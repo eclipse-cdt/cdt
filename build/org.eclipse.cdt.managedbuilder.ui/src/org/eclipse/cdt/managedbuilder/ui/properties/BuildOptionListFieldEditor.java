@@ -11,9 +11,14 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.Assert;
@@ -40,18 +45,83 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 public class BuildOptionListFieldEditor extends FieldEditor {
+	/**
+	 * Multi-purpose dialog to prompt the user for a value, path, or file.
+	 * 
+	 * @since 2.0
+	 */
+	class SelectPathInputDialog extends InputDialog {
+		// Constants for externalized strings
+		private static final String BROWSE = "BuildPropertyCommon.label.browse"; //$NON-NLS-1$
+		private int type;
+		
+		/**
+		 * @param parentShell
+		 * @param dialogTitle
+		 * @param dialogMessage
+		 * @param initialValue
+		 * @param validator
+		 * @param type
+		 */
+		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator, int type) {
+			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
+			this.type = type;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+		 */
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			if (type != IOption.BROWSE_NONE) {
+				final Button browse = createButton(parent, 3, ManagedBuilderUIPlugin.getResourceString(BROWSE), true);
+				browse.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent ev) {
+						String currentName;
+						String result;
+						switch (type) {
+							case IOption.BROWSE_DIR :
+								DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+								currentName = getText().getText();
+								if(currentName != null && currentName.trim().length() != 0) {
+									dialog.setFilterPath(currentName);
+								}
+								result = dialog.open();
+								if(result != null) {
+									getText().setText(result);
+								}
+								break;
+							case IOption.BROWSE_FILE:
+								FileDialog browseDialog = new FileDialog(getShell());
+								currentName = getText().getText();
+								if (currentName != null && currentName.trim().length() != 0) {
+									browseDialog.setFilterPath(currentName);
+								}
+								result = browseDialog.open();
+								if (result != null) {
+									getText().setText(result);
+								}
+								break;
+						}
+					}
+				});
+			}
+		}
+
+	}
+
 	// Label constants
-	private static final String TITLE = "BuildPropertyCommon.label.title";	//$NON-NLS-1$
-	private static final String NEW = "BuildPropertyCommon.label.new"; //$NON-NLS-1$
-	private static final String REMOVE = "BuildPropertyCommon.label.remove"; //$NON-NLS-1$
-	private static final String UP = "BuildPropertyCommon.label.up"; //$NON-NLS-1$
-	private static final String DOWN = "BuildPropertyCommon.label.down"; //$NON-NLS-1$
-	private static final String EDIT = "BuildPropertyCommon.label.editVar"; //$NON-NLS-1$
-	
-	// Browse strategy constants
-	public static final int BROWSE_NONE = 0;
-	public static final int BROWSE_FILE = 1;
-	public static final int BROWSE_DIR = 2;
+	private static final String LABEL = "BuildPropertyCommon.label";	//$NON-NLS-1$
+	private static final String TITLE = LABEL + ".title";	//$NON-NLS-1$
+	private static final String NEW = LABEL + ".new"; //$NON-NLS-1$
+	private static final String REMOVE = LABEL + ".remove"; //$NON-NLS-1$
+	private static final String UP = LABEL + ".up"; //$NON-NLS-1$
+	private static final String DOWN = LABEL + ".down"; //$NON-NLS-1$
+	private static final String EDIT = LABEL + ".editVar";	//$NON-NLS-1$
+	private static final String FILE_TITLE = "BrowseEntryDialog.title.file";	//$NON-NLS-1$
+	private static final String DIR_TITLE = "BrowseEntryDialog.title.directory";	//$NON-NLS-1$
+	private static final String FILE_MSG = "BrowseEntryDialog.message.file";	//$NON-NLS-1$
+	private static final String DIR_MSG = "BrowseEntryDialog.message.directory";	//$NON-NLS-1$
 	
 	// The top-level control for the field editor.
 	private Composite top;
@@ -64,6 +134,8 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	private String fieldName;
 	private SelectionListener selectionListener;
 	private int browseType;
+	private IConfiguration configuration;
+	private IResource owner;
 	
 	// The button for adding the contents of the text field to the list
 	private Button addButton;
@@ -84,7 +156,8 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	public BuildOptionListFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 		this.fieldName = labelText;
-		browseType = BROWSE_NONE;
+		browseType = IOption.BROWSE_NONE;
+
 	}
 
 	/* (non-Javadoc)
@@ -348,6 +421,32 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	}
 
 	/* (non-Javadoc)
+	 * @return Returns the configuration.
+	 */
+	private IConfiguration getConfiguration() {
+		if (configuration == null) {
+			BuildToolsSettingsStore store = (BuildToolsSettingsStore)getPreferenceStore();
+			if (store != null) {
+				configuration = store.getOwner();
+			}
+		}
+		return configuration;
+	}
+	
+	/*(non-Javadoc)
+	 * @return Returns the owner.
+	 */
+	private IResource getOwner() {
+		if (owner == null) {
+			IConfiguration config = getConfiguration();
+			if (config != null) {
+				owner = config.getOwner();
+			}
+		}
+		return owner;
+	}
+	
+	/* (non-Javadoc)
 	 * Answers a <code>String</code> containing the value the user entered, or 
 	 * <code>null</code> if the user cancelled the interaction.
 	 * 
@@ -356,25 +455,46 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	protected String getNewInputObject() {
 		// Create a dialog to prompt for a new list item
 		String input = null;
-
-		if (browseType == BROWSE_DIR) {
-			DirectoryDialog browseDialog = new DirectoryDialog(getShell());
-			if (browseDialog != null) {
-				input = browseDialog.open();
-			}
-		} else if (browseType == BROWSE_FILE) {
-//			dialog = new BrowseEntryDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String());
-			FileDialog browseDialog = new FileDialog(getShell());
-			if (browseDialog != null) {
-				input = browseDialog.open();
-			}
+		String title = new String();
+		String message = new String();
+		String initVal = new String();
+		IPath path = null;
+		
+		if (browseType == IOption.BROWSE_DIR) {
+			title = ManagedBuilderUIPlugin.getResourceString(DIR_TITLE);
+			message = ManagedBuilderUIPlugin.getResourceString(DIR_MSG);
+			path = getOwner().getLocation();
+			initVal = path == null ? initVal : path.toString();
+		} else if (browseType == IOption.BROWSE_FILE) {
+			title = ManagedBuilderUIPlugin.getResourceString(FILE_TITLE);
+			message = ManagedBuilderUIPlugin.getResourceString(FILE_MSG);
+			path = getOwner().getLocation();
+			initVal = path == null ? initVal : path.toString();
 		} else {
-			InputDialog basicDialog = new InputDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
-			if (basicDialog != null && basicDialog.open() == InputDialog.OK) {
-				input = basicDialog.getValue();
-			}
+			title = ManagedBuilderUIPlugin.getResourceString(TITLE);
+			message = fieldName;
 		}
-
+		
+		// Prompt for value
+		SelectPathInputDialog dialog = new SelectPathInputDialog(getShell(), title, message, initVal, null, browseType);
+		if (dialog.open() == SelectPathInputDialog.OK) {
+			input = dialog.getValue().trim();
+		}
+		
+		// Convert the value based on the type of input we expect
+		switch (browseType) {
+			case IOption.BROWSE_DIR:
+			case IOption.BROWSE_FILE:
+				String[] segments = input.split("\\s"); //$NON-NLS-1$
+				if (segments.length > 1) {
+					// Double-quote paths with whitespaces
+					input = "\"" + input + "\"";
+				}
+				break;
+			default:
+				break;
+		}
+		
 		return input;
 	}
 

@@ -90,6 +90,7 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 				case IOption.OBJECTS :
 					BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(
 							opt.getId(), opt.getName(), getFieldEditorParent());
+					listField.setBrowseStrategy(opt.getBrowseType());
 					addField(listField);
 					fieldsList.add(listField);
 					break;

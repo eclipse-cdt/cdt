@@ -226,8 +226,10 @@
             </optionCategory>
             <option
                   name="%Option.Posix.InclPaths"
+                  browseNeeded="directory"
                   category="cygwin.gnu.c.compiler.category.dirs"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="cygwin.gnu.c.compiler.general.include.paths">
                <listOptionValue
@@ -570,8 +572,10 @@
             </optionCategory>
             <option
                   name="%Option.Posix.InclPaths"
+                  browseNeeded="directory"
                   category="cygwin.gnu.compiler.category.dirs"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="cygwin.compiler.general.include.paths">
                <listOptionValue
@@ -891,15 +895,19 @@
             </optionCategory>
             <option
                   name="%Option.Posix.Libs"
+                  browseNeeded="file"
                   category="cygwin.gnu.c.linker.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="cygwin.gnu.c.link.libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
+                  browseNeeded="directory"
                   category="cygwin.gnu.c.linker.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="cygwin.gnu.c.link.paths">
             </option>
@@ -924,7 +932,9 @@
             </option>
             <option
                   name="%Option.Posix.UserObjs"
+                  browseNeeded="file"
                   category="cygwin.gnu.c.linker.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="cygwin.gnu.c.link.ld.userobjs">
             </option>
@@ -988,15 +998,19 @@
             </optionCategory>
             <option
                   name="%Option.Posix.Libs"
+                  browseNeeded="file"
                   category="cygwin.gnu.linker.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="cygwin.link.libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
+                  browseNeeded="directory"
                   category="cygwin.gnu.linker.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="cygwin.link.ld.paths">
             </option>
@@ -1021,7 +1035,9 @@
             </option>
             <option
                   name="%Option.Posix.UserObjs"
+                  browseNeeded="file"
                   category="cygwin.gnu.linker.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="cygwin.gnu.link.ld.userobjs">
             </option>
@@ -1152,6 +1168,7 @@
                   name="%Option.Posix.Libs"
                   category="cygwin.gnu.c.solink.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="cygwin.gnu.c.solink.libs">
             </option>
@@ -1159,6 +1176,7 @@
                   name="%Option.Posix.Libsearch"
                   category="cygwin.gnu.c.solink.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="cygwin.gnu.c.solink.paths">
             </option>
@@ -1184,6 +1202,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="cygwin.gnu.c.solink.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="cygwin.gnu.c.solink.userobjs">
             </option>
@@ -1242,6 +1261,7 @@
                   name="%Option.Posix.Libs"
                   category="cygwin.gnu.solink.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="cygwin.solink.libs">
             </option>
@@ -1249,6 +1269,7 @@
                   name="%Option.Posix.Libsearch"
                   category="cygwin.gnu.solink.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="cygwin.solink.ld.paths">
             </option>
@@ -1274,6 +1295,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="cygwin.gnu.solink.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="cygwin.gnu.solink.userobjs">
             </option>
@@ -1568,6 +1590,7 @@
                   name="%Option.Posix.InclPaths"
                   category="linux.gnu.c.compiler.category.dirs"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="linux.gnu.c.compiler.general.include.paths">
             </option>
@@ -1860,6 +1883,7 @@
                   name="%Option.Posix.InclPaths"
                   category="linux.gnu.compiler.category.dirs"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="linux.gnu.compiler.dirs.incpaths">
                <listOptionValue
@@ -2159,6 +2183,7 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.c.linker.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="linux.gnu.c.link.libs">
             </option>
@@ -2166,6 +2191,7 @@
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.c.linker.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="linux.gnu.c.link.paths">
             </option>
@@ -2190,6 +2216,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.c.linker.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="linux.gnu.c.link.ld.userobjs">
             </option>
@@ -2255,6 +2282,7 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.linker.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="linux.gnu.linker.libs.libs">
             </option>
@@ -2262,6 +2290,7 @@
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.linker.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="linux.gnu.linker.libs.paths">
             </option>
@@ -2286,6 +2315,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.linker.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="linux.gnu.linker.userobjs">
             </option>
@@ -2414,6 +2444,7 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.c.solink.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="linux.gnu.c.solink.libs">
             </option>
@@ -2421,6 +2452,7 @@
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.c.solink.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="linux.gnu.c.solink.paths">
             </option>
@@ -2446,6 +2478,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.c.solink.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="linux.gnu.c.solink.userobjs">
             </option>
@@ -2505,6 +2538,7 @@
                   name="%Option.Posix.Libs"
                   category="linux.gnu.solink.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="linux.gnu.solink.libs.libs">
             </option>
@@ -2512,6 +2546,7 @@
                   name="%Option.Posix.Libsearch"
                   category="linux.gnu.solink.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="linux.gnu.solink.libs.paths">
             </option>
@@ -2537,6 +2572,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="linux.gnu.solink.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="linux.gnu.solink.userobjs">
             </option>
@@ -2744,6 +2780,7 @@
                   name="%Option.Posix.InclPaths"
                   category="solaris.gnu.c.compiler.category.dirs"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="solaris.gnu.c.compiler.general.include.paths">
             </option>
@@ -3021,6 +3058,7 @@
                   name="%Option.Posix.InclPaths"
                   category="solaris.gnu.compiler.category.dirs"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="solaris.gnu.compiler.dirs.incpaths">
                <listOptionValue
@@ -3320,6 +3358,7 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.c.linker.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="solaris.gnu.c.link.libs">
             </option>
@@ -3327,6 +3366,7 @@
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.c.linker.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="solaris.gnu.c.link.paths">
             </option>
@@ -3351,6 +3391,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.c.linker.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="solaris.gnu.c.link.ld.userobjs">
             </option>
@@ -3416,6 +3457,7 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.linker.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="solaris.gnu.linker.libs.libs">
             </option>
@@ -3423,6 +3465,7 @@
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.linker.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="solaris.gnu.linker.libs.paths">
             </option>
@@ -3447,6 +3490,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.linker.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="solaris.gnu.linker.userobjs">
             </option>
@@ -3579,6 +3623,7 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.c.solink.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="solaris.gnu.c.solink.libs">
             </option>
@@ -3586,6 +3631,7 @@
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.c.solink.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="solaris.gnu.c.solink.paths">
             </option>
@@ -3611,6 +3657,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.c.solink.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="solaris.gnu.c.solink.userobjs">
             </option>
@@ -3670,6 +3717,7 @@
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.solink.category.libs"
                   command="-l"
+                  browseType="file"
                   valueType="libs"
                   id="solaris.gnu.solink.libs.libs">
             </option>
@@ -3677,6 +3725,7 @@
                   name="%Option.Posix.Libsearch"
                   category="solaris.gnu.solink.category.libs"
                   command="-L"
+                  browseType="directory"
                   valueType="stringList"
                   id="solaris.gnu.solink.libs.paths">
             </option>
@@ -3702,6 +3751,7 @@
             <option
                   name="%Option.Posix.UserObjs"
                   category="solaris.gnu.solink.category.other"
+                  browseType="file"
                   valueType="userObjs"
                   id="solaris.gnu.solink.userobjs">
             </option>

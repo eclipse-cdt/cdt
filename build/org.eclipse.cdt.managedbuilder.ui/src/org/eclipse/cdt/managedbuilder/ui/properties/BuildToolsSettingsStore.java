@@ -183,6 +183,16 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		return getDefaultLong(name);
 	}
 
+	/**
+	 * Accessor to extract the configuration that owns the property store.
+	 * 
+	 * @return Returns the <code>IConfiguration</code> that owns the receiver.
+	 * @since 2.0
+	 */
+	public IConfiguration getOwner() {
+		return owner;
+	}
+	
 	/* (non-Javadoc)
 	 * Answers the map containing the strings associated with each option 
 	 * ID.

@@ -97,6 +97,27 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		}
 	}
 	
+	/**
+	 * @param symbol
+	 * @param symbol2
+	 * @param map
+	 */
+	public void discardDeferredParent(IDeferredTemplateInstance parent, ITemplateSymbol template, Map map) {
+		List parents = getParents();
+		int size = parents.size();
+		ParentWrapper w = null;
+		ISymbol originalParent = parent.getTemplate().getTemplatedSymbol();
+		for( int i = 0; i < size; i++ ){
+			w = (ParentWrapper) parents.get(i);
+			ISymbol instance = w.getParent();
+			if( instance.getInstantiatedSymbol() == originalParent ){
+				parents.remove( i );
+				template.removeInstantiation( (IContainerSymbol) instance );
+				break;
+			}
+		}
+	}
+	
 	protected void collectInstantiatedConstructor( IParameterizedSymbol constructor ){
 		if( constructor.isType( TypeInfo.t_constructor ) )
 			addToConstructors( constructor );

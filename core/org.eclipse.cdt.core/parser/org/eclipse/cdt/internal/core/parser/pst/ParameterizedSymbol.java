@@ -105,6 +105,16 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		setReturnType( returnType.instantiate( template, argMap ) );
 	}
 	
+	/**
+	 * @param symbol
+	 * @param symbol2
+	 * @param map
+	 */
+	public void discardDeferredReturnType(ISymbol oldReturnType, TemplateSymbol template, Map map) {
+		ISymbol returnType = getReturnType();
+		setReturnType( null );
+		template.removeInstantiation( (IContainerSymbol) returnType );
+	}
 	
 	public void prepareForParameters( int numParams ){
 		if( _parameterList == Collections.EMPTY_LIST ){

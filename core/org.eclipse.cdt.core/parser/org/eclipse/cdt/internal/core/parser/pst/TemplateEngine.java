@@ -69,6 +69,18 @@ public final class TemplateEngine {
 		info.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 	}
 	
+	/**
+	 * @param info
+	 * @param symbol
+	 * @param map
+	 */
+	public static void discardDeferredTypeInfo(TypeInfo info, TemplateSymbol template, Map map) {
+		ISymbol instance = info.getTypeSymbol();
+		if( !(instance instanceof IDeferredTemplateInstance ) )
+			template.removeInstantiation( (IContainerSymbol) instance );
+		info.setTypeSymbol( null );
+	}
+	
 	static protected ITemplateSymbol matchTemplatePartialSpecialization( ITemplateSymbol template, List args ) throws ParserSymbolTableException{
 		if( template == null ){
 			return null;

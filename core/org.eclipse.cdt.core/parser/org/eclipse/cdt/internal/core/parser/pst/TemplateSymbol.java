@@ -150,7 +150,15 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		instance = (IContainerSymbol) symbol.instantiate( template, map );
 		addInstantiation( instance, actualArgs );
 		
-		processDeferredInstantiations();
+		try{
+			processDeferredInstantiations();
+		} catch( ParserSymbolTableException e ){
+			if( e.reason == ParserSymbolTableException.r_RecursiveTemplate ){
+				//clean up some.
+				removeInstantiation( instance );
+			}
+			throw e;
+		}
 		
 		return instance;		
 	}
@@ -434,10 +442,11 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		_processingDeferred = true;
 		int numDeferred = _deferredInstantiations.size();
+		int numProcessed = 0;
 		int loopCount = 0;
-		while( numDeferred > 0 ){
-			while( numDeferred > 0 ) {
-				Object [] objs = (Object [])_deferredInstantiations.get(0);
+		while( numDeferred > numProcessed ){
+			for( int i = numProcessed; i < numDeferred; i++ ){
+				Object [] objs = (Object [])_deferredInstantiations.get(i);
 				
 				DeferredKind kind = (DeferredKind) objs[2];
 				
@@ -450,15 +459,36 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				} else if( kind == DeferredKind.TYPE_SYMBOL ){
 					TemplateEngine.instantiateDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
 				}
-				
-				_deferredInstantiations.remove( 0 );
-				numDeferred--;
+				numProcessed++;
 			}
 			numDeferred = _deferredInstantiations.size();
-			if( ++loopCount > ParserSymbolTable.TEMPLATE_LOOP_THRESHOLD )
+			if( ++loopCount > ParserSymbolTable.TEMPLATE_LOOP_THRESHOLD ){
+				discardDeferredInstantiations();
+				_processingDeferred = false;
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_RecursiveTemplate );
+			}
 		}
 		_processingDeferred = false;
+	}
+	
+	private void discardDeferredInstantiations(){
+		int size = _deferredInstantiations.size();
+		for( int i = 0; i < size; i++ ){
+			Object [] objs = (Object []) _deferredInstantiations.get(i);
+			
+			DeferredKind kind = (DeferredKind) objs[2];
+			
+			if( kind == DeferredKind.PARENT ){
+				DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
+				d.discardDeferredParent( (IDeferredTemplateInstance) objs[1], this, (Map) objs[3] );
+			} else if( kind == DeferredKind.RETURN_TYPE ){
+				ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
+				p.discardDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
+			} else if( kind == DeferredKind.TYPE_SYMBOL ){
+				TemplateEngine.discardDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
+			}
+		}
+		_deferredInstantiations.clear();
 	}
 	
 	private		List  _specializations         = Collections.EMPTY_LIST;	//template specializations

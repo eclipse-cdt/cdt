@@ -111,8 +111,15 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 			
 		instance = (IContainerSymbol) symbol.instantiate( this, argMap );
 		addInstantiation( instance, actualArgs );
-		processDeferredInstantiations();
-			
+		try{
+			processDeferredInstantiations();
+		} catch( ParserSymbolTableException e ){
+			if( e.reason == ParserSymbolTableException.r_RecursiveTemplate ){
+				//clean up some.
+				removeInstantiation( instance );
+			}
+			throw e;
+		}
 		return instance;
 		
 	}

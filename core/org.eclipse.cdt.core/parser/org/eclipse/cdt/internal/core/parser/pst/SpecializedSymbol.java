@@ -29,10 +29,6 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		super( table, name );
 	}
 	
-	protected SpecializedSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super( table, name, obj );
-	}
-	
 	public Object clone(){
 		SpecializedSymbol copy = (SpecializedSymbol)super.clone();
 		
@@ -67,16 +63,16 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		
 		int numSpecArgs = specArgs.size();
 		for( int i = 0; i < numSpecArgs; i++ ){
-			TypeInfo info = (TypeInfo) specArgs.get(i);
-			TypeInfo mappedInfo = (TypeInfo) arguments.get(i);
+			ITypeInfo info = (ITypeInfo) specArgs.get(i);
+			ITypeInfo mappedInfo = (ITypeInfo) arguments.get(i);
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
-			if( mappedInfo.isType( TypeInfo.t_type ) && mappedInfo.getTypeSymbol().isType( TypeInfo.t_templateParameter ) ){
+			if( mappedInfo.isType( ITypeInfo.t_type ) && mappedInfo.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) ){
 				return deferredInstance( arguments );
 			}
 			
 			actualArgs.add( mappedInfo );
-			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol().isType( TypeInfo.t_templateParameter )){
+			if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol().isType( ITypeInfo.t_templateParameter )){
 				ISymbol param = info.getTypeSymbol();
 				
 				param = TemplateEngine.translateParameterForDefinition ( templatedSymbol, param, getDefinitionParameterMap() );
@@ -141,7 +137,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addArgument(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
-	public void addArgument(TypeInfo arg) {
+	public void addArgument(ITypeInfo arg) {
 		if( _argumentList == Collections.EMPTY_LIST )
 			_argumentList = new ArrayList(4);
 		

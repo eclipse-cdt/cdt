@@ -10,7 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
 
 /**
  * @author hamer
@@ -19,26 +20,26 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 public class ExpressionResult {
 	
  
- private TypeInfo result;
+ private ITypeInfo result;
  private boolean failedToDereference = false;
  
  ExpressionResult(){
- 	result = new TypeInfo();
+ 	result = TypeInfoProvider.newTypeInfo();
  }
- ExpressionResult(TypeInfo result){
+ ExpressionResult(ITypeInfo result){
  	this.result = result;
  }
 /**
  * @return
  */
-public TypeInfo getResult() {
+public ITypeInfo getResult() {
 	return result;
 }
 
 /**
  * @param info
  */
-public void setResult(TypeInfo info) {
+public void setResult(ITypeInfo info) {
 	result = info;
 }
 

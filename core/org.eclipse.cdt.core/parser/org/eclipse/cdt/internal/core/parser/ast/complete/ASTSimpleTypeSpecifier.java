@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
 /**
  * @author jcamelon
@@ -49,23 +49,23 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
      */
     public Type getType()
     {
-        if( symbol.getType() == TypeInfo.t_int )
+        if( symbol.getType() == ITypeInfo.t_int )
         	return IASTSimpleTypeSpecifier.Type.INT;
-        if( symbol.getType() == TypeInfo.t_double )
+        if( symbol.getType() == ITypeInfo.t_double )
         	return IASTSimpleTypeSpecifier.Type.DOUBLE; 
-        if( symbol.getType() == TypeInfo.t_float )
+        if( symbol.getType() == ITypeInfo.t_float )
         	return IASTSimpleTypeSpecifier.Type.FLOAT;
-        if( symbol.getType() == TypeInfo.t_bool )
+        if( symbol.getType() == ITypeInfo.t_bool )
 			return IASTSimpleTypeSpecifier.Type.BOOL;
-		if( symbol.getType() == TypeInfo.t_type )
+		if( symbol.getType() == ITypeInfo.t_type )
 			return IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
-		if( symbol.getType() == TypeInfo.t_char )
+		if( symbol.getType() == ITypeInfo.t_char )
 			return IASTSimpleTypeSpecifier.Type.CHAR;
-		if( symbol.getType() == TypeInfo.t_void )
+		if( symbol.getType() == ITypeInfo.t_void )
 			return IASTSimpleTypeSpecifier.Type.VOID;
-		if( symbol.getType() == TypeInfo.t_wchar_t)
+		if( symbol.getType() == ITypeInfo.t_wchar_t)
 			return IASTSimpleTypeSpecifier.Type.WCHAR_T;
-		if( symbol.getType() == TypeInfo.t__Bool )
+		if( symbol.getType() == ITypeInfo.t__Bool )
 			return IASTSimpleTypeSpecifier.Type._BOOL;
 			
         return IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
@@ -83,28 +83,28 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
      */
     public boolean isLong()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isLong );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isLong );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isShort()
      */
     public boolean isShort()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isShort );
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isShort );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isSigned()
      */
     public boolean isSigned()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isSigned);
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isSigned);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isUnsigned()
      */
     public boolean isUnsigned()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isUnsigned );
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isUnsigned );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isTypename()
@@ -139,7 +139,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
      */
     public boolean isComplex()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isComplex );
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isComplex );
     }
 
     /* (non-Javadoc)
@@ -147,7 +147,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
      */
     public boolean isImaginary()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isImaginary );		        
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isImaginary );		        
     }
 
 	/* (non-Javadoc)

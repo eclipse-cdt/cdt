@@ -39,21 +39,23 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 	public IContainerSymbol getContainingSymbol();
 	public void setContainingSymbol( IContainerSymbol containing );
 	
-	public boolean isType( TypeInfo.eType type );
-	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType );
-	public TypeInfo.eType getType();
-	public void setType(TypeInfo.eType t);
-	public TypeInfo getTypeInfo();
-	public void setTypeInfo( TypeInfo info );
+	public boolean isType( ITypeInfo.eType type );
+	public boolean isType( ITypeInfo.eType type, ITypeInfo.eType upperType );
+	public ITypeInfo.eType getType();
+	public void setType(ITypeInfo.eType t);
+	public ITypeInfo getTypeInfo();
+	public void setTypeInfo( ITypeInfo info );
 	public ISymbol getTypeSymbol();
 	public void setTypeSymbol( ISymbol type );
 
 	public boolean isForwardDeclaration();
 	public void setIsForwardDeclaration( boolean forward );
+	public void setForwardSymbol( ISymbol forward );
+	public ISymbol getForwardSymbol();
 	
 	public int compareCVQualifiersTo( ISymbol symbol );
 	public List getPtrOperators();
-	public void addPtrOperator( TypeInfo.PtrOp ptrOp );
+	public void addPtrOperator( ITypeInfo.PtrOp ptrOp );
 	
 	public boolean isTemplateInstance();
 	public ISymbol getInstantiatedSymbol();

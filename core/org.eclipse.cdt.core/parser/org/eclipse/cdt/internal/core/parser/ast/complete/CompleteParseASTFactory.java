@@ -91,6 +91,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 import org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.IUsingDeclarationSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IUsingDirectiveSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.NamespaceSymbolExtension;
@@ -99,10 +100,8 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
@@ -117,7 +116,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 public class CompleteParseASTFactory extends BaseASTFactory implements IASTFactory
 {
     protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private final static List SUBSCRIPT;
+	private final static ITypeInfo.OperatorExpression SUBSCRIPT;
     private final static IProblemFactory problemFactory = new ASTProblemFactory();
 	private final IFilenameProvider fileProvider;
 	private final ParserMode mode;
@@ -129,8 +128,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
     static 
     {
-    	SUBSCRIPT = new ArrayList(1);
-    	SUBSCRIPT.add( TypeInfo.OperatorExpression.subscript );
+    	SUBSCRIPT = ITypeInfo.OperatorExpression.subscript;
     }
 
     static private class LookupType extends Enum {
@@ -207,9 +205,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	protected boolean validParameterList(List parameters){
 		Iterator i = parameters.iterator();
 		while (i.hasNext()){
-			TypeInfo info = (TypeInfo)i.next();
+			ITypeInfo info = (ITypeInfo)i.next();
 			if (info != null){
-				if((info.getType() == TypeInfo.t_type) 
+				if((info.getType() == ITypeInfo.t_type) 
 					&& (info.getTypeSymbol() == null))
 					return false;
 			}else
@@ -218,18 +216,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return true;
 	}
 	
-	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, LookupType lookupType ) throws ASTSemanticException {
+	private ISymbol lookupElement (IContainerSymbol startingScope, String name, ITypeInfo.eType type, List parameters, LookupType lookupType ) throws ASTSemanticException {
 		return lookupElement( startingScope, name, type, parameters, null, lookupType );
 	}
 	
-	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, List arguments, LookupType lookupType ) throws ASTSemanticException {
+	private ISymbol lookupElement (IContainerSymbol startingScope, String name, ITypeInfo.eType type, List parameters, List arguments, LookupType lookupType ) throws ASTSemanticException {
 		ISymbol result = null;
 		if( startingScope == null ) return null;
 		try {
-			if((type == TypeInfo.t_function) || (type == TypeInfo.t_constructor)){
+			if((type == ITypeInfo.t_function) || (type == ITypeInfo.t_constructor)){
 				// looking for a function
 				if(validParameterList(parameters))
-					if(type == TypeInfo.t_constructor){
+					if(type == ITypeInfo.t_constructor){
 						IDerivableContainerSymbol startingDerivableScope = (IDerivableContainerSymbol) startingScope;
 						result = startingDerivableScope.lookupConstructor( new LinkedList(parameters));
 					}
@@ -271,10 +269,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 	
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException{
-		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, 0, references, throwOnError, lookup );
+		return lookupQualifiedName(startingScope, name, ITypeInfo.t_any, null, 0, references, throwOnError, lookup );
 	}
 
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, ITypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
 	{
 		ISymbol result = null;
 		if( name == null && throwOnError )
@@ -303,13 +301,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return lookupQualifiedName(startingScope, name, references, throwOnError, LookupType.UNQUALIFIED);
 	}
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException{
-		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, references, throwOnError, lookup );
+		return lookupQualifiedName(startingScope, name, ITypeInfo.t_any, null, references, throwOnError, lookup );
 	}
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError ) throws ASTSemanticException{
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, ITypeInfo.eType type, List parameters, List references, boolean throwOnError ) throws ASTSemanticException{
 		return lookupQualifiedName( startingScope, name, type, parameters, references, throwOnError, LookupType.UNQUALIFIED );
 	}
 	
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, ITypeInfo.eType type, List parameters, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
 	{
 		ISymbol result = null;
 		IToken firstSymbol = null;
@@ -631,12 +629,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
         if( namespaceSymbol != null )
         {
-        	if( namespaceSymbol.getType() != TypeInfo.t_namespace )
+        	if( namespaceSymbol.getType() != ITypeInfo.t_namespace )
         		handleProblem( IProblem.SEMANTIC_INVALID_OVERLOAD, identifier, nameOffset, nameEndOffset, nameLineNumber, true );
         }
         else
         {
-        	namespaceSymbol = pst.newContainerSymbol( identifier, TypeInfo.t_namespace );
+        	namespaceSymbol = pst.newContainerSymbol( identifier, ITypeInfo.t_namespace );
         	if( identifier.equals( EMPTY_STRING ) ) 
         		namespaceSymbol.setContainingSymbol( pstScope );	
         	else
@@ -733,7 +731,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingLine, int nameOffset, int nameEndOffset, int nameLine) throws ASTSemanticException
     {
         IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
-        TypeInfo.eType pstType = classKindToTypeInfo(kind);		
+        ITypeInfo.eType pstType = classKindToTypeInfo(kind);		
 		List references = new ArrayList();
 
 		String newSymbolName = EMPTY_STRING; 
@@ -784,9 +782,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( classSymbol != null && classSymbol.getType() != pstType )
 			{
 				boolean isError = true;
-				if( classSymbol.isType( TypeInfo.t_class, TypeInfo.t_union ) )
+				if( classSymbol.isType( ITypeInfo.t_class, ITypeInfo.t_union ) )
 				{
-					if ( ( pstType == TypeInfo.t_class || pstType == TypeInfo.t_struct || pstType == TypeInfo.t_union ) )
+					if ( ( pstType == ITypeInfo.t_class || pstType == ITypeInfo.t_struct || pstType == ITypeInfo.t_union ) )
 						isError = false;
 								
 				}				
@@ -797,7 +795,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IDerivableContainerSymbol newSymbol = pst.newDerivableContainerSymbol( newSymbolName, pstType );
 		
 		if( classSymbol != null )
-			classSymbol.setTypeSymbol( newSymbol );
+			classSymbol.setForwardSymbol( newSymbol );
 			
 		List args = null;
 		if( isTemplateId ){
@@ -839,7 +837,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			exp = (ASTExpression) iter.next();
 			
-			TypeInfo info = exp.getResultType().getResult();
+			ITypeInfo info = exp.getResultType().getResult();
 			
 			list.add( info );
 		}
@@ -894,18 +892,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		return true;
 	}
-	protected TypeInfo.eType classKindToTypeInfo(ASTClassKind kind)
+	protected ITypeInfo.eType classKindToTypeInfo(ASTClassKind kind)
     {
-        TypeInfo.eType pstType = null;
+        ITypeInfo.eType pstType = null;
         
         if( kind == ASTClassKind.CLASS )
-        	pstType = TypeInfo.t_class;
+        	pstType = ITypeInfo.t_class;
         else if( kind == ASTClassKind.STRUCT )
-        	pstType = TypeInfo.t_struct;
+        	pstType = ITypeInfo.t_struct;
         else if( kind == ASTClassKind.UNION )
-        	pstType = TypeInfo.t_union;
+        	pstType = ITypeInfo.t_union;
         else if( kind == ASTClassKind.ENUM )
-            pstType = TypeInfo.t_enumeration;
+            pstType = ITypeInfo.t_enumeration;
 //        else
 //        	assert false : kind ;
         return pstType;
@@ -970,20 +968,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ASTSymbol definition  = i.hasNext() ? (ASTSymbol) i.next() : null;
     			
 //    	assert (symbol != null ) : "createReference cannot be called on null symbol ";
-    	if( symbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ||
+    	if( symbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) ||
 		    symbol.getASTExtension().getPrimaryDeclaration() instanceof IASTTypedefDeclaration )
 			return cache.getReference( offset, declaration);
-        else if( symbol.getType() == TypeInfo.t_namespace )
+        else if( symbol.getType() == ITypeInfo.t_namespace )
         	return cache.getReference( offset, declaration);
-        else if( symbol.getType() == TypeInfo.t_class || 
-				 symbol.getType() == TypeInfo.t_struct || 
-				 symbol.getType() == TypeInfo.t_union ) 
+        else if( symbol.getType() == ITypeInfo.t_class || 
+				 symbol.getType() == ITypeInfo.t_struct || 
+				 symbol.getType() == ITypeInfo.t_union ) 
 			return cache.getReference( offset, (ISourceElementCallbackDelegate)symbol.getASTExtension().getPrimaryDeclaration() );
-		else if( symbol.getType() == TypeInfo.t_enumeration )
+		else if( symbol.getType() == ITypeInfo.t_enumeration )
 			return cache.getReference( offset, (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
-		else if( symbol.getType() == TypeInfo.t_enumerator )
+		else if( symbol.getType() == ITypeInfo.t_enumerator )
 			return cache.getReference( offset, declaration );
-		else if(( symbol.getType() == TypeInfo.t_function ) || (symbol.getType() == TypeInfo.t_constructor))
+		else if(( symbol.getType() == ITypeInfo.t_function ) || (symbol.getType() == ITypeInfo.t_constructor))
 		{
 			ASTNode referenced = (definition != null) ? definition : declaration;
 			if( referenced instanceof IASTMethod )
@@ -991,26 +989,26 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				return cache.getReference( offset, (IASTMethod)referenced ); 
 			return cache.getReference( offset, (IASTFunction)referenced );
 		}
-		else if( ( symbol.getType() == TypeInfo.t_type ) || 
-				( symbol.getType() == TypeInfo.t_bool )||
-				( symbol.getType() == TypeInfo.t_char  ) ||     
-				( symbol.getType() == TypeInfo.t_wchar_t )||
-				( symbol.getType() == TypeInfo.t_int )   ||
-				( symbol.getType() == TypeInfo.t_float )||
-				( symbol.getType() == TypeInfo.t_double ) ||    
-				( symbol.getType() == TypeInfo.t_void ) ||
-				( symbol.getType() == TypeInfo.t__Bool) ||
-				( symbol.getType() == TypeInfo.t_templateParameter ) )
+		else if( ( symbol.getType() == ITypeInfo.t_type ) || 
+				( symbol.getType() == ITypeInfo.t_bool )||
+				( symbol.getType() == ITypeInfo.t_char  ) ||     
+				( symbol.getType() == ITypeInfo.t_wchar_t )||
+				( symbol.getType() == ITypeInfo.t_int )   ||
+				( symbol.getType() == ITypeInfo.t_float )||
+				( symbol.getType() == ITypeInfo.t_double ) ||    
+				( symbol.getType() == ITypeInfo.t_void ) ||
+				( symbol.getType() == ITypeInfo.t__Bool) ||
+				( symbol.getType() == ITypeInfo.t_templateParameter ) )
 			
 		{
-			if( symbol.getContainingSymbol().getType() == TypeInfo.t_class || 
-				symbol.getContainingSymbol().getType() == TypeInfo.t_struct || 
-				symbol.getContainingSymbol().getType() == TypeInfo.t_union )
+			if( symbol.getContainingSymbol().getType() == ITypeInfo.t_class || 
+				symbol.getContainingSymbol().getType() == ITypeInfo.t_struct || 
+				symbol.getContainingSymbol().getType() == ITypeInfo.t_union )
 			{
 				return cache.getReference( offset, (definition != null ? definition : declaration ));
 			}
-			else if( ( 	symbol.getContainingSymbol().getType() == TypeInfo.t_function || 
-						symbol.getContainingSymbol().getType() == TypeInfo.t_constructor ) && 
+			else if( ( 	symbol.getContainingSymbol().getType() == ITypeInfo.t_function || 
+						symbol.getContainingSymbol().getType() == ITypeInfo.t_constructor ) && 
 				symbol.getContainingSymbol() instanceof IParameterizedSymbol && 
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList() != null && 
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList().contains( symbol ) )
@@ -1042,7 +1040,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingLine, int nameOffset, int nameEndOffset, int nameLine) throws ASTSemanticException
     {
 		IContainerSymbol containerSymbol = scopeToSymbol(scope);
-		TypeInfo.eType pstType = TypeInfo.t_enumeration;
+		ITypeInfo.eType pstType = ITypeInfo.t_enumeration;
 			
 		IDerivableContainerSymbol classSymbol = pst.newDerivableContainerSymbol( name, pstType );
 		try
@@ -1071,7 +1069,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
         IContainerSymbol enumerationSymbol = (IContainerSymbol)((ISymbolOwner)enumeration).getSymbol();
         
-        ISymbol enumeratorSymbol = pst.newSymbol( name, TypeInfo.t_enumerator );
+        ISymbol enumeratorSymbol = pst.newSymbol( name, ITypeInfo.t_enumerator );
         try
         {
             enumerationSymbol.addSymbol( enumeratorSymbol );
@@ -1156,7 +1154,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		try {
 			symbol = typeId.getTypeSymbol();
 			
-			if( symbol.isType( TypeInfo.t_type ) )
+			if( symbol.isType( ITypeInfo.t_type ) )
 				symbol = symbol.getTypeSymbol();
 		} catch (ASTNotImplementedException e) {
 			return;
@@ -1187,9 +1185,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	}
 	
 	private boolean createConstructorReference( ISymbol classSymbol, ASTExpression expressionList, ITokenDuple duple, List references ){
-		if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
+		if( classSymbol != null && classSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) ){
 			TypeInfoProvider provider = pst.getTypeInfoProvider();
-			TypeInfo info = classSymbol.getTypeInfo().getFinalType( provider );
+			ITypeInfo info = classSymbol.getTypeInfo().getFinalType( provider );
 			classSymbol = info.getTypeSymbol();
 			provider.returnTypeInfo( info );
 		}
@@ -1303,9 +1301,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				parameters.add(expResult.getResult());
 			}
 			if( functionScope.equals( startingScope ) )
-				symbol = lookupQualifiedName(functionScope, functionId, TypeInfo.t_function, parameters, references, false);
+				symbol = lookupQualifiedName(functionScope, functionId, ITypeInfo.t_function, parameters, references, false);
 			else
-				symbol = lookupQualifiedName(functionScope, functionId, TypeInfo.t_function, parameters, references, false, LookupType.QUALIFIED );
+				symbol = lookupQualifiedName(functionScope, functionId, ITypeInfo.t_function, parameters, references, false, LookupType.QUALIFIED );
 		}
 		
     	return symbol;
@@ -1324,10 +1322,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     private IContainerSymbol getSearchScope (Kind kind, IASTExpression lhs, IContainerSymbol startingScope) throws ASTSemanticException{
 		if( kind.isPostfixMemberReference() )
 		{
-			TypeInfo lhsInfo = ((ASTExpression)lhs).getResultType().getResult();
+			ITypeInfo lhsInfo = ((ASTExpression)lhs).getResultType().getResult();
 			if(lhsInfo != null){
 				TypeInfoProvider provider = pst.getTypeInfoProvider();
-				TypeInfo info = null;
+				ITypeInfo info = null;
 				try{
 					info = lhsInfo.getFinalType( provider );
 				} catch ( ParserSymbolTableError e ){
@@ -1349,21 +1347,21 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /*
      * Conditional Expression conversion
      */
-     protected TypeInfo conditionalExpressionConversions(TypeInfo second, TypeInfo third){
-     	TypeInfo info = new TypeInfo();
+     protected ITypeInfo conditionalExpressionConversions(ITypeInfo second, ITypeInfo third){
+     	ITypeInfo info = null;
      	if(second.equals(third)){
      		info = second;
      		return info;
      	}
-     	if((second.getType() == TypeInfo.t_void) && (third.getType() != TypeInfo.t_void)){
+     	if((second.getType() == ITypeInfo.t_void) && (third.getType() != ITypeInfo.t_void)){
      		info = third;
      		return info;	
      	}
-		if((second.getType() != TypeInfo.t_void) && (third.getType() == TypeInfo.t_void)){
+		if((second.getType() != ITypeInfo.t_void) && (third.getType() == ITypeInfo.t_void)){
 			info = second;
 			return info;	
 		}
-		if((second.getType() == TypeInfo.t_void) && (third.getType() == TypeInfo.t_void)){
+		if((second.getType() == ITypeInfo.t_void) && (third.getType() == ITypeInfo.t_void)){
 			info = second;
 			return info;	
 		}
@@ -1379,77 +1377,77 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Apply the usual arithmetic conversions to find out the result of an expression 
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
-	protected TypeInfo usualArithmeticConversions( IASTScope scope, TypeInfo lhs, TypeInfo rhs) throws ASTSemanticException{
+	protected ITypeInfo usualArithmeticConversions( IASTScope scope, ITypeInfo lhs, ITypeInfo rhs) throws ASTSemanticException{
 		
 		// if you have a variable of type basic type, then we need to go to the basic type first
-		while( (lhs.getType() == TypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
+		while( (lhs.getType() == ITypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
 			lhs = lhs.getTypeSymbol().getTypeInfo();  
 		}
-		while( (rhs.getType() == TypeInfo.t_type) && (rhs.getTypeSymbol() != null)){
+		while( (rhs.getType() == ITypeInfo.t_type) && (rhs.getTypeSymbol() != null)){
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
 		}
 		
-		if( !lhs.isType(TypeInfo.t__Bool, TypeInfo.t_enumerator ) && 
-			!rhs.isType(TypeInfo.t__Bool, TypeInfo.t_enumerator ) ) 
+		if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) && 
+			!rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) ) 
 		{
 			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null ); 
 		}
 
-		TypeInfo info = new TypeInfo();
+		ITypeInfo info = TypeInfoProvider.newTypeInfo( );
 		if( 
-		   ( lhs.checkBit(TypeInfo.isLong)  && lhs.getType() == TypeInfo.t_double)
-		|| ( rhs.checkBit(TypeInfo.isLong)  && rhs.getType() == TypeInfo.t_double)
+		   ( lhs.checkBit(ITypeInfo.isLong)  && lhs.getType() == ITypeInfo.t_double)
+		|| ( rhs.checkBit(ITypeInfo.isLong)  && rhs.getType() == ITypeInfo.t_double)
 		){
-			info.setType(TypeInfo.t_double);
-			info.setBit(true, TypeInfo.isLong);		
+			info.setType(ITypeInfo.t_double);
+			info.setBit(true, ITypeInfo.isLong);		
 			return info; 
 		}
 		else if(
-		   ( lhs.getType() == TypeInfo.t_double )
-		|| ( rhs.getType() == TypeInfo.t_double )
+		   ( lhs.getType() == ITypeInfo.t_double )
+		|| ( rhs.getType() == ITypeInfo.t_double )
 		){
-			info.setType(TypeInfo.t_double);
+			info.setType(ITypeInfo.t_double);
 			return info; 			
 		}
 		else if (
-		   ( lhs.getType() == TypeInfo.t_float )
-		|| ( rhs.getType() == TypeInfo.t_float )
+		   ( lhs.getType() == ITypeInfo.t_float )
+		|| ( rhs.getType() == ITypeInfo.t_float )
 		){
-			info.setType(TypeInfo.t_float);
+			info.setType(ITypeInfo.t_float);
 			return info; 						
 		} else {
 			// perform intergral promotions (Specs section 4.5)
-			info.setType(TypeInfo.t_int);
+			info.setType(ITypeInfo.t_int);
 		}
 		
 		if(
-		   ( lhs.checkBit(TypeInfo.isUnsigned) && lhs.checkBit(TypeInfo.isLong)) 
-		|| ( rhs.checkBit(TypeInfo.isUnsigned) && rhs.checkBit(TypeInfo.isLong))
+		   ( lhs.checkBit(ITypeInfo.isUnsigned) && lhs.checkBit(ITypeInfo.isLong)) 
+		|| ( rhs.checkBit(ITypeInfo.isUnsigned) && rhs.checkBit(ITypeInfo.isLong))
 		){
-			info.setBit(true, TypeInfo.isUnsigned);
-			info.setBit(true, TypeInfo.isLong);
+			info.setBit(true, ITypeInfo.isUnsigned);
+			info.setBit(true, ITypeInfo.isLong);
 			return info;
 		} 
 		else if(
-			( lhs.checkBit(TypeInfo.isUnsigned) && rhs.checkBit(TypeInfo.isLong) ) 
-		 || ( rhs.checkBit(TypeInfo.isUnsigned) && lhs.checkBit(TypeInfo.isLong) )
+			( lhs.checkBit(ITypeInfo.isUnsigned) && rhs.checkBit(ITypeInfo.isLong) ) 
+		 || ( rhs.checkBit(ITypeInfo.isUnsigned) && lhs.checkBit(ITypeInfo.isLong) )
 		){
-			info.setBit(true, TypeInfo.isUnsigned);
-			info.setBit(true, TypeInfo.isLong);
+			info.setBit(true, ITypeInfo.isUnsigned);
+			info.setBit(true, ITypeInfo.isLong);
 			return info;
 		}
 		else if (		
-			( lhs.checkBit(TypeInfo.isLong)) 
-		 || ( rhs.checkBit(TypeInfo.isLong))
+			( lhs.checkBit(ITypeInfo.isLong)) 
+		 || ( rhs.checkBit(ITypeInfo.isLong))
 		){
-			info.setBit(true, TypeInfo.isLong);
+			info.setBit(true, ITypeInfo.isLong);
 			return info;			
 		}
 		else if (
-			( lhs.checkBit(TypeInfo.isUnsigned) ) 
-		 || ( rhs.checkBit(TypeInfo.isUnsigned) )		
+			( lhs.checkBit(ITypeInfo.isUnsigned) ) 
+		 || ( rhs.checkBit(ITypeInfo.isUnsigned) )		
 		){
-			info.setBit(true, TypeInfo.isUnsigned);
+			info.setBit(true, ITypeInfo.isUnsigned);
 			return info;			
 		} else {
 			// it should be both = int
@@ -1457,36 +1455,32 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}		
 	}
 		
-	private TypeInfo addToInfo(ASTExpression exp, boolean flag, int mask)
+	private ITypeInfo modifyTypeInfo(ASTExpression exp, Kind kind)
 	{
 //		assert exp != null : exp;
-		TypeInfo info = exp.getResultType().getResult();
-		info.setBit(flag, mask);
+		ITypeInfo info = exp.getResultType().getResult();
+		
+		//short added to a type
+		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT ){
+			info.setBit( true, ITypeInfo.isShort);
+		}
+		// long added to a type
+		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG ){
+		    info.setBit( true, ITypeInfo.isLong);
+		}
+		// signed added to a type
+		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED ){
+		    info.setBit( true, ITypeInfo.isUnsigned);
+		}
+		// unsigned added to a type
+		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED ){
+		    info.setBit( true, ITypeInfo.isUnsigned);
+		}
+		
 		return info;
 	}
 	
-	protected ExpressionResult getExpressionResultType(
-			IASTScope scope, 
-			Kind kind, IASTExpression lhs,
-			IASTExpression rhs,
-			IASTExpression thirdExpression,
-			IASTTypeId typeId,
-			String literal,
-			ISymbol symbol)	throws ASTSemanticException{
-		
-		
-		TypeInfo info = new TypeInfo();
-		
-		if( extension.canHandleExpressionKind( kind ))
-		{
-			extension.getExpressionResultType( kind, lhs, rhs, typeId );
-			return new ExpressionResult( info );
-		}
-		
-		ExpressionResult result = null;
-		if( literal != null && !literal.equals(EMPTY_STRING) && kind.isLiteral() ){ 
-			info.setDefault( literal );
-		}
+	private void constructBasicType( TypeInfoProvider provider, Kind kind ){
 		// types that resolve to void
 		if ((kind == IASTExpression.Kind.PRIMARY_EMPTY)
 		|| (kind == IASTExpression.Kind.THROWEXPRESSION) 
@@ -1495,67 +1489,46 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.DELETE_CASTEXPRESSION)
 		|| (kind == IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION)
 		){
-			info.setType(TypeInfo.t_void);
-			result = new ExpressionResult(info);
-			return result;
+			provider.setType( ITypeInfo.t_void );
 		}
 		// types that resolve to int
 		if ((kind == IASTExpression.Kind.PRIMARY_INTEGER_LITERAL)
 		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT)
 		){
-			info.setType(TypeInfo.t_int);
-			result = new ExpressionResult(info);
-			return result;
+		    provider.setType( ITypeInfo.t_int );
 		}
+		
 		// size of is always unsigned int
-		if ((kind == IASTExpression.Kind.UNARY_SIZEOF_TYPEID) 		
+		if((kind == IASTExpression.Kind.UNARY_SIZEOF_TYPEID) 		
 		|| (kind == IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION) 		
 		){
-			info.setType(TypeInfo.t_int);
-			info.setBit(true, TypeInfo.isUnsigned);
-			result = new ExpressionResult(info);
-			return result;
+		    provider.setType( ITypeInfo.t_int );
+		    provider.setTypeBits( ITypeInfo.isUnsigned );
 		}
+		
 		// types that resolve to char
-		if( (kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL)
-		||  (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR)){
-			info.setType(TypeInfo.t_char);
-			// check that this is really only one literal
-			if(literal.length() > 1){
-				// this is a string
-				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));					
-			}
-			result = new ExpressionResult(info);
-			return result;				
-		}		
-		// types that resolve to string
-		if (kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL){
-			info.setType(TypeInfo.t_char);
-			info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));
-			result = new ExpressionResult(info);
-			return result;				
-		}		
+		if((kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL)
+		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR)
+		|| (kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL)
+		){
+		    provider.setType( ITypeInfo.t_char );				
+		}	
 		// types that resolve to float
-		if( (kind == IASTExpression.Kind.PRIMARY_FLOAT_LITERAL)
+		if((kind == IASTExpression.Kind.PRIMARY_FLOAT_LITERAL)
 		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT)){
-			info.setType(TypeInfo.t_float);
-			result = new ExpressionResult(info);
-			return result;
+		    provider.setType( ITypeInfo.t_float );
 		}
-		// types that resolve to double
+		//types that resolve to double
 		if( kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE){
-			info.setType(TypeInfo.t_double);
-			result = new ExpressionResult(info);
-			return result;				
-		}		
-		// types that resolve to wchar
+		    provider.setType( ITypeInfo.t_double );
+							
+		}	
+		//types that resolve to wchar
 		if(kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART){
-			info.setType(TypeInfo.t_wchar_t);
-			result = new ExpressionResult(info);
-			return result;				
+		    provider.setType( ITypeInfo.t_wchar_t );
 		}		
 		// types that resolve to bool
-		if( (kind == IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL)
+		if((kind == IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL)
 		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL)
 		|| (kind == IASTExpression.Kind.RELATIONAL_GREATERTHAN)
 		|| (kind == IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO)
@@ -1567,38 +1540,61 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.LOGICALOREXPRESSION) 				
 		)
 		{
-			info.setType(TypeInfo.t_bool);
-			result = new ExpressionResult(info);
-			return result;
+		    provider.setType(ITypeInfo.t_bool);
 		}
-		// short added to a type
-		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT ){
-			info = addToInfo((ASTExpression)lhs, true, TypeInfo.isShort);
-			result = new ExpressionResult(info);
-			return result;
+	}
+	protected ExpressionResult getExpressionResultType(
+			IASTScope scope, 
+			Kind kind, IASTExpression lhs,
+			IASTExpression rhs,
+			IASTExpression thirdExpression,
+			IASTTypeId typeId,
+			String literal,
+			ISymbol symbol)	throws ASTSemanticException
+	{
+	    ITypeInfo info = null;
+	    ExpressionResult result = null;
+	    
+		if( extension.canHandleExpressionKind( kind ))
+		{
+			info = extension.getExpressionResultType( kind, lhs, rhs, typeId );
+			return new ExpressionResult( info );
 		}
-		// long added to a type
-		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG ){
-			info = addToInfo((ASTExpression)lhs, true, TypeInfo.isLong);
-			result = new ExpressionResult(info);
-			return result;
+		
+		//basic types
+		if( kind.isBasicType() ){
+			TypeInfoProvider provider = TypeInfoProvider.getProvider( pst );
+			provider.beginTypeConstruction();
+			
+			if( literal != null && !literal.equals(EMPTY_STRING) && kind.isLiteral() ){ 
+				provider.setDefaultObj( literal );
+			}
+			
+			constructBasicType( provider, kind );
+			
+			info = provider.completeConstruction();
+			
+			//types that need a pointer
+			if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
+		        (literal.length() > 1 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
+			                               kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR )) )
+			{
+				info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
+			}
+			
+			return new ExpressionResult( info );
 		}
-		// signed added to a type
-		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED ){
-			info = addToInfo((ASTExpression)lhs, false, TypeInfo.isUnsigned);
-			result = new ExpressionResult(info);
-			return result;
+
+		// modifications to existing types		
+		if( kind.isPostfixSimpleType() ){
+		    info = modifyTypeInfo( (ASTExpression)lhs, kind );
+		    return new ExpressionResult( info );
 		}
-		// unsigned added to a type
-		if (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED ){
-			info = addToInfo((ASTExpression)lhs, true, TypeInfo.isUnsigned);
-			result = new ExpressionResult(info);
-			return result;
-		}
+		
 		// Id expressions resolve to t_type, symbol already looked up
 		if( kind == IASTExpression.Kind.ID_EXPRESSION )
 		{
-			info.setType(TypeInfo.t_type);
+		    info = TypeInfoProvider.newTypeInfo(ITypeInfo.t_type);
 			info.setTypeSymbol(symbol);								
 			result = new ExpressionResult(info);
 			if (symbol == null)
@@ -1614,8 +1610,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			
 			info = left.getResultType().getResult();
 			if (info != null){
-				info.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
 				info = info.getFinalType( null );
+				info.applyOperatorExpression( ITypeInfo.OperatorExpression.addressof );
 			} else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
@@ -1630,8 +1626,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
 			info = left.getResultType().getResult();
 			if (info != null){
-				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 				info = info.getFinalType( null );
+				info.applyOperatorExpression( ITypeInfo.OperatorExpression.indirection );
 			}else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
@@ -1646,8 +1642,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			info = left.getResultType().getResult();
 			if ((info != null))
 			{
-				info.addOperatorExpression( TypeInfo.OperatorExpression.subscript );
 				info = info.getFinalType( null );
+				info.applyOperatorExpression( ITypeInfo.OperatorExpression.subscript );
 			}else {
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			}
@@ -1661,7 +1657,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)
 		){
 			if(symbol != null){
-				info = new TypeInfo(symbol.getTypeInfo());			
+				info = TypeInfoProvider.newTypeInfo( symbol.getTypeInfo() );			
 			}
 			result = new ExpressionResult(info);
 			return result;
@@ -1675,8 +1671,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			info = right.getResultType().getResult();
 			if ((info != null) && (symbol != null)){
-				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
 				info.setTypeSymbol(symbol);
+				info = info.getFinalType( null );
+				info.applyOperatorExpression( ITypeInfo.OperatorExpression.indirection );
+				
 			} else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
@@ -1687,7 +1685,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (kind == IASTExpression.Kind.PRIMARY_THIS){
 			if(symbol != null)
 			{
-				info.setType(TypeInfo.t_type);
+			    info = TypeInfoProvider.newTypeInfo(ITypeInfo.t_type);
 				info.setTypeSymbol(symbol);	
 			} else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
@@ -1701,8 +1699,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			ASTExpression right = (ASTExpression)rhs;  
 			ASTExpression third = (ASTExpression)thirdExpression;
 			if((right != null ) && (third != null)){
-				TypeInfo rightType =right.getResultType().getResult();
-				TypeInfo thirdType =third.getResultType().getResult();
+				ITypeInfo rightType =right.getResultType().getResult();
+				ITypeInfo thirdType =third.getResultType().getResult();
 				if((rightType != null) && (thirdType != null)){
 					info = conditionalExpressionConversions(rightType, thirdType);   
 				} else 
@@ -1721,7 +1719,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			try
             {
                 info = typeId.getTypeSymbol().getTypeInfo();
-				info.addPtrOperator( new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));
+				info.addPtrOperator( new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));
             }
             catch (ASTNotImplementedException e)
             {
@@ -1743,8 +1741,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			ASTExpression left = (ASTExpression)lhs;
 			ASTExpression right = (ASTExpression)rhs;  
 			if((left != null ) && (right != null)){
-				TypeInfo leftType =left.getResultType().getResult();
-				TypeInfo rightType =right.getResultType().getResult();
+				ITypeInfo leftType =left.getResultType().getResult();
+				ITypeInfo rightType =right.getResultType().getResult();
 				info = usualArithmeticConversions( scope, leftType, rightType);
 			}
 			else 
@@ -1796,7 +1794,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| ( kind == IASTExpression.Kind.POSTFIX_CONST_CAST )		
 		){
 			try{
-				info = new TypeInfo(typeId.getTypeSymbol().getTypeInfo()); 
+				info = TypeInfoProvider.newTypeInfo(typeId.getTypeSymbol().getTypeInfo()); 
 			}catch (ASTNotImplementedException e)
 			{
 				// will never happen
@@ -1808,11 +1806,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if(kind == IASTExpression.Kind.EXPRESSIONLIST){
 			result = new ExpressionResultList();
 			if(lhs != null){
-				TypeInfo leftType = ((ASTExpression)lhs).getResultType().getResult();
+				ITypeInfo leftType = ((ASTExpression)lhs).getResultType().getResult();
 				result.setResult(leftType);	
 			}
 			if(rhs != null){
-				TypeInfo rightType = ((ASTExpression)rhs).getResultType().getResult();
+				ITypeInfo rightType = ((ASTExpression)rhs).getResultType().getResult();
 				result.setResult(rightType);
 			}
 			return result;			
@@ -1823,12 +1821,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				IParameterizedSymbol psymbol = (IParameterizedSymbol) symbol;
 				ISymbol returnTypeSymbol = psymbol.getReturnType();
 				if(returnTypeSymbol != null){
-					info.setType(returnTypeSymbol.getType());  
-					info.setTypeSymbol(returnTypeSymbol);
+				    info = TypeInfoProvider.newTypeInfo(returnTypeSymbol.getTypeInfo());  
+					//info.setTypeSymbol(returnTypeSymbol);
 				}else {
 					// this is call to a constructor
 				}
-			} 
+			} else {
+			    info = TypeInfoProvider.newTypeInfo();
+			}
 			result = new ExpressionResult(info);
 			if(symbol == null)
 				result.setFailedToDereference(true);
@@ -1853,7 +1853,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| ( kind == IASTExpression.Kind.POSTFIX_TYPENAME_TEMPLATEID ) )
 		{
 			if(symbol != null){
-				info.setType(TypeInfo.t_type);
+			    info = TypeInfoProvider.newTypeInfo(ITypeInfo.t_type);
 				info.setTypeSymbol(symbol);
 			} else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
@@ -1968,24 +1968,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     			return query;
     	}
     	
-    	TypeInfo.eType type = null;
+    	ITypeInfo.eType type = null;
     	
     	if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
-    		type = TypeInfo.t_type;
+    		type = ITypeInfo.t_type;
 	    else if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
-        	type = TypeInfo.t_bool;
+        	type = ITypeInfo.t_bool;
         else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
-			type = TypeInfo.t_char;
+			type = ITypeInfo.t_char;
 		else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE ||kind == IASTSimpleTypeSpecifier.Type.FLOAT  ) 
-			type = TypeInfo.t_double;
+			type = ITypeInfo.t_double;
 		else if( kind == IASTSimpleTypeSpecifier.Type.INT )
-			type = TypeInfo.t_int;
+			type = ITypeInfo.t_int;
 		else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
-			type = TypeInfo.t_void;
+			type = ITypeInfo.t_void;
 		else if( kind == IASTSimpleTypeSpecifier.Type.WCHAR_T)
-			type = TypeInfo.t_wchar_t;
+			type = ITypeInfo.t_wchar_t;
 		else if( kind == IASTSimpleTypeSpecifier.Type._BOOL )
-			type = TypeInfo.t__Bool;
+			type = ITypeInfo.t__Bool;
 	
 		List references = ( kind == Type.CLASS_OR_TYPENAME ) ? new ArrayList( DEFAULT_QUALIFIEDNAME_REFERENCE_SIZE ): null; 
 		ISymbol s = pst.newSymbol( EMPTY_STRING, type ); 
@@ -2052,12 +2052,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			s.setTypeSymbol( typeSymbol );
 		}
 		
-		s.getTypeInfo().setBit( isLong, TypeInfo.isLong );
-		s.getTypeInfo().setBit( isShort, TypeInfo.isShort);
-		s.getTypeInfo().setBit( isUnsigned, TypeInfo.isUnsigned );
-		s.getTypeInfo().setBit( isComplex, TypeInfo.isComplex );
-		s.getTypeInfo().setBit( isImaginary, TypeInfo.isImaginary );
-		s.getTypeInfo().setBit( isSigned, TypeInfo.isSigned );
+		s.getTypeInfo().setBit( isLong, ITypeInfo.isLong );
+		s.getTypeInfo().setBit( isShort, ITypeInfo.isShort);
+		s.getTypeInfo().setBit( isUnsigned, ITypeInfo.isUnsigned );
+		s.getTypeInfo().setBit( isComplex, ITypeInfo.isComplex );
+		s.getTypeInfo().setBit( isImaginary, ITypeInfo.isImaginary );
+		s.getTypeInfo().setBit( isSigned, ITypeInfo.isSigned );
 			
 		IASTSimpleTypeSpecifier result = new ASTSimpleTypeSpecifier( s, false, typeNameAsString, references );
 		if( kind != Type.CLASS_OR_TYPENAME )
@@ -2108,9 +2108,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				parentScope = ((IDeferredTemplateInstance) symbol).getTemplate().getTemplatedSymbol();
 			
 			if((parentScope != null) && 
-			( (parentScope.getType() == TypeInfo.t_class) 
-			|| (parentScope.getType() == TypeInfo.t_struct)
-			|| (parentScope.getType() == TypeInfo.t_union))
+			( (parentScope.getType() == ITypeInfo.t_class) 
+			|| (parentScope.getType() == ITypeInfo.t_struct)
+			|| (parentScope.getType() == ITypeInfo.t_union))
 			){
 				if( parentScope.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier ){
 					//we are trying to define a member of a class for which we only have a forward declaration
@@ -2143,7 +2143,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 		}
 	
-		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name.extractNameFromTemplateId(), TypeInfo.t_function );
+		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name.extractNameFromTemplateId(), ITypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		
 		symbol.setHasVariableArgs( hasVariableArguments );
@@ -2169,13 +2169,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IParameterizedSymbol functionDeclaration = null; 
 		
 		functionDeclaration = 
-			(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getFirstToken().getImage(), TypeInfo.t_function, functionParameters, 0, null, false, LookupType.FORDEFINITION );                
+			(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getFirstToken().getImage(), ITypeInfo.t_function, functionParameters, 0, null, false, LookupType.FORDEFINITION );                
 
-		if( functionDeclaration != null && symbol.isType( TypeInfo.t_function )){
+		if( functionDeclaration != null && symbol.isType( ITypeInfo.t_function )){
 			previouslyDeclared = true;
 			
 			if( isFunctionDefinition ){
-				functionDeclaration.setTypeSymbol( symbol );
+				functionDeclaration.setForwardSymbol( symbol );
 			}
 		}
 		
@@ -2203,9 +2203,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isStatic,
         IParameterizedSymbol symbol)
     {
-        symbol.getTypeInfo().setBit( isInline, TypeInfo.isInline );
-        symbol.getTypeInfo().setBit( isFriend, TypeInfo.isFriend );
-        symbol.getTypeInfo().setBit( isStatic, TypeInfo.isStatic );
+        symbol.getTypeInfo().setBit( isInline, ITypeInfo.isInline );
+        symbol.getTypeInfo().setBit( isFriend, ITypeInfo.isFriend );
+        symbol.getTypeInfo().setBit( isStatic, ITypeInfo.isStatic );
     }
     
     /**
@@ -2220,67 +2220,69 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
     }
 
-	protected TypeInfo getParameterTypeInfo( IASTAbstractDeclaration absDecl)throws ASTSemanticException{
-		TypeInfo type = new TypeInfo();
+	protected ITypeInfo getParameterTypeInfo( IASTAbstractDeclaration absDecl)throws ASTSemanticException{
+	    TypeInfoProvider provider = TypeInfoProvider.getProvider( pst );
+	    provider.beginTypeConstruction();
 		if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
 		{
 			IASTSimpleTypeSpecifier simpleType = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier());
 			IASTSimpleTypeSpecifier.Type kind = simpleType.getType();
 			if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
-				type.setType(TypeInfo.t_bool);
+				provider.setType(ITypeInfo.t_bool);
 			else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
-				type.setType(TypeInfo.t_char);
+				provider.setType(ITypeInfo.t_char);
 			else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE )
-				type.setType(TypeInfo.t_double);
+			    provider.setType(ITypeInfo.t_double);
 			else if( kind == IASTSimpleTypeSpecifier.Type.FLOAT )
-				type.setType(TypeInfo.t_float); 
+			    provider.setType(ITypeInfo.t_float); 
 			else if( kind == IASTSimpleTypeSpecifier.Type.INT )
-				type.setType(TypeInfo.t_int);
+			    provider.setType(ITypeInfo.t_int);
 			else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
-				type.setType(TypeInfo.t_void);
+			    provider.setType(ITypeInfo.t_void);
 			else if( kind == IASTSimpleTypeSpecifier.Type.WCHAR_T)
-				type.setType(TypeInfo.t_wchar_t);
+			    provider.setType(ITypeInfo.t_wchar_t);
 			else if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
-				type.setType(TypeInfo.t_type);
+			    provider.setType(ITypeInfo.t_type);
 			else if( kind == IASTSimpleTypeSpecifier.Type._BOOL ){
-				type.setType( TypeInfo.t__Bool );
+			    provider.setType( ITypeInfo.t__Bool );
 			}
 //			else
 //				assert false : "Unexpected IASTSimpleTypeSpecifier.Type";
 			
-			setTypeBitFlags(type, simpleType);
+			setTypeBitFlags(provider, simpleType);
 			
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTClassSpecifier )
 		{
-			type.setType( TypeInfo.t_type );
-			type.setTypeSymbol( ((ASTClassSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
+		    provider.setType( ITypeInfo.t_type );
+		    provider.setTypeSymbol( ((ASTClassSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTEnumerationSpecifier )
 		{
-			type.setType( TypeInfo.t_type );
-			type.setTypeSymbol( ((ASTEnumerationSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
+		    provider.setType( ITypeInfo.t_type );
+		    provider.setTypeSymbol( ((ASTEnumerationSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
 		}
 		else if( absDecl.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier )
 		{
-			type.setType( TypeInfo.t_type );
-			type.setTypeSymbol( ((ASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
+		    provider.setType( ITypeInfo.t_type );
+		    provider.setTypeSymbol( ((ASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol() );
 		}
 //		else
-//			assert false : this; 		
-		return type;		
+//			assert false : this;
+		
+		return provider.completeConstruction();		
 	}
     /**
 	 * @param type
 	 * @param simpleType
 	 */
-	private void setTypeBitFlags(TypeInfo type, IASTSimpleTypeSpecifier simpleType) {
-		type.setBit( simpleType.isLong(), TypeInfo.isLong);
-		type.setBit( simpleType.isShort(), TypeInfo.isShort);
-		type.setBit( simpleType.isUnsigned(), TypeInfo.isUnsigned);
-		type.setBit( simpleType.isComplex(), TypeInfo.isComplex);
-		type.setBit( simpleType.isImaginary(), TypeInfo.isImaginary);
-		type.setBit( simpleType.isSigned(), TypeInfo.isSigned);
+	private void setTypeBitFlags(TypeInfoProvider provider, IASTSimpleTypeSpecifier simpleType) {
+		provider.setBit( simpleType.isLong(), ITypeInfo.isLong);
+		provider.setBit( simpleType.isShort(), ITypeInfo.isShort);
+		provider.setBit( simpleType.isUnsigned(), ITypeInfo.isUnsigned);
+		provider.setBit( simpleType.isComplex(), ITypeInfo.isComplex);
+		provider.setBit( simpleType.isImaginary(), ITypeInfo.isImaginary);
+		provider.setBit( simpleType.isSigned(), ITypeInfo.isSigned);
 	}
 
 	/**
@@ -2293,8 +2295,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return;
 	
 		// now determined by another function    
-		TypeInfo info = getParameterTypeInfo( absDecl );
-		TypeInfo.eType type = info.getType();
+		ITypeInfo info = getParameterTypeInfo( absDecl );
+		ITypeInfo.eType type = info.getType();
 		
 		ISymbol xrefSymbol = info.getTypeSymbol();
 		List newReferences = null; 
@@ -2307,7 +2309,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    		newReferences = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getReferences();
 	    	}
 	   		
-	   		infoBits = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol().getTypeInfo().getTypeInfo();
+	   		infoBits = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol().getTypeInfo().getTypeBits();
 	    }
 	    else if( absDecl.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier )
 	    {
@@ -2337,9 +2339,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    		paramSymbol.setTypeSymbol( xrefSymbol );
 	    }
 	    
-	    paramSymbol.getTypeInfo().setTypeInfo( infoBits );
-	    paramSymbol.getTypeInfo().setBit( absDecl.isConst(), TypeInfo.isConst );
-	    paramSymbol.getTypeInfo().setBit( absDecl.isVolatile(), TypeInfo.isVolatile );
+	    paramSymbol.getTypeInfo().setTypeBits( infoBits );
+	    paramSymbol.getTypeInfo().setBit( absDecl.isConst(), ITypeInfo.isConst );
+	    paramSymbol.getTypeInfo().setBit( absDecl.isVolatile(), ITypeInfo.isVolatile );
 	    
 	    setPointerOperators( paramSymbol, absDecl.getPointerOperators(), absDecl.getArrayModifiers() );
 	
@@ -2369,15 +2371,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
         	ASTPointerOperator pointerOperator = (ASTPointerOperator)pointerOpsIterator.next();
         	if( pointerOperator == ASTPointerOperator.REFERENCE )
-        		symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference )); 
+        		symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_reference )); 
         	else if( pointerOperator == ASTPointerOperator.POINTER )
-				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer ));
+				symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer ));
 			else if( pointerOperator == ASTPointerOperator.CONST_POINTER )
-				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer, true, false ));
+				symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer, true, false ));
 			else if( pointerOperator == ASTPointerOperator.VOLATILE_POINTER )
-				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer, false, true));
+				symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer, false, true));
 			else if( pointerOperator == ASTPointerOperator.RESTRICT_POINTER )
-				symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_pointer ));
+				symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer ));
 //			else
 //				assert false : pointerOperator;
         }
@@ -2385,7 +2387,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         while( arrayModsIterator.hasNext() )
         {
         	arrayModsIterator.next();
-        	symbol.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_array )); 
+        	symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_array )); 
         }
     }
 
@@ -2469,7 +2471,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			methodName = nameDuple.toString();
 		}
 		
-		symbol = pst.newParameterizedSymbol( methodName, TypeInfo.t_function );
+		symbol = pst.newParameterizedSymbol( methodName, ITypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
 		symbol.setHasVariableArgs( hasVariableArguments );
@@ -2518,30 +2520,30 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 			
 			functionDeclaration = (IParameterizedSymbol) lookupQualifiedName( ownerScope, nameDuple, 
-																			  isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, 
+																			  isConstructor ? ITypeInfo.t_constructor : ITypeInfo.t_function, 
 																			  functionParameters, null, false, 
 																			  isFriend ? LookupType.FORFRIENDSHIP : LookupType.FORDEFINITION );
 			
-			previouslyDeclared = ( functionDeclaration != null ) && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function );
+			previouslyDeclared = ( functionDeclaration != null ) && functionDeclaration.isType( isConstructor ? ITypeInfo.t_constructor : ITypeInfo.t_function );
 			
 			if( isFriend )
 			{
-				if( functionDeclaration != null && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function ))
+				if( functionDeclaration != null && functionDeclaration.isType( isConstructor ? ITypeInfo.t_constructor : ITypeInfo.t_function ))
 				{
-					symbol.setTypeSymbol( functionDeclaration );
+					symbol.setForwardSymbol( functionDeclaration );
 					// friend declaration, has no real visibility, set private
 					visibility = ASTAccessVisibility.PRIVATE;		
-				} else if( ownerScope.getContainingSymbol().isType( TypeInfo.t_constructor ) ||
-						   ownerScope.getContainingSymbol().isType( TypeInfo.t_function )    ||
-						   ownerScope.getContainingSymbol().isType( TypeInfo.t_block ) )
+				} else if( ownerScope.getContainingSymbol().isType( ITypeInfo.t_constructor ) ||
+						   ownerScope.getContainingSymbol().isType( ITypeInfo.t_function )    ||
+						   ownerScope.getContainingSymbol().isType( ITypeInfo.t_block ) )
 				{	
 					//only needs to be previously declared if we are in a local class
 					handleProblem( IProblem.SEMANTIC_ILLFORMED_FRIEND, nameDuple.toString(), nameDuple.getStartOffset(), nameDuple.getEndOffset(), nameDuple.getLineNumber(), true );
 				}
 				 
-			} else if( functionDeclaration != null && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function ) )
+			} else if( functionDeclaration != null && functionDeclaration.isType( isConstructor ? ITypeInfo.t_constructor : ITypeInfo.t_function ) )
 			{
-				functionDeclaration.setTypeSymbol( symbol );
+				functionDeclaration.setForwardSymbol( symbol );
 				// set the definition visibility = declaration visibility
 //				ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
 				visibility = ((IASTMethod)(functionDeclaration.getASTExtension().getPrimaryDeclaration())).getVisiblity();		
@@ -2564,7 +2566,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 			else
 			{
-				symbol.setType( TypeInfo.t_constructor );
+				symbol.setType( ITypeInfo.t_constructor );
 				((IDerivableContainerSymbol)ownerScope).addConstructor( symbol );
 			}
 		}
@@ -2602,7 +2604,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				{
 					ASTConstructorMemberInitializer realInitializer = ((ASTConstructorMemberInitializer)initializer);
 					IDerivableContainerSymbol container = (IDerivableContainerSymbol) symbol.getContainingSymbol();
-					lookupQualifiedName(container, initializer.getName(), TypeInfo.t_any, null, realInitializer.getNameOffset(), realInitializer.getReferences(), false, LookupType.QUALIFIED);
+					lookupQualifiedName(container, initializer.getName(), ITypeInfo.t_any, null, realInitializer.getNameOffset(), realInitializer.getReferences(), false, LookupType.QUALIFIED);
 					// TODO try and resolve parameter references now in the expression list
 				}
 			}
@@ -2623,10 +2625,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     protected void setMethodTypeInfoBits(IParameterizedSymbol symbol, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit)
     {
-        symbol.getTypeInfo().setBit( isConst, TypeInfo.isConst );
-		symbol.getTypeInfo().setBit( isVolatile, TypeInfo.isVolatile );
-		symbol.getTypeInfo().setBit( isVirtual, TypeInfo.isVirtual );
-		symbol.getTypeInfo().setBit( isExplicit, TypeInfo.isExplicit );
+        symbol.getTypeInfo().setBit( isConst, ITypeInfo.isConst );
+		symbol.getTypeInfo().setBit( isVolatile, ITypeInfo.isVolatile );
+		symbol.getTypeInfo().setBit( isVirtual, ITypeInfo.isVirtual );
+		symbol.getTypeInfo().setBit( isExplicit, ITypeInfo.isExplicit );
     }
 
     /* (non-Javadoc)
@@ -2666,9 +2668,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			else if( symbol instanceof IDeferredTemplateInstance )
 				parentScope = ((IDeferredTemplateInstance) symbol).getTemplate().getTemplatedSymbol();
 			
-			if( (parentScope != null) && ( (parentScope.getType() == TypeInfo.t_class) ||
-					                       (parentScope.getType() == TypeInfo.t_struct)|| 
-										   (parentScope.getType() == TypeInfo.t_union) ) )
+			if( (parentScope != null) && ( (parentScope.getType() == ITypeInfo.t_class) ||
+					                       (parentScope.getType() == ITypeInfo.t_struct)|| 
+										   (parentScope.getType() == ITypeInfo.t_union) ) )
 			{
 				IASTScope fieldParentScope = (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
 
@@ -2704,10 +2706,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
 			if( variableDeclaration != null && newSymbol.getType() == variableDeclaration.getType() )
 			{
-				if( !newSymbol.isType( TypeInfo.t_type ) ||
-					(newSymbol.isType( TypeInfo.t_type ) && newSymbol.getTypeSymbol() != variableDeclaration.getTypeSymbol() ) )
+				if( !newSymbol.isType( ITypeInfo.t_type ) ||
+					(newSymbol.isType( ITypeInfo.t_type ) && newSymbol.getTypeSymbol() != variableDeclaration.getTypeSymbol() ) )
 				{
-					variableDeclaration.setTypeSymbol( newSymbol );
+					variableDeclaration.setForwardSymbol( newSymbol );
 					previouslyDeclared = true;
 				}
 			}
@@ -2746,7 +2748,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( currentSymbol == null )
 				return;
 			
-			TypeInfo currentTypeInfo = new TypeInfo( currentSymbol.getTypeInfo() ); 
+			ITypeInfo currentTypeInfo = TypeInfoProvider.newTypeInfo( currentSymbol.getTypeInfo() ); 
 			Iterator designators = clause.getDesignators();
 			while( designators.hasNext() )
 			{
@@ -2779,14 +2781,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                     }
                     
 					// we have found the correct field
-					currentTypeInfo = new TypeInfo( lookup.getTypeInfo() );
+					currentTypeInfo = TypeInfoProvider.newTypeInfo( lookup.getTypeInfo() );
 					if( lookup.getTypeInfo() == null )
 						break;
 					currentSymbol = lookup.getTypeSymbol();
 
 				}
 				else if( designator.getKind() == IASTDesignator.DesignatorKind.SUBSCRIPT )
-					currentTypeInfo.applyOperatorExpressions( SUBSCRIPT );		
+					currentTypeInfo.applyOperatorExpression( SUBSCRIPT );		
 			}
 			
         }			
@@ -2809,13 +2811,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isStatic,
         ISymbol newSymbol)
     {
-        newSymbol.getTypeInfo().setBit( isMutable, TypeInfo.isMutable );
-        newSymbol.getTypeInfo().setBit( isAuto, TypeInfo.isAuto );
-        newSymbol.getTypeInfo().setBit( isExtern, TypeInfo.isExtern );
-        newSymbol.getTypeInfo().setBit( isRegister, TypeInfo.isRegister );
-        newSymbol.getTypeInfo().setBit( isStatic, TypeInfo.isStatic );
-        newSymbol.getTypeInfo().setBit( abstractDeclaration.isConst(), TypeInfo.isConst );
-        newSymbol.getTypeInfo().setBit( abstractDeclaration.isVolatile(), TypeInfo.isVolatile );
+        newSymbol.getTypeInfo().setBit( isMutable, ITypeInfo.isMutable );
+        newSymbol.getTypeInfo().setBit( isAuto, ITypeInfo.isAuto );
+        newSymbol.getTypeInfo().setBit( isExtern, ITypeInfo.isExtern );
+        newSymbol.getTypeInfo().setBit( isRegister, ITypeInfo.isRegister );
+        newSymbol.getTypeInfo().setBit( isStatic, ITypeInfo.isStatic );
+        newSymbol.getTypeInfo().setBit( abstractDeclaration.isConst(), ITypeInfo.isConst );
+        newSymbol.getTypeInfo().setBit( abstractDeclaration.isVolatile(), ITypeInfo.isVolatile );
     }
     
     protected ISymbol cloneSimpleTypeSymbol(
@@ -2841,20 +2843,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         else if( abstractDeclaration.getTypeSpecifier() instanceof ASTClassSpecifier )  
         {
-            symbolToBeCloned = pst.newSymbol(name, TypeInfo.t_type);
+            symbolToBeCloned = pst.newSymbol(name, ITypeInfo.t_type);
             symbolToBeCloned.setTypeSymbol(((ASTClassSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol());
 		}
 		else if( abstractDeclaration.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier ) 
 		{
 			ASTElaboratedTypeSpecifier elab = ((ASTElaboratedTypeSpecifier)abstractDeclaration.getTypeSpecifier());
-			symbolToBeCloned = pst.newSymbol(name, TypeInfo.t_type);
+			symbolToBeCloned = pst.newSymbol(name, ITypeInfo.t_type);
 			symbolToBeCloned.setTypeSymbol(elab.getSymbol());
 			if( elab.getSymbol() != null && references != null )
 				addReference( references, createReference( elab.getSymbol(), elab.getName(), elab.getNameOffset()) );
 		} 
 		else if ( abstractDeclaration.getTypeSpecifier() instanceof ASTEnumerationSpecifier )
 		{
-			symbolToBeCloned = pst.newSymbol( name, TypeInfo.t_type );
+			symbolToBeCloned = pst.newSymbol( name, ITypeInfo.t_type );
 			symbolToBeCloned.setTypeSymbol(((ASTEnumerationSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol());
 		}
 		if( symbolToBeCloned != null ){
@@ -2932,11 +2934,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			
 			if( fieldDeclaration != null && newSymbol.getType() == fieldDeclaration.getType() )
 			{
-				if( !newSymbol.isType( TypeInfo.t_type ) ||
-					(newSymbol.isType( TypeInfo.t_type ) && newSymbol.getTypeSymbol() != fieldDeclaration.getTypeSymbol() ) )
+				if( !newSymbol.isType( ITypeInfo.t_type ) ||
+					(newSymbol.isType( ITypeInfo.t_type ) && newSymbol.getTypeSymbol() != fieldDeclaration.getTypeSymbol() ) )
 				{
 					previouslyDeclared = true;
-					fieldDeclaration.setTypeSymbol( newSymbol );
+					fieldDeclaration.setForwardSymbol( newSymbol );
 //					// set the definition visibility = declaration visibility
 //					ASTReference reference = (ASTReference) fieldReferences.iterator().next();
 					visibility = ((IASTField)fieldDeclaration.getASTExtension().getPrimaryDeclaration()).getVisiblity();
@@ -3002,11 +3004,21 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine ) throws ASTSemanticException
     {
     	ISymbol symbol = null;
+    	
+    	TypeInfoProvider provider = TypeInfoProvider.getProvider( pst );
+    	provider.beginTypeConstruction();
+    	
+    	if( defaultValue != null ){
+    	    try {
+                provider.setDefaultObj( defaultValue.getTypeSymbol().getTypeInfo() );
+            } catch ( ASTNotImplementedException e1 ) {
+            }
+    	}
     	if( kind == ParamKind.TEMPLATE_LIST ){
     		ITemplateSymbol template = pst.newTemplateSymbol( identifier );
-    		template.setType( TypeInfo.t_templateParameter );
-    		template.getTypeInfo().setTemplateParameterType( TypeInfo.t_template );
-    		
+    		provider.setType( ITypeInfo.t_templateParameter );
+    		provider.setTemplateParameterType( ITypeInfo.t_template );
+    		template.setTypeInfo( provider.completeConstruction() );
     		Iterator iter = parms.iterator();
     		while (iter.hasNext()){
     			ASTTemplateParameter param = (ASTTemplateParameter)iter.next();
@@ -3020,12 +3032,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      	} else {
     		
     		if(  kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
-    			symbol = pst.newSymbol( identifier, TypeInfo.t_templateParameter );
-        		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_typeName );
+    			symbol = pst.newSymbol( identifier );
+    			provider.setType( ITypeInfo.t_templateParameter );
+        		provider.setTemplateParameterType( ITypeInfo.t_typeName );
+        		symbol.setTypeInfo( provider.completeConstruction() );
         	} else /*ParamKind.PARAMETER*/ {
         		symbol = cloneSimpleTypeSymbol( parameter.getName(), parameter, null );
-        		symbol.getTypeInfo().setTemplateParameterType( symbol.getType() );
-        		symbol.setType( TypeInfo.t_templateParameter );        		
+        		provider.setTemplateParameterType( symbol.getType() );
+        		provider.setType( ITypeInfo.t_templateParameter );
+        		provider.setTypeSymbol( symbol.getTypeSymbol() );
+        		ITypeInfo info = provider.completeConstruction();
+        		info.addPtrOperator( symbol.getPtrOperators() );
+        		info.setTypeBits( symbol.getTypeInfo().getTypeBits() );
+        		symbol.setTypeInfo( info );
         	}
     	}
 
@@ -3034,14 +3053,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			codeScope.addSymbol( symbol );
 		} catch (ParserSymbolTableException e) {
 		}
-		
-		if( defaultValue != null ){
-			try {
-				symbol.getTypeInfo().setDefault( defaultValue.getTypeSymbol().getTypeInfo() );
-			} catch (ASTNotImplementedException e1) {
-			}
-		}
-		
+				
     	ASTTemplateParameter ast = new ASTTemplateParameter( symbol, defaultValue,  parameter, parms, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine );
     	
    	    attachSymbolExtension( symbol, ast, false );
@@ -3092,13 +3104,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		setPointerOperators( typeSymbol, mapping.getPointerOperators(), mapping.getArrayModifiers() );
 		
-		if( typeSymbol.getType() != TypeInfo.t_type ){
-			ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
-	    	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
+		if( typeSymbol.getType() != ITypeInfo.t_type ){
+			ISymbol newSymbol = pst.newSymbol( name, ITypeInfo.t_type);
+	    	newSymbol.getTypeInfo().setBit( true,ITypeInfo.isTypedef );
 	    	newSymbol.setTypeSymbol( typeSymbol );
 	    	typeSymbol = newSymbol;
 		} else {
-			typeSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
+			typeSymbol.getTypeInfo().setBit( true,ITypeInfo.isTypedef );
 		}
 	
     	List references = new ArrayList();
@@ -3146,7 +3158,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
 		IContainerSymbol originalScope = currentScopeSymbol;
 		
-		TypeInfo.eType pstType = classKindToTypeInfo(kind);
+		ITypeInfo.eType pstType = classKindToTypeInfo(kind);
 		List references = new ArrayList();
 		IToken nameToken = name.getFirstToken();
 		String newSymbolName = EMPTY_STRING; 
@@ -3290,11 +3302,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
         ISymbol namespaceSymbol = lookupQualifiedName( startingSymbol, alias, references, true );
         
-        if( namespaceSymbol.getType() != TypeInfo.t_namespace )
+        if( namespaceSymbol.getType() != ITypeInfo.t_namespace )
         	handleProblem( IProblem.SEMANTIC_INVALID_OVERLOAD, alias.toString(), startingOffset, endOffset, startingLine, true );
         
-        ISymbol newSymbol = pst.newContainerSymbol( identifier, TypeInfo.t_namespace );
-        newSymbol.setTypeSymbol( namespaceSymbol );
+        ISymbol newSymbol = pst.newContainerSymbol( identifier, ITypeInfo.t_namespace );
+        newSymbol.setForwardSymbol( namespaceSymbol );
         
         try
         {
@@ -3318,7 +3330,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTCodeScope createNewCodeBlock(IASTScope scope) {
 		IContainerSymbol symbol = scopeToSymbol( scope );
 		
-		IContainerSymbol newScope = pst.newContainerSymbol(EMPTY_STRING, TypeInfo.t_block); 
+		IContainerSymbol newScope = pst.newContainerSymbol(EMPTY_STRING, ITypeInfo.t_block); 
 		newScope.setContainingSymbol(symbol);
 		newScope.setIsTemplateMember( symbol.isTemplateMember() );
 		
@@ -3376,8 +3388,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			// won't get thrown
 		} 
 		if( lookupSymbol == null ) return false;
-		if( lookupSymbol.isType( TypeInfo.t_type, TypeInfo.t_enumeration ) ||
-			(lookupSymbol.isType( TypeInfo.t_templateParameter ) && lookupSymbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ) ||
+		if( lookupSymbol.isType( ITypeInfo.t_type, ITypeInfo.t_enumeration ) ||
+			(lookupSymbol.isType( ITypeInfo.t_templateParameter ) && lookupSymbol.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName ) ||
 			(lookupSymbol.getASTExtension() != null && lookupSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTTypedefDeclaration ) )
 		{
 			return true;
@@ -3415,29 +3427,29 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	  * @param id
 	  * @return
 	  */
-	 public static TypeInfo.eType getTypeKind(IASTTypeId id)
+	 public static ITypeInfo.eType getTypeKind(IASTTypeId id)
 	 {
 		 IASTSimpleTypeSpecifier.Type type = id.getKind();
 		 if( type == IASTSimpleTypeSpecifier.Type.BOOL )
-			 return TypeInfo.t_bool;
+			 return ITypeInfo.t_bool;
 		 else if( type == IASTSimpleTypeSpecifier.Type._BOOL )
-		     return TypeInfo.t__Bool;
+		     return ITypeInfo.t__Bool;
 		 else if( type == IASTSimpleTypeSpecifier.Type.CHAR )
-			 return TypeInfo.t_char;
+			 return ITypeInfo.t_char;
 		 else if ( type == IASTSimpleTypeSpecifier.Type.WCHAR_T )
-		 	 return TypeInfo.t_wchar_t;
+		 	 return ITypeInfo.t_wchar_t;
 		 else if( type == IASTSimpleTypeSpecifier.Type.DOUBLE )
-			 return TypeInfo.t_double;
+			 return ITypeInfo.t_double;
 		 else if( type == IASTSimpleTypeSpecifier.Type.FLOAT )
-			 return TypeInfo.t_float;
+			 return ITypeInfo.t_float;
 		 else if( type == IASTSimpleTypeSpecifier.Type.INT )
-			 return TypeInfo.t_int;
+			 return ITypeInfo.t_int;
 		 else if( type == IASTSimpleTypeSpecifier.Type.VOID )
-			 return TypeInfo.t_void;
+			 return ITypeInfo.t_void;
 		 else if( id.isShort() || id.isLong() || id.isUnsigned() || id.isSigned() )
-		 	return TypeInfo.t_int;
+		 	return ITypeInfo.t_int;
 		 else 
-			 return TypeInfo.t_type;
+			 return ITypeInfo.t_type;
 	 }
 	 
 	protected ISymbol createSymbolForTypeId( IASTScope scope, IASTTypeId id ) throws ASTSemanticException
@@ -3447,16 +3459,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ASTTypeId typeId = (ASTTypeId)id;
 		ISymbol result = pst.newSymbol( EMPTY_STRING, CompleteParseASTFactory.getTypeKind(id)); 
     	
-    	result.getTypeInfo().setBit( id.isConst(), TypeInfo.isConst );
-		result.getTypeInfo().setBit( id.isVolatile(), TypeInfo.isVolatile );
+    	result.getTypeInfo().setBit( id.isConst(), ITypeInfo.isConst );
+		result.getTypeInfo().setBit( id.isVolatile(), ITypeInfo.isVolatile );
 		
-		result.getTypeInfo().setBit( id.isShort(), TypeInfo.isShort);
-		result.getTypeInfo().setBit( id.isLong(), TypeInfo.isLong);
-		result.getTypeInfo().setBit( id.isUnsigned(), TypeInfo.isUnsigned);
-		result.getTypeInfo().setBit( id.isSigned(), TypeInfo.isSigned );
+		result.getTypeInfo().setBit( id.isShort(), ITypeInfo.isShort);
+		result.getTypeInfo().setBit( id.isLong(), ITypeInfo.isLong);
+		result.getTypeInfo().setBit( id.isUnsigned(), ITypeInfo.isUnsigned);
+		result.getTypeInfo().setBit( id.isSigned(), ITypeInfo.isSigned );
 		
 		List refs = new ArrayList();
-		if( result.getType() == TypeInfo.t_type )
+		if( result.getType() == ITypeInfo.t_type )
 		{
 			ISymbol typeSymbol = lookupQualifiedName( scopeToSymbol(scope), typeId.getTokenDuple(), refs, true );
 			if( typeSymbol == null /*|| typeSymbol.getType() == TypeInfo.t_type*/ )
@@ -3558,8 +3570,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						classSymbol = (IContainerSymbol) lookupQualifiedName(scopeToSymbol( scope ), duple, null, false );
 					} catch (ASTSemanticException e) {
 					}
-					if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
-						TypeInfo info = classSymbol.getTypeInfo().getFinalType( pst.getTypeInfoProvider() );
+					if( classSymbol != null && classSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) ){
+						ITypeInfo info = classSymbol.getTypeInfo().getFinalType( pst.getTypeInfoProvider() );
 						classSymbol = (IContainerSymbol) info.getTypeSymbol();
 						pst.getTypeInfoProvider().returnTypeInfo( info );
 					}
@@ -3650,7 +3662,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public boolean validateIndirectMemberOperation(IASTNode node) {
 		List pointerOps = null;
 		TypeInfoProvider provider = pst.getTypeInfoProvider();
-		TypeInfo typeInfo = null;
+		ITypeInfo typeInfo = null;
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
@@ -3660,9 +3672,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		else if( node instanceof ASTExpression )
 		{
-			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
-			if( typeSymbol != null ){
-				typeInfo = typeSymbol.getTypeInfo().getFinalType( provider );
+			ITypeInfo info = ((ASTExpression)node).getResultType().getResult();
+			if( info != null ){
+				typeInfo = info.getFinalType( provider );
 				pointerOps = typeInfo.getPtrOperators();
 				provider.returnTypeInfo( typeInfo );
 			}
@@ -3671,8 +3683,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return false;
 		
 		if( pointerOps == null || pointerOps.isEmpty() ) return false;
-		TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
-		if( lastOperator.getType() == TypeInfo.PtrOp.t_array || lastOperator.getType() == TypeInfo.PtrOp.t_pointer ) return true;
+		ITypeInfo.PtrOp lastOperator = (ITypeInfo.PtrOp) pointerOps.get( pointerOps.size() - 1 );
+		if( lastOperator.getType() == ITypeInfo.PtrOp.t_array || lastOperator.getType() == ITypeInfo.PtrOp.t_pointer ) return true;
 		return false;
 	}
 
@@ -3685,24 +3697,26 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
 			TypeInfoProvider provider = pst.getTypeInfoProvider();
-			TypeInfo info = symbol.getTypeInfo().getFinalType( provider );
+			ITypeInfo info = symbol.getTypeInfo().getFinalType( provider );
 			pointerOps = info.getPtrOperators();
 			provider.returnTypeInfo( info );
 		}
 		else if( node instanceof ASTExpression )
 		{
-			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
-			if( typeSymbol != null )
-			{
-				pointerOps = typeSymbol.getPtrOperators();
+		    ITypeInfo info = ((ASTExpression)node).getResultType().getResult();
+			if( info != null ){
+			    TypeInfoProvider provider = pst.getTypeInfoProvider();
+				info = info.getFinalType( provider );
+				pointerOps = info.getPtrOperators();
+				provider.returnTypeInfo( info );
 			}
 		}
 		else
 			return false;
 		
 		if( pointerOps == null || pointerOps.isEmpty() ) return true;
-		TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
-		if( lastOperator.getType() == TypeInfo.PtrOp.t_reference ) return true;
+		ITypeInfo.PtrOp lastOperator = (ITypeInfo.PtrOp) pointerOps.get( pointerOps.size() - 1 );
+		if( lastOperator.getType() == ITypeInfo.PtrOp.t_reference ) return true;
 		return false;
 	}
 

@@ -20,44 +20,43 @@ import java.util.Set;
 
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Cost;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
  * @author aniefer
  */
 public final class TemplateEngine {
 
-	static protected TypeInfo instantiateTypeInfo( TypeInfo info, ITemplateSymbol template, Map  argMap ) throws ParserSymbolTableException{
+	static protected ITypeInfo instantiateTypeInfo( ITypeInfo info, ITemplateSymbol template, Map  argMap ) throws ParserSymbolTableException{
 		if( argMap == null )
 			return info;
 
-		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() == null )
+		if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol() == null )
 			return info;
-		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
+		if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
 			IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
-			TypeInfo newInfo = new TypeInfo( info );
+			ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
 			//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
 			template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
 			newInfo.setTypeSymbol( deferred );
 			return newInfo;
-		} else if( info.isType( TypeInfo.t_type ) && 
-				   info.getTypeSymbol().isType( TypeInfo.t_templateParameter ) &&
+		} else if( info.isType( ITypeInfo.t_type ) && 
+				   info.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) &&
 				   argMap.containsKey( info.getTypeSymbol() ) )
 		{
-			TypeInfo targetInfo = new TypeInfo( (TypeInfo) argMap.get( info.getTypeSymbol() ) );
+			ITypeInfo targetInfo = TypeInfoProvider.newTypeInfo( (ITypeInfo) argMap.get( info.getTypeSymbol() ) );
 			if( info.hasPtrOperators() ){
 				targetInfo.addPtrOperator( info.getPtrOperators() );
 			}
 			
-			if( info.checkBit( TypeInfo.isConst ) )
-				targetInfo.setBit( true, TypeInfo.isConst );
+			if( info.checkBit( ITypeInfo.isConst ) )
+				targetInfo.setBit( true, ITypeInfo.isConst );
 			
-			if( info.checkBit( TypeInfo.isVolatile ) )
-				targetInfo.setBit( true, TypeInfo.isVolatile );
+			if( info.checkBit( ITypeInfo.isVolatile ) )
+				targetInfo.setBit( true, ITypeInfo.isVolatile );
 			
 			return targetInfo;
-		} else if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol().isType( TypeInfo.t_function ) ){
-			TypeInfo newInfo = new TypeInfo( info );
+		} else if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol().isType( ITypeInfo.t_function ) ){
+			ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( info );
 			newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 			return newInfo;
 		}
@@ -65,7 +64,7 @@ public final class TemplateEngine {
 	
 	}
 	
-	static protected void instantiateDeferredTypeInfo( TypeInfo info, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException {
+	static protected void instantiateDeferredTypeInfo( ITypeInfo info, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException {
 		info.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 	}
 	
@@ -74,7 +73,7 @@ public final class TemplateEngine {
 	 * @param symbol
 	 * @param map
 	 */
-	public static void discardDeferredTypeInfo(TypeInfo info, TemplateSymbol template, Map map) {
+	public static void discardDeferredTypeInfo(ITypeInfo info, TemplateSymbol template, Map map) {
 		ISymbol instance = info.getTypeSymbol();
 		if( !(instance instanceof IDeferredTemplateInstance ) )
 			template.removeInstantiation( (IContainerSymbol) instance );
@@ -105,12 +104,12 @@ public final class TemplateEngine {
 			
 			int specArgsSize = specArgs.size();			
 			HashMap map = new HashMap();
-			TypeInfo info1 = null, info2 = null;
+			ITypeInfo info1 = null, info2 = null;
 
 			boolean match = true;
 			for( int j = 0; j < specArgsSize; j++ ){
-				info1 = (TypeInfo) specArgs.get(j);
-				info2 = (TypeInfo) args.get(j);
+				info1 = (ITypeInfo) specArgs.get(j);
+				info2 = (ITypeInfo) args.get(j);
 				
 				ISymbol sym1 = template.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME );
 				sym1.setTypeInfo( info1 );
@@ -140,17 +139,17 @@ public final class TemplateEngine {
 		return bestMatch;
 	}
 	
-	static protected boolean matchTemplateParameterAndArgument( ISymbol param, TypeInfo arg ){
+	static protected boolean matchTemplateParameterAndArgument( ISymbol param, ITypeInfo arg ){
 		if( !isValidArgument(param, arg) ){
 			return false;
 		}
 		
-		if( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
+		if( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName ){
 			return true;	
-		} else if( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
+		} else if( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ){
 			
 			ISymbol symbol = arg.getTypeSymbol();
-			if( !arg.isType( TypeInfo.t_type ) || symbol == null || !symbol.isType( TypeInfo.t_template ) ){
+			if( !arg.isType( ITypeInfo.t_type ) || symbol == null || !symbol.isType( ITypeInfo.t_template ) ){
 				return false;
 			}
 			
@@ -178,12 +177,18 @@ public final class TemplateEngine {
 			return true;
 		} else {
 			Cost cost = null;
+		    TypeInfoProvider provider = TypeInfoProvider.getProvider( param.getSymbolTable() );
 			try{
+				ITypeInfo info = provider.getTypeInfo( param.getTypeInfo().getTemplateParameterType() );
 				try {
-					TypeInfo info = new TypeInfo( param.getTypeInfo() );
+					info.copy( param.getTypeInfo() );
 					info.setType( info.getTemplateParameterType() );
 					cost = param.getSymbolTable().checkStandardConversionSequence( arg, info );
+					provider.returnTypeInfo( info );
 				} catch (ParserSymbolTableException e) {
+				    //nothing
+				} finally {
+				    provider.returnTypeInfo( info );
 				}
 				
 				if( cost == null || cost.rank != Cost.NO_MATCH_RANK ){
@@ -191,16 +196,16 @@ public final class TemplateEngine {
 				}
 			} finally{
 				if( cost != null )
-					cost.release( param.getSymbolTable().getTypeInfoProvider() );
+					cost.release( provider );
 			}
 		}
 		return true;
 	}
 
-	static private boolean isValidArgument(ISymbol param, TypeInfo arg) {
-		if( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
+	static private boolean isValidArgument(ISymbol param, ITypeInfo arg) {
+		if( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName ){
 			//14.3.1, local type, type with no name
-			if( arg.isType( TypeInfo.t_type ) && arg.getTypeSymbol() != null ){
+			if( arg.isType( ITypeInfo.t_type ) && arg.getTypeSymbol() != null ){
 				ISymbol symbol = arg.getTypeSymbol();
 				if( symbol.getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
 					return false;
@@ -208,15 +213,15 @@ public final class TemplateEngine {
 					return false;
 				}
 			}
-		} else if ( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
-			
+		} else if ( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ){
+			//TODO
 		} else {
 			List ptrs = param.getPtrOperators();
-			PtrOp op = ( ptrs.size() > 0 ) ? (PtrOp) ptrs.get(0) : null;
+			ITypeInfo.PtrOp op = ( ptrs.size() > 0 ) ? (ITypeInfo.PtrOp) ptrs.get(0) : null;
 			
 			//if the parameter has reference type
-			if( op != null && op.getType() == PtrOp.t_reference ){
-				if( arg.isType( TypeInfo.t_type )  && arg.getTypeSymbol() != null ){
+			if( op != null && op.getType() == ITypeInfo.PtrOp.t_reference ){
+				if( arg.isType( ITypeInfo.t_type )  && arg.getTypeSymbol() != null ){
 					if( arg.getTypeSymbol().getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
 						return false;
 					}
@@ -225,17 +230,17 @@ public final class TemplateEngine {
 			}
 			
 			List argPtrs = arg.getPtrOperators();
-			PtrOp argOp = (argPtrs.size() > 0 ) ? (PtrOp)argPtrs.get(0) : null;
+			ITypeInfo.PtrOp argOp = (argPtrs.size() > 0 ) ? (ITypeInfo.PtrOp)argPtrs.get(0) : null;
 			
 			//address of an object with external linkage exluding nonstatic class members
 			//name of an object with external linkage excluding nonstatic class members
-			if( (argOp != null && argOp.getType() == PtrOp.t_pointer ) ||
-					( arg.isType( TypeInfo.t_type ) ) )
+			if( (argOp != null && argOp.getType() == ITypeInfo.PtrOp.t_pointer ) ||
+					( arg.isType( ITypeInfo.t_type ) ) )
 			{
 				ISymbol symbol = arg.getTypeSymbol();
-				if ( symbol != null && symbol.getContainingSymbol().isType( TypeInfo.t_class, TypeInfo.t_union ) ){
-					if( !symbol.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
-						if( !symbol.getTypeInfo().checkBit( TypeInfo.isStatic ) ){
+				if ( symbol != null && symbol.getContainingSymbol().isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
+					if( !symbol.isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
+						if( !symbol.getTypeInfo().checkBit( ITypeInfo.isStatic ) ){
 							return false;
 						}
 					}
@@ -245,16 +250,16 @@ public final class TemplateEngine {
 			}
 			
 			//integral or enumeration type
-			if( op == null && ( arg.isType( TypeInfo.t_bool, TypeInfo.t_int ) || 
-					arg.isType( TypeInfo.t_enumerator )           )  )
+			if( op == null && ( arg.isType( ITypeInfo.t_bool, ITypeInfo.t_int ) || 
+					arg.isType( ITypeInfo.t_enumerator )           )  )
 			{	
 				return true;
 			}
 			
 			//name of a non-type template parameter
-			if( arg.isType( TypeInfo.t_templateParameter ) && 
-					arg.getTemplateParameterType() != TypeInfo.t_typeName &&
-					arg.getTemplateParameterType() != TypeInfo.t_template )
+			if( arg.isType( ITypeInfo.t_templateParameter ) && 
+					arg.getTemplateParameterType() != ITypeInfo.t_typeName &&
+					arg.getTemplateParameterType() != ITypeInfo.t_template )
 			{
 				return true;
 			}
@@ -263,25 +268,25 @@ public final class TemplateEngine {
 		return true;	
 	}
 	
-	static protected boolean hasExternalLinkage( TypeInfo type ){
-		if( ! type.isType( TypeInfo.t_type ) )
+	static protected boolean hasExternalLinkage( ITypeInfo type ){
+		if( ! type.isType( ITypeInfo.t_type ) )
 			return false;
 		
 		return !hasNoLinkage( type );
 	}
 	
-	static protected boolean hasInternalLinkage( TypeInfo type ){
+	static protected boolean hasInternalLinkage( ITypeInfo type ){
 		return !hasNoLinkage( type );
 	}
 	
-	static protected boolean hasNoLinkage( TypeInfo type ){
-		if( type.isType( TypeInfo.t_type ) ){
+	static protected boolean hasNoLinkage( ITypeInfo type ){
+		if( type.isType( ITypeInfo.t_type ) ){
 			ISymbol symbol = type.getTypeSymbol();
 			if( symbol.getContainingSymbol() == null ){
 				return true;	//a temporary 
 			}
 			
-			return symbol.getContainingSymbol().isType( TypeInfo.t_function );	
+			return symbol.getContainingSymbol().isType( ITypeInfo.t_function );	
 		}
 		
 		return false;
@@ -293,20 +298,20 @@ public final class TemplateEngine {
 	 * @param pSymbol
 	 * @return
 	 */	
-	static private TypeInfo getParameterTypeForDeduction( ISymbol pSymbol ){
-		TypeInfo p = new TypeInfo( pSymbol.getTypeInfo () );
+	static private ITypeInfo getParameterTypeForDeduction( ISymbol pSymbol ){
+		ITypeInfo p = TypeInfoProvider.newTypeInfo( pSymbol.getTypeInfo () );
 		List pPtrs = p.getPtrOperators();
 		if( pPtrs.size() > 0 ){
-			PtrOp pOp = (PtrOp) pPtrs.get( 0 );
-			if( pOp.getType() == PtrOp.t_reference || pOp.getType() == PtrOp.t_undef_ptr ){
+			ITypeInfo.PtrOp pOp = (ITypeInfo.PtrOp) pPtrs.get( 0 );
+			if( pOp.getType() == ITypeInfo.PtrOp.t_reference || pOp.getType() == ITypeInfo.PtrOp.t_undef_ptr ){
 				pPtrs.remove( 0 );	
 			} else {
-				PtrOp newOp = new PtrOp( pOp.getType(), false, false );
+				ITypeInfo.PtrOp newOp = new ITypeInfo.PtrOp( pOp.getType(), false, false );
 				pPtrs.set( 0, newOp );
 			}
 		} else {
-			p.setBit( false, TypeInfo.isConst );
-			p.setBit( false, TypeInfo.isVolatile );
+			p.setBit( false, ITypeInfo.isConst );
+			p.setBit( false, ITypeInfo.isVolatile );
 		}
 		
 
@@ -322,32 +327,32 @@ public final class TemplateEngine {
 	 * @param aInfo
 	 * @return
 	 */
-	static private TypeInfo getArgumentTypeForDeduction( TypeInfo aInfo, boolean pIsAReferenceType ) throws ParserSymbolTableException{
+	static private ITypeInfo getArgumentTypeForDeduction( ITypeInfo aInfo, boolean pIsAReferenceType ) throws ParserSymbolTableException{
 		
-		TypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo, null );
+		ITypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo, null );
 		
 		if( !pIsAReferenceType ){
 			ISymbol aSymbol = a.getTypeSymbol();
 			
-			if( a.getType() == TypeInfo.t_type ){
+			if( a.getType() == ITypeInfo.t_type ){
 				if( aSymbol == null ){
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
-				} else if( aSymbol.isType( TypeInfo.t_function ) &&  a.getPtrOperators().size() == 0 ){
-					a.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );	
+				} else if( aSymbol.isType( ITypeInfo.t_function ) &&  a.getPtrOperators().size() == 0 ){
+					a.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer ) );	
 				}
 			}
 			List aPtrs = a.getPtrOperators();
 			if( aPtrs.size() > 0 ){
-				PtrOp pOp = (PtrOp) aPtrs.get( 0 );
+				ITypeInfo.PtrOp pOp = (ITypeInfo.PtrOp) aPtrs.get( 0 );
 				
-				if( pOp.getType() == PtrOp.t_array ){
-					aPtrs.set( 0, new PtrOp( PtrOp.t_pointer, false, false ) );
+				if( pOp.getType() == ITypeInfo.PtrOp.t_array ){
+					aPtrs.set( 0, new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer, false, false ) );
 				} else {
-					aPtrs.set( 0, new PtrOp( pOp.getType(), false, false ) );
+					aPtrs.set( 0, new ITypeInfo.PtrOp( pOp.getType(), false, false ) );
 				}
 			} else {
-				a.setBit( false, TypeInfo.isConst );
-				a.setBit( false, TypeInfo.isVolatile );
+				a.setBit( false, ITypeInfo.isConst );
+				a.setBit( false, ITypeInfo.isVolatile );
 			}
 		}
 		
@@ -437,30 +442,30 @@ public final class TemplateEngine {
 		return aSymbol;
 	}
 	
-	static private boolean deduceTemplateArgument( Map map, ISymbol pSymbol, TypeInfo a ) throws ParserSymbolTableException{//, Map argumentMap ){
+	static private boolean deduceTemplateArgument( Map map, ISymbol pSymbol, ITypeInfo a ) throws ParserSymbolTableException{
 		ISymbol symbol;
 		
 		boolean pIsAReferenceType = false;
 		
 		List ptrOps = pSymbol.getPtrOperators();
-		if( ptrOps.size() > 0 && ((PtrOp)ptrOps.get(0)).getType() == TypeInfo.PtrOp.t_reference ){
+		if( ptrOps.size() > 0 && ((ITypeInfo.PtrOp)ptrOps.get(0)).getType() == ITypeInfo.PtrOp.t_reference ){
 			pIsAReferenceType = true;
 		}
 		
-		TypeInfo p = getParameterTypeForDeduction( pSymbol );
+		ITypeInfo p = getParameterTypeForDeduction( pSymbol );
 		
 		a = getArgumentTypeForDeduction( a, pIsAReferenceType );
 		
-		if( p.isType( TypeInfo.t_type ) ){
+		if( p.isType( ITypeInfo.t_type ) ){
 			symbol = p.getTypeSymbol();
 			ISymbol aSymbol = a.getTypeSymbol();
-			if( symbol == null || ( a.isType( TypeInfo.t_type) && aSymbol == null ) || a.isType( TypeInfo.t_undef ))
+			if( symbol == null || ( a.isType( ITypeInfo.t_type) && aSymbol == null ) || a.isType( ITypeInfo.t_undef ))
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			if( symbol instanceof IDeferredTemplateInstance || symbol.isTemplateInstance() ){
 				return deduceFromTemplateTemplateArguments(map, symbol, aSymbol);	
 			} 
-			if( symbol.isType( TypeInfo.t_templateParameter ) ){
-				if( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
+			if( symbol.isType( ITypeInfo.t_templateParameter ) ){
+				if( symbol.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName ){
 					//a = getFlatTypeInfo( a );
 					List aPtrs = a.getPtrOperators();
 					List pPtrs = p.getPtrOperators();
@@ -475,13 +480,13 @@ public final class TemplateEngine {
 						if( pSize != aSize )
 							return false;
 						
-						PtrOp pOp = null;
-						PtrOp aOp = null;
+						ITypeInfo.PtrOp pOp = null;
+						ITypeInfo.PtrOp aOp = null;
 
 						int aIdx = 0;
 						for( int i = 0; i < pSize; i++ ){
-							pOp = (PtrOp) pPtrs.get(i);
-							aOp = (PtrOp) aPtrs.get(aIdx++);
+							pOp = (ITypeInfo.PtrOp) pPtrs.get(i);
+							aOp = (ITypeInfo.PtrOp) aPtrs.get(aIdx++);
 							if( pOp.getType() == aOp.getType() ){
 								if( !pOp.equals( aOp ) )
 									return false;
@@ -492,22 +497,22 @@ public final class TemplateEngine {
 						} 
 					}
 					//cvlist T
-					if( p.checkBit( TypeInfo.isConst ) ){
-						if( !a.checkBit( TypeInfo.isConst ) )
+					if( p.checkBit( ITypeInfo.isConst ) ){
+						if( !a.checkBit( ITypeInfo.isConst ) )
 							return false;
-						a.setBit( false, TypeInfo.isConst);
+						a.setBit( false, ITypeInfo.isConst);
 					}
-					if( p.checkBit( TypeInfo.isVolatile ) ){
-						if( !a.checkBit( TypeInfo.isVolatile ) )
+					if( p.checkBit( ITypeInfo.isVolatile ) ){
+						if( !a.checkBit( ITypeInfo.isVolatile ) )
 							return false;
-						a.setBit( false, TypeInfo.isVolatile);
+						a.setBit( false, ITypeInfo.isVolatile);
 					}
 					
 					//T
 					return deduceArgument( map, symbol, a );
 						
-				} else if ( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
-					
+				} else if ( symbol.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ){
+					//TODO
 				} else {
 					//non-type parameter
 					if( symbol.getTypeInfo().getTemplateParameterType() == a.getType() ){
@@ -517,9 +522,9 @@ public final class TemplateEngine {
 				}
 			} 
 			//T (*) ( ), T ( T::* ) ( T ), & variations
-			else if( symbol.isType( TypeInfo.t_function ) ){
+			else if( symbol.isType( ITypeInfo.t_function ) ){
 				if( !(aSymbol instanceof IParameterizedSymbol)|| 
-						!aSymbol.isType( TypeInfo.t_function ) )
+						!aSymbol.isType( ITypeInfo.t_function ) )
 				{
 					return false;
 				}
@@ -533,9 +538,9 @@ public final class TemplateEngine {
 				
 				List pPtrs = p.getPtrOperators();
 				if( pPtrs.size() != 0 ){
-					PtrOp op = (PtrOp) pPtrs.get(0);
-					if( op.getType() == PtrOp.t_memberPointer ){
-						TypeInfo info = new TypeInfo( TypeInfo.t_type, 0, aFunction.getContainingSymbol() );
+					ITypeInfo.PtrOp op = (ITypeInfo.PtrOp) pPtrs.get(0);
+					if( op.getType() == ITypeInfo.PtrOp.t_memberPointer ){
+						ITypeInfo info = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, aFunction.getContainingSymbol() );
 						if( !deduceTemplateArgument( map, op.getMemberOf(), info ) ){
 							return false;
 						}
@@ -549,7 +554,7 @@ public final class TemplateEngine {
 				} 
 				int size = pParams.size();
 				for( int i = 0; i < size; i++ ){
-					TypeInfo info = ((ISymbol)aParams.get( i )).getTypeInfo();
+					ITypeInfo info = ((ISymbol)aParams.get( i )).getTypeInfo();
 					if( !deduceTemplateArgument( map, (ISymbol)pParams.get(i), info ) ){
 						return false;
 					}
@@ -558,7 +563,7 @@ public final class TemplateEngine {
 			} 
 			 
 		} 
-		if( p.isType( TypeInfo.t_templateParameter ) ){
+		if( p.isType( ITypeInfo.t_templateParameter ) ){
 			return deduceArgument( map, pSymbol, a );
 		}
 		if( p.getType() == a.getType() ){
@@ -621,10 +626,10 @@ public final class TemplateEngine {
 				sym = (ISymbol) obj;
 			} else {
 				sym = pSymbol.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME );
-				sym.setTypeInfo( (TypeInfo) obj );
+				sym.setTypeInfo( (ITypeInfo) obj );
 			}
 			
-			TypeInfo arg = transformTypeInfo( aList.get( i ), null );
+			ITypeInfo arg = transformTypeInfo( aList.get( i ), null );
 			
 			try {
 				if( !deduceTemplateArgument( map, sym, arg ) ){
@@ -676,7 +681,7 @@ public final class TemplateEngine {
 		}
 
 		ISymbol templateSymbol = template.getTemplatedSymbol();
-		if( !templateSymbol.isType( TypeInfo.t_function ) ){
+		if( !templateSymbol.isType( ITypeInfo.t_function ) ){
 			return null;
 		}
 
@@ -693,7 +698,7 @@ public final class TemplateEngine {
 		int size = pList.size();
 		for( int i = 0; i < size; i++ ){
 			try {
-				if( !deduceTemplateArgument( map, (ISymbol) pList.get(i), (TypeInfo) arguments.get(i) ) ){
+				if( !deduceTemplateArgument( map, (ISymbol) pList.get(i), (ITypeInfo) arguments.get(i) ) ){
 					return null;
 				}
 			} catch (ParserSymbolTableException e) {
@@ -704,12 +709,12 @@ public final class TemplateEngine {
 		return map;			
 	}
 
-	static private boolean deduceArgument( Map map, ISymbol p, TypeInfo a ){
+	static private boolean deduceArgument( Map map, ISymbol p, ITypeInfo a ){
 		
 		a = ParserSymbolTable.getFlatTypeInfo( a, null );
 		
 		if( map.containsKey( p ) ){
-			TypeInfo current = (TypeInfo)map.get( p );
+			ITypeInfo current = (ITypeInfo)map.get( p );
 			return current.equals( a );
 		} 
 		map.put( p, a );
@@ -733,7 +738,7 @@ public final class TemplateEngine {
 		ITemplateSymbol template1 = spec1;
 		ITemplateSymbol template2 = spec2;
 		
-		if( decl.isType( TypeInfo.t_class, TypeInfo.t_union ) ) {
+		if( decl.isType( ITypeInfo.t_class, ITypeInfo.t_union ) ) {
 			template1 = classTemplateSpecializationToFunctionTemplate( spec1 );
 			template2 = classTemplateSpecializationToFunctionTemplate( spec2 );	
 		}
@@ -805,22 +810,22 @@ public final class TemplateEngine {
 
 	static private Map createMapForFunctionTemplateOrdering( ITemplateSymbol template ){
 		HashMap map = new HashMap();
-		TypeInfo val = null;
+		ITypeInfo val = null;
 		List paramList = template.getParameterList();
 		int size = paramList.size();
 		for( int i = 0; i < size; i++ ){
 			ISymbol param = (ISymbol) paramList.get( i );
 			//template type parameter
-			if( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
-				val = new TypeInfo( TypeInfo.t_type, 0, template.getSymbolTable().newSymbol( "", TypeInfo.t_class ) ); //$NON-NLS-1$
+			if( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName ){
+				val = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, template.getSymbolTable().newSymbol( "", ITypeInfo.t_class ) ); //$NON-NLS-1$
 			} 
 			//template parameter
-			else if ( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ) {
-				
+			else if ( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ) {
+				//TODO
 			}
 			//non type parameter 
 			else {
-				val = new TypeInfo( param.getTypeInfo().getTemplateParameterType(), 0, null );
+				val = TypeInfoProvider.newTypeInfo( param.getTypeInfo().getTemplateParameterType() );
 			}
 			map.put( param, val );
 		}
@@ -844,13 +849,13 @@ public final class TemplateEngine {
 		//TODO clean up this
 		((ContainerSymbol)transformed).getContents().clear();
 		
-		IParameterizedSymbol function = specialization.getSymbolTable().newParameterizedSymbol( transformed.getName(), TypeInfo.t_function );
+		IParameterizedSymbol function = specialization.getSymbolTable().newParameterizedSymbol( transformed.getName(), ITypeInfo.t_function );
 		try{
 			transformed.addSymbol( function );
 		} catch ( ParserSymbolTableException e ){
 			//we shouldn't get this because there aren't any other symbols in the template
 		}
-		ISymbol param = specialization.getSymbolTable().newSymbol( "", TypeInfo.t_type ); //$NON-NLS-1$
+		ISymbol param = specialization.getSymbolTable().newSymbol( "", ITypeInfo.t_type ); //$NON-NLS-1$
 		
 		param.setTypeSymbol( specialization.instantiate( specialization.getArgumentList() ) );
 				
@@ -859,22 +864,22 @@ public final class TemplateEngine {
 		return transformed;
 	}
 	
-	static private TypeInfo transformTypeInfo( Object obj, Map argumentMap ){
-		TypeInfo info = null;
+	static private ITypeInfo transformTypeInfo( Object obj, Map argumentMap ){
+		ITypeInfo info = null;
 		if( obj instanceof ISymbol ){
-			info = new TypeInfo( TypeInfo.t_type, 0, (ISymbol) obj );
+			info = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, (ISymbol) obj );
 		} else {
-			info = (TypeInfo) obj;
+			info = (ITypeInfo) obj;
 		}
 		
 		if( argumentMap == null )
 			return info;
 		
-		if( info.isType( TypeInfo.t_type ) && 
-				info.getTypeSymbol().isType( TypeInfo.t_templateParameter ) &&
-				argumentMap.containsKey( info.getTypeSymbol() ) )
+		if( info.isType( ITypeInfo.t_type ) && 
+			info.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) &&
+			argumentMap.containsKey( info.getTypeSymbol() ) )
 		{
-			TypeInfo newType = new TypeInfo( (TypeInfo) argumentMap.get( info.getTypeSymbol() ) );
+			ITypeInfo newType = TypeInfoProvider.newTypeInfo( (ITypeInfo) argumentMap.get( info.getTypeSymbol() ) );
 			if( info.hasPtrOperators() )
 				newType.addPtrOperator( info.getPtrOperators() );
 			
@@ -907,8 +912,8 @@ public final class TemplateEngine {
 			List instanceArgs = new ArrayList( templateParams.size() );
 			for( int i = 0; i < numTemplateParams; i++ ){
 				ISymbol param = (ISymbol) templateParams.get(i);
-				TypeInfo arg = (TypeInfo) (  i < numTemplateArgs ? templateArguments.get(i) : null);
-				TypeInfo mapped = (TypeInfo) map.get( param );
+				ITypeInfo arg = (ITypeInfo) (  i < numTemplateArgs ? templateArguments.get(i) : null);
+				ITypeInfo mapped = (ITypeInfo) map.get( param );
 				
 				if( arg != null && mapped != null )
 					if( arg.equals( mapped ) )
@@ -952,7 +957,7 @@ public final class TemplateEngine {
 				} else if( !parameters.isEmpty() ){
 					int size = parameters.size();
 					for( int i = 0; i < size; i++ ){
-						if( parameters.get(i) != ((TypeInfo) arguments.get(i)).getTypeSymbol() ){
+						if( parameters.get(i) != ((ITypeInfo) arguments.get(i)).getTypeSymbol() ){
 							forPrimary = false;
 							break;
 						}
@@ -1025,12 +1030,12 @@ public final class TemplateEngine {
 		
 		int a1Size = a1.size();
 		for( int i = 0; i < a1Size; i++ ){
-			TypeInfo t1 = (TypeInfo) a1.get( i );
-			TypeInfo t2 = (TypeInfo) a2.get( i );
+			ITypeInfo t1 = (ITypeInfo) a1.get( i );
+			ITypeInfo t2 = (ITypeInfo) a2.get( i );
 			
 			if( t1.equals( t2 ) ){
 				continue;
-			} else if( t1.isType( TypeInfo.t_type ) && t2.isType( TypeInfo.t_type ) ) {
+			} else if( t1.isType( ITypeInfo.t_type ) && t2.isType( ITypeInfo.t_type ) ) {
 				ISymbol s1 = t1.getTypeSymbol(), s2 = t2.getTypeSymbol();
 				if( m[0].containsKey( s1 ) && m[1].containsKey( s2 ) && m[0].get( s1 ).equals( m[1].get( s2 ) ) )
 					continue;
@@ -1097,7 +1102,7 @@ public final class TemplateEngine {
 	 */
 	static protected ISymbol instantiateWithinTemplateScope( IContainerSymbol container, ITemplateSymbol symbol ) throws ParserSymbolTableException
 	{
-		if( symbol.getTemplatedSymbol().isType( TypeInfo.t_function ) ){
+		if( symbol.getTemplatedSymbol().isType( ITypeInfo.t_function ) ){
 			return symbol;
 		}
 		
@@ -1115,7 +1120,7 @@ public final class TemplateEngine {
 			}
 			containing = containing.getContainingSymbol();
 			
-			if( containing != null && !containing.isTemplateMember() || !containing.isType( TypeInfo.t_template ) ){
+			if( containing != null && !containing.isTemplateMember() || !containing.isType( ITypeInfo.t_template ) ){
 				break;
 			}
 		}
@@ -1129,7 +1134,7 @@ public final class TemplateEngine {
 				int size = params.size();
 				List args = new ArrayList( size );
 				for( int i = 0; i < size; i++ ){
-					args.add( new TypeInfo( TypeInfo.t_type, 0, (ISymbol) params.get(i) ) );
+					args.add( TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, (ISymbol) params.get(i) ) );
 				}
 				
 				instance = template.instantiate( args );
@@ -1154,14 +1159,14 @@ public final class TemplateEngine {
 	
 	static protected boolean canAddTemplate( IContainerSymbol containing, ITemplateSymbol template ){
 		//14-2 A template-declaration can appear only as a namespace scope or class scope declaration
-		if( !containing.isType( TypeInfo.t_namespace ) && !containing.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
+		if( !containing.isType( ITypeInfo.t_namespace ) && !containing.isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
 			return false;
 		}	
 		
 		//14.5.2-3  A member function template shall not be virtual
-		if( containing.isTemplateMember() && containing.getContainingSymbol().isType( TypeInfo.t_template ) ){
+		if( containing.isTemplateMember() && containing.getContainingSymbol().isType( ITypeInfo.t_template ) ){
 			ISymbol symbol = template.getTemplatedSymbol();
-			if( symbol != null && symbol.isType( TypeInfo.t_function ) && symbol.getTypeInfo().checkBit( TypeInfo.isVirtual ) ){
+			if( symbol != null && symbol.isType( ITypeInfo.t_function ) && symbol.getTypeInfo().checkBit( ITypeInfo.isVirtual ) ){
 				return false;
 			}
 		}
@@ -1178,7 +1183,7 @@ public final class TemplateEngine {
 		for( int i = 0; i < numParams; i++ ){
 			ISymbol param = (ISymbol) params.get(i);
 			if( i < numArgs ){
-				TypeInfo arg = (TypeInfo) arguments.get(i);
+				ITypeInfo arg = (ITypeInfo) arguments.get(i);
 				if( matchTemplateParameterAndArgument( param, arg ) ){
 					actualArgs.add( arg );
 				} else {
@@ -1220,7 +1225,7 @@ public final class TemplateEngine {
 			int numArgs = args.size();
 			for( int i = 0; i < numParams && i < numArgs; i++ ){
 				ISymbol param = (ISymbol) params.get(i);
-				TypeInfo arg = (TypeInfo) args.get(i);
+				ITypeInfo arg = (ITypeInfo) args.get(i);
 				if( map.containsKey( param ) ) {
 					if( !map.get( param ).equals( arg )){
 						continue outer;
@@ -1250,9 +1255,9 @@ public final class TemplateEngine {
 		int numArgs = ( args != null ) ? args.size() : 0;
 		for( int i = 0; i < numParams; i++ ){
 			ISymbol param = (ISymbol) params.get(i);
-			TypeInfo arg = null;
+			ITypeInfo arg = null;
 			if( i < numArgs ){
-				arg = (TypeInfo) args.get(i);
+				arg = (ITypeInfo) args.get(i);
 			} else {
 				if( map == null ){
 					map = deduceTemplateArgumentsUsingParameterList( template, fn );
@@ -1260,7 +1265,7 @@ public final class TemplateEngine {
 						return null;
 				}
 				if( map.containsKey( param ) ){
-					arg = (TypeInfo) map.get( param );
+					arg = (ITypeInfo) map.get( param );
 				}
 			}
 			
@@ -1294,7 +1299,7 @@ public final class TemplateEngine {
 	}
 	
 	static protected boolean templateParametersAreEquivalent( ISymbol p1, ISymbol p2 ){
-		if( !p1.isType( TypeInfo.t_templateParameter ) || !p2.isType( TypeInfo.t_templateParameter ) ||
+		if( !p1.isType( ITypeInfo.t_templateParameter ) || !p2.isType( ITypeInfo.t_templateParameter ) ||
 			 p1.getTypeInfo().getTemplateParameterType() != p2.getTypeInfo().getTemplateParameterType() )
 		{
 			return false;
@@ -1303,11 +1308,11 @@ public final class TemplateEngine {
 		ITemplateSymbol t1 = getContainingTemplate( p1 );
 		ITemplateSymbol t2 = getContainingTemplate( p2 );
 		
-		if( p1.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName )
+		if( p1.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName )
 		{
 			List l1 = t1.getParameterList(), l2 = t2.getParameterList();
 			return ( l1 != null && l2 != null &&  l1.indexOf( p1 ) == l2.indexOf( p2 ) ); 
-		} else if( p1.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
+		} else if( p1.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ){
 			ITemplateSymbol pt1 = (ITemplateSymbol)p1.getTypeSymbol();
 			ITemplateSymbol pt2 = (ITemplateSymbol)p2.getTypeSymbol();
 			return checkTemplateParameterListsAreEquivalent( pt1.getParameterList(), pt2.getParameterList() );
@@ -1343,8 +1348,8 @@ public final class TemplateEngine {
 			return false;
 		
 		for( int i = 0; i < size; i++ ){
-			TypeInfo info1 = (TypeInfo) args.get(i);
-			TypeInfo info2 = (TypeInfo) args2.get(i);
+			ITypeInfo info1 = (ITypeInfo) args.get(i);
+			ITypeInfo info2 = (ITypeInfo) args2.get(i);
 			
 			if( ! info1.equals( info2 ) )
 				return false;

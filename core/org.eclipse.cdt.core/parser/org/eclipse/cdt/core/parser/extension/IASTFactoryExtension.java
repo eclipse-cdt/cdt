@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author jcamelon
@@ -53,7 +53,7 @@ public interface IASTFactoryExtension {
 	 * @param typeId
 	 * @return TODO
 	 */
-	public TypeInfo getExpressionResultType(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTTypeId typeId);
+	public ITypeInfo getExpressionResultType(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTTypeId typeId);
     
 	public boolean overrideCreateSimpleTypeSpecifierMethod(Type type);
 	

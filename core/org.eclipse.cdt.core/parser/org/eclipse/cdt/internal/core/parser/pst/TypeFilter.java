@@ -28,7 +28,7 @@ public class TypeFilter {
         acceptedTypes.addAll( types );
 	}
 	
-	public TypeFilter( TypeInfo.eType type ){
+	public TypeFilter( ITypeInfo.eType type ){
 		acceptedTypes.add( type );
 	}
 	
@@ -37,7 +37,7 @@ public class TypeFilter {
 		populatedAcceptedTypes( kind );
 	}
 	
-    public void addAcceptedType( TypeInfo.eType type ){
+    public void addAcceptedType( ITypeInfo.eType type ){
     	acceptedTypes.add( type );
     }
     
@@ -46,16 +46,16 @@ public class TypeFilter {
         acceptedKinds.add( kind );
     }
     
-    public boolean willAccept( TypeInfo.eType type ){
-    	return( acceptedTypes.contains( TypeInfo.t_any ) ||
+    public boolean willAccept( ITypeInfo.eType type ){
+    	return( acceptedTypes.contains( ITypeInfo.t_any ) ||
     			acceptedTypes.contains( type ) );
     }
     
 	public boolean shouldAccept( ISymbol symbol ){
 		return shouldAccept( symbol, symbol.getTypeInfo() );
 	}
-	public boolean shouldAccept( ISymbol symbol, TypeInfo typeInfo ){
-		if( acceptedTypes.contains( TypeInfo.t_any ) ){
+	public boolean shouldAccept( ISymbol symbol, ITypeInfo typeInfo ){
+		if( acceptedTypes.contains( ITypeInfo.t_any ) ){
 			return true;         
         }
         
@@ -65,11 +65,11 @@ public class TypeFilter {
 		
 		IContainerSymbol container = symbol.getContainingSymbol();
 		
-		boolean symbolIsMember = container.isType( TypeInfo.t_class, TypeInfo.t_union );
-		boolean symbolIsLocal = container.isType( TypeInfo.t_constructor, TypeInfo.t_function ) ||
-								container.isType( TypeInfo.t_block );
+		boolean symbolIsMember = container.isType( ITypeInfo.t_class, ITypeInfo.t_union );
+		boolean symbolIsLocal = container.isType( ITypeInfo.t_constructor, ITypeInfo.t_function ) ||
+								container.isType( ITypeInfo.t_block );
 		
-		if( typeInfo.isType( TypeInfo.t_function ) )
+		if( typeInfo.isType( ITypeInfo.t_function ) )
 		{
 			if( ( acceptedKinds.contains( LookupKind.FUNCTIONS ) && !symbolIsMember ) ||
 				( acceptedKinds.contains( LookupKind.METHODS )   &&  symbolIsMember ) )
@@ -78,7 +78,7 @@ public class TypeFilter {
 			} 
 			return false;
 		} 
-		else if ( typeInfo.isType( TypeInfo.t_type ) && typeInfo.checkBit( TypeInfo.isTypedef ) ){
+		else if ( typeInfo.isType( ITypeInfo.t_type ) && typeInfo.checkBit( ITypeInfo.isTypedef ) ){
 			if( acceptedKinds.contains( LookupKind.TYPEDEFS ) ||
 				acceptedKinds.contains( LookupKind.TYPES ) )
 			{
@@ -86,7 +86,7 @@ public class TypeFilter {
 			} 
 			return false;
 		}
-		else if ( typeInfo.isType( TypeInfo.t_type ) || typeInfo.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
+		else if ( typeInfo.isType( ITypeInfo.t_type ) || typeInfo.isType( ITypeInfo.t__Bool, ITypeInfo.t_void ) )
 		{
 			if( ( acceptedKinds.contains( LookupKind.VARIABLES ) 	   && !symbolIsMember && !symbolIsLocal ) ||
 				( acceptedKinds.contains( LookupKind.LOCAL_VARIABLES ) && !symbolIsMember && symbolIsLocal )  ||
@@ -106,22 +106,22 @@ public class TypeFilter {
 	 * @param lookupKind
 	 */
 	private void populatedAcceptedTypes(LookupKind kind) {
-             if ( kind == LookupKind.ALL )         { acceptedTypes.add( TypeInfo.t_any );         }
-        else if ( kind == LookupKind.STRUCTURES )  { acceptedTypes.add( TypeInfo.t_class );
-                                                     acceptedTypes.add( TypeInfo.t_struct );
-                                                     acceptedTypes.add( TypeInfo.t_union );       }
-        else if ( kind == LookupKind.STRUCTS )     { acceptedTypes.add( TypeInfo.t_struct );      }
-        else if ( kind == LookupKind.UNIONS )      { acceptedTypes.add( TypeInfo.t_union );       }
-        else if ( kind == LookupKind.CLASSES )     { acceptedTypes.add( TypeInfo.t_class );       }
-		else if ( kind == LookupKind.CONSTRUCTORS ){ acceptedTypes.add( TypeInfo.t_constructor ); } 
-		else if ( kind == LookupKind.NAMESPACES )  { acceptedTypes.add( TypeInfo.t_namespace );   }
-		else if ( kind == LookupKind.ENUMERATIONS ){ acceptedTypes.add( TypeInfo.t_enumeration ); } 
-		else if ( kind == LookupKind.ENUMERATORS ) { acceptedTypes.add( TypeInfo.t_enumerator );  }
+             if ( kind == LookupKind.ALL )         { acceptedTypes.add( ITypeInfo.t_any );         }
+        else if ( kind == LookupKind.STRUCTURES )  { acceptedTypes.add( ITypeInfo.t_class );
+                                                     acceptedTypes.add( ITypeInfo.t_struct );
+                                                     acceptedTypes.add( ITypeInfo.t_union );       }
+        else if ( kind == LookupKind.STRUCTS )     { acceptedTypes.add( ITypeInfo.t_struct );      }
+        else if ( kind == LookupKind.UNIONS )      { acceptedTypes.add( ITypeInfo.t_union );       }
+        else if ( kind == LookupKind.CLASSES )     { acceptedTypes.add( ITypeInfo.t_class );       }
+		else if ( kind == LookupKind.CONSTRUCTORS ){ acceptedTypes.add( ITypeInfo.t_constructor ); } 
+		else if ( kind == LookupKind.NAMESPACES )  { acceptedTypes.add( ITypeInfo.t_namespace );   }
+		else if ( kind == LookupKind.ENUMERATIONS ){ acceptedTypes.add( ITypeInfo.t_enumeration ); } 
+		else if ( kind == LookupKind.ENUMERATORS ) { acceptedTypes.add( ITypeInfo.t_enumerator );  }
 //		else if ( kind == LookupKind.TYPEDEFS )    { acceptedTypes.add( TypeInfo.t_type );  }
-		else if ( kind == LookupKind.TYPES )       { acceptedTypes.add( TypeInfo.t_class );
-		                                             acceptedTypes.add( TypeInfo.t_struct );
-		                                             acceptedTypes.add( TypeInfo.t_union );
-		                                             acceptedTypes.add( TypeInfo.t_enumeration ); }
+		else if ( kind == LookupKind.TYPES )       { acceptedTypes.add( ITypeInfo.t_class );
+		                                             acceptedTypes.add( ITypeInfo.t_struct );
+		                                             acceptedTypes.add( ITypeInfo.t_union );
+		                                             acceptedTypes.add( ITypeInfo.t_enumeration ); }
 		
 	}
 

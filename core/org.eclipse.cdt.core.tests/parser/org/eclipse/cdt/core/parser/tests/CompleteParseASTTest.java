@@ -1887,8 +1887,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Writer writer = new StringWriter();
 		writer.write( "typedef int DWORD;\n" ); //$NON-NLS-1$
 		writer.write( "typedef char BYTE;\n"); //$NON-NLS-1$
-		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\n"); //$NON-NLS-1$
-		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\n"); //$NON-NLS-1$
+		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\\n"); //$NON-NLS-1$
 		writer.write( "((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))\n"); //$NON-NLS-1$
 		writer.write( "enum e {\n"); //$NON-NLS-1$
 		writer.write( "blah1 = 5,\n"); //$NON-NLS-1$

@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
 /**
  * @author aniefer
@@ -67,11 +67,11 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getTemplateParameterKind()
 	 */
 	public ParamKind getTemplateParameterKind() {
-		TypeInfo.eType type = symbol.getTypeInfo().getTemplateParameterType();
-		if( type == TypeInfo.t_typeName )
+		ITypeInfo.eType type = symbol.getTypeInfo().getTemplateParameterType();
+		if( type == ITypeInfo.t_typeName )
 			//TODO: difference between class & typename?
 			return ParamKind.TYPENAME;
-		else if( type == TypeInfo.t_template )
+		else if( type == ITypeInfo.t_template )
 			return ParamKind.TEMPLATE_LIST;
 		else 
 			return ParamKind.PARAMETER;

@@ -29,8 +29,8 @@ import java.util.Map;
 public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public void addParameter( ISymbol param );
-	public void addParameter( TypeInfo.eType type, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault );
-	public void addParameter( ISymbol typeSymbol, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault );
+	public void addParameter( ITypeInfo.eType type, int info, ITypeInfo.PtrOp ptrOp, boolean hasDefault );
+	public void addParameter( ISymbol typeSymbol, int info, ITypeInfo.PtrOp ptrOp, boolean hasDefault );
 	
 	public Map getParameterMap();
 	public List getParameterList();

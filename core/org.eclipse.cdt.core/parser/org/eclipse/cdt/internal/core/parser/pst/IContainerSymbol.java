@@ -98,13 +98,13 @@ public interface IContainerSymbol extends ISymbol {
 	 *                            IDerivableContainerSymbol
 	 *             r_CircularInheritance if during lookup of the name, we come across a class with a circular inheritance tree
 	 */
-	public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException; 
+	public ISymbol elaboratedLookup( ITypeInfo.eType type, String name ) throws ParserSymbolTableException; 
 	public ISymbol lookup( String name ) throws ParserSymbolTableException;
 	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException;
 	public IParameterizedSymbol lookupMethodForDefinition( String name, List parameters ) throws ParserSymbolTableException;
 	public IContainerSymbol lookupNestedNameSpecifier( String name ) throws ParserSymbolTableException;
 	public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException;
-	public ISymbol qualifiedLookup( String name, TypeInfo.eType t ) throws ParserSymbolTableException;
+	public ISymbol qualifiedLookup( String name, ITypeInfo.eType t ) throws ParserSymbolTableException;
 	public IParameterizedSymbol unqualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol memberFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol qualifiedFunctionLookup( String name, List parameters ) throws ParserSymbolTableException;

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface ISpecializedSymbol extends ITemplateSymbol {
 	
-	public void addArgument( TypeInfo arg );
+	public void addArgument( ITypeInfo arg );
 	
 	public List getArgumentList();
 	

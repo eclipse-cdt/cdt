@@ -27,11 +27,11 @@ import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
 /**
  * @author jcamelon
@@ -78,14 +78,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public boolean isVirtual()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isVirtual );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isVirtual );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isExplicit()
      */
     public boolean isExplicit()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isExplicit);
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isExplicit);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isConstructor()
@@ -106,14 +106,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public boolean isConst()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isConst);
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isConst);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVolatile()
      */
     public boolean isVolatile()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isVolatile );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isVolatile );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isPureVirtual()

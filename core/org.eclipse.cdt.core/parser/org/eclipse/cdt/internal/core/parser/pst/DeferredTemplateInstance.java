@@ -52,13 +52,13 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		List newArgs = new ArrayList( args.size() );
 		int size = args.size();
 		for( int i = 0; i < size; i++ ){
-			TypeInfo arg = (TypeInfo) args.get(i);
+			ITypeInfo arg = (ITypeInfo) args.get(i);
 			newArgs.add( TemplateEngine.instantiateTypeInfo( arg, template, argMap ) );
 		}
 		
 		ITemplateSymbol deferredTemplate = getTemplate(); 
-		if( deferredTemplate.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( deferredTemplate ) ){
-			TypeInfo i = (TypeInfo) argMap.get( deferredTemplate );
+		if( deferredTemplate.isType( ITypeInfo.t_templateParameter ) && argMap.containsKey( deferredTemplate ) ){
+			ITypeInfo i = (ITypeInfo) argMap.get( deferredTemplate );
 			deferredTemplate = (ITemplateSymbol) i.getTypeSymbol();
 		}
 		
@@ -69,7 +69,7 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 			return instance;
 	}
 	
-	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
+	public boolean isType( ITypeInfo.eType type, ITypeInfo.eType upperType ){
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.isType( type, upperType );
@@ -77,21 +77,21 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		
 	}
 	
-	public TypeInfo.eType getType(){ 		
+	public ITypeInfo.eType getType(){ 		
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.getType();
 		return super.getType();
 	}
 	
-	public TypeInfo getTypeInfo(){
+	public ITypeInfo getTypeInfo(){
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.getTypeInfo();
 		return super.getTypeInfo();
 	}
 
-	public boolean isType( TypeInfo.eType type ){
+	public boolean isType( ITypeInfo.eType type ){
 		return _template.getTemplatedSymbol().isType( type ); 
 	}
 	

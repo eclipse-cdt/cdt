@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateSpecialization;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType;
 
 /**
  * @author aniefer
@@ -84,7 +82,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			size = args.size();
 			spec.prepareArguments( size );
 			for( int i = 0; i < size; i++){
-				spec.addArgument( (TypeInfo) args.get(i) );
+				spec.addArgument( (ITypeInfo) args.get(i) );
 			}
 			
 			spec.addSymbol( symbol );
@@ -114,7 +112,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		int templatesSize = templates.size(), templatesIdx = 0;
 		for( int i = 0; i < size; i++ ){
 			sym = (ISymbol) symbols.get( i );
-			if( !sym.getContainingSymbol().isType( TypeInfo.t_template ) ){
+			if( !sym.getContainingSymbol().isType( ITypeInfo.t_template ) ){
 				symbols.remove( i-- );
 				size--;
 			} else if( templatesIdx < templatesSize ) {
@@ -165,12 +163,12 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			}
 		}
 		
-		if( symbol.isType( TypeInfo.t_function ) ){
+		if( symbol.isType( ITypeInfo.t_function ) ){
 			if( args != null )
 				previous = lookupFunctionTemplateId( symbol.getName(), argList, args, false );
 			else
 				previous = lookupMethodForDefinition( symbol.getName(), argList );
-		} else if ( symbol.isType( TypeInfo.t_constructor ) ){
+		} else if ( symbol.isType( ITypeInfo.t_constructor ) ){
 			previous = lookupConstructor( argList );
 		} else {
 			previous = lookupMemberForDefinition( symbol.getName() );
@@ -318,7 +316,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			ISymbol instantiated = sym.getInstantiatedSymbol();
 			if( instantiated != null ){
 				IContainerSymbol container = instantiated.getContainingSymbol();
-				if( container.isType( TypeInfo.t_template ) ){
+				if( container.isType( ITypeInfo.t_template ) ){
 					((ITemplateSymbol) container ).removeInstantiation( sym );
 				}
 			}
@@ -363,7 +361,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
-	public ISymbol elaboratedLookup(eType type, String name) throws ParserSymbolTableException {
+	public ISymbol elaboratedLookup(ITypeInfo.eType type, String name) throws ParserSymbolTableException {
 		ListIterator iter = templates.listIterator( templates.size() );
 		while( iter.hasPrevious() ){
 			ITemplateSymbol template = (ITemplateSymbol) iter.previous();
@@ -425,7 +423,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public ISymbol qualifiedLookup(String name, eType t) throws ParserSymbolTableException {
+	public ISymbol qualifiedLookup(String name, ITypeInfo.eType t) throws ParserSymbolTableException {
 		return getContainingSymbol().qualifiedLookup( name, t );
 	}
 
@@ -517,7 +515,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		int templateIdx = 0;
 		for( int i = 0; i < numSymbols; i++ ){
 			ISymbol symbol = (ISymbol) symbols.get(i);
-			if( symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
+			if( symbol.getContainingSymbol().isType( ITypeInfo.t_template ) ){
 				if( templateIdx < numTemplates )
 					templateIdx++;
 				else
@@ -556,21 +554,21 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDirective(org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
-	public IUsingDirectiveSymbol addUsingDirective(IContainerSymbol namespace) throws ParserSymbolTableException {
+	public IUsingDirectiveSymbol addUsingDirective(IContainerSymbol namespace) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String)
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration(String name) throws ParserSymbolTableException {
+	public IUsingDeclarationSymbol addUsingDeclaration(String name) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration(String name, IContainerSymbol declContext) throws ParserSymbolTableException {
+	public IUsingDeclarationSymbol addUsingDeclaration(String name, IContainerSymbol declContext) {
 		return null;
 	}
 
@@ -584,7 +582,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#prefixLookup(org.eclipse.cdt.internal.core.parser.pst.TypeFilter, java.lang.String, boolean)
 	 */
-	public List prefixLookup(TypeFilter filter, String prefix, boolean qualified, List paramList) throws ParserSymbolTableException {
+	public List prefixLookup(TypeFilter filter, String prefix, boolean qualified, List paramList) {
 		return null;
 	}
 	/* (non-Javadoc)
@@ -611,7 +609,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#instantiate(org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol, java.util.Map)
 	 */
-	public ISymbol instantiate(ITemplateSymbol template, Map argMapParm) throws ParserSymbolTableException {
+	public ISymbol instantiate(ITemplateSymbol template, Map argMapParm) {
 		return null;
 	}
 
@@ -619,6 +617,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setName(java.lang.String)
 	 */
 	public void setName(String name) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -631,41 +630,43 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#isType(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public boolean isType(eType type) {
+	public boolean isType(ITypeInfo.eType type) {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#isType(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public boolean isType(eType type, eType upperType) {
+	public boolean isType(ITypeInfo.eType type, ITypeInfo.eType upperType) {
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#getType()
 	 */
-	public eType getType() {
+	public ITypeInfo.eType getType() {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setType(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public void setType(eType t) {
+	public void setType(ITypeInfo.eType t) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#getTypeInfo()
 	 */
-	public TypeInfo getTypeInfo() {
+	public ITypeInfo getTypeInfo() {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setTypeInfo(org.eclipse.cdt.internal.core.parser.pst.TypeInfo)
 	 */
-	public void setTypeInfo(TypeInfo info) {
+	public void setTypeInfo(ITypeInfo info) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -679,6 +680,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setTypeSymbol(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void setTypeSymbol(ISymbol type) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -692,6 +694,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setIsForwardDeclaration(boolean)
 	 */
 	public void setIsForwardDeclaration(boolean forward) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -711,7 +714,8 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#addPtrOperator(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp)
 	 */
-	public void addPtrOperator(PtrOp ptrOp) {
+	public void addPtrOperator(ITypeInfo.PtrOp ptrOp) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -732,6 +736,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setInstantiatedSymbol(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void setInstantiatedSymbol(ISymbol symbol) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -745,6 +750,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setIsTemplateMember(boolean)
 	 */
 	public void setIsTemplateMember(boolean isMember) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -765,18 +771,21 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setIsInvisible(boolean)
 	 */
 	public void setIsInvisible(boolean invisible) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addParent(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addParent(ISymbol parent) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addParent(org.eclipse.cdt.internal.core.parser.pst.ISymbol, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility, int, java.util.List)
 	 */
 	public void addParent(ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -796,13 +805,15 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addConstructor(org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol)
 	 */
-	public void addConstructor(IParameterizedSymbol constructor) throws ParserSymbolTableException {
+	public void addConstructor(IParameterizedSymbol constructor) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addCopyConstructor()
 	 */
-	public void addCopyConstructor() throws ParserSymbolTableException {
+	public void addCopyConstructor() {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
@@ -816,19 +827,20 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addFriend(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addFriend(ISymbol friend) {
+	    /* nothing */
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#lookupForFriendship(java.lang.String)
 	 */
-	public ISymbol lookupForFriendship(String name) throws ParserSymbolTableException {
+	public ISymbol lookupForFriendship(String name) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#lookupFunctionForFriendship(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol lookupFunctionForFriendship(String name, List parameters) throws ParserSymbolTableException {
+	public IParameterizedSymbol lookupFunctionForFriendship(String name, List parameters) {
 		return null;
 	}
 
@@ -843,5 +855,20 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#preparePtrOperatros(int)
 	 */
 	public void preparePtrOperatros(int numPtrOps) {
+	    /* nothing */
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setForwardSymbol(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
+	 */
+	public void setForwardSymbol(ISymbol forward) {
+	    /* nothing */
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#getForwardSymbol()
+	 */
+	public ISymbol getForwardSymbol() {
+		return null;
 	}
 }

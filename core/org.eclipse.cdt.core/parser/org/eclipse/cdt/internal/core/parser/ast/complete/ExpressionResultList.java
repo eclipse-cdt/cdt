@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
 /**
  * @author hamer
@@ -27,15 +27,15 @@ public class ExpressionResultList extends ExpressionResult {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ExpressionResult#getResult()
 	 */
-	public TypeInfo getResult() {
+	public ITypeInfo getResult() {
 		// TODO Auto-generated method stub
-		return (TypeInfo)resultList.get(0);
+		return (ITypeInfo)resultList.get(0);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ExpressionResult#setResult(org.eclipse.cdt.internal.core.parser.pst.TypeInfo)
 	 */
-	public void setResult(TypeInfo info) {
+	public void setResult(ITypeInfo info) {
 		// TODO Auto-generated method stub
 		resultList.add(info);
 	}

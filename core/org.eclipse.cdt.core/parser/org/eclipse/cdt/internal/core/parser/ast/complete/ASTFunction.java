@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
 /**
  * @author jcamelon
@@ -79,7 +79,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public boolean isInline()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isInline );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isInline );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isFriend()
@@ -93,7 +93,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public boolean isStatic()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isStatic );
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isStatic );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()

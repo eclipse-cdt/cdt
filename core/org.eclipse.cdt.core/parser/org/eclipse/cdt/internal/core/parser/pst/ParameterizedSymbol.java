@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
  * @author aniefer
@@ -37,11 +35,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		super( table, name );
 	}
 	
-	protected ParameterizedSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super( table, name, obj );
-	}
-	
-	protected ParameterizedSymbol( ParserSymbolTable table, String name, TypeInfo.eType typeInfo ){
+	protected ParameterizedSymbol( ParserSymbolTable table, String name, ITypeInfo.eType typeInfo ){
 		super( table, name, typeInfo );
 	}
 	
@@ -66,10 +60,10 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		ParameterizedSymbol newParameterized = (ParameterizedSymbol) super.instantiate( template, argMap );
 
 		if( _returnType != null ){
-			if( _returnType.isType( TypeInfo.t_templateParameter ) ){
+			if( _returnType.isType( ITypeInfo.t_templateParameter ) ){
 				if( argMap.containsKey( _returnType ) ){
 					newParameterized.setReturnType( getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME ) );
-					newParameterized.getReturnType().setTypeInfo( (TypeInfo) argMap.get( _returnType ) );
+					newParameterized.getReturnType().setTypeInfo( (ITypeInfo) argMap.get( _returnType ) );
 					newParameterized.getReturnType().setInstantiatedSymbol( _returnType );
 				}
 			} else {
@@ -81,7 +75,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		}
 		
 		//handle template parameter lists in TemplateSymbol, only do function parameter lists here.
-		if( !isType( TypeInfo.t_template ) ){
+		if( !isType( ITypeInfo.t_template ) ){
 			List params = getParameterList();
 			int size = params.size();
 			
@@ -148,7 +142,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		}
 		
 		param.setContainingSymbol( this );
-		param.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
+		param.setIsTemplateMember( isTemplateMember() || getType() == ITypeInfo.t_template );
 		
 //		Command command = new AddParameterCommand( this, param );
 //		getSymbolTable().pushCommand( command );
@@ -157,14 +151,11 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addParameter(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, int, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp, boolean)
 	 */
-	public void addParameter( TypeInfo.eType type, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault ){
+	public void addParameter( ITypeInfo.eType type, int info, ITypeInfo.PtrOp ptrOp, boolean hasDefault ){
 		BasicSymbol param = new BasicSymbol(getSymbolTable(), ParserSymbolTable.EMPTY_NAME);
 				
-		TypeInfo t = param.getTypeInfo();
-		t.setTypeInfo( info );
-		t.setType( type );
-		t.addPtrOperator( ptrOp );
-		t.setHasDefault( hasDefault );
+		ITypeInfo t = TypeInfoProvider.newTypeInfo( type, info, ptrOp, hasDefault );
+		param.setTypeInfo( t );
 			
 		addParameter( param );
 	}
@@ -172,15 +163,11 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addParameter(org.eclipse.cdt.internal.core.parser.pst.ISymbol, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp, boolean)
 	 */
-	public void addParameter( ISymbol typeSymbol, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault ){
+	public void addParameter( ISymbol typeSymbol, int info, ITypeInfo.PtrOp ptrOp, boolean hasDefault ){
 		BasicSymbol param = new BasicSymbol(getSymbolTable(), ParserSymbolTable.EMPTY_NAME);
 		
-		TypeInfo nfo = param.getTypeInfo();
-		nfo.setTypeInfo( info );
-		nfo.setType( TypeInfo.t_type );
-		nfo.setTypeSymbol( typeSymbol );
-		nfo.addPtrOperator( ptrOp );
-		nfo.setHasDefault( hasDefault );
+		ITypeInfo nfo = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, info, typeSymbol, ptrOp, hasDefault );
+		param.setTypeInfo( nfo );
 			
 		addParameter( param );
 	}
@@ -225,8 +212,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		List params = getParameterList();
 		List functionParams = function.getParameterList();
 	
-		TypeInfo info = null;
-		TypeInfo fInfo = null;
+		ITypeInfo info = null;
+		ITypeInfo fInfo = null;
 	
 		TypeInfoProvider provider = getSymbolTable().getTypeInfoProvider();
 		
@@ -241,33 +228,33 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			info = ParserSymbolTable.getFlatTypeInfo( info, provider );
 			fInfo = ParserSymbolTable.getFlatTypeInfo( fInfo, provider );
 			
-			for( TypeInfo nfo = info; nfo != null; nfo = fInfo ){
+			for( ITypeInfo nfo = info; nfo != null; nfo = fInfo ){
 				//an array declaration is adjusted to become a pointer declaration
 				//only the second and subsequent array dimensions are significant in parameter types
 				ListIterator ptrs = nfo.getPtrOperators().listIterator(); 
 				if( ptrs.hasNext() ){
-					PtrOp op = (PtrOp) ptrs.next();
-					if( op.getType() == PtrOp.t_array ){
+					ITypeInfo.PtrOp op = (ITypeInfo.PtrOp) ptrs.next();
+					if( op.getType() == ITypeInfo.PtrOp.t_array ){
 						ptrs.remove();
-						ptrs.add( new PtrOp( PtrOp.t_pointer, op.isConst(), op.isVolatile() ) );
+						ptrs.add( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer, op.isConst(), op.isVolatile() ) );
 					}
 				}
 				
 				//a function type is adjusted to become a pointer to function type
-				if( nfo.isType( TypeInfo.t_type ) && nfo.getTypeSymbol() != null && 
-					nfo.getTypeSymbol().isType( TypeInfo.t_function ) )
+				if( nfo.isType( ITypeInfo.t_type ) && nfo.getTypeSymbol() != null && 
+					nfo.getTypeSymbol().isType( ITypeInfo.t_function ) )
 				{
 					if( nfo.getPtrOperators().size() == 0 ){
-						nfo.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
+						nfo.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer ) );
 					}
 				}
 
 				//const and volatile type-specifiers are ignored (only the outermost level)
 				if( nfo.getPtrOperators().size() == 0 ){
-					nfo.setBit( false, TypeInfo.isConst );
-					nfo.setBit( false, TypeInfo.isVolatile );
+					nfo.setBit( false, ITypeInfo.isConst );
+					nfo.setBit( false, ITypeInfo.isVolatile );
 				} else {
-					PtrOp op = (PtrOp) nfo.getPtrOperators().get( nfo.getPtrOperators().size() - 1 );
+					ITypeInfo.PtrOp op = (ITypeInfo.PtrOp) nfo.getPtrOperators().get( nfo.getPtrOperators().size() - 1 );
 					op.setConst( false );
 					op.setVolatile( false );
 				}
@@ -295,7 +282,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	public void setReturnType( ISymbol type ){
 		_returnType = type;
 		_returnType.setContainingSymbol( this );
-		_returnType.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
+		_returnType.setIsTemplateMember( isTemplateMember() || getType() == ITypeInfo.t_template );
 	}
 
 	/* (non-Javadoc)

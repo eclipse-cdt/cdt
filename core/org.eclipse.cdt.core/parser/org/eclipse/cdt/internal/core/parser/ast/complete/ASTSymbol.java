@@ -15,9 +15,9 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
 
 /**
  * @author jcamelon
@@ -44,8 +44,8 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
     public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
     	ISymbol sym = getSymbol();
     	IContainerSymbol result = null;
-    	ParserSymbolTable.TypeInfoProvider provider = sym.getSymbolTable().getTypeInfoProvider();
-		TypeInfo info = null;
+    	TypeInfoProvider provider = sym.getSymbolTable().getTypeInfoProvider();
+		ITypeInfo info = null;
 		
 		try{
 			info = sym.getTypeInfo().getFinalType( provider );
@@ -53,7 +53,7 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
 			throw new LookupError();
 		}
 		
-		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() != null && info.getTypeSymbol() instanceof IContainerSymbol )
+		if( info.isType( ITypeInfo.t_type ) && info.getTypeSymbol() != null && info.getTypeSymbol() instanceof IContainerSymbol )
 			result = (IContainerSymbol) info.getTypeSymbol();
 		else if( sym instanceof IContainerSymbol )
 			result = (IContainerSymbol) sym;
@@ -64,18 +64,18 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
     
     public boolean shouldFilterLookupResult( ISymbol sym ){
     	boolean result = false;
-    	ParserSymbolTable.TypeInfoProvider provider = sym.getSymbolTable().getTypeInfoProvider();
-    	TypeInfo info = null;
+    	TypeInfoProvider provider = sym.getSymbolTable().getTypeInfoProvider();
+    	ITypeInfo info = null;
     	try{
 			info = getSymbol().getTypeInfo().getFinalType( provider );
 		} catch( ParserSymbolTableError e ){
 			return true;
 		}
 		
-		if( info.checkBit( TypeInfo.isConst ) && !sym.getTypeInfo().checkBit( TypeInfo.isConst ) )
+		if( info.checkBit( ITypeInfo.isConst ) && !sym.getTypeInfo().checkBit( ITypeInfo.isConst ) )
 			result = true;
 		
-		if( info.checkBit( TypeInfo.isVolatile ) && !sym.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
+		if( info.checkBit( ITypeInfo.isVolatile ) && !sym.getTypeInfo().checkBit( ITypeInfo.isVolatile ) )
 			result = true;
 		
 		provider.returnTypeInfo( info );

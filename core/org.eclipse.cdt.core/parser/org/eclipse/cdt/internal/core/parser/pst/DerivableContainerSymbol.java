@@ -34,12 +34,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	protected DerivableContainerSymbol( ParserSymbolTable table, String name ){
 		super( table, name );
 	}
-	
-	protected DerivableContainerSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super( table, name, obj );
-	}
-	
-	protected DerivableContainerSymbol( ParserSymbolTable table, String name, TypeInfo.eType typeInfo ){
+
+	protected DerivableContainerSymbol( ParserSymbolTable table, String name, ITypeInfo.eType typeInfo ){
 		super( table, name, typeInfo );
 	}
 	
@@ -73,8 +69,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			
 			if( parent instanceof IDeferredTemplateInstance ){
 				template.registerDeferredInstatiation( newSymbol, parent, ITemplateSymbol.DeferredKind.PARENT, argMap );
-			} else 	if( parent.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( parent ) ){
-				TypeInfo info = (TypeInfo) argMap.get( parent );
+			} else 	if( parent.isType( ITypeInfo.t_templateParameter ) && argMap.containsKey( parent ) ){
+				ITypeInfo info = (ITypeInfo) argMap.get( parent );
 				parent = info.getTypeSymbol();
 			}
 			newSymbol.addParent( parent, wrapper.isVirtual(), wrapper.getAccess(), wrapper.getOffset(), wrapper.getReferences() );
@@ -119,7 +115,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	}
 	
 	protected void collectInstantiatedConstructor( IParameterizedSymbol constructor ){
-		if( constructor.isType( TypeInfo.t_constructor ) )
+		if( constructor.isType( ITypeInfo.t_constructor ) )
 			addToConstructors( constructor );
 	}
 	
@@ -172,7 +168,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addConstructor(org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol)
 	 */
 	public void addConstructor(IParameterizedSymbol constructor) throws ParserSymbolTableException {
-		if( !constructor.isType( TypeInfo.t_constructor ) )
+		if( !constructor.isType( ITypeInfo.t_constructor ) )
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			
 		List constructors = getConstructors();
@@ -184,7 +180,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		}
 		
 		constructor.setContainingSymbol( this );
-		constructor.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
+		constructor.setIsTemplateMember( isTemplateMember() || getType() == ITypeInfo.t_template );
 		
 		addThis( constructor );
 
@@ -205,24 +201,25 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			paramType = TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) getContainingSymbol() );
 		}
 		
-		TypeInfo param = getSymbolTable().getTypeInfoProvider().getTypeInfo();
-		param.setType( TypeInfo.t_type );
-		param.setBit( true, TypeInfo.isConst );
+		ITypeInfo param = TypeInfoProvider.getProvider(getSymbolTable()).getTypeInfo( ITypeInfo.t_type );
+		param.setType( ITypeInfo.t_type );
+		param.setBit( true, ITypeInfo.isConst );
 		param.setTypeSymbol( paramType );
-		param.addPtrOperator( new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ) );
+		param.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_reference, false, false ) );
 		parameters.add( param );
 		
 		IParameterizedSymbol constructor = null;
 		try{
 			constructor = lookupConstructor( parameters );
 		} catch ( ParserSymbolTableException e ){
+		    /* nothing */
 		} finally {
 			getSymbolTable().getTypeInfoProvider().returnTypeInfo( param );
 		}
 		
 		if( constructor == null ){
-			constructor = getSymbolTable().newParameterizedSymbol( getName(), TypeInfo.t_constructor );
-			constructor.addParameter( this, TypeInfo.isConst, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ), false );
+			constructor = getSymbolTable().newParameterizedSymbol( getName(), ITypeInfo.t_constructor );
+			constructor.addParameter( this, ITypeInfo.isConst, new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_reference, false, false ), false );
 
 			addConstructor( constructor );	
 		}
@@ -274,13 +271,13 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			return false; 
 		}
 			
-		TypeInfo type = obj.getTypeInfo();
-		if( ( !type.isType( TypeInfo.t_function ) && !type.isType( TypeInfo.t_constructor) ) ||
-			type.checkBit( TypeInfo.isStatic ) ){
+		ITypeInfo type = obj.getTypeInfo();
+		if( ( !type.isType( ITypeInfo.t_function ) && !type.isType( ITypeInfo.t_constructor) ) ||
+			type.checkBit( ITypeInfo.isStatic ) ){
 			return false;
 		}
 
-		if( obj.getContainingSymbol().isType( TypeInfo.t_class, TypeInfo.t_union ) ){
+		if( obj.getContainingSymbol().isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
 			//check to see if there is already a this object, since using declarations
 			//of function will have them from the original declaration
 			boolean foundThis = false;
@@ -296,13 +293,13 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			//if we didn't find "this" then foundItems will still be null, no need to actually
 			//check its contents 
 			if( !foundThis ){
-				ISymbol thisObj = getSymbolTable().newSymbol( ParserSymbolTable.THIS, TypeInfo.t_type );
+				ISymbol thisObj = getSymbolTable().newSymbol( ParserSymbolTable.THIS, ITypeInfo.t_type );
 				thisObj.setTypeSymbol( obj.getContainingSymbol() );
 				//thisObj.setCVQualifier( obj.getCVQualifier() );
-				TypeInfo.PtrOp ptr = new TypeInfo.PtrOp();
-				ptr.setType( TypeInfo.PtrOp.t_pointer );
-				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( TypeInfo.isConst ), TypeInfo.isConst );
-				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( TypeInfo.isVolatile ), TypeInfo.isVolatile );
+				ITypeInfo.PtrOp ptr = new ITypeInfo.PtrOp();
+				ptr.setType( ITypeInfo.PtrOp.t_pointer );
+				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( ITypeInfo.isConst ), ITypeInfo.isConst );
+				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( ITypeInfo.isVolatile ), ITypeInfo.isVolatile );
 				
 				thisObj.addPtrOperator(ptr);
 				
@@ -336,11 +333,11 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			//its not, it goes in the innermost enclosing namespace
 			IContainerSymbol enclosing = getContainingSymbol();
 			
-			boolean local = enclosing.isType( TypeInfo.t_constructor ) ||
-							enclosing.isType( TypeInfo.t_function )    ||
-							enclosing.isType( TypeInfo.t_block );
+			boolean local = enclosing.isType( ITypeInfo.t_constructor ) ||
+							enclosing.isType( ITypeInfo.t_function )    ||
+							enclosing.isType( ITypeInfo.t_block );
 			
-			while( enclosing != null && !enclosing.isType( TypeInfo.t_namespace ) ){
+			while( enclosing != null && !enclosing.isType( ITypeInfo.t_namespace ) ){
 				enclosing = enclosing.getContainingSymbol();
 			}
 			
@@ -349,6 +346,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			try {
 				enclosing.addSymbol( friend );
 			} catch (ParserSymbolTableException e) {
+			    /* nothing */
 			}
 		}
 		
@@ -369,8 +367,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 */
 	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException{
 		IContainerSymbol enclosing = getContainingSymbol();
-		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
-			while( enclosing != null && ( enclosing.getType() != TypeInfo.t_namespace) )
+		if( enclosing != null && enclosing.isType( ITypeInfo.t_namespace, ITypeInfo.t_union ) ){
+			while( enclosing != null && ( enclosing.getType() != ITypeInfo.t_namespace) )
 			{                                        		
 				enclosing = enclosing.getContainingSymbol();
 			}
@@ -391,8 +389,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 
 		
 		IContainerSymbol enclosing = getContainingSymbol();
-		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
-			while( enclosing != null && ( enclosing.getType() != TypeInfo.t_namespace) )
+		if( enclosing != null && enclosing.isType( ITypeInfo.t_namespace, ITypeInfo.t_union ) ){
+			while( enclosing != null && ( enclosing.getType() != ITypeInfo.t_namespace) )
 			{                                        		
 				enclosing = enclosing.getContainingSymbol();
 			}

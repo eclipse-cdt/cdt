@@ -35,8 +35,9 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.GCCASTCompleteExten
 import org.eclipse.cdt.internal.core.parser.ast.expression.GCCASTExpressionExtension;
 import org.eclipse.cdt.internal.core.parser.ast.gcc.ASTGCCDesignator;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
 
 /**
  * @author jcamelon
@@ -68,35 +69,34 @@ public abstract class GCCASTExtension implements IASTFactoryExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#getExpressionResultType(org.eclipse.cdt.internal.core.parser.pst.TypeInfo, org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTTypeId, org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
-	public TypeInfo getExpressionResultType(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTTypeId typeId) {
-		TypeInfo info = null;
+	public ITypeInfo getExpressionResultType(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTTypeId typeId) {
+		ITypeInfo info = null;
 		if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID ||
 			kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
 		{
-			info = new TypeInfo();
-			info.setType(TypeInfo.t_int);
-			info.setBit(true, TypeInfo.isUnsigned);
+			info = TypeInfoProvider.newTypeInfo( ITypeInfo.t_int );
+			info.setBit(true, ITypeInfo.isUnsigned);
 		}
 		else if( kind == IASTGCCExpression.Kind.RELATIONAL_MAX || 
 			kind == IASTGCCExpression.Kind.RELATIONAL_MIN )
 		{
 			if( lhs instanceof ASTExpression )
-				info = new TypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
+				info = TypeInfoProvider.newTypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
 		}
 		else if( kind == IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID )
 		{
 			if( typeId instanceof ASTTypeId )
-				info = new TypeInfo( ((ASTTypeId)typeId).getTypeSymbol().getTypeInfo() );
+				info = TypeInfoProvider.newTypeInfo( ((ASTTypeId)typeId).getTypeSymbol().getTypeInfo() );
 		}
 		else if ( kind == IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION )
 		{
 			if( lhs instanceof ASTExpression )
-				info = new TypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
+				info = TypeInfoProvider.newTypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
 		}
 		
 		if( info != null )
 			return info;
-		return new TypeInfo();
+		return TypeInfoProvider.newTypeInfo();
 	}
 	
 	/* (non-Javadoc)

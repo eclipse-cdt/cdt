@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
 
 /**
  * @author jcamelon
@@ -177,13 +177,13 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	
 	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
 		ExpressionResult result = getResultType();
-		TypeInfo type = (result != null ) ? result.getResult() : null;
+		ITypeInfo type = (result != null ) ? result.getResult() : null;
 		IContainerSymbol containerSymbol = null;
 		
 		if( type != null && type.getTypeSymbol() != null ){
 			TypeInfoProvider provider = type.getTypeSymbol().getSymbolTable().getTypeInfoProvider();
 			type = type.getFinalType( provider );
-			if( type.isType( TypeInfo.t_type ) && 
+			if( type.isType( ITypeInfo.t_type ) && 
 				type.getTypeSymbol() != null   && type.getTypeSymbol() instanceof IContainerSymbol )
 			{
 				containerSymbol = (IContainerSymbol) type.getTypeSymbol();
@@ -196,15 +196,15 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	
 	public boolean shouldFilterLookupResult( ISymbol symbol ){
 		ExpressionResult result = getResultType();
-		TypeInfo type = ( result != null ) ? result.getResult() : null;
+		ITypeInfo type = ( result != null ) ? result.getResult() : null;
 		if( type != null ){
 			boolean answer = false;
 			TypeInfoProvider provider = symbol.getSymbolTable().getTypeInfoProvider(); 
 			type = type.getFinalType( provider );
-			if( type.checkBit( TypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( TypeInfo.isConst ) )	
+			if( type.checkBit( ITypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( ITypeInfo.isConst ) )	
 				answer = true;
 			
-			if( type.checkBit( TypeInfo.isVolatile ) && !symbol.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
+			if( type.checkBit( ITypeInfo.isVolatile ) && !symbol.getTypeInfo().checkBit( ITypeInfo.isVolatile ) )
 				answer = true;
 			
 			provider.returnTypeInfo( type );

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
 /**
  * @author jcamelon
@@ -64,35 +64,35 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      */
     public boolean isAuto()
     {
-        return symbol.getTypeInfo().checkBit( TypeInfo.isAuto );
+        return symbol.getTypeInfo().checkBit( ITypeInfo.isAuto );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isRegister()
      */
     public boolean isRegister()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isRegister);
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isRegister);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isStatic()
      */
     public boolean isStatic()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isStatic);    	
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isStatic);    	
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isExtern()
      */
     public boolean isExtern()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isExtern );
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isExtern );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isMutable()
      */
     public boolean isMutable()
     {
-		return symbol.getTypeInfo().checkBit( TypeInfo.isMutable);
+		return symbol.getTypeInfo().checkBit( ITypeInfo.isMutable);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#getAbstractDeclaration()

@@ -84,6 +84,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -709,6 +710,9 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 					return celement.getPath().toString() + " - [" + celement.getElementName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return celement.getElementName();
+			} else if (o instanceof IWorkbenchAdapter) {
+				IWorkbenchAdapter wAdapter = (IWorkbenchAdapter)o;
+				return wAdapter.getLabel(o);
 			} else {
 				return "ItemSelected"; //$NON-NLS-1$
 			}

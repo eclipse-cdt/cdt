@@ -23,5 +23,12 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 
 	// A declaration in C++ can be a friend declaration
 	public boolean isFriend();
+	public void setFriend( boolean value );
+	
+	public boolean isVirtual();
+	public void setVirtual( boolean value );
+	
+	public boolean isExplicit();
+	public void setExplicit( boolean value );
 	
 }

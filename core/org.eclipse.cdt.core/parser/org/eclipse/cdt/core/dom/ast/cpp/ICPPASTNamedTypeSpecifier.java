@@ -8,22 +8,16 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom.ast;
+package org.eclipse.cdt.core.dom.ast.cpp;
+
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 
 /**
- * Represents the use of a typedef name in an decl specifier.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface IASTTypedefNameSpecifier extends IASTDeclSpecifier {
+public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier, ICPPASTDeclSpecifier {
+    
+    public boolean isTypename();
+    public void setIsTypename( boolean value );
 
-	public static final ASTNodeProperty NAME = new ASTNodeProperty( "Name"); //$NON-NLS-1$
-
-    /**
-	 * @return the typedef name.
-	 */
-	public IASTName getName();
-	
-	public void setName( IASTName name );
-	
 }

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
@@ -65,6 +66,7 @@ import org.eclipse.cdt.internal.core.parser2.c.CASTContinueStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTDefaultStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTDoStatement;
+import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerationSpecifier;
 import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTForStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTGotoStatement;
@@ -1058,14 +1060,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * enumerator-definition enumerator-list , enumerator-definition
      * enumerator-definition: enumerator enumerator = constant-expression
      * enumerator: identifier
-     * 
      * @param owner
      *            IParserCallback object that represents the declaration that
      *            owns this type specifier.
+     * 
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IASTEnumerationSpecifier enumSpecifier(DeclarationWrapper sdw)
+    protected ICASTEnumerationSpecifier enumSpecifier()
             throws BacktrackException, EndOfFileException {
         IToken mark = mark();
         IASTName name = null;
@@ -1077,7 +1079,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             name = createName();
         if (LT(1) == IToken.tLBRACE) {
             
-            IASTEnumerationSpecifier result = createEnumerationSpecifier();
+            ICASTEnumerationSpecifier result = (ICASTEnumerationSpecifier) createEnumerationSpecifier();
             ((ASTNode)result).setOffset( startOffset );
             result.setName( name );
             name.setParent( result );
@@ -1157,11 +1159,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @return
      */
     protected abstract IASTEnumerator createEnumerator();        
-
-    /**
-     * @return
-     */
-    protected abstract IASTEnumerationSpecifier createEnumerationSpecifier();
 
     /**
      * @param token
@@ -1590,6 +1587,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTASMDeclaration createASMDirective() {
         return new CASTASMDeclaration();
+    }
+
+    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
+        return new CASTEnumerationSpecifier();
     }
 
 }

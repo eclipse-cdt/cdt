@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
@@ -47,7 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
@@ -1310,7 +1309,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
             case IToken.t_enum:
                 try {
-                    enumSpec = (ICASTEnumerationSpecifier) enumSpecifier(null);
+                    enumSpec = enumSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
@@ -1376,7 +1375,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTName name = createName( identifier );
             declSpec.setName( name );
             name.setParent( declSpec );
-            name.setPropertyInParent( IASTTypedefNameSpecifier.NAME );
+            name.setPropertyInParent( IASTNamedTypeSpecifier.NAME );
             return declSpec;
         }
         ICASTSimpleDeclSpecifier declSpec = createSimpleTypeSpecifier();
@@ -1980,13 +1979,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTEnumerator createEnumerator() {
         return new CASTEnumerator();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerationSpecifier()
-     */
-    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
-        return new CASTEnumerationSpecifier();
     }
 
 }

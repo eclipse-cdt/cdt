@@ -27,6 +27,7 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier {
 	public int getKey();
 	public static final int k_struct = 1;
 	public static final int k_union = 2;
+	public static final int k_last = k_union;
     
 	
 	public void setKey( int key );

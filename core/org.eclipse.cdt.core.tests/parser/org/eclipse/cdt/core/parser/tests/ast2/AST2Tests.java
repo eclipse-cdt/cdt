@@ -40,7 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -261,7 +261,7 @@ public class AST2Tests extends TestCase {
 		// the declaration for myS
 		IASTSimpleDeclaration decl_myS = (IASTSimpleDeclaration)declstmt_myS.getDeclaration();
 		// the type specifier for myS
-		IASTTypedefNameSpecifier type_spec_myS = (IASTTypedefNameSpecifier)decl_myS.getDeclSpecifier();
+		IASTNamedTypeSpecifier type_spec_myS = (IASTNamedTypeSpecifier)decl_myS.getDeclSpecifier();
 		// the type name for myS
 		IASTName name_type_myS = type_spec_myS.getName();
 		// the declarator for myS

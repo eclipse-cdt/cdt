@@ -14,23 +14,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -43,7 +49,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -69,7 +78,6 @@ import org.eclipse.cdt.internal.core.parser2.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTConditionalExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerationSpecifier;
 import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerator;
 import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.parser2.c.CASTName;
@@ -2138,7 +2146,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICPPASTUsingDeclaration createUsingDeclaration() {
+    protected ICPPASTUsingDeclaration createUsingDeclaration() {
         return new CPPASTUsingDeclaration();
     }
 
@@ -2209,7 +2217,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICPPASTLinkageSpecification createLinkageSpecification() {
+    protected ICPPASTLinkageSpecification createLinkageSpecification() {
         return new CPPASTLinkageSpecification();
     }
 
@@ -2723,6 +2731,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTName createName(ITokenDuple duple) {
+        if( duple == null ) return createName();
         if( duple.getSegmentCount() != 1 ) return createQualifiedName( duple );
         CASTName name = new CASTName( duple.toCharArray() );
         name.setOffset( duple.getStartOffset());
@@ -3097,16 +3106,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected ICPPASTDeclSpecifier declSpecifierSeq(boolean parm, boolean tryConstructor) throws BacktrackException,
             EndOfFileException {
+        IToken firstToken = LA(1);
         Flags flags = new Flags(parm, tryConstructor);
         
-        boolean isInline, isVirtual, isExplicit, isFriend;
-        boolean isConst, isVolatile, isRestrict;
-        boolean isLong, isShort, isUnsigned, isSigned;
-        boolean isTypename;
+        boolean isInline= false, isVirtual= false, isExplicit= false, isFriend= false;
+        boolean isConst = false, isVolatile= false, isRestrict= false;
+        boolean isLong= false, isShort= false, isUnsigned= false, isSigned= false;
+        boolean isTypename= false;
         
         int storageClass = IASTDeclSpecifier.sc_unspecified;
         int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
         ITokenDuple duple = null;
+        
+        ICPPASTCompositeTypeSpecifier classSpec = null;
+        ICPPASTElaboratedTypeSpecifier elabSpec = null;
+        IASTEnumerationSpecifier enumSpec = null;
         declSpecifiers: for (;;) {
             switch (LT(1)) {
             case IToken.t_inline:
@@ -3262,28 +3276,27 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_struct:
             case IToken.t_union:
                 try {
-                    classSpecifier(null);
+                    classSpec = classSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
-                    elaboratedTypeSpecifier(null);
+                    elabSpec = elaboratedTypeSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 }
             case IToken.t_enum:
                 try {
-                    enumSpecifier(null);
+                    enumSpec = enumSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
                     // this is an elaborated class specifier
-                    elaboratedTypeSpecifier(null);
+                    elabSpec = elaboratedTypeSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 }
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
-                    IToken start = LA(1);
                     Object expression = unaryTypeofExpression();
                     if (expression != null) {
                         flags.setEncounteredTypename(true);
@@ -3292,35 +3305,129 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 break declSpecifiers;
             }
         }
-        return null;
+        
+        if( elabSpec != null )
+        {
+            elabSpec.setConst( isConst );
+            elabSpec.setVolatile( isVolatile );
+            if( elabSpec instanceof IGPPASTDeclSpecifier )
+                ((IGPPASTDeclSpecifier)elabSpec).setRestrict( isRestrict );
+            elabSpec.setFriend( isFriend );
+            elabSpec.setInline( isInline );
+            elabSpec.setStorageClass( storageClass );
+            elabSpec.setVirtual( isVirtual );
+            elabSpec.setExplicit( isExplicit );
+            return elabSpec;
+        }
+        if( enumSpec != null )
+        {
+            enumSpec.setConst( isConst );
+            enumSpec.setVolatile( isVolatile );
+            if( enumSpec instanceof IGPPASTDeclSpecifier )
+                ((IGPPASTDeclSpecifier)enumSpec).setRestrict( isRestrict );
+            ((ICPPASTDeclSpecifier)enumSpec).setFriend( isFriend );
+            ((ICPPASTDeclSpecifier)enumSpec).setVirtual( isVirtual );
+            ((ICPPASTDeclSpecifier)enumSpec).setExplicit( isExplicit );
+            enumSpec.setInline( isInline );
+            enumSpec.setStorageClass( storageClass );
+            return elabSpec;            
+        }
+        if( classSpec != null )
+        {
+            classSpec.setConst( isConst );
+            classSpec.setVolatile( isVolatile );
+            if( classSpec instanceof IGPPASTDeclSpecifier )
+                ((IGPPASTDeclSpecifier)classSpec).setRestrict( isRestrict );
+            classSpec.setFriend( isFriend );
+            classSpec.setInline( isInline );
+            classSpec.setStorageClass( storageClass );
+            classSpec.setVirtual( isVirtual );
+            classSpec.setExplicit( isExplicit );
+            return classSpec;            
+        }
+        if( duple != null )
+        {
+            ICPPASTNamedTypeSpecifier nameSpec = createNamedTypeSpecifier();
+            nameSpec.setIsTypename( isTypename );
+            IASTName name = createName( duple );
+            nameSpec.setName( name );
+            name.setParent( nameSpec );
+            name.setPropertyInParent( IASTNamedTypeSpecifier.NAME );
+            
+            nameSpec.setConst( isConst );
+            nameSpec.setVolatile( isVolatile );
+            if( nameSpec instanceof IGPPASTDeclSpecifier )
+                ((IGPPASTDeclSpecifier)nameSpec).setRestrict( isRestrict );
+            nameSpec.setFriend( isFriend );
+            nameSpec.setInline( isInline );
+            nameSpec.setStorageClass( storageClass );
+            nameSpec.setVirtual( isVirtual );
+            nameSpec.setExplicit( isExplicit );
+            return nameSpec;
+        }
+        ICPPASTSimpleDeclSpecifier simpleDeclSpec = createSimpleDeclSpecifier();
+        ((CPPASTNode)simpleDeclSpec).setOffset( firstToken.getOffset() ); 
+        simpleDeclSpec.setConst( isConst );
+        simpleDeclSpec.setVolatile( isVolatile );
+        if( simpleDeclSpec instanceof IGPPASTDeclSpecifier )
+            ((IGPPASTDeclSpecifier)simpleDeclSpec).setRestrict( isRestrict );
+        
+        simpleDeclSpec.setFriend( isFriend );
+        simpleDeclSpec.setInline( isInline );
+        simpleDeclSpec.setStorageClass( storageClass );
+        simpleDeclSpec.setVirtual( isVirtual );
+        simpleDeclSpec.setExplicit( isExplicit );
+        
+        simpleDeclSpec.setType( simpleType );
+        simpleDeclSpec.setLong( isLong );
+        simpleDeclSpec.setShort( isShort );
+        simpleDeclSpec.setUnsigned( isUnsigned );
+        simpleDeclSpec.setSigned( isSigned );
+        
+        return simpleDeclSpec;
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTSimpleDeclSpecifier createSimpleDeclSpecifier() {
+        return new CPPASTSimpleDeclSpecifier();
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTNamedTypeSpecifier createNamedTypeSpecifier() {
+        return new CPPASTNamedTypeSpecifier();
     }
 
     /**
      * Parse an elaborated type specifier.
-     * 
      * @param decl
      *            Declaration which owns the elaborated type
+     * @return TODO
+     * 
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void elaboratedTypeSpecifier(DeclarationWrapper sdw)
+    protected ICPPASTElaboratedTypeSpecifier elaboratedTypeSpecifier()
             throws BacktrackException, EndOfFileException {
         // this is an elaborated class specifier
         IToken t = consume();
-        Object eck = null;
+        int eck = 0;
 
         switch (t.getType()) {
         case IToken.t_class:
-            eck = null; //ASTClassKind.CLASS;
+            eck = ICPPASTElaboratedTypeSpecifier.k_class; 
             break;
         case IToken.t_struct:
-            eck = null; //ASTClassKind.STRUCT;
+            eck = IASTElaboratedTypeSpecifier.k_struct;
             break;
         case IToken.t_union:
-            eck = null; //ASTClassKind.UNION;
+            eck = IASTElaboratedTypeSpecifier.k_union;
             break;
         case IToken.t_enum:
-            eck = null; //ASTClassKind.ENUM;
+            eck = IASTElaboratedTypeSpecifier.k_enum;
             break;
         default:
             backup(t);
@@ -3328,34 +3435,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     t.getFilename());
         }
 
-        ITokenDuple d = name();
-        Object elaboratedTypeSpec = null;
-        final boolean isForewardDecl = (LT(1) == IToken.tSEMI);
+        IASTName name = createName( name() );
+        
+        ICPPASTElaboratedTypeSpecifier elaboratedTypeSpec = createElaboratedTypeSpecifier();
+        ((CPPASTNode)elaboratedTypeSpec).setOffset( t.getOffset() );
+        elaboratedTypeSpec.setKind( eck );
+        elaboratedTypeSpec.setName( name );
+        return elaboratedTypeSpec;
+    }
 
-        try {
-            elaboratedTypeSpec = null; /*
-                                        * astFactory.createElaboratedTypeSpecifier(sdw
-                                        * .getScope(), eck, d, t.getOffset(),
-                                        * t.getLineNumber(), d
-                                        * .getLastToken().getEndOffset(),
-                                        * d.getLastToken() .getLineNumber(),
-                                        * isForewardDecl, sdw.isFriend()); }
-                                        * catch (ASTSemanticException e) {
-                                        * throwBacktrack(e.getProblem());
-                                        */
-        } catch (Exception e) {
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            logException(
-                    "elaboratedTypeSpecifier:createElaboratedTypeSpecifier", e); //$NON-NLS-1$
-            throwBacktrack(t.getOffset(), endOffset, t.getLineNumber(), t
-                    .getFilename());
-        }
-        sdw.setTypeSpecifier(elaboratedTypeSpec);
-
-        if (isForewardDecl) {
-            //			((IASTElaboratedTypeSpecifier) elaboratedTypeSpec).acceptElement(
-            //					requestor);
-        }
+    /**
+     * @return
+     */
+    protected ICPPASTElaboratedTypeSpecifier createElaboratedTypeSpecifier() {
+        return new CPPASTElaboratedTypeSpecifier();
     }
 
     /**
@@ -3776,18 +3869,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * 
      * classSpecifier : classKey name (baseClause)? "{" (memberSpecification)*
      * "}"
-     * 
      * @param owner
      *            IParserCallback object that represents the declaration that
      *            owns this classSpecifier
+     * 
+     * @return TODO
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void classSpecifier(DeclarationWrapper sdw)
+    protected ICPPASTCompositeTypeSpecifier classSpecifier()
             throws BacktrackException, EndOfFileException {
-        Object nameType = null; //ClassNameType.IDENTIFIER;
-        Object classKind = null;
-        Object access = null; //ASTAccessVisibility.PUBLIC;
+        int classKind = 0;
         IToken classKey = null;
         IToken mark = mark();
 
@@ -3795,55 +3887,41 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         switch (LT(1)) {
         case IToken.t_class:
             classKey = consume();
-            classKind = null; //ASTClassKind.CLASS;
-            access = null; //ASTAccessVisibility.PRIVATE;
+            classKind = ICPPASTCompositeTypeSpecifier.k_class; 
             break;
         case IToken.t_struct:
             classKey = consume();
-            classKind = null; //ASTClassKind.STRUCT;
+            classKind = IASTCompositeTypeSpecifier.k_struct;
             break;
         case IToken.t_union:
             classKey = consume();
-            classKind = null; //ASTClassKind.UNION;
+            classKind = IASTCompositeTypeSpecifier.k_union;
             break;
         default:
             throwBacktrack(mark.getOffset(), mark.getEndOffset(), mark
                     .getLineNumber(), mark.getFilename());
         }
 
-        ITokenDuple duple = null;
+        IASTName name = null;
 
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
-            duple = name();
-        if (duple != null && !duple.isIdentifier())
-            nameType = null; //ClassNameType.TEMPLATE;
+            name = createName( name() );
+        else
+            name = createName();
+
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
             backup(mark);
             throwBacktrack(errorPoint.getOffset(), errorPoint.getEndOffset(),
                     errorPoint.getLineNumber(), errorPoint.getFilename());
         }
-        Object astClassSpecifier = null;
-
-        try {
-            astClassSpecifier = null; /*astFactory.createClassSpecifier(sdw.getScope(),
-             duple, classKind, nameType, access, classKey.getOffset(),
-             classKey.getLineNumber(), duple == null ? classKey
-             .getOffset() : duple.getFirstToken().getOffset(),
-             duple == null ? classKey.getEndOffset() : duple
-             .getFirstToken().getEndOffset(), duple == null
-             ? classKey.getLineNumber()
-             : duple.getFirstToken().getLineNumber(), classKey.getFilename());
-             } catch (ASTSemanticException e) {
-             throwBacktrack(e.getProblem()); */
-        } catch (Exception e) {
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            logException("classSpecifier:createClassSpecifier", e); //$NON-NLS-1$
-            throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
-                    mark.getFilename());
-        }
-        sdw.setTypeSpecifier(astClassSpecifier);
+        
+        ICPPASTCompositeTypeSpecifier astClassSpecifier = createClassSpecifier();
+        ((CPPASTNode)astClassSpecifier).setOffset( classKey.getOffset() );
+        astClassSpecifier.setKey( classKind );
+        astClassSpecifier.setName( name );
+        
         // base clause
         if (LT(1) == IToken.tCOLON) {
             baseSpecifier(astClassSpecifier);
@@ -3851,62 +3929,77 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IToken.tLBRACE) {
             consume(IToken.tLBRACE);
-            //			astClassSpecifier.enterScope(requestor);
 
-            try {
-                cleanupLastToken();
-                memberDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
-                    int checkToken = LA(1).hashCode();
-                    switch (LT(1)) {
-                    case IToken.t_public:
-                        consume();
-                        consume(IToken.tCOLON);
-//                            astClassSpecifier
-//                                    .setCurrentVisibility(ASTAccessVisibility.PUBLIC);
-                        break;
-                    case IToken.t_protected:
-                        consume();
-                        consume(IToken.tCOLON);
-//                            astClassSpecifier
-//                                    .setCurrentVisibility(ASTAccessVisibility.PROTECTED);
-                        break;
-
-                    case IToken.t_private:
-                        consume();
-                        consume(IToken.tCOLON);
-//                            astClassSpecifier
-//                                    .setCurrentVisibility(ASTAccessVisibility.PRIVATE);
-                        break;
-                    case IToken.tRBRACE:
-                        consume(IToken.tRBRACE);
-                        break memberDeclarationLoop;
-                    default:
-                        try {
-                            declaration();
-                        } catch (BacktrackException bt) {
-                            if (checkToken == LA(1).hashCode())
-                                failParseWithErrorHandling();
-                        }
+            cleanupLastToken();
+            memberDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
+                int checkToken = LA(1).hashCode();
+                switch (LT(1)) {
+                case IToken.t_public:
+                case IToken.t_protected:
+                case IToken.t_private:
+                    IToken key = consume();
+                    consume(IToken.tCOLON);
+                    ICPPASTVisiblityLabel label = createVisibilityLabel();
+                    ((CPPASTNode)label).setOffset( key.getOffset() );
+                    label.setVisibility( token2Visibility( key.getType() ));
+                    astClassSpecifier.addMemberDeclaration( label );
+                    label.setParent( astClassSpecifier );
+                    label.setPropertyInParent( ICPPASTCompositeTypeSpecifier.VISIBILITY_LABEL );
+                    break;
+                case IToken.tRBRACE:
+                    consume(IToken.tRBRACE);
+                    break memberDeclarationLoop;
+                default:
+                    try {
+                        IASTDeclaration d = declaration();
+                        astClassSpecifier.addMemberDeclaration( d );
+                        d.setParent( astClassSpecifier );
+                        d.setPropertyInParent( IASTCompositeTypeSpecifier.MEMBER_DECLARATION );
+                    } catch (BacktrackException bt) {
+                        if (checkToken == LA(1).hashCode())
+                            failParseWithErrorHandling();
                     }
-                    if (checkToken == LA(1).hashCode())
-                        failParseWithErrorHandling();
                 }
-                // consume the }
-                IToken lt = consume(IToken.tRBRACE);
-//                astClassSpecifier.setEndingOffsetAndLineNumber(lt
-//                            .getEndOffset(), lt.getLineNumber());
-                //				try {
-                //					astFactory.signalEndOfClassSpecifier(astClassSpecifier);
-                //				} catch (Exception e1) {
-                //					logException("classSpecifier:signalEndOfClassSpecifier", e1); //$NON-NLS-1$
-                //					throwBacktrack(lt.getOffset(), lt.getEndOffset(), lt.getLineNumber(), lt.getFilename());
-                //				}
-
-            } finally {
-                //				astClassSpecifier.exitScope(requestor);				
+                if (checkToken == LA(1).hashCode())
+                    failParseWithErrorHandling();
             }
+            // consume the }
+            consume(IToken.tRBRACE);
+
 
         }
+        return astClassSpecifier;
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTCompositeTypeSpecifier createClassSpecifier() {
+        return new CPPASTCompositeTypeSpecifier();
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTVisiblityLabel createVisibilityLabel() {
+        return new CPPASTVisibilityLabel();
+    }
+
+    /**
+     * @param type
+     * @return
+     */
+    protected int token2Visibility(int type) {
+        switch( type )
+        {
+        case IToken.t_public:
+            return ICPPASTVisiblityLabel.v_public;
+        case IToken.t_protected:
+            return ICPPASTVisiblityLabel.v_protected;
+        case IToken.t_private:
+            return ICPPASTVisiblityLabel.v_private;
+        }
+        return 0;
     }
 
     /**
@@ -3922,95 +4015,101 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param classSpecOwner
      * @throws BacktrackException
      */
-    protected void baseSpecifier(Object astClassSpec)
+    protected void baseSpecifier(ICPPASTCompositeTypeSpecifier astClassSpec)
             throws EndOfFileException, BacktrackException {
-        IToken la = LA(1);
-        char[] fn = la.getFilename();
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        la = null;
+        
         consume(IToken.tCOLON);
 
         boolean isVirtual = false;
-        Object visibility = null; //ASTAccessVisibility.PUBLIC;
-        ITokenDuple nameDuple = null;
-
-        ArrayList bases = null;
-
+        int visibility = 0; //ASTAccessVisibility.PUBLIC;
+        IASTName name = null;
+        IToken firstToken = null;
         baseSpecifierLoop: for (;;) {
             switch (LT(1)) {
             case IToken.t_virtual:
-                consume(IToken.t_virtual);
+                if( firstToken == null ) 
+                    firstToken = consume(IToken.t_virtual);
+                else
+                    consume(IToken.t_virtual);
                 isVirtual = true;
                 break;
             case IToken.t_public:
-                consume();
-                break;
+                visibility = ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.v_public;
+            	if( firstToken == null )
+            	    firstToken = consume();
+            	else
+            	    consume();
+            	break;
             case IToken.t_protected:
-                consume();
-                visibility = null; //ASTAccessVisibility.PROTECTED;
-                break;
+                visibility = ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.v_protected;
+	        	if( firstToken == null )
+	        	    firstToken = consume();
+	        	else
+	        	    consume();
+            	break;
             case IToken.t_private:
-                visibility = null; //ASTAccessVisibility.PRIVATE;
-                consume();
+                visibility = ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.v_private;
+	        	if( firstToken == null )
+	        	    firstToken = consume();
+	        	else
+	        	    consume();
                 break;
             case IToken.tCOLONCOLON:
             case IToken.tIDENTIFIER:
                 //to get templates right we need to use the class as the scope
-                nameDuple = name();
+                name = createName( name() );
                 break;
             case IToken.tCOMMA:
-                //because we are using the class as the scope to get the name, we need to postpone adding the base 
-                //specifiers until after we have all the nameDuples
-                if (bases == null) {
-                    bases = new ArrayList(4);
-                }
-                bases.add(new Object[] {
-                        isVirtual ? Boolean.TRUE : Boolean.FALSE, visibility,
-                        nameDuple });
+                if( name == null )
+                    name = createName();
+                ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier baseSpec = createBaseSpecifier();
+                if( firstToken != null )
+                    ((CPPASTNode)baseSpec).setOffset( firstToken.getOffset() );
+                baseSpec.setVirtual( isVirtual );
+                baseSpec.setVisibility( visibility );
+                baseSpec.setName( name );
+                name.setParent( baseSpec );
+                name.setPropertyInParent(ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME );
 
+                astClassSpec.addBaseSpecifier( baseSpec );
+                baseSpec.setParent( astClassSpec );
+                baseSpec.setPropertyInParent( ICPPASTCompositeTypeSpecifier.BASE_SPECIFIER );
+                
                 isVirtual = false;
-                visibility = null; //ASTAccessVisibility.PUBLIC;
-                nameDuple = null;
+                visibility = 0; 
+                name = null;
+                firstToken = null;
                 consume();
                 continue baseSpecifierLoop;
+            case IToken.tLBRACE: 
+                if( name == null )
+                    name = createName();
+                baseSpec = createBaseSpecifier();
+                if( firstToken != null )
+                    ((CPPASTNode)baseSpec).setOffset( firstToken.getOffset() );
+                baseSpec.setVirtual( isVirtual );
+                baseSpec.setVisibility( visibility );
+                baseSpec.setName( name );
+                name.setParent( baseSpec );
+                name.setPropertyInParent(ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME );
+
+                astClassSpec.addBaseSpecifier( baseSpec );
+                baseSpec.setParent( astClassSpec );
+                baseSpec.setPropertyInParent( ICPPASTCompositeTypeSpecifier.BASE_SPECIFIER );
+                //fall through
             default:
                 break baseSpecifierLoop;
             }
         }
-
-        try {
-            if (bases != null) {
-                int size = bases.size();
-                for (int i = 0; i < size; i++) {
-                    Object[] data = (Object[]) bases.get(i);
-                    //	            		try {
-                    //							astFactory.addBaseSpecifier( astClassSpec, 
-                    //									                     ((Boolean)data[0]).booleanValue(),
-                    //							                             (ASTAccessVisibility) data[1], 
-                    //														 (ITokenDuple)data[2] );
-                    //						} catch (ASTSemanticException e1) {
-                    //							failParse( e1.getProblem() );
-                    //						}
-                }
-            }
-
-            //	        	astFactory.addBaseSpecifier(
-            //	                astClassSpec,
-            //	                isVirtual,
-            //	                visibility,
-            //	                nameDuple );
-            //	        }
-            //	        catch (ASTSemanticException e)
-            //	        {
-            //				failParse( e.getProblem() );
-        } catch (Exception e) {
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            logException("baseSpecifier_2::addBaseSpecifier", e); //$NON-NLS-1$
-            throwBacktrack(startingOffset, endOffset, line, fn);
-        }
     }
 
+
+    /**
+     * @return
+     */
+    private ICPPASTBaseSpecifier createBaseSpecifier() {
+        return new CPPASTBaseSpecifier();
+    }
 
     protected void catchHandlerSequence()
             throws EndOfFileException, BacktrackException {
@@ -4252,18 +4351,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerationSpecifier()
-     */
-    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
-        return new CASTEnumerationSpecifier();
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#buildTypeIdExpression(int, org.eclipse.cdt.core.dom.ast.IASTTypeId, int)
      */
     protected IASTExpression buildTypeIdExpression(int op_sizeof, IASTTypeId typeId, int startingOffset) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerationSpecifier()
+     */
+    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
+        return new CPPASTEnumerationSpecifier();
     }
 
     

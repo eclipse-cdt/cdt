@@ -9,12 +9,12 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 
 /**
  * @author jcamelon
  */
-public interface ICASTTypedefNameSpecifier extends IASTTypedefNameSpecifier,
+public interface ICASTTypedefNameSpecifier extends IASTNamedTypeSpecifier,
         ICASTDeclSpecifier {
 
 }

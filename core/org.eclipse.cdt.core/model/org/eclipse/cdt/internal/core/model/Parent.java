@@ -82,7 +82,7 @@ public abstract class Parent extends CElement implements IParent {
 		return resource;
 	}
 
-	public IResource getCorrespondingResource() throws CModelException {
+	public IResource getResource() throws CModelException {
 		return null;
 	}
 

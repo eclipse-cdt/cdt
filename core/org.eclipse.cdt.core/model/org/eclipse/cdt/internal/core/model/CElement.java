@@ -81,7 +81,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	public boolean exists() {
 		try {
-			return getCorrespondingResource() != null;
+			return getResource() != null;
 		} catch (CModelException e) {
 			e.printStackTrace();
 		}
@@ -89,7 +89,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 	
 	public boolean isReadOnly () {
-		return true;
+		return getElementInfo().isReadOnly();
 	}
 
 	public boolean isStructureKnown() throws CModelException {
@@ -149,7 +149,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	public abstract IResource getUnderlyingResource() throws CModelException;
 
-	public abstract IResource getCorrespondingResource() throws CModelException;
+	public abstract IResource getResource() throws CModelException;
 
 	protected abstract CElementInfo createElementInfo();
 
@@ -184,8 +184,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		if (o instanceof CElement) {
 			CElement other = (CElement) o;
 			try {
-				IResource tres = getCorrespondingResource();
-				IResource ores = other.getCorrespondingResource();
+				IResource tres = getResource();
+				IResource ores = other.getResource();
 				if (ores != null && tres != null) {
 					return tres.equals(ores);
 				}

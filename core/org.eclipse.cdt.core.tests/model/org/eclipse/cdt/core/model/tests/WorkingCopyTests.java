@@ -18,7 +18,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -77,9 +76,8 @@ public class WorkingCopyTests extends TestCase {
 		if (!fCProject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
 			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
-
-		CCorePlugin.getDefault().setUseNewParser(true);		
 	}
+
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures= description.getNatureIds();

@@ -4,14 +4,16 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.TestCase;
-
 import java.io.FileInputStream;
 import java.util.Map;
 
-import org.eclipse.cdt.testplugin.CProjectHelper;
+import junit.framework.TestCase;
+
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -20,9 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 /**
  * @author bnicolle
@@ -78,8 +77,6 @@ public abstract class IntegratedCModelTest extends TestCase {
 		if (!fCProject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
 			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
-
-		CCorePlugin.getDefault().setUseNewParser(true);
 	}
 
 	protected void tearDown() {

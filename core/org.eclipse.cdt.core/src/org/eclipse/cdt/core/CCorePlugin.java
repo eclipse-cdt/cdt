@@ -68,8 +68,6 @@ public class CCorePlugin extends Plugin {
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
 
-	public final static String PREF_USE_NEW_PARSER = "useNewParser";
-
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 	
 	// Build Model Interface Discovery
@@ -244,9 +242,6 @@ public class CCorePlugin extends Plugin {
 		
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
-		
-		// Set the default for using the new parser
-		getPluginPreferences().setDefault(PREF_USE_NEW_PARSER, true);
 	}
     
     
@@ -770,16 +765,6 @@ public class CCorePlugin extends Plugin {
 			}
 		}
 		return provider;
-	}
-
-	// Preference to turn on/off the new parser
-	public void setUseNewParser(boolean useNewParser) {
-		getPluginPreferences().setValue(PREF_USE_NEW_PARSER, useNewParser);
-		savePluginPreferences();
-	}
-
-	public boolean useNewParser() {
-		return getPluginPreferences().getBoolean(PREF_USE_NEW_PARSER);
 	}
 
 	/**

@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -93,8 +92,8 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		addedElements = new Vector(10);
 		removedElements = new Vector(10);
 		changedElements = new Vector(20);
-		CCorePlugin.getDefault().setUseNewParser(true);
 	}
+
 	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures= description.getNatureIds();

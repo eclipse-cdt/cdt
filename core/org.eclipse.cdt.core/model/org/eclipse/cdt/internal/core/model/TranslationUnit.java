@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -22,7 +21,6 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
-import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -206,20 +204,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		return sourceManipulationInfo;
 	}
+
 	protected Map parse(InputStream in) {
 		try {
 			removeChildren();
-			if (CCorePlugin.getDefault().useNewParser()) {
-				// new parser
-				CModelBuilder modelBuilder = new CModelBuilder(this);
-				return (modelBuilder.parse());
 
-			} else {
-				// cdt 1.0 parser
-				ModelBuilder modelBuilder= new ModelBuilder(this);
-				CStructurizer.getCStructurizer().parse(modelBuilder, in);
-				return null;
-			}
+			CModelBuilder modelBuilder = new CModelBuilder(this);
+			return modelBuilder.parse();
 		} catch (Exception e) {
 			System.out.println(e);
 			return null;

@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -51,9 +50,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 
 		BooleanFieldEditor showCUChildrenEditor= new BooleanFieldEditor(PreferenceConstants.PREF_SHOW_CU_CHILDREN, CUIPlugin.getResourceString(SHOW_CU_CHILDREN_LABEL), parent);
 		addField(showCUChildrenEditor);
-
-		BooleanFieldEditor useNewParserEditor= new BooleanFieldEditor(CCorePlugin.PREF_USE_NEW_PARSER, CUIPlugin.getResourceString(USE_NEW_PARSER_LABEL), parent);
-		addField(useNewParserEditor);
 	}
 	
 
@@ -65,15 +61,10 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 	}
 	
-	public static boolean useNewParser() {
-		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(CCorePlugin.PREF_USE_NEW_PARSER);
-	}
-	
 	/**
 	 * @see IWorkbenchPreferencePage#init
 	 */
 	public void init(IWorkbench workbench) {
-		CUIPlugin.getDefault().getPreferenceStore().setValue(CCorePlugin.PREF_USE_NEW_PARSER, CCorePlugin.getDefault().useNewParser());
 	}
 	
 	/**
@@ -82,7 +73,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, true);
 		prefs.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
-		prefs.setDefault(CCorePlugin.PREF_USE_NEW_PARSER, CCorePlugin.getDefault().useNewParser());
 		prefs.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 	}
 	
@@ -93,7 +83,6 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		if (!super.performOk())
 			return false;
 		
-		CCorePlugin.getDefault().setUseNewParser(useNewParser());
 		return true;
 	}
 

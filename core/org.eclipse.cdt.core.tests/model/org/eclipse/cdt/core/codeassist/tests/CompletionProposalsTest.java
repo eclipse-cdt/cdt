@@ -78,9 +78,7 @@ public class CompletionProposalsTest  extends TestCase{
 			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
 
-		CCorePlugin.getDefault().setUseNewParser(true);
 		// use the new indexer
-		
 		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.setEnabled(fCProject.getProject(),true);
 		

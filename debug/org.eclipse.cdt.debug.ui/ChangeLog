@@ -1,3 +1,8 @@
+2004-12-21 Mikhail Khodjaiants
+	Fix for bug 73168: Use memory view provided by Eclipse platform in CDT.
+	Added rendering bindings and default renderings for CDT memory blocks.
+	* plugin.xml
+
 2004-12-03 Mikhail Khodjaiants
 	Fix for bug 62659: Unable to set default for register format via plugin_customization.ini.
 	* CDebugPreferencePage.java

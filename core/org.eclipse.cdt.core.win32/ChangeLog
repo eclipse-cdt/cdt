@@ -1,0 +1,6 @@
+2002-1-21  Alain Magloire
+
+	* library/Win32ProcessEx.c (waitFor): Get the exit value of the process
+	not starter.exe
+	* os/win32/x86/spawner.dll: Recompiled.
+	Patch from Alex Chapiro, for bug 25111.

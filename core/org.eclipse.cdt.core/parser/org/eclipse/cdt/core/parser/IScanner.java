@@ -36,5 +36,5 @@ public interface IScanner  {
 	public int  getCount();
 	public boolean isOnTopContext();
 	public CharArrayObjectMap getRealDefinitions();
-
+	public void cancel();
 }

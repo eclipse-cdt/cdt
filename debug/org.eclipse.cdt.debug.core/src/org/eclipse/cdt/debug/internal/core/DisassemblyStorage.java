@@ -146,5 +146,19 @@ public class DisassemblyStorage implements IDisassemblyStorage
 
 	private void initializeAddresses()
 	{
+		if ( fInstructions.length > 0 )
+		{
+			fStartAddress = fInstructions[0].getAdress();
+			fEndAddress = fInstructions[fInstructions.length - 1].getAdress();
+		}
+	}
+	
+	private String getInstructionString( ICDIInstruction instruction )
+	{
+		StringBuffer sb = new StringBuffer();
+		if ( instruction != null )
+		{
+		}
+		return sb.toString();
 	}
 }

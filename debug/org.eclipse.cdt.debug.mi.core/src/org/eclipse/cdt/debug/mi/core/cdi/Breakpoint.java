@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -68,6 +72,7 @@ public class Breakpoint extends SessionObject implements ICDILocationBreakpoint 
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setCondition(ICDICondition)
 	 */
 	public void setCondition(ICDICondition condition) throws CDIException {
+		mgr.setCondition(this, condition);
 		this.condition = condition;
 	}
 

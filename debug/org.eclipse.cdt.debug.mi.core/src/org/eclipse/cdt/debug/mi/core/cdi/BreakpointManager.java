@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDisable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakEnable;
@@ -160,6 +161,34 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		((Breakpoint) breakpoint).getMIBreakPoint().setEnabled(false);
 	}
 
+	public void setCondition(ICDIBreakpoint breakpoint, ICDICondition condition) throws CDIException {
+		int number = 0;
+		if (breakpoint instanceof Breakpoint
+			&& breakList.contains(breakpoint)) {
+			number = ((Breakpoint) breakpoint).getMIBreakPoint().getNumber();
+		} else {
+			throw new CDIException("Not a CDT breakpoint");
+		}
+
+		// We only suppor expression not ignore count reset.
+		String exprCond = condition.getExpression();
+		if (exprCond == null) {
+			throw new CDIException("ignore count not supported");
+		}
+		CSession s = getCSession();
+		CommandFactory factory = s.getMISession().getCommandFactory();
+		MIBreakCondition breakCondition =
+			factory.createMIBreakCondition(number, exprCond);
+		try {
+			s.getMISession().postCommand(breakCondition);
+			MIInfo info = breakCondition.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints()
 	 */

@@ -63,7 +63,13 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 			parseWinShared(str, aList);
 		}
 	}
-	
+
+	/**
+	 * We do the parsing backward because on some Un*x system, the To or the From
+	 * and even the "Sym Read" can be empty....
+	 * @param str
+	 * @param aList
+	 */	
 	void parseUnixShared(String str, List aList) {
 		if (str.length() > 0) {
 			// Pass the header
@@ -72,34 +78,39 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 				long from = 0;
 				long to = 0;
 				boolean syms = false;
+				String name = "";
 
-				for (int i = 0; i < 3 && (index = str.indexOf(' ')) != -1; i++) {
-					String sub = str.substring(0, index).trim();
-					// advance to next column
-					str = str.substring(index).trim();
-					switch (i) {
-						case 0: // first column is "From"
-							try {
-								from = Long.decode(sub).longValue();
-							} catch (NumberFormatException e) {
+				for (int i = 0; (index = str.lastIndexOf(' ')) != -1 || i <= 3; i++) {
+					if (index == -1) {
+						index = 0;
+					}
+					String sub = str.substring(index).trim();
+					// move to previous column
+					str = str.substring(0, index).trim();
+					switch(i) {
+						case 0:
+							name = sub;
+						break;
+						case 1:
+							if (sub.equalsIgnoreCase("Yes")) {
+								syms = true;
 							}
 						break;
-						case 1: // second column is "To"
+						case 2: // second column is "To"
 							try {
 								to = Long.decode(sub).longValue();
 							} catch (NumberFormatException e) {
 							}
 						break;
-						case 2: // third column is "Syms Read"
-							if (sub.equalsIgnoreCase("Yes")) {
-								syms = true;
+						case 3: // first column is "From"
+							try {
+								from = Long.decode(sub).longValue();
+							} catch (NumberFormatException e) {
 							}
 						break;
-						default: // last column is "Shared object library"
-							i = 3; // bail out. use the entire string
 					}
 				}
-				MIShared s = new MIShared(from, to, syms, str.trim());
+				MIShared s = new MIShared(from, to, syms, name);
 				aList.add(s);
 			}
 		}
@@ -113,7 +124,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 		int index = str.lastIndexOf(' ');
 		if (index > 0) {
 			String sub = str.substring(index).trim();
-			// Go figure they do not print the "0x" to indicate hexadicimal!!
+			// Go figure they do not print the "0x" to indicate hexadecimal!!
 			if (!sub.startsWith("0x")) {
 				sub = "0x" + sub;
 			}

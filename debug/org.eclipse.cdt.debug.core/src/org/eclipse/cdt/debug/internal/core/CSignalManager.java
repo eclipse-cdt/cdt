@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
@@ -14,6 +15,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSignal;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 
@@ -54,6 +57,7 @@ public class CSignalManager extends CUpdateManager implements ICSignalManager
 			}
 			catch( CDIException e )
 			{
+				throwDebugException( e.getMessage(), DebugException.TARGET_REQUEST_FAILED, e );
 			}
 		}
 		return ( fSignals != null ) ? fSignals : new ICSignal[0];
@@ -125,5 +129,18 @@ public class CSignalManager extends CUpdateManager implements ICSignalManager
 			return ((CDebugTarget)getDebugTarget()).getCDISession().getSignalManager();
 		}
 		return null;
+	}
+	
+	/**
+	 * Throws a debug exception with the given message, error code, and underlying
+	 * exception.
+	 */
+	protected void throwDebugException( String message, int code, Throwable exception ) throws DebugException 
+	{
+		throw new DebugException( new Status( IStatus.ERROR, 
+											  CDebugModel.getPluginIdentifier(),
+											  code, 
+											  message, 
+											  exception ) );
 	}
 }

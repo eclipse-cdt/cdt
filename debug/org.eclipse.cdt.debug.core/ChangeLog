@@ -1,4 +1,8 @@
 2003-04-23 Mikhail Khodjaiants
+	Throw DebugException when getSignals() fails.
+	* CSignalManager.java
+
+2003-04-23 Mikhail Khodjaiants
 	Additional checks for the situation when the stack depth is not 0 and 
 	the frame array is empty.
 	* CThread.java

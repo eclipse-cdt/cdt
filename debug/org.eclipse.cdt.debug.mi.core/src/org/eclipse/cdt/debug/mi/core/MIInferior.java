@@ -37,7 +37,7 @@ public class MIInferior extends Process {
 
 	OutputStream out;
 	InputStream in;
-	
+
 	PipedOutputStream inPiped;
 
 	PipedInputStream err;
@@ -45,7 +45,6 @@ public class MIInferior extends Process {
 	PTY pty;
 
 	int inferiorPid;
-
 
 	MIInferior(MISession mi, PTY p) {
 		session = mi;
@@ -111,11 +110,9 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#waitFor()
 	 */
-	public int waitFor() throws InterruptedException {
-		if (!isTerminated()) {
-			synchronized (this) {
-				wait();
-			}
+	public synchronized int waitFor() throws InterruptedException {
+		while (state != TERMINATED) {
+			wait();
 		}
 		return exitValue();
 	}
@@ -152,8 +149,7 @@ public class MIInferior extends Process {
 		// - For Program session:
 		//   if the inferior was not terminated.
 		// - For PostMortem(Core): noop
-		if ((session.isAttachSession() && isConnected()) ||
-			(session.isProgramSession() && !isTerminated())) {
+		if ((session.isAttachSession() && isConnected()) || (session.isProgramSession() && !isTerminated())) {
 
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
@@ -168,27 +164,31 @@ public class MIInferior extends Process {
 		}
 	}
 
-	public void interrupt() throws MIException {
+	public synchronized void interrupt() throws MIException {
 		Process gdb = session.getGDBProcess();
 		if (gdb instanceof Spawner) {
-			Spawner gdbSpawner = (Spawner)gdb;
+			Spawner gdbSpawner = (Spawner) gdb;
 			gdbSpawner.interrupt();
 			// Allow (5 secs) for the interrupt to propagate.
-			for (int i = 0; isRunning() && i < 5; i++) {
+			for (int i = 0;(state == RUNNING) && i < 5; i++) {
 				try {
-					java.lang.Thread.sleep(1000);
+					wait(1000);
 				} catch (InterruptedException e) {
 				}
 			}
-			if (isRunning() && inferiorPid > 0) {
+			if ((state == RUNNING) && inferiorPid > 0) {
 				// lets try something else.
 				gdbSpawner.raise(inferiorPid, gdbSpawner.INT);
-			}
-			for (int i = 0; isRunning() && i < 5; i++) {
-				try {
-					java.lang.Thread.sleep(1000);
-				} catch (InterruptedException e) {
+				for (int i = 0;(state == RUNNING) && i < 5; i++) {
+					try {
+						wait(1000);
+					} catch (InterruptedException e) {
+					}
 				}
+			}
+			// If we've failed throw an exception up.
+			if (state == RUNNING) {
+				throw new MIException("Failed to interrupt");
 			}
 		} else {
 			// Try the exec-interrupt; this will be for "gdb --async"
@@ -229,10 +229,12 @@ public class MIInferior extends Process {
 
 	public synchronized void setSuspended() {
 		state = SUSPENDED;
+		notifyAll();
 	}
 
 	public synchronized void setRunning() {
 		state = RUNNING;
+		notifyAll();
 	}
 
 	public synchronized void setTerminated() {

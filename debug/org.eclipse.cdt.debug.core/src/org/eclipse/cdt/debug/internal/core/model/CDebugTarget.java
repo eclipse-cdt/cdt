@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
+import org.eclipse.cdt.debug.core.IRunToLine;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -55,6 +56,7 @@ import org.eclipse.cdt.debug.internal.core.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -82,6 +84,7 @@ public class CDebugTarget extends CDebugElement
 						  implements IDebugTarget,
 						  			 ICDIEventListener,
 						  			 IRestart,
+						  			 IRunToLine,
 						  			 IFormattedMemoryRetrieval,
 						  			 IState,
 						  			 ILaunchListener,
@@ -1788,5 +1791,27 @@ public class CDebugTarget extends CDebugElement
 		{
 			targetRequestFailed( e.getMessage(), null );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRunToLine#canRunToLine(IResource, int)
+	 */
+	public boolean canRunToLine( IResource resource, int lineNumber )
+	{
+		// check if supports run to line
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IRunToLine#runToLine(IResource, int)
+	 */
+	public void runToLine( IResource resource, int lineNumber ) throws DebugException
+	{
+		if ( !canRunToLine( resource, lineNumber ) )
+		{
+			return;
+		}
+		setInternalTemporaryBreakpoint( getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber ) );
+		resume();
 	}
 }

@@ -20,23 +20,13 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.INullSelectionListener;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * 
@@ -44,92 +34,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since Sep 17, 2002
  */
-public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelegate, 
-													IEditorActionDelegate,
-													IPartListener,
-													ISelectionListener,
-													INullSelectionListener
+public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 {
-	private IAction fAction;
-	private IWorkbenchWindow fWorkbenchWindow;
-	private IWorkbenchPart fTargetPart;
-	private IEditorPart fTargetEditor;
-	private IDebugTarget fDebugTarget = null;
-
 	/**
 	 * Constructor for AddExpressionActionDelegate.
 	 */
 	public AddExpressionActionDelegate()
-	{
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose()
-	{
-		IWorkbenchWindow win = getWorkbenchWindow();
-		if ( win != null )
-		{
-			win.getPartService().removePartListener( this );
-			win.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init( IWorkbenchWindow window )
-	{
-		setWorkbenchWindow( window );
-		IWorkbenchPage page = window.getActivePage();
-		if ( page != null )
-		{
-			setTargetPart( page.getActivePart() );
-		}
-		window.getPartService().addPartListener( this );
-		window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-		initializeDebugTarget();
-		update();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated( IWorkbenchPart part )
-	{
-		setTargetPart( part );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop( IWorkbenchPart part )
-	{
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed( IWorkbenchPart part )
-	{
-		if ( part == getTargetPart() )
-		{
-			setTargetPart( null );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated( IWorkbenchPart part )
-	{
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened( IWorkbenchPart part )
 	{
 	}
 
@@ -145,35 +55,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 		createExpression( dlg.getExpression() );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
-		setAction( action );
-		update();
-	}
-
-	protected IAction getAction()
-	{
-		return fAction;
-	}
-
-	protected void setAction( IAction action )
-	{
-		fAction = action;
-	}
-
-	protected IWorkbenchWindow getWorkbenchWindow()
-	{
-		return fWorkbenchWindow;
-	}
-
-	protected void setWorkbenchWindow( IWorkbenchWindow workbenchWindow )
-	{
-		fWorkbenchWindow = workbenchWindow;
-	}
-	
 	protected String getSelectedText()
 	{
 		ISelection selection = getTargetSelection();
@@ -182,45 +63,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 			return ((ITextSelection)selection).getText().trim();
 		}
 		return "";
-	}
-
-	protected void update()
-	{
-		IAction action = getAction();
-		if ( action != null )
-		{
-			action.setEnabled( getDebugTarget() != null && getTargetPart() != null );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-	 */
-	public void setActiveEditor( IAction action, IEditorPart targetEditor )
-	{
-		setAction( action );
-		if ( getWorkbenchWindow() == null )
-		{
-			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
-			setWorkbenchWindow( window );
-			if ( window != null )
-			{
-				window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-			}
-		}
-		setTargetPart( targetEditor );
-		initializeDebugTarget();
-		update();
-	}
-
-	protected IWorkbenchPart getTargetPart()
-	{
-		return fTargetPart;
-	}
-
-	protected void setTargetPart( IWorkbenchPart part )
-	{
-		fTargetPart = part;
 	}
 
 	protected Shell getShell()
@@ -233,20 +75,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 		{
 			return CDebugUIPlugin.getActiveWorkbenchShell();
 		}
-	}
-
-	protected ISelection getTargetSelection()
-	{
-		IWorkbenchPart part = getTargetPart();
-		if ( part != null )
-		{
-			ISelectionProvider provider = part.getSite().getSelectionProvider();
-			if ( provider != null )
-			{
-				return provider.getSelection();
-			}
-		}
-		return null;
 	}
 	
 	private void createExpression( final String text )
@@ -273,6 +101,7 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 									}
 								} );
 	}
+
 	/**
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
@@ -296,16 +125,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 			setDebugTarget( target );
 			update();
 		}
-	}
-	
-	protected void setDebugTarget( IDebugTarget target )
-	{
-		fDebugTarget = target;
-	}
-	
-	protected IDebugTarget getDebugTarget()
-	{
-		return fDebugTarget;
 	}
 	
 	protected void initializeDebugTarget()

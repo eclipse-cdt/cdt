@@ -121,6 +121,23 @@
             </enablement>
          </action>
          <action
+               id="org.eclipse.cdt.debug.ui.internal.actions.RunToLineActionDelegate"
+               hoverIcon="icons/full/clcl16/runtoline_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               disabledIcon="icons/full/dlcl16/runtoline_co.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               label="%RunToLineAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
                label="%ManageBreakpointAction.label"
                icon="icons/full/obj16/brkpi_obj.gif"
                helpContextId="manage_breakpoint_action_context"
@@ -175,9 +192,15 @@
                icon="icons/full/clcl16/restart.gif"
                helpContextId="restart_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               menubarPath="threadGroup"
+               menubarPath="stepGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
       </viewerContribution>
       <viewerContribution
@@ -215,6 +238,21 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               menubarPath="additions"
+               label="%RunToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               helpContextId="run_to_line_action_context">
             <enablement>
                <pluginState
                      value="activated"

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -462,7 +463,7 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	private boolean isOnOutputEntry(IOutputEntry entry, IPath path) {
-		if (entry.getPath().isPrefixOf(path) && !Util.isExcluded(path, entry.fullExclusionPatternChars())) {
+		if (entry.getPath().isPrefixOf(path) && !CoreModelUtil.isExcluded(path, entry.fullExclusionPatternChars())) {
 			return true;
 		}
 		return false;

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceEntry;
@@ -118,7 +119,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 
 	private boolean isOnSourceEntry(IPath path) {
 		if (sourceEntry.getPath().isPrefixOf(path) 
-				&& !Util.isExcluded(path, sourceEntry.fullExclusionPatternChars())) {
+				&& !CoreModelUtil.isExcluded(path, sourceEntry.fullExclusionPatternChars())) {
 			return true;
 		}
 		return false;

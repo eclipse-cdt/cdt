@@ -1,3 +1,13 @@
+2004-03-26 David Inglis
+
+	Refactor to move exclusion matching methods out into public class.
+	
+	* model/org/eclipse/cdt/core/model/CoreModelUtil.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/SourceRoot.java
+	* model/org/eclipse/cdt/internal/core/model/Util.java
+
+
 2004-03-25 David Inglis
 	
 	Added util class for core model

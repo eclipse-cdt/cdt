@@ -39,11 +39,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
-import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
-import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
-import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
  * @author Doug Schaefer
@@ -1887,39 +1883,6 @@ abstract class BaseScanner implements IScanner {
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
-	protected IToken newToken( int signal ) {
-	    if( bufferData[bufferStackPos] instanceof MacroData )
-		{
-			int mostRelevant;
-			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
-				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
-					break;
-			MacroData data = (MacroData)bufferData[mostRelevant + 1];
-			return new SimpleExpansionToken( signal, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1)); 
-		}
-		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
-	}
-
-	protected IToken newToken( int signal, char [] buffer )
-	{
-		if( bufferData[bufferStackPos] instanceof MacroData )
-		{
-			int mostRelevant;
-			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
-				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
-					break;
-			MacroData data = (MacroData)bufferData[mostRelevant + 1];
-			return new ImagedExpansionToken( signal, buffer, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
-		}
-		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
-		if( buffer != null && buffer.length == 0 && signal != IToken.tSTRING && signal != IToken.tLSTRING )
-			bufferPos[bufferStackPos] += 1; //TODO - remove this hack at some point
-		
-		return i;
-	}
 	
 	protected IToken scanIdentifier() {
 		char[] buffer = bufferStack[bufferStackPos];
@@ -4431,4 +4394,8 @@ abstract class BaseScanner implements IScanner {
         buffer.append( getLineNumber( getCurrentOffset()));
         return buffer.toString();
     }
+    
+	protected abstract IToken newToken( int signal );
+	protected abstract IToken newToken( int signal, char [] buffer );
+
 }

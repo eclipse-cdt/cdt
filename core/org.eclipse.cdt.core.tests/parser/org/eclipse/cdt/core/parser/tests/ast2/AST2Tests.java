@@ -29,13 +29,16 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -57,7 +60,9 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
@@ -1128,6 +1133,38 @@ public class AST2Tests extends AST2BaseTest {
         assertTrue( h_r instanceof IBasicType );
         assertEquals( h_ps.length, 1 );
         assertTrue( h_ps[0] instanceof IBasicType );
+    }
+    
+    public void testDesignatedInitializers() throws ParserException
+    {
+        StringBuffer buffer = new StringBuffer( "typedef struct {\n" ); //$NON-NLS-1$
+   		buffer.append( " int x;\n" ); //$NON-NLS-1$
+   		buffer.append( " int y;\n" ); //$NON-NLS-1$
+   		buffer.append( "} Coord;\n" ); //$NON-NLS-1$
+   		buffer.append( "typedef struct {\n" ); //$NON-NLS-1$
+   		buffer.append( "Coord *pos;\n" ); //$NON-NLS-1$
+   		buffer.append( "int width;\n" ); //$NON-NLS-1$
+   		buffer.append( "} Point;\n" ); //$NON-NLS-1$
+   		buffer.append( "int main(int argc, char *argv[])\n" ); //$NON-NLS-1$
+   		buffer.append( "{\n" ); //$NON-NLS-1$
+   		buffer.append( "Coord xy = {.y = 10, .x = 11};\n" ); //$NON-NLS-1$
+   		buffer.append( "Point point = {.width = 100, .pos = &xy};\n" ); //$NON-NLS-1$
+   		buffer.append( "}\n" ); //$NON-NLS-1$
+   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+   		assertNotNull( tu );
+   		IASTDeclaration []declarations = tu.getDeclarations();
+   		IASTFunctionDefinition main = (IASTFunctionDefinition) declarations[2];
+   		IASTStatement [] statements = ((IASTCompoundStatement)main.getBody()).getStatements();
+   		IASTSimpleDeclaration xy = (IASTSimpleDeclaration) ((IASTDeclarationStatement)statements[0]).getDeclaration();
+   		IASTDeclarator declarator_xy  = xy.getDeclarators()[0];
+   		IASTInitializer [] initializers = ((IASTInitializerList) declarator_xy.getInitializer()).getInitializers();
+   		for( int i = 0; i < 2; ++i )
+   		{
+   		    ICASTDesignatedInitializer designatedInitializer = (ICASTDesignatedInitializer) initializers[i];
+   		    assertEquals( designatedInitializer.getDesignators().length, 1 );
+   		    ICASTFieldDesignator fieldDesignator = (ICASTFieldDesignator) designatedInitializer.getDesignators()[0];
+   		    assertNotNull( fieldDesignator.getName().toString() );
+   		}
     }
 }
 

@@ -15,9 +15,14 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
+import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
+import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
+import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
  * @author jcamelon
@@ -25,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
 public class DOMScanner extends BaseScanner {
 
     private final ICodeReaderFactory codeReaderFactory;
+    private int overallOffset = 0;
 
 
     /**
@@ -85,5 +91,39 @@ public class DOMScanner extends BaseScanner {
         return codeReaderFactory.createCodeReaderForInclusion(finalPath);
     }
     
+
+	/**
+	 * @return
+	 */
+	protected IToken newToken( int signal ) {
+	    if( bufferData[bufferStackPos] instanceof MacroData )
+		{
+			int mostRelevant;
+			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
+				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
+					break;
+			MacroData data = (MacroData)bufferData[mostRelevant + 1];
+			return new SimpleExpansionToken( signal, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1)); 
+		}
+		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
+	}
+
+	protected IToken newToken( int signal, char [] buffer )
+	{
+		if( bufferData[bufferStackPos] instanceof MacroData )
+		{
+			int mostRelevant;
+			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
+				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
+					break;
+			MacroData data = (MacroData)bufferData[mostRelevant + 1];
+			return new ImagedExpansionToken( signal, buffer, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
+		}
+		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+		if( buffer != null && buffer.length == 0 && signal != IToken.tSTRING && signal != IToken.tLSTRING )
+			bufferPos[bufferStackPos] += 1; //TODO - remove this hack at some point
+		
+		return i;
+	}
 
 }

@@ -70,6 +70,8 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
@@ -145,7 +147,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         char[] fn = la.getFilename();
         la = null;
         if (LT(1) == IToken.tLBRACE) {
-            consume(IToken.tLBRACE).getOffset();
+            consume(IToken.tLBRACE);
             IASTInitializerList result = createInitializerList();
             ((ASTNode)result).setOffset( startingOffset );
             for (;;) {
@@ -156,10 +158,33 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (newDesignators.size() != 0)
                     if (LT(1) == IToken.tASSIGN)
                         consume(IToken.tASSIGN);
+                    
                 IASTInitializer initializer = cInitializerClause(newDesignators);
-                result.addInitializer(initializer);
-                initializer.setParent( result );
-                initializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
+                
+                if( newDesignators.isEmpty() )
+                {
+	                result.addInitializer(initializer);
+	                initializer.setParent( result );
+	                initializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
+                }
+                else
+                {
+                    ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
+                    ((CASTNode)desigInitializer).setOffset( ((CASTNode)newDesignators.get(0)).getOffset());
+                    for( int i = 0; i < newDesignators.size(); ++i )
+                    {
+                        ICASTDesignator d = (ICASTDesignator) newDesignators.get(i);
+                        d.setParent( desigInitializer );
+                        d.setPropertyInParent( ICASTDesignatedInitializer.DESIGNATOR );
+                        desigInitializer.addDesignator( d );
+                    }
+                    desigInitializer.setRHSInitializer(initializer);
+                    initializer.setParent( desigInitializer );
+                    initializer.setPropertyInParent( ICASTDesignatedInitializer.RHS_INITIALIZER );
+                    result.addInitializer( desigInitializer );
+                    desigInitializer.setParent( result );
+                    desigInitializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
+                }
                 // can end with just a '}'
                 if (LT(1) == IToken.tRBRACE)
                     break;
@@ -199,6 +224,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         throwBacktrack(startingOffset, endOffset, line, fn);
         return null;
+    }
+
+    /**
+     * @return
+     */
+    protected ICASTDesignatedInitializer createDesignatorInitializer() {
+        return new CASTDesignatedInitializer();
     }
 
     /**

@@ -273,7 +273,7 @@ public class ErrorParserManager extends OutputStream {
 			path = (IPath) getWorkingDirectory().append(filePath);
 		}
 		IFile file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
-		return (file.exists()) ? file : null;
+		return (file != null && file.exists()) ? file : null;
 	}
 
 	protected class Problem {

@@ -1,3 +1,13 @@
+2002-11-06 David Inglis
+	* index/org/eclipse/cdt/internal/core/index/CTagsRunner.java
+	fixed NPE when projects are deleted.
+	
+	* src/org/eclipse/cdt/core/ErrorParserManager.java
+	fixed NPE when file exits outside of workspace
+				
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+	fixed out of memory failure on bad elf files
+
 2002-11-06 Alain Magloire
 
 	Deal with some issues of PR 25756.

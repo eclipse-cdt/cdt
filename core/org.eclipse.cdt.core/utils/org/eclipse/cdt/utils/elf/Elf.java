@@ -166,7 +166,7 @@ public class Elf {
 			try {
 				if ( section_strtab == null ) {
 					int size = (int)sections[ehdr.e_shstrndx].sh_size;
-					if ( size > efile.length() )
+					if ( size <= 0 || size > efile.length() )
 						return EMPTY_STRING;
 					section_strtab = new byte[size];
 					efile.seek(sections[ehdr.e_shstrndx].sh_offset);

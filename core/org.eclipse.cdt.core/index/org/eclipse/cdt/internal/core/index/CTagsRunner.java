@@ -13,6 +13,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.core.index.ITagEntry;
 
@@ -52,9 +53,11 @@ public class CTagsRunner implements Runnable {
 							try {
 								CTagsCmd cmd = new CTagsCmd();
 								IFile file = (IFile)resource;
-								String location = file.getLocation().toOSString();
-								ITagEntry[] entries = cmd.getTagEntries(file, location);
-								filesMap.put(resource.getLocation(), entries);
+								IPath path = file.getLocation();
+								if (path != null) {
+									ITagEntry[] entries = cmd.getTagEntries(file, path.toOSString());
+									filesMap.put(resource.getLocation(), entries);
+								}
 							} catch (IOException e) {
 							}
 							//System.out.println("indexing " + resource.getName());

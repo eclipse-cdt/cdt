@@ -1,5 +1,12 @@
 2004-03-30 Alain Magloire
 
+	Fix PR 56734
+
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePage.java
+	* puglin.xml
+
+2004-03-30 Alain Magloire
+
 	Show the import/export menu even when no selection.
 	PR 56650
 	* src/org/eclipse/cdt/internal/cview/MainActiongroup.java

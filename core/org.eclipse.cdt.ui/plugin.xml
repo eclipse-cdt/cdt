@@ -70,7 +70,7 @@
             enabled="false"
             description="%HideObjectFiles.description"
             class="org.eclipse.cdt.internal.ui.filters.ObjectFilter"
-            id="org.eclipse.cdt.internal.ui.CView.ArchiveFilter">
+            id="org.eclipse.cdt.internal.ui.CView.ObjectFilter">
       </filter>
       <filter
             targetId="org.eclipse.cdt.ui.CView"

@@ -197,18 +197,26 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		Object source = event.getSource();
-		String property = event.getProperty();
-		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStream) {
-			BuildConsoleStream stream = (BuildConsoleStream) source;
-			if (stream.getConsole().equals(getConsole())) {
-				getViewer().getTextWidget().redraw();
+		final Object source = event.getSource();
+		final String property = event.getProperty();
+		Display display = getControl().getDisplay();
+		display.asyncExec(new Runnable() {
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStream) {
+					BuildConsoleStream stream = (BuildConsoleStream) source;
+					if (stream.getConsole().equals(getConsole())) {
+						getViewer().getTextWidget().redraw();
+					}
+				} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
+					setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
+				} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
+					setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
+				}
 			}
-		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
-			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
-		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
-			setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
-		}
+		});
 
 	}
 

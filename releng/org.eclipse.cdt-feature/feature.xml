@@ -13,17 +13,13 @@
       %description
    </description>
 
-   <license>
+   <license url="%licenseURL">
       %license
    </license>
 
    <url>
       <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
    </url>
-
-   <requires>
-      <import plugin="org.eclipse.platform" version="2.0.0" match="compatible"/>
-   </requires>
 
    <plugin
          id="org.eclipse.cdt.core"

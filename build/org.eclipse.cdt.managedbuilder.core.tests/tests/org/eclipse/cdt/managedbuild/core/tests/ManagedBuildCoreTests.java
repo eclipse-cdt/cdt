@@ -60,6 +60,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public class ManagedBuildCoreTests extends TestCase {
 	private static final boolean boolVal = true;
@@ -242,7 +243,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		ManagedBuildManager.saveBuildInfo(project, false);
 		
 		// Use the plugin mechanism to discover the supplier of the path information
-		IExtensionPoint extensionPoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ScannerInfoProvider");
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID + ".ScannerInfoProvider");
 		if (extensionPoint == null) {
 			fail("Failed to retrieve the extension point ScannerInfoProvider.");
 		}

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -649,7 +650,7 @@ public class BreakpointManager extends Manager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#createLocation(long)
 	 */
-	public ICDILocation createLocation(long address) {
+	public ICDILocation createLocation(IAddress address) {
 		return new Location(address);
 	}
 

@@ -10,8 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -62,7 +64,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 				String fileName = frame.getFile();
 				int lineNumber = frame.getLineNumber();
 				ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
-				long address = frame.getAddress();				
+				IAddress address = frame.getAddress();				
 				if ( fileName != null && fileName.length() > 0 ) {
 					try {
 						mixedInstrs = sm.getMixedInstructions( fileName, 
@@ -73,19 +75,17 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 						targetRequestFailed( e.getMessage(), e );
 					}
 				}
-				if ( mixedInstrs.length == 0 ||
 				// Double check if debugger returns correct address range.
+				if ( mixedInstrs.length == 0 ||
 						!containsAddress( mixedInstrs, address ) ) {
-					if ( address >= 0 ) {
 						try {
-							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE ) );
+							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( address, address.add(BigInteger.valueOf(DISASSEMBLY_BLOCK_SIZE)) ) );
 							return DisassemblyBlock.create( this, instructions );
 						}
 						catch( CDIException e ) {
 							targetRequestFailed( e.getMessage(), e );
 						}
 					}
-				}
 				else {
 					return DisassemblyBlock.create( this, mixedInstrs );
 				}
@@ -94,11 +94,11 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 		return null;
 	}
 
-	private boolean containsAddress( ICDIMixedInstruction[] mi, long address ) {
+	private boolean containsAddress( ICDIMixedInstruction[] mi, IAddress address ) {
 		for( int i = 0; i < mi.length; ++i ) {
 			ICDIInstruction[] instructions = mi[i].getInstructions();
 			for ( int j = 0; j < instructions.length; ++j )
-				if ( instructions[j].getAdress() == address )
+				if ( address.equals(instructions[j].getAdress()))
 					return true;
 		}
 		return false;

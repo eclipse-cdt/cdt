@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
 import java.util.Arrays;
+
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmSourceLine;
@@ -20,7 +22,6 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
-import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -67,7 +68,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	 * @param disassembly
 	 * @param instructions
 	 */
-	private DisassemblyEditorInput( IDisassemblyBlock block ) {
+	private DisassemblyEditorInput( IDisassemblyBlock block) {
 		fBlock = block;
 		createContents();
 	}
@@ -125,7 +126,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return fContents;
 	}
 
-	public int getInstructionLine( long address ) {
+	public int getInstructionLine( IAddress address ) {
 		if ( fBlock != null ) {
 			IAsmSourceLine[] lines = fBlock.getSourceLines();
 			int result = 0;
@@ -134,13 +135,13 @@ public class DisassemblyEditorInput implements IEditorInput {
 				++result;
 				for ( int j = 0; j < instructions.length; ++j ) {
 					++result;
-					if ( instructions[j].getAdress() == address ) {
+					if ( address.compareTo(instructions[j].getAdress()) ==  0) {
 						return result;
 					}
 				}
 			}
 		}
-		return 0;
+		return -1;
 	}
 
 	public int getInstructionLine( ICLineBreakpoint breakpoint ) {
@@ -150,8 +151,8 @@ public class DisassemblyEditorInput implements IEditorInput {
 				IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
 				if ( bt != null ) {
 					try {
-						long address = bt.getBreakpointAddress( breakpoint );
-						if ( address != 0 )
+						IAddress address = bt.getBreakpointAddress( breakpoint );
+						if ( ! address.isZero()  )
 							return getInstructionLine( address );
 					}
 					catch( DebugException e ) {
@@ -159,10 +160,10 @@ public class DisassemblyEditorInput implements IEditorInput {
 				}
 			}
 		}
-		return 0;
+		return -1;
 	}
 
-	public long getAddress( int lineNumber ) {
+	public IAddress getAddress( int lineNumber ) {
 		if ( fBlock != null ) {
 			IAsmSourceLine[] lines = fBlock.getSourceLines();
 			int current = 0;
@@ -176,7 +177,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 				current += instructions.length;
 			}
 		}
-		return 0;
+		return null;
 	}
 
 	public String getModuleFile() {
@@ -185,10 +186,11 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public static DisassemblyEditorInput create( ICStackFrame frame ) throws DebugException {
 		DisassemblyEditorInput input = null;
-		IDisassembly disassembly = ((ICDebugTarget)frame.getDebugTarget()).getDisassembly();
+		ICDebugTarget target = ((ICDebugTarget)frame.getDebugTarget());
+		IDisassembly disassembly = target.getDisassembly();
 		if ( disassembly != null ) {
 			IDisassemblyBlock block = disassembly.getDisassemblyBlock( frame );
-			input = new DisassemblyEditorInput( block );
+			input = new DisassemblyEditorInput( block);
 		}
 		return input;
 	}
@@ -216,7 +218,8 @@ public class DisassemblyEditorInput implements IEditorInput {
 					}
 				}
 			}
-			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );
+			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset,
+														 fBlock.getSourceLines()[0].getInstructions()[0].getAdress().getCharsNum());
 			int argPosition = instrPos + maxOpcodeLength + 1;
 			if ( fBlock.isMixedMode() )
 				fSourceRegions = new IRegion[mi.length]; 
@@ -241,7 +244,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 		Arrays.fill( spaces, ' ' );
 		StringBuffer sb = new StringBuffer();
 		if ( instruction != null ) {
-			sb.append( CDebugUIUtils.toHexAddressString( instruction.getAdress() ) );
+			sb.append( instruction.getAdress().toHexAddressString() );
 			sb.append( ' ' );
 			String functionName = instruction.getFunctionName();
 			if ( functionName != null && functionName.length() > 0 ) {
@@ -262,8 +265,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return sb.toString();
 	}
 
-	private int calculateInstructionPosition( int maxFunctionName, long maxOffset ) {
-		return (16 + maxFunctionName + Long.toString( maxOffset ).length());
+	private int calculateInstructionPosition( int maxFunctionName, long maxOffset, int addressLength ) {
+	    //(Address prefix address representation in chars) + (space) + (<) + (+) + (>) + (:) + (space)
+	    return ( addressLength + 6 + maxFunctionName + Long.toString( maxOffset ).length() );
 	}
 
 	private String getSourceLineString( IAsmSourceLine line ) {
@@ -282,8 +286,8 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return ( fBlock != null ) ? fBlock.getDisassembly() : null;
 	}
 
-	public ICLineBreakpoint breakpointExists( long address ) throws CoreException {
-		Assert.isTrue( address != 0 );
+	public ICLineBreakpoint breakpointExists( IAddress address ) throws CoreException {
+		Assert.isTrue( address != null );
 		IDisassembly dis = getDisassembly();
 		if ( dis != null ) {
 			IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
@@ -294,7 +298,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 					if ( bps[i] instanceof ICLineBreakpoint ) {
 						ICLineBreakpoint b = (ICLineBreakpoint)bps[i];
 						try {
-							if ( address == bt.getBreakpointAddress( b )  )
+							if ( address.compareTo(bt.getBreakpointAddress( b )) == 0)
 								return b;
 						}
 						catch( NumberFormatException e ) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.core.IAddress;
+
 
 /**
  * 
@@ -24,7 +26,7 @@ public interface ICDILocation {
 	 * 
 	 * @return the address of this location
 	 */
-	long getAddress();
+	IAddress getAddress();
 	
 	/**
 	 * Returns the source file of this location or <code>null</code>

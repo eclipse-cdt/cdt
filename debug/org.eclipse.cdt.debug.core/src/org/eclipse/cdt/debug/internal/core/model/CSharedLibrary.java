@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
@@ -52,21 +53,21 @@ public class CSharedLibrary extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSharedLibrary#getStartAddress()
 	 */
-	public long getStartAddress()
+	public IAddress getStartAddress()
 	{
 		if ( getCDISharedLibrary() != null )
 			return getCDISharedLibrary().getStartAddress();
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSharedLibrary#getEndAddress()
 	 */
-	public long getEndAddress()
+	public IAddress getEndAddress()
 	{
 		if ( getCDISharedLibrary() != null )
 			return getCDISharedLibrary().getEndAddress();
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)

@@ -11,9 +11,11 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -32,16 +34,19 @@ import org.eclipse.cdt.debug.mi.core.output.MIMemory;
  */
 public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 
-	MIDataReadMemoryInfo mem;
 	String expression;
 	boolean frozen;
 	boolean dirty;
 
+	private MIDataReadMemoryInfo mem;
+	private IAddress cStartAddress; //cashed start address
+	private byte[]   cBytes; //cashed bytes 
+
 	public MemoryBlock(Target target, String exp, MIDataReadMemoryInfo info) {
 		super(target);
 		expression = exp;
-		mem = info;
 		frozen = true;
+		setMIDataReadMemoryInfo(info);
 	}
 
 	/**
@@ -52,9 +57,12 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	}
 
 	/**
-	 * Reset the internal MIDataReadMemoryInfo.
+	 * Reset the internal MIDataReadMemoryInfo. All modifications into mem info should be done
+	 * using this method
 	 */
 	public void setMIDataReadMemoryInfo(MIDataReadMemoryInfo m) {
+		cStartAddress = ((Target)getTarget()).getAddressFactory().createAddress(m.getAddress());
+		cBytes = getBytes(m);
 		mem = m;
 	}
 
@@ -68,7 +76,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @return true if any address in the array is within the block.
 	 */
-	public boolean contains(Long[] adds) {
+	public boolean contains(IAddress[] adds) {
 		for (int i = 0; i < adds.length; i++) {
 			if (contains(adds[i])) {
 				return true;
@@ -80,10 +88,12 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @return true if the address is within the block.
 	 */
-	public boolean contains(Long addr) {
-		long start = getStartAddress();
+	public boolean contains(IAddress addr) {
+		IAddress start = getStartAddress();
 		long length = getLength();
-		if (start <= addr.longValue() && addr.longValue() <= start + length) {
+		if ( start.compareTo(addr) <= 0 && 
+		     addr.compareTo(start.add(BigInteger.valueOf(length))) <= 0 ) 
+		{
 			return true;
 		}
 		return false;
@@ -104,10 +114,10 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getBytes()
+	 * 
 	 */
-	public byte[] getBytes() throws CDIException {
-		MIMemory[] miMem = mem.getMemories();
+	private byte[] getBytes(MIDataReadMemoryInfo m) {
+		MIMemory[] miMem = m.getMemories();
 		List aList = new ArrayList();
 		for (int i = 0; i < miMem.length; i++) {
 			long[] data = miMem[i].getData();
@@ -123,6 +133,10 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		return bytes;
 	}
 
+	public byte[] getBytes() throws CDIException {
+		return cBytes;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#refresh()
 	 */
@@ -130,7 +144,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		Target target = (Target)getTarget();
 		MemoryManager mgr = (MemoryManager)target.getSession().getMemoryManager();
 		setDirty(true);
-		Long[] addresses = mgr.update(this, null);
+		IAddress[] addresses = mgr.update(this, null);
 		// Check if this affects other blocks.
 		if (addresses.length > 0) {
 			MemoryBlock[] blocks = mgr.getMemoryBlocks(target.getMISession());
@@ -154,8 +168,8 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getStartAddress()
 	 */
-	public long getStartAddress() {
-		return mem.getAddress();
+	public IAddress getStartAddress() {
+		return cStartAddress;
 	}
 
 	/**

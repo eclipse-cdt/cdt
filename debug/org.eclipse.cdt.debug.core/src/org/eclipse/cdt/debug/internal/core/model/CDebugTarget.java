@@ -15,7 +15,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -204,6 +207,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * The target's preference set.
 	 */
 	private Preferences fPreferences = null;
+
+	private IAddressFactory fAddressFactory;
 
 	/**
 	 * Constructor for CDebugTarget.
@@ -754,7 +759,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
 	public IMemoryBlock getMemoryBlock( long startAddress, long length ) throws DebugException {
-		return null;
+ 		//TODO:IPF_TODO look into implementation
+ 		throw new RuntimeException("Method getMemoryBlock should not be called from CDT");
 	}
 
 	/* (non-Javadoc)
@@ -1498,7 +1504,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#canRunToAddress(long)
 	 */
-	public boolean canRunToAddress( long address ) {
+	public boolean canRunToAddress( IAddress address ) {
 		// for now
 		return canResume();
 	}
@@ -1506,7 +1512,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToAddress(long, boolean)
 	 */
-	public void runToAddress( long address, boolean skipBreakpoints ) throws DebugException {
+	public void runToAddress( IAddress address, boolean skipBreakpoints ) throws DebugException {
 		if ( !canRunToAddress( address ) )
 			return;
 		if ( skipBreakpoints ) {
@@ -1602,7 +1608,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(long)
 	 */
-	public boolean canJumpToAddress( long address ) {
+	public boolean canJumpToAddress( IAddress address ) {
 		// check if supports jump to address
 		return canResume();
 	}
@@ -1610,7 +1616,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(long)
 	 */
-	public void jumpToAddress( long address ) throws DebugException {
+	public void jumpToAddress( IAddress address ) throws DebugException {
 		if ( !canJumpToAddress( address ) )
 			return;
 		ICDILocation location = getCDITarget().createLocation( address );
@@ -1760,8 +1766,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IBreakpointTarget#getBreakpointAddress(org.eclipse.cdt.debug.core.model.ICLineBreakpoint)
 	 */
-	public long getBreakpointAddress( ICLineBreakpoint breakpoint ) throws DebugException {
-		return (getBreakpointManager() != null) ? getBreakpointManager().getBreakpointAddress( breakpoint ) : 0;
+	public IAddress getBreakpointAddress( ICLineBreakpoint breakpoint ) throws DebugException {
+		return (getBreakpointManager() != null) ? getBreakpointManager().getBreakpointAddress( breakpoint ) : getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)
@@ -1838,4 +1844,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public boolean isPostMortem() {
 		return false;
 	}
+
+ 	public IAddressFactory getAddressFactory()
+ 	{
+ 		if ( fAddressFactory == null )
+ 		{
+ 			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
+ 			{
+ 				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+ 				if ( cFile instanceof IBinary )
+ 				{
+ 					fAddressFactory = ((IBinary)cFile).getAddressFactory();
+ 				}
+ 			}
+ 		}
+ 		return fAddressFactory;
+ 	}
+
 }

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
@@ -63,8 +64,8 @@ public class DisassemblyInstructionPointerAnnotation extends Annotation {
 		IDisassembly disassembly = getDisassembly( frame );
 		hashCode = 37*hashCode + (( disassembly != null ) ? disassembly.hashCode() : 0);
 		if ( frame != null ) {
-			long address = frame.getAddress();
-			hashCode = 37*hashCode + (int)(address^(address>>>32));
+			IAddress address = frame.getAddress();
+			hashCode = 37*hashCode + address.hashCode();
 		}
 		return hashCode;
 	}

@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
+
 /**
  * An instruction of disassemby.
  */
@@ -20,7 +22,7 @@ public interface IAsmInstruction {
 	 * 
 	 * @return the address of this instruction
 	 */
-	long getAdress();
+	IAddress getAdress();
 	
 	/**
 	 * Returns the function name of this instruction, 

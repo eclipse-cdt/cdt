@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.Properties;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
@@ -54,19 +55,19 @@ public class Session implements ICDISession, ICDISessionObject {
 	SourceManager sourceManager;
 	ICDIConfiguration configuration;
 
-	public Session(MISession miSession, boolean attach) {
+	public Session(MISession miSession, IAddressFactory addrFactory, boolean attach) {
 		commonSetup();
 		setConfiguration(new Configuration(miSession, attach));
 
-		Target target = new Target(this, miSession);
+		Target target = new Target(this, miSession, addrFactory);
 		addTargets(new Target[] { target }, target);
 	}
 
-	public Session(MISession miSession) {
+	public Session(MISession miSession, IAddressFactory addrFactory) {
 		commonSetup();
 		setConfiguration(new CoreFileConfiguration());
 
-		Target target = new Target(this, miSession);
+		Target target = new Target(this, miSession, addrFactory);
 		addTargets(new Target[] { target }, target);
 	}
 

@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  * GDB/MI memory parsing.
  */
 public class MIMemory {
-	long addr;
+	String addr;
 	long [] data = new long[0];
 	String ascii = ""; //$NON-NLS-1$
 
@@ -22,7 +22,7 @@ public class MIMemory {
 		parse(tuple);
 	}
 
-	public long getAddress() {
+	public String getAddress() {
 		return addr;
 	}
 
@@ -36,7 +36,7 @@ public class MIMemory {
 
 	public String toSting() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("addr=\"" + Long.toHexString(addr) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("addr=\"" + addr + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("data=[");  //$NON-NLS-1$
 		for (int i = 0 ; i < data.length; i++) {
 			if (i != 0) {
@@ -63,7 +63,7 @@ public class MIMemory {
 
 			if (var.equals("addr")) { //$NON-NLS-1$
 				try {
-					addr = Long.decode(str.trim()).longValue();
+					addr = str.trim();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("data")) { //$NON-NLS-1$

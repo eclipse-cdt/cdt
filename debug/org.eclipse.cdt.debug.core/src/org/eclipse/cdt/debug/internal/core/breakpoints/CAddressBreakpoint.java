@@ -10,13 +10,12 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.framework.msg.MessageFormat;
 
 /**
  * A breakpoint that suspend the execution when a particular address is reached.
@@ -58,8 +57,7 @@ public class CAddressBreakpoint extends AbstractLineBreakpoint implements ICAddr
 			sb.append( name );
 		}
 		try {
-			long address = Long.parseLong( getAddress() );
-			sb.append( MessageFormat.format( BreakpointMessages.getString( "CAddressBreakpoint.2" ), new String[] { CDebugUtils.toHexAddressString( address ) } ) ); //$NON-NLS-1$
+			sb.append( MessageFormat.format( BreakpointMessages.getString( "CAddressBreakpoint.2" ), new String[] { getAddress() } ) ); //$NON-NLS-1$
 		}
 		catch( NumberFormatException e ) {
 		}

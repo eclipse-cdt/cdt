@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 
@@ -22,5 +23,5 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  */
 public interface ICDIPointerValue extends ICDIDerivedValue {
 	
-	long pointerValue() throws CDIException;
+	IAddress pointerValue() throws CDIException;
 }

@@ -54,7 +54,7 @@ public class MIBreakpoint {
 	String type = ""; //$NON-NLS-1$
 	String disp = ""; //$NON-NLS-1$
 	boolean enabled;
-	long address;
+	String address;
 	String func = "";  //$NON-NLS-1$
 	String file = ""; //$NON-NLS-1$
 	int line;
@@ -146,7 +146,7 @@ public class MIBreakpoint {
 		enabled = e;
 	}
 
-	public long getAddress() {
+	public String getAddress() {
 		return address;
 	}
 
@@ -228,7 +228,7 @@ public class MIBreakpoint {
 				enabled = str.equals("y"); //$NON-NLS-1$
 			} else if (var.equals("addr")) { //$NON-NLS-1$
 				try {
-					address = Long.decode(str.trim()).longValue();
+					address = str.trim();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func")) { //$NON-NLS-1$

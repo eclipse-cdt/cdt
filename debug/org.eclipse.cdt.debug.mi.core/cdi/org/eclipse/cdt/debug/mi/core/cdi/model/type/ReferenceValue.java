@@ -11,8 +11,10 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -32,8 +34,7 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue#referenceValue()
 	 */
-	public long referenceValue() throws CDIException {
-		long value = 0;
+	public IAddress referenceValue() throws CDIException {
 		String valueString = getValueString().trim();
 		if ( valueString.startsWith("@") ) //$NON-NLS-1$
 			valueString = valueString.substring( 1 );
@@ -41,10 +42,14 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 		if (space != -1) {
 			valueString = valueString.substring(0, space).trim();
 		}
-		try {
-			value = Long.decode(valueString).longValue();
-		} catch (NumberFormatException e) {
+		try{
+			
+			return ((Target)getTarget()).getAddressFactory().createAddress(valueString);
 		}
-		return value;
+		catch(Exception e)
+		{
+			return null;
+		}
+		
 	}
 }

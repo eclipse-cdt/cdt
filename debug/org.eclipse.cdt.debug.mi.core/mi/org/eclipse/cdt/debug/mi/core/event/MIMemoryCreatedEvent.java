@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.mi.core.MISession;
 
 
@@ -20,20 +21,20 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  */
 public class MIMemoryCreatedEvent extends MICreatedEvent {
 
-	long address;
+	IAddress address;
 	long totalBytes;
 
-	public MIMemoryCreatedEvent(MISession source, long addr, long total) {
+	public MIMemoryCreatedEvent(MISession source, IAddress addr, long total) {
 		this(source, 0, addr, total);
 	}
 
-	public MIMemoryCreatedEvent(MISession source, int token, long addr, long total) {
+	public MIMemoryCreatedEvent(MISession source, int token, IAddress addr, long total) {
 		super(source, token);
 		address = addr;
 		totalBytes = total;
 	}
 
-	public long getAddress() {
+	public IAddress getAddress() {
 		return address;
 	}
 

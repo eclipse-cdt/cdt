@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.mi.core.output;
 public class MIFrame {
 
 	int level;
-	long addr;
+	String addr;
 	String func = ""; //$NON-NLS-1$
 	String file = ""; //$NON-NLS-1$
 	int line;
@@ -42,7 +42,7 @@ public class MIFrame {
 		return line;
 	}
 
-	public long getAddress() {
+	public String getAddress() {
 		return addr;
 	}
 
@@ -53,7 +53,7 @@ public class MIFrame {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("level=\"" + level + "\"");  //$NON-NLS-1$//$NON-NLS-2$
-		buffer.append(",addr=\"" + Long.toHexString(addr) + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",addr=\"" + addr + "\"");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append(",func=\"" + func + "\"");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append(",file=\"" + file + "\"");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append(",line=\"").append(line).append('"'); //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class MIFrame {
 				}
 			} else if (var.equals("addr")) { //$NON-NLS-1$
 				try {
-					addr = Long.decode(str.trim()).longValue();
+					addr = str.trim();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func")) { //$NON-NLS-1$

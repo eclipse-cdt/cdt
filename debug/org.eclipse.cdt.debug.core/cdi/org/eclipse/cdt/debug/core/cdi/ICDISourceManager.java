@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 
@@ -40,7 +41,7 @@ public interface ICDISourceManager extends ICDIManager {
 	 *  @param endAddress is the end address
 	 *  @throws CDIException on failure.
 	 */
-	ICDIInstruction[] getInstructions(long startAddress, long endAddress)
+	ICDIInstruction[] getInstructions(IAddress startAddress, IAddress endAddress)
 		throws CDIException;
 
 	/**
@@ -66,8 +67,8 @@ public interface ICDISourceManager extends ICDIManager {
 	 *  @throws CDIException on failure.
 	 */
 	ICDIMixedInstruction[] getMixedInstructions(
-		long startAddress,
-		long endAddress)
+		IAddress startAddress,
+	    IAddress endAddress)
 		throws CDIException;
 
 	/**

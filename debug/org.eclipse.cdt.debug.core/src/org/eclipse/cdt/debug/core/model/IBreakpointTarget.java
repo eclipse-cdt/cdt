@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -30,5 +31,5 @@ public interface IBreakpointTarget {
 	 * @return the target address of the given breakpoint
 	 * @throws DebugException if the address is not available
 	 */
-	long getBreakpointAddress( ICLineBreakpoint breakpoint ) throws DebugException;
+	IAddress getBreakpointAddress( ICLineBreakpoint breakpoint ) throws DebugException;
 }

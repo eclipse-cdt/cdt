@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
@@ -100,12 +102,12 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	/**
 	 * update one Block.
 	 */
-	public Long[] update(MemoryBlock block, List aList) throws CDIException {
+	public IAddress[] update(MemoryBlock block, List aList) throws CDIException {
 		Target target = (Target)block.getTarget();
 		MISession miSession = target.getMISession();
 		MemoryBlock newBlock = cloneBlock(block);
-		boolean newAddress = ( newBlock.getStartAddress() != block.getStartAddress() );
-		Long[] array = compareBlocks(block, newBlock);
+		boolean newAddress = ! newBlock.getStartAddress().equals(block.getStartAddress());
+		IAddress[] array = compareBlocks(block, newBlock);
 		// Update the block MIDataReadMemoryInfo.
 		block.setMIDataReadMemoryInfo(newBlock.getMIDataReadMemoryInfo());
 		if (array.length > 0 || newAddress) {
@@ -126,21 +128,23 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 * oldBlock.getLength() == newBlock.getLength();
 	 * @return Long[] array of modified addresses.
 	 */
-	Long[] compareBlocks (MemoryBlock oldBlock, MemoryBlock newBlock) throws CDIException {
+	IAddress[] compareBlocks (MemoryBlock oldBlock, MemoryBlock newBlock) throws CDIException {
 		byte[] oldBytes = oldBlock.getBytes();
 		byte[] newBytes = newBlock.getBytes();
 		List aList = new ArrayList(newBytes.length);
-		long diff = newBlock.getStartAddress() - oldBlock.getStartAddress();
-		if ( Math.abs( diff ) < newBytes.length ) {
+		BigInteger distance = newBlock.getStartAddress().distance(oldBlock.getStartAddress());
+		//IPF_TODO enshure it is OK here
+		int diff = distance.intValue();
+		if ( Math.abs(diff) <  newBytes.length) {
 			for (int i = 0; i < newBytes.length; i++) {
-				if (i + (int)diff < oldBytes.length && i + (int)diff >= 0) {
-					if (oldBytes[i + (int)diff] != newBytes[i]) {
-						aList.add(new Long(newBlock.getStartAddress() + i));
+				if (i + diff < oldBytes.length && i + diff >= 0) {
+					if (oldBytes[i + diff] != newBytes[i]) {
+						aList.add(newBlock.getStartAddress().add(BigInteger.valueOf(i)));
 					}
 				}
 			}
 		}
-		return (Long[])aList.toArray(new Long[0]);
+		return (IAddress[])aList.toArray(new IAddress[0]);
 	}
 
 	/**
@@ -176,10 +180,9 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
 	 */
-	public ICDIMemoryBlock createMemoryBlock(long address, int length)
+	public ICDIMemoryBlock createMemoryBlock(IAddress address, int length)
 		throws CDIException {
-		String addr = "0x" + Long.toHexString(address); //$NON-NLS-1$
-		return createMemoryBlock(addr, length);
+		return createMemoryBlock(address.toHexAddressString(), length);
 	}
 		
 	/**

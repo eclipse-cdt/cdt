@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -43,14 +45,14 @@ public class CFormattedMemoryBlock extends CDebugElement
 {
 	class CFormattedMemoryBlockRow implements IFormattedMemoryBlockRow
 	{
-		private long fAddress;
+		private IAddress fAddress;
 		private String[] fData;
 		private String fAscii;
 
 		/**
 		 * Constructor for CFormattedMemoryBlockRow.
 		 */
-		public CFormattedMemoryBlockRow( long address, String[] data, String ascii )
+		public CFormattedMemoryBlockRow( IAddress address, String[] data, String ascii )
 		{
 			fAddress = address;
 			fData = data;
@@ -60,7 +62,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow#getAddress()
 		 */
-		public long getAddress()
+		public IAddress getAddress()
 		{
 			return fAddress;
 		}
@@ -92,7 +94,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private boolean fDisplayAscii = true;
 	private char fPaddingChar = '.';
 	private List fRows = null;
-	private Long[] fChangedAddresses = new Long[0];
+	private IAddress[] fChangedAddresses = new IAddress[0];
 	private boolean fStartAddressChanged = false;
 
 	/**
@@ -219,33 +221,33 @@ public class CFormattedMemoryBlock extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#nextRowAddress()
 	 */
-	public long nextRowAddress()
+	public IAddress nextRowAddress()
 	{
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#previousRowAddress()
 	 */
-	public long previousRowAddress()
+	public IAddress previousRowAddress()
 	{
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#nextPageAddress()
 	 */
-	public long nextPageAddress()
+	public IAddress nextPageAddress()
 	{
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#previousPageAddress()
 	 */
-	public long previousPageAddress()
+	public IAddress previousPageAddress()
 	{
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
 
 	/* (non-Javadoc)
@@ -285,13 +287,18 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public long getStartAddress()
 	{
+		//IPF_TODO look into implementation
+		throw new RuntimeException("Method IMemoryBlock.getStartAddress shoud not be called in CDT debug");
+	}
+
+	public IAddress getRealStartAddress()
+	{
 		if ( fCDIMemoryBlock != null )
 		{
 			return fCDIMemoryBlock.getStartAddress();
 		}
-		return 0;
+		return ((CDebugTarget)getDebugTarget()).getAddressFactory().getZero();
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
 	 */
@@ -510,19 +517,19 @@ public class CFormattedMemoryBlock extends CDebugElement
 		fireTerminateEvent();
 	}
 	
-	public Long[] getChangedAddresses()
+	public IAddress[] getChangedAddresses()
 	{
 		return fChangedAddresses;
 	}
 
-	protected void setChangedAddresses( Long[] changedAddresses )
+	protected void setChangedAddresses( IAddress[] changedAddresses )
 	{
 		fChangedAddresses = changedAddresses;
 	}
 	
 	protected void resetChangedAddresses()
 	{
-		fChangedAddresses = new Long[0];
+		fChangedAddresses = new IAddress[0];
 	}
 
 	/**
@@ -679,12 +686,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 		return fStartAddressChanged;
 	}
 	
-	private long getRowAddress( int offset )
+	private IAddress getRowAddress(int offset )
 	{
-		long result = getStartAddress() + offset;		
-		if ( result > 0xFFFFFFFFL )
+		IAddress result = getRealStartAddress().add(BigInteger.valueOf(offset));
+		IAddress max = ((CDebugTarget)getDebugTarget()).getAddressFactory().getMax();
+		if ( result.compareTo(max) > 0 )
 		{
-			result -= 0xFFFFFFFFL;
+			result = result.add(result.getMaxOffset().negate());
 		}
 		return result;
 	}

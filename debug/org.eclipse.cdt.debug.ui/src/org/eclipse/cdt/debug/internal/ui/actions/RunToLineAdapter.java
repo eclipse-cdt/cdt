@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
@@ -83,7 +84,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 			else {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
 				if ( target instanceof IAdaptable ) {
 					IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
 					if ( runToAddress != null && runToAddress.canRunToAddress( address ) ) {

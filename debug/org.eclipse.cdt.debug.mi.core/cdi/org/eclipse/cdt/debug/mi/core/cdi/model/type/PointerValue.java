@@ -11,8 +11,10 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -29,17 +31,19 @@ public class PointerValue extends DerivedValue implements ICDIPointerValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
-	public long pointerValue() throws CDIException {
-		long value = 0;
-		String valueString = getValueString();
+	public IAddress pointerValue() throws CDIException {
+		String valueString = getValueString().trim();
 		int space = valueString.indexOf(' ');
 		if (space != -1) {
 			valueString = valueString.substring(0, space).trim();
 		}
-		try {
-			value = Long.decode(valueString).longValue();
-		} catch (NumberFormatException e) {
+		try{
+			
+			return ((Target)getTarget()).getAddressFactory().createAddress(valueString);
 		}
-		return value;
+		catch(Exception e)
+		{
+			return null;
+		}
 	}
 }

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 
@@ -30,14 +31,14 @@ public interface ICSharedLibrary extends IDebugElement {
 	 * 
 	 * @return the start address of this library
 	 */
-	long getStartAddress();
+	IAddress getStartAddress();
 
 	/**
 	 * Returns the end address of this library.
 	 * 
 	 * @return the end address of this library
 	 */
-	long getEndAddress();
+	IAddress getEndAddress();
 
 	/**
 	 * Returns whether the symbols of this library are read.

@@ -222,6 +222,10 @@ public class CommandFactory {
 		return new MIGDBShowSolibSearchPath();
 	}
 
+	public MIGDBShowAddressSize createMIGDBShowAddressSize() {
+		return new MIGDBShowAddressSize();
+	}
+
 	public MIStackInfoDepth createMIStackInfoDepth() {
 		return new MIStackInfoDepth();
 	}

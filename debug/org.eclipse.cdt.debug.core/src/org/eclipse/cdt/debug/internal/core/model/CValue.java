@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -274,12 +276,20 @@ public class CValue extends AbstractCValue {
 	private String getLongValueString( ICDILongValue value ) throws CDIException {
 		CVariableFormat format = getParentVariable().getFormat(); 
 		if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
-			return (isUnsigned()) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
+			if ( isUnsigned() ) {
+				BigInteger bigValue = new BigInteger( value.getValueString() );
+				return bigValue.toString();
+			}
+			return Long.toString( value.longValue() );
 		}
 		else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
 			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( (isUnsigned()) ? value.longValue() : value.intValue() );
-			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+			if ( isUnsigned() ) {
+				BigInteger bigValue = new BigInteger( value.getValueString() );
+				sb.append( bigValue.toString( 16 ) );
+			}
+			else
+				sb.append( Long.toHexString( value.longValue() ) );
 			return sb.toString();
 		}
 		return null;
@@ -351,33 +361,32 @@ public class CValue extends AbstractCValue {
 		return null;
 	}
 
-	private String getPointerValueString( ICDIPointerValue value ) throws CDIException {
-		long longValue = value.pointerValue();
+  	private String getPointerValueString( ICDIPointerValue value ) throws CDIException
+  	{
+ 		//IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
+ 		IAddress address = value.pointerValue();
+ 		if(address == null) return "";
 		CVariableFormat format = getParentVariable().getFormat(); 
-		if ( CVariableFormat.DECIMAL.equals( format ) ) {
-			return Long.toString( longValue );
-		}
-		else if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( longValue );
-			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
-			return sb.toString();
-		}
+        if( CVariableFormat.NATURAL.equals( format ) ||
+            CVariableFormat.HEXADECIMAL.equals( format ) )
+            return address.toHexAddressString();
+		if( CVariableFormat.DECIMAL.equals( format ))
+  			return address.toString();
 		return null;
 	}
 
-	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException {
-		long longValue = value.referenceValue();
+  	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException
+  	{
+  		//NOTE: Reference should be displayed identically to address
+ 		//IPF_TODO Workaround to solve incoorect handling of structures referenced by pointers or references
+ 		IAddress address = value.referenceValue();
+ 		if(address == null) return "";
 		CVariableFormat format = getParentVariable().getFormat(); 
-		if ( CVariableFormat.DECIMAL.equals( format ) ) {
-			return Long.toString( longValue );
-		}
-		else if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.HEXADECIMAL.equals( format ) ) {
-			StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
-			String stringValue = Long.toHexString( longValue );
-			sb.append( (stringValue.length() > 8) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
-			return sb.toString();
-		}
+        if( CVariableFormat.NATURAL.equals( format ) ||
+            CVariableFormat.HEXADECIMAL.equals( format ) )
+            return address.toHexAddressString();
+        if( CVariableFormat.DECIMAL.equals( format ))
+            return address.toString();
 		return null;
 	}
 

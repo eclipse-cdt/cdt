@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 
@@ -30,7 +31,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getAdress()
 	 */
-	public long getAdress() {
+	public IAddress getAdress() {
 		return fCDIInstruction.getAdress();
 	}
 

@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
@@ -39,9 +40,9 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	
 	private IAsmSourceLine[] fSourceLines;
 
-	private long fStartAddress = 0;
+	private IAddress fStartAddress;
 
-	private long fEndAddress = 0;
+	private IAddress fEndAddress;
 	
 	private boolean fMixedMode = false;
 
@@ -100,8 +101,9 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	public boolean contains( ICStackFrame frame ) {
 		if ( !getDisassembly().getDebugTarget().equals( frame.getDebugTarget() ) )
 			return false;
-		long address = frame.getAddress();
-		return (address >= fStartAddress && address <= fEndAddress);
+		IAddress address = frame.getAddress();
+		return ( address.compareTo(fStartAddress) >= 0 && 
+				 address.compareTo(fEndAddress)   <= 0    );
 	}
 
 	/* (non-Javadoc)

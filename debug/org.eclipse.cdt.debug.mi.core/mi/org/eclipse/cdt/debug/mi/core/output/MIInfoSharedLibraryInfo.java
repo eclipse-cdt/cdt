@@ -80,8 +80,8 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 		if (str.length() > 0) {
 			// Pass the header
 			int index = -1;
-			long from = 0;
-			long to = 0;
+			String from = "";
+			String to = "";
 			boolean syms = false;
 			String name = ""; //$NON-NLS-1$
 
@@ -102,16 +102,10 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 						}
 						break;
 					case 2 : // second column is "To"
-						try {
-							to = Long.decode(sub).longValue();
-						} catch (NumberFormatException e) {
-						}
+							to = sub;
 						break;
 					case 3 : // first column is "From"
-						try {
-							from = Long.decode(sub).longValue();
-						} catch (NumberFormatException e) {
-						}
+							from = sub;
 						break;
 				}
 			}
@@ -123,8 +117,8 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	}
 
 	void parseWinShared(String str, List aList) {
-		long from = 0;
-		long to = 0;
+		String from = "";
+		String to = "";
 		boolean syms = true;
 
 		int index = str.lastIndexOf(' ');
@@ -134,10 +128,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 			if (!sub.startsWith("0x")) { //$NON-NLS-1$
 				sub = "0x" + sub; //$NON-NLS-1$
 			}
-			try {
-				from = Long.decode(sub).longValue();
-			} catch (NumberFormatException e) {
-			}
+			from = sub;
 			str = str.substring(0, index).trim();
 		}
 		MIShared s = new MIShared(from, to, syms, str.trim());

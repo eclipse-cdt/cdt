@@ -703,9 +703,8 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 
 	protected StringBuffer appendAddress( ICAddressBreakpoint breakpoint, StringBuffer label ) throws CoreException {
 		try {
-			long address = Long.parseLong( breakpoint.getAddress() );
 			label.append( ' ' );
-			label.append( MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.27" ), new String[]{ CDebugUtils.toHexAddressString( address ) } ) ); //$NON-NLS-1$
+			label.append( MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.27" ), new String[]{ breakpoint.getAddress() } ) ); //$NON-NLS-1$
 		}
 		catch( NumberFormatException e ) {
 		}

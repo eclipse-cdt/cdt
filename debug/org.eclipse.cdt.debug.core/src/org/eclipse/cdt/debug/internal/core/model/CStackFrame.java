@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
@@ -529,7 +531,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getAddress()
 	 */
-	public long getAddress() {
+	public IAddress getAddress() {
 		return getCDIStackFrame().getLocation().getAddress();
 	}
 

@@ -130,10 +130,12 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 */
 	public ICDILocation getLocation() {
 		if (frame != null) {
-			return new Location(frame.getFile(), frame.getFunction(),
-					frame.getLine(), frame.getAddress());
+			return new Location(frame.getFile(), 
+					            frame.getFunction(),
+					            frame.getLine(),  
+								((Target)getTarget()).getAddressFactory().createAddress(frame.getAddress()));
 		}
-		return new Location("", "", 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
+		return new Location("", "", 0, ((Target)getTarget()).getAddressFactory().getZero()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

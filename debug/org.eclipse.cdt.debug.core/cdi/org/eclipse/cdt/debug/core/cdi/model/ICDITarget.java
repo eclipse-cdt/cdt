@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -182,6 +183,6 @@ public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 	/**
 	 * Returns a ICDILocation
 	 */
-	ICDILocation createLocation(long address);
+	ICDILocation createLocation(IAddress address);
 
 }

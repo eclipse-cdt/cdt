@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
@@ -145,16 +146,16 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(long, long)
 	 */
-	public ICDIInstruction[] getInstructions(long start, long end) throws CDIException {
+	public ICDIInstruction[] getInstructions(IAddress start, IAddress end) throws CDIException {
 		Target target = (Target)getSession().getCurrentTarget();
 		return getInstructions(target, start, end);
 	}
-	public ICDIInstruction[] getInstructions(Target target, long start, long end) throws CDIException {
+	public ICDIInstruction[] getInstructions(Target target, IAddress start, IAddress end) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String hex = "0x"; //$NON-NLS-1$
-		String sa = hex + Long.toHexString(start);
-		String ea = hex + Long.toHexString(end);
+		String sa = start.toHexAddressString();
+		String ea = end.toHexAddressString();
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, false);
 		try {
 			mi.postCommand(dis);
@@ -205,16 +206,15 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(long, long)
 	 */
-	public ICDIMixedInstruction[] getMixedInstructions(long start, long end) throws CDIException {	
+	public ICDIMixedInstruction[] getMixedInstructions(IAddress start, IAddress end) throws CDIException {	
 		Target target = (Target)getSession().getCurrentTarget();
 		return getMixedInstructions(target, start, end);
 	}
-	public ICDIMixedInstruction[] getMixedInstructions(Target target, long start, long end) throws CDIException {
+	public ICDIMixedInstruction[] getMixedInstructions(Target target, IAddress start, IAddress end) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String hex = "0x"; //$NON-NLS-1$
-		String sa = hex + Long.toHexString(start);
-		String ea = hex + Long.toHexString(end);
+		String sa = start.toHexAddressString();
+		String ea = end.toHexAddressString();
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, true);
 		try {
 			mi.postCommand(dis);

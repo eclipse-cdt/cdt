@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -256,7 +258,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		return getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 	}
 
-	public long getBreakpointAddress( ICBreakpoint breakpoint ) {
+	public IAddress getBreakpointAddress( ICBreakpoint breakpoint ) {
 		if ( breakpoint != null ) {
 			ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 			if ( cdiBreakpoint instanceof ICDILocationBreakpoint ) {
@@ -269,7 +271,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				}
 			}
 		}
-		return 0;
+		return fDebugTarget.getAddressFactory().getZero();
 	}
 
 	public void setBreakpoint( ICBreakpoint breakpoint ) throws DebugException {
@@ -493,7 +495,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 
 	private ICDIBreakpoint setAddressBreakpoint( ICAddressBreakpoint breakpoint ) throws CDIException, CoreException, NumberFormatException {
 		ICDITarget cdiTarget = getCDITarget();
-		ICDILocation location = cdiTarget.createLocation( Long.parseLong( breakpoint.getAddress() ) );
+		ICDILocation location = cdiTarget.createLocation( getDebugTarget().getAddressFactory().createAddress(breakpoint.getAddress()));
 		ICDIBreakpoint cdiBreakpoint = null;
 		synchronized ( getBreakpointMap() ) {
 			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null, true );
@@ -563,7 +565,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 					else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
 						breakpoint = createFunctionBreakpoint( cdiBreakpoint );
 					}
-					else if ( cdiBreakpoint.getLocation().getAddress() > 0 ) {
+					else if ( ! cdiBreakpoint.getLocation().getAddress().isZero() ) {
 						breakpoint = createAddressBreakpoint( cdiBreakpoint );
 					}
 				}
@@ -571,7 +573,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
 				breakpoint = createFunctionBreakpoint( cdiBreakpoint );
 			}
-			else if ( cdiBreakpoint.getLocation().getAddress() > 0 ) {
+			else if ( ! cdiBreakpoint.getLocation().getAddress().isZero()) {
 				breakpoint = createAddressBreakpoint( cdiBreakpoint );
 			}
 		}

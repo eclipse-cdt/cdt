@@ -153,7 +153,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 				fLocation = new Location (miBreakpoint.getFile(),
 					miBreakpoint.getFunction(),
 					miBreakpoint.getLine(),
-					miBreakpoint.getAddress());
+					((Target)getTarget()).getAddressFactory().createAddress(miBreakpoint.getAddress()));
 			}
 		}
 		return fLocation;

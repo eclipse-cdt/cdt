@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
@@ -32,14 +33,14 @@ public interface ICDISharedLibrary extends ICDIObject {
 	 * 
 	 * @return the start address of this library
 	 */
-	long getStartAddress();
+	IAddress getStartAddress();
 
 	/**
 	 * Returns the end address of this library.
 	 * 
 	 * @return the end address of this library
 	 */
-	long getEndAddress();
+	IAddress getEndAddress();
 
 	/**
 	 * Returns whether the symbols of this library are read.

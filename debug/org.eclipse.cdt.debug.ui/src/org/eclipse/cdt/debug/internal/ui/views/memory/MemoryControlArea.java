@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
-import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -430,7 +429,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 				}
 			}
 			if ( getMemoryBlock() != null ) {
-				fAddressText.setText( CDebugUIUtils.toHexAddressString( getMemoryBlock().getStartAddress() ) );
+				fAddressText.setText( getMemoryBlock().getRealStartAddress().toHexAddressString() );
 				handleAddressEnter();
 			}
 		}

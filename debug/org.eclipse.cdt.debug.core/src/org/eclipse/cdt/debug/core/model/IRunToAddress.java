@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -22,12 +23,12 @@ public interface IRunToAddress {
 	 * 
 	 * @return whether this operation is currently available
 	 */
-	public boolean canRunToAddress( long address );
+	public boolean canRunToAddress( IAddress address );
 
 	/**
 	 * Causes this element to run to specified address.
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void runToAddress( long address, boolean skipBreakpoints ) throws DebugException;
+	public void runToAddress( IAddress address, boolean skipBreakpoints ) throws DebugException;
 }

@@ -11,15 +11,16 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlockRow;
-import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
@@ -77,7 +78,7 @@ public class MemoryPresentation
 		{
 			int offset = sb.length();
 			sb.append( getRowText( rows[i] ) );
-			fAddressZones.add( new Point( offset, offset + getAddressLength() ) );
+			fAddressZones.add( new Point( offset, offset + rows[i].getAddress().getCharsNum()  ) );
 		}
 		return sb.toString();
 	}
@@ -104,7 +105,7 @@ public class MemoryPresentation
 	public Point[] getChangedZones()
 	{
 		fChangedZones.clear();
-		Long[] changedAddresses = getChangedAddresses();
+		IAddress[] changedAddresses = getChangedAddresses();
 		for ( int i = 0; i < changedAddresses.length; ++i )
 		{
 			int dataOffset = getDataItemOffsetByAddress( changedAddresses[i] );
@@ -126,7 +127,7 @@ public class MemoryPresentation
 	
 	public String getStartAddress()
 	{
-		return ( fBlock != null ) ? getAddressString( fBlock.getStartAddress() ) : "";  //$NON-NLS-1$
+		return ( fBlock != null ) ? fBlock.getRealStartAddress().toHexAddressString() : "";  //$NON-NLS-1$
 	}
 
 	public String getAddressExpression()
@@ -141,15 +142,10 @@ public class MemoryPresentation
 		return new String( chars );
 	}
 
-	private String getAddressString( long address )
-	{
-		return CDebugUIUtils.toHexAddressString( address );
-	}
-
 	private String getRowText( IFormattedMemoryBlockRow row )
 	{
-		StringBuffer result = new StringBuffer( getRowLength() ); 
-		result.append( getAddressString( row.getAddress() ) ); 
+		StringBuffer result = new StringBuffer( getRowLength( ) ); 
+		result.append(  row.getAddress().toHexAddressString() ); 
 		result.append( getInterval( INTERVAL_BETWEEN_ADDRESS_AND_DATA ) );
 		String[] items = row.getData();
 		for ( int i = 0; i < items.length; ++i )
@@ -175,9 +171,9 @@ public class MemoryPresentation
 			   getDataBytesPerRow() : 0 ) + 1;
 	}
 
-	private int getAddressLength()
-	{
-		return 10;
+
+   private int getAddressLength() {
+   		return fBlock.getRealStartAddress().getCharsNum();
 	}
 	
 	private boolean isInAsciiArea( int offset )
@@ -293,12 +289,12 @@ public class MemoryPresentation
 		return IFormattedMemoryBlock.MEMORY_FORMAT_HEX;
 	}
 	
-	private Long[] getChangedAddresses()
+	private IAddress[] getChangedAddresses()
 	{
-		return ( getMemoryBlock() != null ) ? getMemoryBlock().getChangedAddresses() : new Long[0];
+		return ( getMemoryBlock() != null ) ? getMemoryBlock().getChangedAddresses() : new IAddress[0];
 	}
 	
-	private int getDataItemOffsetByAddress( Long address )
+	private int getDataItemOffsetByAddress( IAddress address )
 	{
 		if ( getMemoryBlock() != null )
 		{
@@ -307,15 +303,16 @@ public class MemoryPresentation
 			{
 				int wordSize = getMemoryBlock().getWordSize();
 				int numberOfColumns = getMemoryBlock().getNumberOfColumns();
-				if ( address.longValue() >= rows[i].getAddress() && 
-					 address.longValue() < rows[i].getAddress() + (wordSize * numberOfColumns) )
+
+				if(  address.compareTo( rows[i].getAddress())  >=0 && 
+					 address.compareTo( rows[i].getAddress().add(BigInteger.valueOf(wordSize * numberOfColumns)))  <0)
 				{
 					for ( int j = 1; j <= numberOfColumns; ++j )
 					{
-						if ( address.longValue() >= rows[i].getAddress() + ((j - 1) * wordSize) &&
-							 address.longValue() < rows[i].getAddress() + (j * wordSize) )
+						if(  address.compareTo( rows[i].getAddress().add(BigInteger.valueOf( (j - 1) * wordSize)))    >=0 && 
+							 address.compareTo( rows[i].getAddress().add(BigInteger.valueOf(    j      * wordSize)))      <0)
 						{
-							return (i * getRowLength()) + ((j - 1) * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS)) + getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA;
+							return (i * getRowLength()) + ((j - 1) * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS)) + address.getCharsNum()  + INTERVAL_BETWEEN_ADDRESS_AND_DATA;
 						}
 					}
 				}
@@ -325,7 +322,7 @@ public class MemoryPresentation
 		return -1;
 	}
 	
-	private int getAsciiOffsetByAddress( Long address )
+	private int getAsciiOffsetByAddress( IAddress address )
 	{
 		if ( getMemoryBlock() != null )
 		{
@@ -334,14 +331,16 @@ public class MemoryPresentation
 			{
 				IFormattedMemoryBlockRow firstRow = rows[0];
 				IFormattedMemoryBlockRow lastRow = rows[rows.length - 1];
-				if ( address.longValue() >= firstRow.getAddress() && address.longValue() <= lastRow.getAddress() )
+				
+				if (address.compareTo( firstRow.getAddress()) >=0 && address.compareTo( lastRow.getAddress()) <=0)
+				
 				{
-					int asciiOffset = (int)(address.longValue() - firstRow.getAddress());
+					BigInteger asciiOffset = address.distance( firstRow.getAddress());
 					int asciiRowlength = getMemoryBlock().getWordSize() * getMemoryBlock().getNumberOfColumns();
-					int numberOfRows = asciiOffset / asciiRowlength;
-					int offsetInRow = asciiOffset % asciiRowlength;
+					int numberOfRows = asciiOffset.intValue()  / asciiRowlength;
+					int offsetInRow = asciiOffset.intValue()  % asciiRowlength;
 					return (numberOfRows * getRowLength()) + 
-						   getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+						   address.getCharsNum() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
 						   (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) * getMemoryBlock().getNumberOfColumns() +
 						   INTERVAL_BETWEEN_DATA_AND_ASCII + offsetInRow;
 				}
@@ -513,13 +512,13 @@ public class MemoryPresentation
 	{
 		if ( getMemoryBlock() != null )
 		{
-			int index = getDataItemIndex( offset );
+			int index = getDataItemIndex(offset );
 			if ( index != -1 )
 			{
 				char[] chars = getDataItemChars( index );
 				if ( isInDataArea( offset ) )
 				{
-					int charIndex = getOffsetInDataItem( offset, index );
+					int charIndex = getOffsetInDataItem(offset, index );
 					chars[charIndex] = newChar;
 				}
 				if ( isInAsciiArea( offset ) )
@@ -539,7 +538,7 @@ public class MemoryPresentation
 			int index = getDataItemIndex( offset );
 			if ( index != -1 )
 			{
-				String newValue = getNewItemValue( offset, ch );
+				String newValue = getNewItemValue(offset, ch );
 				if ( newValue != null )
 				{
 					try

@@ -10,22 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 
 /**
  */
 public class Location implements ICDILocation {
 
-	long addr;
+	IAddress addr;
 	String file = ""; //$NON-NLS-1$
 	String function = ""; //$NON-NLS-1$
 	int line;
 
 	public Location(String f, String fnct, int l) {
-		this(f, fnct, l, 0);
+		this(f, fnct, l, null);
 	}
 
-	public Location(String f, String fnct, int l, long a) {
+	public Location(String f, String fnct, int l, IAddress a) {
 		if (f != null)
 			file = f;
 		if (fnct != null)
@@ -34,14 +35,14 @@ public class Location implements ICDILocation {
 		addr = a;  
 	}
 
-	public Location(long address) {
+	public Location(IAddress address) {
 		addr = address;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getAddress()
 	 */
-	public long getAddress() {
+	public IAddress getAddress() {
 		return addr;
 	}
 
@@ -86,9 +87,9 @@ public class Location implements ICDILocation {
 				}
 			}
 		}
-		long oaddr = location.getAddress();
-		if (addr != 0 && oaddr != 0) {
-			if (addr == oaddr) {
+		IAddress oaddr = location.getAddress();
+		if (addr != null && oaddr != null) { //IPF_TODO: check ZERO addresses
+			if (addr.equals(oaddr)) {
 				return true;
 			}
 		}

@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 
 /**
@@ -41,7 +42,7 @@ public interface ICDIMemoryManager extends ICDIManager {
 	 * @return a memory block with the specified identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIMemoryBlock createMemoryBlock(long address, int length)
+	ICDIMemoryBlock createMemoryBlock(IAddress address, int length)
 		throws CDIException;
 
 	/**

@@ -18,7 +18,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIDataReadMemoryInfo extends MIInfo {
 
-	long addr;
+	String addr;
 	long nextRow;
 	long prevRow;
 	long nextPage;
@@ -33,7 +33,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 		parse();
 	}
 
-	public long getAddress() {
+	public String getAddress() {
 		return addr;
 	}
 
@@ -96,7 +96,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 
 					if (var.equals("addr")) { //$NON-NLS-1$
 						try {
-							addr = Long.decode(str.trim()).longValue();
+							addr = str.trim();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("nr-bytes")) { //$NON-NLS-1$

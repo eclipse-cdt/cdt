@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
@@ -26,7 +27,7 @@ public interface ICDIMemoryBlock extends ICDIObject {
 	 * 
 	 * @return the start address of this memory block
 	 */
-	long getStartAddress();
+	IAddress getStartAddress();
 	
 	/**
 	 * Returns the length of this memory block in bytes.

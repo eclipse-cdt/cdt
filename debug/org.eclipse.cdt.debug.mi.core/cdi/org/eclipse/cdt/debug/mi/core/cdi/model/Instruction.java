@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;
 
@@ -26,8 +27,8 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getAdress()
 	 */
-	public long getAdress() {
-		return asm.getAddress();
+	public IAddress getAdress() {
+		return ((Target)getTarget()).getAddressFactory().createAddress(asm.getAddress());
 	}
 
 	/**

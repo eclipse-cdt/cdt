@@ -95,7 +95,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 		MISession miSession = mblock.getMISession();
 		ICDIMemoryBlock[] blocks = mgr.getMemoryBlocks(miSession);
 		for (int i = 0; i < blocks.length; i++) {
-			if (blocks[i].getStartAddress() == mblock.getAddress() &&
+			if (blocks[i].getStartAddress().equals(mblock.getAddress()) &&
 			    blocks[i].getLength() == mblock.getLength()) {
 				source = blocks[i];
 				break;

@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
@@ -145,9 +146,10 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	public boolean hasSharedLibChanged(ICDISharedLibrary lib, MIShared miLib) {
+		IAddressFactory af = ((Target)getSession().getCurrentTarget()).getAddressFactory();
 		return !miLib.getName().equals(lib.getFileName()) ||
-			miLib.getFrom() != lib.getStartAddress() ||
-			miLib.getTo() != lib.getEndAddress() ||
+			!af.createAddress(miLib.getFrom()).equals(lib.getStartAddress())   ||
+		    !af.createAddress(miLib.getTo()).equals(lib.getEndAddress()) ||
 			miLib.isRead() != lib.areSymbolsLoaded();
 	}
 

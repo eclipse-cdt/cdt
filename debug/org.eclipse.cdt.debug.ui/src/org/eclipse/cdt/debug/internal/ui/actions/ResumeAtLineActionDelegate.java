@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
@@ -247,7 +248,7 @@ public class ResumeAtLineActionDelegate implements IWorkbenchWindowActionDelegat
 			}
 			ITextSelection textSelection = (ITextSelection)selection;
 			int lineNumber = textSelection.getStartLine() + 1;
-			long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+			IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
 			return jumpToAddress.canJumpToAddress( address );
 		}
 		return false;
@@ -287,7 +288,7 @@ public class ResumeAtLineActionDelegate implements IWorkbenchWindowActionDelegat
 			else {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
 				IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)debugTarget).getAdapter( IJumpToAddress.class );
 				if ( jumpToAddress != null )
 					jumpToAddress.jumpToAddress( address );

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.cdi.event;
 
+import org.eclipse.cdt.core.IAddress;
+
 /**
  * 
  * Notifies that the originator has changed.
@@ -19,5 +21,5 @@ public interface ICDIMemoryChangedEvent extends ICDIChangedEvent {
 	/**
 	 * @return the modified addresses.
 	 */
-	Long[] getAddresses();
+	IAddress[] getAddresses();
 }

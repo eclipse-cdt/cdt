@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -22,12 +23,12 @@ public interface IJumpToAddress {
 	 * 
 	 * @return whether this operation is currently available
 	 */
-	public boolean canJumpToAddress( long address );
+	public boolean canJumpToAddress( IAddress address );
 
 	/**
 	 * Causes this element to resume the execution at the specified address.
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void jumpToAddress( long address ) throws DebugException;
+	public void jumpToAddress( IAddress address ) throws DebugException;
 }

@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.mi.core.event;
 
 import org.eclipse.cdt.debug.mi.core.MISession;
 
-
+import org.eclipse.cdt.core.IAddress;
 
 /**
  * This can not be detected yet by gdb/mi.
@@ -20,18 +20,18 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  */
 public class MIMemoryChangedEvent extends MIChangedEvent {
 
-	Long[] addresses;
+	IAddress[] addresses;
 
-	public MIMemoryChangedEvent(MISession source, Long[] addrs) {
+	public MIMemoryChangedEvent(MISession source, IAddress[] addrs) {
 		this(source, 0, addrs);
 	}
 
-	public MIMemoryChangedEvent(MISession source, int token, Long[] addrs) {
+	public MIMemoryChangedEvent(MISession source, int token, IAddress[] addrs) {
 		super(source, token);
 		addresses = addrs;
 	}
 
-	public Long[] getAddresses() {
+	public IAddress[] getAddresses() {
 		return addresses;
 	}
 }

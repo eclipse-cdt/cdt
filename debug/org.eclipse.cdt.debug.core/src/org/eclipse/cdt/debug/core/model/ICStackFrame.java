@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
@@ -24,7 +25,7 @@ public interface ICStackFrame extends IStackFrame, ICDebugElement {
 	 * 
 	 * @return the address of this stack frame
 	 */
-	public long getAddress();
+	public IAddress getAddress();
 	
 	/**
 	 * Returns the source file of this stack frame or <code>null</code>

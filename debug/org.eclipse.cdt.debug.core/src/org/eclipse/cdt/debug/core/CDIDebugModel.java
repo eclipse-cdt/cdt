@@ -12,6 +12,8 @@ package org.eclipse.cdt.debug.core;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -255,7 +257,7 @@ public class CDIDebugModel {
 	 */
 	public static ICAddressBreakpoint createAddressBreakpoint( String sourceHandle, 
 															   IResource resource, 
-															   long address, 
+															   IAddress address, 
 															   boolean enabled, 
 															   int ignoreCount, 
 															   String condition, 
@@ -266,7 +268,7 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
-		attributes.put( ICLineBreakpoint.ADDRESS, Long.toString( address ) );
+		attributes.put( ICLineBreakpoint.ADDRESS, address.toHexAddressString() );
 		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );

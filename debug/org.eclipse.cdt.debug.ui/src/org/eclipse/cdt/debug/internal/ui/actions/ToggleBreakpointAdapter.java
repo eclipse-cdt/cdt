@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IFunction;
@@ -110,8 +111,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
 				}
 				else {
-					long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-					if ( address == 0 ) {
+					IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+					if ( address == null ) {
 						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
 					}
 					else {

@@ -16,23 +16,23 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIShared {
 
-	long from;
-	long to;
+	String from;
+	String to;
 	boolean isread;
 	String name;
 
-	public MIShared (long start, long end, boolean read, String location) {
+	public MIShared (String start, String end, boolean read, String location) {
 		from = start;
 		to = end;
 		isread = read;
 		name = location;
 	}
 
-	public long getFrom() {
+	public String getFrom() {
 		return from;
 	}
 
-	public long getTo() {
+	public String getTo() {
 		return to;
 	}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 
@@ -104,13 +105,15 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 
 	char getPaddingCharacter();
 
-	long nextRowAddress();
+	public IAddress getRealStartAddress();
 	
-	long previousRowAddress();
+	IAddress nextRowAddress();
 	
-	long nextPageAddress();
+	IAddress previousRowAddress();
 	
-	long previousPageAddress();
+	IAddress nextPageAddress();
+	
+	IAddress previousPageAddress();
 
 	void reformat( int format,
 				   int wordSize,
@@ -124,7 +127,7 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 				   char paddingChar ) throws DebugException;
 	void dispose();
 
-	Long[] getChangedAddresses();
+	IAddress[] getChangedAddresses();
 	
 	boolean isFrozen();
 	

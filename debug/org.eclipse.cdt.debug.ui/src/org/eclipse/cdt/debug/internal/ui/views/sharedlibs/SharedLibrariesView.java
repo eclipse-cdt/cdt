@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.internal.ui.views.sharedlibs;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
-import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -83,11 +82,9 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 					case 2:
 						return ( library.areSymbolsLoaded() ) ? SharedLibrariesMessages.getString( "SharedLibrariesView.Loaded_1" ) : SharedLibrariesMessages.getString( "SharedLibrariesView.Not_loaded_1" ); //$NON-NLS-1$ //$NON-NLS-2$
 					case 3:
-						return ( library.getStartAddress() > 0 ) ? 
-									CDebugUIUtils.toHexAddressString( library.getStartAddress() ) : ""; //$NON-NLS-1$
+						return library.getStartAddress().toHexAddressString(); //$NON-NLS-1$
 					case 4:
-						return ( library.getEndAddress() > 0 ) ? 
-									CDebugUIUtils.toHexAddressString( library.getEndAddress() ) : ""; //$NON-NLS-1$
+						return library.getEndAddress().toHexAddressString(); //$NON-NLS-1$
 				}
 			}
 			return null;

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
@@ -119,7 +120,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				MemoryManager mgr = (MemoryManager)session.getMemoryManager();
 				MemoryBlock[] blocks = mgr.getMemoryBlocks(miEvent.getMISession());
 				MIMemoryChangedEvent miMem = (MIMemoryChangedEvent)miEvent;
-				Long[] addresses = miMem.getAddresses();
+				IAddress[] addresses = miMem.getAddresses();
 				for (int i = 0; i < blocks.length; i++) {
 					if (blocks[i].contains(addresses) &&
 						(! blocks[i].isFrozen() || blocks[i].isDirty())) {

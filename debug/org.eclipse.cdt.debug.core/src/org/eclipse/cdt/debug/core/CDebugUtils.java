@@ -91,19 +91,6 @@ public class CDebugUtils
 		}
 	}
 	
-	public static String toHexAddressString( long address )
-	{
-		String addressString = Long.toHexString( address );
-		StringBuffer sb = new StringBuffer( 10 );
-		sb.append( "0x" ); //$NON-NLS-1$
-		for ( int i = 0; i < 8 - addressString.length(); ++i )
-		{
-			sb.append( '0' );
-		}
-		sb.append( addressString );
-		return sb.toString();
-	}
-
 	public static char[] getByteText( byte b )
 	{
 		return new char[]{ charFromByte( (byte)((b >>> 4) & 0x0f) ), 
@@ -200,18 +187,6 @@ public class CDebugUtils
 			return 0;
 		return Long.parseLong( bytesToString( bytes, le, false ), 16 );
 	}  
-	
-	public static long toLongLong( char[] bytes, boolean le )
-	{
-		if ( bytes.length != 16 )
-			return 0;
-		return Long.parseLong( bytesToString( bytes, le, false ), 16 );
-	}
-	
-	public static long toUnsignedLongLong( char[] bytes, boolean le )
-	{
-		return 0;
-	}
 	
 	private static String bytesToString( char[] bytes, boolean le, boolean signed )
 	{

@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.mi.core.output;
  * Represent a GDB Tuple MI assembly response.
  */
 public class MIAsm {
-	long address;
+	String address;
 	String function = ""; //$NON-NLS-1$
 	String opcode = ""; //$NON-NLS-1$
 	String args = ""; //$NON-NLS-1$
@@ -24,7 +24,7 @@ public class MIAsm {
 		parse(tuple);
 	}
 
-	public long getAddress() {
+	public String getAddress() {
 		return address;
 	}
 
@@ -43,7 +43,7 @@ public class MIAsm {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('{');
-		buffer.append("address=\"" + Long.toHexString(address) +"\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("address=\"" + address +"\"");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append(",func-name=\"" + function + "\"");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append(",offset=\"").append(offset).append('"'); //$NON-NLS-1$
 		buffer.append(",inst=\"" + getInstruction() + "\"");  //$NON-NLS-1$//$NON-NLS-2$
@@ -64,7 +64,7 @@ public class MIAsm {
 
 			if (var.equals("address")) { //$NON-NLS-1$
 				try {
-					address = Long.decode(str.trim()).longValue();
+					address = str.trim();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func-name")) { //$NON-NLS-1$

@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.core.IAddress;
+
 /**
  * 
  * Represents a row in the output table of formatted memory block.
@@ -24,7 +26,7 @@ public interface IFormattedMemoryBlockRow
 	 * 
 	 * @return the address of this row
 	 */
-	long getAddress();
+	IAddress getAddress();
 
 	/**
 	 * Returns the array of memory words.

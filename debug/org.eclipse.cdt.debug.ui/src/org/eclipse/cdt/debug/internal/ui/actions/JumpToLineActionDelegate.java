@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
@@ -176,7 +177,7 @@ public class JumpToLineActionDelegate extends AbstractEditorActionDelegate
 		}
 	}
 
-	protected void jumpToAddress( long address )
+	protected void jumpToAddress( IAddress address )
 	{
 		IJumpToAddress target = (IJumpToAddress)getDebugTarget().getAdapter( IJumpToAddress.class );
 		if ( target != null )

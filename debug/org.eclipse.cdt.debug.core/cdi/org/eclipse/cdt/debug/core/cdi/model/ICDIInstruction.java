@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.core.IAddress;
+
 /**
  * 
  * Represents a machine instruction.
@@ -22,7 +24,7 @@ public interface ICDIInstruction extends ICDIObject {
 	 * Returns the Address.
 	 * @return the address.
 	 */
-	long getAdress();
+	IAddress getAdress();
 	
 	/**
 	 * @return the function name.

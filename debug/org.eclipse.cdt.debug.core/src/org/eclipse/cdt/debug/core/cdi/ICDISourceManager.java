@@ -5,8 +5,6 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
-import java.io.File;
-
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 
@@ -29,30 +27,6 @@ public interface ICDISourceManager extends ICDISessionObject
 	 * @return String array of search paths.
 	 */
 	String[] getSourcePaths() throws CDIException;
-
-	/**
-	 * Returns an array of directories. Returns the empty array 
-	 * if the source path is empty.
-	 * 
-	 * @return an array of directories
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	File[] getDirectories() throws CDIException;
-	
-	/**
-	 * Sets the source path according to the given array of directories.
-	 * 
-	 * @param directories - the array of directories
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	void set( File[] directories ) throws CDIException;
-	
-	/**
-	 * Reset the source path to empty.
-	 * 
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	void reset() throws CDIException;
 
 	/**
 	 *  @param startAddress is the begining address

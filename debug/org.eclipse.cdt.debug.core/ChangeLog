@@ -1,6 +1,6 @@
 2005-02-17 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
-	Removed the core support of theShared Libraries view.
+	Removed the core support of the Shared Libraries view.
 	* ICSharedLibraryManager.java: removed
 	* ICDebugTarget.java
 	* ICSharedLibrary.java: removed

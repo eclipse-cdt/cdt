@@ -22,7 +22,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDIThread extends ICDIObject {
+public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISuspend, ICDIObject {
+
 	/**
 	 * Returns the stack frames contained in this thread. An
 	 * empty collection is returned if this thread contains
@@ -55,6 +56,8 @@ public interface ICDIThread extends ICDIObject {
 
 	/**
 	 * Set the current Stack for the thread.
+	 * 
+	 * @deprecated
 	 * @param - ICDIStackFrame
 	 */
 	void setCurrentStackFrame(ICDIStackFrame current) throws CDIException;
@@ -62,6 +65,8 @@ public interface ICDIThread extends ICDIObject {
 	/**
 	 * Set the current frame whithout generation any events, for example
 	 * registers changed events.
+	 * 
+	 * @deprecated
 	 * @param frame
 	 * @param b
 	 */
@@ -69,107 +74,94 @@ public interface ICDIThread extends ICDIObject {
 
 	/**
 	 * Set the current stackframe.
+	 * 
+	 * @deprecated
 	 * @return ICDIStackFrame
 	 */
 	ICDIStackFrame getCurrentStackFrame() throws CDIException;
-	/**
-	 * Returns whether this thread is currently suspended.
-	 *
-	 * @return whether this thread is currently suspended
-	 */
-	boolean isSuspended();
 
 	/**
-	 * Causes this thread to resume its execution. 
-	 * Has no effect on a thread that is not suspended.
+	 * Equivalent to resume(false)
 	 * 
+	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void resume() throws CDIException;
 
 	/**
-	 * Causes this thread to suspend its execution. 
-	 * Has no effect on an already suspended thread.
+	 * Equivalent to stepOver(1)
 	 * 
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	void suspend() throws CDIException;
-
-	/**
-	 * Equivalent to stepReturn(true)
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	void stepReturn() throws CDIException;
-
-	/**
-	 * If execute is true, continue running until just after function. if
-	 * If execute is false, cancel execution of the function and stop the
-	 * program after the function.
-	 * Can  only be called when the associated target is suspended.
-	 * 
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	void stepReturn(boolean execute) throws CDIException;
-
-	/**
-	 * Steps over the current source line. Can only be called
-	 * when the associated thread is suspended. 
-	 * 
+	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOver() throws CDIException;
 
 	/**
-	 * Steps into the current source line. Can only be called
-	 * when the associated thread is suspended. 
+	 * Equivalent to stepInto(1)
 	 * 
+	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepInto() throws CDIException;
 
 	/**
-	 * Steps over the current machine instruction. Can only be called
-	 * when the associated thread is suspended. 
+	 * Equivalent to stepOverInstruction(1)
 	 * 
+	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOverInstruction() throws CDIException;
 
 	/**
-	 * Steps into the current machine instruction. Can only be called
-	 * when the associated thread is suspended. 
+	 * Equivalent to stepIntoInstruction(1)
 	 * 
+	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepIntoInstruction() throws CDIException;
 
 	/**
-	 * Continues running until location is reached.
-	 * Can only be called when the associated thread is suspended.
+	 * This method is deprecated and will only be available
+	 * on the stackframe
 	 * 
+	 * @deprecated
+	 * @see ICDIStackFrame.stepReturn()
+	 * @throws CDIException
+	 */
+	void stepReturn() throws CDIException;
+
+	/**
+	 * Equivalent to stepUntil(location)
+	 * 
+	 * @deprecated
+	 * @see #stepUntil(ICDILocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void runUntil(ICDILocation location) throws CDIException;
 
 	/**
-	 * Resume execution at location. Note the jump() does not change stackframe.
-	 * The result is undefined if jump outside of the stacframe i.e function.
-	 * Can  only be called when the associated target is suspended.
+	 * Equivalent to resume(location)
 	 * 
+	 * @deprecated
+	 * @see #resume(ICDILocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void jump(ICDILocation location) throws CDIException;
 
 	/**
-	 * Method signal, resume execution without giving a signal.
+	 * Equivalent to resume(false)
+	 * 
+	 * @deprecated
+	 * @see #resume(boolean)
 	 * @throws CDIException
 	 */
 	void signal() throws CDIException;
 
 	/**
-	 * Resume execution where the program stopped but immediately give the
-	 * signal.
+	 * Equivalent to resume(signal)
 	 * 
+	 * @deprecated
+	 * @see #resume(ICDISignal) 
 	 * @param signal
 	 * @throws CDIException
 	 */

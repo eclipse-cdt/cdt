@@ -22,7 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDIStackFrame extends ICDIObject {
+public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
 	/**
 	 * Returns the location of the instruction pointer in this 
 	 * stack frame.

@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 
 /**
  * 
@@ -23,13 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDITarget extends ICDIBreakpointManagement, ICDIObject {
-	/**
-	 * Returns the debug session this target is contained in.
-	 * 
-	 * @return the debug session this target is contained in
-	 */
-	ICDISession getSession();
+public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 
 	/**
 	 * Gets the target process.
@@ -40,17 +34,9 @@ public interface ICDITarget extends ICDIBreakpointManagement, ICDIObject {
 	Process getProcess();
 
 	/**
-	 * Returns the threads contained in this target. 
-	 * An empty collection is returned if this target contains no 
-	 * threads.
-	 * 
-	 * @return a collection of threads
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIThread[] getThreads() throws CDIException;
-
-	/**
 	 * Set the current thread on the target.
+	 * 
+	 * @deprecated
 	 * @param - ICDThread
 	 */
 	void setCurrentThread(ICDIThread current) throws CDIException;
@@ -104,116 +90,85 @@ public interface ICDITarget extends ICDIBreakpointManagement, ICDIObject {
 	void restart() throws CDIException;
 
 	/**
-	 * Returns whether this target is currently suspended.
-	 *
-	 * @return whether this target is currently suspended
-	 */
-	boolean isSuspended();
-
-	/**
-	 * Causes this target to resume its execution. 
-	 * Has no effect on a target that is not suspended.
+	 * Equivalent to resume(false)
 	 * 
+	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void resume() throws CDIException;
 
 	/**
-	 * Causes this target to suspend its execution. 
-	 * Has no effect on an already suspended target.
+	 * Equivalent to stepOver(1)
 	 * 
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	void suspend() throws CDIException;
-
-	/**
-	 * Equivalent to stepReturn(true)
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	void stepReturn() throws CDIException;
-
-	/**
-	 * If execute is true, continue running until just after function. if
-	 * If execute is false, cancel execution of the function and stop the
-	 * program after the function.
-	 * Can  only be called when the associated target is suspended.
-	 * 
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	void stepReturn(boolean execute) throws CDIException;
-
-	/**
-	 * Steps over the current source line. Can only be called
-	 * when the associated target is suspended. 
-	 * 
+	 * @deprecated
+	 * @see #stepOver(int)
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOver() throws CDIException;
 
 	/**
-	 * Steps into the current source line. Can only be called
-	 * when the associated target is suspended. 
+	 * Equivalent to stepInto(1)
 	 * 
+	 * @deprecated
+	 * @see #stepInto(int) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepInto() throws CDIException;
 
 	/**
-	 * Steps over the current machine instruction. Can only be called
-	 * when the associated target is suspended. 
+	 * Equivalent to stepOverInstruction(1)
 	 * 
+	 * @deprecated
+	 * @see stepOverInstruction(int) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOverInstruction() throws CDIException;
 
 	/**
-	 * Steps into the current machine instruction. Can only be called
-	 * when the associated target is suspended. 
+	 * Equivalent to stepIntoInstruction(1)
 	 * 
+	 * @deprecated
+	 * @see #stepIntoInstruction(int) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepIntoInstruction() throws CDIException;
 
 	/**
-	 * Continues running until location is reached. Can only be called when the associated 
-	 * target is suspended.
+	 * Equivaltent to stepUntil(location)
 	 * 
+	 * @deprecated
+	 * @see #stepUntil(ICDILocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void runUntil(ICDILocation location) throws CDIException;
 
 	/**
-	 * Resume execution at location. Note the jump() does not change stackframe.
-	 * The result is undefined if jump outside of the stacframe i.e function.
-	 * Can  only be called when the associated target is suspended.
+	 * Equivalent to resume(location
 	 * 
+	 * @deprecated
+	 * @see #resume(ICDLocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void jump(ICDILocation location) throws CDIException;
 	
 	/**
-	 * Method signal, resume execution without giving a signal.
+	 * Equivalent to resume(false)
+	 * 
+	 * @deprecated
 	 * @throws CDIException
 	 */
 	void signal() throws CDIException;
 
 	/**
-	 * Resume execution where the program stopped but immediately give the
-	 * signal.
+	 * Equivalent to resume(signal)
 	 * 
+	 * @deprecated
+	 * @see #resume(ICDISignal) 
 	 * @param signal
 	 * @throws CDIException
 	 */
 	void signal(ICDISignal signal) throws CDIException;
 	
-	/**
-	 * Returns the currently selected thread.
-	 * 
-	 * @return the currently selected thread
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIThread getCurrentThread() throws CDIException;
-
 	/**
 	 * Return a ICDICondition
 	 */

@@ -1,3 +1,8 @@
+2004-07-06 Chris Weibe
+
+	Fix for PR 69199
+	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
+
 2004-07-06 Hoda Amer
 	Fix for PR 69330 : Outline is flickering.
 	

@@ -326,8 +326,11 @@ public class CElementLabels {
 		
 		//qualification
 		if( getFlag( flags, M_FULLY_QUALIFIED ) ){
-			getTypeLabel( method.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
-			buf.append( "::" ); //$NON-NLS-1$
+			ICElement parent = method.getParent();
+			if (parent != null && parent.exists()) {
+				getTypeLabel( parent, T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
+				buf.append( "::" ); //$NON-NLS-1$
+			}
 		}
 		
 		buf.append( method.getElementName() );
@@ -455,9 +458,11 @@ public class CElementLabels {
 	public static void getTypeLabel(ICElement elem, int flags, StringBuffer buf) {
 		if (getFlag(flags, T_FULLY_QUALIFIED)) {
 			ISourceRoot root= CModelUtil.getSourceRoot(elem);
-			getSourceRootLabel(root, (flags & P_COMPRESSED), buf);
-			buf.append(root.getElementName());
-			buf.append('.');
+			if (root != null) {
+				getSourceRootLabel(root, (flags & P_COMPRESSED), buf);
+				buf.append(root.getElementName());
+				buf.append('.');
+			}
 		}
 		
 		String typeName= elem.getElementName();

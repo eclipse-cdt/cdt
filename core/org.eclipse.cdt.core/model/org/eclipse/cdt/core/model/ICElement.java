@@ -250,6 +250,16 @@ public interface ICElement extends IAdaptable {
 	IResource getUnderlyingResource() throws CModelException;
 
 	/**
+	 * Returns the Corresponding resource for
+	 * this element, or <code>null</code> if this element does not have
+	 * a corresponding resource.
+	 *
+	 * @return the corresponding resource, or <code>null</code> if none
+	 * @exception CModelException if this element does not exist or if an
+	 *		exception occurs while accessing its resource
+	 */
+	IResource getResource() throws CModelException;
+	/**
 	 * Returns whether this C element is read-only. An element is read-only
 	 * if its structure cannot be modified by the C model. 
 	 *

@@ -36,17 +36,9 @@ public interface IScannerData {
 	 */
 	public abstract void setIncludePathNames(List includePathNames);
 	/**
-	 * @param includePaths The includePaths to set.
-	 */
-	public abstract void setIncludePaths(List includePaths);
-	/**
 	 * @return Returns the includePathNames.
 	 */
 	public abstract List getIncludePathNames();
-	/**
-	 * @return Returns the includePaths.
-	 */
-	public abstract List getIncludePaths();
 	/**
 	 * @return Returns the originalConfig.
 	 */

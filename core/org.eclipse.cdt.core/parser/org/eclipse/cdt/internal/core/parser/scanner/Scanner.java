@@ -286,27 +286,35 @@ public class Scanner implements IScanner {
     	}
     	initialContextInitialized = true;   	
     }
+	
 	public void addIncludePath(String includePath) {
 		scannerData.getIncludePathNames().add(includePath);
-		scannerData.getIncludePaths().add( new File( includePath ) );
 	}
 
 	public void overwriteIncludePath(String [] newIncludePaths) {
 		if( newIncludePaths == null ) return;
 		scannerData.setIncludePathNames(new ArrayList());
-		scannerData.setIncludePaths( new ArrayList() );
 		
-		for( int i = 0; i < newIncludePaths.length; ++i ) 
-			scannerData.getIncludePathNames().add( newIncludePaths[i] );
-		
-		Iterator i = scannerData.getIncludePathNames().iterator(); 
-		while( i.hasNext() )
+		for( int i = 0; i < newIncludePaths.length; ++i )
 		{
-			String path = (String) i.next();
-			scannerData.getIncludePaths().add( new File( path ));
-		}
-		
-		
+			String path = newIncludePaths[i];
+			
+			File file = new File( path );
+			
+			if( !file.exists() && path.indexOf('\"') != -1 )
+			{
+				StringTokenizer tokenizer = new StringTokenizer(path, "\"" );	//$NON-NLS-1$
+				StringBuffer buffer = new StringBuffer(path.length() );
+				while( tokenizer.hasMoreTokens() ){
+					buffer.append( tokenizer.nextToken() );
+				}
+				file = new File( buffer.toString() );
+			}
+
+			if( file.exists() && file.isDirectory() )
+				scannerData.getIncludePathNames().add( path );
+			
+		}		
 	}
 
 	public void addDefinition(String key, IMacroDescriptor macro) {
@@ -489,70 +497,67 @@ public class Scanner implements IScanner {
 	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
 
 		FileReader inclusionReader = null;
-		String newPath = null; 
-		if( useIncludePaths ) // search include paths for this file
+		String newPath = null;
+		
+		totalLoop:	for( int i = 0; i < 2; ++i )
 		{
-			// iterate through the include paths 
-			Iterator iter = scannerData.getIncludePaths().iterator();
-	
-			while (iter.hasNext()) {
-	
-				File pathFile = (File)iter.next();
-				String path = pathFile.getPath();
-				if( !pathFile.exists() && path.indexOf('\"') != -1 )
-				{
-					StringTokenizer tokenizer = new StringTokenizer(path, "\"" );	//$NON-NLS-1$
-					StringBuffer buffer = new StringBuffer(path.length() );
-					while( tokenizer.hasMoreTokens() ){
-						buffer.append( tokenizer.nextToken() );
-					}
-					pathFile = new File( buffer.toString() );
-				}
-				if (pathFile.isDirectory()) {
+			if( useIncludePaths ) // search include paths for this file
+			{
+				// iterate through the include paths 
+				Iterator iter = scannerData.getIncludePathNames().iterator();
+		
+				while (iter.hasNext()) {
+		
+					String path = (String)iter.next();
+					File pathFile = new File(path);
+					//TODO assert pathFile.isDirectory();				
 					StringBuffer buffer = new StringBuffer( pathFile.getPath() );
 					buffer.append( File.separatorChar );
 					buffer.append( fileName );
 					newPath = buffer.toString();
+					//TODO remove ".." and "." segments
 					File includeFile = new File(newPath);
 					if (includeFile.exists() && includeFile.isFile()) {
 						try {
 							inclusionReader = new FileReader(includeFile);
-							break;
+							break totalLoop;
 						} catch (FileNotFoundException fnf) {
-							// do nothing - check the next directory
+							continue;
 						}
 					}
 				}
+				
+				if (inclusionReader == null )
+					handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
+	
 			}
-			
-			if (inclusionReader == null )
-				handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
-
-		}
-		else // local inclusion
-		{
-			String currentFilename = scannerData.getContextStack().getCurrentContext().getFilename(); 
-			File currentIncludeFile = new File( currentFilename );
-			String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
-			currentIncludeFile = null; 
-			StringBuffer buffer = new StringBuffer( parentDirectory );
-			buffer.append( File.separatorChar );
-			buffer.append( fileName );
-			newPath = buffer.toString();
-			File includeFile = new File( newPath );
-			if (includeFile.exists() && includeFile.isFile()) {
-				try {
-					inclusionReader =
-						new FileReader(includeFile);
-				} catch (FileNotFoundException fnf) {
-					// the spec says that if finding in the local directory fails, search the include paths
-					handleInclusion( fileName, true, beginOffset, startLine, nameOffset, nameLine, endOffset, endLine );
-				}
-			}
-			else
+			else // local inclusion
 			{
-				// the spec says that if finding in the local directory fails, search the include paths
-				handleInclusion( fileName, true, beginOffset, startLine, nameOffset, nameLine, endOffset, endLine );
+				String currentFilename = scannerData.getContextStack().getCurrentContext().getFilename(); 
+				File currentIncludeFile = new File( currentFilename );
+				String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
+				currentIncludeFile = null; 
+				
+				StringBuffer buffer = new StringBuffer( parentDirectory );
+				buffer.append( File.separatorChar );
+				buffer.append( fileName );
+				newPath = buffer.toString();
+				//TODO remove ".." and "." segments 
+				File includeFile = new File( newPath );
+				if (includeFile.exists() && includeFile.isFile()) {
+					try {
+						inclusionReader = new FileReader(includeFile);
+						break totalLoop;
+					} catch (FileNotFoundException fnf) {
+						useIncludePaths = true;
+						continue totalLoop;
+					}
+				}
+				else
+				{
+					useIncludePaths = true;
+					continue totalLoop;
+				}
 			}
 		}
 		if (inclusionReader != null) {

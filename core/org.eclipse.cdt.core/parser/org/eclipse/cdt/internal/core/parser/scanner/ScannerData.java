@@ -42,7 +42,6 @@ public class ScannerData implements IScannerData
 	private final IScanner scanner;
 	private final IScannerInfo originalConfig;
 	private List includePathNames = new ArrayList();
-	private List includePaths = new ArrayList();
 	
 	/**
 	 * @return Returns the contextStack.
@@ -59,24 +58,10 @@ public class ScannerData implements IScannerData
 	}
 
 	/**
-	 * @param includePaths The includePaths to set.
-	 */
-	public void setIncludePaths(List includePaths) {
-		this.includePaths = includePaths;
-	}
-
-	/**
 	 * @return Returns the includePathNames.
 	 */
 	public List getIncludePathNames() {
 		return includePathNames;
-	}
-
-	/**
-	 * @return Returns the includePaths.
-	 */
-	public List getIncludePaths() {
-		return includePaths;
 	}
 
 	/**

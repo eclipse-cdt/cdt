@@ -1,3 +1,6 @@
+2004-02-24 John Camelon
+	Refactoring Scanner.handleInclusion to be more modular.
+
 2004-02-24 Andrew Niefer
 	Template Explicit Specializations (bug 51485)
 	adding basic symbol table functionality for non-nested template specializations

@@ -1851,4 +1851,12 @@ public class Scanner2Test extends BaseScanner2Test
         assertEquals( t.getOffset(), offset + 3 );
         assertEquals( t.getLineNumber(), 2 );
     }
+    
+    public void testBug74328() throws Exception
+	{
+    	initializeScanner( "\"\";\n" ); //$NON-NLS-1$
+    	validateString(	""); //$NON-NLS-1$
+    	validateToken( IToken.tSEMI );
+    	validateEOF();
+	}
 }

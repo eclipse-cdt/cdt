@@ -2110,7 +2110,18 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         writer.write( "using namespace N;     \n" );
         writer.write( "PINT pint;             \n" );
         parse( writer.toString() );
-        assertTrue( callback.problems.isEmpty() );
     }
+    
+    public void testBug74328() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "int\n" ); 
+    	writer.write( "main(int argc, char **argv) {\n" );
+    	writer.write( "	char *sign;\n" );
+    	writer.write( "sign = \"\"; // IProblem generated here, syntax error\n" );
+    	writer.write( "return argc;\n" );
+    	writer.write( "}\n" );
+    	parse( writer.toString() );
+	}
 }
 

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
@@ -65,6 +66,18 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 				}
 				return p.toString();
 			}
+		} else if (element instanceof ITranslationUnit) {
+			ITranslationUnit unit = (ITranslationUnit)element;
+			Object parent = unit.getParent();
+			if (parent instanceof IIncludeReference) {
+				IPath p = unit.getPath();
+				IPath parentLocation = ((IIncludeReference)parent).getPath();
+				if (parentLocation.isPrefixOf(p)) {
+					p = p.setDevice(null);
+					p = p.removeFirstSegments(parentLocation.segmentCount());
+				}
+				return p.toString();
+			}			
 		}
 		return super.getText(element);
 	}

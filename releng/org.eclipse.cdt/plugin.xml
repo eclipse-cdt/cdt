@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt"
    name="%pluginName"
-   version="2.0.0"
+   version="2.0.1"
    provider-name="%providerName">
   <requires>
       <import plugin="org.eclipse.ui.intro"/>

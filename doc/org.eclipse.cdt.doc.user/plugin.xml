@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.doc.user"
    name="%pluginName"
-   version="2.0.0"
+   version="2.0.1"
    provider-name="%providerName">
 
    <runtime>

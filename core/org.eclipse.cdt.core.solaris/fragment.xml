@@ -3,10 +3,10 @@
 <fragment
    id="org.eclipse.cdt.core.solaris"
    name="%fragmentName.solaris"
-   version="2.0.0"
+   version="2.0.1"
    provider-name="Eclipse.org"
    plugin-id="org.eclipse.cdt.core"
-   plugin-version="2.0.0">
+   plugin-version="2.0.1">
 
    <runtime>
       <library name="cdt_solaris.jar"/>

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 /* from pfind.c */
-char *pfind( char *name );
+extern char *pfind(const char *name);
 
 pid_t
 exec0(const char *path, char *const argv[], char *const envp[],
@@ -19,17 +19,13 @@ exec0(const char *path, char *const argv[], char *const envp[],
 	char *full_path;
 
 	/*
-	 * Handle this error case, we need the full path for execve() below.
+	 * We use pfind() to check that the program exists and is an executable.
+	 * If not pass the error up.  Also execve() wants a full path.
 	 */ 
-	if (path[0] != '/' && path[0] != '.') {
-		full_path = pfind(path);
-		//full_path = pathfind (getenv ("PATH"), path, "rx");
-		if (full_path == NULL) {
-			fprintf(stderr, "Unable to find full path for \"%s\"\n", path );
-			return -1;
-		}
-	} else {
-		full_path = strdup(path);
+	full_path = pfind(path);
+	if (full_path == NULL) {
+		fprintf(stderr, "Unable to find full path for \"%s\"\n", (path) ? path : "");
+		return -1;
 	}
 
 	/*

@@ -22,6 +22,7 @@ public interface ICompletionRequestor {
 	void acceptClass(String name, int completionStart, int completionLength, int relevance);
 	void acceptStruct(String name, int completionStart, int completionLength, int relevance);
 	void acceptUnion(String name, int completionStart, int completionLength, int relevance);
+	void acceptTypedef(String name, int completionStart, int completionLength, int relevance);
 	void acceptNamespace(String name, int completionStart, int completionLength, int relevance);
 	void acceptMacro(String name, int completionStart, int completionLength, int relevance);
 	void acceptEnumeration(String name, int completionStart, int completionLength, int relevance);

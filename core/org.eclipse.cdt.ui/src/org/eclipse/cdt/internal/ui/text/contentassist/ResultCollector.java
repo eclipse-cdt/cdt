@@ -475,6 +475,31 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			completions.add(proposal);		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ICompletionRequestor#acceptTypedef(java.lang.String, int, int, int)
+	 */
+	public void acceptTypedef(String name, 
+			int completionStart,
+			int completionLength, 
+			int relevance) {
+		String replaceString = ""; //$NON-NLS-1$
+		String displayString = ""; //$NON-NLS-1$
+		Image image = null;
+		StringBuffer infoString = new StringBuffer();
+	
+		// fill the replace, display and info strings
+		replaceString = name;
+		displayString = name;
+
+		// get the image 	
+		ImageDescriptor imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
+		image = registry.get( imageDescriptor );
+
+		// create proposal and add it to completions list
+		ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
+			null, image, completionStart, completionLength, relevance);
+		completions.add(proposal);		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICompletionRequestor#acceptKeyword(java.lang.String, int, int, int)

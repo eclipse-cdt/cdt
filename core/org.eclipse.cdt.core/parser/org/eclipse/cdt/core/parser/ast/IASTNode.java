@@ -22,8 +22,8 @@ public interface IASTNode {
 	
 	 public static class LookupKind extends Enum {
 
-		public static final LookupKind ALL = new LookupKind( 0 );
-		public static final LookupKind STRUCTURES = new LookupKind( 1 );
+		public static final LookupKind ALL = new LookupKind( 0 ); // includes everything
+		public static final LookupKind STRUCTURES = new LookupKind( 1 ); // includes STRUCTS + UNIONS + CLASSES
 		public static final LookupKind STRUCTS = new LookupKind( 2 );
 		public static final LookupKind UNIONS = new LookupKind( 3 );
 		public static final LookupKind CLASSES = new LookupKind( 4 );
@@ -38,6 +38,8 @@ public interface IASTNode {
 		public static final LookupKind ENUMERATIONS = new LookupKind( 13 ); 
 		public static final LookupKind ENUMERATORS = new LookupKind( 14 );
 		public static final LookupKind THIS = new LookupKind(15);
+		public static final LookupKind TYPEDEFS = new LookupKind(16);
+		public static final LookupKind TYPES = new LookupKind(17); // includes STRUCTURES + ENUMERATIONS + TYPEDEFS
 		
 		/**
 		 * @param enumValue

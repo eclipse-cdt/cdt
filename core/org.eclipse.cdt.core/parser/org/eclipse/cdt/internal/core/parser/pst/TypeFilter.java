@@ -106,6 +106,7 @@ public class TypeFilter {
 		else if ( kind == LookupKind.NAMESPACES )  { acceptedTypes.add( TypeInfo.t_namespace );   }
 		else if ( kind == LookupKind.ENUMERATIONS ){ acceptedTypes.add( TypeInfo.t_enumeration ); } 
 		else if ( kind == LookupKind.ENUMERATORS ) { acceptedTypes.add( TypeInfo.t_enumerator );  }
+		else if ( kind == LookupKind.TYPEDEFS )    { acceptedTypes.add( TypeInfo.t_type );  }
 	}
 
 

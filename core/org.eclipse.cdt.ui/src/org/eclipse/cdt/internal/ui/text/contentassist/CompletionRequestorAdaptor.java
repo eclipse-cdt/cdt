@@ -139,4 +139,11 @@ public class CompletionRequestorAdaptor implements ICompletionRequestor {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ICompletionRequestor#acceptTypedef(java.lang.String, int, int, int)
+	 */
+	public void acceptTypedef(String name, int completionStart,
+			int completionLength, int relevance) {
+		// TODO Auto-generated method stub
+	}
 }

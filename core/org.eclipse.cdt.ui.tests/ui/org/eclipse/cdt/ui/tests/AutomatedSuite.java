@@ -34,7 +34,7 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		
 		// Success Tests
-		addTest(PartitionTokenScannerTest.suite());
+		//addTest(PartitionTokenScannerTest.suite());
 		addTest(TextBufferTest.suite());
 		// completion tests
 		addTest(CompletionTest_FieldType_Prefix.suite());
@@ -75,6 +75,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_MacroRef_Prefix.suite());
 		addTest(CompletionFailedTest_FunctionReference_Bug50807.suite());
 		addTest(CompletionFailedTest_ConstructorReference_Bug50808.suite());
+		addTest(CompletionFailedTest_TypeDef_Bug52948.suite());
 	}
 	
 }

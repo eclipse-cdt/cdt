@@ -11,17 +11,18 @@
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 public interface RelevanceConstants {
-	final int CASE_MATCH_RELEVANCE = 150;
+	final int CASE_MATCH_RELEVANCE = 160;
 	final int EXACT_NAME_MATCH_RELEVANCE = 40;
 	
-	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 130;
-	final int FIELD_TYPE_RELEVANCE = 120;
-	final int VARIABLE_TYPE_RELEVANCE = 110;
-	final int METHOD_TYPE_RELEVANCE = 100;
-	final int FUNCTION_TYPE_RELEVANCE = 90;
-	final int CLASS_TYPE_RELEVANCE = 80;
-	final int STRUCT_TYPE_RELEVANCE = 70;
-	final int UNION_TYPE_RELEVANCE = 60;
+	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 140;
+	final int FIELD_TYPE_RELEVANCE = 130;
+	final int VARIABLE_TYPE_RELEVANCE = 120;
+	final int METHOD_TYPE_RELEVANCE = 110;
+	final int FUNCTION_TYPE_RELEVANCE = 100;
+	final int CLASS_TYPE_RELEVANCE = 90;
+	final int STRUCT_TYPE_RELEVANCE = 80;
+	final int UNION_TYPE_RELEVANCE = 70;
+	final int TYPEDEF_TYPE_RELEVANCE = 60;
 	final int NAMESPACE_TYPE_RELEVANCE = 50;
 	final int MACRO_TYPE_RELEVANCE = 40;
 	final int ENUMERATION_TYPE_RELEVANCE = 30;

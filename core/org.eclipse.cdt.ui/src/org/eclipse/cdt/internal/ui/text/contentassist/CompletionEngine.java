@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
@@ -92,6 +93,7 @@ public class CompletionEngine implements RelevanceConstants {
 	private int numEnumerations = 0;
 	private int numEnumerators = 0;
 	private int numNamespaces = 0;
+	private int numTypedefs = 0;
 	
 	public CompletionEngine(ICompletionRequestor completionRequestor){
 			requestor = completionRequestor;
@@ -130,6 +132,8 @@ public class CompletionEngine implements RelevanceConstants {
 				return STRUCT_TYPE_RELEVANCE;
 			case ICElement.C_UNION:
 				return UNION_TYPE_RELEVANCE;
+			case ICElement.C_TYPEDEF:
+				return TYPEDEF_TYPE_RELEVANCE;
 			case ICElement.C_NAMESPACE:
 				return NAMESPACE_TYPE_RELEVANCE;
 			case ICElement.C_MACRO:
@@ -314,6 +318,14 @@ public class CompletionEngine implements RelevanceConstants {
 			
 			requestor.acceptEnumerator(enumerator.getName(), completionStart, completionLength, relevance);
 		}
+		else if(node instanceof IASTTypedefDeclaration){
+			numTypedefs++;
+			IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)node;
+			int relevance = computeRelevance(ICElement.C_TYPEDEF, prefix, typedef.getName());
+			relevance += totalNumberOfResults - numTypedefs;
+			
+			requestor.acceptTypedef(typedef.getName(), completionStart, completionLength, relevance);
+		}
 	}
 	
 	private void addKeywordToCompletions (String keyword){
@@ -359,6 +371,7 @@ public class CompletionEngine implements RelevanceConstants {
 		numEnumerations = 0;
 		numEnumerators = 0;
 		numNamespaces = 0;
+		numTypedefs = 0;
 	}
 	private void addToCompletions (ILookupResult result){
 		if(result == null){
@@ -441,11 +454,12 @@ public class CompletionEngine implements RelevanceConstants {
 //		IASTScope searchNode = completionNode.getCompletionScope();
 //		// here we have to look for anything that could be referenced within this scope
 //		// 1. lookup local variables, global variables, functions, methods, structures, enums, and namespaces
-//		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[4];
+//		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[5];
 //		kinds[0] = IASTNode.LookupKind.VARIABLES; 
 //		kinds[1] = IASTNode.LookupKind.STRUCTURES; 
 //		kinds[2] = IASTNode.LookupKind.ENUMERATIONS; 
 //		kinds[3] = IASTNode.LookupKind.NAMESPACES; 
+//		kinds[4] = IASTNode.LookupKind.TYPEDEFS; 
 //		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 //		addToCompletions(result);
 //		// TODO
@@ -459,10 +473,11 @@ public class CompletionEngine implements RelevanceConstants {
 		if(completionNode.getCompletionPrefix().length() > 0 ) {
 			// 2. Lookup all types that could be used here
 			ILookupResult result;
-			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[3];
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[4];
 			kinds[0] = IASTNode.LookupKind.STRUCTURES; 				
 			kinds[1] = IASTNode.LookupKind.ENUMERATIONS;
 			kinds[2] = IASTNode.LookupKind.NAMESPACES;
+			kinds[3] = IASTNode.LookupKind.TYPEDEFS;
 			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		} else // prefix is empty, we can not look for everything 
@@ -697,7 +712,7 @@ public class CompletionEngine implements RelevanceConstants {
 			
 	}
 	private void logKind(String message, IASTCompletionNode.CompletionKind kind){
-		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST) )
+		if (! CUIPlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
 			return;
 		
 		String kindStr = ""; //$NON-NLS-1$
@@ -737,7 +752,7 @@ public class CompletionEngine implements RelevanceConstants {
 		log (message + kindStr);
 	}
 	private void logNode(String message, IASTNode node){
-		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
+		if (! CUIPlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
 			return;
 		
 		if(node == null){
@@ -772,13 +787,17 @@ public class CompletionEngine implements RelevanceConstants {
 			log(message + name);
 			return;
 		}
-		
+		if(node instanceof IASTNamespaceDefinition){
+			String name = "Namespace "; //$NON-NLS-1$
+			log(message + name);
+			return;
+		}		
 		log(message + node.toString());
 		return;
 		
 	}
 	private void logLookups(LookupKind[] kinds){
-		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
+		if (! CUIPlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
 			return;
 		
 		StringBuffer kindName = new StringBuffer("Looking For "); //$NON-NLS-1$
@@ -816,6 +835,8 @@ public class CompletionEngine implements RelevanceConstants {
 				kindName.append("ENUMERATORS"); //$NON-NLS-1$
 			else if(kind == IASTNode.LookupKind.THIS)				
 				kindName.append("THIS"); //$NON-NLS-1$
+			else if(kind == IASTNode.LookupKind.TYPEDEFS)				
+				kindName.append("TYPEDEFS"); //$NON-NLS-1$
 
 			kindName.append(", "); //$NON-NLS-1$
 		}

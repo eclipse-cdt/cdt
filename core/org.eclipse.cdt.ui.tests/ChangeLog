@@ -1,3 +1,6 @@
+2004-03-08 Hoda Amer
+	Added one failed test: CompletionFailedTest_TypeDef_Bug52948
+
 2004-03-03 John Camelon
 	Updated failed test to fail in new way as Content Assist feature work continues on ...
 

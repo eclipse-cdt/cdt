@@ -37,6 +37,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -70,7 +72,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected final ParserMode mode;
 
-    protected IProblemRequestor requestor = null;
 
     protected final boolean supportStatementsInExpressions;
 
@@ -80,12 +81,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
-            IProblemRequestor callback, boolean supportStatementsInExpressions,
-            boolean supportTypeOfUnaries, boolean supportAlignOfUnaries) {
+            boolean supportStatementsInExpressions, boolean supportTypeOfUnaries,
+            boolean supportAlignOfUnaries) {
         this.scanner = scanner;
         this.log = logService;
         this.mode = parserMode;
-        this.requestor = callback;
         this.supportStatementsInExpressions = supportStatementsInExpressions;
         this.supportTypeOfUnaries = supportTypeOfUnaries;
         this.supportAlignOfUnaries = supportAlignOfUnaries;
@@ -286,15 +286,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throw bt;
     }
 
-    protected void failParse(BacktrackException bt) {
-        if (requestor != null) {
-            if (bt.getProblem() == null) {
-                IASTProblem problem = createProblem( IASTProblem.SYNTAX_ERROR, bt.getOffset(), bt.getLength() );
-                requestor.acceptProblem(problem);
-            } else
-                requestor.acceptProblem(bt.getProblem());
-        }
+    protected IASTProblem failParse(BacktrackException bt) {
+        IASTProblem result = null;
+        
+        if (bt.getProblem() == null) 
+            result = createProblem( IASTProblem.SYNTAX_ERROR, bt.getOffset(), bt.getLength() );
+        else
+            result = bt.getProblem();
+        
         failParse();
+        return result;
     }
 
     /**
@@ -303,14 +304,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @param length
      * @return
      */
-    protected IASTProblem createProblem(int signal, int offset, int length)
-    {
-        IASTProblem result = new ASTProblem( signal, EMPTY_STRING, false, true );
-        ((ASTNode)result).setOffset( offset );
-        ((ASTNode)result).setLength( length );
-        return result;
-    }
-    
+    protected abstract IASTProblem createProblem(int signal, int offset, int length);    
     /**
      * @param string
      * @param e
@@ -477,7 +471,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                             DEFAULT_COMPOUNDSTATEMENT_LIST_SIZE);
                 statements.add(s);
             } catch (BacktrackException b) {
-                failParse(b);
+                IASTProblem p = failParse(b);
+                IASTProblemStatement ps = createProblemStatement();
+                ps.setProblem( p );
+                ((ASTNode)ps).setOffset( ((ASTNode)p).getOffset() );
+                p.setParent( ps );
+                p.setPropertyInParent( IASTProblemStatement.PROBLEM );
+                statements.add( ps );
                 if (LA(1).hashCode() == checkToken)
                     failParseWithErrorHandling();
             }
@@ -494,6 +494,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
         return result;
     }
+
+    /**
+     * @return
+     */
+    protected abstract IASTProblemStatement createProblemStatement();
 
     /**
      * @return
@@ -1683,17 +1688,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		condition = condition();
         		consume(IToken.tRPAREN);
         	} catch (BacktrackException b) {
-        	    //if the problem has no offset info, make a new one that does
-        	    if( b.getProblem() != null ){
-        	        IASTProblem p = b.getProblem();
-//        	        IASTProblem p2 = problemFactory.createProblem( p.getID(), start.getOffset(), 
-//                            		   lastToken != null ? lastToken.getEndOffset() : start.getEndOffset(), 
-//                                       start.getLineNumber(), p.getOriginatingFileName(),
-//                                       p.getArguments() != null ? p.getArguments().toCharArray() : null,
-//                                       p.isWarning(), p.isError() );
-        	        b.initialize( p );
-        	    }
-        		failParse(b);
+        		IASTProblem p = failParse(b);
+        		IASTProblemExpression ps = createProblemExpression();
+        		ps.setProblem( p );
+        		((ASTNode)ps).setOffset( ((ASTNode)p).getOffset() );
+        		p.setParent( ps );
+        		p.setPropertyInParent( IASTProblemExpression.PROBLEM );
+        		condition = ps;
         		failParseWithErrorHandling();
         		passedCondition = false;
         	}
@@ -1741,6 +1742,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         cleanupLastToken();
         return if_statement;
     }
+
+    /**
+     * @return
+     */
+    protected abstract IASTProblemExpression createProblemExpression();
 
     /**
      * @return

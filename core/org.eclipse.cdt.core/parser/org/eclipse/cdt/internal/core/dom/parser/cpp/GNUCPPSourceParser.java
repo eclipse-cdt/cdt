@@ -59,6 +59,10 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -128,7 +132,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
-import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
@@ -1718,10 +1721,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *  
      */
     public GNUCPPSourceParser(IScanner scanner, ParserMode mode,
-            IProblemRequestor callback, IParserLogService log,
-            ICPPParserExtensionConfiguration config) {
-        super( scanner, log, mode, callback, config.supportStatementsInExpressions(),
-                config.supportTypeofUnaryExpressions(), config.supportAlignOfUnaryExpression() );
+            IParserLogService log, ICPPParserExtensionConfiguration config) {
+        super( scanner, log, mode, config.supportStatementsInExpressions(), config.supportTypeofUnaryExpressions(),
+                config.supportAlignOfUnaryExpression() );
         allowCPPRestrict = config.allowRestrictPointerOperators();
         supportExtendedTemplateSyntax = config
                 .supportExtendedTemplateSyntax();
@@ -1838,9 +1840,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         d.setParent( linkage );
                         d.setPropertyInParent( ICPPASTLinkageSpecification.OWNED_DECLARATION );
                     } catch (BacktrackException bt) {
-                        failParse(bt);
+                        IASTProblem p = failParse(bt);
+                        IASTProblemDeclaration pd = createProblemDeclaration();
+                        p.setParent( pd );
+                        pd.setProblem( p );
+                        ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
+                        p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                        linkage.addDeclaration( pd );
+                        pd.setParent( linkage );
+                        pd.setPropertyInParent( ICPPASTLinkageSpecification.OWNED_DECLARATION );                    
+                        errorHandling();
                         if (checkToken == LA(1).hashCode())
-                            failParseWithErrorHandling();
+                            errorHandling();
                     }
                 }
                 if (checkToken == LA(1).hashCode())
@@ -2277,9 +2288,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         d.setPropertyInParent( ICPPASTNamespaceDefinition.OWNED_DECLARATION );
                         namespaceDefinition.addDeclaration( d );
                     } catch (BacktrackException bt) {
-                        failParse(bt);
+                        IASTProblem p = failParse(bt);
+                        IASTProblemDeclaration pd = createProblemDeclaration();
+                        p.setParent( pd );
+                        pd.setProblem( p );
+                        ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
+                        p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                        namespaceDefinition.addDeclaration( pd );
+                        pd.setParent( namespaceDefinition );
+                        pd.setPropertyInParent( ICPPASTNamespaceDefinition.OWNED_DECLARATION );                    
+                        errorHandling();
                         if (checkToken == LA(1).hashCode())
-                            failParseWithErrorHandling();
+                            errorHandling();
                     }
                 }
                 if (checkToken == LA(1).hashCode())
@@ -3460,8 +3480,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 try {
                                     exceptionSpecIds.add(typeId(false));
                                 } catch (BacktrackException e) {
-                                    failParse(e);
-                                    break;
+                                    IASTProblem p = failParse(e);
+                                    IASTProblemTypeId typeIdProblem = createTypeIDProblem();
+                                    typeIdProblem.setProblem( p );
+                                    ((CPPASTNode)typeIdProblem).setOffset( ((CPPASTNode)p).getOffset() );
+                                    p.setParent( typeIdProblem );
+                                    p.setPropertyInParent( IASTProblemTypeId.PROBLEM );
+                                    exceptionSpecIds.add( typeIdProblem );
                                 }
                                 break;
                             }
@@ -3579,6 +3604,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         return d;
 
+    }
+
+    /**
+     * @return
+     */
+    protected IASTProblemTypeId createTypeIDProblem() {
+        return new CPPASTProblemTypeId();
     }
 
     /**
@@ -3767,8 +3799,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         d.setParent( astClassSpecifier );
                         d.setPropertyInParent( IASTCompositeTypeSpecifier.MEMBER_DECLARATION );
                     } catch (BacktrackException bt) {
+                        IASTProblem p = failParse(bt);
+                        IASTProblemDeclaration pd = createProblemDeclaration();
+                        pd.setProblem( p );
+                        ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
+                        p.setParent( pd );
+                        p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                        astClassSpecifier.addMemberDeclaration( pd );
+                        pd.setParent( astClassSpecifier );
+                        pd.setPropertyInParent( IASTCompositeTypeSpecifier.MEMBER_DECLARATION );
                         if (checkToken == LA(1).hashCode())
-                            failParseWithErrorHandling();
+                            errorHandling();
                     }
                 }
                 if (checkToken == LA(1).hashCode())
@@ -3931,9 +3972,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         while (LT(1) == IToken.t_catch) {
             int startOffset = consume(IToken.t_catch).getOffset();
             consume(IToken.tLPAREN);
+            boolean isEllipsis = false;
+            IASTDeclaration decl = null;
             try {
-                boolean isEllipsis = false;
-                IASTDeclaration decl = null;
                 if (LT(1) == IToken.tELLIPSIS)
                 {
                     consume(IToken.tELLIPSIS);
@@ -3945,29 +3986,35 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             true);
                 }
                 consume(IToken.tRPAREN);
-
-                IASTStatement compoundStatement = catchBlockCompoundStatement();
-                ICPPASTCatchHandler handler = createCatchHandler();
-                ((ASTNode)handler).setOffset( startOffset );
-                handler.setIsCatchAll( isEllipsis );
-                if( decl != null )
-                {
-                    handler.setDeclaration( decl );
-                    decl.setParent( handler );
-                    decl.setPropertyInParent( ICPPASTCatchHandler.DECLARATION );
-                }
-                if( compoundStatement != null )
-                {
-                    handler.setCatchBody( compoundStatement );
-                    compoundStatement.setParent( handler );
-                    compoundStatement.setPropertyInParent( ICPPASTCatchHandler.CATCH_BODY );
-                }
-                collection.add( handler );
-            } catch (BacktrackException bte) {
-                failParse(bte);
-                failParseWithErrorHandling();
             }
-        }
+            catch (BacktrackException bte) {
+                IASTProblem p = failParse(bte);
+                IASTProblemDeclaration pd = createProblemDeclaration();
+                pd.setProblem( p );
+                ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
+                p.setParent( pd );
+                p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                decl = pd;
+            }
+
+            IASTStatement compoundStatement = catchBlockCompoundStatement();
+            ICPPASTCatchHandler handler = createCatchHandler();
+            ((ASTNode)handler).setOffset( startOffset );
+            handler.setIsCatchAll( isEllipsis );
+            if( decl != null )
+            {
+                handler.setDeclaration( decl );
+                decl.setParent( handler );
+                decl.setPropertyInParent( ICPPASTCatchHandler.DECLARATION );
+            }
+            if( compoundStatement != null )
+            {
+                handler.setCatchBody( compoundStatement );
+                compoundStatement.setParent( handler );
+                compoundStatement.setPropertyInParent( ICPPASTCatchHandler.CATCH_BODY );
+            }
+            collection.add( handler );
+        } 
     }
 
     /**
@@ -4011,7 +4058,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             try {
                 return simpleDeclarationStrategyUnion();
             } catch (BacktrackException b) {
-                failParse(b);
+                failParse();
                 throwBacktrack(b);
                 return null;
             }
@@ -4051,20 +4098,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             } catch (BacktrackException b) {
                 try {
                     // Mark as failure and try to reach a recovery point
-                    failParse(b);
+                    IASTProblem p = failParse(b);
+                    IASTProblemDeclaration pd = createProblemDeclaration();
+                    p.setParent( pd );
+                    pd.setProblem( p );
+                    ((CPPASTNode)pd).setOffset( ((CPPASTNode)p).getOffset() );
+                    p.setPropertyInParent( IASTProblemDeclaration.PROBLEM );
+                    translationUnit.addDeclaration( pd );
+                    pd.setParent( translationUnit );
+                    pd.setPropertyInParent( IASTTranslationUnit.OWNED_DECLARATION );                    
                     errorHandling();
-                    //                    if (lastBacktrack != -1 && lastBacktrack ==
-                    // LA(1).hashCode())
-                    //                    {
-                    //                        // we haven't progressed from the last backtrack
-                    //                        // try and find tne next definition
-                    //                        failParseWithErrorHandling();
-                    //                    }
-                    //                    else
-                    //                    {
-                    //                        // start again from here
-                    //                        lastBacktrack = LA(1).hashCode();
-                    //                    }
                 } catch (EndOfFileException e) {
                     break;
                 }
@@ -4089,6 +4132,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
             }
         }
+    }
+
+    /**
+     * @return
+     */
+    protected IASTProblemDeclaration createProblemDeclaration() {
+        return new CPPASTProblemDeclaration();
     }
 
     /**
@@ -4431,5 +4481,31 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         translationUnit = null;
     }
 
-    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#createProblemStatement()
+     */
+    protected IASTProblemStatement createProblemStatement() {
+        return new CPPASTProblemStatement();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#createProblemExpression()
+     */
+    protected IASTProblemExpression createProblemExpression() {
+        return new CPPASTProblemExpression();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#createProblem(int,
+     *      int, int)
+     */
+    protected IASTProblem createProblem(int signal, int offset, int length) {
+        IASTProblem result = new CPPASTProblem(signal, EMPTY_STRING, false, true);
+        ((ASTNode) result).setOffset(offset);
+        ((ASTNode) result).setLength(length);
+        return result;
+    }
+
 }

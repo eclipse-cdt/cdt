@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IParserConfiguration;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
@@ -32,7 +31,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -58,12 +56,6 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
             "GNUC",  //$NON-NLS-1$
             "GNUC++" };  //$NON-NLS-1$
     private static final ISourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
-    private static final IProblemRequestor PROBLEM_REQUESTOR = new IProblemRequestor() {
-
-        public boolean acceptProblem(IASTProblem problem) {
-            return true;
-        }
-    };
 
 
     /* (non-Javadoc)
@@ -124,9 +116,9 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 	                ParserUtil.getScannerLogService(), Collections.EMPTY_LIST);
 		    //assume GCC
 		    if( l == ParserLanguage.C )
-		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, PROBLEM_REQUESTOR, ParserUtil.getParserLogService(), new GCCParserExtensionConfiguration()  );
+		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GCCParserExtensionConfiguration()  );
 		    else
-		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, PROBLEM_REQUESTOR, ParserUtil.getParserLogService(), new GNUCPPParserExtensionConfiguration() );		    
+		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GNUCPPParserExtensionConfiguration() );		    
 		}
 		else
 		{
@@ -145,22 +137,22 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    if( dialect.equals( dialects[0]))
 		    {
 		        ICParserExtensionConfiguration config = new ANSICParserExtensionConfiguration();
-		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, PROBLEM_REQUESTOR, ParserUtil.getParserLogService(), config ); 
+		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config ); 
 		    }
 		    else if( dialect.equals( dialects[1] ))
 		    {
 		        ICPPParserExtensionConfiguration config = new ANSICPPParserExtensionConfiguration();
-		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, PROBLEM_REQUESTOR, ParserUtil.getParserLogService(), config );
+		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );
 		    }
 		    else if( dialect.equals( dialects[2]))
 		    {
 		        ICParserExtensionConfiguration config = new GCCParserExtensionConfiguration();
-		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, PROBLEM_REQUESTOR, ParserUtil.getParserLogService(), config ); 		        
+		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config ); 		        
 		    }
 		    else if( dialect.equals( dialects[3]))
 		    {
 		        ICPPParserExtensionConfiguration config = new GNUCPPParserExtensionConfiguration();
-		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, PROBLEM_REQUESTOR, ParserUtil.getParserLogService(), config );		        
+		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );		        
 		    }
 		}
 		IASTTranslationUnit tu = parser.parse();

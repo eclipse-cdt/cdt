@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.parser2.ProblemCollector;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -71,7 +70,6 @@ public class AST2BaseTest extends TestCase {
      * @throws ParserException
      */
     protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
-        ProblemCollector collector = new ProblemCollector();
         CodeReader codeReader = new CodeReader(code
                 .toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
@@ -86,7 +84,7 @@ public class AST2BaseTest extends TestCase {
         {
             ICPPParserExtensionConfiguration config = null;
             config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, collector,
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
                 NULL_LOG,
                 config );
         }
@@ -95,14 +93,14 @@ public class AST2BaseTest extends TestCase {
             ICParserExtensionConfiguration config = null;
              config = new ANSICParserExtensionConfiguration();
             
-            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, collector, 
+            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, 
                 NULL_LOG, config );
         }
         IASTTranslationUnit tu = parser2.parse();
         if( parser2.encounteredError() )
             throw new ParserException( "FAILURE"); //$NON-NLS-1$
         
-        assertTrue( collector.hasNoProblems() );
+        //TODO add in assertion here to visit all problems 
     
         return tu;
     }

@@ -56,6 +56,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -90,13 +94,11 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
-import org.eclipse.cdt.internal.core.dom.parser.IProblemRequestor;
 
 /**
  * @author jcamelon
  */
 public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
-    
 
     private final boolean supportGCCStyleDesignators;
 
@@ -104,16 +106,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     /**
      * @param scanner
-     * @param logService
      * @param parserMode
-     * @param callback
+     * @param logService
      */
     public GNUCSourceParser(IScanner scanner, ParserMode parserMode,
-            IProblemRequestor callback, IParserLogService logService,
-            ICParserExtensionConfiguration config) {
-        super(scanner, logService, parserMode, callback, config
+            IParserLogService logService, ICParserExtensionConfiguration config) {
+        super(scanner, logService, parserMode, config
                 .supportStatementsInExpressions(), config
-                .supportTypeofUnaryExpressions(), config
+        .supportTypeofUnaryExpressions(), config
                 .supportAlignOfUnaryExpression());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
     }
@@ -147,7 +147,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (LT(1) == IToken.tLBRACE) {
             consume(IToken.tLBRACE);
             IASTInitializerList result = createInitializerList();
-            ((ASTNode)result).setOffset( startingOffset );
+            ((ASTNode) result).setOffset(startingOffset);
             for (;;) {
                 int checkHashcode = LA(1).hashCode();
                 // required at least one initializer list
@@ -156,32 +156,35 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (newDesignators.size() != 0)
                     if (LT(1) == IToken.tASSIGN)
                         consume(IToken.tASSIGN);
-                    
+
                 IASTInitializer initializer = cInitializerClause(newDesignators);
-                
-                if( newDesignators.isEmpty() )
-                {
-	                result.addInitializer(initializer);
-	                initializer.setParent( result );
-	                initializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
-                }
-                else
-                {
+
+                if (newDesignators.isEmpty()) {
+                    result.addInitializer(initializer);
+                    initializer.setParent(result);
+                    initializer
+                            .setPropertyInParent(IASTInitializerList.NESTED_INITIALIZER);
+                } else {
                     ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
-                    ((CASTNode)desigInitializer).setOffset( ((CASTNode)newDesignators.get(0)).getOffset());
-                    for( int i = 0; i < newDesignators.size(); ++i )
-                    {
-                        ICASTDesignator d = (ICASTDesignator) newDesignators.get(i);
-                        d.setParent( desigInitializer );
-                        d.setPropertyInParent( ICASTDesignatedInitializer.DESIGNATOR );
-                        desigInitializer.addDesignator( d );
+                    ((CASTNode) desigInitializer)
+                            .setOffset(((CASTNode) newDesignators.get(0))
+                                    .getOffset());
+                    for (int i = 0; i < newDesignators.size(); ++i) {
+                        ICASTDesignator d = (ICASTDesignator) newDesignators
+                                .get(i);
+                        d.setParent(desigInitializer);
+                        d
+                                .setPropertyInParent(ICASTDesignatedInitializer.DESIGNATOR);
+                        desigInitializer.addDesignator(d);
                     }
                     desigInitializer.setOperandInitializer(initializer);
-                    initializer.setParent( desigInitializer );
-                    initializer.setPropertyInParent( ICASTDesignatedInitializer.OPERAND );
-                    result.addInitializer( desigInitializer );
-                    desigInitializer.setParent( result );
-                    desigInitializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
+                    initializer.setParent(desigInitializer);
+                    initializer
+                            .setPropertyInParent(ICASTDesignatedInitializer.OPERAND);
+                    result.addInitializer(desigInitializer);
+                    desigInitializer.setParent(result);
+                    desigInitializer
+                            .setPropertyInParent(IASTInitializerList.NESTED_INITIALIZER);
                 }
                 // can end with just a '}'
                 if (LT(1) == IToken.tRBRACE)
@@ -193,7 +196,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
                 if (checkHashcode == LA(1).hashCode()) {
                     IToken l2 = LA(1);
-                    throwBacktrack(startingOffset, l2.getEndOffset() - startingOffset);
+                    throwBacktrack(startingOffset, l2.getEndOffset()
+                            - startingOffset);
                     return null;
                 }
 
@@ -210,7 +214,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTExpression assignmentExpression = assignmentExpression();
             IASTInitializerExpression result = createInitializerExpression();
             result.setExpression(assignmentExpression);
-            ((ASTNode)result).setOffset(((ASTNode)assignmentExpression).getOffset());
+            ((ASTNode) result).setOffset(((ASTNode) assignmentExpression)
+                    .getOffset());
             assignmentExpression.setParent(result);
             assignmentExpression
                     .setPropertyInParent(IASTInitializerExpression.INITIALIZER_EXPRESSION);
@@ -248,21 +253,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         //designated initializers for C
         List designatorList = Collections.EMPTY_LIST;
-        
+
         if (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
             while (LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET) {
                 if (LT(1) == IToken.tDOT) {
                     int offset = consume(IToken.tDOT).getOffset();
                     IToken id = identifier();
                     ICASTFieldDesignator designator = createFieldDesignator();
-                    ((ASTNode)designator).setOffset( offset );
-                    IASTName n = createName( id );
-                    designator.setName( n );
-                    n.setParent( designator );
-                    n.setPropertyInParent( ICASTFieldDesignator.FIELD_NAME );
-                    if( designatorList == Collections.EMPTY_LIST )
-                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
-                    designatorList.add( designator );
+                    ((ASTNode) designator).setOffset(offset);
+                    IASTName n = createName(id);
+                    designator.setName(n);
+                    n.setParent(designator);
+                    n.setPropertyInParent(ICASTFieldDesignator.FIELD_NAME);
+                    if (designatorList == Collections.EMPTY_LIST)
+                        designatorList = new ArrayList(
+                                DEFAULT_DESIGNATOR_LIST_SIZE);
+                    designatorList.add(designator);
                 } else if (LT(1) == IToken.tLBRACKET) {
                     IToken mark = consume(IToken.tLBRACKET);
                     int offset = mark.getOffset();
@@ -270,47 +276,53 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     if (LT(1) == IToken.tRBRACKET) {
                         consume(IToken.tRBRACKET);
                         ICASTArrayDesignator designator = createArrayDesignator();
-                        ((ASTNode)designator).setOffset( offset );
-                        designator.setSubscriptExpression( constantExpression );
-                        constantExpression.setParent( designator );
-                        constantExpression.setPropertyInParent( ICASTArrayDesignator.SUBSCRIPT_EXPRESSION );
-                        if( designatorList == Collections.EMPTY_LIST )
-                            designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
-                        designatorList.add( designator );
+                        ((ASTNode) designator).setOffset(offset);
+                        designator.setSubscriptExpression(constantExpression);
+                        constantExpression.setParent(designator);
+                        constantExpression
+                                .setPropertyInParent(ICASTArrayDesignator.SUBSCRIPT_EXPRESSION);
+                        if (designatorList == Collections.EMPTY_LIST)
+                            designatorList = new ArrayList(
+                                    DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList.add(designator);
                         continue;
                     }
                     backup(mark);
-                    if (supportGCCStyleDesignators ) {
+                    if (supportGCCStyleDesignators) {
                         int startOffset = consume(IToken.tLBRACKET).getOffset();
                         IASTExpression constantExpression1 = expression();
                         consume(IToken.tELLIPSIS);
                         IASTExpression constantExpression2 = expression();
                         consume(IToken.tRBRACKET);
                         IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
-                        ((ASTNode)designator).setOffset( startOffset );
-                        designator.setRangeFloor( constantExpression1 );
-                        constantExpression1.setParent( designator );
-                        constantExpression1.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION );
-                        designator.setRangeCeiling( constantExpression2 );
-                        constantExpression2.setParent( designator );
-                        constantExpression2.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION );
-                        if( designatorList == Collections.EMPTY_LIST )
-                            designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
-                        designatorList.add( designator );                                
+                        ((ASTNode) designator).setOffset(startOffset);
+                        designator.setRangeFloor(constantExpression1);
+                        constantExpression1.setParent(designator);
+                        constantExpression1
+                                .setPropertyInParent(IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION);
+                        designator.setRangeCeiling(constantExpression2);
+                        constantExpression2.setParent(designator);
+                        constantExpression2
+                                .setPropertyInParent(IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION);
+                        if (designatorList == Collections.EMPTY_LIST)
+                            designatorList = new ArrayList(
+                                    DEFAULT_DESIGNATOR_LIST_SIZE);
+                        designatorList.add(designator);
                     }
-                } else if ( supportGCCStyleDesignators && LT(1) == IToken.tIDENTIFIER )
-                {
+                } else if (supportGCCStyleDesignators
+                        && LT(1) == IToken.tIDENTIFIER) {
                     IToken identifier = identifier();
                     consume(IToken.tCOLON);
                     ICASTFieldDesignator designator = createFieldDesignator();
-                    ((ASTNode)designator).setOffset( identifier.getOffset() );
-                    IASTName n = createName( identifier );
-                    designator.setName( n );
-                    n.setParent( designator );
-                    n.setPropertyInParent( ICASTFieldDesignator.FIELD_NAME );
-                    if( designatorList == Collections.EMPTY_LIST )
-                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
-                    designatorList.add( designator );                    
+                    ((ASTNode) designator).setOffset(identifier.getOffset());
+                    IASTName n = createName(identifier);
+                    designator.setName(n);
+                    n.setParent(designator);
+                    n.setPropertyInParent(ICASTFieldDesignator.FIELD_NAME);
+                    if (designatorList == Collections.EMPTY_LIST)
+                        designatorList = new ArrayList(
+                                DEFAULT_DESIGNATOR_LIST_SIZE);
+                    designatorList.add(designator);
                 }
             }
         } else {
@@ -321,14 +333,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     IToken identifier = identifier();
                     consume(IToken.tCOLON);
                     ICASTFieldDesignator designator = createFieldDesignator();
-                    ((ASTNode)designator).setOffset( identifier.getOffset() );
-                    IASTName n = createName( identifier );
-                    designator.setName( n );
-                    n.setParent( designator );
-                    n.setPropertyInParent( ICASTFieldDesignator.FIELD_NAME );
-                    if( designatorList == Collections.EMPTY_LIST )
-                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
-                    designatorList.add( designator );
+                    ((ASTNode) designator).setOffset(identifier.getOffset());
+                    IASTName n = createName(identifier);
+                    designator.setName(n);
+                    n.setParent(designator);
+                    n.setPropertyInParent(ICASTFieldDesignator.FIELD_NAME);
+                    if (designatorList == Collections.EMPTY_LIST)
+                        designatorList = new ArrayList(
+                                DEFAULT_DESIGNATOR_LIST_SIZE);
+                    designatorList.add(designator);
                 } else if (LT(1) == IToken.tLBRACKET) {
                     int startOffset = consume(IToken.tLBRACKET).getOffset();
                     IASTExpression constantExpression1 = expression();
@@ -336,16 +349,19 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     IASTExpression constantExpression2 = expression();
                     consume(IToken.tRBRACKET);
                     IGCCASTArrayRangeDesignator designator = createArrayRangeDesignator();
-                    ((ASTNode)designator).setOffset( startOffset );
-                    designator.setRangeFloor( constantExpression1 );
-                    constantExpression1.setParent( designator );
-                    constantExpression1.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION );
-                    designator.setRangeCeiling( constantExpression2 );
-                    constantExpression2.setParent( designator );
-                    constantExpression2.setPropertyInParent( IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION );
-                    if( designatorList == Collections.EMPTY_LIST )
-                        designatorList = new ArrayList( DEFAULT_DESIGNATOR_LIST_SIZE );
-                    designatorList.add( designator );                                
+                    ((ASTNode) designator).setOffset(startOffset);
+                    designator.setRangeFloor(constantExpression1);
+                    constantExpression1.setParent(designator);
+                    constantExpression1
+                            .setPropertyInParent(IGCCASTArrayRangeDesignator.SUBSCRIPT_FLOOR_EXPRESSION);
+                    designator.setRangeCeiling(constantExpression2);
+                    constantExpression2.setParent(designator);
+                    constantExpression2
+                            .setPropertyInParent(IGCCASTArrayRangeDesignator.SUBSCRIPT_CEILING_EXPRESSION);
+                    if (designatorList == Collections.EMPTY_LIST)
+                        designatorList = new ArrayList(
+                                DEFAULT_DESIGNATOR_LIST_SIZE);
+                    designatorList.add(designator);
                 }
             }
         }
@@ -386,8 +402,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-
-  
     /**
      * @throws BacktrackException
      * @throws EndOfFileException
@@ -397,7 +411,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
         if (firstToken.getType() == IToken.tLBRACE)
-            throwBacktrack(firstToken.getOffset(), firstToken.getLength() );
+            throwBacktrack(firstToken.getOffset(), firstToken.getLength());
 
         firstToken = null; // necessary for scalability
 
@@ -435,7 +449,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             if (hasFunctionTryBlock && !hasFunctionBody)
-                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset );
+                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
         }
 
         if (hasFunctionBody) {
@@ -447,7 +461,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 throwBacktrack(firstOffset, LA(1).getEndOffset());
 
             IASTFunctionDefinition funcDefinition = createFunctionDefinition();
-            ((ASTNode)funcDefinition).setOffset(firstOffset);
+            ((ASTNode) funcDefinition).setOffset(firstOffset);
             funcDefinition.setDeclSpecifier(declSpec);
             declSpec.setParent(funcDefinition);
             declSpec.setPropertyInParent(IASTFunctionDefinition.DECL_SPECIFIER);
@@ -466,7 +480,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
 
         IASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration();
-        ((ASTNode)simpleDeclaration).setOffset(firstOffset);
+        ((ASTNode) simpleDeclaration).setOffset(firstOffset);
         simpleDeclaration.setDeclSpecifier(declSpec);
         declSpec.setParent(simpleDeclaration);
         declSpec.setPropertyInParent(IASTSimpleDeclaration.DECL_SPECIFIER);
@@ -537,7 +551,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             } catch (BacktrackException b) {
                 try {
                     // Mark as failure and try to reach a recovery point
-                    failParse(b);
+                    IASTProblem p = failParse(b);
+                    IASTProblemDeclaration pd = createProblemDeclaration();
+                    pd.setProblem(p);
+                    ((CASTNode) pd).setOffset(((CASTNode) p).getOffset());
+                    p.setParent(pd);
+                    p.setPropertyInParent(IASTProblemDeclaration.PROBLEM);
+                    pd.setParent(translationUnit);
+                    pd
+                            .setPropertyInParent(IASTTranslationUnit.OWNED_DECLARATION);
+                    translationUnit.addDeclaration(pd);
                     errorHandling();
                     if (lastBacktrack != -1
                             && lastBacktrack == LA(1).hashCode()) {
@@ -577,6 +600,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
+     * @return
+     */
+    protected IASTProblemDeclaration createProblemDeclaration() {
+        return new CASTProblemDeclaration();
+    }
+
+    /**
      * @param expression
      * @throws BacktrackException
      */
@@ -584,31 +614,49 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         IASTExpression conditionalExpression = conditionalExpression();
         // if the condition not taken, try assignment operators
-        if (conditionalExpression != null && conditionalExpression instanceof IASTConditionalExpression ) //&&
+        if (conditionalExpression != null
+                && conditionalExpression instanceof IASTConditionalExpression) //&&
             return conditionalExpression;
         switch (LT(1)) {
         case IToken.tASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_assign, conditionalExpression);
+            return assignmentOperatorExpression(IASTBinaryExpression.op_assign,
+                    conditionalExpression);
         case IToken.tSTARASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_multiplyAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_multiplyAssign,
+                    conditionalExpression);
         case IToken.tDIVASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_divideAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_divideAssign, conditionalExpression);
         case IToken.tMODASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_moduloAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_moduloAssign, conditionalExpression);
         case IToken.tPLUSASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_plusAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_plusAssign, conditionalExpression);
         case IToken.tMINUSASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_minusAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_minusAssign, conditionalExpression);
         case IToken.tSHIFTRASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_shiftRightAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_shiftRightAssign,
+                    conditionalExpression);
         case IToken.tSHIFTLASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_shiftLeftAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_shiftLeftAssign,
+                    conditionalExpression);
         case IToken.tAMPERASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_binaryAndAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_binaryAndAssign,
+                    conditionalExpression);
         case IToken.tXORASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_binaryXorAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_binaryXorAssign,
+                    conditionalExpression);
         case IToken.tBITORASSIGN:
-            return assignmentOperatorExpression(IASTBinaryExpression.op_binaryOrAssign, conditionalExpression);
+            return assignmentOperatorExpression(
+                    IASTBinaryExpression.op_binaryOrAssign,
+                    conditionalExpression);
         }
         return conditionalExpression;
     }
@@ -632,19 +680,20 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 int operator = 0;
                 switch (t) {
                 case IToken.tGT:
-                    operator = IASTBinaryExpression.op_greaterThan; 
+                    operator = IASTBinaryExpression.op_greaterThan;
                     break;
                 case IToken.tLT:
-                    operator = IASTBinaryExpression.op_lessThan; 
+                    operator = IASTBinaryExpression.op_lessThan;
                     break;
                 case IToken.tLTEQUAL:
                     operator = IASTBinaryExpression.op_lessEqual;
                     break;
                 case IToken.tGTEQUAL:
-                    operator = IASTBinaryExpression.op_greaterEqual; 
+                    operator = IASTBinaryExpression.op_greaterEqual;
                     break;
                 }
-                firstExpression = buildBinaryExpression( operator, firstExpression, secondExpression );
+                firstExpression = buildBinaryExpression(operator,
+                        firstExpression, secondExpression);
                 break;
             default:
                 return firstExpression;
@@ -672,13 +721,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     operator = IASTBinaryExpression.op_multiply;
                     break;
                 case IToken.tDIV:
-                    operator = IASTBinaryExpression.op_divide; 
+                    operator = IASTBinaryExpression.op_divide;
                     break;
                 case IToken.tMOD:
-                    operator = IASTBinaryExpression.op_modulo; 
+                    operator = IASTBinaryExpression.op_modulo;
                     break;
                 }
-                firstExpression = buildBinaryExpression( operator, firstExpression, secondExpression );
+                firstExpression = buildBinaryExpression(operator,
+                        firstExpression, secondExpression);
                 break;
             default:
                 return firstExpression;
@@ -708,8 +758,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     backup(mark);
                     throwBacktrack(bte);
                 }
-                
-                return buildTypeIdUnaryExpression( IASTCastExpression.op_cast, typeId, castExpression, startingOffset );
+
+                return buildTypeIdUnaryExpression(IASTCastExpression.op_cast,
+                        typeId, castExpression, startingOffset);
             } catch (BacktrackException b) {
             }
         }
@@ -725,15 +776,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int startingOffset = LA(1).getOffset();
         switch (LT(1)) {
         case IToken.tSTAR:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_star );
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_star);
         case IToken.tAMPER:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);
         case IToken.tPLUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus );
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus);
         case IToken.tMINUS:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus );
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus);
         case IToken.tNOT:
-            return unaryOperatorCastExpression(IASTUnaryExpression.op_not );
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_not);
         case IToken.tCOMPL:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);
         case IToken.tINCR:
@@ -759,10 +810,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 unaryExpression = unaryExpression();
             }
             mark = null;
-            if (typeId == null && unaryExpression != null )
-                return buildUnaryExpression( IASTUnaryExpression.op_sizeof, unaryExpression, startingOffset );
-            return buildTypeIdExpression( IASTTypeIdExpression.op_sizeof, typeId, startingOffset ); 
-            
+            if (typeId == null && unaryExpression != null)
+                return buildUnaryExpression(IASTUnaryExpression.op_sizeof,
+                        unaryExpression, startingOffset);
+            return buildTypeIdExpression(IASTTypeIdExpression.op_sizeof,
+                    typeId, startingOffset);
+
         default:
             if (LT(1) == IGCCToken.t_typeof && supportTypeOfUnaries) {
                 IASTExpression unary = unaryTypeofExpression();
@@ -784,13 +837,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @param startingOffset
      * @return
      */
-    protected IASTExpression buildTypeIdExpression(int op_sizeof, IASTTypeId typeId, int startingOffset) {
+    protected IASTExpression buildTypeIdExpression(int op_sizeof,
+            IASTTypeId typeId, int startingOffset) {
         IASTTypeIdExpression result = createTypeIdExpression();
-        result.setOperator( op_sizeof );
-        ((ASTNode)result).setOffset( startingOffset );
-        result.setTypeId( typeId );
-        typeId.setParent( result );
-        typeId.setPropertyInParent( IASTTypeIdExpression.TYPE_ID );
+        result.setOperator(op_sizeof);
+        ((ASTNode) result).setOffset(startingOffset);
+        result.setTypeId(typeId);
+        typeId.setParent(result);
+        typeId.setPropertyInParent(IASTTypeIdExpression.TYPE_ID);
         return result;
     }
 
@@ -814,20 +868,17 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // ( type-name ) { initializer-list }
             // ( type-name ) { initializer-list , }
             IToken m = mark();
-        	try
-        	{
-	            int offset = consume(IToken.tLPAREN).getOffset();
-	            IASTTypeId t = typeId(false);
-	            consume( IToken.tRPAREN );
-	            IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
-	            firstExpression = buildTypeIdInitializerExpression( t, i, offset );
-	            break;
-        	}
-        	catch( BacktrackException bt )
-        	{
-        	    backup( m );
-        	}
-            
+            try {
+                int offset = consume(IToken.tLPAREN).getOffset();
+                IASTTypeId t = typeId(false);
+                consume(IToken.tRPAREN);
+                IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
+                firstExpression = buildTypeIdInitializerExpression(t, i, offset);
+                break;
+            } catch (BacktrackException bt) {
+                backup(m);
+            }
+
         default:
             firstExpression = primaryExpression();
         }
@@ -840,73 +891,86 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume(IToken.tLBRACKET);
                 secondExpression = expression();
                 consume(IToken.tRBRACKET);
-                IASTArraySubscriptExpression s  = createArraySubscriptExpression();
-                ((ASTNode)s).setOffset( ((ASTNode)firstExpression).getOffset() );
-                s.setArrayExpression( firstExpression );
-                firstExpression.setParent( s );
-                firstExpression.setPropertyInParent( IASTArraySubscriptExpression.ARRAY );
-                s.setSubscriptExpression( secondExpression );
-                secondExpression.setParent( s );
-                secondExpression.setPropertyInParent( IASTArraySubscriptExpression.SUBSCRIPT );
+                IASTArraySubscriptExpression s = createArraySubscriptExpression();
+                ((ASTNode) s)
+                        .setOffset(((ASTNode) firstExpression).getOffset());
+                s.setArrayExpression(firstExpression);
+                firstExpression.setParent(s);
+                firstExpression
+                        .setPropertyInParent(IASTArraySubscriptExpression.ARRAY);
+                s.setSubscriptExpression(secondExpression);
+                secondExpression.setParent(s);
+                secondExpression
+                        .setPropertyInParent(IASTArraySubscriptExpression.SUBSCRIPT);
                 firstExpression = s;
                 break;
             case IToken.tLPAREN:
                 // function call
                 consume(IToken.tLPAREN);
-            	if( LT(1) != IToken.tRPAREN )
-            	    secondExpression = expression();
+                if (LT(1) != IToken.tRPAREN)
+                    secondExpression = expression();
                 consume(IToken.tRPAREN);
                 IASTFunctionCallExpression f = createFunctionCallExpression();
-                ((ASTNode)f).setOffset( ((ASTNode)firstExpression).getOffset() );
-                f.setFunctionNameExpression( firstExpression );
-                firstExpression.setParent( f );
-                firstExpression.setPropertyInParent( IASTFunctionCallExpression.FUNCTION_NAME );
-                
-                if( secondExpression != null )
-                {
-                    f.setParameterExpression( secondExpression );
-	                secondExpression.setParent( f );
-	                secondExpression.setPropertyInParent( IASTFunctionCallExpression.PARAMETERS );
+                ((ASTNode) f)
+                        .setOffset(((ASTNode) firstExpression).getOffset());
+                f.setFunctionNameExpression(firstExpression);
+                firstExpression.setParent(f);
+                firstExpression
+                        .setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
+
+                if (secondExpression != null) {
+                    f.setParameterExpression(secondExpression);
+                    secondExpression.setParent(f);
+                    secondExpression
+                            .setPropertyInParent(IASTFunctionCallExpression.PARAMETERS);
                 }
                 firstExpression = f;
                 break;
             case IToken.tINCR:
                 int offset = consume(IToken.tINCR).getOffset();
-            	firstExpression = buildUnaryExpression( IASTUnaryExpression.op_postFixIncr, firstExpression, offset );
+                firstExpression = buildUnaryExpression(
+                        IASTUnaryExpression.op_postFixIncr, firstExpression,
+                        offset);
                 break;
             case IToken.tDECR:
                 offset = consume().getOffset();
-        		firstExpression = buildUnaryExpression( IASTUnaryExpression.op_postFixDecr, firstExpression, offset );
+                firstExpression = buildUnaryExpression(
+                        IASTUnaryExpression.op_postFixDecr, firstExpression,
+                        offset);
                 break;
             case IToken.tDOT:
                 // member access
                 consume(IToken.tDOT);
-                IASTName name = createName( identifier() );
+                IASTName name = createName(identifier());
                 IASTFieldReference result = createFieldReference();
-                ((ASTNode)result).setOffset( ((ASTNode)firstExpression).getOffset() );
-                result.setFieldOwner( firstExpression );
+                ((ASTNode) result).setOffset(((ASTNode) firstExpression)
+                        .getOffset());
+                result.setFieldOwner(firstExpression);
                 result.setIsPointerDereference(false);
-                firstExpression.setParent( result );
-                firstExpression.setPropertyInParent( IASTFieldReference.FIELD_OWNER );
-                result.setFieldName( name );
-                name.setParent( result );
-                name.setPropertyInParent( IASTFieldReference.FIELD_NAME );
+                firstExpression.setParent(result);
+                firstExpression
+                        .setPropertyInParent(IASTFieldReference.FIELD_OWNER);
+                result.setFieldName(name);
+                name.setParent(result);
+                name.setPropertyInParent(IASTFieldReference.FIELD_NAME);
                 firstExpression = result;
                 break;
             case IToken.tARROW:
                 // member access
                 consume(IToken.tARROW);
-	            name = createName( identifier() );
-	            result = createFieldReference();
-	            ((ASTNode)result).setOffset( ((ASTNode)firstExpression).getOffset() );
-	            result.setFieldOwner( firstExpression );
-	            result.setIsPointerDereference(true);
-	            firstExpression.setParent( result );
-	            firstExpression.setPropertyInParent( IASTFieldReference.FIELD_OWNER );
-	            result.setFieldName( name );
-	            name.setParent( result );
-	            name.setPropertyInParent( IASTFieldReference.FIELD_NAME );
-	            firstExpression = result;
+                name = createName(identifier());
+                result = createFieldReference();
+                ((ASTNode) result).setOffset(((ASTNode) firstExpression)
+                        .getOffset());
+                result.setFieldOwner(firstExpression);
+                result.setIsPointerDereference(true);
+                firstExpression.setParent(result);
+                firstExpression
+                        .setPropertyInParent(IASTFieldReference.FIELD_OWNER);
+                result.setFieldName(name);
+                name.setParent(result);
+                name.setPropertyInParent(IASTFieldReference.FIELD_NAME);
+                firstExpression = result;
                 break;
             default:
                 return firstExpression;
@@ -917,7 +981,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected  IASTFunctionCallExpression createFunctionCallExpression() {
+    protected IASTFunctionCallExpression createFunctionCallExpression() {
         return new CASTFunctionCallExpression();
     }
 
@@ -934,15 +998,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @param offset
      * @return
      */
-    protected ICASTTypeIdInitializerExpression buildTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i, int offset) {
+    protected ICASTTypeIdInitializerExpression buildTypeIdInitializerExpression(
+            IASTTypeId t, IASTInitializer i, int offset) {
         ICASTTypeIdInitializerExpression result = createTypeIdInitializerExpression();
-        ((ASTNode)result).setOffset( offset );
-        result.setTypeId( t );
-        t.setParent( result );
-        t.setPropertyInParent( ICASTTypeIdInitializerExpression.TYPE_ID );
-        result.setInitializer( i );
-        i.setParent( result );
-        i.setPropertyInParent( ICASTTypeIdInitializerExpression.INITIALIZER );
+        ((ASTNode) result).setOffset(offset);
+        result.setTypeId(t);
+        t.setParent(result);
+        t.setPropertyInParent(ICASTTypeIdInitializerExpression.TYPE_ID);
+        result.setInitializer(i);
+        i.setParent(result);
+        i.setPropertyInParent(ICASTTypeIdInitializerExpression.INITIALIZER);
         return result;
     }
 
@@ -972,37 +1037,38 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         // TO DO: we need more literals...
         case IToken.tINTEGER:
             t = consume();
-        	literalExpression = createLiteralExpression();
-        	literalExpression.setKind( IASTLiteralExpression.lk_integer_constant);
-        	literalExpression.setValue( t.getImage() );
-        	((ASTNode)literalExpression).setOffset( t.getOffset() );
-        	return literalExpression;
+            literalExpression = createLiteralExpression();
+            literalExpression
+                    .setKind(IASTLiteralExpression.lk_integer_constant);
+            literalExpression.setValue(t.getImage());
+            ((ASTNode) literalExpression).setOffset(t.getOffset());
+            return literalExpression;
         case IToken.tFLOATINGPT:
             t = consume();
-	    	literalExpression = createLiteralExpression();
-	    	literalExpression.setKind( IASTLiteralExpression.lk_float_constant );
-	    	literalExpression.setValue( t.getImage() );
-	    	((ASTNode)literalExpression).setOffset( t.getOffset() );
-	    	return literalExpression;
+            literalExpression = createLiteralExpression();
+            literalExpression.setKind(IASTLiteralExpression.lk_float_constant);
+            literalExpression.setValue(t.getImage());
+            ((ASTNode) literalExpression).setOffset(t.getOffset());
+            return literalExpression;
         case IToken.tSTRING:
         case IToken.tLSTRING:
             t = consume();
-	    	literalExpression = createLiteralExpression();
-	    	literalExpression.setKind( IASTLiteralExpression.lk_string_literal );
-	    	literalExpression.setValue( t.getImage() );
-	    	((ASTNode)literalExpression).setOffset( t.getOffset() );
-	    	return literalExpression;
+            literalExpression = createLiteralExpression();
+            literalExpression.setKind(IASTLiteralExpression.lk_string_literal);
+            literalExpression.setValue(t.getImage());
+            ((ASTNode) literalExpression).setOffset(t.getOffset());
+            return literalExpression;
         case IToken.tCHAR:
         case IToken.tLCHAR:
             t = consume();
-	    	literalExpression = createLiteralExpression();
-	    	literalExpression.setKind( IASTLiteralExpression.lk_char_constant );
-	    	literalExpression.setValue( t.getImage() );
-	    	((ASTNode)literalExpression).setOffset( t.getOffset() );
-	    	return literalExpression;
+            literalExpression = createLiteralExpression();
+            literalExpression.setKind(IASTLiteralExpression.lk_char_constant);
+            literalExpression.setValue(t.getImage());
+            ((ASTNode) literalExpression).setOffset(t.getOffset());
+            return literalExpression;
         case IToken.tLPAREN:
             t = consume();
-        	//TODO - do we need to return a wrapper?
+            //TODO - do we need to return a wrapper?
             IASTExpression lhs = expression();
             consume(IToken.tRPAREN);
             return lhs;
@@ -1019,7 +1085,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         default:
             IToken la = LA(1);
             startingOffset = la.getOffset();
-            throwBacktrack( startingOffset, la.getLength() );
+            throwBacktrack(startingOffset, la.getLength());
             return null;
         }
 
@@ -1046,35 +1112,32 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTDeclSpecifier declSpecifier = null;
         IASTDeclarator declarator = null;
 
-        try
-        {
-	        declSpecifier = declSpecifierSeq(false);
-	        declarator = declarator();
+        try {
+            declSpecifier = declSpecifierSeq(false);
+            declarator = declarator();
+        } catch (BacktrackException bt) {
+            int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
+            backup(mark);
+            throwBacktrack(startingOffset, endingOffset - startingOffset);
         }
-        catch( BacktrackException bt )
+        if (declarator == null || declarator.getName().toString() != null) //$NON-NLS-1$
         {
             int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
-            backup( mark );
-            throwBacktrack( startingOffset, endingOffset - startingOffset );            
+            backup(mark);
+            throwBacktrack(startingOffset, endingOffset - startingOffset);
         }
-        if( declarator == null || declarator.getName().toString() != null )   //$NON-NLS-1$
-        {
-            int endingOffset = lastToken == null ? 0 : lastToken.getEndOffset();
-            backup( mark );
-            throwBacktrack( startingOffset, endingOffset - startingOffset );
-        }
-        
+
         IASTTypeId result = createTypeId();
-        ((ASTNode)result).setOffset( startingOffset );
-        
-        result.setDeclSpecifier( declSpecifier );
-        declSpecifier.setParent( result );
-        declSpecifier.setPropertyInParent( IASTTypeId.DECL_SPECIFIER );
-        
-        result.setAbstractDeclarator( declarator );
-        declarator.setParent( result );
-        declarator.setPropertyInParent( IASTTypeId.ABSTRACT_DECLARATOR );
-        
+        ((ASTNode) result).setOffset(startingOffset);
+
+        result.setDeclSpecifier(declSpecifier);
+        declSpecifier.setParent(result);
+        declSpecifier.setPropertyInParent(IASTTypeId.DECL_SPECIFIER);
+
+        result.setAbstractDeclarator(declarator);
+        declarator.setParent(result);
+        declarator.setPropertyInParent(IASTTypeId.ABSTRACT_DECLARATOR);
+
         return result;
     }
 
@@ -1103,9 +1166,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
             boolean isConst = false, isVolatile = false, isRestrict = false;
 
-            if( LT(1) != IToken.tSTAR )
-            {
-                backup( mark );
+            if (LT(1) != IToken.tSTAR) {
+                backup(mark);
                 break;
             }
 
@@ -1133,7 +1195,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
 
             IASTPointerOperator po = createPointer();
-            ((ASTNode)po).setOffset( startOffset );
+            ((ASTNode) po).setOffset(startOffset);
             ((ICASTPointer) po).setConst(isConst);
             ((ICASTPointer) po).setVolatile(isVolatile);
             ((ICASTPointer) po).setRestrict(isRestrict);
@@ -1163,7 +1225,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTElaboratedTypeSpecifier elabSpec = null;
         IASTEnumerationSpecifier enumSpec = null;
         boolean isTypedef = false;
-        
+
         declSpecifiers: for (;;) {
             switch (LT(1)) {
             //Storage Class Specifiers
@@ -1184,7 +1246,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 consume();
                 break;
             case IToken.t_typedef:
-            	isTypedef = true;
+                isTypedef = true;
                 storageClass = IASTDeclSpecifier.sc_typedef;
                 consume();
                 break;
@@ -1233,12 +1295,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_long:
                 flags.setEncounteredRawType(true);
                 consume();
-                if( isLong )
-                {
+                if (isLong) {
                     isLongLong = true;
                     isLong = false;
-                }
-                else
+                } else
                     isLong = true;
                 break;
             case IToken.t_float:
@@ -1286,14 +1346,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 if (lookAheadForDeclarator(flags)) {
                     break declSpecifiers;
                 }
-                switch( LT(2) )
-                {
-            		case IToken.tLPAREN:
-            			if (isTypedef) break;
-                	case IToken.tSEMI:
-                	case IToken.tASSIGN: 
-                	    //TODO more
-                	    break declSpecifiers;
+                switch (LT(2)) {
+                case IToken.tLPAREN:
+                    if (isTypedef)
+                        break;
+                case IToken.tSEMI:
+                case IToken.tASSIGN:
+                    //TODO more
+                    break declSpecifiers;
                 }
 
                 identifier = identifier();
@@ -1303,11 +1363,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_struct:
             case IToken.t_union:
                 try {
-                    structSpec = structOrUnionSpecifier( );
+                    structSpec = structOrUnionSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
-                    elabSpec = elaboratedTypeSpecifier(  );
+                    elabSpec = elaboratedTypeSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 }
@@ -1318,7 +1378,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
                 } catch (BacktrackException bt) {
                     // this is an elaborated class specifier
-                    elabSpec = elaboratedTypeSpecifier( );
+                    elabSpec = elaboratedTypeSpecifier();
                     flags.setEncounteredTypename(true);
                     break;
                 }
@@ -1332,35 +1392,32 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 break declSpecifiers;
             }
         }
-        
-        if( structSpec != null )
-        {
-            ((ASTNode)structSpec).setOffset( startingOffset );
+
+        if (structSpec != null) {
+            ((ASTNode) structSpec).setOffset(startingOffset);
             structSpec.setConst(isConst);
-            ((ICASTCompositeTypeSpecifier)structSpec).setRestrict(isRestrict);
+            ((ICASTCompositeTypeSpecifier) structSpec).setRestrict(isRestrict);
             structSpec.setVolatile(isVolatile);
             structSpec.setInline(isInline);
             structSpec.setStorageClass(storageClass);
 
             return structSpec;
         }
-        
-        if( enumSpec != null )
-        {
-            ((ASTNode)enumSpec).setOffset( startingOffset );
+
+        if (enumSpec != null) {
+            ((ASTNode) enumSpec).setOffset(startingOffset);
             enumSpec.setConst(isConst);
-            ((CASTEnumerationSpecifier)enumSpec).setRestrict(isRestrict);
+            ((CASTEnumerationSpecifier) enumSpec).setRestrict(isRestrict);
             enumSpec.setVolatile(isVolatile);
             enumSpec.setInline(isInline);
             enumSpec.setStorageClass(storageClass);
             return enumSpec;
-            
+
         }
-        if( elabSpec != null )
-        {
-            ((ASTNode)elabSpec).setOffset( startingOffset );
+        if (elabSpec != null) {
+            ((ASTNode) elabSpec).setOffset(startingOffset);
             elabSpec.setConst(isConst);
-            ((CASTElaboratedTypeSpecifier)elabSpec).setRestrict(isRestrict);
+            ((CASTElaboratedTypeSpecifier) elabSpec).setRestrict(isRestrict);
             elabSpec.setVolatile(isVolatile);
             elabSpec.setInline(isInline);
             elabSpec.setStorageClass(storageClass);
@@ -1375,11 +1432,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             declSpec.setInline(isInline);
             declSpec.setStorageClass(storageClass);
 
-            ((ASTNode)declSpec).setOffset(startingOffset);
-            IASTName name = createName( identifier );
-            declSpec.setName( name );
-            name.setParent( declSpec );
-            name.setPropertyInParent( IASTNamedTypeSpecifier.NAME );
+            ((ASTNode) declSpec).setOffset(startingOffset);
+            IASTName name = createName(identifier);
+            declSpec.setName(name);
+            name.setParent(declSpec);
+            name.setPropertyInParent(IASTNamedTypeSpecifier.NAME);
             return declSpec;
         }
         ICASTSimpleDeclSpecifier declSpec = createSimpleTypeSpecifier();
@@ -1391,12 +1448,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         declSpec.setType(simpleType);
         declSpec.setLong(isLong);
-        declSpec.setLongLong( isLongLong );
+        declSpec.setLongLong(isLongLong);
         declSpec.setUnsigned(isUnsigned);
         declSpec.setSigned(isSigned);
         declSpec.setShort(isShort);
 
-        ((ASTNode)declSpec).setOffset(startingOffset);
+        ((ASTNode) declSpec).setOffset(startingOffset);
         return declSpec;
     }
 
@@ -1419,6 +1476,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * 
      * classSpecifier : classKey name (baseClause)? "{" (memberSpecification)*
      * "}"
+     * 
      * @param owner
      *            IParserCallback object that represents the declaration that
      *            owns this classSpecifier
@@ -1427,7 +1485,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected ICASTCompositeTypeSpecifier structOrUnionSpecifier( )
+    protected ICASTCompositeTypeSpecifier structOrUnionSpecifier()
             throws BacktrackException, EndOfFileException {
 
         int classKind = 0;
@@ -1445,7 +1503,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             classKind = IASTCompositeTypeSpecifier.k_union;
             break;
         default:
-            throwBacktrack(mark.getOffset(), mark.getLength() );
+            throwBacktrack(mark.getOffset(), mark.getLength());
         }
 
         IToken nameToken = null;
@@ -1462,23 +1520,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         consume(IToken.tLBRACE);
         cleanupLastToken();
-        
+
         IASTName name = null;
-        if( nameToken != null )
-            name = createName( nameToken );
+        if (nameToken != null)
+            name = createName(nameToken);
         else
             name = createName();
-        
+
         ICASTCompositeTypeSpecifier result = createCompositeTypeSpecifier();
-        
-        result.setKey( classKind );
-        ((ASTNode)result).setOffset( classKey.getOffset() );
-        
-        result.setName( name );
-        if( name != null )
-        {
-            name.setParent( result );
-            name.setPropertyInParent( IASTCompositeTypeSpecifier.TYPE_NAME );
+
+        result.setKey(classKind);
+        ((ASTNode) result).setOffset(classKey.getOffset());
+
+        result.setName(name);
+        if (name != null) {
+            name.setParent(result);
+            name.setPropertyInParent(IASTCompositeTypeSpecifier.TYPE_NAME);
         }
 
         memberDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
@@ -1490,9 +1547,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             default:
                 try {
                     IASTDeclaration d = declaration();
-                    d.setParent( result );
-                    d.setPropertyInParent( IASTCompositeTypeSpecifier.MEMBER_DECLARATION );
-                    result.addMemberDeclaration( d );
+                    d.setParent(result);
+                    d
+                            .setPropertyInParent(IASTCompositeTypeSpecifier.MEMBER_DECLARATION);
+                    result.addMemberDeclaration(d);
                 } catch (BacktrackException bt) {
                     if (checkToken == LA(1).hashCode())
                         failParseWithErrorHandling();
@@ -1538,16 +1596,16 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             break;
         default:
             backup(t);
-            throwBacktrack(t.getOffset(), t.getLength() );
+            throwBacktrack(t.getOffset(), t.getLength());
         }
 
         IToken identifier = identifier();
-        IASTName name = createName( identifier );
+        IASTName name = createName(identifier);
         ICASTElaboratedTypeSpecifier result = createElaboratedTypeSpecifier();
-        result.setName( name );
-        name.setParent( result );
-        name.setPropertyInParent( IASTElaboratedTypeSpecifier.TYPE_NAME );
-        result.setKind( eck );
+        result.setName(name);
+        name.setParent(result);
+        name.setPropertyInParent(IASTElaboratedTypeSpecifier.TYPE_NAME);
+        result.setKind(eck);
         return result;
     }
 
@@ -1600,8 +1658,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 declaratorName = createName();
             } else if (LT(1) == IToken.tIDENTIFIER) {
                 declaratorName = createName(identifier());
-            }
-            else
+            } else
                 declaratorName = createName();
 
             for (;;) {
@@ -1630,7 +1687,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             int endOffset = (lastToken != null) ? lastToken
                                     .getEndOffset() : 0;
                             if (seenParameter)
-                                throwBacktrack(startingOffset, endOffset - startingOffset);
+                                throwBacktrack(startingOffset, endOffset
+                                        - startingOffset);
                             IASTParameterDeclaration pd = parameterDeclaration();
                             if (parameters == Collections.EMPTY_LIST)
                                 parameters = new ArrayList(
@@ -1639,12 +1697,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                             seenParameter = true;
                         }
                     }
-                    
+
                     break;
                 case IToken.tLBRACKET:
-                    if( arrayMods == Collections.EMPTY_LIST )
-                        arrayMods = new ArrayList( DEFAULT_POINTEROPS_LIST_SIZE );
-                    consumeArrayModifiers( arrayMods );
+                    if (arrayMods == Collections.EMPTY_LIST)
+                        arrayMods = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
+                    consumeArrayModifiers(arrayMods);
                     continue;
                 case IToken.tCOLON:
                     consume(IToken.tCOLON);
@@ -1663,32 +1721,28 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (isFunction) {
             IASTFunctionDeclarator fc = createFunctionDeclarator();
             fc.setVarArgs(encounteredVarArgs);
-            for (int i = 0; i < parameters.size(); ++i)
-            {
+            for (int i = 0; i < parameters.size(); ++i) {
                 IASTParameterDeclaration p = (IASTParameterDeclaration) parameters
-                .get(i);
-                p.setParent( fc );
-                p.setPropertyInParent( IASTFunctionDeclarator.FUNCTION_PARAMETER );
+                        .get(i);
+                p.setParent(fc);
+                p
+                        .setPropertyInParent(IASTFunctionDeclarator.FUNCTION_PARAMETER);
                 fc.addParameterDeclaration(p);
             }
             d = fc;
-        } else if( arrayMods != Collections.EMPTY_LIST )
-        {
+        } else if (arrayMods != Collections.EMPTY_LIST) {
             d = createArrayDeclarator();
-            for( int i = 0; i < arrayMods.size(); ++i )
-            {
+            for (int i = 0; i < arrayMods.size(); ++i) {
                 IASTArrayModifier m = (IASTArrayModifier) arrayMods.get(i);
-                m.setParent( d );
-                m.setPropertyInParent( IASTArrayDeclarator.ARRAY_MODIFIER );
-                ((IASTArrayDeclarator)d).addArrayModifier( m );
+                m.setParent(d);
+                m.setPropertyInParent(IASTArrayDeclarator.ARRAY_MODIFIER);
+                ((IASTArrayDeclarator) d).addArrayModifier(m);
             }
-        }
-        else if (bitField != null) {
+        } else if (bitField != null) {
             IASTFieldDeclarator fl = createFieldDeclarator();
             fl.setBitFieldSize(bitField);
             d = fl;
-        } else 
-        {
+        } else {
             d = createDeclarator();
         }
         for (int i = 0; i < pointerOps.size(); ++i) {
@@ -1711,10 +1765,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return d;
     }
 
-
-	protected IASTArrayDeclarator createArrayDeclarator() {
-	    return new CASTArrayDeclarator();
-	}
+    protected IASTArrayDeclarator createArrayDeclarator() {
+        return new CASTArrayDeclarator();
+    }
 
     /**
      * @return
@@ -1730,16 +1783,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTFunctionDeclarator();
     }
 
-    
-    
-    
     /**
      * @param t
      * @return
      */
     protected IASTName createName(IToken t) {
         IASTName n = new CASTName(t.getCharImage());
-        ((ASTNode)n).setOffset(t.getOffset());
+        ((ASTNode) n).setOffset(t.getOffset());
         return n;
     }
 
@@ -1750,41 +1800,41 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTDeclarator();
     }
 
-    protected void consumeArrayModifiers(List arrayMods )
+    protected void consumeArrayModifiers(List arrayMods)
             throws EndOfFileException, BacktrackException {
 
         while (LT(1) == IToken.tLBRACKET) {
             //eat the '['
-            int startOffset = consume(IToken.tLBRACKET).getOffset(); 
+            int startOffset = consume(IToken.tLBRACKET).getOffset();
 
             boolean isStatic = false;
             boolean isConst = false;
             boolean isRestrict = false;
             boolean isVolatile = false;
             boolean isVarSized = false;
-            
+
             outerLoop: do {
                 switch (LT(1)) {
                 case IToken.t_static:
                     isStatic = true;
-                	consume();
-                	break;
+                    consume();
+                    break;
                 case IToken.t_const:
                     isConst = true;
-                	consume();
-                	break;
+                    consume();
+                    break;
                 case IToken.t_volatile:
                     isVolatile = true;
-                	consume();
-                	break;
+                    consume();
+                    break;
                 case IToken.t_restrict:
                     isRestrict = true;
-                	consume();
+                    consume();
                     break;
                 case IToken.tSTAR:
                     isVarSized = true;
-                	consume();
-                	//deliberate fall through
+                    consume();
+                //deliberate fall through
                 default:
                     break outerLoop;
                 }
@@ -1793,34 +1843,32 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTExpression exp = null;
 
             if (LT(1) != IToken.tRBRACKET) {
-                if (!( isStatic || isRestrict || isConst || isVolatile ))
+                if (!(isStatic || isRestrict || isConst || isVolatile))
                     exp = assignmentExpression();
                 else
                     exp = constantExpression();
             }
             consume(IToken.tRBRACKET);
-            
+
             IASTArrayModifier arrayMod = null;
-            if(!( isStatic || isRestrict || isConst || isVolatile ))
+            if (!(isStatic || isRestrict || isConst || isVolatile))
                 arrayMod = createArrayModifier();
-            else
-            {
+            else {
                 ICASTArrayModifier temp = createCArrayModifier();
-                temp.setStatic( isStatic );
-                temp.setConst( isConst );
-                temp.setVolatile( isVolatile );
+                temp.setStatic(isStatic);
+                temp.setConst(isConst);
+                temp.setVolatile(isVolatile);
                 temp.setRestrict(isRestrict);
-                temp.setVariableSized(isVarSized );
+                temp.setVariableSized(isVarSized);
                 arrayMod = temp;
             }
-            ((ASTNode)arrayMod).setOffset( startOffset );
-            if( exp != null )
-            {
-                arrayMod.setConstantExpression( exp );
-                exp.setParent( arrayMod );
-                exp.setPropertyInParent( IASTArrayModifier.CONSTANT_EXPRESSION );
+            ((ASTNode) arrayMod).setOffset(startOffset);
+            if (exp != null) {
+                arrayMod.setConstantExpression(exp);
+                exp.setParent(arrayMod);
+                exp.setPropertyInParent(IASTArrayModifier.CONSTANT_EXPRESSION);
             }
-            arrayMods.add( arrayMod );
+            arrayMods.add(arrayMod);
         }
     }
 
@@ -1850,11 +1898,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (current == LA(1)) {
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            throwBacktrack(current.getOffset(), endOffset - current.getOffset() );
+            throwBacktrack(current.getOffset(), endOffset - current.getOffset());
         }
 
         IASTParameterDeclaration result = createParameterDeclaration();
-        ((ASTNode)result).setOffset(startingOffset);
+        ((ASTNode) result).setOffset(startingOffset);
         result.setDeclSpecifier(declSpec);
         declSpec.setParent(result);
         declSpec.setPropertyInParent(IASTParameterDeclaration.DECL_SPECIFIER);
@@ -1887,11 +1935,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             try {
                 return simpleDeclaration();
             } catch (BacktrackException b) {
-                failParse(b);
-                throwBacktrack(b);
+                IASTProblem p = failParse(b);
+                IASTProblemExpression pe = createProblemExpression();
+                ((CASTNode) pe).setOffset(((CASTNode) p).getOffset());
+                pe.setProblem(p);
+                p.setParent(pe);
+                p.setPropertyInParent(IASTProblemExpression.PROBLEM);
+                return pe;
             }
         }
-        return null;
     }
 
     /*
@@ -1921,35 +1973,45 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTBinaryExpression();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createConditionalExpression()
      */
     protected IASTConditionalExpression createConditionalExpression() {
         return new CASTConditionalExpression();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createUnaryExpression()
      */
     protected IASTUnaryExpression createUnaryExpression() {
         return new CASTUnaryExpression();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createCompoundStatementExpression()
      */
     protected IGNUASTCompoundStatementExpression createCompoundStatementExpression() {
         return new CASTCompoundStatementExpression();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createExpressionList()
      */
     protected IASTExpressionList createExpressionList() {
         return new CASTExpressionList();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerator()
      */
     protected IASTEnumerator createEnumerator() {
@@ -2079,11 +2141,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTCastExpression();
     }
 
-    protected IASTStatement statement() throws EndOfFileException, BacktrackException {
+    protected IASTStatement statement() throws EndOfFileException,
+            BacktrackException {
         switch (LT(1)) {
         // labeled statements
         case IToken.t_case:
-                return parseCaseStatement();
+            return parseCaseStatement();
         case IToken.t_default:
             return parseDefaultStatement();
         // compound statement
@@ -2118,18 +2181,50 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             if (LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON) {
                 return parseLabelStatement();
             }
-            
-            return parseDeclarationOrExpressionStatement();            
+
+            return parseDeclarationOrExpressionStatement();
         }
-    
+
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#nullifyTranslationUnit()
      */
     protected void nullifyTranslationUnit() {
         translationUnit = null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#createProblemStatement()
+     */
+    protected IASTProblemStatement createProblemStatement() {
+        return new CASTProblemStatement();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#createProblemExpression()
+     */
+    protected IASTProblemExpression createProblemExpression() {
+        return new CASTProblemExpression();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#createProblem(int,
+     *      int, int)
+     */
+    protected IASTProblem createProblem(int signal, int offset, int length) {
+        IASTProblem result = new CASTProblem(signal, EMPTY_STRING, false, true);
+        ((ASTNode) result).setOffset(offset);
+        ((ASTNode) result).setLength(length);
+        return result;
+    }
 
 }

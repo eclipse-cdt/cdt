@@ -1356,7 +1356,6 @@ public class QuickParser2Tests extends TestCase {
     protected void parse(String code, boolean expectedToPass,
             ParserLanguage lang, boolean gcc) throws Exception {
 
-        ProblemCollector collector = new ProblemCollector();
         CodeReader codeReader = new CodeReader( code.toCharArray() );
         IScannerInfo scannerInfo = new ScannerInfo();
         IScannerConfiguration configuration = null;
@@ -1373,7 +1372,7 @@ public class QuickParser2Tests extends TestCase {
             else
                 config = new ANSICPPParserExtensionConfiguration();
             parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE,
-                    collector, NULL_LOG, config);
+                    NULL_LOG, config);
         } else {
             ICParserExtensionConfiguration config = null;
             if (gcc)
@@ -1382,13 +1381,15 @@ public class QuickParser2Tests extends TestCase {
                 config = new ANSICParserExtensionConfiguration();
 
             parser2 = new GNUCSourceParser(scanner, ParserMode.QUICK_PARSE,
-                    collector, NULL_LOG, config);
+                    NULL_LOG, config);
         }
         parser2.parse();
         if (parser2.encounteredError() && expectedToPass)
             throw new ParserException("FAILURE"); //$NON-NLS-1$
         if (expectedToPass)
-            assertTrue(collector.hasNoProblems());
+        {
+            //TODO need visitor to ensure that there aren't any problems
+        }
     }
 
     public void testBug60142() throws Exception {

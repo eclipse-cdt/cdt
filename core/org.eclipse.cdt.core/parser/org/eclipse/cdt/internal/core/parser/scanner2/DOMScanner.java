@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTProblem;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
@@ -180,7 +180,7 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#handleProblem(int, int, char[])
      */
     protected void handleProblem(int id, int startOffset, char[] arg) {
-        IASTProblem problem = new ASTProblem(id, arg, true, false );
+        IASTProblem problem = new CASTProblem(id, arg, true, false );
         locationMap.encounterProblem(problem); 
     }
 

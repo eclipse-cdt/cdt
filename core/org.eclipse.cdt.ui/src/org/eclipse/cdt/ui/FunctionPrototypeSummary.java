@@ -10,26 +10,48 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 	String farguments;
 		
 	/**
-	 * Creates a prototype which matches the format
-	 * returntype function(arguments)
-	 * @param properProto
+	 * Create a function prototype summary based on a prototype string.
+	 * @param The string describing the prototype which is properly 
+	 * formed with following format -- returntype function(arguments)
+	 * The following formats will be converted as follows:
+	 * function(arguments) --> void function(arguments)
+	 * returntype function --> returntype function()
+	 * function            --> void function() 
 	 */
 	public FunctionPrototypeSummary(String proto) {
 		int leftbracket = proto.indexOf('(');
 		int rightbracket = proto.lastIndexOf(')');
+		
+		//If there are brackets missing, then assume void parameters
+		if(leftbracket == -1 || rightbracket == -1) {
+			if(leftbracket != -1) {
+				proto = proto.substring(leftbracket) + ")";
+			} else if(rightbracket != -1) {
+				proto = proto.substring(rightbracket - 1) + "()";				
+			} else {
+				proto = proto + "()";
+			}
+		
+			leftbracket = proto.indexOf('(');
+			rightbracket = proto.lastIndexOf(')');
+		} 
+		
 		farguments = proto.substring(leftbracket + 1, rightbracket);
 			
 		int nameend = leftbracket - 1;
 		while(proto.charAt(nameend) == ' ') {
 			nameend--;
 		}
+
 		int namestart = nameend;
 		while(namestart > 0 && proto.charAt(namestart) != ' ') {
 			namestart--;
 		}
+
 		fname = proto.substring(namestart, nameend + 1).trim();
 			
 		if(namestart == 0) {
+			//@@@ Should this be int instead?
 			freturn = "void";
 		} else {
 			freturn = proto.substring(0, namestart).trim();

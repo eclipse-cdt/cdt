@@ -15,7 +15,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.index.TagFlags;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IMember;
@@ -591,31 +590,36 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		Iterator i = elementsFound.iterator();
 		while (i.hasNext()){
 			CCompletionProposal proposal;
-			FunctionPrototypeSummary fproto = null;
-			String fname = "";
+			String replaceString = "";
 			String displayString = "";
 			Image image = null;
 			StringBuffer infoString = new StringBuffer();
 			
 			BasicSearchMatch match = (BasicSearchMatch)i.next();
-			fproto = getPrototype(match);						
-			fname = (fproto == null) ? match.getName() : fproto.getName();
-			displayString = (fproto == null) ? fname : fproto.getPrototypeString(true);
+
+			//Make sure we replace with the appropriate string for functions and methods
+			FunctionPrototypeSummary fproto = getPrototype(match);
+			if(fproto != null) {						
+				replaceString = fproto.getName() + "()";
+				displayString = fproto.getPrototypeString(true);
+			} else {
+				replaceString = 
+				displayString = match.getName();;
+			}
+
 			image = labelProvider.getImage(match);
 			infoString.append(displayString);
 			if(match.getParentName().length() > 0) {
 				infoString.append(" - Parent: ");
 				infoString.append(match.getParentName());
 			}							 
-			
-			
 			 
 			proposal = new CCompletionProposal(
-												fname, // replacement string
+												replaceString, // Replacement string
 											   	region.getOffset(), 
 											   	region.getLength(),
 											   	image,
-											   	displayString, // displayString
+											   	displayString, // Display string
 											   	calculateRelevance(match)
 											  );
 			completions.add(proposal);
@@ -625,7 +629,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			if(fproto != null){
 				String fargs = fproto.getArguments();
 				if(fargs != null && fargs.length() > 0) {
-					proposal.setContextInformation(new ContextInformation(fname, fargs));
+					proposal.setContextInformation(new ContextInformation(replaceString, fargs));
 				}
 			}
 			
@@ -642,42 +646,61 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		ITagEntry[] tags = model.query(project, frag + "*", false, false);
 		if (tags != null && tags.length > 0) {
 			for (int i = 0; i < tags.length; i++) {
-				String fname = tags[i].getTagName();
 				FunctionPrototypeSummary fproto = null;
+				String fargs = null;
+				String fdisplay = null;
+				String fdesc = null;
+				String fname = tags[i].getTagName();
 				int kind = tags[i].getKind();
 
+				//No member completion yet
+				if (kind == TagFlags.T_MEMBER) {
+					continue;
+				}
+
+				//This doesn't give you a nice "function" look to macros, but is safe
 				if (kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
 					fname = fname + "()";
+
+					String pattern = tags[i].getPattern();
+					if(pattern != null) {
+						fproto = new FunctionPrototypeSummary(pattern);
+					} 				
+		
+					if(fproto == null) {
+						fproto = new FunctionPrototypeSummary(fname);
+					}
+				} 
+				
+				if(fproto != null) {
+					fargs = fproto.getArguments();
+					fdisplay = fproto.getPrototypeString(true);
+				} else {
+					fdisplay = fname;
+				}
+
+				//@@@ In the future something more usefull could go in here (ie Doxygen/JavaDoc)
+				fdesc = "<b>" + fname + "</b><br>" + "Defined in:<br> " + tags[i].getFileName();
+				if(tags[i].getClassName() != null) {
+					fdesc = fdesc + "<br>Class:<br> " + tags[i].getClassName(); 
+				}
+				    
+				//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
+				CCompletionProposal proposal;
+				proposal = new CCompletionProposal(fname, 
+												   region.getOffset(), 
+												   region.getLength(),
+												   getTagImage(kind), 
+												   fdisplay,
+												   3);
+				completions.add(proposal);
+
+				if(fdesc != null) {
+					proposal.setAdditionalProposalInfo(fdesc);
 				}
 				
-				if(tags[i].getPattern() != null) {
-					try {
-						fproto = new FunctionPrototypeSummary(tags[i].getPattern());
-					} catch(Exception ex) {
-						fproto = null;
-					}
-				} 				
-				if(fproto == null) {
-					fproto = new FunctionPrototypeSummary(fname);
-				}
-
-				//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
-				if (kind != TagFlags.T_MEMBER) {
-					CCompletionProposal proposal;
-					proposal = new CCompletionProposal(fname, 
-													   region.getOffset(), 
-													   region.getLength(),
-													   getTagImage(kind), 
-													   fproto.getPrototypeString(true),
-													   3);
-					completions.add(proposal);
-
-					//No summary information available yet
-
-					String fargs = fproto.getArguments();
-					if(fargs != null && fargs.length() > 0) {
-						proposal.setContextInformation(new ContextInformation(fname, fargs));
-					}
+				if(fargs != null && fargs.length() > 0) {
+					proposal.setContextInformation(new ContextInformation(fname, fargs));
 				}
 			}
 		}

@@ -752,7 +752,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			exp = (ASTExpression) iter.next();
 			
-			TypeInfo info = exp.getResultType().getResult();;
+			TypeInfo info = exp.getResultType().getResult();
 			
 			list.add( info );
 		}
@@ -832,7 +832,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
            	handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
         	 
         //Its possible that the parent is not an IContainerSymbol if its a template parameter or some kinds of template instances
-		ISymbol symbol = (ISymbol) lookupQualifiedName( classSymbol, parentClassName, references, true );
+		ISymbol symbol = lookupQualifiedName( classSymbol, parentClassName, references, true );
 		classSymbol.addParent( symbol, isVirtual, visibility, parentClassName.getFirstToken().getOffset(), references );
 		 
     }

@@ -11,10 +11,8 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
  * @author jcamelon
@@ -22,9 +20,7 @@ import org.eclipse.cdt.internal.core.parser.ast.Offsets;
  */
 public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements IASTTemplateSpecialization
 {
-	private Offsets offsets = new Offsets(); 
-	private IASTDeclaration ownedDeclaration;
-    /**
+	/**
      * @param scope
      */
     public ASTTemplateSpecialization(IASTScope scope, int startingOffset, int startingLine )

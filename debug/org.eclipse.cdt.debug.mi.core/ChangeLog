@@ -1,3 +1,10 @@
+2004-06-02 Mikhail Khodjaiants
+
+	Moved externalized strings to the right property file.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/CdiResources.properties
+	* src/org/eclipse/cdt/debug/mi/core/MIPluginResources.properties
+
 2004-0602 Alain Magloire
 
 	Overload getFullName() for registerObject

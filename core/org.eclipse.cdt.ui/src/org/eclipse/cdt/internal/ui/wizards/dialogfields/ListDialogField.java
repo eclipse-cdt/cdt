@@ -33,8 +33,8 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -87,7 +87,7 @@ public class ListDialogField extends DialogField {
 	}
 	
 	protected TableViewer fTable;
-	protected ILabelProvider fLabelProvider;
+	protected IBaseLabelProvider fLabelProvider;
 	protected ListViewerAdapter fListViewerAdapter;
 	protected List fElements;
 	protected ViewerSorter fViewerSorter;
@@ -122,7 +122,7 @@ public class ListDialogField extends DialogField {
 	 * marks a separator.
 	 * @param lprovider The label provider to render the table entries
 	 */	
-	public ListDialogField(IListAdapter adapter, String[] buttonLabels, ILabelProvider lprovider) {
+	public ListDialogField(IListAdapter adapter, String[] buttonLabels, IBaseLabelProvider lprovider) {
 		super();
 		fListAdapter= adapter;
 

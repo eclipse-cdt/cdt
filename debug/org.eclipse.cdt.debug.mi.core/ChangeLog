@@ -1,5 +1,16 @@
 2003-04-21 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/Target.java (suspend):
+	Remove the delay of 10 secs.
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java (interrupt):
+	Do a delay of 10 secs to allow time for the inferior to stop.
+	* src/org/eclipse/cdt/debug/mi/core/MISession.java (terminate) :
+	Clear the EventQueue, if we restart.
+	* src/org/eclipse/cdt/debug/mi/core/Queue (isEmpty):
+	New method.
+
+2003-04-21 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java:
 	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java:
 	Ignore exception when doing "set auto-solib-path on".

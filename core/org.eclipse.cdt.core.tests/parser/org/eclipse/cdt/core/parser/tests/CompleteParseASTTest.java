@@ -792,20 +792,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	 */
 	public void testBug43373() throws Exception
 	{
-		try { // This is to prove that there are no exceptions
-			// Used to cause AST Semantic exception
-			Iterator i = parse( "class A { static int x; }; int A::x = 5;" ).getDeclarations(); //$NON-NLS-1$
-			IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-			Iterator j = getDeclarations(classA);
-			IASTField field1 = (IASTField) j.next();			
+		Iterator i = parse( "class A { static int x; }; int A::x = 5;" ).getDeclarations(); //$NON-NLS-1$
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator j = getDeclarations(classA);
+		IASTField field1 = (IASTField) j.next();			
 			// Note : this used to be considered a variable, not a field
-			IASTField field2 = (IASTField)i.next(); 
-			assertTrue (field1.getVisiblity() == field2.getVisiblity());
-			assertAllReferences( 1, createTaskList( new Task( classA )));
-			
-		}catch (Exception e){
-			fail();
-		}
+		IASTField field2 = (IASTField)i.next(); 
+		assertTrue (field1.getVisiblity() == field2.getVisiblity());
+		assertAllReferences( 1, createTaskList( new Task( classA )));			
 	}
 	
 	public void testBug39504() throws Exception

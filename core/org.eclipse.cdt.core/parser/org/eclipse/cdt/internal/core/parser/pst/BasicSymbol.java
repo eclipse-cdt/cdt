@@ -177,5 +177,16 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)
 	
 	private		boolean				_isTemplateMember = false;
-	private		ISymbol				_instantiatedSymbol = null;		
+	private		ISymbol				_instantiatedSymbol = null;
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public Object clone() {
+		
+		BasicSymbol s = (BasicSymbol) super.clone();
+		s._typeInfo = new TypeInfo( s._typeInfo );
+		return s;
+	}
 }

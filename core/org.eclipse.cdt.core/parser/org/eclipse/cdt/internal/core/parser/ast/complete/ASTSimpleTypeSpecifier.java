@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
@@ -122,7 +123,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
     
     public List getReferences()
     {
-    	return refs;
+    	return (refs == null ) ? Collections.EMPTY_LIST : refs;
     }
 
     /* (non-Javadoc)

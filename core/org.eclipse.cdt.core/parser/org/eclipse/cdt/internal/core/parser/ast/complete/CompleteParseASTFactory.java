@@ -124,6 +124,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	private final ReferenceCache cache = new ReferenceCache();
 	private static final int BUILTIN_TYPE_SIZE = 64;
 	private final Hashtable typeIdCache = new Hashtable( BUILTIN_TYPE_SIZE );
+	private final Hashtable simpleTypeSpecCache = new Hashtable( BUILTIN_TYPE_SIZE );
+	private static final int DEFAULT_QUALIFIEDNAME_REFERENCE_SIZE = 4;
 	
     static 
     {
@@ -1956,6 +1958,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
     	if( extension.overrideCreateSimpleTypeSpecifierMethod( kind ))
     		return extension.createSimpleTypeSpecifier(pst, scope, kind, typeName, isShort, isLong, isSigned, isUnsigned, isTypename, isComplex, isImaginary, isGlobal, extensionParms );
+    	String typeNameAsString = typeName.toString();
+    	if( kind != Type.CLASS_OR_TYPENAME )
+    	{
+    		IASTSimpleTypeSpecifier query = (IASTSimpleTypeSpecifier) simpleTypeSpecCache.get( typeNameAsString );
+    		if( query != null )
+    			return query;
+    	}
+    	
     	TypeInfo.eType type = null;
     	
     	if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
@@ -1975,7 +1985,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		else if( kind == IASTSimpleTypeSpecifier.Type._BOOL )
 			type = TypeInfo.t__Bool;
 	
-		List references = new ArrayList(); 
+		List references = ( kind == Type.CLASS_OR_TYPENAME ) ? new ArrayList( DEFAULT_QUALIFIEDNAME_REFERENCE_SIZE ): null; 
 		ISymbol s = pst.newSymbol( EMPTY_STRING, type ); 
 		if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
 		{
@@ -2047,7 +2057,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		s.getTypeInfo().setBit( isImaginary, TypeInfo.isImaginary );
 		s.getTypeInfo().setBit( isSigned, TypeInfo.isSigned );
 			
-		return new ASTSimpleTypeSpecifier( s, false, typeName.toString(), references );
+		IASTSimpleTypeSpecifier result = new ASTSimpleTypeSpecifier( s, false, typeNameAsString, references );
+		if( kind != Type.CLASS_OR_TYPENAME )
+			simpleTypeSpecCache.put( typeNameAsString, result );
+		return result;
 
     }
     /* (non-Javadoc)
@@ -3001,16 +3014,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     		}
     		symbol = template;
      	} else {
-    		symbol = pst.newSymbol( identifier, TypeInfo.t_templateParameter );
+    		
     		if(  kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
+    			symbol = pst.newSymbol( identifier, TypeInfo.t_templateParameter );
         		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_typeName );
         	} else /*ParamKind.PARAMETER*/ {
-           		symbol.setName( parameter.getName() );
-        		symbol.setTypeInfo( ((ASTSimpleTypeSpecifier)parameter.getTypeSpecifier()).getSymbol().getTypeInfo() );
+        		symbol = cloneSimpleTypeSymbol( parameter.getName(), parameter, null );
         		symbol.getTypeInfo().setTemplateParameterType( symbol.getType() );
-        		symbol.setType( TypeInfo.t_templateParameter );
-        		
-        		setPointerOperators( symbol, parameter.getPointerOperators(), parameter.getArrayModifiers() );
+        		symbol.setType( TypeInfo.t_templateParameter );        		
         	}
     	}
 

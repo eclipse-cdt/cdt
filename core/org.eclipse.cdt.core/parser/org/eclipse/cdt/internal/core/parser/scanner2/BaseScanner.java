@@ -1551,7 +1551,6 @@ abstract class BaseScanner implements IScanner {
             if (!exception)
                 finished = true;
         } else if (nextToken.getType() == IToken.tCOMPLETION) {
-			lastToken.setNext(nextToken);
         	finished = true;
         } else if (nextToken.getType() == IToken.tPOUNDPOUND) {
             // time for a pasting
@@ -1629,10 +1628,10 @@ abstract class BaseScanner implements IScanner {
             // Find the first thing we would care about
             skipOverWhiteSpace();
 
-            while (++bufferPos[bufferStackPos] >= bufferLimit[bufferStackPos]) {
+            if (++bufferPos[bufferStackPos] >= bufferLimit[bufferStackPos]) {
                 // We're at the end of a context, pop it off and try again
                 popContext();
-                continue contextLoop;
+                continue;
             }
 
             // Tokens don't span buffers, stick to our current one
@@ -1992,7 +1991,7 @@ abstract class BaseScanner implements IScanner {
         }
 
         // We've run out of contexts, our work is done here
-        return null;
+        return contentAssistMode ? eocToken : null;
     }
 
     protected IToken scanIdentifier() {

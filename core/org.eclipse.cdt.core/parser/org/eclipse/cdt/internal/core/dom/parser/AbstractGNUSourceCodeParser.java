@@ -120,6 +120,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return completionNode;
 	}
 	
+	// Use to create the completion node
+	protected ASTCompletionNode createCompletionNode(IToken token) {
+		if (completionNode == null)
+			completionNode = new ASTCompletionNode(token);
+		return completionNode;
+	}
     /**
      * Look Ahead in the token list to see what is coming.
      * 
@@ -524,8 +530,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          		exprName.setParent(expr);
          		exprName.setPropertyInParent(IASTIdExpression.ID_NAME);
          		
-         		if (completionNode == null)
-         			completionNode = new ASTCompletionNode(token);
+				createCompletionNode(token);
          		completionNode.addName(exprName);
          		
          		// Now the declaration statement

@@ -3521,10 +3521,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 throw eof;
             }
         } else if (LT(1) == IToken.tLPAREN) {
-            if( d instanceof IASTFunctionDeclarator ){
+            if( d instanceof IASTFunctionDeclarator && d.getNestedDeclarator() == null ){
                 //constructor initializer doesn't make sense for a function declarator, 
-                //C++98:8.5-11 A parenthesized initializer can be a list of expressions
-                //only when the entity  has a class type
+                //we must have an object to initialize, a function doesn't work.
                 return null;
             }
             // initializer in constructor

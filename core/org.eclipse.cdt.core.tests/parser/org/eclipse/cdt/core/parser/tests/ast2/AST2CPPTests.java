@@ -3278,7 +3278,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( expression.getSimpleType(), ICPPASTSimpleTypeConstructorExpression.t_int );
     }
 	
-    public void testBug90498() throws Exception {
+    public void testBug90498_1() throws Exception {
         IASTTranslationUnit tu = parse( "typedef INT ( FOO ) (INT);", ParserLanguage.CPP ); //$NON-NLS-1$
         
         IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
@@ -3291,6 +3291,22 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNotNull( dtor.getNestedDeclarator() );
         IASTDeclarator nested = dtor.getNestedDeclarator();
         assertEquals( nested.getName().toString(), "FOO" );  //$NON-NLS-1$
+    }
+    
+    public void testBug90498_2() throws Exception {
+        IASTTranslationUnit tu = parse( "int (* foo) (int) (0);", ParserLanguage.CPP ); //$NON-NLS-1$
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
+        assertTrue( declSpec instanceof IASTSimpleDeclSpecifier );
+        
+        IASTDeclarator dtor = decl.getDeclarators()[0];
+        assertTrue( dtor instanceof IASTFunctionDeclarator );
+        assertNotNull( dtor.getNestedDeclarator() );
+        IASTDeclarator nested = dtor.getNestedDeclarator();
+        assertEquals( nested.getName().toString(), "foo" );  //$NON-NLS-1$
+        
+        assertNotNull( dtor.getInitializer() );
     }
 }
 

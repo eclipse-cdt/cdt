@@ -12,13 +12,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,7 +60,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 	public static final String REMOVED = "removed"; //$NON-NLS-1$
 
 	private Map fDiscoveredMap = new HashMap();
-	private List listeners = Collections.synchronizedList(new Vector());
+	private List listeners = Collections.synchronizedList(new ArrayList());
 
 	private static final int INFO_CHANGED = 1;
 	private static final int INFO_REMOVED = 2;
@@ -249,25 +249,27 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 		Object[] list = listeners.toArray();
 		for (int i = 0; i < list.length; i++) {
 			final IDiscoveredInfoListener listener = (IDiscoveredInfoListener)list[i];
-			Platform.run(new ISafeRunnable() {
+			if (listener != null) {
+				Platform.run(new ISafeRunnable() {
 
-				public void handleException(Throwable exception) {
-					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-							CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
-					CCorePlugin.log(status);
-				}
-
-				public void run() throws Exception {
-					switch (type) {
-						case INFO_CHANGED :
-							listener.infoChanged(info);
-							break;
-						case INFO_REMOVED :
-							listener.infoRemoved(info.getProject());
-							break;
+					public void handleException(Throwable exception) {
+						IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+								CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
+						CCorePlugin.log(status);
 					}
-				}
-			});
+
+					public void run() throws Exception {
+						switch (type) {
+							case INFO_CHANGED :
+								listener.infoChanged(info);
+								break;
+							case INFO_REMOVED :
+								listener.infoRemoved(info.getProject());
+								break;
+						}
+					}
+				});
+			}
 		}
 	}
 

@@ -50,7 +50,7 @@ public class COwner implements ICOwnerInfo {
 				}
 			}
 		}
-		return fPlatform;
+		return fPlatform == null ? "*" : fPlatform;
 	}
 	
 	void configure(IProject project, ICDescriptor cproject) throws CoreException {

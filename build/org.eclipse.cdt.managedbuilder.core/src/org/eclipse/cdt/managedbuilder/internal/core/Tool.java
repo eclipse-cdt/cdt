@@ -206,8 +206,15 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 			IOption option = opts[index];
 			switch (option.getValueType()) {
 				case IOption.BOOLEAN :
+					String boolCmd;
 					if (option.getBooleanValue()) {
-						buf.append(option.getCommand() + WHITE_SPACE);
+						boolCmd = option.getCommand();
+					} else {
+						// Note: getCommandFalse is new with CDT 2.0
+						boolCmd = option.getCommandFalse();
+					}
+					if (boolCmd != null && boolCmd.length() > 0) {
+						buf.append(boolCmd + WHITE_SPACE);
 					}
 					break;
 				
@@ -219,8 +226,10 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 					break;
 				
 				case IOption.STRING :
+					String strCmd = option.getCommand();
 					String val = option.getStringValue();
-					if (val.length() > 0) { 
+					if (val.length() > 0) {
+						if (strCmd != null) buf.append(strCmd);
 						buf.append(val + WHITE_SPACE);
 					}
 					break;

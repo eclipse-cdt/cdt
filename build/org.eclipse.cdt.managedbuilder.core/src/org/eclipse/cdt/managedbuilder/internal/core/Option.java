@@ -33,6 +33,7 @@ public class Option extends BuildObject implements IOption {
 	private List builtIns;
 	private IOptionCategory category;
 	private String command;
+	private String commandFalse;
 	private String defaultEnumName;
 	private Map enumCommands;
 	private ITool tool;
@@ -61,6 +62,9 @@ public class Option extends BuildObject implements IOption {
 
 		// Get the command defined for the option
 		command = element.getAttribute(COMMAND);
+		
+		// Get the command defined for a Boolean option when the value is False
+		commandFalse = element.getAttribute(COMMAND_FALSE);
 		
 		// Options hold different types of values
 		String valueTypeStr = element.getAttribute(VALUE_TYPE);
@@ -184,6 +188,13 @@ public class Option extends BuildObject implements IOption {
 		return command;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getCommandFalse()
+	 */
+	public String getCommandFalse() {
+		return commandFalse;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefinedSymbols()
 	 */

@@ -249,6 +249,13 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getCommandFalse()
+	 */
+	public String getCommandFalse() {
+		return option.getCommandFalse();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefinedSymbols()
 	 */
 	public String[] getDefinedSymbols() throws BuildException {

@@ -27,6 +27,7 @@ public interface IOption extends IBuildObject {
 	// Schema attribute names for option elements
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
+	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
 	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
 	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
 	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
@@ -88,6 +89,13 @@ public interface IOption extends IBuildObject {
 	 */
 	public String getCommand();
 	
+	/**
+	 * Answers a <code>String</code> containing the actual command line
+	 * option associated with a Boolean option when the value is False
+	 * @return String
+	 */
+	public String getCommandFalse();
+
 	/**
 	 * Answers the user-defined preprocessor symbols. 
 	 * 

@@ -214,6 +214,13 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="commandFalse" type="string">
+            <annotation>
+               <documentation>
+                  An optional value, used only with options of type Boolean, that specifies the actual command that will be passed to the tool on the command line when the value of the Boolean option is False.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

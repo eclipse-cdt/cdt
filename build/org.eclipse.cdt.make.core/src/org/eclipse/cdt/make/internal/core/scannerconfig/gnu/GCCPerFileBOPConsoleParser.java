@@ -10,12 +10,18 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
@@ -115,15 +121,21 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             TraceUtil.outputTrace("Error identifying file name :2", line, TraceUtil.EOL);
             return rc;
         }
-        if (getUtility() != null) {
-            IPath pFilePath = ((GCCPerFileBOPConsoleParserUtility) getUtility()).getAbsolutePath(filePath);
+        if (fUtil != null) {
+            IPath pFilePath = fUtil.getAbsolutePath(filePath);
             String longFileName = pFilePath.toString();
             String shortFileName = pFilePath.removeFileExtension().lastSegment();
             String genericLine = line.replaceAll(filePath, "LONG_NAME");
             genericLine = genericLine.replaceAll(shortFileName+"\\.", "SHORT_NAME\\.");
-            // getUtility().addGenericCommandForFile(longFileName, genericLine);
-            // alternative 
-            ((GCCPerFileBOPConsoleParserUtility) getUtility()).addGenericCommandForFile2(longFileName, genericLine);
+
+            CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine);
+            List cmdList = new ArrayList();
+            cmdList.add(cmd);
+            Map sc = new HashMap(1);
+            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
+            IFile file = getProject().getFile(pFilePath);
+            getCollector().contributeToScannerConfig(file, sc);
+            // fUtil.addGenericCommandForFile2(longFileName, genericLine);
         }
         return rc;
     }

@@ -20,12 +20,13 @@ import java.util.List;
  * @author vhirsl
  */
 public class CCommandDSC {
-
+    private final static String SINGLE_SPACE = " "; //$NON-NLS-1$
+    
 	private static int ids = 0;
 	private int commandId;
 	private List compilerCommand;	// members are KVPair objects
 	private boolean discovered;
-	private List files;				// list of files this command applies to
+//	private List files;				// list of files this command applies to
 	private boolean cppFileType;	// C or C++ file type
 	// TODO add discovered scanner config
 	/**
@@ -34,7 +35,7 @@ public class CCommandDSC {
 	public CCommandDSC() {
 		compilerCommand = new ArrayList();
 		discovered = false;
-		files = null;
+//		files = null;
 		cppFileType = false;	// assume C file type
 		commandId = ++ids;
 	}
@@ -43,28 +44,48 @@ public class CCommandDSC {
 		compilerCommand.add(option);
 	}
 	
-	public void addFile(String fileName) {
-		if (files == null) {
-			files = new ArrayList();
-		}
-		if (!files.contains(fileName)) {
-			files.add(fileName);
-			if (!cppFileType && !fileName.endsWith(".c")) {
-				cppFileType = true;
-			}
-		}
-	}
+    /**
+     * @return
+     */
+    public Integer getCommandIdAsInteger() {
+        return new Integer(getCommandId());
+    }
+    /**
+     * @return Returns the commandId.
+     */
+    public int getCommandId() {
+        return commandId;
+    }
+    /**
+     * @param commandId The commandId to set.
+     */
+    public void setCommandId(int commandId) {
+        this.commandId = commandId;
+    }
+    
+//	public void addFile(String fileName) {
+//		if (files == null) {
+//			files = new ArrayList();
+//		}
+//		if (!files.contains(fileName)) {
+//			files.add(fileName);
+//			if (!cppFileType && !fileName.endsWith(".c")) { //$NON-NLS-1$
+//				cppFileType = true;
+//			}
+//		}
+//	}
 	
-	public int getNumberOfFiles() {
-		if (files == null) return 0;
-		return files.size();
-	}
+//	public int getNumberOfFiles() {
+//		if (files == null) return 0;
+//		return files.size();
+//	}
 	
-	public String getCommandAsString() {
+	public String toString() {
 		String commandAsString = new String();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVPair optionPair = (KVPair)i.next();
-			commandAsString += optionPair.getKey().toString() + " " + optionPair.getValue() + " ";
+			commandAsString += optionPair.getKey().toString() + SINGLE_SPACE + 
+                               optionPair.getValue() + SINGLE_SPACE;
 		}
 		return commandAsString.trim();
 	}
@@ -84,7 +105,8 @@ public class CCommandDSC {
 			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE) ||
 					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE))
 				continue;
-			commandAsString += optionPair.getKey().toString() + " " + optionPair.getValue() + " ";
+			commandAsString += optionPair.getKey().toString() + SINGLE_SPACE + 
+                               optionPair.getValue() + SINGLE_SPACE;
 		}
 		return commandAsString.trim();
 	}
@@ -111,9 +133,9 @@ public class CCommandDSC {
 		return (String[]) includeFiles.toArray(new String[includeFiles.size()]);
 	}
 	
-	public List getFilesList() {
-		return files;
-	}
+//	public List getFilesList() {
+//		return files;
+//	}
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -130,4 +152,5 @@ public class CCommandDSC {
 	public int hashCode() {
 		return compilerCommand.hashCode();
 	}
+
 }

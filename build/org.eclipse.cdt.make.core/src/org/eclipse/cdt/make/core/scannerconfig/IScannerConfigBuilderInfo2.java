@@ -64,13 +64,7 @@ public interface IScannerConfigBuilderInfo2 {
 	void setProviderOpenFilePath(String providerId, String filePath);
 	
     /**
-     * Store the buildInfo.
-     * @throws CoreException
-     */
-	void store() throws CoreException;
-    /**
      * Persist the buildInfo.
-     * It is expected that buildInfo was previously stored.
      * @throws CoreException
      */
     void save() throws CoreException;

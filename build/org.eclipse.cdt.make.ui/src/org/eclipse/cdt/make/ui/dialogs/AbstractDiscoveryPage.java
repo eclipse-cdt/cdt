@@ -10,14 +10,8 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
 
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
-import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -25,12 +19,24 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @author vhirsl
  */
-public abstract class AbstractDiscoveryPage extends AbstractCOptionPage {
+public abstract class AbstractDiscoveryPage extends DialogPage {
+    protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
+    protected static final String PROFILE_GROUP_LABEL = PREFIX + ".profile.group.label"; //$NON-NLS-1$
 
-    private Preferences fPrefs;
-    private IScannerConfigBuilderInfo2 fBuildInfo;
-    private boolean fInitialized = false;
+    protected AbstractDiscoveryOptionsBlock fContainer;
     
+    /**
+     * @return Returns the fContainer.
+     */
+    protected AbstractDiscoveryOptionsBlock getContainer() {
+        return fContainer;
+    }
+    /**
+     * @param container The fContainer to set.
+     */
+    protected void setContainer(AbstractDiscoveryOptionsBlock container) {
+        fContainer = container;
+    }
     /**
      * 
      */
@@ -53,89 +59,20 @@ public abstract class AbstractDiscoveryPage extends AbstractCOptionPage {
         super(title, image);
     }
 
-    /**
-     * @return Returns the fPrefs.
-     */
-    protected Preferences getPrefs() {
-        return fPrefs;
-    }
-    /**
-     * @return Returns the fBuildInfo.
-     */
-    protected IScannerConfigBuilderInfo2 getBuildInfo() {
-        return fBuildInfo;
-    }
-    /**
-     * @return Returns the fInitialized.
-     */
-    protected boolean isInitialized() {
-        return fInitialized;
-    }
-    /**
-     * @param initialized The fInitialized to set.
-     */
-    protected void setInitialized(boolean initialized) {
-        fInitialized = initialized;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#setContainer(org.eclipse.cdt.ui.dialogs.ICOptionContainer)
-     */
-    public void setContainer(ICOptionContainer container) {
-        super.setContainer(container);
+    protected abstract boolean isValid();
+    protected abstract void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo);
+    protected abstract void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo);
+    
+    public void performApply() {
+        IScannerConfigBuilderInfo2 buildInfo = getContainer().getBuildInfo();
         
-        fPrefs = getContainer().getPreferences();
-        IProject project = getContainer().getProject();
-
-        fInitialized = true;
-        if (project != null) {
-            try {
-                fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
-            } catch (CoreException e) {
-                // missing builder information (builder disabled or legacy project) 
-                fInitialized = false;
-                fBuildInfo = null;
-            }
-        } else {
-            fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
-        }
-    }
-
-    /**
-     * Create build info based on project properties
-     * @param project
-     * @return
-     */
-    protected IScannerConfigBuilderInfo2 createBuildInfo(IProject project) {
-        IScannerConfigBuilderInfo2 bi = null;
-        if (project != null) {
-            try {
-                bi = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
-            } catch (CoreException e) {
-                // disabled builder... just log it 
-                MakeCorePlugin.log(e);
-            }
-        }
-        else {
-            bi = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
-        }
-        return bi;
+        populateBuildInfo(buildInfo);
     }
     
-    /**
-     * Create build info based on preferences
-     * @return
-     */
-    protected IScannerConfigBuilderInfo2 createBuildInfo() {
-        IScannerConfigBuilderInfo2 bi = null;
-        // Populate with the default values
-        if (getContainer().getProject() != null) {
-            // get the preferences
-            bi = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
-        } else {
-            // get the defaults
-            bi = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, true);
-        }
-        return bi;
+    public void performDefaults() {
+        IScannerConfigBuilderInfo2 buildInfo = getContainer().getBuildInfo();
+        
+        restoreFromBuildinfo(buildInfo);
     }
     
 }

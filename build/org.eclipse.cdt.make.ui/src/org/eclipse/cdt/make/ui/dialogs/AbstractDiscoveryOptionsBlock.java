@@ -16,12 +16,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.make.internal.ui.preferences.TabFolderLayout;
+import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 
@@ -30,13 +36,47 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @author vhirsl
  */
-public abstract class AbstractDiscoveryOptionsBlock extends AbstractDiscoveryPage {
+public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage {
+    private Preferences fPrefs;
+    private IScannerConfigBuilderInfo2 fBuildInfo;
+    private boolean fInitialized = false;
+
     private Map fProfilePageMap = null;
 
     // Composite parent provided by the block.
     private Composite fCompositeParent;
-    private ICOptionPage fCurrentPage;
+    private AbstractDiscoveryPage fCurrentPage;
 
+    /**
+     * @return Returns the project.
+     */
+    protected IProject getProject() {
+        return getContainer().getProject();
+    }
+    /**
+     * @return Returns the fPrefs.
+     */
+    protected Preferences getPrefs() {
+        return fPrefs;
+    }
+    /**
+     * @return Returns the fBuildInfo.
+     */
+    protected IScannerConfigBuilderInfo2 getBuildInfo() {
+        return fBuildInfo;
+    }
+    /**
+     * @return Returns the fInitialized.
+     */
+    protected boolean isInitialized() {
+        return fInitialized;
+    }
+    /**
+     * @param initialized The fInitialized to set.
+     */
+    protected void setInitialized(boolean initialized) {
+        fInitialized = initialized;
+    }
     /**
      * Create a profile page only on request
      * 
@@ -44,16 +84,16 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractDiscoveryPag
      */
     protected static class DiscoveryProfilePageConfiguration {
 
-        ICOptionPage page;
+        AbstractDiscoveryPage page;
         IConfigurationElement fElement;
 
         public DiscoveryProfilePageConfiguration(IConfigurationElement element) {
             fElement = element;
         }
 
-        public ICOptionPage getPage() throws CoreException {
+        public AbstractDiscoveryPage getPage() throws CoreException {
             if (page == null) {
-                page = (ICOptionPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
+                page = (AbstractDiscoveryPage) fElement.createExecutableExtension("class"); //$NON-NLS-1$
             }
             return page;
         }
@@ -95,13 +135,73 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractDiscoveryPag
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#setContainer(org.eclipse.cdt.ui.dialogs.ICOptionContainer)
+     */
+    public void setContainer(ICOptionContainer container) {
+        super.setContainer(container);
+        
+        fPrefs = getContainer().getPreferences();
+        IProject project = getContainer().getProject();
+
+        fInitialized = true;
+        if (project != null) {
+            try {
+                fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
+            } catch (CoreException e) {
+                // missing builder information (builder disabled or legacy project) 
+                fInitialized = false;
+                fBuildInfo = null;
+            }
+        } else {
+            fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
+        }
+    }
+
+    protected void updateContainer() {
+        getContainer().updateContainer();
+    }
+
+    /**
+     * @param project
+     */
+    protected void createBuildInfo() {
+        if (getProject() != null) {
+            try {
+                // get the project properties
+                fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(getProject());
+            }
+            catch (CoreException e) {
+                fBuildInfo = null;
+            }
+        }
+        else {
+            // get the preferences
+            fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
+        }
+    }
+
+    /**
+     * Create build info based on preferences
+     */
+    protected void createDefaultBuildInfo() {
+        // Populate with the default values
+        if (getProject() != null) {
+            // get the preferences
+            fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
+        } else {
+            // get the defaults
+            fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, true);
+        }
+    }
+    
     protected Composite getCompositeParent() {
         return fCompositeParent;
     }
 
     protected void setCompositeParent(Composite parent) {
         fCompositeParent = parent;
-//        fCompositeParent.setLayout(new TabFolderLayout());
+        fCompositeParent.setLayout(new TabFolderLayout());
     }
 
     /* (non-Javadoc)
@@ -122,31 +222,32 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractDiscoveryPag
             return;
         }
         String profileId = getCurrentProfileId();
-        ICOptionPage page = getDiscoveryProfilePage(profileId);
+        AbstractDiscoveryPage page = getDiscoveryProfilePage(profileId);
         if (page != null) {
             if (page.getControl() == null) {
                 Composite parent = getCompositeParent();
-                page.setContainer(getContainer());
+                page.setContainer(this);
                 page.createControl(parent);
                 parent.layout(true);
-            } else {
-                page.setVisible(false);
+            }
+            if (fCurrentPage != null) {
+                fCurrentPage.setVisible(false);
             }
             page.setVisible(true);
         }
         setCurrentPage(page);
     }
 
-    protected ICOptionPage getCurrentPage() {
+    protected AbstractDiscoveryPage getCurrentPage() {
         return fCurrentPage;
     }
 
-    protected void setCurrentPage(ICOptionPage page) {
+    protected void setCurrentPage(AbstractDiscoveryPage page) {
         fCurrentPage = page;
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
+     * @see org.eclipse.cdt.ui.dialogs.AbstractDiscoveryPage#isValid()
      */
     public boolean isValid() {
         return (getCurrentPage() == null) ? true : getCurrentPage().isValid();
@@ -159,7 +260,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractDiscoveryPag
         return getCurrentPage().getErrorMessage();
     }
     
-    protected ICOptionPage getDiscoveryProfilePage(String profileId) {
+    protected AbstractDiscoveryPage getDiscoveryProfilePage(String profileId) {
         DiscoveryProfilePageConfiguration configElement = 
                 (DiscoveryProfilePageConfiguration) fProfilePageMap.get(profileId);
         if (configElement != null) {
@@ -196,4 +297,5 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractDiscoveryPag
     }
     
     protected abstract String getCurrentProfileId();
+    
 }

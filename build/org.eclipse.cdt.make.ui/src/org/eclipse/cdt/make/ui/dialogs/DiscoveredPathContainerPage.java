@@ -30,11 +30,12 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -558,57 +559,59 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private boolean deleteEntry() {
 		boolean rc = false;
-		List newSelection = new ArrayList();
-		List selElements = fDiscoveredContainerList.getSelectedElements();
-		for (int i = 0; i < selElements.size(); ++i) {
-			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
-			if (elem.getEntryKind() != DiscoveredElement.CONTAINER) {
-				DiscoveredElement parent = elem.getParent();
-				if (parent != null) {
-					Object[] children = parent.getChildren();
-					if (elem.delete()) {
-                        // ScannerInfoCollector collector = ScannerInfoCollector.getInstance();
-                        IProject project = fCProject.getProject();
-                        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-                                getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID); // use selected profile for the project
-                        PerProjectSICollector collector = (PerProjectSICollector) profileInstance.getScannerInfoCollector();
-						switch (elem.getEntryKind()) {
-							case DiscoveredElement.PATHS_GROUP:
-                                collector.deleteAllPaths(project);
-								break;
-							case DiscoveredElement.SYMBOLS_GROUP:
-                                collector.deleteAllSymbols(project);
-								break;
-							case DiscoveredElement.INCLUDE_PATH:
-                                collector.deletePath(project, elem.getEntry());
-								break;
-							case DiscoveredElement.SYMBOL_DEFINITION:
-                                collector.deleteSymbol(project, elem.getEntry());
-								break;
-						}
-						rc = true;
-						// set new selection
-						for (int j = 0; j < children.length; ++j) {
-							DiscoveredElement child = (DiscoveredElement) children[j];
-							if (elem.equals(child)) {
-								newSelection.clear();
-								if (j + 1 < children.length) {
-									newSelection.add(children[j + 1]);
-								}
-								else if (j - 1 >= 0) {
-									newSelection.add(children[j - 1]);
-								}
-								else {
-									newSelection.add(parent);
-								}
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		fDiscoveredContainerList.postSetSelection(new StructuredSelection(newSelection));
+        IProject project = fCProject.getProject();
+        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+                getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID); // use selected profile for the project
+        IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+        if (collector instanceof IScannerInfoCollectorUtil) {
+            IScannerInfoCollectorUtil collectorUtil = (IScannerInfoCollectorUtil) collector;
+    		List newSelection = new ArrayList();
+    		List selElements = fDiscoveredContainerList.getSelectedElements();
+    		for (int i = 0; i < selElements.size(); ++i) {
+    			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
+    			if (elem.getEntryKind() != DiscoveredElement.CONTAINER) {
+    				DiscoveredElement parent = elem.getParent();
+    				if (parent != null) {
+    					Object[] children = parent.getChildren();
+    					if (elem.delete()) {
+    						switch (elem.getEntryKind()) {
+    							case DiscoveredElement.PATHS_GROUP:
+                                    collectorUtil.deleteAllPaths(project);
+    								break;
+    							case DiscoveredElement.SYMBOLS_GROUP:
+                                    collectorUtil.deleteAllSymbols(project);
+    								break;
+    							case DiscoveredElement.INCLUDE_PATH:
+                                    collectorUtil.deletePath(project, elem.getEntry());
+    								break;
+    							case DiscoveredElement.SYMBOL_DEFINITION:
+                                    collectorUtil.deleteSymbol(project, elem.getEntry());
+    								break;
+    						}
+    						rc = true;
+    						// set new selection
+    						for (int j = 0; j < children.length; ++j) {
+    							DiscoveredElement child = (DiscoveredElement) children[j];
+    							if (elem.equals(child)) {
+    								newSelection.clear();
+    								if (j + 1 < children.length) {
+    									newSelection.add(children[j + 1]);
+    								}
+    								else if (j - 1 >= 0) {
+    									newSelection.add(children[j - 1]);
+    								}
+    								else {
+    									newSelection.add(parent);
+    								}
+    								break;
+    							}
+    						}
+    					}
+    				}
+    			}
+    		}
+    		fDiscoveredContainerList.postSetSelection(new StructuredSelection(newSelection));
+        }
 		return rc;
 	}
 

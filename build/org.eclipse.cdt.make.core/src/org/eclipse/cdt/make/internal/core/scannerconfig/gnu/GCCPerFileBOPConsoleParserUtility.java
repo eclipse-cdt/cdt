@@ -10,8 +10,6 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,7 +110,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
             return;
         compiledFileList.add(longFileName);
 
-        CCommandDSC command = getDSCCommand(genericLine);
+        CCommandDSC command = getNewCCommandDSC(genericLine);
         int index = commandsList2.indexOf(command);
         if (index == -1) {
             commandsList2.add(command);
@@ -121,15 +119,15 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         else {
             command = (CCommandDSC) commandsList2.get(index);
         }
-        // add a file
-        command.addFile(longFileName);
-        ++filesN;
+//        // add a file
+//        command.addFile(longFileName);
+//        ++filesN;
     }
 
     /**
      * @param genericLine
      */
-    private CCommandDSC getDSCCommand(String genericLine) {
+    public CCommandDSC getNewCCommandDSC(String genericLine) {
         CCommandDSC command = new CCommandDSC();
         String[] tokens = genericLine.split("\\s+");
         command.addSCOption(new KVPair(SCDOptionsEnum.COMMAND, tokens[0]));
@@ -189,24 +187,32 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
     /**
      * 
      */
-    void generateReport2() {
-        StringWriter buffer = new StringWriter();
-        PrintWriter writer = new PrintWriter(buffer);
-        for (Iterator i = commandsList2.iterator(); i.hasNext(); ) {
-            CCommandDSC cmd = (CCommandDSC)i.next();
-            writer.println("Stats for generic command: '" + cmd.getCommandAsString() + "' applicable for " + 
-                    Integer.toString(cmd.getNumberOfFiles()) + " files: ");
-            List filesList = cmd.getFilesList();
-            if (filesList != null) {
-                for (Iterator j = filesList.iterator(); j.hasNext(); ) {
-                    writer.println("    " + (String)j.next());
-                }
-            }
-        }
-        writer.close();
-            
-        TraceUtil.metricsTrace(buffer.toString());
-        TraceUtil.summaryTrace("Discovery summary", workingDirsN, commandsN, filesN);
+//    void generateReport2() {
+//        StringWriter buffer = new StringWriter();
+//        PrintWriter writer = new PrintWriter(buffer);
+//        for (Iterator i = commandsList2.iterator(); i.hasNext(); ) {
+//            CCommandDSC cmd = (CCommandDSC)i.next();
+//            writer.println("Stats for generic command: '" + cmd.getCommandAsString() + "' applicable for " + 
+//                    Integer.toString(cmd.getNumberOfFiles()) + " files: ");
+//            List filesList = cmd.getFilesList();
+//            if (filesList != null) {
+//                for (Iterator j = filesList.iterator(); j.hasNext(); ) {
+//                    writer.println("    " + (String)j.next());
+//                }
+//            }
+//        }
+//        writer.close();
+//            
+//        TraceUtil.metricsTrace(buffer.toString());
+//        TraceUtil.summaryTrace("Discovery summary", workingDirsN, commandsN, filesN);
+//    }
+
+    /**
+     * Returns all CCommandDSC collected so far
+     * @return
+     */
+    public List getCCommandDSCList() {
+        return new ArrayList(commandsList2);
     }
 
 }

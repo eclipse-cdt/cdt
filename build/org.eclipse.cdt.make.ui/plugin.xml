@@ -534,4 +534,11 @@
             class="org.eclipse.cdt.make.ui.dialogs.GCCPerProjectSCDProfilePage"
             name="%GCCPerProjectProfile.name"
             profileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.make.ui.DiscoveryProfilePage">
+      <profilePage
+            class="org.eclipse.cdt.make.ui.dialogs.GCCPerFileSCDProfilePage"
+            name="%GCCPerFileProfile.name"
+            profileId="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile"/>
    </extension></plugin>

@@ -78,7 +78,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         scInfo2.setProviderOutputParserEnabled(providerId, true);
         scInfo2.setProblemReportingEnabled(true);
         try {
-            scInfo2.store();
+            scInfo2.save();
         }
         catch (CoreException e) {
         }

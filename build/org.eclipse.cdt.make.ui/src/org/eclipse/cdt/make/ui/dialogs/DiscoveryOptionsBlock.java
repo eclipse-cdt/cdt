@@ -15,9 +15,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -28,6 +25,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.preferences.TabFolderLayout;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -120,16 +118,13 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         // Create a group for scanner config discovery
         if (createScannerConfigControls(scComp, tabColumns)) {
             // create a composite for discovery profile options
-            profileComp = ControlFactory.createComposite(composite, 1);
+            profileComp = new Composite(composite, SWT.NULL);
     //        ((GridLayout)profileComp.getLayout()).marginHeight = 5;
     //        ((GridLayout)profileComp.getLayout()).marginWidth = 5;
     //        ((GridLayout)profileComp.getLayout()).verticalSpacing = 5;
             profileComp.setFont(font);
-            GridData gd = (GridData) profileComp.getLayoutData();
-            gd.grabExcessHorizontalSpace = true;
-    //        gd.grabExcessVerticalSpace = true;
-            gd.horizontalAlignment = GridData.FILL;
-            gd.verticalAlignment = GridData.FILL;
+            profileComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+            profileComp.setLayout(new TabFolderLayout());
             
             // Must set the composite parent to super class.
             setCompositeParent(profileComp);
@@ -196,7 +191,12 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         ((GridData)label.getLayoutData()).grabExcessHorizontalSpace = false;
 
         profileComboBox = new Combo(scGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
-
+        profileComboBox.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                getBuildInfo().setSelectedProfileId(getCurrentProfileId());
+                handleDiscoveryProfileChanged();
+            }
+        });
         // fill the combobox and set the initial value
         for (Iterator items = getDiscoveryProfileIdList().iterator(); items.hasNext();) {
             String profileId = (String)items.next();
@@ -252,33 +252,21 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         // init buildInfo
         final IProject project = getContainer().getProject();
         // Create new build info in case of new C++ project wizard
-        final IScannerConfigBuilderInfo2 buildInfo = createBuildInfo(project);
+        createBuildInfo();
         
-        if (buildInfo != null) {
-            populateBuildInfo(buildInfo);
-            buildInfo.store();
+        if (getBuildInfo() != null) {
+            populateBuildInfo(getBuildInfo());
             monitor.worked(1);
             
             if (scEnabledButton.getSelection()) {
-                getCurrentPage().performApply(monitor);
+                getCurrentPage().performApply();
             }
             monitor.worked(1);
             
             if (project != null) {
                 configureProject(project, monitor);
-                ICDescriptorOperation op = new ICDescriptorOperation() {
-      
-                    public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-                        buildInfo.save();
-                    }
-                    
-                };
-                CCorePlugin.getDefault().getCDescriptorManager().
-                        runDescriptorOperation(project, op, monitor);
             }
-            else {
-                buildInfo.save();
-            }
+            getBuildInfo().save();
         }        
         monitor.done();
     }
@@ -321,10 +309,12 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
    }
 
     private void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
-        buildInfo.setAutoDiscoveryEnabled(scEnabledButton.getSelection());
-        String profileName = profileComboBox.getItem(profileComboBox.getSelectionIndex());
-        buildInfo.setSelectedProfileId(getDiscoveryProfileId(profileName));
-        buildInfo.setProblemReportingEnabled(scProblemReportingEnabledButton.getSelection());
+        if (buildInfo != null) {
+            buildInfo.setAutoDiscoveryEnabled(scEnabledButton.getSelection());
+            String profileName = profileComboBox.getItem(profileComboBox.getSelectionIndex());
+            buildInfo.setSelectedProfileId(getDiscoveryProfileId(profileName));
+            buildInfo.setProblemReportingEnabled(scProblemReportingEnabledButton.getSelection());
+        }
     }
 
     /* (non-Javadoc)
@@ -336,19 +326,23 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
             // Missing builder info on a non-legacy project
             return;
         }
-        IScannerConfigBuilderInfo2 buildInfo = createBuildInfo();
+        createDefaultBuildInfo();
         
-        restoreFromBuildinfo(buildInfo);
+        restoreFromBuildinfo(getBuildInfo());
         enableAllControls();
         
         getCurrentPage().performDefaults();
+        
+        handleDiscoveryProfileChanged();
     }
 
     private void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
-        scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled());
-        String profileId = buildInfo.getSelectedProfileId(); 
-        profileComboBox.setText(getDiscoveryProfileName(profileId));
-        scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
+        if (buildInfo != null) {
+            scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled());
+            String profileId = buildInfo.getSelectedProfileId(); 
+            profileComboBox.setText(getDiscoveryProfileName(profileId));
+            scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
+        }
     }
 
 }

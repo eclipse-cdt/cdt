@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
@@ -43,7 +44,7 @@ import org.eclipse.core.runtime.Platform;
  * @since 3.0
  * @author vhirsl
  */
-public class PerProjectSICollector implements IScannerInfoCollector2 {
+public class PerProjectSICollector implements IScannerInfoCollector2, IScannerInfoCollectorUtil {
 	private IProject project;
 	
 	private Map discoveredSI;
@@ -390,47 +391,41 @@ public class PerProjectSICollector implements IScannerInfoCollector2 {
         return sumDiscoveredIncludes;
     }
 
-    /**
-     * Delete all discovered paths for the project
-     * 
-     * @param project
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteAllPaths(org.eclipse.core.resources.IResource)
      */
-    public void deleteAllPaths(IProject project) {
+    public void deleteAllPaths(IResource resource) {
+        IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             sumDiscoveredIncludes.clear();
         }
     }
 
-    /**
-     * Delete all discovered symbols for the project
-     * 
-     * @param project
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteAllSymbols(org.eclipse.core.resources.IResource)
      */
-    public void deleteAllSymbols(IProject project) {
+    public void deleteAllSymbols(IResource resource) {
+        IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             sumDiscoveredSymbols.clear();
         }
     }
 
-    /**
-     * Delete a specific include path
-     * 
-     * @param project
-     * @param path
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deletePath(org.eclipse.core.resources.IResource, java.lang.String)
      */
-    public void deletePath(IProject project, String path) {
+    public void deletePath(IResource resource, String path) {
+        IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             sumDiscoveredIncludes.remove(path);
         }
     }
 
-    /**
-     * Delete a specific symbol definition
-     * 
-     * @param project
-     * @param path
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteSymbol(org.eclipse.core.resources.IResource, java.lang.String)
      */
-    public void deleteSymbol(IProject project, String symbol) {
+    public void deleteSymbol(IResource resource, String symbol) {
+        IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             // remove it from the Map of SymbolEntries 
             ScannerConfigUtil.removeSymbolEntryValue(symbol, sumDiscoveredSymbols);

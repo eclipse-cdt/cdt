@@ -18,12 +18,15 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.ScannerInfoProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -420,7 +423,6 @@ public class ScannerConfigInfoFactory2 {
 	 * @author vhirsl
 	 */
 	private static class BuildProperty extends Store {
-        private static boolean sIsDirty = false;
 		private IProject project;
         private String profileId;
 
@@ -436,7 +438,8 @@ public class ScannerConfigInfoFactory2 {
          */
         protected void load() {
 			ICDescriptor descriptor;
-            int loaded = 0; // if everything is successfully loaded the value should be at least 2
+            List profileIds = ScannerConfigProfileManager.getInstance().getProfileIds();
+            List loadedProfiles = new ArrayList();
 			try {
 				descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
 				for (Node sc = descriptor.getProjectData(SCANNER_CONFIG).getFirstChild();
@@ -449,28 +452,82 @@ public class ScannerConfigInfoFactory2 {
                                 : profileId;
                         problemReportingEnabled = Boolean.valueOf(
                         		((Element)sc).getAttribute(PROBLEM_REPORTING_ENABLED)).booleanValue();
-                        ++loaded;
                     }
                     else if (sc.getNodeName().equals(PROFILE)) {
 						//if (selectedProfile.equals(((Element)sc).getAttribute(ID))) {
 							load(sc);
-                            ++loaded;
+                            loadedProfiles.add(((Element)sc).getAttribute(ID));
 						//}
 					}
 				}
-				if (loaded < 2) {
+				if (loadedProfiles.size() < 1) {
                     // No ScannerConfigDiscovery entry, try old project location - .project
-					if (!migrateScannerConfigBuildInfo(ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID)) {
-						// disable autodiscovery
-						autoDiscoveryEnabled = false;
+					if (migrateScannerConfigBuildInfo(ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID)) {
+                        loadedProfiles.add(ScannerConfigProfileManager.PER_PROJECT_PROFILE_ID);
 					}
+                    else {
+                        // disable autodiscovery
+                        autoDiscoveryEnabled = false;
+                    }
 				}
+                if (loadedProfiles.size() < profileIds.size()) {
+                    // initialize remaining profiles with default values
+                    for (Iterator i = profileIds.iterator(); i.hasNext(); ) {
+                        String profileId = (String) i.next();
+                        if (!loadedProfiles.contains(profileId)) {
+                            loadDefaults(profileId);
+                            loadedProfiles.add(profileId);
+                        }
+                    }
+//                    // store migrated data
+//                    isDirty = true;
+//                    store();
+//                    save();
+                }
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
 			}
 		}
 
 		/**
+         * Load profile defaults
+         * @param profileId
+         */
+        private void loadDefaults(String profileId) {
+            ProfileOptions po = new ProfileOptions();
+            po.buildOutputFileActionEnabled = false;
+            po.buildOutputParserEnabled = false;
+            
+            ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
+                    getSCProfileConfiguration(profileId);
+
+            po.providerOptionsMap = new LinkedHashMap();
+            for (Iterator i = configuredProfile.getSIProviderIds().iterator(); i.hasNext(); ) {
+                String providerId = (String) i.next();
+                ProfileOptions.ProviderOptions ppo = new ProfileOptions.ProviderOptions();
+                ScannerInfoProvider configuredProvider = configuredProfile.
+                        getScannerInfoProviderElement(providerId);
+                ppo.providerKind = configuredProvider.getProviderKind();
+                ppo.providerOutputParserEnabled = false;
+                if (ppo.providerKind.equals(ScannerConfigProfile.ScannerInfoProvider.RUN)) {
+                    ppo.providerRunUseDefault = true;
+                    ppo.providerRunCommand = configuredProvider.getAction().getAttribute(COMMAND);
+                    ppo.providerRunArguments = configuredProvider.getAction().getAttribute(ARGUMENTS);
+                }
+                else if (ppo.providerKind.equals(ScannerConfigProfile.ScannerInfoProvider.OPEN)) {
+                    ppo.providerOpenFilePath = configuredProvider.getAction().getAttribute("file");//$NON-NLS-1$ 
+                }
+                
+                po.providerOptionsMap.put(providerId, ppo);
+            }
+            
+            if (profileOptionsMap == null) {
+                profileOptionsMap = new LinkedHashMap();
+            }
+            profileOptionsMap.put(profileId, po);
+        }
+
+        /**
 		 * @param profileId
 		 */
 		private boolean migrateScannerConfigBuildInfo(String profileId) {
@@ -506,7 +563,6 @@ public class ScannerConfigInfoFactory2 {
                 
                 // store migrated data
                 isDirty = true;
-                store();
                 save();
 			} 
 			catch (CoreException e) {
@@ -591,41 +647,37 @@ public class ScannerConfigInfoFactory2 {
             }
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2.Store#store()
-		 */
-		public void store() throws CoreException {
+		private boolean store() throws CoreException {
 			if (isDirty) {
-                synchronized (BuildProperty.class) {
-    				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-    				Element sc = descriptor.getProjectData(SCANNER_CONFIG);
-                    Document doc = sc.getOwnerDocument();
-    
-                    // Clear out all current children
-                    Node child = sc.getFirstChild();
-                    while (child != null) {
-                        sc.removeChild(child);
-                        child = sc.getFirstChild();
-                    }
-    
-                    Element autod = doc.createElement(SC_AUTODISCOVERY);
-                    sc.appendChild(autod);
-    				autod.setAttribute(ENABLED, Boolean.toString(autoDiscoveryEnabled));
-    				autod.setAttribute(SELECTED_PROFILE_ID, selectedProfile);
-    				autod.setAttribute(PROBLEM_REPORTING_ENABLED, Boolean.toString(problemReportingEnabled));
-    
-    				for (Iterator i = profileOptionsMap.keySet().iterator(); i.hasNext();) {
-                        String profileId = (String) i.next();
-                        Element profile = doc.createElement(PROFILE);
-    					profile.setAttribute(ID, profileId);
-    					store(profile, (ProfileOptions) profileOptionsMap.get(profileId));
-    				    sc.appendChild(profile);
-                    }
-    				
-    				isDirty = false;
-                    sIsDirty = true;
+				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
+				Element sc = descriptor.getProjectData(SCANNER_CONFIG);
+                Document doc = sc.getOwnerDocument();
+
+                // Clear out all current children
+                Node child = sc.getFirstChild();
+                while (child != null) {
+                    sc.removeChild(child);
+                    child = sc.getFirstChild();
                 }
+
+                Element autod = doc.createElement(SC_AUTODISCOVERY);
+                sc.appendChild(autod);
+				autod.setAttribute(ENABLED, Boolean.toString(autoDiscoveryEnabled));
+				autod.setAttribute(SELECTED_PROFILE_ID, selectedProfile);
+				autod.setAttribute(PROBLEM_REPORTING_ENABLED, Boolean.toString(problemReportingEnabled));
+
+				for (Iterator i = profileOptionsMap.keySet().iterator(); i.hasNext();) {
+                    String profileId = (String) i.next();
+                    Element profile = doc.createElement(PROFILE);
+					profile.setAttribute(ID, profileId);
+					store(profile, (ProfileOptions) profileOptionsMap.get(profileId));
+				    sc.appendChild(profile);
+                }
+				
+				isDirty = false;
+                return true;
 			}
+            return false;
 		}
 
 		/**
@@ -691,13 +743,17 @@ public class ScannerConfigInfoFactory2 {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#save()
          */
-        public void save() throws CoreException {
-            synchronized (BuildProperty.class) {
-                if (sIsDirty) {
-                    ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
-                    descriptor.saveProjectData();
-                    sIsDirty = false;
-                }
+        public synchronized void save() throws CoreException {
+            if (store()) {
+                ICDescriptorOperation op = new ICDescriptorOperation() {
+                    
+                     public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+                         descriptor.saveProjectData();
+                     }
+                      
+                 };
+                 CCorePlugin.getDefault().getCDescriptorManager().
+                         runDescriptorOperation(project, op, null);
             }
         }
 
@@ -785,10 +841,7 @@ public class ScannerConfigInfoFactory2 {
             }
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigInfoFactory2.Store#store()
-		 */
-		public void store() {
+		private void store() {
 			if (isDirty) {
 				set(SCANNER_CONFIG_AUTODISCOVERY_ENABLED, autoDiscoveryEnabled);
 				set(SCANNER_CONFIG_SELECTED_PROFILE_ID, selectedProfile);
@@ -871,7 +924,7 @@ public class ScannerConfigInfoFactory2 {
          * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2#save()
          */
         public void save() throws CoreException {
-            // Nothing to do here
+            store();
         }
 
 	}

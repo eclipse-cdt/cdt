@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public interface IContainerSymbol extends ISymbol {
 
 	public boolean hasUsingDirectives();
 	public List getUsingDirectives();
-	public void addUsingDirective( IContainerSymbol namespace ) throws ParserSymbolTableException;
+	public IUsingDirectiveSymbol addUsingDirective( IContainerSymbol namespace ) throws ParserSymbolTableException;
 	
 	public ISymbol addUsingDeclaration( String name ) throws ParserSymbolTableException;
 	public ISymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException;
@@ -55,4 +56,6 @@ public interface IContainerSymbol extends ISymbol {
 	public TemplateInstance instantiate( List arguments ) throws ParserSymbolTableException;
 	
 	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol );
+	
+	public Iterator getContentsIterator();
 }

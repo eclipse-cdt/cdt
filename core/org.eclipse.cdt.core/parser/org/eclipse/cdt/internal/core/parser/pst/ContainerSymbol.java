@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -139,6 +139,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		obj.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
+		getContents().add( obj );
+		
 		Command command = new AddSymbolCommand( obj, containing );
 		getSymbolTable().pushCommand( command );
 	}
@@ -163,7 +165,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDirective(org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
-	public void addUsingDirective( IContainerSymbol namespace ) throws ParserSymbolTableException{
+	public IUsingDirectiveSymbol addUsingDirective( IContainerSymbol namespace ) throws ParserSymbolTableException{
 		if( namespace.getType() != TypeInfo.t_namespace ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
 		}
@@ -180,10 +182,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		List usingDirectives = getUsingDirectives();		
 	
-		usingDirectives.add( namespace );
+		IUsingDirectiveSymbol usingDirective = new UsingDirectiveSymbol( getSymbolTable(), namespace );
+		usingDirectives.add( usingDirective );
 		
-		Command command = new AddUsingDirectiveCommand( this, namespace );
+		getContents().add( usingDirective );
+		
+		Command command = new AddUsingDirectiveCommand( this, usingDirective );
 		getSymbolTable().pushCommand( command );
+		
+		return usingDirective;
 	}
 
 	/* (non-Javadoc)
@@ -749,6 +756,17 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return instance;
 	}
 
+	protected List getContents(){
+		if(_contents == null ){
+			_contents = new LinkedList();
+		}
+		return _contents;
+	}
+	
+	public Iterator getContentsIterator(){
+		return getContents().iterator();
+	}
+	
 	static private class AddSymbolCommand extends Command{
 		AddSymbolCommand( ISymbol newDecl, IContainerSymbol context ){
 			_symbol = newDecl;
@@ -776,27 +794,46 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			} else if( obj instanceof BasicSymbol ){
 				_context.getContainedSymbols().remove( _symbol.getName() );
 			}
-//			if( _removeThis && _symbol instanceof IParameterizedSymbol ){
-//				((IParameterizedSymbol)_symbol).getContainedSymbols().remove( ParserSymbolTable.THIS );
-//			}
+			
+			//this is an inefficient way of doing this, we can modify the interfaces if the undo starts
+			//being used often.
+			Iterator iter = _context.getContentsIterator();
+			while( iter.hasNext() ){
+				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
+				if( ext == _symbol ){
+					iter.remove();
+					break;
+				}
+			}
 		}
 		
-		private ISymbol 		 _symbol;
-		private IContainerSymbol _context; 
+		private final ISymbol          _symbol;
+		private final IContainerSymbol _context; 
 	}
 	
 	static private class AddUsingDirectiveCommand extends Command{
-		public AddUsingDirectiveCommand( IContainerSymbol container, IContainerSymbol namespace ){
+		public AddUsingDirectiveCommand( IContainerSymbol container, IUsingDirectiveSymbol directive ){
 			_decl = container;
-			_namespace = namespace;
+			_directive = directive;
 		}
 		public void undoIt(){
-			_decl.getUsingDirectives().remove( _namespace );
+			_decl.getUsingDirectives().remove( _directive );
+			
+			//this is an inefficient way of doing this, we can modify the interfaces if the undo starts
+			//being used often.
+			Iterator iter = _decl.getContentsIterator();
+			while( iter.hasNext() ){
+				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
+				if( ext == _directive ){
+					iter.remove();
+					break;
+				}
+			}
 		}
-		private IContainerSymbol _decl;
-		private IContainerSymbol _namespace;
+		private final IContainerSymbol _decl;
+		private final IUsingDirectiveSymbol _directive;
 	}
-	
+
 	static protected class SymbolTableComparator implements Comparator{
 		public int compare( Object o1, Object o2 ){
 			int result = ((String) o1).compareToIgnoreCase( (String) o2 );
@@ -810,7 +847,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			return ( obj instanceof SymbolTableComparator );
 		}
 	}
-	
+
+	private 	LinkedList	_contents;				//ordered list of all contents of this symbol
 	private		LinkedList	_usingDirectives;		//collection of nominated namespaces
 	private		Map 		_containedSymbols;		//declarations contained by us.
 

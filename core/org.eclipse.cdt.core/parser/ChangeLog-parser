@@ -1,3 +1,11 @@
+2004-01-16 Andrew Niefer
+	Created IExtensibleSymbol, which is a new base class for the symbol interfaces
+	Created IUsingDirectiveSymbol and UsingDirectiveSymbol
+	Modified ASTUsingDirective to use IUsingDirectiveSymbol
+	Modified CompleteParseASTFactory.createUsingDirective
+	Added IContainerSymbol.getContentsIterator()
+	Implemented getContentsIterator in ContainerSymbol
+
 2004-01-16 John Camelon
 	Changed IASTNode.LookupException to IASTNode.LookupError.
 	Updated IASTElaboratedTypeSpecifier to remove redundant extends relationships.

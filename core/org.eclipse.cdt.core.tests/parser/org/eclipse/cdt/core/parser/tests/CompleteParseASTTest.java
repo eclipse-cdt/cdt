@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -194,6 +194,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertQualifiedName( fieldY.getFullyQualifiedName(), new String [] { "A", "B", "C", "y" } );		
 		IASTUsingDirective directive = (IASTUsingDirective)declarations.next();
 		assertEquals( directive.getNamespaceDefinition(), namespaceB );
+		assertEquals( directive.getNamespaceName(), "A::B" );
 		IASTUsingDeclaration declaration = (IASTUsingDeclaration)declarations.next();
 		assertEquals( declaration.getUsingType(), variableX );
 		declaration = (IASTUsingDeclaration)declarations.next();

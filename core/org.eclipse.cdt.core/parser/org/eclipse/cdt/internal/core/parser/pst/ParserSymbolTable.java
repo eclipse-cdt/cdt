@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others. 
+ * Copyright (c) 2002,2003,2004 Rational Software Corporation and others. 
  * All rights reserved.   This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at 
@@ -243,7 +243,7 @@ public class ParserSymbolTable {
 				
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
-				if( (!data.qualified || !foundSomething || data.mode == LookupMode.PREFIX ) && temp.getUsingDirectives() != null ){
+				if( (!data.qualified || !foundSomething || data.mode == LookupMode.PREFIX ) && temp.hasUsingDirectives() ){
 					//name wasn't found, add transitive using directives for later consideration
 					transitiveDirectives.addAll( temp.getUsingDirectives() );
 				}
@@ -1091,7 +1091,7 @@ public class ParserSymbolTable {
 		Iterator iter = directives.iterator();
 	
 		for( int i = size; i > 0; i-- ){
-			temp = (IContainerSymbol) iter.next();
+			temp = ((IUsingDirectiveSymbol) iter.next()).getNamespace();
 		
 			//namespaces are searched at most once
 			if( !data.visited.contains( temp ) ){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -14,9 +14,9 @@
  
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -120,6 +120,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		constructor.setContainingSymbol( this );
 		addThis( constructor );
 
+		getContents().add( constructor );
+		
 		Command command = new AddConstructorCommand( constructor, this );
 		getSymbolTable().pushCommand( command );			
 	}
@@ -335,7 +337,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		}
 		public void undoIt(){
 			List constructors = _context.getConstructors();
-			ListIterator iter = constructors.listIterator();
+			Iterator iter = constructors.listIterator();
 			
 			int size = constructors.size();
 			IParameterizedSymbol item = null;
@@ -346,10 +348,19 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 					break;
 				}
 			}
+			
+			iter = _context.getContentsIterator();
+			while( iter.hasNext() ){
+				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
+				if( ext == _constructor ){
+					iter.remove();
+					break;
+				}
+			}
 		}
 	
-		private IParameterizedSymbol _constructor;
-		private IDerivableContainerSymbol _context; 
+		private final IParameterizedSymbol _constructor;
+		private final IDerivableContainerSymbol _context; 
 	}
 	
 	public class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol

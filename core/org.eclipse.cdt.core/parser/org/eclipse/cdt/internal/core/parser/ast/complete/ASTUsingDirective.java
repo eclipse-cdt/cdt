@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IUsingDirectiveSymbol;
 
 /**
  * @author jcamelon
@@ -24,7 +25,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  */
 public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUsingDirective
 {
-	private final IASTNamespaceDefinition namespace; 
+	private final IUsingDirectiveSymbol using;
 	private Offsets offsets = new Offsets();
 	private final ASTReferenceStore referenceDelegate;
     /**
@@ -32,10 +33,12 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      * @param startingOffset
      * @param endingOffset
      */
-    public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset, List references )
+    //public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset, List references )
+	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int endingOffset, List references )
     {
     	super( ownerSymbol );
-        namespace = namespaceDefinition;
+        //namespace = namespaceDefinition;
+        using = usingDirective; 
         setStartingOffset(startingOffset);
         setEndingOffset(endingOffset);
         referenceDelegate = new ASTReferenceStore( references );
@@ -46,7 +49,8 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      */
     public String getNamespaceName()
     {
-        String [] fqn = namespace.getFullyQualifiedName();
+    	IASTNamespaceDefinition namespace = getNamespaceDefinition();
+		String [] fqn = namespace.getFullyQualifiedName();
         StringBuffer buffer = new StringBuffer(); 
         for( int i = 0; i < fqn.length; ++i )
         {
@@ -118,7 +122,9 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      */
     public IASTNamespaceDefinition getNamespaceDefinition()
     {
-        return namespace;
+    	IContainerSymbol namespaceSymbol = using.getNamespace();
+    	
+        return (IASTNamespaceDefinition)namespaceSymbol.getASTExtension().getPrimaryDeclaration();
     }
 
 }

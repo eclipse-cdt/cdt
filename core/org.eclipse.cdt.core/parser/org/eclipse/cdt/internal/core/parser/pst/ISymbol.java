@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -17,15 +17,11 @@ import java.util.Map;
  * @author jcamelon
  *
  */
-public interface ISymbol extends Cloneable {
+public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 
-	public ParserSymbolTable getSymbolTable();
-	
 	public Object clone();
 		
-	public ISymbolASTExtension getASTExtension(); 
-	public void setASTExtension( ISymbolASTExtension obj );
-
+	public void setName(String name);
 	public String getName();
 	
 	public IContainerSymbol getContainingSymbol();
@@ -56,9 +52,4 @@ public interface ISymbol extends Cloneable {
 	public int getDepth();
 	public boolean getIsInvisible();
 	public void setIsInvisible( boolean invisible );
-
-    /**
-     * @param name
-     */
-    public void setName(String name);
 }

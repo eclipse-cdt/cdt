@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
+import org.eclipse.cdt.internal.core.parser.pst.IUsingDirectiveSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
@@ -3433,6 +3434,126 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params );
 		
 		assertEquals( foo1, look );
+	}
+	
+	/**
+	 * int global;
+	 * class A {
+	 *    A();
+	 *    int var;
+	 *    void foo();
+	 * };
+	 *
+	 */
+	public void testIterator_1() throws Exception{
+		newTable();
+		
+		ISymbol global = table.newSymbol( "global", TypeInfo.t_int );
+		table.getCompilationUnit().addSymbol( global );
+		
+		IDerivableContainerSymbol cls = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		
+		table.getCompilationUnit().addSymbol( cls );
+		
+		IParameterizedSymbol constructor = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
+		cls.addConstructor( constructor );
+		
+		ISymbol var = table.newSymbol( "var", TypeInfo.t_int );
+		cls.addSymbol( var );
+		
+		IParameterizedSymbol foo = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		cls.addSymbol( foo );
+		
+		
+		Iterator iter = table.getCompilationUnit().getContentsIterator();
+		assertEquals( iter.next(), global );
+		IContainerSymbol symbol = (IContainerSymbol) iter.next();
+		assertEquals( symbol, cls );
+		assertFalse( iter.hasNext() );
+		
+		iter = symbol.getContentsIterator();
+		assertEquals( iter.next(), constructor );
+		assertEquals( iter.next(), var );
+		assertEquals( iter.next(), foo );
+		assertFalse( iter.hasNext() );
+	}
+	
+	/**
+	 * int foo();
+	 * namespace A{
+	 *    int bar();
+	 *    int bar( int );
+	 * };
+	 * class B{
+	 *    void func(){ 
+	 *       using namespace A;
+	 *    }
+	 * };
+	 * @throws Exception
+	 */
+	public void testIterator_2() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol foo = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		table.getCompilationUnit().addSymbol( foo );
+		
+		IContainerSymbol nsA = table.newContainerSymbol( "A", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( nsA );
+		
+		IParameterizedSymbol bar1 = table.newParameterizedSymbol( "bar", TypeInfo.t_function );
+		nsA.addSymbol( bar1 );
+		
+		IParameterizedSymbol bar2 = table.newParameterizedSymbol( "bar", TypeInfo.t_function );
+		bar2.addParameter( TypeInfo.t_int, 0, null, false );
+		nsA.addSymbol( bar2 );
+		
+		IDerivableContainerSymbol B = table.newDerivableContainerSymbol("B", TypeInfo.t_class);
+		table.getCompilationUnit().addSymbol( B );
+		
+		B.addCopyConstructor();
+		
+		IParameterizedSymbol func = table.newParameterizedSymbol( "func", TypeInfo.t_function );
+		B.addSymbol( func );
+		
+		IUsingDirectiveSymbol using = func.addUsingDirective( nsA );
+		
+		Iterator iter = table.getCompilationUnit().getContentsIterator();
+		
+		assertEquals( iter.next(), foo );
+		
+		IContainerSymbol s1 = (IContainerSymbol) iter.next();
+		assertEquals( s1, nsA );
+		
+		IContainerSymbol s2 = (IContainerSymbol) iter.next();
+		assertEquals( s2, B );
+		
+		assertFalse( iter.hasNext() );
+		
+		iter = s1.getContentsIterator();
+		assertEquals( iter.next(), bar1 );
+		assertEquals( iter.next(), bar2 );
+		assertFalse( iter.hasNext() );
+		
+		iter = s2.getContentsIterator();
+		
+		//Copy constructor!!
+		ISymbol copy = (ISymbol) iter.next();
+		assertTrue( copy instanceof IParameterizedSymbol );
+		assertEquals( copy.getName(), "B" );
+		assertEquals( copy.getType(), TypeInfo.t_constructor );
+		
+		assertEquals( iter.next(), func );
+		assertFalse( iter.hasNext() );
+		
+		iter = func.getContentsIterator();
+		//this pointer!!
+		ISymbol th = (ISymbol) iter.next();
+		assertEquals( th.getName(), "this" );
+		assertEquals( th.getTypeSymbol(), B );
+		
+		assertEquals( iter.next(), using );
+		
+		assertFalse( iter.hasNext() );
 	}
 }
 

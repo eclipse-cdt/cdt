@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003, 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
+import org.eclipse.cdt.internal.core.parser.pst.IUsingDirectiveSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.NamespaceSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
@@ -326,13 +327,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol symbol = lookupQualifiedName( 
 			scopeToSymbol( scope), duple, references, true ); 
 
+		IUsingDirectiveSymbol usingDirective = null;
 		try {
-			((ASTScope)scope).getContainerSymbol().addUsingDirective( (IContainerSymbol)symbol );
+			usingDirective = ((ASTScope)scope).getContainerSymbol().addUsingDirective( (IContainerSymbol)symbol );
 		} catch (ParserSymbolTableException pste) {
 			throw new ASTSemanticException();	
 		}
 		
-		IASTUsingDirective astUD = new ASTUsingDirective( scopeToSymbol(scope), ((IASTNamespaceDefinition)symbol.getASTExtension().getPrimaryDeclaration()), startingOffset, endingOffset, references );
+		IASTUsingDirective astUD = new ASTUsingDirective( scopeToSymbol(scope), usingDirective, startingOffset, endingOffset, references );
 		return astUD;
     }
     

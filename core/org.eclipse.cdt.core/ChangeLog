@@ -1,5 +1,12 @@
 2003-03-12 Alain Magloire
 
+	Patch from Chris Songer
+
+	* model/org/eclipse/cdt/internal/core/model/BinaryInfo.java:
+	set the line information on the IVariable and IFunction in BinaryInfo.
+
+2003-03-12 Alain Magloire
+
 	* utils/org/eclipse/cdt/utils/elf/Elf.java (Symbol.lineInfo):
 	The address value may not align with the debug information, for example when
 	adding Profiling etc .. we try to get the nearest symbol as a fallback.

@@ -11,27 +11,39 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class ReferencesSearchGroup extends ActionGroup {
 
 	private FindRefsAction fFindRefsAction;
 	private FindRefsInWorkingSetAction fFindRefsInWorkingSetAction;
 	
+	private CEditor fEditor;
+	private IWorkbenchSite fSite;
+	
 	public ReferencesSearchGroup(IWorkbenchSite site) {
 		fFindRefsAction= new FindRefsAction(site);
 		fFindRefsInWorkingSetAction = new FindRefsInWorkingSetAction(site);
 	}
+	
 	/**
 	 * @param editor
 	 */
 	public ReferencesSearchGroup(CEditor editor) {
+		fEditor = editor;
+		
 		fFindRefsAction= new FindRefsAction(editor);
+		fFindRefsAction.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_REFS);
+		if (editor != null){
+			editor.setAction(ICEditorActionDefinitionIds.FIND_REFS, fFindRefsAction);
+		}
 		fFindRefsInWorkingSetAction = new FindRefsInWorkingSetAction(editor);
 	}
 	
@@ -45,6 +57,11 @@ public class ReferencesSearchGroup extends ActionGroup {
 		IMenuManager incomingMenu = menu;
 		
 		IMenuManager refsMenu = new MenuManager(CSearchMessages.getString("group.references"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
+		
+		if (fEditor != null){
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, refsMenu);	
+		}
+		
 		incomingMenu.add(refsMenu);
 		incomingMenu = refsMenu;
 		
@@ -52,4 +69,13 @@ public class ReferencesSearchGroup extends ActionGroup {
 		incomingMenu.add(fFindRefsInWorkingSetAction);
 		
 	}	
+	
+	/* 
+	 * Overrides method declared in ActionGroup
+	 */
+	public void dispose() {
+		fFindRefsAction= null;
+		fFindRefsInWorkingSetAction= null;
+		super.dispose();
+	}
 }

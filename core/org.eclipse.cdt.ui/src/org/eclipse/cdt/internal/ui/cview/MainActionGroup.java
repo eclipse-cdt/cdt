@@ -252,14 +252,9 @@ public class MainActionGroup extends CViewActionGroup {
 			return;
 		}
 
-		MenuManager search = new MenuManager(CViewMessages.getString("SearchAction.label"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
-
-		
 		if (SelectionSearchGroup.canActionBeAdded(selection)){
-		selectionSearchGroup.fillContextMenu(search);
+			selectionSearchGroup.fillContextMenu(menu);
 		}
-		
-		menu.add(search);
 	}
 	
 	public void runDefaultAction(IStructuredSelection selection) {

@@ -166,7 +166,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 					fCElement= null;
 				handleAllElements( event );
 				List searchFor = getSearchFor();
-				getContainer().setPerformActionEnabled( searchFor.size() != 0 );
+				getContainer().setPerformActionEnabled( searchFor.size() != 0 && getPattern().length() > 0 );
 				setLimitTo( searchFor );
 				updateCaseSensitiveCheckbox();
 			}
@@ -249,7 +249,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		
 		fPattern.addModifyListener( new ModifyListener() {
 			public void modifyText( ModifyEvent e ) {
-				getContainer().setPerformActionEnabled( getPattern().length() > 0 );
+				getContainer().setPerformActionEnabled( getPattern().length() > 0 && getSearchFor().size() != 0 );
 				updateCaseSensitiveCheckbox();
 			}
 		});
@@ -426,7 +426,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				initSelections();
 			}
 			fPattern.setFocus();
-			getContainer().setPerformActionEnabled(fPattern.getText().length() > 0);
+			getContainer().setPerformActionEnabled(fPattern.getText().length() > 0 && getSearchFor().size() != 0 );
 		}
 		super.setVisible(visible);
 	}

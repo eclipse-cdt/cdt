@@ -79,4 +79,14 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.redo.action"</code>).
 	 */
 	public static final String REDO_ACTION= "org.eclipse.cdt.ui.edit.text.redo.action"; //$NON-NLS-1$	
+	/**
+	 * Action definition ID of the find references in workspace action
+	 * (value <code>"org.eclipse.cdt.ui.search.findrefs"</code>).
+	 */
+	public static final String FIND_REFS= "org.eclipse.cdt.ui.search.findrefs"; //$NON-NLS-1$	
+	/**
+	 * Action definition ID of the find declarations in workspace action
+	 * (value <code>"org.eclipse.cdt.ui.search.finddecl"</code>).
+	 */
+	public static final String FIND_DECL= "org.eclipse.cdt.ui.search.finddecl"; //$NON-NLS-1$	
 }

@@ -126,7 +126,8 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
         	fMatchCount++;
     		int start = match.getStartOffset();
     		int end = match.getEndOffset();
-    		fSearch.addMatch(new Match(match,start,end-start));
+    		String classifier = PARENT + match.getParentName() + NAME + match.getName() + LOCATION + match.getLocation().toOSString() + ELEMENTTYPE + match.getElementType() + VISIBILITY  + match.getVisibility();
+    		fSearch.addMatch(new CSearchMatch(classifier,start,end-start, match));
     		return true;        	
       		}
       	}	

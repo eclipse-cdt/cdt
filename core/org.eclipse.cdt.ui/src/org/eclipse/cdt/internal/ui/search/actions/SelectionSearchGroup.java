@@ -11,19 +11,16 @@
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.List;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class SelectionSearchGroup extends ActionGroup {
 	
@@ -58,16 +55,8 @@ public class SelectionSearchGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		
-		IMenuManager incomingMenu = menu;
-		
-		if (fEditor != null){
-			IMenuManager selSearchMenu = new MenuManager(CSearchMessages.getString("group.search"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
-			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, selSearchMenu);
-			incomingMenu = selSearchMenu;
-		}
-		
-		fDeclarationsSearchGroup.fillContextMenu(incomingMenu);
-		fRefSearchGroup.fillContextMenu(incomingMenu);
+		fDeclarationsSearchGroup.fillContextMenu(menu);
+		fRefSearchGroup.fillContextMenu(menu);
 	}	
 	
 	public static boolean canActionBeAdded(ISelection selection) {

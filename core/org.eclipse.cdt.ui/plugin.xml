@@ -598,6 +598,26 @@
             category="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.opencview">
       </command>
+      <command
+            description="Find Declaration"
+            category="org.eclipse.cdt.ui.category.source"
+            name="Find Declaration"
+            id="org.eclipse.cdt.ui.search.finddecl"/>
+      <command
+            category="org.eclipse.cdt.ui.category.source"
+            description="Find Refs"
+            name="Find Refs"
+            id="org.eclipse.cdt.ui.search.findrefs"/>
+      <keyBinding
+            command="org.eclipse.cdt.ui.search.findrefs"
+            string="Ctrl+Shift+G"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <keyBinding
+            command="org.eclipse.cdt.ui.search.finddecl"
+            string="Ctrl+G"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"

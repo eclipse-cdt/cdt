@@ -19,8 +19,11 @@ import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ILineTracker;
@@ -149,36 +152,73 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		super.disposeFileInfo(element, info);
 	}
 
-	protected void commitFileBuffer(IProgressMonitor monitor, Object element, FileInfo fileInfo, boolean overwrite)
+	protected void commitWorkingCopy(IProgressMonitor monitor, Object element, TranslationUnitInfo info, boolean overwrite)
 			throws CoreException {
-		if (fileInfo instanceof TranslationUnitInfo) {
-			TranslationUnitInfo info = (TranslationUnitInfo)fileInfo;
 
-			synchronized (info.fCopy) {
-				info.fCopy.reconcile();
-			}
-
-			//if (fSavePolicy != null)
-			//	fSavePolicy.preSave(info.fCopy);
-
-			try {
-				fIsAboutToSave = true;
-				//info.fCopy.commit(overwrite, monitor);
-				super.commitFileBuffer(monitor, info, overwrite);
-			} catch (CoreException x) {
-				// inform about the failure
-				fireElementStateChangeFailed(element);
-				throw x;
-			} catch (RuntimeException x) {
-				// inform about the failure
-				fireElementStateChangeFailed(element);
-				throw x;
-			} finally {
-				fIsAboutToSave = false;
-			}
-		} else {
-			super.commitFileBuffer(monitor, fileInfo, overwrite);
+		synchronized (info.fCopy) {
+			info.fCopy.reconcile();
 		}
+
+		IDocument document= info.fTextFileBuffer.getDocument();
+		IResource resource= info.fCopy.getResource();
+		
+		//Assert.isTrue(resource instanceof IFile);
+		if (!resource.exists()) {
+			// underlying resource has been deleted, just recreate file, ignore the rest
+			createFileFromDocument(monitor, (IFile) resource, document);
+			return;
+		}
+
+		//if (fSavePolicy != null)
+		//	fSavePolicy.preSave(info.fCopy);
+		
+		try {
+			fIsAboutToSave = true;
+			//info.fCopy.commit(overwrite, monitor);
+			commitFileBuffer(monitor, info, overwrite);
+		} catch (CoreException x) {
+			// inform about the failure
+			fireElementStateChangeFailed(element);
+			throw x;
+		} catch (RuntimeException x) {
+			// inform about the failure
+			fireElementStateChangeFailed(element);
+			throw x;
+		} finally {
+			fIsAboutToSave = false;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createSaveOperation(java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
+	 */
+	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
+		final FileInfo info= getFileInfo(element);
+		if (info instanceof TranslationUnitInfo) {
+			return new DocumentProviderOperation() {
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				protected void execute(IProgressMonitor monitor) throws CoreException {
+					commitWorkingCopy(monitor, element, (TranslationUnitInfo) info, overwrite);
+				}
+				/*
+				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
+				 */
+				public ISchedulingRule getSchedulingRule() {
+					if (info.fElement instanceof IFileEditorInput) {
+						IFile file= ((IFileEditorInput) info.fElement).getFile();
+						IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
+						if (file == null || !file.exists())
+							return ruleFactory.createRule(file);
+						else
+							return ruleFactory.modifyRule(file);
+					} else
+						return null;
+				}
+			};
+		}
+		return super.createSaveOperation(element, document, overwrite);
 	}
 
 	/*

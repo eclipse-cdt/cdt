@@ -530,17 +530,10 @@
    <extension
          point="org.eclipse.cdt.core.CIndexer">
       <indexer
-            indexStorageID="org.eclipse.cdt.core.cindexstorage"
             class="org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer"
             name="Original C/C++ Indexer"
             id="org.eclipse.cdt.core.originalsourceindexer">
       </indexer>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run class="org.eclipse.cdt.core.index2.IndexRunner"/>
-      </application>
    </extension>
  
 </plugin>

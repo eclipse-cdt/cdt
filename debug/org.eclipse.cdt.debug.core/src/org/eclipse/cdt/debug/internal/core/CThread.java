@@ -621,7 +621,7 @@ public class CThread extends CDebugElement
 	 */
 	public boolean canTerminate()
 	{
-		return !isTerminated();
+		return getDebugTarget().canTerminate();
 	}
 
 	/* (non-Javadoc)

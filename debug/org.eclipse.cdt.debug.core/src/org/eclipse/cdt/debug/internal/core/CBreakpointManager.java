@@ -7,7 +7,6 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -519,11 +518,9 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		{
 			try
 			{
-				Map attributes = breakpoint.getMarker().getAttributes();
-				attributes.put( ICBreakpoint.ENABLED, new Boolean( cdiBreakpoint.isEnabled() ) );
-				attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( cdiBreakpoint.getCondition().getIgnoreCount() ) );
-				attributes.put( ICBreakpoint.CONDITION, cdiBreakpoint.getCondition().getExpression() );
-				breakpoint.getMarker().setAttributes( attributes );
+				breakpoint.setEnabled( cdiBreakpoint.isEnabled() );
+				breakpoint.setIgnoreCount( cdiBreakpoint.getCondition().getIgnoreCount() );
+				breakpoint.setCondition( cdiBreakpoint.getCondition().getExpression() );
 			}
 			catch( CDIException e )
 			{

@@ -1,4 +1,8 @@
 2003-11-07 Mikhail Khodjaiants
+	Use the corresponding methods of 'ICBreakpoint' to set breakpoint properties.
+	* CBreakpointManager.java
+
+2003-11-07 Mikhail Khodjaiants
 	Fix for PR 46303: Exception when selecting Debug... menu.
 	Check if the string passed to the 'getCommonSourceLocationsFromMemento' method is not empty.
 	* SourceUtils.java

@@ -10,15 +10,15 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DeclarationSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declarator;
-import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.newparser.Parser;
 import org.eclipse.cdt.internal.core.newparser.ParserException;
+import org.eclipse.cdt.internal.core.newparser.util.DeclarationSpecifier;
+import org.eclipse.cdt.internal.core.newparser.util.Name;
 
 /**
  * Tests the construction of DOMs for snippets of code
@@ -54,7 +54,7 @@ public class DOMTests extends TestCase {
 		assertEquals(1, declarators.size());
 		Declarator declarator = (Declarator)declarators.get(0);
 		Name name = declarator.getName();
-		assertEquals("x", name.getName());
+		assertEquals("x", name.toString());
 	}
 	
 	/**
@@ -78,14 +78,14 @@ public class DOMTests extends TestCase {
 		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
 		Name className = classSpecifier.getName();
-		assertEquals("A", className.getName());
+		assertEquals("A", className.toString());
 		
 		// Get the declarator and check it's name
 		List declarators = declaration.getDeclarators();
 		assertEquals(1, declarators.size());
 		Declarator declarator = (Declarator)declarators.get(0);
 		Name name = declarator.getName();
-		assertEquals("a", name.getName());
+		assertEquals("a", name.toString());
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class DOMTests extends TestCase {
 		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
 		Name className = classSpecifier.getName();
-		assertEquals("A", className.getName());
+		assertEquals("A", className.toString());
 		
 		// Get the member declaration
 		declarations = classSpecifier.getDeclarations();
@@ -127,7 +127,7 @@ public class DOMTests extends TestCase {
 		assertEquals(1, declarators.size());
 		Declarator declarator = (Declarator)declarators.get(0);
 		Name name = declarator.getName();
-		assertEquals("x", name.getName());
+		assertEquals("x", name.toString());
 	}
 	/**
 	 * Test code: class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; }
@@ -153,7 +153,7 @@ public class DOMTests extends TestCase {
 		// Get the class specifier and check its name
 		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
 		Name className = classSpecifier.getName();
-		assertEquals("A", className.getName());
+		assertEquals("A", className.toString());
 		
 		List baseClasses = classSpecifier.getBaseSpecifiers();
 		assertEquals( 3, baseClasses.size() );
@@ -186,10 +186,10 @@ public class DOMTests extends TestCase {
 		assertEquals(2, declarators.size());
 		Declarator declarator = (Declarator)declarators.get(0);
 		Name name = declarator.getName();
-		assertEquals("x", name.getName());
+		assertEquals("x", name.toString());
 		declarator = (Declarator)declarators.get(1); 
 		name = declarator.getName();
-		assertEquals("y", name.getName());
+		assertEquals("y", name.toString());
 		
 		declaration = (SimpleDeclaration)declarations.get(1); 
 		// Make sure it's an float
@@ -197,11 +197,11 @@ public class DOMTests extends TestCase {
 		declarators = declaration.getDeclarators(); 
 		assertEquals( 3, declarators.size() );
 		name  = ((Declarator)declarators.get(0)).getName(); 
-		assertEquals( "a", name.getName() );
+		assertEquals( "a", name.toString() );
 		name  = ((Declarator)declarators.get(1)).getName();
-		assertEquals( "b", name.getName() );
+		assertEquals( "b", name.toString() );
 		name  = ((Declarator)declarators.get(2)).getName();		
-		assertEquals( "c", name.getName() );
+		assertEquals( "c", name.toString() );
 		
 	}
 	
@@ -224,7 +224,7 @@ public class DOMTests extends TestCase {
 		List declarators  = simpleDeclaration.getDeclarators(); 
 		assertEquals( 1, declarators.size() ); 
 		Declarator functionDeclarator = (Declarator)declarators.get( 0 ); 
-		assertEquals( functionDeclarator.getName().getName(), "myFunction" );
+		assertEquals( functionDeclarator.getName().toString(), "myFunction" );
 		ParameterDeclarationClause pdc = functionDeclarator.getParms(); 
 		assertNotNull( pdc ); 
 		List parameterDecls = pdc.getDeclarations(); 
@@ -260,7 +260,7 @@ public class DOMTests extends TestCase {
 		List simpleDeclarators =  simpleDeclaration.getDeclarators(); 
 		assertEquals( simpleDeclarators.size(), 2 ); 
 		Declarator methodDeclarator = (Declarator)simpleDeclarators.get(0);
-		assertEquals( methodDeclarator.getName().getName(), "floor" ); 
+		assertEquals( methodDeclarator.getName().toString(), "floor" ); 
 		ParameterDeclarationClause pdc = methodDeclarator.getParms(); 
 		assertNotNull( pdc );
 		List parameterDeclarations = pdc.getDeclarations(); 
@@ -270,9 +270,9 @@ public class DOMTests extends TestCase {
 		List parm1Declarators = parm1Declaration.getDeclarators(); 
 		assertEquals( parm1Declarators.size(), 1 ); 
 		Declarator parm1Declarator = (Declarator)parm1Declarators.get(0);
-		assertEquals( parm1Declarator.getName().getName(), "input" );
+		assertEquals( parm1Declarator.getName().toString(), "input" );
 		Declarator integerDeclarator = (Declarator)simpleDeclarators.get(1);
-		assertEquals( integerDeclarator.getName().getName(), "someInt" ); 
+		assertEquals( integerDeclarator.getName().toString(), "someInt" ); 
 		assertNull( integerDeclarator.getParms() ); 
 	}
 

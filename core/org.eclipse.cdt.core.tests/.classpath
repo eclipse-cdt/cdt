@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="failures"/>
 	<classpathentry kind="src" path="model"/>
 	<classpathentry kind="src" path="parser"/>
-	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="suite"/>
 	<classpathentry kind="src" path="indexer"/>
 	<classpathentry kind="src" path="search"/>

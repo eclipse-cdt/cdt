@@ -128,7 +128,7 @@ public class ParserSymbolTable {
 			if( data.foundItems == null || data.foundItems.isEmpty() ){
 				data.foundItems = map;
 			} else {
-				mergeResults( data, data.foundItems, map );
+			    mergeScopedResults( data.foundItems, map );
 			}	
 		}
 		
@@ -177,7 +177,7 @@ public class ParserSymbolTable {
 			if( data.foundItems == null || data.foundItems.isEmpty() ){
 				data.foundItems = map;
 			} else {
-				mergeInheritedResults( data.foundItems, map );
+				mergeScopedResults( data.foundItems, map );
 			}
 		}
 					
@@ -686,7 +686,7 @@ public class ParserSymbolTable {
 						if( temp == null )
 							temp = inherited;
 						else
-							mergeInheritedResults( temp, inherited );
+							mergeScopedResults( temp, inherited );
 					}
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
@@ -767,7 +767,7 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @throws ParserSymbolTableException
 	 */
-	private static void mergeInheritedResults( CharArrayObjectMap resultMap, CharArrayObjectMap map ){
+	private static void mergeScopedResults( CharArrayObjectMap resultMap, CharArrayObjectMap map ){
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}

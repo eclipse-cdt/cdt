@@ -46,6 +46,13 @@ public class LaunchUIPlugin extends AbstractUIPlugin {
 		return fgPlugin;
 	}
 	
+	public static Shell getShell() {
+		if (getActiveWorkbenchWindow() != null) {
+			return getActiveWorkbenchWindow().getShell();
+		}
+		return null;
+	}
+
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
@@ -54,7 +61,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
+			return "org.eclipse.cdt.launch"; //$NON-NLS-1$
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}

@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -41,6 +43,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Insert the type's description here.
@@ -48,18 +53,18 @@ import org.eclipse.debug.core.model.IProcess;
  */
 public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 
-/*
-  	protected String renderDebugTarget(ICDISession session) {
-		String format= "{0} at localhost {1}";
-		return MessageFormat.format(format, new String[] { classToRun, String.valueOf(host) });
-	}
-*/
+	/*
+	  	protected String renderDebugTarget(ICDISession session) {
+			String format= "{0} at localhost {1}";
+			return MessageFormat.format(format, new String[] { classToRun, String.valueOf(host) });
+		}
+	*/
 	public String renderProcessLabel(String[] commandLine) {
-		String format= "{0} ({1})";
-		String timestamp= DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+		String format = "{0} ({1})";
+		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { commandLine[0], timestamp });
 	}
-	
+
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -71,21 +76,29 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			return;
 		}
 		ICProject cproject = getCProject(config);
-		IPath projectPath = ((IProject)cproject.getResource()).getFile(getProgramName(config)).getLocation();
-		String arguments[] = getProgramArgumentsArray(config);		
-		ArrayList command = new ArrayList(1+arguments.length);
+		IPath projectPath = ((IProject) cproject.getResource()).getFile(getProgramName(config)).getLocation();
+		String arguments[] = getProgramArgumentsArray(config);
+		ArrayList command = new ArrayList(1 + arguments.length);
 		command.add(projectPath.toOSString());
 		command.addAll(Arrays.asList(arguments));
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			ICDebugConfiguration dbgCfg = null;
-			ICDebugger cdebugger = null;			
+			ICDebugger cdebugger = null;
 			try {
-				dbgCfg = CDebugCorePlugin.getDefault().getDebugConfiguration(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
+				dbgCfg =
+					CDebugCorePlugin.getDefault().getDebugConfiguration(
+						config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
 				cdebugger = dbgCfg.getDebugger();
 			}
 			catch (CoreException e) {
-				IStatus status = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED, "CDT Debubger not installed", e);
+				IStatus status =
+					new Status(
+						IStatus.ERROR,
+						LaunchUIPlugin.getUniqueIdentifier(),
+						ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED,
+						"CDT Debubger not installed",
+						e);
 				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 
 				if (handler != null) {
@@ -98,31 +111,88 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
 			ICDISession dsession = null;
 			try {
-				dsession = cdebugger.createLaunchSession(config, exe);
+				String debugMode =
+					config.getAttribute(
+						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+				if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
+					dsession = cdebugger.createLaunchSession(config, exe);
+				}
+				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+					int pid = getProcessID();
+					dsession = cdebugger.createAttachSession(config, exe, pid);
+				}
+				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+					IPath corefile = getCoreFilePath((IProject)cproject.getResource());
+					dsession = cdebugger.createCoreSession(config, exe, corefile);
+				}
 			}
 			catch (CDIException e) {
-				IStatus status = new Status(0, LaunchUIPlugin.getUniqueIdentifier(), ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,"CDI Error", e);				
+				IStatus status =
+					new Status(
+						0,
+						LaunchUIPlugin.getUniqueIdentifier(),
+						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR,
+						"CDI Error",
+						e);
 				throw new CoreException(status);
-			}			
+			}
 			ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
 			opt.setArguments(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
 			File wd = getWorkingDir(config);
-			if ( wd != null ) {
+			if (wd != null) {
 				opt.setWorkingDirectory(wd.toString());
 			}
 			opt.setEnvironment(getEnvironmentProperty(config));
 			ICDITarget dtarget = dsession.getTargets()[0];
 			Process process = dtarget.getProcess();
-			IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel((String [])command.toArray(new String[command.size()])));
+			IProcess iprocess =
+				DebugPlugin.newProcess(launch, process, renderProcessLabel((String[]) command.toArray(new String[command.size()])));
 			boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-			CDebugModel.newDebugTarget(launch, dsession.getTargets()[0], dbgCfg.getName(), iprocess, exe.getProject(), true, false, stopInMain );
+			CDebugModel.newDebugTarget(
+				launch,
+				dsession.getTargets()[0],
+				dbgCfg.getName(),
+				iprocess,
+				exe.getProject(),
+				true,
+				false,
+				stopInMain);
 		}
 		else {
-			String []commandArray = (String [])command.toArray(new String[command.size()]);
+			String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 			Process process = exec(commandArray, getEnvironmentArray(config), getWorkingDir(config));
 			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray));
 		}
 		monitor.done();
+	}
+
+	private IPath getCoreFilePath(IProject project) {
+		Shell shell = LaunchUIPlugin.getShell();
+		if ( shell == null ) 
+			return null;
+		FileDialog dialog = new FileDialog( shell );
+		dialog.setText( "Select Corefile" );
+		
+		String initPath = null;
+		try {
+			initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath"));
+		}
+		catch (CoreException e) {
+		}
+		if ( initPath == null || initPath.equals("") ) {
+			initPath = project.getLocation().toString();
+		}
+		dialog.setFilterPath( initPath );
+		String res = dialog.open();
+		if ( res != null )
+			return new Path( res );
+		return null;		
+	}
+
+
+	private int getProcessID() {
+		return -1;
 	}
 
 
@@ -159,7 +229,13 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 
-			IStatus status = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, "Eclipse runtime does not support working directory", e);
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					LaunchUIPlugin.getUniqueIdentifier(),
+					ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED,
+					"Eclipse runtime does not support working directory",
+					e);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 
 			if (handler != null) {

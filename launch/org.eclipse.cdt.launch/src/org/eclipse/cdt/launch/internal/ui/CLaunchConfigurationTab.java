@@ -41,8 +41,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				if (!ss.isEmpty()) {
 					Object obj = ss.getFirstElement();
 					if (obj instanceof ICElement) {
-						ICProjectDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(((ICElement)obj).getCProject().getProject());
-						if ( descriptor.getPlatform().equals(getPlatform(config)) )
+						ICProjectDescriptor descriptor =
+							CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject());
+						if (descriptor.getPlatform().equals(getPlatform(config)))
 							return (ICElement) obj;
 					}
 					if (obj instanceof IResource) {
@@ -52,8 +53,9 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 							ce = CoreModel.getDefault().create(pro);
 						}
 						if (ce != null) {
-							ICProjectDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
-							if ( descriptor.getPlatform().equals(getPlatform(config)) )
+							ICProjectDescriptor descriptor =
+								CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
+							if (descriptor.getPlatform().equals(getPlatform(config)))
 								return ce;
 						}
 					}
@@ -78,11 +80,16 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			name = cProject.getElementName();
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
-		
+
 	}
-	
-	protected String getPlatform(ILaunchConfiguration config) throws CoreException {
+
+	protected String getPlatform(ILaunchConfiguration config) {
 		String platform = BootLoader.getOS();
-		return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PLATFORM, platform);
-	}	
+		try {
+			return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PLATFORM, platform);
+		}
+		catch (CoreException e) {
+			return platform;
+		}
+	}
 }

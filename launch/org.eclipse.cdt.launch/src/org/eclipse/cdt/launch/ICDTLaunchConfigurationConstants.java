@@ -51,6 +51,11 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_PROGRAM_ENVIROMENT_MAP = LaunchUIPlugin.getUniqueIdentifier() + ".ENVIRONMENT_MAP"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. The value is the platform string of the launch configuration
+	 */
+	public static final String ATTR_PLATFORM = LaunchUIPlugin.getUniqueIdentifier() + ".PLATFFORM"; //$NON-NLS-1$
+
+	/**
 	 * Launch configuration attribute key. The value is the debugger id
 	 * used when launching a C/C++ application for debug.
 	 */
@@ -59,17 +64,36 @@ public interface ICDTLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. The value is the platform string of the launch configuration
 	 */
-	public static final String ATTR_PLATFORM = LaunchUIPlugin.getUniqueIdentifier() + ".PLATFFORM"; //$NON-NLS-1$
-	
-	/**
-	 * Launch configuration attribute key. The value is the platform string of the launch configuration
-	 */
 	public static final String ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration attribute key. The value is the platform string of the launch configuration
+	 * Launch configuration attribute key. The value is a boolean specifying whether to stop at main().
 	 */
 	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is the startup mode for the debugger.
+	 */
+	public static final String ATTR_DEBUGGER_START_MODE = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_START_MODE"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
+	 * Startup debugger running the program.
+	 */
+	public static String DEBUGGER_MODE_RUN = "run";
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
+	 * Startup debugger and attach to running process.
+	 */
+	public static String DEBUGGER_MODE_ATTACH = "attach";
+
+	/**
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
+	 * Startup debugger to view a core file.
+	 */
+	public static String DEBUGGER_MODE_CORE = "core";
+
 	/**
 	 * Status code indicating that the Eclipse runtime does not support
 	 * launching a program with a working directory. This feature is only

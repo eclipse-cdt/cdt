@@ -52,8 +52,6 @@ public class CSharedLibraryManager implements ICSharedLibraryManager {
 			fSharedLibraries.add( library );
 		}
 		library.fireCreationEvent();
-		if ( library.areSymbolsLoaded() )
-			setBreakpoints();
 	}
 
 	public synchronized void sharedLibraryUnloaded( ICDISharedLibrary cdiLibrary ) {
@@ -71,7 +69,6 @@ public class CSharedLibraryManager implements ICSharedLibraryManager {
 		CSharedLibrary library = find( cdiLibrary );
 		if ( library != null ) {
 			library.fireChangeEvent( DebugEvent.STATE );
-			setBreakpoints();
 		}
 	}
 
@@ -144,10 +141,6 @@ public class CSharedLibraryManager implements ICSharedLibraryManager {
 		catch( CDIException e ) {
 			CDebugElement.targetRequestFailed( e.getMessage(), null );
 		}
-	}
-
-	private void setBreakpoints() {
-		getDebugTarget().setBreakpoints();
 	}
 
 	protected CDebugTarget getDebugTarget() {

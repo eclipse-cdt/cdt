@@ -8,11 +8,12 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.internal.ui.editor;
+package org.eclipse.cdt.make.internal.ui.text.makefile;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.internal.ui.text.IMakefileColorManager;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
@@ -158,6 +159,7 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 
 			return Token.UNDEFINED;
 		}
+
 		/**
 		 * Returns the characters in the buffer to the scanner.
 		 *

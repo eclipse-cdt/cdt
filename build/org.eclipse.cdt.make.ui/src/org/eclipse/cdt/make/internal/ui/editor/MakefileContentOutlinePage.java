@@ -10,9 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IRule;
 import org.eclipse.cdt.make.core.makefile.IStatement;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
-import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefile;
+import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -54,6 +51,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		protected boolean showInferenceRule = true;
 
 		protected IMakefile makefile;
+		protected IMakefile nullMakefile = new NullMakefile();
 
 		/* (non-Javadoc)
 		* @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -109,21 +107,12 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null) {
-				//IDocument document= fDocumentProvider.getDocument(oldInput);
-				//if (document != null) {
-				//}
+				makefile = nullMakefile;
 			}
 
 			if (newInput != null) {
-				IDocument document = fDocumentProvider.getDocument(newInput);
-				if (document != null) {
-					try {
-						String content = document.get();
-						Reader r = new StringReader(content);
-						makefile = new PosixMakefile(r);
-					} catch (IOException e) {
-					}
-				}
+				IDocument document= fDocumentProvider.getDocument(newInput);
+				makefile = fEditor.getMakefile(document);
 			}
 		}
 

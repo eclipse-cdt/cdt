@@ -8,7 +8,7 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.internal.ui.editor;
+package org.eclipse.cdt.make.internal.ui.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;

@@ -19,18 +19,11 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 
-	private final static String ACTION_ID = "org.eclipse.cdt.make.ui.MakefileEditorTogglePresentationAction"; //$NON-NLS-1$
 	/**
 	 * Constructor for MakefileEditorTogglePresentationAction.
-	 * @param bundle
-	 * @param prefix
-	 * @param editor
 	 */
 	public MakefileEditorTogglePresentationAction() {
-		super(MakeUIPlugin.getDefault().getResourceBundle(), "MakefileEditorTogglePresentationAction.", null); //$NON-NLS-1$
-
-		setToolTipText("MakefileEditorTogglePresentationAction.tooltip"); //$NON-NLS-1$
-		setActionDefinitionId(ACTION_ID);
+		super(MakeUIPlugin.getDefault().getResourceBundle(), "MakefileEditorTogglePresentation.", null); //$NON-NLS-1$
 		MakeUIImages.setImageDescriptors(this, MakeUIImages.T_TOOL, MakeUIImages.IMG_TOOLS_MAKEFILE_SEGMENT_EDIT);
 		update();
 	}
@@ -50,16 +43,8 @@ public class MakefileEditorTogglePresentationAction extends TextEditorAction {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		setChecked(isChecked());
-		setEnabled(isEnabled());
-	}
-
-	/**
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(ITextEditor)
-	 */
-	public void setEditor(ITextEditor editor) {
-		super.setEditor(editor);
-		update();
+		setChecked(getTextEditor() != null && getTextEditor().showsHighlightRangeOnly());
+		setEnabled(true);
 	}
 
 }

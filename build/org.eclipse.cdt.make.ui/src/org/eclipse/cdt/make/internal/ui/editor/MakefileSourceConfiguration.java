@@ -10,8 +10,15 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import org.eclipse.cdt.make.internal.ui.text.IMakefileColorManager;
+import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCodeScanner;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCompletionProcessor;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
@@ -19,11 +26,13 @@ import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.swt.graphics.RGB;
 
-public class MakefileEditorConfiguration extends SourceViewerConfiguration {
+public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 
-	private IMakefileColorManager colorManager = null;
-	private MakefileCodeScanner codeScanner = null;
+	private IMakefileColorManager colorManager;
+	private MakefileCodeScanner codeScanner;
+	private MakefileEditor fEditor;
 
 	/**
 	 * Single token scanner.
@@ -37,8 +46,9 @@ public class MakefileEditorConfiguration extends SourceViewerConfiguration {
 	/**
 	 * Constructor for MakeConfiguration
 	 */
-	public MakefileEditorConfiguration(IMakefileColorManager colorManager) {
+	public MakefileSourceConfiguration(IMakefileColorManager colorManager, MakefileEditor editor) {
 		super();
+		fEditor = editor;
 		this.colorManager = colorManager;
 	}
 
@@ -51,9 +61,28 @@ public class MakefileEditorConfiguration extends SourceViewerConfiguration {
 			MakefileEditor.MAKE_COMMENT,
 			MakefileEditor.MAKE_KEYWORD,
 			MakefileEditor.MAKE_MACRO_VAR,
-			MakefileEditor.MAKE_META_DATA };
+			MakefileEditor.MAKE_META_DATA
+		};
 
 	}
+
+        /**
+         * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
+         */
+        public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+                ContentAssistant assistant = new ContentAssistant();
+                assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
+                assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefileEditor.MAKE_MACRO_VAR);
+                assistant.enableAutoActivation(true);
+                assistant.setAutoActivationDelay(500);
+                assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+                assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+                //Set to Carolina blue
+                assistant.setContextInformationPopupBackground(getColorManager().getColor(new RGB(0, 191, 255)));
+                                                                                                                             
+                return assistant;
+        }
+
 
 	protected IMakefileColorManager getColorManager() {
 		if (null == colorManager)

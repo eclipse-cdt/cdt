@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;

@@ -25,7 +25,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class IncludeRefContainer extends CElementGrouping {
 
-	private Object[] EMPTY = new Object[0];
 	ICProject fCProject;
 
 	/**
@@ -55,10 +54,14 @@ public class IncludeRefContainer extends CElementGrouping {
 	public Object[] getChildren(Object o) {
 		try {
 			IIncludeReference[] references = fCProject.getIncludeReferences();
-			return references;
+			IncludeReferenceProxy[] proxies = new IncludeReferenceProxy[references.length];
+			for (int i = 0; i < proxies.length; ++i) {
+				proxies[i] = new IncludeReferenceProxy(this, references[i]);
+			}
+			return proxies;
 		} catch (CModelException e) {
 		}
-		return EMPTY;
+		return NO_CHILDREN;
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,13 @@
+2004-08-31 Alain Magloire
+
+	Provide a Proxy wrapper for the includeRefence class
+	This will allow us to provide special Icon, a correct
+	getParent() etc .. in the C/C++ view.
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeReferenceProxy.java
+
 2004-08-30 Alain Magloire
 
 	Fix for 72914

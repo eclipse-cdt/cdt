@@ -10,11 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 /*
@@ -73,6 +78,9 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 			if (container != null && container.isAccessible()) {
 				return getImage(reference.getCProject());
 			}
+			ImageDescriptor desc = CElementImageProvider.getImageDescriptor(ICElement.C_CCONTAINER);
+			desc = new CElementImageDescriptor(desc, 0, CElementImageProvider.SMALL_SIZE);
+			return CUIPlugin.getImageDescriptorRegistry().get(desc);
 		}
 		return super.getImage(element);
 	}

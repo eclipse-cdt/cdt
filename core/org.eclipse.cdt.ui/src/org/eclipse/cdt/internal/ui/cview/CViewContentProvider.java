@@ -153,10 +153,8 @@ public class CViewContentProvider extends CElementContentProvider {
 		// up the parent for {IInclude,ILibrary}Reference so that they refer
 		// to the container and containers refere to the project
 		Object parent = super.internalGetParent(element);
-		if (element instanceof IIncludeReference) {
-			if (parent instanceof ICProject) {
-				parent = new IncludeRefContainer((ICProject)parent);
-			}
+		if (element instanceof IncludeReferenceProxy) {
+			parent = ((IncludeReferenceProxy)element).getIncludeRefContainer();
 		} else if (element instanceof IncludeRefContainer) {
 			parent = ((IncludeRefContainer)element).getCProject();
 		} if (element instanceof ILibraryReference) {

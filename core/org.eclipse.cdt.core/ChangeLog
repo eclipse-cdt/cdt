@@ -1,3 +1,9 @@
+2004-04-04 Alain Magloire
+
+	Race condition causing deadlocks fix.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+
 2004-04-29 Alain Magloire
 
 	Changes to working copy, to be wrap in runnable Plaform

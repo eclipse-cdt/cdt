@@ -37,7 +37,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	public LibraryEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath libraryPath, IPath sourceAttachmentPath,
 		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
 		super(ILibraryEntry.CDT_LIBRARY, basePath, baseRef, resourcePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
-		this.libraryPath = libraryPath;
+		this.libraryPath = (libraryPath == null) ? EMPTY_PATH : libraryPath;
 		this.sourceAttachmentPath = sourceAttachmentPath;
 		this.sourceAttachmentRootPath = sourceAttachmentRootPath;
 		this.sourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping;
@@ -133,7 +133,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	}
 
 	public IPath getFullLibraryPath() {
-		IPath lib = getPath();
+		IPath lib = getLibraryPath();
 		IPath p = (!basePath.isEmpty()) ? basePath.append(lib) : lib;
 		if (p.isAbsolute()) {
 			return p;

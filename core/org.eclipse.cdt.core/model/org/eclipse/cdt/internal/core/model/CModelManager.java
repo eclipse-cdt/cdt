@@ -744,7 +744,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Fire C Model deltas, flushing them after the fact. 
 	 * If the firing mode has been turned off, this has no effect. 
 	 */
-	public synchronized void fire(ICElementDelta customDeltas, int eventType) {
+	public void fire(ICElementDelta customDeltas, int eventType) {
 		if (fFire) {
 			ICElementDelta deltaToNotify;
 			if (customDeltas == null) {

@@ -121,6 +121,7 @@ class CPElementLabelProvider extends LabelProvider {
 				{
 					StringBuffer str = new StringBuffer( ((IPath)cpentry.getAttribute(CPElement.LIBRARY)).toOSString());
 					addBaseString(cpentry, str);
+					addExport(cpentry, str);
 					return str.toString();
 				}
 			case IPathEntry.CDT_PROJECT :
@@ -130,6 +131,7 @@ class CPElementLabelProvider extends LabelProvider {
 					IPath incPath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE));
 					StringBuffer str = new StringBuffer(incPath.toOSString());
 					addBaseString(cpentry, str);
+					addExport(cpentry, str);
 					return str.toString();
 				}
 			case IPathEntry.CDT_MACRO :
@@ -137,17 +139,23 @@ class CPElementLabelProvider extends LabelProvider {
 					StringBuffer str = new StringBuffer((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
 							+ (String)cpentry.getAttribute(CPElement.MACRO_VALUE));
 					addBaseString(cpentry, str);
+					addExport(cpentry, str);
 					return str.toString();
 				}
 			case IPathEntry.CDT_CONTAINER :
-				try {
-					IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(), cpentry.getCProject());
-					if (container != null) {
-						return container.getDescription();
+				{
+					StringBuffer str = new StringBuffer(path.toString());
+					try {
+						IPathEntryContainer container = CoreModel.getPathEntryContainer(cpentry.getPath(), cpentry.getCProject());
+						if (container != null) {
+							str.setLength(0);
+							str.append(container.getDescription());
+						}
+					} catch (CModelException e) {
 					}
-				} catch (CModelException e) {
+					addExport(cpentry, str);
+					return str.toString();
 				}
-				return path.toString();
 			case IPathEntry.CDT_SOURCE :
 			case IPathEntry.CDT_OUTPUT :
 				{
@@ -168,16 +176,22 @@ class CPElementLabelProvider extends LabelProvider {
 		}
 		return CPathEntryMessages.getString("CPElementLabelProvider.unknown_element.label"); //$NON-NLS-1$
 	}
+	private void addExport(CPElement cpentry, StringBuffer str) {
+		if (cpentry.isExported()) {
+			str.append(' ');
+			str.append(CPathEntryMessages.getString("CPElementLabelProvider.export.label")); //$NON-NLS-1$
+		}
+	}
 
 	private void addBaseString(CPElement cpentry, StringBuffer str) {
 		IPath baseRef = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
 		if (!baseRef.isEmpty()) {
 			str.append(" - ("); //$NON-NLS-1$
 			if (baseRef.isAbsolute()) {
-//				str.append("From project ");
+				//				str.append("From project ");
 				str.append(baseRef);
 			} else {
-//				str.append("From contribution ");
+				//				str.append("From contribution ");
 				IPathEntryContainer container;
 				try {
 					container = CoreModel.getPathEntryContainer(baseRef, cpentry.getCProject());

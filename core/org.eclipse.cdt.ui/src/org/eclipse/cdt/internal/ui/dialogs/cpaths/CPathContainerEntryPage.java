@@ -42,6 +42,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	private final int IDX_EDIT = 2;
 	private final int IDX_REMOVE = 3;
+	private final int IDX_EXPORT = 5;
 
 	public CPathContainerEntryPage(ListDialogField cPathList) {
 		super(CPathEntryMessages.getString("ContainerEntryPage.title")); //$NON-NLS-1$
@@ -51,7 +52,9 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		/* IDX_ADD */CPathEntryMessages.getString("ContainerEntryPage.add.button"), //$NON-NLS-1$
 				/* */null,
 				/* IDX_EDIT */CPathEntryMessages.getString("ContainerEntryPage.edit.button"), //$NON-NLS-1$
-				/* IDX_REMOVE */CPathEntryMessages.getString("ContainerEntryPage.remove.button") //$NON-NLS-1$
+				/* IDX_REMOVE */CPathEntryMessages.getString("ContainerEntryPage.remove.button"), //$NON-NLS-1$
+				null,
+				/* IDX_EXPORT */CPathEntryMessages.getString("ContainerEntryPage.export.button") //$NON-NLS-1$
 		};
 
 		ContainersAdapter adapter = new ContainersAdapter();
@@ -62,6 +65,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		fContainersList.enableButton(IDX_REMOVE, false);
 		fContainersList.enableButton(IDX_EDIT, false);
+		fContainersList.enableButton(IDX_EXPORT, false);
 
 		fContainersList.setViewerSorter(new CPElementSorter());
 
@@ -100,10 +104,10 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		fContainersList.setButtonsMinWidth(buttonBarWidth);
 
 		fContainersList.getTreeViewer().addFilter(new ViewerFilter() {
-			
+
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if ( element instanceof CPElementGroup) {
-					return ((CPElementGroup)element).getChildren().length != 0; 
+				if (element instanceof CPElementGroup) {
+					return ((CPElementGroup)element).getChildren().length != 0;
 				}
 				return true;
 			}
@@ -183,6 +187,10 @@ public class CPathContainerEntryPage extends CPathBasePage {
 				/* remove */
 				removeEntry();
 				return;
+			case IDX_EXPORT :
+				/* export */
+				exportEntry();
+				return;
 		}
 		if (containers != null) {
 			int nElementsChosen = containers.length;
@@ -224,24 +232,6 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 	}
 
-	private void removeEntry() {
-		List selElements = fContainersList.getSelectedElements();
-		for (int i = selElements.size() - 1; i >= 0; i--) {
-			Object elem = selElements.get(i);
-			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute)elem;
-				attrib.getParent().setAttribute(attrib.getKey(), null);
-				selElements.remove(i);
-			}
-		}
-		if (selElements.isEmpty()) {
-			fContainersList.refresh();
-			fCPathList.dialogFieldChanged(); // validate
-		} else {
-			fContainersList.removeElements(selElements);
-		}
-	}
-
 	private boolean canRemove(List selElements) {
 		if (selElements.size() == 0) {
 			return false;
@@ -262,6 +252,52 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		return true;
 	}
 
+	private void removeEntry() {
+		List selElements = fContainersList.getSelectedElements();
+		for (int i = selElements.size() - 1; i >= 0; i--) {
+			Object elem = selElements.get(i);
+			if (elem instanceof CPElementAttribute) {
+				CPElementAttribute attrib = (CPElementAttribute)elem;
+				attrib.getParent().setAttribute(attrib.getKey(), null);
+				selElements.remove(i);
+			}
+		}
+		if (selElements.isEmpty()) {
+			fContainersList.refresh();
+			fCPathList.dialogFieldChanged(); // validate
+		} else {
+			fContainersList.removeElements(selElements);
+		}
+	}
+	
+	private boolean canExport(List selElements) {
+		if (selElements.size() == 0) {
+			return false;
+		}
+		for (int i = 0; i < selElements.size(); i++) {
+			Object elem = selElements.get(i);
+			if (elem instanceof CPElement) {
+				CPElement curr = (CPElement)elem;
+				if (curr.getParentContainer() != null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private void exportEntry() {
+		List selElements = fContainersList.getSelectedElements();
+		if (selElements.size() != 1) {
+			return;
+		}
+		Object elem = selElements.get(0);
+		if (fContainersList.getIndexOfElement(elem) != -1) {
+			((CPElement)elem).setExported(!((CPElement)elem).isExported()); // toggle export
+			fContainersList.refresh(elem);
+		}
+	}
+	
 	/**
 	 * Method editEntry.
 	 */
@@ -316,6 +352,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		List selElements = fContainersList.getSelectedElements();
 		fContainersList.enableButton(IDX_EDIT, canEdit(selElements));
 		fContainersList.enableButton(IDX_REMOVE, canRemove(selElements));
+		fContainersList.enableButton(IDX_EXPORT, canExport(selElements));
 	}
 
 	private boolean canEdit(List selElements) {
@@ -422,12 +459,8 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		// dinglis-TODO Auto-generated method stub
-
 	}
 
 	public void performDefaults() {
-		// dinglis-TODO Auto-generated method stub
-
 	}
 }

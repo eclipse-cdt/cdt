@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -36,7 +35,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -69,6 +67,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	private final int IDX_ADD_CONTRIBUTED = 2;
 	private final int IDX_EDIT = 4;
 	private final int IDX_REMOVE = 5;
+	private final int IDX_EXPORT = 7;
 
 	/**
 	 * @param title
@@ -88,7 +87,9 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 			/* IDX_ADD_CONTRIBUTED*/ CPathEntryMessages.getString("LibrariesEntryPage.libraries.addcontriblib.button"), //$NON-NLS-1$
 			/* */ null,  
 			/* IDX_EDIT */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.edit.button"), //$NON-NLS-1$
-			/* IDX_REMOVE */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.remove.button") //$NON-NLS-1$
+			/* IDX_REMOVE */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.remove.button"), //$NON-NLS-1$
+			null,
+			/* IDX_EXPORT */ CPathEntryMessages.getString("LibrariesEntryPage.libraries.export.button") //$NON-NLS-1$
 		};		
 
 		fLibrariesList = new TreeListDialogField(adapter, buttonLabels, new CPElementLabelProvider());
@@ -97,6 +98,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 
 		fLibrariesList.setViewerSorter(new CPElementSorter());
 		fLibrariesList.enableButton(IDX_EDIT, false);
+		fLibrariesList.enableButton(IDX_EXPORT, false);
 	}
 
 	public Image getImage() {
@@ -227,8 +229,13 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 			return;
 		case IDX_REMOVE: /* remove */
 			removeEntry();
-			return;			
+			return;
+		case IDX_EXPORT :
+			/* export */
+			exportEntry();
+			return;		
 		}
+		
 		if (libentries != null) {
 			int nElementsChosen= libentries.length;					
 			// remove duplicates
@@ -242,10 +249,6 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 					//curr.setAttribute(CPElement.SOURCEATTACHMENT, BuildPathSupport.guessSourceAttachment(curr));
 				}
 			}
-			if (!elementsToAdd.isEmpty()) {
-				askForAddingExclusionPatternsDialog(elementsToAdd);
-			}
-			
 			fLibrariesList.addElements(elementsToAdd);
 			fCPathList.addElements(elementsToAdd);
 			if (index == IDX_ADD_LIB) {
@@ -255,13 +258,31 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		}
 	}
 
-	private void askForAddingExclusionPatternsDialog(List newEntries) {
-		HashSet modified= new HashSet();
-		fixNestingConflicts(newEntries, fCPathList.getElements(), modified);
-		if (!modified.isEmpty()) {
-			String title= CPathEntryMessages.getString("LibrariesWorkbookPage.exclusion_added.title"); //$NON-NLS-1$
-			String message= CPathEntryMessages.getString("LibrariesWorkbookPage.exclusion_added.message"); //$NON-NLS-1$
-			MessageDialog.openInformation(getShell(), title, message);
+	private boolean canExport(List selElements) {
+		if (selElements.size() == 0) {
+			return false;
+		}
+		for (int i = 0; i < selElements.size(); i++) {
+			Object elem = selElements.get(i);
+			if (elem instanceof CPElement) {
+				CPElement curr = (CPElement)elem;
+				if (curr.getParentContainer() != null) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private void exportEntry() {
+		List selElements = fLibrariesList.getSelectedElements();
+		if (selElements.size() != 1) {
+			return;
+		}
+		Object elem = selElements.get(0);
+		if (fLibrariesList.getIndexOfElement(elem) != -1) {
+			((CPElement)elem).setExported(!((CPElement)elem).isExported()); // toggle export
+			fLibrariesList.refresh(elem);
 		}
 	}
 	
@@ -375,6 +396,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		List selElements= fLibrariesList.getSelectedElements();
 		fLibrariesList.enableButton(IDX_EDIT, canEdit(selElements));
 		fLibrariesList.enableButton(IDX_REMOVE, canRemove(selElements));
+		fLibrariesList.enableButton(IDX_EXPORT, canExport(selElements));
 	}
 
 	private IFile[] getUsedLibFiles(CPElement existing) {
@@ -399,11 +421,11 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	private CPElement[] openExtLibFileDialog(CPElement existing) {
-		String title= CPathEntryMessages.getString("LibrariesWorkbookPage.ExtLibDialog.new.title"); //$NON-NLS-1$
+		String title= CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.new.title"); //$NON-NLS-1$
 		
 		FileDialog dialog= new FileDialog(getShell(), existing == null ? SWT.MULTI : SWT.SINGLE);
 		dialog.setText(title);
-		dialog.setFilterExtensions(new String[] {"*.a;*.so;*.dll"}); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] {"*.a;*.so;*.dll;*.lib"}); //$NON-NLS-1$
 		//dialog.setFilterPath(lastUsedPath);
 		if (existing != null) {
 			dialog.setFileName(existing.getPath().lastSegment());
@@ -435,8 +457,8 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 		
-		String title= (existing == null) ? CPathEntryMessages.getString("LibrariesWorkbookPage.JARArchiveDialog.new.title") : CPathEntryMessages.getString("LibrariesWorkbookPage.JARArchiveDialog.edit.title"); //$NON-NLS-1$ //$NON-NLS-2$
-		String message= (existing == null) ? CPathEntryMessages.getString("LibrariesWorkbookPage.JARArchiveDialog.new.description") : CPathEntryMessages.getString("LibrariesWorkbookPage.JARArchiveDialog.edit.description"); //$NON-NLS-1$ //$NON-NLS-2$
+		String title= (existing == null) ? CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.new.title") : CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.edit.title"); //$NON-NLS-1$ //$NON-NLS-2$
+		String message= (existing == null) ? CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.new.description") : CPathEntryMessages.getString("LibrariesEntryPage.ExtLibDialog.edit.description"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), lp, cp);
 		dialog.setValidator(validator);

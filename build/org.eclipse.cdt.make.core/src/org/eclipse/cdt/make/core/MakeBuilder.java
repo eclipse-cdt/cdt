@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class MakeBuilder extends ACBuilder {
@@ -129,9 +130,6 @@ public class MakeBuilder extends ACBuilder {
 				if (targets.length != 0 && targets[targets.length - 1].equals("clean")) //$NON-NLS-1$
 					isClean = true;
 
-				// Before launching give visual cues via the monitor
-				monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + buildCommand.toString()); //$NON-NLS-1$
-
 				String errMsg = null;
 				CommandLauncher launcher = new CommandLauncher();
 				// Print the command for visual interaction.
@@ -168,14 +166,17 @@ public class MakeBuilder extends ACBuilder {
 						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
 					}
 				}
-				if (true) {
 //					MakeRecon recon = new MakeRecon(buildCommand, buildArguments, env, workingDirectory, makeMonitor, cos);
 //					recon.invokeMakeRecon();
 //					cos = recon;
-					cos = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos);
+				QualifiedName qName = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "progressMonitor");
+				Integer last = (Integer)getProject().getSessionProperty(qName);
+				if (last == null) {
+					last = new Integer(100);
 				}
+				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos, last.intValue());
 				ErrorParserManager epm = new ErrorParserManager(getProject(), this, info.getErrorParsers());
-				epm.setOutputStream(cos);
+				epm.setOutputStream(streamMon);
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);
@@ -186,6 +187,8 @@ public class MakeBuilder extends ACBuilder {
 						p.getOutputStream().close();
 					} catch (IOException e) {
 					}
+					// Before launching give visual cues via the monitor
+					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + launcher.getCommandLine()); //$NON-NLS-1$
 					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, 0))
 						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
@@ -201,7 +204,7 @@ public class MakeBuilder extends ACBuilder {
 				} else {
 					errMsg = launcher.getErrorMessage();
 				}
-//				makeMonitor.done();
+				getProject().setSessionProperty(qName, !monitor.isCanceled() && !isClean ? new Integer(streamMon.getWorkDone()) : null);
 
 				if (errMsg != null) {
 					StringBuffer buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$

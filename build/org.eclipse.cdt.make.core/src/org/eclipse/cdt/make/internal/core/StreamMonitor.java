@@ -19,28 +19,32 @@ public class StreamMonitor extends OutputStream {
 
 	IProgressMonitor monitor;
 	OutputStream console;
-	public static final int TOTAL_WORK = 10;
-	private int halfWay = TOTAL_WORK / 2;
-	private int currentIncrement = 1;
+	public final int fTotalWork;
+	private int halfWay;
+	private int currentIncrement = 2;
 	private int nextProgress = currentIncrement;
 	private int worked = 0;
 
-	public StreamMonitor(IProgressMonitor mon, OutputStream cos) {
+	public StreamMonitor(IProgressMonitor mon, OutputStream cos, int totalWork) {
 		monitor = mon;
 		console = cos;
-		monitor.beginTask("", TOTAL_WORK);
+		fTotalWork = totalWork;
+		halfWay = fTotalWork / 2;
+		monitor.beginTask("", fTotalWork);
 	}
 
 	private void progressUpdate() {
 		if (--nextProgress <= 0) {
 			//we have exhausted the current increment, so report progress
-			monitor.worked(1);
+			if (fTotalWork > worked) {
+				monitor.worked(1);
+			}
 			worked++;
 			if (worked >= halfWay) {
 				//we have passed the current halfway point, so double the
 				//increment and reset the halfway point.
 				currentIncrement *= 2;
-				halfWay += (TOTAL_WORK - halfWay) / 2;
+				halfWay += (fTotalWork - halfWay) / 2;
 			}
 			//reset the progress counter to another full increment
 			nextProgress = currentIncrement;
@@ -90,5 +94,9 @@ public class StreamMonitor extends OutputStream {
 			console.write(b, off, len);
 		}
 		progressUpdate();
+	}
+
+	public int getWorkDone() {
+		return worked;
 	}
 }

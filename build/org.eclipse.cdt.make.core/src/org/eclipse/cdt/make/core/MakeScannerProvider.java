@@ -52,23 +52,24 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	private static MakeScannerProvider defaultProvider;
 
 	public static MakeScannerProvider getDefault() {
-		if ( defaultProvider == null) {
+		if (defaultProvider == null) {
 			defaultProvider = new MakeScannerProvider();
 		}
 		return defaultProvider;
 	}
-	
+
 	public MakeScannerInfo getMakeScannerInfo(IProject project, boolean cacheInfo) throws CoreException {
 		MakeScannerInfo scannerInfo = null;
-		// See if there's already one associated with the resource for this session
+		// See if there's already one associated with the resource for this
+		// session
 		scannerInfo = (MakeScannerInfo)project.getSessionProperty(scannerInfoProperty);
 
-		// Try to load one for the project		
-		if (scannerInfo == null ) {
+		// Try to load one for the project
+		if (scannerInfo == null) {
 			scannerInfo = loadScannerInfo(project);
 		}
 
-		// There is nothing persisted for the session, or saved in a file so 
+		// There is nothing persisted for the session, or saved in a file so
 		// create a build info object
 		if (scannerInfo != null && cacheInfo == true) {
 			project.setSessionProperty(scannerInfoProperty, scannerInfo);
@@ -98,14 +99,16 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		}
 		ListIterator iter = listeners.listIterator();
 		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(project, (IScannerInfo)info);
+			((IScannerInfoChangeListener)iter.next()).changeNotification(project, info);
 		}
 
 	}
 
-	/* (non-Javadoc)
-		 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
-		 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
+	 */
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IScannerInfo info = null;
 		try {
@@ -117,8 +120,8 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 
 	/*
 	 * Loads the build file and parses the nodes for build information. The
-	 * information is then associated with the resource for the duration of 
-	 * the session.
+	 * information is then associated with the resource for the duration of the
+	 * session.
 	 */
 	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
@@ -143,11 +146,11 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 
 	/**
 	 * The build model manager for standard builds only caches the build
-	 * information for a resource on a per-session basis. This method
-	 * allows clients of the build model manager to programmatically 
-	 * remove the association between the resource and the information 
-	 * while the reource is still open or in the workspace. The Eclipse core 
-	 * will take care of removing it if a resource is closed or deleted. 
+	 * information for a resource on a per-session basis. This method allows
+	 * clients of the build model manager to programmatically remove the
+	 * association between the resource and the information while the reource
+	 * is still open or in the workspace. The Eclipse core will take care of
+	 * removing it if a resource is closed or deleted.
 	 * 
 	 * @param resource
 	 */
@@ -159,21 +162,22 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	}
 
 	/**
-	 * Persists build-specific information in the build file. Build 
-	 * information for standard make projects consists of preprocessor 
-	 * symbols and includes paths. Other project-related information is
-	 * stored in the persistent properties of the project.  
+	 * Persists build-specific information in the build file. Build information
+	 * for standard make projects consists of preprocessor symbols and includes
+	 * paths. Other project-related information is stored in the persistent
+	 * properties of the project.
 	 * 
 	 * @param project
 	 */
 	static void updateScannerInfo(MakeScannerInfo scannerInfo) throws CoreException {
 		IProject project = scannerInfo.getProject();
 
-		// See if there's already one associated with the resource for this session
-		if ( project.getSessionProperty(scannerInfoProperty) != null ) {
+		// See if there's already one associated with the resource for this
+		// session
+		if (project.getSessionProperty(scannerInfoProperty) != null) {
 			project.setSessionProperty(scannerInfoProperty, scannerInfo);
-		} 
-		
+		}
+
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 
 		Element rootElement = descriptor.getProjectData(CDESCRIPTOR_ID);
@@ -208,8 +212,11 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		notifyInfoListeners(project, scannerInfo);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource, org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
 	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		IResource project = null;
@@ -234,8 +241,11 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource, org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
 	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		IResource project = null;

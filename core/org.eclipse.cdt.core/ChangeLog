@@ -1,3 +1,11 @@
+2003-10-17 Alain Magloire
+
+	A proposed fix from c_ravikanth@xxxx, for a more meaningfull
+	error message.
+	PR 44160
+
+	* utils/org/eclipse/cdt/utils/spawner/Spawner.java
+
 2003-10-14 Alain Magloire
 
 	Change the scheme slightly to keep on looking for pattern

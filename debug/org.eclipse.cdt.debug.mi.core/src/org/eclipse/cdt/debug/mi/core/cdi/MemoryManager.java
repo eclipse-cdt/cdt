@@ -16,6 +16,8 @@ import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataReadMemory;
+import org.eclipse.cdt.debug.mi.core.event.MIEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 
 /**
@@ -30,6 +32,95 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	}
 
 	/**
+	 * This method will be call by the eventManager.processSuspended() every time the
+	 * inferior comes to a Stop/Suspended.  It will allow to look at the blocks that
+	 * are registered and fired any event if changed.
+	 * Note: Frozen blocks are not updated.
+	 */
+	public void update() {
+		MISession mi = getCSession().getMISession();
+		MemoryBlock[] blocks = listMemoryBlocks();
+		List eventList = new ArrayList(blocks.length);
+		for (int i = 0; i < blocks.length; i++) {
+			if (! blocks[i].isFrozen()) {
+				try {
+					MemoryBlock block = cloneBlock(blocks[i]);
+					Long[] array = compareBlocks(blocks[i], block);
+					if (array.length > 0) {
+						eventList.add(new MIMemoryChangedEvent(array));
+					}
+					// Update the block MIDataReadMemoryInfo.
+					blocks[i].setMIDataReadMemoryInfo(block.getMIDataReadMemoryInfo());
+				} catch (CDIException e) {
+				}
+			}
+		}
+		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
+	}
+
+	/**
+	 * @return the registers MemoryBlock.
+	 */
+	MemoryBlock[] listMemoryBlocks() {
+		return (MemoryBlock[])blockList.toArray(new MemoryBlock[0]);
+	}
+
+	/**
+	 * Compare two blocks and return an array of all _addresses_ that are different.
+	 * This method is not smart it always assume that:
+	 * oldBlock.getStartAddress() == newBlock.getStartAddress;
+	 * oldBlock.getLength() == newBlock.getLength();
+	 * @return Long[] array of modified addresses.
+	 */
+	Long[] compareBlocks (MemoryBlock oldBlock, MemoryBlock newBlock) throws CDIException {
+		if (oldBlock.getStartAddress() != newBlock.getStartAddress()) {
+			return new Long[0];
+		}
+		byte[] oldBytes = oldBlock.getBytes();
+		byte[] newBytes = newBlock.getBytes();
+		List aList = new ArrayList(oldBytes.length);
+		for (int i = 0; i < oldBytes.length; i++) {
+			if (i < newBytes.length) {
+				if (oldBytes[i] != newBytes[i]) {
+					aList.add(new Long(oldBlock.getStartAddress() + i));
+				}
+			}
+		}
+		return (Long[])aList.toArray(new Long[0]);
+	}
+
+	/**
+	 * Use the same expression and length of the original block
+	 * to create a new MemoryBlock.  The new block is not register
+	 * with the MemoryManager.
+	 */
+	MemoryBlock cloneBlock(MemoryBlock block) throws CDIException {
+		String exp = block.getExpression();
+		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(exp, (int)block.getLength());
+		return new MemoryBlock(getCSession().getCTarget(), exp, info);
+	}
+
+	/**
+	 * Post a -data-read-memory to gdb/mi.
+	 */
+	MIDataReadMemoryInfo createMIDataReadMemoryInfo(String exp, int length) throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIDataReadMemory mem = factory.createMIDataReadMemory(0, exp, MIFormat.HEXADECIMAL, 1, 1, length, null);
+		try {
+			mi.postCommand(mem);
+			MIDataReadMemoryInfo info = mem.getMIDataReadMemoryInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			return info;
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
 	 */
 	public ICDIMemoryBlock createMemoryBlock(long address, int length)
@@ -41,27 +132,18 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(string, int)
 	 */
-	public ICDIMemoryBlock createMemoryBlock(String address, int length)
-		throws CDIException {
-		MISession mi = getCSession().getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIDataReadMemory mem = factory.createMIDataReadMemory(0, address, MIFormat.HEXADECIMAL, 1, 1, length, null);
-		try {
-			mi.postCommand(mem);
-			MIDataReadMemoryInfo info = mem.getMIDataReadMemoryInfo();
-			MemoryBlock block = new MemoryBlock(getCSession().getCTarget(), info);
-			blockList.add(block);
-			return block;
-		} catch (MIException e) {
-			throw new CDIException(e.getMessage());
-		}
+	public ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException {
+		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(address, length);
+		ICDIMemoryBlock block = new MemoryBlock(getCSession().getCTarget(), address, info);
+		blockList.add(block);
+		return block;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlocks()
 	 */
 	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
-		return (ICDIMemoryBlock[])blockList.toArray(new ICDIMemoryBlock[0]);
+		return (ICDIMemoryBlock[])listMemoryBlocks();
 	}
 
 	/**

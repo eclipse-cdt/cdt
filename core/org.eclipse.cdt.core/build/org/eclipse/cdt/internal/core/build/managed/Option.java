@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.build.managed;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
@@ -53,6 +54,28 @@ public class Option extends BuildObject implements IOption {
 		String categoryId = element.getAttribute("category");
 		if (categoryId != null)
 			setCategory(tool.getOptionCategory(categoryId));
+		
+		// valueType
+		String valueTypeStr = element.getAttribute("valueType");
+		if (valueTypeStr == null || valueTypeStr.equals("string"))
+			valueType = IOption.STRING;
+		else if (valueTypeStr.equals("stringList"))
+			valueType = IOption.STRING_LIST;
+		
+		// value
+		switch (valueType) {
+			case IOption.STRING:
+				value = element.getAttribute("value");
+				break;
+			case IOption.STRING_LIST:
+				List valueList = new ArrayList();
+				value = valueList;
+				IConfigurationElement[] valueElements = element.getChildren("optionValue");
+				for (int i = 0; i < valueElements.length; ++i) {
+					valueList.add(valueElements[i].getAttribute("value"));
+				}
+				break;
+		}
 	}
 
 	/* (non-Javadoc)

@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * 
@@ -88,6 +90,15 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		if (element.hasAttribute("parent"))
 			parent = target.getParent().getConfiguration(element.getAttribute("parent"));
+		
+		NodeList configElements = element.getChildNodes();
+		for (int i = 0; i < configElements.getLength(); ++i) {
+			Node configElement = configElements.item(i);
+			if (configElement.getNodeName().equals("toolRef")) {
+				new ToolReference(this, (Element)configElement);
+			}
+		}
+	
 	}
 	
 	public void serealize(Document doc, Element element) {
@@ -103,6 +114,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 			for (int i = 0; i < toolReferences.size(); ++i) {
 				ToolReference toolRef = (ToolReference)toolReferences.get(i);
 				Element toolRefElement = doc.createElement("toolRef");
+				element.appendChild(toolRefElement);
 				toolRef.serealize(doc, toolRefElement);
 			}
 	}

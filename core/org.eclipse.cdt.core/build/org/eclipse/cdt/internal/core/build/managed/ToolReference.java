@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * 
@@ -69,6 +71,20 @@ public class ToolReference implements ITool {
 	}
 
 	public ToolReference(Configuration owner, Element element) {
+		this.owner = owner;
+		
+		Target parentTarget = (Target)owner.getTarget();
+		parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute("id"));
+
+		owner.addToolReference(this);
+	
+		NodeList configElements = element.getChildNodes();
+		for (int i = 0; i < configElements.getLength(); ++i) {
+			Node configElement = configElements.item(i);
+			if (configElement.getNodeName().equals("optionRef")) {
+				new OptionReference(this, (Element)configElement);
+			}
+		}
 	}
 
 	public void serealize(Document doc, Element element) {
@@ -78,6 +94,7 @@ public class ToolReference implements ITool {
 			for (int i = 0; i < optionReferences.size(); ++i) {
 				OptionReference optionRef = (OptionReference)optionReferences.get(i);
 				Element optionRefElement = doc.createElement("optionRef");
+				element.appendChild(optionRefElement);
 				optionRef.serealize(doc, optionRefElement);
 			}
 	}

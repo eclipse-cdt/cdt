@@ -42,14 +42,14 @@
             </optionCategory>
             <option
                   name="Compiler Flags"
-                  type="string"
+                  valueType="string"
                   id="linux.compiler.flags">
             </option>
             <option
                   name="Optimization Flags"
-                  default="-O"
-                  type="string"
                   category="linux.compiler.optimization"
+                  value="-O"
+                  valueType="string"
                   id="linux.compiler.optimizationFlags">
             </option>
          </tool>
@@ -106,11 +106,20 @@
             </optionCategory>
             <option
                   name="Option in Top"
+                  valueType="stringList"
                   id="topOption">
+               <optionValue
+                     value="a">
+               </optionValue>
+               <optionValue
+                     value="b">
+               </optionValue>
             </option>
             <option
                   name="Option in Category"
                   category="category"
+                  value="x"
+                  valueType="string"
                   id="childOption">
             </option>
          </tool>
@@ -124,8 +133,8 @@
             <toolRef
                   id="root.tool">
                <optionRef
-                     value="x"
-                     id="topOption">
+                     value="y"
+                     id="childOption">
                </optionRef>
             </toolRef>
          </configuration>

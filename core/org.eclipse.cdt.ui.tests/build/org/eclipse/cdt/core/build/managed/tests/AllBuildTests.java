@@ -54,7 +54,7 @@ public class AllBuildTests extends TestCase {
 	 * Navigates through the build info as defined in the extensions
 	 * defined in this plugin
 	 */
-	public void testExtensions() {
+	public void testExtensions() throws Exception {
 		ITarget testRoot = null;
 		ITarget testSub = null;
 		
@@ -67,7 +67,7 @@ public class AllBuildTests extends TestCase {
 			if (target.getName().equals("Test Root")) {
 				testRoot = target;
 				
-				checkRootTarget(testRoot);
+				checkRootTarget(testRoot, "x");
 				
 			} else if (target.getName().equals("Test Sub")) {
 				testSub = target;
@@ -123,7 +123,19 @@ public class AllBuildTests extends TestCase {
 		for (int i = 0; i < configs.length; ++i)
 			target.createConfiguration(configs[i], target.getId() + "." + i);
 		
-		checkRootTarget(target);
+		checkRootTarget(target, "x");
+		
+		// Override the "Option in Category" option value
+		configs = target.getConfigurations();
+		ITool[] tools = configs[0].getTools();
+		IOptionCategory topCategory = tools[0].getTopOptionCategory();
+		IOptionCategory[] categories = topCategory.getChildCategories();
+		IOption[] options = categories[0].getOptions(configs[0]);
+		configs[0].setOption(options[0], "z");
+		options = categories[0].getOptions(null);
+		assertEquals("x", options[0].getStringValue());
+		options = categories[0].getOptions(configs[0]);
+		assertEquals("z", options[0].getStringValue());
 		
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project);
@@ -133,7 +145,7 @@ public class AllBuildTests extends TestCase {
 		
 		targets = ManagedBuildManager.getTargets(project);
 		assertEquals(1, targets.length);
-		checkRootTarget(targets[0]);
+		checkRootTarget(targets[0], "z");
 	}
 	
 	IProject createProject(String name) throws CoreException {
@@ -154,7 +166,7 @@ public class AllBuildTests extends TestCase {
 		return project;	
 	}
 	
-	private void checkRootTarget(ITarget target) {
+	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
 		// Tools
 		ITool[] tools = target.getTools();
 		// Root Tool
@@ -164,7 +176,11 @@ public class AllBuildTests extends TestCase {
 		IOption[] options = rootTool.getOptions();
 		assertEquals(2, options.length);
 		assertEquals("Option in Top", options[0].getName());
+		String[] valueList = options[0].getStringListValue();
+		assertEquals("a", valueList[0]);
+		assertEquals("b", valueList[1]);
 		assertEquals("Option in Category", options[1].getName());
+		assertEquals("x", options[1].getStringValue());
 		// Option Categories
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
@@ -187,11 +203,34 @@ public class AllBuildTests extends TestCase {
 		tools = rootConfig.getTools();
 		assertEquals(1, tools.length);
 		assertEquals("Root Tool", tools[0].getName());
+		topCategory = tools[0].getTopOptionCategory();
+		options = topCategory.getOptions(configs[0]);
+		assertEquals(1, options.length);
+		assertEquals("Option in Top", options[0].getName());
+		valueList = options[0].getStringListValue();
+		assertEquals("a", valueList[0]);
+		assertEquals("b", valueList[1]);
+		categories = topCategory.getChildCategories();
+		options = categories[0].getOptions(configs[0]);
+		assertEquals("Option in Category", options[0].getName());
+		assertEquals(oicValue, options[0].getStringValue());
 		// Root Override Config
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
+		assertEquals(1, tools.length);
 		assertTrue(tools[0] instanceof ToolReference);
-		options = tools[0].getOptions();
+		assertEquals("Root Tool", tools[0].getName());
+		topCategory = tools[0].getTopOptionCategory();
+		options = topCategory.getOptions(configs[1]);
+		assertEquals(1, options.length);
+		assertEquals("Option in Top", options[0].getName());
+		valueList = options[0].getStringListValue();
+		assertEquals("a", valueList[0]);
+		assertEquals("b", valueList[1]);
+		categories = topCategory.getChildCategories();
+		options = categories[0].getOptions(configs[1]);
+		assertEquals("Option in Category", options[0].getName());
+		assertEquals("y", options[0].getStringValue());
 	}
-	
+
 }

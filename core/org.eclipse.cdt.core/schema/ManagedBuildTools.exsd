@@ -92,6 +92,7 @@
       <complexType>
          <sequence>
             <element ref="optionEnum"/>
+            <element ref="optionValue"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -107,7 +108,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" use="default" value="string">
+         <attribute name="valueType" use="default" value="string">
             <annotation>
                <documentation>
                   
@@ -117,12 +118,12 @@
                <restriction base="string">
                   <enumeration value="string">
                   </enumeration>
-                  <enumeration value="enumeration">
+                  <enumeration value="stringList">
                   </enumeration>
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="default" type="string">
+         <attribute name="value" type="string">
             <annotation>
                <documentation>
                   
@@ -204,7 +205,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="value" type="string" use="required">
+         <attribute name="value" type="string">
             <annotation>
                <documentation>
                   
@@ -273,6 +274,18 @@
             </annotation>
          </attribute>
          <attribute name="owner" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="optionValue">
+      <complexType>
+         <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
                   

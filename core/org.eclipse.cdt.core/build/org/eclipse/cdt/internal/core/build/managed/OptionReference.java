@@ -10,6 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.build.managed;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
@@ -17,6 +20,7 @@ import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * 
@@ -51,6 +55,20 @@ public class OptionReference implements IOption {
 		option = owner.getTool().getOption(element.getAttribute("id"));
 		
 		owner.addOptionReference(this);
+
+		// value
+		switch (option.getValueType()) {
+			case IOption.STRING:
+				value = element.getAttribute("value");
+				break;
+			case IOption.STRING_LIST:
+				List valueList = new ArrayList();
+				IConfigurationElement[] valueElements = element.getChildren("optionValue");
+				for (int i = 0; i < valueElements.length; ++i) {
+					valueList.add(valueElements[i].getAttribute("value"));
+				}
+				break;
+		}
 	}
 
 	/**
@@ -64,6 +82,21 @@ public class OptionReference implements IOption {
 		option = owner.getTool().getOption(element.getAttribute("id"));
 		
 		owner.addOptionReference(this);
+
+		// value
+		switch (option.getValueType()) {
+			case IOption.STRING:
+				value = element.getAttribute("value");
+				break;
+			case IOption.STRING_LIST:
+				List valueList = new ArrayList();
+				NodeList nodes = element.getElementsByTagName("optionValue");
+				for (int i = 0; i < nodes.getLength(); ++i) {
+					valueList.add(((Element)nodes.item(i)).getAttribute("value"));
+				}
+				break;
+		}
+
 	}
 	
 	/**
@@ -74,7 +107,20 @@ public class OptionReference implements IOption {
 	 */
 	public void serealize(Document doc, Element element) {
 		element.setAttribute("id", option.getId());
-		option = owner.getOption(element.getAttribute("id"));
+		
+		// value
+		switch (option.getValueType()) {
+			case IOption.STRING:
+				element.setAttribute("value", (String)value);
+				break;
+			case IOption.STRING_LIST:
+				List valueList = (List)value;
+				for (int i = 0; i < valueList.size(); ++i) {
+					Element valueElement = doc.createElement("optionValue");
+					valueElement.setAttribute("value", (String)valueList.get(i));
+					element.appendChild(valueElement);
+				}
+		}
 	}
 	
 	/* (non-Javadoc)

@@ -27,10 +27,13 @@
          name="Tools for Build Test"
          point="org.eclipse.cdt.core.ManagedBuildInfo">
       <target
+            makeFlags="-k"
             isTest="true"
+            cleanCommand="del /myworld"
             name="Test Root"
             defaultExtension="toor"
             isAbstract="false"
+            makeCommand="make"
             id="test.root">
          <tool
                sources="foo,bar"
@@ -109,12 +112,15 @@
          </configuration>
       </target>
       <target
-            isTest="true"
             name="Test Sub"
-            parent="test.root"
+            id="test.sub"
+            cleanCommand="rm -yourworld"
+            isTest="true"
             defaultExtension="bus"
             isAbstract="false"
-            id="test.sub">
+            makeCommand="gmake"
+            makeFlags="-d"
+            parent="test.root">
          <configuration
                name="Sub Config"
                id="sub.config">
@@ -122,8 +128,8 @@
          <tool
                sources="yarf"
                name="Sub Tool"
-               outputPrefix="lib"
                outputs="bus"
+               outputPrefix="lib"
                id="tool.sub">
             <option
                   name="Include Paths"
@@ -153,6 +159,14 @@
                </optionValue>
             </option>
          </tool>
+      </target>
+      <target
+            isTest="true"
+            name="Test Sub Sub"
+            parent="test.sub"
+            defaultExtension="tss"
+            makeCommand="nmake"
+            id="test.sub.sub">
       </target>
    </extension>
 

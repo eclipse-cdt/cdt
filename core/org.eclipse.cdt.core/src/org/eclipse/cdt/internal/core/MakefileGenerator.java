@@ -298,7 +298,7 @@ public class MakefileGenerator {
 		 * 		<cd <Proj_Dep_1/build_dir>; make all> 
 		 * 		<cd <Proj_Dep_.../build_dir>; make all> 
 		 * 		<cd <Proj_Dep_n/build_dir>; make all> 
-		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $(OUTPUT_PREFIX)$@ $^ $(LIB_DEPS)
+		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $^ $(LIB_DEPS)
 		 */
 		String cmd = info.getToolForTarget(extension);
 		String flags = info.getFlagsForTarget(extension);
@@ -323,7 +323,7 @@ public class MakefileGenerator {
 			e.printStackTrace();
 		}
 
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + outputPrefix + "$@" + WHITESPACE + "$^");
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$^");
 		String[] libraries = info.getLibsForTarget(extension);
 		for (int i = 0; i < libraries.length; i++) {
 			String lib = libraries[i];

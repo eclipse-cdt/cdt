@@ -116,8 +116,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getCleanCommand()
 	 */
 	public String getCleanCommand() {
-		// TODO Get from the model
-		return new String("rm -rf");
+		// Get from the model
+		String command = new String();
+		ITarget target = getDefaultTarget();
+		command = target.getCleanCommand();
+		return command;
 	}
 
 	/* (non-Javadoc)
@@ -276,8 +279,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeCommand()
 	 */
 	public String getMakeCommand() {
-		// TODO Don't hard-code this
-		return new String("make");
+		String command = new String();
+		ITarget target = getDefaultTarget();
+		command = target.getMakeCommand();
+		return command;
 	}
 
 	/* (non-Javadoc)

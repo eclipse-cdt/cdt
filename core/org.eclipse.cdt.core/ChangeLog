@@ -1,5 +1,26 @@
+2003-07-28 Sean Evoy
+	In order to meet certain internal guidelines and to test the makefile 
+	generator, the build model replied to some answers with hard-coded information. 
+	This patch moves the information into the build model.
+
+	* schema/ManagedBuildTools.exsd
+	* build/org/eclipse/cdt/core/build/managed/ITarget.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Target.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java:
+	Added code to correctly extract and persist the make command and clean 
+	command from a Target/ITarget. Added the attributes to the schema. Removed 
+	the hard-coded answers from the ManagedBuildManager.
+	
+	* src/org/eclipse/cdt/internal/core/GeneratedMakefileBuilder.java:
+	Removed two methods that were no longer invoked from the builder.
+	
+	* src/org/eclipse/cdt/internal/core/MakefileGenerator.java:
+	Corrected a bug in the makefile generator whereby the output prefix was applied 
+	twice to library targets, i.e. liblibfoo.a instead of libfoo.a. 
+	
+
 2003-07-24 Sean Evoy
-	*src/org/eclipse/cdt/internal/core/MakefileGenerator.java:
+	* src/org/eclipse/cdt/internal/core/MakefileGenerator.java:
 	Added code to place interproject dependencies in target build rule, 
 	added code to properly put output prefixes on library names, and 
 	added code to put library link arguments at the end of the depednency list

@@ -47,6 +47,13 @@ public interface ITarget extends IBuildObject {
 	public String getArtifactName();
 	
 	/**
+	 * Answers the OS-specific command to remove files created by the build
+	 *  
+	 * @return
+	 */
+	public String getCleanCommand();
+
+	/**
 	 * Returns all of the configurations defined by this target.
 	 * @return
 	 */
@@ -59,6 +66,13 @@ public interface ITarget extends IBuildObject {
 	 * @return
 	 */
 	public String getDefaultExtension();	
+
+	/**
+	 * Answers the name of the make utility for the target.
+	 *  
+	 * @return
+	 */
+	public String getMakeCommand();
 
 	/**
 	 * Returns the configuration with the given id, or null if not found.
@@ -110,5 +124,6 @@ public interface ITarget extends IBuildObject {
 	 * @param name The name of the build artifact.
 	 */
 	public void setBuildArtifact(String name);
+
 	
 }

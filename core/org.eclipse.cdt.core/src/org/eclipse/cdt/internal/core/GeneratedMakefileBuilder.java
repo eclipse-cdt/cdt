@@ -11,7 +11,6 @@ package org.eclipse.cdt.internal.core;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -31,16 +30,12 @@ import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -195,51 +190,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.worked(1);		
 	}
 
-	protected IPath getBuildDirectory(String dirName) throws CoreException {
-		// Create or get the handle for the build directory 
-		IFolder folder = getProject().getFolder(dirName);
-		if (!folder.exists()) {
-			try {
-				folder.create(false, true, null);
-			}
-			catch (CoreException e) {
-				if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
-					folder.refreshLocal(IResource.DEPTH_ZERO, null);
-				else
-					throw e;
-			}
-		}
-		return folder.getFullPath();
-	}
-	
-	/**
-	 * Gets the makefile for the project. It may be empty. 
-	 * 
-	 * @return The <code>IFile</code> to generate the makefile into.
-	 */
-	protected IFile getMakefile(IPath filePath, IProgressMonitor monitor) throws CoreException {
-		// Create or get the handle for the makefile
-		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
-		IFile newFile = root.getFileForLocation(filePath);
-		if (newFile == null) {
-			newFile = root.getFile(filePath);
-		}
-		// Create the file if it does not exist
-		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
-		try {
-			newFile.create(contents, false, monitor);
-		}
-		catch (CoreException e) {
-			// If the file already existed locally, just refresh to get contents
-			if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED)
-				newFile.refreshLocal(IResource.DEPTH_ZERO, null);
-			else
-				throw e;
-		}
-		// TODO handle long running file operation
-		return newFile;
-	}
-	
 	/**
 	 * @param makefilePath
 	 * @param info

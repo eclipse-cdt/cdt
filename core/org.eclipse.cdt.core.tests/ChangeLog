@@ -20,6 +20,20 @@
 2003-07-28 John Camelon
 	Added/moved tests as necessary for bugfix 40842 & 40843. 
 
+2003-07-28 Sean Evoy
+	In order to meet certain internal guidelines and to test the makefile 
+	generator, the build model replied to some answers with hard-coded information. 
+	This patch moves the information into the build model.
+
+ 	* plugin.xml:
+	Added information to the target tags to test inheritence and 
+	overridding the make command and clean command attributes.
+	
+	* build/org/eclipse/cdt/core/build/managed/tests/AllBuildTests.java:
+	Added code to test the make command and clean command attributes in 
+	Targets. Also added a test to insure that sub-sub targets inherit settings 
+	properly.
+	
 2003-07-28 Andrew Niefer
 	This patch creates a new failing test class : FullParseFailedTests.  This 
 	is for writing failed tests on the parser doing COMPLETE_PARSE.

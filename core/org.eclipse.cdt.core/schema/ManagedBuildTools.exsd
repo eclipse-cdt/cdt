@@ -358,6 +358,27 @@ Two additional types exist to flag options of special relevance to the build mod
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="cleanCommand" type="string">
+            <annotation>
+               <documentation>
+                  This attribute maintains the command that removes files for a particular target. For example, on POSIX targets like Linuc, Solaris, or Cygwin, the command would be &lt;code&gt;rm -rf&lt;/code&gt; whereas on Win32 platforms it would be &lt;code&gt;del /F /S /Q&lt;/code&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="makeCommand" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="makeFlags" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

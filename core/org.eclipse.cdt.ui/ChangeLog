@@ -1,3 +1,13 @@
+2003-07-28 Sean Evoy
+	In order to meet certain internal guidelines and to test the makefile 
+	generator, the build model replied to some answers with hard-coded information. 
+	This patch moves the information into the build model.
+
+	* plugin.xml:
+	Added new attributes to Targets to add make command, clean command and
+	make flag information. I also added a toolchain specification for Solaris, but 
+	it is turned off for now until I test it.
+
 2003-07-24 Sean Evoy
 	* plugin.xml:
 	Added new attributes to tools and changed the value type enum for 

@@ -74,6 +74,7 @@ public class AllBuildTests extends TestCase {
 	public void testExtensions() throws Exception {
 		ITarget testRoot = null;
 		ITarget testSub = null;
+		ITarget testSubSub = null;
 		
 		// Note secret null parameter which means just extensions
 		ITarget[] targets = ManagedBuildManager.getDefinedTargets(null);
@@ -84,16 +85,21 @@ public class AllBuildTests extends TestCase {
 			if (target.getName().equals("Test Root")) {
 				testRoot = target;
 				checkRootTarget(testRoot, "x");
-				
 			} else if (target.getName().equals("Test Sub")) {
 				testSub = target;
 				checkSubTarget(testSub);
+			} else if (target.getName().equals("Test Sub Sub")) {
+				testSubSub = target;
+				checkSubSubTarget(testSubSub);
 			}
 		}
-		
+		// All these targets are defines in the plugin files, so none
+		// of them should be null at this point
 		assertNotNull(testRoot);
 		assertNotNull(testSub);
+		assertNotNull(testSubSub);
 	}
+
 
 	/**
 	 * The purpose of this test is to exercise the build path info interface.
@@ -465,8 +471,12 @@ public class AllBuildTests extends TestCase {
 	 */
 	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
 		// Target stuff
+		String expectedCleanCmd = "del /myworld";
+		String expectedMakeCommand = "make";
 		assertTrue(target.isTestTarget());
 		assertEquals(target.getDefaultExtension(), rootExt);
+		assertEquals(expectedCleanCmd, target.getCleanCommand());
+		assertEquals(expectedMakeCommand, target.getMakeCommand());
 		
 		// Tools
 		ITool[] tools = target.getTools();
@@ -570,6 +580,16 @@ public class AllBuildTests extends TestCase {
 		assertEquals("doIt", tools[0].getToolCommand());
 	}
 
+	/**
+	 * @param testSubSub
+	 */
+	private void checkSubSubTarget(ITarget target) {
+		// Check the inherited clean command
+		assertEquals("rm -yourworld", target.getCleanCommand());
+		assertEquals("nmake", target.getMakeCommand());
+		
+	}
+
 	/*
 	 * Do a sanity check on the values in the sub-target. Most of the
 	 * sanity on the how build model entries are read is performed in 
@@ -578,6 +598,10 @@ public class AllBuildTests extends TestCase {
 	 * in the sub target, the test does a sanity check just to be complete.
 	 */
 	private void checkSubTarget(ITarget target) throws BuildException {
+		// Check the overridden clan command
+		assertEquals("rm -yourworld", target.getCleanCommand());
+		assertEquals("gmake", target.getMakeCommand());
+
 		// Make sure this is a test target
 		assertTrue(target.isTestTarget());
 		// Make sure the build artifact extension is there

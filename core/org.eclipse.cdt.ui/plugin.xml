@@ -621,9 +621,12 @@
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.core.ManagedBuildInfo">
       <target
+            makeFlags="-k"
             isTest="false"
+            cleanCommand="rm -rf"
             name="Cygwin"
             isAbstract="true"
+            makeCommand="make"
             id="cygwin">
          <tool
                sources="c,cc,cpp,cxx,C"
@@ -888,9 +891,12 @@
          </tool>
       </target>
       <target
+            makeFlags="-k"
             isTest="true"
+            cleanCommand="rm -rf"
             name="Linux"
             isAbstract="true"
+            makeCommand="make"
             id="linux">
          <tool
                name="Compiler"
@@ -958,6 +964,82 @@
          <tool
                name="Archiver"
                id="org.eclipse.cdt.ui.tests.tool.linux.ar">
+         </tool>
+      </target>
+      <target
+            makeFlags="-k"
+            isTest="true"
+            cleanCommand="rm -rf"
+            name="Solaris"
+            isAbstract="true"
+            makeCommand="make"
+            id="solaris">
+         <tool
+               name="Compiler"
+               outputFlag="-o"
+               id="solaris.compiler">
+            <optionCategory
+                  owner="solaris.compiler"
+                  name="Optimization Options"
+                  id="solaris.compiler.optimization">
+            </optionCategory>
+            <option
+                  name="Compiler Flags"
+                  valueType="string"
+                  id="solaris.compiler.flags">
+            </option>
+            <option
+                  name="Optimization Flags"
+                  category="solaris.compiler.optimization"
+                  value="-O"
+                  valueType="string"
+                  id="solaris.compiler.optimizationFlags">
+            </option>
+         </tool>
+      </target>
+      <target
+            isTest="true"
+            name="Solaris Executable"
+            parent="solaris"
+            isAbstract="false"
+            id="solaris.exec">
+         <tool
+               name="Linker"
+               outputFlag="-o"
+               id="solaris.link">
+         </tool>
+         <configuration
+               name="Release"
+               id="Solaris.exec.release">
+         </configuration>
+         <configuration
+               name="Debug"
+               id="solaris.exec.debug">
+         </configuration>
+      </target>
+      <target
+            isTest="true"
+            name="Solaris Shared Library"
+            parent="solaris"
+            defaultExtension=".so"
+            isAbstract="false"
+            id="solaris.so">
+         <tool
+               name="Linker"
+               outputFlag="-o"
+               id="solaris.solink">
+         </tool>
+      </target>
+      <target
+            isTest="true"
+            name="Solaris Static Library"
+            parent="solaris"
+            defaultExtension=".a"
+            isAbstract="false"
+            id="solaris.lib">
+         <tool
+               name="Archiver"
+               id="solaris.ar">
          </tool>
       </target>
    </extension>

@@ -31,16 +31,18 @@ import org.w3c.dom.Node;
  */
 public class Target extends BuildObject implements ITarget {
 
-	private ITarget parent;
-	private IResource owner;
-	private List tools;
-	private Map toolMap;
-	private List configurations;
+	private String artifactName;
+	private String cleanCommand;
 	private Map configMap;
+	private List configurations;
+	private String defaultExtension;
 	private boolean isAbstract = false;
 	private boolean isTest = false;
-	private String artifactName;
-	private String defaultExtension;
+	private String makeCommand;
+	private IResource owner;
+	private ITarget parent;
+	private Map toolMap;
+	private List tools;
 
 	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
 	private static final String EMPTY_STRING = new String();
@@ -66,6 +68,8 @@ public class Target extends BuildObject implements ITarget {
 		this.artifactName = parent.getArtifactName();
 		this.defaultExtension = parent.getDefaultExtension();
 		this.isTest = parent.isTestTarget();
+		this.cleanCommand = parent.getCleanCommand();
+		this.makeCommand = parent.getMakeCommand();
 
 		// Hook me up
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner, true);
@@ -110,6 +114,20 @@ public class Target extends BuildObject implements ITarget {
 
 		// Is this a test target
 		isTest = ("true".equals(element.getAttribute("isTest")));
+		
+		// Get the clean command
+		cleanCommand = element.getAttribute("cleanCommand");
+		if (cleanCommand == null) {
+			// See if it defined in the parent
+			cleanCommand = parent.getCleanCommand();
+		}
+
+		// Get the make command
+		makeCommand = element.getAttribute("makeCommand");
+		if (makeCommand == null) {
+			// See if it defined in the parent
+			makeCommand = parent.getMakeCommand();
+		}
 
 		IConfigurationElement[] targetElements = element.getChildren();
 		for (int k = 0; k < targetElements.length; ++k) {
@@ -159,6 +177,12 @@ public class Target extends BuildObject implements ITarget {
 			
 		// Is this a test target
 		isTest = ("true".equals(element.getAttribute("isTest")));
+		
+		// Get the clean command
+		cleanCommand = element.getAttribute("cleanCommand");
+		
+		// Get the make command
+		makeCommand = element.getAttribute("makeCommand");
 	
 		Node child = element.getFirstChild();
 		while (child != null) {
@@ -184,6 +208,8 @@ public class Target extends BuildObject implements ITarget {
 		element.setAttribute("artifactName", getArtifactName());
 		element.setAttribute("defaultExtension", getDefaultExtension());
 		element.setAttribute("isTest", isTest ? "true" : "false");
+		element.setAttribute("cleanCommand", getCleanCommand());
+		element.setAttribute("makeCommand", getMakeCommand());
 				
 		if (configurations != null)
 			for (int i = 0; i < configurations.size(); ++i) {
@@ -192,6 +218,14 @@ public class Target extends BuildObject implements ITarget {
 				element.appendChild(configElement);
 				config.serialize(doc, configElement);
 			}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#getMakeCommand()
+	 */
+	public String getMakeCommand() {
+		// Return the name of the make utility
+		return makeCommand == null ? EMPTY_STRING : makeCommand;
 	}
 
 	public String getName() {
@@ -268,6 +302,14 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#getCleanCommand()
+	 */
+	public String getCleanCommand() {
+		// Return the command used to remove files
+		return cleanCommand == null ? EMPTY_STRING : cleanCommand;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getArtifactName()
 	 */
 	public String getArtifactName() {
@@ -325,4 +367,5 @@ public class Target extends BuildObject implements ITarget {
 	public void setBuildArtifact(String name) {
 		artifactName = name;		
 	}
+
 }

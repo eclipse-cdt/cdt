@@ -1,69 +1,137 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>C/C++ search page, Search dialog box</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 <body>
 
 <h1>C/C++ search page, Search dialog box</h1>
 
-<p>You can search for C/C++ elements on the C/C++ search page of the Search dialog box.</p>
-<p><img src="../images/search.png" width="256" height="197" onClick="changeSize(this,256,197);" 
-	    alt="Editor General Preferences Dialog Box" title="click to toggle image size"></p>
-<dl>
-  <dt>Search string</dt>
-  <dd>Specifies a search string.</dd>
-  <dt>Class/Struct</dt>
-  <dd>Includes classes and structs in your search.</dd>
-  <dt>Function</dt>
-  <dd>Searches for global functions or functions in a namespace 
-    (functions that are not members of a class, struct, or union).</dd>
-  <dt>Variable</dt>
-  <dd>Searches for variables that are not members of a class, 
-    struct, or union.</dd>
-  <dt>Union</dt>
-  <dd>Searches for unions.</dd>
-  <dt>Method</dt>
-  <dd>Searches for methods that are members of a class, struct, or 
-  union.</dd>
-  <dt>Field</dt>
-  <dd>Searches for fields that are members of a class, struct, or 
-    union.</dd>
-  <dt>Enumeration</dt>
-  <dd>Searches for enumerations.</dd>
-  <dt>Namespace</dt>
-  <dd>Searches for namespaces.</dd>
-  <dt>Any Element</dt>
-  <dd>Includes all elements in the search.</dd>
-  <dt>Declarations</dt>
-  <dd>Limits the search to declarations.</dd>
-  <dt>Definitions</dt>
-  <dd>Limits the search to definitions (for functions, methods, 
-  variables, and fields).</dd>
-  <dt>References</dt>
-  <dd>Limits the search to references.</dd>
-  <dt>All Occurrences</dt>
-  <dd>Includes declarations, definitions, and references in the 
-  search.</dd>
-  <dt>Workspace</dt>
-  <dd>Searches the Eclipse workspace.</dd>
-  <dt>Selected Resources</dt>
-  <dd>Includes selected resources in the search.</dd>
-  <dt>Working Set</dt>
-  <dd>Specifies a working set to search.</dd>
-</dl>
+<p><img src="../images/search.png" alt="Search Dialog Box" ></p>
+<p>
+ <dt>Search string</dt>
+ <dd>Specifies a search string.</dd>
+ <dd>The search functions support the following wildcards:</dd>
+	<ul>
+		<dd><li>Use * to represent any series of characters</li></dd>
+		<dd><li>Use ? to represent any single character</li></dd>
+		<dd><li>Use \* to find an asterisk character (*)</li></dd>
+		<dd><li>Use \? to find a question mark</li></dd>
+		<dd><li>Use \\ to find a backslash character (\).</li></dd>
+	</ul></p>
+ 
+ <dt>Case sensitive</dt>
+ <dd>Searches will return results which match capitalization specified in the search string precisely.</dd><br>
+ <dt>Search for</dt>
+	<dd>Specify the types of elements to include in the search:<dd><br>
+
+	<dd><table border="1" cellspacing="0">
+	 <tr>
+ 		<th>Search for</th>
+ 		<th>Description</th>
+	</tr> 
+	 <tr>
+	 	<td><b>Class/Struct</b></td>
+		<td>Includes classes and structs in your search.</td>
+	</tr>
+	<tr>	
+		<td><b>Function</b></td>
+		<td>Searches for global functions or functions in a namespace (functions that are not members of a class, struct, or union).</td>
+	</tr>
+	<tr>
+		<td><b>Variable</b></td>
+		<td>Searches for variables that are not members of a class, struct, or union.</td>
+	</tr>
+	<tr>
+		<td><b>Union</b></td>
+		<td>Searches for unions.</td>
+	</tr>
+		<td><b>Method</b></td>
+		<td>Searches for methods that are members of a class, struct, or union.</td>
+	</tr>
+	<tr>
+		<td><b>Field</b></td>
+		<td>Searches for fields that are members of a class, struct, or union.</td>
+	</tr>
+	<tr>
+		<td><b>Enumeration</b></td>
+		<td>Searches for enumerations.</td>
+	</tr>
+	<tr>
+		<td><b>Namespace</b></td>
+		<td>Searches for namespaces.</td>
+	</tr>
+	<tr>
+		<td><b>Any Element</b></td>
+		<td>Includes all elements in the search.</td>
+	</tr>
+	</table></dd><br>
+
+ <dt>Limit to</dt>
+ 
+	<dd>Specify the types of context to search:<dd><br>
+	<dd><table border="1" cellspacing="0">
+	 <tr>
+ 		<th>Limit to</th>
+ 		<th>Description</th>
+	</tr> 
+
+	<tr>
+		<td><b>Declarations</b></td>
+		<td>Limits the search to declarations.</td>
+	</tr>
+	<tr>
+		<td><b>Definitions</b></td>
+		<td>Limits the search to definitions (for functions, methods, variables, and fields).</td>
+	</tr>
+	<tr>
+		<td><b>References</b></td>
+		<td>Limits the search to references.</td>
+	</tr>
+	<tr>
+		<td><b>All Occurrences</b></td>
+		<td>Includes declarations, definitions, and references in the search.</td>
+	</tr>
+	</table></dd><br>
+
+ <dt>Scope</dt>
+	<dd>Choose the scope of the search:<dd><br>
+	<dd><table border="1" cellspacing="0">
+	 <tr>
+	 	<th>Scope</th>
+		<th>Availability</th>
+	 	<th>Description</th>
+	</tr>
+	<tr>
+		<td><b>Workspace</b></td>
+		<td>all elements</td>
+		<td>Searches in the full workspace</td>
+	</tr>
+	<tr>
+		<td><b>Selected Resources</b></td>
+		<td>all elements</td>
+		<td>Searches the project selected in the <b>Projects</b> view</td>
+	</tr>
+	<tr>
+		<td><b>Enclosing Projects</b></td>
+		<td>all elements</td>
+		<td>Searches the projects selected in the <b>Projects</b> view including linked projects</td>
+	</tr>
+	<tr>
+		<td><b>Workings Set</b></td>
+		<td>all elements</td>
+		<td>Searches in a working set</td> 
+	</tr>
+</table></dd><br>
+<dd>Scopes can be saved and names in the working set dialog. Existing instances of working sets are also available in the Search Scope submenu.</dd>
+</p>
+
+
+
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a><br>
@@ -73,9 +141,14 @@ function changeSize(theImage,wd,ht) {
 <a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
-<a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
-<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">  
+<a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a><br>
+<a href="cdt_u_m_search.htm">Search action</a><br>
+<a href="cdt_u_search_view.htm">Search view</a></p>
 
+<p>
+<img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement" BORDER=0 width="300" height="14">  <br>
+<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">  
+</p>
 </body>
 
 </html>

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>C/C++ Problems view</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript">
+	function changeSize(theImage,wd,ht) {
+		wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+		if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}	
+		else {wdth=wd;hght=ht;}
+		theImage.style.width=wdth; theImage.style.height=hght;
+	}
+	</script>
+</head>
+<body>
+
+<h1>Problems view</h1>
+
+<p>If you encounter any errors during a build they will be displayed in the <b>Problems</b> view.  </p>
+
+<p><img src="../images/view_problem.png" alt="Problems View" ></p>
+
+<p>Errors are passed up from your C++ compiler. The <b>Problems</b> view lists the error, filename and folder.  
+If you can select an error the associated file will open in the <b>C/C++ Editor</b> view and the cursor will display the line where the error was encountered.</p>
+
+<p><img src="../images/cdt_error_workbench.png" width="400" height="300" onClick="changeSize(this,400,300);" 
+	     alt="C/C++ Perspective in Eclipse showing code errors" title="click to toggle image size"></p>
+
+<h2>Problems view Toolbar</h2>
+
+<table border="1" cellpadding="1" cellspacing="0">
+	<tr><th>Icon</th><th>Command</th><th>Description</th></tr>
+	<tr>
+		<td align="center" valign="top"><img src="../images/icon_delete.png"></td>	
+		<td valign="top">Delete</td>
+		<td valign="top">Deletes the selected error from the Problems view.</td>
+	</tr>
+	<tr>
+		<td align="center" valign="top"><img src="../images/icon_filter.png"></td>
+		<td valign="top">Filters...</td>
+		<td valign="top">Lauches the Filter dialog box to filter the errors in the problems view.</td>
+	</tr>
+	<tr>
+		<td align="center" valign="top"><img src="../images/icon_menu.png"></td>
+		<td valign="top">Menu</td>
+		<td valign="top">Select the Sort or Filters help navigate through errors in the Problems view.</td>
+	</tr>
+	<tr>
+		<td align="center" valign="top"><img src="../images/icon_con_min.png"></td>
+		<td valign="top">Minimize</td>
+		<td valign="top">Minimizes the Problems view.</td>
+	</tr>
+	<tr>
+		<td align="center" valign="top"><img src="../images/icon_con_max.png"></td>
+		<td valign="top">Maximize</td>
+		<td valign="top">Maximizes the Problems view.</td>
+	</tr>
+</table>
+
+<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> </p>
+<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"> </p>
+<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"></p>
+
+<p>
+<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">  
+</p>
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Window Menu</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript">
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
+</head>
+<body>
+<h1>Window menu</h1>
+
+<p>This menu allows you to display, hide, and otherwise manipulate the various views, perspectives, and actions in the Workbench</p>
+<p><img src="../images/cdt_menu_window.png" alt="Window Menu" ></p>
+<p>
+<table border="1" cellspacing="0" cellpadding="3">
+	<tr><th>Name</th><th>Function</th><th>Keyboard Shortcut</th></tr>
+
+	<tr>
+		<td><b>New Window</b></td>
+		<td>Window menu commands: </td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Open Perspective</b></td>
+		<td>This command opens a new perspective in this Workbench window. 
+				This preference can be changed in the <b>Window &gt; Preferences &gt; Workbench &gt; Perspectives</b> page. 
+				All of the perspectives that are open within the Workbench window are shown on the shortcut bar. 
+				The perspectives you will likely want to open are listed first.This list is dependent on the current perspective. 
+				From the <b>Other...</b> submenu you can open any perspective.</td>
+		<td>&nbsp;</td>
+	</tr>
+	
+	<tr>
+		<td><b>Show View</b></td>
+		<td>This command displays the selected view in the current perspective. 
+				You can configure how views are opened in the <b>Window &gt; Preferences &gt; Workbench &gt; Perspectives page</b>. 
+				Views you are likely to want to open are listed first.This list is dependent on the current perspective. 
+				From the <b>Other...</b> submenu you can open any view. 
+				The views are sorted into categories in the Show View dialog.</td>
+		<td>&nbsp;</td>
+	</tr>
+	
+	<tr>
+		<td><b>Show/Hide Editors</b></td>
+		<td>This command can be toggled to show or hide the editor area in the active perspective.</td>
+		<td>&nbsp;</td>
+	</tr>
+	
+	<tr>
+		<td><b>Lock the Toolbars</b></td>
+		<td>This command toggles whether or not the Workbench tool bar can be manually reorganized.</td>
+		<td>&nbsp;</td>
+	</tr>
+	
+	<tr>
+		<td><b>Customize Perspective</b></td>
+		<td>Each perspective includes a predefined set of actions that are accessible from the menu bar and Workbench toolbar.
+				Related actions are grouped into action sets. 
+				This command allows you to customize the current perspective by showing or hiding various action sets. 
+				The first three (<b>File &gt; New</b>, <b>Window &gt; Open Perspective</b>, <b>Window &gt; Show View</b>) control which actions appear as top level items in their respective menus. 
+				The last category (<b>Other</b>) controls which action sets are visible in the perspective.</td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Save Perspective As</b></td>
+		<td>This command allows you to save the current perspective, creating your own custom perspective. 
+				You can open more perspectives of this type using the <b>Window &gt; Open Perspective &gt; Other</b> menu item once you have saved a perspective.</td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Reset Perspective</b></td>
+		<td>This command changes the layout of the current perspective to its original configuration.</td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Close Perspective</b></td>
+		<td>This command closes the active perspective.</td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Close All Perspectives</b></td>
+<td>This command closes all open perspectives in the Workbench window.</td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Navigation</b></td>
+		<td>This submenu contains shortcut keys for navigating between the views, perspectives, and editors in the Workbench window.
+		<ul>
+			<li><b>Show System Menu</b>: Shows the menu that is used for resizing, closing or pinning the current view or editor.</li>
+			<li><b>Show View Menu</b>: Shows the drop down menu that is available in the toolbar of the active view.</li>
+			<li><b>Mazimize Active View or Editor</b>: Mazimizes the current view or editor to fill the workbench.</li>
+			<li><b>Activate Editor</b>: Makes the current editor active.</li>
+			<li><b>Next Editor</b>: Activates the next open editor in the list of most recently used editors.</li>
+			<li><b>Previous Editor</b>: Activates the previous open editor in the list of most recently used editors.</li>
+			<li><b>Next View</b>: Activates the next open view in the list of most recently used views.</li>
+			<li><b>Previous View</b>: Activates the previous open editor in the list of most recently used editors.</li>
+			<li><b>Next Perspective</b>: Activates the next open perspective in the list of most recently used perspectives.</li>
+			<li><b>Previous Perspective</b>: Activates the previous open perspective in the list of most recently used perspectives.</li>
+		</ul>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td><b>Switch to Editor</b></td>
+		<td>Opens a dialog that allows you to manage all editors that are open, and rapidly switch to other open editors.  Here is what the switch editors dialog looks like:
+		<ul>
+			<li><b>Switch to Editor</b>: By selecting an editor from the list and hitting OK, that editor will be made active. If the chosen editor is in a different window or perspective, that window and perspective will be made active</li>
+			<li><b>Close Selected Editors</b>: Closes all editors selected in the list.</li>
+			<li><b>Save Selected Editors</b>: Saves the contents of all editors selected in the list.</li>
+			<li><b>Select Clean Editors</b>: Selects the editors in the list that have not been modified since their last save.</li>
+			<li><b>Invert Selection</b>: Reverses the selection in the list of editors.</li>
+		</ul>
+		<td>Ctrl + Shift + E</td>
+	</tr>
+
+	<tr>
+		<td><b>Preferences</b></td>
+		<td>This command allows you to indicate your preferences for using the Workbench.  	
+				There are a wide variety of preferences for configuring the appearance of the Workbench and its views, and for customizing the behavior of all tools that are installed in the Workbench.
+				See the <a href="cdt_u_c_pref.htm">C/C++ Page Preference Window</a> section for more details on the CDT preferences.</td>
+		<td>&nbsp;</td>
+	</tr>
+ </table></p>
+
+<p>
+<img src="../images/rh03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="300" height="14"><br>
+<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
+</p>
+
+</BODY>
+</HTML>

@@ -3,24 +3,31 @@
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
 <toc label="Concepts">
-          <topic label="CDT overview" href="concepts/cdt_c_over_cdt.htm"/>
-          <topic label="CDT Projects" href="concepts/cdt_o_projects.htm">
-               <topic label="CDT projects" href="concepts/cdt_c_projects.htm"/>
-               <topic label="Project file views" href="concepts/cdt_c_proj_file_views.htm"/>
-          </topic>
-          <topic label="Coding aids" href="concepts/cdt_o_code_entry.htm">
-               <topic label="Outline view" href="concepts/cdt_c_outlineview.htm"/>
-               <topic label="Comments" href="concepts/cdt_c_comments.htm"/>
-               <topic label="Content assist" href="concepts/cdt_c_content_assist.htm"/>
-               <topic label="C/C ++ search" href="concepts/cdt_c_search.htm"/>
-               <topic label="Open declarations" href="concepts/cdt_c_open_declarations.htm"/>
-          </topic>
-          <topic label="Build" href="concepts/cdt_o_build_conc.htm">
-               <topic label="Build overview" href="concepts/cdt_c_build_over.htm"/>
-		   <topic label="Manage Build Extensibility Document" href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Reference%20Documents/Managed_Build/Managed_Build_Extensibility.html?cvsroot=Tools_Project"/>
-          </topic>
-          <topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
-               <topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/>
-               <topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/>
-          </topic>
+	<topic label="CDT Overview" href="cdt_c_over_cdt.htm"/> 
+	<topic label="CDT Projects" href="cdt_c_projects.htm"/> 
+	<topic label="CDT Perspectives" href="cdt_c_perspectives.htm"/> 
+	<topic label="CDT Views" href="cdt_c_views.htm"/> 
+	<topic label="Code aids" href="cdt_o_code_entry.htm">
+		<topic label="Comments" href="cdt_c_comments.htm"/>
+		<topic label="Content Assist" href="cdt_c_content_assist.htm"/>
+		<topic label="Templates" href="cdt_c_templates.htm"/> 
+	</topic>
+	<topic label="Editing" href="cdt_o_edit.htm"> 
+		<topic label="Editor View" href="cdt_c_editor.htm"/>
+	</topic>
+	<topic label="Navigation aids" href="cdt_o_nav.htm"> 
+		<topic label="Outline View" href="cdt_c_outlineview.htm"/> 
+		<topic label="Project File views" href="cdt_c_proj_file_views.htm"/> 
+		<topic label="C/C++ search" href="cdt_c_search.htm"/> 
+		<topic label="Open declarations" href="cdt_c_open_declarations.htm"/> 
+	</topic>
+	<topic label="Build" href="cdt_o_build_conc.htm"> 
+		<topic label="Building C/C++ Projects" href="cdt_c_build_over.htm"/> 
+		<topic label="Manage Build Extensibility Document" href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Reference%20Documents/Managed_Build/Managed_Build_Extensibility.html?cvsroot=Tools_Project"/>
+	</topic>
+	<topic label="Debug" href="cdt_o_dbg_concepts.htm">
+		<topic label="Adding Break Points" href="cdt_c_brkpnts.htm"/> 
+		<topic label="Debug overview" href="cdt_c_over_dbg.htm"/> 
+		<topic label="Debug information" href="cdt_c_dbg_info.htm"/> 
+	</topic>
 </toc>

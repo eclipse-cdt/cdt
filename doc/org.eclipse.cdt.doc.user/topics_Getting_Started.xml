@@ -2,14 +2,9 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
-<toc label="Tutorial">
+<toc label="Getting Started">
           <topic label="Managed Make Hello World Tutorial" href="getting_started/cdt_w_basic.htm"/>
           <topic label="Standard Make Hello World Tutorial" href="getting_started/cdt_w_standard.htm"/>
-          <topic label="Creating your project" href="getting_started/cdt_w_newproj.htm"/>
-          <topic label="Creating your C++ file" href="getting_started/cdt_w_newcpp.htm"/>
-          <topic label="Creating your makefile" href="getting_started/cdt_w_newmake.htm"/>
-          <topic label="Building your project" href="getting_started/cdt_w_build.htm"/>
-          <topic label="Debugging your project" href="getting_started/cdt_w_debug.htm"/>
           <topic label="How to bring C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>
           <topic label="Updating the CDT" href="getting_started/cdt_w_install_cdt.htm"/>
 </toc>

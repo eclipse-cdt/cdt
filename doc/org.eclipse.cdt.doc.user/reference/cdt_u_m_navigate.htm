@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Navigate Menu actions</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript">
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
+</head>
+<body>
+
+<h1>Navigate Menu actions</h1>
+<p>Navigate menu commands: </p>
+
+<p><img src="../images/cdt_menu_navigate.png" alt="Selecting Navigate Menu" ></p>
+<p>
+<table border="1" cellspacing="0" cellpadding="3">
+<tbody>
+<tr>
+<th>Name</th><th>Function</th><th>Keyboard Shortcut</th>
+</tr>
+
+<tr>
+<td valign="top"><b>Go Into</b></td>
+<td valign="top">Sets the view input to the currently selected element.</td>
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td valign="top"><b>Go To</b></td>
+<td valign="top">
+<ul>
+<li>Back: Sets the view input to the input back in history.
+Enabled only when a history exists (<strong>Go Into</strong> was used).</li>
+<li>Forward: Sets the view input to the input forward in history.
+Enabled only when a history exists (<strong>Go Into</strong> or 
+<strong>GoTo &gt; Back</strong> were used).</li>
+<li>Up One Level: Sets the input of the current view to its input's parent element.</li>
+</ul>
+</td>
+<td>&nbsp;</td>
+</tr>
+
+
+<tr>
+<td valign="top"><span class="guilabel">Next</span></td>
+<td valign="top">The &quot;next&quot; definition is based on
+where the focus is.
+For example, during a search this entry becomes <span class="guilabel">Next Match</span>.
+</td>
+<td>[Ctrl]+[.]</td>
+</tr>
+
+<tr>
+<td><span class="guilabel">Previous</span></td>
+<td>The &quot;previous&quot; definition is based on
+where the focus is.
+For example, during a search this entry becomes <span class="guilabel">Previous Match</span>.</td>
+<td>[Ctrl]+[,]</td>
+</tr>
+
+<tr>
+<td valign="top"><span class="guilabel">Go to Last Edit Location</span></td>
+<td valign="top">Moves the cursor to the line that contains the last edit.
+Editor only.</td>
+<td valign="top">[Ctrl]+[Q]</td>
+</tr>
+ 
+<tr>
+<td valign="top"><span class="guilabel">Go to Line</span></td>
+<td valign="top">Open a dialog where you can specify the line number 
+to which to move the cursor. 
+Editor only.</td>
+<td valign="top">[Ctrl]+[L]</td>
+</tr>
+ 
+<tr>
+<td valign="top"><span class="guilabel">Back</span></td>
+<td valign="top">Moves the focus to the previous file.
+Editor only.</td>
+<td valign="top">[Ctrl]+[Q]</td>
+</tr>
+ 
+<tr>
+<td valign="top"><span class="guilabel">Forward</span></td>
+<td valign="top">Returns the focus from the previous file.
+Editor only.</td>
+<td valign="top">[Ctrl]+[Q]</td>
+</tr>
+
+</tbody>
+</table>
+</p>
+
+<p class="note"><span class="notetitle">Note: </span>
+Other <span class="guilabel">Navigate</span> options are used with the JDT.
+Refer to the <i>Java Development User Guide</i> for details.
+</p>
+
+<p>
+<img src="../images/rh03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="300" height="14"><br>
+<img src="../images/ng03_04.gif" ALT="IBM Copyright Statement" BORDER=0 width="324" height="14">
+</p>
+</body>
+</html>

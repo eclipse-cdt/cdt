@@ -5,6 +5,7 @@
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -28,7 +29,7 @@ public interface ICDebugPreferenceConstants {
 	 * The default values for the memory view parameters.
 	 */
 	public static final String DEFAULT_MEMORY_PADDING_CHAR = "."; //$NON-NLS-1$
-	public static final FontData DEFAULT_MEMORY_FONT = Display.getDefault().getSystemFont().getFontData()[0];
+	public static final FontData DEFAULT_MEMORY_FONT = JFaceResources.getTextFont().getFontData()[0];
 	public static final RGB DEFAULT_MEMORY_FOREGROUND_RGB = Display.getCurrent().getSystemColor( SWT.COLOR_LIST_FOREGROUND ).getRGB();
 	public static final RGB DEFAULT_MEMORY_BACKGROUND_RGB = Display.getCurrent().getSystemColor( SWT.COLOR_LIST_BACKGROUND ).getRGB();
 	public static final RGB DEFAULT_MEMORY_ADDRESS_RGB = Display.getCurrent().getSystemColor( SWT.COLOR_DARK_GRAY ).getRGB();

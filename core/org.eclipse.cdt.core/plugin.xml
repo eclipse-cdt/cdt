@@ -247,7 +247,7 @@
             id="org.eclipse.cdt.core.language.cxx">
       </language>
       <language
-            name="Assembly"
+            name="%fileTypeMapping.AssemblyLanguage"
             id="org.eclipse.cdt.core.language.asm">
       </language>
    </extension>

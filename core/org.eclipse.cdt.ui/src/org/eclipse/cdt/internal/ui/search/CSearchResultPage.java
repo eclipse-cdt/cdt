@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.search.internal.ui.text.DelegatingLabelProvider;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
@@ -93,7 +92,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	 */
 	protected void configureTreeViewer(TreeViewer viewer) {
 		//viewer.setSorter(new ViewerSorter());
-		viewer.setLabelProvider(new CSearchResultLabelProvider());
+		viewer.setLabelProvider(new CountLabelProvider(this,new CSearchResultLabelProvider()));
 		_contentProvider= new LevelTreeContentProvider(viewer, _currentGrouping);
 		viewer.setContentProvider(_contentProvider);
 	}
@@ -101,7 +100,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
 	 */
 	protected void configureTableViewer(TableViewer viewer) {
-		viewer.setLabelProvider(new DelegatingLabelProvider(this, new CSearchResultLabelProvider()));
+		viewer.setLabelProvider(new CountLabelProvider(this, new CSearchResultLabelProvider()));
 		_contentProvider=new CSearchTableContentProvider(viewer);
 		viewer.setContentProvider(_contentProvider);
 		//setSortOrder(_currentSortOrder);

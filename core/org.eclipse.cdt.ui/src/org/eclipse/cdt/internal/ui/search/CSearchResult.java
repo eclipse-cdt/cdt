@@ -144,6 +144,13 @@ public class CSearchResult extends AbstractTextSearchResult {
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
 	 */
 	public String getLabel() {
-		return cQuery.getLabel();
+		int matches = getMatchCount();
+		String label = null;
+		if (matches == 1)
+			return cQuery.getSingularLabel();
+		else
+			label = cQuery.getPluralLabelPattern();
+		
+		return MessageFormat.format(label, new Object[]{new Integer(matches)});
 	}
 }

@@ -173,6 +173,7 @@ public class CPluginImages {
 
 	public static final ImageDescriptor DESC_TOOL_NEWCLASS= create(T_TOOL, "newclass_wiz.gif"); 				//$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_WIZBAN_ADD_LIBRARY = create(T_WIZBAN, "addpath_wiz.gif"); //$NON-NLS-1$
 	// For the build image
 	public static final String IMG_OBJS_BUILD= NAME_PREFIX + "build_menu.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_MENU = createManaged(T_OBJ, IMG_OBJS_BUILD);

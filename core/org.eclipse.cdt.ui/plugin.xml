@@ -31,6 +31,8 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
+   <extension-point id="CPathContainerPage" name="%CPathContainerPageExtensionPoint" schema="schema/CPathContainerPage.exsd"/>
+   
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -231,7 +230,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		treeWidget.setFont(composite.getFont());
 
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(NewWizardMessages.getString("MultipleFolderSelectionDialog.button")); //$NON-NLS-1$
+		button.setText(CPathEntryMessages.getString("MultipleFolderSelectionDialog.button")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent event) {

@@ -1,10 +1,25 @@
+2004-05-15 David Inglis
+
+	Work in Progress - start of new C Path Container Wizard
+	
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/AbstractPathOptionBlock.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/ExtendedCPathBasePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/MultipleFolderSelectionDialog.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/NewSourceFolderDialog.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewWizardMessages.properties
+	* icons/full/wizban/addpath_wiz.gif
+
 2004-04-15 David Inglis
 
 	simple refactor
 	
-	 - refactor/org/eclipse/cdt/internal/ui/refactoring/ListContentProvider.java
-	 * refactor/org/eclipse/cdt/internal/ui/refactoring/RefactoringSaveHelper.java
-	 + src/org/eclipse/cdt/internal/ui/viewsupport/ListContentProvider.java
+	- refactor/org/eclipse/cdt/internal/ui/refactoring/ListContentProvider.java
+	* refactor/org/eclipse/cdt/internal/ui/refactoring/RefactoringSaveHelper.java
+	+ src/org/eclipse/cdt/internal/ui/viewsupport/ListContentProvider.java
 
 2004-04-15 Chris Wiebe
 

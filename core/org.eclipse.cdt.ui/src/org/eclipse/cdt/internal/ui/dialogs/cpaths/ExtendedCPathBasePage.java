@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
@@ -40,9 +41,10 @@ import org.eclipse.swt.widgets.Display;
 
 public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
-	ListDialogField fPathList;
-	TreeListDialogField fSrcList;
-	List fCPathList;
+	protected ListDialogField fPathList;
+	protected TreeListDialogField fSrcList;
+	protected List fCPathList;
+	protected ICProject fCurrCProject;
 
 	private static final int IDX_ADD = 0;
 	private static final int IDX_ADD_WORKSPACE = 1;
@@ -173,6 +175,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	}
 
 	public void init(ICProject project, List cPaths) {
+		fCurrCProject = project;
 		List list = new ArrayList(project.getChildrenOfType(ICElement.C_CCONTAINER));
 		int i;
 		for (i = 0; i < list.size(); i++) {
@@ -193,6 +196,15 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		return fCPathList;
 	}
 
+	protected IPathEntry[] getRawClasspath() {
+		IPathEntry[] currEntries= new IPathEntry[fCPathList.size()];
+		for (int i= 0; i < currEntries.length; i++) {
+			CPListElement curr= (CPListElement) fCPathList.get(i);
+			currEntries[i]= curr.getPathEntry();
+		}
+		return currEntries;
+	}
+	
 	public List getSelection() {
 		return fSrcList.getSelectedElements();
 	}

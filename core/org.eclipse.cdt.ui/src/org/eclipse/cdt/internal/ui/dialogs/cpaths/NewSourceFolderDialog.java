@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
@@ -51,16 +50,16 @@ public class NewSourceFolderDialog extends StatusDialog {
 		SourceContainerAdapter adapter = new SourceContainerAdapter();
 
 		fUseProjectButton = new SelectionButtonDialogField(SWT.RADIO);
-		fUseProjectButton.setLabelText(NewWizardMessages.getString("NewSourceFolderDialog.useproject.button")); //$NON-NLS-1$
+		fUseProjectButton.setLabelText(CPathEntryMessages.getString("NewSourceFolderDialog.useproject.button")); //$NON-NLS-1$
 		fUseProjectButton.setDialogFieldListener(adapter);
 
 		fUseFolderButton = new SelectionButtonDialogField(SWT.RADIO);
-		fUseFolderButton.setLabelText(NewWizardMessages.getString("NewSourceFolderDialog.usefolder.button")); //$NON-NLS-1$
+		fUseFolderButton.setLabelText(CPathEntryMessages.getString("NewSourceFolderDialog.usefolder.button")); //$NON-NLS-1$
 		fUseFolderButton.setDialogFieldListener(adapter);
 
 		fContainerDialogField = new StringDialogField();
 		fContainerDialogField.setDialogFieldListener(adapter);
-		fContainerDialogField.setLabelText(NewWizardMessages.getString("NewSourceFolderDialog.sourcefolder.label")); //$NON-NLS-1$
+		fContainerDialogField.setLabelText(CPathEntryMessages.getString("NewSourceFolderDialog.sourcefolder.label")); //$NON-NLS-1$
 
 		fUseFolderButton.attachDialogField(fContainerDialogField);
 
@@ -139,7 +138,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 		if (fUseFolderButton.isSelected()) {
 			String pathStr = fContainerDialogField.getText();
 			if (pathStr.length() == 0) {
-				fContainerFieldStatus.setError(NewWizardMessages.getString("NewSourceFolderDialog.error.enterpath")); //$NON-NLS-1$
+				fContainerFieldStatus.setError(CPathEntryMessages.getString("NewSourceFolderDialog.error.enterpath")); //$NON-NLS-1$
 				return;
 			}
 			IPath path = fCurrProject.getFullPath().append(pathStr);
@@ -147,7 +146,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 
 			IStatus pathValidation = workspace.validatePath(path.toString(), IResource.FOLDER);
 			if (!pathValidation.isOK()) {
-				fContainerFieldStatus.setError(NewWizardMessages.getFormattedString("NewSourceFolderDialog.error.invalidpath", //$NON-NLS-1$
+				fContainerFieldStatus.setError(CPathEntryMessages.getFormattedString("NewSourceFolderDialog.error.invalidpath", //$NON-NLS-1$
 						pathValidation.getMessage()));
 				return;
 			}
@@ -156,7 +155,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 			folder = fCurrProject;
 		}
 		if (isExisting(folder)) {
-			fContainerFieldStatus.setError(NewWizardMessages.getString("NewSourceFolderDialog.error.pathexists")); //$NON-NLS-1$
+			fContainerFieldStatus.setError(CPathEntryMessages.getString("NewSourceFolderDialog.error.pathexists")); //$NON-NLS-1$
 			return;
 		}
 		fContainerFieldStatus.setOK();

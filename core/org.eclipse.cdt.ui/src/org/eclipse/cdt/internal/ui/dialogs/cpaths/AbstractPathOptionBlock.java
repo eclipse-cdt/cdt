@@ -21,10 +21,10 @@ import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -277,7 +277,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 			CPListElement entry = ((CPListElement) cPathEntries.get(i));
 			IResource res = entry.getResource();
 			if ((res instanceof IFolder) && !res.exists()) {
-				createFolder((IFolder) res, true, true, null);
+				CoreUtility.createFolder((IFolder) res, true, true, null);
 			}
 			cpath.add(entry.getPathEntry());
 		}
@@ -302,21 +302,6 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 			initializeTimeStamps();
 		} finally {
 			monitor.done();
-		}
-	}
-
-	/**
-	 * Creates a folder and all parent folders if not existing. Project must
-	 * exist. <code> org.eclipse.ui.dialogs.ContainerGenerator</code> is too
-	 * heavy (creates a runnable)
-	 */
-	private void createFolder(IFolder folder, boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
-		if (!folder.exists()) {
-			IContainer parent = folder.getParent();
-			if (parent instanceof IFolder) {
-				createFolder((IFolder) parent, force, local, null);
-			}
-			folder.create(force, local, monitor);
 		}
 	}
 }

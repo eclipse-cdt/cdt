@@ -153,20 +153,6 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
 //		assertFalse(i.hasNext());
 	}
-
-	public void testPredefinedSymbol_bug70928() throws Exception {
-		// GNU builtin storage class type __cdecl preceded by a custom return type 
-		try {
-			parse("typedef int size_t; \n size_t __cdecl foo(); \n");//$NON-NLS-1$
-			fail();
-		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("typedef int size_t; \n int __cdecl foo(); \n").getDeclarations();//$NON-NLS-1$
-//		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
-//		IASTFunction fd = (IASTFunction) i.next();
-//		assertFalse(i.hasNext());
-	}
 	
 	public void testUsingOverloadedName_bug71317() throws Exception {
 		// using a globaly defined function overloaded in a namespace

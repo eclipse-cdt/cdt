@@ -2075,4 +2075,13 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertTrue( i.next() instanceof IASTAbstractTypeSpecifierDeclaration );
     	assertFalse( i.hasNext() );
 	}
+    
+	public void testPredefinedSymbol_bug70928() throws Exception {
+		// GNU builtin storage class type __cdecl preceded by a custom return type 
+		Iterator i = parse("typedef int size_t; \n int __cdecl foo(); \n").getDeclarations();//$NON-NLS-1$
+		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
+		IASTFunction fd = (IASTFunction) i.next();
+		assertFalse(i.hasNext());
+	}
+
 }

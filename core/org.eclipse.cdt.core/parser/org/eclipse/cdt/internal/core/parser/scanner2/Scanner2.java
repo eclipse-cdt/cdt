@@ -1887,9 +1887,8 @@ public class Scanner2 implements IScanner, IScannerData {
 						if( buffer[ bufferPos[bufferStackPos] + 1] != '#' ){
 						    --bufferPos[bufferStackPos];
 						    return false;
-						} else {
-							++bufferPos[ bufferStackPos ];
-						}
+						} 
+						++bufferPos[ bufferStackPos ];
 				    }
 				    break;
 			}
@@ -2472,6 +2471,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	= new ObjectStyleMacro("__const".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __signed__
 	= new ObjectStyleMacro("__signed__".toCharArray(), "signed".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __cdecl = new
+		ObjectStyleMacro( "__cdecl".toCharArray(), emptyCharArray ); //$NON-NLS-1$
 	
 	private static final FunctionStyleMacro __attribute__
 		= new FunctionStyleMacro(
@@ -2501,6 +2502,7 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		// gcc extensions
 		definitions.put(__inline__.name, __inline__);
+		definitions.put(__cdecl.name, __cdecl );
 		definitions.put( __const__.name, __const__ );
 		definitions.put( __const.name, __const );
 		definitions.put(__extension__.name, __extension__);

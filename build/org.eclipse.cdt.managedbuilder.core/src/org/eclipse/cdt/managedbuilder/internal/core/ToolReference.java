@@ -232,6 +232,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputFlag()
 	 */
 	public String getOutputFlag() {
+		// The tool reference does not override this value
 		return parent.getOutputFlag();
 	}
 
@@ -239,6 +240,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutputPrefix()
 	 */
 	public String getOutputPrefix() {
+		// The tool reference does not override this value
 		return parent.getOutputPrefix();
 	}
 
@@ -253,6 +255,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getTopOptionCategory()
 	 */
 	public IOptionCategory getTopOptionCategory() {
+		// The tool reference does not override this value
 		return parent.getTopOptionCategory();
 	}
 
@@ -260,6 +263,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
 	 */
 	public boolean isHeaderFile(String ext) {
+		// The tool reference does not override this value
 		return parent.isHeaderFile(ext);
 	}
 
@@ -267,6 +271,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */
 	public boolean producesFileType(String outputExtension) {
+		// The tool reference does not override this value
 		return parent.producesFileType(outputExtension);
 	}
 
@@ -279,6 +284,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
 	 */
 	public String getId() {
+		// The tool reference does not override this value
 		return parent.getId();
 	}
 
@@ -286,23 +292,17 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
 	 */
 	public String getName() {
+		// The tool reference does not override this value
 		return parent.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setId(java.lang.String)
+	/**
+	 * Answers <code>true</code> if the reference is a reference to the 
+	 * tool specified in the argument.
+	 * 
+	 * @param target the tool that should be tested
+	 * @return boolean
 	 */
-	public void setId(String id) {
-		// Not allowed
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setName(java.lang.String)
-	 */
-	public void setName(String name) {
-		// Not allowed
-	}
-
 	public boolean references(ITool target) {
 		if (equals(target)) {
 			// we are the target
@@ -367,7 +367,16 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String extension) {
+		// The tool reference does not override this value
 		return parent.buildsFileType(extension);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
+	 */
+	public int getNatureFilter() {
+		// The tool reference does not override this value
+		return parent.getNatureFilter();
 	}
 
 	/* (non-Javadoc)
@@ -382,6 +391,7 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
 	 */
 	public String getOutputExtension(String inputExtension) {
+		// The tool reference does not override this value
 		return parent.getOutputExtension(inputExtension);
 	}
 

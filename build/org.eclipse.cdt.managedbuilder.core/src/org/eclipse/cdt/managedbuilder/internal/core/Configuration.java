@@ -15,12 +15,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -189,8 +193,50 @@ public class Configuration extends BuildObject implements IConfiguration {
 			? parent.getTools()
 			: target.getTools();
 		
+		// Validate that the tools correspond to the nature
+		IProject project = (IProject)target.getOwner();
+		if (project != null) {
+			List validTools = new ArrayList();
+			
+			// The target is associated with a real project
+			for (int i = 0; i < tools.length; ++i) {
+				ITool tool = tools[i];
+				// Make sure the tool filter and project nature agree
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						try {
+							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								validTools.add(tool);
+							}
+						} catch (CoreException e) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						try {
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								validTools.add(tool);
+							}
+						} catch (CoreException e) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						validTools.add(tool);
+						break;
+				} 
+			}
+			// Now put the valid tools back into the array
+			tools = (ITool[]) validTools.toArray(new ITool[validTools.size()]);			
+		}
+		
 		// Replace tools with local overrides
 		for (int i = 0; i < tools.length; ++i) {
+			ITool tool = tools[i];
+			if (tool == null) {
+				// May have been filtered out
+				continue;
+			}
 			ToolReference ref = getToolReference(tools[i]);
 			if (ref != null)
 				tools[i] = ref;

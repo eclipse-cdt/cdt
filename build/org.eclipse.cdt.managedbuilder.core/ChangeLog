@@ -1,3 +1,30 @@
+2003-10-01 Sean Evoy
+	Fix for bugs 43490 (trivial), 44020, and 43980.
+	Added a new field to the schema for a tool. The attribute manages a list of 
+	project natures that the tool should be filtered against in the build model 
+	and UI.
+	* schema/ManagedBuildTools.exsd
+	
+	Updated the ITool interface and its mplementors to pay attention to this new 
+	attribute when loading from a plugin file. Clients can querry for a numeric 
+	constant indicating the filter.
+	* src/org/eclipse/cdt/managedbuilder/core/ITool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java
+	
+	All the methods in managed build manager that access information stored in a tool 
+	first check that the tool is valid for the project nature.
+	*  src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	
+	Put a safety check in the option reference constructor when reading one in from 
+	a project file. I the option reference is to an option not managed by the build 
+	model, the constructor does not add itself to the runtime representation of the 
+	model.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java
+
+	In preparation for 44020, each new target created is assigned a truly random ID.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+
 2003-09-30 Sean Evoy
 	Fix for bug 41826.
 	

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -66,7 +67,13 @@ public class Target extends BuildObject implements ITarget {
 		
 		// Copy the parent's identity
 		this.parent = parent;
-		setId(parent.getId() + ".1");		
+		Random r = new Random();
+		r.setSeed(System.currentTimeMillis());
+		int id = r.nextInt();
+		if (id < 0) {
+			id *= -1;
+		}
+		setId(owner.getName() + "." + parent.getId() + "." + id);		
 		setName(parent.getName());
 		this.artifactName = parent.getArtifactName();
 		this.binaryParserId = parent.getBinaryParserId();

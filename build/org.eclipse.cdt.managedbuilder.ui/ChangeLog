@@ -1,3 +1,19 @@
+2003-10-01 Sean Evoy
+	Fix for bugs 43490 (trivial), 44020, and 43980.
+	A massive change has occurred in the plugin file. I added new C tools that apply 
+	only to projects with C natures. I also added option overrides in the default 
+	configurations for these new tools. The trivial fix for the new C project wizard 
+	involved changing the icon entry in the plugin file.
+	* plugin.xml
+
+	In preparation for 44020, each new configuration created is assigned a truly 
+	random ID.
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/NewManagedProjectWizard.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java
+	
+	Removed a tooltip that was not being populated properly.
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/CProjectPlatformPage.java
+
 2003-09-30 Sean Evoy
 	Fix for bug 41826.
 

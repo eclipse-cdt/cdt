@@ -120,6 +120,12 @@ public class OptionReference implements IOption {
 		this.owner = owner;	
 		option = owner.getTool().getOption(element.getAttribute(ID));
 		
+		// Bail now if there's no option for the reference
+		if (option == null) {
+			return;
+		}
+		
+		// Hook the reference up		
 		owner.addOptionReference(this);
 
 		// value

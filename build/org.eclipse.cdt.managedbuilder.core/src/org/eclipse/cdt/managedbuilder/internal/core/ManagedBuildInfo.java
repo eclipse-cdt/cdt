@@ -25,8 +25,12 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
@@ -34,7 +38,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
-
+	
+	// Local variables
 	private boolean isDirty;
 	private IResource owner;
 	private Map targetMap;
@@ -97,13 +102,32 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#buildsFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String srcExt) {
+		// Make sure the owner is treated as a project for the duration
+		IProject project = (IProject)owner;
+
 		// Check to see if there is a rule to build a file with this extension
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.buildsFileType(srcExt)) {
-				return true;
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							return tool.buildsFileType(srcExt);
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							return tool.buildsFileType(srcExt);
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						return tool.buildsFileType(srcExt);
+				}
+			} catch (CoreException e) {
+				continue;
 			}
 		}
 		return false;
@@ -183,12 +207,33 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getDefinedSymbols()
 	 */
 	public Map getDefinedSymbols() {
+		IProject project = (IProject)owner;
 		// Return the defined symbols for the default configuration
 		HashMap symbols = new HashMap();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+			// Now extract the valid tool's options
 			IOption[] opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
 				IOption option = opts[j];
@@ -229,20 +274,36 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getFlagsForSource(java.lang.String)
 	 */
 	public String getFlagsForSource(String extension) {
+		IProject project = (IProject)owner;
+
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.buildsFileType(extension)) {
-				String flags = new String();
 				try {
-					flags = tool.getToolFlags();
+					// Make sure the tool is right for the project
+					switch (tool.getNatureFilter()) {
+						case ITool.FILTER_C:
+							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolFlags();
+							}
+							break;
+						case ITool.FILTER_CC:
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolFlags();
+							}
+							break;
+						case ITool.FILTER_BOTH:
+							return tool.getToolFlags();
+					}
+				} catch (CoreException e) {
+					continue;
 				} catch (BuildException e) {
 					// Give it your best shot with the next tool
 					continue;
 				}
-				return flags;
 			}
 		}
 		return null;
@@ -252,8 +313,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFlags(java.lang.String)
 	 */
 	public String getFlagsForTarget(String extension) {
+		IProject project = (IProject)owner;
 		// Treat null extensions as an empty string
-		String ext = extension == null ? new String()  :  extension;
+		String ext = extension == null ? new String() : extension;
 		
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
@@ -261,14 +323,28 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.producesFileType(ext)) {
-				String flags = new String();
 				try {
-					flags = tool.getToolFlags();
+					// Make sure the tool is right for the project
+					switch (tool.getNatureFilter()) {
+						case ITool.FILTER_C:
+							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolFlags();
+							}
+							break;
+						case ITool.FILTER_CC:
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolFlags();
+							}
+							break;
+						case ITool.FILTER_BOTH:
+							return tool.getToolFlags();
+					}
+				} catch (CoreException e) {
+					continue;
 				} catch (BuildException e) {
-					// Somehow the model is out of sync for this item. Keep iterating
+					// Give it your best shot with the next tool
 					continue;
 				}
-				return flags;
 			}
 		}
 		return null;
@@ -278,6 +354,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public String[] getIncludePaths() {
+		IProject project = (IProject)owner;
+		
 		// Return the include paths for the default configuration
 		ArrayList paths = new ArrayList();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
@@ -285,6 +363,26 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		ITool[] tools = config.getTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+			// The tool checks out for this project, get its options
 			IOption[] opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
 				IOption option = opts[j];
@@ -318,12 +416,34 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getLibsForTarget(java.lang.String)
 	 */
 	public String[] getLibsForTarget(String extension) {
+		IProject project = (IProject)owner;
+		
 		ArrayList libs = new ArrayList();
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+			// The tool is OK for this project nature
 			if (tool.producesFileType(extension)) {
 				IOption[] opts = tool.getOptions();
 				// Look for the lib option type
@@ -398,14 +518,30 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputExtension(java.lang.String)
 	 */
 	public String getOutputExtension(String resourceExtension) {
+		IProject project = (IProject)owner;
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			String output = tool.getOutputExtension(resourceExtension);
-			if (output != null) {
-				return output;
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							return tool.getOutputExtension(resourceExtension);
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							return tool.getOutputExtension(resourceExtension);
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						return tool.getOutputExtension(resourceExtension);
+				}
+			} catch (CoreException e) {
+				continue;
 			}
 		}
 		return null;
@@ -415,6 +551,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
 	 */
 	public String getOutputFlag(String outputExt) {
+		IProject project = (IProject)owner;
 		// Treat null extension as an empty string
 		String ext = outputExt == null ? new String() : outputExt;
 		
@@ -424,6 +561,26 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+			// It's OK
 			if (tool.producesFileType(ext)) {
 				flags = tool.getOutputFlag();
 			}
@@ -435,6 +592,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputPrefix(java.lang.String)
 	 */
 	public String getOutputPrefix(String outputExtension) {
+		IProject project = (IProject)owner;
 		// Treat null extensions as empty string
 		String ext = outputExtension == null ? new String() : outputExtension;
 		
@@ -444,6 +602,25 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
 			if (tool.producesFileType(ext)) {
 				flags = tool.getOutputPrefix();
 			}
@@ -473,13 +650,33 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolForSource(java.lang.String)
 	 */
 	public String getToolForSource(String extension) {
+		IProject project = (IProject)owner;
+
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.buildsFileType(extension)) {
-				return tool.getToolCommand();
+				try {
+					// Make sure the tool is right for the project
+					switch (tool.getNatureFilter()) {
+						case ITool.FILTER_C:
+							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolCommand();
+							}
+							break;
+						case ITool.FILTER_CC:
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolCommand();
+							}
+							break;
+						case ITool.FILTER_BOTH:
+							return tool.getToolCommand();
+					}
+				} catch (CoreException e) {
+					continue;
+				}
 			}
 		}
 		return null;
@@ -489,6 +686,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolInvocation(java.lang.String)
 	 */
 	public String getToolForTarget(String extension) {
+		IProject project = (IProject)owner;
+
 		// Treat a null argument as an empty string
 		String ext = extension == null ? new String() : extension;
 		// Get all the tools for the current config
@@ -497,7 +696,25 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool.producesFileType(ext)) {
-				return tool.getToolCommand();
+				try {
+					// Make sure the tool is right for the project
+					switch (tool.getNatureFilter()) {
+						case ITool.FILTER_C:
+							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolCommand();
+							}
+							break;
+						case ITool.FILTER_CC:
+							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+								return tool.getToolCommand();
+							}
+							break;
+						case ITool.FILTER_BOTH:
+							return tool.getToolCommand();
+					}
+				} catch (CoreException e) {
+					continue;
+				}
 			}
 		}
 		return null;
@@ -507,12 +724,33 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getUserObjectsForTarget(java.lang.String)
 	 */
 	public String[] getUserObjectsForTarget(String extension) {
+		IProject project = (IProject)owner;
 		ArrayList objs = new ArrayList();
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (!project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (!project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							continue;
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						break;
+				}
+			} catch (CoreException e) {
+				continue;
+			}
+			// The tool is OK for this project nature
 			if (tool.producesFileType(extension)) {
 				IOption[] opts = tool.getOptions();
 				// Look for the user object option type
@@ -543,13 +781,31 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isHeaderFile(java.lang.String)
 	 */
 	public boolean isHeaderFile(String ext) {
+		IProject project = (IProject)owner;
+
 		// Check to see if there is a rule to build a file with this extension
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.isHeaderFile(ext)) {
-				return true;
+			try {
+				// Make sure the tool is right for the project
+				switch (tool.getNatureFilter()) {
+					case ITool.FILTER_C:
+						if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							return tool.isHeaderFile(ext);
+						}
+						break;
+					case ITool.FILTER_CC:
+						if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+							return tool.isHeaderFile(ext);
+						}
+						break;
+					case ITool.FILTER_BOTH:
+						return tool.isHeaderFile(ext);
+				}
+			} catch (CoreException e) {
+				continue;
 			}
 		}
 		return false;

@@ -41,6 +41,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private String command;
 	private List inputExtensions;
 	private List interfaceExtensions;
+	private int natureFilter;
 	private Map optionMap;
 	private List options;
 	private String outputExtension;
@@ -70,6 +71,18 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 		// name
 		setName(element.getAttribute(ITool.NAME));
+		
+		// Get the nature filter
+		String nature = element.getAttribute(NATURE);
+		if (nature == null || "both".equals(nature)) {
+			natureFilter = FILTER_BOTH;
+		} else if ("cnature".equals(nature)) {
+			natureFilter = FILTER_C;
+		} else if ("ccnature".equals(nature)) {
+			natureFilter = FILTER_CC;
+		} else {
+			natureFilter = FILTER_BOTH;
+		}
 		
 		// Get the supported input file extension
 		String inputs = element.getAttribute(ITool.SOURCES) == null ? 
@@ -348,6 +361,13 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 
 		myOptions.trimToSize();
 		return (IOption[])myOptions.toArray(new IOption[myOptions.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
+	 */
+	public int getNatureFilter() {
+		return natureFilter;
 	}
 
 	/* (non-Javadoc)

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -478,13 +479,17 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			SortedMap newConfigs = manageDialog.getNewConfigs();
 			Set keys = newConfigs.keySet();
 			Iterator keyIter = keys.iterator();
-			int index = selectedTarget.getConfigurations().length;
+			Random r = new Random();
+			r.setSeed(System.currentTimeMillis());
 			while (keyIter.hasNext()) {
 				String name = (String) keyIter.next();
 				IConfiguration parent = (IConfiguration) newConfigs.get(name);
 				if (parent != null) {
-					++index;
-					String newId = parent.getId() + "." + index;
+					int id = r.nextInt();
+					if (id < 0) {
+						id *= -1;
+					}
+					String newId = parent.getId() + "." + id;
 					IConfiguration newConfig = selectedTarget.createConfiguration(parent, newId);
 					newConfig.setName(name);
 					// Update the config lists

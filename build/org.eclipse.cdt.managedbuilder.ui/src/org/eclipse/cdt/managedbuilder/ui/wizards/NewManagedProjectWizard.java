@@ -11,6 +11,8 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
+import java.util.Random;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -108,14 +110,19 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			ITarget parent = targetConfigurationPage.getSelectedTarget();
 			newTarget = ManagedBuildManager.createTarget(newProject, parent);
 			if (newTarget != null) {
-				// TODO add name entry field to project
 				String artifactName = newProject.getName();
 				artifactName +=  parent.getDefaultExtension().length() == 0 ? "" : "." + parent.getDefaultExtension();
 				newTarget.setBuildArtifact(artifactName);
 				IConfiguration [] selectedConfigs = targetConfigurationPage.getSelectedConfigurations();
+				Random r = new Random();
+				r.setSeed(System.currentTimeMillis());
 				for (int i = 0; i < selectedConfigs.length; i++) {
 					IConfiguration config = selectedConfigs[i];
-					newTarget.createConfiguration(config, config.getId() + "." + i);
+					int id = r.nextInt();
+					if (id < 0) {
+						id *= -1;
+					}
+					newTarget.createConfiguration(config, config.getId() + "." + id);
 				}
 				// Now add the first config in the list as the default
 				IConfiguration[] newConfigs = newTarget.getConfigurations();

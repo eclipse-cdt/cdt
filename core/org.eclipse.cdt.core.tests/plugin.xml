@@ -40,6 +40,7 @@
             makeFlags="-k"
             osList="win32">
          <tool
+               natureFilter="cnature"
                sources="foo,bar"
                name="Root Tool"
                headerExtensions="baz"
@@ -159,6 +160,7 @@
                id="sub.config">
          </configuration>
          <tool
+               natureFilter="both"
                sources="yarf"
                name="Sub Tool"
                headerExtensions="arf,barf"
@@ -202,7 +204,7 @@
                </listOptionValue>
                <listOptionValue
 		             value="&quot;../includes&quot;"
-                     builIn="false">
+                     builtIn="false">
                </listOptionValue>
             </option>
             <option

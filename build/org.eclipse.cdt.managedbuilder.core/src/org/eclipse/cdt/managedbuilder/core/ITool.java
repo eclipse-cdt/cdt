@@ -15,8 +15,9 @@ package org.eclipse.cdt.managedbuilder.core;
  */
 public interface ITool extends IBuildObject {
 	// Schema element names
-	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
 	public static final String COMMAND = "command";	//$NON-NLS-1$
+	public static final String INTERFACE_EXTS = "headerExtensions";	//$NON-NLS-1$
+	public static final String NATURE =	"natureFilter";	//$NON-NLS-1$
 	public static final String OPTION = "option";	//$NON-NLS-1$
 	public static final String OPTION_CAT = "optionCategory";	//$NON-NLS-1$
 	public static final String OPTION_REF = "optionReference";	//$NON-NLS-1$
@@ -24,8 +25,12 @@ public interface ITool extends IBuildObject {
 	public static final String OUTPUT_PREFIX = "outputPrefix";	//$NON-NLS-1$
 	public static final String OUTPUTS = "outputs";	//$NON-NLS-1$
 	public static final String SOURCES = "sources";	//$NON-NLS-1$
-	public static final String INTERFACE_EXTS = "headerExtensions";	//$NON-NLS-1$
+	public static final String TOOL_ELEMENT_NAME = "tool";	//$NON-NLS-1$
 	public static final String WHITE_SPACE = " ";	//$NON-NLS-1$
+	
+	public static final int FILTER_C = 0;
+	public static final int FILTER_CC = 1;
+	public static final int FILTER_BOTH = 2;
 
 	/**
 	 * Return <code>true</code> if the receiver builds files with the
@@ -35,6 +40,25 @@ public interface ITool extends IBuildObject {
 	 * @return boolean
 	 */
 	public boolean buildsFileType(String extension);
+	
+	/**
+	 * Answers a constant corresponding to the project nature the tool should be used 
+	 * for. Possible answers are:
+	 *  
+	 * <dl>
+	 * <dt>ITool.FILTER_C
+	 * <dd>The tool should only be displayed for C projects. <i>Notes:</i> even 
+	 * though a C++ project has a C nature, this flag will mask the tool for C++ 
+	 * projects. 
+	 * <dt>ITool.FILTER_CC
+	 * <dd>The tool should only be displayed for C++ projects.
+	 * <dt>ITool.FILTER_BOTH
+	 * <dd>The tool should be displayed for projects with both natures.
+	 * </dl>
+	 * 
+	 * @return int
+	 */
+	public int getNatureFilter();
 
 	/**
 	 * Get a particular option.

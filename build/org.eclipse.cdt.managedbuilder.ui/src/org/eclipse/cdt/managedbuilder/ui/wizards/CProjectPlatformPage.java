@@ -91,7 +91,7 @@ public class CProjectPlatformPage extends WizardPage {
 		platformLabel.setLayoutData(new GridData());
 
 		platformSelection =	ControlFactory.createSelectCombo(composite, targetNames, null);
-		platformSelection.setToolTipText(ManagedBuilderUIPlugin.getResourceString(PLATFORM_TIP));
+//		platformSelection.setToolTipText(ManagedBuilderUIPlugin.getResourceString(PLATFORM_TIP));
 		platformSelection.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				handleTargetSelection();

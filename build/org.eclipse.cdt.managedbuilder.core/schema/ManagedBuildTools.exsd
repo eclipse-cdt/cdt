@@ -118,6 +118,23 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="natureFilter" use="required">
+            <annotation>
+               <documentation>
+                  Filter the display (and use) of the tool by the nature of the project. Selecting a value of &apos;cnature&apos; insures that the tool will be displayed IFF there is a cnature associated with the project. A ccnature will filter this tool out. If &apos;ccnature&apos; is selected, the tool will only be available for C++ projects. If &apos;both&apos; is selected, the tool will be displayed when either nature is present.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="cnature">
+                  </enumeration>
+                  <enumeration value="ccnature">
+                  </enumeration>
+                  <enumeration value="both">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

@@ -286,11 +286,8 @@ public class ManagedBuildTests extends TestCase {
 	 * 
 	 */
 	public void testConfigurations() throws CoreException, BuildException {
-		String rootConfigId = "test.root.1.0";
 		String rootName = "Root Config";
-		String overrideConfigId = "test.root.1.1";
 		String overrideName = "Root Override Config";
-		String completeOverrideConfigId = "test.root.1.2";
 		String completeOverrideName = "Complete Override Config";
 		
 		// Open the test project
@@ -303,11 +300,8 @@ public class ManagedBuildTests extends TestCase {
 		IConfiguration[] definedConfigs = rootTarget.getConfigurations(); 		
 		assertEquals(3, definedConfigs.length);
 		IConfiguration baseConfig = definedConfigs[0];
-		assertEquals(definedConfigs[0].getId(), rootConfigId);
 		assertEquals(definedConfigs[0].getName(), rootName);
-		assertEquals(definedConfigs[1].getId(), overrideConfigId);
 		assertEquals(definedConfigs[1].getName(), overrideName);
-		assertEquals(definedConfigs[2].getId(), completeOverrideConfigId);
 		assertEquals(definedConfigs[2].getName(), completeOverrideName);
 		
 		// Create a new configuration and test the rename function
@@ -355,9 +349,7 @@ public class ManagedBuildTests extends TestCase {
 		rootTarget.removeConfiguration(testConfigId);
 		definedConfigs = rootTarget.getConfigurations(); 		
 		assertEquals(3, definedConfigs.length);
-		assertEquals(definedConfigs[0].getId(), rootConfigId);
 		assertEquals(definedConfigs[0].getName(), rootName);
-		assertEquals(definedConfigs[1].getId(), overrideConfigId);
 		assertEquals(definedConfigs[1].getName(), overrideName);
 	}
 	
@@ -522,10 +514,8 @@ public class ManagedBuildTests extends TestCase {
 		// There should be a default configuration defined for the project
 		ITarget buildTarget = info.getDefaultTarget();
 		assertNotNull(buildTarget);
-		assertEquals(buildTarget.getId(), "test.root.1");
 		IConfiguration buildConfig = info.getDefaultConfiguration(buildTarget);
 		assertNotNull(buildConfig);
-		assertEquals(buildConfig.getId(), "test.root.1.0");
 				
 		// The default target should be the same as the one-and-only target in the project
 		List targets = info.getTargets();
@@ -705,7 +695,8 @@ public class ManagedBuildTests extends TestCase {
 		// The root tool defines one valid header file extension
 		assertTrue(rootTool.isHeaderFile("baz"));
 		assertTrue(tools[0].isHeaderFile("baz"));
-
+		assertEquals(ITool.FILTER_C, rootTool.getNatureFilter());
+		
 		// Partially Overriden Configuration
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
@@ -834,7 +825,8 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("lib", subTool.getOutputPrefix());
 		assertTrue(subTool.isHeaderFile("arf"));
 		assertTrue(subTool.isHeaderFile("barf"));
-
+		assertEquals(ITool.FILTER_BOTH, subTool.getNatureFilter());
+		
 		// Do a sanity check on the options 
 		assertEquals("Include Paths", subOpts[0].getName());
 		assertEquals(IOption.INCLUDE_PATH, subOpts[0].getValueType());

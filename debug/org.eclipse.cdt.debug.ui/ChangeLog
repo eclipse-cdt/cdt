@@ -1,4 +1,8 @@
 2003-04-21 Mikhail Khodjaiants
+	Fix for bug 36682.
+	* CDTDebugModelPresentation.java
+
+2003-04-21 Mikhail Khodjaiants
 	Temporary fix for character values.
 	* CDTDebugModelPresentation.java
 

@@ -485,7 +485,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			if ( isShowVariableTypeNames() )
 			{
-				label += var.getReferenceTypeName() + " ";
+				String type = getVariableTypeName( var );
+				if ( type != null && type.length() > 0 )
+					label += type + " ";
 			}
 			label += var.getName();
 			IValue value = var.getValue();
@@ -930,5 +932,24 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 		}
 		return result;
+	}
+
+	private String getVariableTypeName( IVariable variable )
+	{
+		String type = null;
+		try
+		{
+			type = variable.getReferenceTypeName();
+			if ( type != null )
+			{
+				int index = type.indexOf( '[' );
+				if ( index != -1 )
+					return type.substring( 0, index ).trim();
+			}
+		}
+		catch( DebugException e )
+		{
+		}
+		return type;
 	}
 }

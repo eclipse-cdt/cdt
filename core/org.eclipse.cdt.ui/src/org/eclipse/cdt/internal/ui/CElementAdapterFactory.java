@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.ResourcePropertySource;
@@ -26,11 +27,13 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		IPropertySource.class,
 		IResource.class,
 		IWorkbenchAdapter.class,
+		IDeferredWorkbenchAdapter.class,
 		IProject.class,
 		IWorkspaceRoot.class
 	};
 	
 	private static CWorkbenchAdapter fgCWorkbenchAdapter= new CWorkbenchAdapter();
+	private static DeferredCWorkbenchAdapter fgDeferredCWorkbenchAdapter= new DeferredCWorkbenchAdapter();
 	
 	/**
 	 * @see CElementAdapterFactory#getAdapterList
@@ -69,6 +72,8 @@ public class CElementAdapterFactory implements IAdapterFactory {
 				return res.getProject();
 		} else if (IResource.class.equals(key)) {
 			return celem.getResource();
+		} else if (IDeferredWorkbenchAdapter.class.equals(key)) {
+		    return fgDeferredCWorkbenchAdapter;
 		} else if (IWorkbenchAdapter.class.equals(key)) {
 			return fgCWorkbenchAdapter;
 		}

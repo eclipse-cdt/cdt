@@ -1,3 +1,9 @@
+2004-09-03 Chris Wiebe
+
+	add support for IDeferredWorkbenchAdapter
+	* src/org/eclipse/cdt/internal/ui/CElementAdapterFactory.java
+	* src/org/eclipse/cdt/internal/ui/DeferredCWorkbenchAdapter.java
+
 2004-09-03 Alain Magloire
 
 	The Binaries were not showing children.

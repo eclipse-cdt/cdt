@@ -59,11 +59,23 @@ public class CContainerInfo extends OpenableInfo {
 			if (resources != null) {
 				CModelManager factory = CModelManager.getDefault();
 				for (int i = 0; i < resources.length; i++) {
-					// Check for Valid C projects only.
-					ICElement celement = factory.create(parent, resources[i]);
-					if (celement == null) {
+					ICElement[] children = getChildren();
+					boolean found = false;
+					for (int j = 0; j < children.length; j++) {
+						IResource r = children[j].getResource();
+						if (r.equals(resources[i])){
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
 						notChildren.add(resources[i]);
 					}
+					// Check for Valid C projects only.
+					//ICElement celement = factory.create(parent, resources[i]);
+					//if (celement == null) {
+					//	notChildren.add(resources[i]);
+					//}
 				}
 			}
 		} catch (CoreException e) {

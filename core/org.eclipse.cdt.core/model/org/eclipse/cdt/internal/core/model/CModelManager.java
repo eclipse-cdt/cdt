@@ -311,12 +311,18 @@ public class CModelManager implements IResourceChangeListener {
 			CProject cproj = (CProject)celement.getCProject();
 			ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
 			container.removeChild(celement);
+			CElementDelta delta = new CElementDelta(getCModel());
+			delta.changed(container, ICElementDelta.CHANGED); 
+			registerCModelDelta(delta); 
 		} else if (type == ICElement.C_BINARY) {
 			if (! ((IBinary)celement).isObject()) {
 //System.out.println("RELEASE Binary " + cfile.getElementName());
 				CProject cproj = (CProject)celement.getCProject();
 				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
 				container.removeChild(celement);
+				CElementDelta delta = new CElementDelta(getCModel());
+				delta.changed(container, ICElementDelta.CHANGED); 
+				registerCModelDelta(delta); 
 			}
 		}
 

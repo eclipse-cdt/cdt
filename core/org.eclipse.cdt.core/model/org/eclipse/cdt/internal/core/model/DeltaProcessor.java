@@ -375,10 +375,19 @@ public class DeltaProcessor {
 		}
 	}
 
+	/**
+	 * Add the resource delta to the right CElementDelta tree.
+	 * @param parent
+	 * @param delta
+	 */
 	protected void nonCResourcesChanged(ICElement parent, IResourceDelta delta) {
 		CElementDelta elementDelta = fCurrentDelta.find(parent);
 		if (elementDelta == null) {
 			fCurrentDelta.changed(parent, ICElementDelta.F_CONTENT);
+			elementDelta = fCurrentDelta.find(parent);
+			if (elementDelta != null) {
+				elementDelta.addResourceDelta(delta);
+			}
 		} else {
 			elementDelta.addResourceDelta(delta);
 		}
@@ -443,15 +452,12 @@ public class DeltaProcessor {
 								updateIndexRemoveResource(element, delta);
 							}
 						}
-					} else if ((flags & IResourceDelta.DESCRIPTION) != 0) {
+					} 
+					if ((flags & IResourceDelta.DESCRIPTION) != 0) {
 						if (element != null) {
 							elementAdded(element, delta);
 						}
-					} else if (element != null) {
-						elementChanged(element, delta);
 					}
-				} else if (element != null) {
-					elementChanged(element, delta);
 				}
 				break;
 		}

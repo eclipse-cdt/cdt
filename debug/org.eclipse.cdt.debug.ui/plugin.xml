@@ -130,6 +130,12 @@
             class="org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage"
             id="org.eclipse.cdt.debug.ui.CDebugPreferencePage">
       </page>
+      <page
+            name="%SourcePreferencePage.name"
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.SourcePreferencePage"
+            id="org.eclipse.cdt.debug.ui.SourcePreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

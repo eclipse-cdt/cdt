@@ -1,3 +1,13 @@
+2003-10-23 Mikhail Khodjaiants
+	Added a preference page for the source lookup.
+	It includes two new preferences: 'Source Locations' and 'Search For Duplicate Source Files'.
+	* plugin.properties
+	* plugin.xml
+	* ICDebugHelpContextIds.java
+	* SourcePreferencePage.java
+	* SourceListDialogField.java
+	* SourceLookupBlock.java
+
 2003-10-22 Mikhail Khodjaiants
 	Refactoring: converting nested types 'SourceListDialogField' and 'SourceLookupLabelProvider' 
 	of 'SourceLookupBlock' to the top level types.

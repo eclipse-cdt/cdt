@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
@@ -202,5 +203,11 @@ public class SourceListDialogField extends ListDialogField
 	protected void setChanged()
 	{
 		fObservable.setChanged();
+	}
+
+	public ICSourceLocation[] getSourceLocations()
+	{
+		List list = getElements();
+		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
 }

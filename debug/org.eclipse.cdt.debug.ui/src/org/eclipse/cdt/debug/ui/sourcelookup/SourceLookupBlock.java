@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
@@ -276,7 +278,7 @@ public class SourceLookupBlock implements Observer
 			locations = CSourceLocator.getDefaultSourceLocations( getProject() );
 		resetGeneratedLocations( locations );
 		resetAdditionalLocations( locations );
-		fSearchForDuplicateFiles.setSelection( false );
+		fSearchForDuplicateFiles.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES ) );
 	}
 
 	public IProject getProject()

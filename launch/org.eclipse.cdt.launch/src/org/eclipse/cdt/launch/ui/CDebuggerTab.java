@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Label;
 public class CDebuggerTab extends CLaunchConfigurationTab {
 	ArrayList fDinfo;
 	int fDindex;
-	Combo fDlist;
+	Combo fDCombo;
 	Button stopInMain;
 
 	// Dynamic Debugger UI widgets
@@ -53,8 +53,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		comp.setLayout(topLayout);
 		Label dlabel = new Label(comp, SWT.NONE);
 		dlabel.setText("Debugger:");
-		fDlist = new Combo(comp, SWT.DROP_DOWN|SWT.READ_ONLY);
-		fDlist.addModifyListener(new ModifyListener() {
+		fDCombo = new Combo(comp, SWT.DROP_DOWN|SWT.READ_ONLY);
+		fDCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				handleDebuggerComboBoxModified();
 			}
@@ -145,7 +145,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		if ( fDinfo != null ) {
 			fDinfo.clear();
 		}
-		fDlist.removeAll();
+		fDCombo.removeAll();
 		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
 		fDinfo = new ArrayList(debugConfigs.length);
 		for( int i = 0; i < debugConfigs.length; i++ ) {
@@ -153,19 +153,19 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			for( int j = 0; j < supported.length; j++ ) {
 				if (supported[j].equals("*") || supported[j].equalsIgnoreCase(platform)) {
 					fDinfo.add(debugConfigs[i]);
-					fDlist.add(debugConfigs[i].getName());
+					fDCombo.add(debugConfigs[i].getName());
 					break;
 				}
 			}
 		}
-		fDlist.getParent().layout();
+		fDCombo.getParent().layout();
 	}
 	
 	protected void setSelection(String id) {
 		for (int i = 0; i < fDinfo.size(); i++ ) {
 			ICDebugConfiguration debugConfig = (ICDebugConfiguration) fDinfo.get(i);
 			if ( debugConfig != null && debugConfig.getID().equals(id) ) {
-				fDlist.select(i);
+				fDCombo.select(i);
 				return;
 			}
 		}
@@ -210,7 +210,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if ( isValid(config) ) {
-			ICDebugConfiguration dbgCfg = (ICDebugConfiguration)fDinfo.get(fDlist.getSelectionIndex());
+			ICDebugConfiguration dbgCfg = (ICDebugConfiguration)fDinfo.get(fDCombo.getSelectionIndex());
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, dbgCfg.getID() );
 			ILaunchConfigurationTab dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
@@ -226,7 +226,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 
-		if ( fDlist.getSelectionIndex() == -1 ) {
+		if ( fDCombo.getSelectionIndex() == -1 ) {
 			setErrorMessage("No debugger avalible");
 			return false;
 		}
@@ -243,8 +243,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	 * that is registered against the debugger id of the currently selected debugger.
 	 */
 	protected ILaunchConfigurationTab getTabForCurrentDebugger() {
-		int selectedIndex = fDlist.getSelectionIndex();
-		if (selectedIndex >= 0) {
+		int selectedIndex = fDCombo.getSelectionIndex();
+		if (selectedIndex >= 0 && !fDinfo.isEmpty()) {
 			ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDinfo.get(selectedIndex);
 			return CDebugUIPlugin.getDefault().getDebuggerPage(dbgCfg.getID());
 		}

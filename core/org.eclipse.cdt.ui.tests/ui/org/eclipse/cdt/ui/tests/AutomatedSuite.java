@@ -9,7 +9,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_ScopedReference_ConstructorDefinition;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NestedPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix2;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_Prefix;
@@ -44,6 +44,7 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_SingleName_Pre
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeDef_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeRef_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeRef_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NestedPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_Prefix;
 import org.eclipse.cdt.ui.tests.textmanipulation.TextBufferTest;
@@ -109,10 +110,10 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_FunctionReference_NoPrefix.suite());
 		addTest(CompletionTest_ConstructorReference.suite());
 		addTest(CompletionTest_TypeDef_NoPrefix.suite());
+		addTest(CompletionTest_VariableType_NestedPrefix.suite());
 		
 		// Failed Tests
 		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
-		addTest(CompletionFailedTest_ScopedReference_ConstructorDefinition.suite());
 	}
 	
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  * Bug#50152: Wrong context sent after a "::"
  *
  */
-public class CompletionFailedTest_ScopedReference_ConstructorDefinition  extends CompletionProposalsBaseTest{
+public class CompletionTest_VariableType_NestedPrefix  extends CompletionProposalsBaseTest{
 	
 	private final String fileName = "CompletionTestStart38.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
@@ -29,19 +29,20 @@ public class CompletionFailedTest_ScopedReference_ConstructorDefinition  extends
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTCompilationUnit";
 	private final String expectedContextName = "ASTClassSpecifier";
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; // should be CompletionKind.CONSTRUCTOR_REFERENCE
+	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-//			 "Foo()"
+			"Foo()",
+			"DEF"
 	};
 	
-	public CompletionFailedTest_ScopedReference_ConstructorDefinition(String name) {
+	public CompletionTest_VariableType_NestedPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_ScopedReference_ConstructorDefinition.class.getName());
-		suite.addTest(new CompletionFailedTest_ScopedReference_ConstructorDefinition("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_VariableType_NestedPrefix.class.getName());
+		suite.addTest(new CompletionTest_VariableType_NestedPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	

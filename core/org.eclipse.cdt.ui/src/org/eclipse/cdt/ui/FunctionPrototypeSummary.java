@@ -14,7 +14,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 	 * @param The string describing the prototype which is properly 
 	 * formed with following format -- returntype function(arguments)
 	 * The following formats will be converted as follows:
-	 * function(arguments) --> void function(arguments)
+	 * function(arguments) --> function(arguments) //constructors!
 	 * returntype function --> returntype function()
 	 * function            --> void function() 
 	 */
@@ -55,8 +55,8 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		fname = proto.substring(namestart, nameend + 1).trim();
 			
 		if(namestart == 0) {
-			//@@@ Should this be int instead?
-			freturn = "void"; //$NON-NLS-1$
+			//Constructors are like this, don't stick a type on them.
+			freturn = ""; //$NON-NLS-1$
 		} else {
 			freturn = proto.substring(0, namestart).trim();
 		}
@@ -90,7 +90,7 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 			buffer.append(getArguments());
 		}
 		buffer.append(")"); //$NON-NLS-1$
-		if((namefirst) && (appendReturnType) ) {
+		if((namefirst) && (appendReturnType) && getReturnType().length() > 0 ) {
 			buffer.append(" "); //$NON-NLS-1$
 			buffer.append(getReturnType());
 		}

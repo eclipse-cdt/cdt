@@ -35,9 +35,8 @@ public class CompletionTest_ConstructorReference  extends CompletionProposalsBas
 	private final CompletionKind expectedKind = CompletionKind.CONSTRUCTOR_REFERENCE; 
 	private final String expectedPrefix = "";  
 	private final String[] expectedResults = {
-	// should be
-	//		"xOtherClass(char*)",
-	//		"xOtherClass(int)"
+			"xOtherClass(char*)",
+			"xOtherClass(int)"
 	};
 	
 	public CompletionTest_ConstructorReference(String name) {

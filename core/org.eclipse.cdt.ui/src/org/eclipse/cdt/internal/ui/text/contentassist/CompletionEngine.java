@@ -565,8 +565,14 @@ public class CompletionEngine implements RelevanceConstants {
 		}
 	}
 	private void completionOnVariableType(IASTCompletionNode completionNode){
-		// 1. basic completion on all types
-		completionOnTypeReference(completionNode);
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[5];
+		kinds[0] = IASTNode.LookupKind.STRUCTURES; 				
+		kinds[1] = IASTNode.LookupKind.ENUMERATIONS;
+		kinds[2] = IASTNode.LookupKind.NAMESPACES;
+		kinds[3] = IASTNode.LookupKind.TYPEDEFS;
+		kinds[4] = IASTNode.LookupKind.CONSTRUCTORS;
+		ILookupResult result = lookup(completionNode.getCompletionScope(), completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext(), null);
+		addToCompletions(result);
 	}
 	
 	private void completionOnSingleNameReference(IASTCompletionNode completionNode){
@@ -781,11 +787,11 @@ public class CompletionEngine implements RelevanceConstants {
 			}				
 		}
 		else if(kind == CompletionKind.VARIABLE_TYPE) {
-			if (completionNode.getCompletionContext() == null){
+			if (completionNode.getCompletionContext() != null){
 				// CompletionOnVariableType
 				completionOnVariableType(completionNode);
 			}else {
-				completionOnScopedReference(completionNode);
+				completionOnTypeReference( completionNode );
 			}
 		}
 		else if(kind == CompletionKind.ARGUMENT_TYPE){

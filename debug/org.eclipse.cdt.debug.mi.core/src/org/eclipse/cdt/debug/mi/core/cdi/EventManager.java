@@ -370,11 +370,18 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 							if (bpoints[i] instanceof Breakpoint) {
 								Breakpoint bkpt = (Breakpoint)bpoints[i];
 								try {
+									boolean enable = bkpt.isEnabled();
 									bpMgr.setLocationBreakpoint(bkpt);
 									bpMgr.deleteFromDeferredList(bkpt);
 									bpMgr.addToBreakpointList(bkpt);
+									// If the breakpoint was disable in the IDE
+									// install it but keep it disable
+									if (!enable) {
+										bpMgr.disableBreakpoint(bkpt);
+									}
 									eventList.add(new MIBreakpointCreatedEvent(bkpt.getMIBreakpoint().getNumber()));
 								} catch (CDIException e) {
+									// ignore
 								}
 							}
 						}
@@ -422,25 +429,26 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 
 				int miLevel = 0;
 				int tid = 0;
-				ICDIThread oldThread = null;
+				ICDIThread currentThread = null;
 				try {
-					oldThread = currentTarget.getCurrentThread();
+					currentThread = currentTarget.getCurrentThread();
 				} catch (CDIException e1) {
 				}
-				if (oldThread instanceof Thread) {
-					tid = ((Thread)oldThread).getId();
+				if (currentThread instanceof Thread) {
+					tid = ((Thread)currentThread).getId();
 				}
-				// select the old thread now
+				// Select the old thread now.
 				if (tid > 0) {
 					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);
 					try {
 						mi.postCommand(selectThread);
 					} catch (MIException e) {
+						// ignore
 					}
 				}
 				ICDIStackFrame frame = null;
 				try {
-					frame = oldThread.getCurrentStackFrame();
+					frame = currentThread.getCurrentStackFrame();
 				} catch (CDIException e2) {
 				}
 				int count = 0;
@@ -471,6 +479,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						mi.postCommand(selectFrame);
 						mi.postCommand(finish);
 					} catch (MIException e) {
+						// ignore
 					}
 				} else {
 					// if we are still at the same level in the backtrace

@@ -1,7 +1,13 @@
-/*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -24,6 +30,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	BreakpointManager mgr;
 	int type;
 	String tid;
+	boolean enable;
 
 	public Breakpoint(BreakpointManager m, int kind, ICDILocation loc, ICDICondition cond, String threadId) {
 		super(m.getSession().getCurrentTarget());
@@ -32,6 +39,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 		location = loc;
 		condition = cond;
 		tid = threadId;
+		enable = true;
 	}
 
 	public Breakpoint(BreakpointManager m, MIBreakpoint miBreak) {
@@ -46,9 +54,9 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
 	public void setMIBreakpoint(MIBreakpoint newMIBreakpoint) {
 		miBreakpoint = newMIBreakpoint;
-		// Force the reset of the location and condition.
-		location = null;
+		// Force the reset to use GDB's values.
 		condition = null;
+		location = null;
 	}
 
 	public boolean isDeferred() {
@@ -60,8 +68,9 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public ICDICondition getCondition() throws CDIException {
 		if (condition == null) {
-			if (miBreakpoint != null)
+			if (miBreakpoint != null) {
 				condition =  new Condition(miBreakpoint.getIgnoreCount(), miBreakpoint.getCondition());
+			}
 		}
 		return condition;
 	}
@@ -70,8 +79,9 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getThreadId()
 	 */
 	public String getThreadId() throws CDIException {
-		if (miBreakpoint != null)
+		if (miBreakpoint != null) {
 			return miBreakpoint.getThreadId();
+		}
 		return tid;
 	}
 
@@ -79,17 +89,19 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isEnabled()
 	 */
 	public boolean isEnabled() throws CDIException {
-		if (miBreakpoint != null)
+		if (miBreakpoint != null) {
 			return miBreakpoint.isEnabled();
-		return false;
+		}
+		return enable;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
-		if (miBreakpoint != null)
+		if (miBreakpoint != null) {
 			return miBreakpoint.isHardware();
+		}
 		return (type == ICDIBreakpoint.HARDWARE);
 	}
 
@@ -97,8 +109,9 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
-		if (miBreakpoint != null)
+		if (miBreakpoint != null) {
 			return miBreakpoint.isTemporary();
+		}
 		return (type == ICDIBreakpoint.TEMPORARY);
 	}
 
@@ -115,12 +128,15 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setEnabled(boolean)
 	 */
-	public void setEnabled(boolean enable) throws CDIException {
-		if (enable == false && isEnabled() == true) { 
+	public void setEnabled(boolean on) throws CDIException {
+		if (miBreakpoint != null) {
+			if (on == false && isEnabled() == true) { 
 				mgr.disableBreakpoint(this);
-		} else if (enable == true && isEnabled() == false) {
+			} else if (on == true && isEnabled() == false) {
 				mgr.enableBreakpoint(this);
+			}
 		}
+		enable = on;
 	}
 
 	/**
@@ -128,11 +144,12 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public ICDILocation getLocation() throws CDIException {
 		if (location == null) {
-			if (miBreakpoint != null)
+			if (miBreakpoint != null) {
 				location = new Location (miBreakpoint.getFile(),
 					miBreakpoint.getFunction(),
 					miBreakpoint.getLine(),
 					miBreakpoint.getAddress());
+			}
 		}
 		return location;
 	}

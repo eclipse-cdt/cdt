@@ -1,3 +1,9 @@
+2004-08-17 Alain Magloire
+
+	Deferred breakpoint when disable was not respected.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+
 2004-08-14 Alain Magloire
 
 	Fix for 71992.

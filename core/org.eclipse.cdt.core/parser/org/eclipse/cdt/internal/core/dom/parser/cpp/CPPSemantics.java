@@ -1175,13 +1175,13 @@ public class CPPSemantics {
 		    	dtor = dtor.getNestedDeclarator();
 			IASTName declName = dtor.getName();
 			scope.addName( declName );
-			if( !data.typesOnly && nameMatches( data, declName.toCharArray() ) ) {
+			if( !data.typesOnly && nameMatches( data, declName ) ) {
 		        return declName;
 		    }
 		} else if( node instanceof ICPPASTTemplateParameter ){
 			IASTName name = CPPTemplates.getTemplateParameterName( (ICPPASTTemplateParameter) node );
 			scope.addName( name );
-			if( nameMatches( data, name.toCharArray() ) ) {
+			if( nameMatches( data, name ) ) {
 		        return name;
 		    }
 		}
@@ -1198,7 +1198,7 @@ public class CPPSemantics {
 				IASTName declaratorName = declarator.getName();
 				scope.addName( declaratorName );
 				if( !data.typesOnly || simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ) {
-					if( nameMatches( data, declaratorName.toCharArray() ) ) {
+					if( nameMatches( data, declaratorName ) ) {
 						return declaratorName;
 					}
 				}
@@ -1209,20 +1209,20 @@ public class CPPSemantics {
 			if( declarators.length == 0 && declSpec instanceof IASTElaboratedTypeSpecifier ){
 				IASTName elabName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
 				scope.addName( elabName );
-				if( nameMatches( data, elabName.toCharArray() ) ) {
+				if( nameMatches( data, elabName ) ) {
 					return elabName;
 				}
 			} else if( declSpec instanceof ICPPASTCompositeTypeSpecifier ){
 				IASTName compName = ((IASTCompositeTypeSpecifier)declSpec).getName();
 				scope.addName( compName );
-				if( nameMatches( data, compName.toCharArray() ) ) {
+				if( nameMatches( data, compName ) ) {
 					return compName;
 				}
 			} else if( declSpec instanceof IASTEnumerationSpecifier ){
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
 			    IASTName eName = enumeration.getName();
 			    scope.addName( eName );
-			    if( nameMatches( data, eName.toCharArray() ) ) {
+			    if( nameMatches( data, eName ) ) {
 					return eName;
 				}
 			    //check enumerators too
@@ -1232,7 +1232,7 @@ public class CPPSemantics {
 			        if( enumerator == null ) break;
 			        eName = enumerator.getName();
 			        scope.addName( eName );
-			        if( !data.typesOnly && nameMatches( data, eName.toCharArray() ) ) {
+			        if( !data.typesOnly && nameMatches( data, eName ) ) {
 						return eName;
 					}
 			    }
@@ -1245,18 +1245,18 @@ public class CPPSemantics {
 				name = ns[ ns.length - 1 ];
 			}
 			scope.addName( name );
-			if( nameMatches( data, name.toCharArray() ) ) {
+			if( nameMatches( data, name ) ) {
 				return name;
 			}
 		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
 			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
 			scope.addName( namespaceName );
-			if( nameMatches( data, namespaceName.toCharArray() ) )
+			if( nameMatches( data, namespaceName ) )
 				return namespaceName;
 		} else if( declaration instanceof ICPPASTNamespaceAlias ){
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
 			scope.addName( alias );
-			if( nameMatches( data, alias.toCharArray() ) )
+			if( nameMatches( data, alias ) )
 				return alias;
 		} else 
 		
@@ -1268,7 +1268,7 @@ public class CPPSemantics {
 			IASTName declName = declarator.getName();
 			scope.addName( declName );
 
-		    if( !data.typesOnly && nameMatches( data, declName.toCharArray() ) ) {
+		    if( !data.typesOnly && nameMatches( data, declName ) ) {
 				return declName;
 			}
 		} 
@@ -1276,9 +1276,15 @@ public class CPPSemantics {
 		return null;
 	}
 
-	private static final boolean nameMatches( LookupData data, char[] potential ){
-	    return ( (data.prefixLookup && CharArrayUtils.equals( potential, 0, data.name.length, data.name )) || 
-			     (!data.prefixLookup && CharArrayUtils.equals( potential, data.name )) );
+	private static final boolean nameMatches( LookupData data, IASTName potential ){
+	    if( potential instanceof ICPPASTQualifiedName ){
+	        //A qualified name implies the name actually belongs to a different scope, and should
+	        //not be considered here.
+	        return false;
+	    }
+	    char[] c = potential.toCharArray();
+	    return ( (data.prefixLookup && CharArrayUtils.equals( c, 0, data.name.length, data.name )) || 
+			     (!data.prefixLookup && CharArrayUtils.equals( c, data.name )) );
 	}
 	
 	private static void addDefinition( IBinding binding, IASTName name ){

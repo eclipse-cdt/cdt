@@ -7,7 +7,9 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -312,7 +314,13 @@ public class DeltaProcessor {
 	 * </ul>
 	 */
 	protected void elementChanged(ICElement element, IResourceDelta delta) {
-		if (element instanceof Openable) {
+		if (element instanceof IBinary || element instanceof IArchive) {
+			CModelManager factory = CModelManager.getDefault();
+			CElementInfo pinfo = (CElementInfo)factory.peekAtInfo(element);
+			if (pinfo != null) {
+				factory.removeInfo(element);
+			}
+		} else if (element instanceof Openable) {
 			close((Openable)element);
 		}
 		fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);

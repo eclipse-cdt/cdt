@@ -51,10 +51,8 @@ public class BinaryRunner {
 				} catch (CoreException e) {
 					return e.getStatus();
 				}
-				if (monitor.isCanceled()) {
-					fireEvents(cproject, vbin);
-					fireEvents(cproject, vlib);
-				}
+				fireEvents(cproject, vbin);
+				fireEvents(cproject, vlib);
 				return Status.OK_STATUS;
 			}
 		};

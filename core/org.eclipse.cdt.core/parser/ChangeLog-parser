@@ -1,3 +1,6 @@
+2004-04-15 Andrew Niefer
+	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=57791 - Parser infinite loop
+
 2004-04-14 John Camelon
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=52253
 

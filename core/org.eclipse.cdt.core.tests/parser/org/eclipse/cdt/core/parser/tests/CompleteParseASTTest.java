@@ -1488,6 +1488,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertTrue( f.isFriend() );
 	}
 	
+	public void testBug57791() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write(" void f() {                  ");
+		writer.write("    struct astruct astruct;  ");
+		writer.write("    astruct.foo++;           ");
+		writer.write(" }");
+		
+		parse( writer.toString(), true, ParserLanguage.C );
+	}
+	
 	public void testBug44249() throws Exception
 	{
 

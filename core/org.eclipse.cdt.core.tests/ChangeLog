@@ -1,3 +1,6 @@
+2004-04-15 Andrew Niefer
+	added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testBug57791()
+
 2004-04-14 John Camelon
 	Added CompletionTest::testBug52253().
 

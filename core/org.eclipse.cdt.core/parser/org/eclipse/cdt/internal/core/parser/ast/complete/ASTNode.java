@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
@@ -54,7 +55,12 @@ public class ASTNode implements IASTNode {
 			ISymbol sym = null;
 			if( context instanceof IASTTypedefDeclaration ){
 				ISymbol typedef = ((ISymbolOwner)context).getSymbol();
-				TypeInfo info = typedef.getTypeInfo().getFinalType();
+				TypeInfo info = null;
+				try{
+					info = typedef.getTypeInfo().getFinalType();
+				} catch( ParserSymbolTableError e ){
+					throw new LookupError();
+				}
 				sym = info.getTypeSymbol();
 			} else if ( context instanceof IASTVariable ){
 				sym = ((ISymbolOwner)context).getSymbol().getTypeSymbol(); // good enough for now
@@ -109,6 +115,8 @@ public class ASTNode implements IASTNode {
 				lookupResults = thisContainer.prefixLookup( filter, prefix, false );
 			}
 		} catch (ParserSymbolTableException e) {
+			throw new LookupError();
+		} catch (ParserSymbolTableError e ){
 			throw new LookupError();
 		}
 		

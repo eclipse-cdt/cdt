@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 public class ParserSymbolTable {
 
+	public static final int    TYPE_LOOP_THRESHOLD = 50;
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final String THIS = "this";	//$NON-NLS-1$
 	
@@ -1973,13 +1974,15 @@ public class ParserSymbolTable {
 			ISymbol typeSymbol = topInfo.getTypeSymbol();
 			
 			info = typeSymbol.getTypeInfo();
-			
+			int j = 0;
 			while( info.getTypeSymbol() != null && ( info.getType() == TypeInfo.t_type || info.isForwardDeclaration() ) ){
 				typeSymbol = info.getTypeSymbol();
 				
 				returnInfo.addPtrOperator( info.getPtrOperators() );	
 				returnInfo.setTypeInfo( ( returnInfo.getTypeInfo() | info.getTypeInfo() ) & ~TypeInfo.isTypedef & ~TypeInfo.isForward );
 				info = typeSymbol.getTypeInfo();
+				if( ++j > TYPE_LOOP_THRESHOLD )
+					throw new ParserSymbolTableError();
 			}
 			
 			if( info.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) || info.isType( TypeInfo.t_function ) ){

@@ -88,6 +88,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IUsingDeclarationSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IUsingDirectiveSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.NamespaceSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
@@ -240,6 +241,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		} catch (ParserSymbolTableException e) {
 			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction )
 				handleProblem( e.createProblemID(), name );
+		} catch (ParserSymbolTableError e){
+			handleProblem( IProblem.INTERNAL_RELATED, name );
 		}
 		return result;		
 	}
@@ -385,6 +388,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					{
 						if ( throwOnError )
 							handleProblem( pste.createProblemID(), image );
+						return null;
+					}
+					catch( ParserSymbolTableError e )
+					{
+						if( throwOnError )
+							handleProblem( IProblem.INTERNAL_RELATED, image );
 						return null;
 					}
 				}
@@ -1125,7 +1134,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		){
 			TypeInfo lhsInfo = ((ASTExpression)lhs).getResultType().getResult();
 			if(lhsInfo != null){
-				TypeInfo info = lhsInfo.getFinalType();
+				TypeInfo info = null;
+				try{
+					info = lhsInfo.getFinalType();
+				} catch ( ParserSymbolTableError e ){
+					return null;
+				}
 				ISymbol containingScope = info.getTypeSymbol();
 //				assert containingScope != null : "Malformed Expression";	
 				if( containingScope instanceof IDeferredTemplateInstance )
@@ -1922,7 +1936,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		functionDeclaration = 
 			(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getFirstToken().getImage(), TypeInfo.t_function, functionParameters, 0, new ArrayList(), false, LookupType.FORDEFINITION );                
 
-		if( functionDeclaration != null ){
+		if( functionDeclaration != null && symbol.isType( TypeInfo.t_function )){
 			previouslyDeclared = true;
 			
 			if( isFunctionDefinition ){
@@ -2271,24 +2285,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					(IParameterizedSymbol) lookupQualifiedName(ownerScope, nameDuple.toString(), isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, 0, functionReferences, false, LookupType.FORDEFINITION );
 			}
 			
-			previouslyDeclared = ( functionDeclaration != null );
+			previouslyDeclared = ( functionDeclaration != null ) && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function );
 			
 			if( isFriend )
 			{
-				if( functionDeclaration != null )
+				if( functionDeclaration != null && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function ))
 				{
 					symbol.setTypeSymbol( functionDeclaration );
 					// friend declaration, has no real visibility, set private
 					visibility = ASTAccessVisibility.PRIVATE;		
-				} else if( ownerScope.isType( TypeInfo.t_constructor ) ||
-						   ownerScope.isType( TypeInfo.t_function )    ||
-						   ownerScope.isType( TypeInfo.t_block ) )
+				} else if( ownerScope.getContainingSymbol().isType( TypeInfo.t_constructor ) ||
+						   ownerScope.getContainingSymbol().isType( TypeInfo.t_function )    ||
+						   ownerScope.getContainingSymbol().isType( TypeInfo.t_block ) )
 				{	
 					//only needs to be previously declared if we are in a local class
 					handleProblem( IProblem.SEMANTIC_ILLFORMED_FRIEND, nameDuple.toString(), nameDuple.getStartOffset(), nameDuple.getEndOffset(), nameDuple.getLineNumber() );
 				}
 				 
-			} else if( functionDeclaration != null )
+			} else if( functionDeclaration != null && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function ) )
 			{
 				functionDeclaration.setTypeSymbol( symbol );
 				// set the definition visibility = declaration visibility
@@ -2435,10 +2449,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if(!isStatic){
 			ISymbol variableDeclaration = lookupQualifiedName(ownerScope, name.toString(), new ArrayList(), false, LookupType.UNQUALIFIED);                
 	
-			if( variableDeclaration != null )
+			if( variableDeclaration != null && newSymbol.getType() == variableDeclaration.getType() )
 			{
-				variableDeclaration.setTypeSymbol( newSymbol );
-				previouslyDeclared = true;
+				if( !newSymbol.isType( TypeInfo.t_type ) ||
+					(newSymbol.isType( TypeInfo.t_type ) && newSymbol.getTypeSymbol() != variableDeclaration.getTypeSymbol() ) )
+				{
+					variableDeclaration.setTypeSymbol( newSymbol );
+					previouslyDeclared = true;
+				}
 			}
 		}
 		try
@@ -2647,14 +2665,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if(!isStatic){
 			List fieldReferences = new ArrayList();		
 			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, name.toString(), fieldReferences, false, LookupType.FORDEFINITION);                
-				
-			if( fieldDeclaration != null )
+			
+			if( fieldDeclaration != null && newSymbol.getType() == fieldDeclaration.getType() )
 			{
-				previouslyDeclared = true;
-				fieldDeclaration.setTypeSymbol( newSymbol );
-				// set the definition visibility = declaration visibility
-				ASTReference reference = (ASTReference) fieldReferences.iterator().next();
-				visibility = ((IASTField)reference.getReferencedElement()).getVisiblity();		
+				if( !newSymbol.isType( TypeInfo.t_type ) ||
+					(newSymbol.isType( TypeInfo.t_type ) && newSymbol.getTypeSymbol() != fieldDeclaration.getTypeSymbol() ) )
+				{
+					previouslyDeclared = true;
+					fieldDeclaration.setTypeSymbol( newSymbol );
+					// set the definition visibility = declaration visibility
+					ASTReference reference = (ASTReference) fieldReferences.iterator().next();
+					visibility = ((IASTField)reference.getReferencedElement()).getVisiblity();					}
 			}
 		}
 		

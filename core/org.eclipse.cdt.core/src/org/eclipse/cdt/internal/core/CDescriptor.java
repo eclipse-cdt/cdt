@@ -67,7 +67,7 @@ public class CDescriptor implements ICDescriptor {
 	private HashMap extInfoMap = new HashMap(4);
 	private Document dataDoc;
 
-	static final String DESCRIPTION_FILE_NAME = ".cdtproject"; //$NON-NLS-1$
+	protected static final String DESCRIPTION_FILE_NAME = ".cdtproject"; //$NON-NLS-1$
 
 	private static final String CEXTENSION_NAME = "cextension"; //$NON-NLS-1$
 

@@ -152,7 +152,10 @@ public class EditorUtility {
 				element= ((IWorkingCopy) element).getOriginalElement();
  
  			if (element instanceof ISourceReference) {
- 				element = ((ISourceReference)element).getTranslationUnit();                    
+ 				ITranslationUnit tu = ((ISourceReference)element).getTranslationUnit();
+ 				if (tu != null) {
+ 					element = tu;                    
+ 				}
  			}
 
 			if (element instanceof ITranslationUnit) {

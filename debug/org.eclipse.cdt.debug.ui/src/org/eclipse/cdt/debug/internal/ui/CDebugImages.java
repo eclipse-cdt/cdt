@@ -76,6 +76,7 @@ public class CDebugImages
 	public static final String IMG_LCL_MEMORY_SAVE = NAME_PREFIX + "memory_update.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_MEMORY_CLEAR = NAME_PREFIX + "memory_clear.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_SHOW_ASCII = NAME_PREFIX + "show_ascii.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_LOAD_ALL_SYMBOLS = NAME_PREFIX + "load_all_symbols_co.gif";	//$NON-NLS-1$
 
 	public static final String IMG_TOOLS_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "adddirsource_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "addprjsource_wiz.gif";	//$NON-NLS-1$

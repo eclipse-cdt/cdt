@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshAction;
+import org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsForAllAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -159,6 +160,11 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 		setAction( "Refresh", action ); //$NON-NLS-1$
 		add( (RefreshAction)action );
 
+		action = new LoadSymbolsForAllAction( getViewer() );
+		action.setEnabled( false );
+		setAction( "LoadSymbolsForAll", action ); //$NON-NLS-1$
+		add( (LoadSymbolsForAllAction)action );
+
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	}
@@ -176,11 +182,15 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 */
 	protected void fillContextMenu( IMenuManager menu )
 	{
+		menu.add( new Separator( ICDebugUIConstants.EMPTY_SHARED_LIBRARIES_GROUP ) );
+		menu.add( new Separator( ICDebugUIConstants.SHARED_LIBRARIES_GROUP ) );
+
 		menu.add( new Separator( ICDebugUIConstants.EMPTY_REFRESH_GROUP ) );
 		menu.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 
+		menu.appendToGroup( ICDebugUIConstants.SHARED_LIBRARIES_GROUP, getAction( "LoadSymbolsForAll" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "AutoRefresh" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "Refresh" ) ); //$NON-NLS-1$
 	}
@@ -191,6 +201,10 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	protected void configureToolBar( IToolBarManager tbm )
 	{
 		tbm.add( new Separator( this.getClass().getName() ) );
+
+		tbm.add( new Separator( ICDebugUIConstants.SHARED_LIBRARIES_GROUP ) );
+		tbm.add( getAction( "LoadSymbolsForAll" ) ); //$NON-NLS-1$
+
 		tbm.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 		tbm.add( getAction( "AutoRefresh" ) ); //$NON-NLS-1$
 		tbm.add( getAction( "Refresh" ) ); //$NON-NLS-1$
@@ -231,6 +245,11 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 			{
 				slm = (ICSharedLibraryManager)((IDebugElement)input).getDebugTarget().getAdapter( ICSharedLibraryManager.class );
 			}
+		}
+
+		if ( getViewer() == null )
+		{
+			return;
 		}
 
 		Object current = getViewer().getInput();

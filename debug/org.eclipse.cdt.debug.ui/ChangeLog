@@ -1,5 +1,16 @@
+2003-02-11 Mikhail Khodjaiants
+	The 'Load Symbole For All' action is added to the 'Shared Libraries' view
+	* CDebugImages.java
+	* ICDebugHelpContextIds.java
+	* LoadSymbolsForAllAction.java: new
+	* SharedLibrariesView.java
+	* ICDebugUIConstants.java
+	* icons/full/clcl16/load_all_symbols_co.gif: new
+	* icons/full/dlcl16/load_all_symbols_co.gif: new
+	* icons/full/elcl16/load_all_symbols_co.gif: new
+
 2003-02-10 Mikhail Khodjaiants
-	The 'Auto-Refresh' and 'Refresh' actions added to the 'Shared Libraries' view.
+	The 'Auto-Refresh' and 'Refresh' actions are added to the 'Shared Libraries' view.
 	* RefreshAction.java: new
 	* AutoRefreshAction.java: new
 	* RefreshMemoryAction.java

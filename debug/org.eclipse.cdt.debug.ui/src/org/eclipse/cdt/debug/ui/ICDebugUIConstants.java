@@ -82,4 +82,18 @@ public interface ICDebugUIConstants
 	 * </code>).
 	 */
 	public static final String REFRESH_GROUP = "refreshGroup"; //$NON-NLS-1$
+	/** 
+	 * Identifier for an empty group preceeding a
+	 * shared libraries group  in a menu (value <code>"
+	 * emptySharedLibrariesGroup"
+	 * </code>).
+	 */
+	public static final String EMPTY_SHARED_LIBRARIES_GROUP = "emptySharedLibrariesGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a shared libraries group in a menu (value <code>"
+	 * sharedLibrariesGroup"
+	 * </code>).
+	 */
+	public static final String SHARED_LIBRARIES_GROUP = "sharedLibrariesGroup"; //$NON-NLS-1$
 }

@@ -286,17 +286,15 @@ class UpdateManagedProject20 {
 			ITool parent = curTool.getSuperClass();
 			String curToolId = curTool.getId();
 			
-			if(parent == null)
-				continue;
-			
-			parent = parent.getSuperClass();
+			while (parent != null) {
+				String parentId = parent.getId();
+				if(parentId.equals(toolId))
+					break;
+				parent = parent.getSuperClass();
+			}
 			if(parent == null)
 				continue;
 
-			String parentId = parent.getId();
-			if(!parentId.equals(toolId))
-				continue;
-				
 			try{
 				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.')+1)); //$NON-NLS-1$
 			}
@@ -374,56 +372,52 @@ class UpdateManagedProject20 {
 		if(option == null)
 			option = tool.getOptionById(optId);
 		
-		if(option == null){
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject20.7",optId), null)); //$NON-NLS-1$
-		}
-
-		try{
-			int type = option.getValueType();
-				
-			switch(type){
-				case IOption.BOOLEAN:{
-					if(optRef.hasAttribute(IOption.DEFAULT_VALUE)){
-						Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
-						configuration.setOption(tool,option,bool.booleanValue());
+		if (option != null) {		//  Ignore options that don't have a match
+			try{
+				int type = option.getValueType();
+					
+				switch(type){
+					case IOption.BOOLEAN:{
+						if(optRef.hasAttribute(IOption.DEFAULT_VALUE)){
+							Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
+							configuration.setOption(tool,option,bool.booleanValue());
+						}
+						break;
 					}
-					break;
-				}
-			case IOption.ENUMERATED:
-			case IOption.STRING:{
-					if(optRef.hasAttribute(IOption.DEFAULT_VALUE))
-						configuration.setOption(tool,option,optRef.getAttribute(IOption.DEFAULT_VALUE));
-					break;
-				}
-			case IOption.STRING_LIST:
-			case IOption.INCLUDE_PATH:
-			case IOption.PREPROCESSOR_SYMBOLS:
-			case IOption.LIBRARIES:
-			case IOption.OBJECTS:{
-					Vector values = new Vector();
-					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
-					for (int j = 0; j < nodes.getLength(); ++j) {
-						Node node = nodes.item(j);
-						if (node.getNodeType() == Node.ELEMENT_NODE) {
-							Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
-							if (!isBuiltIn.booleanValue()) {
-								values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+				case IOption.ENUMERATED:
+				case IOption.STRING:{
+						if(optRef.hasAttribute(IOption.DEFAULT_VALUE))
+							configuration.setOption(tool,option,optRef.getAttribute(IOption.DEFAULT_VALUE));
+						break;
+					}
+				case IOption.STRING_LIST:
+				case IOption.INCLUDE_PATH:
+				case IOption.PREPROCESSOR_SYMBOLS:
+				case IOption.LIBRARIES:
+				case IOption.OBJECTS:{
+						Vector values = new Vector();
+						NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
+						for (int j = 0; j < nodes.getLength(); ++j) {
+							Node node = nodes.item(j);
+							if (node.getNodeType() == Node.ELEMENT_NODE) {
+								Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+								if (!isBuiltIn.booleanValue()) {
+									values.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+								}
 							}
 						}
+						configuration.setOption(tool,option,(String[])values.toArray(new String[values.size()]));
+						break;
 					}
-					configuration.setOption(tool,option,(String[])values.toArray(new String[values.size()]));
+				default:
 					break;
 				}
-			default:
-				break;
+			}
+			catch(BuildException e){
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+						ConverterMessages.getFormattedString("UpdateManagedProject20.8",e.getMessage()), e)); //$NON-NLS-1$
 			}
 		}
-		catch(BuildException e){
-			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-					ConverterMessages.getFormattedString("UpdateManagedProject20.8",e.getMessage()), e)); //$NON-NLS-1$
-		}
-
 	}
 }
 

@@ -1,3 +1,8 @@
+2003-02-20 Mikhail Khodjaiants
+	The generation of launch configuration shouldn't fail if project is not set or project name is empty.
+	* DefaultSourceLocator.java
+	* CSourceLookupTab.java
+
 2003-02-18 Mikhail Khodjaiants
 	New 'Source Lookup' tab.
 	* plugin.xml

@@ -106,10 +106,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		String configPlatform = getPlatform(config);
 		String programCPU = "native";
 		ICElement ce = getContext(config, configPlatform);
-		try {
+		if (ce instanceof IBinary) {
 			IBinary bin = (IBinary) ce;
 			programCPU = bin.getCPU();
-		} catch (Exception e) {
 		}
 		fDCombo.removeAll();
 		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
@@ -246,10 +245,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		String projectPlatform = getPlatform(config);
 		String projectCPU = "native";
 		if (ce != null) {
-			try {
+			if (ce instanceof IBinary) {
 				IBinary bin = (IBinary) ce;
 				projectCPU = bin.getCPU();
-			} catch (Exception e) {
 			}
 		}
 		ICDebugConfiguration debugConfig = getDebugConfig();

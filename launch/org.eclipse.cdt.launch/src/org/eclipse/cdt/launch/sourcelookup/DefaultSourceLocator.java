@@ -178,7 +178,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	private IProject getProject( ILaunchConfiguration configuration ) throws CoreException
 	{
 		String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null );
-		if ( projectName != null )
+		if ( !isEmpty( projectName ) )
 		{
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
 			if ( project.exists() )

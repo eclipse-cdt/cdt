@@ -78,7 +78,6 @@ public abstract class AbstractRefreshActionDelegate extends ActionDelegate imple
 			action.setEnabled( ( um != null ) ? um.canUpdate() : false );
 		}
 	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)

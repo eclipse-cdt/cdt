@@ -1,3 +1,13 @@
+2004-06-11 Mikhail Khodjaiants
+	New implementation of the "Auto-Refresh" actions for registers and shared libraries.
+	* plugin.properties
+	* plugin.xml	
+	* AbstractAutoRefreshActionDelegate.java: new
+	* AutoRefreshRegistersAction.java: new
+	* AutoRefreshSharedLibrariesAction.java: new
+	* AutoRefreshAction.java: removed
+	* AbstractRefreshActionDelegate.java
+
 2004-06-09 Mikhail Khodjaiants
 	New implementation of the "Refresh" actions for registers and shared libraries.
 	* icons/full/clcl16/auto_refresh_co.gif: new

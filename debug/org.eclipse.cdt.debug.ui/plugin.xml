@@ -979,6 +979,23 @@
                      id="org.eclipse.cdt.debug.ui"/>
             </enablement>
          </action>
+         <action
+               helpContextId="auto_refresh_shared_libraries_context"
+               disabledIcon="icons/full/dlcl16/auto_refresh_co.gif"
+               hoverIcon="icons/full/clcl16/auto_refresh_co.gif"
+               toolbarPath="refreshGroup"
+               label="%AutoRefreshAction.label"
+               tooltip="%AutoRefreshAction.tooltip"
+               icon="icons/full/elcl16/auto_refresh_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshSharedLibrariesActionDelegate"
+               style="toggle"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshSharedLibrariesActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.RegisterView"
@@ -1000,6 +1017,24 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction"
                style="push"
                id="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui"/>
+            </enablement>
+         </action>
+         <action
+               helpContextId="auto_refresh_registers_context"
+               disabledIcon="icons/full/dlcl16/auto_refresh_co.gif"
+               hoverIcon="icons/full/clcl16/auto_refresh_co.gif"
+               toolbarPath="refreshGroup"
+               label="%AutoRefreshAction.label"
+               tooltip="%AutoRefreshAction.tooltip"
+               icon="icons/full/elcl16/auto_refresh_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshRegistersActionDelegate"
+               style="toggle"
+               state="false"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshRegistersActionDelegate">
             <enablement>
                <pluginState
                      value="activated"

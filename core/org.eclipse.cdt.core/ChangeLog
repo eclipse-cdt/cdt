@@ -1,6 +1,6 @@
 2004-04-15 Alain Magloire
 
-	BinaryContainer was not cleaned up.
+	Archive/BinaryContainer was not cleaned up.
 
 	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java

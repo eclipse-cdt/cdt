@@ -27,7 +27,7 @@ public class CompletionFailedTest_MemberReference_Arrow_Prefix2  extends Complet
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTExpression";
+	private final String expectedContextName = "ASTBinaryExpression";
 	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
 	private final String expectedPrefix = "a";
 	//TODO Andrew uncomment these when you get the bug fixed

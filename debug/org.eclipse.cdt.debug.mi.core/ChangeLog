@@ -1,5 +1,14 @@
 2002-10-30 Alain Magloire
 
+	* src/.../core/cdi/MemoryBlock.java (setDirty): When need a
+	refresh setDirty() to true.
+	(isDirty): Return the flag value.
+
+	* src/.../core/cdi/MemoryManager.java (update): Check if
+	the MemoryBlock isDirty().
+
+2002-10-30 Alain Magloire
+
 	* src/.../core/cdi/MemoryBlock.java (setValue): reuse refresh()
 	to update the memory and fire any MemoryChangedEvents.
 

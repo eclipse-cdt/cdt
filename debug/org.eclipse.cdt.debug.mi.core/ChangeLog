@@ -1,3 +1,7 @@
+2004-11-16 Alain Magloire
+	Do not check for isEnable() when changing condition.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/mode/Breakpoint.java
+
 2004-11-12 Mikhail Khodjaiants
 	Implemented the "equals' method of the "Condition" class.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Condition.java

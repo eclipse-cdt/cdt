@@ -1,5 +1,12 @@
 2002-11-12 Alain Magloire
 
+	* index/.../internal/core/index/CTagsRunner.java (run):
+	Remove the quick start code, not necessary.
+	* index/.../core/index/IndexModel.java (setEnabled):
+	Check if it was already enabled.
+
+2002-11-12 Alain Magloire
+
 	* index/.../internal/core/index/IndexManager.java (removeConatiner):
 	Change the signature of the function to take IContainer.
 	(removeResource): Also remove the request from the requestList.
@@ -8,7 +15,7 @@
 
 2002-11-12 Alain Magloire
 
-	* index/.../index/IndexModel.java (isEnabled):
+	* index/.../core/index/IndexModel.java (isEnabled):
 	New method check if indexing is enable for a project.
 	(setEnabled) : enable/disable indexing for a project.
 	(removeResource): New method, remove resource from the list.

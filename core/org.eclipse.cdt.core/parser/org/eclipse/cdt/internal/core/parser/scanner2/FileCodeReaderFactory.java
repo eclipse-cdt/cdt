@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
+import org.eclipse.cdt.core.parser.CodeReaderCache;
+import org.eclipse.cdt.core.parser.EmptyCodeReaderCache;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
 
 /**
  * @author jcamelon
@@ -20,9 +22,11 @@ import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 public class FileCodeReaderFactory implements ICodeReaderFactory {
 
     private static FileCodeReaderFactory instance;
+	private ICodeReaderCache cache = null;
 
-    private FileCodeReaderFactory()
+    private FileCodeReaderFactory(ICodeReaderCache cache)
     {
+		this.cache = cache;
     }
     
     /* (non-Javadoc)
@@ -36,23 +40,27 @@ public class FileCodeReaderFactory implements ICodeReaderFactory {
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
      */
     public CodeReader createCodeReaderForTranslationUnit(String path) {
-        return InternalParserUtil.createFileReader(path);
-    }
+		return cache.get(path);
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
     public CodeReader createCodeReaderForInclusion(String path) {
-        return InternalParserUtil.createFileReader(path);
-    }
+		return cache.get(path);
+	}
 
     /**
      * @return
      */
     public static FileCodeReaderFactory getInstance() {
         if( instance == null )
-            instance = new FileCodeReaderFactory();
+            instance = new FileCodeReaderFactory(new EmptyCodeReaderCache());
         return instance;
     }
+
+	public ICodeReaderCache getCodeReaderCache() {
+		return cache;
+	}
 
 }

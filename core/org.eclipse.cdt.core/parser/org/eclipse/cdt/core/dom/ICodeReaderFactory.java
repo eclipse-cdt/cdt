@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
 
 /**
  * This is the interface that an AST Service uses to delegate the construction
@@ -42,4 +43,10 @@ public interface ICodeReaderFactory {
 	 * @return CodeReader for contents at that path.
 	 */
 	public CodeReader createCodeReaderForInclusion(String path);
+	
+	/**
+	 * Returns the ICodeReaderCache used for this ICodeReaderFacotry.
+	 * @return the ICodeReaderCache used for this ICodeReaderFacotry
+	 */
+	public ICodeReaderCache getCodeReaderCache();
 }

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -72,6 +73,10 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					}
 					public int getUniqueIdentifier() {
 						return 99;
+					}
+					public ICodeReaderCache getCodeReaderCache() {
+						// TODO this is useless
+						return null;
 					}
 				}
 			);

@@ -618,6 +618,11 @@
             id="org.eclipse.cdt.ui.preferences.CFileTypesPreferences">
       </page>
       <page
+            class="org.eclipse.cdt.internal.ui.preferences.CParserPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            name="%CDTParser.name"
+            id="org.eclipse.cdt.ui.preferences.CParserPreferencePage"/>
+      <page
             name="%appearancePrefName"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.AppearancePreferencePage"

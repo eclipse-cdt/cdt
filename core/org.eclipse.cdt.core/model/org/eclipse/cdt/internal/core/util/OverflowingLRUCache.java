@@ -65,6 +65,16 @@ public abstract class OverflowingLRUCache extends LRUCache {
 	 */
 	protected double fLoadFactor = 0.333;
 	/**
+	 * Creates an OverflowingLRUCache with default sizes.
+	 * 
+	 * This is required to create a cache with a hash map that is not 
+	 * dependent on the initial size of the cache (i.e. if the cache is
+	 * relative to size of entries and not the number of entries).
+	 */
+	public OverflowingLRUCache() {
+		super();
+	}
+	/**
 	 * Creates a OverflowingLRUCache. 
 	 * @param size Size limit of cache.
 	 */

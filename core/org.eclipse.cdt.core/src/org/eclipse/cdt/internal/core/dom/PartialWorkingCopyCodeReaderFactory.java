@@ -17,7 +17,8 @@ import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.EmptyCodeReaderCache;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
@@ -27,12 +28,14 @@ public class PartialWorkingCopyCodeReaderFactory
         implements ICodeReaderFactory {
 
     private final IWorkingCopyProvider provider;
+	private ICodeReaderCache cache = null;
 
     /**
      * @param provider
      */
     public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider) {
         this.provider = provider;
+		cache = new EmptyCodeReaderCache();
     }
 
     /* (non-Javadoc)
@@ -46,14 +49,14 @@ public class PartialWorkingCopyCodeReaderFactory
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
      */
     public CodeReader createCodeReaderForTranslationUnit(String path) {
-        return ParserUtil.createReader( path, createWorkingCopyIterator() );
+        return ((EmptyCodeReaderCache)cache).createReader( path, createWorkingCopyIterator() );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
     public CodeReader createCodeReaderForInclusion(String path) {
-        return ParserUtil.createReader( path, EmptyIterator.EMPTY_ITERATOR );
+        return cache.get( path );
     }
 
     /**
@@ -63,5 +66,12 @@ public class PartialWorkingCopyCodeReaderFactory
         if( provider == null ) return EmptyIterator.EMPTY_ITERATOR;
         return Arrays.asList( provider.getWorkingCopies() ).iterator();
     }
+
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getCodeReaderCache()
+     */
+	public ICodeReaderCache getCodeReaderCache() {
+		return cache;
+	}
 
 }

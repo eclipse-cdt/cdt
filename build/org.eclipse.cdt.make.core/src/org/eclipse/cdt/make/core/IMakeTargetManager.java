@@ -21,7 +21,7 @@ public interface IMakeTargetManager {
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
 
 	IMakeTarget[] getTargets(IContainer container) throws CoreException;
-	IMakeTarget findTarget(IContainer container, String name);
+	IMakeTarget findTarget(IContainer container, String name) throws CoreException;
 
 	IProject[]    getTargetBuilderProjects() throws CoreException;
 	

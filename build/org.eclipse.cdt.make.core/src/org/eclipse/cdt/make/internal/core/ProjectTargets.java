@@ -48,22 +48,21 @@ public class ProjectTargets {
 	private HashMap targetMap = new HashMap();
 
 	private IProject project;
-	private MakeTargetManager manager;
 
-	public ProjectTargets(MakeTargetManager manager, IProject project) {
+	public ProjectTargets(IProject project) {
 		this.project = project;
-		this.manager = manager;
 	}
 
-	public ProjectTargets(MakeTargetManager manager, IProject project, InputStream input) {
-		this(manager, project);
+	public ProjectTargets(MakeTargetManager manager, IProject project, InputStream input) throws CoreException {
+		this(project);
 
 		Document document = null;
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			document = parser.parse(input);
 		} catch (Exception e) {
-			MakeCorePlugin.log(e);
+			throw new CoreException(
+				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Error reading project targets.", e));
 		}
 		Node node = document.getFirstChild();
 		if (node.getNodeName().equals(BUILD_TARGET_ELEMENT)) {
@@ -188,7 +187,7 @@ public class ProjectTargets {
 		return project;
 	}
 
-	protected Document getAsXML() throws IOException {
+	protected Document getAsXML() {
 		Document doc = new DocumentImpl();
 		Element targetsRootElement = doc.createElement(BUILD_TARGET_ELEMENT);
 		doc.appendChild(targetsRootElement);

@@ -114,7 +114,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return projectTargets.get(container);
 	}
 
-	public IMakeTarget findTarget(IContainer container, String name) {
+	public IMakeTarget findTarget(IContainer container, String name) throws CoreException {
 		ProjectTargets projectTargets = (ProjectTargets)projectMap.get(container.getProject());
 		if (projectTargets == null) {
 			projectTargets = readTargets(container.getProject());
@@ -256,7 +256,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 	}
 
-	protected ProjectTargets readTargets(IProject project) {
+	protected ProjectTargets readTargets(IProject project) throws CoreException {
 		IPath targetFilePath =
 			MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
@@ -268,7 +268,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			}
 		}
 		if (projectTargets == null) {
-			projectTargets = new ProjectTargets(this, project);
+			projectTargets = new ProjectTargets(project);
 		}
 		projectMap.put(project, projectTargets);
 		return projectTargets;

@@ -52,7 +52,7 @@ public class MakeBuilder extends ACBuilder {
 	public class MyResourceDeltaVisitor implements IResourceDeltaVisitor {
 		boolean bContinue;
 
-		public boolean visit(IResourceDelta delta) throws CoreException {
+		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 			if (resource != null && resource.getProject() == getProject()) {
 				bContinue = true;

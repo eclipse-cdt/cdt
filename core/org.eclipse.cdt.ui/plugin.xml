@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.ui"
+   name="%pluginName"
+   version="1.0.0"
+   provider-name="QNX Software Systems Ltd."
+   class="org.eclipse.cdt.internal.ui.CPlugin">
+
+   <runtime>
+      <library name="cdtui.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+<!-- ======================================================================= -->
+<!-- The C Plugin                                                            -->
+<!-- ======================================================================= -->
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.cdt.core"/>
+   </requires>
+
+
+   <extension-point id="CCompletionContributor" name="%completionContributorName"/>
+   <extension-point id="CElementFilters" name="%elementFiltersName"/>
+<!-- =========================================================================== -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- =========================================================================== -->
+   <extension-point id="textHovers" name="%textHoversName"/>
+<!-- =========================================================================== -->
+<!-- Extension point: org.eclipse.cdt.ui.editorActions                      -->
+<!-- Purpose: Provide an action for the CEditor's context menu                   -->
+<!-- Extension Implementation:                                                   -->
+<!-- must implement org.eclipse.cdt.ui.ICEditorContextMenuAction           -->
+<!-- =========================================================================== -->
+   <extension-point id="editorActions" name="%editorActionsName"/>
+<!-- =========================================================================== -->
+<!-- Extension point: org.eclipse.cdt.ui.editorRulerActions                -->
+<!-- Purpose: Provide an action for the CEditor's ruler                          -->
+<!-- Extension Implementation:                                                   -->
+<!-- must implement org.eclipse.cdt.ui.ICEditorRulerAction                 -->
+<!-- =========================================================================== -->
+   <extension-point id="editorRulerActions" name="%editorRulerActionsName"/>
+
+<!-- Implement our filters for C-View.  -->
+   <extension
+         point="org.eclipse.cdt.ui.CElementFilters">
+      <filter
+            selected="true"
+            pattern=".*">
+      </filter>
+      <filter
+            selected="false"
+            pattern="*.o">
+      </filter>
+      <filter
+            selected="false"
+            pattern="*.so">
+      </filter>
+      <filter
+            selected="false"
+            pattern="*.a">
+      </filter>
+      <filter
+            selected="false"
+            pattern="Makefile">
+      </filter>
+      <filter
+            selected="false"
+            pattern="*.h">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%perspective.name"
+            icon="icons/full/cview16/c_pers.gif"
+            class="org.eclipse.cdt.internal.ui.CPerspectiveFactory"
+            id="org.eclipse.cdt.ui.CPerspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <perspectiveShortcut
+               id="org.eclipse.cdt.ui.CPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <perspectiveShortcut
+               id="org.eclipse.cdt.ui.CPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <perspectiveShortcut
+               id="org.eclipse.cdt.ui.CPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <perspectiveShortcut
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <perspectiveShortcut
+               id="org.eclipse.vcm.ui.vcmPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.projectNatureImages">
+      <image
+            icon="icons/full/ovr16/c_ovr.gif"
+            natureId="org.eclipse.cdt.cnature"
+            id="org.eclipse.cdt.cProjectNatureImage">
+      </image>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%viewsCategory.name"
+            id="org.eclipse.cdt.ui.views">
+      </category>
+      <view
+            name="%BuildConsoleView.name"
+            icon="icons/full/cview16/buildconsole.gif"
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.BuildConsoleView"
+            id="org.eclipse.cdt.ui.BuildConsoleView">
+      </view>
+      <view
+            name="%CView.name"
+            icon="icons/full/cview16/cview.gif"
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.cview.CView"
+            id="org.eclipse.cdt.ui.CView">
+      </view>
+   </extension>
+<!-- For C Wizards -->
+<!-- The wizards -->
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="%newCWizardsCategory.name"
+            id="org.eclipse.cdt.ui.newCWizards">
+      </category>
+      <wizard
+            name="%StdCWizard.name"
+            icon="icons/full/ctool16/newc_app.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            class="org.eclipse.cdt.ui.wizards.StdCWizard"
+            project="true"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.StdCWizard">
+         <description>
+            %StdCWizard.description
+         </description>
+      </wizard>
+<!-- For C++ Wizards -->
+      <category
+            name="%newCCWizardsCategory.name"
+            id="org.eclipse.cdt.ui.newCCWizards">
+      </category>
+      <wizard
+            name="%StdCCWizard.name"
+            icon="icons/full/ctool16/newcc_app.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            class="org.eclipse.cdt.ui.wizards.StdCCWizard"
+            project="true"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.StdCCWizard">
+         <description>
+            %StdCCWizard.description
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.ui.ceditor"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%CEditor.name"
+            icon="icons/full/obj16/c_file_obj.gif"
+            extensions="c, h, cc, hh, cpp, cxx"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
+            class="org.eclipse.cdt.internal.ui.editor.CEditor"
+            id="org.eclipse.cdt.ui.editor.CEditor">
+      </editor>
+      <editor
+            name="%Editors.DefaultTextEditor"
+            icon="icons/full/obj16/file_obj.gif"
+            extensions="mk"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.editors.text.TextEditor"
+            id="org.eclipse.ui.DefaultTextEditor">
+      </editor>
+      <editor
+            name="%AsmEditor.name"
+            icon="icons/full/obj16/c_file_obj.gif"
+            extensions="s"
+            class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
+            id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%CPluginPreferencePage.name"
+            class="org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CPluginPreferencePage">
+      </page>
+      <page
+            name="%CPluginEditorPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CEditorPreferencePage">
+      </page>
+      <page
+            name="%CPluginTemplatePreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.TemplatePreferencePage"
+            id="org.eclipse.cdt.ui.preferences.TemplatePreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            name="%CProjectPropertyPage.name"
+            class="org.eclipse.cdt.internal.ui.preferences.CProjectPropertyPage"
+            id="org.eclipse.cdt.ui.preferences.CProjectPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
+   </extension>
+<!--
+<extension
+      point="org.eclipse.debug.core.launchers">
+   <launcher
+         label="%CApplicationLauncher.label"
+         description="%CApplicationLauncher.description"
+         wizard="org.eclipse.cdt.internal.ui.wizards.CLaunchWizard"
+         modes="run"
+         class="org.eclipse.cdt.internal.core.CApplicationLauncher"
+         labelProvider="org.eclipse.cdt.internal.ui.CElementLabelProvider"
+         id="org.eclipse.cdt.core.CApplicationLauncher">
+   </launcher>
+</extension>
+-->
+<!--
+   <page
+         objectClass="org.eclipse.core.resources.IFile"
+         name="%CLaunchingPropertyPage.executionArguments.name"
+         class="org.eclipse.cdt.internal.ui.preferences.CLaunchingPropertyPage"
+         id="org.eclipse.cdt.ui.preferences.CLaunchingPropertyPage">
+   </page>
+-->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.cdt.core.model.ICElement"
+            id="org.eclipse.cdt.ui.compare.CElementContributions">
+         <menu
+               label="%CompareWithMenu.label"
+               path="additions"
+               id="compareWithMenu">
+            <separator
+                  name="compareWithGroup">
+            </separator>
+         </menu>
+         <action
+               label="%CompareWithEachOtherAction.label"
+               tooltip="%CompareWithEachOtherAction.tooltip"
+               class="org.eclipse.compare.internal.CompareAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               enablesFor="2+"
+               id="org.eclipse.cdt.ui.actions.CompareWithEachOther">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.core.model.ICElement"
+            id="org.eclipse.cdt.ui.compare.CompilationUnitContributions">
+         <menu
+               label="%ReplaceWithMenu.label"
+               path="additions"
+               id="replaceWithMenu">
+            <separator
+                  name="replaceWithGroup">
+            </separator>
+         </menu>
+         <action
+               label="%ReplaceFromHistoryAction.label"
+               tooltip="%ReplaceFromHistoryAction.tooltip"
+               class="org.eclipse.compare.internal.ReplaceWithEditionAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.ui.actions.ReplaceFromHistory">
+         </action>
+         <action
+               label="%CompareWithHistoryAction.label"
+               tooltip="%CompareWithHistoryAction.tooltip"
+               class="org.eclipse.compare.internal.CompareWithEditionAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               enablesFor="1"
+               id="compareWithHistory">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.compare.structureCreators">
+      <structureCreator
+            extensions="c,cc,cpp,cxx,h"
+            class="org.eclipse.cdt.internal.ui.compare.CStructureCreator">
+      </structureCreator>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            extensions="c,cc,cpp,cxx,h,c2"
+            class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator">
+      </viewer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%CFolderActionSet.label"
+            description="%CFolderActionSet.description"
+            visible="false"
+            id="org.eclipse.cdt.ui.CFolderActionSet">
+         <action
+               label="%OpenNewFileWizardAction.label"
+               icon="icons/full/ctool16/newfile_wiz.gif"
+               tooltip="%OpenNewFileWizardAction.tooltip"
+               class="org.eclipse.cdt.internal.ui.wizards.OpenNewFileWizardAction"
+               toolbarPath="Normal/FolderWizards"
+               id="org.eclipse.cdt.ui.actions.OpenNewFileWizardAction">
+         </action>
+         <action
+               label="%OpenNewFolderWizardAction.label"
+               icon="icons/full/ctool16/newfolder_wiz.gif"
+               tooltip="%OpenNewFolderWizardAction.tooltip"
+               class="org.eclipse.cdt.internal.ui.wizards.OpenNewFolderWizardAction"
+               toolbarPath="Normal/FolderWizards"
+               id="org.eclipse.cdt.ui.actions.OpenNewFolderWizardAction">
+         </action>
+      </actionSet>
+   </extension>
+<!-- Wizards ToolBar buttons -->
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%MakeView.name"
+            icon="icons/full/obj16/build_menu.gif"
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.makeview.MakeView"
+            id="org.eclipse.cdt.ui.MakeView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IMarker"
+            id="org.eclipse.cdt.ui.action.DeleteTaskAction">
+         <filter
+               name="type"
+               value="org.eclipse.cdt.core.problem">
+         </filter>
+         <action
+               label="%DeleteTaskAction.label"
+               icon="icons/full/ovr16/error_co.gif"
+               class="org.eclipse.cdt.internal.ui.util.DeleteTaskAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.cdt.ui.action.DeleteTaskAction">
+         </action>
+      </objectContribution>
+   </extension>
+<!-- =========================================================================== -->
+<!-- Debug Model Presentation                                                      -->
+<!-- =========================================================================== -->
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.eclipse.cdt.core.debug.ui.CDebugModelPresentation"
+            id="org.eclipse.cdt.ui">
+      </debugModelPresentation>
+   </extension>
+
+</plugin>

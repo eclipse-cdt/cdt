@@ -1,0 +1,128 @@
+package org.eclipse.cdt.internal.ui.makeview;
+
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.BuildAction;
+
+import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+
+
+public class MakeAction extends Action  {
+	static final String PREFIX = "BuildAction.";
+
+	MakeTarget[] targets;
+	Shell shell;
+
+	public MakeAction (MakeTarget[] targets, Shell shell, String s) {
+		super (s);
+		this.shell = shell;
+		this.targets = targets;
+	
+		setToolTipText(PREFIX);
+		setImageDescriptor(CPluginImages.DESC_BUILD_MENU);
+	}
+
+	/**
+	 * Causes all editors to save any modified resources depending on the user's
+	 * preference.
+	 */
+	void saveAllResources() {
+
+		if (!BuildAction.isSaveAllSet())
+			return;
+
+		List projects = new ArrayList();
+		for (int i = 0; i < targets.length; ++i ) {
+			MakeTarget target = targets[i];
+			projects.add(target.getResource().getProject());	
+		}
+
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchPage [] pages = windows[i].getPages();
+			for (int j = 0; j < pages.length; j++) {
+				IWorkbenchPage page = pages[j];
+				IEditorPart[] editors = page.getEditors();
+				for (int k = 0; k < editors.length; k++) {
+					IEditorPart editor = editors[k];
+					if (editor.isDirty()) {
+						IEditorInput input = editor.getEditorInput();
+						if (input instanceof IFileEditorInput) {
+							IFile inputFile = ((IFileEditorInput)input).getFile();
+							if (projects.contains(inputFile.getProject())) {
+								page.saveEditor(editor, false);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void run() {
+		try {
+			saveAllResources();
+			IRunnableWithProgress op = new IRunnableWithProgress () {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+					boolean bCleanConsole = true;
+					for (int i = 0; i < targets.length; ++i ) {
+						MakeTarget target = targets[i];
+						IResource res = target.getResource();
+						IProject project = res.getProject();
+						MakeUtil.setSessionConsoleMode(project, bCleanConsole);
+
+						try {
+							if (! project.equals(res) || target.isLeaf()) {
+								String dir = res.getLocation().toOSString();
+								MakeUtil.setSessionBuildDir(project, dir);
+								if (target.isLeaf()) {
+									MakeUtil.setSessionTarget(project, target.toString());
+								}
+								//System.out.println ("Build0: " + res + " " + ta);
+							}
+							//System.out.println ("Build: " + project);
+							project.build (IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+						} catch (CoreException e) {
+						} 
+
+						MakeUtil.removeSessionBuildDir(project);
+						MakeUtil.removeSessionTarget(project);
+						// Clean console only before the first target
+						MakeUtil.setSessionConsoleMode(project, true);
+						bCleanConsole = false;
+					}
+				}
+			};
+			new ProgressMonitorDialog(shell).run(true, true, op);
+		} catch (InvocationTargetException e) {
+			// handle exception
+		} catch (InterruptedException e) {
+			// handle cancelation
+		}
+	}
+}

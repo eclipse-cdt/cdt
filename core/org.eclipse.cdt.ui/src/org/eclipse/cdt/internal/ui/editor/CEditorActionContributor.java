@@ -118,7 +118,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
-		fTogglePresentation.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION);
+		fTogglePresentation.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
 		
 		//fToggleTextHover= new ToggleTextHoverAction();
 
@@ -175,8 +175,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	public void contributeToToolBar(IToolBarManager tbm) {
 		super.contributeToToolBar(tbm);
 		tbm.add(new Separator());
-		tbm.add(fTogglePresentation);
-		//tbm.add(fToggleTextHover);
 		tbm.add(fNextError);
 		tbm.add(fPreviousError);		
 	}

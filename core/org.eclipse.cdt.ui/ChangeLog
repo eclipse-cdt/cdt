@@ -1,4 +1,12 @@
 2004-12-21 Alain Magloire
+	We use TogglePresentation action definition ID rather the one
+	define in the CDT, since now the platfrom defines one.
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java
+	* src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitionIds.java
+	* src/org/eclipse/cdt/internal/ui/editor/ToggglePresentationAction.java
+
+2004-12-21 Alain Magloire
 	Fix PR 81635 patch form Przemek
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
 

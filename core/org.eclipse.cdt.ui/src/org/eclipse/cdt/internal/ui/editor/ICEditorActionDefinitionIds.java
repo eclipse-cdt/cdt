@@ -64,11 +64,6 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String ADD_INCLUDE= "org.eclipse.cdt.ui.edit.text.c.add.include"; //$NON-NLS-1$	
 
 	/**
-	 * Action definition ID of the toggle presentation toolbar button action
-	 * (value <code>"org.eclipse.cdt.ui.edit.text.java.toggle.presentation"</code>).
-	 */
-	public static final String TOGGLE_PRESENTATION= "org.eclipse.cdt.ui.edit.text.c.toggle.presentation"; //$NON-NLS-1$
-	/**
 	 * Action definition ID of the open declaration action
 	 * (value <code>"org.eclipse.cdt.ui.edit.opendecl"</code>).
 	 */

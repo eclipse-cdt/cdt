@@ -51,6 +51,7 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
@@ -263,7 +264,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		site.setSelectionProvider(treeViewer);
 		
 		IActionBars bars= site.getActionBars();		
-		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION, fTogglePresentation);
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);

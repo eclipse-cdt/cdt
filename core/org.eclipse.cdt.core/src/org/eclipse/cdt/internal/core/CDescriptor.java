@@ -494,7 +494,7 @@ public class CDescriptor implements ICDescriptor {
 		IExtension extension = extensionPoint.getExtension(ext.getID());
 		if (extension == null) {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-					CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound" + ":" + ext.getID()), null)); //$NON-NLS-1$ //$NON-NLS-2$
+					CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound") + ":" + ext.getID(), null)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {

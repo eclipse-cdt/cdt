@@ -507,10 +507,10 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		fOverlayStore.addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				String p = event.getProperty();
-//				if (p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
-//					|| p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+				if (p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
+					|| p.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
 					initializeViewerColors(fPreviewViewer);
-//				}
+				}
 
 				fPreviewViewer.getDocument().set(fPreviewViewer.getDocument().get());
 				fPreviewViewer.invalidateTextPresentation();

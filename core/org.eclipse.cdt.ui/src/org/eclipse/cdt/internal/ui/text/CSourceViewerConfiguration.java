@@ -6,11 +6,13 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Vector;
 
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -27,6 +29,8 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.information.IInformationPresenter;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -109,18 +113,36 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected ITextEditor getEditor() {
 		return fEditor;
 	}
-	
-	/**
-	 * @see ISourceViewerConfiguration#getPresentationReconciler(ISourceViewer)
+
+    /**
+     * Creates outline presenter. 
+     * @param editor Editor.
+     * @return Presenter with outline view.
+     */
+    public IInformationPresenter getOutlinePresenter(CEditor editor)
+    {
+        final InformationPresenter presenter = new InformationPresenter(getOutlineContolCreator(editor));
+        presenter.setSizeConstraints(20, 20, true, false);
+        final IInformationProvider provider = new CElementContentProvider(getEditor());
+        presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
+        presenter.setInformationProvider(provider, ICPartitions.C_MULTILINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_STRING);
+        
+        return presenter;
+    }
+
+    /**
+     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
+    public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
 		PresentationReconciler reconciler= new PresentationReconciler();
 
 		RuleBasedScanner scanner;
 
-		if(sourceViewer instanceof CEditor.AdaptedSourceViewer) {
-			String language = ((CEditor.AdaptedSourceViewer)sourceViewer).getDisplayLanguage();
+		if(sourceViewer instanceof CSourceViewer) {
+			String language = ((CSourceViewer)sourceViewer).getDisplayLanguage();
 			if(language != null && language.equals(CEditor.LANGUAGE_CPP)) {
 				scanner= fTextTools.getCppCodeScanner();
 			} else {
@@ -395,5 +417,30 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return super.getInformationPresenter(sourceViewer);
 	}
+    
+    
+    /**
+     * Creates control for outline presentation in editor.
+     * @param editor Editor.
+     * @return Control.
+     */
+    private IInformationControlCreator getOutlineContolCreator(final CEditor editor)
+    {
+        final IInformationControlCreator conrolCreator = new IInformationControlCreator()
+        {
+            /**
+             * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
+             */
+            public IInformationControl createInformationControl(Shell parent)
+            {
+                int shellStyle= SWT.RESIZE;
+                int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
+                return new COutlineInformationControl(editor, parent, shellStyle, treeStyle);                
+            }
+        };
+        return conrolCreator;
+    }
 
+
+    
 }

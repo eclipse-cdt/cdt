@@ -27,12 +27,20 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.ArchiveContainer;
 import org.eclipse.cdt.internal.core.model.BinaryContainer;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A content provider for C elements.
@@ -53,42 +61,30 @@ C model (<code>ICModel</code>)<br>
 
  * </pre>
  */
-public class CElementContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener {
+public class CElementContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener, IInformationProvider, IInformationProviderExtension{
 
-	protected StructuredViewer fViewer;
+	/** Editor. */
+    protected ITextEditor fEditor;
+    protected StructuredViewer fViewer;
 	protected Object fInput;
 
-	/* (non-Cdoc)
-	 * Method declared on IContentProvider.
-	 */
-	public void dispose() {
-		super.dispose();
-		CoreModel.getDefault().removeElementChangedListener(this);
-	}
-
-	/* (non-Cdoc)
-	 * Method declared on IContentProvider.
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-		super.inputChanged(viewer, oldInput, newInput);
-
-		fViewer = (StructuredViewer)viewer;
-
-		if (oldInput == null && newInput != null) {
-			CoreModel.getDefault().addElementChangedListener(this);
-		} else if (oldInput != null && newInput == null) {
-			CoreModel.getDefault().removeElementChangedListener(this);
-		}
-		fInput= newInput;
-	}
-
+    /**
+     * Creates a new content provider for C elements.
+     */
+    public CElementContentProvider()
+    {
+        // Empty.
+    }
+    
 	/**
 	 * Creates a new content provider for C elements.
+     * @param editor Editor.
 	 */
-	public CElementContentProvider() {
+	public CElementContentProvider(ITextEditor editor)
+    {
+        fEditor = editor;
 	}
-
+    
 	/**
 	 * Creates a new content provider for C elements.
 	 */
@@ -96,10 +92,35 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		super(provideMembers, provideWorkingCopy);
 	}
 
-	/* (non-Cdoc)
-	 * Method declared on IElementChangedListener.
+    /**
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    public void dispose() {
+        super.dispose();
+        CoreModel.getDefault().removeElementChangedListener(this);
+    }
+
+    /**
+     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+        super.inputChanged(viewer, oldInput, newInput);
+
+        fViewer = (StructuredViewer) viewer;
+
+        if (oldInput == null && newInput != null) {
+            CoreModel.getDefault().addElementChangedListener(this);
+        } else if (oldInput != null && newInput == null) {
+            CoreModel.getDefault().removeElementChangedListener(this);
+        }
+        fInput= newInput;
+    }
+
+	/**
+     * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 	 */
-	public void elementChanged(final ElementChangedEvent event) {
+    public void elementChanged(final ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
 		} catch(CModelException e) {
@@ -323,4 +344,44 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 	}
 
+    /**
+     * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
+     */
+    public IRegion getSubject(ITextViewer textViewer, int offset) {
+		if (textViewer != null && fEditor != null) {
+			IRegion region = CWordFinder.findWord(textViewer.getDocument(),
+					offset);
+			if (region != null) {
+				return region;
+			}
+			return new Region(offset, 0);
+		}
+		return null;
+	}
+
+    /**
+	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer,
+	 *      org.eclipse.jface.text.IRegion)
+	 */
+    public String getInformation(ITextViewer textViewer, IRegion subject)
+    {
+        return getInformation2(textViewer, subject).toString();
+    }
+
+    /**
+     * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+     */
+    public Object getInformation2(ITextViewer textViewer, IRegion subject) {
+		if (fEditor == null)
+			return null;
+		try {
+			ICElement element = SelectionConverter.getElementAtOffset(fEditor);
+			if (element != null) {
+				return element.toString();
+			}
+			return SelectionConverter.getInput(fEditor).toString();
+		} catch (CModelException e) {
+			return null;
+		}
+	}
 }

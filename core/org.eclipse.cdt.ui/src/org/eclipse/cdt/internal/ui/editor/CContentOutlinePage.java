@@ -231,7 +231,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		//treeViewer.setContentProvider(new CElementContentProvider(true, true));
-		treeViewer.setContentProvider(new CContentOutlinerProvider(this));
+		treeViewer.setContentProvider(new CContentOutlinerProvider(treeViewer));
 		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(), true));
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);

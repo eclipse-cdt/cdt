@@ -118,4 +118,9 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 */
 	public static final String OPEN_EDITOR= "org.eclipse.cdt.ui.edit.text.c.open.editor"; //$NON-NLS-1$
 
+    /**
+     * Action definition ID of the open outline dialog.
+     * (value <code>"org.eclipse.cdt.ui.edit.open.outline"</code>).
+     */
+    public static final String OPEN_OUTLINE= "org.eclipse.cdt.ui.edit.open.outline"; //$NON-NLS-1$
 }

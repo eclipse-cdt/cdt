@@ -5,9 +5,7 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -55,13 +53,11 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -293,7 +289,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @param event the property change event
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
+		CSourceViewer asv = (CSourceViewer) getSourceViewer();
 
 		try {
 			if (asv != null) {
@@ -519,6 +515,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 			fPropertyChangeListener = null;
 		}
+
+        final CSourceViewer sourceViewer = (CSourceViewer) getSourceViewer();
+        if (sourceViewer != null)
+        {
+            sourceViewer.unconfigure();
+        }
         
         if (fSelectionUpdateListener != null) {
 			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
@@ -653,7 +655,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action = fShowInCViewAction;
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
 		setAction("ShowInCView", action); //$NON-NLS-1$
-		
+        
+        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
+        setAction("OpenOutline", action); //$NON-NLS-1$*/
+        
 		//Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
@@ -686,8 +692,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "Format"); //$NON-NLS-1$
 		
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
-		
-		fRefactoringActionGroup.fillContextMenu(menu);
+
+        fRefactoringActionGroup.fillContextMenu(menu);
 		fSelectionSearchGroup.fillContextMenu(menu);
 	
 	}
@@ -885,14 +891,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fTabConverter = new TabConverter();
 			configureTabConverter();
 			fTabConverter.setNumberOfSpacesPerTab(getPreferenceStore().getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
-			AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
+			CSourceViewer asv = (CSourceViewer) getSourceViewer();
 			asv.addTextConverter(fTabConverter);
 		}
 	}
 
 	private void stopTabConversion() {
 		if (fTabConverter != null) {
-			AdaptedSourceViewer asv = (AdaptedSourceViewer) getSourceViewer();
+			CSourceViewer asv = (CSourceViewer) getSourceViewer();
 			asv.removeTextConverter(fTabConverter);
 			fTabConverter = null;
 		}
@@ -987,98 +993,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	public final static String LANGUAGE_CPP = "CEditor.language.cpp"; //$NON-NLS-1$
 	public final static String LANGUAGE_C = "CEditor.language.c"; //$NON-NLS-1$
 
-	/**
-	 * Adapted source viewer for CEditor
-	 */
-
-	public class AdaptedSourceViewer extends ProjectionViewer implements ITextViewerExtension {
-
-		private List fTextConverters;
-		private String fDisplayLanguage;
-
-		public AdaptedSourceViewer(
-			Composite parent,
-			IVerticalRuler ruler,
-			int styles,
-			IOverviewRuler fOverviewRuler,
-			boolean isOverviewRulerShowing,
-			String language) {
-			super(parent, ruler, fOverviewRuler, isOverviewRulerShowing, styles);
-			fDisplayLanguage = language;
-		}
-		public IContentAssistant getContentAssistant() {
-			return fContentAssistant;
-		}
-
-		/*
-		 * @see ITextOperationTarget#doOperation(int)
-		 */
-		public void doOperation(int operation) {
-
-			if (getTextWidget() == null) {
-				return;
-			}
-			switch (operation) {
-				case CONTENTASSIST_PROPOSALS:
-					String msg= fContentAssistant.showPossibleCompletions();
-					setStatusLineErrorMessage(msg);
-					return;
-			}
-			super.doOperation(operation);
-		}
-
-		public void insertTextConverter(ITextConverter textConverter, int index) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void addTextConverter(ITextConverter textConverter) {
-			if (fTextConverters == null) {
-				fTextConverters = new ArrayList(1);
-				fTextConverters.add(textConverter);
-			} else if (!fTextConverters.contains(textConverter))
-				fTextConverters.add(textConverter);
-		}
-
-		public void removeTextConverter(ITextConverter textConverter) {
-			if (fTextConverters != null) {
-				fTextConverters.remove(textConverter);
-				if (fTextConverters.size() == 0)
-					fTextConverters = null;
-			}
-		}
-
-		/*
-		 * @see TextViewer#customizeDocumentCommand(DocumentCommand)
-		 */
-		protected void customizeDocumentCommand(DocumentCommand command) {
-			super.customizeDocumentCommand(command);
-			if (fTextConverters != null) {
-				for (Iterator e = fTextConverters.iterator(); e.hasNext();)
-					 ((ITextConverter) e.next()).customizeDocumentCommand(getDocument(), command);
-			}
-		}
-
-		public void setDisplayLanguage(String language) {
-			fDisplayLanguage = language;
-		}
-
-		public String getDisplayLanguage() {
-			return fDisplayLanguage;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.source.ISourceViewer#setRangeIndication(int, int, boolean)
-		 */
-		public void setRangeIndication(int offset, int length, boolean moveCursor) {
-			// Fixin a bug in the ProjectViewer implemenation
-			// PR: https://bugs.eclipse.org/bugs/show_bug.cgi?id=72914
-			if (isProjectionMode()) {
-				super.setRangeIndication(offset, length, moveCursor);
-			} else {
-				super.setRangeIndication(offset, length, false);
-			}
-		}
-	}
-
 	/*
 	 * @see AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
 	 */
@@ -1102,13 +1016,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fOverviewRuler = createOverviewRuler(sharedColors);
 
 		ISourceViewer sourceViewer =
-			new AdaptedSourceViewer(
-				parent,
+			new CSourceViewer(
+				this, parent,
 				ruler,
 				styles,
 				fOverviewRuler,
 				isOverviewRulerVisible(),
 				fileType);
+        sourceViewer.configure(getSourceViewerConfiguration());
 		fSourceViewerDecorationSupport =
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		

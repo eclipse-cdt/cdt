@@ -1,3 +1,18 @@
+2004-12-14 Alain Magloire
+	PR 80631 Patch form Przemek Tomaszewski
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutilinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinerProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CSourceViewer.java
+	* src/org/eclipse/cdt/internal/ui/editor/ICEdtiroActionDefinitionIds.java
+	* src/org/eclipse/cdt/internal/ui/text/COutlineInformationControl.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/internal/ui/util/ProblemTreeViewer.java
+	* src/org/eclpse/cdt/ui/CElementContentProvider.java
+	* plugin.properties.
+	* plugin.xml
+
 2004-12-12 Alain Magloire
 	PR 80631 Patch form Przemek Tomaszewski 
 	* src/org/eclipse/cdt/internal.ui/preferences/CEditorPreferencePage.java

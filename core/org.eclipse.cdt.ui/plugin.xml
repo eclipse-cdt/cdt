@@ -938,6 +938,18 @@
             command="org.eclipse.cdt.ui.edit.text.c.add.include"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.showOutline.name"
+            description="%ActionDefinition.showOutline.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.open.outline">
+      </command>
+      <keyBinding
+            string="Ctrl+O"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.open.outline"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"

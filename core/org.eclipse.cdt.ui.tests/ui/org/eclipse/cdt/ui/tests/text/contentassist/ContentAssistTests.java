@@ -209,9 +209,9 @@ public class ContentAssistTests extends TestCase {
         
         results = getResults( cu, c2.indexOf( "::" ) + 2 ); //$NON-NLS-1$
         assertEquals( results.length, 3 );
-        assertEquals( results[0].getDisplayString(), "CHEAT" ); //$NON-NLS-1$
-        assertEquals( results[1].getDisplayString(), "IDIOT" ); //$NON-NLS-1$
-        assertEquals( results[2].getDisplayString(), "NORMAL" ); //$NON-NLS-1$
+        assertEquals( results[0].getDisplayString(), "IDIOT" ); //$NON-NLS-1$
+        assertEquals( results[1].getDisplayString(), "NORMAL" ); //$NON-NLS-1$
+        assertEquals( results[2].getDisplayString(), "CHEAT" ); //$NON-NLS-1$
     }
     
     public void testBug72559() throws Exception {
@@ -228,10 +228,10 @@ public class ContentAssistTests extends TestCase {
         IFile cu = importFile( "t.cpp", code ); //$NON-NLS-1$
         ICompletionProposal [] results = getResults( cu, code.indexOf( "v " ) + 1 ); //$NON-NLS-1$
         
-        assertEquals( results.length, 4 );
-        assertEquals( results[0].getDisplayString(), "var : float" ); //$NON-NLS-1$
-        assertEquals( results[1].getDisplayString(), "virtual" ); //$NON-NLS-1$
-        assertEquals( results[2].getDisplayString(), "void" ); //$NON-NLS-1$
-        assertEquals( results[3].getDisplayString(), "volatile" ); //$NON-NLS-1$
+        assertEquals( results.length, 4 );       
+        assertEquals( results[0].getDisplayString(), "virtual" ); //$NON-NLS-1$
+        assertEquals( results[1].getDisplayString(), "volatile" ); //$NON-NLS-1$
+        assertEquals( results[2].getDisplayString(), "var : float" ); //$NON-NLS-1$
+        assertEquals( results[3].getDisplayString(), "void" ); //$NON-NLS-1$
     }
 }

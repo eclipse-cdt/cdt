@@ -45,17 +45,16 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		
 		simpleName = caseSensitive ? name : CharOperation.toLowerCase( name );
 		if( caseSensitive || containers == null ){
-			containingTypes = containers;
+			qualifications = containers;
 		} else {
 			int len = containers.length;
-			this.containingTypes = new char[ len ][];
+			this.qualifications = new char[ len ][];
 			for( int i = 0; i < len; i++ ){
-				this.containingTypes[i] = CharOperation.toLowerCase( containers[i] );
+				this.qualifications[i] = CharOperation.toLowerCase( containers[i] );
 			}
 		} 
 		
 		classKind = kind;
-		limitTo = limit;
 	}
 	
 	public int matchLevel( ISourceElementCallbackDelegate node ){
@@ -70,10 +69,14 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			return IMPOSSIBLE_MATCH;
 		}
 
-		String [] fullyQualifiedName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
-		
+		//create char[][] out of full name, 
+		String [] fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
+		char [][] qualName = new char [ fullName.length - 1 ][];
+		for( int i = 0; i < fullName.length - 1; i++ ){
+			qualName[i] = fullName[i].toCharArray();
+		}
 		//check containing scopes
-		if( !matchQualifications( containingTypes, fullyQualifiedName ) ){
+		if( !matchQualifications( qualifications, qualName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
@@ -94,16 +97,15 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		return simpleName;
 	}
 	public char[] [] getContainingTypes () {
-		return containingTypes;
+		return qualifications;
 	}
 	public ASTClassKind getKind(){
 		return classKind;
 	}
 
 	private char[] 	  simpleName;
-	private char[][]  containingTypes;
+	private char[][]  qualifications;
 	private ASTClassKind classKind;
-	private LimitTo	  limitTo;
 	
 	protected char[] decodedSimpleName;
 	private char[][] decodedContainingTypes;
@@ -129,26 +131,30 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	protected void decodeIndexEntry(IEntryResult entryResult) {	
 		char[] word = entryResult.getWord();
 		int size = word.length;
-
-		this.decodedType = word[TYPE_DECL_LENGTH];
-		int oldSlash = TYPE_DECL_LENGTH+1;
-		int slash = CharOperation.indexOf(SEPARATOR, word, oldSlash+1);
 		
-		this.decodedSimpleName = CharOperation.subarray(word, oldSlash+1, slash);
+		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
+		
+		this.decodedType = word[ firstSlash + 1 ];
+		firstSlash += 2;
+		
+		int slash = CharOperation.indexOf( SEPARATOR, word, firstSlash + 1 );
+		
+		this.decodedSimpleName = CharOperation.subarray( word, firstSlash + 1, slash );
 	
-		if (slash != -1){
-			if (slash+1 < size){
-				this.decodedContainingTypes = CharOperation.splitOn('/', CharOperation.subarray(word, slash+1, size));
+		if( slash != -1 && slash+1 < size ){
+			char [][] temp = CharOperation.splitOn('/', CharOperation.subarray( word, slash + 1, size ));
+			this.decodedContainingTypes = new char [ temp.length ][];
+			for( int i = 0; i < temp.length; i++ ){
+				this.decodedContainingTypes[ i ] = temp[ temp.length - i - 1 ];
 			}
 		} 
-
 	}
 
 	public char[] indexEntryPrefix() {
 		return AbstractIndexer.bestTypePrefix(
-				limitTo,
+				getLimitTo(),
 				simpleName,
-				containingTypes,
+				qualifications,
 				classKind,
 				_matchMode,
 				_caseSensitive
@@ -156,36 +162,41 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	}
 
 	protected boolean matchIndexEntry() {
-
-		//TODO: BOG PUT QUALIFIER CHECKING BACK IN
-//		if (containingTypes != null){
-//			// empty char[][] means no enclosing type (in which case, the decoded one is the empty char array)
-//			if (containingTypes.length == 0){
-//				if (decodedContainingTypes != CharOperation.NO_CHAR_CHAR) return false;
-//			} else {
-//				if (!CharOperation.equals(containingTypes, decodedContainingTypes, _caseSensitive)) return false;
-//			}
-//		}
-
-		/* check simple name matches */
-		if (simpleName != null){
-			switch(_matchMode){
-				case EXACT_MATCH :
-					if (!CharOperation.equals(simpleName, decodedSimpleName, _caseSensitive)){
-						return false;
-					}
-					break;
-				case PREFIX_MATCH :
-					if (!CharOperation.prefixEquals(simpleName, decodedSimpleName, _caseSensitive)){
-						return false;
-					}
-					break;
-				case PATTERN_MATCH :
-					if (!CharOperation.match(simpleName, decodedSimpleName, _caseSensitive)){
-						return false;
-					}
+		//check type matches
+		if( classKind == null ){
+			//don't match variable entries
+			if( decodedType == VAR_SUFFIX ){
+				return false;
+			}
+		} else if( classKind == ASTClassKind.CLASS ) {
+			if( decodedType != CLASS_SUFFIX ){
+				return false;
+			} 
+		} else if ( classKind == ASTClassKind.STRUCT ) {
+			if( decodedType != STRUCT_SUFFIX ){
+				return false;
+			}
+		} else if ( classKind == ASTClassKind.UNION ) {
+			if( decodedType != UNION_SUFFIX ){
+				return false;
+			}
+		} else if ( classKind == ASTClassKind.ENUM ) {
+			if( decodedType != ENUM_SUFFIX ) {
+				return false;
 			}
 		}
+		
+		/* check simple name matches */
+		if (simpleName != null){
+			if( ! matchesName( simpleName, decodedSimpleName ) ){
+				return false; 
+			}
+		}
+		
+		if( !matchQualifications( qualifications, decodedContainingTypes ) ){
+			return false;
+		}
+		
 		return true;
 	}
 	

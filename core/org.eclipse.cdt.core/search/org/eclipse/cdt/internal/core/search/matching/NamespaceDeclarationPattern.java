@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
+import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
@@ -39,11 +40,11 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 * @param limitTo
 	 * @param caseSensitive
 	 */
-	public NamespaceDeclarationPattern(char[] name, char[][] qualifications, int matchMode, LimitTo limitTo, boolean caseSensitive) {
+	public NamespaceDeclarationPattern(char[] name, char[][] quals, int matchMode, LimitTo limitTo, boolean caseSensitive) {
 		super( matchMode, caseSensitive, limitTo );
 		
-		_name = name;
-		_qualifications = qualifications;
+		simpleName = name;
+		qualifications = quals;
 	}
 
 	/* (non-Javadoc)
@@ -55,19 +56,29 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 			
 		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)node;
 		
-		if( _name != null && !matchesName( _name, namespace.getName().toCharArray() ) ){
+		if( simpleName != null && !matchesName( simpleName, namespace.getName().toCharArray() ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 
-		if( !matchQualifications( _qualifications, namespace.getFullyQualifiedName() ) ){
+		//create char[][] out of full name, 
+		String [] fullName = namespace.getFullyQualifiedName();
+		char [] [] qualName = new char [ fullName.length - 1 ][];
+		for( int i = 0; i < fullName.length - 1; i++ ){
+			qualName[i] = fullName[i].toCharArray();
+		}
+		
+		if( !matchQualifications( qualifications, qualName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 
 		return ACCURATE_MATCH;
 	}
 
-	private char[][] _qualifications;
-	private char[] _name;
+	private char[][] decodedContainingTypes;
+	private char[] decodedSimpleName;
+	private char[][] qualifications;
+	private char[] simpleName;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#feedIndexRequestor(org.eclipse.cdt.internal.core.search.IIndexSearchRequestor, int, int[], org.eclipse.cdt.internal.core.index.impl.IndexInput, org.eclipse.cdt.core.search.ICSearchScope)
 	 */
@@ -80,8 +91,23 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#decodeIndexEntry(org.eclipse.cdt.internal.core.index.IEntryResult)
 	 */
 	protected void decodeIndexEntry(IEntryResult entryResult) {
-		// TODO Auto-generated method stub
+		char[] word = entryResult.getWord();
+		int size = word.length;
+
+		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
 		
+		int slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+		
+		this.decodedSimpleName = CharOperation.subarray(word, firstSlash+1, slash);
+	
+		if( slash != -1 && slash+1 < size ){
+			char [][] temp = CharOperation.splitOn('/', CharOperation.subarray(word, slash+1, size));
+			this.decodedContainingTypes = new char [ temp.length ][];
+			for( int i = 0; i < temp.length; i++ ){
+				this.decodedContainingTypes[ i ] = temp[ temp.length - i - 1 ];
+			}
+		} 
+
 	}
 
 	/* (non-Javadoc)
@@ -90,8 +116,8 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	public char[] indexEntryPrefix() {
 		return AbstractIndexer.bestNamespacePrefix(
 				_limitTo,
-				_name,
-				_qualifications,
+				simpleName,
+				qualifications,
 				_matchMode, _caseSensitive
 		);
 	}
@@ -99,7 +125,17 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#matchIndexEntry()
 	 */
 	protected boolean matchIndexEntry() {
-		// TODO Auto-generated method stub
+		/* check simple name matches */
+		if( simpleName != null ){
+			if( ! matchesName( simpleName, decodedSimpleName ) ){
+				return false; 
+			}
+		}
+	
+		if( !matchQualifications( qualifications, decodedContainingTypes ) ){
+			return false;
+		}
+	
 		return true;
 	}
 

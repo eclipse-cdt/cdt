@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
+import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
@@ -74,8 +75,17 @@ public class VariableDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#decodeIndexEntry(org.eclipse.cdt.internal.core.index.IEntryResult)
 	 */
 	protected void decodeIndexEntry(IEntryResult entryResult) {
-		// TODO Auto-generated method stub
+		char[] word = entryResult.getWord();
+		int size = word.length;
 		
+		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
+		
+		this.decodedType = word[ firstSlash + 1 ];
+		firstSlash += 2;
+		
+		int slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+		
+		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);
 	}
 
 	/* (non-Javadoc)
@@ -93,9 +103,22 @@ public class VariableDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#matchIndexEntry()
 	 */
 	protected boolean matchIndexEntry() {
+		if( decodedType != VAR_SUFFIX ){
+			return false;
+		}
+			
+		/* check simple name matches */
+		if (simpleName != null){
+			if( ! matchesName( simpleName, decodedSimpleName ) ){
+				return false; 
+			}
+		}
+		
 		return true;
 	}
 	
 	protected char [] simpleName;
+	protected char [] decodedSimpleName;
+	protected char    decodedType;
 
 }

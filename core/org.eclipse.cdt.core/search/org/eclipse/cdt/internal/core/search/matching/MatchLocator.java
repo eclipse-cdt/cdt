@@ -298,7 +298,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			}
 			
 			IScanner scanner = ParserFactory.createScanner( reader, pathString, new ScannerInfo(), ParserMode.QUICK_PARSE, this );
-			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.QUICK_PARSE );
+			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE );
 			
 			parser.parse();
 		}

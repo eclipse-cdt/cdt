@@ -244,11 +244,20 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	 * Current encoding is optimized for queries: all classes
 	 */
 	public static final char[] bestTypePrefix( LimitTo limitTo, char[] typeName, char[][] containingTypes, ASTClassKind classKind, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == DECLARATIONS ){
+			prefix = TYPE_DECL;
+		} else if( limitTo == REFERENCES ){
+			prefix = TYPE_REF;
+		} else {
+			return TYPE_ALL;
+		}
+
 		//Class kind not provided, best we can do
 		if (classKind == null){
-			return TYPE_DECL;
+			return prefix;
 		}
-		
+						
 		char classType=CLASS_SUFFIX;
 		if (classKind == ASTClassKind.STRUCT){
 			classType = STRUCT_SUFFIX;
@@ -260,22 +269,19 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			classType = ENUM_SUFFIX;
 		}
 		
-		char [] prefix = null;
-		if( limitTo == DECLARATIONS ){
-			prefix = TYPE_DECL;
-		} else if( limitTo == REFERENCES ){
-			prefix = TYPE_REF;
-		}
-		
 		return bestPrefix( prefix, classType, typeName, containingTypes, matchMode, isCaseSensitive );
 	}
+	
 	public static final char[] bestNamespacePrefix(LimitTo limitTo, char[] namespaceName, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = NAMESPACE_REF;
-		} else {
+		} else if ( limitTo == DECLARATIONS ) {
 			prefix = NAMESPACE_DECL;
+		} else {
+			return NAMESPACE_ALL;
 		}
+		
 		return bestPrefix( prefix, (char) 0, namespaceName, containingTypes, matchMode, isCaseSensitive );
 	}	
 		
@@ -283,8 +289,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = TYPE_REF;
-		} else {
+		} else if( limitTo == DECLARATIONS ){
 			prefix = TYPE_DECL;
+		} else {
+			return TYPE_ALL;
 		}
 		
 		return bestPrefix( prefix, VAR_SUFFIX, varName, null, matchMode, isCaseSenstive );	
@@ -294,9 +302,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = FIELD_REF;
-		} else {
+		} else if( limitTo == DECLARATIONS ){
 			prefix = FIELD_DECL;
-		}		
+		} else {
+			return FIELD_ALL;
+		}
+		
 		return bestPrefix( prefix, (char)0, fieldName, containingTypes, matchMode, isCaseSensitive );
 	}  
 
@@ -304,9 +315,15 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = METHOD_REF;
-		} else {
+		} else if( limitTo == DECLARATIONS ){
 			prefix = METHOD_DECL;
-		}		
+		} else if( limitTo == DEFINITIONS ){
+			//TODO prefix = METHOD_DEF;
+			return METHOD_ALL;	
+		} else {
+			return METHOD_ALL;
+		}
+		
 		return bestPrefix( prefix, (char)0, methodName, containingTypes, matchMode, isCaseSensitive );
 	}  
 	
@@ -314,9 +331,14 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = FUNCTION_REF;
-		} else {
+		} else if( limitTo == DECLARATIONS ){
 			prefix = FUNCTION_DECL;
-		}		
+		} else if ( limitTo == DEFINITIONS ){
+			//TODO prefix = FUNCTION_DEF;
+			return FUNCTION_ALL;
+		} else {
+			return FUNCTION_ALL;
+		}
 		return bestPrefix( prefix, (char)0, functionName, null, matchMode, isCaseSensitive );
 	}  
 		

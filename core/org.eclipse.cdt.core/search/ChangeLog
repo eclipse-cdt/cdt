@@ -1,3 +1,7 @@
+2003-07-24 Andrew Niefer
+	- Implemented decodeIndexEntry & matchIndexEntry for all patterns
+	- changed MatchLocator to use a COMPLETE_PARSE.
+
 2003-07-23 Andrew Niefer
 	-Changed ICSearchPattern.matchLevel to take a ISourceElementCallbackDelegate
 	-Changed ICSearchResultCollector.createMatch to take a ISourceElementCallbackDelegate

@@ -354,25 +354,25 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		return false;
 	}
 	
-	protected boolean matchQualifications( char[][] qualifications, String [] fullyQualifiedName ){
+	protected boolean matchQualifications( char[][] qualifications, char[][] candidate ){
 		
-		int qualLen = qualifications != null ? qualifications.length : 0;
-		int fullLen = fullyQualifiedName != null ? fullyQualifiedName.length : 0;
+		int qualLength = qualifications != null ? qualifications.length : 0;
+		int candidateLength = candidate != null ? candidate.length : 0;
 		
-		if( qualLen == 0 ){
+		if( qualLength == 0 ){
 			return true;
 		}
 		
 		int root = ( qualifications[0].length == 0 ) ? 1 : 0;
 		
-		if( (root == 1 && fullLen - 1 != qualLen - 1 ) ||
-			(root == 0 && fullLen - 1 < qualLen ) )
+		if( (root == 1 && candidateLength != qualLength - 1 ) ||
+			(root == 0 && candidateLength < qualLength ) )
 		{
 			return false;
 		}
 		
-		for( int i = 1; i <= qualLen - root; i++ ){
-			if( !matchesName( qualifications[ qualLen - i - root ], fullyQualifiedName[ fullLen - i - 1 ].toCharArray() ) ){
+		for( int i = 1; i <= qualLength - root; i++ ){
+			if( !matchesName( qualifications[ qualLength - i - root ], candidate[ candidateLength - i ] ) ){
 				return false;		
 			}
 		}

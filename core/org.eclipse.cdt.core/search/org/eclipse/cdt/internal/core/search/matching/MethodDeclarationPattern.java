@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.index.IEntryResult;
+import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
 /**
@@ -24,6 +26,9 @@ import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class MethodDeclarationPattern extends FunctionDeclarationPattern {
+
+	private char[][] decodedQualifications;
+
 
 	private char[][] qualifications;
 
@@ -43,9 +48,14 @@ public class MethodDeclarationPattern extends FunctionDeclarationPattern {
 			return IMPOSSIBLE_MATCH;
 		}
 		
+		//create char[][] out of full name, 
+		String [] fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
+		char [][] qualName = new char [ fullName.length - 1 ][];
+		for( int i = 0; i < fullName.length - 1; i++ ){
+			qualName[i] = fullName[i].toCharArray();
+		}
 		//check containing scopes
-		String [] fullyQualifiedName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
-		if( !matchQualifications( qualifications, fullyQualifiedName ) ){
+		if( !matchQualifications( qualifications, qualName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
@@ -56,7 +66,37 @@ public class MethodDeclarationPattern extends FunctionDeclarationPattern {
 		return AbstractIndexer.bestMethodPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 	}
 	
+	protected void decodeIndexEntry(IEntryResult entryResult) {
+		char[] word = entryResult.getWord();
+		int size = word.length;
+		
+		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
+		
+		int slash = CharOperation.indexOf( SEPARATOR, word, firstSlash + 1 );
+		
+		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);
+		
+		if( slash != -1 && slash+1 < size ){
+			char [][] temp = CharOperation.splitOn('/', CharOperation.subarray(word, slash + 1, size));
+			this.decodedQualifications = new char [ temp.length ][];
+			for( int i = 0; i < temp.length; i++ ){
+				this.decodedQualifications[ i ] = temp[ temp.length - i - 1 ];
+			}
+		}
+	}
+
 	protected boolean matchIndexEntry() {
+		/* check simple name matches */
+		if (simpleName != null){
+			if( ! matchesName( simpleName, decodedSimpleName ) ){
+				return false; 
+			}
+		}
+		
+		if( !matchQualifications( qualifications, decodedQualifications ) ){
+			return false;
+		}
+		
 		return true;
 	}
 }

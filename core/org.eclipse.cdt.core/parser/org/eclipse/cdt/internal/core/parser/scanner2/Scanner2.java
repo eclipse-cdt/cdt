@@ -76,10 +76,10 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	PrintStream dlog;
 	{
-		try {
-			dlog = new PrintStream(new FileOutputStream("C:/dlog.txt"));
-		} catch (FileNotFoundException e) {
-		}
+//		try {
+//			dlog = new PrintStream(new FileOutputStream("C:/dlog.txt"));
+//		} catch (FileNotFoundException e) {
+//		}
 	}
 
 	public Scanner2(CodeReader reader,
@@ -157,6 +157,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	private void popContext() {
 		bufferStack[bufferStackPos] = null;
+		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
 	}
 	
@@ -986,10 +987,10 @@ public class Scanner2 implements IScanner, IScannerData {
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
 						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
-							dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1));
+							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1));
 							skipOverConditionalCode(true);
 						} else
-							dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1));
+							if (dlog != null) dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1));
 						return;
 					case ppElse:
 					case ppElif:
@@ -1081,7 +1082,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (reader != null) {
 						if (reader.filename != null)
 							fileCache.put(reader.filename, reader);
-						dlog.println("#include <" + finalPath + ">");
+						if (dlog != null) dlog.println("#include <" + finalPath + ">");
 						pushContext(reader.buffer, reader);
 						return;
 					}
@@ -1125,7 +1126,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
-		dlog.println("#define " + new String(buffer, idstart, idlen));
+		if (dlog != null) dlog.println("#define " + new String(buffer, idstart, idlen));
 		
 		// Now check for function style macro to store the arguments
 		char[][] arglist = null;
@@ -1230,7 +1231,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 		
 		definitions.remove(buffer, idstart, idlen);
-		dlog.println("#undef " + new String(buffer, idstart, idlen));
+		if (dlog != null) dlog.println("#undef " + new String(buffer, idstart, idlen));
 	}
 	
 	private void handlePPIfdef(boolean positive) {
@@ -1266,13 +1267,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 
 		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-			dlog.println((positive ? "#ifdef" : "#ifndef")
+			if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef")
 					+ " <TRUE> " + new String(buffer, idstart, idlen));
 			// continue on
 			return;
 		}
 		
-		dlog.println((positive ? "#ifdef" : "#ifndef")
+		if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef")
 				+ " <FALSE> " + new String(buffer, idstart, idlen));
 		// skip over this group
 		skipOverConditionalCode(true);
@@ -1635,6 +1636,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (argparens == 0) {
 						break;
 					}
+				} else if (c == '\n') {
+					// eat it and continue
+					continue;
 				} else {
 					// start of next macro arg
 					--bufferPos[bufferStackPos];

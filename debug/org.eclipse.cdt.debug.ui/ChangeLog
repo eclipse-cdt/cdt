@@ -1,4 +1,11 @@
 2004-04-30 Mikhail Khodjaiants
+	New implementation of the "Resume At Line" global action.
+	* plugin.xml
+	* ActionMessages.properties
+	* ResumeAtLineActionDelegate.java
+	* ToggleBreakpointAdapter.java 
+
+2004-04-30 Mikhail Khodjaiants
 	Added ruler breakpoint actions to the Disassembly view.
 	* ICDebugHelpContextIds.java
 	* IInternalCDebugUIConstants.java

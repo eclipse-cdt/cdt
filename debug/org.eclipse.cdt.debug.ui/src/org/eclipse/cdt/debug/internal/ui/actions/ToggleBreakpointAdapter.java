@@ -136,6 +136,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) {
+		if ( part instanceof DisassemblyView ) {
+			IEditorInput input = ((DisassemblyView)part).getInput();
+			if ( !(input instanceof DisassemblyEditorInput) || 
+				 ((DisassemblyEditorInput)input).equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ) {
+				return false;
+			}
+		}
 		return ( selection instanceof ITextSelection );
 	}
 

@@ -19,10 +19,10 @@ import java.util.Set;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
-import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 
 
 /**

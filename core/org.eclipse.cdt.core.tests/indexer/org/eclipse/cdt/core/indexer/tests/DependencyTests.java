@@ -650,9 +650,12 @@ import org.eclipse.core.runtime.Platform;
 	   }
    }
 	
-   protected void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {
-	   searchEngine.search( workspace, pattern, scope, collector, false );
-   }
+	protected void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {
+   		try {
+   			searchEngine.search( workspace, pattern, scope, collector, false );
+		} catch (InterruptedException e) {
+		}
+	}
    
    /*
 	* Utils

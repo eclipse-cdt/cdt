@@ -1,3 +1,6 @@
+2004-02-13 Andrew Niefer
+	Updated calls to search to handle InterruptedException
+
 2004-02-16 Alain Magloire
 
 	Use ITextEditor instead of CEditor.

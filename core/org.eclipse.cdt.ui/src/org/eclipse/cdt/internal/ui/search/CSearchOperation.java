@@ -20,16 +20,14 @@ import java.util.List;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * @author aniefer
@@ -78,9 +76,10 @@ public class CSearchOperation implements IRunnableWithProgress,ICSearchConstants
 			pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
 		}
 		
-		engine.search( _workspace, pattern, _scope, _collector, false );
-	
-		
+		try {
+			engine.search( _workspace, pattern, _scope, _collector, false );
+		} catch (InterruptedException e) {
+		}
 	}
 	
 	/**

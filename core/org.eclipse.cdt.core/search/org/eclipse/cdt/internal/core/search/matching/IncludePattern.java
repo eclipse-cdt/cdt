@@ -41,7 +41,6 @@ public class IncludePattern extends CSearchPattern {
 	 */
 	protected void decodeIndexEntry(IEntryResult entryResult) {
 		char[] word = entryResult.getWord();
-		int size = word.length;
 	
 		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
 

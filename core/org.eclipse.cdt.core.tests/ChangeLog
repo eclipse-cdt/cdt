@@ -1,3 +1,6 @@
+2004-02-13 Andrew Niefer
+	updated tests using search to handle InterruptedExcpetion
+
 2004-02-12 Andrew Niefer
 	UnCommented CompleteParseASTTest.testBug47628
 	Added CompleteParseASTTest.testBug47636

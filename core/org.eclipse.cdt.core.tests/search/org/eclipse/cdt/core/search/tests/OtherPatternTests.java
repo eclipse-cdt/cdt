@@ -22,13 +22,13 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
-import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -327,7 +327,10 @@ public class OtherPatternTests extends BaseSearchTest {
 
 		ArrayList matchesList = new ArrayList();
 		MatchLocator matchLocator = new MatchLocator( pattern, resultCollector, scope, monitor );
-		matchLocator.locateMatches( new String [] { path }, workspace, null, matchesList);
+		try {
+			matchLocator.locateMatches( new String [] { path }, workspace, null, matchesList);
+		} catch (InterruptedException e1) {
+		}
 		
 		AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation(resultCollector, matchesList);
 		try {

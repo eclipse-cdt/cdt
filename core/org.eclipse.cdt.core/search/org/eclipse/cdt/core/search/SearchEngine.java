@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -109,7 +108,6 @@ public class SearchEngine implements ICSearchConstants{
 	 */
 	public static ICSearchScope createCFileSearchScope(IFile sourceFile, ArrayList elements) {
 		CSearchScope scope = new CSearchScope();
-		HashSet visitedProjects = new HashSet(2);
 		
 		if (sourceFile != null){
 			//Add the source file and project
@@ -155,7 +153,7 @@ public class SearchEngine implements ICSearchConstants{
 	 * @param _scope
 	 * @param _collector
 	 */
-	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations) {
+	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations) throws InterruptedException {
 		if( VERBOSE ) {
 			System.out.println("Searching for " + pattern + " in " + scope); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -199,7 +197,7 @@ public class SearchEngine implements ICSearchConstants{
 			matchLocator.setShouldExcludeLocalDeclarations( excludeLocalDeclarations );
 			
 			if( progressMonitor != null && progressMonitor.isCanceled() )
-				throw new OperationCanceledException();
+				throw new InterruptedException();
 			
 			//TODO: BOG Filter Working Copies...
 			matchLocator.locateMatches( pathCollector.getPaths(), workspace, this.workingCopies, matches);

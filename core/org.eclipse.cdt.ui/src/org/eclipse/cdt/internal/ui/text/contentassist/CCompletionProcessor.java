@@ -20,8 +20,8 @@ import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
@@ -546,7 +546,10 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				orPattern.addPattern(SearchEngine.createSearchPattern( 
 						searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
 			}
-			searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
+			try {
+				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
+			} catch (InterruptedException e) {
+			}
 			elementsFound.addAll(searchResultCollector.getSearchResults());
 			
 			sendResultsToCollector(elementsFound.iterator(), offset, length, prefix ); 

@@ -449,7 +449,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		elements[0] = cProject;
 		ICSearchScope scope = SearchEngine.createCSearchScope(elements, true);
 
-		searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector, false);
+		try {
+			searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector, false);
+		} catch (InterruptedException e) {
+		}
 		elementsFound.addAll(resultCollector.getSearchResults());
 	}
 	

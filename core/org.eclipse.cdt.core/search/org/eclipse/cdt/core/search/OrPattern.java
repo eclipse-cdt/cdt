@@ -11,18 +11,17 @@
 /*
  * Created on Aug 6, 2003
  */
-package org.eclipse.cdt.internal.core.search.matching;
+package org.eclipse.cdt.core.search;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-import org.eclipse.cdt.core.search.ICSearchPattern;
-import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 

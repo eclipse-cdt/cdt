@@ -89,7 +89,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 
 
@@ -335,7 +334,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 		
    
-	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies,ArrayList matches ){
+	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies,ArrayList matches ) throws InterruptedException{
 		matchStorage = matches;
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
 		
@@ -368,7 +367,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		for( int i = 0; i < length; i++ ){
 			if( progressMonitor != null ) {
 				if( progressMonitor.isCanceled() ){
-					throw new OperationCanceledException();
+					throw new InterruptedException();
 				} else {
 					progressMonitor.worked( 1 );
 				}
@@ -482,7 +481,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			if( node instanceof IASTReference ){
 				IASTReference reference = (IASTReference) node;
 				offset = reference.getOffset();
-				end = offset + reference.getName().length();;
+				end = offset + reference.getName().length();
 				if (VERBOSE)
 					MatchLocator.verbose("Report Match: " + reference.getName());
 			} else if( node instanceof IASTOffsetableNamedElement ){
@@ -491,7 +490,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 															    : offsetableElement.getStartingOffset();
 				end = offsetableElement.getNameEndOffset();
 				if( end == 0 ){
-					end = offset + offsetableElement.getName().length();;
+					end = offset + offsetableElement.getName().length();
 				}
 																						  
 				if (VERBOSE)

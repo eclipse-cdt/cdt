@@ -189,7 +189,6 @@ public class FieldDeclarationPattern extends CSearchPattern {
 	private char [][] decodedQualifications;
 	private char []   simpleName;
 	private char []   decodedSimpleName;
-	private char      decodedType;
 
 	private SearchFor searchFor;
 }

@@ -16,8 +16,8 @@ import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
@@ -124,55 +124,59 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 	 * @see IAction#actionPerformed
 	 */
 	public void run() {
-		 		 final String selectedText = getSelectedStringFromEditor();
+		final String selectedText = getSelectedStringFromEditor();
+		
+		if(selectedText == null) {
+			return;
+		}
+		
+		final ArrayList elementsFound = new ArrayList();
 
-		 		 if(selectedText == null) {
-		 		 		 return;
-		 		 }
-
-		 		 final ArrayList elementsFound = new ArrayList();
-
-		 		 IRunnableWithProgress runnable = new IRunnableWithProgress() {
-		 		 		 public void run(IProgressMonitor monitor) {
-		 		 		 		 BasicSearchResultCollector  resultCollector =  new BasicSearchResultCollector(monitor);
-		 		 		 		 IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-		 		 		 		 ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
+		IRunnableWithProgress runnable = new IRunnableWithProgress() 
+		{
+			public void run(IProgressMonitor monitor) {
+				BasicSearchResultCollector  resultCollector =  new BasicSearchResultCollector(monitor);
+		 		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
+		 		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
 
 				ICElement[] projectScopeElement = new ICElement[1];
 				projectScopeElement[0] = unit.getCProject();//(ICElement)currentScope.getCProject();
 				ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
 				OrPattern orPattern = new OrPattern();
 				// search for global variables, functions, classes, structs, unions, enums and macros
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
-		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, true ));
-				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
-		 		 		 		 elementsFound.addAll(resultCollector.getSearchResults());		 
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
+ 		 		orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, true ));
+				try {
+					searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
+				} catch (InterruptedException e) {
+				}
+		 		elementsFound.addAll(resultCollector.getSearchResults());		 
 			}
-		 		 };
+ 		};
 
-		 		 try {
-		 		 		 ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
-		 		 		 progressMonitor.run(true, true, runnable);
-
-		 		 		 if (elementsFound.isEmpty() == true) {
-		 		 		 		 return;
-		 		 		 }
-
-		 		 		 IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
-		 		 		 if (selected != null) {
-		 		 		 		 open(selected);
-		 		 		 		 return;
-		 		 		 }
-		 		 } catch(Exception x) {
-		 		 		 CUIPlugin.getDefault().log(x);
-		 		 }
+		try {
+	 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
+	 		progressMonitor.run(true, true, runnable);
+	
+	 		if (elementsFound.isEmpty() == true) {
+	 			return;
+	 		}
+	
+	 		IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
+	 		if (selected != null) {
+	 			open(selected);
+	 			return;
+	 		}
+		} catch(Exception x) {
+		 		 CUIPlugin.getDefault().log(x);
+		}
 	}
 
 	protected Shell getShell() {

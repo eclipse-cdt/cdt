@@ -59,8 +59,6 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		}
 		BasicSearchMatch match = (BasicSearchMatch)obj;
 		
-		IPath path = getLocation();
-		
 		if( startOffset != match.getStartOffset() || endOffset != match.getEndOffset()  )
 			return false;
 		

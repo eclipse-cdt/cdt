@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.search.matching;
 import java.io.CharArrayReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -439,8 +440,22 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			
 			if (VERBOSE)
 			  MatchLocator.verbose("*** New Search for path: " + pathString);
-			  
-			parser.parse();
+			
+			try{ 
+				parser.parse();
+			}
+			catch(Exception ex){
+				 if (VERBOSE){
+					MatchLocator.verbose("MatchLocator Exception: ");
+					ex.printStackTrace();
+				 }
+			}
+			catch(VirtualMachineError vmErr){
+				if (VERBOSE){
+					MatchLocator.verbose("MatchLocator VM Error: ");
+					vmErr.printStackTrace();
+				 }
+			}
 		}
 	}
 	

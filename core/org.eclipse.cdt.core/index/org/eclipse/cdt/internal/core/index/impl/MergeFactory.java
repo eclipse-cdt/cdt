@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.index.impl;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
+
 /**
  * A mergeFactory is used to merge 2 indexes into one. One of the indexes 
  * (oldIndex) is on the disk and the other(addsIndex) is in memory.
@@ -81,7 +84,24 @@ public class MergeFactory {
 			mergeReferences();
 			mergeIncludes();
 			mergeOutput.flush();
-		} finally {
+		} 
+		catch ( Exception ex ){
+			if (ex instanceof IOException)
+			  throw (IOException) ex;
+			else {
+			  if (IndexManager.VERBOSE) {
+				   JobManager.verbose("-> got the following exception during merge:"); //$NON-NLS-1$
+				   ex.printStackTrace();
+			  }
+			}
+		}
+		catch ( VirtualMachineError er ) {
+			if (IndexManager.VERBOSE) {
+			  JobManager.verbose("-> got the following exception during merge:"); //$NON-NLS-1$
+			  er.printStackTrace();
+			} 
+		}
+		finally {
 			//closes everything
 			oldInput.close();
 			addsInput.close();

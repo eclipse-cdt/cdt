@@ -474,10 +474,20 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#suspend()
 	 */
 	public void suspend() throws CDIException {
-		// send a noop to see if we get an aswer.
+		// Send the interrupt an sync for 10 seconds.
+		// for an answer.  The waiting time is arbitrary.
 		MISession mi = session.getMISession();
 		try {
 			mi.getMIInferior().interrupt();
+			for (int i = 0; isRunning() && i < 5; i++) {
+				try {
+					java.lang.Thread.sleep(2000);
+				} catch (InterruptedException e) {
+				}
+			}
+			if (isRunning()) {
+				throw new CDIException("Failed to suspend");
+			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}

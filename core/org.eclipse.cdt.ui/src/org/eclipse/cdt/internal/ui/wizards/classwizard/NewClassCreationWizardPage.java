@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -80,6 +82,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
@@ -225,7 +228,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		composite.setFont(parent.getFont());
         
         createSourceFolderControls(composite, nColumns);
-//        createNamespaceControls(composite, nColumns);
         createEnclosingTypeControls(composite, nColumns);
         
         createSeparator(composite, nColumns);
@@ -507,6 +509,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     			if (elem instanceof ICElement) {
     				celem = (ICElement) elem;
     			}
+    		}
+
+    		if (celem == null && part instanceof CEditor) {
+		    	IEditorInput input = ((IEditorPart)part).getEditorInput();
+		    	if (input != null) {
+					final IResource res = (IResource) input.getAdapter(IResource.class);
+					if (res != null && res instanceof IFile) {
+					    celem = CoreModel.getDefault().create((IFile)res);
+					}
+		    	}
     		}
     	}
     

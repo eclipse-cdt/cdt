@@ -84,16 +84,28 @@ public class TokenDuple implements ITokenDuple {
 	public String toString() 
 	{
 		StringBuffer buff = new StringBuffer(); 
+		IToken prev = null;
 		IToken iter = firstToken; 
 		for( ; ; )
 		{
-			buff.append( iter.getImage() );
-			if( iter.getType() == IToken.t_operator )
+			if( prev != null && 
+			    prev.getType() != IToken.tCOLONCOLON && 
+				prev.getType() != IToken.tIDENTIFIER && 
+				prev.getType() != IToken.tLT &&
+				prev.getType() != IToken.tCOMPL &&
+				iter.getType() != IToken.tGT && 
+				prev.getType() != IToken.tLBRACKET && 
+				iter.getType() != IToken.tRBRACKET && 
+				iter.getType() != IToken.tCOLONCOLON )
 				buff.append( ' ');
+			
+				
+			buff.append( iter.getImage() );
 			if( iter == lastToken ) break;
+			prev = iter;
 			iter = iter.getNext();
 		}
-		return buff.toString();
+		return buff.toString().trim();
 	}
 	
 	public boolean isIdentifier()

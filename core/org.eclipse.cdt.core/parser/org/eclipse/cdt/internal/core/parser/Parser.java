@@ -846,8 +846,9 @@ public class Parser implements IParser
         IASTTemplate ownerTemplate)
         throws Backtrack
     {
+    	IToken firstToken = LA(1);
         DeclarationWrapper sdw =
-            new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
+            new DeclarationWrapper(scope, firstToken.getOffset(), ownerTemplate);
 
         declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, sdw, forKR );
         try
@@ -893,6 +894,8 @@ public class Parser implements IParser
             case IToken.tLBRACE :
                 if (forKR)
                     throw backtrack;
+                if( firstToken == LA(1) )
+					throw backtrack;
                 declarator.setHasFunctionBody(true);
                 hasFunctionBody = true;
                 break;
@@ -2202,7 +2205,7 @@ public class Parser implements IParser
         else
         {
             // must be a conversion function
-            typeId(d.getDeclarationWrapper().getScope(), false );
+            typeId(d.getDeclarationWrapper().getScope(), true );
             toSend = lastToken;
         }
         ITokenDuple duple =
@@ -3553,7 +3556,7 @@ public class Parser implements IParser
     /**
      * @throws Backtrack
      */
-    protected IASTTypeId typeId(IASTScope scope, boolean forNewExpression ) throws Backtrack
+    protected IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers ) throws Backtrack
     {
     	IToken mark = mark();
     	ITokenDuple name = null;
@@ -3576,6 +3579,7 @@ public class Parser implements IParser
 	        	// do nothing
 	        }
 	        
+	        boolean encounteredType = false;
             simpleMods : for (;;)
             {
                 switch (LT(1))
@@ -3611,45 +3615,61 @@ public class Parser implements IParser
                         break;
                         
                     case IToken.tIDENTIFIER :
+                    	if( encounteredType ) break simpleMods;
+                    	encounteredType = true;
                         name = name();
 						kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
-                        break simpleMods;
+                        break;
                         
                     case IToken.t_int :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
                     	kind = IASTSimpleTypeSpecifier.Type.INT;
 						consume();
-                    	break simpleMods;
+                    	break;
                     	
                     case IToken.t_char :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
 						kind = IASTSimpleTypeSpecifier.Type.CHAR;
 						consume();
-						break simpleMods;
+						break;
 
                     case IToken.t_bool :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
 						kind = IASTSimpleTypeSpecifier.Type.BOOL;
 						consume();
-						break simpleMods;
+						break;
                     
                     case IToken.t_double :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
 						kind = IASTSimpleTypeSpecifier.Type.DOUBLE;
 						consume();
-						break simpleMods;
+						break;
                     
                     case IToken.t_float :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
 						kind = IASTSimpleTypeSpecifier.Type.FLOAT;
 						consume();
-						break simpleMods;
+						break;
                     
                     case IToken.t_wchar_t :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
 						kind = IASTSimpleTypeSpecifier.Type.WCHAR_T;
 						consume();
-						break simpleMods;
+						break;
 
                     
                     case IToken.t_void :
+						if( encounteredType ) break simpleMods;
+						encounteredType = true;                    
 						kind = IASTSimpleTypeSpecifier.Type.VOID;
 						consume();
-						break simpleMods;
+						break;
 
                         
                     default :
@@ -3690,13 +3710,13 @@ public class Parser implements IParser
     		throw backtrack;
     	
     	TypeId id = new TypeId(); 
-    	IToken last = mark(); 
+    	IToken last = lastToken; 
     	consumePointerOperators( id );
     	if( lastToken == null ) lastToken = last;
 		
-		if( ! forNewExpression )
+		if( ! skipArrayModifiers  )
 		{
-			last = mark(); 
+			last = lastToken; 
 	    	consumeArrayModifiers( id, scope );
 			if( lastToken == null ) lastToken = last;
 		}

@@ -421,7 +421,7 @@ public class IndexManagerTests extends TestCase {
 	
 		for (int i=0;i<methodresults.length; i++)
 		{
-			assertEquals(methodResultModel[i],methodresults[i].toString());
+			assertEquals("Index is " +i , methodResultModel[i],methodresults[i].toString());
 		}
   }
   

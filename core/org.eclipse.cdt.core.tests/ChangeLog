@@ -1,3 +1,7 @@
+2003-09-26 John Camelon
+	Added QuickParseASTTests::testBug43644() & testBug43062().  
+	Moved ASTFailedTests::testBug39531() to QuickParseASTTests.
+
 2003-09-25 Andrew Niefer
 	-bug43129 - Cannot search for definitions of global variables
 		-added testbug43129() in OtherPatternTests

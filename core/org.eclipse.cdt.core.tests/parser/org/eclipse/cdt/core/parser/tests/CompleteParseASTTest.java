@@ -811,5 +811,37 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable varX = (IASTVariable)parse( "extern int x;").getDeclarations().next();
 		assertTrue( varX.isExtern() ); 	
 	}
-	
+
+	public void testBug43503() throws Exception
+	{
+		StringBuffer buff = new StringBuffer(); 
+		
+		buff.append( "class SD_02 {");
+		buff.append( "	public:");
+		buff.append( " void f_SD_02();");
+		buff.append( " };");
+		buff.append( "class SD_01 {\n"); 
+		buff.append( "	public:\n");
+		buff.append( "		SD_02 *next;");      // REFERENCE SD_02
+		buff.append( "		void f_SD_01();\n");
+		buff.append( "};\n");
+		buff.append( "int main(){\n");
+		buff.append( "	SD_01 a = new SD_01();\n");  // REFERENCE SD_01 * 2
+		buff.append( "	a->f_SD_01();\n");			// REFERENCE a && REFERENCE f_SD_01
+		buff.append( "}\n");
+		buff.append( "void SD_01::f_SD_01()\n");	// REFERENCE SD_01
+		buff.append( "{\n");
+		buff.append( "   next->f_SD_02();\n");		// REFERENCE next && reference f_SD_02
+		buff.append( "}\n");
+		Iterator i = parse( buff.toString() ).getDeclarations();
+		IASTClassSpecifier SD_02 = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTMethod f_SD_02 = (IASTMethod)getDeclarations( SD_02 ).next();
+		IASTClassSpecifier SD_01 = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTField next= (IASTField)getDeclarations( SD_01 ).next();
+		IASTFunction main = (IASTFunction)i.next();
+		IASTVariable a = (IASTVariable)getDeclarations(main).next();
+		IASTMethod f_SD_01 = (IASTMethod)i.next();
+		assertFalse( i.hasNext() );
+		assertAllReferences( 8, createTaskList( new Task( SD_02), new Task( SD_01, 3 ), new Task( a ), new Task( f_SD_01 ), new Task( f_SD_02 ), new Task( next ) ));
+	}
 }

@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -687,8 +688,28 @@ public class CompleteParseBaseTest extends TestCase
     	{
     		IASTReference r = (IASTReference)allReferences.next();
     		if( r.getReferencedElement() == element )
+    		{
     			if( ! matches.add( r ) && ! allowDuplicates )
     				fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() );
+    		}
+    		else
+    		{
+    			if( r.getReferencedElement() instanceof IASTQualifiedNameElement && 
+    				element instanceof IASTQualifiedNameElement )
+    			{
+					if( qualifiedNamesEquals( 
+						((IASTQualifiedNameElement)r.getReferencedElement()).getFullyQualifiedName(),
+						((IASTQualifiedNameElement)element).getFullyQualifiedName() 
+											) 
+					  )
+					  { 
+					  
+						if( ! matches.add( r ) && ! allowDuplicates )
+							fail( "Duplicate reference found for ISourceElementCallbackDelegate: " + element + " @ offset " + r.getOffset() );
+					  }
+					
+    			}
+    		}
     	}
     	
     	assertEquals( expectedDistinctReferenceCount, matches.size() );
@@ -809,6 +830,22 @@ public class CompleteParseBaseTest extends TestCase
         result.add( task6 );
         return result;
     }
-	
+
+	public boolean qualifiedNamesEquals( String [] fromAST, String [] theTruth)
+	{
+		if( fromAST == null || theTruth == null ) return false;
+		if( fromAST.length !=  theTruth.length ) return false;
+		for( int i = 0; i < fromAST.length; ++i )
+		{
+			if( !( fromAST[i].equals( theTruth[i] ) ) )
+				return false;
+		}
+		return true;
+	}
+
+	protected void assertQualifiedName(String [] fromAST, String [] theTruth)
+	{
+		assertTrue( qualifiedNamesEquals( fromAST, theTruth ));
+	}	
 
 }

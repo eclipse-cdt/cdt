@@ -62,10 +62,6 @@ public class ASTFailedTests extends BaseASTTest
         }
         assertCodeFailsParse(code.toString());
     }
-    public void testBug39531() throws Exception
-    {
-        assertCodeFailsParse("class AString { operator char const *() const; };");
-    }
 
     public void testBug39536A() throws Exception
     {

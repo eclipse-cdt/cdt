@@ -1843,6 +1843,33 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue(m1.getVisiblity() == ASTAccessVisibility.PUBLIC);
 		assertTrue(m2.getVisiblity() == ASTAccessVisibility.PUBLIC);
 		assertTrue(m3.getVisiblity() == ASTAccessVisibility.PUBLIC);
-	}		
+	}
+	
+	public void testBug43644() throws Exception
+	{
+		Iterator i = parse( "void foo();{ int x; }", true, false ).getDeclarations();
+		IASTFunction f = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );		
+	}
+	
+	public void testBug43062() throws Exception
+	{
+		Iterator i = parse( "class X { operator short  (); 	operator int unsigned(); operator int signed(); };").getDeclarations();
+		IASTClassSpecifier classX = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertFalse( i.hasNext() );
+		Iterator members = classX.getDeclarations();
+        IASTMethod shortMethod = (IASTMethod)members.next();
+        IASTMethod unsignedMethod = (IASTMethod)members.next();
+        IASTMethod signedMethod = (IASTMethod)members.next(); 
+        assertFalse( members.hasNext() );
+		assertEquals( shortMethod.getName(), "operator short");
+		assertEquals( unsignedMethod.getName(), "operator int unsigned");
+		assertEquals( signedMethod.getName(), "operator int signed");
+	}
+
+	public void testBug39531() throws Exception
+	{
+		parse("class AString { operator char const *() const; };");
+	}
 
 }

@@ -1,3 +1,8 @@
+2003-09-26 John Camelon
+	Fixed Bug 43644 : 6 triangle icons appearing in outline viewer when typing an error
+	Fixed Bug 43062 : Outline is confused on operator methods containing spaces 
+	Fixed Bug 39531 : Problems with type conversion operators 
+
 2003-09-25 Hoda Amer
 	- Last part of solution to bug#42453: Expression result types not computed 
 	Added the handling of POSTFIX_TYPENAME_IDENTIFIER

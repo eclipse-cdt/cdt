@@ -356,4 +356,12 @@ public class ASTFunction extends ASTScope implements IASTFunction
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getContainingFunction()
+	 */
+	public IASTFunction getContainingFunction() {
+		return this;
+	}
 }

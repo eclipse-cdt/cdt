@@ -95,12 +95,9 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionExc
  */
 public class CompleteParseASTFactory extends BaseASTFactory implements IASTFactory
 {
-    /**
-     * 
-     */
-    
+	
     private final static List SUBSCRIPT;
-	private final IASTExtensionFactory extensionFactory;
+	//private final IASTExtensionFactory extensionFactory;
 	
     static 
     {
@@ -124,7 +121,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
         super();
 		pst = new ParserSymbolTable( language, mode );
-		extensionFactory = factory;
+//		extensionFactory = factory;
     }
 
 	/*
@@ -271,7 +268,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		                    if( result != null ) 
 								addReference( references, createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
 							else
-								throw new ASTSemanticException();    
+							{	
+								if( startingScope.getASTExtension().getPrimaryDeclaration() instanceof IASTCodeScope )
+								{
+									if( ((IASTCodeScope) startingScope.getASTExtension().getPrimaryDeclaration()).getContainingFunction() instanceof IASTMethod )
+									{
+										IASTClassSpecifier classSpecifier = ((IASTMethod) ((IASTCodeScope) startingScope.getASTExtension().getPrimaryDeclaration()).getContainingFunction()).getOwnerClassSpecifier();
+										((ASTClassSpecifier)classSpecifier).addUnresolvedReference( new UnresolvedReferenceDuple( startingScope, name ));
+										break;
+									}
+								}
+								throw new ASTSemanticException();
+							}
 		                }
 		                catch (ParserSymbolTableException e)
 		                {
@@ -667,8 +675,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     protected IASTReference createReference(ISymbol symbol, String string, int offset ) throws ASTSemanticException 
     {
-    	if( symbol == null )
-    		throw new ASTSemanticException(); 
+    	if( symbol == null ) throw new ASTSemanticException(); 
     		
         if( symbol.getType() == TypeInfo.t_namespace )
         {
@@ -2489,7 +2496,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
     	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
     	
-    	
     	List references = new ArrayList();
 		if( mapping.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
 	    {
@@ -2786,15 +2792,41 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier)
     {
-    	if( astClassSpecifier == null ) return;
+    	ASTClassSpecifier astImplementation = (ASTClassSpecifier)astClassSpecifier;
 		try
-        {
-            ((IDerivableContainerSymbol)((ASTClassSpecifier)astClassSpecifier).getSymbol()).addCopyConstructor();
+        { 
+			((IDerivableContainerSymbol)(astImplementation).getSymbol()).addCopyConstructor();
         }
         catch (ParserSymbolTableException e)
         {
         	// do nothing, this is best effort
         }
+        
+        Iterator i = astImplementation.getUnresolvedReferences();
+        List references = new ArrayList();
+        while( i.hasNext() )
+        {	
+        	UnresolvedReferenceDuple duple = (UnresolvedReferenceDuple) i.next();
+        	ISymbol s = null;
+        	
+        	List subReferences = new ArrayList();
+        	try
+			{
+        		s = lookupQualifiedName( duple.getScope(), duple.getName(), subReferences, false );
+        	}
+        	catch( ASTSemanticException ase )
+			{
+        	}
+        	
+        	if( s != null )
+        		references.addAll( subReferences );
+        	
+        	
+        }
+        
+        if( ! references.isEmpty() )
+        	astImplementation.setExtraReferences( references );
+        
     }
 
     public IASTInitializerClause createInitializerClause(IASTScope scope, IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators)
@@ -2835,4 +2867,5 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return null;
 		return s.getASTExtension().getPrimaryDeclaration();
 	}
+
 }

@@ -8,28 +8,31 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import java.util.Iterator;
-
+import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
  * @author jcamelon
- *
  */
-public interface IASTMethod extends  IASTFunction, IASTMember {
+public class UnresolvedReferenceDuple {
 
-	public boolean isVirtual();
-	public boolean isExplicit(); 
+	public UnresolvedReferenceDuple( IContainerSymbol scope, ITokenDuple name ){
+		this.scope = scope;
+		this.name = name;
+	}
 	
-	public boolean isConstructor(); 
-	public boolean isDestructor(); 
+	private final IContainerSymbol scope;
+	private final ITokenDuple name;
+
+	public IContainerSymbol getScope()
+	{
+		return scope;
+	}
 	
-	public boolean isConst(); 
-	public boolean isVolatile(); 
-	public boolean isPureVirtual(); 
-	
-	public Iterator getConstructorChainInitializers();
-	
-	public IASTClassSpecifier getOwnerClassSpecifier();
+	public ITokenDuple      getName()
+	{
+		return name;
+	}
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
@@ -210,4 +211,10 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     		return new EmptyIterator(); 
         return constructorChainElements.iterator();
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getOwnerClassSpecifier()
+	 */
+	public IASTClassSpecifier getOwnerClassSpecifier() {
+		return (IASTClassSpecifier) getOwnerScope();
+	}
 }

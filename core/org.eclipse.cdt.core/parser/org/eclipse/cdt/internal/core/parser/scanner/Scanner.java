@@ -2098,7 +2098,7 @@ public class Scanner implements IScanner {
 			if( offsetLimit == NO_OFFSET_LIMIT )
 				throw new EndOfFileException();
 			
-			if( finalToken.getEndOffset() == offsetLimit )
+			if( finalToken != null && finalToken.getEndOffset() == offsetLimit )
 				throw new OffsetLimitReachedException(finalToken);
 			throw new OffsetLimitReachedException( (IToken)null );
 		}

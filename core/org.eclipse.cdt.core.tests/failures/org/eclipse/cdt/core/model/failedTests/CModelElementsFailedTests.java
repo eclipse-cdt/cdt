@@ -12,19 +12,12 @@ package org.eclipse.cdt.core.model.failedTests;
 ***********************************************************************/
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.INamespace;
-import org.eclipse.cdt.core.model.IStructure;
-import org.eclipse.cdt.internal.core.model.CElement;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;

@@ -42,7 +42,7 @@ public class QuickParser extends Parser {
 		scanner.setASTFactory(astFactory);
 	}
 
-	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException
+	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
 	{
 		skipOverCompoundStatement();
 	}

@@ -1067,9 +1067,8 @@ public abstract class Parser implements IParser
    			
    				if ( !( declaration instanceof IASTScope ) ) 
    					throw backtrack;
-   					
-                handleFunctionBody((IASTScope)declaration, 
-                	sdw.isInline() );
+ 
+				handleFunctionBody((IASTScope)declaration );
 				((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
 					lastToken.getEndOffset(), lastToken.getLineNumber());
   
@@ -1100,7 +1099,7 @@ public abstract class Parser implements IParser
         }
         
     }
-    protected abstract void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException;
+    protected abstract void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException;
 
     protected void skipOverCompoundStatement() throws BacktrackException, EndOfFileException
     {
@@ -2837,6 +2836,7 @@ public abstract class Parser implements IParser
             }
             
             astClassSpecifier.exitScope( requestor );
+            
             
         }
     }

@@ -77,6 +77,7 @@ public class CompletionParser extends CompleteParser implements IParser {
 	 * @return
 	 */
 	private Set reconcileKeywords(Set keywords, String prefix) {
+		if( keywords == null ) return null;
 		Set resultSet = new TreeSet(); 
 		Iterator i = keywords.iterator(); 
 		while( i.hasNext() )

@@ -13,13 +13,12 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
  * @author jcamelon
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 
@@ -87,5 +86,15 @@ public class ASTCodeScope extends ASTScope implements IASTCodeScope {
     {
     	declarations.add(declaration);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getContainingFunction()
+	 */
+	public IASTFunction getContainingFunction() {
+		IASTCodeScope i = getOwnerCodeScope();
+		while( (i != null ) && !( i instanceof IASTFunction ))
+			i = i.getOwnerCodeScope();
+		return (IASTFunction) i;
+	}
 
 }

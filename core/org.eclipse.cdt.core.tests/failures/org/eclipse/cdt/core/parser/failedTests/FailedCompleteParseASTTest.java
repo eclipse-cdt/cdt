@@ -142,38 +142,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
 	}
 
-	public void testErrorHandling_1() throws Exception
-	{
-		Iterator i = parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ).getDeclarations();
-		IASTVariable x = (IASTVariable)i.next();
-		assertEquals( x.getName(), "x");
-		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTVariable anotherA = (IASTVariable)i.next();
-		assertFalse(i.hasNext()); // should be true
-		// this variable is skipped because of wrong error handling
-//		IASTVariable b = (IASTVariable)i.next();
-//		assertEquals( b.getName(), "b");
-//		assertFalse(i.hasNext());
-	}
 
-	public void testBug44340() throws Exception {
-	  try {
-	  	// inline function with reference to variables declared after them
-		IASTScope scope = parse ("class A{ int getX() {return x[1];} int x[10];};");
-		Iterator i = scope.getDeclarations();
-		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		Iterator j = getDeclarations(classA);
-		IASTMethod g = (IASTMethod)j.next();
-		IASTField x = (IASTField)j.next();
-		assertFalse(j.hasNext());
-		assertAllReferences( 1, createTaskList( new Task( x )));
-		
-	  } catch (ParserException e){
-		// parsing fails for now	  	
-	  }
-		
-		
-	}
 	
 	public void testBug47926() throws Exception{
 		StringBuffer buffer = new StringBuffer();

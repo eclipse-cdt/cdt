@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -193,6 +194,11 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    	Iterator i = resolvedCrossReferences.iterator();
+    	while( i.hasNext() )
+    	{
+    		((IASTReference)i.next()).acceptElement( requestor );
+    	}
         try
         {
             requestor.exitClassSpecifier(this);
@@ -201,6 +207,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         {
             /* do nothing */
         }
+        
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
@@ -263,6 +270,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     {
     	return declarations.iterator();
     }
+    
     public void addDeclaration(IASTDeclaration declaration)
     {
     	declarations.add(declaration);
@@ -287,4 +295,24 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     public int getNameLineNumber() {
     	return offsets.getNameLineNumber();
     }
+    
+    private List unresolvedCrossReferences = new ArrayList();
+    
+    public void addUnresolvedReference( UnresolvedReferenceDuple duple)
+	{
+    	unresolvedCrossReferences.add( duple );
+    }
+    
+    public Iterator getUnresolvedReferences()
+	{
+    	return unresolvedCrossReferences.iterator();
+    }
+    
+    private List resolvedCrossReferences = new ArrayList();
+	/**
+	 * @param references2
+	 */
+	public void setExtraReferences(List references) {
+		resolvedCrossReferences.addAll( references );
+	}
 }

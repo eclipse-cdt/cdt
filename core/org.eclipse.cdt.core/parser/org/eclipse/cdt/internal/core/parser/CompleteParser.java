@@ -41,12 +41,9 @@ public class CompleteParser extends Parser {
 		scanner.setASTFactory(astFactory);
 	}
 	
-	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException
+	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
 	{
-		if ( isInlineFunction ) 
-			skipOverCompoundStatement();
-		else
-			functionBody(scope);
+		functionBody(scope);
 	}
 	
 	protected void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException 

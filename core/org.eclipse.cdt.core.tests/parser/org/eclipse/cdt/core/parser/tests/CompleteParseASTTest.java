@@ -1178,4 +1178,30 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertTrue( foo.takesVarArgs() );
 		assertAllReferences( 1, createTaskList( new Task( foo ) ) );
 	}
+	
+	public void testErrorHandling_1() throws Exception
+	{
+		Iterator i = parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ).getDeclarations();
+		IASTVariable x = (IASTVariable)i.next();
+		assertEquals( x.getName(), "x");
+		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertEquals( A.getName(), "A");
+		IASTVariable anotherA = (IASTVariable)i.next();
+		assertEquals( anotherA.getName(), "b");
+		assertFalse(i.hasNext()); // should be true
+	}
+	
+	public void testBug44340() throws Exception {
+		// inline function with reference to variables declared after them
+		IASTScope scope = parse ("class A{ int getX() {return x[1];} int x[10];};", false );
+		Iterator i = scope.getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator j = getDeclarations(classA);
+		IASTMethod g = (IASTMethod)j.next();
+		IASTField x = (IASTField)j.next();
+		assertFalse(j.hasNext());
+		assertAllReferences( 1, createTaskList( new Task( x )));		
+	}
+	
+	
 }

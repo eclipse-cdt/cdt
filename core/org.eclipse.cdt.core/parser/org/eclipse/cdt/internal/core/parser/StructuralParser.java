@@ -46,8 +46,7 @@ public class StructuralParser extends Parser implements IParser {
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleFunctionBody(org.eclipse.cdt.core.parser.ast.IASTScope, boolean)
 	 */
 	protected void handleFunctionBody(
-		IASTScope scope,
-		boolean isInlineFunction)
+		IASTScope scope)
 		throws BacktrackException, EndOfFileException {
 		skipOverCompoundStatement();
 	}

@@ -177,6 +177,14 @@ public class CompleteParseBaseTest extends TestCase
 		{
 			return nestedScopes.iterator();
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getContainingFunction()
+		 */
+		public IASTFunction getContainingFunction() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
     
     public static class FullParseCallback implements ISourceElementRequestor 

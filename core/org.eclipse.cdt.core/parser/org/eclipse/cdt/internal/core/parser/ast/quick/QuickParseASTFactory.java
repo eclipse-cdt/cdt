@@ -353,5 +353,4 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
 		throw new ASTNotImplementedException();
 	}
-
 }

@@ -18,14 +18,14 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 
 public class SimpleToken extends AbstractToken implements IToken {
 	
-	public SimpleToken(int t, ContextStack contextStack ) {
-		super(t,contextStack.getCurrentLineNumber());
+	public SimpleToken(int t, ContextStack contextStack, char [] filename ) {
+		super(t,contextStack.getCurrentLineNumber(), filename );
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public SimpleToken( int t, int endOffset )
+	public SimpleToken( int t, int endOffset, char [] filename  )
 	{
-		super( t );
+		super( t, filename );
 		setOffsetAndLength( endOffset );
 	}
 

@@ -27,13 +27,22 @@ public class ASTElaboratedTypeSpecifier extends ASTNode implements IASTElaborate
 	private final String typeName;
 	private final ASTClassKind classKind;
 	private final ASTQualifiedNamedElement qualifiedName;   
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param elaboratedClassKind
      * @param typeName
      * @param startingOffset
      * @param endOffset
+     * @param filename
      */
-    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine)
+    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, char[] filename)
     {
     	classKind = elaboratedClassKind; 
     	this.typeName = typeName;
@@ -42,6 +51,7 @@ public class ASTElaboratedTypeSpecifier extends ASTNode implements IASTElaborate
     	setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
     	setEndingOffsetAndLineNumber( endOffset, endingLine );
     	qualifiedName = new ASTQualifiedNamedElement( scope, typeName );
+    	fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getTypeName()

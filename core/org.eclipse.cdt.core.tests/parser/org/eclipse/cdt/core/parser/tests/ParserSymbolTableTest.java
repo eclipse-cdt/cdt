@@ -58,6 +58,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
  */
 public class ParserSymbolTableTest extends TestCase {
 
+	private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray();
 	public ParserSymbolTable table = null;
 	public TypeInfoProvider provider = null;
 	
@@ -2934,15 +2935,15 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbolASTExtension cuExtension = new StandardSymbolExtension( table.getCompilationUnit(), (ASTSymbol) compUnit );
 		table.getCompilationUnit().setASTExtension( cuExtension );
 		
-		IASTClassSpecifier clsSpec = new ASTClassSpecifier( A, ASTClassKind.CLASS, ClassNameType.IDENTIFIER, ASTAccessVisibility.PUBLIC, 0, 0, 0, 0, 0, new ArrayList( ) ); 
+		IASTClassSpecifier clsSpec = new ASTClassSpecifier( A, ASTClassKind.CLASS, ClassNameType.IDENTIFIER, ASTAccessVisibility.PUBLIC, 0, 0, 0, 0, 0, new ArrayList( ), EMPTY_CHAR_ARRAY );  //$NON-NLS-1$
 		ISymbolASTExtension clsExtension = new StandardSymbolExtension( A, (ASTSymbol) clsSpec );
 		A.setASTExtension( clsExtension );
 		
-		IASTField field = new ASTField(i, null, null, null, 0, 0, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PUBLIC );
+		IASTField field = new ASTField(i, null, null, null, 0, 0, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PUBLIC, EMPTY_CHAR_ARRAY );
 		ISymbolASTExtension extension = new StandardSymbolExtension( i, (ASTSymbol) field );
 		i.setASTExtension( extension );
 		
-		field = new ASTField(i, null, null, null, 0, 0, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PRIVATE );
+		field = new ASTField(i, null, null, null, 0, 0, 0, 0, 0, new ArrayList(), false, null, ASTAccessVisibility.PRIVATE, EMPTY_CHAR_ARRAY );
 		extension = new StandardSymbolExtension( j, (ASTSymbol) field );
 		j.setASTExtension( extension );
 	

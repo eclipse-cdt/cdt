@@ -36,11 +36,20 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
     private final boolean isStatic;
     private final String name;
     private final ASTQualifiedNamedElement qualifiedName; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param scope
+     * @param filename
      */
     public ASTVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression )
+    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression, char[] filename )
     {
         super(scope);
 		this.isAuto = isAuto;
@@ -59,6 +68,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
 		if( initializerClause != null )
 			initializerClause.setOwnerVariableDeclaration(this);
+		fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isAuto()

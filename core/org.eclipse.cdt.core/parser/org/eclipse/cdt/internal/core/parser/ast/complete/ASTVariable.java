@@ -35,6 +35,14 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     private final IASTInitializerClause initializerClause;
     private final IASTAbstractDeclaration abstractDeclaration;
     protected List references;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param newSymbol
      * @param abstractDeclaration
@@ -43,8 +51,9 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      * @param startingOffset
      * @param nameOffset
      * @param references
+     * @param filename
      */
-    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references, IASTExpression constructorExpression, boolean previouslyDeclared  )
+    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references, IASTExpression constructorExpression, boolean previouslyDeclared, char[] filename  )
     {
     	super( newSymbol );
         this.abstractDeclaration = abstractDeclaration;
@@ -55,7 +64,8 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
 		setNameOffset( nameOffset );
 		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
 		this.references = references;
-		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName() );		
+		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName() );	
+		fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isAuto()

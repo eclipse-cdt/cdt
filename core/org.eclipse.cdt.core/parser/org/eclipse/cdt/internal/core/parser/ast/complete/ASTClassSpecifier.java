@@ -93,7 +93,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     /**
      * @param symbol
      */
-    public ASTClassSpecifier(ISymbol symbol, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references )
+    public ASTClassSpecifier(ISymbol symbol, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references, char [] filename )
     {
         super(symbol);
         classKind = kind;
@@ -104,6 +104,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
 		this.references = references;
+		fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassNameType()
@@ -275,6 +276,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	
 	
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset, nameStartOffset, nameEndOffset, nameLineNumber;
+	private final char[] fn;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
      */
@@ -356,4 +358,10 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 }

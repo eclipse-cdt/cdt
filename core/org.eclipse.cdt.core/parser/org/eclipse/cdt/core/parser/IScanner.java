@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
  * @author jcamelon
  *
  */
-public interface IScanner  extends IFilenameProvider {
+public interface IScanner  {
 
 	public static final String __CPLUSPLUS = "__cplusplus"; //$NON-NLS-1$
 	public static final String __STDC_VERSION__ = "__STDC_VERSION__"; //$NON-NLS-1$

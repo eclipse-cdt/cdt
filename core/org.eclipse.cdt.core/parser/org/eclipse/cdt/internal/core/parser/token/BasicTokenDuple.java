@@ -501,5 +501,12 @@ public class BasicTokenDuple implements ITokenDuple {
 		return toString().toCharArray(); //TODO fix me!
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getFilename()
+	 */
+	public char[] getFilename() {
+		return firstToken.getFilename();
+	}
+
 	
 }

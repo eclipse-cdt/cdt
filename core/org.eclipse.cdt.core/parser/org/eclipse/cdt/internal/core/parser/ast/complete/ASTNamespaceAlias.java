@@ -28,14 +28,23 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
     private final String alias;
     private final IASTNamespaceDefinition namespace;
     private List references;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param scope
      * @param symbol
      * @param startingOffset
      * @param nameOffset
      * @param endOffset
+     * @param filename
      */
-    public ASTNamespaceAlias(ISymbol s, String alias, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references)
+    public ASTNamespaceAlias(ISymbol s, String alias, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references, char[] filename)
     {
         super( s );
         this.alias = alias; 
@@ -45,6 +54,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
         setNameOffset(nameOffset); 
         setNameEndOffsetAndLineNumber(nameEndOffset, nameEndOffset);
         this.references = references;
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias#getAlias()

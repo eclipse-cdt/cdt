@@ -27,13 +27,22 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
 {
 	private final IUsingDirectiveSymbol using;
 	private List references;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param namespaceDefinition
      * @param startingOffset
      * @param endingOffset
+     * @param filename
      */
     //public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset, List references )
-	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int startingLine, int endingOffset, int endingLine, List references )
+	public ASTUsingDirective(IContainerSymbol ownerSymbol, IUsingDirectiveSymbol usingDirective, int startingOffset, int startingLine, int endingOffset, int endingLine, List references, char[] filename )
     {
     	super( ownerSymbol );
         //namespace = namespaceDefinition;
@@ -41,6 +50,7 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setEndingOffsetAndLineNumber(endingOffset, endingLine);
         this.references = references;
+        fn = filename;
     }
 
     /* (non-Javadoc)

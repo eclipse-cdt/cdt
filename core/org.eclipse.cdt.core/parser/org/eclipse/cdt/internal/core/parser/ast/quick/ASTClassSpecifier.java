@@ -35,7 +35,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         int startingOffset, 
         int startingLine, 
         int nameOffset, 
-        int nameEndOffset, int nameLineNumber, ASTAccessVisibility access)
+        int nameEndOffset, int nameLineNumber, ASTAccessVisibility access, char[] filename)
     {
     	super( scope, name );
         classNameType = type;
@@ -45,6 +45,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLineNumber);
         this.access = access;
         this.name = name;
+        fn = filename;
     }
     
     private final String name;
@@ -54,6 +55,14 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
     private ASTAccessVisibility access;
     private final ClassNameType classNameType;
     private final ASTClassKind classKind;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassNameType()
      */

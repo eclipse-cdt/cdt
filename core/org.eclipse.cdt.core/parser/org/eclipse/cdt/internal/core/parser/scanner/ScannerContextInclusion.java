@@ -37,7 +37,7 @@ public class ScannerContextInclusion implements IScannerContext
     
 	public final String getContextName()
 	{
-		return code.filename;
+		return new String( code.filename );
 	}
 	
 	public int getOffset()

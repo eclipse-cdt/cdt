@@ -39,15 +39,23 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	private IASTTypeId defaultValue;
 	private ASTParameterDeclaration parameter;
 	private List parms;
-	
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 
 	/**
+	 * @param filename
 	 * @param symbol
 	 * @param defaultValue2
 	 * @param parameter2
 	 * @param parms2
 	 */
-	public ASTTemplateParameter(ISymbol sym, IASTTypeId defVal, IASTParameterDeclaration param, List parms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine ) {
+	public ASTTemplateParameter(ISymbol sym, IASTTypeId defVal, IASTParameterDeclaration param, List parms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename ) {
 		super( sym );
 		symbol = sym;
 		defaultValue = defVal;
@@ -58,6 +66,7 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 		setEndingOffsetAndLineNumber(endingOffset, endingLine);
 		setNameOffset(nameOffset);
 		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
+		fn = filename;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getTemplateParameterKind()

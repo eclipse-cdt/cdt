@@ -100,7 +100,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameLine,
 		int endingOffset,
 		int endingLine,
-		IMacroDescriptor info) {
+		IMacroDescriptor info, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -121,7 +121,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameEndOffset,
 		int nameLine,
 		int endingOffset,
-		int endingLine) {
+		int endingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -176,7 +176,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingOffset,
 		int startingLine,
 		int endingOffset,
-		int endingLine) {
+		int endingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -194,7 +194,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingLine,
 		int nameOffset,
 		int nameEndOffset,
-		int nameLineNumber)
+		int nameLineNumber, char[] fn)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -243,7 +243,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		IASTScope scope,
 		String spec,
 		int startingOffset,
-		int startingLine) {
+		int startingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -268,7 +268,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingLine,
 		int nameOffset,
 		int nameEndOffset,
-		int nameLine)
+		int nameLine, char[] fn)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -327,7 +327,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingLine,
 		int nameOffset,
 		int nameEndOffset,
-		int nameLine)
+		int nameLine, char[] fn)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -350,7 +350,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameLine,
 		int endingOffset,
 		int endLine,
-		IASTExpression initialValue)
+		IASTExpression initialValue, char[] fn)
 		throws ASTSemanticException {
 		return null;
 
@@ -612,7 +612,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameOffset,
 		int nameEndOffset,
 		int nameLine,
-		IASTExpression constructorExpression)
+		IASTExpression constructorExpression, char[] fn)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -647,7 +647,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameEndOffset,
 		int nameLine,
 		IASTExpression constructorExpression,
-		ASTAccessVisibility visibility)
+		ASTAccessVisibility visibility, char[] fn)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -695,7 +695,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int nameEndOffset,
 		int nameLine,
 		int endingOffset,
-		int endingLine) {
+		int endingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -711,7 +711,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		List templateParameters,
 		boolean exported,
 		int startingOffset,
-		int startingLine) {
+		int startingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -730,12 +730,12 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		IASTTypeId defaultValue,
 		IASTParameterDeclaration parameter,
 		List parms, IASTCodeScope parameterScope,
-		int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine) {
+		int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
+	/*Os
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTemplateInstantiation(org.eclipse.cdt.core.parser.ast.IASTScope,
@@ -744,7 +744,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	public IASTTemplateInstantiation createTemplateInstantiation(
 		IASTScope scope,
 		int startingOffset,
-		int startingLine) {
+		int startingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -758,7 +758,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	public IASTTemplateSpecialization createTemplateSpecialization(
 		IASTScope scope,
 		int startingOffset,
-		int startingLine) {
+		int startingLine, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -779,7 +779,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingLine,
 		int nameOffset,
 		int nameEndOffset,
-		int nameLine)
+		int nameLine, char[] fn)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -800,7 +800,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int startingLine,
 		int endingOffset,
 		int endingLine,
-		boolean isFriend) {
+		boolean isFriend, char[] fn) {
 		// TODO Auto-generated method stub
 		return null;
 	}

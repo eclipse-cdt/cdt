@@ -32,6 +32,13 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
     private final IASTAbstractDeclaration mapping;
     private final ASTQualifiedNamedElement qualifiedName;
     private List references; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 
     /**
      * @param newSymbol
@@ -39,8 +46,9 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
      * @param startingOffset
      * @param nameOffset
      * @param references
+     * @param filename
      */
-    public ASTTypedef(ISymbol newSymbol, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references)
+    public ASTTypedef(ISymbol newSymbol, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, List references, char[] filename)
     {
         super( newSymbol );
         this.mapping = mapping;
@@ -49,6 +57,7 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setNameOffset(nameOffset);
         setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
+        fn = filename;
     }
 
     /* (non-Javadoc)

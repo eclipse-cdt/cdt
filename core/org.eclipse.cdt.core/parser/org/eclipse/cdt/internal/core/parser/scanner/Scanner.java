@@ -168,7 +168,7 @@ public final class Scanner implements IScanner, IScannerData {
     	this.contextStack = new ContextStack( this, log );
     	this.workingCopies = workingCopies;
     	this.scannerExtension = extension;
-		this.astFactory = ParserFactory.createASTFactory( this, parserMode, language );
+		this.astFactory = ParserFactory.createASTFactory( parserMode, language );
 		
 		if (reader.isFile())
 			fileCache.put(reader.filename, reader);
@@ -631,12 +631,12 @@ public final class Scanner implements IScanner, IScannerData {
                 inclusion =
                 	getASTFactory().createInclusion(
                         fileName,
-                        duple.filename,
+                        new String( duple.filename ),
                         !useIncludePaths,
                         beginOffset,
                         startLine,
                         nameOffset,
-                        nameOffset + fileName.length(), nameLine, endOffset, endLine);
+                        nameOffset + fileName.length(), nameLine, endOffset, endLine, getCurrentFilename());
             }
             catch (Exception e)
             {
@@ -2786,7 +2786,7 @@ public final class Scanner implements IScanner, IScannerData {
                             beginningOffset,
                             startLine,
                             directive.getStartOffset(),
-                            directive.getStartOffset() + directive.getFilename().length(), nameLine, directive.getEndOffset(), endLine);
+                            directive.getStartOffset() + directive.getFilename().length(), nameLine, directive.getEndOffset(), endLine, getCurrentFilename());
                 }
                 catch (Exception e)
                 {
@@ -3090,7 +3090,7 @@ public final class Scanner implements IScanner, IScannerData {
 		
 		try
         {
-			getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor ).acceptElement( requestor, null );
+			getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor, getCurrentFilename() ).acceptElement( requestor, null );
         }
         catch (Exception e)
         {
@@ -3554,7 +3554,7 @@ public final class Scanner implements IScanner, IScannerData {
 	 */
 	public IASTFactory getASTFactory() {
 		if( astFactory == null )
-			astFactory = ParserFactory.createASTFactory( this, parserMode, language );
+			astFactory = ParserFactory.createASTFactory(  parserMode, language );
 		return astFactory;
 	}
 

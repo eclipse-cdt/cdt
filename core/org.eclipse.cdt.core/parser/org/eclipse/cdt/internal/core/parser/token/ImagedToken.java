@@ -25,14 +25,14 @@ public class ImagedToken extends SimpleToken {
 	 * @param contextStack
 	 * @param i
 	 */
-	public ImagedToken(int t, ContextStack contextStack, char[] i) {
-		super(t, contextStack);
+	public ImagedToken(int t, ContextStack contextStack, char[] i, char [] f) {
+		super(t, contextStack, f );
 		setImage( i );
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public ImagedToken( int t, char[] i, int endOffset) {
-		super( t, 0 );
+	public ImagedToken( int t, char[] i, int endOffset, char [] f ) {
+		super( t, 0, f  );
 		setImage(i);
 		setOffsetAndLength( endOffset );
 	}

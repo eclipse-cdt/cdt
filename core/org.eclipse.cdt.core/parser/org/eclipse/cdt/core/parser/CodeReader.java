@@ -19,32 +19,35 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+
 /**
  * @author jcamelon
  */
 public class CodeReader {
 
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
-	private static final String NOFILE = "<text>"; //$NON-NLS-1$
+	private static final String NF = "<text>"; //$NON-NLS-1$
+	private static final char [] NOFILE = NF.toCharArray(); //$NON-NLS-1$
 	
 	public final char[] buffer;
-	public final String filename;
+	public final char[] filename;
 	
 	// If you already have preloaded the buffer, e.g. working copy
 	public CodeReader(String filename, char[] buffer) {
-		this.filename = filename;
+		this.filename = filename.toCharArray();
 		this.buffer = buffer;
 	}
 
 	// If you are just scanning a string
 	public CodeReader(char[] buffer) {
-		this(NOFILE, buffer);
+		this(NF, buffer);
 	}
 	
 	// If you are loading up a file normally
 	public CodeReader(String filename) throws IOException
 	{
-		this.filename = filename;
+		this.filename = filename.toCharArray();
 		
 		FileInputStream stream = new FileInputStream(filename);
 		try {
@@ -56,7 +59,7 @@ public class CodeReader {
 	
 	// If you have a handle on a stream to the file, e.g. IFile.getContents()
 	public CodeReader(String filename, InputStream stream) throws IOException {
-		this.filename = filename;
+		this.filename = filename.toCharArray();
 		
 		FileInputStream fstream = 
 			(stream instanceof FileInputStream)
@@ -107,7 +110,7 @@ public class CodeReader {
 	}
 	
 	public boolean isFile() {
-		return filename != NOFILE;
+		return !CharArrayUtils.equals( filename, NOFILE );
 	}
 	
 }

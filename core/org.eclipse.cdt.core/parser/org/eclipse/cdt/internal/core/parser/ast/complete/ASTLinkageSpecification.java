@@ -29,15 +29,24 @@ public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements 
 {
 	private List declarations = new ArrayList();
     private final String linkageString;
-    
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
+     * @param filename
      * 
      */
-    public ASTLinkageSpecification( IContainerSymbol scope, String linkageString, int startingOffset, int startingLine )
+    public ASTLinkageSpecification( IContainerSymbol scope, String linkageString, int startingOffset, int startingLine, char[] filename )
     {
         super( scope );
         this.linkageString = linkageString;
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification#getLinkageString()

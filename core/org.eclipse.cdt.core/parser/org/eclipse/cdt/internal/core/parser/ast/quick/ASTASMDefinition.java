@@ -24,12 +24,22 @@ public class ASTASMDefinition
 	implements IASTASMDefinition {
 
 	private final String assembly; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	/**
 	 * @param scope
+	 * @param filename
 	 */
-	public ASTASMDefinition(IASTScope scope, String assembly) {
+	public ASTASMDefinition(IASTScope scope, String assembly, char[] filename) {
 		super(scope);
 		this.assembly = assembly;
+		fn = filename;
 	}
 
 	/* (non-Javadoc)

@@ -112,7 +112,7 @@ public class ContextStack {
 	}
 
     public void updateInclusionContext(CodeReader code, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
-    	addInclusionFilename( code.filename );
+    	addInclusionFilename( new String( code.filename ));
     	ScannerContextInclusion context = new ScannerContextInclusion( code, inclusion, currentInclusionIndex - 1 );
     	
     	if( isCircularInclusion( context.getContextName() ) )

@@ -21,6 +21,7 @@ public interface IToken {
 	public int getType();
 	public String getImage();
 	public char [] getCharImage();
+	public char [] getFilename();
 	public int getOffset();
 	public int getLength();
 	public int getEndOffset();

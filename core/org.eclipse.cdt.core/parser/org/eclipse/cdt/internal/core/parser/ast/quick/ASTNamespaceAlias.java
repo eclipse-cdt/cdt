@@ -26,6 +26,14 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
 
 	private final String alias;
     private final String identifier;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param scope
      * @param identifier
@@ -33,8 +41,9 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
      * @param startingOffset
      * @param nameOffset
      * @param endOffset
+     * @param filename
      */
-    public ASTNamespaceAlias(IASTScope scope, String identifier, String string, int startingOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endingLine)
+    public ASTNamespaceAlias(IASTScope scope, String identifier, String string, int startingOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endingLine, char[] filename)
     {
         super( scope );
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
@@ -43,6 +52,7 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
         setEndingOffsetAndLineNumber(endOffset, endingLine);
         this.identifier = identifier;
         this.alias = string;
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)

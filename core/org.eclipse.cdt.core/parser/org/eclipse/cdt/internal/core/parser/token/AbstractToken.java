@@ -24,15 +24,19 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
  */
 public abstract class AbstractToken implements IToken, ITokenDuple {
 
-	public AbstractToken( int type, int lineNumber )
+	private final char[] filename;
+
+	public AbstractToken( int type, int lineNumber, char [] filename )
 	{
 		setType( type );
 		this.lineNumber = lineNumber;
+		this.filename = filename;
 	}
 
-	public AbstractToken( int type )
+	public AbstractToken( int type, char [] filename  )
 	{
 		setType( type );
+		this.filename = filename;
 	}
 	
 	public String toString() {
@@ -53,6 +57,13 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 		return lineNumber;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#getFilename()
+	 */
+	public char[] getFilename() {
+		return filename;
+	}
+	
 	public int getEndOffset() { return getOffset() + getLength(); }
 
 	protected int type;

@@ -16,11 +16,12 @@ package org.eclipse.cdt.core.parser;
  */
 public class BacktrackException extends Exception
 {
-
+	private static final char [] EMPTY_CHARARRAY = "".toCharArray(); //$NON-NLS-1$
 	private IProblem problem;
 	private int startOffset;
 	private int endOffset;
 	private int lineNumber;
+	private char[] filename;
 
 	/**
 	 * @param p
@@ -37,6 +38,7 @@ public class BacktrackException extends Exception
 		problem = null;
 		startOffset = 0;
 		endOffset = 0;
+		filename = EMPTY_CHARARRAY;
 	}
 	/**
 	 * @return Returns the problem.
@@ -48,12 +50,14 @@ public class BacktrackException extends Exception
 	/**
 	 * @param startingOffset
 	 * @param endingOffset
+	 * @param f TODO
 	 */
-	public void initialize(int startingOffset, int endingOffset, int line) {
+	public void initialize(int startingOffset, int endingOffset, int line, char[] f) {
 		reset();
 		startOffset = startingOffset;
 		endOffset = endingOffset;
 		lineNumber = line;
+		this.filename = f;
 	}
 	/**
 	 * @return Returns the offset.
@@ -73,5 +77,12 @@ public class BacktrackException extends Exception
 	 */
 	public int getLineNumber() {
 		return lineNumber;
+	}
+
+	/**
+	 * @return
+	 */
+	public char[] getFilename() {
+		return filename;
 	}
 }

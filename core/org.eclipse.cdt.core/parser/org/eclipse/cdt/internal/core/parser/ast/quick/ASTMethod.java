@@ -52,6 +52,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      * @param startOffset
      * @param nameOffset
      * @param ownerTemplate
+     * @param filename
      */
     public ASTMethod(
         IASTScope scope,
@@ -73,7 +74,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         boolean isConstructor,
         boolean isDestructor,
         boolean isVirtual, boolean isExplicit, boolean isPureVirtual, 
-        ASTAccessVisibility visibility, List constructorChainElements, boolean hasFunctionTryBlock, boolean hasVarArgs )
+        ASTAccessVisibility visibility, List constructorChainElements, boolean hasFunctionTryBlock, boolean hasVarArgs, char []filename )
     {
         super(
             scope,
@@ -87,7 +88,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
             startOffset,
             startLine,
             nameOffset,
-            nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVarArgs, nameLine);
+            nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVarArgs, nameLine, filename);
         this.isVirtual = isVirtual;
         this.isPureVirtual = isPureVirtual;
         this.isConstructor = isConstructor;

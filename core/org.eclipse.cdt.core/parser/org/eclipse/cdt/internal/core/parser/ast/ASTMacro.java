@@ -26,8 +26,9 @@ public class ASTMacro implements IASTMacro {
 	private int nameEndOffset = 0;
     private final String name;
     private final IMacroDescriptor innerMacro;
+	private final char[] fn;
     
-	public ASTMacro( String name, IMacroDescriptor info, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine )
+	public ASTMacro( String name, IMacroDescriptor info, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn )
 	{
 		this.name =name; 
 		setStartingOffsetAndLineNumber(start, startLine);
@@ -35,6 +36,7 @@ public class ASTMacro implements IASTMacro {
 		setNameEndOffsetAndLineNumber(nameEnd, nameLine);
 		setEndingOffsetAndLineNumber(end, endLine);
 		innerMacro = info;
+		this.fn = fn;
 	}
 	
 	private int startingOffset = 0, endingOffset = 0, nameOffset = 0;
@@ -201,6 +203,12 @@ public class ASTMacro implements IASTMacro {
 	 */
 	public void setFileIndex(int index) {
 		fileIndex = index;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
 	}
 
 }

@@ -38,14 +38,23 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
 	private ISymbol owned = null;
 	private IASTScope ownerScope;
 	private ITemplateFactory factory;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	
 	private ITemplateSymbol getTemplateSymbol(){
 		return (ITemplateSymbol) (( getSymbol() instanceof ITemplateSymbol ) ? getSymbol() : null);
 	}
     /**
+     * @param filename
      * 
      */
-    public ASTTemplateDeclaration( ITemplateSymbol template, IASTScope scope, List parameters )
+    public ASTTemplateDeclaration( ITemplateSymbol template, IASTScope scope, List parameters, char[] filename )
     {
         super( template );
         
@@ -67,6 +76,7 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
         
         templateParameters = ( parameters != null ) ? parameters : new LinkedList();
         ownerScope = scope;
+        fn = filename;
     }
     
     public IASTScope getOwnerScope(){

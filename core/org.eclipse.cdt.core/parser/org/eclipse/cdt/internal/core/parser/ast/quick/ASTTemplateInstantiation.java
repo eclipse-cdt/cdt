@@ -27,15 +27,24 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 public class ASTTemplateInstantiation extends ASTDeclaration implements IASTTemplateInstantiation
 {
     private IASTDeclaration declaration;
-    
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 
     /**
      * @param scope
+     * @param filename
      */
-    public ASTTemplateInstantiation(IASTScope scope, int startingOffset, int startingLine)
+    public ASTTemplateInstantiation(IASTScope scope, int startingOffset, int startingLine, char[] filename)
     {
         super( scope );
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
+        fn = filename;
     }
     
     /* (non-Javadoc)

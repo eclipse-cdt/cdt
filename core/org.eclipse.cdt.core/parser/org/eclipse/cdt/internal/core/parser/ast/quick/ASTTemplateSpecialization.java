@@ -24,9 +24,9 @@ public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements
 	/**
      * @param scope
      */
-    public ASTTemplateSpecialization(IASTScope scope, int startingOffset, int startingLine )
+    public ASTTemplateSpecialization(IASTScope scope, int startingOffset, int startingLine, char [] filename )
     {
-        super(scope, null, startingOffset, startingLine, false );
+        super(scope, null, startingOffset, startingLine, false, filename );
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
     }
 

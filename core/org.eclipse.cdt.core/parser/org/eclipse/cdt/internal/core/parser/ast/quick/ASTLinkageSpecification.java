@@ -29,12 +29,20 @@ public class ASTLinkageSpecification
 	implements IASTDeclaration, IASTLinkageSpecification, IASTQScope {
 
 	private final String linkage; 
-	
-	public ASTLinkageSpecification( IASTScope scope, String linkage, int startingOffset, int startingLine )
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
+	public ASTLinkageSpecification( IASTScope scope, String linkage, int startingOffset, int startingLine, char[] filename )
 	{
 		super( scope );
 		this.linkage = linkage;
 		setStartingOffsetAndLineNumber(startingOffset, startingLine);
+		fn = filename;
 	}
 
 	/* (non-Javadoc)

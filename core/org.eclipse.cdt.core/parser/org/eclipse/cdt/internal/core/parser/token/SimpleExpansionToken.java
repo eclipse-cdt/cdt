@@ -24,8 +24,8 @@ public class SimpleExpansionToken extends SimpleToken implements IToken {
 	 * @param tokenType
 	 * @param stack
 	 */
-	public SimpleExpansionToken(int tokenType, ContextStack stack) {
-		super( tokenType, stack );
+	public SimpleExpansionToken(int tokenType, ContextStack stack, char [] f) {
+		super( tokenType, stack, f );
 	}
 	
 	protected int length;

@@ -28,6 +28,14 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
 {
 	private final String parameterName; 
 	private final IASTInitializerClause initializerClause;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param isConst
      * @param typeSpecifier
@@ -35,8 +43,9 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
      * @param arrayModifiers
      * @param parameterName
      * @param initializerClause
+     * @param filename
      */
-    public ASTParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine )
+    public ASTParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
     {
     	super( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
 		this.parameterName = parameterName;
@@ -45,6 +54,7 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
 		setEndingOffsetAndLineNumber( endingOffset, endingLine );
 		setNameOffset( nameOffset );
 		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
+		fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getName()

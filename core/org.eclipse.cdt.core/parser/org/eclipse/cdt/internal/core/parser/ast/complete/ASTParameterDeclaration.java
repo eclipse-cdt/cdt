@@ -34,7 +34,14 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
 	private final ASTAbstractDeclaration abstractDeclaration;
     private final String parameterName; 
 	private final IASTInitializerClause initializerClause;
-	
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param isConst
      * @param typeSpecifier
@@ -42,8 +49,9 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
      * @param arrayModifiers
      * @param parameterName
      * @param initializerClause
+     * @param filename
      */
-    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine )
+    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
     {
     	super( symbol );
     	abstractDeclaration = new ASTAbstractDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
@@ -53,6 +61,7 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
 		setEndingOffsetAndLineNumber(endingOffset, endingLine);
 		setNameOffset(nameOffset);
 		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
+		fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getName()

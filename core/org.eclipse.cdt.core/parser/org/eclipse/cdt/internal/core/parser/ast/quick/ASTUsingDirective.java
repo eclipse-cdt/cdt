@@ -25,14 +25,21 @@ public class ASTUsingDirective
 	extends ASTDeclaration
 	implements IASTUsingDirective {
 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 
-	public ASTUsingDirective( IASTScope scope, String name, int startingOffset, int startingLine, int endingOffset, int endingLine )
+	public ASTUsingDirective( IASTScope scope, String name, int startingOffset, int startingLine, int endingOffset, int endingLine, char[] filename )
 	{
 		super( scope );
 		this.namespaceName = name;
 		setStartingOffsetAndLineNumber(startingOffset, startingLine);
 		setEndingOffsetAndLineNumber(endingOffset, endingLine);
-		
+		fn = filename;
 	}
 	private final String namespaceName;
 	

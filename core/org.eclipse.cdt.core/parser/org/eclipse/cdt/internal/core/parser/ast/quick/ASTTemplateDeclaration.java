@@ -31,15 +31,25 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
     private IASTDeclaration ownedDeclaration;
     private List templateParameters;
     private final boolean isExported; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param templateParameters
+     * @param filename
      */
-    public ASTTemplateDeclaration(IASTScope scope, List templateParameters, int startingOffset, int startingLine, boolean isExported)
+    public ASTTemplateDeclaration(IASTScope scope, List templateParameters, int startingOffset, int startingLine, boolean isExported, char[] filename)
     {
         super( scope );
         this.templateParameters = templateParameters;
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         this.isExported = isExported;
+        fn = filename;
     }
 
     /* (non-Javadoc)

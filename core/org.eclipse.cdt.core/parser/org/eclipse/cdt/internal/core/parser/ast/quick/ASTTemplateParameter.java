@@ -33,13 +33,22 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
     private final ParamKind kind;
     private final String identifier;
     private final String defaultValue;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param kind
      * @param identifier
      * @param defaultValue
      * @param parameter
+     * @param filename
      */
-    public ASTTemplateParameter(ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List templateParms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine )
+    public ASTTemplateParameter(ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List templateParms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
     {
         this.kind = kind; 
         this.identifier = identifier; 
@@ -50,6 +59,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
 		setEndingOffsetAndLineNumber( endingOffset, endingLine );
 		setNameOffset( nameOffset );
 		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
+		fn = filename;
     }
     
     /* (non-Javadoc)

@@ -28,14 +28,23 @@ public class ASTUsingDeclaration
 
 	private final boolean isTypename; 
 	private final String  mappingName; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	
-	public ASTUsingDeclaration( IASTScope scope, boolean isTypeName, String mappingName, int startingOffset, int startingLine, int endingOffset, int endingLine )
+	public ASTUsingDeclaration( IASTScope scope, boolean isTypeName, String mappingName, int startingOffset, int startingLine, int endingOffset, int endingLine, char[] filename )
 	{
 		super( scope );
 		isTypename = isTypeName;
 		this.mappingName = mappingName;
 		setStartingOffsetAndLineNumber(startingOffset, startingLine);
 		setEndingOffsetAndLineNumber(endingOffset, endingLine);
+		fn = filename;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#isTypename()

@@ -29,18 +29,28 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     implements IASTEnumerationSpecifier, IASTOffsetableNamedElement
 {
 	private final String name; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	
     /**
      * @param name
      * @param startingOffset
+     * @param filename
      */
-    public ASTEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine )
+    public ASTEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
     {
     	super( scope, name );
         this.name = name;
         setNameOffset( nameOffset );
         setStartingOffsetAndLineNumber( startingOffset, startingLine);
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()

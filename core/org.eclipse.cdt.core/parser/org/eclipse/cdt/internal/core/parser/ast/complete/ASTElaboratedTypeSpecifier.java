@@ -35,8 +35,9 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      * @param kind
      * @param startingOffset
      * @param endOffset
+     * @param filename
      */
-    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references, boolean isDecl )
+    public ASTElaboratedTypeSpecifier(ISymbol checkSymbol, ASTClassKind kind, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references, boolean isDecl, char[] filename )
     {
         super( checkSymbol );
         this.kind = kind;
@@ -47,6 +48,7 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), checkSymbol.getName() );
         isForwardDeclaration = isDecl;
         this.references = references;
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getName()
@@ -212,4 +214,12 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
     }
+    
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 }

@@ -33,9 +33,10 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 {
 	/**
      * @param scope
+	 * @param filename
      */
     public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, 
-    			boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs, int nameLine )
+    			boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs, int nameLine, char[] filename )
     {
         super(ownerTemplate != null ? null : scope  );
         this.name = name; 
@@ -54,6 +55,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         this.hasFunctionTryBlock = hasFunctionTryBlock;
         this.varArgs = hasVarArgs;
+        fn = filename;
     }
     
     private boolean previouslyDeclared;
@@ -66,6 +68,14 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     private final List parms;
     private final IASTAbstractDeclaration returnType;
     private final boolean isInline, isFriend, isStatic; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#isInline()

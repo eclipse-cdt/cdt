@@ -23,14 +23,16 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
 {
 	private final String assembly;
     /**
+     * @param filename
      * 
      */
-    public ASTASMDefinition( IContainerSymbol scope, String assembly, int first, int firstLine, int last , int lastLine )
+    public ASTASMDefinition( IContainerSymbol scope, String assembly, int first, int firstLine, int last , int lastLine, char[] filename )
     {
         super( scope );
         this.assembly = assembly;
         setStartingOffsetAndLineNumber(first, firstLine);
         setEndingOffsetAndLineNumber(last, lastLine);
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTASMDefinition#getBody()
@@ -66,6 +68,7 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
     {
     }
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset;
+	private final char[] fn;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
      */
@@ -109,5 +112,11 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
     {
         return endingOffset;
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 
 }

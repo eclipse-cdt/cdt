@@ -31,19 +31,28 @@ public class ASTNamespaceDefinition
 {
 	private final ASTQualifiedNamedElement qualifiedName;
 	private List declarations = null;
-	
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param namespaceSymbol
      * @param startingOffset
      * @param nameOffset
+     * @param filename
      */
-    public ASTNamespaceDefinition(ISymbol namespaceSymbol, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine )
+    public ASTNamespaceDefinition(ISymbol namespaceSymbol, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
     {
         super( namespaceSymbol );
         setStartingOffsetAndLineNumber( startingOffset, startingLine );
         setNameOffset( nameOffset );
         setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), namespaceSymbol.getName() );
+        fn= filename;
     }
 
     /* (non-Javadoc)

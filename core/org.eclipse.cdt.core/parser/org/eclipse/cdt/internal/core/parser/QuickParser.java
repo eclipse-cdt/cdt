@@ -71,7 +71,7 @@ public class QuickParser extends Parser {
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
-		astFactory = ParserFactory.createASTFactory( this, ParserMode.QUICK_PARSE, language);
+		astFactory = ParserFactory.createASTFactory( ParserMode.QUICK_PARSE, language);
 		scanner.setASTFactory(astFactory);
 		astFactory.setLogger(log);
 	}

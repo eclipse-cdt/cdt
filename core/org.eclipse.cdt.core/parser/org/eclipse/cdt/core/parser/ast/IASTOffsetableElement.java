@@ -24,5 +24,7 @@ public interface IASTOffsetableElement {
 	
 	public int getStartingLine(); 
 	public int getEndingLine(); 
+	
+	public char [] getFilename();
 
 }

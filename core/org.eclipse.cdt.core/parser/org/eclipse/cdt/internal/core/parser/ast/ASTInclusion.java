@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
  */
 public class ASTInclusion implements IASTInclusion {
 
-	public ASTInclusion( String name, String fileName, boolean local, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine )
+	public ASTInclusion( String name, String fileName, boolean local, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, char [] fn  )
 	{
 		this.name = name; 
 		this.fileName = fileName;
@@ -29,6 +29,7 @@ public class ASTInclusion implements IASTInclusion {
 		setNameOffset(nameOffset);
 		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
 		setEndingOffsetAndLineNumber(endOffset, endLine);
+		this.filename = fn;
 	}
 
 	private int nameEndOffset;
@@ -179,6 +180,7 @@ public class ASTInclusion implements IASTInclusion {
 	}
 
 	private int fileIndex;
+	private final char[] filename;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFileIndex()
 	 */
@@ -191,5 +193,12 @@ public class ASTInclusion implements IASTInclusion {
 	 */
 	public void setFileIndex(int index) {
 		fileIndex = index;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return filename;
 	}
 }

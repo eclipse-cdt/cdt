@@ -24,12 +24,21 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
  */
 public class TokenFactory {
 		
+	protected static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	public static IToken createToken( int tokenType, IScannerData scannerData )
 	{
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			return new SimpleExpansionToken( tokenType, scannerData.getContextStack() );
+			return new SimpleExpansionToken( tokenType, scannerData.getContextStack(), getCurrentFilename(scannerData) );
 		
-		return new SimpleToken(	tokenType, scannerData.getContextStack() );
+		return new SimpleToken(	tokenType, scannerData.getContextStack(), getCurrentFilename(scannerData) );
+	}
+
+	/**
+	 * @param scannerData
+	 * @return
+	 */
+	private static char[] getCurrentFilename(IScannerData scannerData) {
+		return scannerData.getContextStack().getInclusionFilename(scannerData.getContextStack().getMostRelevantFileContextIndex() ).toCharArray();
 	}
 
 	/**
@@ -40,14 +49,14 @@ public class TokenFactory {
 	 */
 	public static IToken createUniquelyImagedToken(int type, String image, IScannerData scannerData) {
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			return new ImagedExpansionToken( type, scannerData.getContextStack(), image.toCharArray() );
+			return new ImagedExpansionToken( type, scannerData.getContextStack(), image.toCharArray(), getCurrentFilename(scannerData) );
 
-		return new ImagedToken(type, scannerData.getContextStack(), image.toCharArray() );
+		return new ImagedToken(type, scannerData.getContextStack(), image.toCharArray(),  getCurrentFilename(scannerData));
 	}
 	
 	public static IToken createStandAloneToken( int type, String image )
 	{
-		return new ImagedToken( type, image.toCharArray(), 0);
+		return new ImagedToken( type, image.toCharArray(), 0, EMPTY_CHAR_ARRAY);
 	}
 
 	public static ITokenDuple createTokenDuple( IToken first, IToken last )

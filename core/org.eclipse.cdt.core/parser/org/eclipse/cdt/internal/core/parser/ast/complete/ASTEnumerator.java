@@ -26,13 +26,22 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
     
 	private final IASTExpression initialValue;
 	private final IASTEnumerationSpecifier owner; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param enumeratorSymbol
      * @param startingOffset
      * @param endingOffset
      * @param initialValue
+     * @param filename
      */
-    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IASTExpression initialValue)
+    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IASTExpression initialValue, char[] filename)
     {
         super( enumeratorSymbol );
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
@@ -41,6 +50,7 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
         setEndingOffsetAndLineNumber( endingOffset, endingLine );
         this.initialValue = initialValue;
         this.owner = owner;
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getOwnerEnumerationSpecifier()

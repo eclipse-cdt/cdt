@@ -36,9 +36,16 @@ public class ASTTemplateInstantiation extends ASTSymbol implements IASTTemplateI
 	private IASTTemplateDeclaration instantiatedTemplate;
 	private ISymbol instance;
 	
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
 	
-	
-    public ASTTemplateInstantiation( IASTScope scope ){
+    public ASTTemplateInstantiation( IASTScope scope, char[] filename ){
     	super( null );
     	IContainerSymbol container = ((ASTScope)scope).getContainerSymbol();
     	
@@ -49,6 +56,7 @@ public class ASTTemplateInstantiation extends ASTSymbol implements IASTTemplateI
     	
     	factory.pushTemplate( null );
     	ownerScope = scope;
+    	fn = filename;
     }
     
     public IASTTemplateDeclaration getInstantiatedTemplate(){

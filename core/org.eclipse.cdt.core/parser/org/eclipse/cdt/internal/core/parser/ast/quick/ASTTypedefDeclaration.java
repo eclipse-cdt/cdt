@@ -29,12 +29,21 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
 	private final String name;
     private final IASTAbstractDeclaration mapping;
     private final ASTQualifiedNamedElement qualifiedName; 
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param scope
      * @param name
      * @param mapping
+     * @param filename
      */
-    public ASTTypedefDeclaration(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine )
+    public ASTTypedefDeclaration(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
     {
         super( scope );
         this.name = name; 
@@ -43,6 +52,7 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
         setNameOffset(nameOffset);
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
+        fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypedef#getName()

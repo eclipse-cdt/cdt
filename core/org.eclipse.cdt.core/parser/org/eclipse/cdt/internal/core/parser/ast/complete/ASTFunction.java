@@ -44,6 +44,14 @@ public class ASTFunction extends ASTScope implements IASTFunction
 	private final List parameters;
 	protected List references;
 	private List declarations = null;	
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param symbol
      * @param parameters
@@ -53,8 +61,9 @@ public class ASTFunction extends ASTScope implements IASTFunction
      * @param nameOffset
      * @param ownerTemplate
      * @param references
+     * @param filename
      */
-    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int startingLine, int nameOffset, int nameLine, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, boolean hasFunctionTryBlock, boolean isFriend )
+    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int startingLine, int nameOffset, int nameLine, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, boolean hasFunctionTryBlock, boolean isFriend, char[] filename )
     {
     	super( symbol );
     	this.parameters = parameters;
@@ -69,6 +78,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	this.previouslyDeclared =previouslyDeclared;
     	this.hasFunctionTryBlock = hasFunctionTryBlock;
     	this.isFriendDeclaration = isFriend;
+    	fn = filename;
     }
 
 

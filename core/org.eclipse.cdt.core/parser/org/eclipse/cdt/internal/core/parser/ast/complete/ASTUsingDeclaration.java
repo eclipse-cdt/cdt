@@ -31,11 +31,19 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
 	private final List declarations = new ArrayList(); 
 	private List references;
 	private String name; 
-	
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
+     * @param filename
      * 
      */
-    public ASTUsingDeclaration( IASTScope ownerScope, String name, List declarations, boolean isTypeName, int startingOffset, int startingLine, int endingOffset, int endingLine, List references )
+    public ASTUsingDeclaration( IASTScope ownerScope, String name, List declarations, boolean isTypeName, int startingOffset, int startingLine, int endingOffset, int endingLine, List references, char[] filename )
     {
     	this.ownerScope = ownerScope;
     	this.isTypeName = isTypeName;
@@ -44,6 +52,7 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
     	setStartingOffsetAndLineNumber(startingOffset, startingLine);
     	setEndingOffsetAndLineNumber(endingOffset, endingLine);
     	this.references = references;
+    	fn = filename;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#isTypename()

@@ -32,8 +32,9 @@ public class ASTAbstractTypeSpecifierDeclaration
     
     /**
      * @param ownerScope
+     * @param filename
      */
-    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend )
+    public ASTAbstractTypeSpecifierDeclaration(IContainerSymbol ownerScope, IASTTypeSpecifier typeSpecifier, IASTTemplate ownerTemplate, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend, char[] filename )
     {
         super(ownerScope);
         this.typeSpec = typeSpecifier;
@@ -41,6 +42,7 @@ public class ASTAbstractTypeSpecifierDeclaration
         this.isFriendDeclaration = isFriend;
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setEndingOffsetAndLineNumber(endingOffset, endingLine);
+        fn = filename;
     }
 
     /* (non-Javadoc)
@@ -100,6 +102,7 @@ public class ASTAbstractTypeSpecifierDeclaration
     
 	
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset;
+	private final char[] fn;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
      */
@@ -143,4 +146,11 @@ public class ASTAbstractTypeSpecifierDeclaration
     {
         return endingOffset;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
 }

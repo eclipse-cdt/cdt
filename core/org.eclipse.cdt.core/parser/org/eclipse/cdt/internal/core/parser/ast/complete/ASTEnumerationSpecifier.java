@@ -31,16 +31,26 @@ public class ASTEnumerationSpecifier
     implements IASTEnumerationSpecifier
 {
 	private final ASTQualifiedNamedElement qualifiedName;
+    private final char [] fn;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
+	 */
+	public char[] getFilename() {
+		return fn;
+	}
+
     /**
      * @param symbol
+     * @param filename
      */
-    public ASTEnumerationSpecifier(ISymbol symbol, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine )
+    public ASTEnumerationSpecifier(ISymbol symbol, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
     {
         super(symbol);
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setNameOffset( nameOffset );
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
+        fn = filename;
     }
 
 

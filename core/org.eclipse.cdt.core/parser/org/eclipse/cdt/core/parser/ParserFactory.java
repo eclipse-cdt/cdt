@@ -44,14 +44,14 @@ public class ParserFactory {
 	
 	private static IParserExtensionFactory extensionFactory = new ParserExtensionFactory( ExtensionDialect.GCC );
 	
-	public static IASTFactory createASTFactory( IFilenameProvider provider, ParserMode mode, ParserLanguage language )
+	public static IASTFactory createASTFactory( ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory(extensionFactory.createASTExtension( mode ));
 		else if( mode == ParserMode.EXPRESSION_PARSE )
 			return new ExpressionParseASTFactory( extensionFactory.createASTExtension( mode ));
 		else
-			return new CompleteParseASTFactory( provider, language, mode, extensionFactory.createASTExtension( mode )); 
+			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtension( mode )); 
 	}
 	
 	

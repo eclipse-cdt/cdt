@@ -147,4 +147,11 @@ public class MacroExpansionToken implements IToken {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#getFilename()
+	 */
+	public char[] getFilename() {
+		return null;
+	}
+
 }

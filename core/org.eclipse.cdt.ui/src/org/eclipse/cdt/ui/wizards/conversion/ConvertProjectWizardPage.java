@@ -138,7 +138,7 @@ public abstract class ConvertProjectWizardPage
     protected void addToMainPage(Composite container){
        
 		// Add convert to C or C/C++ buttons
-		Composite area = ControlFactory.createGroup(container, "Convert to C or C/C++", 2);
+		Composite area = ControlFactory.createGroup(container, "Convert to C or C++", 2);
 		
 
 		SelectionListener cListener =  new SelectionAdapter() {
@@ -154,7 +154,7 @@ public abstract class ConvertProjectWizardPage
 			  			      cListener);
 		cRadioButton.setSelection(convertToC);			  			      
 		ccRadioButton = ControlFactory.createRadioButton(area, 
-							  "C/C++ Project",
+							  "C++ Project",
 							  "C++",
 			  			      cListener);	
 		ccRadioButton.setSelection(convertToCC);			  			      

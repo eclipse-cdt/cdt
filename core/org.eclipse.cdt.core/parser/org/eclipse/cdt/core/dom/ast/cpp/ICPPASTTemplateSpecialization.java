@@ -10,18 +10,16 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
+public interface ICPPASTTemplateSpecialization extends IASTDeclaration {
 
-	// Extra storage class in C++
-	public static final int sc_mutable = IASTDeclSpecifier.sc_last + 1;
-	public static final int sc_last = sc_mutable;
+    public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned Declaration"); //$NON-NLS-1$
+    public IASTDeclaration getDeclaration();
+    public void setDeclaration( IASTDeclaration declaration );
 
-	// A declaration in C++ can be a friend declaration
-	public boolean isFriend();
-	
 }

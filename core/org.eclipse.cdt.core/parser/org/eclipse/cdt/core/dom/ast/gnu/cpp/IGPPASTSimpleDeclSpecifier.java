@@ -8,20 +8,18 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom.ast.cpp;
+package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 
 /**
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
+public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
+        ICPPASTSimpleDeclSpecifier {
 
-	// Extra storage class in C++
-	public static final int sc_mutable = IASTDeclSpecifier.sc_last + 1;
-	public static final int sc_last = sc_mutable;
+	public static final int t_Complex = ICPPASTSimpleDeclSpecifier.t_last + 1;
+	public static final int t_Imaginary = ICPPASTSimpleDeclSpecifier.t_last + 2;
+	public static final int t_last = t_Imaginary;
 
-	// A declaration in C++ can be a friend declaration
-	public boolean isFriend();
-	
 }

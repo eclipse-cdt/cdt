@@ -56,12 +56,8 @@ public class CASTSimpleDeclaration extends CASTNode implements
                 declarators[i] = old[i];
         }
         declarators[ currentIndex++ ] = d;
-
     }
     
-    /**
-     * @param decls2
-     */
     private void removeNullDeclarators() {
         int nullCount = 0; 
         for( int i = 0; i < declarators.length; ++i )

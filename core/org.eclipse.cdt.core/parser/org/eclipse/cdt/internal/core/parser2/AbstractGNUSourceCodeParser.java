@@ -58,7 +58,6 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.ParserProblemFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
-import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser2.c.CASTASMDeclaration;
 import org.eclipse.cdt.internal.core.parser2.c.CASTBreakStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCaseStatement;
@@ -965,18 +964,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTStatement functionBody() throws EndOfFileException,
             BacktrackException {
         return compoundStatement();
-    }
-
-    /**
-     * @param sdw
-     * @param typeNameBegin
-     * @param typeNameEnd
-     */
-    protected void setTypeName(DeclarationWrapper sdw, IToken typeNameBegin,
-            IToken typeNameEnd) {
-        if (typeNameBegin != null)
-            sdw.setTypeName(TokenFactory.createTokenDuple(typeNameBegin,
-                    typeNameEnd));
     }
 
     /**

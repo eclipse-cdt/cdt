@@ -57,5 +57,19 @@ public class ANSICPPParserExtensionConfiguration implements
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportComplexNumbers()
+     */
+    public boolean supportComplexNumbers() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportRestrictKeyword()
+     */
+    public boolean supportRestrictKeyword() {
+        return false;
+    }
+
 
 }

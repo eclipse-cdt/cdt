@@ -57,4 +57,18 @@ public class GNUCPPParserExtensionConfiguration implements
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportComplexNumbers()
+     */
+    public boolean supportComplexNumbers() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration#supportRestrictKeyword()
+     */
+    public boolean supportRestrictKeyword() {
+        return true;
+    }
+
 }

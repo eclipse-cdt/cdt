@@ -25,6 +25,7 @@ public interface ICPPParserExtensionConfiguration {
 	public boolean supportExtendedTemplateSyntax();
 	public boolean supportMinAndMaxOperators();
 	public boolean supportStatementsInExpressions();
-	
+	public boolean supportComplexNumbers();
+	public boolean supportRestrictKeyword();
 
 }

@@ -1,3 +1,16 @@
+2004-08-23 Mikhail Khodjaiants
+	Changes in the "Debugger" tab of the launch configuration dialog.
+	Replaced the "Run in debugger/Attach to running process" radio button by 
+	the "Attach to running process" check box.
+	Added the "Advanced" button that opens the "Advanced options" dialog.
+	The "Automatically track the values of variables" check box is moved to the dialog.
+	The "CoreFileDebuggerTab" class is implemented as an extension of "CDebuggerTab".
+	* LaunchUIPluginResources.properties
+	* AbstractCDebuggerTab.java
+	* CoreFileCLaunchConfigurationTabGroup.java
+	* CDebuggerTab.java
+	* CorefileDebuggerTab.java renamed to CoreFileDebuggerTab.java
+
 2004-08-12 Mikhail Khodjaiants
 	Warning cleanup.
 	* CApplicationLaunchShortcut.java

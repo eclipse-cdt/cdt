@@ -12,9 +12,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.ILibraryReference;
-import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -224,13 +224,15 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_ENUMERATOR;
 
 			case ICElement.C_FIELD:
+			{
 			IField  field = (IField)celement;
-			switch(field.getVisibility()){
-				case IMember.V_PUBLIC:
+			ASTAccessVisibility visibility = field.getVisibility();
+			
+				if (visibility == ASTAccessVisibility.PUBLIC)
 					return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
-				case IMember.V_PROTECTED:
+				if( visibility == ASTAccessVisibility.PROTECTED)
 					return CPluginImages.DESC_OBJS_PROTECTED_FIELD;
-				case IMember.V_PRIVATE:
+				if( visibility == ASTAccessVisibility.PRIVATE)
 					return CPluginImages.DESC_OBJS_PRIVATE_FIELD;
 			}
 			
@@ -241,13 +243,14 @@ public class CElementImageProvider {
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
+			{
 				IMethodDeclaration  md= (IMethodDeclaration)celement;
-				switch(md.getVisibility()){
-					case IMember.V_PUBLIC:
+				ASTAccessVisibility visibility =md.getVisibility(); 
+				if( visibility == ASTAccessVisibility.PUBLIC)
 						return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
-					case IMember.V_PROTECTED:
+				if( visibility == ASTAccessVisibility.PROTECTED)
 						return CPluginImages.DESC_OBJS_PROTECTED_METHOD;
-					case IMember.V_PRIVATE:
+				if( visibility ==  ASTAccessVisibility.PRIVATE)
 						return CPluginImages.DESC_OBJS_PRIVATE_METHOD;
 				}
 				

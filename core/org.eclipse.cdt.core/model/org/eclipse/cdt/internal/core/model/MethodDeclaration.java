@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration{
 	
@@ -90,11 +91,11 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setConst(isConst);
 	}
 
-	public int getVisibility(){
+	public ASTAccessVisibility getVisibility(){
 		return getMethodInfo().getVisibility();
 	}
 	
-	public void setVisibility(int visibility){
+	public void setVisibility(ASTAccessVisibility visibility){
 		getMethodInfo().setVisibility(visibility);
 	}
 	

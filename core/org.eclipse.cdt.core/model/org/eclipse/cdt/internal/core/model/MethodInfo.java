@@ -11,7 +11,7 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class MethodInfo extends FunctionInfo {
 
@@ -20,11 +20,11 @@ public class MethodInfo extends FunctionInfo {
 	boolean isVirtual = false;
 	boolean isFriend = false;
 	boolean isConst = false;
-	int visibility;
+	ASTAccessVisibility visibility = null;
 		
 	MethodInfo(CElement element) {
 		super(element);
-		visibility = IMember.V_PRIVATE;
+		visibility = ASTAccessVisibility.PRIVATE;
 	}
 	
 	public boolean isAbstract(){
@@ -71,7 +71,7 @@ public class MethodInfo extends FunctionInfo {
 	 * Returns the visibility.
 	 * @return int
 	 */
-	public int getVisibility() {
+	public ASTAccessVisibility getVisibility() {
 		return visibility;
 	}
 
@@ -79,7 +79,7 @@ public class MethodInfo extends FunctionInfo {
 	 * Sets the visibility.
 	 * @param visibility The visibility to set
 	 */
-	public void setVisibility(int visibility) {
+	public void setVisibility(ASTAccessVisibility visibility) {
 		this.visibility = visibility;
 	}
 

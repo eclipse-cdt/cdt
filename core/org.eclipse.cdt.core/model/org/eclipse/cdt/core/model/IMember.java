@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -12,15 +14,11 @@ package org.eclipse.cdt.core.model;
  */
 public interface IMember extends IDeclaration {
 
-	static final int V_PRIVATE = 0;
-	static final int V_PROTECTED = 1;
-	static final int V_PUBLIC = 2;
-
 	/**
 	 * Returns the member's visibility
 	 * V_PRIVATE = 0 V_PROTECTED = 1 V_PUBLIC = 2
 	 * @return int
 	 */
-	public int getVisibility();	
+	public ASTAccessVisibility getVisibility();	
 	
 }

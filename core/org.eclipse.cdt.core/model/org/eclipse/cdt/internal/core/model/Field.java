@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class Field extends VariableDeclaration implements IField {
 	
@@ -58,11 +59,11 @@ public class Field extends VariableDeclaration implements IField {
 		getFieldInfo().setStatic(isStatic);
 	}
 
-	public int getVisibility() {
+	public ASTAccessVisibility getVisibility() {
 		return getFieldInfo().getVisibility();
 	}
 
-	public void setVisibility(int visibility) {
+	public void setVisibility(ASTAccessVisibility visibility) {
 		getFieldInfo().setVisibility(visibility);
 	}
 

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -66,7 +67,7 @@ public class MemberFilter extends ViewerFilter{
 			}
 			if (element instanceof IMember) {
 				IMember member= (IMember)element;
-				if (hasFilter(FILTER_NONPUBLIC) && (member.getVisibility() != IMember.V_PUBLIC)) {
+				if (hasFilter(FILTER_NONPUBLIC) && (member.getVisibility() != ASTAccessVisibility.PUBLIC)) {
 					return false;
 				}
 				

@@ -1,6 +1,3 @@
-package org.eclipse.cdt.internal.core.model;
-
-
 /*******************************************************************************
  * Copyright (c) 2001 Rational Software Corp. and others.
  * All rights reserved. This program and the accompanying materials 
@@ -11,51 +8,51 @@ package org.eclipse.cdt.internal.core.model;
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
+package org.eclipse.cdt.internal.core.model;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CTaskTagsReconciler;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IProblemReporter;
-import org.eclipse.cdt.core.parser.ITranslationResult;
+import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
-import org.eclipse.cdt.internal.core.dom.ClassKey;
-import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
-import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.Declaration;
-import org.eclipse.cdt.internal.core.dom.Declarator;
-import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
-import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
-import org.eclipse.cdt.internal.core.dom.EnumeratorDefinition;
-import org.eclipse.cdt.internal.core.dom.IOffsetable;
-import org.eclipse.cdt.internal.core.dom.ITemplateParameterListOwner;
-import org.eclipse.cdt.internal.core.dom.Inclusion;
-import org.eclipse.cdt.internal.core.dom.Macro;
-import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
-import org.eclipse.cdt.internal.core.dom.OldKRParameterDeclarationClause;
-import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
-import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
-import org.eclipse.cdt.internal.core.dom.PointerOperator;
-import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
-import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
-import org.eclipse.cdt.internal.core.dom.TemplateParameter;
-import org.eclipse.cdt.internal.core.dom.TranslationUnit;
-import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.parser.ast.quick.ASTArrayModifier;
 import org.eclipse.core.resources.IProject;
 
 
@@ -63,56 +60,51 @@ public class CModelBuilder {
 	
 	protected org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
 	protected Map newElements;
-	
+	protected IQuickParseCallback quickParseCallback; 
+	protected IASTCompilationUnit compilationUnit; 
+		
 	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
 		this.translationUnit = tu ;
 		this.newElements = new HashMap();
 	}
 
+	protected IASTCompilationUnit parse( String code, boolean hasCppNature, boolean quick, boolean throwExceptionOnError ) throws ParserException
+	{
+		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
+		quickParseCallback = ParserFactory.createQuickParseCallback(); 
+		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, quickParseCallback), quickParseCallback, mode );
+		parser.setCppNature(hasCppNature);
+		if( ! parser.parse() && throwExceptionOnError )
+			throw new ParserException("Parse failure");
+		return quickParseCallback.getCompilationUnit(); 
+	}
+	
+	protected IASTCompilationUnit parse( String code, boolean hasCppNature )throws ParserException
+	{
+		return parse( code, hasCppNature, true, true );
+	}
+
 	public Map parse() throws Exception {
-		
-		DOMBuilder domBuilder = new DOMBuilder();
-		
+
 		Map options = null;
 		IProject currentProject = null;
+		boolean hasCppNature = true;
 		
 		if (translationUnit != null && translationUnit.getCProject() != null) {
 			options = translationUnit.getCProject().getOptions(true);
 			currentProject = translationUnit.getCProject().getProject();
 		}		
-		  		
-        // create problem reporter
-		IProblemReporter problemReporter = ParserFactory.createProblemReporter(options);
-        
-        // create translation result       
-        ITranslationResult unitResult = ParserFactory.createTranslationResult(translationUnit.getPath().lastSegment());
-  
-  		// create parser
-        IParser parser = ParserFactory.createParser(
-                ParserFactory.createScanner( 
-                        new StringReader( 
-                                translationUnit.getBuffer().getContents() 
-                            ), 
-                        null, new ScannerInfo(), ParserMode.QUICK_PARSE, 
-                        domBuilder, 
-                        problemReporter, unitResult 
-                ), 
-                domBuilder, 
-                ParserMode.QUICK_PARSE, 
-                problemReporter, unitResult
-        );
-        
 		if( currentProject != null )
 		{
-			boolean hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
-			parser.setCppNature(hasCppNature);
+			hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
 		}
 		
 		try
 		{
-			parser.parse();
+			compilationUnit = parse( translationUnit.getBuffer().getContents(), hasCppNature);		
 		}
-		catch( Exception e )
+			
+		catch( ParserException e )
 		{
 			System.out.println( "Parse Exception in Outline View" ); 
 			e.printStackTrace();
@@ -120,277 +112,320 @@ public class CModelBuilder {
 		long startTime = System.currentTimeMillis();
 		try
 		{ 
-			generateModelElements(domBuilder.getTranslationUnit());
+			generateModelElements();
 		}
 		catch( NullPointerException npe )
 		{
 			System.out.println( "NullPointer exception generating CModel");
 			npe.printStackTrace();
 		}
-		
-        // process translation results
-		CTaskTagsReconciler.getInstance().acceptResult(translationUnit, unitResult);
-		 
+				 
 		// For the debuglog to take place, you have to call
 		// Util.setDebugging(true);
 		// Or set debug to true in the core plugin preference 
 		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms");
 		return this.newElements;
-	}
+		
+	}	
 	
-	protected void generateModelElements(TranslationUnit tu){
-		Iterator i = tu.iterateOffsetableElements();
+	protected void generateModelElements(){
+		Iterator i = quickParseCallback.iterateOffsetableElements();
 		while (i.hasNext()){
-			IOffsetable offsetable = (IOffsetable)i.next();
-			if(offsetable instanceof Inclusion){
-				createInclusion(translationUnit, (Inclusion) offsetable); 		
+			IASTOffsetableElement offsetable = (IASTOffsetableElement)i.next();
+			if(offsetable instanceof IASTInclusion){
+				createInclusion(translationUnit, (IASTInclusion) offsetable); 		
 			}
-			else if(offsetable instanceof Macro){
-				createMacro(translationUnit, (Macro) offsetable);				
-			}else if(offsetable instanceof Declaration){
-				generateModelElements (translationUnit, (Declaration) offsetable);
+			else if(offsetable instanceof IASTMacro){
+				createMacro(translationUnit, (IASTMacro) offsetable);				
+			}else if(offsetable instanceof IASTDeclaration){
+				try{
+					generateModelElements (translationUnit, (IASTDeclaration) offsetable);
+				} catch(ASTNotImplementedException e){
+				}
 			}
 		} 
 	}	
+
+	protected void generateModelElements (Parent parent, IASTDeclaration declaration) throws ASTNotImplementedException
+	{
+		if(declaration instanceof IASTNamespaceDefinition ) {
+			generateModelElements(parent, (IASTNamespaceDefinition) declaration);
+		}
+
+		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration ) {
+			generateModelElements(parent, (IASTAbstractTypeSpecifierDeclaration) declaration);
+		}
+
+		if(declaration instanceof IASTTemplateDeclaration ) {
+			generateModelElements(parent, (IASTTemplateDeclaration) declaration);
+		}
+
+		if(declaration instanceof IASTTypedefDeclaration ) {
+			generateModelElements(parent, (IASTTypedefDeclaration) declaration);
+		}
+
+/*		if ((declaration instanceof IASTPointerToFunction) 
+		|| (declaration instanceof IASTPointerToMethod)) 
+		{
+			createPointerToFunction(parent, declaration, false); 
+		}	
+		// variable or field	
+		else */ 
+		if (declaration instanceof IASTVariable)
+		{
+			createVariableSpecification(parent, (IASTVariable)declaration, false); 
+		}	
+		// function or method 
+		else if(declaration instanceof IASTFunction ) 
+		{
+			createFunctionSpecification(parent, (IASTFunction)declaration, false);
+		}
+	}
 	
-	protected void generateModelElements (Parent parent, Declaration declaration){
-		// Namespace Definition 
-		if(declaration instanceof NamespaceDefinition){
-			NamespaceDefinition nsDef = (NamespaceDefinition) declaration;
-			IParent namespace = createNamespace(parent, nsDef);
-			List nsDeclarations = nsDef.getDeclarations();
-			Iterator nsDecls = 	nsDeclarations.iterator();
-			while (nsDecls.hasNext()){
-				Declaration subNsDeclaration = (Declaration) nsDecls.next();
-				generateModelElements((Parent)namespace, subNsDeclaration);			
-			}
-		}// end Namespace Definition
+	protected void generateModelElements (Parent parent, IASTNamespaceDefinition declaration) throws ASTNotImplementedException{
+		// IASTNamespaceDefinition 
+		IParent namespace = createNamespace(parent, declaration);
+		Iterator nsDecls = declaration.getDeclarations();
+		while (nsDecls.hasNext()){
+			IASTDeclaration subNsDeclaration = (IASTDeclaration) nsDecls.next();
+			generateModelElements((Parent)namespace, subNsDeclaration);			
+		}
+	}
+	
+	protected void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws ASTNotImplementedException
+	{
+		// IASTAbstractTypeSpecifierDeclaration 
+		 IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier(); 
+		// IASTEnumerationSpecifier
+		if ( typeSpec instanceof IASTEnumerationSpecifier){
+			IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
+			IParent enumElement = createEnumeration (parent, enumSpecifier);
+		}
+		// IASTClassSpecifier
+		else if (typeSpec instanceof IASTClassSpecifier){
+			IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
+			IParent classElement = createClass (parent, classSpecifier, false);
+			// create the sub declarations 
+			Iterator j = classSpecifier.getDeclarations();
+			while (j.hasNext()){
+				IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
+				generateModelElements((Parent)classElement, subDeclaration);					
+			} // end while j
+		}
+	}
 
-		// Simple Declaration 
-		if(declaration instanceof SimpleDeclaration){
-			SimpleDeclaration simpleDeclaration = (SimpleDeclaration) declaration;
-
-			/*-------------------------------------------
-			 * Checking the type if it is a composite one
-			 *-------------------------------------------*/
-			TypeSpecifier typeSpec = simpleDeclaration.getTypeSpecifier();
-			// Enumeration
-			if (typeSpec instanceof EnumerationSpecifier){
-				EnumerationSpecifier enumSpecifier = (EnumerationSpecifier) typeSpec;
-				IParent enumElement = createEnumeration (parent, enumSpecifier);
-			}
-			// Structure
-			else if (typeSpec instanceof ClassSpecifier){
-				ClassSpecifier classSpecifier = (ClassSpecifier) typeSpec;
-				IParent classElement = createClass (parent, simpleDeclaration, classSpecifier, false);
-				// create the sub declarations 
-				List declarations = classSpecifier.getDeclarations();
-				Iterator j = declarations.iterator();
-				while (j.hasNext()){
-					Declaration subDeclaration = (Declaration)j.next();
-					generateModelElements((Parent)classElement, subDeclaration);					
-				} // end while j
-			}
-			/*-----------------------------------------
-			 * Create declarators of simple declaration
-			 * ----------------------------------------*/
-			List declarators  = simpleDeclaration.getDeclarators();
-			Iterator d = declarators.iterator();
-			while (d.hasNext()){ 		
-				Declarator declarator = (Declarator)d.next();
-				createElement(parent, simpleDeclaration, declarator);
-			} // end while d		
-		} // end if SimpleDeclaration
-		
+	protected void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws ASTNotImplementedException
+	{				
 		// Template Declaration 
-		if(declaration instanceof TemplateDeclaration){
-			TemplateDeclaration templateDeclaration = (TemplateDeclaration)declaration;
-			SimpleDeclaration simpleDeclaration = (SimpleDeclaration)templateDeclaration.getDeclarations().get(0);
-			TypeSpecifier typeSpec = simpleDeclaration.getTypeSpecifier();
-			if (typeSpec instanceof ClassSpecifier){
-				ClassSpecifier classSpecifier = (ClassSpecifier) typeSpec;
-				ITemplate classTemplate = (StructureTemplate)createClass(parent, simpleDeclaration, classSpecifier, true);
+		IASTDeclaration declaration = (IASTDeclaration)templateDeclaration.getOwnedDeclaration();
+		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration){
+			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;			
+			IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier();
+			if (typeSpec instanceof IASTClassSpecifier){
+				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
+				ITemplate classTemplate = (StructureTemplate)createClass(parent, classSpecifier, true);
 				CElement element = (CElement) classTemplate;
+				
 				// set the element position		
-				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getTotalLength());	
+				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
 				// set the element lines
-				element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
+				//element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
 				// set the template parameters				
 				String[] parameterTypes = getTemplateParameters(templateDeclaration);
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
-
+	
 				// create the sub declarations 
-				List declarations = classSpecifier.getDeclarations();
-				Iterator j = declarations.iterator();
+				Iterator j  = classSpecifier.getDeclarations();
 				while (j.hasNext()){
-					Declaration subDeclaration = (Declaration)j.next();
+					IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
 					generateModelElements((Parent)classTemplate, subDeclaration);					
 				} // end while j
 			}
-			List declarators  = simpleDeclaration.getDeclarators();
-			Iterator d = declarators.iterator();
-			while (d.hasNext()){ 		
-				Declarator declarator = (Declarator)d.next();
-				createTemplateElement(parent,templateDeclaration, simpleDeclaration, declarator);
-			} // end while d		
-			
-		}// end Template Declaration
 
-	}
-		
-	protected void createElement(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator)
-    {
-		// typedef
-		if(simpleDeclaration.getDeclSpecifier().isTypedef()){
-			createTypeDef(parent, declarator, simpleDeclaration);
-		} else {
-			if (isFunctionSpecification(declarator)) {
-                // function or method 
-                createFunctionSpecification(parent, simpleDeclaration, declarator, false);
-            } else {
-                // variable or field	
-				createVariableSpecification(parent, simpleDeclaration, declarator, false); 
-			}
-		}				
-	}
-
-	protected void createTemplateElement(Parent parent, TemplateDeclaration templateDeclaration, SimpleDeclaration simpleDeclaration, Declarator declarator){
-		ParameterDeclarationClause pdc = declarator.getParms();
+		}
 		ITemplate template = null;
-		if (pdc == null){	
-			template = (ITemplate) createVariableSpecification(parent, simpleDeclaration, declarator, true); 
-		}
-		else{
-			// template of function or method
-			template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, true);
-		}
 
-		if(template != null){
+/*		if ((declaration instanceof IASTPointerToFunction) 
+			|| (declaration instanceof IASTPointerToMethod))
+		{
+			template = (ITemplate) createPointerToFunction(parent, declaration, true); 
+		}	
+		// template of variable or field	
+		else */ 
+		if (declaration instanceof IASTVariable) 
+		{
+			template = (ITemplate) createVariableSpecification(parent, (IASTVariable)declaration, true); 
+		}	
+		// Template of function or method 
+		else if(declaration instanceof IASTFunction ) 
+		{
+			template = (ITemplate) createFunctionSpecification(parent, (IASTFunction)declaration, true);
+		}		
+	 	 
+ 		if(template != null){
 			CElement element = (CElement)template;
 			// set the element position		
-			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getTotalLength());	
+			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
 			// set the element lines
-			element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
+			//element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
 			// set the template parameters
 			String[] parameterTypes = getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
 		}
 	}
-	protected Include createInclusion(Parent parent, Inclusion inclusion){
+
+	protected void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws ASTNotImplementedException
+	{
+		TypeDef typeDef = createTypeDef(parent, declaration);
+		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
+		generateModelElements(parent, abstractDeclaration);
+	}
+	
+	protected void generateModelElements (Parent parent, IASTAbstractDeclaration abstractDeclaration) throws ASTNotImplementedException{
+		/*-------------------------------------------
+		 * Checking the type if it is a composite one
+		 *-------------------------------------------*/
+		 IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier(); 
+		// IASTEnumerationSpecifier
+		if ( typeSpec instanceof IASTEnumerationSpecifier){
+			IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
+			IParent enumElement = createEnumeration (parent, enumSpecifier);
+		}
+		// IASTClassSpecifier
+		else if (typeSpec instanceof IASTClassSpecifier){
+			IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
+			IParent classElement = createClass (parent, classSpecifier, false);
+			// create the sub declarations 
+			Iterator j = classSpecifier.getDeclarations();
+			while (j.hasNext()){
+				IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
+				generateModelElements((Parent)classElement, subDeclaration);					
+			} // end while j
+		}
+	}
+	
+	protected Include createInclusion(Parent parent, IASTInclusion inclusion){
 		// create element
 		Include element = new Include((CElement)parent, inclusion.getName(), !inclusion.isLocal());
 		// add to parent
 		parent.addChild((CElement) element);
 		// set position
-		element.setIdPos(inclusion.getNameOffset(), inclusion.getNameLength());
-		element.setPos(inclusion.getStartingOffset(), inclusion.getTotalLength());
+		element.setIdPos(inclusion.getNameOffset(), inclusion.getName().length());
+		element.setPos(inclusion.getStartingOffset(), inclusion.getEndingOffset() - inclusion.getStartingOffset());
 		// set the element lines
-		element.setLines(inclusion.getTopLine(), inclusion.getBottomLine());
+		//element.setLines(inclusion.getTopLine(), inclusion.getBottomLine());
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 	
-	protected org.eclipse.cdt.internal.core.model.Macro createMacro(Parent parent, Macro macro){
+	protected Macro createMacro(Parent parent, IASTMacro macro){
 		// create element
-		org.eclipse.cdt.internal.core.model.Macro element = new  org.eclipse.cdt.internal.core.model.Macro(parent, macro.getName());
+		org.eclipse.cdt.internal.core.model.Macro element = new  Macro(parent, macro.getName());
 		// add to parent
 		parent.addChild((CElement) element);		
 		// set position
-		element.setIdPos(macro.getNameOffset(), macro.getNameLength());
-		element.setPos(macro.getStartingOffset(), macro.getTotalLength());
+		element.setIdPos(macro.getNameOffset(), macro.getName().length());
+		element.setPos(macro.getStartingOffset(), macro.getEndingOffset() - macro.getStartingOffset());
 		// set the element lines
-		element.setLines(macro.getTopLine(), macro.getBottomLine());
+		//element.setLines(macro.getTopLine(), macro.getBottomLine());
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 	
-	protected Namespace createNamespace(Parent parent, NamespaceDefinition nsDef){
+	protected Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef){
 		// create element
-		String nsName = (nsDef.getName() == null ) ? "" : nsDef.getName().toString();
+		String type = "namespace";
+		String nsName = (nsDef.getName() == null )  
+						? "" 
+						: nsDef.getName().toString();
 		Namespace element = new Namespace ((ICElement)parent, nsName );
 		// add to parent
 		parent.addChild((ICElement)element);
-		// set element position
-		if(nsDef.getName() != null){
-			element.setIdPos(nsDef.getNameOffset(), nsDef.getName().length());
-		}else{
-			element.setIdPos(nsDef.getStartingOffset(), new String( "namespace").length());
-		}
-		element.setPos(nsDef.getStartingOffset(), nsDef.getTotalLength());
-		element.setTypeName(new String( "namespace"));
+		element.setIdPos(nsDef.getNameOffset(), (nsName.length() == 0) ? type.length() : nsName.length());
+		element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
+		element.setTypeName(type);
 		// set the element lines
-		element.setLines(nsDef.getTopLine(), nsDef.getBottomLine());
+		//element.setLines(nsDef.getTopLine(), nsDef.getBottomLine());
 		
 		this.newElements.put(element, element.getElementInfo());		
 		return element;
 	}
 
-	protected Enumeration createEnumeration(Parent parent, EnumerationSpecifier enumSpecifier){
+	protected Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier){
 		// create element
-		String enumName = (enumSpecifier.getName() == null ) ? "" : enumSpecifier.getName().toString();
+		String type = "enum";
+		String enumName = (enumSpecifier.getName() == null )
+						  ? "" 
+						  : enumSpecifier.getName().toString();
 		Enumeration element = new Enumeration ((ICElement)parent, enumName );
 		// add to parent
 		parent.addChild((ICElement)element);
-		List enumItems = enumSpecifier.getEnumeratorDefinitions();
-		Iterator i = enumItems.iterator();
+		Iterator i  = enumSpecifier.getEnumerators();
 		while (i.hasNext()){
 			// create sub element
-			EnumeratorDefinition enumDef = (EnumeratorDefinition) i.next();
+			IASTEnumerator enumDef = (IASTEnumerator) i.next();
 			createEnumerator(element, enumDef);
 		}
 		// set enumeration position
-		if(enumSpecifier.getName() != null ){
-			element.setIdPos(enumSpecifier.getStartingOffset(), enumSpecifier.getName().length());
-		}else {
-			element.setIdPos(enumSpecifier.getStartingOffset(), enumSpecifier.getStartImage().length());				
-		}
-		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getTotalLength());
-		element.setTypeName(enumSpecifier.getStartImage());
+		element.setIdPos(enumSpecifier.getNameOffset(), (enumName.length() == 0) ? type.length() : enumName.length());
+		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getEndingOffset() - enumSpecifier.getStartingOffset());
+		element.setTypeName(type);
 		// set the element lines
-		element.setLines(enumSpecifier.getTopLine(), enumSpecifier.getBottomLine());
+		//element.setLines(enumSpecifier.getTopLine(), enumSpecifier.getBottomLine());
 		 
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 	
-	protected Enumerator createEnumerator(Parent enum, EnumeratorDefinition enumDef){
+	protected Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef){
 		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
 		// add to parent
 		enum.addChild(element);
 		// set enumerator position
 		element.setIdPos(enumDef.getStartingOffset(), enumDef.getName().length());
-		element.setPos(enumDef.getStartingOffset(), enumDef.getTotalLength());
+		element.setPos(enumDef.getStartingOffset(), enumDef.getEndingOffset() - enumDef.getStartingOffset());
 		// set the element lines
-		element.setLines(enumDef.getTopLine(), enumDef.getBottomLine());
+		//element.setLines(enumDef.getTopLine(), enumDef.getBottomLine());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;		
 	}
 	
-	protected Structure createClass(Parent parent, SimpleDeclaration simpleDeclaration, ClassSpecifier classSpecifier, boolean isTemplate){
+	protected Structure createClass(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate){
 		// create element
-		String className = (classSpecifier.getName() == null ) ? "" : classSpecifier.getName().toString();
-		int kind;
-		switch( classSpecifier.getClassKey() )
-		{
-			case ClassKey.t_class:
-				if(!isTemplate)
-					kind = ICElement.C_CLASS;
-				else
-					kind = ICElement.C_TEMPLATE_CLASS;
-				break;
-			case ClassKey.t_struct:
-				if(!isTemplate)
-					kind = ICElement.C_STRUCT;
-				else
-					kind = ICElement.C_TEMPLATE_STRUCT;
-				break;	
-			default:
-				if(!isTemplate)
-					kind = ICElement.C_UNION;
-				else
-					kind = ICElement.C_TEMPLATE_UNION;
-				break;
+		String className = "";
+		String type = "";
+		int kind = ICElement.C_CLASS;
+		ASTClassKind classkind = classSpecifier.getClassKind();
+		if(classkind == ASTClassKind.CLASS){
+			if(!isTemplate)
+				kind = ICElement.C_CLASS;
+			else
+				kind = ICElement.C_TEMPLATE_CLASS;
+			type = "class";
+			className = (classSpecifier.getName() == null )
+						? ""
+						: classSpecifier.getName().toString();				
+		}
+		if(classkind == ASTClassKind.STRUCT){
+			if(!isTemplate)
+				kind = ICElement.C_STRUCT;
+			else
+				kind = ICElement.C_TEMPLATE_STRUCT;
+			type = "struct";
+			className = (classSpecifier.getName() == null ) 
+						? "" 
+						: classSpecifier.getName().toString();				
+		}
+		if(classkind == ASTClassKind.UNION){
+			if(!isTemplate)
+				kind = ICElement.C_UNION;
+			else
+				kind = ICElement.C_TEMPLATE_UNION;
+			type = "union";
+			className = (classSpecifier.getName() == null )
+						? "" 
+						: classSpecifier.getName().toString();				
 		}
 		
 		Structure element;
@@ -405,88 +440,56 @@ public class CModelBuilder {
 
 		// add to parent
 		parent.addChild((ICElement) element);
-		String type;
 		// set element position 
-		if( classSpecifier.getName()  != null )
-		{
-			type = simpleDeclaration.getDeclSpecifier().getTypeName();
-			element.setIdPos( classSpecifier.getNameOffset(), classSpecifier.getName().length() );
-		}
-		else
-		{
-			type = classSpecifier.getClassKeyImage();
-			element.setIdPos(classSpecifier.getStartingOffset(), classSpecifier.getClassKeyImage().length());
-			
-		}
+		element.setIdPos( classSpecifier.getNameOffset(), (className.length() == 0) ? type.length() : className.length() );
 		element.setTypeName( type );
 		if(!isTemplate){
 			// set the element position
-			element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getTotalLength());
+			element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getEndingOffset() - classSpecifier.getStartingOffset());
 			// set the element lines
-			element.setLines(classSpecifier.getTopLine(), classSpecifier.getBottomLine());
+			//element.setLines(classSpecifier.getTopLine(), classSpecifier.getBottomLine());
 		}
 		
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 	
-	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
+	protected TypeDef createTypeDef(Parent parent, IASTTypedefDeclaration typeDefDeclaration){
 		// create the element
-		String domName = getDOMName(declarator);
-        if (domName == null) {
-            // Something is wrong, skip this element
-            return null;             
-        }
+		String name = typeDefDeclaration.getName();
         
-		String declaratorName = domName.toString();
+        TypeDef element = new TypeDef( parent, name );
         
-        TypeDef element = new TypeDef( parent, declaratorName );
-        
-        StringBuffer typeName = new StringBuffer(getType(simpleDeclaration, declarator));
+        StringBuffer typeName = new StringBuffer(getType(typeDefDeclaration.getAbstractDeclarator()));
 		element.setTypeName(typeName.toString());
 		
 		// add to parent
 		parent.addChild((CElement)element);
 
 		// set positions
-		element.setIdPos(declarator.getNameOffset(), domName.length());	
-		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
+		element.setIdPos(typeDefDeclaration.getNameOffset(),name.length());	
+		element.setPos(typeDefDeclaration.getStartingOffset(), typeDefDeclaration.getEndingOffset() - typeDefDeclaration.getStartingOffset());
 		// set the element lines
-		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+		//element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;	
 	}
 
-	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate)
+	protected VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)
     {
-		String domName = getDOMName(declarator); 
-		if (domName == null) {
-			// TODO : improve errorhandling
-			// When parsing syntactically incorrect code, we might
-			// end up here. Most often, function/method declaration
-			// misses return type, and is neither a constructor nor
-			// a conversion operator. Like
-			// 	A::B() {}
-			// Parser sees A::B, understands that it is not a constructor
-			// /conversion, then considers it a declaration. So its
-			// type is read as A::B, no name, and a list of declarations
-			// in ().
-			// For now, we just ignore this scenario (and create no
-			// model elements), but in the future we can process this
-			// declaration as a function (with undefined/no type)
+		String variableName = varDeclaration.getName(); 
+		if(variableName == null){
+			// something is wrong, skip this element
 			return null;
-		}  
-
-		String variableName = domName.toString();  
-		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
-		
+		}
 		VariableDeclaration element = null;
-		if(parent instanceof IStructure){
+		if(varDeclaration instanceof IASTField){
+			IASTField fieldDeclaration = (IASTField) varDeclaration;
 			// field
 			Field newElement = new Field( parent, variableName);
-			newElement.setMutable(declSpecifier.isMutable());			
-			newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+			newElement.setMutable(fieldDeclaration.isMutable());
+			newElement.setVisibility(fieldDeclaration.getVisiblity());
 			element = newElement;			
 		}
 		else {
@@ -495,7 +498,7 @@ public class CModelBuilder {
 				VariableTemplate newElement = new VariableTemplate( parent, variableName );
 				element = newElement;									
 			}else {
-				if(declSpecifier.isExtern()){
+				if(varDeclaration.isExtern()){
 					// variableDeclaration
 					VariableDeclaration newElement = new VariableDeclaration( parent, variableName );
 					element = newElement;
@@ -507,54 +510,53 @@ public class CModelBuilder {
 				}
 			}
 		}
-		element.setTypeName ( getType(simpleDeclaration, declarator) );
-		element.setConst(declSpecifier.isConst());
-		element.setVolatile(declSpecifier.isVolatile());
-		element.setStatic(declSpecifier.isStatic());
+		element.setTypeName ( getType(varDeclaration.getAbstractDeclaration()) );
+		element.setConst(varDeclaration.getAbstractDeclaration().isConst());
+		// TODO : fix volatile for variables
+		// element.setVolatile(varDeclaration.isVolatile());
+		element.setStatic(varDeclaration.isStatic());
 		// add to parent
 		parent.addChild( element ); 	
 
 		// set position
-		element.setIdPos( declarator.getNameOffset(), domName.length() );
+		element.setIdPos( varDeclaration.getNameOffset(), variableName.length() );
 		if(!isTemplate){
 			// set element position
-			element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
+			element.setPos(varDeclaration.getStartingOffset(), varDeclaration.getEndingOffset() - varDeclaration.getStartingOffset());
 			// set the element lines
-			element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+			//element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 		}
 			
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 
-	protected FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate)
-    {
-		String domName = getDOMName(declarator);
-        if (domName == null) {
+	protected FunctionDeclaration createFunctionSpecification(Parent parent, IASTFunction functionDeclaration, boolean isTemplate)
+    {    	
+		String name = functionDeclaration.getName();
+        if (name == null) {
             // Something is wrong, skip this element
             return null;             
         } 
 
-		String declaratorName = domName.toString();
-		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
-		
 		// get parameters types
-		String[] parameterTypes = getFunctionParameterTypes(declarator);
+		String[] parameterTypes = getFunctionParameterTypes(functionDeclaration);
 		
 		FunctionDeclaration element = null;
 		
-		if( parent instanceof IStructure )
+		if( functionDeclaration instanceof IASTMethod )
 		{
-			if (simpleDeclaration.isFunctionDefinition())
+			IASTMethod methodDeclaration = (IASTMethod) functionDeclaration;
+			if (methodDeclaration.hasFunctionBody())
 			{
 				// method
 				if(!isTemplate){
-					Method newElement = new Method( parent, declaratorName );
-					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					Method newElement = new Method( parent, name );
+					newElement.setVisibility(methodDeclaration.getVisiblity());
 					element = newElement;				
 				}else {
-					MethodTemplate newElement = new MethodTemplate(parent, declaratorName);
-					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					MethodTemplate newElement = new MethodTemplate(parent, name);
+					newElement.setVisibility(methodDeclaration.getVisiblity());
 					element = newElement;				
 				}
 			}
@@ -562,32 +564,27 @@ public class CModelBuilder {
 			{
 				// method declaration
 				if(!isTemplate){
-					MethodDeclaration newElement = new MethodDeclaration( parent, declaratorName );
-					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					MethodDeclaration newElement = new MethodDeclaration( parent, name );
+					newElement.setVisibility(methodDeclaration.getVisiblity());
 					element = newElement;				
 				}else {
-					MethodTemplate newElement = new MethodTemplate(parent, declaratorName);
-					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					MethodTemplate newElement = new MethodTemplate(parent, name);
+					newElement.setVisibility(methodDeclaration.getVisiblity());
 					element = newElement;				
 				}
 				
 			}
 		}
-		else if(( parent instanceof ITranslationUnit ) 
-				|| ( parent instanceof INamespace ))
+		else // instance of IASTFunction 
 		{
-			if (simpleDeclaration.isFunctionDefinition())
-			{
-				// if it belongs to a class, then create a method
-				// else create a function
-				// this will not be known until we have cross reference information
-				
+			if (functionDeclaration.hasFunctionBody())
+			{				
 				// function
 				if(!isTemplate){
-					Function newElement = new Function( parent, declaratorName );
+					Function newElement = new Function( parent, name );
 					element = newElement;				
 				} else {
-					FunctionTemplate newElement = new FunctionTemplate( parent, declaratorName );
+					FunctionTemplate newElement = new FunctionTemplate( parent, name );
 					element = newElement;
 				}
 			}
@@ -595,109 +592,108 @@ public class CModelBuilder {
 			{
 				// functionDeclaration
 				if(!isTemplate){
-					FunctionDeclaration newElement = new FunctionDeclaration( parent, declaratorName );
+					FunctionDeclaration newElement = new FunctionDeclaration( parent, name );
 					element = newElement;				
 				} else {
-					FunctionTemplate newElement = new FunctionTemplate( parent, declaratorName );
+					FunctionTemplate newElement = new FunctionTemplate( parent, name );
 					element = newElement;
 				}
 			}
 		}						
 		element.setParameterTypes(parameterTypes);
-		element.setReturnType( getFunctionReturnType(simpleDeclaration, declarator) );
-		element.setVolatile(declSpecifier.isVolatile());
-		element.setStatic(declSpecifier.isStatic());
-		element.setConst(declarator.isConst());				
+		element.setReturnType( getType(functionDeclaration.getReturnType()) );
+		// TODO: Fix volatile and const
+		//element.setVolatile(functionDeclaration.isVolatile());
+		element.setStatic(functionDeclaration.isStatic());
+		//element.setConst(functionDeclaration.isConst());				
 
 		// add to parent
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( declarator.getNameOffset(), domName.length() );
+		element.setIdPos( functionDeclaration.getNameOffset(), name.length() );
 		if(!isTemplate){
 			// set the element position		
-			element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+			element.setPos(functionDeclaration.getStartingOffset(), functionDeclaration.getEndingOffset() - functionDeclaration.getStartingOffset());	
 			// set the element lines
-			element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+			//element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 		}
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 
-	
-	private String[] getTemplateParameters(ITemplateParameterListOwner templateDeclaration){
-		// add the parameters
-		List templateParameters = templateDeclaration.getTemplateParms().getDeclarations();
-		Iterator i = templateParameters.iterator();
-		String[] parameterTypes = new String[templateParameters.size()];
-		
-		for( int j = 0; j< templateParameters.size(); ++j ){
+	private String[] getTemplateParameters(Iterator templateParams){
+		List paramList = new ArrayList();
+		while (templateParams.hasNext()){
 			StringBuffer paramType = new StringBuffer();
-			Declaration decl = (Declaration)templateParameters.get(j);
-			if(decl instanceof TemplateParameter){
-				TemplateParameter parameter = (TemplateParameter) decl;
-				if(parameter.getName() != null){
-					paramType.append(parameter.getName().toString());
-				}else {
-					int kind = parameter.getKind();
-					switch (kind){
-						case TemplateParameter.k_class:
-							paramType.append("class");
-						break;						
-						case TemplateParameter.k_typename:
-							paramType.append("typename");
-						break;						
-						case TemplateParameter.k_template:
-							paramType.append("template<");
-							String[] subParams =getTemplateParameters(parameter);
-							int p = 0; 
-							if ( subParams.length > 0)
-								paramType.append(subParams[p++]);
-							while( p < subParams.length){
-								paramType.append(", ");
-								paramType.append(subParams[p++]);							
-							}
-							paramType.append(">");
-						break;						
-						default:
-						break;
-					} // switch
-				}
-			} else if(decl instanceof ParameterDeclaration){
-				ParameterDeclaration parameter = (ParameterDeclaration) decl;
-				paramType.append(getType(parameter, (Declarator)parameter.getDeclarators().get(0)));				
+			IASTTemplateParameter parameter = (IASTTemplateParameter)templateParams.next();
+			if((parameter.getIdentifier() != null) && (parameter.getIdentifier().length() != 0))
+			{
+				paramList.add(parameter.getIdentifier().toString());
 			}
-			parameterTypes[j] = new String(paramType.toString());
-		} // end for
+			else
+			{				
+				IASTTemplateParameter.ParamKind kind = parameter.getTemplateParameterKind();
+				if(kind == IASTTemplateParameter.ParamKind.CLASS){
+					paramType.append("class");
+				}
+				if(kind == IASTTemplateParameter.ParamKind.TYPENAME){
+					paramType.append("typename");
+				}
+				if(kind == IASTTemplateParameter.ParamKind.TEMPLATE_LIST){
+					paramType.append("template<");
+					String[] subParams = getTemplateParameters(parameter.getTemplateParameters());
+					int p = 0; 
+					if ( subParams.length > 0)
+						paramType.append(subParams[p++]);
+					while( p < subParams.length){
+						paramType.append(", ");
+						paramType.append(subParams[p++]);							
+					}
+					paramType.append(">");
+				}
+				if(kind == IASTTemplateParameter.ParamKind.PARAMETER){
+					paramType.append(getType(parameter.getParameterDeclaration()));				
+				}
+				paramList.add(paramType.toString());
+			} // end else
+		}// end while
+		String[] parameterTypes = new String[paramList.size()];
+		for(int j=0; j<paramList.size(); ++j){
+			parameterTypes[j] = (String) paramList.get(j);			
+		}
 		return parameterTypes;		
+		
+	}	
+	private String[] getTemplateParameters(IASTTemplateDeclaration templateDeclaration){
+		// add the parameters
+		Iterator i = templateDeclaration.getTemplateParameters();
+		return getTemplateParameters(i);
 	}
-	
-	private String getType(Declaration declaration, Declarator declarator)
+		
+	private String getType(IASTAbstractDeclaration declaration)
 	{
 		StringBuffer type = new StringBuffer();
 			
 		// get type from declaration
 		type.append(getDeclarationType(declaration));
+		type.append(getSubtype(declaration));
 		
-		type.append(getSubType(declarator, new SubTypeProcessingFlags(false)));
+//		type.append(getSubType(declarator, new SubTypeProcessingFlags(false)));
 		
 		return type.toString();
 	}
 	
-	private String getFunctionReturnType(Declaration declaration, Declarator declarator)
-	{
+
+	private String getSubtype(IASTAbstractDeclaration declaration){
 		StringBuffer type = new StringBuffer();
-		
-		// get type from declaration
-		type.append(getDeclarationType(declaration));
-	
-		type.append(getSubType(declarator, new SubTypeProcessingFlags(true)));
-	
-		return type.toString();
+		type.append(getPointerOperation(declaration));
+		type.append(getArrayQualifiers(declaration));
+		return type.toString();		
 	}
     
-    private class SubTypeProcessingFlags {
+/*    private class SubTypeProcessingFlags {
         boolean returnTypeForFunction = false;
         boolean processedInnermostParameterList = false;
         
@@ -705,8 +701,8 @@ public class CModelBuilder {
             this.returnTypeForFunction = returnTypeForFunction;
         }
     }
-	
-	private String getSubType(Declarator declarator, SubTypeProcessingFlags flags) {
+*/	
+/*	private String getSubType(Declarator declarator, SubTypeProcessingFlags flags) {
 		StringBuffer type = new StringBuffer();
 						
 		// add pointer or reference from declarator if any
@@ -766,7 +762,7 @@ public class CModelBuilder {
 			
 		return type.toString();
 	}
-    
+*/    
     
     /**
      *  Here is a tricky one. Determines if a declarator represents a function
@@ -781,7 +777,7 @@ public class CModelBuilder {
      * @return True, if the declarator represents a function specification
      */
     
-    private boolean isFunctionSpecification(Declarator declarator)
+/*    private boolean isFunctionSpecification(Declarator declarator)
     {
         Declarator currentDeclarator = declarator;
         boolean result = false;
@@ -806,115 +802,81 @@ public class CModelBuilder {
         
         return result;
     }
-
-	
-	private String getDeclarationType(Declaration declaration){
+*/	
+	private String getDeclarationType(IASTAbstractDeclaration declaration){
 		StringBuffer type = new StringBuffer();
-		if(declaration instanceof ParameterDeclaration){
-			ParameterDeclaration paramDeclaration = (ParameterDeclaration) declaration;
-			if(paramDeclaration.getDeclSpecifier().isConst())
-				type.append("const ");
-			if(paramDeclaration.getDeclSpecifier().isVolatile())
-				type.append("volatile ");
-			TypeSpecifier typeSpecifier = paramDeclaration.getTypeSpecifier();
-			if(typeSpecifier == null){
-				type.append(paramDeclaration.getDeclSpecifier().getTypeName());
-			}
-			else if(typeSpecifier instanceof ElaboratedTypeSpecifier){
-				ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier) typeSpecifier;
-				type.append(getElaboratedTypeSignature(elab));
-			}
-		}
 		
-		if(declaration instanceof SimpleDeclaration){
-			SimpleDeclaration simpleDeclaration = (SimpleDeclaration) declaration;
-			if(simpleDeclaration.getDeclSpecifier().isConst())
-				type.append("const ");
-			if(simpleDeclaration.getDeclSpecifier().isVolatile())
-				type.append("volatile ");
-			TypeSpecifier typeSpecifier = simpleDeclaration.getTypeSpecifier();
-			if(typeSpecifier == null){
-				type.append(simpleDeclaration.getDeclSpecifier().getTypeName()); 
-			} 
-			else if(typeSpecifier instanceof ElaboratedTypeSpecifier){
-				ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier) typeSpecifier;
-				type.append(getElaboratedTypeSignature(elab));
-			}
-		}
-		
+		if(declaration.isConst())
+			type.append("const ");
+		// TODO: Fix volatile
+//		if(declaration.isVolatile())
+//			type.append("volatile ");
+		IASTTypeSpecifier typeSpecifier = declaration.getTypeSpecifier();
+		if(typeSpecifier instanceof IASTElaboratedTypeSpecifier){
+			IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) typeSpecifier;
+			type.append(getElaboratedTypeSignature(elab));
+		}else if(typeSpecifier instanceof IASTSimpleTypeSpecifier){		
+			IASTSimpleTypeSpecifier simpleSpecifier = (IASTSimpleTypeSpecifier) typeSpecifier;		
+			type.append(simpleSpecifier.getTypename());
+		} 
 		return type.toString();	
 	}
 	
-	private String getElaboratedTypeSignature(ElaboratedTypeSpecifier elab){
+	private String getElaboratedTypeSignature(IASTElaboratedTypeSpecifier elab){
 		StringBuffer type = new StringBuffer();
-		int t = elab.getClassKey();
-		switch (t){
-			case ClassKey.t_class:
-				type.append("class");
-			break;
-			case ClassKey.t_struct:
-				type.append("struct");
-			break;
-			case ClassKey.t_union:
-				type.append("union");
-			break;
-			case ClassKey.t_enum:
-				type.append("enum");
-			break;
-		};
+		ASTClassKind t = elab.getClassKind();
+		if( t == ASTClassKind.CLASS){
+			type.append("class");
+		} 
+		else if( t == ASTClassKind.STRUCT){
+			type.append("struct");
+		}
+		else if( t == ASTClassKind.UNION){
+			type.append("union");
+		}
+		else if( t == ASTClassKind.STRUCT){
+			type.append("enum");
+		}
 		type.append(" ");
 		type.append(elab.getName().toString());
 		return type.toString();
 	}
 	
-	private String getDeclaratorPointerOperation(Declarator declarator){		
+	private String getPointerOperation(IASTAbstractDeclaration declaration){		
 		StringBuffer pointerString = new StringBuffer();
-		List pointerOperators = declarator.getPointerOperators();
-		if(pointerOperators != null) {
-			Iterator i = pointerOperators.iterator();
-			while(i.hasNext()){
-				PointerOperator po = (PointerOperator) i.next();
-				switch (po.getType()){
-					case PointerOperator.t_pointer_to_member:
-						pointerString.append(po.getNameSpecifier());
-					// Intentional fall-through
-					case PointerOperator.t_pointer:
-						pointerString.append("*");
-					break;
-					case PointerOperator.t_reference:
-						pointerString.append("&");
-					break;									
-				}
+		Iterator i = declaration.getPointerOperators();
+		while(i.hasNext()){
+			ASTPointerOperator po = (ASTPointerOperator) i.next();
+			if(po == ASTPointerOperator.POINTER)
+				pointerString.append("*");
+
+			if(po == ASTPointerOperator.REFERENCE)
+				pointerString.append("&");
+
+			if(po == ASTPointerOperator.CONST_POINTER)
+				pointerString.append(" const");
+
+			if(po == ASTPointerOperator.VOLATILE_POINTER)
+				pointerString.append(" volatile");
 				
-				if(po.isConst())
-					pointerString.append(" const");
-				if(po.isVolatile())
-					pointerString.append(" volatile");
-			}
+//				case PointerOperator.t_pointer_to_member:
+//					pointerString.append(po.getNameSpecifier());
 		}
 		return pointerString.toString();
 	}
 
-	private String getDeclaratorArrayQualifiers(Declarator declarator){		
+	private String getArrayQualifiers(IASTAbstractDeclaration declaration){		
 		StringBuffer arrayString = new StringBuffer();
-		List arrayQualifiers = declarator.getArrayQualifiers(); 
-		if(arrayQualifiers != null){
-			Iterator i = arrayQualifiers.iterator();
-			while (i.hasNext()){
-				ArrayQualifier q = (ArrayQualifier) i.next();
-				arrayString.append("[]");				
-			}
+		Iterator i  = declaration.getArrayModifiers(); 
+		while (i.hasNext()){
+			ASTArrayModifier q = (ASTArrayModifier) i.next();
+			arrayString.append("[]");				
 		}
 		return arrayString.toString();
 	}
 	
-    
-    private String[] getParameterTypes(Declarator declarator) 
-    {
-        return getParameterTypes(declarator, null);
-    }
-	
-	private String[] getParameterTypes(Declarator declarator, HashMap mapOfKRParams) 
+    	
+/*	private String[] getParameterTypes(Declarator declarator, HashMap mapOfKRParams) 
 	{	
 		if (declarator == null) return null;
 		
@@ -928,7 +890,7 @@ public class CModelBuilder {
 			for (int j = 0; j < parameterList.size(); ++j) {
 				ParameterDeclaration param = (ParameterDeclaration) parameterList.get(j);
                 Declarator decl = (Declarator) param.getDeclarators().get(0);
-				parameterTypes[j] =	getType(param, decl);
+				parameterTypes[j] =	getType(param);
                 
                 if (    (mapOfKRParams != null) 
                     &&  (mapOfKRParams.size() > 0) 
@@ -952,10 +914,22 @@ public class CModelBuilder {
 		
 		return parameterTypes;
 	}
-    
-    private String[] getFunctionParameterTypes(Declarator declarator)
+*/    
+    private String[] getFunctionParameterTypes(IASTFunction functionDeclaration)
     {
-        Declarator currentDeclarator = declarator;
+    	Iterator parameters = functionDeclaration.getParameters();
+    	List paramList = new ArrayList();
+    	while (parameters.hasNext()){
+			IASTParameterDeclaration param = (IASTParameterDeclaration)parameters.next();
+			paramList.add(getType(param));
+    	}
+		String[] parameterTypes = new String[paramList.size()];
+		for(int i=0; i<paramList.size(); ++i){
+			parameterTypes[i] = (String)paramList.get(i); 
+		}
+    	return parameterTypes;
+    	
+/*        Declarator currentDeclarator = declarator;
         Declarator innermostPDCDeclarator = null;
 
         while (currentDeclarator != null) {
@@ -1000,6 +974,7 @@ public class CModelBuilder {
         }
 
         return getParameterTypes(innermostPDCDeclarator, mapOfKRParams);
+*/	
     }
 	
 	private String getParametersString(String[] parameterTypes) 
@@ -1020,28 +995,5 @@ public class CModelBuilder {
 		}
 		
 		return parameters.toString();
-	}
-	
-	private String getParametersString(Declarator declarator) 
-	{
-		return getParametersString(getParameterTypes(declarator));
-	}
-    
-    private String getDOMName(Declarator declarator) 
-    {
-        Declarator currentDeclarator = declarator;
-        String name = null;
-        
-        if (currentDeclarator != null) {
-            while (currentDeclarator.getDeclarator() != null) {
-                currentDeclarator = currentDeclarator.getDeclarator();
-            }
-        }
-        // The innermost declarator must contain the name
-        if (currentDeclarator != null) {
-               name = currentDeclarator.getName();
-        }
-        
-        return name;
-    }       
+	}	    
 }

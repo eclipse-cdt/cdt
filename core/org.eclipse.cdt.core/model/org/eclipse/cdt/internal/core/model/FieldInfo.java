@@ -11,7 +11,7 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class FieldInfo extends SourceManipulationInfo {
 
@@ -21,12 +21,12 @@ public class FieldInfo extends SourceManipulationInfo {
 	boolean isVolatile = false;
 	boolean isMutable = false;
 	boolean isStatic = false;
-	int visibility;
+	ASTAccessVisibility visibility;
 	
 	protected FieldInfo (CElement element) {
 		super(element);
 		flags = 0;
-		visibility = IMember.V_PRIVATE;
+		visibility = ASTAccessVisibility.PRIVATE;
 	}
 
 	protected int getAccessControl() {
@@ -80,7 +80,7 @@ public class FieldInfo extends SourceManipulationInfo {
 	 * Returns the visibility.
 	 * @return int
 	 */
-	public int getVisibility() {
+	public ASTAccessVisibility getVisibility() {
 		return visibility;
 	}
 
@@ -88,7 +88,7 @@ public class FieldInfo extends SourceManipulationInfo {
 	 * Sets the visibility.
 	 * @param visibility The visibility to set
 	 */
-	public void setVisibility(int visibility) {
+	public void setVisibility(ASTAccessVisibility visibility) {
 		this.visibility = visibility;
 	}
 

@@ -666,7 +666,7 @@ public class CoreModel {
 	 * @see #getPathEntryContainer(IPath, IJavaProject)
 	 * @see IPathEntryContainer
 	 */
-	public void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer container, IProgressMonitor monitor)
+	public static void setPathEntryContainer(ICProject[] affectedProjects, IPathEntryContainer container, IProgressMonitor monitor)
 			throws CModelException {
 		pathEntryManager.setPathEntryContainer(affectedProjects, container, monitor);
 	}
@@ -681,7 +681,7 @@ public class CoreModel {
 	 * @param changes array of changes.
 	 * @param monitor progress monitor
 	 */
-	public void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] changes, IProgressMonitor monitor) {
+	public static void pathEntryContainerUpdates(IPathEntryContainerExtension container, PathEntryContainerChanged[] changes, IProgressMonitor monitor) {
 		pathEntryManager.pathEntryContainerUpdates(container, changes, monitor);
 	}
 

@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.eclipse.cdt.core.index.Indexer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -29,6 +31,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -55,8 +58,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -74,7 +80,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	public static final String EXTENSION_POINT_ID= "org.eclipse.cdt.ui.CSearchPage"; //$NON-NLS-1$
 	
 	public boolean performAction() {
-	
+	    fLineManager.setErrorMessage(null); 
 		SearchPatternData data = getPatternData();
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 		
@@ -169,11 +175,52 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		}
 
 		setControl( result );
-
+		
+		fLineManager = getStatusLineManager();
+		
+		setIndexerMessages();
+		
 		Dialog.applyDialogFont( result );
 		WorkbenchHelp.setHelp(result, ICHelpContextIds.C_SEARCH_PAGE);	
 	}
 	
+	/**
+	 * 
+	 */
+	private void  setIndexerMessages() {
+		
+		if (fLineManager == null)
+			return;
+		
+		if (Indexer.indexEnabledOnAllProjects())
+			return;
+		
+		if (Indexer.indexEnabledOnAnyProjects()){
+			fLineManager.setErrorMessage(CSearchMessages.getString("CSearchPage.warning.indexersomeprojects")); //$NON-NLS-1$
+		}else{
+			fLineManager.setErrorMessage(CSearchMessages.getString("CSearchPage.warning.indexernoprojects")); //$NON-NLS-1$
+		}
+	}
+	
+	private IStatusLineManager getStatusLineManager(){
+		
+		IWorkbenchWindow wbWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (wbWindow != null) {
+			IWorkbenchPage page= wbWindow.getActivePage();
+			if (page != null) {
+				 IWorkbenchPartSite workbenchSite = page.getActivePart().getSite();
+				 if (workbenchSite instanceof IViewSite){
+				 	return ((IViewSite) workbenchSite).getActionBars().getStatusLineManager();
+				 }
+				 else if (workbenchSite instanceof IEditorSite){
+				 	return ((IEditorSite) workbenchSite).getActionBars().getStatusLineManager();
+				 }
+			}
+		}
+		
+		return null;
+	}
+
 	private Control createExpression( Composite parent ) {
 		Composite  result = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
@@ -631,4 +678,6 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private Combo fPattern;
 	private ISearchPageContainer fContainer;
 	private Button fCaseSensitive;
+	
+	private IStatusLineManager fLineManager;
 }

@@ -1,3 +1,11 @@
+2004-05-31 Bogdan Gheorghe
+
+	Added warning message to status line when C search page is invoked and not all
+	projects in the workspace have indexing turned on.
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
+	
 2004-05-27 Alain Magloire
 
 	Reverse part of a patch from TF concerning

@@ -38,6 +38,9 @@ public class Indexer {
 		IProject[] projects= CCorePlugin.getWorkspace().getRoot().getProjects();
 		boolean allEnabled = false;
 		for (int i=0; i<projects.length; i++){
+		  if (!projects[i].isOpen())
+		  	continue;
+		  
 		  if (indexEnabledOnProject(projects[i])){
 		  	allEnabled=true;
 		  	break;

@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.CPathEntry;
 import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.DeltaProcessor;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -827,6 +828,7 @@ public class CCorePlugin extends Plugin {
 	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String DEPENDENCY = CCorePlugin.PLUGIN_ID + "/debug/dependency" ; //$NON-NLS-1$
+	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ;
 	/**
 	 * Configure the plugin with respect to option settings defined in ".options" file
 	 */
@@ -858,6 +860,9 @@ public class CCorePlugin extends Plugin {
 		
 			option = Platform.getDebugOption(SEARCH);
 			if(option != null) SearchEngine.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			
+			option = Platform.getDebugOption(DELTA);
+			if(option != null) DeltaProcessor.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			
 			option = Platform.getDebugOption(MATCH_LOCATOR);
 			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$

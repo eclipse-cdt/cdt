@@ -1,3 +1,8 @@
+2002-12-10 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIVariable.java (setFormat):
+	New method to change the variable formats(hexa, octal, etc..)
+
 2002-12-10 Mikhail Khodjaiants
 	If the given source file path is absolute and the source locator can not find it in the all specified locations return a FileStorage object.
 	* CSourceLocator.java

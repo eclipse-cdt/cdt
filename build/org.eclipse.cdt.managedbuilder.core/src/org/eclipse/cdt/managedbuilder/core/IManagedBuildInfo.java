@@ -183,6 +183,20 @@ public interface IManagedBuildInfo {
 	public String getToolForTarget(String extension);
 	
 	/**
+	 * Answers true if the build model has been changed by the user.
+	 * 
+	 * @return
+	 */
+	public boolean isDirty();
+	
+	/**
+	 * Set the dirty flag for the build model to the value of the argument.
+	 * 
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
+	
+	/**
 	 * Set the primary configuration for the receiver.
 	 * 
 	 * @param configuration The <code>IConfiguration</code> that will be used as the default

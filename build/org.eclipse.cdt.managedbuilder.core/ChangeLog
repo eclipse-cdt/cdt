@@ -1,3 +1,24 @@
+2003-09-16 Sean Evoy
+	Patch contains a fix for bug 43017. Renamed the "addDeps" method to a 
+	more descriptive "addSourceDependencies". Added a flag when the 
+	inter-project dependencies are calculated so that clean and all are 
+	properly passed to the make invocation. Finally, I replaced the hard-coded
+	'make' with $(MAKE)
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+	
+	It also contains some more work on 41826, specifically on the logic to
+	implement a rebuild when the build settings change. The builder checks for 
+	a build model change whenever a build is requested and responds appropriately. 
+	The make targets (i.e. 'clean' and 'all') are also calculated differently now.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	
+	The build model was modified to set a dirty flag when an option changes. I also
+	made a change to avoid an NPE when the build info was loaded.
+	* src/org/eclipse/cdt/managedbuilder/core/IManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java
+	
+
 2003-09-15 Sean Evoy
 	First submission of code to new project. Moved the managed builder 
 	source code out of the cdt.core project. This includes the code to 

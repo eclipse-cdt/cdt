@@ -208,7 +208,12 @@ public class ManagedBuildTests extends TestCase {
 			}
 		}
 		assertNotNull(symbolOpt);
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+		assertFalse(info.isDirty());
 		ManagedBuildManager.setOption(defaultConfig, symbolOpt, expectedSymbols);
+		assertTrue(info.isDirty());
+		info.setDirty(false);
+		assertFalse(info.isDirty());
 	}
 	
 	/**

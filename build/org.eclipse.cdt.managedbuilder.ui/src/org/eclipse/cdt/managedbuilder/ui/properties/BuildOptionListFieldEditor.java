@@ -90,11 +90,14 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		// Add it to the list
 		if (input != null) {
 			int index = list.getSelectionIndex();
-			if (index >= 0)
+			if (index >= 0) {
 				list.add(input, index + 1);
-			else
+				list.setSelection(index + 1);
+			}
+			else {
 				list.add(input, 0);
-			selectionChanged();
+				list.setSelection(0);
+			}
 		}
 	}
 
@@ -213,6 +216,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	
 		// Create the buttons
 		createButtons(buttonGroup);
+		selectionChanged();
 	}
 
 	/* (non-Javadoc)
@@ -284,6 +288,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 			for (int i = 0; i < array.length; i++){
 				list.add(array[i]);
 			}
+			list.setSelection(0);
 		}
 	}
 

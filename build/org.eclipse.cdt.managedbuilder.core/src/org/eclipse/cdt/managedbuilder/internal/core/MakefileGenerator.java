@@ -196,6 +196,11 @@ public class MakefileGenerator {
 		}
 	}	
 
+	/**
+	 * @param project
+	 * @param info
+	 * @param monitor
+	 */
 	public MakefileGenerator(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
 		super();
 		// Save the project so we can get path and member information
@@ -209,11 +214,14 @@ public class MakefileGenerator {
 	}
 
 	/* (non-javadoc)
+	 * Calculates dependencies for all the source files in the argument. A source 
+	 * file can depend on any number of header files, so the dependencies have to 
+	 * be added to its dependency list. 
 	 * 
 	 * @param module
 	 * @return
 	 */
-	protected StringBuffer addDeps(IContainer module) throws CoreException {
+	protected StringBuffer addSourceDependencies(IContainer module) throws CoreException {
 		// Calculate the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		String relativePath = moduleRelativePath.toString();
@@ -372,7 +380,7 @@ public class MakefileGenerator {
 	 * Answers a <code>StrinBuffer</code> containing all of the required targets to
 	 * properly build the project.
 	 */
-	protected StringBuffer addTargets() {
+	protected StringBuffer addTargets(boolean rebuild) {
 		StringBuffer buffer = new StringBuffer();
 
 		// Get the target and it's extension
@@ -383,16 +391,16 @@ public class MakefileGenerator {
 		/*
 		 * Write out the target rule as:
 		 * <prefix><target>.<extension>: $(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)
-		 * 		<cd <Proj_Dep_1/build_dir>; make all> 
-		 * 		<cd <Proj_Dep_.../build_dir>; make all> 
-		 * 		<cd <Proj_Dep_n/build_dir>; make all> 
+		 * 		<cd <Proj_Dep_1/build_dir>; $(MAKE) all> 
+		 * 		<cd <Proj_Dep_.../build_dir>; $(MAKE) all> 
+		 * 		<cd <Proj_Dep_n/build_dir>; $(MAKE) all> 
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $^ $(LIB_DEPS)
 		 */
 		String cmd = info.getToolForTarget(extension);
 		String flags = info.getFlagsForTarget(extension);
 		String outflag = info.getOutputFlag(extension);
 		String outputPrefix = info.getOutputPrefix(extension);
-
+		String targets = rebuild ? "clean all" : "all";
 		buffer.append(outputPrefix + target + COLON + WHITESPACE + "$(CC_SRCS:$(ROOT)/%.cpp=%.o) $(C_SRCS:$(ROOT)/%.c=%.o)" + NEWLINE);
 		IProject[] deps;
 		try {
@@ -404,11 +412,11 @@ public class MakefileGenerator {
 					IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(dep);
 					buildDir += SEPARATOR + depInfo.getConfigurationName();
 				}
-				buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "make all" + NEWLINE);
+				buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "$(MAKE) " + targets + NEWLINE);
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// There are 2 exceptions; the project does not exist or it is not open
+			// and neither conditions apply if we are building for it ....
 		}
 
 		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$^");
@@ -420,7 +428,7 @@ public class MakefileGenerator {
 		buffer.append(NEWLINE);
 		buffer.append(NEWLINE);
 
-		// TODO Generate 'all' for now but determine the real rules from UI
+		// We only have one target, 'all'
 		buffer.append("all: " + outputPrefix + target + NEWLINE);
 		buffer.append(NEWLINE);
 		
@@ -587,7 +595,7 @@ public class MakefileGenerator {
 		topBuildDir = createDirectory(info.getConfigurationName());
 		IPath makefilePath = topBuildDir.addTrailingSeparator().append(MAKEFILE_NAME);
 		IFile makefileHandle = createFile(makefilePath);
-		populateTopMakefile(makefileHandle);
+		populateTopMakefile(makefileHandle, false);
 		checkCancel();
 		
 		// Regenerate any fragments for modified directories
@@ -725,10 +733,9 @@ public class MakefileGenerator {
 	 * Create the entire contents of the makefile.
 	 * 
 	 * @param fileHandle The file to place the contents in.
-	 * @param info
-	 * @param monitor
+	 * @param rebuild FLag signalling that the user is doing a full rebuild
 	 */
-	protected void populateTopMakefile(IFile fileHandle) {
+	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) {
 		StringBuffer buffer = new StringBuffer();
 		
 		// Add the macro definitions
@@ -738,7 +745,7 @@ public class MakefileGenerator {
 		buffer.append(addModules()); 
 
 		// Add targets
-		buffer.append(addTargets());
+		buffer.append(addTargets(rebuild));
 
 		// Save the file
 		try {
@@ -772,7 +779,7 @@ public class MakefileGenerator {
 		// Create a module dep file
 		IFile modDepfile = createFile(moduleOutputDir.addTrailingSeparator().append(DEPFILE_NAME));
 		StringBuffer depBuf = new StringBuffer();
-		depBuf.append(addDeps(module));
+		depBuf.append(addSourceDependencies(module));
 
 		// Save the files
 		Util.save(makeBuf, modMakefile);
@@ -804,7 +811,7 @@ public class MakefileGenerator {
 		IFile makefileHandle = createFile(makefilePath);
 		
 		// Populate the makefile
-		populateTopMakefile(makefileHandle);
+		populateTopMakefile(makefileHandle, true);
 		checkCancel();
 		
 		// Now populate the module makefiles

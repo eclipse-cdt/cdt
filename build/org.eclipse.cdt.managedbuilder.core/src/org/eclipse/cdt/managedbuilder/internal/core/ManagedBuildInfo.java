@@ -33,20 +33,23 @@ import org.w3c.dom.Node;
 
 public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
+	private boolean isDirty;
 	private IResource owner;
 	private Map targetMap;
 	private List targets;
 	private Map defaultConfigurations;
 	private ITarget defaultTarget;
 	
-	public ManagedBuildInfo() {
+	public ManagedBuildInfo(IResource owner) {
 		targetMap = new HashMap();
 		targets = new ArrayList();
 		defaultConfigurations = new HashMap();
+		this.owner = owner;
 	}
 	
 	public ManagedBuildInfo(IResource owner, Element element) {
-		this();
+		this(owner);
+		
 		// The id of the default configuration
 		String defaultTargetId = null;
 		List configIds = new ArrayList();
@@ -460,6 +463,20 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isDirty()
+	 */
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	/**
+	 * Write the contents of the build model to the persistent store specified in the 
+	 * argument.
+	 * 
+	 * @param doc
+	 * @param element
+	 */
 	public void serialize(Document doc, Element element) {
 		// Write out each target and their default config
 		for (int i = 0; i < targets.size(); ++i) {
@@ -500,6 +517,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			return;
 		}
 		defaultTarget = target;		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setDirty(boolean)
+	 */
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
 	}
 
 }

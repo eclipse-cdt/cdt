@@ -207,20 +207,24 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @param option
 	 */
 	private static void setDirty(IConfiguration config, IOption option) {
-		// Don't bother unless this is something that effect the 
+		// Set the build info dirty so builder will rebuild
+		IResource resource = config.getOwner();
+		IManagedBuildInfo info = getBuildInfo(resource);
+		info.setDirty(true);
+
+		// Continue if change is something that effect the scanner
 		if (!(option.getValueType() == IOption.INCLUDE_PATH 
 			|| option.getValueType() == IOption.PREPROCESSOR_SYMBOLS)) {
 			return;
 		}
 		// Figure out if there is a listener for this change
-		IResource resource = config.getOwner();
 		List listeners = (List) getBuildModelListeners().get(resource);
 		if (listeners == null) {
 			return;
 		}
 		ListIterator iter = listeners.listIterator();
 		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, getScannerInfo(resource));
+			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource, false));
 		}
 	}
 
@@ -465,7 +469,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		if (buildInfo == null && create) {
 			try {
-				buildInfo = new ManagedBuildInfo();
+				buildInfo = new ManagedBuildInfo(resource);
 				resource.setSessionProperty(buildInfoProperty, buildInfo);
 			} catch (CoreException e) {
 				buildInfo = null;
@@ -491,21 +495,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			buildModelListeners = new HashMap();
 		}
 		return buildModelListeners;
-	}
-
-	/**
-	 * Answers with an interface to the parse information that has been 
-	 * associated with the resource specified in the argument. 
-	 * 
-	 * @deprecated This method is not part of the registration interface. 
-	 * Clients of build information should now use getScannerInformation(IResource) 
-	 * for one-time information requests.
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	public static IScannerInfo getScannerInfo(IResource resource) {
-		return (IScannerInfo) getBuildInfo(resource, false);
 	}
 
 	/* (non-Javadoc)

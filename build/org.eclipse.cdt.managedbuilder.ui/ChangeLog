@@ -1,3 +1,11 @@
+2003-09-16 Sean Evoy
+	Changed the initialization and button status logic so the list buttons are 
+	enabled correctly on start-up and that the fist item in the list (if 
+	any) is selected. Also changed the "Add" event handler to properly enable 
+	the buttons and set the list selection.
+	
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionListFieldEditor.java
+
 2003-09-15 Sean Evoy
 	First submission of code to new project. Moved all the managed 
 	builder-specific UI elements out of the cdt.ui project. This 

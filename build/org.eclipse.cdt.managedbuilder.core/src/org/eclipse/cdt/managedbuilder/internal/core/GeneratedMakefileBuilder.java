@@ -99,23 +99,27 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor.subTask(statusMsg);
 		}
 
-		if (kind == IncrementalProjectBuilder.FULL_BUILD) {
-			fullBuild(monitor);
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+
+		if (kind == IncrementalProjectBuilder.FULL_BUILD || info.isDirty()) {
+			fullBuild(monitor, info);
 		}
 		else {
 			// Create a delta visitor to make sure we should be rebuilding
 			ResourceDeltaVisitor visitor = new ResourceDeltaVisitor();
 			IResourceDelta delta = getDelta(getProject());
 			if (delta == null) {
-				fullBuild(monitor);
+				fullBuild(monitor, info);
 			}
 			else {
 				delta.accept(visitor);
 				if (visitor.shouldBuild()) {
-					incrementalBuild(delta, monitor);
+					incrementalBuild(delta, info, monitor);
 				}
 			}
 		}
+		info.setDirty(false);
+		
 		// Checking to see if the user cancelled the build
 		checkCancel(monitor);
 
@@ -138,7 +142,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	/**
 	 * @param monitor
 	 */
-	protected void fullBuild(IProgressMonitor monitor) throws CoreException {
+	protected void fullBuild(IProgressMonitor monitor, IManagedBuildInfo info) throws CoreException {
 		// Always need one of these bad boys
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -175,7 +179,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.subTask(statusMsg);
 
 		// Regenerate the makefiles for this project
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		MakefileGenerator generator = new MakefileGenerator(currentProject, info, monitor);		
 		try {
 			generator.regenerateMakefiles();
@@ -194,20 +197,27 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.worked(1);		
 	}
 
-	/**
-	 * @param makefilePath
-	 * @param info
+	/* (non-javadoc)
+	 * Answers an array of strings with the proper make targets
+	 * 
+	 * @param fullBuild
 	 * @return
 	 */
-	protected String[] getMakeTargets() {
+	protected String[] getMakeTargets(boolean fullBuild) {
 		List args = new ArrayList();
+		if (fullBuild) {
+			args.add("clean");
+		}
 		// Add each target
 		String sessionTarget = MakeUtil.getSessionTarget(getProject());
 		StringTokenizer tokens = new StringTokenizer(sessionTarget);
 		while (tokens.hasMoreTokens()) {
-			args.add(tokens.nextToken().trim());
+			String target = tokens.nextToken().trim();
+			if (!args.contains(target)) {
+				args.add(target);
+			}
 		}
-		if (args.isEmpty()) {
+		if (args.isEmpty() || !args.contains("all")) {
 			args.add("all");
 		}
 		return (String[])args.toArray(new String[args.size()]);
@@ -248,7 +258,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @param delta
 	 * @param monitor
 	 */
-	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
+	protected void incrementalBuild(IResourceDelta delta, IManagedBuildInfo info, IProgressMonitor monitor) throws CoreException {
 		// Rebuild the resource tree in the delta
 		IProject currentProject = getProject();
 		String statusMsg = null;
@@ -261,7 +271,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		monitor.subTask(statusMsg);
 		
 		// Ask the makefile generator to generate any makefiles needed to build delta
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		MakefileGenerator generator = new MakefileGenerator(currentProject, info, monitor);
 		try {
 			generator.generateMakefiles(delta);
@@ -324,7 +333,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		IPath workingDirectory = getWorkingDirectory().append(buildDir);
 
 		// Get the arguments to be passed to make from build model
-		String[] makeTargets = getMakeTargets();
+		String[] makeTargets = getMakeTargets(fullBuild);
 		
 		// Get a launcher for the make command
 		String errMsg = null;

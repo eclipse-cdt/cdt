@@ -34,9 +34,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -256,7 +258,20 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * @return the selected binary or <code>null</code> if none.
 	 */
 	protected IBinary chooseBinary(List binList, String mode) {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new CElementLabelProvider());
+		ILabelProvider provider = new CElementLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IBinary) {
+					IBinary bin = (IBinary)element;
+					StringBuffer name = new StringBuffer();
+					name.append(bin.getPath().toString());
+					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
+					return name.toString();
+				}
+				return super.getText(element);
+			}
+		};
+
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), provider);
 		dialog.setElements(binList.toArray());
 		dialog.setTitle("C Local Application"); //$NON-NLS-1$
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {

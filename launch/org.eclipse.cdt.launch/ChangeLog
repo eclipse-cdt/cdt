@@ -1,3 +1,11 @@
+2004-01-07 Alain Magloire
+
+	Fix # 49652
+	You could not see a difference with binaries of the same name but different location.
+
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+
 2003-12-18 Alain Magloire
 
 	Possible NPE, PR 49146

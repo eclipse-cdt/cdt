@@ -493,7 +493,7 @@ public class PathEntryManager implements ICDescriptorListener {
 	protected ICElementDelta makePathEntryDelta(ICProject cproject, IPathEntry entry, boolean removed) {
 		int kind = entry.getEntryKind();
 		ICElement celement = null;
-		int flag = 0;
+		int flag = ICElementDelta.F_PATHENTRY_REORDER;
 		if (entry == null) {
 			celement = cproject;
 			flag = ICElementDelta.F_PATHENTRY_REORDER;

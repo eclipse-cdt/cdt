@@ -443,7 +443,7 @@ public class CProject extends Openable implements ICProject {
 		IPath path = resource.getFullPath();
 		
 		// ensure that folders are only excluded if all of their children are excluded
-		if (resource.getType() == IResource.FOLDER) {
+		if (resource.getType() == IResource.FOLDER || resource.getType() == IResource.PROJECT) {
 			path = path.append("*"); //$NON-NLS-1$
 		}
 
@@ -566,5 +566,21 @@ public class CProject extends Openable implements ICProject {
 	 */
 	public Object[] getNonCResources() throws CModelException {
 		return ((CProjectInfo) getElementInfo()).getNonCResources(getResource());
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)
+	 */
+	protected void closing(Object info) throws CModelException {
+		if (info instanceof CProjectInfo) {
+			CProjectInfo pinfo = (CProjectInfo)info;
+			if (pinfo.vBin != null) {
+				pinfo.vBin.close();
+			}
+			if (pinfo.vLib != null) {
+				pinfo.vLib.close();
+			}
+			CModelManager.getDefault().removeBinaryRunner(this);
+		}
+		super.closing(info);
 	}
 }

@@ -1,3 +1,15 @@
+2004-03-23 Alain Magloire
+
+	Show the objects on the IOuputEntry path should
+	be save in the BinaryContainer.
+
+	* model/org/eclipse/cdt/internal/core/model/BinaryContainer.java
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+	* model/org/eclipse/cdt/internal/core/model/CElementDelta.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntry.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2004-03-22 Tanya Wolff
 	Externalized names of Binary Parsers and Error Parsers
  

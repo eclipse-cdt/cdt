@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -23,8 +24,17 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 	public IBinary[] getBinaries() {
 		((BinaryContainerInfo)getElementInfo()).sync();
 		ICElement[] e = getChildren();
-		IBinary[] b = new IBinary[e.length];
-		System.arraycopy(e, 0, b, 0, e.length);
+		ArrayList list = new ArrayList(e.length);
+		for (int i = 0; i < e.length; i++) {
+			if (e[i] instanceof IBinary) {
+				IBinary bin = (IBinary)e[i];
+				if (bin.isExecutable() || bin.isSharedLib()) {
+					list.add(bin);
+				}
+			}
+		}
+		IBinary[] b = new IBinary[list.size()];
+		list.toArray(b);
 		return b;
 	}
 

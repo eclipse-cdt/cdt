@@ -277,10 +277,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 								vlib.addChild(celement);
 							} else {
 								celement = new Binary(cfolder, file, (IBinaryObject)bin);
-								if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
-									BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
-									vbin.addChild(celement);
-								}
+								BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+								vbin.addChild(celement);
 							}
 						}
 						checkIfBinary = true;
@@ -300,9 +298,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					} else {
 						BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
 						IBinary binary = new Binary(vbin, file, (IBinaryObject)bin);
-						if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
-							vbin.addChild(binary);
-						}
+						vbin.addChild(binary);
 					}
 				}
 			}
@@ -331,15 +327,13 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			delta.changed(container, ICElementDelta.CHANGED); 
 			registerCModelDelta(delta); 
 		} else if (type == ICElement.C_BINARY) {
-			if (! ((IBinary)celement).isObject()) {
 //System.out.println("RELEASE Binary " + celement.getElementName());
-				CProject cproj = (CProject)celement.getCProject();
-				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
-				container.removeChild(celement);
-				CElementDelta delta = new CElementDelta(getCModel());
-				delta.changed(container, ICElementDelta.CHANGED); 
-				registerCModelDelta(delta); 
-			}
+			CProject cproj = (CProject)celement.getCProject();
+			BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
+			container.removeChild(celement);
+			CElementDelta delta = new CElementDelta(getCModel());
+			delta.changed(container, ICElementDelta.CHANGED); 
+			registerCModelDelta(delta); 
 		}
 
 		if (celement instanceof IParent) {
@@ -361,10 +355,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 							releaseCElement(pinfo.vLib);
 						}
 						IProject project = celement.getCProject().getProject();
-						BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
-						if (runner != null) {
-							runner.stop();
-						}
+						removeBinaryRunner(project);
 					}
 				}
 			} else {
@@ -677,6 +668,16 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return runner;
 	}
 
+	public void removeBinaryRunner(ICProject cproject) {
+		removeBinaryRunner(cproject.getProject());
+	}
+	public void removeBinaryRunner(IProject project) {
+		BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
+		if (runner != null) {
+			runner.stop();
+		}
+	}
+
 	public SourceMapper getSourceMapper(ICProject cProject) {
 		SourceMapper mapper = null;
 		synchronized(sourceMappers) {
@@ -941,10 +942,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				}
 			} else if (0 != (delta.getFlags() & IResourceDelta.REMOVED)) {
 				IProject project = (IProject) resource;
-				BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
-				if (runner != null) {
-					runner.stop();
-				}
+				removeBinaryRunner(project);
 				binaryParsersMap.remove(project);
 			}
 		break;

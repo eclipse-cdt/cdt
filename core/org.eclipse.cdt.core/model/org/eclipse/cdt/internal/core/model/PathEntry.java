@@ -118,6 +118,9 @@ public class PathEntry implements IPathEntry {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
+		if (path != null) {
+			buffer.append(path.toString()).append(' ');
+		}
 		buffer.append('[');
 		switch (getEntryKind()) {
 			case IPathEntry.CDT_LIBRARY :

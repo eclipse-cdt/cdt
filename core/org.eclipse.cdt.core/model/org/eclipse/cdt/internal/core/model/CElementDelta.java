@@ -694,7 +694,13 @@ public class CElementDelta implements ICElementDelta {
 			buffer.append("ADDED TO PATHENTRY LIBRARY"); //$NON-NLS-1$
 			prev = true;
 		}
-		
+		if ((changeFlags & ICElementDelta.F_PATHENTRY_REORDER) != 0) {
+			if (prev)
+				buffer.append(" | "); //$NON-NLS-1$
+			buffer.append("PATHENTRY REORDER"); //$NON-NLS-1$
+			prev = true;
+		}
+
 		//if ((changeFlags & ICElementDelta.F_SUPER_TYPES) != 0) {
 		//	if (prev)
 		//		buffer.append(" | "); //$NON-NLS-1$

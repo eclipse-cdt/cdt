@@ -114,7 +114,7 @@ public class BinaryRunner {
 					}
 					Archive ar = new Archive(parent, file, (IBinaryArchive)bin);
 					vlib.addChild(ar);
-				} else if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+				} else {
 					if (parent == null) {
 						parent = vbin;
 					}
@@ -136,12 +136,11 @@ public class BinaryRunner {
 			if (Thread.currentThread().isInterrupted()) {
 				return false;
 			}
-			if (!cproject.isOnOutputEntry(res)) {
-				return false;
-			}
-			if (res instanceof IFile) {
-				runner.addChildIfBinary((IFile)res);
-				return false;
+			if (cproject.isOnOutputEntry(res)) {
+				if (res instanceof IFile) {
+					runner.addChildIfBinary((IFile)res);
+					return false;
+				}
 			}
 			return true;
 		}

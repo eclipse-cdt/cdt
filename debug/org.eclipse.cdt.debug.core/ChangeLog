@@ -1,3 +1,9 @@
+2005-01-19 Mikhail Khodjaiants
+	Fix for bug 83051: Add global variables deletes existing ones when new added.
+	* ICGlobalVariableManager.java
+	* CGlobalVariableManager.java
+	* CVariableFactory.java
+
 2005-01-18 Mikhail Khodjaiants
 	Fix for bug 82858: NPE when adding global variable to variable view.
 	* CDebugTarget.java

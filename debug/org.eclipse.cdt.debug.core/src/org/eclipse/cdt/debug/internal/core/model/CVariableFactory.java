@@ -48,6 +48,13 @@ public class CVariableFactory {
 			public String toString() {
 				return MessageFormat.format( "{0}::{1}", new String[] { getPath().toOSString(), getName() } ); //$NON-NLS-1$
 			}
+
+		    public boolean equals( Object obj ) {
+		    	if ( !(obj instanceof IGlobalVariableDescriptor) )
+		    		return false;
+		    	IGlobalVariableDescriptor d = (IGlobalVariableDescriptor)obj;
+		    	return ( getName().compareTo( d.getName() ) == 0 && getPath().equals( d.getPath() ) );
+		    }
 		};
 	}
 

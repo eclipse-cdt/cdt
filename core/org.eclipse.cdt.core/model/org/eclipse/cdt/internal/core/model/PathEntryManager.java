@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.model.PathEntryContainerChanged;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
+import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -375,7 +376,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						IPathEntry[] containerEntries = container.getPathEntries();
 						if (containerEntries != null) {
 							for (int j = 0; j < containerEntries.length; j++) {
-								IPathEntry newEntry = cloneEntry(projectPath, containerEntries[j]);
+								IPathEntry newEntry = cloneEntryAndExpand(projectPath, containerEntries[j]);
 								listEntries.add(newEntry);
 							}
 						}
@@ -422,16 +423,16 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							IPathEntry[] containerEntries = container.getPathEntries();
 							if (containerEntries != null) {
 								for (int j = 0; j < containerEntries.length; j++) {
-									IPathEntry newEntry = cloneEntry(projectPath, containerEntries[j]);
+									IPathEntry newEntry = cloneEntryAndExpand(projectPath, containerEntries[j]);
 									resolvedEntries.add(newEntry);
 								}
 							}
 						} else {
-							resolvedEntries.add(cloneEntry(projectPath, entry));
+							resolvedEntries.add(cloneEntryAndExpand(projectPath, entry));
 						}
 					}
 				} else {
-					IPathEntry clone = cloneEntry(projectPath, entry);
+					IPathEntry clone = cloneEntryAndExpand(projectPath, entry);
 					IPathEntry e = getExpandedPathEntry(clone, cproject);
 					if (e != null) {
 						resolvedEntries.add(e);
@@ -1526,7 +1527,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return false;
 	}
 
-	protected IPathEntry cloneEntry(IPath rpath, IPathEntry entry) {
+	protected IPathEntry cloneEntryAndExpand(IPath rpath, IPathEntry entry) {
 
 		// get the path
 		IPath entryPath = entry.getPath();
@@ -1534,18 +1535,42 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			entryPath = Path.EMPTY;
 		}
 		IPath resourcePath = (entryPath.isAbsolute()) ? entryPath : rpath.append(entryPath);
-
+	
+		IPathEntryVariableManager varManager = CCorePlugin.getDefault().getPathEntryVariableManager();
 		switch (entry.getEntryKind()) {
 			case IPathEntry.CDT_INCLUDE : {
 				IIncludeEntry include = (IIncludeEntry)entry;
-				return CoreModel.newIncludeEntry(resourcePath, include.getBasePath(), include.getIncludePath(),
+
+				IPath basePath = include.getBasePath();
+				basePath = varManager.resolvePath(basePath);
+
+				IPath includePath = include.getIncludePath();
+				includePath = varManager.resolvePath(includePath);
+				
+				return CoreModel.newIncludeEntry(resourcePath, basePath, includePath,
 						include.isSystemInclude(), include.getExclusionPatterns(), include.isExported());
 			}
 			case IPathEntry.CDT_LIBRARY : {
 				ILibraryEntry library = (ILibraryEntry)entry;
-				return CoreModel.newLibraryEntry(resourcePath, library.getBasePath(), library.getLibraryPath(),
-						library.getSourceAttachmentPath(), library.getSourceAttachmentRootPath(),
-						library.getSourceAttachmentPrefixMapping(), library.isExported());
+
+				IPath basePath = library.getBasePath();
+				basePath = varManager.resolvePath(basePath);
+
+				IPath libraryPath = library.getLibraryPath();
+				libraryPath = varManager.resolvePath(libraryPath);
+
+				IPath sourceAttachmentPath = library.getSourceAttachmentPath();
+				sourceAttachmentPath = varManager.resolvePath(sourceAttachmentPath);
+
+				IPath sourceAttachmentRootPath = library.getSourceAttachmentRootPath();
+				sourceAttachmentRootPath = varManager.resolvePath(sourceAttachmentRootPath);
+
+				IPath sourceAttachmentPrefixMapping = library.getSourceAttachmentPrefixMapping();
+				sourceAttachmentPrefixMapping = varManager.resolvePath(sourceAttachmentPrefixMapping);
+
+				return CoreModel.newLibraryEntry(resourcePath, basePath, libraryPath,
+						sourceAttachmentPath, sourceAttachmentRootPath,
+						sourceAttachmentPrefixMapping, library.isExported());
 			}
 			case IPathEntry.CDT_MACRO : {
 				IMacroEntry macro = (IMacroEntry)entry;
@@ -1564,8 +1589,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				ISourceEntry source = (ISourceEntry)entry;
 				return CoreModel.newSourceEntry(resourcePath, source.getExclusionPatterns());
 			}
-			case IPathEntry.CDT_CONTAINER :
+			case IPathEntry.CDT_CONTAINER : {
 				return CoreModel.newContainerEntry(entry.getPath(), entry.isExported());
+			}
 		}
 		return entry;
 	}

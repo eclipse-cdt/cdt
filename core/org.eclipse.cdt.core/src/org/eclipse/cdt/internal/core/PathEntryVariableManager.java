@@ -23,7 +23,9 @@ import org.eclipse.cdt.core.resources.IPathEntryVariableChangeListener;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.resources.PathEntryVariableChangeEvent;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 
@@ -55,20 +57,24 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * 
 	 * @see org.eclipse.core.resources.IPathEntryVariableManager#getValue(String)
 	 */
-	public String getValue(String varName) {
+	public IPath getValue(String varName) {
 		String key = getKeyForName(varName);
 		String value = preferences.getString(key);
-		return value.length() == 0 ? null : value;
+		return value.length() == 0 ? null : Path.fromPortableString(value);
 	}
 
 	/**
 	 * @see org.eclipse.core.resources.IPathEntryVariableManager#setValue(String, IPath)
 	 */
-	public void setValue(String varName, String newValue) throws CoreException {
+	public void setValue(String varName, IPath newValue) throws CoreException {
+		//if the location doesn't have a device, see if the OS will assign one
+		if (newValue != null && newValue.isAbsolute() && newValue.getDevice() == null) {
+			newValue = new Path(newValue.toFile().getAbsolutePath());
+		}
 		int eventType;
 		// read previous value and set new value atomically in order to generate the right event		
 		synchronized (this) {
-			String currentValue = getValue(varName);
+			IPath currentValue = getValue(varName);
 			boolean variableExists = currentValue != null;
 			if (!variableExists && newValue == null) {
 				return;
@@ -80,7 +86,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 				preferences.setToDefault(getKeyForName(varName));
 				eventType = PathEntryVariableChangeEvent.VARIABLE_DELETED;
 			} else {
-				preferences.setValue(getKeyForName(varName), newValue);
+				preferences.setValue(getKeyForName(varName), newValue.toPortableString());
 				eventType = variableExists ? PathEntryVariableChangeEvent.VARIABLE_CHANGED : PathEntryVariableChangeEvent.VARIABLE_CREATED;
 			}
 		}
@@ -98,12 +104,16 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathEntryVariableManager#resolvePath(IPath)
 	 */
-	public String resolvePath(String variable) {
-		if (variable == null || variable.length() == 0 || variable.indexOf('$') == -1) {
-			return variable;
+	public IPath resolvePath(IPath path) {
+		if (path == null || path.segmentCount() == 0) {
+			return path;
+		}
+		String variable = path.toPortableString();
+		if (variable.indexOf('$') == -1) {
+			return path;
 		}
 		String value = expandVariable(variable);
-		return value == null ? variable : value;
+		return (value == null || value.length() == 0) ? Path.EMPTY : new Path(value);
 	}
 
 	/**
@@ -122,7 +132,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * @see PathEntryVariableChangeEvent#VARIABLE_CHANGED
 	 * @see PathEntryVariableChangeEvent#VARIABLE_DELETED
 	 */
-	private void fireVariableChangeEvent(String name, String value, int type) {
+	private void fireVariableChangeEvent(String name, IPath value, int type) {
 		if (this.listeners.size() == 0)
 			return;
 		// use a separate collection to avoid interference of simultaneous additions/removals 
@@ -228,7 +238,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 				if (inMacro) {
 					inMacro = false;
 					String p = param.toString();
-					String v = getValue(p);
+					String v = getValue(p).toPortableString();
 					if (v != null) {
 						sb.append(v);
 					}

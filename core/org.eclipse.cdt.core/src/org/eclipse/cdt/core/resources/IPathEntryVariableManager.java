@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.resources;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Manages a collection of variables
@@ -53,7 +54,7 @@ public interface IPathEntryVariableManager {
 	 * <li>The variable value is relative</li>
 	 * </ul>
 	 */
-	public void setValue(String name, String value) throws CoreException;
+	public void setValue(String name, IPath value) throws CoreException;
 
 	/**
 	 * Returns the value of the variable with the given name. If there is
@@ -63,7 +64,7 @@ public interface IPathEntryVariableManager {
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
 	 */
-	public String getValue(String name);
+	public IPath getValue(String name);
 
 	/**
 	 * Returns an array containing all defined variable names.
@@ -120,7 +121,7 @@ public interface IPathEntryVariableManager {
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
 	 */
-	public String resolvePath(String path);
+	public IPath resolvePath(IPath path);
 
 	/**
 	 * Returns <code>true</code> if the given variable is defined and

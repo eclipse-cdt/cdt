@@ -14,6 +14,8 @@ package org.eclipse.cdt.core.resources;
 
 import java.util.EventObject;
 
+import org.eclipse.core.runtime.IPath;
+
 /**
  * Describes a change in path variable.
  */
@@ -38,7 +40,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	/**
 	 * The value of the changed variable (may be null). 
 	 */
-	private String value;
+	private IPath value;
 
 	/** The event type. */
 	private int type;
@@ -46,7 +48,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	/**
 	 * Constructor for this class.
 	 */
-	public PathEntryVariableChangeEvent(IPathEntryVariableManager source, String variableName, String value, int type) {
+	public PathEntryVariableChangeEvent(IPathEntryVariableManager source, String variableName, IPath value, int type) {
 		super(source);
 		if (type < VARIABLE_CHANGED || type > VARIABLE_DELETED)
 			throw new IllegalArgumentException("Invalid event type: " + type); //$NON-NLS-1$
@@ -55,7 +57,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 		this.type = type;
 	}
 
-	public String getValue() {
+	public IPath getValue() {
 		return value;
 	}
 

@@ -88,6 +88,14 @@ public class ParserSymbolTable {
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 		}
 		
+		//handle namespace aliases
+		if( inSymbol.isType( TypeInfo.t_namespace ) ){
+			ISymbol symbol = inSymbol.getTypeSymbol();
+			if( symbol != null && symbol.isType( TypeInfo.t_namespace ) ){
+				inSymbol = (IContainerSymbol) symbol;
+			}
+		}
+		
 		ISymbol symbol = null;					//the return value
 		LinkedList transitives = new LinkedList();	//list of transitive using directives
 		
@@ -2884,7 +2892,13 @@ public class ParserSymbolTable {
 			if( namespace.getType() != TypeInfo.t_namespace ){
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );
 			}
-					
+			
+			//handle namespace aliasing
+			ISymbol alias = namespace.getTypeSymbol();
+			if( alias != null && alias.isType( TypeInfo.t_namespace ) ){
+				namespace = (IContainerSymbol) alias;
+			}
+			
 			if( _usingDirectives == null ){
 				_usingDirectives = new LinkedList(); 
 			}
@@ -2950,8 +2964,18 @@ public class ParserSymbolTable {
 		public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException{
 			LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
 			data.qualified = true;
-	
-			ParserSymbolTable.lookupInContained( data, this );
+			
+			IContainerSymbol container = this;
+			
+			//handle namespace aliases
+			if( container.isType( TypeInfo.t_namespace ) ){
+				ISymbol symbol = container.getTypeSymbol();
+				if( symbol != null && symbol.isType( TypeInfo.t_namespace ) ){
+					container = (IContainerSymbol) symbol;
+				}
+			}
+			
+			ParserSymbolTable.lookupInContained( data, container );
 		
 			return ParserSymbolTable.resolveAmbiguities( data );
 		}

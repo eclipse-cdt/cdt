@@ -2,6 +2,10 @@
 	Modified CCompletionProposalsTest to complete on a body file 
 	that includes a header file.
 	
+2003-09-02 Andrew Niefer
+	added ParserSymbolTableTest.testNamespaceAlias()
+	added ParserSymbolTableTest.testUsingNamespaceAlias()
+	
 2003-08-28 Andrew Niefer
 	Modified BaseSearchTest.setup to properly include the "include.h" file
 

@@ -2204,6 +2204,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * 
 	 * @throws Exception   
 	 */
+	//TODO
 	public void incompletetestTemplateSpecialization() throws Exception{
 		newTable();
 		
@@ -2501,6 +2502,79 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol lookup = classA.lookupConstructor( paramList );
 		
 		assertEquals( lookup, constructor2 );
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 * 
+	 * namespace A
+	 * { 
+	 *    int x;
+	 * }
+	 * namespace B = A;
+	 * 
+	 * ++B::x;
+	 */
+	public void testNamespaceAlias() throws Exception{
+		newTable();
+		
+		IContainerSymbol NSA = table.newContainerSymbol( "A", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( NSA );
+		
+		ISymbol x = table.newSymbol( "x", TypeInfo.t_int );
+		NSA.addSymbol( x );
+		
+		IContainerSymbol NSB = table.newContainerSymbol( "B", TypeInfo.t_namespace );
+		NSB.setTypeSymbol( NSA );  //alias B to A
+		
+		table.getCompilationUnit().addSymbol( NSB );
+		
+		ISymbol lookup = table.getCompilationUnit().lookup( "B" );
+		assertEquals( lookup, NSB );
+		
+		lookup = NSB.lookup( "x" );
+		assertEquals( lookup, x );
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 * namespace A 
+	 * {
+	 *   void f( );
+	 * }
+	 * namespace B = A;
+	 * 
+	 * B::f();
+	 * 
+	 * using namespace B;
+	 * f();
+	 */
+	public void testUsingNamespaceAlias() throws Exception{
+		newTable();
+		
+		IContainerSymbol NSA = table.newContainerSymbol( "A", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( NSA );
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
+		
+		NSA.addSymbol( f );
+		
+		IContainerSymbol NSB = table.newContainerSymbol( "B", TypeInfo.t_namespace );
+		NSB.setTypeSymbol( NSA );
+		table.getCompilationUnit().addSymbol( NSB );
+		
+		//look for function that has no parameters
+		LinkedList paramList = new LinkedList();
+		ISymbol look = NSB.qualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f );
+		
+		table.getCompilationUnit().addUsingDirective( NSB );
+		
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f );
 	}
 }
 

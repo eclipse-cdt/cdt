@@ -1,3 +1,6 @@
+2003-09-02 Andrew Niefer
+	bug41935 - Modifications to PST to allow for namespace aliases
+
 2003-08-28 John Camelon 
 	Fixed bug39535 - Parser fails on namesapce aliases
 	

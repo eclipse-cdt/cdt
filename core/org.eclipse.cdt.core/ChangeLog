@@ -1,5 +1,11 @@
 2002-12-19 Alain Magloire
 
+	* model/org/eclipse/cdt/internal/core/model/parser/BinaryContainerAdapter.java (getFile):
+	Check getParent() it may return null.
+	(getFolder): Check getParent(), it may return null. 
+	
+2002-12-19 Alain Magloire
+
 	* src/org/eclipse/cdt/core/ErrorParserManager.java (findFilePath):
 	The workspace will throw an Exception if the file
 	is not within the workspace, catch it.

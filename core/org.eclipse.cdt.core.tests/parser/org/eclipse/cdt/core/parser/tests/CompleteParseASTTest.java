@@ -2386,6 +2386,35 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	    	assertFalse( i.hasNext() );
     	}
 	}
+    public void testBug71317A() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("void f();\n"); //$NON-NLS-1$
+	    writer.write("namespace NS {\n"); //$NON-NLS-1$
+	    writer.write("using ::f;\n"); //$NON-NLS-1$
+	    writer.write("using ::f;\n}"); //$NON-NLS-1$
+	    parse(writer.toString());
+    }
 
+    public void testBug71317B() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("void f();\n"); //$NON-NLS-1$
+	    writer.write("namespace NS {\n"); //$NON-NLS-1$
+	    writer.write("void f();\n"); //$NON-NLS-1$
+	    writer.write("using ::f;\n}"); //$NON-NLS-1$
+	    
+	    try{
+	    	parse(writer.toString());
+	    	assertTrue(false);
+		} catch (ParserException pe) {
+			// expected IProblem
+		} finally {
+	    	Iterator probs = callback.getProblems();
+			assertTrue( probs.hasNext() );
+	    	Object ipo = probs.next();
+	    	assertTrue( ipo instanceof IProblem );
+	    	IProblem ip = (IProblem)ipo;
+	    	assertEquals(ip.getSourceLineNumber(), 4);
+		}
+    }
 }
 

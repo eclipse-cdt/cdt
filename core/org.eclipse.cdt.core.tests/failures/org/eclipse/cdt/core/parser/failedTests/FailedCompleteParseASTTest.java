@@ -139,25 +139,4 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertFalse( i.hasNext() );
 //		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
 	}
-	
-	
-	public void testUsingOverloadedName_bug71317() throws Exception {
-		// using a globaly defined function overloaded in a namespace
-		try {
-			parse("int foo(int); \n namespace NS { \n int foo(int); \n using ::foo; \n } \n");//$NON-NLS-1$
-			fail();
-		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("int foo(); \n namespace NS { int bar(); \n using ::foo; \n } \n").getDeclarations();//$NON-NLS-1$
-//		IASTFunction fd1 = (IASTFunction) i.next();
-//		IASTNamespaceDefinition nd = (IASTNamespaceDefinition) i.next();
-//		assertFalse(i.hasNext());
-//		Iterator j = nd.getDeclarations();
-//		IASTFunction fd2 = (IASTFunction) j.next();
-//		IASTUsingDeclaration ud = (IASTUsingDeclaration) j.next();
-//		assertFalse(j.hasNext());
-	}
-	
-	
 }

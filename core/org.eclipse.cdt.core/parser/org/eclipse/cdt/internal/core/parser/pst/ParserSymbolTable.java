@@ -939,6 +939,16 @@ public class ParserSymbolTable {
 				return true;
 			}
 			
+			// fix 71317, see C++ spec 7.3.3-11, two using declarations may introduce functions with the same
+			//name and parameter types
+			if (newSymbol.isForwardDeclaration() && newSymbol.getForwardSymbol() != null 
+					&& newSymbol.getContainingSymbol() == origSymbol.getContainingSymbol() 
+					&& newSymbol.getForwardSymbol().getContainingSymbol() != newSymbol.getContainingSymbol() 
+					&& origSymbol.isForwardDeclaration() && origSymbol.getForwardSymbol() != null 
+					&& origSymbol.getForwardSymbol().getContainingSymbol() != origSymbol.getContainingSymbol()) {
+				return true;
+			}
+			
 			return false;
 		}
 		

@@ -587,14 +587,40 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return result;
 	}
 	
-	private boolean eligibleForRefactoring(ICElement element){
+	private boolean isConstructorOrDestructor(IFunctionDeclaration function) throws CModelException{
+		// check declarations
+		if(function instanceof IMethodDeclaration){
+			IMethodDeclaration method = (IMethodDeclaration)function;
+			if((method.isConstructor()) || (method.isDestructor()))
+				return true;
+		}
+		// check definitions
+		String returnType = function.getReturnType(); 
+		if(( returnType == null) || (returnType.length() == 0) )
+			return true;
+		
+		if(getCurrentElementName().startsWith("~"))
+			return true;
+		
+		return false;
+	}
+	
+	private boolean eligibleForRefactoring(ICElement element) throws CModelException{
 		if((element == null) 
 			|| (!(element instanceof ISourceReference)) 
 			|| (element instanceof ITranslationUnit) 
 			|| (element instanceof IMacro)
 			|| (element instanceof IInclude)){
 			return false;
-		} else {
+		} else // disabling renaming of constructors and destructors 
+			if(element instanceof IFunctionDeclaration){
+			IFunctionDeclaration function = (IFunctionDeclaration)element;
+			if (isConstructorOrDestructor(function))
+				return false;
+			else
+				return true;
+		}
+		else {
 			return true;
 		}
 	}

@@ -278,7 +278,7 @@ public class Scanner2Test extends BaseScanner2Test
 
 		initializeScanner("#define MULTICOMMENT X /* comment1 */ + Y /* comment 2 */"); //$NON-NLS-1$
 		validateEOF();
-		validateDefinition("MULTICOMMENT", "X /* comment1 */ + Y"); //$NON-NLS-1$ //$NON-NLS-2$
+		validateDefinition("MULTICOMMENT", "X  + Y"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		initializeScanner("#define SIMPLE_STRING This is a simple string.\n"); //$NON-NLS-1$
 		validateEOF();

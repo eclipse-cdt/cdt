@@ -71,4 +71,129 @@ public class CharArrayUtils {
 		System.arraycopy(str, start, copy, 0, length);
 		return copy;
 	}
+	
+	public static final char[] concat(char[] first, char[] second) {
+		if (first == null)
+			return second;
+		if (second == null)
+			return first;
+
+		int length1 = first.length;
+		int length2 = second.length;
+		char[] result = new char[length1 + length2];
+		System.arraycopy(first, 0, result, 0, length1);
+		System.arraycopy(second, 0, result, length1, length2);
+		return result;
+	}
+	
+	public static final char[] replace(
+		char[] array,
+		char[] toBeReplaced,
+		char[] replacementChars) {
+
+		int max = array.length;
+		int replacedLength = toBeReplaced.length;
+		int replacementLength = replacementChars.length;
+
+		int[] starts = new int[5];
+		int occurrenceCount = 0;
+
+		if (!equals(toBeReplaced, replacementChars)) {
+
+			next : for (int i = 0; i < max; i++) {
+				int j = 0;
+				while (j < replacedLength) {
+					if (i + j == max)
+						continue next;
+					if (array[i + j] != toBeReplaced[j++])
+						continue next;
+				}
+				if (occurrenceCount == starts.length) {
+					System.arraycopy(
+						starts,
+						0,
+						starts = new int[occurrenceCount * 2],
+						0,
+						occurrenceCount);
+				}
+				starts[occurrenceCount++] = i;
+			}
+		}
+		if (occurrenceCount == 0)
+			return array;
+		char[] result =
+			new char[max
+				+ occurrenceCount * (replacementLength - replacedLength)];
+		int inStart = 0, outStart = 0;
+		for (int i = 0; i < occurrenceCount; i++) {
+			int offset = starts[i] - inStart;
+			System.arraycopy(array, inStart, result, outStart, offset);
+			inStart += offset;
+			outStart += offset;
+			System.arraycopy(
+				replacementChars,
+				0,
+				result,
+				outStart,
+				replacementLength);
+			inStart += replacedLength;
+			outStart += replacementLength;
+		}
+		System.arraycopy(array, inStart, result, outStart, max - inStart);
+		return result;
+	}
+
+	public static final char[][] subarray(char[][] array, int start, int end) {
+		if (end == -1)
+			end = array.length;
+		if (start > end)
+			return null;
+		if (start < 0)
+			return null;
+		if (end > array.length)
+			return null;
+
+		char[][] result = new char[end - start][];
+		System.arraycopy(array, start, result, 0, end - start);
+		return result;
+	}
+
+	public static final char[] subarray(char[] array, int start, int end) {
+		if (end == -1)
+			end = array.length;
+		if (start > end)
+			return null;
+		if (start < 0)
+			return null;
+		if (end > array.length)
+			return null;
+
+		char[] result = new char[end - start];
+		System.arraycopy(array, start, result, 0, end - start);
+		return result;
+	}
+	
+	public static final int indexOf(char toBeFound, char[] array) {
+		for (int i = 0; i < array.length; i++)
+			if (toBeFound == array[i])
+				return i;
+		return -1;
+	}
+	final static public char[] trim(char[] chars) {
+
+		if (chars == null)
+			return null;
+
+		int start = 0, length = chars.length, end = length - 1;
+		while (start < length && chars[start] == ' ') {
+			start++;
+		}
+		while (end > start && chars[end] == ' ') {
+			end--;
+		}
+		if (start != 0 || end != length - 1) {
+			return subarray(chars, start, end + 1);
+		}
+		return chars;
+	}
 }

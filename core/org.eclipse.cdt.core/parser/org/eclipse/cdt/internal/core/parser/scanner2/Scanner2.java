@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1169,11 +1170,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		int textstart = bufferPos[bufferStackPos] + 1;
 		int textend = textstart - 1;
 		
+		boolean encounteredMultilineComment = false;
 		while (bufferPos[bufferStackPos] + 1 < limit
 				&& buffer[bufferPos[bufferStackPos] + 1] != '\n') {
 			skipOverNonWhiteSpace();
 			textend = bufferPos[bufferStackPos];
-			skipOverWhiteSpace();
+			if( skipOverWhiteSpace() )
+				encounteredMultilineComment = true;
 		}
 
 		int textlen = textend - textstart + 1;
@@ -1182,6 +1185,11 @@ public class Scanner2 implements IScanner, IScannerData {
 			text = new char[textlen];
 			System.arraycopy(buffer, textstart, text, 0, textlen);
 		}
+		
+		if( encounteredMultilineComment )
+			text = removeMultilineCommentFromBuffer( text );
+		if( CharArrayUtils.indexOf( '\n', text ) != -1 )
+			text = removedEscapedNewline( text );
 			
 		// Throw it in
 		definitions.put(name,
@@ -1190,6 +1198,48 @@ public class Scanner2 implements IScanner, IScannerData {
 				: new FunctionStyleMacro(name, text, arglist));
 	}
 	
+	/**
+	 * @param text
+	 * @return
+	 */
+	private char[] removedEscapedNewline(char[] text) {
+		char [] result = new char[ text.length ];
+		Arrays.fill( result, ' ');
+		int counter = 0;
+		for( int i = 0;  i < text.length; ++i )
+		{
+			if( text[i] == '\\' && i+ 1 < text.length && text[i+1] == '\n' )
+				++i;
+			else
+				result[ counter++ ] = text[i];
+		}
+		return CharArrayUtils.trim( result );
+	}
+
+	/**
+	 * @param text
+	 * @return
+	 */
+	private char[] removeMultilineCommentFromBuffer(char[] text) {
+		char [] result = new char[ text.length ];
+		Arrays.fill( result, ' ');
+		int resultCount = 0;
+		for( int i = 0; i < text.length; ++i )
+		{
+			if( text[i] == '/' && ( i+1 < text.length ) && text[i+1] == '*')
+			{
+				i += 2;
+				while( i < text.length && text[i] != '*' && i+1 < text.length && text[i+1] != '/')
+					++i;
+				++i;
+			}
+			else
+				result[resultCount++] = text[i];
+				
+		}
+		return CharArrayUtils.trim( result );
+	}
+
 	private void handlePPUndef() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1346,10 +1396,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
-	private void skipOverWhiteSpace() {
+	private boolean skipOverWhiteSpace() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
+		boolean encounteredMultiLineComment = false;
 		while (++bufferPos[bufferStackPos] < limit) {
 			int pos = bufferPos[bufferStackPos];
 			switch (buffer[pos]) {
@@ -1364,7 +1415,7 @@ public class Scanner2 implements IScanner, IScannerData {
 							skipToNewLine();
 							// leave the new line there
 							--bufferPos[bufferStackPos];
-							return;
+							return false;
 						} else if (buffer[pos + 1] == '*') {
 							// C comment, find closing */
 							for (bufferPos[bufferStackPos] += 2;
@@ -1375,6 +1426,7 @@ public class Scanner2 implements IScanner, IScannerData {
 										&& pos + 1 < limit
 										&& buffer[pos + 1] == '/') {
 									++bufferPos[bufferStackPos];
+									encounteredMultiLineComment = true;
 									break;
 								}
 							}
@@ -1393,8 +1445,9 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 			// fell out of switch without continuing, we're done
 			--bufferPos[bufferStackPos];
-			return;
+			return encounteredMultiLineComment;
 		}
+		return encounteredMultiLineComment;
 	}
 	
 	private void skipOverNonWhiteSpace() {
@@ -1409,8 +1462,17 @@ public class Scanner2 implements IScanner, IScannerData {
 				case '\n':
 					--bufferPos[bufferStackPos];
 					return;
-				case '\\':
+				case '/':
 					int pos = bufferPos[bufferStackPos];
+					if( pos +1 < limit && ( buffer[pos+1] == '/' ) || ( buffer[pos+1] == '*') )
+					{
+						--bufferPos[bufferStackPos];
+						return;
+					}
+					break;
+													
+				case '\\':
+					pos = bufferPos[bufferStackPos];
 					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
 						// \n is whitespace
 						--bufferPos[bufferStackPos];
@@ -1418,7 +1480,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					}
 					break;
 				case '"':
-					boolean escaped = false;
+					boolean escaped = false; 
+					if( bufferPos[bufferStackPos] -1  > 0 && buffer[bufferPos[bufferStackPos] -1 ] == '\\' )
+						escaped = true;
 					loop:
 					while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
 						switch (buffer[bufferPos[bufferStackPos]]) {
@@ -1431,6 +1495,18 @@ public class Scanner2 implements IScanner, IScannerData {
 									continue;
 								}
 								break loop;
+							case '\n':
+								if( !escaped )
+									break loop;
+							case '/': 
+								if( escaped && ( bufferPos[bufferStackPos] +1 < limit ) && 
+										( buffer[bufferPos[ bufferStackPos ] + 1] == '/' ||
+										  buffer[bufferPos[ bufferStackPos ] + 1] == '*' ) )
+								{
+									--bufferPos[bufferStackPos];
+									return;
+								}
+						
 							default:
 								escaped = false;
 						}

@@ -10,6 +10,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
+import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
@@ -362,6 +363,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 					if ( info != null && info instanceof ICDIBreakpointHit )
 					{
 						return target.getName() + " (Breakpoint hit)";
+					}
+					if ( info != null && info instanceof ICDIErrorInfo )
+					{
+						return MessageFormat.format( "{0} (Error: {1})", new String[] { target.getName(), ((ICDIErrorInfo)info).getMessage() } );
 					}
 					if ( info != null && info instanceof ICDISession )
 					{

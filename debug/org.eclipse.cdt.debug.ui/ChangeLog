@@ -1,9 +1,18 @@
 2002-12-02 Mikhail Khodjaiants
+	If the target is suspended because of error display the error message in the Launch view.
+	* CDTDebugModelPresentation.java
+
+2002-12-02 Mikhail Khodjaiants
 	Refactoring org.eclipse.cdt.debug.core - UI changes.
 
 2002-12-02 Mikhail Khodjaiants
 	'Run to line' and 'Add expression' actions for assembly editor.
 	*plugin.xml
+
+2002-12-01 Mikhail Khodjaiants
+	Contributing breakpoint actions to asm editor.
+	* plugin.xml
+	* ManageBreakpointRulerActionDelegate.java
 
 2002-11-29 Mikhail Khodjaiants
 	Cosmetic change for the MemoryView preference page.

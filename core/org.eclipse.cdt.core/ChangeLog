@@ -1,5 +1,15 @@
 2002-11-05 Alain Magloire
 
+	* utils/.../utils/coff: New folder.
+	* utils/.../utils/coff/Coff.java: First implementation
+	of a generic COFF binary file parser.
+	* utils/.../utils/coff/Exe.java: First implementation of
+	a generic EXE binary file parser.
+	* utils/.../utils/PE.java: First implementation of a generic
+	PE coff format parser.
+
+2002-11-05 Alain Magloire
+
 	* src/.../ErrorParserManager.java (parse):
 	Trim the line of unwanted trailing spaces.
 

@@ -1,11 +1,10 @@
-/*
+/***********************************************************************************************************************************
  * Created on 25-Jul-2003
- *
+ * 
  * Copyright (c) 2002,2003 QNX Software Systems Ltd.
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ **********************************************************************************************************************************/
 package org.eclipse.cdt.make.ui.actions;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -28,39 +27,38 @@ public class BuildTargetAction extends AbstractTargetAction {
 			BuildTargetDialog dialog = new BuildTargetDialog(getShell(), container);
 			String name = null;
 			try {
-				name = (String) container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"));
+				name = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
 			} catch (CoreException e) {
 			}
-			if ( name != null) {
-				IPath path = new Path(name);
-				name = path.segment(path.segmentCount() - 1);
-				IContainer targetContainer;
-				if ( path.segmentCount() > 1) {
-					path = path.removeLastSegments(1);
-					targetContainer = (IContainer) container.findMember(path);
-				} else {
-					targetContainer = container;
+			try {
+				if (name != null) {
+					IPath path = new Path(name);
+					name = path.segment(path.segmentCount() - 1);
+					IContainer targetContainer;
+					if (path.segmentCount() > 1) {
+						path = path.removeLastSegments(1);
+						targetContainer = (IContainer)container.findMember(path);
+					} else {
+						targetContainer = container;
+					}
+					IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(targetContainer, name);
+					if (target != null)
+						dialog.setTarget(target);
 				}
-				IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(targetContainer, name);
-				if (target != null)
-					dialog.setTarget(target);
-			}
-			if (dialog.open() == Window.OK) {
-				IMakeTarget target = dialog.getTarget();
-				if (target != null) {
-					try {
-						IPath path = target.getContainer().getProjectRelativePath().removeFirstSegments(container.getProjectRelativePath().segmentCount());
+				if (dialog.open() == Window.OK) {
+					IMakeTarget target = dialog.getTarget();
+					if (target != null) {
+						IPath path =
+							target.getContainer().getProjectRelativePath().removeFirstSegments(
+								container.getProjectRelativePath().segmentCount());
 						path = path.append(target.getName());
-						container.setSessionProperty(
-							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"),
-							path.toString());
-					} catch (CoreException e1) {
+						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), //$NON-NLS-1$
+						path.toString());
 					}
 				}
+			} catch (CoreException e) {
 			}
 		}
 	}
-
-
 
 }

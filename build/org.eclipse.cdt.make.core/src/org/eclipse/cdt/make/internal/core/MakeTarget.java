@@ -23,15 +23,15 @@ import org.eclipse.core.runtime.Path;
 
 public class MakeTarget implements IMakeTarget {
 
+	private final MakeTargetManager manager;
+	private String name;
 	private String target;
 	private String buildArguments;
 	private IPath buildCommand;
 	private boolean isDefaultBuildCmd;
 	private boolean isStopOnError;
-	private String name;
 	private String targetBuilderID;
 	private IContainer container;
-	private MakeTargetManager manager;
 	
 	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
@@ -64,32 +64,36 @@ public class MakeTarget implements IMakeTarget {
 		return isStopOnError;
 	}
 
-	public void setStopOnError(boolean stopOnError) {
+	public void setStopOnError(boolean stopOnError) throws CoreException {
 		isStopOnError = stopOnError;
+		manager.updateTarget(this);
 	}
 
 	public boolean isDefaultBuildCmd() {
 		return isDefaultBuildCmd;
 	}
 
-	public void setUseDefaultBuildCmd(boolean useDefault) {
+	public void setUseDefaultBuildCmd(boolean useDefault) throws CoreException {
 		isDefaultBuildCmd = useDefault;
+		manager.updateTarget(this);
 	}
 
 	public IPath getBuildCommand() {
-		return buildCommand != null ? buildCommand: new Path("");
+		return buildCommand != null ? buildCommand: new Path(""); //$NON-NLS-1$
 	}
 
-	public void setBuildCommand(IPath command) {
+	public void setBuildCommand(IPath command) throws CoreException {
 		buildCommand = command;
+		manager.updateTarget(this);
 	}
 
 	public String getBuildArguments() {
-		return buildArguments != null ? buildArguments : "";
+		return buildArguments != null ? buildArguments : ""; //$NON-NLS-1$
 	}
 
-	public void setBuildArguments(String arguments) {
+	public void setBuildArguments(String arguments) throws CoreException {
 		buildArguments = arguments;
+		manager.updateTarget(this);
 	}
 
 	public IContainer getContainer() {
@@ -133,9 +137,9 @@ public class MakeTarget implements IMakeTarget {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
 	}
 
-	public void setBuildTarget(String target) {
+	public void setBuildTarget(String target) throws CoreException {
 		this.target = target;
-		
+		manager.updateTarget(this);
 	}
 
 	public String getBuildTarget() {

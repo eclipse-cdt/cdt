@@ -20,18 +20,18 @@ public interface IMakeTarget {
 	String getTargetBuilderID();
 	
 	boolean isStopOnError();
-	void setStopOnError(boolean stopOnError);
+	void setStopOnError(boolean stopOnError) throws CoreException;
 
 	boolean isDefaultBuildCmd();
-	void setUseDefaultBuildCmd(boolean useDefault);
+	void setUseDefaultBuildCmd(boolean useDefault) throws CoreException;
 
-	void setBuildTarget(String target);
-	String getBuildTarget();
+	void setBuildTarget(String target) throws CoreException;
+	String getBuildTarget() ;
 	
 	IPath getBuildCommand();
-	void setBuildCommand(IPath command);
+	void setBuildCommand(IPath command) throws CoreException;
 	String getBuildArguments();
-	void setBuildArguments(String arguments);
+	void setBuildArguments(String arguments) throws CoreException;
 	
 	
 	/**

@@ -174,18 +174,22 @@ public class MakeTargetDialog extends Dialog {
 				if (newName.equals("")) {
 					fStatusLine.setErrorMessage("Must specify a target name.");
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				} else if (
-					fTarget != null
+				} else
+					try {
+						if (fTarget != null
 						&& fTarget.getName().equals(newName)
 						|| fTargetManager.findTarget(fContainer, newName) == null) {
-					fStatusLine.setErrorMessage(null);
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
-				} else {
-					fStatusLine.setErrorMessage("Target with that name already exits");
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				}
+							fStatusLine.setErrorMessage(null);
+							getButton(IDialogConstants.OK_ID).setEnabled(true);
+						} else {
+							fStatusLine.setErrorMessage("Target with that name already exits");
+							getButton(IDialogConstants.OK_ID).setEnabled(false);
+						}
+					} catch (CoreException ex) {
+						fStatusLine.setErrorMessage(ex.getLocalizedMessage());
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+					}
 			}
-
 		});
 	}
 

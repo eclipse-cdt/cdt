@@ -48,6 +48,10 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
  */
 public class VariableManager extends SessionObject implements ICDIVariableManager {
 
+	// We put a restriction on how deep we want to
+	// go when doing update of the variables.
+	// If the number is to high, gdb will just hang.
+	int MAX_STACK_DEPTH = 200;
 	List variableList;
 	boolean autoupdate;
 	MIVarChange[] noChanges = new MIVarChange[0];
@@ -507,6 +511,8 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createArgument(ICDIArgumentObject)
 	 */
 	public void update() throws CDIException {
+		int high = 0;
+		int low = 0;
 		List eventList = new ArrayList();
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
@@ -518,13 +524,21 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		if (currentTarget != null) {
 			ICDIThread currentThread = currentTarget.getCurrentThread();
 			if (currentThread != null) {
-				frames = currentThread.getStackFrames();
 				currentStack = currentThread.getCurrentStackFrame();
+				high = currentStack.getLevel();
+				if (high > 0) {
+					high--;
+				}
+				low = high - MAX_STACK_DEPTH;
+				if (low < 0) {
+					low = 0;
+				}
+				frames = currentThread.getStackFrames(low, high);
 			}
 		}
 		for (int i = 0; i < vars.length; i++) {
 			Variable variable = vars[i];
-			if (isVariableNeedsUpdate(variable, currentStack, frames )) {
+			if (isVariableNeedsToBeUpdate(variable, currentStack, frames, low)) {
 				String varName = variable.getMIVar().getVarName();
 				MIVarChange[] changes = noChanges;
 				MIVarUpdate update = factory.createMIVarUpdate(varName);
@@ -563,7 +577,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @param frames
 	 * @return
 	 */
-	boolean isVariableNeedsUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames) throws CDIException {
+	boolean isVariableNeedsToBeUpdate(Variable variable, ICDIStackFrame current, ICDIStackFrame[] frames, int low) throws CDIException {
 		ICDIStackFrame varStack = variable.getStackFrame();
 		boolean inScope = false;
 		
@@ -579,12 +593,16 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			// The variable is in the current selected frame it should be updated
 			return true;
 		} else {
-			// Check if the Variable is still in Scope and below say yes
-			// if it is no longer in scope so update() call call "-var-delete".
-			for (int i = 0; i < frames.length; i++) {
-				if (varStack.equals(frames[i])) {
-					inScope = true;
+			if (varStack.getLevel() >= low) {
+				// Check if the Variable is still in Scope 
+				// if it is no longer in scope so update() call call "-var-delete".
+				for (int i = 0; i < frames.length; i++) {
+					if (varStack.equals(frames[i])) {
+						inScope = true;
+					}
 				}
+			} else {
+				inScope = true;
 			}
 		}
 		// return true if the variable is no longer in scope we

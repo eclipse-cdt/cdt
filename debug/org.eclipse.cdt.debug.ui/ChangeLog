@@ -1,3 +1,7 @@
+2002-12-02 Mikhail Khodjaiants
+	'Run to line' and 'Add expression' actions for assembly editor.
+	*plugin.xml
+
 2002-11-29 Mikhail Khodjaiants
 	Cosmetic change for the MemoryView preference page.
 	* plugin.properties

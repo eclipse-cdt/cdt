@@ -448,6 +448,39 @@
             </enablement>
          </action>
       </viewerContribution>
+      <viewerContribution
+            targetID="#ASMEditorRulerContext"
+            id="org.eclipse.cdt.debug.ui.AsmEditorPopupActions">
+         <action
+               menubarPath="additions"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               icon="icons/full/obj16/expression_obj.gif"
+               label="%AddExpressionAction.label"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               helpContextId="add_expression_action_context">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               menubarPath="additions"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               label="%RunToLineAction.label"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               helpContextId="run_to_line_action_context">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

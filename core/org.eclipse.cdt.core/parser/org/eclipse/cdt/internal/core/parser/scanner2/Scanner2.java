@@ -85,7 +85,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	protected IParserLogService log;
 	private IScannerExtension scannerExtension;
 	
-	private CharArrayObjectMap definitions = new CharArrayObjectMap(64);
+	private CharArrayObjectMap definitions = new CharArrayObjectMap(512);
 	private String[] includePaths;
 	int count;
 	

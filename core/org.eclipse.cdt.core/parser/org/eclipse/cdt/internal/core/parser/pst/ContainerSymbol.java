@@ -666,7 +666,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	public IParameterizedSymbol unqualifiedFunctionLookup( char[] name, final List parameters ) throws ParserSymbolTableException{
 		//figure out the set of associated scopes first, so we can remove those that are searched
 		//during the normal lookup to avoid doing them twice
-		final ObjectSet associated = new ObjectSet(0);
+		ObjectSet associated = ObjectSet.EMPTY_SET;
 	
 		//collect associated namespaces & classes.
 		int size = ( parameters == null ) ? 0 : parameters.size();
@@ -683,6 +683,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				continue;
 			}
 				
+			if( associated == ObjectSet.EMPTY_SET )
+			    associated = new ObjectSet( 2 );
 			ParserSymbolTable.getAssociatedScopes( paramType, associated );
 		
 			//if T is a pointer to a data member of class X, its associated namespaces and classes
@@ -696,13 +698,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				}
 			}
 		}
-	
+		final ObjectSet associatedData = associated;
 		LookupData data = new LookupData( name ){
 			public ObjectSet getAssociated() { return assoc; }
 			public List      getParameters() { return params; }
 			public TypeFilter getFilter()    { return FUNCTION_FILTER; }
 			
-			final private ObjectSet assoc = associated;
+			final private ObjectSet assoc = associatedData;
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 		};
 		

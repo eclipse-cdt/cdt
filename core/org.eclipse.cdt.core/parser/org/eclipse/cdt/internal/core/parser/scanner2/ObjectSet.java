@@ -14,14 +14,13 @@
  */
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author aniefer
  */
-public class ObjectSet extends HashTable{
+public class ObjectSet extends ObjectTable {
     public static final ObjectSet EMPTY_SET = new ObjectSet( 0 ){
         public Object clone()               { return this; }
         public List toList()                { return Collections.EMPTY_LIST; }
@@ -57,15 +56,6 @@ public class ObjectSet extends HashTable{
 	    }
 	}
 
-	public List toList(){
-	    List list = new ArrayList( size() );
-	    int size = size();
-	    for( int i = 0; i < size; i++ ){
-	        list.add( keyAt( i ) );
-	    }
-	    return list;
-	}
-	
 	public boolean remove( Object key ) {
 		int i = lookup(key);
 		if (i < 0)
@@ -74,11 +64,4 @@ public class ObjectSet extends HashTable{
 		removeEntry(i);
 		return true;
 	}
-
-    /**
-     * @return
-     */
-    public boolean isEmpty() {
-        return currEntry == -1;
-    }
 }

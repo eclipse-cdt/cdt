@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 /**
  * @author Doug Schaefer
  */
-public class CharArrayIntMap extends CharArrayMap {
+public class CharArrayIntMap extends CharTable {
 
 	private int[] valueTable;
 	public final int undefined;
@@ -28,10 +28,16 @@ public class CharArrayIntMap extends CharArrayMap {
 		int[] oldValueTable = valueTable;
 		valueTable = new int[size];
 		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);
+		super.resize(size);
 	}
 	
+	public void clear() {
+		super.clear();
+		for( int i = 0; i < capacity(); i++ )
+			valueTable[i] = undefined;
+	}
 	public int put(char[] key, int start, int length, int value) {
-		int i = add(key, start, length);
+		int i = addIndex(key, start, length);
 		int oldvalue = valueTable[i];
 		valueTable[i] = value;
 		return oldvalue;
@@ -45,7 +51,6 @@ public class CharArrayIntMap extends CharArrayMap {
 		int i = lookup(key, start, length);
 		if (i >= 0)
 			return valueTable[i];
-		return -1;
+		return undefined;
 	}
-
 }

@@ -10,12 +10,16 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.Action;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.BuildOutputProvider;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.ScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.ScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.ScannerInfoProvider;
 import org.eclipse.core.resources.IProject;
@@ -35,16 +39,27 @@ public class SCProfileInstance {
 	public SCProfileInstance(IProject project, ScannerConfigProfile profile) {
 		this.project = project;
 		this.profile = profile;
-		instantiate();
 	}
 	/**
 	 * 
 	 */
-	private void instantiate() {
+	private void instantiateCollector() {
 		// create collector object
-		collector = (IScannerInfoCollector) profile.getScannerInfoCollectorElement().createScannerInfoCollector();
-        if (collector instanceof IScannerInfoCollector2) {
-            ((IScannerInfoCollector2) collector).setProject(project);
+		collector = createScannerInfoCollector();
+        if (collector != null) {
+        	// call collector.setProject(project) if class supports it
+        	Class clazz = (Class) collector.getClass();
+        	try {
+				Method setProjectMethod = clazz.getMethod("setProject", new Class[] {IProject.class});//$NON-NLS-1$
+				setProjectMethod.invoke(collector, new Object[] {project});
+			} catch (SecurityException e) {
+				MakeCorePlugin.log(e);
+			} catch (NoSuchMethodException e) {
+			} catch (IllegalArgumentException e) {
+			} catch (IllegalAccessException e) {
+			} catch (InvocationTargetException e) {
+				MakeCorePlugin.log(e.getCause());
+			}
         }
 		// all other objects are created on request
 	}
@@ -60,8 +75,20 @@ public class SCProfileInstance {
 	 * @return a single scannerInfoCollector object
 	 */
 	public IScannerInfoCollector getScannerInfoCollector() {
+		if (collector == null) {
+			instantiateCollector();
+		}
 		return collector;
 	}
+	
+	public IScannerInfoCollector createScannerInfoCollector() {
+		ScannerInfoCollector collector = profile.getScannerInfoCollectorElement();
+		if (collector != null) {
+			return (IScannerInfoCollector) collector.createScannerInfoCollector();
+		}
+		return null;
+	}
+	
 	/**
 	 * @return Creates new buildOutputProvider user object.
 	 */

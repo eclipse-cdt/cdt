@@ -50,13 +50,13 @@ public class ScannerInfoConsoleParserFactory {
                                             IProject currentProject,
                                             String providerId,
                                             IScannerConfigBuilderInfo2 scBuildInfo,
+                                            IScannerInfoCollector collector,
                                             IMarkerGenerator markerGenerator) {
         if (scBuildInfo.isProviderOutputParserEnabled(providerId)) {
             // get the ESIProvider console parser 
             SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
                     getSCProfileInstance(currentProject, scBuildInfo.getSelectedProfileId());
             IScannerInfoConsoleParser clParser = profileInstance.createExternalScannerInfoParser(providerId);
-            IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
             clParser.startup(currentProject, currentProject.getLocation(), collector, markerGenerator);
             // create an output stream sniffer
             return new ConsoleOutputSniffer(outputStream, errorStream, new 

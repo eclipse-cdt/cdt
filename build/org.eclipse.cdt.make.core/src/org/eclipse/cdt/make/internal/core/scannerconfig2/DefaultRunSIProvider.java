@@ -108,7 +108,7 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
             cos = new StreamMonitor(new SubProgressMonitor(monitor, 70), cos, 100);
             
             ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
-                    cos, cos, currentProject, providerId, buildInfo, markerGenerator);
+                    cos, cos, currentProject, providerId, buildInfo, collector, markerGenerator);
             OutputStream consoleOut = (sniffer == null ? cos : sniffer.getOutputStream());
             OutputStream consoleErr = (sniffer == null ? cos : sniffer.getErrorStream());
             TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$

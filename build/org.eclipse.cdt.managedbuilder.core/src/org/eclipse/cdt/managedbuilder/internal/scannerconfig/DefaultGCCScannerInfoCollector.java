@@ -16,13 +16,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Implementation class for gathering the built-in compiler settings for 
@@ -32,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @since 2.0
  */
-public class DefaultGCCScannerInfoCollector implements IScannerInfoCollector2 {
+public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollector {
 	protected Map definedSymbols;
 	protected static final String EQUALS = "=";	//$NON-NLS-1$
 	protected List includePaths;
@@ -99,16 +97,7 @@ public class DefaultGCCScannerInfoCollector implements IScannerInfoCollector2 {
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
-		
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#updateScannerConfiguration(org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
-        // TODO Auto-generated method stub
-        
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)

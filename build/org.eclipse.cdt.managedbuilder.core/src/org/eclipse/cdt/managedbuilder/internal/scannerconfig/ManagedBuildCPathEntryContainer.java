@@ -214,10 +214,11 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		// See if we can load a dynamic resolver
         SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
                 getSCProfileInstance(project, MM_PP_DISCOVERY_PROFILE_ID);
-        IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+        IScannerInfoCollector collector = profileInstance.createScannerInfoCollector();
         
 		if (collector instanceof IManagedScannerInfoCollector) {
             IManagedScannerInfoCollector mCollector = (IManagedScannerInfoCollector) collector;
+            mCollector.setProject(project);
 			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
 			calculateEntriesDynamically((IProject)info.getOwner(), profileInstance, collector);
 			addIncludePaths(mCollector.getIncludePaths());

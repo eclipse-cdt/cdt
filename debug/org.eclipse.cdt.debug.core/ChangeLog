@@ -1,3 +1,8 @@
+2002-10-20 Mikhail Khodjaiants
+	Added a functionality needed to process ICDIMemoryChangedEvent.
+	* IFormattedMemoryBlock.java
+	* CFormattedMemoryBlock.java
+ 
 2002-10-20 Alain Magloire
 
 	* src/.../cdi/model/CTarget.java (getMemoryBlock): Remove

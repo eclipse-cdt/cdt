@@ -4,17 +4,18 @@
       label="%featureName"
       version="1.0.0"
       provider-name="%providerName"
-      os=""
-      ws=""
+      os="linux"
+      ws="motif"
       nl="en_US"
+      arch="x86"
       image="eclipse_update_120.jpg">
 
    <description>
       %description
    </description>
 
-   <license url="%licenseURL">
-         %license
+   <license>
+      %license
    </license>
 
    <url>

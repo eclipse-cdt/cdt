@@ -10,14 +10,13 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.core.model; 
 
-import java.io.File;
 import java.math.BigInteger;
-import java.text.MessageFormat;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICModule;
@@ -223,10 +222,16 @@ public class CModule extends CDebugElement implements ICModule {
 		if ( path == null || path.isEmpty() ) {
 			requestFailed( CoreModelMessages.getString( "CModule.2" ), null ); //$NON-NLS-1$
 		}
-		File file = new File( path.toOSString() );
-		if ( !file.exists() ) {
-			requestFailed( MessageFormat.format( CoreModelMessages.getString( "CModule.3" ), new String[] { path.toOSString() } ), null ); //$NON-NLS-1$
+		String message = CoreModelMessages.getString( "CModule.4" ); //$NON-NLS-1$
+		if ( fCDIObject instanceof ICDISharedLibrary ) {
+			try {
+				((ICDISharedLibrary)fCDIObject).loadSymbols();
+				return;
+			}
+			catch( CDIException e ) {
+				message = e.getMessage();
+			}
 		}
-		targetRequestFailed( CoreModelMessages.getString( "CModule.4" ), null ); //$NON-NLS-1$
+		targetRequestFailed( message, null );
 	}
 }

@@ -1,3 +1,9 @@
+2005-02-15 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
+	Support for the symbols loading operations.
+	* CModule.java
+	* CoreModelMessages.properties
+
 2005-02-14 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
 	Support for the symbols loading operations.

@@ -34,6 +34,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -174,7 +175,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	 */
 	protected void createActions()
 	{
-		IAction action = new ShowRegisterTypesAction( getStructuredViewer() );
+		IAction action = new ShowRegisterTypesAction( this );
 		setAction( "ShowTypeNames", action ); //$NON-NLS-1$
 
 		action = new ChangeRegisterValueAction( getViewer() );
@@ -229,7 +230,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 
 		menu.appendToGroup( ICDebugUIConstants.REGISTER_GROUP, getAction( "ChangeRegisterValue" ) ); //$NON-NLS-1$
-		menu.appendToGroup( IDebugUIConstants.RENDER_GROUP, getAction( "ShowTypeNames" ) ); //$NON-NLS-1$
+//		menu.appendToGroup( IDebugUIConstants.RENDER_GROUP, getAction( "ShowTypeNames" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "AutoRefresh" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "Refresh" ) ); //$NON-NLS-1$
 	}
@@ -395,4 +396,21 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	{
 		fExpandedRegisters.remove( rm );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter )
+	{
+		if ( IDebugModelPresentation.class.equals( adapter ) ) 
+		{
+			IBaseLabelProvider labelProvider = getStructuredViewer().getLabelProvider();
+			if ( labelProvider instanceof VariablesViewLabelProvider ) 
+			{
+				return ((VariablesViewLabelProvider)labelProvider).getPresentation();
+			}
+		}
+		return super.getAdapter( adapter );
+	}
+
 }

@@ -1,3 +1,8 @@
+2003-10-24 Mikhail Khodjaiants
+	Fix for PR 43624: The "Show Types Name" action of the Registers view doesn't work.
+	* ShowRegisterTypesAction.java
+	* RegistersView.java
+
 2003-10-22 Mikhail Khodjaiants
 	Moved the 'AddAddressBreakpointActionDelegate' action 
 	to the 'org.eclipse.cdt.debug.internal.ui.actions' package.

@@ -363,10 +363,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	}
 
 	private void handleBreakpointCreatedEvent( final ICDIBreakpoint cdiBreakpoint ) {
-		if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
-			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
-		else if ( cdiBreakpoint instanceof ICDIWatchpoint )
+		if ( cdiBreakpoint instanceof ICDIWatchpoint )
 			doHandleWatchpointCreatedEvent( (ICDIWatchpoint)cdiBreakpoint );
+		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
+			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
 		if ( !cdiBreakpoint.isTemporary() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
 			try {
 				cdiBreakpoint.setEnabled( false );
@@ -406,6 +406,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			}
 		}
 		if ( breakpoint != null ) {
+			try {
+				breakpoint.setTargetFilter( getDebugTarget() );
+			}
+			catch( CoreException e ) {
+			}
 			getBreakpointNotifier().breakpointInstalled( getDebugTarget(), breakpoint );
 		}
 	}

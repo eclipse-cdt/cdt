@@ -23,6 +23,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,6 +40,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -50,14 +52,20 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private ProblemTreeViewer treeViewer;
 	private ListenerList selectionChangedListeners = new ListenerList();
 	private TogglePresentationAction fTogglePresentation;
+	private String fContextMenuId;
 	
 	private OpenIncludeAction fOpenIncludeAction;
 	private SearchForReferencesAction fSearchForReferencesAction;
 
 	public CContentOutlinePage(CEditor editor) {
+		this("#TranslationUnitOutlinerContext", editor);
+	}
+	
+	public CContentOutlinePage(String contextMenuID, CEditor editor) {
 		super();
 		fEditor= editor;
 		fInput= null;
+		fContextMenuId = contextMenuID;
 
 		fTogglePresentation= new TogglePresentationAction();
 		fTogglePresentation.setEditor(editor);
@@ -126,6 +134,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (SearchForReferencesAction.canActionBeAdded(getSelection())) {
 			menu.add(fSearchForReferencesAction);
 		}
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 	}
 	
 	/**
@@ -143,7 +153,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(treeViewer);
 				
-		MenuManager manager= new MenuManager("#PopUp");
+		MenuManager manager= new MenuManager(fContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -156,6 +166,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		// register global actions
 		IPageSite site= getSite();
+		site.registerContextMenu(fContextMenuId, manager, treeViewer);
+		site.setSelectionProvider(treeViewer);
 		IActionBars bars= site.getActionBars();		
 		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION, fTogglePresentation);
 

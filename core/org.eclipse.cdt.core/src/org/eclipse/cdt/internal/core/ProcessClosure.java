@@ -39,8 +39,6 @@ public class ProcessClosure {
 		}
 
 		public void run() {
-			byte[] buffer = new byte[1024];
-			int len;
 			try {
 				try {
 					BufferedReader reader = new BufferedReader(new InputStreamReader(fInputStream));

@@ -1,3 +1,7 @@
+2004-12-08 Vladimir Hirsl
+	Removed some dead code in ReaderThread class.
+	* src/org/eclipse/cdt/internal/core/ProcessClosure.java
+	
 2004-12-02 Alain Magloire
 	Fix for PR 40081.
 	For Cygwin use NM to get the global variables.

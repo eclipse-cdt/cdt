@@ -109,12 +109,13 @@
          </action>
       </viewerContribution>
       <viewerContribution
-            targetID="org.eclipse.cdt.ui.editor.CEditor.RulerContext"
+            targetID="#RulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
          <action
-               label="%AbbBreakpoint.label"
+               label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               menubarPath="debug"
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
          </action>
       </viewerContribution>

@@ -87,26 +87,39 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * Create a new configuration based on one already defined.
 	 * 
 	 * @param target The <code>Target</code> the receiver will be added to.
-	 * @param parent The <code>IConfiguration</code> to copy the settings from.
+	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the configuration.
 	 */
-	public Configuration(Target target, IConfiguration parent, String id) {
+	public Configuration(Target target, IConfiguration parentConfig, String id) {
 		this.id = id;
-		this.name = parent.getName();
+		this.name = parentConfig.getName();
 		this.target = target;
-		this.parent = parent;
+
+		// If this contructor is called to clone an existing 
+		// configuration, the parent of the parent should be stored. 
+		// As of 2.0, there is still one single level of inheritence to
+		// worry about
+		parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
 		
 		// Check that the tool and the project match
 		IProject project = (IProject) target.getOwner();
 		
 		// Get the tool references from the parent
-		List parentToolRefs = ((Configuration)parent).getLocalToolReferences();
+		List parentToolRefs = ((Configuration)parentConfig).getLocalToolReferences();
 		Iterator iter = parentToolRefs.listIterator();
 		while (iter.hasNext()) {
 			ToolReference toolRef = (ToolReference)iter.next();
 
 			// Make a new ToolReference based on the tool in the ref
-			ToolReference newRef = new ToolReference(this, toolRef.getTool());
+			ITool parentTool = toolRef.getTool();
+			ToolReference newRef = new ToolReference(this, parentTool);
+			
+			// The reference may have a different command than the parent tool
+			String refCmd = toolRef.getToolCommand(); 
+			if (!refCmd.equals(parentTool.getToolCommand())) {
+				newRef.setToolCommand(refCmd);
+			}
+			
 			List optRefs = toolRef.getOptionReferenceList();
 			Iterator optIter = optRefs.listIterator();
 			while (optIter.hasNext()) {

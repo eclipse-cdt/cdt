@@ -1,3 +1,9 @@
+2004-10-04 Alain Magloire
+
+	IllegalMonitorException fix.
+	mi/org/eclipse/cdt/debug/mi/core/MIInferior.java
+	src/org/eclipse/cdt/debug/mi/core/MIProcessAdapter.java
+
 2004-09-22 Alain Magloire
 	Makes the mi/ source folder independant of the cdt.core
 	so we can make it a library.

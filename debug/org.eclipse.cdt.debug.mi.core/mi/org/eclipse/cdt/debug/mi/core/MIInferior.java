@@ -178,7 +178,7 @@ public class MIInferior extends Process {
 		}
 	}
 
-	public synchronized void interrupt() throws MIException {
+	public void interrupt() throws MIException {
 		MIProcess gdb = session.getGDBProcess();
 		// Check if they can handle the interrupt
 		// Try the exec-interrupt; this will be for "gdb --async"
@@ -190,10 +190,12 @@ public class MIInferior extends Process {
 				// call getMIInfo() even if we discard the value;
 				interrupt.getMIInfo();
 				// Allow (5 secs) for the interrupt to propagate.
-				for (int i = 0;(state == RUNNING) && i < 5; i++) {
-					try {
-						wait(1000);
-					} catch (InterruptedException e) {
+				synchronized(this) {
+					for (int i = 0;(state == RUNNING) && i < 5; i++) {
+						try {
+							wait(1000);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 			} catch (MIException e) {

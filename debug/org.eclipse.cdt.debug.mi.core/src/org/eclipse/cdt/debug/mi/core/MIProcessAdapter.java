@@ -114,21 +114,25 @@ public class MIProcessAdapter implements MIProcess {
 			Spawner gdbSpawner = (Spawner) fGDBProcess;
 			gdbSpawner.interrupt();
 			int state;
-			// Allow (5 secs) for the interrupt to propagate.
-			for (int i = 0; inferior.isRunning() && i < 5; i++) {
-				try {
-					wait(1000);
-				} catch (InterruptedException e) {
+			synchronized (inferior) {
+				// Allow (5 secs) for the interrupt to propagate.
+				for (int i = 0; inferior.isRunning() && i < 5; i++) {
+					try {
+						inferior.wait(1000);
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 			// If we are still running try to drop the sig to the PID
 			if (inferior.isRunning() && inferior.getInferiorPID() > 0) {
 				// lets try something else.
 				gdbSpawner.raise(inferior.getInferiorPID(), gdbSpawner.INT);
-				for (int i = 0; inferior.isRunning() && i < 5; i++) {
-					try {
-						wait(1000);
-					} catch (InterruptedException e) {
+				synchronized (inferior) {
+					for (int i = 0; inferior.isRunning() && i < 5; i++) {
+						try {
+							inferior.wait(1000);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 			}

@@ -1,4 +1,0 @@
-name=Eclipse C/C++ Development Tools
-id=org.eclipse.cdt
-version=1.0.0
-feature.default.id=org.eclipse.cdt

@@ -184,7 +184,7 @@
          name="CDT Visual C Error Parser"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
-            class="org.eclipse.cdt.internal.core.linux.VCErrorParser">
+            class="org.eclipse.cdt.internal.errorparsers.VCErrorParser">
       </errorparser>
    </extension>
 

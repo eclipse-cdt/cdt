@@ -5,9 +5,7 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 
 /**
  */
@@ -50,20 +48,6 @@ public class Location implements ICDILocation {
 	 */
 	public String getFunction() {
 		return function;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getInstructions()
-	 */
-	public ICDIInstruction[] getInstructions() throws CDIException {
-		return new ICDIInstruction[0];
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getInstructions(int)
-	 */
-	public ICDIInstruction[] getInstructions(int maxCount) throws CDIException {
-		return new ICDIInstruction[0];
 	}
 
 	/**

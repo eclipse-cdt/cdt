@@ -5,7 +5,6 @@
  */
 package org.eclipse.cdt.debug.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 
 /**
  * 
@@ -45,27 +44,6 @@ public interface ICDILocation
 	 * @return the line number of this location
 	 */
 	int getLineNumber();
-	
-	/**
-	 * Returns an array of the machine instructions of the function
-	 * surrounding the address of this location.
-	 *  
-	 * @return an array of the machine instructions
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	ICDIInstruction[] getInstructions() throws CDIException;
-	
-	/**
-	 * Returns an array of the machine instructions of the function
-	 * surrounding the address of this location. If the number of 
-	 * instructions is greater than maxCount the size of the returning
-	 * array is limited by maxCount.
-	 *  
-	 * @param maxCount - maximum number of instructions to read
-	 * @return an array of the machine instructions
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	ICDIInstruction[] getInstructions( int maxCount ) throws CDIException;
 	
 	/**
 	 * Return true if the both location refers to the same

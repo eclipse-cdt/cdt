@@ -1,3 +1,8 @@
+2002-10-12 Alain Magloire
+
+	* cdi/Location (getInstructions): Methods removed
+	no longer define in ICDILocation.
+
 2002-10-11 Alain Magloire
 
 	* cdi/SourceManager (getMixedInstruction):

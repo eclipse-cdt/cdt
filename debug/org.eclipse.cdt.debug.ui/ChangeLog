@@ -1,3 +1,8 @@
+2004-07-30 Mikhail Khodjaiants
+	Display the error message in the variable's label if the value of variable can not be retrieved.
+	* CDebugUIMessages.properties
+	* CDTDebugModelPresentation.java
+
 2004-07-23 Mikhail Khodjaiants
 	More informative error messages.
 	* CDebugUIMessages.properties

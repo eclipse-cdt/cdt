@@ -516,7 +516,10 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 			if ( name != null )
 				label.append( name.trim() );
 			IValue value = var.getValue();
-			if ( value instanceof ICValue && value.getValueString() != null ) {
+			if ( value instanceof ICDebugElementStatus && !((ICDebugElementStatus)value).isOK() ) {
+				label.append(  getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.4" ), ((ICDebugElementStatus)value).getMessage() ) ); //$NON-NLS-1$
+			}
+			else if ( value instanceof ICValue && value.getValueString() != null ) {
 				String valueString = value.getValueString().trim();
 				if ( type != null && type.isCharacter() ) {
 					if ( valueString.length() == 0 )

@@ -12,8 +12,10 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
@@ -176,7 +178,25 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			}
 			listEntries.trimToSize();
+			
 			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
+
+			// Check for duplication in the sources
+			List dups = checkForSourceDuplication(resolvedEntries);
+			if (dups.size() > 0) {
+				List newList = new ArrayList(Arrays.asList(resolvedEntries));
+				newList.removeAll(dups);
+				resolvedEntries = (IPathEntry[]) newList.toArray(new IPathEntry[newList.size()]);
+			}
+
+			// Check for duplication in the outputs
+			dups = checkForOutputDuplication(resolvedEntries);
+			if (dups.size() > 0) {
+				List newList = new ArrayList(Arrays.asList(resolvedEntries));
+				newList.removeAll(dups);
+				resolvedEntries = (IPathEntry[]) newList.toArray(new IPathEntry[newList.size()]);
+			}
+
 			if (generateMarkers) {
 				final ICProject finalCProject = cproject;
 				final IPathEntry[] finalEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES); 
@@ -197,7 +217,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								createPathEntryProblemMarker(project, status);
 							}
 						}
-						return CModelStatus.OK_STATUS;
+						return Status.OK_STATUS;
 					}
 				};
 				markerTask.schedule();
@@ -1161,6 +1181,30 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			}
 		}
 
+		// check duplication of sources
+		List dups = checkForSourceDuplication(entries);
+		if (dups.size() > 0) {
+			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
+			for (int i = 0; i < dups.size(); ++i) {
+				StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				errMesg.append(':').append(dups.get(i).toString());
+				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());			
+			}
+			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
+		}
+	
+		// check duplication of Outputs
+		dups = checkForOutputDuplication(entries);
+		if (dups.size() > 0) {
+			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
+			for (int i = 0; i < dups.size(); ++i) {
+				StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.DuplicateEntry")); //$NON-NLS-1$
+				errMesg.append(':').append(dups.get(i).toString());
+				cmodelStatus[i] = new CModelStatus(ICModelStatusConstants.NAME_COLLISION, errMesg.toString());			
+			}
+			return CModelStatus.newMultiStatus(ICModelStatusConstants.INVALID_PATHENTRY, cmodelStatus);
+		}
+
 		// allow nesting source entries in each other as long as the outer entry excludes the inner one
 		for (int i = 0; i < entries.length; i++) {
 			IPathEntry entry = entries[i];
@@ -1187,17 +1231,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 								StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
 								errMesg.append(':').append(entry.toString());
 								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
+							} else if (otherKind == IPathEntry.CDT_SOURCE) {
+								exclusionPattern += '/';
+								StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
+								errMesg.append(':').append(entry.toString());
+								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
 							} else {
-								if (otherKind == IPathEntry.CDT_SOURCE) {
-									exclusionPattern += '/';
-									StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
-									errMesg.append(':').append(entry.toString());
-									return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString());
-								} else {
-									StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
-									errMesg.append(':').append(entry.toString());
-									return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); //$NON-NLS-1$
-								}
+								StringBuffer errMesg = new StringBuffer(CCorePlugin.getResourceString("CoreModel.PathEntry.NestedEntry")); //$NON-NLS-1$
+								errMesg.append(':').append(entry.toString());
+								return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, errMesg.toString()); //$NON-NLS-1$
 							}
 						}
 					}
@@ -1336,6 +1378,52 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return false;
 	}
 
+	private List checkForSourceDuplication(IPathEntry[] pathEntries) {
+		List duplicate = new ArrayList(pathEntries.length);
+		for (int i = 0; i < pathEntries.length; ++i) {
+			if (pathEntries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
+				ISourceEntry sourceEntry = (ISourceEntry)pathEntries[i];
+				for (int j = 0; j < pathEntries.length; ++j) {
+					if (pathEntries[j].getEntryKind() == IPathEntry.CDT_SOURCE) {
+						ISourceEntry otherSource = (ISourceEntry)pathEntries[j];
+						if (!sourceEntry.equals(otherSource)) {
+							if (!duplicate.contains(sourceEntry)) {
+								if (sourceEntry.getPath().equals(otherSource.getPath())) {
+									// duplication of sources
+									duplicate.add(otherSource);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return duplicate;
+	}
+	
+	private List checkForOutputDuplication(IPathEntry[] pathEntries) {
+		List duplicate = new ArrayList(pathEntries.length);
+		for (int i = 0; i < pathEntries.length; ++i) {
+			if (pathEntries[i].getEntryKind() == IPathEntry.CDT_OUTPUT) {
+				IOutputEntry outputEntry = (IOutputEntry)pathEntries[i];
+				for (int j = 0; j < pathEntries.length; ++j) {
+					if (pathEntries[j].getEntryKind() == IPathEntry.CDT_OUTPUT) {
+						IOutputEntry otherOutput = (IOutputEntry)pathEntries[j];
+						if (!outputEntry.equals(otherOutput)) {
+							if (!duplicate.contains(outputEntry)) {
+								if (outputEntry.getPath().equals(otherOutput.getPath())) {
+									// duplication of outputs
+									duplicate.add(otherOutput);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return duplicate;
+	}
+	
 	/**
 	 * Record a new marker denoting a classpath problem
 	 */
@@ -1351,7 +1439,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			case  ICModelStatusConstants.INVALID_PATH:
 				severity = IMarker.SEVERITY_WARNING;
 				break;
-	
+
 			default:
 				severity = IMarker.SEVERITY_ERROR;
 				break;
@@ -1367,7 +1455,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					ICModelMarker.PATHENTRY_FILE_FORMAT,
 				},
 				new Object[] {
-					status.getString(),
+					status.getMessage(),
 					new Integer(severity), 
 					"pathentry",//$NON-NLS-1$
 					"false",//$NON-NLS-1$

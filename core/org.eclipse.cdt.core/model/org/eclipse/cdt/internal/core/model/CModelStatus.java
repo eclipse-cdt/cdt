@@ -169,6 +169,16 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public String getMessage() {
 		Throwable exception = getException();
+		if (isMultiStatus()) {
+			StringBuffer sb = new StringBuffer();
+			IStatus[] children = getChildren();
+			if (children != null && children.length > 0) {
+				for (int i = 0; i < children.length; ++i) {
+					sb.append(children[i].getMessage()).append(',');
+				}
+			}
+			return sb.toString();
+		}
 		if (exception == null) {
 			switch (getCode()) {
 				case CORE_EXCEPTION :
@@ -212,9 +222,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				case INVALID_PATH:
 					if (fString != null) {
 						return fString;
-					} else {
-						return CoreModelMessages.getFormattedString("status.invalidPath", getPath() == null ? "null" : getPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
+					return CoreModelMessages.getFormattedString("status.invalidPath", getPath() == null ? "null" : getPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 				case INVALID_PROJECT:
 					return CoreModelMessages.getFormattedString("status.invalidProject", getString()); //$NON-NLS-1$
@@ -228,9 +237,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				case INVALID_SIBLING:
 					if (fString != null) {
 						return CoreModelMessages.getFormattedString("status.invalidSibling", getString()); //$NON-NLS-1$
-					} else {
-						return CoreModelMessages.getFormattedString("status.invalidSibling", getFirstElementName()); //$NON-NLS-1$
 					}
+					return CoreModelMessages.getFormattedString("status.invalidSibling", getFirstElementName()); //$NON-NLS-1$
 
 				case IO_EXCEPTION:
 					return CoreModelMessages.getFormattedString("status.IOException"); //$NON-NLS-1$
@@ -243,9 +251,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					}
 					if (fString != null) {
 						return fString;
-					} else {
-						return CoreModelMessages.getFormattedString("status.nameCollision", sb.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
+					return CoreModelMessages.getFormattedString("status.nameCollision", sb.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 
 				case NO_ELEMENTS_TO_PROCESS:
 					return CoreModelMessages.getFormattedString("operation.needElements"); //$NON-NLS-1$
@@ -289,14 +296,12 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 
 			}
 			return getString();
-		} else {
-			String message = exception.getMessage();
-			if (message != null) {
-				return message;
-			} else {
-				return exception.toString();
-			}
 		}
+		String message = exception.getMessage();
+		if (message != null) {
+			return message;
+		}
+		return exception.toString();
 	}
 
 	/**
@@ -368,13 +373,12 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	public boolean matches(int mask) {
 		if (! isMultiStatus()) {
 			return matches(this, mask);
-		} else {
-			for (int i = 0, max = fChildren.length; i < max; i++) {
-				if (matches((CModelStatus) fChildren[i], mask))
-					return true;
-			}
-			return false;
 		}
+		for (int i = 0, max = fChildren.length; i < max; i++) {
+			if (matches((CModelStatus) fChildren[i], mask))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -395,6 +399,18 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public static ICModelStatus newMultiStatus(ICModelStatus[] children) {
 		CModelStatus jms = new CModelStatus();
+		jms.fChildren = children;
+		return jms;
+	}
+
+	/**
+	 * Creates and returns a new <code>ICModelStatus</code> that is a
+	 * a multi-status status.
+	 *
+	 * @see IStatus#.isMultiStatus()
+	 */
+	public static ICModelStatus newMultiStatus(int code, ICModelStatus[] children) {
+		CModelStatus jms = new CModelStatus(code);
 		jms.fChildren = children;
 		return jms;
 	}

@@ -1,3 +1,9 @@
+2004-08-24 Alain Magloire
+
+	Fix for PR 72078
+	* model/org/eclipse/cdt/internal/core/model/CModelStatus.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2004-08-23 Chris Wiebe
 
 	fix for 68210 - add missing cpp header names

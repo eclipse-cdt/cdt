@@ -196,9 +196,9 @@ public class Parser2 {
 	 */
 	public DeclSpecifierSeq declSpecifierSeq() throws Backtrack {
 		DeclSpecifierSeq declSpecifierSeq = new DeclSpecifierSeq();
-		
-		boolean done = false;
-		while (!done) {
+
+		declSpecifiers:		
+		for (;;) {
 			switch (LT(1)) {
 				case Token.t_auto:
 					consume();
@@ -306,7 +306,7 @@ public class Parser2 {
 						break;
 					}
 					else
-						done = true;
+						break declSpecifiers;
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:
@@ -316,7 +316,7 @@ public class Parser2 {
 					// enumSpecifier();
 					break;
 				default:
-					done = true;
+					break declSpecifiers;
 			}
 		}
 		return declSpecifierSeq;
@@ -469,23 +469,74 @@ public class Parser2 {
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
 	public ClassSpecifier classSpecifier() throws Backtrack {
+		ClassSpecifier classSpecifier;
+		
+		// class key
 		switch (LT(1)) {
 			case Token.t_class:
+				consume();
+				classSpecifier = new ClassSpecifier(ClassSpecifier.t_class);
+				break;
 			case Token.t_struct:
+				consume();
+				classSpecifier = new ClassSpecifier(ClassSpecifier.t_struct);
+				break;
 			case Token.t_union:
 				consume();
+				classSpecifier = new ClassSpecifier(ClassSpecifier.t_union);
 				break;
 			default:
 				throw backtrack;
 		}
-		
-		ClassSpecifier classSpecifier = new ClassSpecifier();
-		
-		// Right now, just handle the case where the class name is
-		// being declared
+
+		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
-			currRegion.addDeclaration(consume().getImage(), classSpecifier);
-		} // else it's an anonymous class
+			// TO DO: handles nested names and template ids
+			classSpecifier.setName(consume().getImage());
+		}
+		
+		// base clause
+		if (LT(1) == Token.tCOLON) {
+			consume();
+			
+			BaseSpecifier baseSpecifier = new BaseSpecifier(classSpecifier);
+			
+			baseSpecifierLoop:
+			for (;;) {
+				switch (LT(1)) {
+					case Token.t_virtual:
+						consume();
+						baseSpecifier.setVirtual(true);
+						break;
+					case Token.t_public:
+						consume();
+						baseSpecifier.setAccess(BaseSpecifier.t_public);
+						break;
+					case Token.t_protected:
+						consume();
+						baseSpecifier.setAccess(BaseSpecifier.t_protected);
+						break;
+					case Token.t_private:
+						consume();
+						baseSpecifier.setAccess(BaseSpecifier.t_private);
+						break;
+					case Token.tCOLON:
+					case Token.tIDENTIFIER:
+						if (baseSpecifier.getName() != null) {
+							// already have a name
+							break baseSpecifierLoop;
+						}
+						// TO DO: handle nested names and template ids
+						baseSpecifier.setName(consume().getImage());
+						break;
+					case Token.tCOMMA:
+						baseSpecifier = new BaseSpecifier(classSpecifier);
+						continue baseSpecifierLoop;
+					default:
+						break baseSpecifierLoop;
+				}
+			}
+		}
 		
 		// If we don't get a "{", assume elaborated type
 		if (LT(1) == Token.tLBRACE) {

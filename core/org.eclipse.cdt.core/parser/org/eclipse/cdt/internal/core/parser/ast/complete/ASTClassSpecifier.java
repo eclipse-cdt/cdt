@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -234,26 +235,29 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     	declarations = new ArrayList(0);
 	}
     
-    private List unresolvedCrossReferences = new ArrayList();
+    private List unresolvedCrossReferences = Collections.EMPTY_LIST;
     private boolean processingUnresolvedReferences = false;
     public void addUnresolvedReference( UnresolvedReferenceDuple duple)
 	{
     	//avoid a ConcurrentModificationException by not adding more references when we are 
     	//in the middle of processing them
-    	if( !processingUnresolvedReferences )
+    	if( !processingUnresolvedReferences ){
+    	    if( unresolvedCrossReferences == Collections.EMPTY_LIST )
+    	        unresolvedCrossReferences = new ArrayList();
     		unresolvedCrossReferences.add( duple );
+    	}
     }
     
-    public Iterator getUnresolvedReferences()
+    public List getUnresolvedReferences()
 	{
-    	return unresolvedCrossReferences.iterator();
+    	return unresolvedCrossReferences;
     }
     
     public void setProcessingUnresolvedReferences( boolean processing ){
     	processingUnresolvedReferences = processing;
     }
     
-    private List resolvedCrossReferences = new ArrayList();
+    private List resolvedCrossReferences = Collections.EMPTY_LIST;
 	/**
 	 * @param references2
 	 */
@@ -263,6 +267,8 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 			for( int i = 0; i < references.size(); ++i )
 			{
 				IASTReference r = (IASTReference)references.get(i);
+				if( resolvedCrossReferences == Collections.EMPTY_LIST )
+				    resolvedCrossReferences = new ArrayList( references.size() );
 				resolvedCrossReferences.add( r );	
 			}
 		}

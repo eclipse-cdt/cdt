@@ -10,8 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -74,7 +74,7 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
 
         factory.pushTemplate( template );
         
-        templateParameters = ( parameters != null ) ? parameters : new LinkedList();
+        templateParameters = ( parameters != null ) ? parameters : Collections.EMPTY_LIST;
         ownerScope = scope;
         fn = filename;
     }

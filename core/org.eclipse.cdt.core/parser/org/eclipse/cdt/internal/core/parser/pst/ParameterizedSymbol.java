@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
@@ -222,12 +221,11 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			for( ITypeInfo nfo = info; nfo != null; nfo = fInfo ){
 				//an array declaration is adjusted to become a pointer declaration
 				//only the second and subsequent array dimensions are significant in parameter types
-				ListIterator ptrs = nfo.getPtrOperators().listIterator(); 
-				if( ptrs.hasNext() ){
-					ITypeInfo.PtrOp op = (ITypeInfo.PtrOp) ptrs.next();
+				List ptrs = nfo.getPtrOperators(); 
+				if( ptrs.size() > 0 ){
+					ITypeInfo.PtrOp op = (ITypeInfo.PtrOp) ptrs.get(0);
 					if( op.getType() == ITypeInfo.PtrOp.t_array ){
-						ptrs.remove();
-						ptrs.add( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer, op.isConst(), op.isVolatile() ) );
+						ptrs.set( 0, new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_pointer, op.isConst(), op.isVolatile() ) );
 					}
 				}
 				

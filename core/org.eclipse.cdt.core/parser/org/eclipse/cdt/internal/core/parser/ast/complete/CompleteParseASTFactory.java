@@ -14,10 +14,8 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -166,15 +164,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			cache.returnReference( reference );
 			return;
 		}
-		Iterator i = references.iterator();
-		while (i.hasNext()){
-			IASTReference ref = (IASTReference)i.next();
+		int size = references.size();
+		for( int i = 0; i < size; i++ ){
+			IASTReference ref = (IASTReference)references.get(i);
 			if (ref != null){
 				if( (CharArrayUtils.equals( ref.getNameCharArray(), reference.getNameCharArray()))
 				&& (ref.getOffset() == reference.getOffset())
 				){
 					cache.returnReference( ref );
-					i.remove();
+					references.remove(i--);
+					size--;
 					break; 
 				}
 			}
@@ -186,16 +185,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( templateArgs == null )
 			return;
 		
-		Iterator i = templateArgs.iterator();
-		while( i.hasNext() ){
-			ASTExpression exp = (ASTExpression) i.next();
-			Iterator j = null;
+		int numArgs = templateArgs.size();
+		for( int i = 0; i < numArgs; i++ ){
+			ASTExpression exp = (ASTExpression) templateArgs.get(i);
+			List refs = null;
 			if( exp.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPEID_TYPEID )
-				j = ((ASTTypeId) exp.getTypeId()).getReferences().iterator();
+				refs = ((ASTTypeId) exp.getTypeId()).getReferences();
 			else
-				j = exp.getReferences().iterator();
-			while( j.hasNext() ){
-				IASTReference r = (IASTReference) j.next();
+				refs = exp.getReferences();
+			int numRefs = refs.size();
+			for( int j = 0; j < numRefs; j++ ){
+				IASTReference r = (IASTReference) refs.get(j);
 				addReference( references, cache.getReference(r.getOffset(), r.getReferencedElement()));
 			}
 		}
@@ -205,9 +205,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Parameters are list of TypeInfos
 	 */
 	protected boolean validParameterList(List parameters){
-		Iterator i = parameters.iterator();
-		while (i.hasNext()){
-			ITypeInfo info = (ITypeInfo)i.next();
+		int size = parameters.size();
+		for( int i = 0; i < size; i++ ){
+			ITypeInfo info = (ITypeInfo)parameters.get( i );
 			if (info != null){
 				if((info.getType() == ITypeInfo.t_type) 
 					&& (info.getTypeSymbol() == null))
@@ -231,19 +231,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				if(validParameterList(parameters))
 					if(type == ITypeInfo.t_constructor){
 						IDerivableContainerSymbol startingDerivableScope = (IDerivableContainerSymbol) startingScope;
-						result = startingDerivableScope.lookupConstructor( new LinkedList(parameters));
+						result = startingDerivableScope.lookupConstructor(parameters);
 					}
 					else {
 						if( arguments != null )
-							result = startingScope.lookupFunctionTemplateId( name, new LinkedList( parameters), new LinkedList( arguments ), ( lookupType == LookupType.FORDEFINITION ) );
+							result = startingScope.lookupFunctionTemplateId( name, parameters, arguments, ( lookupType == LookupType.FORDEFINITION ) );
 						else if( lookupType == LookupType.QUALIFIED )
-							result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
+							result = startingScope.qualifiedFunctionLookup(name, parameters);
 						else if( lookupType == LookupType.UNQUALIFIED || lookupType == LookupType.FORPARENTSCOPE)
-							result = startingScope.unqualifiedFunctionLookup( name, new LinkedList( parameters ) );
+							result = startingScope.unqualifiedFunctionLookup( name, parameters );
 						else if( lookupType == LookupType.FORDEFINITION )
-							result = startingScope.lookupMethodForDefinition( name, new LinkedList( parameters ) );
+							result = startingScope.lookupMethodForDefinition( name, parameters );
 						else if( lookupType == LookupType.FORFRIENDSHIP ){
-							result = ((IDerivableContainerSymbol)startingScope).lookupFunctionForFriendship( name, new LinkedList( parameters) );
+							result = ((IDerivableContainerSymbol)startingScope).lookupFunctionForFriendship( name, parameters );
 						}
 					}
 				else
@@ -312,7 +312,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, ITypeInfo.eType type, List parameters, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
 	{
 		ISymbol result = null;
-		IToken firstSymbol = null;
 		if( name == null && throwOnError ) handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
 		else if( name == null ) return null;
 		
@@ -366,15 +365,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				}
                 break;
 			default:
-				Iterator iter = name.iterator();
-				firstSymbol = name.getFirstToken();
+			    IToken t = null;
+				IToken last = name.getLastToken();
 				result = startingScope;
-				if( firstSymbol.getType() == IToken.tCOLONCOLON )
+				if( name.getFirstToken().getType() == IToken.tCOLONCOLON )
 					result = pst.getCompilationUnit();
 				
-				while( iter.hasNext() )
+				for( ; ; )
 				{
-					IToken t = (IToken)iter.next();
+				    if( t == last)
+				        break;
+					t = ( t != null ) ? t.getNext() : name.getFirstToken();
 					if( t.getType() == IToken.tCOLONCOLON ){
 						idx++;
 						continue;
@@ -387,8 +388,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					int offset = t.getOffset();
 					
 					if( templateArgLists != null && templateArgLists[ idx ] != null ){
-						if( iter.hasNext() && t.getNext().getType() == IToken.tLT )
-							t = TokenFactory.consumeTemplateIdArguments( (IToken) iter.next(), iter );
+						if( t != last && t.getNext().getType() == IToken.tLT )
+							t = TokenFactory.consumeTemplateIdArguments( t.getNext(), last );
 					}
 					
 					try
@@ -397,7 +398,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 							result = ((IDeferredTemplateInstance)result).getTemplate().getTemplatedSymbol();
 						}
 						args = ( templateArgLists != null ) ? getTemplateArgList( templateArgLists[ idx ] ) : null;
-						if( t == name.getLastToken() ) 
+						if( t == last ) 
 							result = lookupElement((IContainerSymbol)result, image, type, parameters, args, ( lookup == LookupType.FORDEFINITION ) ? lookup : LookupType.QUALIFIED );
 						else
 							if( templateArgLists != null && templateArgLists[idx] != null )
@@ -440,50 +441,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return result;
 	}
 
-	protected IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
-	    IToken token = name;
-	    if( token.getNext().getType() == IToken.tLT )
-	    {
-	    	token = (IToken) iter.next();
-	    	Stack scopes = new Stack();
-	        scopes.push(new Integer(IToken.tLT));
-	        
-	        while (!scopes.empty())
-	        {
-	        	int top;
-	        	
-	        	token = (IToken) iter.next();
-	        	switch( token.getType() ){
-	        		case IToken.tGT:
-	        			if (((Integer)scopes.peek()).intValue() == IToken.tLT) {
-							scopes.pop();
-						}
-	                    break;
-	        		case IToken.tRBRACKET :
-						do {
-							top = ((Integer)scopes.pop()).intValue();
-						} while (!scopes.empty() && (top == IToken.tGT || top == IToken.tLT));
-						//if (top != IToken.tLBRACKET) throw backtrack;
-						break;
-	        		case IToken.tRPAREN :
-						do {
-							top = ((Integer)scopes.pop()).intValue();
-						} while (!scopes.empty() && (top == IToken.tGT || top == IToken.tLT));
-						//if (top != IToken.tLPAREN) throw backtrack;
-							
-						break;
-	                case IToken.tLT :
-					case IToken.tLBRACKET:
-					case IToken.tLPAREN:
-						scopes.push(new Integer(token.getType()));
-	                    break;
-					
-	        	}
-	        }
-	    }
-	   
-	    return token;
-	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDirective(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple, int, int)
      */
@@ -524,11 +481,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 	protected IContainerSymbol getScopeToSearchUpon(
         IASTScope currentScope,
-        IToken firstToken, Iterator iterator ) 
+        IToken firstToken ) 
     {
 		if( firstToken.getType() == IToken.tCOLONCOLON )  
 		{ 
-			iterator.next();
 			return pst.getCompilationUnit();
 		}
 		return scopeToSymbol(currentScope);
@@ -591,9 +547,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
 			if( endResult != null )
 			{
-				Iterator i = endResult.getReferencedSymbols().iterator();
-				while( i.hasNext() )
-					addReference( references, createReference( (ISymbol) i.next(), name.getLastToken().getCharImage(), name.getLastToken().getOffset() ) );
+				List refs = endResult.getReferencedSymbols();
+				int numRefs = refs.size();
+				for( int i = 0; i < numRefs; i++ )
+					addReference( references, createReference( (ISymbol) refs.get(i), name.getLastToken().getCharImage(), name.getLastToken().getOffset() ) );
 
 			}
 		ASTUsingDeclaration using = new ASTUsingDeclaration( scope, name.getLastToken().getCharImage(),
@@ -841,13 +798,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( args == null )
 			return null;
 		
-		List list = new LinkedList();
-		Iterator iter = args.iterator();
+		int size = args.size();
+		List list = new ArrayList( size );
 		
 		ASTExpression exp;
-		while( iter.hasNext() )
+		for( int i = 0; i < size; i++ )
 		{
-			exp = (ASTExpression) iter.next();
+			exp = (ASTExpression) args.get( i );
 			
 			ITypeInfo info = exp.getResultType().getResult();
 			
@@ -934,16 +891,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
     	setFilename( parentClassName );
     	IDerivableContainerSymbol classSymbol = (IDerivableContainerSymbol)scopeToSymbol( astClassSpec);
-        Iterator iterator = null; 
         List references = new ArrayList(); 
         
-        if( parentClassName != null )
-        {
-        	iterator = parentClassName.iterator();
-        	if( !iterator.hasNext() )
-               	handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
-        }
-        else
+        if( parentClassName == null || parentClassName.getFirstToken() == null )
            	handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
         	 
         //Its possible that the parent is not an IContainerSymbol if its a template parameter or some kinds of template instances
@@ -1186,15 +1136,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( symbol == null || !( symbol instanceof IDerivableContainerSymbol ) )
 			return;
 		
-		Iterator i = descriptor.getNewInitializerExpressions();
+		List initializers = ((ASTNewDescriptor)descriptor).getNewInitializerExpressionsList();
 		
-		ASTExpression exp = ( i.hasNext() )? (ASTExpression) i.next() : null;
+		ASTExpression exp = ( initializers.size() > 0 ) ? (ASTExpression) initializers.get(0) : null;
 		
 		ITokenDuple duple = ((ASTTypeId)typeId).getTokenDuple().getLastSegment();
 		
 		if( createConstructorReference( symbol, exp, duple, references ) ){
 			//if we have a constructor reference, get rid of the class reference.
-			i = ((ASTTypeId)typeId).getReferences().iterator();
+			Iterator i = ((ASTTypeId)typeId).getReferences().iterator();
 			while( i.hasNext() )
 			{
 				ReferenceCache.ASTReference ref = (ReferenceCache.ASTReference) i.next();
@@ -1219,7 +1169,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return false;
 		}
 		
-		List parameters = new LinkedList();
+		List parameters = new ArrayList();
 		while( expressionList != null ){
 			parameters.add( expressionList.getResultType().getResult() );
 			expressionList = (ASTExpression) expressionList.getRHSExpression();
@@ -1942,9 +1892,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	List newTypeIds = new ArrayList(); 
         if( typeIds != null )
         {
-        	Iterator iter =typeIds.iterator();
-        	while( iter.hasNext() )
-        		newTypeIds.add( ((IASTTypeId)iter.next()).toString() );
+            int size = typeIds.size();
+        	for( int i = 0; i < size; i++ )
+        		newTypeIds.add( ((IASTTypeId)typeIds.get(i)).toString() );
         	
         }
         return new ASTExceptionSpecification( newTypeIds );
@@ -2041,10 +1991,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
 		{
 			// lookup the duple
-			Iterator i = typeName.iterator();
-			IToken first = typeName.getFirstToken();
-			
-			ISymbol typeSymbol = getScopeToSearchUpon( scope, first, i );
+			IToken last = typeName.getLastToken();
+			IToken current = null;
+			ISymbol typeSymbol = getScopeToSearchUpon( scope, typeName.getFirstToken() );
 			
 			if( isGlobal )
 				typeSymbol = typeSymbol.getSymbolTable().getCompilationUnit();
@@ -2052,9 +2001,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			List [] argLists = typeName.getTemplateIdArgLists();
 			int idx = 0;
 			
-			while( i.hasNext() )
+			for( ; ; )
 			{
-				IToken current = (IToken)i.next(); 
+			    if( current == last )
+			        break;
+				current = ( current != null ) ? current.getNext() : typeName.getFirstToken(); 
 				
 				if( current.getType() == IToken.tCOLONCOLON ){
 					idx++;
@@ -2065,8 +2016,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				int offset = current.getOffset();
 				
 				if( argLists != null && argLists[ idx ] != null ){
-					if( i.hasNext() && current.getNext().getType() == IToken.tLT )
-						current = TokenFactory.consumeTemplateIdArguments( (IToken) i.next(), i );
+					if( current != last && current.getNext().getType() == IToken.tLT )
+						current = TokenFactory.consumeTemplateIdArguments( current.getNext(), last );
 				}
 				
 				if( typeSymbol instanceof IDeferredTemplateInstance ){
@@ -2076,7 +2027,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 {
 					if( argLists != null && argLists[ idx ] != null )
 						typeSymbol = ((IContainerSymbol)typeSymbol).lookupTemplateId( image, getTemplateArgList( argLists[idx] ) );
-					else if( current != typeName.getLastToken() )
+					else if( current != last )
                 		typeSymbol = ((IContainerSymbol)typeSymbol).lookupNestedNameSpecifier( image );
                     else
                     	typeSymbol = ((IContainerSymbol)typeSymbol).lookup( image );
@@ -2205,12 +2156,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
 		boolean previouslyDeclared = false;
 
-		List functionParameters = new LinkedList();
+		int size = parameters.size();
+		List functionParameters = new ArrayList( size );
 		// the lookup requires a list of type infos
 		// instead of a list of IASTParameterDeclaration
-		Iterator p = parameters.iterator();
-		while (p.hasNext()){
-			ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+		for( int i = 0; i < size; i++ ){
+			ASTParameterDeclaration param = (ASTParameterDeclaration)parameters.get(i);
 			if( param.getSymbol() == null )
 				handleProblem( IProblem.SEMANTICS_RELATED, param.getNameCharArray(), param.getNameOffset(), param.getEndingOffset(), param.getStartingLine(), true );
 			functionParameters.add(param.getSymbol().getTypeInfo());
@@ -2393,7 +2344,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    paramSymbol.getTypeInfo().setBit( absDecl.isConst(), ITypeInfo.isConst );
 	    paramSymbol.getTypeInfo().setBit( absDecl.isVolatile(), ITypeInfo.isVolatile );
 	    
-	    setPointerOperators( paramSymbol, absDecl.getPointerOperators(), absDecl.getArrayModifiers() );
+	    List ptrs = null, arrayMods = null;
+	    if( absDecl instanceof ASTParameterDeclaration ){
+	        ptrs = ((ASTParameterDeclaration)absDecl).getPointerOperatorsList(); 
+	        arrayMods = ((ASTParameterDeclaration)absDecl).getArrayModifiersList();
+	    } else {
+	        ptrs = ((ASTAbstractDeclaration)absDecl).getPointerOperatorsList(); 
+	        arrayMods = ((ASTAbstractDeclaration)absDecl).getArrayModifiersList();
+	    }
+	    setPointerOperators( paramSymbol, ptrs, arrayMods );
 	
 	    if( isParameter)
 	    	symbol.addParameter( paramSymbol );
@@ -2415,11 +2374,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      * @param paramSymbol
      * @param iterator
      */
-    protected void setPointerOperators(ISymbol symbol, Iterator pointerOpsIterator, Iterator arrayModsIterator) throws ASTSemanticException
+    protected void setPointerOperators(ISymbol symbol, List pointerOps, List arrayMods) throws ASTSemanticException
     {
-        while( pointerOpsIterator.hasNext() )
+        int ptrOpsSize = pointerOps.size();
+        for( int i = 0; i < ptrOpsSize; i++)
         {
-        	ASTPointerOperator pointerOperator = (ASTPointerOperator)pointerOpsIterator.next();
+        	ASTPointerOperator pointerOperator = (ASTPointerOperator)pointerOps.get(i);
         	if( pointerOperator == ASTPointerOperator.REFERENCE )
         		symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_reference )); 
         	else if( pointerOperator == ASTPointerOperator.POINTER )
@@ -2433,10 +2393,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 //			else
 //				assert false : pointerOperator;
         }
-        
-        while( arrayModsIterator.hasNext() )
+        int arrayModsSize = arrayMods.size();        
+        for( int i = 0; i < arrayModsSize; i++)
         {
-        	arrayModsIterator.next();
         	symbol.addPtrOperator( new ITypeInfo.PtrOp( ITypeInfo.PtrOp.t_array )); 
         }
     }
@@ -2559,12 +2518,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		if( isFunctionDefinition || isFriend )
 		{
-			List functionParameters = new LinkedList();
+		    int size = parameters.size();
+			List functionParameters = new ArrayList( size );
 			// the lookup requires a list of type infos
 			// instead of a list of IASTParameterDeclaration
-			Iterator p = parameters.iterator();
-			while (p.hasNext()){
-				ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+			for( int i = 0; i < size; i++ ){
+				ASTParameterDeclaration param = (ASTParameterDeclaration)parameters.get(i);
 				if( param.getSymbol() == null )
 					handleProblem( IProblem.SEMANTICS_RELATED, param.getNameCharArray(), param.getNameOffset(), param.getEndingOffset(), param.getNameLineNumber(), true );
 				functionParameters.add(param.getSymbol().getTypeInfo());
@@ -2645,10 +2604,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	{
 		if( constructorChain != null )
 		{
-			Iterator initializers = constructorChain.iterator();
-			while( initializers.hasNext())
+			int size = constructorChain.size();
+			for( int i = 0; i < size; i++ )
 			{
-				IASTConstructorMemberInitializer initializer = (IASTConstructorMemberInitializer)initializers.next();
+				IASTConstructorMemberInitializer initializer = (IASTConstructorMemberInitializer)constructorChain.get(i);
 				if( initializer.getNameCharArray().length > 0 && 
 					initializer instanceof ASTConstructorMemberInitializer && 
 					((ASTConstructorMemberInitializer)initializer).requiresNameResolution() ) 
@@ -2660,8 +2619,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				}
 			}
 		}
-		
-		
 	}
 
 	/**
@@ -2749,7 +2706,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int numPtrOps  = ((ASTAbstractDeclaration)abstractDeclaration).getNumArrayModifiers() +
         				 ((ASTAbstractDeclaration)abstractDeclaration).getNumPointerOperators(); 
         newSymbol.preparePtrOperatros( numPtrOps );
-		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
+		setPointerOperators( newSymbol, ((ASTAbstractDeclaration)abstractDeclaration).getPointerOperatorsList(), 
+		        						((ASTAbstractDeclaration)abstractDeclaration).getArrayModifiersList() );
 		
 		newSymbol.setIsForwardDeclaration( isStatic || isExtern );
 		boolean previouslyDeclared = false;
@@ -2807,10 +2765,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				return;
 			
 			ITypeInfo currentTypeInfo = TypeInfoProvider.newTypeInfo( currentSymbol.getTypeInfo() ); 
-			Iterator designators = clause.getDesignators();
-			while( designators.hasNext() )
+			List designators = clause.getDesignatorList();
+			int size = designators.size();
+			for( int i = 0; i < size; i++ )
 			{
-				ASTDesignator designator = (ASTDesignator)designators.next();
+				ASTDesignator designator = (ASTDesignator)designators.get(i);
 				if( designator.getKind() == IASTDesignator.DesignatorKind.FIELD )
 				{
 					ISymbol lookup = null;
@@ -2854,9 +2813,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         if( clause.getKind() == IASTInitializerClause.Kind.DESIGNATED_INITIALIZER_LIST || 
         	clause.getKind() == IASTInitializerClause.Kind.INITIALIZER_LIST )
         {	
-        	Iterator subInitializers = clause.getInitializers();
-        	while( subInitializers.hasNext() )
-        		addDesignatorReferences( (ASTInitializerClause)subInitializers.next() );
+        	List subInitializers = clause.getInitializersList();
+        	int size = subInitializers.size();
+        	for( int i = 0; i < size; i++ )
+        		addDesignatorReferences( (ASTInitializerClause)subInitializers.get(i) );
         }
     }
 
@@ -2984,7 +2944,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			isRegister,
 			isStatic,
 			newSymbol);
-		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
+		setPointerOperators( newSymbol, ((ASTAbstractDeclaration)abstractDeclaration).getPointerOperatorsList(), 
+		        						((ASTAbstractDeclaration)abstractDeclaration).getArrayModifiersList() );
 		
 		newSymbol.setIsForwardDeclaration(isStatic);
 		boolean previouslyDeclared = false;
@@ -3041,9 +3002,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		// the lookup requires a list of type infos
 		// instead of a list of IASTParameterDeclaration
-		Iterator iter = templateParameters.iterator();
-		while (iter.hasNext()){
-			ASTTemplateParameter param = (ASTTemplateParameter)iter.next();
+		int size = templateParameters.size();
+		for( int i = 0; i < size; i++ ){
+			ASTTemplateParameter param = (ASTTemplateParameter)templateParameters.get(i);
 			try {
 				template.addTemplateParameter( param.getSymbol() );
 			} catch (ParserSymbolTableException e) {
@@ -3086,9 +3047,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     		provider.setType( ITypeInfo.t_templateParameter );
     		provider.setTemplateParameterType( ITypeInfo.t_template );
     		template.setTypeInfo( provider.completeConstruction() );
-    		Iterator iter = parms.iterator();
-    		while (iter.hasNext()){
-    			ASTTemplateParameter param = (ASTTemplateParameter)iter.next();
+    		int size = parms.size();
+    		for( int i = 0; i < size; i++ ){
+    			ASTTemplateParameter param = (ASTTemplateParameter)parms.get(i);
     			try {
     				template.addTemplateParameter( param.getSymbol() );
     			} catch (ParserSymbolTableException e) {
@@ -3169,7 +3130,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( typeSymbol == null )
 			handleProblem( scope, IProblem.SEMANTICS_RELATED, name, nameOffset, nameEndOffset, nameLine, true );
 		
-		setPointerOperators( typeSymbol, mapping.getPointerOperators(), mapping.getArrayModifiers() );
+		setPointerOperators( typeSymbol, ((ASTAbstractDeclaration)mapping).getPointerOperatorsList(), 
+		        						 ((ASTAbstractDeclaration)mapping).getArrayModifiersList() );
 		
 		if( typeSymbol.getType() != ITypeInfo.t_type ){
 			ISymbol newSymbol = pst.newSymbol( name, ITypeInfo.t_type);
@@ -3551,7 +3513,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
             typeId.addReferences( refs, cache );
 		}		
 		
-		setPointerOperators( result, id.getPointerOperators(), id.getArrayModifiers() );
+		setPointerOperators( result, ((ASTTypeId)id).getPointerOperatorsList(), ((ASTTypeId)id).getArrayModifiersList() );
 		return result;
 	}
 
@@ -3581,11 +3543,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         
         astImplementation.setProcessingUnresolvedReferences( true );
-        Iterator i = astImplementation.getUnresolvedReferences();
+        List unresolved = astImplementation.getUnresolvedReferences();
         List references = new ArrayList();
-        while( i.hasNext() )
+        int size = unresolved.size();
+        for( int i = 0; i < size; i++ )
         {	
-        	UnresolvedReferenceDuple duple = (UnresolvedReferenceDuple) i.next();
+        	UnresolvedReferenceDuple duple = (UnresolvedReferenceDuple) unresolved.get(i);
         	
         	try
 			{
@@ -3650,11 +3613,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						return null;
 					}
 					
-					List parameters = new LinkedList();
-					Iterator newInitializerExpressions = expression.getNewExpressionDescriptor().getNewInitializerExpressions();
-					if( newInitializerExpressions.hasNext() )
+					List parameters = new ArrayList();
+					ASTNewDescriptor newDescriptor = (ASTNewDescriptor) expression.getNewExpressionDescriptor();
+					List newInitializerExpressions = newDescriptor.getNewInitializerExpressionsList();
+					int size = newInitializerExpressions.size();
+					for( int i = 0; i < size; i++ )
 					{
-						ASTExpression expressionList = (ASTExpression) newInitializerExpressions.next();
+						ASTExpression expressionList = (ASTExpression) newInitializerExpressions.get(i);
 						while( expressionList != null ){
 							parameters.add( expressionList.getResultType().getResult() );
 							expressionList = (ASTExpression) expressionList.getRHSExpression();

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.token;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -82,12 +81,12 @@ public class TokenFactory {
 		return new TemplateTokenDuple( firstDuple, secondDuple );
 	}
 	
-	public static IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
+	public static IToken consumeTemplateIdArguments( IToken name, IToken last ){
 	    IToken token = name;
 	    
 	    if( token.getType() == IToken.tLT )
 	    {
-	    	if( ! iter.hasNext() )
+	    	if( token == last )
 	    		return token;
 	    		    	
 	    	BraceCounter scopes = BraceCounter.getCounter();
@@ -95,11 +94,11 @@ public class TokenFactory {
 			{		    	
 		        scopes.addValue( IToken.tLT );
 		        
-		        while (!scopes.isEmpty() && iter.hasNext() )
+		        while (!scopes.isEmpty() && token != last )
 		        {
 		        	int top;
 		        	
-		        	token = (IToken) iter.next();
+		        	token = token.getNext();
 		        	switch( token.getType() ){
 		        		case IToken.tGT:
 		        			if( scopes.getLast() == IToken.tLT ) {

@@ -101,12 +101,18 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     {
         return abstractDeclaration.getPointerOperators();
     }
+    public List getPointerOperatorsList(){
+        return abstractDeclaration.getPointerOperatorsList();
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getArrayModifiers()
      */
     public Iterator getArrayModifiers()
     {
         return abstractDeclaration.getArrayModifiers();
+    }
+    public List getArrayModifiersList(){
+        return abstractDeclaration.getArrayModifiersList();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getParameters()

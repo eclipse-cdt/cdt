@@ -303,7 +303,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		char [] fn = start.getFilename();
 		start = null;
 		IASTExpression expression = null;
-		List list = new LinkedList();
+		List list = new ArrayList();
 
 		boolean completedArg = false;
 		boolean failed = false;

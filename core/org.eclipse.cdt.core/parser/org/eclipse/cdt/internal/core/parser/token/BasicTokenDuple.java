@@ -66,15 +66,15 @@ public class BasicTokenDuple implements ITokenDuple {
 	
 	public ITokenDuple getLastSegment()
 	{
-		Iterator iter = iterator();
-		
 		IToken first = null, last = null, token = null;
-		while( iter.hasNext() ){
-			token = (IToken) iter.next();
+		for( ; ; ){
+		    if( token == getLastToken() )
+		        break;
+			token = ( token != null ) ? token.getNext() : getFirstToken();
 			if( first == null )
 				first = token;
 			if( token.getType() == IToken.tLT )
-				token = TokenFactory.consumeTemplateIdArguments( token, iter );
+				token = TokenFactory.consumeTemplateIdArguments( token, getLastToken() );
 			else if( token.getType() == IToken.tCOLONCOLON ){
 				first = null;
 				continue;
@@ -95,8 +95,7 @@ public class BasicTokenDuple implements ITokenDuple {
 	
 	
 	public ITokenDuple getLeadingSegments(){
-		Iterator iter = iterator();
-		if( !iter.hasNext() )
+		if( getFirstToken() == null )
 			return null;
 		
 		int num = getSegmentCount();
@@ -107,12 +106,14 @@ public class BasicTokenDuple implements ITokenDuple {
 		IToken first = null, last = null;
 		IToken previous = null, token = null;
 
-		while( iter.hasNext() ){
-			token = (IToken) iter.next();
+		for( ; ; ){
+		    if( token == getLastToken() )
+		        break;
+			token = ( token != null ) ? token.getNext() : getFirstToken();
 			if( first == null )
 				first = token;
 			if( token.getType() == IToken.tLT )
-				token = TokenFactory.consumeTemplateIdArguments( token, iter );
+				token = TokenFactory.consumeTemplateIdArguments( token, getLastToken() );
 			else if( token.getType() == IToken.tCOLONCOLON ){
 				last = previous;
 				continue;
@@ -428,7 +429,7 @@ public class BasicTokenDuple implements ITokenDuple {
 		    IToken first = i;
 		    IToken temp = null;
 		    while( i != last ){
-		        temp = (IToken) i.next;
+		        temp = i.next;
 		        if( temp.getType() != IToken.tLT )
 		            i = (AbstractToken) temp;
 		        else
@@ -511,13 +512,15 @@ public class BasicTokenDuple implements ITokenDuple {
 	 */
 	protected int calculateSegmentCount() {
 		int n = 1;
-		Iterator iter = iterator();
 		
 		IToken token = null;
-		while( iter.hasNext() ){
-			token = (IToken) iter.next();
+		IToken last = getLastToken();
+		for( ;; ){
+		    if( token == last )
+		        break;
+			token = ( token != null ) ? token.getNext() : getFirstToken();
 			if( token.getType() == IToken.tLT )
-				token = TokenFactory.consumeTemplateIdArguments( token, iter );
+				token = TokenFactory.consumeTemplateIdArguments( token, last );
 			if( token.getType() == IToken.tCOLONCOLON  ){
 				n++;
 				continue;

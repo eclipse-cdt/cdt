@@ -137,13 +137,15 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     {
         if( subExpression != null && subExpression.getReferences() != null )
         {
-        	Iterator subExp = subExpression.getReferences().iterator();
-        	while( subExp.hasNext() )
+        	List refs = subExpression.getReferences();
+        	int size = refs.size();
+        	for( int i = 0; i < size; i++ )
         	{
-        		IASTReference aReference = (IASTReference)subExp.next();
+        		IASTReference aReference = (IASTReference)refs.get(i);
         		if( aReference != null && references.contains( aReference ) )
         		{
-        			subExp.remove();
+        		    refs.remove(i--);
+        		    size--;
         			manager.returnReference( aReference );
         		}
         	}   		

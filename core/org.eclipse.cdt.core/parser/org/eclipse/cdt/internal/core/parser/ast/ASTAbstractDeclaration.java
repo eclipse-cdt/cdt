@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,6 +72,10 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     	if( pointerOperators == null ) return EmptyIterator.EMPTY_ITERATOR;
         return pointerOperators.iterator();
     }
+    public List getPointerOperatorsList(){
+        if( pointerOperators == null ) return Collections.EMPTY_LIST;
+        return pointerOperators;
+    }
     
     public int getNumPointerOperators(){
     	if( pointerOperators == null )
@@ -85,6 +90,11 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     {
 		if( arrayModifiers == null ) return EmptyIterator.EMPTY_ITERATOR;
         return arrayModifiers.iterator();
+    }
+    
+    public List getArrayModifiersList(){
+        if( arrayModifiers == null ) return Collections.EMPTY_LIST;
+        return arrayModifiers;
     }
     
     public int getNumArrayModifiers(){

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.token;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -50,15 +49,15 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 	}
 	public ITokenDuple getLastSegment()
 	{
-		Iterator iter = iterator();
-		
 		IToken first = null, last = null, token = null;
-		while( iter.hasNext() ){
-			token = (IToken) iter.next();
+		for( ; ; ){
+		    if( token == getLastToken() )
+		        break;
+			token = ( token != null ) ? token.getNext() : getFirstToken();
 			if( first == null )
 				first = token;
 			if( token.getType() == IToken.tLT )
-				token = TokenFactory.consumeTemplateIdArguments( token, iter );
+				token = TokenFactory.consumeTemplateIdArguments( token, getLastToken() );
 			else if( token.getType() == IToken.tCOLONCOLON ){
 				first = null;
 				continue;

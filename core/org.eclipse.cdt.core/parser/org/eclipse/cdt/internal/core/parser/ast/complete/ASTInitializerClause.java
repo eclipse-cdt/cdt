@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +66,9 @@ public class ASTInitializerClause implements IASTInitializerClause
 		return initializerClauses.iterator();
 	}
 
+	public List getInitializersList(){
+	    return ( initializerClauses != null ) ? initializerClauses : Collections.EMPTY_LIST;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getAssigmentExpression()
 	 */
@@ -107,6 +111,10 @@ public class ASTInitializerClause implements IASTInitializerClause
 	public Iterator getDesignators()
 	{
 		return designators.iterator();
+	}
+	
+	public List getDesignatorList(){
+	    return designators;
 	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#setOwnerDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)

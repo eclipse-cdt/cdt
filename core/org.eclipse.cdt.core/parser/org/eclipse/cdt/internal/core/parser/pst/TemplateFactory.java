@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -363,9 +362,9 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
 	public ISymbol elaboratedLookup(ITypeInfo.eType type, char[] name) throws ParserSymbolTableException {
-		ListIterator iter = templates.listIterator( templates.size() );
-		while( iter.hasPrevious() ){
-			ITemplateSymbol template = (ITemplateSymbol) iter.previous();
+	    int size = templates.size();
+	    for( int i = size - 1; i >= 0; i-- ){
+			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
 			
 			ISymbol look = template.lookupMemberForDefinition( name );
 			if( look != null && look.isType( type ) ){
@@ -380,9 +379,9 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookup(java.lang.String)
 	 */
 	public ISymbol lookup(char[] name) throws ParserSymbolTableException {
-		ListIterator iter = templates.listIterator( templates.size() );
-		while( iter.hasPrevious() ){
-			ITemplateSymbol template = (ITemplateSymbol) iter.previous();
+	    int size = templates.size();
+	    for( int i = size - 1; i >= 0; i-- ){
+			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
 			
 			ISymbol look = template.lookupMemberForDefinition( name );
 			if( look != null ){

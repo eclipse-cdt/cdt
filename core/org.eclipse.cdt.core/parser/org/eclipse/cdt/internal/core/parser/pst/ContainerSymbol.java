@@ -1025,16 +1025,16 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	}
 	
 	public Iterator getContentsIterator(){
-		return new ContentsIterator( getContents().iterator() );
+		return new ContentsIterator( getContents() );
 	}
 	
 	protected class ContentsIterator implements Iterator {
-		final Iterator internalIterator;
-	
+		final List internalList;
+		private int idx = 0;
 		ObjectSet alreadyReturned = new ObjectSet( 2 );
 		
-		public ContentsIterator( Iterator iter ){
-			internalIterator = iter;
+		public ContentsIterator( List contents ){
+			internalList = contents;
 		}
 		
 		IExtensibleSymbol next = null;
@@ -1042,10 +1042,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			if( next != null ){
 				return true;
 			}
-			if( !internalIterator.hasNext() )
+			if( internalList.size() <= idx )
 				return false;
-			while( internalIterator.hasNext() ){
-				IExtensibleSymbol extensible = (IExtensibleSymbol) internalIterator.next();
+			for( ; idx < internalList.size(); ){
+				IExtensibleSymbol extensible = (IExtensibleSymbol) internalList.get(idx++);
 				if( !alreadyReturned.containsKey( extensible ) ){
 					if( extensible instanceof ISymbol ){
 						ISymbol symbol = (ISymbol) extensible;
@@ -1075,8 +1075,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				return extensible;
 			}
 			
-			while( internalIterator.hasNext() ){
-				extensible = (IExtensibleSymbol) internalIterator.next();
+			for( ; idx < internalList.size(); ){
+				extensible = (IExtensibleSymbol) internalList.get(idx++);
 				if( !alreadyReturned.containsKey( extensible ) ){
 					if( extensible instanceof ISymbol ){
 						ISymbol symbol = (ISymbol) extensible;
@@ -1099,11 +1099,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-		
-		protected void removeSymbol(){
-			internalIterator.remove();
-		}
-		
 	}
 //	static private class AddSymbolCommand extends Command{
 //		AddSymbolCommand( ISymbol newDecl, IContainerSymbol context ){

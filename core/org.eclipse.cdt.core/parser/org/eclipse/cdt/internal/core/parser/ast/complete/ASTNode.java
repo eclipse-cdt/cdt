@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -145,7 +145,7 @@ public class ASTNode implements IASTNode {
 		if( parameterExpression == null )
 			return null;
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		ASTExpression exp = (ASTExpression) parameterExpression;
 		while( exp != null ){
 			params.add( exp.getResultType().getResult() );

@@ -91,12 +91,18 @@ public class ASTTypeId implements IASTTypeId
     {
         return pointerOps.iterator();
     }
+    public List getPointerOperatorsList(){
+        return pointerOps;
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#getArrayModifiers()
      */
     public Iterator getArrayModifiers()
     {
         return arrayModifiers.iterator();
+    }
+    public List getArrayModifiersList(){
+        return arrayModifiers;
     }
     
     public List getReferences()

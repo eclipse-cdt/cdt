@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -35,8 +36,13 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -1072,7 +1078,12 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-//			targetRequestFailed( e.getMessage(), null );
+			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),
+												  ICDebugInternalConstants.STATUS_CODE_ERROR,
+												  "Unable to get stack depth.",
+												  null );
+			status.add( new Status( IStatus.ERROR, status.getPlugin(), status.getCode(), e.getMessage(), null ) );
+			CDebugUtils.error( status, getDebugTarget() );
 		}
 		return depth;
 	}

@@ -1,3 +1,7 @@
+2002-12-13 Mikhail Khodjaiants
+	Display message when 'getStackDepth' is timed out.
+	* CThread.java
+
 2002-12-10 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIVariable.java (setFormat):

@@ -30,6 +30,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -365,7 +366,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 					{
 						try
 						{
-							((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );
+							if ( !sameThread( (IDebugElement)element ) )
+							{
+								((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );
+							}
 						}
 						catch( DebugException e )
 						{
@@ -379,6 +383,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 					{
 						try
 						{
+							if ( !sameThread( (IDebugElement)element ) )
+							{
+								((ISwitchToThread)((IStackFrame)element).getDebugTarget()).setCurrentThread( ((IStackFrame)element).getThread() );
+							}
 							((ISwitchToFrame)((IStackFrame)element).getThread()).switchToFrame( (IStackFrame)element );
 						}
 						catch( DebugException e )
@@ -461,5 +469,21 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 				}
 			}
 		}
+	}
+	
+	private boolean sameThread( IDebugElement element ) throws DebugException
+	{
+		if ( element.getDebugTarget() instanceof ISwitchToThread )
+		{
+			if ( element instanceof IThread )
+			{
+				return ((IThread)element).equals( ((ISwitchToThread)element.getDebugTarget()).getCurrentThread() );
+			}
+			if ( element instanceof IStackFrame )
+			{
+				return ((IStackFrame)element).getThread().equals( ((ISwitchToThread)element.getDebugTarget()).getCurrentThread() );
+			}
+		}
+		return false;
 	}
 }

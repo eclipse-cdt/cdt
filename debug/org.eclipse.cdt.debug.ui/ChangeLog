@@ -1,3 +1,6 @@
+2002-10-14 Mikhail Khodjaiants
+	* CDebugUIPlugin.java: In the 'selectionChanged' method check if the thread of the new frame is current. If not make it current.
+
 2002-10-11 Mikhail Khodjaiants
 	* SwitchToDisassemblyActionDelegate.java: Implementation of the 'Switch to disassembly mode' action.
 	* plugin.properties: Action label and tooltip.

@@ -1,3 +1,8 @@
+2002-10-14 Mikhail Khodjaiants
+	* ISwitchToThread.java: New method to get the current thread.
+	* CDebugTarget.java: Implemented the 'getCurrentThread' method of the 'ISwitchToThread' interface.
+	* CDebugTarget.java: Fix in the 'setCurrentThread' method.
+	
 2002-10-12 Alain Magloire
 
 	* core/cdi/model/ICDIMemoryBlock (supportValueModification):

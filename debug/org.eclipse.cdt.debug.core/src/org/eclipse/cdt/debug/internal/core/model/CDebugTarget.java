@@ -1798,11 +1798,26 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
+			((CThread)thread).setCurrent( true );
 		}
 		catch( CDIException e )
 		{
 			targetRequestFailed( e.getMessage(), null );
 		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.ISwitchToThread#getCurrentThread()
+	 */
+	public IThread getCurrentThread() throws DebugException
+	{
+		IThread[] threads = getThreads();
+		for ( int i = 0; i < threads.length; ++i )
+		{
+			if ( ((CThread)threads[i]).isCurrent() )
+				return threads[i];
+		}
+		return null;
 	}
 
 	protected ISourceLocator getSourceLocator()

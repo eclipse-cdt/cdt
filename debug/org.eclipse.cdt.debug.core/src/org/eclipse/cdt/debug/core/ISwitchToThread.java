@@ -16,5 +16,6 @@ import org.eclipse.debug.core.model.IThread;
  */
 public interface ISwitchToThread
 {
+	IThread getCurrentThread() throws DebugException;	
 	void setCurrentThread( IThread thread ) throws DebugException;	
 }

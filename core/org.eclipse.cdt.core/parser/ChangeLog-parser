@@ -1,4 +1,7 @@
 2004-03-26 Andrew Niefer
+	- handle template template parameters
+
+2004-03-26 Andrew Niefer
 	-report references to symbols used in a template-id.
 
 2004-03-25 Andrew Niefer

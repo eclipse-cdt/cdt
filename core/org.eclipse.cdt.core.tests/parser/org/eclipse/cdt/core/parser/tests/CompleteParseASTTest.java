@@ -1858,4 +1858,43 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertReferenceTask( new Task( T1, 2, false, false ) );
 		assertReferenceTask( new Task( T2, 2, false, false ) );
 	}
+	
+	public void testTemplateTemplateParameter() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( " template< class T > class A {                    ");
+		writer.write( "    int x;                                        ");
+		writer.write( " };                                               ");
+		writer.write( " template < class T > class A < T * > {           ");
+		writer.write( "    long x;                                       ");
+		writer.write( " };                                               ");
+		writer.write( " template< template< class U > class V > class C{ ");
+		writer.write( "    V< int > y;                                   ");
+		writer.write( "    V< int * > z;                                 ");
+		writer.write( " };                                               ");
+		writer.write( " void f( int );                                   ");
+		writer.write( " void f( long );                                  ");
+		writer.write( " void main() {                                    ");
+		writer.write( "    C< A > c;                                     ");
+		writer.write( "    f( c.y.x );                                   ");
+		writer.write( "    f( c.z.x );                                   ");
+		writer.write( " }                                                ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration templateA = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateA2 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateC = (IASTTemplateDeclaration) i.next();
+		
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		
+		IASTFunction main = (IASTFunction) i.next();
+		IASTVariable c = (IASTVariable) getDeclarations( main ).next();
+		
+		IASTSimpleTypeSpecifier spec = (IASTSimpleTypeSpecifier) c.getAbstractDeclaration().getTypeSpecifier();
+		IASTClassSpecifier C = (IASTClassSpecifier) spec.getTypeSpecifier();
+		
+		assertReferenceTask( new Task( f1, 1, false, false ) );
+		assertReferenceTask( new Task( f2, 1, false, false ) );
+	}
 }

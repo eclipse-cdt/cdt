@@ -2615,7 +2615,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
     	ITemplateSymbol template = pst.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
 
-		List functionParameters = new LinkedList();
 		// the lookup requires a list of type infos
 		// instead of a list of IASTParameterDeclaration
 		Iterator iter = templateParameters.iterator();
@@ -2644,18 +2643,35 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTParameterDeclaration parameter,
         List parms ) throws ASTSemanticException
     {
-    	ISymbol symbol = pst.newSymbol( identifier, TypeInfo.t_templateParameter );
-    	if( kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
-    		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_typeName );
-    	} else if ( kind == ParamKind.TEMPLATE_LIST ){
-    		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_template );
-    	} else /*ParamKind.PARAMETER*/ {
-       		symbol.setName( parameter.getName() );
-    		symbol.setTypeInfo( ((ASTSimpleTypeSpecifier)parameter.getTypeSpecifier()).getSymbol().getTypeInfo() );
-    		symbol.getTypeInfo().setTemplateParameterType( symbol.getType() );
-    		symbol.setType( TypeInfo.t_templateParameter );
+    	ISymbol symbol = null;
+    	if( kind == ParamKind.TEMPLATE_LIST ){
+    		ITemplateSymbol template = pst.newTemplateSymbol( identifier );
+    		template.setType( TypeInfo.t_templateParameter );
+    		template.getTypeInfo().setTemplateParameterType( TypeInfo.t_template );
     		
-    		setPointerOperators( symbol, parameter.getPointerOperators(), parameter.getArrayModifiers() );
+    		Iterator iter = parms.iterator();
+    		while (iter.hasNext()){
+    			ASTTemplateParameter param = (ASTTemplateParameter)iter.next();
+    			try {
+    				template.addTemplateParameter( param.getSymbol() );
+    			} catch (ParserSymbolTableException e) {
+    				handleProblem( e.createProblemID(), "", param.getStartingOffset(), param.getEndingOffset(), param.getStartingLine() );  //$NON-NLS-1$
+    			}
+    		}
+    		symbol = template;
+     	} else {
+    		symbol = pst.newSymbol( identifier, TypeInfo.t_templateParameter );
+    		if(  kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
+        		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_typeName );
+        	} else /*ParamKind.PARAMETER*/ {
+        		pst.newSymbol( identifier, TypeInfo.t_templateParameter );
+           		symbol.setName( parameter.getName() );
+        		symbol.setTypeInfo( ((ASTSimpleTypeSpecifier)parameter.getTypeSpecifier()).getSymbol().getTypeInfo() );
+        		symbol.getTypeInfo().setTemplateParameterType( symbol.getType() );
+        		symbol.setType( TypeInfo.t_templateParameter );
+        		
+        		setPointerOperators( symbol, parameter.getPointerOperators(), parameter.getArrayModifiers() );
+        	}
     	}
 
     	ASTTemplateParameter ast = new ASTTemplateParameter( symbol, defaultValue,  parameter, parms );

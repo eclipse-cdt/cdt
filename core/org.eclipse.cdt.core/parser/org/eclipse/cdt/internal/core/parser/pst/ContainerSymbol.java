@@ -426,7 +426,17 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
 		
 		if( isTemplateMember() && found instanceof ITemplateSymbol ) {
-			return TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) found );
+			boolean areWithinTemplate = false;
+			IContainerSymbol container = getContainingSymbol();
+			while( container != null ){
+				if( container == found ){
+					areWithinTemplate = true;
+					break;
+				}
+				container = container.getContainingSymbol();
+			}
+			if( areWithinTemplate )
+				return TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) found );
 		}
 		
 		return found;

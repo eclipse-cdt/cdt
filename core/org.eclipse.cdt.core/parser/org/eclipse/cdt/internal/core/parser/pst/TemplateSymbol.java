@@ -164,7 +164,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	}
 	
 	public void addTemplateParameter( ISymbol param ) throws ParserSymbolTableException {
-		if( isType( TypeInfo.t_template ) ){
+		if( isType( TypeInfo.t_template ) || getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
 			if( !isAllowableTemplateParameter( param ) ){
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateParameter );
 			}

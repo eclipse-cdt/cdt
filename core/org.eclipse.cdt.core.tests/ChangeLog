@@ -1,4 +1,8 @@
-2003-04-26 Andrew Niefer
+2004-03-26 Andrew Niefer
+	template template parameters
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateTemplateParameter()
+
+2004-03-26 Andrew Niefer
 	test references to symbols in template-ids
 	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testOverloadedFunctionTemplates_2()
 	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateParameterAsBaseClause()
@@ -6,26 +10,26 @@
 	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testInstantiatingDeferredInstances()
 	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testClassTemplateStaticMemberDefinition() 
 
-2003-04-25 Andrew Niefer
+2004-03-25 Andrew Niefer
 	-added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testClassTemplateStaticMemberDefinition()
 	-modified parser/org/eclipse/cdt/core/parser/tests/QuickParseASTTests.testPointersToMemberFunctions
 
-2003-03-23 Andrew Niefer
+2004-03-23 Andrew Niefer
 	bug 55673 & fix recursive loop in template instantiation
 	-parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testInstantiatingDeferredInstances()
 	-parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateArgumentDeduction()
 	-parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testBug55673()
 
-2003-03-22 John Camelon
+2004-03-22 John Camelon
 	Added CompleteParseASTTest::testBug54531(). 
 
-2003-03-22 Andrew Niefer
+2004-03-22 Andrew Niefer
 	Typedefs & templates
 	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTypedefedTemplate()
     - added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTypedefedTemplate_2()
 	- added parser/org/eclipse/cdt/core/parser/tests/CompletionParseTest.testCompletionInTypeDef()
 
-2003-03-18 Andrew Niefer
+2004-03-18 Andrew Niefer
 	parsing template-ids
 	- added    parser/org/eclipse/cdt/core/parser/tests/ScannerTestCase.test54778()
 	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseBaseTests.java

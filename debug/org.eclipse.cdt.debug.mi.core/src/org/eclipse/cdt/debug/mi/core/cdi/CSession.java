@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -38,6 +39,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	VariableManager variableManager;
 	RegisterManager registerManager;
 	MemoryManager memoryManager;
+	SharedLibraryManager sharedLibraryManager;
 	SignalManager signalManager;
 	SourceManager sourceManager;
 	ICDIConfiguration configuration;
@@ -101,6 +103,13 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 */
 	public ICDIExpressionManager getExpressionManager() {
 		return variableManager;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSharedLibraryManager()
+	 */
+	public ICDISharedLibraryManager getSharedLibraryManager() {
+		return sharedLibraryManager;
 	}
 
 	/**

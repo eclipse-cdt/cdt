@@ -54,9 +54,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -93,7 +93,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			setDescription(ActionMessages.getString("IncludesGroupingAction.description")); //$NON-NLS-1$
 			setToolTipText(ActionMessages.getString("IncludeGroupingAction.tooltip")); //$NON-NLS-1$
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$		
-			WorkbenchHelp.setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
 
 			boolean enabled= isIncludesGroupingEnabled();
 			setChecked(enabled);
@@ -244,6 +244,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer.setContentProvider(new CContentOutlinerProvider(treeViewer));
 		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(), true));
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		treeViewer.setUseHashlookup(true);
 		treeViewer.addSelectionChangedListener(this);
 
 		initDragAndDrop();
@@ -284,7 +285,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$
 
 		treeViewer.setInput(fInput);
-		WorkbenchHelp.setHelp(control, ICHelpContextIds.COUTLINE_VIEW);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
 	}
 	
 	public void dispose() {

@@ -1,3 +1,7 @@
+2005-03-02 Alain Magloire
+	Fix for PR 87027: Thanks to Jonathan Emmett, for noticing.
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+
 2005-02-25 Alain Magloire
 	Fix PR 82292: Code template variable not working.
 	* src/org/eclipse/cdt/internal/corext/template/c/CContext.java

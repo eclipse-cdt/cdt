@@ -172,6 +172,10 @@ public class DeltaProcessor {
 		}
 	}
 
+	protected void elementChanged(ICElement element, IResourceDelta delta) {
+			fCurrentDelta.changed(element, ICElementDelta.F_CONTENT);
+	}
+
 	/**
 	 * Generic processing for a removed element:<ul>
 	 * <li>Close the element, removing its structure from the cache
@@ -261,7 +265,6 @@ public class DeltaProcessor {
 
 		try {
 			ICElement root = (ICModel)CModelManager.getDefault().getCModel();
-			currentElement = null;
 			
 /*
 			try {
@@ -294,7 +297,7 @@ public class DeltaProcessor {
 			for (int i = 0; i < deltas.length; i++) {
 				IResourceDelta delta = deltas[i];
 				fCurrentDelta = new CElementDelta(root);
-				traverseDelta(delta); // traverse delta
+				traverseDelta(root, delta); // traverse delta
 				translatedDeltas[i] = fCurrentDelta;
 			}
 			return filterRealDeltas(translatedDeltas);
@@ -309,29 +312,33 @@ public class DeltaProcessor {
 	 * If it is not a resource on the classpath, it will be added as a non-java
 	 * resource by the sender of this method.
 	 */
-	protected void traverseDelta(IResourceDelta delta) {
+	protected void traverseDelta(ICElement parent, IResourceDelta delta) {
 		try {
-			if (!updateCurrentDeltaAndIndex(delta)) {
-				nonCResourcesChanged(delta);
+			ICElement current = updateCurrentDeltaAndIndex(delta);
+			if (current == null) {
+				nonCResourcesChanged(parent, delta);
+			} else {
+				parent = current;
 			}
 		} catch (CModelException e) {
 		}
 		IResourceDelta [] children = delta.getAffectedChildren();
 		for (int i = 0; i < children.length; i++) {
-				traverseDelta(children[i]);
+				traverseDelta(parent, children[i]);
 		}
 	}
 
-	protected void nonCResourcesChanged(IResourceDelta delta) {
-		fCurrentDelta.addResourceDelta(delta);
-		IResource res = delta.getResource();
-		if (res != null) {
-			ICElement celem = createElement(res.getParent());
-			if (celem instanceof CContainer) {
-				CElementInfo info = ((CContainer)celem).getElementInfo();
-				if (info instanceof CContainerInfo) {
-					((CContainerInfo)info).setNonCResources(null);
-				}
+	protected void nonCResourcesChanged(ICElement parent, IResourceDelta delta) {
+		CElementDelta elementDelta = fCurrentDelta.find(parent);
+		if (elementDelta == null) {
+			fCurrentDelta.changed(parent, ICElementDelta.F_CONTENT);
+			elementDelta = fCurrentDelta;
+		}
+		elementDelta.addResourceDelta(delta);
+		if (parent instanceof CContainer) {
+			CElementInfo info = ((CContainer)parent).getElementInfo();
+			if (info instanceof CContainerInfo) {
+				((CContainerInfo)info).setNonCResources(null);
 			}
 		}
 	}
@@ -342,7 +349,7 @@ public class DeltaProcessor {
 	 * Returns whether the children of the given delta must be processed.
 	 * @throws a CModelException if the delta doesn't correspond to a c element of the given type.
 	 */
-	private boolean  updateCurrentDeltaAndIndex(IResourceDelta delta) throws CModelException {
+	private ICElement updateCurrentDeltaAndIndex(IResourceDelta delta) throws CModelException {
 
 		IResource resource = delta.getResource();
 		ICElement element = createElement(resource);
@@ -388,14 +395,14 @@ public class DeltaProcessor {
 							elementAdded(element, delta);
 						}
 					} else if (element != null) {
-						elementAdded(element, delta);
+						elementChanged(element, delta);
 					}
 				} else if (element != null) {
-					elementAdded(element, delta);
+					elementChanged(element, delta);
 				}
 				break;
 		}
-		return element != null;
+		return element;
 	}
 
 	protected void updateIndexAddResource(ICElement element, IResourceDelta delta) {

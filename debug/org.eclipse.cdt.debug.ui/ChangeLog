@@ -1,4 +1,8 @@
 2004-06-16 Mikhail Khodjaiants
+	Moved the disassembly font definition to the platform "Debug" theme.
+	* plugin.xml
+
+2004-06-16 Mikhail Khodjaiants
 	Added support for the "Skip Breakpoints" and "Skip breakpoints during a "Run To Line" operation.
 	* RunToLineAdapter.java
 

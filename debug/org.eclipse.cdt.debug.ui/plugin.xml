@@ -1261,7 +1261,7 @@
       </colorDefinition>
       <fontDefinition
             label="%DisassemblyFontDefinition.label"
-            categoryId="org.eclipse.cdt.debug.ui.presentation"
+            categoryId="org.eclipse.debug.ui.presentation"
             defaultsTo="org.eclipse.jface.textfont"
             id="org.eclipse.cdt.debug.ui.disassemblyFont">
          <description>

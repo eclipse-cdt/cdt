@@ -83,7 +83,9 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 			IPath path = reference.getPath();
 			IContainer container = reference.getCModel().getWorkspace().getRoot().getContainerForLocation(path);
 			if (container != null && container.isAccessible()) {
-				return getImage(reference.getCProject());
+				ImageDescriptor desc = CElementImageProvider.getImageDescriptor(ICElement.C_PROJECT);
+				desc = new CElementImageDescriptor(desc, 0, CElementImageProvider.SMALL_SIZE);
+				return CUIPlugin.getImageDescriptorRegistry().get(desc);
 			}
 		} else if (element instanceof IIncludeReference) {
 			ImageDescriptor desc = CElementImageProvider.getImageDescriptor(ICElement.C_CCONTAINER);

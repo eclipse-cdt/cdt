@@ -1,3 +1,7 @@
+2004-11-25 Alain Magloire
+	Fix for PR 79327
+	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java
+	
 2004-11-24 Chris Wiebe
 
 	fix command binding for OpenTypeInHierarchyAction

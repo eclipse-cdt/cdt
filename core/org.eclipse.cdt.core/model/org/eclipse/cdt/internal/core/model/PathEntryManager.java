@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -95,6 +96,10 @@ public class PathEntryManager implements ICDescriptorListener {
 	public static PathEntryManager getDefault() {
 		if (pathEntryManager == null) {
 			pathEntryManager = new PathEntryManager();
+			// Register the Core Model on the Descriptor
+			// Manager, it needs to know about changes.
+			CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(pathEntryManager);
+
 		}
 		return pathEntryManager;
 	}
@@ -241,7 +246,7 @@ public class PathEntryManager implements ICDescriptorListener {
 						if (progressMonitor != null && progressMonitor.isCanceled()) {
 							return;
 						}
-						ICProject affectedProject = (ICProject) modifiedProjects[i];
+						ICProject affectedProject = modifiedProjects[i];
 						if (affectedProject == null) {
 							continue; // was filtered out
 						}
@@ -725,20 +730,24 @@ public class PathEntryManager implements ICDescriptorListener {
 	 */
 	public void descriptorChanged(CDescriptorEvent event) {
 		int flags = event.getFlags();
-		if ((flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
+		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED) {
 			ICDescriptor cdesc = event.getDescriptor();
 			if (cdesc != null) {
 				CModelManager manager = CModelManager.getDefault();
 				ICProject cproject = manager.create(cdesc.getProject());
+				IProject project = cproject.getProject();
 				try {
 					IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
 					resolvedMap.remove(cproject);
 					IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
 					ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
-					for (int i = 0; i < deltas.length; i++) {
-						manager.registerCModelDelta(deltas[i]);
+					if (deltas.length > 0) {
+						cproject.close();
+						for (int i = 0; i < deltas.length; i++) {
+							manager.registerCModelDelta(deltas[i]);
+						}
+						manager.fire(ElementChangedEvent.POST_CHANGE);
 					}
-					manager.fire(ElementChangedEvent.POST_CHANGE);
 				} catch (CModelException e) {
 				}
 			}

@@ -4,8 +4,6 @@ package org.eclipse.cdt.core.model;
  * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CDescriptorEvent;
-import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -30,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class CoreModel implements ICDescriptorListener {
+public class CoreModel {
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = null;
 	private static PathEntryManager pathEntryManager = null;
@@ -666,14 +664,6 @@ public class CoreModel implements ICDescriptorListener {
 
 	public void addElementChangedListener(IElementChangedListener listener) {
 		manager.addElementChangedListener(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
-	 */
-	public void descriptorChanged(CDescriptorEvent event) {
-		pathEntryManager.descriptorChanged(event);
-		manager.descriptorChanged(event);
 	}
 
 	/**

@@ -2087,5 +2087,30 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         parse( "enum DHCPFOBoolean { false, true } additionalHB, more_payload; \n", true, ParserLanguage.C );
         assertTrue( callback.problems.isEmpty() );
     }
+    
+    public void testBug72691() throws Exception{
+        StringWriter writer = new StringWriter();
+        writer.write( "typedef int * PINT; \n" );
+        writer.write( "typedef int * PINT; \n" );
+        writer.write( "PINT pint;          \n" );
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        assertTrue( i.next() instanceof IASTTypedefDeclaration );
+        assertTrue( i.next() instanceof IASTTypedefDeclaration );
+        assertTrue( i.next() instanceof IASTVariable);
+        assertFalse( i.hasNext() );
+        assertTrue( callback.problems.isEmpty() );
+    }
+    
+    public void testBug72691_2() throws Exception{
+        StringWriter writer = new StringWriter();
+        writer.write( "typedef int * PINT;    \n" );
+        writer.write( "namespace N {          \n" );
+        writer.write( "   typedef int * PINT; \n" );
+        writer.write( "}                      \n" );
+        writer.write( "using namespace N;     \n" );
+        writer.write( "PINT pint;             \n" );
+        parse( writer.toString() );
+        assertTrue( callback.problems.isEmpty() );
+    }
 }
 

@@ -529,7 +529,15 @@ public class ParserSymbolTable {
 						        obj = foundSymbol;
 						    else if( foundSymbol.isForwardDeclaration() && foundSymbol.getForwardSymbol() == obj ){
 						        //we already have what we want.
-						    } else if( data.isPrefixLookup() ){
+						    } 
+						    else if( foundSymbol.getTypeInfo().checkBit(ITypeInfo.isTypedef ) &&
+						             obj.getTypeInfo().checkBit( ITypeInfo.isTypedef ) &&
+						             foundSymbol.getTypeInfo().getFinalType( null ).equals(obj.getTypeInfo().getFinalType( null ) ))
+						    {
+						        //two typedef's with matching name, if they are typedefed to the same thing,  
+						        //then its all good and we already have the one we want. (7.1.3-2)
+						    } 
+						    else if( data.isPrefixLookup() ){
 								data.addAmbiguity( foundSymbol.getName() );
 							} else {
 								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
@@ -835,6 +843,16 @@ public class ParserSymbolTable {
 		//allowable thing is if they are both functions.
 		if( origSymbol instanceof IParameterizedSymbol && newSymbol instanceof IParameterizedSymbol )
 			return isValidFunctionOverload( (IParameterizedSymbol) origSymbol, (IParameterizedSymbol) newSymbol );
+		
+		if( origSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) && newSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) ){
+		    TypeInfoProvider provider = origSymbol.getSymbolTable().getTypeInfoProvider();
+		    ITypeInfo origFlat = origSymbol.getTypeInfo().getFinalType( provider );
+		    ITypeInfo newFlat = origSymbol.getTypeInfo().getFinalType( provider );
+		    boolean equals = origFlat.equals( newFlat );
+		    provider.returnTypeInfo( origFlat );
+		    provider.returnTypeInfo( newFlat );
+		    return equals;
+		}
 		return false;
 	}
 	

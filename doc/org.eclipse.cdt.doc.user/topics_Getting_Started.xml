@@ -5,8 +5,9 @@
 <toc label="Getting Started">
           <topic label="CDT Managed Make Tutorial" href="getting_started/cdt_w_basic.htm"/>
           <topic label="CDT Standard Make Tutorial" href="getting_started/cdt_w_standard.htm"/>
-          <topic label="CDT Importing an Existing Project Tutorial" href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Tutorials.html?cvsroot=Tools_Project"/>
-          <topic label="CDT Debugging Tutorial" href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/cdt-home/user/Tutorials.html?cvsroot=Tools_Project"/>
+          <topic label="CDT Importing an Existing Project Tutorial (Managed Make)" href="getting_started/cdt_w_import.htm"/>
+          <topic label="CDT Importing an Existing Project Tutorial (Standard Make)" href="http://download.eclipse.org/tools/cdt/docs/tutorials/import_standard_tutorial/cdt_w_std_import.htm"/>
+          <topic label="CDT Debugging Tutorial" href="http://download.eclipse.org/tools/cdt/docs/tutorials/debug_tutorial/cdt_w_debug.htm"/>
           <topic label="How to bring C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>
           <topic label="Updating the CDT" href="getting_started/cdt_w_install_cdt.htm"/>
 </toc>

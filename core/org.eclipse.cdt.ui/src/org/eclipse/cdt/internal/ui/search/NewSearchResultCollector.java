@@ -87,9 +87,10 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
           	IFile refFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(refLocation);
           	IProject refProject = refFile.getProject();
           	IPath externalMatchLocation = searchMatch.getLocation();
-          	IFile linksFile = refProject.getFile(externalMatchLocation.lastSegment());
-              //Delete links file to keep up to date with latest prefs
-          	if (linksFile.exists())
+          	IFile linksFile = refProject.getFile("_cdtsrchlnk_" + externalMatchLocation.lastSegment()); //$NON-NLS-1$
+            //Delete links file to keep up to date with latest prefs
+          	if (linksFile.exists() &&
+          		linksFile.isLinked())
           		linksFile.delete(true,null);
           	
           	//Check to see if the file already exists - create if doesn't, mark team private 

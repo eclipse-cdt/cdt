@@ -117,7 +117,7 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	protected boolean isValidInput(Object element) {
 		if (element instanceof ITypeInfo) {
 			ITypeInfo type= (ITypeInfo)element;
-			if (type.getCElementType() != ICElement.C_NAMESPACE && exists(type))
+			if (type.getCElementType() != ICElement.C_NAMESPACE && type.exists())
 				return true;
 		}
 		return false;
@@ -131,8 +131,11 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	 * @return	<true> if the given element is a valid element
 	 */
 	protected boolean isValidElement(Object element) {
-		if (element instanceof ICElement) {
-			if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot)
+	    if (element instanceof ICElement) {
+			if (element instanceof ICModel
+			        || element instanceof ICProject
+			        || element instanceof ISourceRoot
+			        || element instanceof ITranslationUnit)
 				return false;
 			return true;
 		}
@@ -240,14 +243,9 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findElementToSelect(java.lang.Object)
 	 */
 	protected Object findElementToSelect(Object element) {
-		if (element instanceof ICElement && !(element instanceof ITranslationUnit)
-			&& TypeUtil.isDeclaredType((ICElement)element)) {
-		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
-		    if (parent != null) {
-		        return element;
-		    }
-		}
-
+	    if (isValidElement(element)) {
+	        return element;
+	    }
 		return null;
 	}
 }

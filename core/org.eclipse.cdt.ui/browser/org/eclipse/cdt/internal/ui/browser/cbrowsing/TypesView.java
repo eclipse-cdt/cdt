@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -109,7 +110,11 @@ public class TypesView extends CBrowsingPart {
 	 * @return	<true> if the given element is a valid input
 	 */
 	protected boolean isValidInput(Object element) {
-		return isValidNamespace(element);
+		if (element instanceof ITypeInfo) {
+			ITypeInfo info = (ITypeInfo)element;
+			return (info.exists() && info.getCElementType() == ICElement.C_NAMESPACE);
+		}
+		return false;
 	}
 
 	/**
@@ -166,12 +171,20 @@ public class TypesView extends CBrowsingPart {
 			return null;
 		}
 
-		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
-		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
-		    if (parent != null) {
-		        ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
-		        if (info != null)
-		            return info.getEnclosingNamespace(true);
+		if (element instanceof ICElement) {
+		    ICElement celem = (ICElement) element;
+		    if (celem instanceof ITranslationUnit) {
+		        IProject project = celem.getCProject().getProject();
+		        return AllTypesCache.getGlobalNamespace(project);
+		    } else if (celem.getElementType() == ICElement.C_NAMESPACE) {
+		        return AllTypesCache.getTypeForElement(celem, true, true, null);
+		    } else {
+			    ICElement parent = TypeUtil.getDeclaringContainerType(celem);
+			    if (parent != null) {
+			        ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
+			        if (info != null)
+			            return info.getEnclosingNamespace(true);
+			    }
 		    }
 			return null;
 		}

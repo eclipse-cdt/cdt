@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -660,24 +661,6 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		return (resource instanceof IProject);
 	}
 
-	protected boolean isValidNamespace(Object element) {
-		if (element instanceof ITypeInfo) {
-			ITypeInfo info = (ITypeInfo)element;
-			if (info.exists() && info.getCElementType() == ICElement.C_NAMESPACE) {
-				// make sure it has types other than namespaces
-				ITypeInfo[] types = info.getEnclosedTypes();
-				if (types != null) {
-					for (int i = 0; i < types.length; ++i) {
-						if (types[i].getCElementType() != ICElement.C_NAMESPACE) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * Answers if the given <code>element</code> is a valid
 	 * element for this part.
@@ -686,20 +669,6 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	 * @return	<true> if the given element is a valid element
 	 */
 	abstract protected boolean isValidElement(Object element);
-//		if (element == null)
-//			return false;
-////		element= getSuitableCElement(element);
-////		if (element == null)
-////			return false;
-//		Object input= getViewer().getInput();
-//		if (input == null)
-//			return false;
-//		if (input instanceof Collection)
-//			return ((Collection)input).contains(element);
-//		else
-//			return input.equals(element);
-//
-//	}
 
 	private boolean isInputResetBy(Object newInput, Object input, IWorkbenchPart part) {
 		if (newInput == null)
@@ -1183,19 +1152,20 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
     }
 	
 	void adjustInputAndSetSelection(Object o) {
-		if (!(o instanceof ICElement) && !(o instanceof ITypeInfo)) {
+		Object element = getOriginalElement(o);
+		if (!(element instanceof ICElement) && !(element instanceof ITypeInfo)) {
 			setSelection(StructuredSelection.EMPTY, true);
 			return;
 		}
-
-		Object elementToSelect= getSuitableElement(findElementToSelect(o));
-		Object newInput= findInputForElement(o);
+		
+		Object elementToSelect= getSuitableElement(findElementToSelect(element));
+		Object newInput= findInputForElement(element);
 		Object oldInput= null;
 		Object viewerInput = getInput();
 		if (viewerInput instanceof ICElement || viewerInput instanceof ITypeInfo)
 			oldInput = viewerInput;
 
-		if (elementToSelect == null && !isValidInput(newInput) && (newInput == null && !isAncestorOf(o, oldInput)))
+		if (elementToSelect == null && !isValidInput(newInput) && (newInput == null && !isAncestorOf(element, oldInput)))
 			// Clear input
 			setInput(null);
 		else if (mustSetNewInput(elementToSelect, oldInput, newInput)) {
@@ -1210,6 +1180,23 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		else
 			setSelection(StructuredSelection.EMPTY, true);
 	}
+	
+	protected Object getOriginalElement(Object obj) {
+		if (obj instanceof ICElement) {
+		    ICElement element = (ICElement)obj;
+			// Below is for children of TranslationUnits but we have to make sure
+			// we handle the case that the child comes from the a workingCopy in that
+			// case it should be equal as the original element.
+			ITranslationUnit t = (ITranslationUnit)element.getAncestor(ICElement.C_UNIT);
+			if (t != null && t.isWorkingCopy()) {
+			    ICElement original = ((IWorkingCopy)t).getOriginal(element);
+			    if (original != null)
+			        return original;
+			}
+		}
+		return obj;
+	}
+
 
 	/**
 	 * Compute if a new input must be set.
@@ -1218,9 +1205,18 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	 * @since 3.0
 	 */	
 	private boolean mustSetNewInput(Object elementToSelect, Object oldInput, Object newInput) {
-		return (newInput == null || !newInput.equals(oldInput))
-		&& (elementToSelect == null
-			|| oldInput == null);
+	    if (newInput == null || oldInput == null || !newInput.equals(oldInput)) {
+	        return true;
+	    }
+	    if (elementToSelect == null) {
+	        return false;
+	    }
+//	    return !findInputForElement(elementToSelect).equals(newInput);
+	    return false;
+//	    return !(inputContainsElement(newInput, elementToSelect));
+//		return (newInput == null || !newInput.equals(oldInput))
+//		&& (elementToSelect == null
+//			|| oldInput == null);
 //		return (newInput == null || !newInput.equals(oldInput))
 //			&& (elementToSelect == null
 //				|| oldInput == null
@@ -1246,10 +1242,10 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	abstract protected Object findElementToSelect(Object element);
 	
 	/**
-	 * Converts the given Java element to one which is suitable for this
+	 * Converts the given C element to one which is suitable for this
 	 * view. It takes into account wether the view shows working copies or not.
 	 *
-	 * @param	element the Java element to be converted
+	 * @param	element the C element to be converted
 	 * @return	an element suitable for this view
 	 */
 	Object getSuitableElement(Object obj) {
@@ -1381,17 +1377,17 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 			}
 			if (ei instanceof IFileEditorInput) {
 				IFile file= ((IFileEditorInput)ei).getFile();
-				ICElement je= (ICElement)file.getAdapter(ICElement.class);
-				if (je == null) {
+				ICElement ce= (ICElement)file.getAdapter(ICElement.class);
+				if (ce == null) {
 					IContainer container= ((IFileEditorInput)ei).getFile().getParent();
 					if (container != null)
-						je= (ICElement)container.getAdapter(ICElement.class);
+						ce= (ICElement)container.getAdapter(ICElement.class);
 				}
-				if (je == null) {					
+				if (ce == null) {					
 					setSelection(null, false);
 					return;
 				}
-				adjustInputAndSetSelection(je);
+				adjustInputAndSetSelection(ce);
 //			} else if (ei instanceof IClassFileEditorInput) {
 //				IClassFile cf= ((IClassFileEditorInput)ei).getClassFile();
 //				adjustInputAndSetSelection(cf);

@@ -1,3 +1,12 @@
+2004-09-02 Chris Wiebe
+
+	fix editor/view selection problems
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingElementComparer.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPart.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/NamespacesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesView.java
+
 2004-09-01 Chris Wiebe
 
 	Fix for 68883

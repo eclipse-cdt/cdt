@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -119,7 +120,21 @@ public class NamespacesView extends CBrowsingPart {
 	 * @return	<true> if the given element is a valid element
 	 */
 	protected boolean isValidElement(Object element) {
-		return isValidNamespace(element);
+		if (element instanceof ITypeInfo) {
+			ITypeInfo info = (ITypeInfo)element;
+			if (info.exists() && info.getCElementType() == ICElement.C_NAMESPACE) {
+				// make sure it has types other than namespaces
+				ITypeInfo[] types = info.getEnclosedTypes();
+				if (types != null) {
+					for (int i = 0; i < types.length; ++i) {
+						if (types[i].getCElementType() != ICElement.C_NAMESPACE) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -170,7 +185,7 @@ public class NamespacesView extends CBrowsingPart {
 				return cProject;
 		}
 		
-		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
+		if (element instanceof ICElement) {
 			ICElement cElem = (ICElement)element;
 			ISourceRoot root = findSourceRoot(cElem);
 			if (exists(root) && !isProjectSourceRoot(root))
@@ -191,19 +206,27 @@ public class NamespacesView extends CBrowsingPart {
 			return null;
 		}
 
-		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
-			ICElement parent = (ICElement)element;
-			while (parent != null) {
-				if ((parent instanceof IStructure
+		if (element instanceof ICElement) {
+		    ICElement celem = (ICElement)element;
+		    if (celem instanceof ITranslationUnit) {
+		        IProject project = celem.getCProject().getProject();
+		        return AllTypesCache.getGlobalNamespace(project);
+		    } else if (celem.getElementType() == ICElement.C_NAMESPACE) {
+		        return AllTypesCache.getTypeForElement(celem, true, true, null);
+		    } else {
+		        ICElement parent = (ICElement)element;
+		        while (parent != null) {
+		            if ((parent instanceof IStructure
 				        || parent instanceof IEnumeration
 				        || parent instanceof ITypeDef)
 				        && parent.exists()) {
-				    ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
-				    if (info != null) {
-				        return info.getEnclosingNamespace(true);
-				    }
-				}
-				parent = parent.getParent();
+					    ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
+					    if (info != null) {
+					        return info.getEnclosingNamespace(true);
+					    }
+		            }
+					parent = parent.getParent();
+		        }
 			}
 			return null;
 		}

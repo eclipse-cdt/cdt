@@ -14,10 +14,18 @@ package org.eclipse.cdt.internal.core.search.indexing;
 import java.io.IOException;
 import java.util.HashSet;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.ISourceEntry;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
+import org.eclipse.cdt.internal.core.model.CModel;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.SourceEntry;
+import org.eclipse.cdt.internal.core.model.SourceRoot;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
@@ -72,108 +80,24 @@ public class IndexAllProject extends IndexRequest {
 				indexedFileNames.put(results[i].getPath(), DELETED);
 			final long indexLastModified = max == 0 ? 0L : index.getIndexFile().lastModified();
 
-//			CModel model = (CModel) CModelManager.getDefault().getCModel();
-//			ICProject cProject = model.getCProject(project.getName());
-//			ICElement[] kids = cProject.getChildren();
-			IPath cProjectPath = project.getFullPath(); 
+			CModel model = (CModel) CModelManager.getDefault().getCModel();
+		
+			if (model == null)
+				return false;
 			
-			IWorkspaceRoot root = this.project.getWorkspace().getRoot();
-			IResource sourceFolder = root.findMember(cProjectPath);
+			ICProject cProject = model.getCProject(project.getName());		
 			
-			if (this.isCancelled) return false;
-
-			if (sourceFolder != null) {
-						
-				// collect output locations if source is project (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32041)
-				final HashSet outputs = new HashSet();
+			if (cProject == null)
+				return false;
 			
-				final boolean hasOutputs = !outputs.isEmpty();
-						
-				final char[][] patterns = null;
-				if (max == 0) {
-					sourceFolder.accept(
-							new IResourceProxyVisitor() {
-								public boolean visit(IResourceProxy proxy) {
-									if (isCancelled) return false;
-									switch(proxy.getType()) {
-										case IResource.FILE :
-										if (Util.isCCFileName(proxy.getName())) {
-											IResource resource = proxy.requestResource();
-											if (resource.getLocation() != null && (patterns == null || !Util.isExcluded(resource, patterns))) {
-												String name = new IFileDocument((IFile) resource).getName();
-												indexedFileNames.put(name, resource);
-											}
-										}
-										return false;
-			
-										case IResource.FOLDER :
-												if (patterns != null && Util.isExcluded(proxy.requestResource(), patterns))
-													return false;
-												if (hasOutputs && outputs.contains(proxy.requestFullPath())) {
-													return false;
-												}
-										}
-										return true;
-								 }
-								},
-								IResource.NONE
-							);
-						} else {
-							sourceFolder.accept(
-								new IResourceProxyVisitor() {
-									public boolean visit(IResourceProxy proxy) {
-										if (isCancelled) return false;
-										switch(proxy.getType()) {
-											case IResource.FILE :					
-												if (Util.isCCFileName(proxy.getName())) {
-													IResource resource = proxy.requestResource();
-													IPath path = resource.getLocation();
-													if (path != null && (patterns == null || !Util.isExcluded(resource, patterns))) {
-														String name = new IFileDocument((IFile) resource).getName();
-														indexedFileNames.put(name,
-															indexedFileNames.get(name) == null || indexLastModified < path.toFile().lastModified()
-																? (Object) resource
-																: (Object) OK);
-													}
-												}
-												return false;
-											case IResource.FOLDER :
-												if (patterns != null && Util.isExcluded(proxy.requestResource(), patterns))
-													return false;
-												if (hasOutputs && outputs.contains(proxy.requestFullPath())) {
-													return false;
-												}
-										}
-										return true;
-									}
-								},
-								IResource.NONE
-							);
-						}
-					}
-					
-			Object[] names = indexedFileNames.keyTable;
-			Object[] values = indexedFileNames.valueTable;
-			boolean shouldSave = false;
-			for (int i = 0, length = names.length; i < length; i++) {
-				String name = (String) names[i];
-				if (name != null) {
-					if (this.isCancelled) return false;
-
-					Object value = values[i];
-					if (value != OK) {
-						shouldSave = true;
-						if (value == DELETED)
-							this.manager.remove(name, this.indexPath);
-						else
-							this.manager.addSource((IFile) value, this.indexPath);
-					}
+			//Get the source roots for this project
+			ISourceRoot[] sourceRoot = cProject.getSourceRoots();
+			for (int i=0;i<sourceRoot.length;i++){
+				if (sourceRoot[i] instanceof SourceRoot){
+					ISourceEntry tempEntry = ((SourceRoot) sourceRoot[i]).getSourceEntry();
+					this.manager.request(new AddFolderToIndex(sourceRoot[i].getPath(), project, tempEntry.fullExclusionPatternChars(), this.manager));
 				}
 			}
-
-			// request to save index when all cus have been indexed
-			if (shouldSave)
-				this.manager.request(new SaveIndex(this.indexPath, this.manager));
 
 		} catch (CoreException e) {
 			if (IndexManager.VERBOSE) {

@@ -1,3 +1,9 @@
+2004-05-18 Bogdan Gheorghe
+	First go at putting in source folder indexing. Index All events will index
+	source folders (still need to put in includes indexing). DeltaProcessor only
+	forwards events for source files so individual indexing doesn't need to be
+ 	altered. 
+ 	
 2004-05-16 Bogdan Gheorghe
     Fix for bug 61332 - make sure that the timer is ready to go before starting
     a new index

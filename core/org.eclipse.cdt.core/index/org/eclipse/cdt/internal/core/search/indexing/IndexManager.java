@@ -143,6 +143,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				// reduces the chance that the file is open later on, preventing it from being deleted
 				if (!job.initializeContents()) return;
 			}
+			
 			request(job);
 		}
 	}
@@ -331,9 +332,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/**
 	 * Index the content of the given source folder.
 	 */
-	public void indexSourceFolder(CProject javaProject, IPath sourceFolder, final char[][] exclusionPattern) {
-		IProject project = javaProject.getProject();
-
+	public void indexSourceFolder(IProject project, IPath sourceFolder, final char[][] exclusionPattern) {
+	
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);

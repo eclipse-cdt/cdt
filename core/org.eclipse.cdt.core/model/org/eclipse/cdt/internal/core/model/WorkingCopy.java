@@ -208,9 +208,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (this.useCount == 0) {
 			return false;
 		}
-		// if resource got deleted, then #getModificationStamp() will answer IResource.NULL_STAMP, which is always different from the cached
-		// timestamp
-		return ((TranslationUnitInfo) getElementInfo()).fTimestamp == ((IFile) resource).getModificationStamp();
+		try {
+			// if resource got deleted, then #getModificationStamp() will answer IResource.NULL_STAMP, which is always different from the cached
+			// timestamp
+			return ((TranslationUnitInfo) getElementInfo()).fTimestamp == ((IFile) resource).getModificationStamp();
+		} catch (CModelException e) {
+			return false;
+		}
 	}
 	/**
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#isWorkingCopy()

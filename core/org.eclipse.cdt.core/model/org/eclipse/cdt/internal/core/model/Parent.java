@@ -23,7 +23,7 @@ public abstract class Parent extends CElement {
 	 * Adds a child to the current element.
 	 * Implementations override this method to support children
 	 */
-	public void addChild(ICElement member) {
+	public void addChild(ICElement member) throws CModelException {
 		getElementInfo().addChild(member);
 	}
 
@@ -31,11 +31,11 @@ public abstract class Parent extends CElement {
 	 * Removes a child to the current element.
 	 * Implementations override this method to support children
 	 */
-	public void removeChild(ICElement member) {
+	public void removeChild(ICElement member) throws CModelException {
 		getElementInfo().removeChild(member);
 	}
 
-	public void removeChildren () {
+	public void removeChildren () throws CModelException {
 		getElementInfo().removeChildren();
 	}
 
@@ -71,15 +71,27 @@ public abstract class Parent extends CElement {
 	}
 
 	public boolean hasChildren () {
-		return getElementInfo().hasChildren();
+		try {
+			return getElementInfo().hasChildren();
+		} catch (CModelException e) {
+			return false;
+		}
 	}
 
 	protected void setChanged () {
-		getElementInfo().setChanged();
+		try {
+			getElementInfo().setChanged();
+		} catch (CModelException e) {
+			// ignore
+		}
 	}
 
 	protected boolean hasChanged () {
-		return getElementInfo().hasChanged();
+		try {
+			return getElementInfo().hasChanged();
+		} catch (CModelException e) {
+			return false;
+		}
 	}
 
 }

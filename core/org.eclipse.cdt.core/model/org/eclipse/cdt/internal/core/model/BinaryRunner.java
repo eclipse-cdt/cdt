@@ -43,17 +43,18 @@ public class BinaryRunner {
 				if (cproject == null || monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
-				ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
-				vlib.removeChildren();
-				vbin.removeChildren();
 				try {
+					BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
+					ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
+					
+					vlib.removeChildren();
+					vbin.removeChildren();
 					cproject.getProject().accept(new Visitor(BinaryRunner.this, monitor));
+					fireEvents(cproject, vbin);
+					fireEvents(cproject, vlib);
 				} catch (CoreException e) {
 					return e.getStatus();
 				}
-				fireEvents(cproject, vbin);
-				fireEvents(cproject, vlib);
 				return Status.OK_STATUS;
 			}
 		};

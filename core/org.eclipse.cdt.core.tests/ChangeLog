@@ -1,3 +1,6 @@
+2004-04-20 David Inglis
+	The CoreModel interfaces throw much more exception, we need to log them for errors.
+
 2004-04-19 Alain Magloire
 	The CoreModel interfaces throw much more exception, we need to log them for errors.
 

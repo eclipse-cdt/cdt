@@ -151,7 +151,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return ((CElement)fCElement).getIdStartPos(); 
 	}
 	
-	public String getElementQualifiedName(ICElement element){
+	public String getElementQualifiedName(ICElement element) throws CModelException{
 		if(!eligibleForRefactoring(element)){
 			return "";
 		} else {
@@ -172,7 +172,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			return name.toString();
 		}
 	}
-	public RefactoringStatus checkNewElementName(String newName){
+	public RefactoringStatus checkNewElementName(String newName) throws CModelException{
 		if (!eligibleForRefactoring(fCElement)) { 
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
 		}

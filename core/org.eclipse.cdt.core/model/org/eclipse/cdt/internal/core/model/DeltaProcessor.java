@@ -87,52 +87,54 @@ public class DeltaProcessor {
 
 		// BUG 36424:
 		// The Binary may only be visible in the BinaryContainers
-		
-		if (celement == null && resource.getType() == IResource.FILE) {
-			ICElement[] children;
-			ICProject cproj = manager.create(resource.getProject());
-			if (cproj != null && cproj.isOpen()) {
-				IBinaryContainer bin = cproj.getBinaryContainer();
-				if (bin.isOpen()) {
-					children = ((CElement)bin).getElementInfo().getChildren();
-					for (int i = 0; i < children.length; i++) {
-						IResource res = children[i].getResource();
-						if (resource.equals(res)) {
-							celement = children[i];
-							break;
+		try {
+			if (celement == null && resource.getType() == IResource.FILE) {
+				ICElement[] children;
+				ICProject cproj = manager.create(resource.getProject());
+				if (cproj != null && cproj.isOpen()) {
+					IBinaryContainer bin = cproj.getBinaryContainer();
+					if (bin.isOpen()) {
+						children = ((CElement)bin).getElementInfo().getChildren();
+						for (int i = 0; i < children.length; i++) {
+							IResource res = children[i].getResource();
+							if (resource.equals(res)) {
+								celement = children[i];
+								break;
+							}
 						}
 					}
 				}
 			}
-		}
-		// BUG 36424:
-		// The Archive may only be visible in the ArchiveContainers
-		if (celement == null && resource.getType() == IResource.FILE) {
-			ICElement[] children;
-			ICProject cproj = manager.create(resource.getProject());
-			if (cproj != null && cproj.isOpen()) {
-				IArchiveContainer ar = cproj.getArchiveContainer();
-				if (ar.isOpen()) {
-					children = ((CElement)ar).getElementInfo().getChildren();
-					for (int i = 0; i < children.length; i++) {
-						IResource res = children[i].getResource();
-						if (resource.equals(res)) {
-							celement = children[i];
-							break;
+			// BUG 36424:
+			// The Archive may only be visible in the ArchiveContainers
+			if (celement == null && resource.getType() == IResource.FILE) {
+				ICElement[] children;
+				ICProject cproj = manager.create(resource.getProject());
+				if (cproj != null && cproj.isOpen()) {
+					IArchiveContainer ar = cproj.getArchiveContainer();
+					if (ar.isOpen()) {
+						children = ((CElement)ar).getElementInfo().getChildren();
+						for (int i = 0; i < children.length; i++) {
+							IResource res = children[i].getResource();
+							if (resource.equals(res)) {
+								celement = children[i];
+								break;
+							}
 						}
 					}
-				}
-			}				
-		}
-
-		//  It is not a C resource if the parent is a Binary/ArchiveContainer
-		// But we have to release too.
-		if (celement != null && resource.getType() == IResource.FILE) {
-			ICElement parent = celement.getParent();
-			if (parent instanceof IArchiveContainer || parent instanceof IBinaryContainer) {
-				releaseCElement(celement);
-				celement = null;
+				}				
 			}
+			//  It is not a C resource if the parent is a Binary/ArchiveContainer
+			// But we have to release too.
+			if (celement != null && resource.getType() == IResource.FILE) {
+				ICElement parent = celement.getParent();
+				if (parent instanceof IArchiveContainer || parent instanceof IBinaryContainer) {
+					releaseCElement(celement);
+					celement = null;
+				}
+			}
+		} catch (CModelException e) {
+			return null;
 		}
 		return celement;
 	}
@@ -140,7 +142,7 @@ public class DeltaProcessor {
 	/**
 	 * Adds the given child handle to its parent's cache of children. 
 	 */
-	protected void addToParentInfo(Openable child) {
+	protected void addToParentInfo(Openable child) throws CModelException {
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
 			CElementInfo info = parent.getElementInfo();
@@ -153,7 +155,7 @@ public class DeltaProcessor {
 	 * element does not have a parent, or the parent is not currently open,
 	 * this has no effect. 
 	 */
-	private void removeFromParentInfo(ICElement child) {
+	private void removeFromParentInfo(ICElement child) throws CModelException {
 		CModelManager factory = CModelManager.getDefault();
 
 		// Remove the child from the parent list.
@@ -166,7 +168,7 @@ public class DeltaProcessor {
 	/**
 	 * Release the Element and cleaning.
 	 */
-	protected void releaseCElement(ICElement celement) {
+	protected void releaseCElement(ICElement celement) throws CModelException {
 		CModelManager factory = CModelManager.getDefault();
 		int type = celement.getElementType();
 		if (type == ICElement.C_ARCHIVE) {
@@ -184,27 +186,21 @@ public class DeltaProcessor {
 			CProjectInfo pinfo = (CProjectInfo)factory.peekAtInfo(cproject);
 			if (pinfo != null && pinfo.vBin != null) {
 				if (factory.peekAtInfo(pinfo.vBin) != null) {
-					try {
-						ICElement[] bins = pinfo.vBin.getChildren();
-						for (int i = 0; i < bins.length; i++) {
-							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
-								fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
-							}
+					ICElement[] bins = pinfo.vBin.getChildren();
+					for (int i = 0; i < bins.length; i++) {
+						if (celement.getPath().isPrefixOf(bins[i].getPath())) {
+							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
 						}
-					} catch (CModelException e) {
 					}
 				}
 			}
 			if (pinfo != null && pinfo.vLib != null) {
 				if (factory.peekAtInfo(pinfo.vLib) != null) {
-					try {
-						ICElement[] ars = pinfo.vLib.getChildren();
-						for (int i = 0; i < ars.length; i++) {
-							if (celement.getPath().isPrefixOf(ars[i].getPath())) {
-								fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
-							}
+					ICElement[] ars = pinfo.vLib.getChildren();
+					for (int i = 0; i < ars.length; i++) {
+						if (celement.getPath().isPrefixOf(ars[i].getPath())) {
+							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
 						}
-					} catch (CModelException e) {
 					}
 				}
 			}
@@ -230,7 +226,7 @@ public class DeltaProcessor {
 	 * <code>basicElementAdded</code>.
 	 * </ul>
 	 */
-	protected void elementAdded(ICElement element, IResourceDelta delta) {
+	protected void elementAdded(ICElement element, IResourceDelta delta) throws CModelException {
 
 		if (element instanceof Openable) {
 			addToParentInfo((Openable)element);
@@ -258,7 +254,7 @@ public class DeltaProcessor {
 	 * a resource is closed, the platform reports all children as removed. This
 	 * would effectively delete the classpath if we processed children.
 	 */
-	protected void elementClosed(ICElement element, IResourceDelta delta) {
+	protected void elementClosed(ICElement element, IResourceDelta delta) throws CModelException {
 
 		if (element.getElementType() == ICElement.C_PROJECT) {
 			// treat project closing as removal
@@ -278,7 +274,7 @@ public class DeltaProcessor {
 	 *		as a the element being opened (CHANGED + F_CLOSED).
 	 * </ul>
 	 */
-	protected void elementOpened(ICElement element, IResourceDelta delta) {
+	protected void elementOpened(ICElement element, IResourceDelta delta) throws CModelException {
 
 		if (element.getElementType() == ICElement.C_PROJECT) {
 			// treat project opening as addition
@@ -325,7 +321,7 @@ public class DeltaProcessor {
 	 * <li>Add a REMOVED entry in the delta
 	 * </ul>
 	 */
-	protected void elementRemoved(ICElement element, IResourceDelta delta) {
+	protected void elementRemoved(ICElement element, IResourceDelta delta) throws CModelException {
 		if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
 			IPath movedToPath = delta.getMovedToPath();
 			// create the moved to element
@@ -445,7 +441,7 @@ public class DeltaProcessor {
 	 * @param parent
 	 * @param delta
 	 */
-	protected void nonCResourcesChanged(ICElement parent, IResourceDelta delta) {
+	protected void nonCResourcesChanged(ICElement parent, IResourceDelta delta) throws CModelException {
 		if (parent instanceof Openable && ((Openable)parent).isOpen()) {			
 			CElementInfo info = ((Openable)parent).getElementInfo();
 			switch (parent.getElementType()) {

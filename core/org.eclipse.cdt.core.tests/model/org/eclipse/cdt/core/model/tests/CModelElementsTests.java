@@ -502,7 +502,7 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(startLine, element.getStartLine());
 		assertEquals(endLine, element.getEndLine());		 		
 	}
-	private void checkElementOffset(CElement element){
+	private void checkElementOffset(CElement element) throws CModelException{
 		if(element.getElementName().length() > 0 ){
 			assertTrue (element.getStartPos() <= element.getIdStartPos());
 			assertEquals (element.getIdLength(), element.getElementName().length());

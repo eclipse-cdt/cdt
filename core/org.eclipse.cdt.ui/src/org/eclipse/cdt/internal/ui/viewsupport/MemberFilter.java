@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IMember;
@@ -61,19 +62,23 @@ public class MemberFilter extends ViewerFilter{
 	 */		
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if(element instanceof IDeclaration){
-			IDeclaration declaration = (IDeclaration) element;
-			if (hasFilter(FILTER_STATIC) && (declaration.isStatic()) ) {
-				return false;
-			}
-			if (element instanceof IMember) {
-				IMember member= (IMember)element;
-				if (hasFilter(FILTER_NONPUBLIC) && (member.getVisibility() != ASTAccessVisibility.PUBLIC)) {
+			try {
+				IDeclaration declaration = (IDeclaration) element;
+				if (hasFilter(FILTER_STATIC) && (declaration.isStatic()) ) {
 					return false;
 				}
-				
-				if (hasFilter(FILTER_FIELDS) && element instanceof IField) {
-					return false;
-				}					
+				if (element instanceof IMember) {
+					IMember member= (IMember)element;
+					if (hasFilter(FILTER_NONPUBLIC) && (member.getVisibility() != ASTAccessVisibility.PUBLIC)) {
+						return false;
+					}
+					
+					if (hasFilter(FILTER_FIELDS) && element instanceof IField) {
+						return false;
+					}					
+				}
+			} catch (CModelException e) {
+				// ignore
 			}
 		}
 		return true;

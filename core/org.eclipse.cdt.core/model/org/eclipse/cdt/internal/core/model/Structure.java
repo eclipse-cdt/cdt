@@ -66,15 +66,15 @@ public class Structure extends SourceManipulation implements  IStructure {
 		return null;
 	}
 
-	public boolean isUnion() {
+	public boolean isUnion() throws CModelException {
 		return getStructureInfo().isUnion();
 	}
 
-	public boolean isClass() {
+	public boolean isClass() throws CModelException {
 		return getStructureInfo().isClass();
 	}
 
-	public boolean isStruct() {
+	public boolean isStruct() throws CModelException {
 		return getStructureInfo().isStruct();
 	}
 
@@ -96,39 +96,39 @@ public class Structure extends SourceManipulation implements  IStructure {
 		return (ASTAccessVisibility)superClassesNames.get(name);
 	}
 
-	public String getTypeName() {
+	public String getTypeName() throws CModelException {
 		return getStructureInfo().getTypeName();
 	}
 	
-	public void setTypeName(String type){
+	public void setTypeName(String type) throws CModelException{
 		getStructureInfo().setTypeString(type);
 	}
 	
-	public boolean isConst() {
+	public boolean isConst() throws CModelException {
 		return getStructureInfo().isConst();
 	}
 
-	public void setConst(boolean isConst) {
+	public void setConst(boolean isConst) throws CModelException {
 		getStructureInfo().setConst(isConst);
 	}
 
-	public boolean isVolatile() {
+	public boolean isVolatile() throws CModelException {
 		return getStructureInfo().isVolatile();
 	}
 
-	public void setVolatile(boolean isVolatile) {
+	public void setVolatile(boolean isVolatile) throws CModelException {
 		getStructureInfo().setVolatile(isVolatile);
 	}
 
-	public boolean isStatic() {
+	public boolean isStatic() throws CModelException {
 		return getStructureInfo().isStatic();
 	}
 	
-	public void setStatic(boolean isStatic) {
+	public void setStatic(boolean isStatic) throws CModelException {
 		getStructureInfo().setStatic(isStatic);
 	}
 	
-	public StructureInfo getStructureInfo(){
+	public StructureInfo getStructureInfo() throws CModelException{
 		return (StructureInfo) getElementInfo();
 	}
 

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IParent;
@@ -125,7 +126,7 @@ private void added(ICElement element) {
  * Builds the C element deltas between the old content of the translation unit
  * and its new content.
  */
-public void buildDeltas() {
+public void buildDeltas() throws CModelException {
 	this.recordNewPositions(this.cElement, 0);
 	this.findAdditions(this.cElement, 0);
 	this.findDeletions();
@@ -135,7 +136,7 @@ public void buildDeltas() {
 /**
  * Finds elements which have been added or changed.
  */
-private void findAdditions(ICElement newElement, int depth) {
+private void findAdditions(ICElement newElement, int depth) throws CModelException {
 	CElementInfo oldInfo = this.getElementInfo(newElement);
 	if (oldInfo == null && depth < this.maxDepth) {
 		this.delta.added(newElement);
@@ -169,7 +170,7 @@ private void findAdditions(ICElement newElement, int depth) {
 /**
  * Looks for changed positioning of elements.
  */
-private void findChangesInPositioning(ICElement element, int depth) {
+private void findChangesInPositioning(ICElement element, int depth) throws CModelException {
 	if (depth >= this.maxDepth || this.added.contains(element) || this.removed.contains(element))
 		return;
 		
@@ -340,7 +341,7 @@ private void recordElementInfo(ICElement element, int depth) {
 /**
  * Fills the newPositions hashtable with the new position information
  */
-private void recordNewPositions(ICElement newElement, int depth) {
+private void recordNewPositions(ICElement newElement, int depth) throws CModelException {
 	if (depth < this.maxDepth && newElement instanceof IParent) {
 		CElementInfo info = null;
 		info = ((CElement)newElement).getElementInfo();

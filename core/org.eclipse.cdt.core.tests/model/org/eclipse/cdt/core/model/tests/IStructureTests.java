@@ -208,7 +208,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		}		
 	}
 	
-	public void testIsUnion() {
+	public void testIsUnion() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElementUnion = null;
 		ICElement myElementNonUnion = null;
@@ -232,7 +232,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		assertNotNull( myStructNonUnion );
 		assertFalse( myStructNonUnion.isUnion() );
 	}
-	public void testIsStruct() {
+	public void testIsStruct() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElementStruct = null;
 		ICElement myElementNonStruct = null;
@@ -257,7 +257,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		assertFalse( myStructNonStruct.isStruct() );
 	}
 	
-	public void testIsClass() {
+	public void testIsClass() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElementClass = null;
 		ICElement myElementNonClass = null;

@@ -525,6 +525,7 @@ public class CCorePlugin extends Plugin {
 				}
 			} catch (CoreException e) {
 				log(e);
+				// ignore
 			}
 		}
 		if (configs == null) {
@@ -584,7 +585,7 @@ public class CCorePlugin extends Plugin {
 					list.toArray(parsers);
 				}
 			} catch (CoreException e) {
-				log(e);
+				// ignore since we fall back to a default....
 			}
 		}
 		if (parsers == null) {

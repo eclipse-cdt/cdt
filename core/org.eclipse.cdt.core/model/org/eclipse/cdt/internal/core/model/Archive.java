@@ -50,7 +50,7 @@ public class Archive extends Openable implements IArchive {
 		return new ArchiveInfo(this);
 	}
 
-	protected ArchiveInfo getArchiveInfo() {
+	protected ArchiveInfo getArchiveInfo() throws CModelException {
 		return (ArchiveInfo)getElementInfo();
 	}
 	/* (non-Javadoc)

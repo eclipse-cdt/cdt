@@ -183,7 +183,7 @@ public class CModelBuilder {
 		
 	}	
 	
-	private void generateModelElements(){
+	private void generateModelElements() throws CModelException{
 		Iterator i = quickParseCallback.iterateOffsetableElements();
 		while (i.hasNext()){
 			IASTOffsetableElement offsetable = (IASTOffsetableElement)i.next();
@@ -201,7 +201,7 @@ public class CModelBuilder {
 		} 
 	}	
 
-	private void generateModelElements (Parent parent, IASTDeclaration declaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTDeclaration declaration) throws CModelException, ASTNotImplementedException
 	{
 		if(declaration instanceof IASTNamespaceDefinition ) {
 			generateModelElements(parent, (IASTNamespaceDefinition) declaration);
@@ -222,7 +222,7 @@ public class CModelBuilder {
 		createSimpleElement(parent, declaration, false);
 	}
 	
-	private void generateModelElements (Parent parent, IASTNamespaceDefinition declaration) throws ASTNotImplementedException{
+	private void generateModelElements (Parent parent, IASTNamespaceDefinition declaration) throws CModelException, ASTNotImplementedException{
 		// IASTNamespaceDefinition 
 		IParent namespace = createNamespace(parent, declaration);
 		Iterator nsDecls = declaration.getDeclarations();
@@ -232,13 +232,13 @@ public class CModelBuilder {
 		}
 	}
 	
-	private void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws CModelException, ASTNotImplementedException
 	{
 		// IASTAbstractTypeSpecifierDeclaration 
 		CElement element = createAbstractElement(parent, abstractDeclaration, false);
 	}
 
-	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws CModelException, ASTNotImplementedException
 	{				
 		// Template Declaration 
 		IASTDeclaration declaration = (IASTDeclaration)templateDeclaration.getOwnedDeclaration();
@@ -269,14 +269,14 @@ public class CModelBuilder {
 		}
 	}
 
-	private void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws CModelException, ASTNotImplementedException
 	{
 		TypeDef typeDef = createTypeDef(parent, declaration);
 		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
 		CElement element = createAbstractElement(parent, abstractDeclaration, false);
 	}
 		
-	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate)throws ASTNotImplementedException{
+	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate)throws ASTNotImplementedException, CModelException{
 		CElement element = null;
 		if(abstractDeclaration != null){
 			IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier();
@@ -306,7 +306,7 @@ public class CModelBuilder {
 		return element;		
 	}
 	
-	private CElement createSimpleElement(Parent parent, IASTDeclaration declaration, boolean isTemplate)throws ASTNotImplementedException{
+	private CElement createSimpleElement(Parent parent, IASTDeclaration declaration, boolean isTemplate)throws CModelException, ASTNotImplementedException{
 
 		CElement element = null;
 		if (declaration instanceof IASTVariable)
@@ -321,7 +321,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private Include createInclusion(Parent parent, IASTInclusion inclusion){
+	private Include createInclusion(Parent parent, IASTInclusion inclusion) throws CModelException{
 		// create element
 		Include element = new Include((CElement)parent, inclusion.getName(), !inclusion.isLocal());
 		element.setFullPathName(inclusion.getFullFileName());
@@ -335,7 +335,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private Macro createMacro(Parent parent, IASTMacro macro){
+	private Macro createMacro(Parent parent, IASTMacro macro) throws CModelException{
 		// create element
 		org.eclipse.cdt.internal.core.model.Macro element = new  Macro(parent, macro.getName());
 		// add to parent
@@ -349,7 +349,7 @@ public class CModelBuilder {
 		
 	}
 	
-	private Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef){
+	private Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef) throws CModelException{
 		// create element
 		String type = "namespace"; //$NON-NLS-1$
 		String nsName = (nsDef.getName() == null )  
@@ -368,7 +368,7 @@ public class CModelBuilder {
 		return element;
 	}
 
-	private Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier){
+	private Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier) throws CModelException{
 		// create element
 		String type = "enum"; //$NON-NLS-1$
 		String enumName = (enumSpecifier.getName() == null )
@@ -394,7 +394,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef){
+	private Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef) throws CModelException{
 		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
 		IASTExpression initialValue = enumDef.getInitialValue();
 		if(initialValue != null){
@@ -413,7 +413,7 @@ public class CModelBuilder {
 		return element;		
 	}
 	
-	private Structure createClass(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate){
+	private Structure createClass(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate) throws CModelException{
 		// create element
 		String className = ""; //$NON-NLS-1$
 		String type = ""; //$NON-NLS-1$
@@ -482,7 +482,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private TypeDef createTypeDef(Parent parent, IASTTypedefDeclaration typeDefDeclaration){
+	private TypeDef createTypeDef(Parent parent, IASTTypedefDeclaration typeDefDeclaration) throws CModelException{
 		// create the element
 		String name = typeDefDeclaration.getName();
         
@@ -502,7 +502,7 @@ public class CModelBuilder {
 		return element;	
 	}
 
-	private VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)throws ASTNotImplementedException
+	private VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)throws CModelException, ASTNotImplementedException
     {
 		String variableName = varDeclaration.getName(); 
 		if((variableName == null) || (variableName.length() <= 0)){
@@ -558,7 +558,7 @@ public class CModelBuilder {
 		return element;
 	}
 
-	private FunctionDeclaration createFunctionSpecification(Parent parent, IASTFunction functionDeclaration, boolean isTemplate)
+	private FunctionDeclaration createFunctionSpecification(Parent parent, IASTFunction functionDeclaration, boolean isTemplate) throws CModelException
     {    	
 		String name = functionDeclaration.getName();
         if ((name == null) || (name.length() <= 0)) {

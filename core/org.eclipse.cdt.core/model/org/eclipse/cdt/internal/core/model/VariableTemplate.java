@@ -9,6 +9,7 @@ package org.eclipse.cdt.internal.core.model;
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITemplate;
 
@@ -46,7 +47,7 @@ public class VariableTemplate extends Variable implements ITemplate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
 	 */
-	public String getTemplateSignature() {
+	public String getTemplateSignature() throws CModelException {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){
 			sig.append("<"); //$NON-NLS-1$

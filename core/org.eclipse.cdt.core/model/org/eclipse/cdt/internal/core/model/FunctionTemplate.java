@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITemplate;
 
@@ -58,7 +59,7 @@ public class FunctionTemplate extends FunctionDeclaration implements ITemplate{
 	 * normal parameter list, then a colon then the function's 
 	 * return type.
 	 */	
-	public String getTemplateSignature() {
+	public String getTemplateSignature() throws CModelException {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){
 			sig.append("<"); //$NON-NLS-1$

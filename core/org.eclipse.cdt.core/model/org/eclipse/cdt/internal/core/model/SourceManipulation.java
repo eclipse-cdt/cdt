@@ -92,7 +92,11 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	 * @see IMember
 	 */
 	public ITranslationUnit getTranslationUnit() {
-		return getSourceManipulationInfo().getTranslationUnit();
+		try {
+			return getSourceManipulationInfo().getTranslationUnit();
+		} catch (CModelException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -149,11 +153,11 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		return new SourceManipulationInfo(this);
 	}
 
-	protected SourceManipulationInfo getSourceManipulationInfo() {
+	protected SourceManipulationInfo getSourceManipulationInfo() throws CModelException {
 		return (SourceManipulationInfo)getElementInfo();
 	}
 	
-	public boolean isIdentical(SourceManipulation other){
+	public boolean isIdentical(SourceManipulation other) throws CModelException{
 		return (this.equals(other) 
 		&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo())));
 	}

@@ -16,7 +16,7 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	boolean isConstructor();
+	boolean isConstructor() throws CModelException;
 
 	/**
 	 * Returns whether this method is a destructor.
@@ -24,7 +24,7 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	boolean isDestructor();
+	boolean isDestructor() throws CModelException;
 
 	/**
 	 * Returns whether this method is an operator method.
@@ -32,7 +32,7 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	boolean isOperator();
+	boolean isOperator() throws CModelException;
 
 	/**
 	 * Returns whether this method is declared pure virtual.
@@ -42,19 +42,19 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	boolean isPureVirtual();
+	boolean isPureVirtual() throws CModelException;
 
 	/**
 	 * Returns if this method is static or not
 	 * @return boolean
 	 */
-	public boolean isStatic();
+	public boolean isStatic() throws CModelException;
 	
 	/**
 	 * Returns if this method is inline or not
 	 * @return boolean
 	 */
-	public boolean isInline();
+	public boolean isInline() throws CModelException;
 	
 	/**
 	 * Returns whether this method is declared virtual.
@@ -62,11 +62,11 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	boolean isVirtual();
+	boolean isVirtual() throws CModelException;
 
 	/**
 	 * return true if the member is a friend.
 	 */
-	public boolean isFriend();
+	public boolean isFriend() throws CModelException;
 
 }

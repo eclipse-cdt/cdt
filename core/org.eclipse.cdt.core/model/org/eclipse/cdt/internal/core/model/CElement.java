@@ -78,7 +78,11 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public boolean exists() {
-		return getElementInfo() != null;
+		try {
+			return getElementInfo() != null;
+		} catch (CModelException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -143,7 +147,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return null;
 	}
 
-	protected void addChild(ICElement e) {
+	protected void addChild(ICElement e) throws CModelException {
 	}
 
 	public void setPos(int startPos, int length) {
@@ -225,22 +229,18 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return false;
 	}
 	
-	public CElementInfo getElementInfo () {
-		try {
-			CModelManager manager;
-			synchronized(manager = CModelManager.getDefault()){
-				Object info = manager.getInfo(this);
+	public CElementInfo getElementInfo () throws CModelException {
+		CModelManager manager;
+		synchronized(manager = CModelManager.getDefault()){
+			Object info = manager.getInfo(this);
+			if (info == null) {
+				openHierarchy();
+				info= manager.getInfo(this);
 				if (info == null) {
-					openHierarchy();
-					info= manager.getInfo(this);
-					if (info == null) {
-						throw newNotPresentException();
-					}
+					throw newNotPresentException();
 				}
-				return (CElementInfo)info;
 			}
-		} catch(CModelException e) {
-			return null;
+			return (CElementInfo)info;
 		}
 	}
 

@@ -206,7 +206,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 	}
 
-	private boolean updateContainer(ICElement cfile) {
+	private boolean updateContainer(ICElement cfile) throws CModelException {
 		IParent container = null;
 		ICProject cproject = null;
 		if (cfile instanceof IBinary) {

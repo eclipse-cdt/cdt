@@ -219,7 +219,7 @@ public class Binary extends Openable implements IBinary {
 	}
 
 
-	boolean computeChildren(OpenableInfo info, IResource res) {
+	boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 		boolean ok = false;
 		if (isObject() || isExecutable() || isSharedLib()) {
 			Map hash = new HashMap();
@@ -243,7 +243,7 @@ public class Binary extends Openable implements IBinary {
 		return ok;
 	}
 
-	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) {
+	private void addFunction(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
 		IPath filename = filename = symbol.getFilename();
 		BinaryFunction function = null;
 
@@ -273,7 +273,7 @@ public class Binary extends Openable implements IBinary {
 		//		}
 	}
 
-	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) {
+	private void addVariable(OpenableInfo info, ISymbol symbol, Map hash) throws CModelException {
 		IPath filename = filename = symbol.getFilename();
 		BinaryVariable variable = null;
 		if (filename != null) {

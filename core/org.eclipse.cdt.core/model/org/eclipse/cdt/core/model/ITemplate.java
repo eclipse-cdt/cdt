@@ -23,8 +23,9 @@ public interface ITemplate extends IDeclaration {
 	/**
 	 * Returns the template signature
 	 * @return String
+	 * @throws CModelException
 	 */
-	String getTemplateSignature();
+	String getTemplateSignature() throws CModelException;
 	/**
 	 * Returns the number of template parameters
 	 * @return int

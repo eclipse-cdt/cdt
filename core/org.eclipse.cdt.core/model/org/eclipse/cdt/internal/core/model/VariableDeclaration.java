@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 
@@ -18,39 +19,39 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		super(parent, name, type);
 	}
 
-	public String getTypeName() {
+	public String getTypeName() throws CModelException {
 		return getVariableInfo().getTypeName();
 	}
 
-	public void setTypeName(String type) {
+	public void setTypeName(String type) throws CModelException {
 		getVariableInfo().setTypeString(type);
 	}
 
-	public boolean isConst() {
+	public boolean isConst() throws CModelException {
 		return getVariableInfo().isConst();
 	}
 
-	public void setConst(boolean isConst) {
+	public void setConst(boolean isConst) throws CModelException {
 		getVariableInfo().setConst(isConst);
 	}
 
-	public boolean isVolatile() {
+	public boolean isVolatile() throws CModelException {
 		return getVariableInfo().isVolatile();
 	}
 
-	public void setVolatile(boolean isVolatile) {
+	public void setVolatile(boolean isVolatile) throws CModelException {
 		getVariableInfo().setVolatile(isVolatile);
 	}
 
-	public boolean isStatic() {
+	public boolean isStatic() throws CModelException {
 		return getVariableInfo().isStatic();
 	}
 
-	public void setStatic(boolean isStatic) {
+	public void setStatic(boolean isStatic) throws CModelException {
 		getVariableInfo().setStatic(isStatic);
 	}
 
-	public VariableInfo getVariableInfo(){
+	public VariableInfo getVariableInfo() throws CModelException{
 		return (VariableInfo) getElementInfo();
 	}
 	

@@ -9,6 +9,17 @@ package org.eclipse.cdt.core.model;
  * Represents the declaration of a variable.
  */
 public interface IVariableDeclaration extends IDeclaration {
-	public String getTypeName();
-	public void setTypeName(String type);
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public String getTypeName() throws CModelException;
+	
+	/**
+	 * 
+	 * @param type
+	 * @throws CModelException
+	 */
+	public void setTypeName(String type) throws CModelException;
 }

@@ -12,7 +12,25 @@ package org.eclipse.cdt.core.model;
 ***********************************************************************/
 
 public interface IDeclaration extends ICElement, ISourceManipulation, ISourceReference {
-	boolean isStatic();
-	boolean isConst();
-	boolean isVolatile();	
+
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	boolean isStatic() throws CModelException;
+	
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	boolean isConst() throws CModelException;
+	
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	boolean isVolatile() throws CModelException;	
 }

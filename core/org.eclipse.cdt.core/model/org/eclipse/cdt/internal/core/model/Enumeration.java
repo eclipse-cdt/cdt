@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumeration;
 
@@ -24,7 +25,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 		return new EnumerationInfo(this);
 	}
 
-	private EnumerationInfo getEnumerationInfo(){
+	private EnumerationInfo getEnumerationInfo() throws CModelException{
 		return (EnumerationInfo) getElementInfo();
 	}
 	/**
@@ -37,35 +38,35 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	/**
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getTypeName()
 	 */
-	public String getTypeName() {
+	public String getTypeName() throws CModelException {
 		return getEnumerationInfo().getTypeName();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#setTypeName(java.lang.String)
 	 */
-	public void setTypeName(String type) {
+	public void setTypeName(String type) throws CModelException {
 		getEnumerationInfo().setTypeName(type);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
-	public boolean isConst() {
+	public boolean isConst() throws CModelException {
 		return getEnumerationInfo().isConst();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
 	 */
-	public boolean isStatic() {
+	public boolean isStatic() throws CModelException {
 		return getEnumerationInfo().isStatic();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
 	 */
-	public boolean isVolatile() {
+	public boolean isVolatile() throws CModelException {
 		return getEnumerationInfo().isVolatile();
 	}
 
@@ -73,7 +74,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * Sets the isConst.
 	 * @param isConst The isConst to set
 	 */
-	public void setConst(boolean isConst) {
+	public void setConst(boolean isConst) throws CModelException {
 		getEnumerationInfo().setConst(isConst);
 	}
 
@@ -81,7 +82,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * Sets the isStatic.
 	 * @param isStatic The isStatic to set
 	 */
-	public void setStatic(boolean isStatic) {
+	public void setStatic(boolean isStatic) throws CModelException {
 		getEnumerationInfo().setStatic( isStatic);
 	}
 
@@ -89,7 +90,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * Sets the isVolatile.
 	 * @param isVolatile The isVolatile to set
 	 */
-	public void setVolatile(boolean isVolatile) {
+	public void setVolatile(boolean isVolatile) throws CModelException {
 		getEnumerationInfo().setVolatile(isVolatile);
 	}	
 

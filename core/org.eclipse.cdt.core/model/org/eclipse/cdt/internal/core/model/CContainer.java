@@ -220,7 +220,7 @@ public class CContainer extends Openable implements ICContainer {
 		return true;
 	}
 
-	protected ICElement computeChild(IResource resource, ICProject cproject) {
+	protected ICElement computeChild(IResource resource, ICProject cproject) throws CModelException {
 		ICElement celement = null;
 		switch (resource.getType()) {
 			case IResource.FILE :

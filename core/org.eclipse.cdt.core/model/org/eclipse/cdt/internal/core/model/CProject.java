@@ -53,11 +53,11 @@ public class CProject extends Openable implements ICProject {
 		super(parent, project, CElement.C_PROJECT);
 	}
 
-	public IBinaryContainer getBinaryContainer() {
+	public IBinaryContainer getBinaryContainer() throws CModelException {
 		return ((CProjectInfo) getElementInfo()).getBinaryContainer();
 	}
 
-	public IArchiveContainer getArchiveContainer() {
+	public IArchiveContainer getArchiveContainer() throws CModelException {
 		return ((CProjectInfo) getElementInfo()).getArchiveContainer();
 	}
 

@@ -212,7 +212,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return getSourceManipulationInfo().getSourceRange();
 	}
 
-	protected TranslationUnitInfo getTranslationUnitInfo() {
+	protected TranslationUnitInfo getTranslationUnitInfo() throws CModelException {
 		return (TranslationUnitInfo)getElementInfo();
 	}
 
@@ -296,7 +296,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @param element
 	 */
 	private void getNewElements(Map newElements, CElement element){
-		Object info = element.getElementInfo();
+		Object info = null;
+		try {
+			info = element.getElementInfo();
+		} catch (CModelException e) {
+		}
 		if(info != null){
 			if(element instanceof IParent){
 				ICElement[] children = ((CElementInfo)info).getChildren();

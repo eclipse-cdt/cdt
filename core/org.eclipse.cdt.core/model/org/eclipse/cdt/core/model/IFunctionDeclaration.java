@@ -62,5 +62,5 @@ public interface IFunctionDeclaration extends IDeclaration {
 	/**
 	 * Returns the signature of the method. 
 	 */	
-	String getSignature();
+	String getSignature() throws CModelException;
 }

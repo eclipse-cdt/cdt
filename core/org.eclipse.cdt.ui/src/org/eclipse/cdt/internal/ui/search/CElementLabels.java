@@ -13,9 +13,11 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -280,6 +282,7 @@ public class CElementLabels {
 	}
 	
 	public static void getMethodLabel( IMethod method, int flags, StringBuffer buf ) {
+		try {
 		//return type
 		if( getFlag( flags, M_PRE_RETURNTYPE ) && method.exists() && !method.isConstructor() ) {
 			buf.append( method.getReturnType() );
@@ -346,7 +349,10 @@ public class CElementLabels {
 		if( getFlag(flags, M_POST_QUALIFIED)) {
 			buf.append( CONCAT_STRING );
 			getTypeLabel( method.getParent(), T_FULLY_QUALIFIED | (flags & P_COMPRESSED), buf );
-		}	
+		}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 	}
 	
 	public static void getTypeLabel(ICElement type, int flags, StringBuffer buf) {

@@ -1,3 +1,14 @@
+2004-04-20 David Inglis
+
+	More of the model throws CModeLException. 
+	
+	* refactor/org/eclipse/cdt/internal/corext/refactoring/rename/RenameElementProcessor.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/CElementLabels.java
+	* src/org/eclipse/cdt/internal/ui/viewsupport/MemberFilter.java
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java
+
 2004-04-20 Alain Magloire
 
 	Fix for PR 59081
@@ -5,7 +16,7 @@
 	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
 	* src/org/eclipse/cdt/internal/ui/editor/DocumentAdapter.java
-
+	
 2004-04-20 David Inglis
 
 	Enable wraping for build console

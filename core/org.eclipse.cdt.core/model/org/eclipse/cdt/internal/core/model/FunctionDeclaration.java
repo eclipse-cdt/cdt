@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 
@@ -49,13 +50,14 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		fParameterTypes = parameterTypes;
 	}		
 		
-	public String getSignature(){
+	public String getSignature() throws CModelException{
 		StringBuffer sig = new StringBuffer(getElementName());
 		sig.append(getParameterClause());
 		if(isConst())
 			sig.append(" const"); //$NON-NLS-1$
-		if(isVolatile())
+		if(isVolatile()) {
 			sig.append(" volatile"); //$NON-NLS-1$
+		}
 		return sig.toString();
 	}
 	
@@ -91,7 +93,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return new FunctionInfo(this);
 	}
 	
-	protected FunctionInfo getFunctionInfo(){
+	protected FunctionInfo getFunctionInfo() throws CModelException{
 		return (FunctionInfo) getElementInfo();
 	}
 	
@@ -110,11 +112,11 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * FunctionDeclarations and Functions can not be constant 
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
-	public boolean isConst(){
+	public boolean isConst() throws CModelException{
 		return getFunctionInfo().isConst();
 	}
 
-	public void setConst(boolean isConst){
+	public void setConst(boolean isConst) throws CModelException{
 		getFunctionInfo().setConst(isConst);
 	}
 
@@ -122,7 +124,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * Returns the isStatic.
 	 * @return boolean
 	 */
-	public boolean isStatic() {
+	public boolean isStatic() throws CModelException {
 		return getFunctionInfo().isStatic();
 	}
 
@@ -130,7 +132,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * Returns the isVolatile.
 	 * @return boolean
 	 */
-	public boolean isVolatile() {
+	public boolean isVolatile() throws CModelException {
 		return getFunctionInfo().isVolatile();
 	}
 
@@ -138,7 +140,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * Sets the isStatic.
 	 * @param isStatic The isStatic to set
 	 */
-	public void setStatic(boolean isStatic) {
+	public void setStatic(boolean isStatic) throws CModelException {
 		getFunctionInfo().setStatic(isStatic);
 	}
 
@@ -146,7 +148,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * Sets the isVolatile.
 	 * @param isVolatile The isVolatile to set
 	 */
-	public void setVolatile(boolean isVolatile) {
+	public void setVolatile(boolean isVolatile) throws CModelException {
 		getFunctionInfo().setVolatile(isVolatile);
 	}
 

@@ -35,13 +35,17 @@ public interface ICProject extends IParent, IOpenable, ICElement {
 
 	/**
 	 * Return the ArchiveContainer of this Project.
+	 * @return
+	 * @throws CModelException
 	 */
-	IArchiveContainer getArchiveContainer();
+	IArchiveContainer getArchiveContainer() throws CModelException;
 
 	/**
 	 * Return the BinaryContainer of this Project.
+	 * @return
+	 * @throws CModelException
 	 */
-	IBinaryContainer getBinaryContainer();
+	IBinaryContainer getBinaryContainer() throws CModelException;
 
 	/**
 	 * Returns the source root folders of the project.

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryModule;
@@ -339,21 +340,25 @@ public class CElementImageProvider {
 				return getEnumeratorImageDescriptor();
 
 			case ICElement.C_FIELD:
-			{
+			try {
 				IField  field = (IField)celement;
 				ASTAccessVisibility visibility = field.getVisibility();
 				return getFieldImageDescriptor(visibility);
+			} catch (CModelException e) {
+				return null;
 			}
 			
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
-			{
+			try {
+				
 				IMethodDeclaration  md= (IMethodDeclaration)celement;
 				ASTAccessVisibility visibility =md.getVisibility();
 				return getMethodImageDescriptor(visibility); 
+			} catch (CModelException e) {
+				return null;
 			}
-
 			case ICElement.C_VARIABLE:
 			case ICElement.C_TEMPLATE_VARIABLE:
 				return getVariableImageDescriptor();
@@ -387,21 +392,24 @@ public class CElementImageProvider {
 	private int computeCAdornmentFlags(ICElement element, int renderFlags) {
 		
 		int flags= computeBasicAdornmentFlags(element, renderFlags);
-		
-		if (showOverlayIcons(renderFlags) && element instanceof IDeclaration) {
-			IDeclaration decl = (IDeclaration) element;
-			if(decl.isStatic()){
-				flags |= CElementImageDescriptor.STATIC;
+
+		try {
+			if (showOverlayIcons(renderFlags) && element instanceof IDeclaration) {
+				IDeclaration decl = (IDeclaration) element;
+				if(decl.isStatic()){
+					flags |= CElementImageDescriptor.STATIC;
+				}
+				if(decl.isConst()){
+					flags |= CElementImageDescriptor.CONSTANT;
+				}
+				if(decl.isVolatile()){
+					flags |= CElementImageDescriptor.VOLATILE;
+				}
+				if(element instanceof ITemplate){
+					flags |= CElementImageDescriptor.TEMPLATE;
+				}
 			}
-			if(decl.isConst()){
-				flags |= CElementImageDescriptor.CONSTANT;
-			}
-			if(decl.isVolatile()){
-				flags |= CElementImageDescriptor.VOLATILE;
-			}
-			if(element instanceof ITemplate){
-				flags |= CElementImageDescriptor.TEMPLATE;
-			}
+		} catch (CModelException e) {
 		}
 		return flags;
 	}

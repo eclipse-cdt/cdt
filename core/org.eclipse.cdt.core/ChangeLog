@@ -1,3 +1,10 @@
+2004-04-20 David Inglis
+
+	Added more CModelException throwing in model essentially if the model fails to create
+	a info an exception is thrown, it we *not* return null.
+	
+	to many files changes to list here.....
+	
 2004-04-20 Alain Magloire
 
 	Fix for PR 59081

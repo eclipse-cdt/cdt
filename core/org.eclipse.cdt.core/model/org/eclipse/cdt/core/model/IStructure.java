@@ -28,11 +28,26 @@ public interface IStructure extends IInheritance, IParent, IVariableDeclaration 
 	 */
 	public IMethodDeclaration [] getMethods() throws CModelException;
 
-	public boolean isUnion();
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public boolean isUnion() throws CModelException;
 
-	public boolean isClass();
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public boolean isClass() throws CModelException;
 
-	public boolean isStruct();
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public boolean isStruct() throws CModelException;
 
 	/**
 	 * 
@@ -40,5 +55,4 @@ public interface IStructure extends IInheritance, IParent, IVariableDeclaration 
 	 * @throws CModelException
 	 */
 	public boolean isAbstract() throws CModelException;
-	
 }

@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -53,35 +54,35 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		return getElementName().startsWith("operator"); //$NON-NLS-1$
 	}
 
-	public boolean isPureVirtual(){
+	public boolean isPureVirtual() throws CModelException{
 		return getMethodInfo().isPureVirtual();
 	}
 
-	public void setPureVirtual(boolean isPureVirtual){
+	public void setPureVirtual(boolean isPureVirtual) throws CModelException{
 		getMethodInfo().setPureVirtual(isPureVirtual);
 	}
 
-	public boolean isInline(){
+	public boolean isInline() throws CModelException{
 		return getMethodInfo().isInline();
 	}
 
-	public void setInline(boolean isInline){
+	public void setInline(boolean isInline) throws CModelException{
 		getMethodInfo().setInline(isInline);
 	}
 
-	public boolean isVirtual(){
+	public boolean isVirtual() throws CModelException{
 		return getMethodInfo().isVirtual();
 	}
 
-	public void setVirtual(boolean isVirtual){
+	public void setVirtual(boolean isVirtual) throws CModelException{
 		getMethodInfo().setVirtual(isVirtual);
 	}
 
-	public boolean isFriend(){
+	public boolean isFriend() throws CModelException{
 		return getMethodInfo().isFriend();
 	}
 
-	public void setFriend(boolean isFriend){
+	public void setFriend(boolean isFriend) throws CModelException{
 		getMethodInfo().setFriend(isFriend);
 	}
 
@@ -89,16 +90,16 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		return isConst;
 	}
 
-	public void setConst(boolean isConst){
+	public void setConst(boolean isConst) throws CModelException{
 		this.isConst = isConst;
 		getMethodInfo().setConst(isConst);
 	}
 
-	public ASTAccessVisibility getVisibility(){
+	public ASTAccessVisibility getVisibility() throws CModelException{
 		return getMethodInfo().getVisibility();
 	}
 	
-	public void setVisibility(ASTAccessVisibility visibility){
+	public void setVisibility(ASTAccessVisibility visibility) throws CModelException{
 		getMethodInfo().setVisibility(visibility);
 	}
 	
@@ -106,7 +107,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		return new MethodInfo(this);
 	}
 	
-	private MethodInfo getMethodInfo(){
+	private MethodInfo getMethodInfo() throws CModelException{
 		return (MethodInfo) getElementInfo();
 	}
 	

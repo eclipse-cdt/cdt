@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -318,7 +317,6 @@ public class DeltaProcessor {
 		CModelManager factory = CModelManager.getDefault();
 		CElementInfo pinfo = (CElementInfo)factory.peekAtInfo(celement);
 		if (pinfo != null) {
-			ArrayList list = new ArrayList();
 			ICElement[] celems = pinfo.getChildren();
 			for (int i = 0; i < celems.length; ++i) {
 				closeBinary(celems[i]);

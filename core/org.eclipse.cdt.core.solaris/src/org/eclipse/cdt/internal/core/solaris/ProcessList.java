@@ -26,7 +26,7 @@ public class ProcessList implements IProcessList {
 	public IProcessInfo [] getProcessList()  {
 		Process ps;
 		BufferedReader psOutput;
-		String[] args = {"/usr/bin/ps", "-e", "-o", "pid,args"};
+		String[] args = {"/usr/bin/ps", "-e", "-o", "pid,args"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		try {
 			ps = ProcessFactory.getFactory().exec(args);

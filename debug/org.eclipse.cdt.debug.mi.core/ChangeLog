@@ -1,5 +1,11 @@
 2003-12-16 Mikhail Khodjaiants
 
+	Show the gdb arguments when tracing.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+ 
+2003-12-16 Mikhail Khodjaiants
+
 	Fix for PR 48870: Terminate gdb if attach to process fails.
 
 	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java

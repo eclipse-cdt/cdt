@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
@@ -65,24 +64,14 @@ public class MIInferior extends Process {
 			out = new OutputStream() {
 				StringBuffer buf = new StringBuffer();
 				public void write(int b) throws IOException {
-					buf.append((char)b);
-					if (b == '\n') {
-						flush();
+					if (!isRunning()) {
+						throw new IOException("target is suspended");
 					}
-				}
-				// Encapsulate the string sent to gdb in a fake command.
-				// and post it to the TxThread.
-				public void flush() throws IOException {
-					CLICommand cmd = new CLICommand(buf.toString()) {
-						public void setToken(int token) {
-							// override to do nothing;
-						}
-					};
-					try {
-						session.postCommand(cmd);
-					} catch (MIException e) {
-						throw new IOException("no mi session");
+					OutputStream channel = session.getChannelOutputStream();
+					if (channel == null) {
+						throw new IOException("No MI Session");
 					}
+					channel.write(b);
 				}
 			};
 		}

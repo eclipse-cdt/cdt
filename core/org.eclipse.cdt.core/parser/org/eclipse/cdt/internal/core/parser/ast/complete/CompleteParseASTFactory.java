@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -1513,12 +1514,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION)
 		){
 			provider.setType( ITypeInfo.t_void );
+			return;
 		}
 		// types that resolve to int
 		if ((kind == IASTExpression.Kind.PRIMARY_INTEGER_LITERAL)
 		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT)
 		){
 		    provider.setType( ITypeInfo.t_int );
+			return;
 		}
 		
 		// size of is always unsigned int
@@ -1527,6 +1530,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		){
 		    provider.setType( ITypeInfo.t_int );
 		    provider.setTypeBits( ITypeInfo.isUnsigned );
+			return;
 		}
 		
 		// types that resolve to char
@@ -1534,21 +1538,24 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR)
 		|| (kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL)
 		){
-		    provider.setType( ITypeInfo.t_char );				
+		    provider.setType( ITypeInfo.t_char );
+			return;
 		}	
 		// types that resolve to float
 		if((kind == IASTExpression.Kind.PRIMARY_FLOAT_LITERAL)
 		|| (kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT)){
 		    provider.setType( ITypeInfo.t_float );
+			return;
 		}
 		//types that resolve to double
 		if( kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE){
 		    provider.setType( ITypeInfo.t_double );
-							
+			return;		
 		}	
 		//types that resolve to wchar
 		if(kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART){
 		    provider.setType( ITypeInfo.t_wchar_t );
+			return;
 		}		
 		// types that resolve to bool
 		if((kind == IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL)
@@ -1564,6 +1571,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		)
 		{
 		    provider.setType(ITypeInfo.t_bool);
+			return;
 		}
 	}
 	protected ExpressionResult getExpressionResultType(
@@ -1598,13 +1606,21 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			info = provider.completeConstruction();
 			
 			//types that need a pointer
-			if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
-		        (literal.length > 1 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
-			                             kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR )) )
-			{
-				info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
+			if( ParserFactory.USE_NEW_SCANNER ){
+			    if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
+			        (literal.length > 3 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
+				                             kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR )) )
+				{
+					info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
+				}
+			} else {
+				if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
+			        (literal.length > 1 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
+				                             kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR )) )
+				{
+					info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
+				}
 			}
-			
 			return new ExpressionResult( info );
 		}
 

@@ -63,7 +63,12 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 			deferredTemplate = (ITemplateSymbol) i.getTypeSymbol();
 		}
 		
+		// process any accumulated deferred instances, we may need them
+		if (template instanceof TemplateSymbol)
+			((TemplateSymbol)template).processDeferredInstantiations();
+
 		ISymbol instance = deferredTemplate.instantiate( newArgs );
+		
 //		if( !( instance instanceof IDeferredTemplateInstance ) )
 //			return instance.instantiate( template, argMap );
 //		else 

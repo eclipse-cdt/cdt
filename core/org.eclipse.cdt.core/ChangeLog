@@ -1,3 +1,11 @@
+2004-10-12 Vladimir Hirsl
+
+	Fix for PR 69604 [Templates] Instantiating template with deferred template instance
+	Original Andrew's patch + a cleanup of processed deferred instntiations.
+	
+	* parser/org/eclipse/cdt/internal/core/parser/pst/DeferredTemplateInstance.java
+	* parser/org/eclipse/cdt/internal/core/parser/pst/TemplateSymbol
+
 2004-10-06 Vladimir Hirsl
 
 	Fix for PR 75728 [ParserSymbolTable] NPE in TypeInfoProvider.newTypeInfo

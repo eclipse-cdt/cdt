@@ -379,12 +379,12 @@
             class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferencePage"
             id="org.eclipse.cdt.ui.preferences.CFileTypesPreferences">
       </page>
-      <page
+      <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage"
             id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
-      </page>
+      </page-->
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

@@ -1,3 +1,9 @@
+2004-06-09 Alain Magloire
+	Disable extension Work In Progress
+	in plugin.xml. Part of PR 66016
+
+	* plugin.xml
+
 2004-06-09 Bogdan Gheorghe
 	Fix for  Bug 66273 - Opening declaration causes stack overflow
 	

@@ -639,10 +639,12 @@ public class BreakpointManager extends Manager {
 				pointList.addAll(Arrays.asList(points));
 			}
 		} catch (MIException e) {
-			// Things did not go well remove all the breakpoints we've set before.
-			MIBreakpoint[] allPoints = (MIBreakpoint[]) pointList.toArray(new MIBreakpoint[pointList.size()]);
 			try {
-				deleteMIBreakpoints(target, allPoints);
+				// Things did not go well remove all the breakpoints we've set before.
+				MIBreakpoint[] allPoints = (MIBreakpoint[]) pointList.toArray(new MIBreakpoint[pointList.size()]);
+				if (allPoints != null && allPoints.length > 0) {
+					deleteMIBreakpoints(target, allPoints);
+				}
 			} catch (CDIException cdie) {
 				// ignore this one;
 			}

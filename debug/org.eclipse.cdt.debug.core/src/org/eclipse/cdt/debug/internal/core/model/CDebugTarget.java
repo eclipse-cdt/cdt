@@ -1560,6 +1560,7 @@ public class CDebugTarget extends CDebugElement
 			} 
 			CDebugUtils.error( status, this );
 		}
+		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
 	private void handleSuspendedBySolibEvent( ICDISharedLibraryEvent solibEvent )
@@ -1889,16 +1890,16 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void setCurrentThread( IThread thread ) throws DebugException
 	{
-		if ( !isSuspended() || !isAvailable() || thread == null || !(thread instanceof CThread) )
+		if ( !isSuspended() || !isAvailable() || !(thread instanceof CThread) )
 			return;
 		try
 		{
 			CThread oldThread = (CThread)getCurrentThread();
 			if ( !thread.equals( oldThread ) )
 			{
+				getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
 				if ( oldThread != null )
 					oldThread.setCurrent( false );
-				getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
 				((CThread)thread).setCurrent( true );
 			}
 		}

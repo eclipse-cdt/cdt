@@ -17,12 +17,7 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.ICDebugger;
-import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -31,19 +26,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 
 abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDelegate {
 
@@ -198,6 +186,32 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		String format = "{0} ({1})";
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { commandLine, timestamp });
+	}
+
+	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
+		String name = getProjectName(config);
+		if (name == null) {
+			abort("C project not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+		}
+		ICProject project = getCProject(config);
+		if (project == null) {
+			abort("Project does not exist or is not a C/C++ project", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+		}
+		return project;
+	}
+
+	protected IPath verifyProgramFile(ILaunchConfiguration config) throws CoreException {
+		ICProject cproject = verifyCProject(config);
+		String fileName = getProgramName(config);
+		if ( fileName == null ) {
+			abort("Program file not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		}
+		
+		IFile projectPath = ((IProject) cproject.getResource()).getFile(fileName);
+		if (projectPath == null || !projectPath.exists()) {
+			abort("Program file does not exist", null, ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+		}
+		return projectPath.getLocation();
 	}
 
 	private static class ArgumentParser {

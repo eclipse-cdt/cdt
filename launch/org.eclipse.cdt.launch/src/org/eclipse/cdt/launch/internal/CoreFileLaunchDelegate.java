@@ -1,13 +1,8 @@
 package org.eclipse.cdt.launch.internal;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.util.Date;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -50,12 +45,13 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		ICProject cproject = getCProject(config);
-		IPath projectPath = ((IProject) cproject.getResource()).getFile(getProgramName(config)).getLocation();
+		IPath projectPath = verifyProgramFile(config);
 
 		ICDebugConfiguration debugConfig = getDebugConfig(config);
 		IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
 		ICDISession dsession = null;
+
+		ICProject cproject = getCProject(config);
 	
 		IPath corefile = getCoreFilePath((IProject)cproject.getResource());
 		if ( corefile == null ) {

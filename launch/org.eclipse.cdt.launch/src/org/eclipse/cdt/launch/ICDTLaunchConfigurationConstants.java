@@ -119,12 +119,37 @@ public interface ICDTLaunchConfigurationConstants {
 	 * </p>
 	 */
 	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 100;
-	
+
 	/**
 	 * Status code indicating the specified working directory
 	 * does not exist.
 	 */
 	public static final int ERR_WORKING_DIRECTORY_DOES_NOT_EXIST = 101;	
+
+	/**
+	 * Status code indicating a launch configuration does not
+	 * specify a project when a project is required.
+	 */
+	public static final int ERR_UNSPECIFIED_PROJECT = 102;	
+
+	/**
+	 * Status code indicating a launch configuration does not
+	 * specify a vaild project.
+	 */
+	public static final int ERR_NOT_A_C_PROJECT = 103;
+
+	/**
+	 * Status code indicating a launch configuration does not
+	 * specify a vaild program.
+	 */
+	public static final int ERR_PROGRAM_NOT_EXIST = 104;
+
+	/**
+	 * Status code indicating a launch configuration does not
+	 * specify a program name.
+	 */
+	
+	public static final int ERR_UNSPECIFIED_PROGRAM = 105;
 
 	/**
 	 * Status code indicating that the CDT debugger is missing
@@ -133,10 +158,17 @@ public interface ICDTLaunchConfigurationConstants {
 	 * and should return a String indicating which debugger to use.
 	 * </p>
 	 */
-	public static final int ERR_DEBUGGER_NOT_INSTALLED = 102;
+	public static final int ERR_DEBUGGER_NOT_INSTALLED = 106;
 
-	public static final int ERR_NO_PROCESSID = 103;
-	public static final int ERR_NO_COREFILE = 104;
+	/**
+	 * Status code indicating a the user did not specify a process id
+	 */
+	public static final int ERR_NO_PROCESSID = 107;
+
+	/**
+	 * Status code indicating a the user did not specify a path to a corefile
+	 */
+	public static final int ERR_NO_COREFILE = 108;
 	
 	/**
 	 * Status code indicating an unexpected internal error.

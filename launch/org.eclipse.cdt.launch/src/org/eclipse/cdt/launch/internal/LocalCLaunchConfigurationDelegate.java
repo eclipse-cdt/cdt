@@ -7,19 +7,14 @@ package org.eclipse.cdt.launch.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -28,7 +23,6 @@ import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -64,8 +58,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		ICProject cproject = getCProject(config);
-		IPath projectPath = ((IProject) cproject.getResource()).getFile(getProgramName(config)).getLocation();
+		IPath projectPath = verifyProgramFile(config);
 		String arguments[] = getProgramArgumentsArray(config);
 		ArrayList command = new ArrayList(1 + arguments.length);
 		command.add(projectPath.toOSString());

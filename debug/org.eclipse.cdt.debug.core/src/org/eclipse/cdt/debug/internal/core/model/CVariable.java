@@ -435,7 +435,16 @@ public abstract class CVariable extends CDebugElement
 			return fDisabledValue;
 		if ( fValue == null )
 		{
-			if ( getType() != null && getType().isArray() )
+			ICType type = null;
+			try
+			{
+				type = getType();
+			}
+			catch( DebugException e )
+			{
+				// ignore and use default type
+			}
+			if ( type != null && type.isArray() )
 			{
 				ICDIVariable var = null;
 				try
@@ -446,7 +455,7 @@ public abstract class CVariable extends CDebugElement
 				{
 					requestFailed( "", e );
 				}
-				int[] dims = getType().getArrayDimensions();
+				int[] dims = type.getArrayDimensions();
 				if ( dims.length > 0 && dims[0] > 0 )
 					fValue = CValueFactory.createArrayValue( this, var, 0, dims[0] - 1 );
 			}

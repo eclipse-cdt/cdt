@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 
 /**
  * @author jcamelon
@@ -28,7 +28,7 @@ public interface ILocationResolver {
 
 	public IASTNodeLocation [] getLocations( int offset, int length );
     public IASTNodeLocation    getLocation( int offset );
-    public IProblem [] getScannerProblems();
+    public IASTProblem[] getScannerProblems();
 
     public String getTranslationUnitPath();
     public String [] getInclusionsPaths();

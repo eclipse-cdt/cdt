@@ -28,9 +28,6 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  */
 public interface IProblem
 {
-
-
-
 	/**
 	 * Returns the problem id
 	 * 

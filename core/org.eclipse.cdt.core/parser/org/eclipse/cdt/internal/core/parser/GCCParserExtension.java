@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.IGCCToken;

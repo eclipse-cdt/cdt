@@ -12,15 +12,16 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
@@ -59,7 +60,7 @@ public class DOMScanner extends BaseScanner {
      */
     public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerConfiguration configuration, ICodeReaderFactory readerFactory) {
         super(reader, info, parserMode, language, log, configuration);
-        this.expressionEvaluator = new ExpressionEvaluator(null, spf);
+        this.expressionEvaluator = new ExpressionEvaluator(null, null);
         this.codeReaderFactory = readerFactory;
         postConstructorSetup(reader, info);
     }
@@ -145,13 +146,6 @@ public class DOMScanner extends BaseScanner {
 	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushProblem(org.eclipse.cdt.core.parser.IProblem)
-     */
-    protected void pushProblem(IProblem p) {
-        locationMap.encounterProblem(p);        
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#quickParsePushPopInclusion(java.lang.Object)
      */
     protected void quickParsePushPopInclusion(Object inclusion) {
@@ -180,6 +174,14 @@ public class DOMScanner extends BaseScanner {
             DOMInclusion d = (DOMInclusion)data;
             locationMap.endInclusion( d.pt, d.o );
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#handleProblem(int, int, char[])
+     */
+    protected void handleProblem(int id, int startOffset, char[] arg) {
+        IASTProblem problem = new ASTProblem(id, arg, true, false );
+        locationMap.encounterProblem(problem); 
     }
 
 }

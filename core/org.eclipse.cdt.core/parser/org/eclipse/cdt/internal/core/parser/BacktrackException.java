@@ -8,7 +8,9 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.internal.core.parser;
+
+import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * @author jcamelon

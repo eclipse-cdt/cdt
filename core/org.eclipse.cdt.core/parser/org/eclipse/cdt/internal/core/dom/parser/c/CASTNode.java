@@ -55,7 +55,7 @@ public class CASTNode extends ASTNode implements IASTNode {
     public IASTTranslationUnit getTranslationUnit() {
         if( this instanceof IASTTranslationUnit ) return (IASTTranslationUnit) this;
         IASTNode node = getParent();
-        while( ! (node instanceof IASTTranslationUnit ))
+        while( ! (node instanceof IASTTranslationUnit ) && node != null )
         {
             node = node.getParent();
         }

@@ -2111,21 +2111,11 @@ abstract class BaseScanner implements IScanner {
 		return newToken(tokenType, image );
 	}
 	
-	protected static final ScannerProblemFactory spf = new ScannerProblemFactory();
+	
 	/**
 	 * @param scanner_bad_character
 	 */
-	protected void handleProblem(int id, int startOffset, char [] arg ) {
-		if( parserMode == ParserMode.COMPLETION_PARSE ) return;
-		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename(), arg != null ? arg : EMPTY_CHAR_ARRAY, false, true );
-		pushProblem(p);
-	}
-
-	
-	/**
-     * @param p
-     */
-    protected abstract void pushProblem(IProblem p);
+	protected abstract void handleProblem(int id, int startOffset, char [] arg );
 
     /**
 	 * @param i

@@ -10,7 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 
 /**
  * @author jcamelon
@@ -57,5 +57,5 @@ public interface IScannerPreprocessorLog {
 
     public void encounterPoundEndIf(int startOffset, int endOffset);
     
-    public void encounterProblem( IProblem problem );
+    public void encounterProblem( IASTProblem problem );
 }

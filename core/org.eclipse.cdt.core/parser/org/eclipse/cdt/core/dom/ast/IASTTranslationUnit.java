@@ -18,7 +18,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTTranslationUnit extends IASTNode {
 
-	ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "OWNED" ); //$NON-NLS-1$
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "Owned" ); //$NON-NLS-1$
+    public static final ASTNodeProperty SCANNER_PROBLEM =  new ASTNodeProperty( "Scanner Problem"); //$NON-NLS-1$
 
     /**
 	 * A translation unit contains an ordered sequence of declarations.
@@ -64,5 +65,6 @@ public interface IASTTranslationUnit extends IASTNode {
 	public IASTMacroDefinition [] getMacroDefinitions();
 	public IASTPreprocessorIncludeStatement [] getIncludeDirectives();
 	public IASTPreprocessorStatement [] getAllPreprocessorStatements();
+    public IASTProblem [] getPreprocesorProblems();
 	
 }

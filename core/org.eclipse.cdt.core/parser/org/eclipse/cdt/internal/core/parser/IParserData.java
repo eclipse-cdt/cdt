@@ -8,7 +8,6 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser;
-import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IToken;

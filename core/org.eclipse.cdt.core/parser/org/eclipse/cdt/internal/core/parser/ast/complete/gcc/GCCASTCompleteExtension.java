@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
@@ -36,6 +35,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
+import org.eclipse.cdt.internal.core.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.parser.DeclarationWrapper;
 import org.eclipse.cdt.internal.core.parser.Declarator;
 import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;

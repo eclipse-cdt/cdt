@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -40,6 +41,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     private static final IASTNodeLocation[] EMPTY_PREPROCESSOR_LOCATION_ARRAY = new IASTNodeLocation[0];
     private static final IASTMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTMacroDefinition[0];
     private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
+    private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
     
     public void addDeclaration( IASTDeclaration d )
     {
@@ -186,5 +188,21 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     protected void finalize() throws Throwable {
         if( resolver != null ) resolver.cleanup();
         super.finalize();
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getPreprocesorProblems()
+     */
+    public IASTProblem[] getPreprocesorProblems() {
+        if( resolver == null ) return EMPTY_PROBLEM_ARRAY;
+        IASTProblem [] result = resolver.getScannerProblems();
+        for( int i = 0; i < result.length; ++i )
+        {
+            IASTProblem p = result[i];
+            p.setParent( this );
+            p.setPropertyInParent( IASTTranslationUnit.SCANNER_PROBLEM );
+        }
+        return result;
     }
 }

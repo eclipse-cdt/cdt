@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 
 /**
  * @author jcamelon
@@ -242,14 +242,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getScannerProblems()
      */
-    public IProblem[] getScannerProblems() {
-        return (IProblem[]) problems.toArray( new IProblem[ problems.size() ]);
+    public IASTProblem[] getScannerProblems() {
+        return (IASTProblem[]) problems.toArray( new IASTProblem[ problems.size() ]);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterIProblem(org.eclipse.cdt.core.parser.IProblem)
      */
-    public void encounterProblem(IProblem problem) {
+    public void encounterProblem(IASTProblem problem) {
         if( problems == Collections.EMPTY_LIST )
             problems = new ArrayList( 4 );
         problems.add(problem);

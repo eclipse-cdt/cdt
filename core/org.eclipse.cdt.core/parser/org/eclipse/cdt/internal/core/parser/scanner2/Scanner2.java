@@ -2612,6 +2612,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		int currarg = -1;
 		CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
 		
+		boolean insideString = false;
 		while (bufferPos[bufferStackPos] < limit) {
 			skipOverWhiteSpace();
 			
@@ -2632,13 +2633,22 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 		    int argend = -1;
 		    if ((macro.hasGCCVarArgs() || macro.hasVarArgs()) && currarg == macro.getVarArgsPosition()) {
+		    	--bufferPos[bufferStackPos]; // go back to first char of macro args
+		    	
 		    	// there are varargs and the other parms have been accounted for, the rest will replace __VA_ARGS__ or name where "name..." is the parm
-		    	while (++bufferPos[bufferStackPos] < limit) {
-		    		if (buffer[bufferPos[bufferStackPos]] == ')') {
+		    	do {
+		    		if (buffer[bufferPos[bufferStackPos]] == '"') {
+		    			if (insideString) 
+		    				insideString = false; 
+		    			else 
+		    				insideString = true;
+		    		}
+		    		
+		    		if (!insideString && buffer[bufferPos[bufferStackPos]] == ')') {
 		    			--bufferPos[bufferStackPos];
 		    			break;
 		    		}
-		    	}
+		    	} while (++bufferPos[bufferStackPos] < limit);
 		    	argend = bufferPos[bufferStackPos];
 		    } else
 		    	argend = skipOverMacroArg(); 

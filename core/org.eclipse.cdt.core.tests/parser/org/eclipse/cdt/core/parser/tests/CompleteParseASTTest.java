@@ -2532,5 +2532,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write("if (WIFEXITED(test)) {}\n}\n"); //$NON-NLS-1$
     	parse(writer.toString());
     }
+    
+    public void testBug79921_79227() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("/* some\n* commented\n* code\n*/\n"); //$NON-NLS-1$
+    	writer.write("#define g_message(...) g_log (1, 2, __VA_ARGS__);\n"); //$NON-NLS-1$
+    	writer.write("int g_log (int a, int b, ...) { return 0; }\n"); //$NON-NLS-1$
+    	writer.write("int foo2() {\n"); //$NON-NLS-1$
+    	writer.write("g_message(\"a string [as] f%2.2x (%2)\")               \\\n"); //$NON-NLS-1$
+    	writer.write("//    	                                       ^ the culprit\n}\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
+
 }
 

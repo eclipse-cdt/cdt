@@ -18,14 +18,14 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
+import org.eclipse.cdt.debug.mi.core.cdi.model.LocalVariable;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
@@ -151,12 +151,12 @@ public class ExpressionManager extends Manager {
 		return null;
 	}
 
-	public Variable createVariable(ICDIStackFrame frame, String code) throws CDIException {
+	public Variable createVariable(StackFrame frame, String code) throws CDIException {
 		Target target = (Target)frame.getTarget();
-		ICDIThread currentThread = target.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Thread currentThread = (Thread)target.getCurrentThread();
+		StackFrame currentFrame = currentThread.getCurrentStackFrame();
 		target.setCurrentThread(frame.getThread(), false);
-		frame.getThread().setCurrentStackFrame(frame, false);
+		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -166,8 +166,7 @@ public class ExpressionManager extends Manager {
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
-			VariableObject varObj = new VariableObject(target, code, frame, 0, 0);
-			Variable variable = new Variable(varObj, info.getMIVar());
+			Variable variable = new LocalVariable(target, null, frame, code, null, 0, 0, info.getMIVar());
 			variableList.add(variable);
 			return variable;
 		} catch (MIException e) {

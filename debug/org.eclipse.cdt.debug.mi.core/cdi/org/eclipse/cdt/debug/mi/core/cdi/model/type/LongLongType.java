@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -21,11 +21,11 @@ public class LongLongType extends IntegralType implements ICDILongLongType {
 	/**
 	 * @param typename
 	 */
-	public LongLongType(ICDIStackFrame frame, String typename) {
+	public LongLongType(StackFrame frame, String typename) {
 		this(frame, typename, false);
 	}
 
-	public LongLongType(ICDIStackFrame frame, String typename, boolean usigned) {
+	public LongLongType(StackFrame frame, String typename, boolean usigned) {
 		super(frame, typename, usigned);
 	}
 }

@@ -48,37 +48,20 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	ICDIStackFrame[] getStackFrames(int lowFrame, int highFrame) throws CDIException;
 
 	/**
-	 * Returns the depth of the stack frames 
+	 * Returns the depth of the stack frames.
+	 *  
 	 * @return  depth of stack frames
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	int getStackFrameCount() throws CDIException;
 
 	/**
-	 * Set the current Stack for the thread.
+	 * Return thread local storage variables descriptor.
 	 * 
-	 * @deprecated
-	 * @param - ICDIStackFrame
+	 * @return
+	 * @throws CDIException
 	 */
-	void setCurrentStackFrame(ICDIStackFrame current) throws CDIException;
-
-	/**
-	 * Set the current frame whithout generation any events, for example
-	 * registers changed events.
-	 * 
-	 * @deprecated
-	 * @param frame
-	 * @param b
-	 */
-	void setCurrentStackFrame(ICDIStackFrame frame, boolean doUpdate) throws CDIException;
-
-	/**
-	 * Set the current stackframe.
-	 * 
-	 * @deprecated
-	 * @return ICDIStackFrame
-	 */
-	ICDIStackFrame getCurrentStackFrame() throws CDIException;
+	ICDIThreadStorageDescriptor[] getThreadStorageDescriptors() throws CDIException;
 
 	/**
 	 * Equivalent to resume(false)

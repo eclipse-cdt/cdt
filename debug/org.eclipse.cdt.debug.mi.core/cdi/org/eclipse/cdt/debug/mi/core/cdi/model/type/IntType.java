@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -21,11 +21,11 @@ public class IntType extends IntegralType implements ICDIIntType {
 	/**
 	 * @param typename
 	 */
-	public IntType(ICDIStackFrame frame, String typename) {
+	public IntType(StackFrame frame, String typename) {
 		this(frame, typename, false);
 	}
 
-	public IntType(ICDIStackFrame frame, String typename, boolean isUnsigned) {
+	public IntType(StackFrame frame, String typename, boolean isUnsigned) {
 		super(frame, typename, isUnsigned);
 	}
 

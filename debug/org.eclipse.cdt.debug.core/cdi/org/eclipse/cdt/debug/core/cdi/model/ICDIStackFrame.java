@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
  * @since Jul 8, 2002
  */
 public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
+
 	/**
 	 * Returns the location of the instruction pointer in this 
 	 * stack frame.
@@ -38,7 +39,7 @@ public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
 	 * @return a collection of visible variables 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIVariable[] getLocalVariables() throws CDIException;
+	ICDILocalVariableDescriptor[] getLocalVariableDescriptors() throws CDIException;
 	
 	/**
 	 * Returns the arguments in this stack frame. An empty collection 
@@ -47,7 +48,7 @@ public interface ICDIStackFrame extends ICDIExecuteStepReturn, ICDIObject {
 	 * @return a collection of arguments 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIArgument[] getArguments() throws CDIException;
+	ICDIArgumentDescriptor[] getArgumentDescriptors() throws CDIException;
 
 	/**
 	 * Returns the thread this stackframe is contained in.

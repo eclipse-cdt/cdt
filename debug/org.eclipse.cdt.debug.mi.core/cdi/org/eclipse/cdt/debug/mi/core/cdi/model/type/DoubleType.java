@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -21,11 +21,11 @@ public class DoubleType extends FloatingPointType implements ICDIDoubleType {
 	/**
 	 * @param typename
 	 */
-	public DoubleType(ICDIStackFrame frame, String typename) {
+	public DoubleType(StackFrame frame, String typename) {
 		this(frame, typename, false, false, false);
 	}
 
-	public DoubleType(ICDIStackFrame frame, String typename, boolean isComplex, boolean isImg, boolean isLong) {
+	public DoubleType(StackFrame frame, String typename, boolean isComplex, boolean isImg, boolean isLong) {
 		super(frame, typename, isComplex, isImg, isLong);
 	}
 }

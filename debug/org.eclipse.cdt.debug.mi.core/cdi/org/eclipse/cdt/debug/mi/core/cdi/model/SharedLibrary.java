@@ -73,7 +73,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	 */
 	public void loadSymbols() throws CDIException {
 		Target target = (Target)getTarget();
-		SharedLibraryManager mgr = (SharedLibraryManager)((Session)target.getSession()).getSharedLibraryManager();
+		SharedLibraryManager mgr = ((Session)target.getSession()).getSharedLibraryManager();
 		mgr.loadSymbols(target, new ICDISharedLibrary[] { this });
 	}
 

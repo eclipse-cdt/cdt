@@ -8,18 +8,14 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
+package org.eclipse.cdt.debug.core.cdi.model;
 
-package org.eclipse.cdt.debug.mi.core.cdi.model;
-
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 
 /**
+ * 
+ * Represents a break condition.
+ * 
+ * @since Jul 9, 2002
  */
-public class ArgumentObject extends VariableObject implements ICDIArgumentObject {
-
-	public ArgumentObject(Target target, String name, ICDIStackFrame frame, int pos, int depth) {
-		super(target, name, frame, pos, depth);
-	}
-
+public interface ICDIRegisterDescriptor extends ICDIVariableDescriptor {
 }

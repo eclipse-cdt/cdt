@@ -12,10 +12,6 @@ package org.eclipse.cdt.debug.core.cdi.model;
 
 
 /**
- * 
- * Represents a break condition.
- * 
- * @since Jul 9, 2002
  */
-public interface ICDIRegisterObject extends ICDIVariableObject {
+public interface ICDIArgumentDescriptor extends ICDILocalVariableDescriptor {
 }

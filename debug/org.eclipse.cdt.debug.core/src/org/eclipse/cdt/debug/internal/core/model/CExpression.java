@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.debug.core.DebugException;
@@ -40,7 +40,7 @@ public class CExpression extends CVariable implements IExpression {
 	/**
 	 * Constructor for CExpression.
 	 */
-	public CExpression( CStackFrame frame, ICDIExpression cdiExpression, ICDIVariableObject varObject ) {
+	public CExpression( CStackFrame frame, ICDIExpression cdiExpression, ICDIVariableDescriptor varObject ) {
 		super( frame, varObject );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ))) ;
 		fCDIExpression = cdiExpression;
@@ -146,7 +146,7 @@ public class CExpression extends CVariable implements IExpression {
 	public void dispose() {
 		if ( fCDIExpression != null ) {
 			try {
-				getCDITarget().destroyExpressions( new ICDIExpression[] { fCDIExpression } );
+				fCDIExpression.dispose();
 				fCDIExpression = null;
 			}
 			catch( CDIException e ) {

@@ -18,7 +18,7 @@ import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CRegisterGroup;
 import org.eclipse.cdt.debug.internal.core.model.CStackFrame;
@@ -103,22 +103,19 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 	}
 
 	private void createMainRegisterGroup() {
-		ICDIRegisterObject[] regObjects = null;
+		ICDIRegisterGroup[] groups = null;
 		try {
-			regObjects = getDebugTarget().getCDISession().getRegisterManager().getRegisterObjects();
+			groups = getDebugTarget().getCDITarget().getRegisterGroups();
 		}
 		catch( CDIException e ) {
 			CDebugCorePlugin.log( e );
 		}
-		if ( regObjects != null ) {
-			fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), "Main", regObjects ) ); //$NON-NLS-1$
+		for (int i = 0; i < groups.length; ++i) {
+			fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), groups[i] ) ); //$NON-NLS-1$
 		}
 	}
 
 	protected ICDIManager getCDIManager() {
-		if ( getDebugTarget() != null ) {
-			return getDebugTarget().getCDISession().getRegisterManager();
-		}
 		return null;
 	}
 

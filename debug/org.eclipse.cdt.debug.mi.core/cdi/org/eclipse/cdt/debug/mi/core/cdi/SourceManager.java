@@ -16,8 +16,6 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -25,7 +23,9 @@ import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBDerivedType;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MixedInstruction;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharType;
@@ -184,7 +184,7 @@ public class SourceManager extends Manager {
 	public void update(Target target) throws CDIException {
 	}
 
-	public Type getType(ICDIStackFrame frame, String name) throws CDIException {
+	public Type getType(StackFrame frame, String name) throws CDIException {
 		if (name == null) {
 			name = new String();
 		}
@@ -234,7 +234,7 @@ public class SourceManager extends Manager {
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 	
-	Type toCDIType(ICDIStackFrame frame, String name) throws CDIException {
+	Type toCDIType(StackFrame frame, String name) throws CDIException {
 		// Check the derived types and agregate types
 		if (name == null) {
 			name = new String();
@@ -399,13 +399,13 @@ public class SourceManager extends Manager {
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 
-	public String getDetailTypeName(ICDIStackFrame frame, String typename) throws CDIException {
+	public String getDetailTypeName(StackFrame frame, String typename) throws CDIException {
 		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
-		ICDIThread currentThread = target.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Thread currentThread = (Thread)target.getCurrentThread();
+		StackFrame currentFrame = currentThread.getCurrentStackFrame();
 		target.setCurrentThread(frame.getThread(), false);
-		frame.getThread().setCurrentStackFrame(frame, false);
+		((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -424,16 +424,16 @@ public class SourceManager extends Manager {
 		}
 	}
 
-	public String getTypeName(ICDIStackFrame frame, String variable) throws CDIException {
+	public String getTypeName(StackFrame frame, String variable) throws CDIException {
 		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
-		ICDIThread currentThread = null;
-		ICDIStackFrame currentFrame = null;
+		Thread currentThread = null;
+		StackFrame currentFrame = null;
 		if (frame != null) {
-			currentThread = target.getCurrentThread();
+			currentThread = (Thread)target.getCurrentThread();
 			currentFrame = currentThread.getCurrentStackFrame();
 			target.setCurrentThread(frame.getThread(), false);
-			frame.getThread().setCurrentStackFrame(frame, false);
+			((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
 		}
 		try {
 			MISession mi = target.getMISession();

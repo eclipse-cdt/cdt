@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
-import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterDescriptor;
+import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterGroup;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
@@ -35,14 +35,13 @@ import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListChangedRegistersInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class RegisterManager extends Manager implements ICDIRegisterManager {
+public class RegisterManager extends Manager {
 
 	Map regsMap;
 	MIVarChange[] noChanges = new MIVarChange[0];
@@ -60,14 +59,17 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 		}
 		return regsList;
 	}
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
-	 */
-	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getRegisterObjects(target);
+
+	public ICDIRegisterGroup[] getRegisterGroups(Target target) throws CDIException {
+		RegisterGroup group = new RegisterGroup(target, "Main"); //$NON-NLS-1$
+		return new ICDIRegisterGroup[] { group };
 	}
-	public ICDIRegisterObject[] getRegisterObjects(Target target) throws CDIException {
+
+	public ICDIRegisterDescriptor[] getRegisterDescriptors(RegisterGroup group) throws CDIException {
+		Target target = (Target)group.getTarget();
+		return getRegisterDescriptors(target);
+	}
+	public ICDIRegisterDescriptor[] getRegisterDescriptors(Target target) throws CDIException {
 		Session session = (Session)getSession();
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -83,66 +85,42 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 			List regsList = new ArrayList(names.length);
 			for (int i = 0; i < names.length; i++) {
 				if (names[i].length() > 0) {
-					regsList.add(new RegisterObject(target, names[i], i));
+					regsList.add(new RegisterDescriptor(target, null, null, names[i], null, i, 0));
 				}
 			}
-			return (ICDIRegisterObject[])regsList.toArray(new ICDIRegisterObject[0]);
+			return (ICDIRegisterDescriptor[])regsList.toArray(new ICDIRegisterDescriptor[0]);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createRegister()
-	 */
-	public ICDIRegister createRegister(ICDIRegisterObject regObject) throws CDIException {
-		RegisterObject regObj = null;
-		if (regObject instanceof RegisterObject) {
-			regObj = (RegisterObject)regObject;
-		}
-		if (regObj != null) {
-			Register reg = getRegister(regObject);
-			if (reg == null) {
-				try {
-					String name = "$" + regObj.getName(); //$NON-NLS-1$
-					Target target = (Target)regObj.getTarget();
-					MISession mi = target.getMISession();
-					CommandFactory factory = mi.getCommandFactory();
-					MIVarCreate var = factory.createMIVarCreate(name);
-					mi.postCommand(var);
-					MIVarCreateInfo info = var.getMIVarCreateInfo();
-					if (info == null) {
-						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-					}
-					reg = new Register(regObj, info.getMIVar());
-					List regList = getRegistersList(target);
-					regList.add(reg);
-				} catch (MIException e) {
-					throw new MI2CDIException(e);
+	public Register createRegister(RegisterDescriptor regDesc) throws CDIException {
+		Register reg = getRegister(regDesc);
+		if (reg == null) {
+			try {
+				String name = "$" + regDesc.getName(); //$NON-NLS-1$
+				Target target = (Target)regDesc.getTarget();
+				MISession mi = target.getMISession();
+				CommandFactory factory = mi.getCommandFactory();
+				MIVarCreate var = factory.createMIVarCreate(name);
+				mi.postCommand(var);
+				MIVarCreateInfo info = var.getMIVarCreateInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
+				reg = new Register(regDesc, info.getMIVar());
+				List regList = getRegistersList(target);
+				regList.add(reg);
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
 			}
-			return reg;
 		}
-		throw new CDIException(CdiResources.getString("cdi.RegisterManager.Wrong_register_type")); //$NON-NLS-1$
-	}
-
-	public Register createRegister(RegisterObject v, MIVar mivar) throws CDIException {
-		Register reg = new Register(v, mivar);
-		Target target = (Target)v.getTarget();
-		List regList = (List) regsMap.get(target);
-		if (regList == null) {
-			regList = Collections.synchronizedList(new ArrayList());
-			regsMap.put(target, regList);
-		}
-		regList.add(reg);
 		return reg;
+		//throw new CDIException(CdiResources.getString("cdi.RegisterManager.Wrong_register_type")); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager#destroyRegister(ICDIRegister)
-	 */
-	public void destroyRegister(ICDIRegister reg) {
+	public void destroyRegister(Register reg) {
 		Target target = (Target)reg.getTarget();
 		List regList = (List)regsMap.get(target);
 		if (regList != null) {
@@ -248,13 +226,11 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 		}
 		return new Register[0];
 	}
-	
 
-
-	private Register getRegister(ICDIRegisterObject regObject) throws CDIException {
-		Register[] regs = getRegisters((Target)regObject.getTarget());
+	private Register getRegister(RegisterDescriptor regDesc) throws CDIException {
+		Register[] regs = getRegisters((Target)regDesc.getTarget());
 		for (int i = 0; i < regs.length; i++) {
-			if (regObject.getName().equals(regs[i].getName())) {
+			if (regDesc.getName().equals(regs[i].getName())) {
 				return regs[i];
 			}
 		}

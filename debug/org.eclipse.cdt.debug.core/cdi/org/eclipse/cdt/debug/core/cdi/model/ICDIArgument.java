@@ -17,5 +17,5 @@ package org.eclipse.cdt.debug.core.cdi.model;
  * 
  * @since Jul 22, 2002
  */
-public interface ICDIArgument extends ICDIVariable, ICDIArgumentObject {
+public interface ICDIArgument extends ICDIVariable, ICDIArgumentDescriptor {
 }

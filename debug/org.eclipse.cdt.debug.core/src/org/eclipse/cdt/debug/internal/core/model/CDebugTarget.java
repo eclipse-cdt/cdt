@@ -59,7 +59,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -1872,9 +1872,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	public ICGlobalVariable createGlobalVariable( IGlobalVariableDescriptor info ) throws DebugException {
-		ICDIVariableObject vo = null;
+		ICDIVariableDescriptor vo = null;
 		try {
-			vo = getCDISession().getVariableManager().getGlobalVariableObject( info.getPath().lastSegment(), null, info.getName() );
+			vo = getCDITarget().getGlobalVariableDescriptors(info.getPath().lastSegment(), null, info.getName());
 		}
 		catch( CDIException e ) {
 			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$

@@ -11,14 +11,14 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIAggregateType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
 public abstract class AggregateType extends Type implements ICDIAggregateType {
 
-	public AggregateType(ICDIStackFrame frame, String typename) {
+	public AggregateType(StackFrame frame, String typename) {
 		super(frame, typename);
 	}
 }

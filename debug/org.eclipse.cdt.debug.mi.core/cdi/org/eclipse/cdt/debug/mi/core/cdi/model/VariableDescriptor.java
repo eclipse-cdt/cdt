@@ -12,19 +12,16 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIVoidType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
@@ -33,7 +30,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 
 /**
  */
-public class VariableObject extends CObject implements ICDIVariableObject {
+public abstract class VariableDescriptor extends CObject implements ICDIVariableDescriptor {
 
 	// Casting info.
 	String castingType;
@@ -42,7 +39,8 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 
 	String name;
 	int position;
-	ICDIStackFrame frame;
+	StackFrame fStackFrame;
+	Thread fThread;
 	int stackdepth;
 
 	String qualifiedName = null;
@@ -53,34 +51,32 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 
 	/**
 	 * Copy constructor.
-	 * @param obj
+	 * @param desc
 	 */
-	public VariableObject(VariableObject obj) {
-		super((Target)obj.getTarget());
-		name = obj.getName();
-		fullName = obj.fullName;
-		sizeof = obj.sizeof;
-		type = obj.type;
+	public VariableDescriptor(VariableDescriptor desc) {
+		super((Target)desc.getTarget());
+		name = desc.getName();
+		fullName = desc.fullName;
+		sizeof = desc.sizeof;
+		type = desc.type;
 		try {
-			frame = obj.getStackFrame();
+			fStackFrame = (StackFrame)desc.getStackFrame();
+			fThread = (Thread)desc.getThread();
 		} catch (CDIException e) {
 		}
-		position = obj.getPosition();
-		stackdepth = obj.getStackDepth();
-		castingIndex = obj.getCastingArrayStart();
-		castingLength = obj.getCastingArrayEnd();
-		castingType = obj.getCastingType();
+		position = desc.getPosition();
+		stackdepth = desc.getStackDepth();
+		castingIndex = desc.getCastingArrayStart();
+		castingLength = desc.getCastingArrayEnd();
+		castingType = desc.getCastingType();
 	}
 
-	public VariableObject(Target target, String n, ICDIStackFrame stack, int pos, int depth) {
-		this(target, n, null, stack, pos, depth);
-	}
-
-	public VariableObject(Target target, String n, String fn, ICDIStackFrame stack, int pos, int depth) {
+	public VariableDescriptor(Target target, Thread thread, StackFrame stack, String n, String fn, int pos, int depth) {
 		super(target);
 		name = n;
 		fullName = fn;
-		frame = stack;
+		fStackFrame = stack;
+		fThread = thread;
 		position = pos;
 		stackdepth = depth;
 	}
@@ -149,7 +145,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableObject#getName()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableDescriptor#getName()
 	 */
 	public String getName() {
 		return name;
@@ -162,9 +158,14 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		if (type == null) {
 			Target target = (Target)getTarget();
 			Session session = (Session) (target.getSession());
-			ICDIStackFrame frame = getStackFrame();
+			StackFrame frame = (StackFrame)getStackFrame();
 			if (frame == null) {
-				frame = target.getCurrentThread().getCurrentStackFrame();
+				Thread thread = (Thread)getThread();
+				if (thread != null) {
+					frame = thread.getCurrentStackFrame();
+				} else {
+					frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
+				}
 			}
 			SourceManager sourceMgr = session.getSourceManager();
 			String nametype = sourceMgr.getTypeName(frame, getQualifiedName());
@@ -195,12 +196,22 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#sizeof()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#sizeof()
 	 */
 	public int sizeof() throws CDIException {
 		if (sizeof == null) {
 			Target target = (Target) getTarget();
 			Session session = (Session) (target.getSession());
+			Thread currentThread = (Thread)target.getCurrentThread();
+			StackFrame currentFrame = currentThread.getCurrentStackFrame();
+			StackFrame frame = (StackFrame)getStackFrame();
+			Thread thread = (Thread)getThread();
+			if (frame != null) {
+				target.setCurrentThread(frame.getThread(), false);				
+				((Thread)frame.getThread()).setCurrentStackFrame(frame, false);
+			} else if (thread != null) {
+				target.setCurrentThread(thread, false);				
+			}
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			String exp = "sizeof(" + getTypeName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -209,11 +220,18 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 				mi.postCommand(evaluate);
 				MIDataEvaluateExpressionInfo info = evaluate.getMIDataEvaluateExpressionInfo();
 				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.model.VariableObject.Target_not_responding")); //$NON-NLS-1$
+					throw new CDIException(CdiResources.getString("cdi.model.VariableDescriptor.Target_not_responding")); //$NON-NLS-1$
 				}
 				sizeof = info.getExpression();
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
+			} finally {
+				if (frame != null) {
+					target.setCurrentThread(currentThread, false);
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				} else if (thread != null) {
+					target.setCurrentThread(currentThread, false);
+				}
 			}
 		}
 
@@ -228,28 +246,18 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#isEdiTable()
-	 */
-	public boolean isEditable() throws CDIException {
-		ICDIType t = getType();
-		if (t instanceof ICDIArrayType
-			|| t instanceof ICDIStructType
-			|| t instanceof ICDIVoidType
-			|| t instanceof ICDIFunctionType) {
-			return false;
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getStackFrame()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getStackFrame()
 	 */
 	public ICDIStackFrame getStackFrame() throws CDIException {
-		return frame;
+		return fStackFrame;
+	}
+
+	public ICDIThread getThread() throws CDIException {
+		return fThread;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getTypeName()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
 		if (typename == null) {
@@ -260,31 +268,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#hasChildren()
-	 */
-	public boolean hasChildren() throws CDIException {
-		ICDIType t = getType();
-
-		// For reference we need to get the referenced type
-		// to make a decision.
-		if (t instanceof ICDIReferenceType) {
-			t = ((ICDIReferenceType) t).getComponentType();
-		}
-
-		if (t instanceof ICDIArrayType || t instanceof ICDIStructType) {
-			return true;
-		} else if (t instanceof ICDIPointerType) {
-			ICDIType sub = ((ICDIPointerType) t).getComponentType();
-			if (sub instanceof ICDIVoidType) {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getQualifiedName()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getQualifiedName()
 	 */
 	public String getQualifiedName() throws CDIException {
 		if (qualifiedName == null) {
@@ -294,34 +278,78 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#equals(ICDIVariableObject)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#equals(ICDIVariableDescriptor)
 	 */
-	public boolean equals(ICDIVariableObject varObj) {
-		if (varObj instanceof VariableObject) {
-			VariableObject var = (VariableObject) varObj;
-			if (var.getName().equals(getName())
-				&& var.getCastingArrayStart() == getCastingArrayStart()
-				&& var.getCastingArrayEnd() == getCastingArrayEnd()
-				&& ((var.getCastingType() == null && getCastingType() == null)
-					|| (var.getCastingType() != null && getCastingType() != null && var.getCastingType().equals(getCastingType())))) {
-				ICDIStackFrame varFrame = null;
-				ICDIStackFrame ourFrame = null;
+	public boolean equals(ICDIVariableDescriptor varDesc) {
+		if (varDesc instanceof VariableDescriptor) {
+			VariableDescriptor desc = (VariableDescriptor) varDesc;
+			if (desc.getName().equals(getName())
+				&& desc.getCastingArrayStart() == getCastingArrayStart()
+				&& desc.getCastingArrayEnd() == getCastingArrayEnd()
+				&& ((desc.getCastingType() == null && getCastingType() == null)
+					|| (desc.getCastingType() != null && getCastingType() != null && desc.getCastingType().equals(getCastingType())))) {
+
+				// Check the threads
+				ICDIThread varThread = null;
+				ICDIThread ourThread = null;
 				try {
-					varFrame = var.getStackFrame();
-					ourFrame = getStackFrame();
+					varThread = desc.getThread();
+					ourThread = getThread();
 				} catch (CDIException e) {
+					// ignore
 				}
-				if (ourFrame == null && varFrame == null) {
-					return true;
-				} else if (varFrame != null && ourFrame != null && varFrame.equals(ourFrame)) {
-					if (var.getStackDepth() == getStackDepth()) {
-						if (var.getPosition() == getPosition()) {
-							return true;
+				if ((ourThread == null && varThread == null) ||
+						(varThread != null && ourThread != null && varThread.equals(ourThread))) {
+					// check the stackFrames
+					ICDIStackFrame varFrame = null;
+					ICDIStackFrame ourFrame = null;
+					try {
+						varFrame = desc.getStackFrame();
+						ourFrame = getStackFrame();
+					} catch (CDIException e) {
+						// ignore
+					}
+					if (ourFrame == null && varFrame == null) {
+						return true;
+					} else if (varFrame != null && ourFrame != null && varFrame.equals(ourFrame)) {
+						if (desc.getStackDepth() == getStackDepth()) {
+							if (desc.getPosition() == getPosition()) {
+								return true;
+							}
 						}
 					}
 				}
+				return false;
 			}
 		}
-		return super.equals(varObj);
+		return super.equals(varDesc);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getVariableDescriptorAsArray(org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor, int, int)
+	 */
+	public ICDIVariableDescriptor getVariableDescriptorAsArray(int start, int length) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		VariableManager mgr = session.getVariableManager();
+		return mgr.getVariableDescriptorAsArray(this, start, length);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getVariableDescriptorAsType(org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor, java.lang.String)
+	 */
+	public ICDIVariableDescriptor getVariableDescriptorAsType(String type) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		VariableManager mgr = session.getVariableManager();
+		return mgr.getVariableDescriptorAsType(this, type);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#createVariable()
+	 */
+	public ICDIVariable createVariable() throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		VariableManager mgr = session.getVariableManager();
+		return mgr.createVariable(this);
+	}
+
 }

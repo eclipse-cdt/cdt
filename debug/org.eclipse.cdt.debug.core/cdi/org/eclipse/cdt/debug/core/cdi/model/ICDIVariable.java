@@ -20,8 +20,15 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIVariable extends ICDIVariableObject {
+public interface ICDIVariable extends ICDIVariableDescriptor {
 
+	/**
+	 * Returns true if the value of this variable could be changed.
+	 * 
+	 * @return true if the value of this variable could be changed
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	boolean isEditable() throws CDIException;
 
 	/**
 	 * Returns the value of this variable.
@@ -55,5 +62,14 @@ public interface ICDIVariable extends ICDIVariableObject {
 	 * @throws CDIException if this method fails.
 	 */
 	void setFormat(int format) throws CDIException;
+
+	/**
+	 * Remove the variable from the manager list.
+	 * 
+	 * @param var
+	 * @return ICDIArgument
+	 * @throws CDIException
+	 */
+	void dispose() throws CDIException;
 
 }

@@ -107,7 +107,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 	 */
 	public Session createAttachSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor)
 			throws CoreException {
-		String msg = MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_attaching_unsupported");
+		String msg = MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_attaching_unsupported"); //$NON-NLS-1$
 		throw newCoreException(msg, null);
 	}
 
@@ -116,7 +116,7 @@ public class GDBServerCDIDebugger extends GDBCDIDebugger {
 	 */
 	public Session createCoreSession(ILaunchConfiguration config, IBinaryExecutable exe, IProgressMonitor monitor)
 			throws CoreException {
-		String msg = MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_corefiles_unsupported");
+		String msg = MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_corefiles_unsupported"); //$NON-NLS-1$
 		throw newCoreException(msg, null);
 	}
 

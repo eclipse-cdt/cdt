@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -22,7 +22,7 @@ public abstract class FloatingPointType extends Type implements ICDIFloatingPoin
 	boolean imaginary;
 	boolean islong;
 
-	public FloatingPointType(ICDIStackFrame frame, String typename, boolean comp, boolean img, boolean l) {
+	public FloatingPointType(StackFrame frame, String typename, boolean comp, boolean img, boolean l) {
 		super(frame, typename);
 		complex = comp;
 		imaginary = img;

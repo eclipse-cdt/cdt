@@ -385,8 +385,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		{
 			try
 			{
-				ICDIExpression[] expressions = { fAddressExpression };
-				((CDebugTarget)getDebugTarget()).getCDITarget().destroyExpressions( expressions );
+				fAddressExpression.dispose();
 			}
 			catch( CDIException e )
 			{

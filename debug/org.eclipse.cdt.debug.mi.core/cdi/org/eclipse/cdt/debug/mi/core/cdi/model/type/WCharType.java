@@ -12,8 +12,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -22,11 +22,11 @@ public class WCharType extends IntegralType implements ICDIWCharType {
 	/**
 	 * @param typename
 	 */
-	public WCharType(ICDIStackFrame frame, String typename) {
+	public WCharType(StackFrame frame, String typename) {
 		this(frame, typename, false);
 	}
 
-	public WCharType(ICDIStackFrame frame, String typename, boolean usigned) {
+	public WCharType(StackFrame frame, String typename, boolean usigned) {
 		super(frame, typename, usigned);
 	}
 }

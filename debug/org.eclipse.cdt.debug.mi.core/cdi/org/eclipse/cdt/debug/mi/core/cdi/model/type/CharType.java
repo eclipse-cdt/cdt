@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -21,11 +21,11 @@ public class CharType extends IntegralType implements ICDICharType {
 	/**
 	 * @param typename
 	 */
-	public CharType(ICDIStackFrame frame, String typename) {
+	public CharType(StackFrame frame, String typename) {
 		this(frame, typename, false);
 	}
 
-	public CharType(ICDIStackFrame frame, String typename, boolean usigned) {
+	public CharType(StackFrame frame, String typename, boolean usigned) {
 		super(frame, typename, usigned);
 	}
 }

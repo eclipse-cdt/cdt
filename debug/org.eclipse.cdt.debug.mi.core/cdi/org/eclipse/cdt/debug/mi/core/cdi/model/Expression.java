@@ -63,28 +63,28 @@ public class Expression extends CObject implements ICDIExpression {
 		Target target = (Target)getTarget();
 		Session session = (Session) (target.getSession());
 		SourceManager sourceMgr = session.getSourceManager();
-		String nametype = sourceMgr.getTypeName(frame, getExpressionText());
+		String nametype = sourceMgr.getTypeName((StackFrame)frame, getExpressionText());
 		try {
-			type = sourceMgr.getType(frame, nametype);
+			type = sourceMgr.getType((StackFrame)frame, nametype);
 		} catch (CDIException e) {
 			// Try with ptype.
 			try {
-				String ptype = sourceMgr.getDetailTypeName(frame, nametype);
-				type = sourceMgr.getType(frame, ptype);
+				String ptype = sourceMgr.getDetailTypeName((StackFrame)frame, nametype);
+				type = sourceMgr.getType((StackFrame)frame, ptype);
 			} catch (CDIException ex) {
 				// Some version of gdb does not work with the name of the class
 				// ex: class data foo --> ptype data --> fails
 				// ex: class data foo --> ptype foo --> succeed
 				try {
-					String ptype = sourceMgr.getDetailTypeName(frame, getExpressionText());
-					type = sourceMgr.getType(frame, ptype);
+					String ptype = sourceMgr.getDetailTypeName((StackFrame)frame, getExpressionText());
+					type = sourceMgr.getType((StackFrame)frame, ptype);
 				} catch (CDIException e2) {
 					// give up.
 				}
 			}
 		}
 		if (type == null) {
-			type = new IncompleteType(frame, nametype);
+			type = new IncompleteType((StackFrame)frame, nametype);
 		}
 
 		return type;
@@ -96,8 +96,17 @@ public class Expression extends CObject implements ICDIExpression {
 	public ICDIValue getValue(ICDIStackFrame context) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		ExpressionManager mgr = session.getExpressionManager();
-		Variable var = mgr.createVariable(context, getExpressionText());
+		Variable var = mgr.createVariable((StackFrame)context, getExpressionText());
 		return var.getValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#dispose()
+	 */
+	public void dispose() throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		ExpressionManager mgr = session.getExpressionManager();
+		mgr.destroyExpressions((Target)getTarget(), new Expression[] {this});
 	}
 
 }

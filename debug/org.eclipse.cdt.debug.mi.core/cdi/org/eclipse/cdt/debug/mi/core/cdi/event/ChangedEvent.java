@@ -42,7 +42,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 		session = s;
 
 		// Try the Variable manager.
-		VariableManager mgr = (VariableManager)session.getVariableManager();
+		VariableManager mgr = session.getVariableManager();
 		String varName = var.getVarName();
 		MISession miSession = var.getMISession();
 		source = mgr.getVariable(miSession, varName);
@@ -55,7 +55,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 
 		// Try the Register manager
 		if (source == null) {
-			RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
+			RegisterManager regMgr = session.getRegisterManager();
 			source = regMgr.getRegister(miSession, varName);
 		}
 
@@ -68,7 +68,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 
 	public ChangedEvent(Session s, MIRegisterChangedEvent reg) {
 		session = s;
-		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
+		RegisterManager mgr = session.getRegisterManager();
 		MISession miSession = reg.getMISession();
 		int regno = reg.getNumber();
 		source = mgr.getRegister(miSession, regno);

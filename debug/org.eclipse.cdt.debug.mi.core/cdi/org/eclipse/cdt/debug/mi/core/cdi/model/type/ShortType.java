@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -21,11 +21,11 @@ public class ShortType extends IntegralType implements ICDIShortType {
 	/**
 	 * @param typename
 	 */
-	public ShortType(ICDIStackFrame frame, String typename) {
+	public ShortType(StackFrame frame, String typename) {
 		this(frame, typename, false);
 	}
 
-	public ShortType(ICDIStackFrame frame, String typename, boolean usigned) {
+	public ShortType(StackFrame frame, String typename, boolean usigned) {
 		super(frame, typename, usigned);
 	}
 }

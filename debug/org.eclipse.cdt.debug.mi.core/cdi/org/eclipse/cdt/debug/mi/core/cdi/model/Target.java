@@ -17,19 +17,20 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.CoreProcess;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SessionObject;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
@@ -70,29 +72,21 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class Target  implements ICDITarget {
+public class Target extends SessionObject implements ICDITarget {
 
-	Session session;
 	MISession miSession;
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
 	
 	public Target(Session s, MISession mi) {
-		session = s;
+		super(s);
 		miSession = mi;
 		currentThreads = noThreads;
 	}
 
 	public MISession getMISession() {
 		return miSession;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSession()
-	 */
-	public ICDISession getSession() {
-		return session;
 	}
 
 	/**
@@ -154,15 +148,16 @@ public class Target  implements ICDITarget {
 				throw new MI2CDIException(e);
 			}
 
+			Session session = (Session)getSession();
 			// Resetting threads may change the value of
 			// some variables like Register.  Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
-				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
+				RegisterManager regMgr = session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
 					regMgr.update(this);
 				}
-				VariableManager varMgr = (VariableManager)session.getVariableManager();
+				VariableManager varMgr = session.getVariableManager();
 				if (varMgr.isAutoUpdate()) {
 					varMgr.update(this);
 				}
@@ -636,10 +631,10 @@ public class Target  implements ICDITarget {
 	public String evaluateExpressionToString(ICDIStackFrame frame, String expressionText) throws CDIException {
 		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
-		ICDIThread currentThread = target.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		Thread currentThread = (Thread)target.getCurrentThread();
+		StackFrame currentFrame = currentThread.getCurrentStackFrame();
 		target.setCurrentThread(frame.getThread(), false);
-		frame.getThread().setCurrentStackFrame(frame, false);
+		((Thread)frame.getThread()).setCurrentStackFrame((StackFrame)frame, false);
 		try {
 			CommandFactory factory = miSession.getCommandFactory();
 			MIDataEvaluateExpression evaluate = 
@@ -931,6 +926,22 @@ public class Target  implements ICDITarget {
 	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
 		SharedLibraryManager sharedMgr = ((Session)getSession()).getSharedLibraryManager();
 		return sharedMgr.getSharedLibraries(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariableDescriptors(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public ICDIVariableDescriptor getGlobalVariableDescriptors(String filename, String function, String name) throws CDIException {
+		VariableManager varMgr = ((Session)getSession()).getVariableManager();
+		return varMgr.getGlobalVariableDescriptor(this, filename, function, name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterGroups()
+	 */
+	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
+		RegisterManager regMgr = ((Session)getSession()).getRegisterManager();
+		return regMgr.getRegisterGroups(this);
 	}
 
 }

@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorageDescriptor;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
@@ -45,7 +46,7 @@ public class Thread extends CObject implements ICDIThread {
 	static ICDIStackFrame[] noStack = new ICDIStackFrame[0];
 	int id;
 	String name;
-	ICDIStackFrame currentFrame;
+	StackFrame currentFrame;
 	List currentFrames;
 	int stackdepth = 0;
 
@@ -86,11 +87,11 @@ public class Thread extends CObject implements ICDIThread {
 		}
 	}
 
-	public ICDIStackFrame getCurrentStackFrame() throws CDIException {
+	public StackFrame getCurrentStackFrame() throws CDIException {
 		if (currentFrame == null) {
 			ICDIStackFrame[] frames = getStackFrames(0, 0);
 			if (frames.length > 0) {
-				currentFrame = frames[0];
+				currentFrame = (StackFrame)frames[0];
 			}
 		}
 		return currentFrame;
@@ -137,7 +138,7 @@ public class Thread extends CObject implements ICDIThread {
 				for (int i = 0; i < currentFrames.size(); i++) {
 					ICDIStackFrame stack = (ICDIStackFrame) currentFrames.get(i);
 					if (stack.getLevel() == depth) {
-						currentFrame = stack;
+						currentFrame = (StackFrame)stack;
 					}
 				}
 			}
@@ -245,16 +246,9 @@ public class Thread extends CObject implements ICDIThread {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame)
-	 */
-	public void setCurrentStackFrame(ICDIStackFrame stackframe) throws CDIException {
-		setCurrentStackFrame(stackframe, true);
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame, boolean)
 	 */
-	public void setCurrentStackFrame(ICDIStackFrame stackframe, boolean doUpdate) throws CDIException {
+	public void setCurrentStackFrame(StackFrame stackframe, boolean doUpdate) throws CDIException {
 		
 		// Assert we should assert that the stackframe is one of our frames.
 
@@ -295,11 +289,11 @@ public class Thread extends CObject implements ICDIThread {
 			// To generate changeEvents.
 			if (doUpdate) {
 				Session session = (Session) target.getSession();
-				RegisterManager regMgr = (RegisterManager) session.getRegisterManager();
+				RegisterManager regMgr = session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
 					regMgr.update(target);
 				}
-				VariableManager varMgr = (VariableManager) session.getVariableManager();
+				VariableManager varMgr = session.getVariableManager();
 				if (varMgr.isAutoUpdate()) {
 					varMgr.update(target);
 				}
@@ -518,6 +512,15 @@ public class Thread extends CObject implements ICDIThread {
 		BreakpointManager bMgr = ((Session)target.getSession()).getBreakpointManager();
 		ICDICondition newCondition = bMgr.createCondition(icount, exp, threadIds);
 		return target.setLocationBreakpoint(type, location, newCondition, deferred);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getThreadStorageDescriptors()
+	 */
+	public ICDIThreadStorageDescriptor[] getThreadStorageDescriptors() throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		VariableManager varMgr = session.getVariableManager();
+		return varMgr.getThreadStorageDescriptors(this);
 	}
 
 }

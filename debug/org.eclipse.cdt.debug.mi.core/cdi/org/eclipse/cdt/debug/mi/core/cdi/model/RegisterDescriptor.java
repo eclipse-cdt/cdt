@@ -11,22 +11,19 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 
 /**
  */
-public class RegisterObject extends VariableObject implements ICDIRegisterObject {
+public class RegisterDescriptor extends VariableDescriptor implements ICDIRegisterDescriptor {
 
-	public RegisterObject(Target target, String name, int i) {
-		super(target, name, null, i, 0);
-	}
 
-	public RegisterObject(Target target, String name, String fn, int i) {
-		super(target, name, fn, null, i, 0);
+	public RegisterDescriptor(Target target, Thread thread, StackFrame frame, String name, String fn, int pos, int depth) {
+		super(target, thread, frame, name, fn, pos, depth);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject#getFullName()
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor#getFullName()
 	 */
 	public String getFullName() {
 		if (fullName == null) {

@@ -16,10 +16,8 @@ import java.util.Properties;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -53,7 +51,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		setConfiguration(new Configuration(miSession, attach));
 
 		Target target = new Target(this, miSession);
-		addTargets(new Target[] { target }, target);
+		addTargets(new Target[] { target });
 	}
 
 	public Session(MISession miSession) {
@@ -61,7 +59,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		setConfiguration(new CoreFileConfiguration());
 
 		Target target = new Target(this, miSession);
-		addTargets(new Target[] { target }, target);
+		addTargets(new Target[] { target });
 	}
 
 	public Session() {
@@ -84,9 +82,9 @@ public class Session implements ICDISession, ICDISessionObject {
 		sharedLibraryManager = new SharedLibraryManager(this);
 	}
 
-	public void addTargets(Target[] targets, Target current) {
+	public void addTargets(Target[] targets) {
 		ProcessManager pMgr = getProcessManager();
-		pMgr.addTargets(targets, current);
+		pMgr.addTargets(targets);
 	}
 
 	public void removeTargets(Target[] targets) {
@@ -100,15 +98,6 @@ public class Session implements ICDISession, ICDISessionObject {
 	}
 
 	/**
-	 * @deprecated
-	 * @return
-	 */
-	public Target getCurrentTarget() {
-		ProcessManager pMgr = getProcessManager();
-		return pMgr.getCurrentTarget();
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getAttribute(String)
 	 */
 	public String getAttribute(String key) {
@@ -119,9 +108,6 @@ public class Session implements ICDISession, ICDISessionObject {
 		return processManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getBreakpointManager()
-	 */
 	public BreakpointManager getBreakpointManager() {
 		return breakpointManager;
 	}
@@ -133,24 +119,15 @@ public class Session implements ICDISession, ICDISessionObject {
 		return eventManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getExpressionManager()
-	 */
 	public ExpressionManager getExpressionManager() {
 		return expressionManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getVariableManager()
-	 */
-	public ICDIVariableManager getVariableManager() {
+	public VariableManager getVariableManager() {
 		return variableManager;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getRegisterManager()
-	 */
-	public ICDIRegisterManager getRegisterManager() {
+	public RegisterManager getRegisterManager() {
 		return registerManager;
 	}
 
@@ -179,15 +156,6 @@ public class Session implements ICDISession, ICDISessionObject {
 	}
 
 	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setCurrentTarget()
-	 */
-	public void setCurrentTarget(Target target) throws CDIException {
-		ProcessManager pMgr = getProcessManager();
-		pMgr.setCurrentTarget(target);
-	}
-
-		/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setAttribute(String, String)
 	 */
 	public void setAttribute(String key, String value) {
@@ -262,7 +230,11 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
 	 */
 	public Process getSessionProcess() throws CDIException {
-		return getSessionProcess(getCurrentTarget());
+		ICDITarget[] targets = getTargets();
+		if (targets != null && targets.length > 0) {
+			return getSessionProcess(targets[0]);
+		}
+		return null;
 	}
 	
 	public Process getSessionProcess(ICDITarget target) {

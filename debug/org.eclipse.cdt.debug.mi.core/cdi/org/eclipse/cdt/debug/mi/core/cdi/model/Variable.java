@@ -11,7 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
@@ -69,7 +69,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 
 /**
  */
-public class Variable extends VariableObject implements ICDIVariable {
+public abstract class Variable extends VariableDescriptor implements ICDIVariable {
 
 	MIVar miVar;
 	Value value;
@@ -78,13 +78,13 @@ public class Variable extends VariableObject implements ICDIVariable {
 	String language;
 	boolean isFake = false;
 
-	public Variable(VariableObject obj, MIVar v) {
+	public Variable(VariableDescriptor obj, MIVar v) {
 		super(obj);
 		miVar = v;
 	}
 
-	public Variable(Target target, String n, String q, ICDIStackFrame stack, int pos, int depth, MIVar v) {
-		super(target, n, q, stack, pos, depth);
+	public Variable(Target target, Thread thread, StackFrame frame, String n, String q, int pos, int depth, MIVar v) {
+		super(target, thread, frame, n, q, pos, depth);
 		miVar = v;
 	}
 
@@ -220,7 +220,8 @@ public class Variable extends VariableObject implements ICDIVariable {
 						fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				Variable v = new Variable((Target)getTarget(), childName, fn, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
+				Variable v = createVariable((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(),
+						childName, fn, getPosition(), getStackDepth(), vars[i]);
 				if (childType != null) {
 					// Hack to reset the typename to a known value
 					v.type = childType;
@@ -234,6 +235,9 @@ public class Variable extends VariableObject implements ICDIVariable {
 		return children;
 	}
 
+	protected abstract Variable createVariable(Target target, Thread thread, StackFrame frame,
+			String name, String fullName, int pos, int depth, MIVar miVar);
+	
 	public int getChildrenNumber() throws CDIException {
 		return miVar.getNumChild();
 	}
@@ -314,31 +318,29 @@ public class Variable extends VariableObject implements ICDIVariable {
 		// Changing values may have side effects i.e. affecting other variables
 		// if the manager is on autoupdate check all the other variables.
 		// Note: This maybe very costly.
-		if (this instanceof Register) {
-			// If register was on autoupdate, update all the other registers
-			// assigning may have side effects i.e. affecting other registers.
-			RegisterManager mgr = (RegisterManager)target.getSession().getRegisterManager();
-			if (mgr.isAutoUpdate()) {
-				mgr.update(target);
-			}
-		} else {
-			// If expression was on autoupdate, update all the other expression
-			// assigning may have side effects i.e. affecting other expressions.
-			ExpressionManager expMgr = ((Session)target.getSession()).getExpressionManager();
-			if (expMgr.isAutoUpdate()) {
-				expMgr.update(target);
-			}
+		// assigning may have side effects i.e. affecting other registers.
 
-			// FIXME: Should we always call the Variable Manager ?
-			VariableManager varMgr = (VariableManager)target.getSession().getVariableManager();
-			if (varMgr.isAutoUpdate()) {
-				varMgr.update(target);
-			}
+		// If register was on autoupdate, update all the other registers
+		RegisterManager regMgr = ((Session)target.getSession()).getRegisterManager();
+		if (regMgr.isAutoUpdate()) {
+			regMgr.update(target);
+		}
+		
+		// If expression was on autoupdate, update all the other expression
+		ExpressionManager expMgr = ((Session)target.getSession()).getExpressionManager();
+		if (expMgr.isAutoUpdate()) {
+			expMgr.update(target);
+		}
+		
+		// If variable was on autoupdate, update all the variables.
+		VariableManager varMgr = ((Session)target.getSession()).getVariableManager();
+		if (varMgr.isAutoUpdate()) {
+			varMgr.update(target);
 		}
 	}
 
 	/**
-	 * Overload the implementation of VariableObject and let gdb
+	 * Overload the implementation of VariableDescriptor and let gdb
 	 * handle it.
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#isEditable()
 	 */
@@ -389,6 +391,15 @@ public class Variable extends VariableObject implements ICDIVariable {
 			return miVar.getVarName().equals(variable.getMIVar().getVarName());
 		}
 		return super.equals(var);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#dispose()
+	 */
+	public void dispose() throws CDIException {
+		ICDITarget target = getTarget();
+		VariableManager varMgr = ((Session)target.getSession()).getVariableManager();
+		varMgr.destroyVariable(this);
 	}
 
 }

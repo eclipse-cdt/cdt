@@ -13,8 +13,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
@@ -29,15 +28,15 @@ public class CRegister extends CGlobalVariable implements IRegister {
 	/**
 	 * Constructor for CRegister.
 	 */
-	protected CRegister( CRegisterGroup parent, ICDIRegister cdiRegister ) {
-		super( parent, null, cdiRegister );
+	protected CRegister( CRegisterGroup parent, ICDIRegisterDescriptor cdiRegisterDescriptor ) {
+		super( parent, null, cdiRegisterDescriptor );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}
 
 	/**
 	 * Constructor for CRegister.
 	 */
-	protected CRegister( CRegisterGroup parent, ICDIRegisterObject registerObject, String message ) {
+	protected CRegister( CRegisterGroup parent, ICDIRegisterDescriptor registerObject, String message ) {
 		super( parent, null, registerObject, message );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}

@@ -19,7 +19,6 @@ public class ProcessManager extends Manager {
 
 	static final Target[] EMPTY_TARGETS = new Target[0];
 	Vector debugTargetList;
-	Target currentTarget;
 
 	public ProcessManager(Session session) {
 		super(session, true);
@@ -37,7 +36,7 @@ public class ProcessManager extends Manager {
 		return (ICDITarget[]) debugTargetList.toArray(new ICDITarget[debugTargetList.size()]);
 	}
 
-	public void addTargets(Target[] targets, Target current) {
+	public void addTargets(Target[] targets) {
 		EventManager eventManager = (EventManager)getSession().getEventManager();
 		for (int i = 0; i < targets.length; ++i) {
 			Target target = targets[i];
@@ -50,9 +49,6 @@ public class ProcessManager extends Manager {
 				}
 			}
 		}
-		if (current != null && debugTargetList.contains(current)) {
-			currentTarget = current;
-		}
 		debugTargetList.trimToSize();
 	}
 
@@ -63,9 +59,6 @@ public class ProcessManager extends Manager {
 			MISession miSession = target.getMISession();
 			if (miSession != null) {
 				miSession.deleteObserver(eventManager);
-			}
-			if (currentTarget != null && currentTarget.equals(target)) {
-				currentTarget = null;
 			}
 			debugTargetList.remove(target);
 		}
@@ -84,20 +77,6 @@ public class ProcessManager extends Manager {
 		}
 		// ASSERT: it should not happen.
 		return null;
-	}
-
-	/**
-	 * @return
-	 */
-	public Target getCurrentTarget() {
-		return currentTarget;
-	}
-
-	/**
-	 * @param current
-	 */
-	public void setCurrentTarget(Target current) {
-		currentTarget = current;
 	}
 
 	public void update(Target target) throws CDIException {

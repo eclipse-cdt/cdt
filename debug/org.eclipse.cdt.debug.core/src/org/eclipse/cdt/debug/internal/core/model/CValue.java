@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -85,7 +86,9 @@ public class CValue extends AbstractCValue {
 	public String getValueString() throws DebugException {
 		if ( fValueString == null && getUnderlyingValue() != null ) {
 			resetStatus();
-			if ( getParentVariable().getStackFrame().isSuspended() ) {
+			ICStackFrame cframe = getParentVariable().getStackFrame();
+			boolean isSuspended = (cframe == null)  ? getCDITarget().isSuspended() : cframe.isSuspended();
+			if ( isSuspended ) {
 				try {
 					fValueString = processUnderlyingValue( getUnderlyingValue() );
 				}

@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.Path;
  */
 public class CVariableFactory {
 
-	public static CVariable createVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject ) {
+	public static CVariable createVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject ) {
 		return new CVariable( parent, cdiVariableObject );
 	}
 
-	public static CVariable createVariableWithError( CDebugElement parent, ICDIVariableObject cdiVariableObject, String message ) {
+	public static CVariable createVariableWithError( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject, String message ) {
 		return new CVariable( parent, cdiVariableObject, message );
 	}
 
@@ -69,7 +69,7 @@ public class CVariableFactory {
 		
 	}
 	
-	public static CGlobalVariable createGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableObject cdiVariableObject ) {
+	public static CGlobalVariable createGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableDescriptor cdiVariableObject ) {
 		return new CGlobalVariable( parent, descriptor, cdiVariableObject );
 	}
 }

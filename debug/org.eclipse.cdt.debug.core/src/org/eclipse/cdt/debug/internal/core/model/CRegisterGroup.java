@@ -11,8 +11,8 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -24,9 +24,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
  */
 public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEnableDisableTarget {
 
-	private String fName;
-
-	private ICDIRegisterObject[] fRegisterObjects;
+	private ICDIRegisterGroup fCDIRegisterGroup;
 
 	private IRegister[] fRegisters;
 
@@ -35,35 +33,34 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEn
 	/**
 	 * Constructor for CRegisterGroup.
 	 */
-	public CRegisterGroup( CDebugTarget target, String name, ICDIRegisterObject[] regObjects ) {
+	public CRegisterGroup( CDebugTarget target, ICDIRegisterGroup regGroup ) {
 		super( target );
-		fName = name;
-		fRegisterObjects = regObjects;
-		fRegisters = new IRegister[regObjects.length];
+		fCDIRegisterGroup = regGroup;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getName()
 	 */
 	public String getName() throws DebugException {
-		return fName;
+		return fCDIRegisterGroup.getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getRegisters()
 	 */
 	public IRegister[] getRegisters() throws DebugException {
-		for ( int i = 0; i < fRegisters.length; ++i ) {
-			if ( fRegisters[i] == null ) {
-				try {
-					fRegisters[i] = new CRegister( this, getCDIRegister( fRegisterObjects[i] ) );
+		if (fRegisters == null) {
+			try {
+				ICDIRegisterDescriptor[] regDescs = fCDIRegisterGroup.getRegisterDescriptors();
+				fRegisters = new IRegister[regDescs.length];
+				for ( int i = 0; i < fRegisters.length; ++i ) {
+					fRegisters[i] = new CRegister( this,  regDescs[i] );
+					if ( ((CRegister)fRegisters[i]).isEnabled() ) {
+						((CRegister)fRegisters[i]).setEnabled( isEnabled() );
+					}
 				}
-				catch( DebugException e ) {
-					fRegisters[i] = new CRegister( this, fRegisterObjects[i], e.getMessage() );
-				}
-				if ( ((CRegister)fRegisters[i]).isEnabled() ) {
-					((CRegister)fRegisters[i]).setEnabled( isEnabled() );
-				}
+			}  catch (CDIException e) {
+				requestFailed( e.getMessage(), null );				
 			}
 		}
 		return fRegisters;
@@ -73,10 +70,13 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEn
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#hasRegisters()
 	 */
 	public boolean hasRegisters() throws DebugException {
-		return fRegisterObjects.length > 0;
+		return getRegisters().length > 0;
 	}
 
 	public void dispose() {
+		if (fRegisters == null) {
+			return;
+		}
 		for ( int i = 0; i < fRegisters.length; ++i ) {
 			if ( fRegisters[i] != null ) {
 				((CRegister)fRegisters[i]).dispose();
@@ -85,18 +85,10 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEn
 		}
 	}
 
-	private ICDIRegister getCDIRegister( ICDIRegisterObject ro ) throws DebugException {
-		ICDIRegister register = null;
-		try {
-			register = ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager().createRegister( ro );
-		}
-		catch( CDIException e ) {
-			requestFailed( e.getMessage(), null );
-		}
-		return register;
-	}
-
 	public void targetSuspended() {
+		if (fRegisters == null) {
+			return;
+		}
 		for ( int i = 0; i < fRegisters.length; ++i ) {
 			if ( fRegisters[i] != null && ((CRegister)fRegisters[i]).hasErrors() ) {
 				((CRegister)fRegisters[i]).dispose();

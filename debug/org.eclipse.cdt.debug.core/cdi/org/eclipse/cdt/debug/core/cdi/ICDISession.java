@@ -46,20 +46,6 @@ public interface ICDISession {
 	String getAttribute(String key);
 
 	/**
-	 * Returns the variable manager of this debug session.
-	 * 
-	 * @return the variable manager
-	 */
-	ICDIVariableManager getVariableManager();
-
-	/**
-	 * Returns the register manager of this debug session.
-	 * 
-	 * @return the register manager
-	 */
-	ICDIRegisterManager getRegisterManager();
-
-	/**
 	 * Returns the event manager of this debug session.
 	 * 
 	 * @return the event manager

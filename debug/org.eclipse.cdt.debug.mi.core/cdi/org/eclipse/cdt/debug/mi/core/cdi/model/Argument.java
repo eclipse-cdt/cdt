@@ -17,8 +17,20 @@ import org.eclipse.cdt.debug.mi.core.output.MIVar;
  */
 public class Argument extends Variable implements ICDIArgument {
 
-	public Argument(ArgumentObject obj, MIVar var) {
+	public Argument(Target target, Thread thread, StackFrame frame,
+			String n, String q, int pos, int depth, MIVar v) {
+		super(target, thread, frame, n, q, pos, depth, v);
+	}
+
+	public Argument(ArgumentDescriptor obj, MIVar var) {
 		super(obj, var);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createVariable(org.eclipse.cdt.debug.mi.core.cdi.model.Target, org.eclipse.cdt.debug.core.cdi.model.ICDIThread, org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame, java.lang.String, java.lang.String, int, int, org.eclipse.cdt.debug.mi.core.output.MIVar)
+	 */
+	protected Variable createVariable(Target target, Thread thread, StackFrame frame, String name, String fullName, int pos, int depth, MIVar miVar) {
+		return new Argument(target, thread, frame, name, fullName, pos, depth, miVar);
 	}
 
 }

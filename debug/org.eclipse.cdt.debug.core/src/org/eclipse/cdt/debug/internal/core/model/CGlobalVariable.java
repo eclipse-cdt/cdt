@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 
@@ -28,7 +28,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	/**
 	 * Constructor for CGlobalVariable.
 	 */
-	protected CGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableObject cdiVariableObject ) {
+	protected CGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableDescriptor cdiVariableObject ) {
 		super( parent, cdiVariableObject );
 		fDescriptor = descriptor;
 	}
@@ -36,7 +36,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	/**
 	 * Constructor for CGlobalVariable.
 	 */
-	protected CGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableObject cdiVariableObject, String message ) {
+	protected CGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableDescriptor cdiVariableObject, String message ) {
 		super( parent, cdiVariableObject, message );
 		fDescriptor = descriptor;
 	}

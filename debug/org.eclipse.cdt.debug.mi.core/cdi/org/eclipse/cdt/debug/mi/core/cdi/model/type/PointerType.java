@@ -11,15 +11,15 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
 public class PointerType extends DerivedType implements ICDIPointerType {
 
-	public PointerType(ICDIStackFrame frame, String typename) {
+	public PointerType(StackFrame frame, String typename) {
 		super(frame, typename);
 	}
 

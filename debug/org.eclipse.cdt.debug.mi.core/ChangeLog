@@ -1,3 +1,13 @@
+2004-10-31 Alain Magloire
+	Refactor ICDIVariableObject --> ICDIVariableDescriptor
+	Refactor ICDIArgumentObject --> ICDIArgumentDescriptor
+	Refactor ICDIRegisterObject --> ICDIRegisterDescriptor
+	Addition ICDIThreadStorageDescriptor, ICDIThreadStorage
+	Addition ICDILocalVariableDescriptor, ICDILocalVariable
+	Addition ICDIGlobalVariableDescriptor, ICDIGlovalVariable
+
+	Adjust the classes to the changes.
+
 2004-10-29 Alain Magloire
 	Remove of ICDISharedLibraryManager
 	* cdi/org/eclipse/cdt/debug/core/cdi/Session.java

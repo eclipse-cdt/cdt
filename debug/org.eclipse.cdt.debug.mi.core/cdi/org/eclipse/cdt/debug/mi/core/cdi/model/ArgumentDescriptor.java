@@ -8,10 +8,18 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.core.cdi.model;
 
+package org.eclipse.cdt.debug.mi.core.cdi.model;
+
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 
 /**
  */
-public interface ICDIArgumentObject extends ICDIVariableObject {
+public class ArgumentDescriptor extends LocalVariableDescriptor implements ICDIArgumentDescriptor {
+
+	public ArgumentDescriptor(Target target, Thread thread, StackFrame frame, String n, String fn,
+			int pos, int depth) {
+		super(target, thread, frame, n, fn, pos, depth);
+	}
+
 }

@@ -12,14 +12,15 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor;
 
 /**
  * Enter type comment.
@@ -72,8 +73,8 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		//String subarray = "*(" + variable.getName() + "+" + index + ")@" + length;
 		ICDITarget target = getTarget();
 		Session session = (Session) (target.getSession());
-		ICDIVariableManager mgr = session.getVariableManager();
-		ICDIVariableObject vo = mgr.getVariableObjectAsArray(variable, index, length);
-		return mgr.createVariable(vo).getValue().getVariables();
+		VariableManager mgr = session.getVariableManager();
+		ICDIVariableDescriptor vo = mgr.getVariableDescriptorAsArray(variable, index, length);
+		return mgr.createVariable((VariableDescriptor)vo).getValue().getVariables();
 	}
 }

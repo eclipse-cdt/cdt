@@ -12,7 +12,6 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 
 /**
  * An expression is a snippet of code that can be evaluated to 
@@ -46,5 +45,14 @@ public interface ICDIExpression extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIValue getValue(ICDIStackFrame context) throws CDIException;
+
+	/**
+	 * Remove the expression from the manager list.
+	 * 
+	 * @param var
+	 * @return ICDIArgument
+	 * @throws CDIException
+	 */
+	void dispose() throws CDIException;
 
 }

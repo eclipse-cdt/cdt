@@ -25,7 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
@@ -116,7 +116,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 				fVariables = new ArrayList( vars.size() );
 				Iterator it = vars.iterator();
 				while( it.hasNext() ) {
-					fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableObject)it.next() ) );
+					fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableDescriptor)it.next() ) );
 				}
 			}
 			else if ( refreshVariables() ) {
@@ -134,7 +134,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		List locals = getAllCDIVariableObjects();
 		int index = 0;
 		while( index < fVariables.size() ) {
-			ICDIVariableObject varObject = findVariable( locals, (CVariable)fVariables.get( index ) );
+			ICDIVariableDescriptor varObject = findVariable( locals, (CVariable)fVariables.get( index ) );
 			if ( varObject != null ) {
 				locals.remove( varObject );
 				index++;
@@ -147,7 +147,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		// add any new locals
 		Iterator newOnes = locals.iterator();
 		while( newOnes.hasNext() ) {
-			fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableObject)newOnes.next() ) );
+			fVariables.add( CVariableFactory.createVariable( this, (ICDIVariableDescriptor)newOnes.next() ) );
 		}
 	}
 
@@ -489,7 +489,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected List getCDILocalVariableObjects() throws DebugException {
 		List list = new ArrayList();
 		try {
-			list.addAll( Arrays.asList( getCDISession().getVariableManager().getLocalVariableObjects( getCDIStackFrame() ) ) );
+			list.addAll( Arrays.asList( getCDIStackFrame().getLocalVariableDescriptors( ) ) );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
@@ -504,7 +504,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected List getCDIArgumentObjects() throws DebugException {
 		List list = new ArrayList();
 		try {
-			list.addAll( Arrays.asList( getCDISession().getVariableManager().getArgumentObjects( getCDIStackFrame() ) ) );
+			list.addAll( Arrays.asList( getCDIStackFrame().getArgumentDescriptors() ) );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
@@ -607,10 +607,10 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	protected ICDIVariableObject findVariable( List list, CVariable var ) {
+	protected ICDIVariableDescriptor findVariable( List list, CVariable var ) {
 		Iterator it = list.iterator();
 		while( it.hasNext() ) {
-			ICDIVariableObject newVarObject = (ICDIVariableObject)it.next();
+			ICDIVariableDescriptor newVarObject = (ICDIVariableDescriptor)it.next();
 			if ( var.sameVariable( newVarObject ) )
 				return newVarObject;
 		}

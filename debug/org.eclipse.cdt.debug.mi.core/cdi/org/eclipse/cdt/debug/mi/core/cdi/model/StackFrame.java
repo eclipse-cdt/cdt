@@ -14,13 +14,11 @@ import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -42,8 +40,8 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	MIFrame frame;
 	Thread cthread;
 	int level;
-	ICDIArgument[] args;
-	ICDIVariable[] locals;
+	ICDIArgumentDescriptor[] argDescs;
+	ICDILocalVariableDescriptor[] localDescs;
 	Location fLocation;
 
 	/*
@@ -88,45 +86,27 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArgumentDescriptors()
 	 */
-	public ICDIArgument[] getArguments() throws CDIException {
-		if (args == null) {
+	public ICDIArgumentDescriptor[] getArgumentDescriptors() throws CDIException {
+		if (argDescs == null) {
 			Session session = (Session)getTarget().getSession();
-			VariableManager mgr = (VariableManager)session.getVariableManager();
-			ICDIArgumentObject[] argObjs = mgr.getArgumentObjects(this);
-			args = new ICDIArgument[argObjs.length];
-			for (int i = 0; i < args.length; i++) {
-				try {
-					args[i] = mgr.createArgument(argObjs[i]);
-				} catch (CDIException e) {
-					args = null;
-					throw e;
-				}
-			}
+			VariableManager mgr = session.getVariableManager();
+			argDescs = mgr.getArgumentDescriptors(this);
 		}
-		return args;
+		return argDescs;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariableDescriptors()
 	 */
-	public ICDIVariable[] getLocalVariables() throws CDIException {
-		if (locals == null) {
+	public ICDILocalVariableDescriptor[] getLocalVariableDescriptors() throws CDIException {
+		if (localDescs == null) {
 			Session session = (Session)getTarget().getSession();
-			VariableManager mgr = (VariableManager)session.getVariableManager();
-			ICDIVariableObject[] varObjs = mgr.getLocalVariableObjects(this);
-			locals = new ICDIVariable[varObjs.length];
-			for (int i = 0; i < locals.length; i++) {
-				try {
-					locals[i] = mgr.createVariable(varObjs[i]);
-				} catch (CDIException e) {
-					locals = null;
-					throw e;
-				}
-			}
+			VariableManager mgr = session.getVariableManager();
+			localDescs = mgr.getLocalVariableDescriptors(this);
 		}
-		return locals;
+		return localDescs;
 	}
 
 	/**

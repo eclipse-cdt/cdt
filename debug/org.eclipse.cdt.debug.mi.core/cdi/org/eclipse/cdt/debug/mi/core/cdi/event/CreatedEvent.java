@@ -51,7 +51,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 
 	public CreatedEvent(Session s, MIVarCreatedEvent var) {
 		session = s;
-		VariableManager mgr = (VariableManager)session.getVariableManager();
+		VariableManager mgr = session.getVariableManager();
 		MISession miSession = var.getMISession();
 		String varName = var.getVarName();
 		source = mgr.getVariable(miSession, varName);
@@ -63,7 +63,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 
 	public CreatedEvent(Session s, MIRegisterCreatedEvent reg) {
 		session = s;
-		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
+		RegisterManager mgr = session.getRegisterManager();
 		MISession miSession = reg.getMISession();
 		int regno = reg.getNumber();
 		source = mgr.getRegister(miSession, regno);

@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -20,7 +20,7 @@ public class IncompleteType extends Type {
 	/**
 	 * @param name
 	 */
-	public IncompleteType(ICDIStackFrame frame, String name) {
+	public IncompleteType(StackFrame frame, String name) {
 		super(frame, name);
 	}
 

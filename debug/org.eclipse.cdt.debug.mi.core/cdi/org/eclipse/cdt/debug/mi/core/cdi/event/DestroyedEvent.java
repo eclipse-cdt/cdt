@@ -45,7 +45,7 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 
 	public DestroyedEvent(Session s, MIVarDeletedEvent var) {
 		session = s;
-		VariableManager varMgr = (VariableManager)session.getVariableManager();
+		VariableManager varMgr = session.getVariableManager();
 		MISession miSession = var.getMISession();
 		String varName = var.getVarName();
 		Variable variable = varMgr.getVariable(miSession, varName);

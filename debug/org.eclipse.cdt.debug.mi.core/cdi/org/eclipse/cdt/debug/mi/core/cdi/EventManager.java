@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ChangedEvent;
@@ -149,7 +148,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something change we do not know what
 					// Let the signal manager handle it with an update().
 					try {
-						SignalManager sMgr = (SignalManager)session.getSignalManager();
+						SignalManager sMgr = session.getSignalManager();
 						sMgr.update(currentTarget);
 					} catch (CDIException e) {
 					}
@@ -265,12 +264,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		Session session = (Session)getSession();
 		MISession miSession = stopped.getMISession();
 		Target currentTarget = session.getTarget(miSession);
-		try {
-			session.setCurrentTarget(currentTarget);
-		} catch (CDIException e) {
-			//TODO: Should not ignore this.
-		}
-
 		if (processSharedLibEvent(stopped)) {
 			// Event was consumed by the shared lib processing bailout
 			return false;
@@ -284,7 +277,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		int threadId = threadId = stopped.getThreadId();
 		currentTarget.updateState(threadId);
 		try {
-			ICDIThread cthread = currentTarget.getCurrentThread();
+			Thread cthread = (Thread)currentTarget.getCurrentThread();
 			if (cthread != null) {
 				cthread.getCurrentStackFrame();
 			} else {
@@ -297,14 +290,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 
 		// Update the managers.
 		// For the Variable/Expression Managers call only the updateManager.
-		VariableManager varMgr = (VariableManager)session.getVariableManager();
+		VariableManager varMgr = session.getVariableManager();
 		ExpressionManager expMgr  = session.getExpressionManager();		
-		RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
+		RegisterManager regMgr = session.getRegisterManager();
 		MemoryManager memMgr = session.getMemoryManager();
 		BreakpointManager bpMgr = session.getBreakpointManager();
-		SignalManager sigMgr = (SignalManager)session.getSignalManager();
-		SourceManager srcMgr = (SourceManager)session.getSourceManager();
-		SharedLibraryManager libMgr = (SharedLibraryManager)session.getSharedLibraryManager();
+		SignalManager sigMgr = session.getSignalManager();
+		SourceManager srcMgr = session.getSourceManager();
+		SharedLibraryManager libMgr = session.getSharedLibraryManager();
 		try {
 			if (varMgr.isAutoUpdate()) {
 				varMgr.update(currentTarget);
@@ -434,14 +427,12 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 
 				int miLevel = 0;
 				int tid = 0;
-				ICDIThread currentThread = null;
+				Thread currentThread = null;
 				try {
-					currentThread = currentTarget.getCurrentThread();
+					currentThread = (Thread)currentTarget.getCurrentThread();
 				} catch (CDIException e1) {
 				}
-				if (currentThread instanceof Thread) {
-					tid = ((Thread)currentThread).getId();
-				}
+				tid = currentThread.getId();
 				// Select the old thread now.
 				if (tid > 0) {
 					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);

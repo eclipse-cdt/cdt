@@ -11,9 +11,9 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -24,7 +24,7 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 	/**
 	 * @param typename
 	 */
-	public ArrayType(ICDIStackFrame frame, String typename,int dim) {
+	public ArrayType(StackFrame frame, String typename,int dim) {
 		super(frame, typename);
 		dimension = dim;
 	}

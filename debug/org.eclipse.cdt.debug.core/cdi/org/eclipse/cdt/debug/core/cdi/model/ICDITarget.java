@@ -48,6 +48,38 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 		throws CDIException;
 
 	/**
+	 * A static/global variable in a particular function or file,
+	 * filename or/and function is the context for the static ICDIVariableDescriptor.
+	 * <pre>
+	 * hello.c:
+	 *   int bar;
+	 *   int main() {
+	 *   	static int bar;
+	 *   }
+	 * file.c:
+	 *   int foo() {
+	 *   	static int bar;
+	 *   }
+	 * getVariableObject(null, null, "bar");
+	 * getVariableObject(null, "main", "bar");
+	 * getVariableObject("file.c", "foo", "bar");
+	 * </pre>
+	 * @param filename
+	 * @param function
+	 * @param name
+	 * @return ICDIVariableDescriptor
+	 * @throws CDIException
+	 */
+	ICDIVariableDescriptor getGlobalVariableDescriptors(String filename, String function, String name) throws CDIException;
+
+	/**
+	 * Return the register groups.
+	 * 
+	 * @return ICDIRegisterGroup[]
+	 */
+	ICDIRegisterGroup[] getRegisterGroups() throws CDIException;
+
+	/**
 	 * Returns whether this target is terminated.
 	 *
 	 * @return whether this target is terminated

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -21,7 +20,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
  * Manager
  *
  */
-public abstract class Manager extends SessionObject implements ICDIManager {
+public abstract class Manager extends SessionObject {
 
 	boolean autoUpdate;
 

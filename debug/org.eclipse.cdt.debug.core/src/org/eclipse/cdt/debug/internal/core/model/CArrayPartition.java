@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICType;
@@ -34,7 +34,7 @@ public class CArrayPartition extends AbstractCVariable {
 
 	private int fEnd;
 
-	private ICDIVariableObject fCDIVariableObject;
+	private ICDIVariableDescriptor fCDIVariableObject;
 
 	private ICDIVariable fCDIVariable;
 
@@ -63,7 +63,7 @@ public class CArrayPartition extends AbstractCVariable {
 	public ICType getType() throws DebugException {
 		if ( fType == null ) {
 			try {
-				ICDIVariableObject varObject = getVariableObject();
+				ICDIVariableDescriptor varObject = getVariableObject();
 				if ( varObject != null )
 					fType = new CType( varObject.getType() );
 			}
@@ -238,9 +238,10 @@ public class CArrayPartition extends AbstractCVariable {
 		return false;
 	}
 
-	private ICDIVariableObject getVariableObject() throws CDIException {
+	private ICDIVariableDescriptor getVariableObject() throws CDIException {
 		if ( fCDIVariableObject == null ) {
-			fCDIVariableObject = getCDISession().getVariableManager().getVariableObjectAsArray( getCDIVariable(), getStart(), getEnd() - getStart() + 1 );
+			fCDIVariableObject = getCDIVariable().getVariableDescriptorAsArray(getStart(), getEnd() - getStart() + 1 );
+			//fCDIVariableObject = getCDISession().getVariableManager().getVariableObjectAsArray( getCDIVariable(), getStart(), getEnd() - getStart() + 1 );
 		}
 		return fCDIVariableObject;
 	}

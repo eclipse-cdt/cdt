@@ -19,12 +19,12 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICType;
@@ -52,7 +52,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		/**
 		 * The CDI variable object this variable is based on.
 		 */
-		private ICDIVariableObject fCDIVariableObject;
+		private ICDIVariableDescriptor fCDIVariableObject;
 
 		/**
 		 * The underlying CDI variable.
@@ -82,7 +82,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		/**
 		 * Constructor for InternalVariable.
 		 */
-		InternalVariable( CVariable var, ICDIVariableObject varObject ) {
+		InternalVariable( CVariable var, ICDIVariableDescriptor varObject ) {
 			setVariable( var );
 			setCDIVariableObject( varObject );
 			setCDIVariable( (varObject instanceof ICDIVariable) ? (ICDIVariable)varObject : null );
@@ -91,7 +91,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		InternalVariable createShadow( int start, int length ) throws DebugException {
 			InternalVariable iv = null;
 			try {
-				iv = new InternalVariable( getVariable(), getCDISession().getVariableManager().getVariableObjectAsArray( getCDIVariableObject(), start, length ) );
+				iv = new InternalVariable( getVariable(), getCDIVariableObject().getVariableDescriptorAsArray( start, length ) );
 			}
 			catch( CDIException e ) {
 				requestFailed( e.getMessage(), null );
@@ -102,7 +102,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		InternalVariable createShadow( String type ) throws DebugException {
 			InternalVariable iv = null;
 			try {
-				iv = new InternalVariable( getVariable(), getCDISession().getVariableManager().getVariableObjectAsType( getCDIVariableObject(), type ) );
+				iv = new InternalVariable( getVariable(), getCDIVariableObject().getVariableDescriptorAsType( type ) );
 			}
 			catch( CDIException e ) {
 				requestFailed( e.getMessage(), null );
@@ -113,10 +113,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		private synchronized ICDIVariable getCDIVariable() throws DebugException {
 			if ( fCDIVariable == null ) {
 				try {
-					if ( getCDIVariableObject() instanceof ICDIArgumentObject )
-						fCDIVariable = getCDISession().getVariableManager().createArgument( (ICDIArgumentObject)getCDIVariableObject() );
-					else
-						fCDIVariable = getCDISession().getVariableManager().createVariable( getCDIVariableObject() );
+					fCDIVariable = getCDIVariableObject().createVariable( );
 				}
 				catch( CDIException e ) {
 					requestFailed( e.getMessage(), null );
@@ -129,11 +126,11 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			fCDIVariable = variable;
 		}
 
-		private ICDIVariableObject getCDIVariableObject() {
+		private ICDIVariableDescriptor getCDIVariableObject() {
 			return fCDIVariableObject;
 		}
 
-		private void setCDIVariableObject( ICDIVariableObject variableObject ) {
+		private void setCDIVariableObject( ICDIVariableDescriptor variableObject ) {
 			fCDIVariableObject = variableObject;
 		}
 
@@ -151,7 +148,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 
 		CType getType() throws DebugException {
 			if ( fType == null ) {
-				ICDIVariableObject varObject = getCDIVariableObject();
+				ICDIVariableDescriptor varObject = getCDIVariableObject();
 				if ( varObject != null ) {
 					synchronized( this ) {
 						if ( fType == null ) {
@@ -171,7 +168,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		synchronized void invalidate() {
 			try {
 				if ( fCDIVariable != null )
-					getCDISession().getVariableManager().destroyVariable( fCDIVariable );
+					fCDIVariable.dispose();
 			}
 			catch( CDIException e ) {
 				logError( e.getMessage() );
@@ -203,7 +200,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		}
 
 		boolean isArgument() {
-			return ( getCDIVariableObject() instanceof ICDIArgumentObject );
+			return ( getCDIVariableObject() instanceof ICDIArgumentDescriptor );
 		}
 
 		void setValue( String expression ) throws DebugException {
@@ -308,7 +305,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			return false;
 		}
 
-		boolean sameVariable( ICDIVariableObject vo ) {
+		boolean sameVariable( ICDIVariableDescriptor vo ) {
 			return getCDIVariableObject().equals( vo );
 		}
 	}
@@ -341,7 +338,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	/**
 	 * Constructor for CVariable.
 	 */
-	protected CVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject ) {
+	protected CVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject ) {
 		super( parent );
 		if ( cdiVariableObject != null ) {
 			fName = cdiVariableObject.getName();
@@ -354,7 +351,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	/**
 	 * Constructor for CVariable.
 	 */
-	protected CVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject, String errorMessage ) {
+	protected CVariable( CDebugElement parent, ICDIVariableDescriptor cdiVariableObject, String errorMessage ) {
 		super( parent );
 		if ( cdiVariableObject != null ) {
 			fName = cdiVariableObject.getName();
@@ -724,7 +721,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		return result;
 	}
 
-	private void createOriginal( ICDIVariableObject vo ) {
+	private void createOriginal( ICDIVariableDescriptor vo ) {
 		if ( vo != null )
 			fName = vo.getName();
 		setOriginal( new InternalVariable( this, vo ) );
@@ -784,7 +781,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		return false;
 	}
 
-	protected boolean sameVariable( ICDIVariableObject vo ) {
+	protected boolean sameVariable( ICDIVariableDescriptor vo ) {
 		InternalVariable iv = getOriginal();
 		return ( iv != null && iv.sameVariable( vo ) );
 	}

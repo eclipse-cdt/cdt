@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 
 /**
  */
@@ -21,7 +21,7 @@ public class StructType extends AggregateType implements ICDIStructType {
 	/**
 	 * @param typename
 	 */
-	public StructType(ICDIStackFrame frame, String typename) {
+	public StructType(StackFrame frame, String typename) {
 		super(frame, typename);
 	}
 

@@ -9,7 +9,7 @@
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
 
-package org.eclipse.cdt.utils.stabs;
+package org.eclipse.cdt.utils.debug.stabs;
 
 public final class StabConstant {
 

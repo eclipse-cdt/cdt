@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -185,6 +186,25 @@ class BinaryInfo extends CFileInfo {
 		if (filename != null && !filename.equals("??")) {
 			TranslationUnit tu = null;
 			IPath path = new Path(filename);
+
+			/*
+			 * This is a first guess, to figure out where the source code file is
+			 * We guess that is is in the same directory as the binary:
+			 * - The correct fix would be to compile the program with absolute path.
+			 * - Use the future binary attachement mechanism.  */
+			if (!path.isAbsolute()) {
+				IResource parentRes = null;
+				try {
+					parentRes = (IResource)parent.getResource();
+				} catch (CModelException e) {
+				}
+				// assert parentRes, we should always have a solid executable.
+				if (parentRes != null) {
+					IPath parentPath = parentRes.getLocation().removeLastSegments(1);
+					path = parentPath.append(path);
+				}
+			}
+
 			if (hash.containsKey(path)) {
 				tu = (TranslationUnit) hash.get(path);
 			} else {
@@ -225,6 +245,25 @@ class BinaryInfo extends CFileInfo {
 		if (filename != null && !filename.equals("??")) {
 			TranslationUnit tu = null;
 			IPath path = new Path(filename);
+			
+			/*
+			 * This is a first guess, to figure out where the source code file is
+			 * We guess that is is in the same directory as the binary:
+			 * - The correct fix would be to compile the program with absolute path.
+			 * - Use the future binary attachement mechanism.  */
+			if (!path.isAbsolute()) {
+				IResource parentRes = null;
+				try {
+					parentRes = (IResource)parent.getResource();
+				} catch (CModelException e) {
+				}
+				// assert parentRes, we should always have a solid executable.
+				if (parentRes != null) {
+					IPath parentPath = parentRes.getLocation().removeLastSegments(1);
+					path = parentPath.append(path);
+				}
+			}
+		
 			if (hash.containsKey(path)) {
 				tu = (TranslationUnit) hash.get(path);
 			} else {

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -210,9 +209,10 @@ public abstract class Parser extends ExpressionParser implements IParser
                     break;
                 }
             }
-            catch (Exception e)
+            catch (Throwable e)
             {
-            	logException( "translationUnit", e ); //$NON-NLS-1$
+            	if( e instanceof Exception )
+            		logException( "translationUnit", (Exception) e ); //$NON-NLS-1$
 				failParse();
             }
         }
@@ -1112,19 +1112,19 @@ public abstract class Parser extends ExpressionParser implements IParser
 				logException( "simpleDecl", e ); //$NON-NLS-1$
 				throw backtrack;
 			}
-			Iterator i = l.iterator();
+			
 			if (hasFunctionBody && l.size() != 1)
 			{
 			    throw backtrack; //TODO Should be an IProblem
 			}
-			if (i.hasNext()) // no need to do this unless we have a declarator
+			if (!l.isEmpty()) // no need to do this unless we have a declarator
 			{
 			    if (!hasFunctionBody || fromCatchHandler)
 			    {
 			    	IASTDeclaration declaration = null;
-			        while (i.hasNext())
+			        for( int i = 0; i < l.size(); ++i )
 			        {
-			            declaration = (IASTDeclaration)i.next();
+			            declaration = (IASTDeclaration)l.get(i);
 			            ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
 			                lastToken.getEndOffset(), lastToken.getLineNumber());
 			            declaration.acceptElement( requestor, astFactory.getReferenceManager() );
@@ -1134,7 +1134,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			        }
 			        return declaration;
 			    }
-			    IASTDeclaration declaration = (IASTDeclaration)i.next();
+			    IASTDeclaration declaration = (IASTDeclaration)l.get(0);
 			    endDeclaration( declaration );
 			    declaration.enterScope( requestor, astFactory.getReferenceManager() );
 			    if( sdw.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier )

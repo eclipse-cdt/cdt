@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,9 +46,12 @@ public class ASTEnumerationSpecifier
     }
 
 
-	private List enumerators = new ArrayList();
+	private List enumerators = Collections.EMPTY_LIST;
+	private static final int ENUMERATOR_LIST_SIZE = 4;
 	public void addEnumerator(IASTEnumerator enumerator)
 	{
+		if( enumerators == Collections.EMPTY_LIST )
+			enumerators = new ArrayList( ENUMERATOR_LIST_SIZE );
 		enumerators.add(enumerator);        
 	}
 

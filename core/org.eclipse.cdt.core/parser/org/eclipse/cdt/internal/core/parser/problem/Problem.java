@@ -196,6 +196,9 @@ public class Problem implements IProblem {
 		errorMessages.put(
 			new Integer(IProblem.SCANNER_BAD_CHARACTER),
 			ParserMessages.getString("ScannerProblemFactory.error.scanner.badCharacter")); //$NON-NLS-1$
+		errorMessages.put( 
+				new Integer( IProblem.SYNTAX_ERROR ), 
+				ParserMessages.getString( "ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
 	}
 	protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
 

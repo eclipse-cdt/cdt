@@ -165,6 +165,7 @@ public class ScannerInfoCollector {
 
 	/**
 	 * Compare discovered include paths and symbol definitions with the ones from scanInfo.
+	 * 
 	 * @param scanInfo
 	 * @param projectName
 	 * @return
@@ -172,63 +173,99 @@ public class ScannerInfoCollector {
 	private boolean scannerConfigNeedsUpdate(DiscoveredScannerInfo discScanInfo, String projectName) {
 		List includes = (List) discoveredIncludes.get(projectName);
 		List symbols = (List) discoveredSymbols.get(projectName);
-		if (includes == null && symbols == null)
-			return false;
 		
-		// Step 1. Add discovered scanner config to the existing discovered scanner config 
-		// add the includes from the latest discovery
-		boolean addedIncludes = false;
-		List sumIncludes = (List) sumDiscoveredIncludes.get(projectName);
-		if (sumIncludes == null) {
-			sumIncludes = new ArrayList(includes);
-			sumDiscoveredIncludes.put(projectName, sumIncludes);
-			addedIncludes = true;
-		}
-		else {
-			for (Iterator i = includes.iterator(); i.hasNext(); ) {
-				String include = (String) i.next();
-				if (!sumIncludes.contains(include)) {
-					addedIncludes |= sumIncludes.add(include);
-				}
-			}
-		}
-		// try to translate cygpaths to absolute paths
-		List finalSumIncludes = translateIncludePaths(sumIncludes);
-		
-		// add the symbols from the latest discovery
-		boolean addedSymbols = false;
-		Map sumSymbols = (Map) sumDiscoveredSymbols.get(projectName);
-		if (sumSymbols == null) {
-			sumSymbols = new LinkedHashMap();
-			sumDiscoveredSymbols.put(projectName, sumSymbols);
-		}
-		addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumSymbols, symbols, false);
-		
-		// Step 2. Get project's scanner config
-		LinkedHashMap persistedIncludes = discScanInfo.getDiscoveredIncludePaths();
-		LinkedHashMap persistedSymbols = discScanInfo.getDiscoveredSymbolDefinitions();
-		
-		// Step 3. Merge scanner config from steps 1 and 2
-		for (Iterator i = finalSumIncludes.iterator(); i.hasNext(); ) {
-			String include = (String) i.next();
-			if (!persistedIncludes.containsKey(include)) {
-				persistedIncludes.put(include, 
-						((new Path(include)).toFile().exists()) ? Boolean.FALSE : Boolean.TRUE);
-				addedIncludes |= true;
-			}
-		}
-		LinkedHashMap candidateSymbols = new LinkedHashMap(persistedSymbols);
-		addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols, sumSymbols);
-		
-		// Step 4. Set resulting scanner config
-		discScanInfo.setDiscoveredIncludePaths(persistedIncludes);
-		discScanInfo.setDiscoveredSymbolDefinitions(candidateSymbols);
-		
-		// invalidate discovered include paths and symbol definitions
-		discoveredIncludes.put(projectName, null);
-		discoveredSymbols.put(projectName, null);
+		boolean addedIncludes = includePathsNeedUpdate(discScanInfo, projectName, includes);
+		boolean addedSymbols = definedSymbolsNeedUpdate(discScanInfo, projectName, symbols);
 		
 		return (addedIncludes | addedSymbols);
+	}
+
+	/**
+	 * Compare include paths with already discovered.
+	 * 
+	 * @param discScanInfo
+	 * @param projectName
+	 * @param includes
+	 * @return
+	 */
+	private boolean includePathsNeedUpdate(DiscoveredScannerInfo discScanInfo, String projectName, List includes) {
+		boolean addedIncludes = false;
+		if (includes != null) {
+			// Step 1. Add discovered scanner config to the existing discovered scanner config 
+			// add the includes from the latest discovery
+			List sumIncludes = (List) sumDiscoveredIncludes.get(projectName);
+			if (sumIncludes == null) {
+				sumIncludes = new ArrayList(includes);
+				sumDiscoveredIncludes.put(projectName, sumIncludes);
+				addedIncludes = true;
+			}
+			else {
+				for (Iterator i = includes.iterator(); i.hasNext(); ) {
+					String include = (String) i.next();
+					if (!sumIncludes.contains(include)) {
+						addedIncludes |= sumIncludes.add(include);
+					}
+				}
+			}
+			// try to translate cygpaths to absolute paths
+			List finalSumIncludes = translateIncludePaths(sumIncludes);
+			
+			// Step 2. Get project's scanner config
+			LinkedHashMap persistedIncludes = discScanInfo.getDiscoveredIncludePaths();
+	
+			// Step 3. Merge scanner config from steps 1 and 2
+			for (Iterator i = finalSumIncludes.iterator(); i.hasNext(); ) {
+				String include = (String) i.next();
+				if (!persistedIncludes.containsKey(include)) {
+					persistedIncludes.put(include, 
+							((new Path(include)).toFile().exists()) ? Boolean.FALSE : Boolean.TRUE);
+					addedIncludes |= true;
+				}
+			}
+			
+			// Step 4. Set resulting scanner config
+			discScanInfo.setDiscoveredIncludePaths(persistedIncludes);
+			
+			// Step 5. Invalidate discovered include paths and symbol definitions
+			discoveredIncludes.put(projectName, null);
+		}
+		return addedIncludes;
+	}
+
+	/**
+	 * Compare symbol definitions with already discovered.
+	 * 
+	 * @param discScanInfo
+	 * @param projectName
+	 * @param symbols
+	 * @return
+	 */
+	private boolean definedSymbolsNeedUpdate(DiscoveredScannerInfo discScanInfo, String projectName, List symbols) {
+		boolean addedSymbols = false;
+		if (symbols != null) {
+			// Step 1. Add discovered scanner config to the existing discovered scanner config 
+			// add the symbols from the latest discovery
+			Map sumSymbols = (Map) sumDiscoveredSymbols.get(projectName);
+			if (sumSymbols == null) {
+				sumSymbols = new LinkedHashMap();
+				sumDiscoveredSymbols.put(projectName, sumSymbols);
+			}
+			addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumSymbols, symbols, false);
+			
+			// Step 2. Get project's scanner config
+			LinkedHashMap persistedSymbols = discScanInfo.getDiscoveredSymbolDefinitions();
+			
+			// Step 3. Merge scanner config from steps 1 and 2
+			LinkedHashMap candidateSymbols = new LinkedHashMap(persistedSymbols);
+			addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols, sumSymbols);
+			
+			// Step 4. Set resulting scanner config
+			discScanInfo.setDiscoveredSymbolDefinitions(candidateSymbols);
+			
+			// Step 5. Invalidate discovered include paths and symbol definitions
+			discoveredSymbols.put(projectName, null);
+		}
+		return addedSymbols;
 	}
 
 	/**

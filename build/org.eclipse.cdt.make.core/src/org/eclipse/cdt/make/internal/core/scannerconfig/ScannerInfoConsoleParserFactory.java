@@ -84,7 +84,9 @@ public class ScannerInfoConsoleParserFactory {
 					// builder not installed or disabled
 					scBuildInfo = null;
 				}
-				if (scBuildInfo != null && scBuildInfo.isMakeBuilderConsoleParserEnabled()) {
+				if (scBuildInfo != null && 
+						scBuildInfo.isAutoDiscoveryEnabled() &&
+						scBuildInfo.isMakeBuilderConsoleParserEnabled()) {
 					// get the make builder console parser 
 					IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
 						getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			

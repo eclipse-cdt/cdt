@@ -628,20 +628,18 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		// Check for macro expansion
 		Object expObject = definitions.get(buffer, start, len);
-		if (expObject == null) {
 			
-			// but not if it has been expanded on the stack already
-			// i.e. recursion avoidance
-			if (expObject != null)
-				for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
-					if (bufferData[stackPos] != null
-							&& bufferData[stackPos] instanceof ObjectStyleMacro
-							&& CharArrayUtils.equals(buffer, start, len,
-									((ObjectStyleMacro)bufferData[stackPos]).name)) {
-						expObject = null;
-						break;
-					}
-		}
+		// but not if it has been expanded on the stack already
+		// i.e. recursion avoidance
+		if (expObject != null)
+			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
+				if (bufferData[stackPos] != null
+						&& bufferData[stackPos] instanceof ObjectStyleMacro
+						&& CharArrayUtils.equals(buffer, start, len,
+								((ObjectStyleMacro)bufferData[stackPos]).name)) {
+					expObject = null;
+					break;
+				}
 		
 		if (expObject != null) {
 			if (expObject instanceof FunctionStyleMacro) {
@@ -1245,8 +1243,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		int nesting = 0;
 		
 		while (bufferPos[bufferStackPos] < limit) {
+				
 			skipOverWhiteSpace();
-			char c = buffer[++bufferPos[bufferStackPos]];
+			
+			if (++bufferPos[bufferStackPos] >= limit)
+				return;
+			
+			char c = buffer[bufferPos[bufferStackPos]];
 			if (c == '#') {
 				skipOverWhiteSpace();
 				
@@ -1304,9 +1307,8 @@ public class Scanner2 implements IScanner, IScannerData {
 						}
 					}
 				}
-			}
-			
-			skipToNewLine();
+			} else if (c != '\n')
+				skipToNewLine();
 		}
 	}
 	
@@ -1326,6 +1328,8 @@ public class Scanner2 implements IScanner, IScannerData {
 						if (buffer[pos + 1] == '/') {
 							// C++ comment, skip rest of line
 							skipToNewLine();
+							// leave the new line there
+							--bufferPos[bufferStackPos];
 							return;
 						} else if (buffer[pos + 1] == '*') {
 							// C comment, find closing */
@@ -1468,9 +1472,9 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void skipToNewLine() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
+		int pos = ++bufferPos[bufferStackPos];
 		
-		int pos = bufferPos[bufferStackPos];
-		if (pos >= limit || buffer[pos] == '\n')
+		if (pos < limit && buffer[pos] == '\n')
 			return;
 		
 		boolean escaped = false;
@@ -1499,7 +1503,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (escaped) {
 						escaped = false;
 						break;
-					} else { 
+					} else {
 						return;
 					}
 			}

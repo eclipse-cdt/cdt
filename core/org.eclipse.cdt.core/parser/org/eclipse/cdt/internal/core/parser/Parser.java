@@ -75,7 +75,6 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public abstract class Parser extends ExpressionParser implements IParser 
 {
-    protected static final List EMPTY_LIST = Collections.unmodifiableList(new ArrayList());
     protected ISourceElementRequestor requestor = null;
     
     /**
@@ -1880,7 +1879,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     		consume( IToken.tASSIGN );
     		simpleDeclarationMark = null; 
     		setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
-			d.setInitializerClause( cInitializerClause(scope, EMPTY_LIST, constructInitializers ) );
+			d.setInitializerClause( cInitializerClause(scope, Collections.EMPTY_LIST, constructInitializers ) );
 			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
     	}
     }
@@ -1979,7 +1978,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     return createInitializerClause(
                         scope,
                         IASTInitializerClause.Kind.EMPTY,
-                        null, null, EMPTY_LIST, constructInitializers );
+                        null, null, Collections.EMPTY_LIST, constructInitializers );
                 }
                 catch (Exception e)
                 {
@@ -2009,7 +2008,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 return createInitializerClause(
                     scope,
                     IASTInitializerClause.Kind.INITIALIZER_LIST,
-                    null, initializerClauses == null ? EMPTY_LIST : initializerClauses, EMPTY_LIST, constructInitializers );
+                    null, initializerClauses == null ? Collections.EMPTY_LIST : initializerClauses, Collections.EMPTY_LIST, constructInitializers );
             }
             catch (Exception e)
             {
@@ -2031,7 +2030,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 return createInitializerClause(
                     scope,
                     IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
-                    assignmentExpression, null, EMPTY_LIST, constructInitializers );
+                    assignmentExpression, null, Collections.EMPTY_LIST, constructInitializers );
             }
             catch (Exception e)
             {

@@ -30,12 +30,12 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 public class ASTVariable extends ASTSymbol implements IASTVariable
 {
 	private final IASTExpression constructorExpression;
-    protected final ASTReferenceStore referenceDelegate;
 	private final ASTQualifiedNamedElement qualifiedName;
 	private NamedOffsets offsets = new NamedOffsets();
     private final IASTExpression bitfieldExpression;
     private final IASTInitializerClause initializerClause;
     private final IASTAbstractDeclaration abstractDeclaration;
+    protected List references;
     /**
      * @param newSymbol
      * @param abstractDeclaration
@@ -55,7 +55,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
 		setStartingOffsetAndLineNumber( startingOffset, startingLine );
 		setNameOffset( nameOffset );
 		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
-		referenceDelegate = new ASTReferenceStore( references );
+		this.references = references;
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName() );		
     }
     /* (non-Javadoc)
@@ -169,7 +169,8 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
         {
             /* do nothing */
         }
-        referenceDelegate.processReferences(requestor);
+        ASTReferenceStore.processReferences(references, requestor);
+        references = null;
         if( initializerClause != null )
         	initializerClause.acceptElement(requestor);
         if( constructorExpression != null )

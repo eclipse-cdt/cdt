@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -690,6 +689,7 @@ public class Scanner implements IScanner {
 
 	private boolean tokenizingMacroReplacementList = false;
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private Map tempMap = new HashMap(); //$NON-NLS-1$
 	public void setTokenizingMacroReplacementList( boolean mr ){
 		tokenizingMacroReplacementList = mr;
 	}
@@ -2092,8 +2092,8 @@ public class Scanner implements IScanner {
 			IScanner subScanner = new Scanner( 
 					new StringReader(expression), 
 					SCRATCH, 
-					EMPTY_MAP, 
-					EMPTY_LIST, 
+					getTemporaryHashtable(), 
+					Collections.EMPTY_LIST, 
 					NULL_REQUESTOR, 
 					ParserMode.QUICK_PARSE, 
 					scannerData.getLanguage(), 
@@ -2135,6 +2135,14 @@ public class Scanner implements IScanner {
 				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), scannerData.getLanguage()), EMPTY_STRING, null );
 		
 		throwEOF( node );
+	}
+
+	/**
+	 * @return
+	 */
+	private Map getTemporaryHashtable() {
+		tempMap.clear();
+		return tempMap = new HashMap();
 	}
 
 	protected void handleInvalidCompletion() throws EndOfFileException
@@ -2638,14 +2646,12 @@ public class Scanner implements IScanner {
 			handleInclusion(directive.getFilename().trim(), directive.useIncludePaths(), beginningOffset, startLine, directive.getStartOffset(), nameLine, directive.getEndOffset(), endLine); 
 	}
 
-	protected static final Hashtable EMPTY_MAP = new Hashtable();
-	protected static final List EMPTY_LIST = new ArrayList();
 	protected Map definitionsBackupMap = null; 
 	
 	protected void temporarilyReplaceDefinitionsMap()
 	{
 		definitionsBackupMap = scannerData.getPublicDefinitions();
-		scannerData.setDefinitions( EMPTY_MAP );
+		scannerData.setDefinitions( Collections.EMPTY_MAP );
 	}
 	
 	protected void restoreDefinitionsMap()
@@ -2676,7 +2682,7 @@ public class Scanner implements IScanner {
 			helperScanner = new Scanner( 
 						new StringReader(replacementString),
 						SCRATCH,
-						EMPTY_MAP, EMPTY_LIST, 
+						getTemporaryHashtable(), Collections.EMPTY_LIST, 
 						NULL_REQUESTOR, 
 						scannerData.getParserMode(),
 						scannerData.getLanguage(),
@@ -2811,7 +2817,7 @@ public class Scanner implements IScanner {
 			
 			macroReplacementTokens = ( ! replacementString.equals( "" ) ) ?  //$NON-NLS-1$
 										tokenizeReplacementString( beginning, key, replacementString, parameterIdentifiers ) :
-										EMPTY_LIST;
+											Collections.EMPTY_LIST;
 			
 			descriptor = new FunctionMacroDescriptor(
 				key,
@@ -2951,7 +2957,7 @@ public class Scanner implements IScanner {
 	        		new StringReader((String)parameters.elementAt(i)), 
 					TEXT, 
 					scannerData.getPublicDefinitions(), 
-					EMPTY_LIST, 
+					Collections.EMPTY_LIST, 
 					NULL_REQUESTOR, 
 					scannerData.getParserMode(), 
 					scannerData.getLanguage(), 

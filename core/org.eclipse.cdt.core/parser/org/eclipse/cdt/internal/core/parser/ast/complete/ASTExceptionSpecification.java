@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 public class ASTExceptionSpecification implements IASTExceptionSpecification
 {
 	private final List typeIds;
-	private final ASTReferenceStore store;  
+	private List references;  
     /**
      * @param newTypeIds
      * @param references
@@ -32,7 +32,7 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
     public ASTExceptionSpecification(List newTypeIds, List references)
     {
         this.typeIds = newTypeIds;
-        store = new ASTReferenceStore( references );        
+        this.references = references;
     }
 
     /* (non-Javadoc)
@@ -49,7 +49,8 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        store.processReferences(requestor);
+    	ASTReferenceStore.processReferences( references, requestor );
+    	references = null;
     }
 
     /* (non-Javadoc)

@@ -83,8 +83,8 @@ public class ASTInitializerClause implements IASTInitializerClause
 		if( assignmentExpression != null )
 			assignmentExpression.acceptElement( requestor );
 			
-		ASTReferenceStore store = new ASTReferenceStore( getReferences() );
-		store.processReferences(requestor);
+		ASTReferenceStore.processReferences(references, requestor);
+		references = null;
 	}
 	
     /* (non-Javadoc)

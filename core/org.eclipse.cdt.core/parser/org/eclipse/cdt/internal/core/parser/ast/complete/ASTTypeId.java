@@ -192,11 +192,8 @@ public class ASTTypeId implements IASTTypeId
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	if( references != null && ! references.isEmpty() )
-    	{
-    		ASTReferenceStore store = new ASTReferenceStore( references );
-    		store.processReferences(requestor);
-    	}
+   		ASTReferenceStore.processReferences(references, requestor);
+   		references = null;
     	Iterator arrayMods = getArrayModifiers();
     	while( arrayMods.hasNext() )
     	{

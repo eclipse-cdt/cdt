@@ -27,7 +27,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
 	private NamedOffsets offsets = new NamedOffsets();
     private final String alias;
     private final IASTNamespaceDefinition namespace;
-    private final ASTReferenceStore store;
+    private List references;
     /**
      * @param scope
      * @param symbol
@@ -44,7 +44,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
         setEndingOffsetAndLineNumber(endOffset, endingLine);
         setNameOffset(nameOffset); 
         setNameEndOffsetAndLineNumber(nameEndOffset, nameEndOffset);
-        store = new ASTReferenceStore( references);
+        this.references = references;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias#getAlias()
@@ -65,7 +65,8 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	store.processReferences(requestor);
+    	ASTReferenceStore.processReferences(references, requestor);
+    	references = null;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

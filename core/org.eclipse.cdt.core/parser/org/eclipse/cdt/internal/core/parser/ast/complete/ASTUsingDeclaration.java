@@ -30,7 +30,7 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
     private final boolean isTypeName;
 	private final List declarations = new ArrayList(); 
 	private Offsets offsets = new Offsets();
-	private final ASTReferenceStore delegate;
+	private List references;
 	private String name; 
 	
     /**
@@ -44,7 +44,7 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
     	this.declarations.addAll( declarations );
     	setStartingOffsetAndLineNumber(startingOffset, startingLine);
     	setEndingOffsetAndLineNumber(endingOffset, endingLine);
-    	delegate = new ASTReferenceStore( references );
+    	this.references = references;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#isTypename()
@@ -108,7 +108,8 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
         {
             /* do nothing */
         }
-        delegate.processReferences(requestor);
+        ASTReferenceStore.processReferences(references, requestor);
+        references = null;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

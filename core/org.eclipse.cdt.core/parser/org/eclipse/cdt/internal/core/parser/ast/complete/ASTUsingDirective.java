@@ -27,7 +27,7 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
 {
 	private final IUsingDirectiveSymbol using;
 	private Offsets offsets = new Offsets();
-	private final ASTReferenceStore referenceDelegate;
+	private List references;
     /**
      * @param namespaceDefinition
      * @param startingOffset
@@ -41,7 +41,7 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
         using = usingDirective; 
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setEndingOffsetAndLineNumber(endingOffset, endingLine);
-        referenceDelegate = new ASTReferenceStore( references );
+        this.references = references;
     }
 
     /* (non-Javadoc)
@@ -102,7 +102,8 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
         {
             /* do nothing */
         }
-        referenceDelegate.processReferences(requestor);
+        ASTReferenceStore.processReferences(references, requestor);
+        references = null;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

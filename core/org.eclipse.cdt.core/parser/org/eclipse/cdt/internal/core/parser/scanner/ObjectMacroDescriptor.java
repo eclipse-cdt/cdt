@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,7 +23,6 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 public class ObjectMacroDescriptor implements IMacroDescriptor {
 
-	private static final ArrayList EMPTY_LIST = new ArrayList(0);
 	private final String expansionSignature;
 	private final String name;
 	private final IToken token;
@@ -54,14 +54,14 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getParameters()
 	 */
 	public List getParameters() {
-		return EMPTY_LIST;
+		return Collections.EMPTY_LIST;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
 	 */
 	public List getTokenizedExpansion() {
-		if( token == null ) return EMPTY_LIST;
+		if( token == null ) return Collections.EMPTY_LIST;
 		if( tokenizedExpansion == null )
 		{
 			tokenizedExpansion = new ArrayList(1);

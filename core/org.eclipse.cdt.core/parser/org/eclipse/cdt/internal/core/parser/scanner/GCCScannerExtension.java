@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -76,9 +77,8 @@ public class GCCScannerExtension implements IScannerExtension {
 	
 	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
 	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
-	private static final List EMPTY_LIST = new ArrayList();
-	protected static final FunctionMacroDescriptor DECLSPEC_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" ); //$NON-NLS-1$
-	protected static final FunctionMacroDescriptor ATTRIBUTE_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersAttribute,  EMPTY_LIST, "" ); //$NON-NLS-1$
+	protected static final FunctionMacroDescriptor DECLSPEC_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  Collections.EMPTY_LIST, "" ); //$NON-NLS-1$
+	protected static final FunctionMacroDescriptor ATTRIBUTE_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersAttribute,  Collections.EMPTY_LIST, "" ); //$NON-NLS-1$
 	
 	private static final String __EXTENSION__ = "__extension__"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$

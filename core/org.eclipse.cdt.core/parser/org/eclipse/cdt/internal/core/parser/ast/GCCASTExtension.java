@@ -10,9 +10,8 @@
 
 package org.eclipse.cdt.internal.core.parser.ast;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -49,7 +48,6 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 public class GCCASTExtension implements IASTFactoryExtension {
 	private final ParserMode mode;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private static final List EMPTY_LIST = new ArrayList( 0 );
 	/**
 	 * @param mode
 	 */
@@ -167,7 +165,7 @@ public class GCCASTExtension implements IASTFactoryExtension {
 			ASTExpression typeOfExpression = (ASTExpression) extensionParms.get( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION );
 			ISymbol s = pst.newSymbol( EMPTY_STRING );
 			s.setTypeInfo( typeOfExpression.getResultType().getResult() );
-			return new ASTGCCSimpleTypeSpecifier( s, isTypename, ( typeName == null ? EMPTY_STRING : typeName.toString()), EMPTY_LIST, typeOfExpression );
+			return new ASTGCCSimpleTypeSpecifier( s, isTypename, ( typeName == null ? EMPTY_STRING : typeName.toString()), Collections.EMPTY_LIST, typeOfExpression );
 		}
 		return null;
 	}

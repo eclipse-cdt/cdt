@@ -43,7 +43,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     private NamedOffsets offsets = new NamedOffsets(); 
 	private final ASTQualifiedNamedElement qualifiedName;
 	private final List parameters;
-	protected final ASTReferenceStore references;
+	protected List references;
 	private List declarations = new ArrayList();	
     /**
      * @param symbol
@@ -65,7 +65,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	setNameOffset(nameOffset);
     	setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
     	this.ownerTemplate = ownerTemplate;
-    	this.references = new ASTReferenceStore( references );
+    	this.references = references;
     	qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
     	this.previouslyDeclared =previouslyDeclared;
     	this.hasFunctionTryBlock = hasFunctionTryBlock;
@@ -215,7 +215,8 @@ public class ASTFunction extends ASTScope implements IASTFunction
     
     protected  void functionCallbacks(ISourceElementRequestor requestor)
     {
-        references.processReferences(requestor);
+        ASTReferenceStore.processReferences(references, requestor);
+        references = null;
         processParameterInitializersAndArrayMods(requestor);
         if( getReturnType() != null )
         	getReturnType().acceptElement(requestor);

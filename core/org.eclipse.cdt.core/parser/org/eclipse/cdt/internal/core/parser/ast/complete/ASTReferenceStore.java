@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,18 +23,14 @@ import org.eclipse.cdt.core.parser.ast.IASTReference;
  */
 public class ASTReferenceStore
 {
-	private List references = new ArrayList();
-	
-	public ASTReferenceStore( List assortedReferences )
-	{
-		references.addAll( assortedReferences );
-	}
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTReferenceStore#processReferences()
      */
-    public void processReferences(ISourceElementRequestor requestor)
+    public static void processReferences(List references, ISourceElementRequestor requestor)
     {
+    	if( references == null || references == Collections.EMPTY_LIST || references.isEmpty() )
+    		return;
         Iterator i = references.iterator(); 
         while( i.hasNext() )
         	((IASTReference)i.next()).acceptElement(requestor);

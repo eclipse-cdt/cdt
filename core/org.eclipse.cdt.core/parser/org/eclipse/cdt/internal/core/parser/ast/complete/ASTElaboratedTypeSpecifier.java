@@ -30,7 +30,6 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     private final ASTClassKind kind;
 	private final ASTQualifiedNamedElement qualifiedName;
     private NamedOffsets offsets = new NamedOffsets();
-    private final ASTReferenceStore store; 
 	
     /**
      * @param checkSymbol
@@ -47,7 +46,6 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         setEndingOffsetAndLineNumber( endOffset, endingLine );
         qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), checkSymbol.getName() );
-        store = new ASTReferenceStore( references );
         isForwardDeclaration = isDecl;
         this.references = references;
     }
@@ -114,7 +112,8 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
             {
                 /* do nothing */
             }
-		store.processReferences(requestor);
+        ASTReferenceStore.processReferences( references, requestor );
+        references = null;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 public abstract class ASTExpression extends ASTNode implements IASTExpression
 {
     private final Kind kind;
-    private final List references;
+    private List references;
     private ExpressionResult resultType;
     
     /**
@@ -75,9 +75,9 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
         {
         	// will not get thrown
         }
-    	if( ! references.isEmpty() )
-	    	new ASTReferenceStore( references ).processReferences(requestor);
-
+        ASTReferenceStore.processReferences( references, requestor );
+        references = null;
+    
 		processCallbacks(requestor);
 			
 		try

@@ -277,11 +277,5 @@ public interface IASTFactory
 	 */
 	public boolean validateDirectMemberOperation(IASTNode node);
 
-	/**
-	 * @param ourScope
-	 * @param newDescriptor TODO
-	 * @return
-	 */
-	public IASTNode lookupConstructor(IASTScope ourScope, IASTNewExpressionDescriptor newDescriptor);
 
 }

@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTBaseSpecifier implements IASTBaseSpecifier
 {
-	private ASTReferenceStore referenceDelegate;
+	private List references;
     private final boolean isVirtual; 
 	private final ISymbol symbol;
 	private final ASTAccessVisibility visibility;
@@ -40,7 +40,7 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
    		this.visibility = visibility;     
    		this.symbol = symbol; 
    		this.offset = nameOffset;
-   		referenceDelegate = new ASTReferenceStore( references ); 
+   		this.references = references; 
     }
    
     /* (non-Javadoc)
@@ -81,20 +81,14 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTReferenceStore#processReferences()
-     */
-    public void processReferences(ISourceElementRequestor requestor)
-    {
-        referenceDelegate.processReferences(requestor); 
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        referenceDelegate.processReferences(requestor);
+    	ASTReferenceStore.processReferences( references, requestor );
+    	references = null;
     }
 
     /* (non-Javadoc)

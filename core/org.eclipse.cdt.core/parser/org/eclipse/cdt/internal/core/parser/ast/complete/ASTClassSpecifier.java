@@ -89,7 +89,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	private final ASTClassKind  classKind;
 	private ASTAccessVisibility currentVisibility;
 	private final ASTQualifiedNamedElement qualifiedName;
-	private final ASTReferenceStore references;
+	private List references;
 
     /**
      * @param symbol
@@ -104,7 +104,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         setNameOffset(nameOffset);
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
-		this.references = new ASTReferenceStore( references );
+		this.references = references;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getClassNameType()
@@ -174,7 +174,8 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-    	references.processReferences( requestor );
+    	ASTReferenceStore.processReferences( references, requestor );
+    	references = null;
         try
         {
             requestor.enterClassSpecifier(this);

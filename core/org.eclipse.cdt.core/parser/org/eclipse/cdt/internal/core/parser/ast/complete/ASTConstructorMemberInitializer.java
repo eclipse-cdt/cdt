@@ -27,7 +27,7 @@ public class ASTConstructorMemberInitializer
 	private final boolean requireNameResolution;
 	private final String name;
     private final IASTExpression expression;
-    private final List references;
+    private List references;
     /**
      * 
      */
@@ -58,8 +58,8 @@ public class ASTConstructorMemberInitializer
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	ASTReferenceStore store = new ASTReferenceStore( references );
-        store.processReferences( requestor );
+    	ASTReferenceStore.processReferences( references, requestor );
+    	references = null;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

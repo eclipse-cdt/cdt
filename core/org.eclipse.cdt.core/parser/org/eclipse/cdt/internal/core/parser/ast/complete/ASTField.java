@@ -61,7 +61,9 @@ public class ASTField extends ASTVariable implements IASTField
         {
             /* do nothing */
         }
-		referenceDelegate.processReferences(requestor);
+		ASTReferenceStore.processReferences(references, requestor);
+		references = null;
+		
 		if( getInitializerClause() != null )
 			getInitializerClause().acceptElement(requestor);
 		if( getAbstractDeclaration() != null )

@@ -32,7 +32,7 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
     private final IASTAbstractDeclaration mapping;
     private NamedOffsets offsets = new NamedOffsets();
     private final ASTQualifiedNamedElement qualifiedName;
-    private final ASTReferenceStore referenceStore; 
+    private List references; 
 
     /**
      * @param newSymbol
@@ -45,7 +45,7 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
     {
         super( newSymbol );
         this.mapping = mapping;
-        this.referenceStore = new ASTReferenceStore( references );
+        this.references = references;
         this.qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName());
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setNameOffset(nameOffset);
@@ -81,7 +81,8 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
         {
             /* do nothing */
         }
-        referenceStore.processReferences(requestor);
+        ASTReferenceStore.processReferences(references, requestor);
+        references = null;
         getAbstractDeclarator().acceptElement( requestor );
     }
 

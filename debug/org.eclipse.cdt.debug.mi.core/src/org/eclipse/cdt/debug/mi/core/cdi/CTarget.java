@@ -12,12 +12,10 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -500,26 +498,10 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCMemoryBlock(long, long)
-	 */
-	public ICDIMemoryBlock getCMemoryBlock(long startAddress, long length)
-		throws CDIException {
-		return null;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getProcess()
 	 */
 	public Process getProcess() {
 		return session.getMISession().getMIInferior();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToValue(String)
-	 */
-	public ICDIValue evaluateExpressionToValue(String expressionText)
-		throws CDIException {
-		return null;
 	}
 
 }

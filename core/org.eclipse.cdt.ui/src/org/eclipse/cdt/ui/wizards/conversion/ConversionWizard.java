@@ -125,7 +125,6 @@ public abstract class ConversionWizard
      * @see org.eclipse.cdt.ui.wizards.CProjectWizard#doRun(IProgressMonitor)
      */
     protected void doRun(IProgressMonitor monitor) {
-        doRunPrologue(monitor);
         try{
             mainPage.doRun(monitor, getProjectID());
         } catch (CoreException ce){

@@ -8,7 +8,9 @@ package org.eclipse.cdt.debug.core;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
@@ -404,5 +406,54 @@ public class CDebugUtils
 			return ( ((Float)value).isInfinite() && value.floatValue() == Float.NEGATIVE_INFINITY );
 		}
 		return false;
+	}
+
+	public static List getReferencedProjects( IProject project )
+	{
+		ArrayList list = new ArrayList( 10 );
+		if ( project != null && project.exists() && project.isOpen() )
+		{
+			IProject[] refs = new IProject[0];
+			try
+			{
+				refs = project.getReferencedProjects();
+			}
+			catch( CoreException e )
+			{
+			}
+			for ( int i = 0; i < refs.length; ++i )
+			{
+				if ( !project.equals( refs[i] ) && refs[i] != null && refs[i].exists() && refs[i].isOpen() )
+				{
+					list.add( refs[i] );
+					getReferencedProjects( project, refs[i], list );
+				}
+			}
+		}
+		return list;
+	}
+
+	private static void getReferencedProjects( IProject root, IProject project, List list )
+	{
+		if ( project != null && project.exists() && project.isOpen() )
+		{
+			IProject[] refs = new IProject[0];
+			try
+			{
+				refs = project.getReferencedProjects();
+			}
+			catch( CoreException e )
+			{
+			}
+			for ( int i = 0; i < refs.length; ++i )
+			{
+				if ( !list.contains( refs[i] ) && refs[i] != null && 
+					 !refs[i].equals( root ) && refs[i].exists() && refs[i].isOpen() )
+					{
+						list.add( refs[i] );
+						getReferencedProjects( root, refs[i], list );
+					}
+			}
+		}
 	}
 }

@@ -6,10 +6,10 @@
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
@@ -28,7 +28,6 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.Separator;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -342,7 +341,7 @@ public class SourceLookupBlock
 		fGeneratedSourceListField.removeAllElements();
 		if ( project == null && project.exists() && project.isOpen() )
 			return;
-		List list = getReferencedProjects( project );
+		List list = CDebugUtils.getReferencedProjects( project );
 		IProject[] refs = (IProject[])list.toArray( new IProject[list.size()] );
 		ICSourceLocation loc = getLocationForProject( project, locations );
 		boolean checked = ( loc != null && ((IProjectSourceLocation)loc).isGeneric() );
@@ -521,25 +520,5 @@ public class SourceLookupBlock
 				 project.equals( ((IProjectSourceLocation)locations[i]).getProject() ) )
 				return locations[i];
 		return null;
-	}
-
-	private List getReferencedProjects( IProject project )
-	{
-		ArrayList list = new ArrayList( 10 );
-		if ( project != null && project.exists() && project.isOpen() )
-		{
-			IProject[] refs = new IProject[0];
-			try
-			{
-				refs = project.getReferencedProjects();
-			}
-			catch( CoreException e )
-			{
-			}
-			list.addAll( Arrays.asList( refs ) );
-			for ( int i = 0; i < refs.length; ++i )
-				list.addAll( getReferencedProjects( refs[i] ) );
-		}
-		return list;
 	}
 }

@@ -562,7 +562,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		IProject project = getProject();
 		if ( project != null && project.exists() && project.isOpen() )
 		{
-			List list = getReferencedProjects( project );
+			List list = CDebugUtils.getReferencedProjects( project );
 			HashSet names = new HashSet( list.size() + 1 );
 			names.add( project.getName() );
 			Iterator it = list.iterator();
@@ -639,27 +639,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private void setReferencedProjects()
 	{
 		fReferencedProjects.clear(); 
-		fReferencedProjects = getReferencedProjects( getProject() );
-	}
-	
-	private List getReferencedProjects( IProject project )
-	{
-		ArrayList list = new ArrayList( 10 );
-		if ( project != null && project.exists() && project.isOpen() )
-		{
-			IProject[] refs = new IProject[0];
-			try
-			{
-				refs = project.getReferencedProjects();
-			}
-			catch( CoreException e )
-			{
-			}
-			list.addAll( Arrays.asList( refs ) );
-			for ( int i = 0; i < refs.length; ++i )
-				list.addAll( getReferencedProjects( refs[i] ) );
-		}
-		return list;
+		fReferencedProjects = CDebugUtils.getReferencedProjects( getProject() );
 	}
 
 	protected ICSourceLocation[] getDefaultSourceLocations()
@@ -705,7 +685,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	private void updateGenericSourceLocations( List affectedProjects )
 	{
-		List newRefs = getReferencedProjects( getProject() );
+		List newRefs = CDebugUtils.getReferencedProjects( getProject() );
 		ICSourceLocation[] locations = getSourceLocations();
 		ArrayList newLocations = new ArrayList( locations.length ); 
 		for ( int i = 0; i < locations.length; ++i )

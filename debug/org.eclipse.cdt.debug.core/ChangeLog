@@ -1,3 +1,8 @@
+2003-07-30 Mikhail Khodjaiants
+	Moved the 'getReferencedProject' method to 'CDebugUtils'. Added the cycle checking.
+	* CDebugUtils.java
+	* CSourceLocator.java
+
 2003-07-28 Mikhail Khodjaiants
 	Minimize the number of the "evaluate expression" requests when changing the value of the floating point types.
 	* CDebugUtils.java

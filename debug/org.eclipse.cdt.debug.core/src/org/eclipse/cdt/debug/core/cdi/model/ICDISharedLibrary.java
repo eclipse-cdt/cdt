@@ -41,7 +41,7 @@ public interface ICDISharedLibrary extends ICDIObject {
 	 *
 	 * @return whether the symbols of this library are read
 	 */
-	boolean symbolsRead();
+	boolean areSymbolsLoaded();
 	
 	/**
 	 * Loads the library symbols.

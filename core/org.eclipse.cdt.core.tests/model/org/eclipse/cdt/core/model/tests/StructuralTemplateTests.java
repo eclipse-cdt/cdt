@@ -152,7 +152,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 			//"TemplateContainer::fum"
 			{"Bar"},
 		  	//"TemplateParameter::scrum"
-			{"Foo"},
+			{"int"},
 			//"IsGreaterThan"
 			{"X"},
 			//"nonVector::first"
@@ -196,7 +196,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 			"nonVector<T>",
 			"ArrayOverlay<X, Y, int=16>",
 			"fum<Bar>(int) : void",
-			"scrum<Foo>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
+			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			// TODO: shouldn't signature indicate const function as well?
 			"IsGreaterThan<X>(X, X) : bool",
 			"first<T>() : const T&", // TODO: where should <T> be?

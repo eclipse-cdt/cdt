@@ -46,7 +46,7 @@ union ArrayOverlay {
 class TemplateContainer {
 	// these are in an enclosing class
 	template<class Bar> void fum(int i);
-	template<class Foo> void scrum(void) {};
+	template<int> void scrum(void) {};
 };
 
 // TEMPLATE_FUNCTION

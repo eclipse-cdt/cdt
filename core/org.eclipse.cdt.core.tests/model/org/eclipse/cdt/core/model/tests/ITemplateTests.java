@@ -191,7 +191,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			//"TemplateContainer::fum"
 			{"Bar"},
 		  	//"TemplateParameter::scrum"
-			{"Foo"},
+			{"int"},
 			//"nonVector::first"
 			{"T"},
 			//"IsGreaterThan"
@@ -231,7 +231,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			"nonVector<T>",
 			"ArrayOverlay<X, Y, int=16>",
 			"fum<Bar>(int) : void",
-			"scrum<Foo>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
+			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			"nonVector<T>::first<T>() : const T&", // TODO: where should <T> be?
 			// TODO: shouldn't signature indicate const function as well?
 			"IsGreaterThan<X>(X, X) : bool",

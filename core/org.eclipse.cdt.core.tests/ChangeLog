@@ -1,4 +1,8 @@
-2004-04-27 Hoda Amer
+2004-04-30 Hoda Amer
+	Final fix for bug#57526 : [CModel] CModelElementsTest needs to test STRUCTURAL_PARSE mode as well
+	Now All CModel tests run twice, once for quick mode and once for Structural mode (Except for IIncludeTests.java
+	
+2004-04-26 Hoda Amer
 	Partial fix for bug#57526 : [CModel] CModelElementsTest needs to test STRUCTURAL_PARSE mode as well
 	Added more tests for Structural Parse to the suit.
 

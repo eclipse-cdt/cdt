@@ -119,6 +119,22 @@ public class PE {
 			byte[] hdr = new byte[DOSHDRSZ];
 			file.readFully(hdr);
 			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+			commonSetup(memory);
+		}
+
+		public DOSHeader(byte[] hdr, boolean little) throws IOException {
+			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, little);
+			commonSetup(memory);
+		}
+
+		public DOSHeader(ReadMemoryAccess memory) throws IOException {
+			commonSetup(memory);
+		}
+
+		public void commonSetup(ReadMemoryAccess memory) throws IOException {
+			if (memory.getSize() < DOSHDRSZ) {
+				throw new IOException("Not a Dos Header"); //$NON-NLS-1$
+			}
 			memory.getBytes(e_res);
 			memory.getBytes(e_oemid);
 			memory.getBytes(e_oeminfo);
@@ -306,28 +322,8 @@ public class PE {
 			fileHeader = new Coff.FileHeader(rfile, rfile.getFilePointer());
 
 			// Check if this a valid machine.
-			switch (fileHeader.f_magic) {
-				case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
-				case PEConstants.IMAGE_FILE_MACHINE_ARM:
-				case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
-				case PEConstants.IMAGE_FILE_MACHINE_I386:
-				case PEConstants.IMAGE_FILE_MACHINE_IA64:
-				case PEConstants.IMAGE_FILE_MACHINE_M68K:
-				case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
-				case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
-				case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
-				case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
-				case PEConstants.IMAGE_FILE_MACHINE_R3000:
-				case PEConstants.IMAGE_FILE_MACHINE_R4000:
-				case PEConstants.IMAGE_FILE_MACHINE_R10000:
-				case PEConstants.IMAGE_FILE_MACHINE_SH3:
-				case PEConstants.IMAGE_FILE_MACHINE_SH4:
-				case PEConstants.IMAGE_FILE_MACHINE_THUMB:
-					// Ok;
-				break;
-
-				default:
-					throw new IOException("Unknow machine/format");
+			if (!isValidMachine(fileHeader.f_magic)) {
+				throw new IOException("Unknow machine/format");
 			}
 
 			if (fileHeader.f_opthdr > 0) {
@@ -342,6 +338,32 @@ public class PE {
 		}
 	}
 
+	public static boolean isValidMachine(int magic) {
+		// Check if this a valid machine.
+		switch (magic) {
+			case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
+			case PEConstants.IMAGE_FILE_MACHINE_ARM:
+			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+			case PEConstants.IMAGE_FILE_MACHINE_I386:
+			case PEConstants.IMAGE_FILE_MACHINE_IA64:
+			case PEConstants.IMAGE_FILE_MACHINE_M68K:
+			case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
+			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
+			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
+			case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
+			case PEConstants.IMAGE_FILE_MACHINE_R3000:
+			case PEConstants.IMAGE_FILE_MACHINE_R4000:
+			case PEConstants.IMAGE_FILE_MACHINE_R10000:
+			case PEConstants.IMAGE_FILE_MACHINE_SH3:
+			case PEConstants.IMAGE_FILE_MACHINE_SH4:
+			case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+				// Ok;
+				return true;
+			//throw new IOException("Unknow machine/format");
+		}
+		return false;
+	}
+	
 	public static Attribute getAttributes(FileHeader filhdr) {
 		Attribute attrib = new Attribute();
 		// Machine type.
@@ -447,9 +469,26 @@ public class PE {
 	}
 
 	public static Attribute getAttribute(byte[] data) throws IOException {
-		if (isExeHeader(data)) {
-			Coff.FileHeader filehdr;
-			filehdr = new Coff.FileHeader(data, true);
+		ReadMemoryAccess memory = new ReadMemoryAccess(data, true);
+		int idx = 0;
+		try {
+			Exe.ExeHeader exeHdr = new Exe.ExeHeader(memory);
+			DOSHeader dosHdr = new DOSHeader(memory);
+			// Jump the Coff header, and Check the sig.
+			idx = dosHdr.e_lfanew;
+			if (idx + 4 < data.length) {
+				if (!((data[idx + 0] == 'P') && (data[idx + 1] == 'E')
+						&& (data[idx + 2] == '\0') && (data[idx + 3] == '\0'))) {
+					throw new IOException("Not a PE format");
+				}
+				idx += 4;
+			}
+		} catch (IOException e) {
+		}
+		byte[] bytes = new byte[data.length - idx];
+		System.arraycopy(data, idx, bytes, 0, data.length - idx);
+		Coff.FileHeader filehdr = new Coff.FileHeader(bytes, true);
+		if (isValidMachine(filehdr.f_magic)) {	
 			return getAttributes(filehdr);
 		}
 		throw new IOException("not a PE format");

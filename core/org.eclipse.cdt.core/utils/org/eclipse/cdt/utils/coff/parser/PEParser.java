@@ -129,7 +129,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#getHintBufferSize()
 	 */
 	public int getHintBufferSize() {
-		return 128;
+		return 512;
 	}
 
 }

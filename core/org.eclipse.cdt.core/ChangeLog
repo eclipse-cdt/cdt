@@ -1,4 +1,12 @@
 2004-02-28 Alain Magloire
+	Fix PE Parser
+
+	* utils/org/eclipse/cdt/utils/coff/Exe.jva
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+	* utils/org/eclipse/cdt/utils/coff/ReadMemoryAccess.java
+	* utils/rg/eclipse/cdt/utils/coff/parser/PEParser.java
+
+2004-02-28 Alain Magloire
 
 	New method in ICElement
 		ICElement.getAncestor(int ancestorType);

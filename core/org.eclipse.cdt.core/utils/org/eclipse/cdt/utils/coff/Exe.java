@@ -44,9 +44,25 @@ public class Exe {
 			byte[] hdr = new byte[EXEHDRSZ];
 			file.readFully(hdr);
 			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+			commonSetup(memory);
+		}
+
+		public ExeHeader(byte[] hdr, boolean little) throws IOException {
+			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
+			commonSetup(memory);
+		}
+
+		public ExeHeader(ReadMemoryAccess memory) throws IOException {
+			commonSetup(memory);
+		}
+
+		void commonSetup(ReadMemoryAccess memory) throws IOException {
+			if (memory.getSize() < EXEHDRSZ) {
+				throw new IOException("Not DOS EXE format"); //$NON-NLS-1$
+			}
 			memory.getBytes(e_signature);
 			if (e_signature[0] != 'M' || e_signature[1] != 'Z') {
-				throw new IOException("Not DOS EXE format");
+				throw new IOException("Not DOS EXE format"); //$NON-NLS-1$
 			}
 			e_lastsize = memory.getShort();
 			e_nblocks = memory.getShort();

@@ -22,6 +22,10 @@ public class ReadMemoryAccess {
 		isle = le;
 	}
 
+	public int getSize() {
+		return bytes.length - memOffset;
+	}
+
 	public void getBytes(byte[] octets) {
 		getBytes(octets, memOffset);
 		memOffset += octets.length;

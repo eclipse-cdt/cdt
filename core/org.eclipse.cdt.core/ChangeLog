@@ -1,5 +1,13 @@
 2002-11-12 Alain Magloire
 
+	* index/.../internal/core/index/IndexManager.java (removeConatiner):
+	Change the signature of the function to take IContainer.
+	(removeResource): Also remove the request from the requestList.
+	* index/.../internal/core/index/RequestList.java (removeItem):
+	new method.
+
+2002-11-12 Alain Magloire
+
 	* index/.../index/IndexModel.java (isEnabled):
 	New method check if indexing is enable for a project.
 	(setEnabled) : enable/disable indexing for a project.

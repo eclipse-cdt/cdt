@@ -191,14 +191,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 		}
 	}
 
-	protected void setEnabledState( ITextEditor editor )
-	{
-		if ( getAction() != null )
-		{
-			getAction().setEnabled( editor != null );
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */

@@ -44,7 +44,7 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * @param binding 
 	 * @return List of IASTName nodes for the binding's declaration
 	 */
-	public IASTDeclaration[] getDeclarations(IBinding binding);
+	public IASTName[] getDeclarations(IBinding binding);
 
 	/**
 	 * Returns the list of references in this translation unit to the given

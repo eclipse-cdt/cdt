@@ -45,12 +45,14 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
@@ -75,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
@@ -226,7 +229,147 @@ public class CVisitor {
 			return true;
 		}
 	}
-	
+
+	public static class CollectDeclarationsAction extends CBaseVisitorAction {
+		{
+			processDeclarators = true;
+			processDeclSpecifiers = true;
+			processEnumerators = true;
+			processStatements = true;
+		}
+		
+		private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
+		private IASTName[] declsFound = null;
+		int numFound = 0;
+		IBinding binding = null;
+		boolean functionDeclared = false;
+		boolean compositeTypeDeclared = false;
+		
+		private void addName(IASTName name) {
+			if( declsFound.length == numFound ) // if the found array is full, then double the array
+	        {
+	            IASTName [] old = declsFound;
+	            declsFound = new IASTName[ old.length * 2 ];
+	            for( int j = 0; j < old.length; ++j )
+	                declsFound[j] = old[j];
+	        }
+			declsFound[numFound++] = name;
+		}
+		
+	    private IASTName[] removeNullFromNames() {
+	    	if (declsFound[declsFound.length-1] != null) { // if the last element in the list is not null then return the list
+				return declsFound;			
+			} else if (declsFound[0] == null) { // if the first element in the list is null, then return empty list
+				return new IASTName[0];
+			}
+			
+			IASTName[] results = new IASTName[numFound];
+			for (int i=0; i<results.length; i++)
+				results[i] = declsFound[i];
+				
+			return results;
+	    }
+		
+		public IASTName[] getDeclarationNames() {
+			return removeNullFromNames();
+		}
+		
+		public CollectDeclarationsAction(IBinding binding) {
+			declsFound = new IASTName[DEFAULT_CHILDREN_LIST_SIZE];
+			this.binding = binding;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
+		 */
+		public boolean processDeclarator(IASTDeclarator declarator) {
+			if ( declarator == null ) return true;
+			
+			IASTNode parent = declarator.getParent();
+			while (parent != null && !(parent instanceof IASTDeclaration))
+				parent = parent.getParent();
+
+			if ( parent instanceof IASTDeclaration ) {
+				if ( !functionDeclared && parent != null && parent instanceof IASTFunctionDefinition ) {
+					if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
+						functionDeclared = true;
+						addName(declarator.getName());
+					}
+				} else if ( parent instanceof IASTSimpleDeclaration ) {
+					if ( (declarator.getName() != null && declarator.getName().resolveBinding() == binding) ) {
+						if ( declarator instanceof IASTFunctionDeclarator ) {
+							functionDeclared = true;
+						}
+						
+						addName(declarator.getName());
+					}
+				} else if ( parent instanceof IASTParameterDeclaration ) {
+					if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
+						addName(declarator.getName());
+					}
+				}
+			}
+			
+			return true;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
+		 */
+		public boolean processDeclSpecifier(IASTDeclSpecifier declSpec) {
+			if ( declSpec instanceof IASTSimpleDeclSpecifier ||
+					declSpec instanceof ICASTTypedefNameSpecifier ) return true;
+			
+			if ( !compositeTypeDeclared && declSpec != null && declSpec instanceof IASTCompositeTypeSpecifier ) {
+				if (((IASTCompositeTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
+					compositeTypeDeclared = true;
+					addName(((IASTCompositeTypeSpecifier)declSpec).getName());
+				}
+			} else if (!compositeTypeDeclared && declSpec instanceof IASTElaboratedTypeSpecifier ) {
+				if (((IASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
+					compositeTypeDeclared = true;
+					addName(((IASTElaboratedTypeSpecifier)declSpec).getName());
+				}
+			} else if (!compositeTypeDeclared && declSpec instanceof IASTEnumerationSpecifier ) {
+				if (((IASTEnumerationSpecifier)declSpec).getName().resolveBinding() == binding) {
+					compositeTypeDeclared = true;
+					addName(((IASTEnumerationSpecifier)declSpec).getName());
+				}
+			} else if ( declSpec instanceof IASTNamedTypeSpecifier ) {
+				if (((IASTNamedTypeSpecifier)declSpec).getName().resolveBinding() == binding) 
+					addName(((IASTNamedTypeSpecifier)declSpec).getName());
+			}
+			
+			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
+		 */
+		public boolean processEnumerator(IASTEnumerator enumerator) {
+			if (enumerator.getName().resolveBinding() == binding) {
+				IASTNode parent = enumerator.getParent();
+				while (parent != null && !(parent instanceof IASTDeclaration))
+					parent = parent.getParent();
+				
+				if (parent != null && parent instanceof IASTDeclaration) addName(enumerator.getName());
+			}
+			
+			return true;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
+		 */
+		public boolean processStatement(IASTStatement statement) {
+			if ( statement instanceof IASTLabelStatement )
+				if ( ((IASTLabelStatement)statement).getName().resolveBinding() == binding ) 
+					addName(((IASTLabelStatement)statement).getName());
+
+			return true;
+		}
+	}
+
 	//lookup bits
 	private static final int COMPLETE = 0;		
 	private static final int CURRENT_SCOPE = 1;
@@ -258,6 +401,8 @@ public class CVisitor {
 		    binding = createBinding( (ICASTEnumerationSpecifier) parent );
 		} else if( parent instanceof IASTEnumerator ) {
 		    binding = createBinding( (IASTEnumerator) parent );
+		} else if( parent instanceof ICASTFieldDesignator ) {
+			binding = resolveBinding( parent );
 		}
 		((CASTName)name).setBinding( binding );
 	}
@@ -493,15 +638,18 @@ public class CVisitor {
 		} else if( node instanceof IASTParameterDeclaration ){
 			IASTParameterDeclaration param = (IASTParameterDeclaration) node;
 			IASTFunctionDeclarator fDtor = (IASTFunctionDeclarator) param.getParent();
-			IFunction function = (IFunction) fDtor.getName().resolveBinding();
-			if( function.getPhysicalNode() != fDtor ) {
-			    IASTParameterDeclaration [] ps = fDtor.getParameters();
-			    int index = -1;
-			    for( index = 0; index < ps.length; index++ )
-			        if( ps[index] == param ) break; 
-				List params = function.getParameters();
-				if( index >= 0 && index < params.size() ){
-				    return (IBinding) params.get( index );
+			
+			if ( fDtor.getName().resolveBinding() instanceof IFunction ) { // possible to have IASTParameterDeclaration whose parent is an IVariable
+				IFunction function = (IFunction) fDtor.getName().resolveBinding();
+				if( function.getPhysicalNode() != fDtor ) {
+				    IASTParameterDeclaration [] ps = fDtor.getParameters();
+				    int index = -1;
+				    for( index = 0; index < ps.length; index++ )
+				        if( ps[index] == param ) break; 
+					List params = function.getParameters();
+					if( index >= 0 && index < params.size() ){
+					    return (IBinding) params.get( index );
+					}
 				}
 			}
 		} else if( node instanceof IASTTypeId ){
@@ -515,6 +663,36 @@ public class CVisitor {
 			}
 			if( name != null ){
 				return name.resolveBinding();
+			}
+		} else if( node instanceof ICASTFieldDesignator ) {
+			IASTNode blockItem = getContainingBlockItem( node );
+			
+			IASTNode parent = node.getParent();
+			while ( parent != null && !(parent.getParent() instanceof IASTTranslationUnit) )
+				parent = parent.getParent();
+			
+			if ( parent.getParent() instanceof IASTTranslationUnit &&
+					blockItem instanceof IASTDeclarationStatement &&
+					((IASTDeclarationStatement)blockItem).getDeclaration() instanceof IASTSimpleDeclaration &&
+					((IASTSimpleDeclaration)((IASTDeclarationStatement)blockItem).getDeclaration()).getDeclSpecifier() instanceof IASTNamedTypeSpecifier ) {
+				// TODO use getDefinitions below instead of getDeclarations (i.e. want collection of defined members and the declaration doesn't always have it)
+				IASTName declNames[] = ((IASTTranslationUnit)parent.getParent()).getDeclarations(((IASTNamedTypeSpecifier)((IASTSimpleDeclaration)((IASTDeclarationStatement)blockItem).getDeclaration()).getDeclSpecifier()).getName().resolveBinding());
+				for (int i=0; i<declNames.length; i++) {
+					IASTNode declBlockItem = getContainingBlockItem(declNames[i]);
+					if ( declBlockItem instanceof IASTSimpleDeclaration ) {
+						if (((IASTSimpleDeclaration)declBlockItem).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) {
+							IASTDeclaration[] decls = ((IASTCompositeTypeSpecifier)((IASTSimpleDeclaration)declBlockItem).getDeclSpecifier()).getMembers();
+							for (int j=0; j<decls.length; j++) {
+								if (decls[j] instanceof IASTSimpleDeclaration) {
+									IASTDeclarator[] decltors = ((IASTSimpleDeclaration)decls[j]).getDeclarators();
+									for(int k=0; k<decltors.length; k++)
+										if (CharArrayUtils.equals(decltors[k].getName().toCharArray(), ((ICASTFieldDesignator)node).getName().toCharArray()))
+											return decltors[k].getName().resolveBinding();
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		return null;
@@ -1350,5 +1528,12 @@ public class CVisitor {
 		visitTranslationUnit(tu, action);
 		
 		return action.getProblems();
+	}
+	
+	public static IASTName[] getDeclarations(IASTTranslationUnit tu, IBinding binding) {
+		CollectDeclarationsAction action = new CollectDeclarationsAction(binding);
+		visitTranslationUnit(tu, action);
+
+		return action.getDeclarationNames();
 	}
 }

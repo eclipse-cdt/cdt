@@ -99,9 +99,8 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
-	public IASTDeclaration[] getDeclarations(IBinding binding) {
-		// TODO Auto-generated method stub
-		return null;
+	public IASTName[] getDeclarations(IBinding binding) {
+		return CVisitor.getDeclarations(this, binding);
 	}
 	
 	/* (non-Javadoc)

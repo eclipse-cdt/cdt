@@ -26,18 +26,21 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public class ErrorParserBlock extends AbstractCOptionPage {
+public abstract class ErrorParserBlock extends AbstractCOptionPage {
 
 	private static final String PREFIX = "ErrorParserBlock"; // $NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
 
+	private static String[] EMPTY = new String[0];
+	private Preferences fPrefs;
 	private HashMap mapParsers = new HashMap();
 	private CheckedListDialogField fErrorParserList;
 	protected boolean listDirty = false;
@@ -53,9 +56,11 @@ public class ErrorParserBlock extends AbstractCOptionPage {
 
 	}
 
-	public ErrorParserBlock() {
-		super(CUIPlugin.getResourceString(LABEL));
-		setDescription(CUIPlugin.getResourceString(DESC));
+	public ErrorParserBlock(Preferences prefs) {
+		//super(CUIPlugin.getResourceString(LABEL));
+		//setDescription(CUIPlugin.getResourceString(DESC));
+		super("Error Parsers");
+		setDescription("Set the error parser for this project");
 	}
 
 	public Image getImage() {
@@ -75,14 +80,8 @@ public class ErrorParserBlock extends AbstractCOptionPage {
 		return new FieldListenerAdapter();
 	}
 
-	protected void getPreferenceErrorParsers(List list) {
-		String[] parserIDs = CCorePlugin.getDefault().getPreferenceErrorParserIDs();
-		for (int i = 0; i < parserIDs.length; i++) {
-			String parserName = (String)mapParsers.get(parserIDs[i]);
-			if (parserName != null) {
-				list.add(parserName);
-			}
-		}
+	protected String[] getErrorParserIDs(Preferences prefs) {
+		return CCorePlugin.getDefault().getPreferenceErrorParserIDs(prefs);
 	}
 
 	/**
@@ -90,15 +89,17 @@ public class ErrorParserBlock extends AbstractCOptionPage {
 	 * @param project
 	 * @param list
 	 */
-	protected void getErrorParsers(IProject project, List list) {
-	}
+	protected abstract String[] getErrorParserIDs(IProject project);
 
 	/**
 	 * To be implemented. abstract method.
 	 * @param project
 	 * @param parsers
 	 */
-	public void saveErrorParsers(IProject project, List parsers) {
+	public abstract void saveErrorParsers(IProject project, String[] parserIDs);
+
+	public void saveErrorParsers(Preferences prefs, String[] parserIDs) {
+		CCorePlugin.getDefault().setPreferenceErrorParser(prefs, parserIDs);
 	}
 
 	protected void initMapParsers() {
@@ -121,15 +122,25 @@ public class ErrorParserBlock extends AbstractCOptionPage {
 		}
 		fErrorParserList.setElements(list);
 
-		list.clear();	
+		list.clear();
+		String[] parserIDs = EMPTY;
+
 		IProject project = getContainer().getProject();
 		if (project == null) {
-			// Preference Page.
-			getPreferenceErrorParsers(list);
+			// From a Preference.
+			parserIDs =getErrorParserIDs(fPrefs);
 		} else {
 			// From the Project.
-			getErrorParsers(project, list);
+			parserIDs = getErrorParserIDs(project);
 		}
+
+		for (int i = 0; i < parserIDs.length; i++) {
+			String value = (String)mapParsers.get(parserIDs[i]);
+			if (value != null) {
+				list.add(value);
+			}
+		}
+
 		fErrorParserList.setCheckedElements(list);
 	}
 
@@ -165,14 +176,20 @@ public class ErrorParserBlock extends AbstractCOptionPage {
 	}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		List list = fErrorParserList.getCheckedElements();
 		if (listDirty) {
 			IProject project = getContainer().getProject();
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
 			monitor.beginTask("Reference Projects", 1);
-			saveErrorParsers(project, list);
+			List list = fErrorParserList.getCheckedElements();
+			
+			String[] parserIDs = (String[])list.toArray(EMPTY);
+			if (project == null) {
+				saveErrorParsers(fPrefs, parserIDs);
+			} else {
+				saveErrorParsers(project, parserIDs);
+			}
 		}
 	}
 

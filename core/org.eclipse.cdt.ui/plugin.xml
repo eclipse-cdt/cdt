@@ -27,10 +27,11 @@
       <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.help"/>
    </requires>
 
 
-   <extension-point id="CCompletionContributor" name="%completionContributorName" schema="schema/CCompletionContributor.exsd"/>
+   <extension-point id="CHelpProvider" name="%cHelpProviderName" schema="schema/CHelpProvider.exsd"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
@@ -1082,6 +1083,17 @@
                value="org.eclipse.cdt.core.cnature">
          </filter>
        </page>
+      <page
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            name="%CDTHelpProperty.name"
+            class="org.eclipse.cdt.ui.dialogs.CHelpConfigurationPropertyPage"
+            id="org.eclipse.cdt.ui.cHelp">
+             <filter
+               	name="nature"
+        		value="org.eclipse.cdt.core.cnature">
+    	     </filter>            
+      </page>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.PathContainerPage">

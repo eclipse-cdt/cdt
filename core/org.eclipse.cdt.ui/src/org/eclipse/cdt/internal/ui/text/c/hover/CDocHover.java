@@ -12,13 +12,13 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
@@ -52,7 +52,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 
 			// call the Help to get info
 
-			ICCompletionInvocationContext context = new ICCompletionInvocationContext() {
+			ICHelpInvocationContext context = new ICHelpInvocationContext() {
 
 				public IProject getProject() {
 					ITranslationUnit unit = getTranslationUnit();
@@ -68,7 +68,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 				}	
 			};
 
-			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(context, expression);
+			IFunctionSummary fs = CHelpProviderManager.getDefault().getFunctionInfo(context, expression);
 			if (fs != null) {
 				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.name")); //$NON-NLS-1$
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));

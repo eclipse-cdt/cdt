@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
-import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -451,7 +451,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		
 		IFunctionSummary[] summary;
 
-		ICCompletionInvocationContext context = new ICCompletionInvocationContext() {
+		ICHelpInvocationContext context = new ICHelpInvocationContext() {
 
 			public IProject getProject() {
 				return fCurrentSourceUnit.getCProject().getProject();
@@ -461,7 +461,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				return fCurrentSourceUnit;
 			}	
 		};
-		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(context, prefix);
+		summary = CHelpProviderManager.getDefault().getMatchingFunctions(context, prefix);
 		if(summary == null) {
 			return;
 		}

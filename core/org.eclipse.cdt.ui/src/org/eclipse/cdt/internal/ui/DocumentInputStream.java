@@ -9,7 +9,7 @@ import java.io.InputStream;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-/**
+/**
  * Input stream which reads from a document
  */
 public class DocumentInputStream extends InputStream {

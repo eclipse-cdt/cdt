@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
@@ -44,7 +44,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
-import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -217,7 +217,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		final IFunctionSummary[] fs = new IFunctionSummary[1];
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				ICCompletionInvocationContext context = new ICCompletionInvocationContext() {
+				ICHelpInvocationContext context = new ICHelpInvocationContext() {
 
 					public IProject getProject() {
 						ITranslationUnit u = getTranslationUnit();
@@ -232,7 +232,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 					}	
 				};
 
-				fs[0] = CCompletionContributorManager.getDefault().getFunctionInfo(context, name);
+				fs[0] = CHelpProviderManager.getDefault().getFunctionInfo(context, name);
 			}
 		};
 		try {

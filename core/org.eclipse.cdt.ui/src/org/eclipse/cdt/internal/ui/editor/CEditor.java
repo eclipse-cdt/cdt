@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.util.CUIHelp;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -1060,6 +1061,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		//Enhance the stock source viewer decorator with a bracket matcher
 		fSourceViewerDecorationSupport.setCharacterPairMatcher(fBracketMatcher);
 		fSourceViewerDecorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
+
+		CUIHelp.setHelp(this, sourceViewer.getTextWidget(), ICHelpContextIds.CEDITOR_VIEW);
 
 		return sourceViewer;
 	}

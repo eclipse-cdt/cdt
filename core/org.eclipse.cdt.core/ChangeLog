@@ -1,3 +1,26 @@
+2003-02-26 Alain Magloire
+
+	A new proposal was make, see cdt-core-home/docs/binarparser.html
+	it changed the the signature:
+	public interface IBinaryParser {
+		IBinary getBinary(IPath path);
+	}
+
+	The getBinary() method no longer takes an IFile, this was necessary
+	to allow the binary parser code to work on files outside of the
+	workspace.  The correspondign implementation is updated.
+	
+	* model/org/eclipse/cdt/internal/core/model/ElfBinaryArchive.java
+	* model/org/eclipse/cdt/internal/core/model/ElfBinaryFile.java
+	* model/org/eclipse/cdt/internal/core/model/ElfParser.java
+	* model/org/eclipse/cdt/internal/core/model/PEBinaryArchive.java
+	* model/org/eclipse/cdt/internal/core/model/PEBinaryFile.java
+	* model/org/eclipse/cdt/internal/core/model/PEBParser.java
+
+	* model/org/eclipse/cdt/internal/core/model/ArchiveInfo.java
+	* model/org/eclipse/cdt/internal/core/model/BinaryInfo.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+
 2003-02-26 David Inglis
 	* model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java
 	* model/org/eclipse/cdt/internal/core/model/BinaryContainer.java

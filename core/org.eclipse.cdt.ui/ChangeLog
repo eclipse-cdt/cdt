@@ -1,3 +1,14 @@
+2002-10-16 Alain Magloire
+
+	By Boosting the level warning of the java compiler,
+	we catch unused imports or variables.
+
+	* src/../internal/ui/editor/asm/AsmPartitionScanner.java:
+	* src/../internal/ui/editor/asm/AsmSourceViewerConfiguration.java:
+	* src/../internal/ui/editor/asm/AsmTextEditor.java:
+	* src/../internal/ui/BuilderConsoleView.java:
+	Removed unused imports.
+	
 2002-10-11 Alain Magloire
 
 	* internal/ui/text/CCodeScanner.java:

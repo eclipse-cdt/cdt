@@ -583,7 +583,7 @@ import org.eclipse.core.runtime.Platform;
 
 
    private String[] convertToLocalPath(String[] model) {
-	   IPath defaultPath = Platform.getInstanceLocation();
+	   IPath defaultPath = new Path("");//Platform.getInstanceLocation();
 	   String[] tempLocalArray = new String[model.length];
 	   for (int i=0;i<model.length;i++){
 		   StringBuffer buffer = new StringBuffer();

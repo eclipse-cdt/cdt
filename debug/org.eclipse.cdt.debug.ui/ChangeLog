@@ -1,3 +1,18 @@
+2003-06-20 Mikhail Khodjaiants
+	Variable bookkeeping (phase 0.1).
+	The 'Enable' and 'Disable' actions added to the Variables view.
+	* plugin.properties
+	* plugin.xml
+	* icons/full/obj16/vard_aggr.gif: new
+	* icons/full/obj16/vard_pointer.gif: new
+	* icons/full/obj16/vard_simple.gif: new
+	* icons/full/clc16/disabled_co.gif: new
+	* icons/full/clc16/enabled_co.gif: new
+	* CDebugImages.java
+	* CDTDebugModelPresentation.java
+	* DisableVariablesActionDelegate.java: new
+	* EnableVariablesActionDelegate.java: new
+
 2003-06-13 Mikhail Khodjaiants
 	Fix for PR 38788: Ctrl-X, Ctrl-C, Ctrl-V, Ctrl-A, Ctrl-Z and Ctrl-Y keys don't work 
 	in the address field of the Memory view.

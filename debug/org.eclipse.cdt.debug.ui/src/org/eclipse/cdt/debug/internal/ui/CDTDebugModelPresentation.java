@@ -564,6 +564,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 					label.append( ' ' );
 				}
 			}
+			if ( !((ICVariable)var).isEnabled() )
+				label.append( "<disabled> " );
 			label.append( var.getName() );
 			IValue value = var.getValue();
 			if ( value instanceof ICValue && value.getValueString() != null )
@@ -870,12 +872,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 	{
 		if ( element instanceof ICVariable )
 		{
-			if ( !((ICVariable)element).isEditable() )
-				return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE );
-			else if ( ((ICVariable)element).hasChildren() )
-				return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_VARIABLE_POINTER );
+			ICType type = ((ICVariable)element).getType();
+			if ( type != null && ( type.isArray() || type.isStructure() ) )
+				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ? 
+							CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE : CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE_DISABLED );
+			else if ( type != null && type.isPointer() )
+				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ?
+							CDebugImages.DESC_OBJS_VARIABLE_POINTER : CDebugImages.DESC_OBJS_VARIABLE_POINTER_DISABLED );
 			else
-				return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_VARIABLE_SIMPLE );
+				return fDebugImageRegistry.get( ( ((ICVariable)element).isEnabled() ) ?
+							CDebugImages.DESC_OBJS_VARIABLE_SIMPLE : CDebugImages.DESC_OBJS_VARIABLE_SIMPLE_DISABLED );
 		}
 		return null;
 	}

@@ -70,8 +70,11 @@ public class CDebugImages
 	public static final String IMG_OBJS_WRITE_WATCHPOINT_ENABLED = NAME_PREFIX + "write_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WRITE_WATCHPOINT_DISABLED = NAME_PREFIX + "write_obj_disabled.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_SIMPLE = NAME_PREFIX + "var_simple.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_VARIABLE_SIMPLE_DISABLED = NAME_PREFIX + "vard_simple.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_AGGREGATE = NAME_PREFIX + "var_aggr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_VARIABLE_AGGREGATE_DISABLED = NAME_PREFIX + "vard_aggr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_POINTER = NAME_PREFIX + "var_pointer.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_VARIABLE_POINTER_DISABLED = NAME_PREFIX + "vard_pointer.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_STRING = NAME_PREFIX + "var_string.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_REGISTER_GROUP = NAME_PREFIX + "registergroup_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_REGISTER = NAME_PREFIX + "register_obj.gif";	//$NON-NLS-1$
@@ -127,8 +130,11 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_SIMPLE = createManaged( T_OBJ, IMG_OBJS_VARIABLE_SIMPLE );
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_SIMPLE_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_SIMPLE_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE = createManaged( T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE );
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_AGGREGATE_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_AGGREGATE_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER = createManaged( T_OBJ, IMG_OBJS_VARIABLE_POINTER );
+	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_POINTER_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_STRING = createManaged( T_OBJ, IMG_OBJS_VARIABLE_STRING );
 	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP );
 	public static final ImageDescriptor DESC_OBJS_REGISTER = createManaged( T_OBJ, IMG_OBJS_REGISTER );

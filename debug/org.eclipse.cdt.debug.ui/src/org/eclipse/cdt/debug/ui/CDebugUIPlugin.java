@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.core.ISwitchToThread;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
+import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
 import org.eclipse.core.resources.IWorkspace;
@@ -147,6 +148,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	{
 		MemoryViewPreferencePage.initDefaults( pstore );
 		RegistersViewPreferencePage.initDefaults( pstore );
+		CDebugPreferencePage.initDefaults( pstore );
 	}
 	
 	public static CDTDebugModelPresentation getDebugModelPresentation()

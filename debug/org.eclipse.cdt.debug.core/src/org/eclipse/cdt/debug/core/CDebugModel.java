@@ -51,26 +51,6 @@ import org.eclipse.debug.core.model.IProcess;
 public class CDebugModel
 {
 	/**
-	 * Preference key for default CDI request timeout value.
-	 */
-	public static final String PREF_REQUEST_TIMEOUT = getPluginIdentifier() + ".PREF_REQUEST_TIMEOUT"; //$NON-NLS-1$
-	
-	/**
-	 * The default CDI request timeout when no preference is set.
-	 */
-	public static final int DEF_REQUEST_TIMEOUT = 10000;
-
-	/**
-	 * The minimum value the CDI request timeout can have.
-	 */
-	public static final int MIN_REQUEST_TIMEOUT = 100;
-
-	/**
-	 * The maximum value the CDI request timeout can have.
-	 */
-	public static final int MAX_REQUEST_TIMEOUT = Integer.MAX_VALUE;
-
-	/**
 	 * Constructor for CDebugModel.
 	 */
 	public CDebugModel()

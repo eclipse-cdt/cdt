@@ -44,7 +44,7 @@ public class CDebugCorePlugin extends Plugin
 	 */
 	public CDebugCorePlugin( IPluginDescriptor descriptor )
 	{
-		super(descriptor);
+		super( descriptor );
 		plugin = this;
 	}
 

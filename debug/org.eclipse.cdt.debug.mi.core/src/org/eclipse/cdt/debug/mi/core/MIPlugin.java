@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.Plugin;
  * GDB/MI Plugin.
  */
 public class MIPlugin extends Plugin {
-
 	//The shared instance.
 	private static MIPlugin plugin;
 
@@ -171,4 +171,21 @@ public class MIPlugin extends Plugin {
 		}
 		//	}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		getPluginPreferences().setDefault( IMIConstants.PREF_REQUEST_TIMEOUT, IMIConstants.DEF_REQUEST_TIMEOUT );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		savePluginPreferences();
+		super.shutdown();
+	}
+
 }

@@ -1,5 +1,10 @@
 2005-01-18 Mikhail Khodjaiants
 	Fix for bug 82800: Make "Resume At Line" action retargettable.
+	CDebugElement should provide an adapter to ICDebugTarget.
+	* CDebugElement.java
+
+2005-01-18 Mikhail Khodjaiants
+	Fix for bug 82800: Make "Resume At Line" action retargettable.
 	CStackFrame should provide an adapter to IJumpToLine and IJumpToAddress.
 	* CStackFrame.java
 

@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -298,6 +299,8 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 			return this;
 		if ( adapter.equals( ICDISession.class ) )
 			return getCDISession();
+		if ( adapter.equals( ICDebugTarget.class ) )
+			return getDebugTarget();
 		return super.getAdapter( adapter );
 	}
 

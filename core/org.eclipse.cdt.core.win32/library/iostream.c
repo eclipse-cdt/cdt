@@ -1,16 +1,15 @@
-/* Copyright, 2002, QNX Software Systems Ltd.  All Rights Reserved
-
- * This source code has been published by QNX Software Systems
- * Ltd. (QSSL). However, any use, reproduction, modification, distribution
- * or transfer of this software, or any software which includes or is based
- * upon any of this code, is only permitted if expressly authorized by a
- * written license agreement from QSSL. Contact the QNX Developer's Network
- * or contact QSSL's legal department for more information.
- *
- *
- *  Win32ProcessEx.c
- *
- *  This is a JNI implementation of access to standard i/o streams 
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
+/*
+ * This is a JNI implementation of access to standard i/o streams 
  */
 #include "stdafx.h"
 #include <string.h>

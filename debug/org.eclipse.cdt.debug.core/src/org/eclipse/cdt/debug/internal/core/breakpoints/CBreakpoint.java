@@ -200,7 +200,7 @@ public abstract class CBreakpoint extends Breakpoint
 	/**
 	 * Resets the install count of this breakpoint
 	 */
-	public void resetInstallCount() throws CoreException
+	public synchronized void resetInstallCount() throws CoreException
 	{
 		setAttribute( INSTALL_COUNT, 0 );
 	}
@@ -208,7 +208,7 @@ public abstract class CBreakpoint extends Breakpoint
 	/**
 	 * Increments the install count of this breakpoint
 	 */
-	public void incrementInstallCount() throws CoreException
+	public synchronized void incrementInstallCount() throws CoreException
 	{
 		int count = getInstallCount();
 		setAttribute( INSTALL_COUNT, count + 1 );
@@ -226,7 +226,7 @@ public abstract class CBreakpoint extends Breakpoint
 	/**
 	 * Decrements the install count of this breakpoint.
 	 */
-	public void decrementInstallCount() throws CoreException
+	public synchronized void decrementInstallCount() throws CoreException
 	{
 		int count = getInstallCount();
 		if ( count > 0 )

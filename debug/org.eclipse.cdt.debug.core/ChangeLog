@@ -1,3 +1,7 @@
+2003-11-10 Mikhail Khodjaiants
+	Added synchronization to some of the 'CBreakpoint' methods.
+	* CBreakpoint.java
+
 2003-11-07 Mikhail Khodjaiants
 	Fix for PR 46358: NPE in the "setCurrentThread" method of "CDebugTarget".
 	'setCurrentThread': check if the old current thread is not null.

@@ -262,6 +262,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				int[] types= {ICElement.C_CLASS, ICElement.C_UNION, ICElement.C_STRUCT, ICElement.C_ENUMERATION, ICElement.C_TYPEDEF};
 				ITypeSearchScope scope = new TypeSearchScope();
 				scope.add(unit.getCProject().getProject());
+				if (!AllTypesCache.isCacheUpToDate(scope)) {
+					AllTypesCache.updateCache(scope, monitor);
+				}
 				infos[0] = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types);				
 			}
 		};

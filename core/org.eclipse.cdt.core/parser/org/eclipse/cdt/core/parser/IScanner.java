@@ -11,6 +11,8 @@ public interface IScanner  {
 	public static final int tPOUNDPOUND = -6;
 	public static final int tPOUND      = -7;
 	
+	public void setOffsetBoundary( int offset );
+	
 	public void setASTFactory( IASTFactory f );
 	public void addDefinition(String key, IMacroDescriptor macroToBeAdded );
 	public void addDefinition(String key, String value); 

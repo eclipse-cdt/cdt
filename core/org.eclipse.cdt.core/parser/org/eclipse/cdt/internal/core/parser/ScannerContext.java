@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.parser.IScannerContext.ContextKind;
 
 public class ScannerContext implements IScannerContext
 {
@@ -25,14 +26,12 @@ public class ScannerContext implements IScannerContext
 	private int line = 1;
 	private int offset;
 	private Stack undo = new Stack(); 
-	private int kind; 
+	private ContextKind kind; 
 				
-	public ScannerContext(){}
-    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion, int, int, int)
      */
-	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int mO, int mL, int l)
+	public ScannerContext(Reader r, String f, ContextKind k, IASTInclusion i, int mO, int mL, int l)
 	{
 		reader = r;
 		filename = f;
@@ -42,15 +41,14 @@ public class ScannerContext implements IScannerContext
         macroOffset = mO;
         macroLength = mL;
         line = l;
-		return this;
 	}
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion)
      */
-    public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i)
+    public ScannerContext(Reader r, String f, ContextKind k, IASTInclusion i)
     {
-        return initialize(r, f, k, i, -1, -1, 1);
+        this(r, f, k, i, -1, -1, 1);
     }
 		
 	public int read() throws IOException {
@@ -151,7 +149,7 @@ public class ScannerContext implements IScannerContext
 	 * Returns the kind.
 	 * @return int
 	 */
-	public int getKind() {
+	public ContextKind getKind() {
 		return kind;
 	}
 
@@ -159,7 +157,7 @@ public class ScannerContext implements IScannerContext
 	 * Sets the kind.
 	 * @param kind The kind to set
 	 */
-	public void setKind(int kind) {
+	public void setKind(ContextKind kind) {
 		this.kind = kind;
 	}
 	/* (non-Javadoc)

@@ -12,9 +12,7 @@ package org.eclipse.cdt.core.parser.failedTests;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -48,10 +46,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("B::B() : a(({ 1; })) {}");
     }
-    public void testBug39678() throws Exception
-    {
-        assertCodeFailsParse("char *s = L\"a\" \"b\";");
-    }
+
     public void testBug39679() throws Exception
     {
         assertCodeFailsParse("Foo blat() return f(4) {}");

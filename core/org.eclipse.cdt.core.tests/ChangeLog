@@ -1,3 +1,7 @@
+2003-12-04 John Camelon
+	Removed some warnings.  
+	Moved testBug39678() from ASTFailedTests to QuickParseASTTests. 
+
 2003-12-03 Andrew Niefer
 	-modified FailedCompleteParseASTTest.testPMDotStarPointerToMemberFunction_Bug43242
 										.testPMArrowStarPointerToMemberFunction_Bug43242

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.parser.IScannerContext.ContextKind;
 
 /**
  * @author aniefer
@@ -37,18 +38,18 @@ public class ContextStack {
 		log = l;
 	}
 
-    public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
+    public void updateContext(Reader reader, String filename, ContextKind type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
         updateContext(reader, filename, type, inclusion, requestor, -1, -1);
     }
   
-	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ContextException 
+	public void updateContext(Reader reader, String filename, ContextKind type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ContextException 
     {
 		int startLine = 1;
 		
         // If we expand a macro within a macro, then keep offsets of the top-level one,
         // as only the top level macro identifier is properly positioned    
-        if (type == IScannerContext.MACROEXPANSION) {
-            if (currentContext.getKind() == IScannerContext.MACROEXPANSION) {
+        if (type == IScannerContext.ContextKind.MACROEXPANSION) {
+            if (currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION) {
                 macroOffset = currentContext.getMacroOffset();
                 macroLength = currentContext.getMacroLength();
             }
@@ -57,20 +58,20 @@ public class ContextStack {
         }
 
 		undoStack.clear();
-		IScannerContext context = new ScannerContext().initialize(reader, filename, type, null, macroOffset, macroLength, startLine );
+		IScannerContext context = new ScannerContext( reader, filename, type, null, macroOffset, macroLength, startLine );
 		context.setExtension(inclusion); 
 		push( context, requestor );	
 	}
 	
 	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ContextException
 	{
-		if( context.getKind() == IScannerContext.INCLUSION )
+		if( context.getKind() == IScannerContext.ContextKind.INCLUSION )
 		{
 			if( !inclusions.add( context.getFilename() ) )
 				throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );
 			context.getExtension().enterScope( requestor );				
 
-		} else if( context.getKind() == IScannerContext.MACROEXPANSION )
+		} else if( context.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 		{
 			if( !defines.add( context.getFilename() ) )
 				throw new ContextException( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
@@ -79,7 +80,7 @@ public class ContextStack {
 			contextStack.push(currentContext);
 		
 		currentContext = context;
-		if( context.getKind() == IScannerContext.TOP )
+		if( context.getKind() == IScannerContext.ContextKind.TOP )
 			topContext = context;
 	}
 	
@@ -90,11 +91,11 @@ public class ContextStack {
 			log.traceLog("ContextStack : Error closing reader ");
 		}
 
-		if( currentContext.getKind() == IScannerContext.INCLUSION )
+		if( currentContext.getKind() == IScannerContext.ContextKind.INCLUSION )
 		{
 			inclusions.remove( currentContext.getFilename() );
 			currentContext.getExtension().exitScope( requestor );
-		} else if( currentContext.getKind() == IScannerContext.MACROEXPANSION )
+		} else if( currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 		{
 			defines.remove( currentContext.getFilename() );
 		}
@@ -164,15 +165,15 @@ public class ContextStack {
 	{
 		if( currentContext != null )
 		{
-			if( currentContext.getKind() == IScannerContext.TOP ) return currentContext;
-			if( currentContext.getKind() == IScannerContext.INCLUSION ) return currentContext;
+			if( currentContext.getKind() == IScannerContext.ContextKind.TOP ) return currentContext;
+			if( currentContext.getKind() == IScannerContext.ContextKind.INCLUSION ) return currentContext;
 		}
 				
 		IScannerContext context = null;
 		for( int i = contextStack.size() - 1; i >= 0; --i )
 		{
 			context = (IScannerContext)contextStack.get(i);
-			if( context.getKind() == IScannerContext.INCLUSION || context.getKind() == IScannerContext.TOP )
+			if( context.getKind() == IScannerContext.ContextKind.INCLUSION || context.getKind() == IScannerContext.ContextKind.TOP )
 				break;
 			if( i == 0 ) context = null;
 		}

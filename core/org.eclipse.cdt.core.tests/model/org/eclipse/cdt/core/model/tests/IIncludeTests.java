@@ -86,7 +86,6 @@ public class IIncludeTests extends IntegratedCModelTest {
 		for( int i=0; i<getIncludeNameList.length; i++ )
 		{
 			IInclude inc1 = theIncludes[i];
-			
 			assertEquals( getIncludeNameList[i], inc1.getIncludeName() );
 		}
 //		checkLineNumbers((CElement)inc1, 2, 2);

@@ -2015,4 +2015,11 @@ public class QuickParseASTTests extends BaseASTTest
 		assertSimpleType( variable, IASTSimpleTypeSpecifier.Type._BOOL );
 	}
 
+	public void testBug39678() throws Exception
+	{
+		IASTVariable variable = (IASTVariable) assertSoleDeclaration("char *s = L\"a\" \"b\";");
+		IASTExpression exp = variable.getInitializerClause().getAssigmentExpression();
+		assertEquals( exp.getLiteralString(), "ab");
+	}
+	
 }

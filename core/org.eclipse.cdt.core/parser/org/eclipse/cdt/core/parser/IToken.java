@@ -26,6 +26,7 @@ public interface IToken {
 	public abstract int getDelta(IToken other);
 	public abstract IToken getNext();
 	public abstract void setNext(IToken t);
+	public abstract void setType(int i);	
 	public abstract boolean looksLikeExpression();
 	public abstract boolean isPointer();
 	public abstract boolean isOperator();
@@ -301,4 +302,5 @@ public interface IToken {
 	static public final int t_restrict = 137;
 
 	static public final int tLAST = t_restrict;
+
 }

@@ -1,3 +1,10 @@
+2003-12-04 John Camelon
+	Removed some warnings. 
+	Fixed Bug 39678 : Scanner doesn't support concatenation of different-type string literals (GCC) 
+	Refactored ScannerContext to use constructors rather than initializers.  
+	Refactored IScannerContext to use enumeration-esque kinds.  
+	Added code assist/selection search support to Scanner.  
+
 2003-12-03 Andrew Niefer
 	- Symbol table - modify prefix lookup handling of ambiguities
 	               - fix up qualified lookup

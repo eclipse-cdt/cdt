@@ -168,4 +168,11 @@ public class Token implements IToken {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#setType(int)
+	 */
+	public void setType(int i) {
+		type = i;
+	}
+
 }

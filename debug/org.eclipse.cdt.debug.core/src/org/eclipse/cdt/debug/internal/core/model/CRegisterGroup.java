@@ -93,16 +93,16 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 	private ICDIRegister[] getCDIRegisters() throws DebugException
 	{
 		ICDIRegister[] results = new ICDIRegister[fRegisterObjects.length];
-		try
+		for ( int i = 0; i < fRegisterObjects.length; ++i )
 		{
-			for ( int i = 0; i < fRegisterObjects.length; ++i )
+			try
 			{
 				results[i] = ((CDebugTarget)getDebugTarget()).getCDISession().getRegisterManager().createRegister( fRegisterObjects[i] );
 			}
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
+			catch( CDIException e )
+			{
+				results[i] = new CRegister.ErrorRegister( fRegisterObjects[i], e );
+			}
 		}
 		return results;
 	}

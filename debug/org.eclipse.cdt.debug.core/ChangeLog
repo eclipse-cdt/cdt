@@ -1,3 +1,8 @@
+2003-10-26 Mikhail Khodjaiants
+	Fix for PR 45534: gdb/MI error in retrieving a register can lead to an empty register pane.
+	* CRegister.java
+	* CRegisterGroup.java
+
 2003-10-23 Mikhail Khodjaiants
 	Core support of the new workbench preferences: 'Source Locations' and 'Search 
 	For Duplicate Source Files'.

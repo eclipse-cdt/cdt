@@ -1,3 +1,7 @@
+2003-11-13 David Inglis
+	Fixed #46431
+	* utils/org/eclipse/cdt/utils/spawner/EnvironmentReader.java
+
 2003-11-06 David Inglis
 	
 	Fix for 45835 also changed binary runner control to stop running when project closes/open/deleted

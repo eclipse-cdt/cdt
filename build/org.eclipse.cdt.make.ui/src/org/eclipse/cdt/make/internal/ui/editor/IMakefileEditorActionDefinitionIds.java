@@ -21,6 +21,6 @@ public interface IMakefileEditorActionDefinitionIds extends ITextEditorActionDef
 
 	final String COMMENT = "org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"; //$NON-NLS-1$
 
-	final String OPEN_DECLARATION = "org.eclipse.cdt.make.ui.edit.text.makefile.open_declaration"; //$NON-NLS-1$
+	final String OPEN_DECLARATION = "org.eclipse.cdt.make.ui.edit.text.makefile.opendcl"; //$NON-NLS-1$
 
 }

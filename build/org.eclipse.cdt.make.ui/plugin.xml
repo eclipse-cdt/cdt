@@ -225,7 +225,13 @@
       </objectContribution>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
+      point="org.eclipse.ui.commands">
+      <scope
+            name="%scope.makefileEditor.name"
+            parent="org.eclipse.ui.textEditorScope"
+            description="%makefileEditor.description"
+            id="org.eclipse.cdt.make.ui.makefileEditorScope">
+      </scope>
       <command
             name="%CommandTargetBuild.name"
             description="%CommandTargetBuild.description"
@@ -268,6 +274,19 @@
             command="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.opendecl.name"
+            category="org.eclipse.cdt.make.ui.category.source"
+            description="%ActionDefinition.opendecl.description"
+            id="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl">
+      </command>
+      <keyBinding
+            string="F3"
+            scope="org.eclipse.cdt.make.ui.makefileEditorScope"
+            command="org.eclipse.cdt.make.ui.edit.text.makefile.opendecl"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

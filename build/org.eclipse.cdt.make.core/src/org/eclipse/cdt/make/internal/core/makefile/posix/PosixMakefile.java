@@ -67,7 +67,7 @@ public class PosixMakefile extends AbstractMakefile {
 
 	void parse(MakefileReader reader) throws IOException {
 		String line;
-		Rule rule = null;
+		Rule[] rules = null;
 		int startLine = 0;
 		int endLine = 0;
 		while ((line = reader.readLine()) != null) {
@@ -77,10 +77,13 @@ public class PosixMakefile extends AbstractMakefile {
 			// 1- Try command first, since we do not strip '#' in commands
 			if (MakefileUtil.isCommand(line)) {
 				Command cmd = new Command(line);
+				cmd.setLines(startLine, endLine);
 				// The commands are added to a Rule
-				if (rule != null) {
-					rule.addCommand(cmd);
-					rule.setEndLine(endLine);
+				if (rules != null) {
+					for (int i = 0; i < rules.length; i++) {
+						rules[i].addCommand(cmd);
+						rules[i].setEndLine(endLine);
+					}
 					continue;
 				}
 				// If it is not a command give the other rules a chance a fallthrough
@@ -119,13 +122,23 @@ public class PosixMakefile extends AbstractMakefile {
 				} else {
 					tgt = line;
 				}
-				rule = new InferenceRule(new Target(tgt));
-				rule.setLines(startLine, endLine);
-				addStatement(rule);
+				InferenceRule irule = new InferenceRule(new Target(tgt));
+				irule.setLines(startLine, endLine);
+				addStatement(irule);
+				rules = new Rule[]{irule};
 				continue;
 			}
 
-			// 5- Target Rule ?
+			// 5- Macro Definiton ?
+			if (MakefileUtil.isMacroDefinition(line)) {
+				// MacroDefinition
+				Statement stmt = new MacroDefinition(line);
+				stmt.setLines(startLine, endLine);
+				addStatement(stmt);
+				continue;
+			}
+
+			// 6- Target Rule ?
 			if (MakefileUtil.isTargetRule(line)) {
 				String[] targets;
 				String[] reqs = new String[0];
@@ -154,23 +167,17 @@ public class PosixMakefile extends AbstractMakefile {
 				for (int i = 0; i < reqs.length; i++) {
 					preqs[i] = new Target(reqs[i]);
 				}
+
+				rules = new Rule[targets.length];
 				for (int i = 0; i < targets.length; i++) {
-					rule = new TargetRule(new Target(targets[i]), preqs);
+					Rule rule = new TargetRule(new Target(targets[i]), preqs);
 					rule.setLines(startLine, endLine);
 					addStatement(rule);
 					if (cmd != null) {
 						rule.addCommand(new Command(cmd));
 					}
+					rules[i] = rule;
 				}
-				continue;
-			}
-
-			// 6- Macro Definiton ?
-			if (MakefileUtil.isMacroDefinition(line)) {
-				// MacroDefinition
-				Statement stmt = new MacroDefinition(line);
-				stmt.setLines(startLine, endLine);
-				addStatement(stmt);
 				continue;
 			}
 

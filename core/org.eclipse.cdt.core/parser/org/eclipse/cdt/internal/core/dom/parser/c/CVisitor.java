@@ -74,9 +74,12 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
@@ -88,6 +91,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
@@ -108,13 +112,14 @@ public class CVisitor {
 		public boolean processStatements     = false;
 		public boolean processTypeIds        = false;
 		public boolean processEnumerators    = false;
-		
+		public boolean processDesignators    = false;
 		/**
 		 * @return true to continue visiting, abort to stop, skip to not descend into this node. 
 		 */
 		public final static int PROCESS_SKIP     = 1;
 		public final static int PROCESS_ABORT    = 2;
 		public final static int PROCESS_CONTINUE = 3;
+        
 		
 		public int processName( IASTName name ) 					{ return PROCESS_CONTINUE; }
 		public int processDeclaration( IASTDeclaration declaration ){ return PROCESS_CONTINUE; }
@@ -126,6 +131,7 @@ public class CVisitor {
 		public int processStatement( IASTStatement statement )      { return PROCESS_CONTINUE; }
 		public int processTypeId( IASTTypeId typeId )               { return PROCESS_CONTINUE; }
 		public int processEnumerator( IASTEnumerator enumerator )   { return PROCESS_CONTINUE; }
+        public int processDesignator( ICASTDesignator designator )  { return PROCESS_CONTINUE; }
 	}
 	
 	public static class ClearBindingAction extends CBaseVisitorAction {
@@ -1199,6 +1205,31 @@ public class CVisitor {
 	        for( int i = 0; i < list.length; i++ ){
 	            if( !visitInitializer( list[i], action ) ) return false;
 	        }
+	    } else if( initializer instanceof ICASTDesignatedInitializer ){
+	        ICASTDesignatedInitializer dinit = (ICASTDesignatedInitializer) initializer;
+	        ICASTDesignator [] ds = dinit.getDesignators();
+	        for( int i = 0; i < ds.length; i++ ){
+	            if( !visitDesignator( ds[i], action ) ) return false;
+	        }
+	        if( !visitInitializer( dinit.getOperandInitializer(), action ) ) return false;
+	    }
+	    return true;
+	}
+	public static boolean visitDesignator( ICASTDesignator designator, CBaseVisitorAction action ){
+	    if( action.processDesignators ){
+	    	switch( action.processDesignator( designator ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
+	    if( designator instanceof ICASTFieldDesignator ){
+	        if( !visitName( ((ICASTFieldDesignator)designator).getName(), action ) ) return false;
+	    } else if( designator instanceof ICASTArrayDesignator ){
+	        if( !visitExpression( ((ICASTArrayDesignator)designator).getSubscriptExpression(), action ) ) return false;
+	    } else if( designator instanceof IGCCASTArrayRangeDesignator ){
+	        if( !visitExpression( ((IGCCASTArrayRangeDesignator)designator).getRangeFloor(), action ) ) return false;
+	        if( !visitExpression( ((IGCCASTArrayRangeDesignator)designator).getRangeCeiling(), action ) ) return false;
 	    }
 	    return true;
 	}

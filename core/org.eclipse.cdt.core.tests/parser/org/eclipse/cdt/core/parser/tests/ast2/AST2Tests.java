@@ -2177,4 +2177,45 @@ public class AST2Tests extends AST2BaseTest {
         assertInstances( col, a, 6 );
         assertInstances( col, g, 3 );
     }
+    
+    public void testFieldDesignators() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "typedef struct { int x; int y; } Coord;  \n" ); //$NON-NLS-1$
+        buffer.append( "int f() {                               \n" ); //$NON-NLS-1$
+        buffer.append( "   Coord xy = { .x = 10, .y = 11 };     \n" ); //$NON-NLS-1$
+        buffer.append( "}                                       \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        CNameCollector col = new CNameCollector();
+        CVisitor.visitTranslationUnit( tu, col );
+        
+        assertEquals( col.size(), 9 );
+        IField x = (IField) col.getName( 1 ).resolveBinding();
+        IField y = (IField) col.getName( 2 ).resolveBinding();
+        ITypedef Coord = (ITypedef) col.getName( 3 ).resolveBinding();
+        
+        assertInstances( col, x, 2 );
+        assertInstances( col, y, 2 );
+        assertInstances( col, Coord, 2 );
+    }
+    
+    public void testArrayDesignator() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "enum { member_one, member_two };    \n" ); //$NON-NLS-1$
+        buffer.append( "const char *nm[] = {                \n" ); //$NON-NLS-1$
+        buffer.append( "   [member_one] = \"one\",          \n" ); //$NON-NLS-1$
+        buffer.append( "   [member_two] = \"two\"           \n" ); //$NON-NLS-1$
+        buffer.append( "};                                  \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        CNameCollector col = new CNameCollector();
+        CVisitor.visitTranslationUnit( tu, col );
+        
+        assertEquals( col.size(), 6 );
+        IEnumerator one = (IEnumerator) col.getName( 1 ).resolveBinding();
+        IEnumerator two = (IEnumerator) col.getName( 2 ).resolveBinding();
+        
+        assertInstances( col, one, 2 );
+        assertInstances( col, two, 2 );
+    }
 }

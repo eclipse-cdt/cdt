@@ -46,7 +46,7 @@ public class CLIProcessor {
 			session.fireEvent(event);
 		} else if (isSettingBreakpoint(operation) ||
 				   isSettingWatchpoint(operation) ||
-				   isEnableBreakpoint(operation) ||
+				   isChangeBreakpoint(operation) ||
 				   isDeletingBreakpoint(operation)) {
 			// We know something change, we just do not know what.
 			// So the easiest way is to let the top layer handle it. 
@@ -113,12 +113,14 @@ public class CLIProcessor {
 		return isDelete;
 	}
 
-	boolean isEnableBreakpoint(String operation) {
+	boolean isChangeBreakpoint(String operation) {
 		boolean isChange = false;
 		/* changing breaks: enable, disable */
 		if ((operation.equals("dis") || operation.equals("disa") ||
 			(operation.startsWith("disa")  && "disable".indexOf(operation) != -1)) ||
-		    (operation.equals("en") || (operation.startsWith("en") && "enable".indexOf(operation) != -1))) {
+		    (operation.equals("en") || (operation.startsWith("en") && "enable".indexOf(operation) != -1)) ||
+		    (operation.startsWith("ig") && "ignore".indexOf(operation) != -1) ||
+		    (operation.startsWith("cond") && "condition".indexOf(operation) != -1)) {
 			isChange = true;
 		}
 		return isChange;

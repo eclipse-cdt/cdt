@@ -1489,7 +1489,8 @@ public class CVisitor {
 		} else if( statement instanceof IASTLabelStatement ){
 		    if( !visitName( ((IASTLabelStatement)statement).getName(), action ) ) return false;
 		} else if( statement instanceof IASTReturnStatement ){
-		    if( !visitExpression( ((IASTReturnStatement) statement ).getReturnValue(), action ) ) return false;
+		    if( ((IASTReturnStatement) statement ).getReturnValue() != null )
+		       if( !visitExpression( ((IASTReturnStatement) statement ).getReturnValue(), action ) ) return false;
 		} else if( statement instanceof IASTSwitchStatement ){
 		    if( !visitExpression( ((IASTSwitchStatement) statement ).getController(), action ) ) return false;
 		    if( !visitStatement( ((IASTSwitchStatement) statement ).getBody(), action ) ) return false;

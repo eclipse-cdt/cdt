@@ -74,34 +74,34 @@ public class ResolverDelta {
 		StringBuffer buf = new StringBuffer();
 		switch (getEventType()) {
 			case EVENT_ADD:
-				buf.append("add");
+				buf.append("add"); //$NON-NLS-1$
 				break;
 			case EVENT_REMOVE:
-				buf.append("remove");
+				buf.append("remove"); //$NON-NLS-1$
 				break;
 			case EVENT_SET:
-				buf.append("set");
+				buf.append("set"); //$NON-NLS-1$
 				break;
 			default:
-				buf.append("?unknown event?");
+				buf.append("?unknown event?"); //$NON-NLS-1$
 				break;
 		}
-		buf.append(" ");
+		buf.append(' ');
 		switch (getElementType()) {
 			case ELEMENT_LANGUAGE:
-				buf.append("language ");
-				buf.append(null != getLanguage() ? getLanguage().getName() : "?");
+				buf.append("language "); //$NON-NLS-1$
+				buf.append(null != getLanguage() ? getLanguage().getName() : "?"); //$NON-NLS-1$
 				break;
 			case ELEMENT_FILETYPE:
-				buf.append("filetype ");
-				buf.append(null != getFileType() ? getFileType().getName() : "?");
+				buf.append("filetype "); //$NON-NLS-1$
+				buf.append(null != getFileType() ? getFileType().getName() : "?"); //$NON-NLS-1$
 				break;
 			case ELEMENT_ASSOCIATION:
-				buf.append("assoc ");
-				buf.append(null != getAssociation() ? getAssociation().getPattern() : "?");
+				buf.append("assoc "); //$NON-NLS-1$
+				buf.append(null != getAssociation() ? getAssociation().getPattern() : "?"); //$NON-NLS-1$
 				break;
 			default:
-				buf.append("?unknown source?");
+				buf.append("?unknown source?"); //$NON-NLS-1$
 				break;
 		}
 		

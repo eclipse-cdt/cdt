@@ -83,13 +83,13 @@ public class ResolverChangeEvent extends EventObject {
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		
-		buf.append("ResolverChangeEvent [");
+		buf.append("ResolverChangeEvent ["); //$NON-NLS-1$
 		buf.append(fDeltas.size());
-		buf.append(" delta(s)]");
+		buf.append(" delta(s)]"); //$NON-NLS-1$
 		
 		for (Iterator iter = fDeltas.iterator(); iter.hasNext();) {
 			ResolverDelta element = (ResolverDelta) iter.next();
-			buf.append("\n  ");
+			buf.append("\n  "); //$NON-NLS-1$
 			buf.append(element.toString());
 		}
 		

@@ -55,8 +55,11 @@ public interface IParserCallback {
 		
 	public Object argumentsBegin( Object declarator );
 	public void argumentsEnd(Object parameterDeclarationClause);
-	
-	public Object functionBodyBegin(Object declaration);
+    
+    public Object oldKRParametersBegin( Object parameterDeclarationClause );
+    public void oldKRParametersEnd(Object oldKRParameterDeclarationClause);
+    
+    public Object functionBodyBegin(Object declaration);
 	public void functionBodyEnd(Object functionBody);
 	
 	public Object classSpecifierBegin(Object container, IToken classKey);

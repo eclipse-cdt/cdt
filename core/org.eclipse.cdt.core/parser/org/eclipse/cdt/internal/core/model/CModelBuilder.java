@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.dom.ITemplateParameterListOwner;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.Macro;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
+import org.eclipse.cdt.internal.core.dom.OldKRParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.PointerOperator;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.resources.IProject;
+
 
 public class CModelBuilder {
 	
@@ -872,8 +874,13 @@ public class CModelBuilder {
 		return arrayString.toString();
 	}
 	
+    
+    private String[] getParameterTypes(Declarator declarator) 
+    {
+        return getParameterTypes(declarator, null);
+    }
 	
-	private String[] getParameterTypes(Declarator declarator) 
+	private String[] getParameterTypes(Declarator declarator, HashMap mapOfKRParams) 
 	{	
 		if (declarator == null) return null;
 		
@@ -886,7 +893,26 @@ public class CModelBuilder {
 
 			for (int j = 0; j < parameterList.size(); ++j) {
 				ParameterDeclaration param = (ParameterDeclaration) parameterList.get(j);
-				parameterTypes[j] =	getType(param, (Declarator) param.getDeclarators().get(0));
+                Declarator decl = (Declarator) param.getDeclarators().get(0);
+				parameterTypes[j] =	getType(param, decl);
+                
+                if (    (mapOfKRParams != null) 
+                    &&  (mapOfKRParams.size() > 0) 
+                    && (decl.getName() == null)) 
+                {
+                    // We have some K&R-style parameter declarations,
+                    // and the current parameter has been declared with a single identifier,
+                    // (like  ...(argname)...)
+                    // It has been parsed as a typename, so 'argname' is a name of the type,
+                    // and parameter name is empty. But for this particular case, 
+                    // 'argname' is a name, and its type we have to lookup in the map
+                    // of old K&R-style parameter declarations.
+                    // If we can't find it, we keep parameter name in the signature
+                    String oldKRParamType = (String)mapOfKRParams.get(parameterTypes[j]);
+                    if (oldKRParamType != null) {
+                        parameterTypes[j] = oldKRParamType; 
+                    }
+                }
 			}
 		}
 		
@@ -904,8 +930,42 @@ public class CModelBuilder {
             }
             currentDeclarator = currentDeclarator.getDeclarator();
         }
+        
+        HashMap mapOfKRParams = null;
+        
+        if (    declarator != null 
+            && declarator.getParms() != null 
+            && declarator.getParms().getOldKRParms() != null) {
+                
+            mapOfKRParams = new HashMap();
+                
+            OldKRParameterDeclarationClause oldKRpdc = declarator.getParms().getOldKRParms();
+            List oldKRParameterList = oldKRpdc.getDeclarations();
+            
+            for (int j = 0; j < oldKRParameterList.size(); ++j) {
+                if(oldKRParameterList.get(j) instanceof SimpleDeclaration) { // Must be
+                    SimpleDeclaration declKR = (SimpleDeclaration)oldKRParameterList.get(j);
+                    
+                    List declarators = declKR.getDeclarators();
+                    Iterator d = declarators.iterator();
+                    while (d.hasNext()) {
+                        Declarator decl = (Declarator) d.next();
+                        
+                        Name oldKRparamName = getDOMName(decl);                        
+                        String oldKRparamType = getType(declKR, decl);
+    
+                        if (   (oldKRparamType != null)
+                            && (oldKRparamName != null)
+                            && (oldKRparamName.toString().length() > 0)
+                            ) {
+                                mapOfKRParams.put(oldKRparamName.toString(), oldKRparamType);
+                        }
+                    }
+                }
+            }
+        }
 
-        return getParameterTypes(innermostPDCDeclarator);
+        return getParameterTypes(innermostPDCDeclarator, mapOfKRParams);
     }
 	
 	private String getParametersString(String[] parameterTypes) 

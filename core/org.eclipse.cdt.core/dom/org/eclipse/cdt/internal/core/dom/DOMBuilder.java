@@ -55,6 +55,23 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	public void argumentsEnd(Object parameterDeclarationClause) {
 	}
 
+    /**
+     * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#oldKRParametersBegin()
+     */
+    public Object oldKRParametersBegin( Object parameterDeclarationClause ) {
+        ParameterDeclarationClause clause = ((ParameterDeclarationClause)parameterDeclarationClause);
+        OldKRParameterDeclarationClause KRclause = new OldKRParameterDeclarationClause( clause );
+        domScopes.push(KRclause);
+        return KRclause; 
+    }
+
+    /**
+     * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#oldKRParametersEnd()
+     */
+    public void oldKRParametersEnd(Object oldKRParameterDeclarationClause) {
+        domScopes.pop();
+    }
+
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classBegin(java.lang.String, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
@@ -318,6 +335,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 		ParameterDeclaration d = (ParameterDeclaration)declaration;
 		d.getOwnerScope().addDeclaration(d);
 	}
+    
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
 	 */

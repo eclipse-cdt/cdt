@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
@@ -51,8 +52,8 @@ public class TranslationUnitTests extends TestCase {
      */
     String[] expectedStringList= {"stdio.h", "unistd.h", "func2p", 
         "globalvar", "myenum", "mystruct", "mystruct_t", "myunion", "mytype", 
-        "func1", "func2", "main", "func3"};
-    int[]  expectedLines={ 12,14,17,20,23,28,32,35,42,47,53,58,65};
+        "func1", "func2", "main", "func3", "KRFunction"};
+    int[]  expectedLines={ 12,14,17,20,23,28,32,35,42,47,53,58,65,70};
     /* This is a list of that the types of the above list of elements is 
      * expected to be.
      */
@@ -60,7 +61,8 @@ public class TranslationUnitTests extends TestCase {
         ICElement.C_FUNCTION_DECLARATION, ICElement.C_VARIABLE, 
         ICElement.C_ENUMERATION, ICElement.C_STRUCT, ICElement.C_TYPEDEF, 
         ICElement.C_UNION, ICElement.C_TYPEDEF, ICElement.C_FUNCTION,
-        ICElement.C_FUNCTION, ICElement.C_FUNCTION,ICElement.C_FUNCTION};
+        ICElement.C_FUNCTION, ICElement.C_FUNCTION,ICElement.C_FUNCTION,
+        ICElement.C_FUNCTION};
     
 
     /**
@@ -163,6 +165,7 @@ public class TranslationUnitTests extends TestCase {
 		suite.addTest(new TranslationUnitTests("testGetElement"));
 		suite.addTest(new TranslationUnitTests("testBug23478A"));
 		suite.addTest(new TranslationUnitTests("testBug23478B"));
+        suite.addTest(new TranslationUnitTests("testKRFunctionDeclarations"));
 		// TODO: suite.addTest(new TranslationUnitTests("testGetElementAtLine"));
 		return suite;
     }
@@ -358,5 +361,17 @@ public class TranslationUnitTests extends TestCase {
         assertTrue(myExp.getMissingString(), myExp.gotAll());
         assertTrue(myExp.getExtraString(), !myExp.gotExtra());
     }
-*/      
+*/
+
+    /***
+     * Simple sanity test for old K&R-style C function declaration
+     */
+    public void testKRFunctionDeclarations() throws CModelException {
+        ITranslationUnit myTranslationUnit = CProjectHelper.findTranslationUnit(testProject,"exetest.c");
+        
+        assertTrue(myTranslationUnit.getElement("KRFunction") instanceof IFunction);            
+        IFunction myKRFunction = (IFunction)myTranslationUnit.getElement("KRFunction"); 
+        assertEquals(myKRFunction.getSignature(), "KRFunction(const char*, int(*)(float), parm3)");
+        assertEquals(myKRFunction.getReturnType(), "bool");
+    }      
 }

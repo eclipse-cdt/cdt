@@ -397,6 +397,19 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	 */
 	public void argumentsEnd(Object parameterDeclarationClause) {
 	}
+    
+    /**
+     * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#oldKRParametersBegin()
+     */
+    public Object oldKRParametersBegin( Object parameterDeclarationClause ) {
+        return null; 
+    }
+
+    /**
+     * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#oldKRParametersEnd()
+     */
+    public void oldKRParametersEnd(Object oldKRParameterDeclarationClause) {
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyBegin(java.lang.Object)

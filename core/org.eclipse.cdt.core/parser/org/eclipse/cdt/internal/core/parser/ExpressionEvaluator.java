@@ -201,6 +201,17 @@ public class ExpressionEvaluator implements IParserCallback {
 	 */
 	public void argumentsEnd(Object parameterDeclarationClause) {
 	}
+    /**
+     * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#oldKRParametersBegin()
+     */
+    public Object oldKRParametersBegin( Object parameterDeclarationClause ) {
+        return null; 
+    }
+    /**
+     * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#oldKRParametersEnd()
+     */
+    public void oldKRParametersEnd(Object oldKRParameterDeclarationClause) {
+    }
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#functionBodyBegin()
 	 */

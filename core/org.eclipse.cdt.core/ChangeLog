@@ -1,3 +1,14 @@
+2003-06-16 Victor Mozgin
+	Implemented support for old K&R-style C function declarations.
+	Added oldKRParametersBegin() and oldKRParametersEnd() to DOMBuilder.
+	Added OldKRParameterDeclarationClause.java to dom/org/eclipse/cdt/internal/core/dom.
+	Added handling of OldKRParameterDeclarationClause to ParameterDeclarationClause.
+
+2003-06-14 Victor Mozgin
+	Added support for pointers to members to DOMBuilder.
+	Added new kind of pointer operator : t_pointer_to_member (PointerOperator).
+	Added nameSpecifier field and set/get operations to PointerOperator.
+
 2003-06-13 Andrew Niefer
 	Added search\org.eclipse.cdt.core.search
 		  search\org.eclipse.cdt.internal.core.search
@@ -5,11 +16,6 @@
 		  search\org.eclipse.cdt.internal.core.search.processing
 	with skeleton classes based on the JDT search as a beginning for 
 	implementing C/CPP search.
-
-2003-06-14 Victor Mozgin
-	Added support for pointers to members to DOMBuilder.
-	Added new kind of pointer operator : t_pointer_to_member (PointerOperator).
-	Added nameSpecifier field and set/get operations to PointerOperator.
 
 2003-06-06 Sean Evoy
 

@@ -6,14 +6,14 @@ import java.util.List;
 
 
 /**
- * @author jcamelon
- *
+ * @author vmozgin
+ * 
  * To change this generated comment edit the template variable "typecomment":
  * Window>Preferences>Java>Templates.
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ParameterDeclarationClause implements IScope {
+public class OldKRParameterDeclarationClause implements IScope {
 
 	/**
 	 * @see org.eclipse.cdt.core.dom.IScope#addDeclaration(org.eclipse.cdt.internal.core.dom.Declaration)
@@ -30,26 +30,11 @@ public class ParameterDeclarationClause implements IScope {
 	}
 
 	private List declarations = new LinkedList();
-	private Declarator owner; 
+	private ParameterDeclarationClause owner; 
 	
-	ParameterDeclarationClause( Declarator owner )
+	OldKRParameterDeclarationClause( ParameterDeclarationClause owner )
 	{
 		this.owner = owner; 
-		this.owner.addParms( this ); 
+		this.owner.addOldKRParms( this ); 
 	}
-    
-    OldKRParameterDeclarationClause oldKRparms = null; 
-
-    public void addOldKRParms( OldKRParameterDeclarationClause oldKRparms )
-    {
-        this.oldKRparms = oldKRparms; 
-    }   
-    
-    /**
-     * Returns the parms.
-     * @return OldKRParameterDeclarationClause
-     */
-    public OldKRParameterDeclarationClause getOldKRParms() {
-        return oldKRparms;
-    }
 }

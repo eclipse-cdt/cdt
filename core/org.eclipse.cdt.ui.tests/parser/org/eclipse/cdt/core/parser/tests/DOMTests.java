@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.Macro;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
+import org.eclipse.cdt.internal.core.dom.OldKRParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.PointerOperator;
@@ -2157,6 +2158,82 @@ public class DOMTests extends BaseDOMTest {
         parse("template <class B,C> int A::nested<B,D>::foo() {} ");
         parse("template <class B,C> int A<B,C>::nested<C,B>::operator+() {} ");
         parse("template <class B,C> A::nested::operator int() {} ");
+    }
+ 
+    
+    public void testOldKRFunctionDeclarations() throws Exception
+    {
+        // Parse and get the translaton unit
+        Writer code = new StringWriter();
+        code.write("bool myFunction( parm1, parm2, parm3 )\n");
+        code.write("const char* parm1;\n");
+        code.write("int (*parm2)(float);\n");
+        code.write("{}");
+        TranslationUnit translationUnit = parse(code.toString());
+
+        // Get the declaration
+        List declarations = translationUnit.getDeclarations();
+        assertEquals(1, declarations.size());
+        SimpleDeclaration simpleDeclaration = (SimpleDeclaration)declarations.get(0);
+        assertEquals( simpleDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_bool );
+        List declarators  = simpleDeclaration.getDeclarators(); 
+        assertEquals( 1, declarators.size() ); 
+        Declarator functionDeclarator = (Declarator)declarators.get( 0 ); 
+        assertEquals( functionDeclarator.getName().toString(), "myFunction" );
+        
+        ParameterDeclarationClause pdc = functionDeclarator.getParms(); 
+        assertNotNull( pdc ); 
+        List parameterDecls = pdc.getDeclarations(); 
+        assertEquals( 3, parameterDecls.size() );
+        ParameterDeclaration parm1 = (ParameterDeclaration)parameterDecls.get( 0 );
+        assertNotNull( parm1.getDeclSpecifier().getName() );
+        assertEquals( "parm1", parm1.getDeclSpecifier().getName().toString() );
+        List parm1Decls = parm1.getDeclarators(); 
+        assertEquals( 1, parm1Decls.size() ); 
+
+        ParameterDeclaration parm2 = (ParameterDeclaration)parameterDecls.get( 1 );
+        assertNotNull( parm2.getDeclSpecifier().getName() );
+        assertEquals( "parm2", parm2.getDeclSpecifier().getName().toString() );
+        List parm2Decls = parm2.getDeclarators(); 
+        assertEquals( 1, parm2Decls.size() );
+        
+        ParameterDeclaration parm3 = (ParameterDeclaration)parameterDecls.get( 2 );
+        assertNotNull( parm3.getDeclSpecifier().getName() );
+        assertEquals( "parm3", parm3.getDeclSpecifier().getName().toString() );
+        List parm3Decls = parm3.getDeclarators(); 
+        assertEquals( 1, parm3Decls.size() );
+        
+        OldKRParameterDeclarationClause clause = pdc.getOldKRParms(); 
+        assertNotNull( clause );
+        assertEquals( clause.getDeclarations().size(), 2 );
+        SimpleDeclaration decl1 = (SimpleDeclaration)clause.getDeclarations().get(0);
+        assertEquals( decl1.getDeclarators().size(), 1 );
+        assertTrue(decl1.getDeclSpecifier().isConst());
+        assertFalse(decl1.getDeclSpecifier().isVolatile());
+        assertEquals( decl1.getDeclSpecifier().getType(), DeclSpecifier.t_char);
+        Declarator declarator1 = (Declarator)decl1.getDeclarators().get( 0 );
+        assertEquals( declarator1.getName().toString(), "parm1" );
+        Expression initValue1  = declarator1.getExpression();
+        List ptrOps1 = declarator1.getPointerOperators();
+        assertNotNull( ptrOps1 );
+        assertEquals( 1, ptrOps1.size() );
+        PointerOperator po1 = (PointerOperator)ptrOps1.get(0);
+        assertNotNull( po1 ); 
+        assertFalse( po1.isConst() );
+        assertFalse( po1.isVolatile() );
+        assertEquals( po1.getType(), PointerOperator.t_pointer );
+        
+        SimpleDeclaration declaration = (SimpleDeclaration)clause.getDeclarations().get(1);
+        assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+        assertEquals( declaration.getDeclarators().size(), 1);
+        assertNull( ((Declarator)declaration.getDeclarators().get(0)).getName() );
+        assertNotNull( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator() );
+        assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator().getName().toString(), "parm2" );
+        ParameterDeclarationClause clause2 = ((Declarator)declaration.getDeclarators().get(0)).getParms();
+        assertEquals( clause2.getDeclarations().size(), 1 );
+        assertEquals( ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().size(), 1 );  
+        assertNull( ((Declarator)((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().get(0)).getName() );
+        assertEquals( ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclSpecifier().getType(), DeclSpecifier.t_float );          
     }
  
 }

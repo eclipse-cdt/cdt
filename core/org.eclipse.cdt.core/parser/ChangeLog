@@ -3,6 +3,14 @@
 	Added proper support for function pointers as parameters.
 	This fixes PR 38921 and 39002.
 
+2003-06-16 Victor Mozgin
+	Implemented support for old K&R-style C function declarations.
+	Added oldKRParametersBegin() and oldKRParametersEnd() to IParserCallback.
+	Added getParameterTypes() with support of K&R to CModelBuilder.
+	Fixed ExpressionEvaluator and NullSourceElementRequestor for additions to IParserCallback.
+	Added handling of K&R syntax to the parser.
+	This fixes PR 7541, 35320 and 38434.
+
 2003-06-14 Victor Mozgin
 	Fixed handling of parameter lists for typedefs for functions.
 	More errorhandling in CModelBuilder.

@@ -648,13 +648,13 @@ c, quickParse);
 				IToken mark = mark(); 
 				try
 				{
-					simpleDeclaration( container, true, scope ); // try it first with the original strategy 
+					simpleDeclaration( container, true, false, scope ); // try it first with the original strategy 
 				}
 				catch( Backtrack bt)
 				{ 
 					// did not work 
 					backup( mark );
-					simpleDeclaration( container, false, scope ); // try it again with the second strategy
+					simpleDeclaration( container, false, false, scope ); // try it again with the second strategy
 				}
 		}
 	}
@@ -749,10 +749,11 @@ c, quickParse);
 	 * - work in functionTryBlock
 	 * 
 	 * @param container			IParserCallback object which serves as the owner scope for this declaration.
-	 * @param tryConstructor	true == take strategy1 (constructor ) : false == take strategy 2 ( pointer to function) 
+	 * @param tryConstructor	true == take strategy1 (constructor ) : false == take strategy 2 ( pointer to function)
+     * @param forKR             Is this for K&R-style parameter declaration (true) or simple declaration (false) 
 	 * @throws Backtrack		request a backtrack
 	 */
-	protected void simpleDeclaration( Object container, boolean tryConstructor, IASTScope scope ) throws Backtrack {
+	protected void simpleDeclaration( Object container, boolean tryConstructor, boolean forKR, IASTScope scope ) throws Backtrack {
 		Object simpleDecl = null; 
 		try{ simpleDecl = callback.simpleDeclarationBegin( container, LA(1));} catch( Exception e ) {}
 		declSpecifierSeq(simpleDecl, false, tryConstructor, scope);
@@ -780,9 +781,11 @@ c, quickParse);
 				consume(IToken.tSEMI);
 				break;
 			case IToken.tCOLON:
+                if (forKR) throw backtrack;
 				ctorInitializer(declarator);					
 				// Falling through on purpose
 			case IToken.tLBRACE:
+                if (forKR) throw backtrack;                
 				Object function = null; 
 				try{ function = callback.functionBodyBegin(simpleDecl ); } catch( Exception e ) {}
 				if (quickParse) {
@@ -811,6 +814,7 @@ c, quickParse);
 		
 		try{ callback.simpleDeclarationEnd(simpleDecl, (Token)lastToken);} catch( Exception e ) {}
 	}
+
 
 	/**
 	 * This method parses a constructor chain 
@@ -1486,6 +1490,7 @@ c, quickParse);
 	 *     (exceptionSpecification)*
 	 * | directDeclarator "[" (constantExpression)? "]"
 	 * | "(" declarator")"
+     * | directDeclarator "(" parameterDeclarationClause ")" (oldKRParameterDeclaration)*
 	 * 
 	 * declaratorId
 	 * : name
@@ -1692,11 +1697,20 @@ c, quickParse);
 								// this is most likely the definition of the constructor 
 								return declarator; 
 							}
-														
-							// const-volatile marker on the method
+								
+                            IToken beforeCVModifier = mark();
+                            IToken cvModifier = null;
+                            IToken afterCVModifier = beforeCVModifier;
+                             
+							// const-volatile
+                            // 2 options: either this is a marker for the method,
+                            // or it might be the beginning of old K&R style parameter declaration, see
+                            //      void getenv(name) const char * name; {}
+                            // This will be determined further below
 							if( LT(1) == IToken.t_const || LT(1) == IToken.t_volatile )
 							{
-								try{ callback.declaratorCVModifier( declarator, consume() );} catch( Exception e ) {}
+                                cvModifier = consume();
+                                afterCVModifier = mark();
 							}
 							
 							//check for throws clause here 
@@ -1737,7 +1751,35 @@ c, quickParse);
 								consume( IToken.tINTEGER);
 								try{ callback.declaratorPureVirtual( declarator ); } catch( Exception e ) { }
 							}
-
+                            
+                            if (afterCVModifier != currToken || LT(1) == IToken.tSEMI) {
+                                // There were C++-specific clauses after const/volatile modifier
+                                // Then it is a marker for the method
+                                try{ callback.declaratorCVModifier( declarator, cvModifier );} catch( Exception e ) {}
+                                // In this case (method) we can't expect K&R parameter declarations,
+                                // but we'll check anyway, for errorhandling
+                            } else {
+                                // let's try this modifier as part of K&R parameter declaration
+                                backup(beforeCVModifier);
+                            }
+                            
+                            if (LT(1) != IToken.tSEMI) {
+                                 // try K&R-style parameter declarations
+                                 Object oldKRParameterDeclarationClause = null; 
+                                 try { oldKRParameterDeclarationClause = callback.oldKRParametersBegin(clause);} catch( Exception e ) {}
+                                 
+                                 try {
+                                     do {                                
+                                         simpleDeclaration(oldKRParameterDeclarationClause, false, true, null);
+                                     } while (LT(1) != IToken.tLBRACE);
+                                 } catch (Exception e) {
+                                    // Something is wrong, 
+                                    // this is not a proper K&R declaration clause
+                                    backup(afterCVModifier);
+                                 }
+                                 
+                                 try{ callback.oldKRParametersEnd(oldKRParameterDeclarationClause);} catch( Exception e ) {}
+                            }
 						}
 						break;
 					case IToken.tLBRACKET:

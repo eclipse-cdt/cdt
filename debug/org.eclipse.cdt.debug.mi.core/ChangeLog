@@ -1,3 +1,8 @@
+2004-08-11 Alain Magloire
+
+	Fix for PR 6991
+	* src/org/eclipse/cdt/debug/mi/core/RxThread.java
+
 2004-07-22 Alain Magloire
 
 	Fix for 70688

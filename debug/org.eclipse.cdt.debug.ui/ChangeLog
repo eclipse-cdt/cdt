@@ -1,4 +1,8 @@
 2002-11-20 Mikhail Khodjaiants
+	Reset the tooltips of the memory view tabs on terminate.
+	* MemoryControlArea.java
+
+2002-11-20 Mikhail Khodjaiants
 	Added the TERMINATE event handler to MemoryViewEventHandler.
 	* MemoryViewer.java
 	* MemoryViewEventHandler.java

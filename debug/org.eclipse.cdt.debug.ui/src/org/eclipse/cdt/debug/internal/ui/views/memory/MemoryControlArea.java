@@ -189,6 +189,7 @@ public class MemoryControlArea extends Composite
 		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" );
 		fMemoryText.refresh();
 		fMemoryView.updateObjects();
+		updateToolTipText();
 	}
 	
 	protected void setMemoryManager( ICMemoryManager mm )
@@ -205,32 +206,6 @@ public class MemoryControlArea extends Composite
 	{
 		return ( getMemoryManager() != null ) ? getMemoryManager().getBlock( getIndex() ) : null;
 	}
-
-/*	
-	private void updatePresentation( PropertyChangeEvent event )
-	{
-		if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_MEMORY_SIZE ) )
-		{
-			fPresentation.setSize( CDebugUIPlugin.getDefault().getPreferenceStore().getInt( ICDebugPreferenceConstants.PREF_MEMORY_SIZE ) );
-		}
-		else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_MEMORY_BYTES_PER_ROW ) )
-		{
-			fPresentation.setBytesPerRow( CDebugUIPlugin.getDefault().getPreferenceStore().getInt( ICDebugPreferenceConstants.PREF_MEMORY_BYTES_PER_ROW ) );
-		}
-		else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_MEMORY_DISPLAY_ASCII ) )
-		{
-			fPresentation.setDisplayASCII( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_MEMORY_DISPLAY_ASCII ) );
-		}
-		else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_MEMORY_FORMAT ) )
-		{
-			fPresentation.setFormat( CDebugUIPlugin.getDefault().getPreferenceStore().getInt( ICDebugPreferenceConstants.PREF_MEMORY_FORMAT ) );
-		}
-		else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ) )
-		{
-			fPresentation.setPaddingChar( CDebugUIPlugin.getDefault().getPreferenceStore().getString( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ).charAt( 0 ) );
-		}
-	}
-*/
 
 	protected int getIndex()
 	{
@@ -362,6 +337,7 @@ public class MemoryControlArea extends Composite
 	{
 		fAddressText.setText( "" );
 		handleAddressEnter();
+		updateToolTipText();
 	}
 
 	/**

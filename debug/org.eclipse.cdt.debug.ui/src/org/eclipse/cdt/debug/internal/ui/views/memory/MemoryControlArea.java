@@ -21,8 +21,12 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -134,7 +138,44 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 										{
 											fMemoryView.updateObjects();
 										}
+									} );		
+		text.addModifyListener( new ModifyListener()
+									{
+										public void modifyText( ModifyEvent e )
+										{
+											handleAddressModification();
+										}
 									} );
+		text.addKeyListener( new KeyListener()
+									{
+										public void keyPressed( KeyEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
+
+										public void keyReleased( KeyEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
+									} );
+		text.addMouseListener( new MouseListener()
+									{
+										public void mouseDoubleClick( MouseEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
+
+										public void mouseDown( MouseEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
+
+										public void mouseUp( MouseEvent e )
+										{
+											fMemoryView.updateObjects();
+										}
+									} );
+
 		fEvaluateButton = new Button( composite, SWT.PUSH );
 		fEvaluateButton.setText( "Evaluate" );
 		fEvaluateButton.setToolTipText( "Evaluate expression to address" );
@@ -145,14 +186,6 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 															evaluateAddressExpression();
 														}
 													} );
-		
-		text.addModifyListener( new ModifyListener()
-									{
-										public void modifyText( ModifyEvent e )
-										{
-											handleAddressModification();
-										}
-									} );
 		return text;
 	}
 
@@ -527,7 +560,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 				fAddressText.paste();
 				break;
 			case SELECT_ALL:
-				fAddressText.setSelection( 0, fAddressText.getCharCount() );
+				fAddressText.selectAll();
 				break;
 		}
 	}

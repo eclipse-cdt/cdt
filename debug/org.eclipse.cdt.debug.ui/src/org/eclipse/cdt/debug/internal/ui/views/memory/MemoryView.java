@@ -14,7 +14,6 @@ import org.eclipse.cdt.debug.internal.ui.actions.MemoryActionSelectionGroup;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryFormatAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryNumberOfColumnAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemorySizeAction;
-import org.eclipse.cdt.debug.internal.ui.actions.MemoryViewAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowAsciiAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;

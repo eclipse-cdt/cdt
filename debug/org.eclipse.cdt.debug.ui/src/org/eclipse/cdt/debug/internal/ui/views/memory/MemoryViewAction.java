@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.internal.ui.actions;
+package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;

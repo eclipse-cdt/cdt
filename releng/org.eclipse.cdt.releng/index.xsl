@@ -173,57 +173,43 @@
 						    		</font>
 				    			</a>
 				    		</td>
-				    		<td>
-				    			<a>
-				    				<xsl:attribute name="href">
-					    				<xsl:text>zips/I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-					    				<xsl:text>/org.eclipse.cdt.make-I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-					    				<xsl:text>.zip</xsl:text>
-					    			</xsl:attribute>
-					    			<font size="1">
-						    			<xsl:text>org.eclipse.cdt.make-I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-						    			<xsl:text>.zip</xsl:text>
-						    		</font>
-				    			</a>
-				    		</td>
 				    	</tr>
-				    	<tr>
-				    		<td>
-				    			<a>
-				    				<xsl:attribute name="href">
-					    				<xsl:text>zips/I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-					    				<xsl:text>/org.eclipse.cdt.managedbuilder-I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-					    				<xsl:text>.zip</xsl:text>
-					    			</xsl:attribute>
-					    			<font size="1">
-						    			<xsl:text>org.eclipse.cdt.managedbuilder-I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-						    			<xsl:text>.zip</xsl:text>
-						    		</font>
-				    			</a>
-				    		</td>
-				    		<td>
-				    			<a>
-				    				<xsl:attribute name="href">
-					    				<xsl:text>zips/I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-					    				<xsl:text>/org.eclipse.cdt.testing-I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-					    				<xsl:text>.zip</xsl:text>
-					    			</xsl:attribute>
-					    			<font size="1">
-						    			<xsl:text>org.eclipse.cdt.testing-I</xsl:text>
-					    				<xsl:value-of select="substring(@label, 17, 12)"/>
-						    			<xsl:text>.zip</xsl:text>
-						    		</font>
-				    			</a>
-				    		</td>
-				    	</tr>
+				    	<xsl:if test="substring(@label, 17, 8) &lt; '20040420'">
+				    		<tr>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.make-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>.zip</xsl:text>
+						    			</xsl:attribute>
+						    			<font size="1">
+							    			<xsl:text>org.eclipse.cdt.make-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    		<td>
+					    			<a>
+					    				<xsl:attribute name="href">
+						    				<xsl:text>zips/I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>/org.eclipse.cdt.managedbuilder-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+						    				<xsl:text>.zip</xsl:text>
+						    			</xsl:attribute>
+						    			<font size="1">
+							    			<xsl:text>org.eclipse.cdt.managedbuilder-I</xsl:text>
+						    				<xsl:value-of select="substring(@label, 17, 12)"/>
+							    			<xsl:text>.zip</xsl:text>
+							    		</font>
+					    			</a>
+					    		</td>
+					    	</tr>
+					    </xsl:if>
 				    </table>
 	    		</li>
 		    </ul>

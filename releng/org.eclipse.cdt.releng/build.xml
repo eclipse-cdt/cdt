@@ -11,7 +11,7 @@
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${baseLocation}/plugins/org.eclipse.pde.build_3.0.0/scripts" />
+		<property name="pde.build.scripts" value="${basedir}/../org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.0.0/scripts" />
 		<property name="eclipseZip" value="eclipse-SDK.zip"/>
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
@@ -21,6 +21,7 @@
 		<property name="sitedir" value="${buildDirectory}/build.site"/>
 		<property name="siteversion" value="2.0.0"/>
 		<property name="milestonedir" value="${buildDirectory}/${milestone}"/>
+		<property name="buildingOSGi" value="true"/>
 	</target>
 
 	<target name="zips" depends="init">
@@ -28,9 +29,9 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
 		</ant>
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/builders" />
-		</ant>
+		<!--ant antfile="build.xml" dir="${pde.build.scripts}">
+			<property name="builder" value="${basedir}/sdk" />
+		</ant-->
 		<concat destfile="compile.log">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
 		</concat>
@@ -47,8 +48,6 @@
 		<!-- This depends on what platform we run the test, it would be
 		     nice to figure this out on the fly -->
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${buildDirectory}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.make-${buildId}.zip" dest="${buildDirectory}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.managedbuilder-${buildId}.zip" dest="${buildDirectory}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${buildId}.zip" dest="${buildDirectory}"/>
 		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.test">
 			<fileset dir="../org.eclipse.test"/>
@@ -71,8 +70,6 @@
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.make-${buildId}.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.managedbuilder-${buildId}.zip" dest="${sitedir}"/>
 		<antcall target="allElements">
 			<param name="target" value="updateJars"/>
 		</antcall>
@@ -94,8 +91,8 @@
 		</xslt>
 		<move file="x" tofile="${sitedir}/eclipse/${dir}/${id}_${siteversion}/${type}.xml"/>
 		<mkdir dir="${sitedir}/${dir}"/>
-		<jar basedir="${sitedir}/eclipse/${dir}/${id}_${siteversion}"
-		     destfile="${sitedir}/${dir}/${id}_${siteversion}.${timestamp}.jar"/>
+		<zip basedir="${sitedir}/eclipse/${dir}/${id}_${siteversion}"
+		     zipfile="${sitedir}/${dir}/${id}_${siteversion}.${timestamp}.jar"/>
 	</target>
 
 	<target name="milestoneSite" depends="init" unless="hasErrors">
@@ -106,8 +103,6 @@
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${milestonedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip" dest="${milestonedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.make-${buildId}.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.managedbuilder-${buildId}.zip" dest="${milestonedir}"/>
 		<antcall target="allElements">
 			<param name="target" value="milestoneJars"/>
 		</antcall>
@@ -156,7 +151,7 @@
 	<target name="mailFail" if="hasErrors">
 		<mail subject="CDT Build ${siteversion}.${timestamp} failed"
 			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
-			<message src="compile.logs"/>
+			<message src="compile.log"/>
 		</mail>
 	</target>
 
@@ -165,16 +160,6 @@
  			<param name="type" value="feature"/>
  			<param name="dir" value="features"/>
  			<param name="id" value="org.eclipse.cdt"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="feature"/>
- 			<param name="dir" value="features"/>
- 			<param name="id" value="org.eclipse.cdt.make"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="feature"/>
- 			<param name="dir" value="features"/>
- 			<param name="id" value="org.eclipse.cdt.managedbuilder"/>
  		</antcall>
  		<antcall target="${target}">
  			<param name="type" value="plugin"/>

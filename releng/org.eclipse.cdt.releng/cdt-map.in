@@ -5,5 +5,3 @@ org.eclipse.cdt-@buildId@-linux.motif.x86.zip = http://download.eclipse.org/tool
 org.eclipse.cdt-@buildId@-qnx.photon.x86.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | qnx,photon,x86 | | runtime
 org.eclipse.cdt-@buildId@-solaris.motif.sparc.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | solaris,motif,sparc | | runtime
 org.eclipse.cdt-@buildId@-win32.win32.x86.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | win32,win32,x86 | | runtime
-org.eclipse.cdt.make-@buildId@.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | | | runtime
-org.eclipse.cdt.managedbuilder-@buildId@.zip = http://download.eclipse.org/tools/cdt/updates/builds/2.0/zips/@buildId@/ | | | runtime

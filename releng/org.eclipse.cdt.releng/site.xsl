@@ -33,38 +33,6 @@
 					</xsl:attribute>
 				</category>
 			</feature>
-			<feature id="org.eclipse.cdt.make">
-				<xsl:attribute name="url">
-					<xsl:text>features/org.eclipse.cdt.make_</xsl:text>
-					<xsl:value-of select="$version"/>
-					<xsl:text>.jar</xsl:text>
-				</xsl:attribute>
-				<xsl:attribute name="version">
-					<xsl:value-of select="$version"/>
-				</xsl:attribute>
-				<category>
-					<xsl:attribute name="name">
-						<xsl:text>cdt_</xsl:text>
-						<xsl:value-of select="$version"/>
-					</xsl:attribute>
-				</category>
-			</feature>
-			<feature id="org.eclipse.cdt.managedbuilder">
-				<xsl:attribute name="url">
-					<xsl:text>features/org.eclipse.cdt.managedbuilder_</xsl:text>
-					<xsl:value-of select="$version"/>
-					<xsl:text>.jar</xsl:text>
-				</xsl:attribute>
-				<xsl:attribute name="version">
-					<xsl:value-of select="$version"/>
-				</xsl:attribute>
-				<category>
-					<xsl:attribute name="name">
-						<xsl:text>cdt_</xsl:text>
-						<xsl:value-of select="$version"/>
-					</xsl:attribute>
-				</category>
-			</feature>
 		</site>
 	</xsl:template>
 	

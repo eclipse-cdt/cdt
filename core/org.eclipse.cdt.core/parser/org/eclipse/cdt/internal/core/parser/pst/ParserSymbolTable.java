@@ -659,12 +659,20 @@ public class ParserSymbolTable {
 				//if the inheritanceChain already contains the parent, then that 
 				//is circular inheritance
 				if( ! data.inheritanceChain.contains( parent ) ){
-					//is this name define in this scope?
-					if( parent instanceof IDeferredTemplateInstance ){
-						parent = ((IDeferredTemplateInstance)parent).getTemplate().getTemplatedSymbol();
-					} else if( parent instanceof ITemplateSymbol ){
-						parent = ((ITemplateSymbol)parent).getTemplatedSymbol();
+					if( parent instanceof IDeferredTemplateInstance || parent instanceof ITemplateSymbol ){
+						if( parent instanceof IDeferredTemplateInstance ){
+							parent = ((IDeferredTemplateInstance)parent).getTemplate().getTemplatedSymbol();
+						} else if( parent instanceof ITemplateSymbol ){
+							parent = ((ITemplateSymbol)parent).getTemplatedSymbol();
+						}
+						if( data.inheritanceChain.contains( parent ) ){
+							//bug 64919, might not really be circular inheritance, it just looks that way
+							//don't throw an exception, just ignore this parent.
+							continue;
+						}
 					}
+					
+					//is this name define in this scope?
 					if( parent instanceof IDerivableContainerSymbol ){
 						temp = lookupInContained( data, (IDerivableContainerSymbol) parent );
 					} else {

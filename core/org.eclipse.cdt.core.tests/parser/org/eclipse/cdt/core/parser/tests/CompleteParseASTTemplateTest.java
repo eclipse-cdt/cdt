@@ -938,4 +938,23 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		IASTTemplateDeclaration foo = (IASTTemplateDeclaration) i.next();
 	}
 	
+	public void testBug64919() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write("class Foo{};                                                   ");
+		writer.write("class Bar{};                                                   ");
+		writer.write("template <class T, class U> class A {};                        ");
+		writer.write("template < class X > class A < X, X > : public A< X, Bar>      ");
+		writer.write("{   typedef int TYPE;   };                                     ");
+		writer.write("template < class X > class A < X, Foo > : public A< X, X >     ");
+		writer.write("{   void f ( TYPE );  };                                       ");
+
+		//success is no stack overflow
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTClassSpecifier Foo = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTClassSpecifier Bar = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTTemplateDeclaration A1 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration A2 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration A3 = (IASTTemplateDeclaration) i.next();
+	}
 }

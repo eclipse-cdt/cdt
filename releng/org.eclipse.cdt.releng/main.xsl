@@ -98,7 +98,18 @@
 
 		<!-- Run the build.xml scripts -->
 	        <xsl:for-each select="projects/feature">
+		    <!-- The default to build the update jars -->
 		    <ant>
+		        <xsl:attribute name="dir">
+			    <xsl:text>build/features/</xsl:text>
+			    <xsl:value-of select="@name"/>
+			</xsl:attribute>
+			<property name="javacFailOnError" value="true"/>
+			<property name="ws" value="gtk"/>
+			<property name="os" value="linux"/>
+		    </ant>
+		    <!-- The old style zips -->
+		    <ant target="zip.distribution">
 		        <xsl:attribute name="dir">
 			    <xsl:text>build/features/</xsl:text>
 			    <xsl:value-of select="@name"/>
@@ -109,7 +120,7 @@
 		    </ant>
 		</xsl:for-each>
 
-		<!-- Move jars to the update site format -->
+		<!-- Move jars and zips to the update site format -->
 		<delete dir="plugins"/>
 		<copy todir="plugins" flatten="true">
 		    <fileset dir="build/plugins">
@@ -135,6 +146,21 @@
 				    <xsl:text>/</xsl:text>
 				    <xsl:value-of select="@name"/>
 				    <xsl:text>_${build.version}.${build.number}.jar</xsl:text>
+				</xsl:attribute>
+			    </include>
+			</xsl:for-each>
+		    </fileset>
+		</copy>
+		<delete dir="dist"/>
+		<copy todir="dist" flatten="true">
+		    <fileset dir="build/features">
+		        <xsl:for-each select="projects/feature">
+			    <include>
+			        <xsl:attribute name="name">
+				    <xsl:value-of select="@name"/>
+				    <xsl:text>/</xsl:text>
+				    <xsl:value-of select="@name"/>
+				    <xsl:text>_${build.version}.${build.number}.bin.dist.zip</xsl:text>
 				</xsl:attribute>
 			    </include>
 			</xsl:for-each>
@@ -208,6 +234,7 @@
 		    <fileset dir=".">
 		        <include name="plugins/*.jar"/>
 			<include name="features/*.jar"/>
+			<include name="dist/*.zip"/>
 		        <include name="logs/**/*.html"/>
 			<include name="build.number"/>
 			<include name="index.html"/>
@@ -216,7 +243,14 @@
 		</ftp>
 	    </target>
 
-	    <target name="all" depends="build,upload"/>
+	    <target name="mail">
+	        <mail from="dschaefe@ca.ibm.com"
+		    tolist="cdt-test-dev@eclipse.org"
+		    subject="CDT Build ${{build.version}}.${{build.number}} completed"
+		    message="This has been an automated message"/>
+	    </target>
+
+	    <target name="all" depends="build,upload,mail"/>
 	</project>
     </xsl:template>
 

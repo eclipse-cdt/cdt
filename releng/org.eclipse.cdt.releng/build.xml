@@ -23,4 +23,8 @@
         <ant antfile="main.xml" target="upload"/>
     </target>
 
+    <target name="mail" depends="bootstrap">
+        <ant antfile="main.xml" target="mail"/>
+    </target>
+
 </project>

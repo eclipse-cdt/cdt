@@ -1,5 +1,10 @@
 2004-06-29 Alain Magloire
 
+	Possible fix for 68665
+	* model/org/eclipse/cdt/internal/core/model/CElementInfo.java
+
+2004-06-29 Alain Magloire
+
 	Fix for PR 68820.
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
 	

@@ -57,8 +57,10 @@ class CElementInfo {
 	}
 
 	protected ICElement[] getChildren() {
-		ICElement[] array= new ICElement[fChildren.size()];		
-		return (ICElement[]) fChildren.toArray( array );
+		synchronized (fChildren) {
+			ICElement[] array= new ICElement[fChildren.size()];		
+			return (ICElement[]) fChildren.toArray( array );
+		}
 	}
 
 

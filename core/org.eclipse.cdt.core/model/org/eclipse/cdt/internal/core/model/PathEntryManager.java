@@ -223,11 +223,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 											if (refEntry.getIncludePath().equals(includePath)) {
 												IPath newBasePath = refEntry.getBasePath();
 												// If the includePath is relative give a new basepath if none
-												if (newBasePath.isEmpty() && !includePath.isAbsolute()) {
-													IPath refResPath = refEntry.getPath();
-													IResource refRes = cproject.getCModel().getWorkspace().getRoot().findMember(refResPath);
+												if (!newBasePath.isAbsolute() && !includePath.isAbsolute()) {
+													IResource refRes;
+													if (!newBasePath.isEmpty()) {
+														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(newBasePath);
+													} else {
+														IPath refResPath = refEntry.getPath();
+														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(refResPath);
+													}
 													if (refRes != null) {
-														newBasePath = refRes.getLocation();
+														if (refRes.getType() == IResource.FILE) {
+															refRes = refRes.getParent();
+														}
+														newBasePath = refRes.getLocation().append(newBasePath);
 													}
 												}
 												return CoreModel.newIncludeEntry(includeEntry.getPath(),
@@ -320,11 +328,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 											if (refEntry.getLibraryPath().equals(libraryPath)) {
 												IPath newBasePath = refEntry.getBasePath();
 												// If the libraryPath is relative give a new basepath if none
-												if (newBasePath.isEmpty() && !libraryPath.isAbsolute()) {
-													IPath refResPath = refEntry.getPath();
-													IResource refRes = cproject.getCModel().getWorkspace().getRoot().findMember(refResPath);
+												if (!newBasePath.isAbsolute() && !libraryPath.isAbsolute()) {
+													IResource refRes;
+													if (!newBasePath.isEmpty()) {
+														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(newBasePath);														
+													} else {
+														IPath refResPath = refEntry.getPath();
+														refRes = cproject.getCModel().getWorkspace().getRoot().findMember(refResPath);
+													}
 													if (refRes != null) {
-														newBasePath = refRes.getLocation();
+														if (refRes.getType() == IResource.FILE) {
+															refRes = refRes.getParent();
+														}
+														newBasePath = refRes.getLocation().append(newBasePath);
 													}
 												}
 

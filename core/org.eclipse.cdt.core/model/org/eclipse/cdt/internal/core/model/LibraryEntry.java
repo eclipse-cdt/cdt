@@ -134,21 +134,35 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	}
 
 	public IPath getFullLibraryPath() {
+		IPath p;
 		IPath lib = getLibraryPath();
-		IPath p = (!basePath.isEmpty()) ? basePath.append(lib) : lib;
-		if (p.isAbsolute()) {
+		if (!basePath.isEmpty()) {
+			IPath loc = basePath;
+			if (!loc.isAbsolute()) {
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(loc);
+				if (res != null) {
+					loc = res.getLocation();
+				}
+			}
+			p = loc.append(lib);
 			return p;
+		} else {
+			p = lib;
 		}
-		IPath resPath = getPath();
-		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);
-		if (res != null) {
-			IPath location = res.getLocation();
-			if (location != null) {
-				p = location.append(p);
+		if (!p.isAbsolute()) {
+			IPath resPath = getPath();
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);
+			if (res != null) {
+				if (res.getType() == IResource.FILE) {
+					res = res.getParent();
+				}
+				IPath location = res.getLocation();
+				if (location != null) {
+					p = location.append(p);
+				}
 			}
 		}
 		return p;
-
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,12 @@
+2004-06-11 Alain Magloire
+
+	The IncludeEntry LibraryEntry getFullIncludePath()
+	was returning the wrong values sometimes.
+
+	* model/org/eclipse/cdt/internal/core/model/IncludeEntry.java
+	* model/org/eclipse/cdt/internal/core/model/LibraryEntry.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	
 2004-06-10 Hoda Amer
 	Fix for PR 65970: [Outline View] Contents of Includes displayed in Outline for STRUCTURAL_PARSE mode
 	

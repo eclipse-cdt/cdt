@@ -289,27 +289,33 @@ public class CValue extends CDebugElement implements ICValue
 	
 	private String getCharValue( String value )
 	{
-		char result = '.';
+		String result = ""; 
 		int index = value.indexOf( ' ' );
 		if ( index > 0 )
 		{
+			char resultChar = '.';
 			try
 			{
 				short shortValue = Short.parseShort( value.substring( 0, index ), 10 );
 				if ( shortValue >= 0 )
 				{
-					result = (char)shortValue;
-					if ( Character.isISOControl( result ) )
+					resultChar = (char)shortValue;
+					if ( Character.isISOControl( resultChar ) )
 					{
-						result = '.';
+						resultChar = '.';
 					}
 				}
 			}
 			catch( NumberFormatException e )
 			{
 			}
+			result = String.valueOf( resultChar );
 		}
-		return String.valueOf( result );
+		else
+		{
+			result = value;
+		}
+		return result;
 	}
 	
 	protected CVariable getParentVariable()

@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -139,7 +140,7 @@ public abstract class CModificationVariable extends CVariable
 			requestFailed( "Unable to set value.", null );
 			return null;
 		}
-		if ( value.getType() == ICValue.TYPE_CHAR )
+		if ( value.getType() == ICValue.TYPE_CHAR && getFormat() == ICDIFormat.NATURAL )
 		{
 			char[] chars = oldExpression.toCharArray();
 			if ( chars.length != 1 )

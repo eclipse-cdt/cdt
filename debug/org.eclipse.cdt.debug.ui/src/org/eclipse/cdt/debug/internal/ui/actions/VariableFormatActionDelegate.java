@@ -122,9 +122,10 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 			{
 				switch( ((ICValue)value).getType() )
 				{
-					case ICValue.TYPE_ARRAY:
+//					case ICValue.TYPE_ARRAY:
 					case ICValue.TYPE_SIMPLE:
 					case ICValue.TYPE_POINTER:
+					case ICValue.TYPE_CHAR:
 						enabled = true;
 						break;
 				}

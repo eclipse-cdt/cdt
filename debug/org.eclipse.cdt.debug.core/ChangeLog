@@ -1,4 +1,9 @@
 2002-12-17 Mikhail Khodjaiants
+	Formatting 'char' types.
+	* CValue.java
+	* CModificationVariable.java
+
+2002-12-17 Mikhail Khodjaiants
 	The core support of the prompting source locator.
 	* ICSourceLocator.java
 	* CDebugTarget.java

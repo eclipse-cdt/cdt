@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -376,5 +378,16 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 	{
 		IExpression expression = CDebugModel.createExpressionForGlobalVariable( target, global.getPath(), global.getName() );
 		DebugPlugin.getDefault().getExpressionManager().addExpression( expression );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init( IAction action )
+	{
+		super.init( action );
+		Object element = DebugUITools.getDebugContext();
+		setSelection( (element != null ) ? new StructuredSelection( element ) : new StructuredSelection() );
+		update( action );
 	}
 }

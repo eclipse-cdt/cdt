@@ -1,4 +1,7 @@
 2003-10-29 Mikhail Khodjaiants
+	* CProjectSourceLocation.java: check if the searched element name is not null or empty.
+
+2003-10-29 Mikhail Khodjaiants
 	Added the 'dispose' method to 'ICSourceLocation'.
 	* ICSourceLocation.java
 	* CDirectorySourceLocation.java

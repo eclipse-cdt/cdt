@@ -96,7 +96,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	public Object findSourceElement( String name ) throws CoreException
 	{
 		Object result = null;
-		if ( getProject() != null && !notFoundCacheLookup( name ) )
+		if ( !isEmpty( name ) && getProject() != null && !notFoundCacheLookup( name ) )
 		{
 			result = cacheLookup( name );
 			if ( result == null )

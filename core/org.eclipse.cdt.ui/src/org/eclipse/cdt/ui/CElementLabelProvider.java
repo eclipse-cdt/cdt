@@ -58,7 +58,7 @@ public class CElementLabelProvider extends LabelProvider {
 		if (element instanceof ICElement) {
 			ICElement celem= (ICElement)element;
 			
-			String name;
+			String name = "";
 			switch(celem.getElementType()){
 				case ICElement.C_FIELD:
 				case ICElement.C_VARIABLE:
@@ -79,7 +79,7 @@ public class CElementLabelProvider extends LabelProvider {
 				case ICElement.C_ENUMERATION:
 					if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
 						name = celem.getElementName();
-					} else {
+					} else if (celem instanceof IVariableDeclaration) {
 						IVariableDeclaration varDecl = (IVariableDeclaration) celem;
 						name = varDecl.getTypeName();				
 					}

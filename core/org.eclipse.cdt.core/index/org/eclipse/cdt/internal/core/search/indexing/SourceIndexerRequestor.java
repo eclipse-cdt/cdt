@@ -15,12 +15,14 @@ package org.eclipse.cdt.internal.core.search.indexing;
 * @author bgheorgh
 */
 
+import java.io.Reader;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -475,5 +477,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	
 	private IASTInclusion peekInclude(){
 		return currentInclude;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
+	 */
+	public Reader createReader(String finalPath) {
+		return ParserUtil.createReader(finalPath);
 	}
 }

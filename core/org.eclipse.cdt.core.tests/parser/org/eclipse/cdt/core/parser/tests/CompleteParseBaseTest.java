@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
@@ -671,6 +673,13 @@ public class CompleteParseBaseTest extends TestCase
         {
 			processReference( reference );
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
+		 */
+		public Reader createReader(String finalPath) {
+			return ParserUtil.createReader(finalPath);
+		}
     
     }
     

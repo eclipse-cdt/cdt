@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -19,7 +24,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 /**
  * @author jcamelon
  */
-public class InternalParserFactory extends ParserFactory {
+public class InternalParserUtil extends ParserFactory {
 
 	public static IExpressionParser createExpressionParser( IScanner scanner, ParserLanguage language, IParserLogService log ) throws ParserFactoryError
 	{
@@ -29,4 +34,21 @@ public class InternalParserFactory extends ParserFactory {
 		return new ExpressionParser( scanner, language, logService );
 	}
 
+	/**
+	 * @param finalPath
+	 * @return
+	 */
+	public static Reader createFileReader(String finalPath) {
+		File includeFile = new File(finalPath);
+		if (includeFile.exists() && includeFile.isFile()) 
+		{
+			//check and see 
+			try {
+				return new FileReader( includeFile);
+			} catch (FileNotFoundException fnf) {
+				
+			}
+		}
+		return null;
+	}
 }

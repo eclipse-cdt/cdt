@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
+import java.io.Reader;
+
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -102,4 +104,10 @@ public interface ISourceElementRequestor {
 	public void exitNamespaceDefinition( IASTNamespaceDefinition namespaceDefinition ); 
 	public void exitInclusion( IASTInclusion inclusion ); 
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit );
+
+	/**
+	 * @param finalPath
+	 * @return
+	 */
+	public Reader createReader(String finalPath);
 }

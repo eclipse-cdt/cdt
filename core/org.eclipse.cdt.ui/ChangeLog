@@ -1,3 +1,6 @@
+2004-02-25 John Camelon
+	Updates for new ISourceElementRequestor interface updates.  
+
 2004-02-24 Alain Magloire
 
 	New constructor for ShowInCView.

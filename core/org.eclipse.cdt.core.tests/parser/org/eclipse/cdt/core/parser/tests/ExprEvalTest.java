@@ -13,7 +13,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.internal.core.parser.IExpressionParser;
-import org.eclipse.cdt.internal.core.parser.InternalParserFactory;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 
 public class ExprEvalTest extends TestCase {
 
@@ -28,7 +28,7 @@ public class ExprEvalTest extends TestCase {
 	public void runTest(String code, int expectedValue) throws Exception {
 		
 		final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
-        IExpressionParser parser = InternalParserFactory.createExpressionParser(ParserFactory.createScanner( new StringReader( code ), getClass().getName(), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService() ), ParserLanguage.CPP, null );
+        IExpressionParser parser = InternalParserUtil.createExpressionParser(ParserFactory.createScanner( new StringReader( code ), getClass().getName(), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService() ), ParserLanguage.CPP, null );
 		IASTExpression expression = parser.expression(null);
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}

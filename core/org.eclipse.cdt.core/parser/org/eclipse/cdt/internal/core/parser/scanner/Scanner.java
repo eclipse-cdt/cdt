@@ -11,8 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -28,6 +26,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.Directives;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
@@ -54,8 +53,8 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
-import org.eclipse.cdt.internal.core.parser.*;
-import org.eclipse.cdt.internal.core.parser.InternalParserFactory;
+import org.eclipse.cdt.internal.core.parser.IExpressionParser;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.Token;
@@ -309,6 +308,7 @@ public class Scanner implements IScanner {
 					buffer.append( tokenizer.nextToken() );
 				}
 				file = new File( buffer.toString() );
+				path = buffer.toString();
 			}
 
 			if( file.exists() && file.isDirectory() )
@@ -496,9 +496,7 @@ public class Scanner implements IScanner {
 
 	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
 
-		FileReader inclusionReader = null;
-		String newPath = null;
-		
+		CodeReader duple = null;
 		totalLoop:	for( int i = 0; i < 2; ++i )
 		{
 			if( useIncludePaths ) // search include paths for this file
@@ -509,65 +507,33 @@ public class Scanner implements IScanner {
 				while (iter.hasNext()) {
 		
 					String path = (String)iter.next();
-					File pathFile = new File(path);
-					//TODO assert pathFile.isDirectory();				
-					StringBuffer buffer = new StringBuffer( pathFile.getPath() );
-					buffer.append( File.separatorChar );
-					buffer.append( fileName );
-					newPath = buffer.toString();
-					//TODO remove ".." and "." segments
-					File includeFile = new File(newPath);
-					if (includeFile.exists() && includeFile.isFile()) {
-						try {
-							inclusionReader = new FileReader(includeFile);
-							break totalLoop;
-						} catch (FileNotFoundException fnf) {
-							continue;
-						}
-					}
+					duple = createReaderDuple( path, fileName );
+					if( duple != null )
+						break totalLoop;
 				}
 				
-				if (inclusionReader == null )
+				if (duple == null )
 					handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
 	
 			}
 			else // local inclusion
 			{
-				String currentFilename = scannerData.getContextStack().getCurrentContext().getFilename(); 
-				File currentIncludeFile = new File( currentFilename );
-				String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
-				currentIncludeFile = null; 
-				
-				StringBuffer buffer = new StringBuffer( parentDirectory );
-				buffer.append( File.separatorChar );
-				buffer.append( fileName );
-				newPath = buffer.toString();
-				//TODO remove ".." and "." segments 
-				File includeFile = new File( newPath );
-				if (includeFile.exists() && includeFile.isFile()) {
-					try {
-						inclusionReader = new FileReader(includeFile);
-						break totalLoop;
-					} catch (FileNotFoundException fnf) {
-						useIncludePaths = true;
-						continue totalLoop;
-					}
-				}
-				else
-				{
-					useIncludePaths = true;
-					continue totalLoop;
-				}
+				duple = createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName );
+				if( duple != null )
+					break totalLoop;
+				useIncludePaths = true;
+				continue totalLoop;
 			}
 		}
-		if (inclusionReader != null) {
+		
+		if (duple!= null) {
 			IASTInclusion inclusion = null;
             try
             {
                 inclusion =
                     scannerData.getASTFactory().createInclusion(
                         fileName,
-                        newPath,
+                        duple.getFilename(),
                         !useIncludePaths,
                         beginOffset,
                         startLine,
@@ -581,7 +547,7 @@ public class Scanner implements IScanner {
 			
 			try
 			{
-				scannerData.getContextStack().updateContext(inclusionReader, newPath, ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
+				scannerData.getContextStack().updateContext(duple.getUnderlyingReader(), duple.getFilename(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
 			}
 			catch (ContextException e1)
 			{
@@ -2283,7 +2249,7 @@ public class Scanner implements IScanner {
 							EXPRESSION,
 							new ScannerInfo( scannerData.getDefinitions(), scannerData.getOriginalConfig().getIncludePaths()), 
 							ParserMode.QUICK_PARSE, scannerData.getLanguage(), new NullSourceElementRequestor(), nullLogService );
-	            parser = InternalParserFactory.createExpressionParser(trial, scannerData.getLanguage(), nullLogService);
+	            parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), nullLogService);
 			} catch( ParserFactoryError pfe )
 			{
 				handleInternalError();
@@ -3127,6 +3093,55 @@ public class Scanner implements IScanner {
 	 */
 	public boolean isOnTopContext() {
 		return ( scannerData.getContextStack().getCurrentContext() == scannerData.getContextStack().getTopContext() );
+	}
+
+	protected CodeReader createReaderDuple( String path, String fileName )
+	{
+		File pathFile = new File(path);
+		//TODO assert pathFile.isDirectory();	
+		StringBuffer newPathBuffer = new StringBuffer( pathFile.getPath() );
+		newPathBuffer.append( File.separatorChar );
+		newPathBuffer.append( fileName );
+		//remove ".." and "." segments
+		String finalPath = reconcilePath( newPathBuffer.toString() );
+		Reader r = scannerData.getClientRequestor().createReader( finalPath );
+		if( r != null )
+			return new CodeReader( finalPath, r );
+		return null;		
+
+	}
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	private String reconcilePath(String originalPath ) {
+		if( originalPath == null ) return null;
+		String [] segments = originalPath.split( "[/\\\\]" );
+		if( segments.length == 1 ) return originalPath;
+		Vector results = new Vector(); 
+		for( int i = 0; i < segments.length; ++i )
+		{
+			String segment = segments[i];
+			if( segment.equals( ".") ) continue;
+			if( segment.equals("..") )
+			{
+				if( results.size() > 0 ) 
+					results.removeElementAt( results.size() - 1 );
+			}
+			else
+				results.add( segment );
+		}
+		StringBuffer buffer = new StringBuffer(); 
+		Iterator i = results.iterator();
+		while( i.hasNext() )
+		{
+			buffer.append( (String)i.next() );
+			if( i.hasNext() )
+				buffer.append( File.separatorChar );
+		}
+		scannerData.getLogService().traceLog( "Path has been reduced to " + buffer.toString());
+		return buffer.toString();
 	}
 
 }

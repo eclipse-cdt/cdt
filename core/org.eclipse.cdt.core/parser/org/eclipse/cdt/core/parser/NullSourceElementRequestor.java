@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.parser;
 
+import java.io.Reader;
+
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 
 
 public class NullSourceElementRequestor implements ISourceElementRequestor 
@@ -448,5 +451,12 @@ public class NullSourceElementRequestor implements ISourceElementRequestor
     {
         // TODO Auto-generated method stub
         
-    } 
+    }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
+	 */
+	public Reader createReader(String finalPath) {
+		return InternalParserUtil.createFileReader( finalPath );
+	} 
 }

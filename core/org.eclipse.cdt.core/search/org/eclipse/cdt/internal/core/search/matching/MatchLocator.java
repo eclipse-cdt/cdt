@@ -593,4 +593,11 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public static void verbose(String log) {
 	  System.out.println("(" + Thread.currentThread() + ") " + log); 
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
+	 */
+	public Reader createReader(String finalPath) {
+		return ParserUtil.createReader(finalPath);
+	}
 }

@@ -1,4 +1,8 @@
 2004-02-25 John Camelon
+	Fixed Bug 43051 : Search: cannot specify relative search paths
+	Fixed Bug 45140 : refactor IScanner to allow use of Readers of IResource
+
+2004-02-25 John Camelon
 	Updated Scanner to allow for invalid identifier names despite C++'s best efforts at maintaining its honour.  
 
 2004-02-24 John Camelon

@@ -107,8 +107,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	
 	protected ISelectionChangedListener fStatusLineClearer;
     
-    /** The property change listener */
-    private PropertyChangeListener fPropertyChangeListener = new PropertyChangeListener();
+	/** The property change listener */
+	private PropertyChangeListener fPropertyChangeListener = new PropertyChangeListener();
 
 	protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
 
@@ -131,20 +131,20 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	/** Preference key for linked position color */
 	public final static String LINKED_POSITION_COLOR = "linkedPositionColor"; //$NON-NLS-1$
 
-    /** Preference key for compiler task tags */
-    private final static String TRANSLATION_TASK_TAGS= CCorePlugin.TRANSLATION_TASK_TAGS;
+	/** Preference key for compiler task tags */
+	private final static String TRANSLATION_TASK_TAGS= CCorePlugin.TRANSLATION_TASK_TAGS;
 
-    private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
-        /*
-         * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-         */
-        public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-            handlePreferencePropertyChanged(event);
-        }
-        public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
-            handlePreferencePropertyChanged(new org.eclipse.jface.util.PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
-        }
-    };        
+	private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
+		/*
+		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+		 */
+		public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+			handlePreferencePropertyChanged(event);
+		}
+		public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
+			handlePreferencePropertyChanged(new org.eclipse.jface.util.PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
+		}
+	};        
 
 	/**
 	 * Default constructor.
@@ -349,11 +349,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 			// 0 length and start and non-zero start line says we know
 			// the line for some reason, but not the offset.
-			if (length == 0 && start == 0 && element.getStartLine() != 0) {
-				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine());
-				if (alternateRegion != null) {
-					start = alternateRegion.getOffset();
-					length = alternateRegion.getLength();
+			if (length == 0 && start == 0 && element.getStartLine() > 0) {
+				// We have the information in term of lines, we can work it out.
+				// Binary elements return the first executable statement so we have to substract -1
+				start = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getStartLine() - 1);
+				if (element.getEndLine() > 0) {
+					length = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getEndLine()) - start;
+				} else {
+					length = start;
+				}
+				// create an alternate region for the keyword highlight.
+				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine() - 1);
+				if (start == length || length < 0) {
+					if (alternateRegion != null) {
+						start = alternateRegion.getOffset();
+						length = alternateRegion.getLength();
+					}
 				}
 			}
 			setHighlightRange(start, length, moveCursor);
@@ -396,12 +407,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 			fBracketMatcher.dispose();
 			fBracketMatcher = null;
 		}
-        if (fPropertyChangeListener != null) {
+		if (fPropertyChangeListener != null) {
 			Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
 			preferences.removePropertyChangeListener(fPropertyChangeListener);			
 			IPreferenceStore preferenceStore = getPreferenceStore();
 			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
-        }
+		}
 		super.dispose();
 	}
 
@@ -876,18 +887,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		return textTools.affectsBehavior(event) || asmTools.affectsBehavior(event);
 	}
 
-    /**
-     * Handles a property change event describing a change
-     * of the C core's preferences and updates the preference
-     * related editor properties.
-     * 
-     * @param event the property change event
-     */
-    protected void handlePreferencePropertyChanged(org.eclipse.jface.util.PropertyChangeEvent event) {
-        if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
-            ISourceViewer sourceViewer= getSourceViewer();
-            if (sourceViewer != null && affectsTextPresentation(event))
-                sourceViewer.invalidateTextPresentation();
-        }
-    }
+	/**
+	 * Handles a property change event describing a change
+	 * of the C core's preferences and updates the preference
+	 * related editor properties.
+	 * 
+	 * @param event the property change event
+	 */
+	protected void handlePreferencePropertyChanged(org.eclipse.jface.util.PropertyChangeEvent event) {
+		if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer != null && affectsTextPresentation(event))
+				sourceViewer.invalidateTextPresentation();
+		}
+	}
 }

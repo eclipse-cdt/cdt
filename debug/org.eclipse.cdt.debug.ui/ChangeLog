@@ -1,3 +1,8 @@
+2004-11-25 Mikhail Khodjaiants
+	Replaced the "breakpointRemoved" method of ICBreakpointListener by the "breakpointsRemoved"
+	method that accepts multiple breakpoints.
+	* CBreakpointUpdater.java
+
 2004-11-23 Mikhail Khodjaiants
 	Workaround for bug 69728: IndexOutOfBoundsException in TextPresentation.
 	This bug is fixed in Eclipse 3.1.

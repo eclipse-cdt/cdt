@@ -1,3 +1,9 @@
+2003-09-30 Alain Magloire
+
+	ICDIVariableObject been updated with a new method.
+	* CVariable.java
+	* ICDIVariable.java
+
 2003-10-29 Mikhail Khodjaiants
 	Fix for PR 43856: Format doesn't work for wchar_t.
 	* CValue.java

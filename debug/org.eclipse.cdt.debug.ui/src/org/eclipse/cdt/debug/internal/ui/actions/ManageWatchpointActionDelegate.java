@@ -5,7 +5,9 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -84,6 +86,8 @@ public class ManageWatchpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void run( IAction action )
 	{
+		Dialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell() );
+		dlg.open();
 	}
 
 	/* (non-Javadoc)

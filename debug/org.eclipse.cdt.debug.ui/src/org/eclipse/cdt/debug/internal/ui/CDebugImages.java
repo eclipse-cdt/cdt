@@ -48,6 +48,8 @@ public class CDebugImages
 	 */	
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED = NAME_PREFIX + "installed_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED = NAME_PREFIX + "installed_ovr_disabled.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_WATCHPOINT_ENABLED = NAME_PREFIX + "readwrite_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_WATCHPOINT_DISABLED = NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.
@@ -63,6 +65,8 @@ public class CDebugImages
 
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED );
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED = createManaged( T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED );
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
 
 	/**
 	 * Returns the image managed under the given key in this registry.

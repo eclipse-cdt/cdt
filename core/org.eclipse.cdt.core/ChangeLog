@@ -1,5 +1,13 @@
 2003-04-12 Alain Magloire
 
+	Bug 36624
+	The latest changes broke the old parser, we still need the old parser
+	until the new one is rock solid.
+	
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java:
+
+2003-04-12 Alain Magloire
+
 	Bug 36424,
 	The Binaries/Archives were not deleted in the virtual containers.
 	

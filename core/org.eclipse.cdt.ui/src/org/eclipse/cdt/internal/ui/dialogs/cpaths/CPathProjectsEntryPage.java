@@ -31,7 +31,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 
 public class CPathProjectsEntryPage extends CPathBasePage {
@@ -96,7 +95,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(24);
 		fProjectsList.setButtonsMinWidth(buttonBarWidth);
 		
-		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_PATHS_PROJECTS);
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_PROJECTS);
 	}
 
 	private class ProjectsListListener implements IDialogFieldListener {

@@ -48,8 +48,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.dialogs.ResourceSorter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -171,7 +169,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 
 		setControl(composite);
 		
-		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_PATHS_LIBRARIES);
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_LIBRARIES);
 	}
 
 	private class LibrariesAdapter implements IDialogFieldListener, ITreeListAdapter {

@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,7 +33,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CPathContainerEntryPage extends CPathBasePage {
 
@@ -119,7 +119,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		setControl(composite);
 		
-		WorkbenchHelp.setHelp(composite, ICHelpContextIds.PROJECT_PATHS_CONTAINERS);
+		CUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_PATHS_CONTAINERS);
 	}
 
 	private class ContainersAdapter implements IDialogFieldListener, ITreeListAdapter {

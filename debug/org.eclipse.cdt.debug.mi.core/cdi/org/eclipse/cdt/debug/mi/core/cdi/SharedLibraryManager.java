@@ -295,8 +295,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
-			((SharedLibrary)libs[i]).getMIShared().setSymbolsRead(true);
-			mi.fireEvent(new MISharedLibChangedEvent(libs[i].getFileName()));
+			// Do not do this, error are not propagate by the CLI "shared command
+			// So we have to manually recheck all the shared with "info shared"
+			//((SharedLibrary)libs[i]).getMIShared().setSymbolsRead(true);
+			//mi.fireEvent(new MISharedLibChangedEvent(libs[i].getFileName()));
+			update();
 		}
 	}
 

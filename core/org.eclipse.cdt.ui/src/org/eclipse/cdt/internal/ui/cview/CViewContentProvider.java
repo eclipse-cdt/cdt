@@ -84,26 +84,26 @@ public class CViewContentProvider extends CElementContentProvider {
 				extras = o;
 			}
 		}
-		try {
-			ILibraryReference[] libRefs = cproject.getLibraryReferences();
-			if (libRefs != null && libRefs.length > 0) {
-				Object[] o = new Object[] {new LibraryRefContainer(cproject)};
-				if (extras != null && extras.length > 0) {
-					extras = concatenate(extras, o);
-				} else {
-					extras = o;
-				}
+		LibraryRefContainer libRefCont = new LibraryRefContainer(cproject);
+		Object[] libRefs = libRefCont.getChildren(cproject);
+		if (libRefs != null && libRefs.length > 0) {
+			Object[] o = new Object[] {libRefCont};
+			if (extras != null && extras.length > 0) {
+				extras = concatenate(extras, o);
+			} else {
+				extras = o;
 			}
-			IIncludeReference[] incRefs = cproject.getIncludeReferences();
-			if (incRefs != null && incRefs.length > 0) {
-				Object[] o = new Object[] {new IncludeRefContainer(cproject)};
-				if (extras != null && extras.length > 0) {
-					extras = concatenate(extras, o);
-				} else {
-					extras = o;
-				}
+		}
+		
+		IncludeRefContainer incRefCont = new IncludeRefContainer(cproject);
+		Object[] incRefs = incRefCont.getChildren(cproject);
+		if (incRefs != null && incRefs.length > 0) {
+			Object[]  o = new Object[] {incRefCont};
+			if (extras != null && extras.length > 0) {
+				extras = concatenate(extras, o);
+			} else {
+				extras = o;
 			}
-		} catch (CModelException e) {
 		}
 		return extras;
 	}
@@ -112,7 +112,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	 */
 	public Object internalGetParent(Object element) {
 		// since we insert logical containers we have to fix
-		// up the parent for includereference so that they refer
+		// up the parent for {IInclude,ILibrary}Reference so that they refer
 		// to the container and containers refere to the project
 		Object parent = super.internalGetParent(element);
 		if (element instanceof IIncludeReference) {
@@ -121,6 +121,12 @@ public class CViewContentProvider extends CElementContentProvider {
 			}
 		} else if (element instanceof IncludeRefContainer) {
 			parent = ((IncludeRefContainer)element).getCProject();
+		} if (element instanceof ILibraryReference) {
+			if (parent instanceof ICProject) {
+				parent = new LibraryRefContainer((ICProject)parent);
+			}
+		} else if (element instanceof LibraryRefContainer) {
+			parent = ((LibraryRefContainer)element).getCProject();
 		}
 		return parent;
 	}

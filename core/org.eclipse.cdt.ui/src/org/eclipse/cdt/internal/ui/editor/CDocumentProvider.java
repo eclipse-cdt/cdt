@@ -391,7 +391,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			super(resource);
 		}
 		
-		public void setCompilationUnit(ITranslationUnit unit)  {
+		public void setTranslationUnit(ITranslationUnit unit)  {
 			fTranslationUnit= unit;
 		}
 		
@@ -825,7 +825,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 		if (tuInfo.fModel instanceof TranslationUnitAnnotationModel) {
 			TranslationUnitAnnotationModel model= (TranslationUnitAnnotationModel) tuInfo.fModel;
-			model.setCompilationUnit(tuInfo.fCopy);
+			model.setTranslationUnit(tuInfo.fCopy);
 		}
 		if (tuInfo.fModel != null)
 			tuInfo.fModel.addAnnotationModelListener(fGlobalAnnotationModelListener);

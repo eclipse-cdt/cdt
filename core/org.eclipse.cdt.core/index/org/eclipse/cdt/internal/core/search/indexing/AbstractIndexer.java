@@ -543,8 +543,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			prefix = ENUMTOR_REF;
 		} else if( limitTo == DECLARATIONS ){
 			prefix = ENUMTOR_DECL;
-		} else {
+		} else if (limitTo == ALL_OCCURRENCES){
 			return ENUMTOR_ALL;
+		}
+		else {
+			//Definitions
+			return "noEnumtorDefs".toCharArray();
 		}
 		
 		return bestPrefix( prefix, (char)0, enumeratorName, containingTypes, matchMode, isCaseSensitive );

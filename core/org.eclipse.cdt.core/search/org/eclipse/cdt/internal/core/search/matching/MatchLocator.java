@@ -202,7 +202,6 @@ public class MatchLocator implements IMatchLocator{
 			IASTEnumerator enumerator = (IASTEnumerator) iter.next();
 			lastDeclaration = enumerator;
 			check ( DECLARATIONS, enumerator );
-			check ( DEFINITIONS, enumerator );
 		}  
 	}
 		

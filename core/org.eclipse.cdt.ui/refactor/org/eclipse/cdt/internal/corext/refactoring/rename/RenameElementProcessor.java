@@ -131,7 +131,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return name; 
 	}
 
-	public int getCurrentElementNameLength() {
+	private int getCurrentElementNameLength() {
 		if(fCElement == null)
 			return 0;	
 		String name = fCElement.getElementName();
@@ -142,7 +142,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return name.length(); 
 	}
 
-	public int getCurrentElementNameStartPos() {
+	private int getCurrentElementNameStartPos() {
 		if(fCElement == null)
 			return 0;	
 		String name = fCElement.getElementName();
@@ -152,15 +152,24 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		return ((CElement)fCElement).getIdStartPos(); 
 	}
 	
-	public String getElementQualifiedName(ICElement element) throws CModelException{
+	private String getElementQualifiedName(ICElement element) throws CModelException{
 		if(!eligibleForRefactoring(element)){
 			return "";
 		} else {
 			StringBuffer name = new StringBuffer();
 			if(element instanceof IFunctionDeclaration){
-				// add the whole signature
 				IFunctionDeclaration function = (IFunctionDeclaration)element;
+				if((element instanceof IMethodDeclaration) && ( ((IMethodDeclaration)element).isFriend() )){
+					// go up until you hit a namespace or a translation unit.
+					ICElement parent = (ICElement) element.getParent();
+					while (!(parent instanceof INamespace) && (!(parent instanceof ITranslationUnit) )){
+						parent = parent.getParent();
+					}
+					name.append(getElementQualifiedName(parent));										
+				}else {
+				// add the whole signature
 				name.append(getElementQualifiedName(element.getParent()));
+				}
 				name.append("::");
 				name.append(function.getSignature());
 			} else {
@@ -308,7 +317,11 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.checking")); //$NON-NLS-1$
 			if (pm.isCanceled())
 				throw new OperationCanceledException();
-						
+			
+			if (fReferences.length == 0){
+				result.addFatalError(RefactoringCoreMessages.getString("RenameTypeRefactoring.no_files"));
+			}
+			
 			if (result.hasFatalError())
 				return result;			
 			// more checks go here
@@ -562,7 +575,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		
 	private static ICElement findEnclosingElements(ICElement element, String newName) {
 		ICElement enclosing= element.getParent();
-		while (enclosing != null){
+		while ((enclosing != null) && (!(enclosing instanceof ITranslationUnit))){
 			if (newName.equals(enclosing.getElementName()))
 				return enclosing;
 			else 

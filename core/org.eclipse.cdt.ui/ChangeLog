@@ -1,3 +1,6 @@
+2004-06-16 Hoda Amer 
+	Fix for PR 66730: [Refactoring] Renaming a class does not change .cpp file.
+	
 2004-06-15 Bogdan Gheorghe
 	Fix for Bug 60490:  "Selected resource" option should only be enabled/disabled 
 	based on selections in the Navigator and C/C++ Projects views - search now

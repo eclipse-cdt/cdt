@@ -6,7 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.registers;
 
-import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.actions.ChangeRegisterValueAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowRegisterTypesAction;
@@ -18,6 +17,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -51,7 +51,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	/**
 	 * The model presentation used as the label provider for the tree viewer.
 	 */
-	private CDTDebugModelPresentation fModelPresentation;
+	private IDebugModelPresentation fModelPresentation;
 
 	protected static final String VARIABLES_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Registers"; //$NON-NLS-1$
 
@@ -60,7 +60,6 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	 */
 	protected Viewer createViewer( Composite parent )
 	{
-		fModelPresentation = new CDTDebugModelPresentation();
 		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 		
 		// add tree viewer
@@ -167,6 +166,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	 */
 	public void dispose()
 	{
+		fModelPresentation.dispose();
 		getSite().getPage().removeSelectionListener( ICDebugUIConstants.ID_REGISTERS_VIEW, this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 		super.dispose();
@@ -188,7 +188,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	{
 		if ( fModelPresentation == null ) 
 		{
-			fModelPresentation = new CDTDebugModelPresentation();
+			fModelPresentation = DebugUITools.newDebugModelPresentation();
 		}
 		return fModelPresentation;
 	}

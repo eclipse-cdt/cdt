@@ -334,7 +334,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (isWorkingCopy()) {
 			ITranslationUnit original = (ITranslationUnit) ((IWorkingCopy)this).getOriginalElement();
 			// might be IResource.NULL_STAMP if original does not exist
-			unitInfo.fTimestamp = ((IFile) original.getResource()).getModificationStamp();
+			IResource r = original.getResource();
+			if (r != null && r instanceof  IFile) {
+				unitInfo.fTimestamp = ((IFile) r).getModificationStamp();
+			}
 		}
 		
 		return unitInfo.isStructureKnown();

@@ -22,8 +22,12 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.cdt.core.tests.FailingTest;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -35,7 +39,7 @@ import junit.framework.TestSuite;
  * @author aniefer
  */
 public class ContentAssistRegressionTests extends BaseTestFramework {
-
+    static boolean 					disabledHelpContributions = false;
     public ContentAssistRegressionTests()
     {
         super();
@@ -48,7 +52,23 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
         super(name);
     }
        
-    protected ICompletionProposal[] getResults( IFile file, int offset ) throws Exception { 
+    private void disableContributions (){
+        //disable the help books so we don't get proposals we weren't expecting
+        final IProject proj = project;
+        CHelpBookDescriptor helpBooks[];
+		helpBooks = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
+			public IProject getProject(){return proj;}
+			public ITranslationUnit getTranslationUnit(){return null;}
+			}
+		);
+		for( int i = 0; i < helpBooks.length; i++ ){
+		    if( helpBooks[i] != null )
+		        helpBooks[i].enable( false );
+		}
+    }
+    protected ICompletionProposal[] getResults( IFile file, int offset ) throws Exception {
+        if( !disabledHelpContributions )
+            disableContributions();
 	    ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create( file );
 		String buffer = tu.getBuffer().getContents();
 		IWorkingCopy wc = null;

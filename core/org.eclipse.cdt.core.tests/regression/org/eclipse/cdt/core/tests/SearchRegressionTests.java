@@ -99,8 +99,8 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     protected Set search( ICSearchPattern pattern, ICElement[] list ) {
     	//leave default scope as workspace
 		try {
-			ICSearchScope scope = SearchEngine.createCSearchScope(list);
-			searchEngine.search( workspace, pattern, scope, resultCollector, false );
+			ICSearchScope searchScope = SearchEngine.createCSearchScope(list);
+			searchEngine.search( workspace, pattern, searchScope, resultCollector, false );
 		} catch (InterruptedException e) {
 		    //boo
 		}
@@ -386,7 +386,9 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
 //  test SE60b var all
     public void testVarReference() throws Exception {
         Writer writer = new StringWriter();
-        	writer.write("#include <string.h>										\n" ); //$NON-NLS-1$
+        //	writer.write("#include <string.h>										\n" ); //$NON-NLS-1$
+        	writer.write("int strlen( const char * );           					\n" ); //$NON-NLS-1$
+        	writer.write("char * strcpy( char *, const char * );   					\n" ); //$NON-NLS-1$
         	writer.write("enum ZooLocs {ZOOANIMAL, BEAR, PANDA};					\n" ); //$NON-NLS-1$
         	writer.write("namespace zoo {											\n" ); //$NON-NLS-1$
        		writer.write("  int foo=1;//vardefn, vardecl							\n" ); //$NON-NLS-1$

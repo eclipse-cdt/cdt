@@ -21,13 +21,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.FileManager;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -58,18 +54,6 @@ abstract public class BaseTestFramework extends TestCase {
 	        
 	            project = cproject.getProject();
 	            project.setSessionProperty(IndexManager.activationKey, Boolean.FALSE );
-	            
-	            //disable the help books so we don't get proposals we weren't expecting
-	            CHelpBookDescriptor helpBooks[];
-				helpBooks = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
-					public IProject getProject(){return project;}
-					public ITranslationUnit getTranslationUnit(){return null;}
-					}
-				);
-				for( int i = 0; i < helpBooks.length; i++ ){
-				    if( helpBooks[i] != null )
-				        helpBooks[i].enable( false );
-				}
 	        } catch ( CoreException e ) {
 	            /*boo*/
 	        }

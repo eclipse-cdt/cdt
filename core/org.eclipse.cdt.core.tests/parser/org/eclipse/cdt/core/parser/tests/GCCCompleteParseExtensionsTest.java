@@ -208,4 +208,18 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
     }
+    
+    public void testBug75401() throws Exception
+    {
+        Writer writer = new StringWriter();
+        writer.write( "#define va_arg __builtin_va_arg      \n"); //$NON-NLS-1$
+        writer.write( "#define va_list __builtin_va_list    \n"); //$NON-NLS-1$
+        writer.write( "void main( int argc, char** argv ) { \n"); //$NON-NLS-1$
+        writer.write( "   va_list v;                        \n"); //$NON-NLS-1$
+        writer.write( "   long l = va_arg( v, long );       \n"); //$NON-NLS-1$
+        writer.write( "}                                    \n"); //$NON-NLS-1$
+        
+        parse( writer.toString() );
+    }
+    
 }

@@ -90,6 +90,11 @@ public class GCCScannerExtension implements IScannerExtension {
 			emptyCharArray, 
 			new char[][] { "arg".toCharArray() } ); //$NON-NLS-1$
 
+	private static final FunctionStyleMacro __builtin_va_arg 
+		= new FunctionStyleMacro( 
+		        "__builtin_va_arg".toCharArray(), //$NON-NLS-1$
+		        "*(type *)ap".toCharArray(), //$NON-NLS-1$
+		        new char[][] { "ap".toCharArray(), "type".toCharArray() } );  //$NON-NLS-1$//$NON-NLS-2$
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#setupBuiltInMacros()
 	 */
@@ -109,6 +114,7 @@ public class GCCScannerExtension implements IScannerExtension {
 		scannerData.getRealDefinitions().put(__complex__.name, __complex__ );
 		scannerData.getRealDefinitions().put(__imag__.name, __imag__ );
 		scannerData.getRealDefinitions().put(__real__.name, __real__ );
+		scannerData.getRealDefinitions().put( __builtin_va_arg.name, __builtin_va_arg );
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
 			scannerData.getRealDefinitions().put(__asm__.name, __asm__);
 		else

@@ -17,6 +17,9 @@
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.cdt.core.tests"/>
@@ -36,6 +39,48 @@
          class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
          id="org.eclipse.cdt.ui.tests.chelp.extension.3"/>
 
+   </extension>
+   
+      <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="org.eclipse.cdt.ui.tests.DOMAST.DOMAST"
+            icon="icons/sample.gif"
+            category="org.eclipse.cdt.ui.views"
+            name="DOM AST"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            targetID="org.eclipse.cdt.ui.CView"
+            id="org.eclipse.cdt.ui.CView">
+         <action
+               label="Show in DOM AST"
+               class="org.eclipse.cdt.ui.tests.DOMAST.OpenDOMViewAction"
+               menubarPath="additions"
+               id="org.eclipse.cdt.ui.tests.DOMAST.OpenDOMViewAction"/>
+         <visibility>
+         	<or>
+				<objectState name="extension" value="cpp"/>
+				<objectState name="extension" value="c"/>				         	
+         	</or>
+         </visibility>
+      </viewerContribution>
    </extension>
 
 

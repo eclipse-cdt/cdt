@@ -53,19 +53,16 @@ public class CBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */	
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {	
-		boolean isFullBuild= (kind == IncrementalProjectBuilder.FULL_BUILD);
-		if (isFullBuild) {
-			invokeMake(true, monitor);
-		} else {
-			/* Take the code in the QNX Builder todo project dependencies.  */
-			invokeMake(false, monitor);
+		boolean isClean = invokeMake((kind == IncrementalProjectBuilder.FULL_BUILD), monitor);
+		if ( isClean ) {
+			forgetLastBuiltState();
 		}
-		forgetLastBuiltState();
-		return null;
+		return getProject().getReferencedProjects();
 	}
 	
 	
-	private void invokeMake(boolean fullBuild, IProgressMonitor monitor) {
+	private boolean invokeMake(boolean fullBuild, IProgressMonitor monitor) {
+		boolean isClean = false;
 		IProject currProject= getProject();
 		SubProgressMonitor subMonitor = null;
 
@@ -78,15 +75,9 @@ public class CBuilder extends ACBuilder {
 			CProjectNature nature= (CProjectNature)currProject.getNature(CProjectNature.C_NATURE_ID);
 			IPath makepath= nature.getBuildCommand();
 			if (!makepath.isEmpty()) {
-				// clear console if requested
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(currProject);
-/*
-				if (BuildInfoFactory.create().isClearBuildConsole()
-					&& MakeUtil.getSessionConsoleMode(currProject)) {
-					console.clear();
-				}
-*/				
+
 				ConsoleOutputStream cos = console.getOutputStream();
 				
 				// remove all markers for this project
@@ -94,7 +85,8 @@ public class CBuilder extends ACBuilder {
 
 				IPath workingDirectory= getWorkingDirectory();
 				String[] userArgs= parseArguments(fullBuild, nature.getIncrBuildArguments());				
-
+				if ( userArgs.length != 0 && userArgs[userArgs.length-1].equals("clean") )
+					isClean = true;
 				// Before launching give visual cues via the monitor
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Invoking Command: " + makepath.toString());
@@ -156,6 +148,7 @@ public class CBuilder extends ACBuilder {
 			CCorePlugin.log(e);
 		}
 		monitor.done();
+		return isClean;
 	}
 	
 	private String[] parseArguments(boolean fullBuild, String override_args) {

@@ -23,3 +23,12 @@
 		  refernce core plugin and nature classes for ID.
 		- removed unsed methods in model for adding/removing
 		  natures.
+
+2002-10-15 David Inglis
+	* src/../internal/core/CBuilder.java
+	
+	Fixed builder to return referenced projects so that eclipse 
+	builder will build increamentaly build projects when they change.
+	Handle "clean" target as special so the build state is cleared allowing
+	the next increamental build to come in as a full build.
+	

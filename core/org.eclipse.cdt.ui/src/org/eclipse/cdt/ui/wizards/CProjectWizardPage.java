@@ -323,6 +323,13 @@ public class CProjectWizardPage extends WizardPage {
 		String locationFieldContents = locationPathField.getText();
 	
 		if (!locationFieldContents.equals("")) {//$NON-NLS-1$
+			// Give a chance to the wizard to do its own validation
+			IStatus validLocation = wizard.isValidLocation(projectFieldContents);
+			if (!validLocation.isOK()) {
+				setErrorMessage(validName.getMessage());
+				return false;		
+			}
+
 			IPath path = new Path("");//$NON-NLS-1$
 			if (!path.isValidPath(locationFieldContents)) {
 				setErrorMessage(CUIPlugin.getResourceString("CProjectWizardPage.locationError")); //$NON-NLS-1$

@@ -622,4 +622,17 @@ public class NullParserCallback implements IParserCallback {
 	public void expressionName(Object expression) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#startBitfield(java.lang.Object)
+	 */
+	public Object startBitfield(Object declarator) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#endBitfield(java.lang.Object)
+	 */
+	public void endBitfield(Object bitfield) {
+	}
+
 }

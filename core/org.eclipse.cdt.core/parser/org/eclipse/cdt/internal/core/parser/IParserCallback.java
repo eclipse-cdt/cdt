@@ -138,5 +138,8 @@ public interface IParserCallback {
 	public void		templateTypeParameterAbort( Object typeParm );
 	public void 	templateTypeParameterInitialTypeId( Object typeParm );
 	public void 	templateTypeParameterEnd( Object typeParm );
+
+	public Object 	startBitfield(Object declarator);
+	public void  	endBitfield(Object bitfield);
 	
 }

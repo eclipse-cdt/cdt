@@ -1654,5 +1654,44 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( tu.getDeclarations().size(), 1 );
 	}
 
+	public void testBug36852() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "int CBT::senseToAllRect( double id_standardQuot = DOSE, double id_minToleranz =15.0,\n" );  
+		code.write( "double id_maxToleranz = 15.0, unsigned int iui_minY = 0, \n" );
+		code.write( "unsigned int iui_maxY = HEIGHT );\n" );
+		TranslationUnit tu = parse( code.toString() );
+	}
+
+	public void testBug36764() throws Exception
+	{
+		TranslationUnit tu = parse( "struct{ int x : 4; int y : 8; };" );
+		assertEquals( tu.getDeclarations().size(), 1 );
+		assertEquals( ((ClassSpecifier)((SimpleDeclaration)tu.getDeclarations().get(0)).getTypeSpecifier()).getDeclarations().size(), 2 );   
+	}
+
+	public void testBug36702() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "void mad_decoder_init(struct mad_decoder *, void *,\n" ); 
+		code.write( "			  enum mad_flow (*)(void *, struct mad_stream *),\n" ); 
+		code.write( "			  enum mad_flow (*)(void *, struct mad_header const *),\n" ); 
+		code.write( "			  enum mad_flow (*)(void *,\n" ); 
+		code.write( "					struct mad_stream const *,\n" ); 
+		code.write( "					struct mad_frame *),\n" ); 
+		code.write( "			  enum mad_flow (*)(void *,\n" ); 
+		code.write( "					struct mad_header const *,\n" ); 
+		code.write( "					struct mad_pcm *),\n" ); 
+		code.write( "			  enum mad_flow (*)(void *,\n" ); 
+		code.write( "					struct mad_stream *,\n" ); 
+		code.write( "					struct mad_frame *),\n" ); 
+		code.write( "			  enum mad_flow (*)(void *, void *, unsigned int *)\n" ); 
+		code.write( ");\n" );  
+		
+		TranslationUnit tu = parse( code.toString() );
+		
+	}
+
+
 }
 

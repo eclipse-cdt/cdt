@@ -891,13 +891,15 @@ c, quick);
 						catch( Backtrack bt )
 						{
 							elaboratedTypeSpecifier(decl);
-							return;
+							flags.setEncounteredTypename(true);
+							break;
 						}
 					}
 					else
 					{
 						elaboratedTypeSpecifier(decl);
-						return;
+						flags.setEncounteredTypename(true);
+						break;
 					}
 				case Token.t_enum:
 					if( !parm )
@@ -905,19 +907,21 @@ c, quick);
 						try
 						{
 							enumSpecifier(decl);
-							return;
+							break;
 						}
 						catch( Backtrack bt )
 						{
 							// this is an elaborated class specifier
 							elaboratedTypeSpecifier(decl);
-							return;
+							flags.setEncounteredTypename(true);
+							break;
 						}
 					}
 					else
 					{
 						elaboratedTypeSpecifier(decl);
-						return;
+						flags.setEncounteredTypename(true);
+						break;
 					}
 				default:
 					break declSpecifiers;
@@ -1428,6 +1432,16 @@ c, quick);
 							try{ callback.arrayDeclaratorEnd( array );} catch( Exception e ) {}
 						}
 						continue;
+					case Token.tCOLON:
+						consume( Token.tCOLON );
+						Object bitfield = null; 
+						try{ bitfield = callback.startBitfield( declarator );} catch( Exception e ) {}
+						Object expression = null; 
+						try{ expression = callback.expressionBegin( bitfield );} catch( Exception e ) {} 
+						constantExpression(expression);
+						try{ callback.expressionEnd( expression ); } catch( Exception e ) {}
+						try{ callback.endBitfield( bitfield );} catch( Exception e ) {}
+						
 					default:
 						break;
 				}
@@ -2337,7 +2351,9 @@ c, quick);
 		switch (type) {
 			// TO DO: we need more literals...
 			case Token.tINTEGER:
+			case Token.tFLOATINGPT:
 			case Token.tSTRING:
+			case Token.tLSTRING:
 			case Token.t_false: 
 			case Token.t_true:			
 				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}

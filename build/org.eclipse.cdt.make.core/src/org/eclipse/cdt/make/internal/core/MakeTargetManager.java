@@ -61,12 +61,12 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	public IMakeTarget createTarget(IProject project, String name, String targetBuilderID) throws CoreException {
 		return new MakeTarget(this, project, targetBuilderID, name);
 	}
-	
+
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
-		if ( target.getContainer() != null) {
+		if (target.getContainer() != null) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_temporary_target"), null)); //$NON-NLS-1$
 		}
 		IProject project = container.getProject();
@@ -74,8 +74,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
-		((MakeTarget)target).setContainer(container);
-		projectTargets.add((MakeTarget)target);
+		((MakeTarget) target).setContainer(container);
+		projectTargets.add((MakeTarget) target);
 		writeTargets(projectTargets);
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
 	}
@@ -86,9 +86,10 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
-		projectTargets.remove(target);
-		writeTargets(projectTargets);
-		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_REMOVED, target));
+		if (projectTargets.remove(target)) {
+			writeTargets(projectTargets);
+			notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_REMOVED, target));
+		}
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
@@ -204,7 +205,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 				int flags = delta.getFlags();
 				int deltaKind = delta.getKind();
 				if (deltaKind == IResourceDelta.ADDED) {
-					if (hasTargetBuilder(project)) {
+					if (hasTargetBuilder(project) && !fProjects.contains(project)) {
 						fProjects.add(project);
 						notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 					}
@@ -240,7 +241,9 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected void writeTargets(ProjectTargets projectTargets) throws CoreException {
-		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(projectTargets.getProject().getName()).addFileExtension(TARGETS_EXT);
+		IPath targetFilePath =
+			MakeCorePlugin.getDefault().getStateLocation().append(projectTargets.getProject().getName()).addFileExtension(
+				TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
 		try {
 			FileOutputStream file = new FileOutputStream(targetFile);
@@ -253,7 +256,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	protected ProjectTargets readTargets(IProject project) {
-		IPath targetFilePath = MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
+		IPath targetFilePath =
+			MakeCorePlugin.getDefault().getStateLocation().append(project.getName()).addFileExtension(TARGETS_EXT);
 		File targetFile = targetFilePath.toFile();
 		ProjectTargets projectTargets = null;
 		if (targetFile.exists()) {
@@ -262,8 +266,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			} catch (FileNotFoundException e) {
 			}
 		}
-		if ( projectTargets == null) {
-		 	projectTargets = new ProjectTargets(this, project);
+		if (projectTargets == null) {
+			projectTargets = new ProjectTargets(this, project);
 		}
 		projectMap.put(project, projectTargets);
 		return projectTargets;

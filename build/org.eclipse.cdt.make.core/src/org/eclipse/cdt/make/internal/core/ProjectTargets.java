@@ -172,15 +172,16 @@ public class ProjectTargets {
 		return false;
 	}
 
-	public void remove(IMakeTarget target) {
+	public boolean remove(IMakeTarget target) {
 		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list == null || !list.contains(target)) {
-			return;
+			return false;
 		}
-		list.remove(target);
+		boolean found = list.remove(target);
 		if (list.size() == 0) {
 			targetMap.remove(list);
 		}
+		return found;
 	}
 
 	public IProject getProject() {

@@ -168,11 +168,6 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	private IDocument fDetailDocument;
 	
 	/**
-	 * The configuration being used in the details area
-	 */
-	private SourceViewerConfiguration fSourceViewerConfiguration;
-
-	/**
 	 * Selection provider for this view.
 	 */
 	private ModulesViewSelectionProvider fSelectionProvider = new ModulesViewSelectionProvider();
@@ -352,6 +347,7 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 		detailsViewer.setDocument( getDetailDocument() );
 		detailsViewer.getTextWidget().setFont( JFaceResources.getFont( IInternalCDebugUIConstants.DETAIL_PANE_FONT ) );
 		getDetailDocument().addDocumentListener( getDetailDocumentListener() );
+		detailsViewer.configure( new SourceViewerConfiguration() );
 		detailsViewer.setEditable( false );
 		Control control = detailsViewer.getControl();
 		GridData gd = new GridData( GridData.FILL_BOTH );

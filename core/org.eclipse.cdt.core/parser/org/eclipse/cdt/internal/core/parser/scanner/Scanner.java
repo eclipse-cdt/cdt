@@ -1215,9 +1215,8 @@ public class Scanner implements IScanner {
 				scannerExtension.handlePreprocessorDirective( token, getRestOfPreprocessorLine() );
 			else
 			{
-				StringBuffer buffer = new StringBuffer( "#"); //$NON-NLS-1$
-				buffer.append( token );
-				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+				if( passOnToClient )
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, token, beginningOffset, false, true );
 			}
 			return null;
 		}
@@ -1510,7 +1509,6 @@ public class Scanner implements IScanner {
 
 		while (c != NOCHAR) {
 			if ( ! passOnToClient ) {
-							
 				while (c != NOCHAR && c != '#' ) 
 				{
 					c = getChar();

@@ -1579,4 +1579,21 @@ public class ScannerTestCase extends BaseScannerTest
     	validateEOF();
 
     }
+    
+    public void testBug56517() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#if 0 \n");
+    	writer.write( "char * x = \"#boo\";\n" );
+    	writer.write( "#endif\n");
+    	initializeScanner( writer.toString() );
+    	validateEOF();
+//    	validateToken( IToken.t_char);
+//    	validateToken( IToken.tSTAR);
+//    	validateIdentifier( "x");
+//    	validateToken( IToken.tASSIGN );
+//    	validateString( "#boo");
+//    	validateToken(IToken.tSEMI);
+//    	validateEOF();
+	}
 }

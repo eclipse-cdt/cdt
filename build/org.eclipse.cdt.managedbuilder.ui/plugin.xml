@@ -64,10 +64,6 @@
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
          </filter>
       </page>
-   </extension>
-       
-   <extension
-         point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
@@ -76,10 +72,6 @@
             class="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildPropertyPage"
             id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
       </page>
-   </extension>
-      
-   <extension
-         point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IFile"
             adaptable="true"
@@ -89,7 +81,7 @@
             id="org.eclipse.cdt.managedbuilder.ui.properties.ResourceBuildProperties">
       </page>
    </extension>
-      
+       
 <!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"
@@ -490,6 +482,7 @@
       <tool
             natureFilter="cnature"
             sources="o"
+			outputs=""
             name="%ToolName.linker.macosx.c"
             outputFlag="-o"
             command="gcc"
@@ -603,6 +596,7 @@
       <tool
             natureFilter="ccnature"
             sources="o"
+			outputs=""
             name="%ToolName.linker.macosx.cpp"
             outputFlag="-o"
             command="g++"

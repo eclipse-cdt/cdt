@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+
 /**
  * 
  * Represents a signal.
@@ -49,5 +51,5 @@ public interface ICDISignal extends ICDIObject {
 	 * 
 	 * Method signal.
 	 */
-	void signal();
+	void signal() throws CDIException ;
 }

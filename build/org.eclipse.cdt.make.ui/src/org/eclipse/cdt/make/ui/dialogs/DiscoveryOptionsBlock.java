@@ -129,6 +129,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			try {
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
 			} catch (CoreException e) {
+				// missing builder information (builder disabled or legacy project) 
 				fInitialized = false;
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 			}
@@ -147,8 +148,8 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		// Missing builder info
-		if (!fInitialized) {
+		if (!fInitialized && !needsSCNature) {
+			// Missing builder info on a non-legacy project
 			return;
 		}
 		if (monitor == null) {
@@ -233,8 +234,8 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
-		// Missing builder info
-		if (!fInitialized) {
+		if (!fInitialized && !needsSCNature) {
+			// Missing builder info on a non-legacy project
 			return;
 		}
 		IScannerConfigBuilderInfo info;
@@ -310,7 +311,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		try {
 			if (project != null && project.hasNature(MakeProjectNature.NATURE_ID)
 					&& !project.hasNature(ScannerConfigNature.NATURE_ID)) {
-				needsSCNature = true; // an old project
+				needsSCNature = true; // legacy project
 			}
 		} catch (CoreException e) {
 			showMissingBuilder = true;

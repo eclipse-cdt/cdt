@@ -18,8 +18,10 @@ import java.util.NoSuchElementException;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 
 
@@ -38,6 +40,20 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	{
 		return macros.iterator();
 	}
+	
+		
+	public void exitMethodBody( IASTMethod method )
+	{
+		method.setHasFunctionBody( true );
+	}
+
+	
+	public void exitFunctionBody( IASTFunction function )
+	{
+		function.setHasFunctionBody( true );
+	}
+	
+	
 	
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit )
 	{

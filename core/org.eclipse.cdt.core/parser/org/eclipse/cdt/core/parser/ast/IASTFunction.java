@@ -26,6 +26,11 @@ public interface IASTFunction extends IASTScope, IASTOffsetableNamedElement, IAS
 
 	public IASTAbstractDeclaration getReturnType();   
 	public Iterator getParameters();
-	public IASTExceptionSpecification getExceptionSpec();  
+	public IASTExceptionSpecification getExceptionSpec();
+	/**
+	 * @param b
+	 */
+	public void setHasFunctionBody(boolean b);
+	public boolean hasFunctionBody();
 
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
-import org.eclipse.cdt.internal.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -52,6 +52,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     
+    private boolean hasFunctionBody = false;
     private final IASTQualifiedNameElement qualifiedName; 
     private final IASTTemplate ownerTemplateDeclaration;
     private NamedOffsets offsets = new NamedOffsets();
@@ -198,4 +199,16 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
     	requestor.exitFunctionBody( this );
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFunction#setHasFunctionBody(boolean)
+	 */
+	public void setHasFunctionBody(boolean b) {
+		hasFunctionBody = true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFunction#hasFunctionBody()
+	 */
+	public boolean hasFunctionBody() {
+		return hasFunctionBody;
+	}
 }

@@ -478,5 +478,25 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 	    assertTrue( node instanceof IASTClassSpecifier );
 	    assertEquals( ((IASTClassSpecifier)node).getName(), "A" ); //$NON-NLS-1$
 	}
+	
+	public void testBug72814() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write( "namespace N{                               \n"); //$NON-NLS-1$
+	    writer.write( "   template < class T > class AAA { T _t };\n"); //$NON-NLS-1$
+	    writer.write( "}                                          \n"); //$NON-NLS-1$
+	    writer.write( "N::AAA<int> a;                             \n"); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( "AAA<int>" ); //$NON-NLS-1$
+	    IASTNode node = parse( code, startIndex, startIndex + 3 );
+	    
+	    assertTrue( node instanceof IASTClassSpecifier );
+	    assertEquals( ((IASTClassSpecifier)node).getName(), "AAA" ); //$NON-NLS-1$
+	    
+	    node = parse( code, startIndex, startIndex + 8 );
+	    
+	    assertTrue( node instanceof IASTClassSpecifier );
+	    assertEquals( ((IASTClassSpecifier)node).getName(), "AAA" ); //$NON-NLS-1$
+	}
 }
 

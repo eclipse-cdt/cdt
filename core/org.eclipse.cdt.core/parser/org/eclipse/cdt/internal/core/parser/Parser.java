@@ -6620,7 +6620,7 @@ public class Parser implements IParserData, IParser
 			// duple is a sub-duple of greaterContextDuple
 			if( duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
 				finalDuple = duple; //	=> do not use greaterContextDuple
-			else if( duple.getLastToken().equals( greaterContextDuple.getLastToken() ))
+			else if( duple.getLastSegment().getFirstToken().equals( greaterContextDuple.getLastSegment().getFirstToken() ))
 				finalDuple = greaterContextDuple; //  => use greaterContextDuple
 			else
 				throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );

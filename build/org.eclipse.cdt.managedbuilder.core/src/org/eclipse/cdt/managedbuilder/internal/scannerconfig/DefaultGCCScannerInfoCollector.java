@@ -42,11 +42,9 @@ public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollec
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.List)
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.Map)
 	 */
-	public void contributeToScannerConfig(IResource resource, List includes,
-			List symbols, List targetSpecificOptions) {
-
+	public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
 		// This method will be called by the parser each time there is a new value
 		Iterator pathIter = includes.listIterator();
 		while (pathIter.hasNext()) {
@@ -63,6 +61,7 @@ public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollec
 			String value = (macroTokens.length > 1) ? macroTokens[1].trim() : new String();
 			getDefinedSymbols().put(macro, value);
 		}	
+		
 	}
 
 	/* (non-Javadoc)
@@ -92,4 +91,5 @@ public class DefaultGCCScannerInfoCollector implements IManagedScannerInfoCollec
 		this.project = project;
 		
 	}
+
 }

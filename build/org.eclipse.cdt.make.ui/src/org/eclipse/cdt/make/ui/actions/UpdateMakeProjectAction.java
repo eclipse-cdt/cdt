@@ -194,10 +194,11 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	protected static void doProjectUpdate(IProgressMonitor monitor, IProject[] project) throws CoreException {
-		monitor.beginTask("Updating make Projects...", project.length * 3);
+		monitor.beginTask("Updating make Projects...", project.length * 4);
 		try {
 			for (int i = 0; i < project.length; i++) {
 				// remove old builder
+				project[i].refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(monitor, 1));
 				MakeProjectNature.removeFromBuildSpec(
 					project[i],
 					MakeCorePlugin.OLD_BUILDER_ID,

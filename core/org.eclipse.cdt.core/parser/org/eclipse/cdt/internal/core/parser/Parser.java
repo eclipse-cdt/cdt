@@ -13,7 +13,9 @@ import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
+import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -34,6 +36,8 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.internal.core.model.Util;
+
+
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
  * ANSI C and C++.
@@ -57,7 +61,10 @@ public class Parser implements IParser
     private boolean cppNature = true; // true for C++, false for C
     private ISourceElementRequestor requestor = null;
     // new callback mechanism
-    private IASTFactory astFactory = null; // ast factory 
+    private IASTFactory astFactory = null; // ast factory
+    
+    private IProblemReporter problemReporter = null;
+    private ITranslationResult unitResult = null; 
     /**
      * This is the single entry point for setting parsePassed to 
      * false, and also making note what token offset we failed upon. 
@@ -78,10 +85,12 @@ public class Parser implements IParser
      * @param c				IParserCallback instance that will receive callbacks as we parse
      * @param quick			Are we asking for a high level parse or not? 
      */
-    public Parser(IScanner s, IParserCallback c, ParserMode m)
+    public Parser(IScanner s, IParserCallback c, ParserMode m, IProblemReporter problemReporter, ITranslationResult unitResult)
     {
         callback = c;
         scanner = s;
+        this.problemReporter = problemReporter;
+        this.unitResult = unitResult;
         if (c instanceof ISourceElementRequestor)
             setRequestor((ISourceElementRequestor)c);
         mode = m;
@@ -90,8 +99,11 @@ public class Parser implements IParser
         scanner.setCallback(c);
         scanner.setASTFactory(astFactory);
     }
+    
+	// counter that keeps track of the number of times Parser.parse() is called
     private static int parseCount = 0;
-    // counter that keeps track of the number of times Parser.parse() is called 
+    
+     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#parse()
      */
@@ -99,6 +111,7 @@ public class Parser implements IParser
     {
         long startTime = System.currentTimeMillis();
         translationUnit();
+        onParseEnd();
         // For the debuglog to take place, you have to call
         // Util.setDebugging(true);
         // Or set debug to true in the core plugin preference 
@@ -111,6 +124,11 @@ public class Parser implements IParser
                 + (parsePassed ? "" : " - parse failure"));
         return parsePassed;
     }
+    
+    public void onParseEnd() {
+        scanner.onParseEnd();
+    }
+        
     /**
      * This is the top-level entry point into the ANSI C++ grammar.  
      * 

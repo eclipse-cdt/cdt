@@ -26,8 +26,12 @@ public interface ICColorConstants {
 	String C_STRING= "c_string"; //$NON-NLS-1$
 	/* The color key for everthing in C code for which no other color is specified. */
 	String C_DEFAULT= "c_default"; //$NON-NLS-1$
-
-
+    
+    /**
+     * The color key for task tags in C comments
+     * (value <code>"c_comment_task_tag"</code>).
+     */
+    String TASK_TAG= "c_comment_task_tag"; //$NON-NLS-1$
 }
 
 

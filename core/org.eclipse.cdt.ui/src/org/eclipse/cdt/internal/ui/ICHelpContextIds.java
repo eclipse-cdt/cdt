@@ -37,6 +37,10 @@ public interface ICHelpContextIds {
 	public static final String PROJECT_PROPERTY_PAGE= PREFIX + "new_project_property_page_context";
 
 	public static final String PROJ_CONF_BLOCK= PREFIX + "new_proj_conf_block_context";
+    
+    public static final String TODO_TASK_INPUT_DIALOG= PREFIX + "todo_task_input_dialog_context"; //$NON-NLS-1$
+    public static final String TODO_TASK_PROPERTY_PAGE= PREFIX + "tasktags_property_page_context"; //$NON-NLS-1$
+    public static final String TODO_TASK_PREFERENCE_PAGE= PREFIX + "tasktags_preference_page_context"; //$NON-NLS-1$
 	
 	// Console view
 	public static final String CLEAR_CONSOLE_ACTION= PREFIX + "clear_console_action_context";

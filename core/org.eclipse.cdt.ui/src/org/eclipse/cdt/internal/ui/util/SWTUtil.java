@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
@@ -16,7 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
@@ -99,8 +107,16 @@ public class SWTUtil {
 			((GridData)gd).heightHint= getButtonHeigthHint(button);
 			((GridData)gd).widthHint= getButtonWidthHint(button);		 
 		}
-	}		
+	}
+	
+	public static int getTableHeightHint(Table table, int rows) {
+		if (table.getFont().equals(JFaceResources.getDefaultFont()))
+			table.setFont(JFaceResources.getDialogFont());
+		int result= table.getItemHeight() * rows + table.getHeaderHeight();
+		if (table.getLinesVisible())
+			result+= table.getGridLineWidth() * (rows - 1);
+		return result;		
+	}
 	
 
 }
-

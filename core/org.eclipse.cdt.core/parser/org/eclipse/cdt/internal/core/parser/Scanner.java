@@ -29,10 +29,13 @@ import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
+import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerContext;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ITranslationResult;
+import org.eclipse.cdt.core.parser.ITranslationOptions;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -47,8 +50,8 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
  */
 
 public class Scanner implements IScanner {
-
-	public Scanner(Reader reader, String filename, Map defns) {
+   
+	public Scanner(Reader reader, String filename, Map defns, IProblemReporter problemReporter, ITranslationResult unitResult) {
 		try {
 			//this is a hack to get around a sudden EOF experience
 			contextStack.push(
@@ -66,6 +69,14 @@ public class Scanner implements IScanner {
 		} 
 		if( defns != null )
 			definitions.putAll( defns );
+            
+        
+        this.problemReporter = problemReporter;
+        this.translationResult = unitResult;
+        
+        if (problemReporter != null && problemReporter.getOptions() != null) {
+			this.taskTagsInfo = new TaskTagsInfo(problemReporter.getOptions());
+        }
 	}
 
 
@@ -154,7 +165,7 @@ public class Scanner implements IScanner {
 				int next = getChar();
 				if (next == '/') {
 					// single line comment
-					skipOverTextUntilNewline();
+					skipOverSinglelineComment();
 					break;
 				} else if (next == '*') {
 					// multiline comment
@@ -497,8 +508,8 @@ public class Scanner implements IScanner {
 						c = getChar();
 						if( c == '/' )
 						{
-							while (c != '\n' && c != NOCHAR)
-								c = getChar();
+							skipOverSinglelineComment();
+							c = getChar();
 							continue;
 						}
 						else if( c == '*' )
@@ -1316,9 +1327,8 @@ public class Scanner implements IScanner {
 						c = getChar();
 						switch (c) {
 							case '/' :
+								skipOverSinglelineComment();
 								c = getChar();
-								while (c != '\n' && c != NOCHAR)
-									c = getChar();
 								continue;
 							case '*' :
 								skipOverMultilineComment();
@@ -1442,9 +1452,8 @@ public class Scanner implements IScanner {
                         c = getChar();
                         switch (c) {
                             case '/' :
-                                c = getChar();
-                                while (c != '\n' && c != NOCHAR)
-                                    c = getChar();
+								skipOverSinglelineComment();
+								c = getChar();
                                 continue;
                             case '*' :
                                 skipOverMultilineComment();
@@ -1651,8 +1660,9 @@ public class Scanner implements IScanner {
 						new StringReader(expression + ";"),
 						EXPRESSION,
 						definitions, 
-						null, ParserMode.COMPLETE_PARSE );
-				IParser parser = ParserFactory.createParser(trial, evaluator, ParserMode.COMPLETE_PARSE );
+						null, ParserMode.COMPLETE_PARSE,
+                        problemReporter, translationResult );
+				IParser parser = ParserFactory.createParser(trial, evaluator, ParserMode.COMPLETE_PARSE, problemReporter, translationResult );
 				parser.expression(null); 
 				
 				expressionEvalResult = evaluator.getResult();
@@ -1688,16 +1698,43 @@ public class Scanner implements IScanner {
 			}
 		}
 	}
+	
+	protected void skipOverSinglelineComment() throws ScannerException {
+		
+		StringBuffer comment = new StringBuffer("//");
+		int commentOffset = lastContext.getOffset() - lastContext.undoStackSize() - 2;
+		int commentStartLine = lastContext.getLine();
+		int c;
+		
+		loop:
+		for (;;) {
+			c = getChar();
+			comment.append((char)c);
+			switch (c) {
+				case NOCHAR :
+				case '\n' :
+					break loop;
+				default :
+					break;
+			}
+		}
+		
+		checkTaskTag(comment, commentOffset, commentStartLine);
+	}
 
 	protected boolean skipOverMultilineComment() throws ScannerException {
 		int state = 0;
 		boolean encounteredNewline = false;
+		StringBuffer comment = new StringBuffer("/*");
+		int commentOffset = lastContext.getOffset() - lastContext.undoStackSize() - 2;
+		int commentStartLine = lastContext.getLine();
 		// simple state machine to handle multi-line comments
 		// state 0 == no end of comment in site
 		// state 1 == encountered *, expecting /
 		// state 2 == we are no longer in a comment
 
 		int c = getChar();
+		comment.append((char)c);
 		while (state != 2 && c != NOCHAR) {
 			if (c == '\n')
 				encounteredNewline = true;
@@ -1715,6 +1752,7 @@ public class Scanner implements IScanner {
 					break;
 			}
 			c = getChar();
+			comment.append((char)c);
 		}
 
 		if (c == NOCHAR) {
@@ -1723,6 +1761,8 @@ public class Scanner implements IScanner {
 		}
 
 		ungetChar(c);
+		
+		checkTaskTag(comment, commentOffset, commentStartLine);
 
 		return encounteredNewline;
 	}
@@ -1871,7 +1911,7 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, null, null, mode );
+				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, null, null, mode, problemReporter, translationResult );
 				helperScanner.setTokenizingMacroReplacementList( true );
 				IToken t = helperScanner.nextToken(false);
 	
@@ -1928,7 +1968,7 @@ public class Scanner implements IScanner {
 			c = getChar();
 			if (c == '/') // one line comment
 				{
-				skipOverTextUntilNewline();
+				skipOverSinglelineComment();
 				addDefinition(key, "");
 			} else if (c == '*') // multi-line comment
 				{
@@ -1969,7 +2009,7 @@ public class Scanner implements IScanner {
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, definitions, null, mode );
+        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, definitions, null, mode, problemReporter, translationResult );
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();
@@ -2205,5 +2245,171 @@ public class Scanner implements IScanner {
 	 */
 	public void setASTFactory(IASTFactory f) {
 		astFactory = f;	
-	}  
+	}
+	
+	//	task tag support
+	 private class TaskTagsInfo {		
+		 char[][] taskTags = null;
+		 char[][] taskPriorities = null;
+				
+		 class FoundTaskInfo {
+			 char[] foundTaskTags = null;
+			 char[] foundTaskMessages = null;
+			 char[] foundTaskPriorities = null;
+			 int foundTaskStartOffset = -1;
+			 int foundTaskEndOffset = -1;
+			 int foundTaskLine = -1;
+		 };
+		
+		 FoundTaskInfo[] foundTaskInfo = null;
+		 int foundTaskCount = 0;
+		 
+		 TaskTagsInfo(ITranslationOptions options) {
+			this.taskTags = options.getTaskTags();
+			this.taskPriorities = options.getTaskPriorities();
+		 }
+	 }
+	 
+	IProblemReporter problemReporter = null;
+	ITranslationResult translationResult = null;
+	TaskTagsInfo taskTagsInfo = null;
+	
+	
+	//	check presence of task tags
+	 public void checkTaskTag(StringBuffer comment, int commentStart, int commentStartLine) {
+
+		 if (this.taskTagsInfo == null) return;
+		 
+    	 int commentLength = comment.length();
+    	 int tagStartLine = commentStartLine;
+		 int foundTaskIndex = taskTagsInfo.foundTaskCount;
+		 char[][] taskTags = taskTagsInfo.taskTags;
+		 char[][] taskPriorities = taskTagsInfo.taskPriorities; 
+
+		// only look for newer task tags		 
+		 if (foundTaskIndex > 0) {
+			 TaskTagsInfo.FoundTaskInfo lastInfo = taskTagsInfo.foundTaskInfo[foundTaskIndex-1];
+			 
+			 if (lastInfo.foundTaskStartOffset >= commentStart) 
+    		 	return;
+    	 }
+    	 
+    	 nextChar: 
+    	 for (int i = 0; i < commentLength; i++) {
+			if (comment.charAt(i) == '\n') tagStartLine++;
+    
+    		 int nextPos = -1;
+    		 char[] tag = null;
+    		 char[] priority = null;
+			 int tagLength = 0;
+    		
+    		 // check for tag occurrence
+    		 nextTag: 
+    		 for (int itag = 0; itag < taskTags.length; itag++) {
+    			 tag = taskTags[itag];
+				 tagLength = tag.length;
+    			 priority = (taskPriorities != null && itag < taskPriorities.length)
+			    				 ? taskPriorities[itag]
+			    				 : null;
+    			 
+    			 for (int t = 0; t < tagLength; t++){
+    				 if (comment.charAt(i+t) != tag[t]) continue nextTag;
+    			 }
+    			 nextPos = i + tagLength;
+    			 
+    			 int fTC = taskTagsInfo.foundTaskCount;
+    
+    			 if (taskTagsInfo.foundTaskInfo == null) {
+					 taskTagsInfo.foundTaskInfo = new TaskTagsInfo.FoundTaskInfo[5];
+    			 } else if (fTC == taskTagsInfo.foundTaskInfo.length) {
+					 TaskTagsInfo.FoundTaskInfo[] resizedFTI = new TaskTagsInfo.FoundTaskInfo[fTC*2];    			 	  
+    				 System.arraycopy(taskTagsInfo.foundTaskInfo, 0, resizedFTI, 0, fTC);
+    			 }
+    			 
+				 TaskTagsInfo.FoundTaskInfo lastFTI = taskTagsInfo.new FoundTaskInfo();
+    			 
+				 lastFTI.foundTaskTags = tag;
+				 lastFTI.foundTaskPriorities = priority;
+				 lastFTI.foundTaskStartOffset = i;
+				 lastFTI.foundTaskLine = tagStartLine;
+				 
+				 taskTagsInfo.foundTaskInfo[fTC] = lastFTI;
+				 taskTagsInfo.foundTaskCount++;
+    			
+    			 for (int jj=i+1; jj<nextPos; jj++) {
+    			 	if (comment.charAt(jj) == '\n') {
+    			 		tagStartLine++;
+    			 	}
+    			 }
+    			 
+				 i = nextPos;
+    		 }
+    	 }
+    	
+    	 for (int i = foundTaskIndex; i < taskTagsInfo.foundTaskCount; i++) {
+    		 // retrieve message start and end positions
+			 TaskTagsInfo.FoundTaskInfo fTI = taskTagsInfo.foundTaskInfo[i];
+			 TaskTagsInfo.FoundTaskInfo fTI2 = taskTagsInfo.foundTaskInfo[i+1];
+    		 int msgStart = fTI.foundTaskStartOffset + fTI.foundTaskTags.length;
+    		 int end;
+    		 char c;
+    		 int max_value = (i + 1 < taskTagsInfo.foundTaskCount) 
+    		 					? fTI2.foundTaskStartOffset - 1 
+    		 					: Integer.MAX_VALUE;
+    		
+    		 end = -1;
+    		 for (int j = msgStart; j < commentLength; j++){
+    			 if ((c = comment.charAt(j)) == '\n' || c == '\r'){
+    				 end = j - 1;
+    				 break;
+    			 }
+    		 }
+    		 end = end < max_value ? end : max_value;
+    		
+    		 if (end < 0){
+    			 for (int j = commentLength-1; j >= msgStart; j--){
+    				 if ((c = comment.charAt(j)) == '*') {
+    					 end = j-1;
+    					 break;
+    				 }
+    			 }
+    			 if (end < 0) end = commentLength-1;
+    		 }
+    		
+    		 // trim the message
+    		 while (Character.isWhitespace(comment.charAt(end)) && msgStart <= end) end--;
+    		 while (Character.isWhitespace(comment.charAt(msgStart)) && msgStart <= end) msgStart++;
+    
+    		 // update the end position of the task
+    		 fTI.foundTaskEndOffset = end;
+    		
+    		 // get the message source
+    		 final int messageLength = end-msgStart+1;
+    		 char[] message = new char[messageLength];
+    
+    		 comment.getChars(msgStart, msgStart + messageLength, message, 0);
+    		 fTI.foundTaskMessages = message;
+    		 
+    		 fTI.foundTaskStartOffset += commentStart;
+    		 fTI.foundTaskEndOffset += commentStart;
+    	 }
+	}
+	
+	
+	public void onParseEnd() {
+		if (problemReporter != null && taskTagsInfo != null){
+			for (int i = 0; i < taskTagsInfo.foundTaskCount; i++) {
+				TaskTagsInfo.FoundTaskInfo fTI = taskTagsInfo.foundTaskInfo[i];
+				
+				problemReporter.task(
+					new String(fTI.foundTaskTags), 
+					new String(fTI.foundTaskMessages),
+					fTI.foundTaskPriorities == null ? null : new String(fTI.foundTaskPriorities), 
+					fTI.foundTaskStartOffset, 
+					fTI.foundTaskEndOffset,
+					fTI.foundTaskLine,
+					this.translationResult);
+			}
+		}
+	}
 }

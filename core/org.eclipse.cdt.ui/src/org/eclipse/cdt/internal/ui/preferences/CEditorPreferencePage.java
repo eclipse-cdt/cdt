@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -71,7 +72,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			"Keywords", ICColorConstants.C_KEYWORD }, {
 			"Built-in types", ICColorConstants.C_TYPE }, {
 			"Strings", ICColorConstants.C_STRING }, {
-			"Others", ICColorConstants.C_DEFAULT }
+			"Others", ICColorConstants.C_DEFAULT }, {
+            PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR }
 	};
 
 	protected final String[][] fAppearanceColorListModel = new String[][] { { "Line number color", TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR }, //$NON-NLS-1$
@@ -245,6 +247,14 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC),
+        
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_TAG_BOLD));
+        
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION));
+        
+        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER));
 
 		OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);

@@ -2,6 +2,11 @@
 	Update IASTExpression. 
 	Move Parser.Backtrack and Parser.EndOfFile to external interface. 
 
+2003-06-26 Victor Mozgin
+	Task tags support in C/C++ comments (initial revision).
+	Infrastructure to support problem reporting during translation.
+	Additional infrastructure for options/preferences handling.
+
 2003-06-25 John Camelon
 	Fixed bug39348 - sizeof elaborated types fail in parsing expression
 

@@ -6,9 +6,11 @@ package org.eclipse.cdt.internal.ui.editor.asm;
  */
  
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
@@ -24,11 +26,15 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class AsmTextTools {
 	
-	private class PreferenceListener implements IPropertyChangeListener {
-		public void propertyChange(PropertyChangeEvent event) {
-			adaptToPreferenceChange(event);
-		}
-	};
+    private class PreferenceListener implements IPropertyChangeListener, Preferences.IPropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent event) {
+            adaptToPreferenceChange(event);
+        }
+        public void propertyChange(Preferences.PropertyChangeEvent event) {
+            adaptToPreferenceChange(new PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
+        }
+    };
+    
 	/** The color manager -- use the same as for C code */
 	private CColorManager fColorManager;
 	/** The Asm source code scanner */
@@ -36,15 +42,17 @@ public class AsmTextTools {
 	/** The Asm partitions scanner */
 	private AsmPartitionScanner fPartitionScanner;
 	/** The ASM multiline comment scanner */
-	private SingleTokenCScanner fMultilineCommentScanner;
+	private CCommentScanner fMultilineCommentScanner;
 	/** The ASM singleline comment scanner */
-	private SingleTokenCScanner fSinglelineCommentScanner;
+	private CCommentScanner fSinglelineCommentScanner;
 	/** The ASM string scanner */
 	private SingleTokenCScanner fStringScanner;
 	
 	
 	/** The preference store */
-	private IPreferenceStore fPreferenceStore;		
+	private IPreferenceStore fPreferenceStore;
+    /** The core preference store */
+    private Preferences fCorePreferenceStore;		
 	/** The preference change listener */
 	private PreferenceListener fPreferenceListener= new PreferenceListener();
 	
@@ -54,17 +62,32 @@ public class AsmTextTools {
 	 * and initializes all members of this collection.
 	 */
 	public AsmTextTools(IPreferenceStore store) {
+        this(store, null);
+    }
+    
+    /**
+     * Creates a new Asm text tools collection and eagerly creates 
+     * and initializes all members of this collection.
+     */
+    public AsmTextTools(IPreferenceStore store, Preferences coreStore) {
 		if(store == null) {
 			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
+        
+        fPreferenceStore = store;
 		store.addPropertyChangeListener(fPreferenceListener);
-		fPreferenceStore = store;
+        
+        fCorePreferenceStore= coreStore;
+        if (fCorePreferenceStore != null) {
+            fCorePreferenceStore.addPropertyChangeListener(fPreferenceListener);
+        }
+        
 		fColorManager= new CColorManager();
 		fCodeScanner= new AsmCodeScanner(fColorManager, store);
 		fPartitionScanner= new AsmPartitionScanner();
 				
-		fMultilineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_MULTI_LINE_COMMENT);
-		fSinglelineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_SINGLE_LINE_COMMENT);
+        fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
+        fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
 	}
 	
@@ -95,6 +118,12 @@ public class AsmTextTools {
 		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(fPreferenceListener);
 			fPreferenceStore= null;
+            
+            if (fCorePreferenceStore != null) {
+                fCorePreferenceStore.removePropertyChangeListener(fPreferenceListener);
+                fCorePreferenceStore= null;
+            }
+            
 			fPreferenceListener= null;
 		}
 	}

@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -45,10 +46,12 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 
 public class CModelManager implements IResourceChangeListener {
 
-        /**
-         * Unique handle onto the CModel
-         */
-        final CModel cModel = new CModel();
+    /**
+     * Unique handle onto the CModel
+     */
+    final CModel cModel = new CModel();
+    
+    public static HashSet OptionNames = new HashSet(20);
         
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.

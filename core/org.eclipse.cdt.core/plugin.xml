@@ -280,4 +280,9 @@
       </ignore>
    </extension>
 
+    <extension id="task" name="%CTaskName" point="org.eclipse.core.resources.markers">
+        <super type="org.eclipse.core.resources.taskmarker"/> 
+        <persistent value="true"/>
+    </extension>
+
 </plugin>

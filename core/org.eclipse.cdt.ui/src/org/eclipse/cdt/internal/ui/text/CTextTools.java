@@ -8,6 +8,8 @@ package org.eclipse.cdt.internal.ui.text;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.core.runtime.Preferences;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
@@ -23,10 +25,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class CTextTools {
 	
-	private class PreferenceListener implements IPropertyChangeListener {
+	private class PreferenceListener implements IPropertyChangeListener, Preferences.IPropertyChangeListener {
 		public void propertyChange(PropertyChangeEvent event) {
 			adaptToPreferenceChange(event);
 		}
+        public void propertyChange(Preferences.PropertyChangeEvent event) {
+            adaptToPreferenceChange(new PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
+        }
 	};
 	
 	/** The color manager */
@@ -38,14 +43,16 @@ public class CTextTools {
 	/** The C partitions scanner */
 	private FastCPartitionScanner fPartitionScanner;
 	/** The Java multiline comment scanner */
-	private SingleTokenCScanner fMultilineCommentScanner;
+	private CCommentScanner fMultilineCommentScanner;
 	/** The Java singleline comment scanner */
-	private SingleTokenCScanner fSinglelineCommentScanner;
+	private CCommentScanner fSinglelineCommentScanner;
 	/** The Java string scanner */
 	private SingleTokenCScanner fStringScanner;
 
 	/** The preference store */
-	private IPreferenceStore fPreferenceStore;	
+	private IPreferenceStore fPreferenceStore;
+    /** The core preference store */
+    private Preferences fCorePreferenceStore;	
 	/** The preference change listener */
 	private PreferenceListener fPreferenceListener= new PreferenceListener();
 	
@@ -54,20 +61,33 @@ public class CTextTools {
 	 * Creates a new C text tools collection and eagerly creates 
 	 * and initializes all members of this collection.
 	 */
-	public CTextTools(IPreferenceStore store) {
+    public CTextTools(IPreferenceStore store) {
+        this(store, null);
+    }
+    
+    /**
+     * Creates a new C text tools collection and eagerly creates 
+     * and initializes all members of this collection.
+     */
+	public CTextTools(IPreferenceStore store, Preferences coreStore) {
 		if(store == null) {
 			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
 		fPreferenceStore = store;
 		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);
+        
+        fCorePreferenceStore= coreStore;
+        if (fCorePreferenceStore != null) {
+            fCorePreferenceStore.addPropertyChangeListener(fPreferenceListener);
+        }
 		
 		fColorManager= new CColorManager();
 		fCodeScanner= new CCodeScanner(fColorManager, store);
 		fCppCodeScanner= new CppCodeScanner(fColorManager, store);
 		fPartitionScanner= new FastCPartitionScanner();
 		
-		fMultilineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_MULTI_LINE_COMMENT);
-		fSinglelineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
 	}
 	
@@ -100,6 +120,12 @@ public class CTextTools {
 		if (fPreferenceStore != null) {
 			fPreferenceStore.removePropertyChangeListener(fPreferenceListener);
 			fPreferenceStore= null;
+            
+            if (fCorePreferenceStore != null) {
+                fCorePreferenceStore.removePropertyChangeListener(fPreferenceListener);
+                fCorePreferenceStore= null;
+            }
+            
 			fPreferenceListener= null;
 		}
 	}
@@ -151,18 +177,18 @@ public class CTextTools {
 	}
 	
 	/**
-	 * Returns a scanner which is configured to scan Java multiline comments.
+	 * Returns a scanner which is configured to scan C multiline comments.
 	 *
-	 * @return a Java multiline comment scanner
+	 * @return a C multiline comment scanner
 	 */
 	public RuleBasedScanner getMultilineCommentScanner() {
 		return fMultilineCommentScanner;
 	}
 
 	/**
-	 * Returns a scanner which is configured to scan Java singleline comments.
+	 * Returns a scanner which is configured to scan C singleline comments.
 	 *
-	 * @return a Java singleline comment scanner
+	 * @return a C singleline comment scanner
 	 */
 	public RuleBasedScanner getSinglelineCommentScanner() {
 		return fSinglelineCommentScanner;

@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -27,6 +28,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -83,6 +85,8 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.tasklist.TaskList;
+
+
 /**
  * C specific text editor.
  */
@@ -94,6 +98,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	private SearchForReferencesAction fSearchForReferencesAction;
 
 	protected ISelectionChangedListener fStatusLineClearer;
+    
+    /** The property change listener */
+    private PropertyChangeListener fPropertyChangeListener = new PropertyChangeListener();
 
 	protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']' };
 
@@ -116,6 +123,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	/** Preference key for linked position color */
 	public final static String LINKED_POSITION_COLOR = "linkedPositionColor"; //$NON-NLS-1$
 
+    /** Preference key for compiler task tags */
+    private final static String TRANSLATION_TASK_TAGS= CCorePlugin.TRANSLATION_TASK_TAGS;
+
+    private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
+        /*
+         * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+         */
+        public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+            handlePreferencePropertyChanged(event);
+        }
+        public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
+            handlePreferencePropertyChanged(new org.eclipse.jface.util.PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
+        }
+    };        
+
 	/**
 	 * Default constructor.
 	 */
@@ -132,7 +154,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
-		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
+		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
 	}
 
 	/**
@@ -361,6 +383,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 			fBracketMatcher.dispose();
 			fBracketMatcher = null;
 		}
+        if (fPropertyChangeListener != null) {
+			Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
+			preferences.removePropertyChangeListener(fPropertyChangeListener);			
+			IPreferenceStore preferenceStore = getPreferenceStore();
+			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
+        }
 		super.dispose();
 	}
 
@@ -460,6 +488,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 		if (isTabConversionEnabled())
 			startTabConversion();
+			
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.addPropertyChangeListener(fPropertyChangeListener);
+			
+		Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
+		preferences.addPropertyChangeListener(fPropertyChangeListener);
 	}
 
 	private IMarker getNextError(int offset, boolean forward) {
@@ -802,4 +836,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } );
 	}
 
+    /**
+     * Handles a property change event describing a change
+     * of the C core's preferences and updates the preference
+     * related editor properties.
+     * 
+     * @param event the property change event
+     */
+    protected void handlePreferencePropertyChanged(org.eclipse.jface.util.PropertyChangeEvent event) {
+        if (TRANSLATION_TASK_TAGS.equals(event.getProperty())) {
+            ISourceViewer sourceViewer= getSourceViewer();
+            if (sourceViewer != null && affectsTextPresentation(event))
+                sourceViewer.invalidateTextPresentation();
+        }
+    }
 }

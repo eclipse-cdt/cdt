@@ -23,6 +23,7 @@ public class ScannerContext implements IScannerContext
 	private String filename;
     private int macroOffset = -1;
     private int macroLength = -1;
+	private int line = 1;
 	private int offset;
 	private Stack undo = new Stack(); 
 	private int kind; 
@@ -30,9 +31,9 @@ public class ScannerContext implements IScannerContext
 	public ScannerContext(){}
     
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion, int, int)
+     * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion, int, int, int)
      */
-	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int mO, int mL)
+	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int mO, int mL, int l)
 	{
 		reader = r;
 		filename = f;
@@ -41,6 +42,7 @@ public class ScannerContext implements IScannerContext
 		inc = i;
         macroOffset = mO;
         macroLength = mL;
+        line = l;
 		return this;
 	}
     
@@ -49,12 +51,14 @@ public class ScannerContext implements IScannerContext
      */
     public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i)
     {
-        return initialize(r, f, k, i, -1, -1);
+        return initialize(r, f, k, i, -1, -1, 1);
     }
 		
 	public int read() throws IOException {
 		++offset;
-		return reader.read();
+		int c = reader.read();
+		if ((char)c == '\n') line++;
+		return c;
 	}
 	
 	/**
@@ -99,6 +103,14 @@ public class ScannerContext implements IScannerContext
     {
         return offset;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IScannerContext#getLine()
+	 */
+	public final int getLine()
+	{
+		return line;
+	}
 
 	/**
 	 * Returns the reader.
@@ -120,7 +132,9 @@ public class ScannerContext implements IScannerContext
 	 */
 	public final int popUndo()
 	{
-		return ((Integer)undo.pop()).intValue();
+		int c = ((Integer)undo.pop()).intValue();
+		if ((char)c == '\n') line++;
+		return c;
 	}
 
 	/**
@@ -129,6 +143,7 @@ public class ScannerContext implements IScannerContext
 	 */
 	public void pushUndo(int undo)
 	{
+		if ((char)undo == '\n') line--;
 		this.undo.push( new Integer( undo )); 
 	}
 

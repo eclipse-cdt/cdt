@@ -7,6 +7,9 @@
 	* src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java
 	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
 
+2003-06-26 Victor Mozgin
+	Task tags support in C/C++ comments (initial revision).
+
 2003-06-25 John Camelon
 	Create new interface and support for calculating lineNumber/offset mapping.  
 	Updated IASTClassSpecifier for qualified name query.  

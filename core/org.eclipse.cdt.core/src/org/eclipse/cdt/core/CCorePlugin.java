@@ -8,12 +8,16 @@ package org.eclipse.cdt.core;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.CPathEntry;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -29,6 +33,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -47,6 +52,47 @@ public class CCorePlugin extends Plugin {
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
 	public final static String PREF_USE_NEW_PARSER = "useNewParser";
+    
+    /**
+     * Possible configurable option ID.
+     * @see #getDefaultOptions
+     */
+    public static final String TRANSLATION_TASK_PRIORITIES = PLUGIN_ID + ".translation.taskPriorities"; //$NON-NLS-1$
+    /**
+     * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
+     * @see #getDefaultOptions
+     */
+    public static final String TRANSLATION_TASK_PRIORITY_HIGH = "HIGH"; //$NON-NLS-1$
+    /**
+     * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
+     * @see #getDefaultOptions
+     */
+    public static final String TRANSLATION_TASK_PRIORITY_LOW = "LOW"; //$NON-NLS-1$
+    /**
+     * Possible configurable option value for TRANSLATION_TASK_PRIORITIES.
+     * @see #getDefaultOptions
+     */
+    public static final String TRANSLATION_TASK_PRIORITY_NORMAL = "NORMAL"; //$NON-NLS-1$
+    /**
+     * Possible configurable option ID.
+     * @see #getDefaultOptions
+     */
+    public static final String TRANSLATION_TASK_TAGS = PLUGIN_ID + ".translation.taskTags"; //$NON-NLS-1$
+    
+    /**
+     * Default task tag
+     */
+    public static final String DEFAULT_TASK_TAG = "TODO"; //$NON-NLS-1$
+    /**
+     * Default task priority
+     */
+    public static final String DEFAULT_TASK_PRIORITY = TRANSLATION_TASK_PRIORITY_NORMAL;
+    /**
+     * Possible  configurable option ID.
+     * @see #getDefaultOptions
+     */
+    public static final String CORE_ENCODING = PLUGIN_ID + ".encoding"; //$NON-NLS-1$
+
 
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
@@ -149,6 +195,202 @@ public class CCorePlugin extends Plugin {
 		// Set the default for using the new parser
 		getPluginPreferences().setDefault(PREF_USE_NEW_PARSER, true);
 	}
+    
+    
+    /**
+     * TODO: Add all options here
+     * Returns a table of all known configurable options with their default values.
+     * These options allow to configure the behaviour of the underlying components.
+     * The client may safely use the result as a template that they can modify and
+     * then pass to <code>setOptions</code>.
+     * 
+     * Helper constants have been defined on CCorePlugin for each of the option ID and 
+     * their possible constant values.
+     * 
+     * Note: more options might be added in further releases.
+     * <pre>
+     * RECOGNIZED OPTIONS:
+     * TRANSLATION / Define the Automatic Task Tags
+     *    When the tag list is not empty, translation will issue a task marker whenever it encounters
+     *    one of the corresponding tags inside any comment in C/C++ source code.
+     *    Generated task messages will include the tag, and range until the next line separator or comment ending.
+     *    Note that tasks messages are trimmed. If a tag is starting with a letter or digit, then it cannot be leaded by
+     *    another letter or digit to be recognized ("fooToDo" will not be recognized as a task for tag "ToDo", but "foo#ToDo"
+     *    will be detected for either tag "ToDo" or "#ToDo"). Respectively, a tag ending with a letter or digit cannot be followed
+     *    by a letter or digit to be recognized ("ToDofoo" will not be recognized as a task for tag "ToDo", but "ToDo:foo" will
+     *    be detected either for tag "ToDo" or "ToDo:").
+     *     - option id:         "org.eclipse.cdt.core.translation.taskTags"
+     *     - possible values:   { "<tag>[,<tag>]*" } where <tag> is a String without any wild-card or leading/trailing spaces 
+     *     - default:           ""
+     * 
+     * TRANSLATION / Define the Automatic Task Priorities
+     *    In parallel with the Automatic Task Tags, this list defines the priorities (high, normal or low)
+     *    of the task markers issued by the translation.
+     *    If the default is specified, the priority of each task marker is "NORMAL".
+     *     - option id:         "org.eclipse.cdt.core.transltaion.taskPriorities"
+     *     - possible values:   { "<priority>[,<priority>]*" } where <priority> is one of "HIGH", "NORMAL" or "LOW"
+     *     - default:           ""
+     * 
+     * CORE / Specify Default Source Encoding Format
+     *    Get the encoding format for translated sources. This setting is read-only, it is equivalent
+     *    to 'ResourcesPlugin.getEncoding()'.
+     *     - option id:         "org.eclipse.cdt.core.encoding"
+     *     - possible values:   { any of the supported encoding names}.
+     *     - default:           <platform default>
+     * </pre>
+     * 
+     * @return a mutable map containing the default settings of all known options
+     *   (key type: <code>String</code>; value type: <code>String</code>)
+     * @see #setOptions
+     */
+    
+    public static HashMap getDefaultOptions()
+    {
+        HashMap defaultOptions = new HashMap(10);
+
+        // see #initializeDefaultPluginPreferences() for changing default settings
+        Preferences preferences = getDefault().getPluginPreferences();
+        HashSet optionNames = CModelManager.OptionNames;
+        
+        // get preferences set to their default
+        String[] defaultPropertyNames = preferences.defaultPropertyNames();
+        for (int i = 0; i < defaultPropertyNames.length; i++){
+            String propertyName = defaultPropertyNames[i];
+            if (optionNames.contains(propertyName)) {
+                defaultOptions.put(propertyName, preferences.getDefaultString(propertyName));
+            }
+        }       
+        // get preferences not set to their default
+        String[] propertyNames = preferences.propertyNames();
+        for (int i = 0; i < propertyNames.length; i++){
+            String propertyName = propertyNames[i];
+            if (optionNames.contains(propertyName)) {
+                defaultOptions.put(propertyName, preferences.getDefaultString(propertyName));
+            }
+        }       
+        // get encoding through resource plugin
+        defaultOptions.put(CORE_ENCODING, ResourcesPlugin.getEncoding()); 
+        
+        return defaultOptions;
+    }
+
+
+    /**
+     * Initializes the default preferences settings for this plug-in.
+     * TODO: Add all options here
+     */
+    protected void initializeDefaultPluginPreferences() 
+    {
+        Preferences preferences = getPluginPreferences();
+        HashSet optionNames = CModelManager.OptionNames;
+    
+        // Compiler settings
+        preferences.setDefault(TRANSLATION_TASK_TAGS, DEFAULT_TASK_TAG); 
+        optionNames.add(TRANSLATION_TASK_TAGS);
+
+        preferences.setDefault(TRANSLATION_TASK_PRIORITIES, DEFAULT_TASK_PRIORITY); 
+        optionNames.add(TRANSLATION_TASK_PRIORITIES);
+    }
+    
+    /**
+     * Helper method for returning one option value only. Equivalent to <code>(String)CCorePlugin.getOptions().get(optionName)</code>
+     * Note that it may answer <code>null</code> if this option does not exist.
+     * <p>
+     * For a complete description of the configurable options, see <code>getDefaultOptions</code>.
+     * </p>
+     * 
+     * @param optionName the name of an option
+     * @return the String value of a given option
+     * @see CCorePlugin#getDefaultOptions
+     */
+    public static String getOption(String optionName) {
+        
+        if (CORE_ENCODING.equals(optionName)){
+            return ResourcesPlugin.getEncoding();
+        }
+        if (CModelManager.OptionNames.contains(optionName)){
+            Preferences preferences = getDefault().getPluginPreferences();
+            return preferences.getString(optionName).trim();
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the table of the current options. Initially, all options have their default values,
+     * and this method returns a table that includes all known options.
+     * <p>
+     * For a complete description of the configurable options, see <code>getDefaultOptions</code>.
+     * </p>
+     * 
+     * @return table of current settings of all options 
+     *   (key type: <code>String</code>; value type: <code>String</code>)
+     * @see CCorePlugin#getDefaultOptions
+     */
+    public static HashMap getOptions() {
+        
+        HashMap options = new HashMap(10);
+
+        // see #initializeDefaultPluginPreferences() for changing default settings
+        Plugin plugin = getDefault();
+        if (plugin != null) {
+            Preferences preferences = plugin.getPluginPreferences();
+            HashSet optionNames = CModelManager.OptionNames;
+            
+            // get preferences set to their default
+            String[] defaultPropertyNames = preferences.defaultPropertyNames();
+            for (int i = 0; i < defaultPropertyNames.length; i++){
+                String propertyName = defaultPropertyNames[i];
+                if (optionNames.contains(propertyName)){
+                    options.put(propertyName, preferences.getDefaultString(propertyName));
+                }
+            }       
+            // get preferences not set to their default
+            String[] propertyNames = preferences.propertyNames();
+            for (int i = 0; i < propertyNames.length; i++){
+                String propertyName = propertyNames[i];
+                if (optionNames.contains(propertyName)){
+                    options.put(propertyName, preferences.getString(propertyName).trim());
+                }
+            }       
+            // get encoding through resource plugin
+            options.put(CORE_ENCODING, ResourcesPlugin.getEncoding());
+        }
+        return options;
+    }
+
+    /**
+     * Sets the current table of options. All and only the options explicitly included in the given table 
+     * are remembered; all previous option settings are forgotten, including ones not explicitly
+     * mentioned.
+     * <p>
+     * For a complete description of the configurable options, see <code>getDefaultOptions</code>.
+     * </p>
+     * 
+     * @param newOptions the new options (key type: <code>String</code>; value type: <code>String</code>),
+     *   or <code>null</code> to reset all options to their default values
+     * @see CCorePlugin#getDefaultOptions
+     */
+    public static void setOptions(HashMap newOptions) {
+    
+        // see #initializeDefaultPluginPreferences() for changing default settings
+        Preferences preferences = getDefault().getPluginPreferences();
+
+        if (newOptions == null){
+            newOptions = getDefaultOptions();
+        }
+        Iterator keys = newOptions.keySet().iterator();
+        while (keys.hasNext()){
+            String key = (String)keys.next();
+            if (!CModelManager.OptionNames.contains(key)) continue; // unrecognized option
+            if (key.equals(CORE_ENCODING)) continue; // skipped, contributed by resource prefs
+            String value = (String)newOptions.get(key);
+            preferences.setValue(key, value);
+        }
+    
+        // persist options
+        getDefault().savePluginPreferences();
+    }    
+    
 
 	public IConsole getConsole(String id) {
 		try {

@@ -24,9 +24,10 @@ public interface IScannerContext {
      * 
      * @param macroOffset   Offset of the expanding macro
      * @param macroLength   Length of the macro identifier
+     * @param line			Initial line counter for the context
      * @return
      */
-    public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int macroOffset, int macroLength);
+    public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i, int macroOffset, int macroLength, int line);
     
 	public IScannerContext initialize(Reader r, String f, int k, IASTInclusion i);
 	public int read() throws IOException;
@@ -55,7 +56,13 @@ public interface IScannerContext {
      * @return int
      */
     public int getRelativeOffset();
-    
+
+	/**
+	 * Returns current line counter.
+	 * @return int
+	 */
+	public int getLine();
+
 	public Reader getReader();
 	
 	public int undoStackSize();  

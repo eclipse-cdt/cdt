@@ -120,7 +120,6 @@ public class CPartitionScanner extends RuleBasedPartitionScanner {
 
 		// Add rules for multi-line comments.
 		rules.add(new MultiLineRule("/*", "*/", comment));
-		//rules.add(new CMultilineCommentScanner(comment, (char)0, false));
 
 		IPredicateRule[] result= new IPredicateRule[rules.size()];
 		rules.toArray(result);

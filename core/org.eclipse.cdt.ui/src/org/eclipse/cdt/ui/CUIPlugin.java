@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.BuildConsoleManager;
@@ -183,7 +184,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public CTextTools getTextTools() {
 		if (fTextTools == null)
-			fTextTools = new CTextTools();
+			fTextTools = new CTextTools(getPreferenceStore(), CCorePlugin.getDefault().getPluginPreferences());
 		return fTextTools;
 	}
 
@@ -192,7 +193,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public AsmTextTools getAsmTextTools() {
 		if (fAsmTextTools == null)
-			fAsmTextTools = new AsmTextTools();
+			fAsmTextTools = new AsmTextTools(getPreferenceStore(), CCorePlugin.getDefault().getPluginPreferences());
 		return fAsmTextTools;
 	}
 
@@ -263,6 +264,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(final IPreferenceStore store) {
 		super.initializeDefaultPreferences(store);
+        PreferenceConstants.initializeDefaultValues(store);
+        
 		runUI(new Runnable() {
 			public void run() {
 				CPluginPreferencePage.initDefaults(store);

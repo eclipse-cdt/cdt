@@ -33,12 +33,9 @@ public interface IScanner  {
 	
 	public int  getCount();
 	public int  getDepth();
-	/**
-	 * @return
-	 */
+
 	public IToken nextTokenForStringizing() throws ScannerException, EndOfFile;
-	/**
-	 * @param b
-	 */
 	public void setTokenizingMacroReplacementList(boolean b);
+    
+	public void onParseEnd();
 }

@@ -42,6 +42,8 @@ public class ContextStack {
   
 	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ScannerException 
     {
+		int startLine = 1;
+		
         // If we expand a macro within a macro, then keep offsets of the top-level one,
         // as only the top level macro identifier is properly positioned    
         if (type == IScannerContext.MACROEXPANSION) {
@@ -49,10 +51,12 @@ public class ContextStack {
                 macroOffset = currentContext.getMacroOffset();
                 macroLength = currentContext.getMacroLength();
             }
+            
+			startLine = currentContext.getLine();
         }
-        
+
 		undoStack.clear();
-		push( new ScannerContext().initialize(reader, filename, type, null, macroOffset, macroLength ), requestor );	
+		push( new ScannerContext().initialize(reader, filename, type, null, macroOffset, macroLength, startLine ), requestor );	
 	}
 	
 	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ScannerException

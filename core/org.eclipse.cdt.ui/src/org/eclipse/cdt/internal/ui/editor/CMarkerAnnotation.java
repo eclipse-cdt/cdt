@@ -177,8 +177,10 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 			} else {
 				if(marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER)) { //|| getMarker().isSubtypeOf(IMarker.SEVERITY_WARNING)) {
 					fIsProblemMarker= true;
-				}
-				fIsProblemMarker = true;
+				} else if (marker.isSubtypeOf(IMarker.TASK) || marker.isSubtypeOf(ICModelMarker.TASK_MARKER)) {
+					fIsProblemMarker= false;
+				} else
+					fIsProblemMarker = true;
 			}
 			
 		} catch (CoreException e) {

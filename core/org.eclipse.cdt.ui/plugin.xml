@@ -316,6 +316,12 @@
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
       </page>
+      <page 
+            name="%todoTaskPrefName"
+	    id = "org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"
+	    class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
+	    category= "org.eclipse.cdt.ui.preferences.CPluginPreferencePage">
+      </page>		
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -340,6 +346,13 @@
                value="org.eclipse.cdt.core.managedBuildNature">
          </filter>
       </page>
+     <page 
+           name="%todoPageName"
+  	   id="org.eclipse.cdt.ui.propertyPages.TodoTaskPropertyPage"
+           objectClass="org.eclipse.core.resources.IProject"
+           class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPropertyPage">
+           <filter name="nature" value="org.eclipse.cdt.core.cnature"/>
+     </page>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">

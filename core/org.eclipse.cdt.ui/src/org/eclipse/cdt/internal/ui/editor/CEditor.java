@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -31,7 +31,6 @@ import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.IAction;
@@ -198,7 +197,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * Gets the current input
 	 */
 	public IFile getInputFile() {
-		//IFileEditorInput editorInput = (IFileEditorInput)getEditorInput();
 		IEditorInput editorInput = getEditorInput();
 		if (editorInput != null) {
 			if ((editorInput instanceof IFileEditorInput)) {
@@ -448,6 +446,36 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		super.dispose();
 	}
 
+	/*
+	 * @see AbstractTextEditor#canHandleMove(IEditorInput, IEditorInput)
+	 */
+	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
+		String oldLanguage = ""; //$NON-NLS-1$
+		if (originalElement instanceof IFileEditorInput) {
+			IFile file= ((IFileEditorInput) originalElement).getFile();
+			if (file != null) {
+				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
+				oldLanguage = type.getLanguageId();
+				if (oldLanguage == null) {
+					return false;
+				}
+			}
+		}
+
+		String newLanguage = ""; //$NON-NLS-1$
+		if (movedElement instanceof IFileEditorInput) {
+			IFile file = ((IFileEditorInput) movedElement).getFile();
+			if (file != null) {
+				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
+				newLanguage = type.getLanguageId();
+				if (newLanguage == null) {
+					return false;
+				}
+			}
+		}
+		return oldLanguage.equals(newLanguage);
+	}
+
 	protected void createActions() {
 		super.createActions();
 
@@ -665,11 +693,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				}
 			};
 			provider.addSelectionChangedListener(fStatusLineClearer);
-
 		} else {
-
 			getStatusLineManager().setErrorMessage(""); //$NON-NLS-1$
-
 		}
 	}
 
@@ -860,18 +885,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		// Figure out if this is a C or C++ source file
-		String filename = getEditorInput().getName();
-		boolean c_file = filename.endsWith(".c"); //$NON-NLS-1$
-
-		if (!c_file && filename.endsWith(".h")) { //$NON-NLS-1$
-			// ensure that this .h file is part of a C project & not a CPP project
-
-			IFile file = getInputFile();
-			if (file != null) {
-				IProject project = file.getProject();
-				c_file = !CoreModel.getDefault().hasCCNature(project);
-			}
-		}
+		IWorkingCopyManager mgr = CUIPlugin.getDefault().getWorkingCopyManager();
+		ITranslationUnit unit = mgr.getWorkingCopy(getEditorInput());
+		String fileType = (unit != null && unit.isCXXLanguage()) ? LANGUAGE_CPP : LANGUAGE_C;
+		
 		fAnnotationAccess = createAnnotationAccess();
 		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
 
@@ -890,7 +907,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				styles,
 				fOverviewRuler,
 				isOverviewRulerVisible(),
-				c_file ? LANGUAGE_C : LANGUAGE_CPP);
+				fileType);
 		fSourceViewerDecorationSupport =
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		
@@ -898,7 +915,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		
 		return sourceViewer;
 	}
-
 
 	/** Outliner context menu Id */
 	protected String fOutlinerContextMenuId;
@@ -952,8 +968,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     		statusLine.setMessage(true, msg, null);	
 
     }  
-    
-    
+
     //Links
     /**
      * Enables browser like links.

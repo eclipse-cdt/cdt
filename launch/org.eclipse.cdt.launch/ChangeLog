@@ -1,3 +1,7 @@
+2002-11-04 David Inglis
+	* src/.../launch/internal/ui/LocalCLaunchCOnfigurationTabGroup.java
+	don't filter tab list based on mode since the configuration is shared with debug mode.
+
 2002-11-01 David Inglis	
 	* src/.../launch/internal/CoreFileLaunchDelegate.java
 	* src/.../launch/internal/LocalCLaunchConfigur.ationDelegate.java

@@ -11,8 +11,12 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
 
 public class GCCErrorParser implements IErrorParser {
-
+	
 	public boolean processLine(String line, ErrorParserManager eoParser) {
+		return processLine(line, eoParser, IMarkerGenerator.SEVERITY_ERROR_RESOURCE);
+	}
+
+	public boolean processLine(String line, ErrorParserManager eoParser, int inheritedSeverity) {
 		// Known patterns.
 		// (a)
 		// filename:lineno: description
@@ -76,7 +80,6 @@ public class GCCErrorParser implements IErrorParser {
 					String fileName = line.substring(0, firstColon);
 					String varName = null;
 					String desc = line.substring(secondColon + 1).trim();
-					int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 					/* Then check for the column  */
 					int thirdColon= line.indexOf(':', secondColon + 1);
 					if (thirdColon != -1) {
@@ -183,7 +186,7 @@ public class GCCErrorParser implements IErrorParser {
 							buf += " in inclusion " + inclusionError;
 							inclusionError = t;
 							// Call the parsing process again.
-							processLine(buf, eoParser);
+							processLine(buf, eoParser, extractSeverity(desc, inheritedSeverity));
 						}
 					}
 
@@ -201,8 +204,9 @@ public class GCCErrorParser implements IErrorParser {
 						}
 					}
 					
+					//If we have an inherited severity, then use that value 
+					int severity = extractSeverity(desc, inheritedSeverity);
 					if (desc.startsWith("warning") || desc.startsWith("Warning")) {
-						severity = IMarkerGenerator.SEVERITY_WARNING;
 						// Remove the warning.
 						String d = desc.substring("warning".length()).trim();
 						if (d.startsWith(":")) {
@@ -232,5 +236,13 @@ public class GCCErrorParser implements IErrorParser {
 			}
 		}
 		return false;
+	}
+	
+	private int extractSeverity(String desc, int defaultSeverity) {
+		int severity = defaultSeverity; 
+		if (desc.startsWith("warning") || desc.startsWith("Warning")) {
+			severity = IMarkerGenerator.SEVERITY_WARNING;
+		}
+		return severity;
 	}
 }

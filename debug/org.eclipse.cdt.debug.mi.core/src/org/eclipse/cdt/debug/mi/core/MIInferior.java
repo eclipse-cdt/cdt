@@ -182,7 +182,7 @@ public class MIInferior extends Process {
 			// Allow (5 secs) for the interrupt to propagate.
 			for (int i = 0; isRunning() && i < 5; i++) {
 				try {
-					java.lang.Thread.sleep(1000);
+					java.lang.Thread.sleep(2000);
 				} catch (InterruptedException e) {
 				}
 			}

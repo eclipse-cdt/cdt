@@ -27,6 +27,8 @@ public class KeywordSetKey extends Enum
 	public static final KeywordSetKey EXPRESSION = new KeywordSetKey( 9 );
 	public static final KeywordSetKey MEMBER = new KeywordSetKey(10);
 	public static final KeywordSetKey ALL = new KeywordSetKey( 11 );
+	public static final KeywordSetKey KEYWORDS = new KeywordSetKey( 12 );
+	public static final KeywordSetKey TYPES = new KeywordSetKey( 13 );
 	/**
 	 * @param enumValue
 	 */

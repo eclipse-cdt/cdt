@@ -28,5 +28,6 @@ public class Directives {
 	public static final String POUND_PRAGMA = "#pragma"; //$NON-NLS-1$
 	public static final String POUND_ELIF = "#elif"; //$NON-NLS-1$
 	public static final String POUND_BLANK = "#"; //$NON-NLS-1$
+	public static final String _PRAGMA = "_Pragma"; //$NON-NLS-1$
 	
 }

@@ -736,7 +736,7 @@ public final class Scanner implements IScanner, IScannerData {
 	private static final String PASTING = "<pasting>"; //$NON-NLS-1$
 
 	private static final String DEFINED = "defined"; //$NON-NLS-1$
-	private static final String _PRAGMA = "_Pragma"; //$NON-NLS-1$
+
 	private static final String POUND_DEFINE = "#define "; //$NON-NLS-1$
 
 	private IScannerContext lastContext = null;
@@ -1584,7 +1584,7 @@ public final class Scanner implements IScanner, IScannerData {
 		if (ident.equals(DEFINED))
 			return newToken(IToken.tINTEGER, handleDefinedMacro());
 		
-		if( ident.equals(_PRAGMA) && language == ParserLanguage.C )
+		if( ident.equals(Directives._PRAGMA) && language == ParserLanguage.C )
 		{
 			handlePragmaOperator(); 
 			return null;

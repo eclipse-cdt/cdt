@@ -24,11 +24,13 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 
 	MIFrame frame;
 	Thread cthread;
+	int level;
 
-	public StackFrame(Thread thread, MIFrame f) {
+	public StackFrame(Thread thread, MIFrame f, int l) {
 		super(thread.getTarget());
 		cthread = thread;
 		frame = f;
+		level = l;
 	}
 
 	MIFrame getMIFrame() {
@@ -85,10 +87,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLevel()
 	 */
 	public int getLevel() {
-		if (frame != null) {
-			return frame.getLevel();
-		}
-		return 0;
+		return level;
 	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#equals(ICDIStackFrame)
@@ -98,10 +97,8 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			StackFrame stack = (StackFrame)stackframe;
 			return  cthread != null &&
 				cthread.equals(stack.getThread()) &&
-				frame != null &&
-				frame.getLevel() == stack.getMIFrame().getLevel() &&
-				frame.getFile().equals(stack.getMIFrame().getFile()) &&
-				frame.getFunction().equals(stack.getMIFrame().getFunction());
+				getLevel() == stack.getLevel() &&
+				getLocation().equals(stack.getLocation());
 		}
 		return super.equals(stackframe);
 	}

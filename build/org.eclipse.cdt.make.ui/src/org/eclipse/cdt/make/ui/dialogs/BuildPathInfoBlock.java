@@ -18,8 +18,8 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -51,10 +51,13 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private static final String SYMBOLS = PREFIX + ".symbols"; //$NON-NLS-1$
 	private static final String BROWSE = PREFIX + ".browse"; //$NON-NLS-1$
 	private static final String PATH_TITLE = BROWSE + ".path"; //$NON-NLS-1$
+	private static final String EDIT_PATH_TITLE = BROWSE + ".path.edit"; //$NON-NLS-1$
 	private static final String PATH_LABEL = BROWSE + ".path.label"; //$NON-NLS-1$
 	private static final String SYMBOL_TITLE = BROWSE + ".symbol"; //$NON-NLS-1$
+	private static final String EDIT_SYMBOL_TITLE = BROWSE + ".symbol.edit"; //$NON-NLS-1$
 	private static final String SYMBOL_LABEL = BROWSE + ".symbol.label"; //$NON-NLS-1$
 	private static final String NEW = "BuildPropertyCommon.label.new"; //$NON-NLS-1$
+	private static final String EDIT = "BuildPropertyCommon.label.edit"; //$NON-NLS-1$
 	private static final String REMOVE = "BuildPropertyCommon.label.remove"; //$NON-NLS-1$
 	private static final String UP = "BuildPropertyCommon.label.up"; //$NON-NLS-1$
 	private static final String DOWN = "BuildPropertyCommon.label.down"; //$NON-NLS-1$
@@ -63,18 +66,20 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private List symbolList;
 	private Composite pathButtonComp;
 	private Button addPath;
+	private Button editPath;
 	private Button removePath;
 	private Button pathUp;
 	private Button pathDown;
 	private Composite symbolButtonComp;
 	private Button addSymbol;
+	private Button editSymbol;
 	private Button removeSymbol;
 	private Button symbolUp;
 	private Button symbolDown;
 	private Shell shell;
 
 	public BuildPathInfoBlock() {
-		super(CUIPlugin.getResourceString(LABEL));
+		super(MakeUIPlugin.getResourceString(LABEL));
 		setDescription("Set the include paths and preprocessor symbols for this project");
 	}
 
@@ -84,7 +89,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		pathButtonComp.setFont(parent.getFont());
 
 		// Add the buttons
-		addPath = ControlFactory.createPushButton(pathButtonComp, CUIPlugin.getResourceString(NEW));
+		addPath = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(NEW));
 		addPath.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAddPath();
@@ -95,7 +100,18 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		addPath.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(addPath);
 
-		removePath = ControlFactory.createPushButton(pathButtonComp, CUIPlugin.getResourceString(REMOVE));
+		editPath = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(EDIT));
+		editPath.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editPathListItem();
+			}
+		});
+		editPath.setEnabled(true);
+		editPath.setFont(parent.getFont());
+		editPath.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(editPath);
+
+		removePath = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(REMOVE));
 		removePath.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleRemovePath();
@@ -105,7 +121,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		removePath.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(removePath);
 
-		pathUp = ControlFactory.createPushButton(pathButtonComp, CUIPlugin.getResourceString(UP));
+		pathUp = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(UP));
 		pathUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handlePathUp();
@@ -115,7 +131,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		pathUp.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(pathUp);
 
-		pathDown = ControlFactory.createPushButton(pathButtonComp, CUIPlugin.getResourceString(DOWN));
+		pathDown = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(DOWN));
 		pathDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handlePathDown();
@@ -154,7 +170,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		symbolButtonComp.setFont(parent.getFont());
 
 		// Add the buttons
-		addSymbol = ControlFactory.createPushButton(symbolButtonComp, CUIPlugin.getResourceString(NEW));
+		addSymbol = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(NEW));
 		addSymbol.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAddSymbol();
@@ -165,7 +181,18 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		addSymbol.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(addSymbol);
 
-		removeSymbol = ControlFactory.createPushButton(symbolButtonComp, CUIPlugin.getResourceString(REMOVE));
+		editSymbol = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(EDIT));
+		editSymbol.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editSymbolListItem();
+			}
+		});
+		editSymbol.setEnabled(true);
+		editSymbol.setFont(parent.getFont());
+		editSymbol.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(editSymbol);
+
+		removeSymbol = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(REMOVE));
 		removeSymbol.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveSymbol();
@@ -175,7 +202,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		removeSymbol.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(removeSymbol);
 
-		symbolUp = ControlFactory.createPushButton(symbolButtonComp, CUIPlugin.getResourceString(UP));
+		symbolUp = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(UP));
 		symbolUp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSymbolUp();
@@ -185,7 +212,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		symbolUp.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(symbolUp);
 
-		symbolDown = ControlFactory.createPushButton(symbolButtonComp, CUIPlugin.getResourceString(DOWN));
+		symbolDown = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(DOWN));
 		symbolDown.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSymbolDown();
@@ -301,8 +328,8 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 				InputDialog dialog =
 					new InputDialog(
 						shell,
-						CUIPlugin.getResourceString(PATH_TITLE),
-						CUIPlugin.getResourceString(PATH_LABEL),
+						MakeUIPlugin.getResourceString(EDIT_PATH_TITLE),
+						MakeUIPlugin.getResourceString(PATH_LABEL),
 						selItem,
 						null);
 				String newItem = null;
@@ -328,8 +355,8 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 				InputDialog dialog =
 					new InputDialog(
 						shell,
-						CUIPlugin.getResourceString(SYMBOL_TITLE),
-						CUIPlugin.getResourceString(SYMBOL_LABEL),
+						MakeUIPlugin.getResourceString(EDIT_SYMBOL_TITLE),
+						MakeUIPlugin.getResourceString(SYMBOL_LABEL),
 						selItem,
 						null);
 				String newItem = null;
@@ -350,12 +377,14 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		// Enable the remove button if there is at least 1 item in the list
 		int items = pathList.getItemCount();
 		if (items > 0) {
+			editPath.setEnabled(true);
 			removePath.setEnabled(true);
 			// Enable the up/down buttons depending on what item is selected
 			int index = pathList.getSelectionIndex();
 			pathUp.setEnabled(items > 1 && index > 0);
 			pathDown.setEnabled(items > 1 && index < (items - 1));
 		} else {
+			editPath.setEnabled(false);
 			removePath.setEnabled(false);
 			pathUp.setEnabled(false);
 			pathDown.setEnabled(false);
@@ -366,12 +395,14 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		// Enable the remove button if there is at least 1 item in the list
 		int items = symbolList.getItemCount();
 		if (items > 0) {
+			editSymbol.setEnabled(true);
 			removeSymbol.setEnabled(true);
 			// Enable the up/down buttons depending on what item is selected
 			int index = symbolList.getSelectionIndex();
 			symbolUp.setEnabled(items > 1 && index > 0);
 			symbolDown.setEnabled(items > 1 && index < (items - 1));
 		} else {
+			editSymbol.setEnabled(false);
 			removeSymbol.setEnabled(false);
 			symbolUp.setEnabled(false);
 			symbolDown.setEnabled(false);
@@ -393,7 +424,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.MAKE_PATH_SYMBOL_SETTINGS);
 
 		// Create a label for the include paths control
-		Label paths = ControlFactory.createLabel(composite, CUIPlugin.getResourceString(PATHS));
+		Label paths = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(PATHS));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = tabColumns;
 		paths.setLayoutData(gd);
@@ -405,7 +436,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		enablePathButtons();
 
 		// Create a label for the symbols control
-		Label symbols = ControlFactory.createLabel(composite, CUIPlugin.getResourceString(SYMBOLS));
+		Label symbols = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(SYMBOLS));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = tabColumns;
 		symbols.setLayoutData(gd);
@@ -434,7 +465,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	protected void handleAddPath() {
 		// Popup an entry dialog
 		InputDialog dialog =
-			new InputDialog(shell, CUIPlugin.getResourceString(PATH_TITLE), CUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
+			new InputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
 		String path = null;
 		if (dialog.open() == InputDialog.OK) {
 			path = dialog.getValue();
@@ -449,7 +480,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	protected void handleAddSymbol() {
 		// Popup an entry dialog
 		InputDialog dialog =
-			new InputDialog(shell, CUIPlugin.getResourceString(SYMBOL_TITLE), CUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
+			new InputDialog(shell, MakeUIPlugin.getResourceString(SYMBOL_TITLE), MakeUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
 		String symbol = null;
 		if (dialog.open() == InputDialog.OK) {
 			symbol = dialog.getValue();

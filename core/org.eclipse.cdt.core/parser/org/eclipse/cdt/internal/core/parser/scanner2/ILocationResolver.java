@@ -11,7 +11,9 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.dom.ast.IASTMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 
 /**
@@ -19,7 +21,11 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
  */
 public interface ILocationResolver {
     
-    public IASTMacroDefinition[] getAllMacroDefinitions();
-    public IASTPreprocessorStatement [] getPreprocessorStatements();
-    public IASTNodeLocation [] getLocations( int offset, int length );
+	public IASTMacroDefinition [] getMacroDefinitions(IASTNode parent);
+	public IASTPreprocessorIncludeStatement [] getIncludeDirectives(IASTNode parent);
+	public IASTPreprocessorStatement [] getAllPreprocessorStatements(IASTNode parent);
+
+	public IASTNodeLocation [] getLocations( int offset, int length );
+    public IASTNodeLocation    getLocation( int offset );
+    
 }

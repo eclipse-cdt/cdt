@@ -11,19 +11,24 @@
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.core.resources.IFile;
 
 /**
  * @author jcamelon
  */
 public interface IASTServiceProvider {
+    
+    public static class UnsupportedDialectException extends Exception 
+    {
+    }
 
     public String getName();
 
-    public IASTTranslationUnit getTranslationUnit();
+    public IASTTranslationUnit getTranslationUnit( IFile fileToParse) throws UnsupportedDialectException;
     
-    public IASTTranslationUnit getTranslationUnit( ICodeReaderFactory fileCreator  );
+    public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator  )throws UnsupportedDialectException;
 
-    public IASTTranslationUnit getTranslationUnit( ICodeReaderFactory fileCreator, IParserConfiguration configuration );
+    public IASTTranslationUnit getTranslationUnit( IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration )throws UnsupportedDialectException;
     
     public String [] getSupportedDialects();
 }

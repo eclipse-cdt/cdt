@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.dom;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 
 /**
  * @author jcamelon
@@ -18,28 +20,46 @@ import org.eclipse.cdt.core.dom.ICodeReaderFactory;
  * This class serves as the manager of the AST/DOM mechanisms for the CDT.
  * It should be eventually added to CCorePlugin for startup.  
  */
-public class DOM {
+public class CDOM {
+    
+    private IASTServiceProvider [] services = { new InternalASTServiceProvider() };
 
-    public IASTServiceProvider[] getASTFactories() {
-        //TODO stub
-        return null;
+    public IASTServiceProvider[] getASTServices() {
+        return services;
     }
     
-    public IASTServiceProvider getDefaultASTFactory() {
-        IASTServiceProvider [] factories = getASTFactories();
+    public IASTServiceProvider getDefaultASTService() {
+        IASTServiceProvider [] factories = getASTServices();
         if( factories != null && factories.length > 0 )
             return factories[0];
         return null;
     }
     
-    public IASTServiceProvider getASTFactoryByName(String name) {
-        IASTServiceProvider [] factories = getASTFactories();
+    public IASTServiceProvider getASTServiceByName(String name) {
+        IASTServiceProvider [] factories = getASTServices();
         if( factories == null || factories.length == 0 )
             return null;
         for( int i = 0; i < factories.length; ++i )
             if( factories[i] != null && factories[i].getName().equals( name ) )
                 return factories[i];
         return null;
+    }
+    
+    public IASTServiceProvider getASTServiceByDialect( String dialect )
+    {
+        IASTServiceProvider [] factories = getASTServices();
+        if( factories == null || factories.length == 0 )
+            return null;
+        for( int i = 0; i < factories.length; ++i )
+            if( factories[i] != null )
+            {
+                String [] dialects = factories[i].getSupportedDialects();
+                if( dialects != null )
+                    for( int j = 0; j < dialects.length; ++j )
+                        if( dialects[j].equals( dialect ))
+                            return factories[i];
+            }
+        return null;        
     }
 
     public static final int PARSE_SAVED_RESOURCES = 0; 
@@ -51,7 +71,7 @@ public class DOM {
         switch( key )
         {
         	case PARSE_SAVED_RESOURCES: 
-        	    return null; //TODO
+        	    return SavedCodeReaderFactory.getInstance();
         	case PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS:
         	    return null; //TODO
         	case PARSE_WORKING_COPY_WHENEVER_POSSIBLE:

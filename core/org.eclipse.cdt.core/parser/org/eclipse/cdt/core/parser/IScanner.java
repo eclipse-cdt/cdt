@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 
 /**
  * @author jcamelon
@@ -38,4 +39,6 @@ public interface IScanner  {
 	public CharArrayObjectMap getRealDefinitions();
 	public void cancel();
 	public char[] getMainFilename();
+	
+	public ILocationResolver getLocationResolver();
 }

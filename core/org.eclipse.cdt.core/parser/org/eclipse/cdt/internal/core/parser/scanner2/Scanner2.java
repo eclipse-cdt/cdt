@@ -3461,6 +3461,14 @@ public class Scanner2 implements IScanner, IScannerData {
         buffer.append( getLineNumber( getCurrentOffset()));
         return buffer.toString();
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.IScanner#getLocationResolver()
+     */
+    public ILocationResolver getLocationResolver() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 	
 
 }

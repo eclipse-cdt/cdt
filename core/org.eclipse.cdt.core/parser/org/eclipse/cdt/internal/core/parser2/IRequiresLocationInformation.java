@@ -8,16 +8,18 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.dom;
+package org.eclipse.cdt.internal.core.parser2;
 
-import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 
 /**
  * @author jcamelon
  */
-public interface IParserConfiguration {
+public interface IRequiresLocationInformation {
 
-    public IScannerInfo getScannerInfo();
-    public String getParserDialect();
+    /**
+     * @param locationResolver
+     */
+    void setLocationResolver(ILocationResolver resolver);
 
 }

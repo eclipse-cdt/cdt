@@ -22,16 +22,19 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
+import org.eclipse.cdt.internal.core.parser2.IRequiresLocationInformation;
 
 /**
  * @author jcamelon
  */
 public class CPPASTTranslationUnit extends CPPASTNode implements
-        IASTTranslationUnit {
+        IASTTranslationUnit, IRequiresLocationInformation {
     private IASTDeclaration [] decls = null;
     private ICPPScope scope = null;
     private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
     private int currentIndex = 0;
+    private ILocationResolver resolver;
     
     public void addDeclaration( IASTDeclaration d )
     {
@@ -107,8 +110,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int)
      */
     public IASTNodeLocation getLocationInfo(int offset) {
-        // TODO Auto-generated method stub
-        return null;
+        return resolver.getLocation(offset);
     }
 
 
@@ -116,8 +118,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int, int)
      */
     public IASTNodeLocation[] getLocationInfo(int offset, int length) {
-        // TODO Auto-generated method stub
-        return null;
+        return resolver.getLocations(offset,length);
     }
 
 
@@ -134,8 +135,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
      */
     public IASTMacroDefinition[] getMacroDefinitions() {
-        // TODO Auto-generated method stub
-        return null;
+        return resolver.getMacroDefinitions(this);
     }
 
 
@@ -143,8 +143,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getIncludeDirectives()
      */
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
-        // TODO Auto-generated method stub
-        return null;
+        return resolver.getIncludeDirectives(this);
     }
 
 
@@ -152,7 +151,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getAllPreprocessorStatements()
      */
     public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
-        // TODO Auto-generated method stub
-        return null;
+        return resolver.getAllPreprocessorStatements(this);
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.IRequiresLocationInformation#setLocationResolver(org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver)
+     */
+    public void setLocationResolver(ILocationResolver resolver) {
+        this.resolver = resolver;
     }
 }

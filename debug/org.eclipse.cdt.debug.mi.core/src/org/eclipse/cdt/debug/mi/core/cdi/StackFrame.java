@@ -1,3 +1,8 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ *
+ */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -44,13 +49,13 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		if (frame != null) {
 			CSession session = getCTarget().getCSession();
 			VariableManager mgr = (VariableManager)session.getVariableManager();
-			mgr.update();
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			int level = frame.getLevel();
 			MIStackListArguments listArgs =
 				factory.createMIStackListArguments(false, level, level);
 			try {
+				cthread.setCurrentStackFrame(this);
 				MIArg[] args = null;
 				mi.postCommand(listArgs);
 				MIStackListArgumentsInfo info =
@@ -72,8 +77,15 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 					cdiArgs = new ICDIArgument[0];
 				}
 			} catch (MIException e) {
-				throw new CDIException(e.toString());
+				//throw new CDIException(e.toString());
+				System.err.println(e);
+			} catch (CDIException e) {
+				//throw e;
+				System.err.println(e);
 			}
+		}
+		if (cdiArgs == null) {
+			cdiArgs = new ICDIArgument[0];
 		}
 		return cdiArgs;
 	}
@@ -82,15 +94,15 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
 	 */
 	public ICDIVariable[] getLocalVariables() throws CDIException {
+		ICDIVariable[] variables = null;
 		CSession session = getCTarget().getCSession();
 		VariableManager mgr = (VariableManager)session.getVariableManager();
-		mgr.update();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackListLocals locals = factory.createMIStackListLocals(false);
 		try {
+			cthread.setCurrentStackFrame(this);
 			MIArg[] args = null;
-			ICDIVariable[] variables = null;
 			mi.postCommand(locals);
 			MIStackListLocalsInfo info = locals.getMIStackListLocalsInfo();
 			if (info == null) {
@@ -105,10 +117,17 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			} else {
 				variables = new ICDIVariable[0];
 			}
-			return variables;
 		} catch (MIException e) {
-			throw new CDIException(e.toString());
+			//throw new CDIException(e.toString());
+			System.err.println(e);
+		} catch (CDIException e) {
+			//throw e;
+			System.err.println(e);
 		}
+		if (variables == null) {
+			variables = new ICDIVariable[0];
+		}
+		return variables;
 	}
 
 	/**

@@ -1,6 +1,14 @@
+2002-11-22 Alain Magloire
+
+	* src/.../internal/ui/LaunchUIPlugin.java (startup):
+	On startup add a listener to DebugPlugin for debug events.
+	(shutdown): remove the listener.
+	(handleDebugEvents): For Termination events do a refresh on
+	the project.
+
 2002-11-21 Alain Magloire
 
-	* src/../internal/ui/WorkingDirectoryBlock.java (setDefaultWorkingDir):
+	* src/.../internal/ui/WorkingDirectoryBlock.java (setDefaultWorkingDir):
 	Set the workspace directory default to be the Project.
 	* src/.../internal/LocalCLaunchConfigurationDelegate.java (launch):
 	Use the new function getWorkingDirectory(), it does more check by

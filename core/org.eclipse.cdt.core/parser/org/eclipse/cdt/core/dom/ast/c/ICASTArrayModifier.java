@@ -25,4 +25,6 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
     public void setVolatile( boolean value );
     public void setRestrict( boolean value );
     public void setStatic( boolean value );
+    public boolean isVariableSized();
+    public void setVariableSized( boolean value );
 }

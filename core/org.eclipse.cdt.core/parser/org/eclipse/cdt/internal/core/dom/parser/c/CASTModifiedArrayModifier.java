@@ -21,6 +21,7 @@ public class CASTModifiedArrayModifier extends CASTArrayModifier implements
     private boolean isRestrict;
     private boolean isStatic;
     private boolean isConst;
+    private boolean varSized;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier#isConst()
@@ -76,6 +77,20 @@ public class CASTModifiedArrayModifier extends CASTArrayModifier implements
      */
     public void setStatic(boolean value) {
         this.isStatic = value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier#isVariableSized()
+     */
+    public boolean isVariableSized() {
+        return varSized;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier#setVariableSized(boolean)
+     */
+    public void setVariableSized(boolean value) {
+        varSized = value;
     }
 
 }

@@ -1780,6 +1780,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             boolean isConst = false;
             boolean isRestrict = false;
             boolean isVolatile = false;
+            boolean isVarSized = false;
             
             outerLoop: do {
                 switch (LT(1)) {
@@ -1799,6 +1800,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     isRestrict = true;
                 	consume();
                     break;
+                case IToken.tSTAR:
+                    isVarSized = true;
+                	consume();
+                	//deliberate fall through
                 default:
                     break outerLoop;
                 }
@@ -1824,6 +1829,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 temp.setConst( isConst );
                 temp.setVolatile( isVolatile );
                 temp.setRestrict(isRestrict);
+                temp.setVariableSized(isVarSized );
                 arrayMod = temp;
             }
             ((ASTNode)arrayMod).setOffset( startOffset );

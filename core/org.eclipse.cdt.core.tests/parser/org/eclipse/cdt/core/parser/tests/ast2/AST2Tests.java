@@ -1415,12 +1415,22 @@ public class AST2Tests extends AST2BaseTest {
     {
         StringBuffer buffer =new StringBuffer( "const int x = 10;\n"); //$NON-NLS-1$
         buffer.append( "int y [ const static x ];"); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
-        IASTDeclaration [] declarations = tu.getDeclarations();
-        IASTSimpleDeclaration y = (IASTSimpleDeclaration) declarations[1];
-        ICASTArrayModifier mod = (ICASTArrayModifier) ((IASTArrayDeclarator)y.getDeclarators()[0]).getArrayModifiers()[0];
+        ICASTArrayModifier mod = (ICASTArrayModifier) ((IASTArrayDeclarator)((IASTSimpleDeclaration) parse( buffer.toString(), ParserLanguage.C ).getDeclarations()[1]).getDeclarators()[0]).getArrayModifiers()[0];
         assertTrue( mod.isConst() );
         assertTrue( mod.isStatic() );
+        assertFalse( mod.isRestrict() );
+        assertFalse( mod.isVolatile() );
+        assertFalse( mod.isVariableSized() );
+    }
+
+    public void testBug80978() throws Exception
+    {
+        StringBuffer buffer =new StringBuffer(); //$NON-NLS-1$
+        buffer.append( "int y ( int [ const *] );"); //$NON-NLS-1$
+        ICASTArrayModifier mod = (ICASTArrayModifier)((IASTArrayDeclarator)((IASTFunctionDeclarator) ((IASTSimpleDeclaration) parse( buffer.toString(), ParserLanguage.C ).getDeclarations()[0]).getDeclarators()[0]).getParameters()[0].getDeclarator() ).getArrayModifiers()[0];
+        assertTrue( mod.isConst() );
+        assertTrue( mod.isVariableSized() );
+        assertFalse( mod.isStatic() );
         assertFalse( mod.isRestrict() );
         assertFalse( mod.isVolatile() );
     }

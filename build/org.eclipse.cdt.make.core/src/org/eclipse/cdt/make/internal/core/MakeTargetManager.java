@@ -140,11 +140,13 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected boolean hasTargetBuilder(IProject project) {
 		try {
-			IProjectDescription description = project.getDescription();
-			ICommand builder[] = description.getBuildSpec();
-			for (int j = 0; j < builder.length; j++) {
-				if (builderMap.containsValue(builder[j].getBuilderName())) {
-					return true;
+			if (project.isAccessible()) {
+				IProjectDescription description = project.getDescription();
+				ICommand builder[] = description.getBuildSpec();
+				for (int j = 0; j < builder.length; j++) {
+					if (builderMap.containsValue(builder[j].getBuilderName())) {
+						return true;
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -158,7 +160,6 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		for (int i = 0; i < project.length; i++) {
 			if (hasTargetBuilder(project[i])) {
 				fProjects.add(project[i]);
-				break;
 			}
 		}
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);

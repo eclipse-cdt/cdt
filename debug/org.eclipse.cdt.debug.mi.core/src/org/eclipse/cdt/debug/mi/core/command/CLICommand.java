@@ -20,6 +20,10 @@ public class CLICommand extends Command
 		operation = oper;
 	}
 
+	public void setOperation(String op) {
+		operation = op;
+	}
+
 	public String getOperation() {
 		return operation;
 	}

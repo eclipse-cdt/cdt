@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements Observer 
 {
-	private TabFolder fTabFolder;
+	protected TabFolder fTabFolder;
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
 	private GDBSolibBlock fSolibBlock;
@@ -160,12 +160,12 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		tabItem.setControl( comp );			
 
-		Composite subComp = ControlFactory.createCompositeEx( comp, 2, GridData.FILL_HORIZONTAL );
+		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
 
 		Label label = ControlFactory.createLabel( subComp, "GDB debugger:" );
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+//		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
 
 		fGDBCommandText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
@@ -191,7 +191,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 								private void handleGDBButtonSelected() 
 								{
 									FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-									dialog.setText( "GDB Command" );
+									dialog.setText( "GDB Command File" );
 									String gdbCommand = fGDBCommandText.getText().trim();
 									int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
 									if ( lastSeparatorIndex != -1 ) 
@@ -209,7 +209,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 
 		label = ControlFactory.createLabel( subComp, "GDB command file:" );
 		gd = new GridData();
-		gd.horizontalSpan = 2;
+//		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
 
 		fGDBInitText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );

@@ -1,23 +1,24 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/*
+ *(c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
  * 
- * Contributors:
- *     Monta Vista - initial API and implementation
- *******************************************************************************/
+ */
 
 package org.eclipse.cdt.debug.mi.internal.ui;
 
+import java.io.File;
+
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
-import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ComboDialogField;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.LayoutUtil;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -25,323 +26,262 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
-public class GDBServerDebuggerPage extends AbstractLaunchConfigurationTab {
-	
-	protected Text fDebuggerCommandText;
-	protected Button fTCPButton;
-	protected Button fAsyncButton;
-	protected Text fHostText;
-	protected Text fHostPort;
-	protected Text fAsyncDev;
-	protected Combo fAsyncDevSpeedCombo;
-	private Button fAutoSoLibButton;
+/**
+ * Enter type comment.
+ * 
+ * @since Nov 20, 2003
+ */
+public class GDBServerDebuggerPage extends GDBDebuggerPage
+{
+	private final static String CONNECTION_TCP = "TCP";
+	private final static String CONNECTION_SERIAL = "Serial";
 
-	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 2;
-		comp.setLayout(topLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gd);
-		setControl(comp);	
-		
-		createVerticalSpacer(comp, 2);
-		
-		Label debugCommandLabel= new Label(comp, SWT.NONE);
-		debugCommandLabel.setText("GDBServer gdb executable:");
-		
-		fDebuggerCommandText= new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fDebuggerCommandText.setLayoutData(gd);
-		fDebuggerCommandText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+	private ComboDialogField fConnectionField;
 
-		Composite radioComp = new Composite(comp, SWT.NONE);
-		GridLayout radioLayout = new GridLayout(2, true);
-		radioLayout.marginHeight = 0;
-		radioLayout.marginWidth = 0;
-		radioComp.setLayout(radioLayout);
+	private String[] fConnections = new String[] { CONNECTION_TCP, CONNECTION_SERIAL };
+	private TCPSettingsBlock fTCPBlock;
+	private SerialPortSettingsBlock fSerialBlock;
+	private Composite fConnectionStack;
+
+	public GDBServerDebuggerPage()
+	{
+		super();
+		fConnectionField = createConnectionField();
+		fTCPBlock = new TCPSettingsBlock();
+		fSerialBlock = new SerialPortSettingsBlock();
+		fTCPBlock.addObserver( this );
+		fSerialBlock.addObserver( this );
+	}
+
+	public void createMainTab( TabFolder tabFolder )
+	{
+		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
+		tabItem.setText( "Main" );
+
+		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
+		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
+		tabItem.setControl( comp );			
+
+		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
+		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
+
+		Label label = ControlFactory.createLabel( subComp, "GDB debugger:" );
+		GridData gd = new GridData();
+//		gd.horizontalSpan = 2;
+		label.setLayoutData( gd );
+
+		fGDBCommandText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
+		fGDBCommandText.addModifyListener( 
+						new ModifyListener() 
+							{
+								public void modifyText( ModifyEvent evt ) 
+								{
+									updateLaunchConfigurationDialog();
+								}
+							} );
+
+		Button button = createPushButton( subComp, "&Browse...", null );
+		button.addSelectionListener( 
+						new SelectionAdapter() 
+							{
+								public void widgetSelected( SelectionEvent evt ) 
+								{
+									handleGDBButtonSelected();
+									updateLaunchConfigurationDialog();
+								}
+								
+								private void handleGDBButtonSelected() 
+								{
+									FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
+									dialog.setText( "GDB Command File" );
+									String gdbCommand = fGDBCommandText.getText().trim();
+									int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
+									if ( lastSeparatorIndex != -1 ) 
+									{
+										dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
+									}
+									String res = dialog.open();
+									if ( res == null ) 
+									{
+										return;
+									}
+									fGDBCommandText.setText( res );
+								}
+							} );
+
+		label = ControlFactory.createLabel( subComp, "GDB command file:" );
 		gd = new GridData();
-		gd.horizontalSpan = 2;
-		radioComp.setLayoutData(gd);
-		fTCPButton = createRadioButton(radioComp, "Connect using TCP");
-		fTCPButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean isTcp = fTCPButton.getSelection();
-				fHostPort.setEnabled(isTcp);
-				fHostText.setEnabled(isTcp);
-				updateLaunchConfigurationDialog();
-			}
-		});
-		fAsyncButton = createRadioButton(radioComp, "Connect using a serial port");
-		fAsyncButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fAsyncDev.setEnabled(fAsyncButton.getSelection());
-				fAsyncDevSpeedCombo.setEnabled(fAsyncButton.getSelection());
-				updateLaunchConfigurationDialog();
-			}
-		});
+//		gd.horizontalSpan = 2;
+		label.setLayoutData( gd );
 
-
-		Label hostTextLabel= new Label(comp, SWT.NONE);
-		hostTextLabel.setText("GDBServer TCP host:");
-		
-		fHostText= new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fHostText.setLayoutData(gd);
-		fHostText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		Label hostPortLabel= new Label(comp, SWT.NONE);
-		hostPortLabel.setText("GDBServer TCP port:");
-		
-		fHostPort= new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fHostPort.setLayoutData(gd);
-		fHostPort.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		
-
-		Label asyncDevLabel= new Label(comp, SWT.NONE);
-		asyncDevLabel.setText("Serial device:");
-		
-		fAsyncDev= new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fAsyncDev.setLayoutData(gd);
-		fAsyncDev.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		Label asyncDevSpeedLabel= new Label(comp, SWT.NONE);
-		asyncDevSpeedLabel.setText("Serial speed:");
-	
-			  
-		fAsyncDevSpeedCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
-		String choices [] = {"9600", "19200","38400", "57600", "115200"};
-		fAsyncDevSpeedCombo.setItems(choices);
-		fAsyncDevSpeedCombo.select(choices.length-1);
-			
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-				  fAsyncDevSpeedCombo.setLayoutData(gd);
-				  fAsyncDevSpeedCombo.addSelectionListener(new SelectionAdapter() {
-					  
-					public void widgetSelected(SelectionEvent arg0) {
+		fGDBInitText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
+		gd = new GridData( GridData.FILL_HORIZONTAL );
+		fGDBInitText.setLayoutData( gd );
+		fGDBInitText.addModifyListener( new ModifyListener() 
+											{
+												public void modifyText( ModifyEvent evt ) 
+												{
+													updateLaunchConfigurationDialog();
+												}
+											} );
+		button = createPushButton( subComp, "&Browse...", null );
+		button.addSelectionListener(
+						new SelectionAdapter() 
+						{
+							public void widgetSelected( SelectionEvent evt ) 
+							{
+								handleGDBInitButtonSelected();
+								updateLaunchConfigurationDialog();
+							}
 							
-						updateLaunchConfigurationDialog();
-							
+							private void handleGDBInitButtonSelected() 
+							{
+								FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
+								dialog.setText( "GDB command file" );
+								String gdbCommand = fGDBInitText.getText().trim();
+								int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
+								if ( lastSeparatorIndex != -1 ) 
+								{
+									dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
+								}
+								String res = dialog.open();
+								if ( res == null ) 
+								{
+									return;
+								}
+								fGDBInitText.setText( res );
+							}
+						} );
+
+		extendMainTab( comp );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#extendMainTab(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void extendMainTab( Composite parent )
+	{
+		Composite comp = ControlFactory.createCompositeEx( parent, 2, GridData.FILL_BOTH );
+		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
+
+
+		fConnectionField.doFillIntoGrid( comp, 2 );
+		((GridData)fConnectionField.getComboControl( null ).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
+		PixelConverter converter = new PixelConverter( comp );
+		LayoutUtil.setWidthHint( fConnectionField.getComboControl( null ), converter.convertWidthInCharsToPixels( 15 ) );
+		fConnectionStack = ControlFactory.createCompositeEx( comp, 1, GridData.FILL_BOTH );
+		StackLayout stackLayout = new StackLayout();
+		fConnectionStack.setLayout( stackLayout );
+		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
+		fTCPBlock.createBlock( fConnectionStack );
+		fSerialBlock.createBlock( fConnectionStack );
+		connectionTypeChanged();
+	}
+
+	private ComboDialogField createConnectionField()
+	{
+		ComboDialogField field = new ComboDialogField( SWT.DROP_DOWN | SWT.READ_ONLY );
+		field.setLabelText( "Connection: " );
+		field.setItems( fConnections );
+		field.setDialogFieldListener( 
+						new IDialogFieldListener()
+							{
+								public void dialogFieldChanged( DialogField field )
+								{
+									connectionTypeChanged();
+								}
+							} );
+		return field;
+	}
+
+	protected void connectionTypeChanged()
+	{
+		((StackLayout)fConnectionStack.getLayout()).topControl = null;
+		int index = fConnectionField.getSelectionIndex();
+		if ( index >= 0 && index < fConnections.length )
+		{
+			String[] connTypes = fConnectionField.getItems();
+			if ( CONNECTION_TCP.equals( connTypes[index] ) )
+				((StackLayout)fConnectionStack.getLayout()).topControl = fTCPBlock.getControl();
+			else if ( CONNECTION_SERIAL.equals( connTypes[index] ) )
+				((StackLayout)fConnectionStack.getLayout()).topControl = fSerialBlock.getControl();
+		}
+		fConnectionStack.layout();
+		updateLaunchConfigurationDialog();
+	}
+
+	public boolean isValid( ILaunchConfiguration launchConfig )
+	{
+		if ( super.isValid( launchConfig ) )
+		{
+			setErrorMessage( null );
+			setMessage( null );
+
+			int index = fConnectionField.getSelectionIndex();
+			if ( index >= 0 && index < fConnections.length )
+			{
+				String[] connTypes = fConnectionField.getItems();
+				if ( CONNECTION_TCP.equals( connTypes[index] ) )
+				{
+					if ( !fTCPBlock.isValid( launchConfig ) )
+					{
+						setErrorMessage( fTCPBlock.getErrorMessage() );
+						return false;
 					}
-				  });
-
-		fTCPButton.setSelection(true);
-		fAsyncButton.setSelection(false);
-		fHostText.setEnabled(true);
-		fHostPort.setEnabled(true);
-		fAsyncDev.setEnabled(false);
-		fHostPort.setEnabled(true);
-		fHostText.setEnabled(true);
-		fAsyncDevSpeedCombo.setEnabled(false);
-
-		createVerticalSpacer(comp, 2);
-
-		fAutoSoLibButton = new Button(comp, SWT.CHECK ) ;
-		fAutoSoLibButton.setText("Load shared library symbols automatically");
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fAutoSoLibButton.setLayoutData(gd);
-/*
-		ListEditor listEditor = new ListEditor("1", "Shared library search paths:", comp) {
-			protected String createList(String[] items) {
-				StringBuffer buf = new StringBuffer();
-				for (int i = 0; i < items.length; i++) {
-					buf.append(items[i]);
-					buf.append(';');
 				}
-				return buf.toString();
-			}
-			protected String getNewInputObject() {
-//				StringInputDialog dialog= new StringInputDialog(comp.getShell(), "Library Path", null, "Enter a library path", "", null);
-//				if (dialog.open() == dialog.OK) {
-//					return dialog.getValue();
-//				} else {
-//					return null;
-//				}
-				return null;
-			}
-
-			protected String[] parseString(String list) {
-				StringTokenizer st = new StringTokenizer(list, ";");
-				ArrayList v = new ArrayList();
-				while (st.hasMoreElements()) {
-					v.add(st.nextElement());
+				else if ( CONNECTION_SERIAL.equals( connTypes[index] ) )
+				{
+					if ( !fSerialBlock.isValid( launchConfig ) )
+					{
+						setErrorMessage( fSerialBlock.getErrorMessage() );
+						return false;
+					}
 				}
-				return (String[]) v.toArray(new String[v.size()]);
+				return true;
 			}
-
-		};
-*/		
-		
+		}
+		return false;
 	}
 
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		String attr;
-		
-		attr = null;
-		try {
-			attr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, (String) null);
-		} catch (CoreException e) {
-		}
-		if (attr == null) {
-			configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-		}
+	public void initializeFrom( ILaunchConfiguration configuration )
+	{
+		super.initializeFrom( configuration );
 
-		/* The booleans should already be correct. */
-
-		attr = null;
-		try {	
-			attr = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, (String) null);
-		} catch (CoreException e) {
-		}
-		if (attr == null) {
-			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "");
-		}
-		attr = null;
-		try {	
-			attr = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, (String) null);
-		} catch (CoreException e) {
-		}
-		if (attr == null) {
-			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "");
-		}
-		attr = null;
-		try {	
-			attr = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, (String) null);
-		} catch (CoreException e) {
-		}
-		if (attr == null) {
-			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "/dev/ttyS0");
-		}
-		attr = null;
-		try {	
-			attr = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, (String) null);
-		} catch (CoreException e) {
-		}
-		if (attr == null) {
-			configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "115200");
-		}
-	}
-
-	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
-	 */
-	public boolean isValid(ILaunchConfiguration launchConfig) {
-		boolean valid;
-		
-		valid= fDebuggerCommandText.getText().length() != 0;
-		setErrorMessage(null);
-		setMessage(null);
-		if (!valid) {
-			setErrorMessage("Debugger executable must be specified");
-			setMessage(null);
-		}
-		if (valid) {
-			if (fTCPButton.getSelection()) {
-				valid = ((fHostText.getText().length() != 0)
-						 && (fHostPort.getText().length() != 0));
-				if (!valid) {
-					setErrorMessage("If TCP is selected, host and port must be specified");
-					setMessage(null);
-				}
-			} else {
-				valid = ((fAsyncDev.getText().length() != 0) && (fAsyncDevSpeedCombo.getSelectionIndex()!=-1)) ;
-				if (!valid) {
-					setErrorMessage("If Async is selected, device and speed must be specified");
-					setMessage(null);
-				}
-			}
-		}
-
-		return valid;
-	}
-
-	public void initializeFrom(ILaunchConfiguration configuration) {
-		String debuggerCommand = "gdb";
 		boolean isTcp = false;
-		String hostText = "";
-		String hostPort = "";
-		String asyncDev = "/dev/ttyS0";
-		String asyncDevSpeed = "115200";
-		boolean autosolib = false;
-		try {
-			debuggerCommand = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			autosolib = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, false);
-		} catch (CoreException e) {
+		try 
+		{
+			isTcp = configuration.getAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false );
+		} 
+		catch( CoreException e ) 
+		{
 		}
-		try {
-			isTcp = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false);
-			hostText = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "");
-			hostPort = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "");
-			asyncDev = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "");
-			asyncDevSpeed = configuration.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "");
-		} catch (CoreException e) {
-		}
-		fDebuggerCommandText.setText(debuggerCommand);
-		fTCPButton.setSelection(isTcp);
-		fAsyncButton.setSelection(!isTcp);
-		fHostText.setText(hostText);
-		fHostPort.setText(hostPort);
-		fAsyncDev.setText(asyncDev);
-		fAsyncDevSpeedCombo.select(fAsyncDevSpeedCombo.indexOf(asyncDevSpeed));
-		fHostText.setEnabled(isTcp);
-		fHostPort.setEnabled(isTcp);
-		fAsyncDev.setEnabled(!isTcp);
-		fAsyncDevSpeedCombo.setEnabled(!isTcp);
-		fAutoSoLibButton.setSelection(autosolib);		
+
+		fTCPBlock.initializeFrom( configuration );
+		fSerialBlock.initializeFrom( configuration );
+
+		fConnectionField.selectItem( ( isTcp ) ? 0 : 1 );
 	}
 
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		String debuggerCommand = fDebuggerCommandText.getText();
-		String hostText = fHostText.getText();
-		String hostPort = fHostPort.getText();
-		String asyncDev = fAsyncDev.getText();
-		String asyncDevSpeed = fAsyncDevSpeedCombo.getItem(fAsyncDevSpeedCombo.getSelectionIndex());
-		debuggerCommand.trim();
-		hostText.trim();
-		hostPort.trim();
-		asyncDev.trim();
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, debuggerCommand);
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, fAutoSoLibButton.getSelection());
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, fTCPButton.getSelection());
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, hostText);
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, hostPort);
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, asyncDev);
-		configuration.setAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, asyncDevSpeed);
+	public void performApply( ILaunchConfigurationWorkingCopy configuration )
+	{
+		super.performApply( configuration );
+		if ( fConnectionField != null )
+			configuration.setAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, fConnectionField.getSelectionIndex() == 0 );
+		fTCPBlock.performApply( configuration );
+		fSerialBlock.performApply( configuration );
 	}
 
-	public String getName() {
-		return "GDBServer Debugger Options";
-	}
-
-	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
-	 */
-	protected void updateLaunchConfigurationDialog() {
-		super.updateLaunchConfigurationDialog();
+	public void setDefaults( ILaunchConfigurationWorkingCopy configuration )
+	{
+		super.setDefaults( configuration );
+		configuration.setAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false );
+		fTCPBlock.setDefaults( configuration );
+		fSerialBlock.setDefaults( configuration );
 	}
 }

@@ -1,3 +1,9 @@
+2004-06-09 Tanya Wolff
+	Externalized strings from Work In Progress
+	Part of PR 66016
+	
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
+	
 2004-06-09 Alain Magloire
 	Disable extension Work In Progress
 	in plugin.xml. Part of PR 66016

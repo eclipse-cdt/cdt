@@ -1,3 +1,7 @@
+2004-11-23 Alain Magloire
+	Tentative fix for 77435
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java
+
 2004-11-19 Alain Magloire
 	Protect agains possible NPE.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java

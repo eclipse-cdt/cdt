@@ -1,3 +1,7 @@
+2005-01-20 Mikhail Khodjaiants
+	Bug 83330: Inconsistent in the label for Add expression.
+	* plugin.properties
+
 2005-01-19 Mikhail Khodjaiants
 	Fix for bug 83051: Add global variables deletes existing ones when new added.
 	* AddGlobalsActionDelegate.java

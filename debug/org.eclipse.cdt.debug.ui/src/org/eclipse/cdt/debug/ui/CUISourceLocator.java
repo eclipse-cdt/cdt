@@ -11,7 +11,6 @@ import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.CSourceLocator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -41,7 +40,7 @@ public class CUISourceLocator implements IPersistableSourceLocator
 	 * Identifier for the 'Prompting C/C++ Source Locator' extension
 	 * (value <code>"org.eclipse.cdt.debug.ui.cSourceLocator"</code>).
 	 */
-	public static final String ID_PROMPTING_JAVA_SOURCE_LOCATOR = CDebugUIPlugin.getUniqueIdentifier() + ".cSourceLocator"; //$NON-NLS-1$
+	public static final String ID_PROMPTING_C_SOURCE_LOCATOR = CDebugUIPlugin.getUniqueIdentifier() + ".cSourceLocator"; //$NON-NLS-1$
 
 	/**
 	 * The project being debugged.

@@ -191,6 +191,7 @@ public class TokenDuple implements ITokenDuple {
 	private static final Integer LBRACKET = new Integer( IToken.tLBRACKET );
 	private static final Integer LPAREN = new Integer( IToken.tLPAREN );
 	private String [] qualifiedName = null;
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	public IToken consumeTemplateIdArguments( IToken name, Iterator iter ){
 	    IToken token = name;
@@ -267,11 +268,11 @@ public class TokenDuple implements ITokenDuple {
 		
 	}
 
-	public String toString() 
+	public static String createStringRepresentation( IToken f, IToken l)
 	{
 		StringBuffer buff = new StringBuffer(); 
 		IToken prev = null;
-		IToken iter = firstToken; 
+		IToken iter = f; 
 		for( ; ; )
 		{
 			if( prev != null && 
@@ -285,13 +286,19 @@ public class TokenDuple implements ITokenDuple {
 				iter.getType() != IToken.tCOLONCOLON )
 				buff.append( ' ');
 			
-				
+			if( iter == null ) return EMPTY_STRING;
 			buff.append( iter.getImage() );
-			if( iter == lastToken ) break;
+			if( iter == l ) break;
 			prev = iter;
 			iter = iter.getNext();
 		}
-		return buff.toString().trim();
+		return buff.toString();
+		
+	}
+	
+	public String toString() 
+	{
+		return createStringRepresentation(firstToken, lastToken);
 	}
 	
 	public boolean isIdentifier()
@@ -533,4 +540,5 @@ public class TokenDuple implements ITokenDuple {
 		qualifiedName = (String[]) qn.toArray( qualifiedName );
 		
 	}
+	
 }

@@ -1679,7 +1679,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    {
 			String signature = "";//$NON-NLS-1$
 			if( start != null && lastToken != null )
-				signature = new TokenDuple( start, lastToken ).toString();
+				signature = TokenDuple.createStringRepresentation(start, lastToken);
 	        return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers(), signature);
 	    }
 	    catch (ASTSemanticException e)

@@ -46,6 +46,7 @@ public class ScannerData implements IScannerData
 	private final IScannerInfo originalConfig;
 	private List includePathNames = new ArrayList();
 	private static final Iterator EMPTY_ITERATOR = new EmptyIterator();
+	private final Map privateDefinitions;
 	/**
 	 * @return Returns the contextStack.
 	 */
@@ -96,7 +97,7 @@ public class ScannerData implements IScannerData
 		return branches;
 	}
 	
-	public Map getDefinitions()
+	public Map getPublicDefinitions()
 	{
 		return definitions;
 	}
@@ -160,6 +161,7 @@ public class ScannerData implements IScannerData
 		this.originalConfig = info;
 		this.contextStack = stack;
 		this.workingCopies = workingCopies;
+		privateDefinitions = new Hashtable();
 	}
 
 	
@@ -182,5 +184,12 @@ public class ScannerData implements IScannerData
 		if( workingCopies != null )
 			return workingCopies.iterator();
 		return EMPTY_ITERATOR;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getPrivateDefinitions()
+	 */
+	public Map getPrivateDefinitions() {
+		return privateDefinitions;
 	}
 }

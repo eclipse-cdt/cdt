@@ -120,6 +120,7 @@ public class Scanner implements IScanner {
 		scannerData.setDefinitions( definitions );
 		scannerData.setIncludePathNames( includePaths );
 		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
+		setupBuiltInMacros();
 	}
 	
     public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies ) {
@@ -322,7 +323,7 @@ public class Scanner implements IScanner {
 	}
 
 	public void addDefinition(String key, IMacroDescriptor macro) {
-		scannerData.getDefinitions().put(key, macro);
+		scannerData.getPublicDefinitions().put(key, macro);
 	}
 
 	public void addDefinition(String key, String value) {
@@ -332,7 +333,10 @@ public class Scanner implements IScanner {
 	}
 
 	public final IMacroDescriptor getDefinition(String key) {
-		return (IMacroDescriptor) scannerData.getDefinitions().get(key); 
+		IMacroDescriptor descriptor = (IMacroDescriptor) scannerData.getPublicDefinitions().get(key);
+		if( descriptor != null )
+			return descriptor;
+		return (IMacroDescriptor) scannerData.getPrivateDefinitions().get(key);
 	}
 
 	public final String[] getIncludePaths() {
@@ -2080,7 +2084,7 @@ public class Scanner implements IScanner {
 	 * @param key
 	 */
 	protected void removeSymbol(String key) {
-		scannerData.getDefinitions().remove(key);
+		scannerData.getPublicDefinitions().remove(key);
 	}
 
 	/**
@@ -2422,7 +2426,7 @@ public class Scanner implements IScanner {
 		IScanner trial = new Scanner( 
 				new StringReader(expressionBuffer.toString()), 
 				EXPRESSION, 
-				scannerData.getDefinitions(), 
+				scannerData.getPublicDefinitions(), 
 				scannerData.getIncludePathNames(),					
 				NULL_REQUESTOR,
 				ParserMode.QUICK_PARSE, 
@@ -2574,7 +2578,7 @@ public class Scanner implements IScanner {
 	
 	protected void temporarilyReplaceDefinitionsMap()
 	{
-		definitionsBackupMap = scannerData.getDefinitions();
+		definitionsBackupMap = scannerData.getPublicDefinitions();
 		scannerData.setDefinitions( EMPTY_MAP );
 	}
 	
@@ -2851,7 +2855,7 @@ public class Scanner implements IScanner {
         Scanner tokenizer  = new Scanner(
         		new StringReader(params), 
 				TEXT, 
-				scannerData.getDefinitions(), 
+				scannerData.getPublicDefinitions(), 
 				scannerData.getIncludePathNames(), 
 				NULL_REQUESTOR, 
 				scannerData.getParserMode(), 
@@ -3170,7 +3174,7 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
 	 */
 	public Map getDefinitions() {
-		return Collections.unmodifiableMap(scannerData.getDefinitions());
+		return Collections.unmodifiableMap(scannerData.getPublicDefinitions());
 	}
 
 	/**

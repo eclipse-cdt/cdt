@@ -97,13 +97,13 @@ public class GCCScannerExtension implements IScannerExtension {
 		//TODO - these macros should not be visible as macros in the scanner's definition list
 		//need to make a public/private table i think
 		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
-			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
+			scannerData.getPrivateDefinitions().put( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 		
 		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
-			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
+			scannerData.getPrivateDefinitions().put( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 
 		if( scannerData.getScanner().getDefinition( __EXTENSION__ ) == null )
-			scannerData.getScanner().addDefinition( __EXTENSION__, new ObjectMacroDescriptor( __EXTENSION__, EMPTY_STRING ));
+			scannerData.getPrivateDefinitions().put( __EXTENSION__, new ObjectMacroDescriptor( __EXTENSION__, EMPTY_STRING ));
 		
 		setupAlternativeKeyword(scannerData, __CONST__, Keywords.CONST);
 		setupAlternativeKeyword(scannerData, __CONST, Keywords.CONST);
@@ -126,7 +126,7 @@ public class GCCScannerExtension implements IScannerExtension {
 		// alternate keyword forms
 		// TODO - make this more efficient - update TokenFactory to avoid a context push for these token to token cases
 		if( scannerData.getScanner().getDefinition( keyword ) == null )
-			scannerData.getScanner().addDefinition( keyword, new ObjectMacroDescriptor( __CONST__, mapping )); //$NON-NLS-1$
+			scannerData.getPrivateDefinitions().put( keyword, new ObjectMacroDescriptor( __CONST__, mapping )); //$NON-NLS-1$
 	}
 
 	private static final Set directives;

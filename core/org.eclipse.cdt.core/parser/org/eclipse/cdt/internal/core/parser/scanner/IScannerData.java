@@ -51,7 +51,8 @@ public interface IScannerData {
 	public abstract IASTFactory getASTFactory();
 	public abstract void setASTFactory(IASTFactory factory);
 	public abstract BranchTracker getBranchTracker();
-	public abstract Map getDefinitions();
+	public abstract Map getPublicDefinitions();
+	public Map getPrivateDefinitions();
 	/**
 	 * @return Returns the problemFactory.
 	 */

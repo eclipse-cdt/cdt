@@ -159,7 +159,7 @@ public class ScannerUtility {
 				Scanner helperScanner = new Scanner(
 											new StringReader(includeLine), 
 											null, 
-											scannerData.getDefinitions(), scannerData.getIncludePathNames(),
+											scannerData.getPublicDefinitions(), scannerData.getIncludePathNames(),
 											NULL_REQUESTOR,
 											scannerData.getParserMode(),
 											scannerData.getLanguage(), NULL_LOG_SERVICE, extension );

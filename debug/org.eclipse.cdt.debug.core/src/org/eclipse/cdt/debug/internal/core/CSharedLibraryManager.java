@@ -30,6 +30,7 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 {
 	private CDebugTarget fDebugTarget = null;
 	private ArrayList fSharedLibraries;
+	private boolean fAutoLoadSymbols = false;
 
 	/**
 	 * Constructor for CSharedLibraryManager.
@@ -251,5 +252,33 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#setAutoLoadSymbols(boolean)
+	 */
+	public void setAutoLoadSymbols( boolean set ) throws DebugException
+	{
+		ICDISharedLibraryManager slm = getCDIManager();
+		if ( slm != null )
+		{
+			try
+			{
+				slm.setAutoLoadSymbols( set );
+				fAutoLoadSymbols = set;
+			}
+			catch( CDIException e )
+			{
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#getAutoLoadSymbols()
+	 */
+	public boolean getAutoLoadSymbols()
+	{
+		return fAutoLoadSymbols;
 	}
 }

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.BranchTracker;
 import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
+import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
 import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro.Expansion;
@@ -55,6 +57,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	int count;
 	
 	private ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
+	private final Map fileCache = new HashMap(100);
 	
 	// The context stack
 	private static final int bufferInitialSize = 8;
@@ -85,7 +88,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		this.log = log;
 		this.workingCopies = workingCopies;
 
-		pushContext(reader.buffer);
+		if (reader.filename != null)
+			fileCache.put(reader.filename, reader);
+		
+		pushContext(reader.buffer, reader);
 
 		if (info.getDefinedSymbols() != null) {
 			Map symbols = info.getDefinedSymbols();
@@ -630,9 +636,22 @@ public class Scanner2 implements IScanner, IScannerData {
 				.definitions.get(buffer, start, len);
 		}
 
-		if (expObject == null)
+		if (expObject == null) {
 			// now check regular macros
 			expObject = definitions.get(buffer, start, len);
+			
+			// but not if it has been expanded on the stack already
+			// i.e. recursion avoidance
+			if (expObject != null)
+				for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
+					if (bufferData[stackPos] != null
+							&& bufferData[stackPos] instanceof ObjectStyleMacro
+							&& CharArrayUtils.equals(buffer, start, len,
+									((ObjectStyleMacro)bufferData[stackPos]).name)) {
+						expObject = null;
+						break;
+					}
+		}
 		
 		if (expObject != null) {
 			if (expObject instanceof FunctionStyleMacro) {
@@ -914,7 +933,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if ((c >= 'a' && c <= 'z')) {
 			while (++bufferPos[bufferStackPos] < limit) {
 				c = buffer[bufferPos[bufferStackPos]];
-				if ((c >= 'a' && c <= 'z'))
+				if ((c >= 'a' && c <= 'z') || c == '_')
 					continue;
 				else
 					break;
@@ -924,6 +943,12 @@ public class Scanner2 implements IScanner, IScannerData {
 			int type = ppKeywords.get(buffer, start, len);
 			if (type != ppKeywords.undefined) {
 				switch (type) {
+					case ppInclude:
+						handlePPInclude(false);
+						return;
+					case ppInclude_next:
+						handlePPInclude(true);
+						return;
 					case ppDefine:
 						handlePPDefine();
 						return;
@@ -957,6 +982,92 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 	}		
 
+	private void handlePPInclude(boolean next) {
+		char[] buffer = bufferStack[bufferStackPos];
+		int limit = bufferLimit[bufferStackPos];
+		
+		skipOverWhiteSpace();
+		
+		int pos = ++bufferPos[bufferStackPos];
+		if (pos >= limit)
+			return;
+
+		boolean local = false;
+		String filename = null;
+		char c = buffer[pos];
+		if (c == '"') {
+			local = true;
+			int start = bufferPos[bufferStackPos] + 1;
+			int length = 0;
+			boolean escaped = false;
+			while (++bufferPos[bufferStackPos] < limit) {
+				++length;
+				c = buffer[bufferPos[bufferStackPos]];
+				if (c == '"') {
+					if (!escaped)
+						break;
+				} else if (c == '\\') {
+					escaped = !escaped;
+					continue;
+				}
+				escaped = false;
+			}
+			--length;
+			
+			filename = new String(buffer, start, length);
+		} else if (c == '<') {
+			local = false;
+			int start = bufferPos[bufferStackPos] + 1;
+			int length = 0;
+
+			while (++bufferPos[bufferStackPos] < limit &&
+					buffer[bufferPos[bufferStackPos]] != '>')
+				++length;
+
+			filename = new String(buffer, start, length);
+		}
+		// TODO else we need to do macro processing on the rest of the line
+
+		skipToNewLine();
+
+		CodeReader reader = null;
+		
+		if (local) {
+			
+		}
+		
+		// iterate through the include paths
+		// foundme has odd logic but if we're not include_next, then we are looking for the
+		// first occurance, otherwise, we're looking for the one after us
+		boolean foundme = !next;
+		if (includePaths != null)
+			for (int i = 0; i < includePaths.length; ++i) {
+				String finalPath = ScannerUtility.createReconciledPath(includePaths[i], filename);
+				if (!foundme) {
+					if (finalPath.equals(((CodeReader)bufferData[bufferStackPos]).filename)) {
+						foundme = true;
+						continue;
+					}
+				} else {
+					reader = (CodeReader)fileCache.get(finalPath);
+					if (reader == null) {
+						reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
+						if (reader != null) {
+							if (reader.filename != null)
+								fileCache.put(reader.filename, reader);
+							pushContext(reader.buffer, reader);
+							return;
+						}
+					}
+				}
+			}
+		
+		// TODO raise a problem
+		//if (reader == null)
+		//	handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, filename, beginOffset, false, true );
+		
+	}
+	
 	private void handlePPDefine() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1651,6 +1762,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static final int ppDefine	= 7;
 	private static final int ppUndef	= 8;
 	private static final int ppError	= 9;
+	private static final int ppInclude_next = 10;
 	
 	static {
 		keywords = new CharArrayIntMap(IToken.tLAST, -1);
@@ -1753,5 +1865,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		ppKeywords.put("define".toCharArray(), ppDefine);
 		ppKeywords.put("undef".toCharArray(), ppUndef);
 		ppKeywords.put("error".toCharArray(), ppError);
+		ppKeywords.put("include_next".toCharArray(), ppInclude_next);
 	}
 }

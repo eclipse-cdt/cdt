@@ -9,7 +9,7 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 
-package org.eclipse.cdt.core.parser.tests;
+package org.eclipse.cdt.core.parser.tests.scanner2;
 
 import java.util.List;
 

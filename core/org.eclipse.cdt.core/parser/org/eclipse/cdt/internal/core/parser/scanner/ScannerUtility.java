@@ -76,7 +76,7 @@ public class ScannerUtility {
 	 * @param fileName
 	 * @return
 	 */
-	static String createReconciledPath(String path, String fileName) {
+	public static String createReconciledPath(String path, String fileName) {
 		//TODO assert pathFile.isDirectory();	
 		StringBuffer newPathBuffer = new StringBuffer( new File(path).getPath() );
 		newPathBuffer.append( File.separatorChar );

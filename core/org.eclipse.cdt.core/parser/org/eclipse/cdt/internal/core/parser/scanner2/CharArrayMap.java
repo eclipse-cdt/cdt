@@ -76,7 +76,7 @@ public abstract class CharArrayMap {
 		int hash = hash(buffer, start, len);
 		
 		if (hashTable[hash] == 0) {
-			if (++currEntry > keyTable.length)
+			if (++currEntry >= keyTable.length)
 				resize();
 			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 			insert(currEntry, hash);

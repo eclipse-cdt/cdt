@@ -2202,7 +2202,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                     foundContext = tempContext;
                     break;
                 }
-                foundContext = findInclusion(context, path);
+                foundContext = findInclusion(tempContext, path);
             }
         }
 

@@ -1,4 +1,8 @@
 2003-03-28 Mikhail Khodjaiants
+	Added time stamp to the trace messages.
+	* MIPlugin.java
+
+2003-03-28 Mikhail Khodjaiants
 	Correction of the previous patch.
 	* MIAsm.java
 

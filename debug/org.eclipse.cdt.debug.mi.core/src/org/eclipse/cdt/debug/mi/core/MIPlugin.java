@@ -6,6 +6,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -233,7 +234,9 @@ public class MIPlugin extends Plugin {
 	}
 
 	public void debugLog(String message) {
-		if (getDefault().isDebugging()) {
+		if (getDefault().isDebugging()) {			
+			// Time stamp
+			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
 			// This is to verbose for a log file, better use the console.
 			//	getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
 			// ALERT:FIXME: For example for big buffers say 4k length,

@@ -587,6 +587,8 @@ public class Elf {
 		public static final int ELF_TYPE_EXE   = 1;
 		public static final int ELF_TYPE_SHLIB = 2;
 		public static final int ELF_TYPE_OBJ   = 3;
+		public static final int ELF_TYPE_CORE  = 4;
+
 		String cpu;
 		int type;
 		boolean bDebug;
@@ -614,6 +616,9 @@ public class Elf {
         Attribute attrib = new Attribute();
 
         switch( ehdr.e_type ) {
+        	case Elf.ELFhdr.ET_CORE:
+				attrib.type = attrib.ELF_TYPE_CORE;
+				break;
             case Elf.ELFhdr.ET_EXEC:
                 attrib.type = attrib.ELF_TYPE_EXE;
                 break;

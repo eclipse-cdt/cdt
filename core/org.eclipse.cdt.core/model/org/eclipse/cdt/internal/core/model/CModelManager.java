@@ -385,7 +385,8 @@ public class CModelManager implements IResourceChangeListener {
 			IBinaryFile bin = parser.getBinary(file);
 			return (bin.getType() == IBinaryFile.EXECUTABLE
 				|| bin.getType() == IBinaryFile.OBJECT
-				|| bin.getType() == IBinaryFile.SHARED);
+				|| bin.getType() == IBinaryFile.SHARED
+				|| bin.getType() == IBinaryFile.CORE);
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}

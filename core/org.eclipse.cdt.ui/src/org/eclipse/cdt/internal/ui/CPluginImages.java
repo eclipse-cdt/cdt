@@ -57,6 +57,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_SHLIB= NAME_PREFIX + "shlib_obj.gif";
 	public static final String IMG_OBJS_CEXEC= NAME_PREFIX + "exec_obj.gif";
 	public static final String IMG_OBJS_CEXEC_DEBUG= NAME_PREFIX + "exec_dbg_obj.gif";
+	public static final String IMG_OBJS_CORE= NAME_PREFIX + "core_obj.gif";
 	public static final String IMG_OBJS_CONTAINER= NAME_PREFIX + "container_obj.gif";
 
 	// Breakpoint images
@@ -78,6 +79,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_SHLIB= createManaged(T_OBJ, IMG_OBJS_SHLIB);
 	public static final ImageDescriptor DESC_OBJS_CEXEC= createManaged(T_OBJ, IMG_OBJS_CEXEC);
 	public static final ImageDescriptor DESC_OBJS_CEXEC_DEBUG= createManaged(T_OBJ, IMG_OBJS_CEXEC_DEBUG);
+	public static final ImageDescriptor DESC_OBJS_CORE= createManaged(T_OBJ, IMG_OBJS_CORE);
 	public static final ImageDescriptor DESC_OBJS_CONTAINER= createManaged(T_OBJ, IMG_OBJS_CONTAINER);
 	
 	// Breakpoint image descriptors

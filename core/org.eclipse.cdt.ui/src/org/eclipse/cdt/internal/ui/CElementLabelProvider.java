@@ -96,63 +96,6 @@ public class CElementLabelProvider extends LabelProvider {
 		return fWorkbenchLabelProvider.getImage(element);
 
 	}
-	
-	/**
-	 * Gets the image key for a c element.
-	 * @param The type of the element
-	 */
-	public static String getCElementImage(ICElement celement) {
-		int type = celement.getElementType();
-		switch (type) {
-			case ICElement.C_CONTAINER:
-				return CPluginImages.IMG_OBJS_CONTAINER;
-
-			case ICElement.C_FILE:
-				ICFile cfile = (ICFile)celement;
-				if (cfile.isArchive()) {
-					return CPluginImages.IMG_OBJS_ARCHIVE;
-				} else if (cfile.isBinary()) {
-					IBinary bin = (IBinary)cfile;
-					if (bin.isExecutable()) {
-						if (bin.hasDebug())
-							return CPluginImages.IMG_OBJS_CEXEC_DEBUG;
-						return CPluginImages.IMG_OBJS_CEXEC;
-					} else if (bin.isSharedLib()) {
-						return CPluginImages.IMG_OBJS_SHLIB;
-					}
-					return CPluginImages.IMG_OBJS_BINARY;
-				} else if (cfile.isTranslationUnit()) {
-					return CPluginImages.IMG_OBJS_TUNIT;
-				}
-				break;
-
-			case ICElement.C_UNION:
-				return CPluginImages.IMG_OBJS_UNION;
-				
-			case ICElement.C_CLASS:
-				return CPluginImages.IMG_OBJS_CLASS;
-				
-			case ICElement.C_STRUCT:
-				return CPluginImages.IMG_OBJS_STRUCT;
-
-			case ICElement.C_FIELD:
-			case ICElement.C_VARIABLE:
-				return CPluginImages.IMG_OBJS_FIELD;
-
-			case ICElement.C_FUNCTION:
-				return CPluginImages.IMG_OBJS_FUNCTION;
-
-			case ICElement.C_FUNCTION_DECLARATION:
-				return CPluginImages.IMG_OBJS_DECLARATION;
-
-			case ICElement.C_INCLUDE:
-				return CPluginImages.IMG_OBJS_INCLUDE;
-
-			case ICElement.C_MACRO:
-				return CPluginImages.IMG_OBJS_MACRO;
-		}
-		return null;
-	}
 
 	/**
 	 * @see IBaseLabelProvider#dispose()

@@ -132,6 +132,8 @@ public class BinaryPropertySource extends FilePropertySource {
 				return "executable";
 			} else if (binary.isSharedLib()) {
 				return "shared library";
+			} else if (binary.isCore()) {
+				return "core file";
 			}
 		}
 		return null;

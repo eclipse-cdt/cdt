@@ -172,6 +172,8 @@ public class CElementImageProvider {
 						return CPluginImages.DESC_OBJS_CEXEC;
 					} else if (bin.isSharedLib()) {
 						return CPluginImages.DESC_OBJS_SHLIB;
+					} else if (bin.isCore()) {
+						return CPluginImages.DESC_OBJS_CORE;
 					}
 					return CPluginImages.DESC_OBJS_BINARY;
 				} else if (cfile.isTranslationUnit()) {

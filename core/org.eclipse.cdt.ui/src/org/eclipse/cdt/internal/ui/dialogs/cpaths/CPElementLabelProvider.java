@@ -36,7 +36,7 @@ class CPElementLabelProvider extends LabelProvider {
 	public CPElementLabelProvider() {
 		this(true);
 	}
-	
+
 	public CPElementLabelProvider(boolean showExported) {
 		fNewLabel = CPathEntryMessages.getString("CPElementLabelProvider.new"); //$NON-NLS-1$
 		fCreateLabel = CPathEntryMessages.getString("CPElementLabelProvider.willbecreated"); //$NON-NLS-1$
@@ -124,8 +124,9 @@ class CPElementLabelProvider extends LabelProvider {
 		switch (cpentry.getEntryKind()) {
 			case IPathEntry.CDT_LIBRARY :
 				{
-					StringBuffer str = new StringBuffer( ((IPath)cpentry.getAttribute(CPElement.LIBRARY)).toOSString());
-					addBaseString(cpentry, str);
+					IPath libPath = (IPath)cpentry.getAttribute(CPElement.LIBRARY);
+					StringBuffer str = new StringBuffer();
+					addBaseString(libPath, cpentry, str);
 					addExport(cpentry, str);
 					return str.toString();
 				}
@@ -134,8 +135,8 @@ class CPElementLabelProvider extends LabelProvider {
 			case IPathEntry.CDT_INCLUDE :
 				{
 					IPath incPath = ((IPath)cpentry.getAttribute(CPElement.INCLUDE));
-					StringBuffer str = new StringBuffer(incPath.toOSString());
-					addBaseString(cpentry, str);
+					StringBuffer str = new StringBuffer();
+					addBaseString(incPath, cpentry, str);
 					addExport(cpentry, str);
 					return str.toString();
 				}
@@ -143,7 +144,7 @@ class CPElementLabelProvider extends LabelProvider {
 				{
 					StringBuffer str = new StringBuffer((String)cpentry.getAttribute(CPElement.MACRO_NAME) + "=" //$NON-NLS-1$
 							+ (String)cpentry.getAttribute(CPElement.MACRO_VALUE));
-					addBaseString(cpentry, str);
+					addBaseString(null, cpentry, str);
 					addExport(cpentry, str);
 					return str.toString();
 				}
@@ -188,9 +189,12 @@ class CPElementLabelProvider extends LabelProvider {
 		}
 	}
 
-	private void addBaseString(CPElement cpentry, StringBuffer str) {
+	private void addBaseString(IPath endPath, CPElement cpentry, StringBuffer str) {
 		IPath baseRef = (IPath)cpentry.getAttribute(CPElement.BASE_REF);
 		if (!baseRef.isEmpty()) {
+			if (endPath != null) {
+				str.append(endPath.toOSString());
+			}
 			str.append(" - ("); //$NON-NLS-1$
 			if (baseRef.isAbsolute()) {
 				//				str.append("From project ");
@@ -210,10 +214,12 @@ class CPElementLabelProvider extends LabelProvider {
 		} else {
 			IPath path = (IPath)cpentry.getAttribute(CPElement.BASE);
 			if (!path.isEmpty()) {
-				if (!path.hasTrailingSeparator()) {
-					path = path.addTrailingSeparator();
+				if (endPath != null) {
+					path = path.append(endPath);
 				}
 				str.insert(0, path.toOSString());
+			} else if (endPath != null) {
+				str.insert(0, endPath.toOSString());
 			}
 		}
 

@@ -34,7 +34,7 @@
       <property name="data-dir" value="${cdt-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
-                value="org.eclipse.cdt.core.model.tests.AllCoreTests"/>
+                value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
     </ant>
   </target>
 

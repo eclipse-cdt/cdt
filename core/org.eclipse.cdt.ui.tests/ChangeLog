@@ -1,3 +1,7 @@
+2003-07-15
+     Clean up some left over stuff that was moved into org.eclipse.cdt.core.tests,
+     and fixed the test.xml to point to the correct test suite.
+     
 2003-06-25 John Camelon
 	Create new interface and support for calculating lineNumber/offset mapping.  
 	Updated IASTClassSpecifier for qualified name query.  

@@ -1,3 +1,14 @@
+2003-09-12 Alain Magloire
+	Patch from Bogdan Gheorghe, it corrected a NPE, when dealing with file extensions.
+	In a Unix enviroment binaries do not have extensions also some C++ headers
+	do not have extension, for example "cstdio" etc .. The patch guard agains null.
+	
+	Second part added debug loggin trace
+
+	* .options
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
 2003-09-12 Keith Campbell
     Added missing dependency on org.eclipse.team.core (this plugin defines extensions
     to org.eclipse.team.core.fileTypes and org.eclipse.team.core.ignore).

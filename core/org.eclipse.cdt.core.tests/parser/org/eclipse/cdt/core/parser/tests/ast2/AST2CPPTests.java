@@ -1648,16 +1648,16 @@ public class AST2CPPTests extends AST2BaseTest {
 //        assertTrue(binding instanceof ICPPClassType);
 //    }
 
-//    public void testBug85049() throws Exception {
-//        StringBuffer buffer = new StringBuffer( "struct B { };\n" ); //$NON-NLS-1$
-//        buffer.append( "void g() {\n" ); //$NON-NLS-1$
-//        buffer.append( "B * bp;  //1\n" ); //$NON-NLS-1$
-//        buffer.append( "}\n" ); //$NON-NLS-1$
-//        IASTTranslationUnit t = parse( buffer.toString(), ParserLanguage.CPP );
-//        IASTFunctionDefinition g = (IASTFunctionDefinition) t.getDeclarations()[1];
-//        IASTCompoundStatement body = (IASTCompoundStatement) g.getBody();
-//        assertTrue( body.getStatements()[0] instanceof IASTDeclarationStatement );
-//    }
+    public void testBug85049() throws Exception {
+        StringBuffer buffer = new StringBuffer( "struct B { };\n" ); //$NON-NLS-1$
+        buffer.append( "void g() {\n" ); //$NON-NLS-1$
+        buffer.append( "B * bp;  //1\n" ); //$NON-NLS-1$
+        buffer.append( "}\n" ); //$NON-NLS-1$
+        IASTTranslationUnit t = parse( buffer.toString(), ParserLanguage.CPP );
+        IASTFunctionDefinition g = (IASTFunctionDefinition) t.getDeclarations()[1];
+        IASTCompoundStatement body = (IASTCompoundStatement) g.getBody();
+        assertTrue( body.getStatements()[0] instanceof IASTDeclarationStatement );
+    }
     
 
     public void testPMConversions() throws Exception {

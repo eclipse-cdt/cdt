@@ -73,6 +73,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -2552,6 +2553,51 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             consume();
 
         return pd;
+    }
+
+    static class HeuristicTypeDetector extends CASTVisitor
+    {
+        private final char[] lookingForName;
+        boolean result = false;
+        
+        {
+            shouldVisitDeclarations = true;
+        }
+
+        public HeuristicTypeDetector( char [] name )
+        {
+            this.lookingForName = name;
+        }
+
+        public int visit(IASTDeclaration declaration) {
+            if( declaration instanceof IASTSimpleDeclaration )
+            {
+                IASTSimpleDeclaration sd = (IASTSimpleDeclaration) declaration;
+                if( sd.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef )
+                {
+                    IASTDeclarator [] declarators = sd.getDeclarators();
+                    for( int i = 0; i < declarators.length; ++i )
+                        if( CharArrayUtils.equals( declarators[i].getName().toCharArray(), lookingForName ) )
+                        {
+                            result = true;
+                            return PROCESS_ABORT;
+                        }
+                }
+            }
+            return PROCESS_CONTINUE;
+        }
+        
+        public boolean getAnswer()
+        {
+            return result;
+        }
+        
+    }
+    
+    protected boolean queryIsTypeName(IASTName name) {
+        HeuristicTypeDetector nc = new HeuristicTypeDetector( name.toCharArray() );
+        translationUnit.accept(nc);
+        return nc.result;
     }
 
 }

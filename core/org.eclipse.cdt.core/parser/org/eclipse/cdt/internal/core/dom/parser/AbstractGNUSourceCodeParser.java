@@ -1524,17 +1524,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
         }
 
-//        // A*B
-//        if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
-//            IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
-//                    .getExpression();
-//            if (exp.getOperator() == IASTBinaryExpression.op_multiply) {
-//                IASTExpression lhs = exp.getOperand1();
-//                if (lhs instanceof IASTIdExpression)
-//                    if (queryIsTypeName(((IASTIdExpression) lhs).getName()))
-//                        return ds;
-//            }
-//        }
+        // A*B
+        if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
+            IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement
+                    .getExpression();
+            if (exp.getOperator() == IASTBinaryExpression.op_multiply) {
+                IASTExpression lhs = exp.getOperand1();
+                if (lhs instanceof IASTIdExpression)
+                    if (queryIsTypeName(((IASTIdExpression) lhs).getName()))
+                        return ds;
+            }
+        }
 
         // x = y; // default to int
         // valid @ Translation Unit scope
@@ -1564,6 +1564,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         return expressionStatement;
     }
+
+    protected abstract boolean queryIsTypeName(IASTName name);
 
     /**
      * @param ds

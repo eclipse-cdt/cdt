@@ -1,5 +1,12 @@
 2005-01-26 Alain Magloire
 	Part of implementing PR 83112
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	Changes in the interface of the Core Model
+	* refactor/org/eclipse/cdt/internal/corext/refactoring/rename/RenameElementProcessor.java
+	* refactor/org/eclipse/cdt/internal/ui/refactoring/actions/RenameRefactoringAction.java
+
+2005-01-26 Alain Magloire
+	Part of implementing PR 83112
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java
 	* src/org/eclipse/cdt/internal/ui/cview/SelectionTransferDragAdapter.java
 	* src/org/eclipse/cdt/internal/ui/cview/SelectionTransferDropAdapter.java

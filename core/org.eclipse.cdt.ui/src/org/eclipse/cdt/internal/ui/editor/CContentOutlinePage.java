@@ -14,6 +14,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
@@ -41,6 +47,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -53,6 +61,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
@@ -236,7 +245,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer.setLabelProvider(new DecoratingCLabelProvider(new StandardCElementLabelProvider(), true));
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
-		
+
+		initDragAndDrop();
+
 		MenuManager manager= new MenuManager(fContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
@@ -430,5 +441,24 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		contentUpdated();		
 	}
-	
+
+	private void initDragAndDrop() {
+		int ops= DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
+		Transfer[] transfers= new Transfer[] {
+			LocalSelectionTransfer.getInstance()
+		};
+		
+		// Drop Adapter
+		TransferDropTargetListener[] dropListeners= new TransferDropTargetListener[] {
+			new SelectionTransferDropAdapter(treeViewer)
+		};
+		treeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new DelegatingDropAdapter(dropListeners));
+		
+		// Drag Adapter
+		TransferDragSourceListener[] dragListeners= new TransferDragSourceListener[] {
+			new SelectionTransferDragAdapter(treeViewer)
+		};
+		treeViewer.addDragSupport(ops, transfers, new CDTViewerDragAdapter(treeViewer, dragListeners));
+	}
+
 }

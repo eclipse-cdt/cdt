@@ -11,9 +11,11 @@
 package org.eclipse.cdt.internal.ui.refactoring.actions;
 
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.corext.refactoring.RenameRefactoring;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -68,10 +70,17 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 			setEnabled(false);
 			return;
 		}
-		
-		if( (((CElement)element).getIdStartPos() != textSelection.getOffset()) 
-		|| (((CElement)element).getIdLength() != textSelection.getLength())) {
-			enable = false;
+		if (element instanceof ISourceReference) {
+			try {
+				ISourceReference sourceRef = (ISourceReference)element;
+				ISourceRange range = sourceRef.getSourceRange();
+				if( (range.getIdStartPos() != textSelection.getOffset()) 
+						|| (range.getIdLength() != textSelection.getLength())) {
+					enable = false;
+				}
+			} catch (CModelException e) {
+				//
+			}
 		}
 		setEnabled(enable);
 	}

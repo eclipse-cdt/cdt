@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceManipulation;
+import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -148,13 +149,20 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	}
 
 	private int getCurrentElementNameStartPos() {
-		if(fCElement == null)
+		if (fCElement == null)
 			return 0;	
-		String name = fCElement.getElementName();
-		if (name.indexOf(QUALIFIER) != -1){
-			return (((CElement)fCElement).getIdStartPos() + name.lastIndexOf(QUALIFIER) + 2);
+		try {
+			String name = fCElement.getElementName();
+			ISourceReference sourceRef = (ISourceReference)fCElement;
+			ISourceRange range = sourceRef.getSourceRange();
+			if (name.indexOf(QUALIFIER) != -1) {
+				return range.getIdStartPos() + name.lastIndexOf(QUALIFIER) + 2;
+			}
+			return range.getIdStartPos();
+		} catch (CModelException e) {
+			//
 		}
-		return ((CElement)fCElement).getIdStartPos(); 
+		return 0;
 	}
 	
 	private String getElementQualifiedName(ICElement element) throws CModelException{

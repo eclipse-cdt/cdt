@@ -1,3 +1,9 @@
+2003-04-03 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdt/model/Target.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdt/model/Thread.java:
+	Before updating the register check if the manager is on autoupdate.
+
 2003-04-02 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdt/model/Target.java:

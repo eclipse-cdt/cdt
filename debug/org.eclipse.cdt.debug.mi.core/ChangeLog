@@ -1,3 +1,8 @@
+2005-01-10 Alain Magloire
+	Fix for PR 82506
+	* mi/org/eclipse/cdt/debug/mi/core/MISession.java
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIParser.java
+
 2004-12-20 Alain Magloire
 	Fix for PR 81019 for MacOsX
 	* mi/org/eclipse/cdt/debug/mi/core/output/MIVarListChildrenInfo.java

@@ -1,5 +1,12 @@
 2003-02-12 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java (isAutoLoadSymbols):
+	New method.
+	* src/org/eclipse/cdt/deb/mi/core/command/MIGDBShow.java (getMIGDBShowInfo):
+	New method.
+
+2003-02-12 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ChangedEvent.java (ChangedEvent):
 	Returns a Variable.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/DestroyedEvent.java (DestroyedEvent):

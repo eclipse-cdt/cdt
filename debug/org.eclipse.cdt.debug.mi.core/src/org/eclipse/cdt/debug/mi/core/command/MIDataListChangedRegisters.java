@@ -24,6 +24,10 @@ public class MIDataListChangedRegisters extends MICommand
 		super("-data-list-changed-registers" );
 	}
 
+	public MIDataListChangedRegistersInfo getMIDataListChangedRegistersInfo() throws MIException {
+		return (MIDataListChangedRegistersInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

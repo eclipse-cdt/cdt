@@ -71,6 +71,10 @@ public class MIDataListRegisterValues extends MICommand
 		}
 	}
 
+	public MIDataListRegisterValuesInfo getMIDataListRegisterValuesInfo() throws MIException {
+		return (MIDataListRegisterValuesInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

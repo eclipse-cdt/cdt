@@ -93,7 +93,9 @@ public class CThread extends CDebugElement
 	/**
 	 * Whether this thread is current.
 	 */
-	private boolean fIsCurrent = false;	
+	private boolean fIsCurrent = false;
+	
+	private CStackFrame fLastStackFrame = null;	
 
 	/**
 	 * Constructor for CThread.
@@ -826,6 +828,7 @@ public class CThread extends CDebugElement
 	private void handleResumedEvent( ICDIResumedEvent event )
 	{
 		setRunning( true );
+		setLastStackFrame( null );
 		int state = IState.RUNNING;
 		int detail = DebugEvent.UNSPECIFIED;
 		if ( isCurrent() )
@@ -974,14 +977,18 @@ public class CThread extends CDebugElement
 	 */
 	public void switchToFrame( IStackFrame frame ) throws DebugException
 	{
-		if ( frame == null && !(frame instanceof CStackFrame) )
+		if ( frame == null || !(frame instanceof CStackFrame) || frame.equals( getLastStackFrame() ) )
 		{
 			return;
 		}
 //		((CDebugTarget)getDebugTarget()).resetRegisters();
 		try
 		{
-			getCDIThread().setCurrentStackFrame( ((CStackFrame)frame).getCDIStackFrame() );
+			if ( getLastStackFrame() != null )
+			{ 
+				getCDIThread().setCurrentStackFrame( ((CStackFrame)frame).getCDIStackFrame() );
+			}
+			setLastStackFrame( (CStackFrame)frame );
 		}
 		catch( CDIException e )
 		{
@@ -992,5 +999,15 @@ public class CThread extends CDebugElement
 	private int getRealSourceMode()
 	{
 		return ((CDebugTarget)getDebugTarget()).getRealSourceMode();
+	}
+	
+	private void setLastStackFrame( CStackFrame frame )
+	{
+		fLastStackFrame = frame;
+	}
+	
+	private CStackFrame getLastStackFrame()
+	{
+		return fLastStackFrame;
 	}
 }

@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
 
@@ -56,6 +58,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		Composite control = ControlFactory.createComposite(parent, 2);
 		((GridLayout) control.getLayout()).makeColumnsEqualWidth = false;
 		((GridLayout) control.getLayout()).marginWidth = 5;
+		setControl(control);
+
+		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.BINARY_PARSER_PAGE);
 
 		ControlFactory.createEmptySpace(control, 2);
 
@@ -96,7 +101,6 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		// fire a change event, to quick start.
 		handleBinaryParserChanged();
 
-		setControl(control);
 	}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {

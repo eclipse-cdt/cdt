@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
@@ -36,6 +37,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
@@ -164,6 +166,9 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
+		setControl(composite);
+
+		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.ERROR_PARSERS_PAGE);
 
 		String[] buttonLabels = new String[] {
 			/* 0 */
@@ -190,7 +195,6 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		LayoutUtil.setHorizontalGrabbing(fErrorParserList.getListControl(null));
 
 		initializeValues();
-		setControl(composite);
 	}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {

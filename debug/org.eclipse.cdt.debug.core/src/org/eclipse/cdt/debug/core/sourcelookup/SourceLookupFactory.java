@@ -8,6 +8,8 @@ package org.eclipse.cdt.debug.core.sourcelookup;
 
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CProjectSourceLocation;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
@@ -16,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @since Jul 14, 2003
  */
-public class SourceLocationFactory
+public class SourceLookupFactory
 {
 	public static IProjectSourceLocation createProjectSourceLocation( IProject project )
 	{
@@ -31,5 +33,10 @@ public class SourceLocationFactory
 	public static IDirectorySourceLocation createDirectorySourceLocation( IPath directory, IPath association, boolean searchSubfolders )
 	{
 		return new CDirectorySourceLocation( directory, association, searchSubfolders );
+	}
+
+	public static ICSourceLocator createSourceLocator( IProject project )
+	{
+		return new CSourceManager( new CSourceLocator( project ) );
 	}
 }

@@ -1,4 +1,10 @@
 2003-10-27 Mikhail Khodjaiants
+	Renamed 'SourceLocationFactory' to 'SourceLookupFactory'.
+	Added the 'createSourceLocator' method to 'SourceLookupFactory'.
+	* SourceLookupFactory.java
+	* CSourceLocator.java
+
+2003-10-27 Mikhail Khodjaiants
 	Changed the 'getAdapter' method of 'CSourceManager' to return the adapter of 
 	the 'ICSourceLocator' class.
 	* CSourceManager.java

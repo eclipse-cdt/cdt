@@ -1,5 +1,13 @@
 2003-03-27 Alain Magloire
 
+	Patch from Thomas Fletcher.
+	
+	* src/org/eclipse/cdt/internal/ui/editor/BracketPainter.java:
+	The brace highlighting doesn't properly use the background
+	colour when it is drawn.
+	
+2003-03-27 Alain Magloire
+
 	ICElement.getResource() no longer throw an exception.
 
 	* src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java

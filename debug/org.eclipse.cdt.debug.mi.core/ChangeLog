@@ -1,3 +1,11 @@
+2004-11-09 Alain Magloire
+	Reverting the changes below, for PR 74496. After exchanging with
+	the Palm folks, it was not fixing the problem.
+	This PR can not be fix for CDT-2.1 moving
+	it to 3.0 where we should have enough framework	for a better fix.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+
 2004-11-08 Alain Magloire
 	Fix for 74496 ; we should destroy the global
 	variables if they are in the address range of a

@@ -23,9 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.CreatedEvent;
@@ -36,16 +34,9 @@ import org.eclipse.cdt.debug.mi.core.cdi.event.MemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ResumedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.SuspendedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
-import org.eclipse.cdt.debug.mi.core.cdi.model.GlobalVariable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
-import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.FunctionValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.PointerValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.ReferenceValue;
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -350,59 +341,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		MISession miSession = unLoaded.getMISession();
 		Target target = session.getTarget(miSession);
 
-		// We do not nee to do fancy checking we can jsut delete all
-		// the expression variable and let the recreate them by reevaluating.
+		// We do not need to do fancy checking we can just delete all
+		// the expression variable and let UI recreate them by reevaluating.
 		ExpressionManager expMgr = session.getExpressionManager();
 		try {
 			expMgr.deleteAllVariables(target);
 		} catch (CDIException e) {
 		}
 
-		// Do this only for global variable for now.
-		// we nee to look at the address of the variable
-		// and see if they are in the range of the library if yes
-		// destroy them
-		SharedLibraryManager sharedMgr = session.getSharedLibraryManager();
-		SharedLibrary lib = sharedMgr.getSharedLibrary(target, unLoaded.getName());
-		if (lib != null) {
-			BigInteger startAddress = lib.getStartAddress();
-			BigInteger endAddress = lib.getEndAddress();
-			try {
-				Thread thread = (Thread)target.getCurrentThread();
-				StackFrame frame = thread.getCurrentStackFrame();
-				VariableManager varMgr = session.getVariableManager();
-				Variable[] vars = varMgr.getVariables(target);
-				for (int i = 0; i < vars.length; i++) {
-					if (vars[i] instanceof GlobalVariable) {
-						try {
-							ICDIValue value = vars[i].getValue();
-							String result = null;
-							if (value instanceof PointerValue ||
-									value instanceof ReferenceValue ||
-									value instanceof FunctionValue) {
-								result = target.evaluateExpressionToString(frame, vars[i].getFullName()); //$NON-NLS-1$								
-							} else {
-								result = target.evaluateExpressionToString(frame, "&" + vars[i].getFullName()); //$NON-NLS-1$
-							}
-							if (result != null && result.length() > 0) {
-								BigInteger address = MIFormat.decodeAdress(result);
-								int op = address.compareTo(startAddress);
-								if (op == 0 || op == 1) {
-									op = address.compareTo(endAddress);
-									if (op == 0 || op == -1) {
-										varMgr.destroyVariable(vars[i]);
-									}
-								}
-							}
-						} catch (CDIException e) {
-							//
-						}
-					}
-				}
-			} catch (CDIException e) {
-				// ignore it. ???
-			}
-		}
 		return false;
 	}
 

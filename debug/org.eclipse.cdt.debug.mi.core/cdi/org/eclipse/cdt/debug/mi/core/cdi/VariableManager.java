@@ -658,7 +658,7 @@ public class VariableManager extends Manager {
 		} else {
 			if (varStack.getLevel() >= low) {
 				// Check if the Variable is still in Scope 
-				// if it is no longer in scope so update() call call "-var-delete".
+				// if it is no longer in scope so update() can call "-var-delete".
 				for (int i = 0; i < frames.length; i++) {
 					if (varStack.equals(frames[i])) {
 						inScope = true;

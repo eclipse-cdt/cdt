@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -83,9 +84,18 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 				String contents = this.getSource();
 				if (contents == null) return;
 				try {
-					byte[] bytes = contents.getBytes(); 
-					ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 					IFile originalRes = (IFile)original.getResource();
+					String encoding = null;
+					try {
+						encoding = originalRes.getCharset();
+					}
+					catch (CoreException ce) {
+						// use no encoding
+					}
+					byte[] bytes = encoding == null 
+						? contents.getBytes() 
+					    : contents.getBytes(encoding);
+					ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 					if (originalRes.exists()) {
 						originalRes.setContents(
 							stream, 
@@ -97,6 +107,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 							force,
 							monitor);
 					}
+				}  catch (IOException e) {
+					throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
 				} catch (CoreException e) {
 					throw new CModelException(e);
 				}

@@ -1,3 +1,9 @@
+2004-06-21 Hoda Amer
+	Fix for PR 67696: [I18N] - New Class Wizard does not take project encoding into account when creating files
+	Now the encoding is taken into consideration when committing a working copy contents to a file.
+	* model/org/eclipse/cdt/internal/core/model/Buffer.java
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopy.java
+	
 2004-06-18 Alain Magloire
 
 	Fix for PR 66108

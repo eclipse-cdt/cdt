@@ -12,11 +12,15 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.ICLogConstants;
-import org.eclipse.cdt.core.model.*;
+import org.eclipse.cdt.core.model.BufferChangedEvent;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IBufferChangedListener;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -300,16 +304,31 @@ public class Buffer implements IBuffer {
 			
 				// use a platform operation to update the resource contents
 				try {
+					String encoding = null;
+					try {
+						encoding = this.file.getCharset();
+					}
+					catch (CoreException ce) {
+						// use no encoding
+					}
 					String contents = this.getContents();
 					if (contents == null) return;
-					byte[] bytes = contents.getBytes(); 
+					byte[] bytes = encoding == null 
+						? contents.getBytes() 
+					    : contents.getBytes(encoding);
 					ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 
-					this.file.setContents(
-						stream, 
-						force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, 
-						null);
-				} 
+					if (this.file.exists()) {
+						this.file.setContents(
+							stream, 
+							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, 
+							null);
+					} else {
+						this.file.create(stream, force, null);
+					}	
+				}  catch (IOException e) {
+					throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+				}
 				catch (CoreException e) {
 					throw new CModelException(e);
 				}

@@ -27,12 +27,8 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
-import org.eclipse.cdt.internal.core.dom.parser.c.CExternalFunction;
-import org.eclipse.cdt.internal.core.dom.parser.c.CExternalVariable;
-import org.eclipse.cdt.internal.core.dom.parser.c.CStructure;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 
 /**
@@ -203,15 +199,8 @@ public class ASTTypeUtil {
 						break;
 				}
 			} catch (DOMException e) {}
-			
-			if (type instanceof CStructure) {
-				result.append(SPACE);
-				result.append(((CStructure)type).getName());
-			}
-			if (type instanceof CPPClassType) {
-				result.append(SPACE);
-				result.append(((CPPClassType)type).getName());
-			}
+			result.append(SPACE);
+			result.append(((ICompositeType)type).getName());
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
 		} else if (type instanceof ICPPTemplateTypeParameter) {
@@ -220,6 +209,8 @@ public class ASTTypeUtil {
 			} catch (DOMException e) {}
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
+			result.append(SPACE);
+			result.append(((IEnumeration)type).getName());
 		} else if (type instanceof IFunctionType) {
 			try {
 				String temp = getType(((IFunctionType)type).getReturnType());
@@ -312,11 +303,7 @@ public class ASTTypeUtil {
 		IType type = null;
 		
 		try {
-			if (binding instanceof CExternalFunction) {
-				type = ((CExternalFunction)binding).getType();
-			} else if (binding instanceof CExternalVariable) {
-				type = ((CExternalVariable)binding).getType();
-			} else if (binding instanceof IEnumerator) {
+			if (binding instanceof IEnumerator) {
 				type = ((IEnumerator)binding).getType();
 			} else if (binding instanceof IFunction) {
 				type = ((IFunction)binding).getType();

@@ -308,8 +308,9 @@ public class TreeObject implements IAdaptable {
 		return filterFlag;
 	}
 	
-	private class ASTPropertySource implements IPropertySource {
-		
+	private static class ASTPropertySource implements IPropertySource {
+		private static final String OPEN_PAREN = " ("; //$NON-NLS-1$
+		private static final String CLOSE_PAREN = ")"; //$NON-NLS-1$
 		private static final String L_BRACKET_STRING = "["; //$NON-NLS-1$
 		private static final String R_BRACKET_STRING = "]"; //$NON-NLS-1$
 		private static final String CLONE_METHOD_NAME = "clone"; //$NON-NLS-1$
@@ -466,6 +467,12 @@ public class TreeObject implements IAdaptable {
 					buffer.append(trimObjectToString(obj.toString()));
 			} else
 				buffer.append(trimObjectToString(obj.toString()));
+			
+			if( obj instanceof IBinding ){
+				buffer.append( OPEN_PAREN );
+				buffer.append( Integer.toHexString(obj.hashCode()) );
+				buffer.append( CLOSE_PAREN );
+			}
 			
 			return buffer.toString();
 		}

@@ -166,7 +166,7 @@ public class ProcessClosure {
 	
 	public boolean isAlive() {
 		if (fProcess != null) {
-			if (fOutputReader.isAlive() && fErrorReader.isAlive()) {
+			if (fOutputReader.isAlive() || fErrorReader.isAlive()) {
 				return true;
 			} else {
 				fProcess= null;

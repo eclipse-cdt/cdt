@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 import java.io.File;
 
 import org.eclipse.cdt.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,11 +39,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.ide.dialogs.PathVariableSelectionDialog;
 
 /**
+ * This class is part of the NewClassWizard
+ * It handels the Link to file part 
  */
 public class LinkToFileGroup extends StringButtonDialogField {
 	private String fText;
@@ -59,7 +59,6 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	protected Text linkTargetField;
 	protected Button linkButton;
 	protected Button browseButton;
-	protected Button variablesButton;
 	private Label resolvedPathLabelText;
 	private Label resolvedPathLabelData;
 	private boolean preventDialogFieldChanged = false;
@@ -80,13 +79,10 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		getLinkCheckButtonControl(parent);		
 
 		Text text= getTextControl(parent);
-		text.setLayoutData(gridDataForText(1));
+		text.setLayoutData(gridDataForText(2));
 
 		Button browseButton = getBrowseButtonControl(parent);		
 		browseButton.setLayoutData(gridDataForButton(browseButton, 1));
-
-		Button variablesButton = getVariablesButtonControl(parent);		
-		variablesButton.setLayoutData(gridDataForButton(variablesButton, 1));
 		
 		DialogField.createEmptySpace(parent);
 
@@ -120,7 +116,6 @@ public class LinkToFileGroup extends StringButtonDialogField {
 				public void widgetSelected(SelectionEvent e) {
 					createLink = linkButton.getSelection();
 					browseButton.setEnabled(createLink);
-					variablesButton.setEnabled(createLink);
 					linkTargetField.setEnabled(createLink);
 					resolveVariable();
 					if (listener != null)
@@ -196,23 +191,6 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		return browseButton;
 	}
 
-	public Button getVariablesButtonControl(Composite parent){
-		// variables button
-		if(variablesButton == null){
-			assertCompositeNotNull(parent);
-			variablesButton = new Button(parent, SWT.PUSH);
-			//setButtonLayoutData(variablesButton);
-			variablesButton.setFont(parent.getFont());
-			variablesButton.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.variablesButton")); //$NON-NLS-1$
-			variablesButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent event) {
-					handleVariablesButtonPressed();
-				}
-			});
-			variablesButton.setEnabled(createLink);
-		}
-		return variablesButton;
-	}
 	/**
 	 * Returns a new status object with the given severity and message.
 	 * 
@@ -221,7 +199,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	private IStatus createStatus(int severity, String message) {
 		return new Status(
 			severity,
-			WorkbenchPlugin.getDefault().getBundle().getSymbolicName(),
+			CUIPlugin.getPluginId(),
 			severity,
 			message,	
 			null);
@@ -279,36 +257,13 @@ public class LinkToFileGroup extends StringButtonDialogField {
 				if (linkTargetName != null)
 					dialog.setFilterPath(linkTargetName);
 			}
-			dialog.setMessage(WorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
+			dialog.setMessage(NewWizardMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
 			selection = dialog.open();
 		}					
 		if (selection != null) {
 			linkTargetField.setText(selection);
 			if (!preventDialogFieldChanged)
 				dialogFieldChanged();
-		}
-	}
-	/**
-	 * Opens a path variable selection dialog
-	 */
-	protected void handleVariablesButtonPressed() {
-		int variableTypes = IResource.FOLDER;
-	
-		// allow selecting file and folder variables when creating a 
-		// linked file
-		if (type == IResource.FILE)
-			variableTypes |= IResource.FILE;
-
-		PathVariableSelectionDialog dialog = 
-			new PathVariableSelectionDialog(linkTargetField.getShell(), variableTypes);
-		if (dialog.open() == IDialogConstants.OK_ID) {
-			String[] variableNames = (String[]) dialog.getResult();			
-			if (variableNames != null && variableNames.length == 1)
-			{
-				linkTargetField.setText(variableNames[0]);
-				if (!preventDialogFieldChanged)
-					dialogFieldChanged();
-			}
 		}
 	}
 	/**
@@ -326,14 +281,6 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		IPath path = new Path(linkTargetField.getText());
 		IPath resolvedPath = pathVariableManager.resolvePath(path);
 	
-		/* (path.equals(resolvedPath)) {
-			resolvedPathLabelText.setVisible(false);
-			resolvedPathLabelData.setVisible(false);
-		} else {
-			resolvedPathLabelText.setVisible(true);
-			resolvedPathLabelData.setVisible(true);
-		}
-		*/
 		resolvedPathLabelData.setText(resolvedPath.toOSString());
 	}
 	/**
@@ -361,11 +308,11 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		if (type == IResource.FILE && linkTargetFile.isFile() == false) {
 			return createStatus(
 				IStatus.ERROR,
-				WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFile"));	//$NON-NLS-1$
+				NewWizardMessages.getString("CreateLinkedResourceGroup.linkTargetNotFile"));	//$NON-NLS-1$
 		} else if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
 			return createStatus(
 				IStatus.ERROR,
-				WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
+				NewWizardMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
 		}
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
@@ -402,7 +349,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			// locationStatus takes precedence over missing location warning.
 			return createStatus(
 				IStatus.WARNING,
-				WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$	
+				NewWizardMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$	
 		}
 		return locationStatus;
 	}

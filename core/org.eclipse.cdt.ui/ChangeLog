@@ -1,5 +1,6 @@
 2004-06-24 Hoda Amer
 	A small fix to the New Class Wizard "link to file" option.
+	Fix for PR# 47570 : [New Class Wizard] Use of internal Eclipse classes in CDT(LinkToFileGroup)
 	
 2004-06-24 Chris Wiebe
 	Fix for PR 48783 : [New Class Wizard] Err Create C++ Class with "Link to  File" checkbox selected

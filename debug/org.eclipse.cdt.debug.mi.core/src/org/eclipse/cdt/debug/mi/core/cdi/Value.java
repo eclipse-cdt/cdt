@@ -101,7 +101,9 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
 		Variable[] variables = null;
-		MISession mi = getCTarget().getCSession().getMISession();
+		CSession session = getCTarget().getCSession();
+		MISession mi = session.getMISession();
+		VariableManager mgr = (VariableManager)session.getVariableManager();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarListChildren var = 
 			factory.createMIVarListChildren(variable.getMIVar().getVarName());
@@ -114,8 +116,10 @@ public class Value extends CObject implements ICDIValue {
 			MIVar[] vars = info.getMIVars();
 			variables = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
-				variables[i] =
-					new Variable(variable.getStackFrame(), vars[i].getExp(), vars[i]);
+				//variables[i] = new Variable(variable.getStackFrame(), vars[i].getExp(), vars[i]);
+				variables[i] = mgr.createVariable(variable.getStackFrame(),
+						vars[i].getExp(), vars[i]);
+
 			}
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());

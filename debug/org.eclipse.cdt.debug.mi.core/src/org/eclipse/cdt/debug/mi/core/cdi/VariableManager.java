@@ -210,6 +210,18 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		return var;
 	}
 
+	Variable createVariable(StackFrame stack, String name, MIVar miVar )
+		throws CDIException {
+		Element element = new Element();
+		element.miVar = miVar;
+		element.name = name;
+		element.stackframe = stack;
+		Variable var = new Variable(stack, name, miVar);
+		element.variable = var;
+		addElement(element);
+		return var;
+	}
+
 
 	ICDIArgument createArgument(StackFrame stack, String name) throws CDIException {
 		Element element = createElement(stack, name);

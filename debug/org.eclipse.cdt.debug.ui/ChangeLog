@@ -1,3 +1,14 @@
+2003-02-09 Alain Magloire
+
+	Changing the scope of methods to protected to let inner class
+	have access to it.
+	* StringDialogField.java
+	* CheckedListDialogField.java
+	* ComboDialogField.java
+	* ListDialogField.java
+	* SelectionButtonDialogField.java
+	* SelectionButtonDialogFieldGroup.java
+
 2003-02-07 Mikhail Khodjaiants
 	Implementing the preference page for the 'Shared Libraries' view.
 	* ICDebugHelpContextIds.java

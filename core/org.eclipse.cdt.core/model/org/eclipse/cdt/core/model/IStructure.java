@@ -1,10 +1,15 @@
+/**********************************************************************
+Copyright (c) 2002, 2004 IBM Rational Software and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+ 
+Contributors:
+    IBM Rational Software - Initial API and implementation
+**********************************************************************/
+
 package org.eclipse.cdt.core.model;
-
-
-/*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- */
 
 /**
  * Represent struct(ure), class or union.
@@ -13,45 +18,51 @@ public interface IStructure extends IInheritance, IParent, IVariableDeclaration 
 	public IField getField(String name);
 	
 	/**
-	 * 
-	 * @return
+	 * Returns the fields of a structure. 
+	 * @return an array of IField elements
 	 * @throws CModelException
 	 */
 	public IField[] getFields() throws CModelException;
 
+	/**
+	 * Returns the specific method with the given name within the structure.
+	 * Returns the first occurance more than one method has the same name.
+	 * @param name
+	 * @return IMethodDeclaration
+	 */
 	public IMethodDeclaration getMethod(String name);
 	
 	/**
-	 * 
-	 * @return
+	 * Returns all methods within the structure.
+	 * @return array of IMethodDeclaration.
 	 * @throws CModelException
 	 */
 	public IMethodDeclaration [] getMethods() throws CModelException;
 
 	/**
-	 * 
-	 * @return
+	 * Checks if the structure is a Union
+	 * @return boolean
 	 * @throws CModelException
 	 */
 	public boolean isUnion() throws CModelException;
 
 	/**
-	 * 
-	 * @return
+	 * Checks if the structure is a class
+	 * @return boolean
 	 * @throws CModelException
 	 */
 	public boolean isClass() throws CModelException;
 
 	/**
-	 * 
-	 * @return
+	 * Checks if the structure is a struct
+	 * @return boolean
 	 * @throws CModelException
 	 */
 	public boolean isStruct() throws CModelException;
 
 	/**
-	 * 
-	 * @return
+	 * Checks if the structure is abstract
+	 * @return boolean
 	 * @throws CModelException
 	 */
 	public boolean isAbstract() throws CModelException;

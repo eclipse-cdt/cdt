@@ -6,7 +6,7 @@ package org.eclipse.cdt.core.model;
  */
 
 /**
- * Represents a function.
+ * Represents a function definition.
  */
 public interface IFunction extends IFunctionDeclaration {
 

@@ -22,9 +22,15 @@ public interface ITemplate extends IDeclaration {
 	void setTemplateParameterTypes(String[] templateParameterTypes);
 	/**
 	 * Returns the template signature
+	 * The signature depends on the type of template. 
+	 * If it is a template of a structure or a variable, it will include the structure name 
+	 * and the list of parameters. If it is a template of a method or a function,  it might 
+	 * include the class name with its template parameters (if any), as well as the function/method
+	 * name, its  template parameters, followed by its normal parameters.
 	 * @return String
 	 * @throws CModelException
 	 */
+	
 	String getTemplateSignature() throws CModelException;
 	/**
 	 * Returns the number of template parameters

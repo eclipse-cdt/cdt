@@ -75,7 +75,7 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 		// Reasons include: 
 		//  This resource does not exist. 
 		//  This resource is a project that is not open. 
-		if (res == null || !res.exists()) { // for elements in archives
+		if (res == null || !res.isAccessible()) { // for elements in archives
 			return 0;
 		}
 		int info= 0;

@@ -3,6 +3,7 @@
 	Fix PR 56734
 
 	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePage.java
+	* src/org/eclipse/cdt/internal/ui/ErrorTickAdornmentProvider.java
 	* puglin.xml
 
 2004-03-30 Alain Magloire

@@ -59,7 +59,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	private OpenIncludeAction fOpenIncludeAction;
 	private SearchForReferencesAction fSearchForReferencesAction;
-
+	private SearchDialogAction fSearchDialogAction;
+	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	public CContentOutlinePage(CEditor editor) {
@@ -77,6 +78,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		fOpenIncludeAction= new OpenIncludeAction(this);
 		fSearchForReferencesAction= new SearchForReferencesAction(this);
+		fSearchDialogAction = new SearchDialogAction(this, editor);
 	}
 	
 	public ICElement getRoot() {
@@ -136,6 +138,11 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (OpenIncludeAction.canActionBeAdded(getSelection())) {
 			menu.add(fOpenIncludeAction);
 		}
+		
+		if (SearchDialogAction.canActionBeAdded(getSelection())) {
+			menu.add(fSearchDialogAction);
+		}
+		
 		if (SearchForReferencesAction.canActionBeAdded(getSelection())) {
 			menu.add(fSearchForReferencesAction);
 		}

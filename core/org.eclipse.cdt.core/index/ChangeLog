@@ -1,3 +1,15 @@
+2003-08-20 Bogdan Gheorghe
+	- Added debug tracing in AbstractIndexer
+	- Added additional file extensions to supported indexed files
+	- Changed the parser instantiation to pass in retrieved build
+	  info
+	- Added function decl index entry based on enterFunctionBody
+	- Added method decl index entry based on enterMethodBody
+	- Added forward decl refs
+	
+2003-08-14 Bogdan Gheorghe
+	- Added forward declarations to index
+	
 2003-08-12 Bogdan Gheorghe
 	- Changed var prefix in AbstractIndexer to pass in fully
 	  qualified names

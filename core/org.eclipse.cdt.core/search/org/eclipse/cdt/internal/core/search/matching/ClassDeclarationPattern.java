@@ -18,6 +18,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
@@ -59,13 +60,21 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	
 	public int matchLevel( ISourceElementCallbackDelegate node, LimitTo limit ){
 		
-		if( !( node instanceof IASTClassSpecifier ) && !( node instanceof IASTEnumerationSpecifier ) )
+		if( !( node instanceof IASTClassSpecifier ) && !( node instanceof IASTEnumerationSpecifier ) && !(node instanceof IASTElaboratedTypeSpecifier) )
 			return IMPOSSIBLE_MATCH;
 			
 		if( ! canAccept( limit ) )
 			return IMPOSSIBLE_MATCH;
 		
-		String nodeName = ((IASTOffsetableNamedElement)node).getName();
+		String nodeName = null;
+		if (node instanceof IASTElaboratedTypeSpecifier)
+		{
+			nodeName = ((IASTElaboratedTypeSpecifier)node).getName();
+		}
+		else
+		{
+			nodeName = ((IASTOffsetableNamedElement)node).getName();
+		}
 		
 		//check name, if simpleName == null, its treated the same as "*"	
 		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
@@ -88,9 +97,13 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			if( node instanceof IASTClassSpecifier ){
 				IASTClassSpecifier clsSpec = (IASTClassSpecifier) node;
 				return ( classKind == clsSpec.getClassKind() ) ? ACCURATE_MATCH : IMPOSSIBLE_MATCH;
-			} else {
+			} else if (node instanceof IASTEnumerationSpecifier){
 				return ( classKind == ASTClassKind.ENUM ) ? ACCURATE_MATCH : IMPOSSIBLE_MATCH;
-			}
+			} else if (node instanceof IASTElaboratedTypeSpecifier ){
+				IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) node;
+				return ( classKind == elabTypeSpec.getClassKind() ) ? ACCURATE_MATCH : IMPOSSIBLE_MATCH;
+			
+			}	
 		}
 		
 		return ACCURATE_MATCH;

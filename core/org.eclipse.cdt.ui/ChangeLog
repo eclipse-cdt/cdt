@@ -1,3 +1,7 @@
+2003-08-20 Bogdan Gheorghe
+	Added a search dialog pop up to the context menu for the
+	CEditor and CContentOutlinePage
+
 2003-08-19 Keith Campbell
 	Extended CView and CViewDragAdapter to use LocalSelectionTransfer.
 	Eventually this will permit dragging elements from the "C/C++ Projects" view

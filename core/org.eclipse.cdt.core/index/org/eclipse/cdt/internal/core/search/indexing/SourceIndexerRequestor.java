@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
@@ -148,7 +149,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void enterFunctionBody(IASTFunction function) {
 		// TODO Auto-generated method stub
-		//System.out.println("enterFunctionBody");
+		indexer.addFunctionDeclaration(function);
+		//indexer.addFunctionDefinition();
 	}
 
 	/* (non-Javadoc)
@@ -245,7 +247,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void enterMethodBody(IASTMethod method) {
 		// TODO Auto-generated method stub
-		//System.out.println("enterMethodBody");
+		//System.out.println("enterMethodBody " + method.getName());
+		indexer.addMethodDeclaration(method);
 	}
 
 	/* (non-Javadoc)
@@ -272,8 +275,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		// TODO Auto-generated method stub
 		//System.out.println("acceptClassReference");
 		if (reference.getReferencedElement() instanceof IASTClassSpecifier)
-		indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement());
-		
+			indexer.addClassReference((IASTClassSpecifier)reference.getReferencedElement());
+		else if (reference.getReferencedElement() instanceof IASTElaboratedTypeSpecifier)
+		{
+		    indexer.addClassReference((IASTTypeSpecifier) reference.getReferencedElement());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -407,8 +413,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
      */
-    public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType)
-    {
-        // TODO BOGDAN IMPLEMENT THIS        
+    public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType){
+        indexer.addElaboratedForwardDeclaration(elaboratedType);       
     }
 }

@@ -18,8 +18,8 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -98,6 +98,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 	private SearchForReferencesAction fSearchForReferencesAction;
 
+	private SearchDialogAction fSearchDialogAction;
+	
 	protected ISelectionChangedListener fStatusLineClearer;
     
     /** The property change listener */
@@ -426,6 +428,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		setAction("OpenOnSelection", new OpenOnSelectionAction(this));
 
 		fSearchForReferencesAction = new SearchForReferencesAction(getSelectionProvider());
+		
+		fSearchDialogAction = new SearchDialogAction(getSelectionProvider(), this);
 	}
 
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
@@ -443,6 +447,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 		MenuManager search = new MenuManager("Search", IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, search);
+		
+		if (SearchDialogAction.canActionBeAdded(getSelectionProvider().getSelection())){
+			search.add(fSearchDialogAction);
+		}
+		
 		if (SearchForReferencesAction.canActionBeAdded(getSelectionProvider().getSelection())) {
 			search.add(fSearchForReferencesAction);
 		}

@@ -1,3 +1,7 @@
+2003-08-20 Bogdan Gheorghe
+	- Changed matching and reporting functions to handle nodes 
+	  of type IElaboratedTypeSpecifier
+	
 2003-08-12 Bogdan Gheorghe
 	- Rolled field and variable search patterns into one pattern, in
 	  order to allow for qualified var searches

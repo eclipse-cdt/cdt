@@ -18,12 +18,16 @@ package org.eclipse.cdt.internal.core.search.indexing;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 
 /**
  * A SourceIndexer indexes source files using the parser. The following items are indexed:
@@ -39,7 +43,7 @@ import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 public class SourceIndexer extends AbstractIndexer {
 	
 	//TODO: Indexer, add additional file types
-	public static final String[] FILE_TYPES= new String[] {"cpp","h"}; //$NON-NLS-1$
+	public static final String[] FILE_TYPES= new String[] {"cpp","h","c", "cc", "hh", "cxx", "hpp"}; //$NON-NLS-1$
 	//protected DefaultProblemFactory problemFactory= new DefaultProblemFactory(Locale.getDefault());
 	IFile resourceFile;
 		
@@ -58,11 +62,31 @@ public class SourceIndexer extends AbstractIndexer {
 		output.addDocument(document);
 		// Create a new Parser
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, document);
+		
+		//Get the scanner info
+		IProject currentProject = resourceFile.getProject();
+		IScannerInfo scanInfo = new ScannerInfo();
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
+		if (provider != null){
+		  IScannerInfo buildScanInfo = provider.getScannerInformation(currentProject);
+		  if (buildScanInfo != null){
+			scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
+		  }
+		}
+		
 		IParser parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), new ScannerInfo(), ParserMode.COMPLETE_PARSE, requestor ), 
+							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, requestor ), 
 							requestor, ParserMode.COMPLETE_PARSE);
+		
 		try{
-			parser.parse();
+			boolean retVal = parser.parse();
+			
+			if (VERBOSE){
+				if (!retVal)
+					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString());
+				else
+					AbstractIndexer.verbose("PARSE SUCCEEDED " + resourceFile.getName().toString());			
+			}	
 		}
 		catch( Exception e ){
 			System.out.println( "Parse Exception in SourceIndexer" ); 

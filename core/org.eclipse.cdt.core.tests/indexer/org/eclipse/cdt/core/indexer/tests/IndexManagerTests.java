@@ -94,11 +94,12 @@ public class IndexManagerTests extends TestCase {
 		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));
 		suite.addTest(new IndexManagerTests("testRefs"));
 		suite.addTest(new IndexManagerTests("testMacros"));
+		suite.addTest(new IndexManagerTests("testForwardDeclarations"));
 		suite.addTest(new IndexManagerTests("testDependencyTree"));
 		suite.addTest(new IndexManagerTests("testIndexShutdown"));
 
 		return suite;
-		//return new TestSuite(IndexManagerTests.class);
+	//	return new TestSuite(IndexManagerTests.class);
 	}
 	/*
 	 * Utils
@@ -374,7 +375,7 @@ public class IndexManagerTests extends TestCase {
 		  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 		  assertTrue("Index exists for project",ind != null);
 		  
-		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }", "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }", "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }"};
+		  String [] typeRefEntryResultModel ={"EntryResult: word=typeRef/C/C/B/A, refs={ 1 }", "EntryResult: word=typeRef/C/ForwardA/A, refs={ 1 }", "EntryResult: word=typeRef/E/e1/B/A, refs={ 1 }", "EntryResult: word=typeRef/V/x/B/A, refs={ 1 }"};
 		  IEntryResult[] typerefresults = ind.queryEntries(IIndexConstants.TYPE_REF);
 
 		  if (typerefresults.length != typeRefEntryResultModel.length)
@@ -496,6 +497,49 @@ public class IndexManagerTests extends TestCase {
    	}
   }
   
+  public void testForwardDeclarations() throws Exception{
+	//Add a new file to the project, give it some time to index
+	importFile("refTest.cpp","resources/indexer/refTest.cpp");
+	//Enable indexing on the created project
+	//By doing this, we force the Index Manager to indexAll()
+	indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+	indexManager.setEnabled(testProject,true);
+	Thread.sleep(TIMEOUT);
+	 //Make sure project got added to index
+	 IPath testProjectPath = testProject.getFullPath();
+	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	 assertTrue("Index exists for project",ind != null);
+
+	 IEntryResult[] fwdDclResults = ind.queryEntries("typeDecl/C/ForwardA/A".toCharArray());
+  
+	 String [] fwdDclModel = {"EntryResult: word=typeDecl/C/ForwardA/A, refs={ 1 }"};
+	
+	 if (fwdDclResults.length != fwdDclModel.length)
+		fail("Entry Result length different from model for forward declarations");
+
+	 for (int i=0;i<fwdDclResults.length; i++)
+	 {
+	   assertEquals(fwdDclModel[i],fwdDclResults[i].toString());
+	 }
+
+	IEntryResult[] fwdDclRefResults = ind.queryEntries("typeRef/C/ForwardA/A".toCharArray());
+  
+	String [] fwdDclRefModel = {"EntryResult: word=typeRef/C/ForwardA/A, refs={ 1 }"};
+
+	if (fwdDclRefResults.length != fwdDclRefModel.length)
+	   fail("Entry Result length different from model for forward declarations refs");
+
+	for (int i=0;i<fwdDclRefResults.length; i++)
+	{
+	  assertEquals(fwdDclRefModel[i],fwdDclRefResults[i].toString());
+	}
+  }
+  
+  public void testFunctionDeclarations2() throws Exception{
+  	
+  }
+  
+  
   public void testDependencyTree() throws Exception{
 	//Add a file to the project
 	IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
@@ -511,8 +555,8 @@ public class IndexManagerTests extends TestCase {
 	DependencyManager dependencyManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
 	dependencyManager.setEnabled(testProject,true);
 	Thread.sleep(10000);
-	String[] depTestModel = {"\\IndexerTestProject\\d.h", "\\IndexerTestProject\\Inc1.h", "\\IndexerTestProject\\c.h", "\\IndexerTestProject\\a.h", "\\IndexerTestProject\\DepTest.h"};
-	String[] depTest2Model = {"\\IndexerTestProject\\d.h", "\\IndexerTestProject\\DepTest2.h"};
+	String[] depTestModel = {File.separator + "IndexerTestProject" + File.separator + "d.h", File.separator + "IndexerTestProject" + File.separator + "Inc1.h", File.separator + "IndexerTestProject" + File.separator + "c.h", File.separator + "IndexerTestProject" + File.separator + "a.h", File.separator + "IndexerTestProject" + File.separator + "DepTest.h"};
+	String[] depTest2Model = {File.separator + "IndexerTestProject" + File.separator + "d.h", File.separator + "IndexerTestProject" + File.separator + "DepTest2.h"};
 	
 	ArrayList includes = new ArrayList();
 	dependencyManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,dependencyManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);

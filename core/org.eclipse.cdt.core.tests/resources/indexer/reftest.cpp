@@ -1,5 +1,7 @@
 namespace A 
 { 
+	class ForwardA;
+	ForwardA * tmp;
 	int something(void);
 	namespace B 
 	{ 

@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -40,8 +42,14 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	final static int ENUM = 4;
 	final static int VAR = 5;
 
+	public static boolean VERBOSE = false;
+	
 	public AbstractIndexer() {
 		super();
+	}
+	
+	public static void verbose(String log) {
+	  System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	public void addClassSpecifier(IASTClassSpecifier classSpecification){
@@ -89,12 +97,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedName(), ENUM, ICSearchConstants.REFERENCES));
 	}
 	public void addVariable(IASTVariable variable) {
-
 		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedName(), VAR, ICSearchConstants.DECLARATIONS));
 	}
 	
 	public void addVariableReference(IASTVariable variable) {
-
 		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedName(), VAR, ICSearchConstants.REFERENCES));
 	}	
 	
@@ -116,6 +122,21 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	
 	public void addMethodReference(IASTMethod method) {
 		this.output.addRef(encodeEntry(method.getFullyQualifiedName(),METHOD_REF,METHOD_REF_LENGTH));
+	}
+
+	public void addElaboratedForwardDeclaration(IASTElaboratedTypeSpecifier elaboratedType) {
+		if (elaboratedType.getClassKind().equals(ASTClassKind.CLASS))
+		{
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedName(),CLASS, ICSearchConstants.DECLARATIONS));
+		}		
+		else if (elaboratedType.getClassKind().equals(ASTClassKind.STRUCT))
+		{
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedName(),STRUCT, ICSearchConstants.DECLARATIONS));
+		}
+		else if (elaboratedType.getClassKind().equals(ASTClassKind.UNION))
+		{
+			this.output.addRef(encodeTypeEntry(elaboratedType.getFullyQualifiedName(),UNION, ICSearchConstants.DECLARATIONS));			
+		}
 	}
 	
 	public void addConstructorDeclaration(){
@@ -160,18 +181,32 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		//this.output.addRef(CharOperation.concat(TYPE_REF, CharOperation.lastSegment(typeName, '.')));
 	}
 	
-	public void addClassReference(IASTClassSpecifier reference){
-		if (reference.getClassKind().equals(ASTClassKind.CLASS))
-		{  
-			this.output.addRef(encodeTypeEntry(reference.getFullyQualifiedName(),CLASS, ICSearchConstants.REFERENCES));
-		}		
-		else if (reference.getClassKind().equals(ASTClassKind.STRUCT))
-		{
-			this.output.addRef(encodeTypeEntry(reference.getFullyQualifiedName(),STRUCT,ICSearchConstants.REFERENCES));
+	public void addClassReference(IASTTypeSpecifier reference){
+		String[] fullyQualifiedName = null;
+		ASTClassKind classKind = null;
+		
+		if (reference instanceof IASTClassSpecifier){
+		  IASTClassSpecifier classRef = (IASTClassSpecifier) reference;
+		  fullyQualifiedName = classRef.getFullyQualifiedName();
+		  classKind = classRef.getClassKind();
 		}
-		else if (reference.getClassKind().equals(ASTClassKind.UNION))
+		else if (reference instanceof IASTElaboratedTypeSpecifier){
+		  IASTElaboratedTypeSpecifier typeRef = (IASTElaboratedTypeSpecifier) reference;
+		  fullyQualifiedName = typeRef.getFullyQualifiedName();
+		  classKind = typeRef.getClassKind();
+		}
+	
+		if (classKind.equals(ASTClassKind.CLASS))
+		{  
+			this.output.addRef(encodeTypeEntry(fullyQualifiedName,CLASS, ICSearchConstants.REFERENCES));
+		}		
+		else if (classKind.equals(ASTClassKind.STRUCT))
 		{
-			this.output.addRef(encodeTypeEntry(reference.getFullyQualifiedName(),UNION,ICSearchConstants.REFERENCES));			
+			this.output.addRef(encodeTypeEntry(fullyQualifiedName,STRUCT,ICSearchConstants.REFERENCES));
+		}
+		else if (classKind.equals(ASTClassKind.UNION))
+		{
+			this.output.addRef(encodeTypeEntry(fullyQualifiedName,UNION,ICSearchConstants.REFERENCES));			
 		}
 	}
 	/**
@@ -234,6 +269,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
 			pos+=tempName.length;				
 		}
+		
+		if (VERBOSE)
+			AbstractIndexer.verbose(new String(result));
+			
 		return result;
 	}
 	/**
@@ -262,6 +301,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
 			pos+=tempName.length;				
 		}
+		
+		if (VERBOSE)
+			AbstractIndexer.verbose(new String(result));
+			
 		return result;
 	}
 	

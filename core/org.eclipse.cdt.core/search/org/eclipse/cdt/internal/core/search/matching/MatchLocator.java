@@ -23,9 +23,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -69,6 +72,7 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -300,6 +304,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			Reader reader = null;
 			
 			IPath realPath = null; 
+			IProject project = null;
+			
 			if( workspaceRoot != null ){
 				IWorkingCopy workingCopy = (IWorkingCopy)wcPaths.get( pathString );
 				
@@ -307,6 +313,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 					reader = new CharArrayReader( workingCopy.getContents() );
 					currentResource = workingCopy.getResource();
 					realPath = currentResource.getLocation();
+					project = currentResource.getProject();
 				} else {
 					currentResource = workspaceRoot.findMember( pathString, true );
 					
@@ -315,11 +322,13 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 							IPath path = new Path( pathString );
 							IFile file = workspaceRoot.getFile( path );
 							file.createLink( path, 0, null );
+							project = file.getProject();
 						}
 						if( currentResource != null && currentResource instanceof IFile ){
 							IFile file = (IFile) currentResource;
 							reader = new InputStreamReader( file.getContents() );
 							realPath = currentResource.getLocation();
+							project = file.getProject();
 						} else continue;
 					} catch ( CoreException e ){
 						continue;
@@ -336,7 +345,14 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				}
 			}
 			
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), new ScannerInfo(), ParserMode.COMPLETE_PARSE, this );
+			//Get the scanner info
+			IScannerInfo scanInfo = new ScannerInfo();
+			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+			if (provider != null){
+				IScannerInfo buildScanInfo = provider.getScannerInformation(project);
+				scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
+			}
+			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, this );
 			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE );
 			
 			parser.parse();
@@ -358,6 +374,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 															    : offsetableElement.getStartingOffset();
 				length = offsetableElement.getName().length();															  
 			}
+		
 				
 			IMatch match = null;		
 			if( currentResource != null ){
@@ -417,9 +434,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
      */
-    public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType)
-    {
-		//TODO BOGDAN IMPLEMENT THIS
+    public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType){
+		check( DECLARATIONS, elaboratedType );	
     }
 
 

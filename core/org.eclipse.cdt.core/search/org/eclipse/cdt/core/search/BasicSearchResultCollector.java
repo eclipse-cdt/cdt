@@ -188,8 +188,17 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 	
 	private void setElementInfo( BasicSearchMatch match, IASTOffsetableElement node ){
 		//ImageDescriptor imageDescriptor = null;
-		if( node instanceof IASTClassSpecifier ){
-			ASTClassKind kind = ((IASTClassSpecifier)node).getClassKind();
+		if( node instanceof IASTClassSpecifier ||
+			node instanceof IASTElaboratedTypeSpecifier ){
+			
+			ASTClassKind kind = null;
+			if (node instanceof IASTClassSpecifier){
+				kind = ((IASTClassSpecifier)node).getClassKind();
+			}
+			else{
+				kind = ((IASTElaboratedTypeSpecifier)node).getClassKind();
+			}
+			
 			if( kind == ASTClassKind.CLASS ){
 				match.type = ICElement.C_CLASS;
 			} else if ( kind == ASTClassKind.STRUCT ){

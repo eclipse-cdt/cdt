@@ -73,7 +73,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				config.launch(mode, null);
 			}
 		} catch (CoreException e) {
-			LaunchUIPlugin.errorDialog("Launch failed", e.getStatus()); //$NON-NLS-1$
+			LaunchUIPlugin.errorDialog(LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.LaunchFailed"), e.getStatus());  //$NON-NLS-1$
 		}
 	}
 
@@ -228,14 +228,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	}
 
 	protected String getDebugConfigDialogTitleString(ICDebugConfiguration [] configList, String mode) {
-		return "Launch Debug Configuration Selection"; //$NON-NLS-1$
+		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.LaunchDebugConfigSelection");  //$NON-NLS-1$
 	}
 	
 	protected String getDebugConfigDialogMessageString(ICDebugConfiguration [] configList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return "Choose a debug configuration to debug"; //$NON-NLS-1$
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseConfigToDebug");  //$NON-NLS-1$
 		} else {
-			return "Choose a configuration to run"; //$NON-NLS-1$
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseConfigToRun");  //$NON-NLS-1$
 		}
 	}
 
@@ -261,14 +261,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	}
 
 	protected String getLaunchSelectionDialogTitleString(List configList, String mode) {
-		return "Launch Configuration Selection"; //$NON-NLS-1$
+		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.LaunchConfigSelection");  //$NON-NLS-1$
 	}
 	
 	protected String getLaunchSelectionDialogMessageString(List binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return "Choose a launch configuration to debug"; //$NON-NLS-1$
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLaunchConfigToDebug");  //$NON-NLS-1$
 		} else {
-			return "Choose a launch configuration to run"; //$NON-NLS-1$
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLaunchConfigToRun");  //$NON-NLS-1$
 		}
 	}
 
@@ -319,14 +319,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	protected String getBinarySelectionDialogTitleString(List binList, String mode) {
-		return "C Local Application"; //$NON-NLS-1$
+		return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.CLocalApplication");  //$NON-NLS-1$
 	}
 	
 	protected String getBinarySelectionDialogMessageString(List binList, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			return "Choose a local application to debug"; //$NON-NLS-1$
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLocalAppToDebug");  //$NON-NLS-1$
 		} else {
-			return "Choose a local application to run"; //$NON-NLS-1$
+			return LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.ChooseLocalAppToRun");  //$NON-NLS-1$
 		}
 	}
 

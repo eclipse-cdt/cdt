@@ -132,9 +132,10 @@ public interface ITypeCache extends ISchedulingRule {
 	 *  <code>null</code> if none exists.
 	 *
 	 * @param type the ICElement type
-	 * @return the namespace
+	 * @param includeGlobalNamespace <code>true</code> if the global (default) namespace should be returned
+	 * @return the enclosing namespace, or <code>null</code> if not found.
 	 */
-	public ITypeInfo getEnclosingNamespace(ITypeInfo info);
+	public ITypeInfo getEnclosingNamespace(ITypeInfo info, boolean includeGlobalNamespace);
 
 	/** Gets the root namespace of which encloses the given type.
 	 *

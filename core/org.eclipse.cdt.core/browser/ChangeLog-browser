@@ -1,3 +1,16 @@
+2004-08-31 Chris Wiebe
+
+	Fix for 68883
+	* browser/org/eclipse/cdt/core/browser/AllTypesCache.java
+	* browser/org/eclipse/cdt/core/browser/ITypeCacheChangedListener.java
+	* browser/org/eclipse/cdt/core/browser/ITypeInfo.java
+	* browser/org/eclipse/cdt/core/browser/TypeInfo.java
+	* browser/org/eclipse/cdt/core/browser/TypeUtil.java
+	* browser/org/eclipse/cdt/core/browser/typehierarchy/TypeHierarchy.java
+	* browser/org/eclipse/cdt/core/browser/cache/ITypeCache.java
+	* browser/org/eclipse/cdt/core/browser/cache/TypeCache.java
+	* browser/org/eclipse/cdt/core/browser/cache/TypeCacheManager.java
+
 2004-08-26 Chris Wiebe
 
 	make QualifiedTypeName immutable class

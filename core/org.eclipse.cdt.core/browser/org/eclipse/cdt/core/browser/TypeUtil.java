@@ -13,17 +13,14 @@ import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author CWiebe
@@ -33,7 +30,30 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class TypeUtil {
 
-    public static ICElement getDeclaringType(ICElement type) {
+    public static boolean isDeclaredType(ICElement elem) {
+        int type = elem.getElementType();
+        return (type == ICElement.C_CLASS
+                || type == ICElement.C_STRUCT
+                || type == ICElement.C_ENUMERATION
+                || type == ICElement.C_UNION
+                || type == ICElement.C_TYPEDEF
+                || type == ICElement.C_NAMESPACE);
+    }
+
+    public static ICElement getDeclaringContainerType(ICElement elem) {
+        while (elem != null) {
+	        if (elem instanceof IStructure
+	                || elem instanceof INamespace
+	                || elem instanceof IEnumeration) {
+	            return elem;
+	        }
+	        elem = elem.getParent();
+        }
+
+    	return null;
+    }
+    
+    public static ICElement getDeclaringClass(ICElement type) {
     	ICElement parentElement = type.getParent();
     	if (parentElement != null && isClassOrStruct(parentElement)) {
     	    return parentElement;
@@ -97,64 +117,6 @@ public class TypeUtil {
 	    return qualifiedName;
 	}
     
-    public static ITypeInfo getTypeForElement(ICElement elem, IProgressMonitor monitor) {
-        if (elem != null) {
-			ICProject cProject = elem.getCProject();
-			IQualifiedTypeName qualifiedName = getFullyQualifiedName(elem);
-			if (qualifiedName != null) {
-				final ITypeSearchScope fScope = new TypeSearchScope(true);
-				if (!AllTypesCache.isCacheUpToDate(fScope)) {
-					AllTypesCache.updateCache(fScope, monitor);
-				}
-					
-				ITypeCache cache = TypeCacheManager.getInstance().getCache(cProject.getProject());
-			    ITypeInfo info = cache.getType(elem.getElementType(), qualifiedName);
-			    if (info != null) {
-					ITypeReference ref = info.getResolvedReference();
-					if (ref == null) {
-						ref = AllTypesCache.resolveTypeLocation(info, monitor);
-					}
-					return info;
-			    }
-			}
-        }
-		return null;
-    }
-
-    public static ITypeInfo getTypeForElement(ICElement elem) {
-        return getTypeForElement(elem, new NullProgressMonitor());
-    }
-    
-    public static ICElement getElementForType(ITypeInfo type, IProgressMonitor monitor) {
-		final ITypeSearchScope fScope = new TypeSearchScope(true);
-		if (!AllTypesCache.isCacheUpToDate(fScope)) {
-			AllTypesCache.updateCache(fScope, monitor);
-		}
-		ITypeReference ref = type.getResolvedReference();
-		if (ref == null) {
-			ref = AllTypesCache.resolveTypeLocation(type, monitor);
-		}
-		if (ref != null) {
-			ICElement[] elems = ref.getCElements();
-			if (elems != null && elems.length > 0) {
-				if (elems.length == 1)
-					return elems[0];
-
-				for (int i = 0; i < elems.length; ++i) {
-					ICElement elem = elems[i];
-					if (elem.getElementType() == type.getCElementType() && elem.getElementName().equals(type.getName())) {
-						//TODO should check fully qualified name
-						return elem;
-					}
-				}
-			}
-		}
-		return null;
-    }
-    public static ICElement getElementForType(ITypeInfo type) {
-        return getElementForType(type, new NullProgressMonitor());
-    }
-
     public static IMethodDeclaration[] getMethods(ICElement elem) {
 	    if (elem instanceof IStructure) {
 	        try {
@@ -267,7 +229,7 @@ public class TypeUtil {
 		    IMethodDeclaration first= findMethod(name, paramTypes, isConstructor, isDestructor, superTypes[i]);
 			if (first != null && first.getVisibility() != ASTAccessVisibility.PRIVATE) {
 				// the order getAllSupertypes does make assumptions of the order of inner elements -> search recursivly
-			    IMethodDeclaration res= findMethodDeclarationInHierarchy(hierarchy, TypeUtil.getDeclaringType(first), name, paramTypes, isConstructor, isDestructor);
+			    IMethodDeclaration res= findMethodDeclarationInHierarchy(hierarchy, TypeUtil.getDeclaringClass(first), name, paramTypes, isConstructor, isDestructor);
 				if (res != null) {
 					return res;
 				}

@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
@@ -314,7 +312,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      */
     public boolean contains(ICElement type) {
     	// classes
-	    ITypeInfo info = AllTypesCache.getTypeForElement(type);
+	    ITypeInfo info = AllTypesCache.getTypeForElement(type, true, true, null);
         
 	    if (info == null)
 	        return false;
@@ -381,12 +379,12 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      */
     public ICElement[] getSubtypes(ICElement type) {
 	    List list = new ArrayList();
-	    ITypeInfo info = TypeUtil.getTypeForElement(type);
+	    ITypeInfo info = AllTypesCache.getTypeForElement(type, true, true, null);
 		Collection entries = (Collection) fTypeToSubTypes.get(info);
 		if (entries != null) {
 			for (Iterator i = entries.iterator(); i.hasNext(); ) {
 				ITypeInfo subType = (ITypeInfo)i.next();
-				ICElement elem = TypeUtil.getElementForType(subType);
+				ICElement elem = AllTypesCache.getElementForType(subType, true, true, null);
 				if (elem != null) {
 				    list.add(elem);
 				}
@@ -400,14 +398,14 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      */
     public ICElement[] getAllSubtypes(ICElement type) {
 	    List list = new ArrayList();
-	    ITypeInfo info = TypeUtil.getTypeForElement(type);
+	    ITypeInfo info = AllTypesCache.getTypeForElement(type, true, true, null);
 	    addSubs(info, list);
 	    //convert list to ICElements
 	    ICElement[] elems = new ICElement[list.size()];
 	    int count = 0;
 	    for (Iterator i = list.iterator(); i.hasNext(); ) {
 	        ITypeInfo subType = (ITypeInfo) i.next();
-	        elems[count++] = TypeUtil.getElementForType(subType);
+	        elems[count++] = AllTypesCache.getElementForType(subType, true, true, null);
 	    }
 	    return elems;
     }
@@ -430,13 +428,13 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      */
     public ICElement[] getSupertypes(ICElement type) {
 	    List list = new ArrayList();
-	    ITypeInfo info = TypeUtil.getTypeForElement(type);
+	    ITypeInfo info = AllTypesCache.getTypeForElement(type, true, true, null);
 		Collection entries = (Collection) fTypeToSuperTypes.get(info);
 		if (entries != null) {
 			for (Iterator i = entries.iterator(); i.hasNext(); ) {
 				TypeEntry entry = (TypeEntry)i.next();
 				ITypeInfo superType = entry.type;
-				ICElement elem = TypeUtil.getElementForType(superType);
+				ICElement elem = AllTypesCache.getElementForType(superType, true, true, null);
 				if (elem != null) {
 				    list.add(elem);
 				}
@@ -450,14 +448,14 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      */
     public ICElement[] getAllSupertypes(ICElement type) {
 	    List list = new ArrayList();
-	    ITypeInfo info = TypeUtil.getTypeForElement(type);
+	    ITypeInfo info = AllTypesCache.getTypeForElement(type, true, true, null);
 	    addSupers(info, list);
 	    //convert list to ICElements
 	    ICElement[] elems = new ICElement[list.size()];
 	    int count = 0;
 	    for (Iterator i = list.iterator(); i.hasNext(); ) {
 	        ITypeInfo superType = (ITypeInfo) i.next();
-	        elems[count++] = TypeUtil.getElementForType(superType);
+	        elems[count++] = AllTypesCache.getElementForType(superType, true, true, null);
 	    }
 	    return elems;
     }
@@ -481,7 +479,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      */
     public ICElement getType() {
         if (fFocusType != null)
-            return TypeUtil.getElementForType(fFocusType);
+            return AllTypesCache.getElementForType(fFocusType, true, true, null);
         return null;
     }
 
@@ -526,10 +524,6 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
     			}
     			System.out.println(this.toString());
     		}
-    	} catch (CModelException e) {
-    		throw e;
-    	} catch (CoreException e) {
-    		throw new CModelException(e);
     	} finally {
     		if (monitor != null) {
     			monitor.done();
@@ -541,7 +535,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
     /**
      * Compute this type hierarchy.
      */
-    protected void compute() throws CModelException, CoreException {
+    protected void compute() {
     	if (fFocusType != null) {
 //    		HierarchyBuilder builder = 
 //    			new IndexBasedHierarchyBuilder(

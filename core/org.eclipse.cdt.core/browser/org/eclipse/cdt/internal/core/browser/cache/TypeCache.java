@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeCacheChangedListener;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeInfoVisitor;
 import org.eclipse.cdt.core.browser.ITypeReference;
@@ -52,6 +53,7 @@ public class TypeCache implements ITypeCache {
 	final ITypeInfo fGlobalNamespace;
 	private final Map fTypeToSubTypes = new HashMap();
 	private final Map fTypeToSuperTypes = new HashMap();
+	private ITypeCacheChangedListener fChangeListener = null;
 
 	private static final class SuperTypeEntry {
 		ITypeInfo superType;
@@ -105,6 +107,9 @@ public class TypeCache implements ITypeCache {
 						}
 					}
 				}
+				// TODO finer-grained change deltas
+				if (fChangeListener != null)
+				    fChangeListener.typeCacheChanged(fProject);
 			}
 		}
 
@@ -299,6 +304,11 @@ public class TypeCache implements ITypeCache {
 		fGlobalNamespace.setCache(this);
 	}
 
+	public TypeCache(IProject project, IWorkingCopyProvider workingCopyProvider, ITypeCacheChangedListener listener) {
+	    this(project, workingCopyProvider);
+	    fChangeListener = listener;
+	}
+	
 	public boolean contains(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -554,7 +564,7 @@ public class TypeCache implements ITypeCache {
 		return null;
 	}
 		
-	public synchronized ITypeInfo getEnclosingNamespace(ITypeInfo info) {
+	public synchronized ITypeInfo getEnclosingNamespace(ITypeInfo info, boolean includeGlobalNamespace) {
 		IQualifiedTypeName enclosingName = info.getQualifiedTypeName().getEnclosingTypeName();
 		if (enclosingName != null) {
 		    // look for namespace
@@ -568,9 +578,11 @@ public class TypeCache implements ITypeCache {
 				enclosingType = (ITypeInfo) fTypeKeyMap.get(new HashKey(enclosingName, kinds[i]));
 			}
 			if (enclosingType != null) {
-			    return getEnclosingNamespace(enclosingType);
+			    return getEnclosingNamespace(enclosingType, includeGlobalNamespace);
 			}
 		}
+		if (includeGlobalNamespace)
+			return fGlobalNamespace;
 		return null;
 	}
 

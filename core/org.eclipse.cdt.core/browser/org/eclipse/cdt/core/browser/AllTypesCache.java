@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheMessages;
 import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.core.resources.IProject;
@@ -55,7 +54,7 @@ public class AllTypesCache {
 	private static IPropertyChangeListener fgPropertyChangeListener;
 	static boolean fgEnableIndexing = true;
 
-	/** Preference key for enabling background cache */
+    /** Preference key for enabling background cache */
 	public final static String ENABLE_BACKGROUND_TYPE_CACHE = "enableBackgroundTypeCache"; //$NON-NLS-1$
 	
 	/**
@@ -85,8 +84,7 @@ public class AllTypesCache {
 		// add delta listener
 		fgElementChangedListener = new IElementChangedListener() {
 			public void elementChanged(ElementChangedEvent event) {
-				TypeCacheManager.getInstance().processDelta(event.getDelta());
-				TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
+				TypeCacheManager.getInstance().processElementChanged(event, fgEnableIndexing);
 			}
 		};
 		CoreModel.getDefault().addElementChangedListener(fgElementChangedListener);
@@ -282,15 +280,7 @@ public class AllTypesCache {
 	 * @param monitor the progress monitor
 	 */
 	public static void updateCache(ITypeSearchScope scope, IProgressMonitor monitor) {
-		// schedule jobs to update cache
-		IProject[] projects = scope.getEnclosingProjects();
-		monitor.beginTask(TypeCacheMessages.getString("AllTypesCache.updateCache.taskName"), projects.length); //$NON-NLS-1$
-		for (int i = 0; i < projects.length; ++i) {
-			IProject project = projects[i];
-			// wait for any running jobs to finish
-			TypeCacheManager.getInstance().getCache(project).reconcileAndWait(true, Job.SHORT, monitor);
-		}
-		monitor.done();
+	    TypeCacheManager.getInstance().updateCache(scope, monitor);
 	}
 
 	/**
@@ -300,26 +290,7 @@ public class AllTypesCache {
 	 * @param monitor the progress monitor
 	 */
 	public static ITypeReference resolveTypeLocation(ITypeInfo info, IProgressMonitor monitor) {
-		ITypeReference location = info.getResolvedReference();
-		if (location == null) {
-			// cancel background jobs
-			IProject project = info.getEnclosingProject();
-			TypeCacheManager.getInstance().getCache(project).cancelJobs();
-
-			// start the search job
-			TypeCacheManager.getInstance().getCache(project).locateTypeAndWait(info, Job.SHORT, monitor);
-
-			// get the newly parsed location
-			location = info.getResolvedReference();
-
-			// resume background jobs
-			TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
-		}
-		return location;
-	}
-	
-	public static ITypeInfo getTypeForElement(ICElement elem) {
-	    return TypeUtil.getTypeForElement(elem);
+	    return TypeCacheManager.getInstance().resolveTypeLocation(info, monitor, fgEnableIndexing);
 	}
 	
 	/** Returns first type in the cache which matches the given
@@ -359,9 +330,25 @@ public class AllTypesCache {
 	 * @return a type hierarchy for the given type
 	 */
 	public static ITypeHierarchy createTypeHierarchy(ICElement type, IProgressMonitor monitor) throws CModelException {
-	    ITypeInfo info = TypeUtil.getTypeForElement(type);
+	    ITypeInfo info = TypeCacheManager.getInstance().getTypeForElement(type, true, true, fgEnableIndexing, monitor);
 	    if (info != null)
 	        return fgTypeHierarchyBuilder.createTypeHierarchy(info, fgEnableIndexing, monitor);
 	    return null;
 	}
+	
+    public static void addTypeCacheChangedListener(ITypeCacheChangedListener listener) {
+        TypeCacheManager.getInstance().addTypeCacheChangedListener(listener);
+    }
+
+    public static void removeTypeCacheChangedListener(ITypeCacheChangedListener listener) {
+        TypeCacheManager.getInstance().removeTypeCacheChangedListener(listener);
+    }
+    
+    public static ITypeInfo getTypeForElement(ICElement element, boolean forceUpdate, boolean forceResolve, IProgressMonitor monitor) {
+        return TypeCacheManager.getInstance().getTypeForElement(element, forceUpdate, forceResolve, fgEnableIndexing, monitor);
+    }
+
+    public static ICElement getElementForType(ITypeInfo type, boolean forceUpdate, boolean forceResolve, IProgressMonitor monitor) {
+        return TypeCacheManager.getInstance().getElementForType(type, forceUpdate, forceResolve, fgEnableIndexing, monitor);
+    }
 }

@@ -149,7 +149,7 @@ public class CModule extends CDebugElement implements ICModule {
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#canLoadSymbols()
 	 */
 	public boolean canLoadSymbols() {
-		return ( getDebugTarget().isSuspended() && (canModifySymbolsSource() || !areSymbolsLoaded()) );
+		return ( getDebugTarget().isSuspended() && !areSymbolsLoaded() );
 	}
 
 	/* (non-Javadoc)

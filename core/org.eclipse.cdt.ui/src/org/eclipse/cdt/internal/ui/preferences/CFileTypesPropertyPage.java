@@ -108,9 +108,9 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
-	protected void performApply() {
+	public boolean performOk() {
 		IResolverModel model = getResolverModel();
 		
 		fPrefsBlock.performApply();
@@ -122,9 +122,9 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			model.setResolver(getProject(), null);
 		}
 
-		super.performApply();
+		return super.performOk();
 	}
-
+	
 	private IProject getProject(){
 		Object		element	= getElement();
 		IProject 	project	= null;

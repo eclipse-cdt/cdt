@@ -71,19 +71,18 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
-	protected void performApply() {
+	public boolean performOk() {
 		IResolverModel model = getResolverModel();
 		
 		fPrefsBlock.performApply();
 		model.setResolver(fPrefsBlock.getResolver());
 
-		super.performApply();
+		return super.performOk();
 	}
-	
+
 	private IResolverModel getResolverModel() {
 		return CCorePlugin.getDefault().getResolverModel();
 	}
-
 }

@@ -1,3 +1,9 @@
+2004-06-03 Alain Magloire
+
+	Patch from Sam Rob, fix for 64783
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPropertyPage.java
+
 2004-06-02 Bogdan Gheorghe
 	
 	Fix for Bug 61241 - [Search] Closing the Search view mid search causes an error

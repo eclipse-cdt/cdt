@@ -31,6 +31,7 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	protected IASTCompilationUnit compilationUnit = null;
 	protected List inclusions = new ArrayList(); 
 	protected List macros = new ArrayList(); 
+	protected boolean hasNoProblems = true;
 	
 	public Iterator getInclusions()
 	{
@@ -194,4 +195,23 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	{
 		return new OffsetableIterator();
 	}	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+	 */
+	public boolean acceptProblem(IProblem problem) {
+		setHasNoProblems(false);
+		return super.acceptProblem(problem);
+	}
+	/**
+	 * @return Returns the hasProblems.
+	 */
+	public boolean hasNoProblems() {
+		return hasNoProblems;
+	}
+	/**
+	 * @param hasProblems The hasProblems to set.
+	 */
+	public void setHasNoProblems(boolean hasProblems) {
+		this.hasNoProblems = hasProblems;
+	}
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -165,7 +166,15 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		else {
 			result = Checks.checkIdentifier(newName);
 		}
-				
+		
+		if (!(fCElement instanceof IFunctionDeclaration)){
+			if(checkSiblingsCollision().hasError()){
+				String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
+						new String[]{fNewElementName, fCElement.getParent().getElementName()});
+				result.addFatalError(msg);		
+			}
+		}
+		
 		if (Checks.isAlreadyNamed(fCElement, newName))
 			result.addFatalError(RefactoringCoreMessages.getString("RenameTypeRefactoring.choose_another_name"));	 //$NON-NLS-1$
 		return result;
@@ -231,13 +240,33 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			if (result.hasFatalError())
 				return result;
 			pm.worked(5);
+
+			result.merge(Checks.checkIfTuBroken(fCElement));
+			if (result.hasFatalError())
+				return result;
+			pm.worked(1);
+		
+			result.merge(checkEnclosingElements());
+			pm.worked(1);
+
+			result.merge(checkEnclosedElements());
+			pm.worked(1);
+
+			result.merge(checkSiblingsCollision());
+			pm.worked(1);
+			
+			if (result.hasFatalError())
+				return result;
 			
 			fReferences= null;
 			if (fUpdateReferences){
 				pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.searching"));	 //$NON-NLS-1$
 				fReferences= getReferences(fCElement.getElementName(), new SubProgressMonitor(pm, 35));
 			}
-			pm.worked(10);
+			pm.worked(6);
+			
+			if (fUpdateReferences)
+				result.merge(analyzeAffectedTranslationUnits());
 
 			pm.setTaskName(RefactoringCoreMessages.getString("RenameTypeRefactoring.checking")); //$NON-NLS-1$
 			if (pm.isCanceled())
@@ -404,6 +433,72 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 					ICSearchConstants.UNKNOWN_SEARCH_FOR, ICSearchConstants.REFERENCES,	false ));
 		} 
 		return orPattern;
+	}
+
+	private RefactoringStatus checkEnclosedElements() throws CoreException {
+		ICElement enclosedElement= findEnclosedElements(fCElement, fNewElementName);
+		if (enclosedElement == null)
+			return null;
+		String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.encloses",  //$NON-NLS-1$
+																		new String[]{fCElement.getElementName(), fNewElementName});
+		return RefactoringStatus.createErrorStatus(msg);
+	}
+
+	private RefactoringStatus checkEnclosingElements() throws CoreException {
+		ICElement enclosingElement= findEnclosingElements(fCElement, fNewElementName);
+		if (enclosingElement == null)
+			return null;
+			
+		String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.enclosed",//$NON-NLS-1$
+								new String[]{fCElement.getElementName(), fNewElementName});
+		return RefactoringStatus.createErrorStatus(msg);
+	}
+	
+	private static ICElement findEnclosedElements(ICElement element, String newName) throws CoreException {
+		if(element instanceof IParent){
+			ICElement[] enclosedTypes= ((IParent)element).getChildren();
+			for (int i= 0; i < enclosedTypes.length; i++){
+				if (newName.equals(enclosedTypes[i].getElementName()) || findEnclosedElements(enclosedTypes[i], newName) != null)
+					return enclosedTypes[i];
+			}
+		}
+		return null;
+	}
+		
+	private static ICElement findEnclosingElements(ICElement element, String newName) {
+		ICElement enclosing= element.getParent();
+		while (enclosing != null){
+			if (newName.equals(enclosing.getElementName()))
+				return enclosing;
+			else 
+				enclosing= enclosing.getParent();	
+		}
+		return null;
+	}
+	private RefactoringStatus checkSiblingsCollision() {		
+		RefactoringStatus result= new RefactoringStatus();
+		// get the siblings of the CElement and check if it has the same name
+		ICElement[] siblings= ((IParent)fCElement.getParent()).getChildren();
+		for (int i = 0; i <siblings.length; ++i ){
+			ICElement sibling = (ICElement)siblings[i];
+			if ((sibling.getElementName().equals(fNewElementName)) 
+			&& (sibling.getElementType() == fCElement.getElementType())  ) {
+				String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
+						new String[]{fNewElementName, fCElement.getParent().getElementName()});
+				result.addError(msg);
+			}
+		}
+		return result;
+	}
+
+	private RefactoringStatus analyzeAffectedTranslationUnits() throws CoreException{
+		RefactoringStatus result= new RefactoringStatus();
+		fReferences= Checks.excludeTranslationUnits(fReferences, result);
+		if (result.hasFatalError())
+			return result;
+		
+		result.merge(Checks.checkCompileErrorsInAffectedFiles(fReferences));	
+		return result;
 	}
 	
 }

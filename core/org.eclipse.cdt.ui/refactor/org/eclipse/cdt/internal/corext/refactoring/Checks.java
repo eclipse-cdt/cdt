@@ -10,15 +10,22 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.corext.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.corext.refactoring.base.RefactoringStatus;
 import org.eclipse.cdt.internal.ui.util.Resources;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 
@@ -147,7 +154,7 @@ public class Checks {
 		if (tu == null)
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("Checks.cu_not_created"));	 //$NON-NLS-1$
 		else if (! tu.isStructureKnown())
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("Checks.cu_not_parsed"));	 //$NON-NLS-1$
+			return RefactoringStatus.createErrorStatus(RefactoringCoreMessages.getString("Checks.cu_not_parsed"));	 //$NON-NLS-1$
 		return new RefactoringStatus();
 	}
 	//-------- validateEdit checks ----
@@ -172,4 +179,60 @@ public class Checks {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * From SearchResultGroup[] passed as the parameter
+	 * this method removes all those that correspond to a non-parsable ITranslationUnit
+	 * and returns it as a result.
+	 * Status object collect the result of checking.
+	 */	
+	public static SearchResultGroup[] excludeTranslationUnits(SearchResultGroup[] grouped, RefactoringStatus status) throws CModelException{
+		List result= new ArrayList();
+		boolean wasEmpty= grouped.length == 0;
+		for (int i= 0; i < grouped.length; i++){	
+			IResource resource= grouped[i].getResource();
+			ICElement element= CoreModel.getDefault().create(resource);
+			if (! (element instanceof ITranslationUnit))
+				continue;
+			//XXX this is a workaround 	for a jcore feature that shows errors in cus only when you get the original element
+			ITranslationUnit cu= (ITranslationUnit)CoreModel.getDefault().create(resource);
+			if (! cu.isStructureKnown()){
+				String path= cu.getResource().getFullPath().toOSString();
+				status.addError(RefactoringCoreMessages.getFormattedString("Checks.cannot_be_parsed", path)); //$NON-NLS-1$
+				continue; //removed, go to the next one
+			}
+			result.add(grouped[i]);	
+		}
+		
+		if ((!wasEmpty) && result.isEmpty())
+			status.addFatalError(RefactoringCoreMessages.getString("Checks.all_excluded")); //$NON-NLS-1$
+		
+		return (SearchResultGroup[])result.toArray(new SearchResultGroup[result.size()]);
+	}
+	
+	public static RefactoringStatus checkCompileErrorsInAffectedFiles(SearchResultGroup[] grouped) throws CModelException {
+		RefactoringStatus result= new RefactoringStatus();
+		for (int i= 0; i < grouped.length; i++){
+			IResource resource= grouped[i].getResource();
+			if (hasCompileErrors(resource))
+				result.addFatalError(RefactoringCoreMessages.getFormattedString("Checks.cu_has_compile_errors", resource.getFullPath().makeRelative())); //$NON-NLS-1$
+		}
+		return result;
+	}
+	
+	private static boolean hasCompileErrors(IResource resource) throws CModelException {
+		try {
+			IMarker[] problemMarkers= resource.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+			for (int i= 0; i < problemMarkers.length; i++) {
+				if (problemMarkers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
+					return true;
+			}
+			return false;
+		} catch (CModelException e){
+			throw e;		
+		} catch (CoreException e){
+			throw new CModelException(e);
+		}
+	}
+	
 }

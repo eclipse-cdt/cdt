@@ -25,4 +25,5 @@ public interface IQuickParseCallback extends ISourceElementRequestor
      */
     public abstract IASTCompilationUnit getCompilationUnit();
     public abstract Iterator iterateOffsetableElements();
+    public boolean hasNoProblems();
 }

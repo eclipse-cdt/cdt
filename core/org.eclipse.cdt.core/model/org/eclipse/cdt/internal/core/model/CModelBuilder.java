@@ -165,7 +165,7 @@ public class CModelBuilder {
 		{ 
 			generateModelElements();
 			// important to know if the unit has parse errors or not
-			translationUnit.getElementInfo().setIsStructureKnown(hasNoErrors);
+			translationUnit.getElementInfo().setIsStructureKnown(hasNoErrors && quickParseCallback.hasNoProblems());
 		}
 		catch( NullPointerException npe )
 		{

@@ -78,7 +78,7 @@ public class CDebugModel
 											   final ICDITarget cdiTarget,
 											   final String name,
 											   final IProcess process,
-//											   final IProject project,
+											   final IProject project,
 											   final boolean allowTerminate,
 											   final boolean allowDisconnect,
 											   final boolean stopInMain ) throws DebugException
@@ -92,7 +92,7 @@ public class CDebugModel
 											  cdiTarget, 
 											  name,
 											  process,
-											  null, // project,
+											  project,
 											  allowTerminate,
 											  allowDisconnect );
 			}

@@ -115,11 +115,12 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			Process process = dtarget.getProcess();
 			IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel((String [])command.toArray(new String[command.size()])));
 			boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-			CDebugModel.newDebugTarget(launch, dsession.getTargets()[0], dbgCfg.getName(), iprocess, true, false, stopInMain );
+			CDebugModel.newDebugTarget(launch, dsession.getTargets()[0], dbgCfg.getName(), iprocess, exe.getProject(), true, false, stopInMain );
 		}
 		else {
-			Process process = exec((String [])command.toArray(new String[command.size()]), getEnvironmentArray(config), getWorkingDir(config));
-			DebugPlugin.getDefault().newProcess(launch, process, "label");
+			String []commandArray = (String [])command.toArray(new String[command.size()]);
+			Process process = exec(commandArray, getEnvironmentArray(config), getWorkingDir(config));
+			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray));
 		}
 		monitor.done();
 	}

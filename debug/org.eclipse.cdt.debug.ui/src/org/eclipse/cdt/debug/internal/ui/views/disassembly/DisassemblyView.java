@@ -282,7 +282,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		getSourceViewerDecorationSupport( viewer );
 		
 		EditorsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
-
+		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		getSite().setSelectionProvider( viewer.getSelectionProvider() );
 		setEventHandler( createEventHandler() );
@@ -353,7 +353,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 				getSourceViewer().changeTextPresentation( createTextPresentation( ((DisassemblyEditorInput)input).getSourceRegions() ), true );
 		}
 		else if ( IInternalCDebugUIConstants.DISASSEMBLY_FONT.equals( propertyName ) ) {
-			getSourceViewer().getTextWidget().setFont(JFaceResources.getFont( IInternalCDebugUIConstants.DISASSEMBLY_FONT ) );			
+			getSourceViewer().getTextWidget().setFont( JFaceResources.getFont( IInternalCDebugUIConstants.DISASSEMBLY_FONT ) );			
 		}
 	}
 
@@ -472,6 +472,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		JFaceResources.getFontRegistry().removeListener( this );
 		JFaceResources.getColorRegistry().removeListener( this );
 		EditorsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
+		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
 
 		if ( fSourceViewerDecorationSupport != null ) {
 			fSourceViewerDecorationSupport.dispose();
@@ -899,7 +900,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		for ( int i = 0; i < regions.length; ++i ) {
 			p.addStyleRange( new StyleRange( regions[i].getOffset(), 
 											 regions[i].getLength(), 
-											 JFaceResources.getColorRegistry().get( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR ),
+											 CDebugUIPlugin.getPreferenceColor( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR ),
 											 null ) );
 		}
 		return p;

@@ -11,6 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 public interface IInternalCDebugUIConstants {
 
@@ -32,6 +35,8 @@ public interface IInternalCDebugUIConstants {
 	 * the workbench font preference page.
 	 */ 
 	public static final String DISASSEMBLY_SOURCE_LINE_COLOR = PREFIX + "disassembly.sourceLineColor"; //$NON-NLS-1$	
+	
+	public static final RGB DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB = Display.getDefault().getSystemColor( SWT.COLOR_DARK_BLUE ).getRGB();
 
 	//Current stack frame instruction pointer
 	public static final String DISASM_INSTRUCTION_POINTER = PREFIX + "disassemblyInstructionPointer"; //$NON-NLS-1$

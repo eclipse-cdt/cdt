@@ -1246,19 +1246,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.themes">
-      <themeElementCategory
-            label="%DebugPresentation.label"
-            id="org.eclipse.cdt.debug.ui.presentation">
-      </themeElementCategory>
-      <colorDefinition
-            label="%DisassemblySourceLineColor.label"
-            categoryId="org.eclipse.cdt.debug.ui.presentation"
-            value="COLOR_DARK_BLUE"
-            id="org.eclipse.cdt.debug.ui.disassembly.sourceLineColor">
-         <description>
-            %DisassemblySourceLineColor.description
-         </description>
-      </colorDefinition>
       <fontDefinition
             label="%DisassemblyFontDefinition.label"
             categoryId="org.eclipse.debug.ui.presentation"

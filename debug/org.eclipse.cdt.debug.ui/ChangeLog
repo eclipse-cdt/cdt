@@ -1,4 +1,13 @@
 2004-06-16 Mikhail Khodjaiants
+	Deleted the "C/C++ Debugger Appearance" theme.
+	Moved the diassembly color preferences to the "C/C++ Debug" preference page.
+	* plugin.xml
+	* IInternalCDebugUIConstants.java
+	* CDebugPreferencePage.java
+	* PreferenceMessages.properties: new
+	* PreferenceMessages.java: new
+
+2004-06-16 Mikhail Khodjaiants
 	Moved the disassembly font definition to the platform "Debug" theme.
 	* plugin.xml
 

@@ -1,24 +1,31 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
-
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -42,51 +49,52 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * 
- * Preference page for debug preferences that apply specifically to
- * C/C++ Debugging.
- * 
- * @since Oct 3, 2002
+ * Preference page for debug preferences that apply specifically to C/C++ Debugging.
  */
-public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
-{
+public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
 	// View setting widgets
 	private Button fPathsButton;
+
 	private Button fRefreshRegistersButton;
+
 	private Button fRefreshSolibsButton;
+
 	private Combo fVariableFormatCombo;
+
 	private Combo fExpressionFormatCombo;
+
 	private Combo fRegisterFormatCombo;
-	
+
 	// Maximum number of disassembly instructions to display
 	private IntegerFieldEditor fMaxNumberOfInstructionsText;
 
+	// The color of source lines in the disassembly view.
+	private ColorFieldEditor fDisassemblySourceColor;
+	
 	private static final int NUMBER_OF_DIGITS = 3;
 
 	// Format constants
 	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL };
-	private static String[] fFormatLabels = new String[] { CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Natural"), CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Hexadecimal"), CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Decimal") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	private static String[] fFormatLabels = new String[]{ CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Natural" ), CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Hexadecimal" ), CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Decimal" ) }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private PropertyChangeListener fPropertyChangeListener;
 
-	protected class PropertyChangeListener implements IPropertyChangeListener
-	{
+	protected class PropertyChangeListener implements IPropertyChangeListener {
+
 		private boolean fHasStateChanged = false;
 
-		public void propertyChange( PropertyChangeEvent event )
-		{
-			if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) )
-			{
+		public void propertyChange( PropertyChangeEvent event ) {
+			if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) ) {
 				fHasStateChanged = true;
 			}
-			else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_CHAR_VALUES ) )
-			{
+			else if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_CHAR_VALUES ) ) {
 				fHasStateChanged = true;
 			}
 		}
 
-		protected boolean hasStateChanged()
-		{
+		protected boolean hasStateChanged() {
 			return fHasStateChanged;
 		}
 	}
@@ -94,21 +102,20 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Constructor for CDebugPreferencePage.
 	 */
-	public CDebugPreferencePage()
-	{
+	public CDebugPreferencePage() {
 		super();
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 		getPreferenceStore().addPropertyChangeListener( getPropertyChangeListener() );
-		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Preference_page_description") ); //$NON-NLS-1$
+		setDescription( CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Preference_page_description" ) ); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
 	 */
-	protected Control createContents( Composite parent )
-	{
+	protected Control createContents( Composite parent ) {
 		WorkbenchHelp.setHelp( getControl(), ICDebugHelpContextIds.C_DEBUG_PREFERENCE_PAGE );
-
 		//The main composite
 		Composite composite = new Composite( parent, SWT.NULL );
 		GridLayout layout = new GridLayout();
@@ -120,56 +127,54 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData( data );
-
 		createSpacer( composite, 1 );
 		createViewSettingPreferences( composite );
 		createSpacer( composite, 1 );
 		createDisassemblySettingPreferences( composite );
 		setValues();
-
 		return composite;
 	}
 
 	/**
 	 * Creates composite group and sets the default layout data.
-	 *
-	 * @param parent  the parent of the new composite
-	 * @param numColumns  the number of columns for the new composite
-	 * @param labelText  the text label of the new composite
+	 * 
+	 * @param parent
+	 *            the parent of the new composite
+	 * @param numColumns
+	 *            the number of columns for the new composite
+	 * @param labelText
+	 *            the text label of the new composite
 	 * @return the newly-created composite
 	 */
-	private Composite createGroupComposite( Composite parent, int numColumns, String labelText )
-	{
+	private Composite createGroupComposite( Composite parent, int numColumns, String labelText ) {
 		return ControlFactory.createGroup( parent, labelText, numColumns );
 	}
-		
+
 	/**
-	 * Set the values of the component widgets based on the
-	 * values in the preference store
+	 * Set the values of the component widgets based on the values in the preference store
 	 */
-	private void setValues()
-	{
+	private void setValues() {
 		IPreferenceStore store = getPreferenceStore();
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fRefreshRegistersButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH ) );
 		fRefreshSolibsButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 		getMaxNumberOfInstructionsText().setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
+		getDisassemblySourceColor().load();
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
 	 */
-	public void init( IWorkbench workbench )
-	{
+	public void init( IWorkbench workbench ) {
 	}
 
-	protected PropertyChangeListener getPropertyChangeListener()
-	{
-		if ( fPropertyChangeListener == null )
-		{
+	protected PropertyChangeListener getPropertyChangeListener() {
+		if ( fPropertyChangeListener == null ) {
 			fPropertyChangeListener = new PropertyChangeListener();
 		}
 		return fPropertyChangeListener;
@@ -178,10 +183,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Set the default preferences for this page.
 	 */
-	public static void initDefaults(IPreferenceStore store)
-	{
+	public static void initDefaults( IPreferenceStore store ) {
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
+		PreferenceConverter.setDefault( store, IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, IInternalCDebugUIConstants.DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.DEF_NUMBER_OF_INSTRUCTIONS );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
@@ -191,8 +196,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * @see DialogPage#dispose()
 	 */
-	public void dispose()
-	{
+	public void dispose() {
 		super.dispose();
 		getPreferenceStore().removePropertyChangeListener( getPropertyChangeListener() );
 	}
@@ -200,36 +204,31 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Create the view setting preferences composite widget
 	 */
-	private void createViewSettingPreferences( Composite parent )
-	{
-		Composite comp = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Opened_view_default_settings") ); //$NON-NLS-1$
-		fPathsButton = createCheckButton( comp, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.pathsButton") ); //$NON-NLS-1$
+	private void createViewSettingPreferences( Composite parent ) {
+		Composite comp = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Opened_view_default_settings" ) ); //$NON-NLS-1$
+		fPathsButton = createCheckButton( comp, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.pathsButton" ) ); //$NON-NLS-1$
 		fRefreshRegistersButton = createCheckButton( comp, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.autoRefreshRegistersButton" ) ); //$NON-NLS-1$
 		fRefreshSolibsButton = createCheckButton( comp, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.autoRefreshSolibsButton" ) ); //$NON-NLS-1$
 		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
 		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
-		fVariableFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.variableFormatCombo"), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-		fExpressionFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.expressionFormatCombo"), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
-		fRegisterFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.registerFormatCombo"), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fVariableFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.variableFormatCombo" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fExpressionFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.expressionFormatCombo" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fRegisterFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.registerFormatCombo" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
 	}
 
 	/**
 	 * Create the disassembly setting preferences composite widget
 	 */
-	private void createDisassemblySettingPreferences( Composite parent )
-	{
-		Composite comp = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Disassembly_options") ); //$NON-NLS-1$
+	private void createDisassemblySettingPreferences( Composite parent ) {
+		Composite group = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.Disassembly_options" ) ); //$NON-NLS-1$
+		Composite comp = ControlFactory.createComposite( group, 2 );
 		createMaxNumberOfInstructionsField( comp );
+		createDisassemblyColorsField( comp );
 	}
 
-	private void createMaxNumberOfInstructionsField( Composite parent )
-	{
-		Composite composite = ControlFactory.createComposite( parent, 2 );
-		fMaxNumberOfInstructionsText = new IntegerFieldEditor( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS,
-															   CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.maxNumberOfInstructions"), //$NON-NLS-1$
-															   composite,
-															   NUMBER_OF_DIGITS );		
-		GridData data = (GridData)fMaxNumberOfInstructionsText.getTextControl( composite ).getLayoutData();
+	private void createMaxNumberOfInstructionsField( Composite parent ) {
+		fMaxNumberOfInstructionsText = new IntegerFieldEditor( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.maxNumberOfInstructions" ), parent, NUMBER_OF_DIGITS ); //$NON-NLS-1$
+		GridData data = (GridData)fMaxNumberOfInstructionsText.getTextControl( parent ).getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
 		data.widthHint = convertWidthInCharsToPixels( NUMBER_OF_DIGITS + 1 );
 		fMaxNumberOfInstructionsText.setPreferencePage( this );
@@ -237,25 +236,28 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fMaxNumberOfInstructionsText.setValidRange( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
 		String minValue = Integer.toString( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS );
 		String maxValue = Integer.toString( ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
-		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.ErrorMaxNumberOfInstructionsRange"), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
+		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( CDebugUIPlugin.getResourceString( "internal.ui.preferences.CDebugPreferencePage.ErrorMaxNumberOfInstructionsRange" ), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
 		fMaxNumberOfInstructionsText.load();
-		fMaxNumberOfInstructionsText.setPropertyChangeListener( 
-					new IPropertyChangeListener()
-						{
-							public void propertyChange( PropertyChangeEvent event )
-							{
-								if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
-									setValid( getMaxNumberOfInstructionsText().isValid() );
-							}
-						} );
+		fMaxNumberOfInstructionsText.setPropertyChangeListener( new IPropertyChangeListener() {
+
+			public void propertyChange( PropertyChangeEvent event ) {
+				if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
+					setValid( getMaxNumberOfInstructionsText().isValid() );
+			}
+		} );
+	}
+
+	private void createDisassemblyColorsField( Composite parent ) {
+		fDisassemblySourceColor = new ColorFieldEditor( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, PreferenceMessages.getString( "CDebugPreferencePage.Color_of_disassembly_source_lines_1" ), parent ); //$NON-NLS-1$
+		fDisassemblySourceColor.setPreferencePage( this );
+		fDisassemblySourceColor.setPreferenceStore( getPreferenceStore() );
+		fDisassemblySourceColor.load();
 	}
 
 	/**
-	 * Creates a button with the given label and sets the default 
-	 * configuration data.
+	 * Creates a button with the given label and sets the default configuration data.
 	 */
-	private Button createCheckButton( Composite parent, String label )
-	{
+	private Button createCheckButton( Composite parent, String label ) {
 		Button button = new Button( parent, SWT.CHECK | SWT.LEFT );
 		button.setText( label );
 		// FieldEditor GridData
@@ -265,19 +267,16 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	/**
-	 * Creates a button with the given label and sets the default 
-	 * configuration data.
+	 * Creates a button with the given label and sets the default configuration data.
 	 */
-	private Combo createComboBox( Composite parent, String label, String[] items, String selection )
-	{
+	private Combo createComboBox( Composite parent, String label, String[] items, String selection ) {
 		ControlFactory.createLabel( parent, label );
 		Combo combo = ControlFactory.createSelectCombo( parent, items, selection );
 		combo.setLayoutData( new GridData() );
 		return combo;
 	}
 
-	protected void createSpacer( Composite composite, int columnSpan )
-	{
+	protected void createSpacer( Composite composite, int columnSpan ) {
 		Label label = new Label( composite, SWT.NONE );
 		GridData gd = new GridData();
 		gd.horizontalSpan = columnSpan;
@@ -285,14 +284,11 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	/**
-	 * @see IPreferencePage#performOk()
-	 * Also, notifies interested listeners
+	 * @see IPreferencePage#performOk() Also, notifies interested listeners
 	 */
-	public boolean performOk()
-	{
+	public boolean performOk() {
 		storeValues();
-		if ( getPropertyChangeListener().hasStateChanged() )
-		{
+		if ( getPropertyChangeListener().hasStateChanged() ) {
 			refreshViews();
 		}
 		CDebugUIPlugin.getDefault().savePluginPreferences();
@@ -301,47 +297,37 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	/**
-	 * Refresh the variables and expression views as changes
-	 * have occurred that affects these views.
+	 * Refresh the variables and expression views as changes have occurred that affects these views.
 	 */
-	private void refreshViews()
-	{
-		BusyIndicator.showWhile( getShell().getDisplay(), 
-								 new Runnable()
-									{
-										public void run()
-										{
-											// Refresh interested views
-											IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-											IWorkbenchPage page = null;
-											for ( int i = 0; i < windows.length; i++ )
-											{
-												page = windows[i].getActivePage();
-												if ( page != null )
-												{
-													refreshViews( page, IDebugUIConstants.ID_EXPRESSION_VIEW );
-													refreshViews( page, IDebugUIConstants.ID_VARIABLE_VIEW );
-													refreshViews( page, ICDebugUIConstants.ID_REGISTERS_VIEW );
-												}
-											}
-										}
-									} );
+	private void refreshViews() {
+		BusyIndicator.showWhile( getShell().getDisplay(), new Runnable() {
+
+			public void run() {
+				// Refresh interested views
+				IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+				IWorkbenchPage page = null;
+				for( int i = 0; i < windows.length; i++ ) {
+					page = windows[i].getActivePage();
+					if ( page != null ) {
+						refreshViews( page, IDebugUIConstants.ID_EXPRESSION_VIEW );
+						refreshViews( page, IDebugUIConstants.ID_VARIABLE_VIEW );
+						refreshViews( page, ICDebugUIConstants.ID_REGISTERS_VIEW );
+					}
+				}
+			}
+		} );
 	}
 
 	/**
 	 * Refresh all views in the given workbench page with the given view id
 	 */
-	protected void refreshViews( IWorkbenchPage page, String viewID )
-	{
+	protected void refreshViews( IWorkbenchPage page, String viewID ) {
 		IViewPart part = page.findView( viewID );
-		if ( part != null )
-		{
+		if ( part != null ) {
 			IDebugView adapter = (IDebugView)part.getAdapter( IDebugView.class );
-			if ( adapter != null )
-			{
+			if ( adapter != null ) {
 				Viewer viewer = adapter.getViewer();
-				if ( viewer instanceof StructuredViewer )
-				{
+				if ( viewer instanceof StructuredViewer ) {
 					((StructuredViewer)viewer).refresh();
 				}
 			}
@@ -351,8 +337,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	/**
 	 * Store the preference values based on the state of the component widgets
 	 */
-	private void storeValues()
-	{
+	private void storeValues() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH, fRefreshRegistersButton.getSelection() );
@@ -361,45 +346,47 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
+		getDisassemblySourceColor().store();
 	}
 
 	/**
 	 * Sets the default preferences.
+	 * 
 	 * @see PreferencePage#performDefaults()
 	 */
-	protected void performDefaults()
-	{
+	protected void performDefaults() {
 		setDefaultValues();
 		super.performDefaults();
 	}
 
-	private void setDefaultValues()
-	{
+	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
 		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fRefreshRegistersButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH ) );
 		fRefreshSolibsButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 		getMaxNumberOfInstructionsText().setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
+		getDisassemblySourceColor().loadDefault();
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}
-	
-	private static int getFormatId( int index )
-	{
-		return ( index >= 0 && index < fFormatIds.length ) ? fFormatIds[index] : fFormatIds[0];
+
+	private static int getFormatId( int index ) {
+		return (index >= 0 && index < fFormatIds.length) ? fFormatIds[index] : fFormatIds[0];
 	}
 
-	private static int getFormatIndex( int id )
-	{
-		for ( int i = 0; i < fFormatIds.length; ++i )
+	private static int getFormatIndex( int id ) {
+		for( int i = 0; i < fFormatIds.length; ++i )
 			if ( fFormatIds[i] == id )
 				return i;
 		return -1;
 	}
 
-	protected IntegerFieldEditor getMaxNumberOfInstructionsText()
-	{
+	protected IntegerFieldEditor getMaxNumberOfInstructionsText() {
 		return fMaxNumberOfInstructionsText;
+	}
+
+	private ColorFieldEditor getDisassemblySourceColor() {
+		return fDisassemblySourceColor;
 	}
 }

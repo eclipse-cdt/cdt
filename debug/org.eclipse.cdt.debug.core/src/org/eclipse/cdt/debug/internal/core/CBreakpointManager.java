@@ -268,7 +268,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 					ICDILocation location = ((ICDILocationBreakpoint)cdiBreakpoint).getLocation();
 					if ( location != null ) {
 						IAddressFactory factory = getDebugTarget().getAddressFactory();
-						return factory.createAddress( location.getAddress().toString() );
+						return factory.createAddress( location.getAddress() );
 					}	
 				}
 				catch( CDIException e ) {
@@ -630,7 +630,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	private ICAddressBreakpoint createAddressBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
 		IFile execFile = getExecFile();
 		String sourceHandle = execFile.getFullPath().toOSString();
-		IAddress address = getDebugTarget().getAddressFactory().createAddress( cdiBreakpoint.getLocation().getAddress().toString() );
+		IAddress address = getDebugTarget().getAddressFactory().createAddress( cdiBreakpoint.getLocation().getAddress() );
 		ICAddressBreakpoint breakpoint = CDIDebugModel.createAddressBreakpoint( sourceHandle, 
 																				execFile, 
 																				address, 

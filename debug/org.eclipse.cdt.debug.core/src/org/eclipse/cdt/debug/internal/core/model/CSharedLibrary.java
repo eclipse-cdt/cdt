@@ -58,7 +58,7 @@ public class CSharedLibrary extends CDebugElement
 	{
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
 		if ( getCDISharedLibrary() != null )
-			return factory.createAddress(getCDISharedLibrary().getStartAddress().toString());
+			return factory.createAddress( getCDISharedLibrary().getStartAddress() );
 		return factory.getZero();
 	}
 
@@ -69,7 +69,7 @@ public class CSharedLibrary extends CDebugElement
 	{
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
 		if ( getCDISharedLibrary() != null )
-			return factory.createAddress(getCDISharedLibrary().getEndAddress().toString());
+			return factory.createAddress( getCDISharedLibrary().getEndAddress() );
 		return factory.getZero();
 	}
 

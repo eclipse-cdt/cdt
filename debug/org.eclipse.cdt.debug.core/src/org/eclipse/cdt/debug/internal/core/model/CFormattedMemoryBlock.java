@@ -296,7 +296,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
 		if ( fCDIMemoryBlock != null )
 		{
-			return factory.createAddress( fCDIMemoryBlock.getStartAddress().toString() );
+			return factory.createAddress( fCDIMemoryBlock.getStartAddress() );
 		}
 		return factory.getZero();
 	}
@@ -506,7 +506,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		BigInteger[] bigs = event.getAddresses();
 		IAddress[] addresses = new IAddress[bigs.length];
 		for (int i = 0; i < addresses.length; ++i) {
-			addresses[i] = factory.createAddress( bigs[i].toString() );
+			addresses[i] = factory.createAddress( bigs[i] );
 		}
 		setChangedAddresses( addresses );
 		fireChangeEvent( DebugEvent.CONTENT );

@@ -1,3 +1,12 @@
+2004-09-29 Mikhail Khodjaiants
+	Use the new "createAddress(BigInteger)" method of "IAddressFactory".
+	* CBreakpointManager.java
+	* AsmInstruction.java
+	* CFormattedMemoryBlock.java
+	* CSharedLibrary.java
+	* CStackFrame.java
+	* CValue.java
+
 2004-09-28 Mikhail Khodjaiants
 	Synchronize the "getType" method of "CVariable.InternalVariable".
 	* CVariable.java

@@ -36,6 +36,7 @@ import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -469,6 +470,9 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		if ( adapter == ICDIStackFrame.class ) {
 			return getCDIStackFrame();
 		}
+		if ( adapter == IMemoryBlockRetrieval.class ) {
+			return getDebugTarget().getAdapter( adapter );
+		}
 		return super.getAdapter( adapter );
 	}
 
@@ -534,7 +538,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public IAddress getAddress() {
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
-		return factory.createAddress( getCDIStackFrame().getLocation().getAddress().toString() );
+		return factory.createAddress( getCDIStackFrame().getLocation().getAddress() );
 	}
 
 	/* (non-Javadoc)

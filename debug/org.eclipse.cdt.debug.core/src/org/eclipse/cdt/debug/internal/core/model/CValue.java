@@ -354,7 +354,7 @@ public class CValue extends AbstractCValue {
 	private String getPointerValueString( ICDIPointerValue value ) throws CDIException {
 		//TODO:IPF_TODO Workaround to solve incorrect handling of structures referenced by pointers or references
 		IAddressFactory factory = ((CDebugTarget)getDebugTarget()).getAddressFactory();
-		IAddress address = factory.createAddress( value.pointerValue().toString() );
+		IAddress address = factory.createAddress( value.pointerValue() );
 		if ( address == null )
 			return ""; //$NON-NLS-1$
 		CVariableFormat format = getParentVariable().getFormat();
@@ -372,7 +372,7 @@ public class CValue extends AbstractCValue {
 		BigInteger refValue = value.referenceValue();
 		if ( refValue == null )
 			return ""; //$NON-NLS-1$
-		IAddress address = factory.createAddress( refValue.toString() );
+		IAddress address = factory.createAddress( refValue );
 		if ( address == null )
 			return ""; //$NON-NLS-1$
 		CVariableFormat format = getParentVariable().getFormat();

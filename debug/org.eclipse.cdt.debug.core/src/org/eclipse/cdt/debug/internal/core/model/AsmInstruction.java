@@ -29,7 +29,7 @@ public class AsmInstruction implements IAsmInstruction {
 	 */
 	public AsmInstruction( IAddressFactory factory, ICDIInstruction cdiInstruction ) {
 		fCDIInstruction = cdiInstruction;
-		fAddress = factory.createAddress( cdiInstruction.getAdress().toString() );
+		fAddress = factory.createAddress( cdiInstruction.getAdress() );
 	}
 
 	/* (non-Javadoc)

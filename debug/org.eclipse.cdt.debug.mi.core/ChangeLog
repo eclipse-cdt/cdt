@@ -1,5 +1,22 @@
 2002-10-21 Alain Magloire
 
+	* src/.../core/GDBProcess.java (getExitValue): Catch
+	IllegalThreadStateException.
+	(getAttribute): Only create Properties, when call.
+	(setAttribute): Only create Properties, when call.
+	(getAdapter): Implemented.
+	(canTerminate): true only of the process is alive.
+	(GDBProcess): Takes one more argument the name.
+	* src/.../core/GDBStreamMonitor.java (fireStreamAppend): New method.
+	Use a synchronized LinkedList for the listeners.
+	(read): new Method.
+	(startMonitoring): New method, start a thread in the background
+	to monitor the input.
+	* src/.../core/GDBStreamsProxy.java (getErrorStream): Start the monitor thread.
+	(getOutputStream): Start the monitor thread.
+
+2002-10-21 Alain Magloire
+
 	Framework for having a gdb console.  The idea is to reuse
 	the eclipse console and save a lot of work.  We "adapt"
 	the gdb Process to what eclipse debug LaunchView wants(IProcess).

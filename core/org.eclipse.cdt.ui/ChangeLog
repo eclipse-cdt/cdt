@@ -1,3 +1,29 @@
+2004-12-10 Bogdan Gheorghe
+	Fix for 43664 : Search should report matches outside of workspace
+	
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchAnnotationModel.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchDocumentProvider.java	
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchFile.java	
+	* src/org/eclipse/cdt/internal/ui/preferences/CSearchPreferencePage.java	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResult.java	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java	
+	* src/org/eclipse/cdt/internal/ui/search/NewSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/DeclarationsSearchGroup.java	
+	* src/org/eclipse/cdt/internal/ui/search/actions/ReferencesSearchGroup.java
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* plugin.properties
+	* plugin.xml
+	
+	Fix for 76123
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
+	
+	Added sorting for external file matches
+	* src/org/eclipse/cdt/internal/ui/search/LevelTreeContentProvider.jaav
+	* src/org/eclipse/cdt/ui/CSearchResultLabelProvider.java
+	
+	
+
 2004-09-09 Bogdan Gheorghe
 	Fix for 73406: Double Indexing On Specific Project
 	* src/org/eclipse/cdt/ui/dialogs/IndexerOptionPropertyPage.java

@@ -11,20 +11,17 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.search.ui.text.Match;
 
 public class NewSearchResultCollector extends BasicSearchResultCollector {
@@ -98,42 +95,14 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
 		return true;
       }
       else {
-      	//Check to see if external markers are enabled
-      	IPreferenceStore store =  CUIPlugin.getDefault().getPreferenceStore();
-      	if (store.getBoolean(CSearchPage.EXTERNALMATCH_ENABLED)){
-          	//Create Link in referring file's project
-          	IPath refLocation = searchMatch.getReferenceLocation();
-          	IFile refFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(refLocation);
-          	IProject refProject = refFile.getProject();
-          	IPath externalMatchLocation = searchMatch.getLocation();
-          	IFile linksFile = getUniqueFile(externalMatchLocation, refProject);
-            //Delete links file to keep up to date with latest prefs
-          	if (linksFile.exists() &&
-          		linksFile.isLinked())
-          		linksFile.delete(true,null);
-          	
-          	//Check to see if the file already exists - create if doesn't, mark team private 
-          	if (!linksFile.exists()){
-          		linksFile.createLink(externalMatchLocation,IResource.NONE,null);
-          		int number = store.getInt(CSearchPage.EXTERNALMATCH_VISIBLE);
-          		if (number==0){
-          			linksFile.setTeamPrivateMember(true);
-          		}
-          		
-          	}
-          	searchMatch.resource = linksFile;
-          	searchMatch.path = externalMatchLocation;
-        	fMatchCount++;
-    		int start = match.getStartOffset();
-    		int end = match.getEndOffset();
-    		String classifier = PARENT + match.getParentName() + NAME + match.getName() + LOCATION + match.getLocation().toOSString() + ELEMENTTYPE + match.getElementType() + VISIBILITY  + match.getVisibility();
-    		fSearch.addMatch(new CSearchMatch(classifier,start,end-start, match));
-    		return true;        	
-      		}
-      	}	
-
-      return false;
-	
+    	fMatchCount++;
+		int start = match.getStartOffset();
+		int end = match.getEndOffset();
+		String classifier = PARENT + match.getParentName() + NAME + match.getName() + LOCATION + match.getLocation().toOSString() + ELEMENTTYPE + match.getElementType() + VISIBILITY  + match.getVisibility();
+		fSearch.addMatch(new CSearchMatch(classifier,start,end-start, match));
+		
+		return true;
+      }
 	}
 
 

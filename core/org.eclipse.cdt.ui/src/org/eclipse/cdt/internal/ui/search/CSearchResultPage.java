@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.editor.ExternalSearchFile;
 import org.eclipse.cdt.internal.ui.search.actions.GroupAction;
 import org.eclipse.cdt.internal.ui.search.actions.SortAction;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -42,7 +43,9 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
@@ -124,7 +127,20 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 			if (searchMatch.resource != null){
 				editor = IDE.openEditor(CUIPlugin.getActivePage(), getCanonicalFile((IFile) searchMatch.resource), false);
 				showWithMarker(editor, getCanonicalFile((IFile) searchMatch.resource), currentOffset, currentLength);
-			}}
+			}
+			else {
+				try {
+					IEditorInput input =EditorUtility.getEditorInput(new ExternalSearchFile(searchMatch.path, searchMatch));
+					IWorkbenchPage p= CUIPlugin.getActivePage();
+					IEditorPart editorPart= p.openEditor(input, "org.eclipse.cdt.ui.editor.ExternalSearchEditor"); //$NON-NLS-1$
+					if (editorPart instanceof ITextEditor) {
+						ITextEditor textEditor= (ITextEditor) editorPart;
+						textEditor.selectAndReveal(searchMatch.startOffset, searchMatch.endOffset - searchMatch.startOffset);
+					}
+				} catch (CModelException e) {}
+				  catch (CoreException e) {}
+			}
+		}
 		if (editor instanceof ITextEditor) {
 		ITextEditor textEditor= (ITextEditor) editor;
 			textEditor.selectAndReveal(currentOffset, currentLength);
@@ -274,7 +290,10 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		
 		if (canonicalPath != null && (!(originalFile.isLinked()))){
 			IPath path = new Path(canonicalPath);
-			originalFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			
+			IFile[] matches = CUIPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			if (matches.length > 0)
+				originalFile = matches[0];
 		}
 		return originalFile;
 	}

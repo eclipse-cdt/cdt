@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
+import org.eclipse.cdt.internal.ui.editor.ExternalSearchDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
@@ -285,6 +286,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
+	private ExternalSearchDocumentProvider fExternalDocumentProvider;
 	private IBufferFactory fBufferFactory;
 	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
@@ -310,6 +312,16 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fDocumentProvider;
 	}
 
+		
+		/**
+		 * Returns the used external search document provider
+		 */
+		public synchronized ExternalSearchDocumentProvider getExternalSearchDocumentProvider() {
+			if (fExternalDocumentProvider == null) {
+				fExternalDocumentProvider = new ExternalSearchDocumentProvider();
+			}
+			return fExternalDocumentProvider;
+		}
 	/**
 	 * Returns the working copy manager
 	 * @return IWorkingCopyManager

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.jface.action.IMenuManager;
@@ -57,6 +58,9 @@ public class DeclarationsSearchGroup extends ActionGroup {
 	 */
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
+		
+		if ((fEditor != null) && (fEditor instanceof ExternalSearchEditor))
+			return;
 		
 		IMenuManager incomingMenu = menu;
 	

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
@@ -119,8 +121,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         char[] fn = la.getFilename();
         la = null;
         if (LT(1) == IToken.tLBRACE) {
-            consume(IToken.tLBRACE);
-            List initializerList = new ArrayList();
+            consume(IToken.tLBRACE).getOffset();
+            IASTInitializerList result = createInitializerList();
+            result.setOffset( startingOffset );
             for (;;) {
                 int checkHashcode = LA(1).hashCode();
                 // required at least one initializer list
@@ -130,7 +133,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     if (LT(1) == IToken.tASSIGN)
                         consume(IToken.tASSIGN);
                 IASTInitializer initializer = cInitializerClause(newDesignators);
-                initializerList.add(initializer);
+                result.addInitializer(initializer);
+                initializer.setParent( result );
+                initializer.setPropertyInParent( IASTInitializerList.NESTED_INITIALIZER );
                 // can end with just a '}'
                 if (LT(1) == IToken.tRBRACE)
                     break;
@@ -150,7 +155,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
             // consume the closing brace
             consume(IToken.tRBRACE);
-            return null;
+            return result;
         }
         // if we get this far, it means that we have not yet succeeded
         // try this now instead
@@ -170,6 +175,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
         throwBacktrack(startingOffset, endOffset, line, fn);
         return null;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTInitializerList createInitializerList() {
+        return new CASTInitializerList();
     }
 
     /**
@@ -668,17 +680,19 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             int startingOffset = mark.getOffset();
             consume();
             IASTTypeId typeId = null;
+            IASTExpression castExpression = null;
             // If this isn't a type name, then we shouldn't be here
             try {
                 try {
                     typeId = typeId(false);
                     consume(IToken.tRPAREN);
+                    castExpression = castExpression();
                 } catch (BacktrackException bte) {
                     backup(mark);
                     throwBacktrack(bte);
                 }
 
-                IASTExpression castExpression = castExpression();
+                
                 return buildTypeIdUnaryExpression( IASTUnaryTypeIdExpression.op_cast, typeId, castExpression, startingOffset );
             } catch (BacktrackException b) {
             }
@@ -814,10 +828,21 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tLPAREN:
             // ( type-name ) { initializer-list }
             // ( type-name ) { initializer-list , }
-            consume(IToken.tLPAREN);
-            /* Object typeId = */typeId(false);
-            /* Object initializerClause = */cInitializerClause(Collections.EMPTY_LIST);
-            firstExpression = null; //createExpressionHere
+            IToken m = mark();
+        	try
+        	{
+	            int offset = consume(IToken.tLPAREN).getOffset();
+	            IASTTypeId t = typeId(false);
+	            consume( IToken.tRPAREN );
+	            IASTInitializer i = cInitializerClause(Collections.EMPTY_LIST);
+	            firstExpression = buildTypeIdInitializerExpression( t, i, offset );
+	            break;
+        	}
+        	catch( BacktrackException bt )
+        	{
+        	    backup( m );
+        	}
+            
         default:
             firstExpression = primaryExpression();
         }
@@ -932,6 +957,31 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 return firstExpression;
             }
         }
+    }
+
+    /**
+     * @param t
+     * @param i
+     * @param offset
+     * @return
+     */
+    protected ICASTTypeIdInitializerExpression buildTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i, int offset) {
+        ICASTTypeIdInitializerExpression result = createTypeIdInitializerExpression();
+        result.setOffset( offset );
+        result.setTypeId( t );
+        t.setParent( result );
+        t.setPropertyInParent( ICASTTypeIdInitializerExpression.TYPE_ID );
+        result.setInitializer( i );
+        i.setParent( result );
+        i.setPropertyInParent( ICASTTypeIdInitializerExpression.INITIALIZER );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected ICASTTypeIdInitializerExpression createTypeIdInitializerExpression() {
+        return new CASTTypeIdInitializerExpression();
     }
 
     /**

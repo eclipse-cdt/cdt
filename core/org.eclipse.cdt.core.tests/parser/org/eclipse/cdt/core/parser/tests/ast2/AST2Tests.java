@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -301,7 +302,8 @@ public class AST2Tests extends TestCase {
         validateSimpleUnaryExpressionC( "sizeof x", IASTUnaryExpression.op_sizeof ); //$NON-NLS-1$
         validateSimpleTypeIdExpressionC( "sizeof( int )", IASTTypeIdExpression.op_sizeof ); //$NON-NLS-1$
         validateSimpleUnaryTypeIdExpression( "(int)x", IASTUnaryTypeIdExpression.op_cast ); //$NON-NLS-1$
-        
+        validateSimplePostfixInitializerExpressionC( "(int) { 5 }"); //$NON-NLS-1$
+        validateSimplePostfixInitializerExpressionC( "(int) { 5, }"); //$NON-NLS-1$
         validateSimpleBinaryExpressionC("x=y", IASTBinaryExpression.op_assign ); //$NON-NLS-1$
         validateSimpleBinaryExpressionC("x*=y", IASTBinaryExpression.op_multiplyAssign ); //$NON-NLS-1$
         validateSimpleBinaryExpressionC("x/=y", IASTBinaryExpression.op_divideAssign ); //$NON-NLS-1$
@@ -334,6 +336,17 @@ public class AST2Tests extends TestCase {
         validateConditionalExpressionC( "x ? y : x" ); //$NON-NLS-1$
     }
     
+    /**
+     * @param string
+     */
+    protected void validateSimplePostfixInitializerExpressionC(String code ) throws ParserException  {
+        ICASTTypeIdInitializerExpression e = (ICASTTypeIdInitializerExpression) getExpressionFromStatementInCode(code, ParserLanguage.C );
+        assertNotNull( e );
+        assertNotNull( e.getTypeId() );
+        assertNotNull( e.getInitializer() );
+    }
+
+
     /**
      * @param string
      * @throws ParserException

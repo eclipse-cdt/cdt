@@ -31,8 +31,10 @@ public class CPListElement {
 	public static final String SOURCEATTACHMENTROOT = "rootpath"; //$NON-NLS-1$
 	public static final String EXCLUSION = "exclusion"; //$NON-NLS-1$
 	public static final String INCLUDE = "includepath"; //$NON-NLS-1$
+	public static final String SYSTEM_INCLUDE = "systeminclude"; //$NON-NLS-1$
 	public static final String MACRO_NAME = "macroname"; //$NON-NLS-1$
 	public static final String MACRO_VALUE = "macrovalue"; //$NON-NLS-1$
+	public static final String BASE_REF = "baseref"; //$NON-NLS-1$
 
 	private ICProject fProject;
 
@@ -73,11 +75,14 @@ public class CPListElement {
 			case IPathEntry.CDT_INCLUDE:
 				createAttributeElement(INCLUDE, new Path("")); //$NON-NLS-1$
 				createAttributeElement(EXCLUSION, new Path[0]);
+				createAttributeElement(SYSTEM_INCLUDE, Boolean.valueOf(false));
+				createAttributeElement(BASE_REF, new Path("")); //$NON-NLS-1$
 				break;
 			case IPathEntry.CDT_MACRO:
 				createAttributeElement(MACRO_NAME, ""); //$NON-NLS-1$
 				createAttributeElement(MACRO_VALUE, ""); //$NON-NLS-1$
 				createAttributeElement(EXCLUSION, new Path[0]);
+				createAttributeElement(BASE_REF, new Path("")); //$NON-NLS-1$
 				break;
 			case IPathEntry.CDT_CONTAINER:
 				try {
@@ -122,7 +127,8 @@ public class CPListElement {
 				return CoreModel.newContainerEntry(fPath, isExported());
 			case IPathEntry.CDT_INCLUDE:
 				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
-				return CoreModel.newIncludeEntry(fPath, (IPath) getAttribute(INCLUDE));
+				return CoreModel.newIncludeEntry(fPath, (IPath) getAttribute(INCLUDE), (IPath) getAttribute(BASE_REF),
+						((Boolean) getAttribute(SYSTEM_INCLUDE)).booleanValue(), exclusionPattern);
 			case IPathEntry.CDT_MACRO:
 				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
 				return CoreModel.newMacroEntry(fPath, (String) getAttribute(MACRO_NAME), (String) getAttribute(MACRO_NAME));
@@ -231,11 +237,8 @@ public class CPListElement {
 	}
 
 	public Object[] getChildren() {
-		if (fEntryKind == IPathEntry.CDT_OUTPUT || fEntryKind == IPathEntry.CDT_SOURCE || fEntryKind == IPathEntry.CDT_INCLUDE
-				|| fEntryKind == IPathEntry.CDT_MACRO) {
-
+		if (fEntryKind == IPathEntry.CDT_OUTPUT || fEntryKind == IPathEntry.CDT_SOURCE) {
 			return new Object[] { findAttributeElement(EXCLUSION)};
-
 		}
 		return fChildren.toArray();
 	}
@@ -332,7 +335,9 @@ public class CPListElement {
 		IPath include = null;
 		String macroName = null;
 		String macroValue = null;
-		
+		boolean sysInclude = false;
+		IPath baseRef = null;
+
 		// get the resource
 		IResource res = null;
 		boolean isMissing = false;
@@ -391,6 +396,8 @@ public class CPListElement {
 					isMissing = !path.toFile().isFile(); // look for external
 				}
 				exclusion = ((IIncludeEntry) curr).getExclusionPatterns();
+				sysInclude = ((IIncludeEntry) curr).isSystemInclude();
+				baseRef = ((IIncludeEntry) curr).getBasePath();
 				include = ((IIncludeEntry) curr).getIncludePath();
 				break;
 			case IPathEntry.CDT_MACRO:
@@ -405,6 +412,7 @@ public class CPListElement {
 				exclusion = ((IMacroEntry) curr).getExclusionPatterns();
 				macroName = ((IMacroEntry) curr).getMacroName();
 				macroValue = ((IMacroEntry) curr).getMacroValue();
+				baseRef = ((IMacroEntry) curr).getBasePath();
 				break;
 			case IPathEntry.CDT_PROJECT:
 				res = root.findMember(path);
@@ -417,6 +425,8 @@ public class CPListElement {
 		elem.setAttribute(INCLUDE, include);
 		elem.setAttribute(MACRO_NAME, macroName);
 		elem.setAttribute(MACRO_VALUE, macroValue);
+		elem.setAttribute(SYSTEM_INCLUDE, Boolean.valueOf(sysInclude));
+		elem.setAttribute(BASE_REF, baseRef);
 		elem.setExported(curr.isExported());
 
 		if (project.exists()) {

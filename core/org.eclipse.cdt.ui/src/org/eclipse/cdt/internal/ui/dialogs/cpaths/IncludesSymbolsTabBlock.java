@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -39,6 +40,7 @@ public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 		}
 
 		public void selectionChanged(TreeListDialogField field) {
+			((ExtendedCPathBasePage)getCurrentPage()).selectionChanged(new StructuredSelection(field.getSelectedElements()));
 		}
 
 		public void doubleClicked(TreeListDialogField field) {
@@ -57,7 +59,10 @@ public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 		}
 
 		public Object getParent(TreeListDialogField field, Object element) {
-			return ((ICElement) element).getParent();
+			if (element instanceof ICElement) {
+				return ((ICElement) element).getParent();
+			}
+			return null;
 		}
 
 		public boolean hasChildren(TreeListDialogField field, Object element) {

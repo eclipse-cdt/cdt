@@ -43,7 +43,7 @@ class CPListLabelProvider extends LabelProvider {
 
 		fLibIcon = CPluginImages.DESC_OBJS_ARCHIVE;
 		fLibWSrcIcon = CPluginImages.DESC_OBJS_ARCHIVE_WSRC;
-		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDE;
+		fIncludeIcon = CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
 		fMacroIcon = CPluginImages.DESC_OBJS_MACRO;
 		fFolderImage = CPluginImages.DESC_OBJS_SOURCE_ROOT;
 		fOutputImage = CPluginImages.DESC_OBJS_CONTAINER;
@@ -129,10 +129,28 @@ class CPListLabelProvider extends LabelProvider {
 			case IPathEntry.CDT_PROJECT:
 				return path.lastSegment();
 			case IPathEntry.CDT_INCLUDE:
-				return ((IPath) cpentry.getAttribute(CPListElement.INCLUDE)).toString();
+				{
+					StringBuffer str = new StringBuffer(((IPath) cpentry.getAttribute(CPListElement.INCLUDE)).toOSString());
+					IPath base = (IPath) cpentry.getAttribute(CPListElement.BASE_REF);
+					if (base != null && base.segmentCount() > 0) {
+						str.append('(');
+						str.append(base);
+						str.append(')');
+					}
+					return str.toString();
+				}
 			case IPathEntry.CDT_MACRO:
-				return (String) cpentry.getAttribute(CPListElement.MACRO_NAME) + "=" //$NON-NLS-1$
-						+ (String) cpentry.getAttribute(CPListElement.MACRO_VALUE);
+				{
+					StringBuffer str = new StringBuffer((String) cpentry.getAttribute(CPListElement.MACRO_NAME) + "=" //$NON-NLS-1$
+							+ (String) cpentry.getAttribute(CPListElement.MACRO_VALUE));
+					IPath base = (IPath) cpentry.getAttribute(CPListElement.BASE_REF);
+					if (base != null && base.segmentCount() > 0) {
+						str.append('(');
+						str.append(base);
+						str.append(')');
+					}
+					return str.toString();
+				}
 			case IPathEntry.CDT_CONTAINER:
 				try {
 					IPathEntryContainer container = CoreModel.getDefault().getPathEntryContainer(cpentry.getPath(),

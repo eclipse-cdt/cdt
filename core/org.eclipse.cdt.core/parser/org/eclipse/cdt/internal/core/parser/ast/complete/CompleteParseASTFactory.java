@@ -715,10 +715,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 	        
 			if( classSymbol != null && ! classSymbol.isForwardDeclaration() )
-				handleProblem( IProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED, newSymbolName );  
+				handleProblem( IProblem.SEMANTIC_UNIQUE_NAME_PREDEFINED, newSymbolName, nameOffset, nameEndOffset, nameLine );  
 			
 			if( classSymbol != null && classSymbol.getType() != pstType )
-				handleProblem( IProblem.SEMANTIC_INVALID_OVERLOAD, newSymbolName );
+				handleProblem( IProblem.SEMANTIC_INVALID_OVERLOAD, newSymbolName, nameOffset, nameEndOffset, nameLine );
 		}
 
 		IDerivableContainerSymbol newSymbol = pst.newDerivableContainerSymbol( newSymbolName, pstType );
@@ -803,7 +803,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( scope != null ){
 			IContainerSymbol symbol = scopeToSymbol( scope );
 			if( symbol.isTemplateMember() ){
-				if( id == IProblem.SEMANTIC_INVALID_CONVERSION_TYPE )
+				if( id == IProblem.SEMANTIC_INVALID_CONVERSION_TYPE ||
+					id == IProblem.SEMANTIC_INVALID_TYPE )
 				{
 					return false;
 				}
@@ -2237,6 +2238,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			Iterator p = parameters.iterator();
 			while (p.hasNext()){
 				ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+				if( param.getSymbol() == null )
+					handleProblem( IProblem.SEMANTICS_RELATED, param.getName(), param.getNameOffset(), param.getEndingOffset(), param.getNameLineNumber() );
 				functionParameters.add(param.getSymbol().getTypeInfo());
 			}
 			

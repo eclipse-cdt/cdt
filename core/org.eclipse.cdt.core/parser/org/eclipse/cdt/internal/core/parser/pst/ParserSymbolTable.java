@@ -638,6 +638,8 @@ public class ParserSymbolTable {
 		{
 			wrapper = (IDerivableContainerSymbol.IParentSymbol) iterator.next();
 			ISymbol parent = wrapper.getParent();
+			if( parent == null )
+				continue;
 
 			if( !wrapper.isVirtual() || !data.visited.contains( parent ) ){
 				if( wrapper.isVirtual() ){
@@ -947,7 +949,7 @@ public class ParserSymbolTable {
 		if( resolvedSymbol != null && resolvedSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
 			ISymbol symbol = resolvedSymbol.getTypeSymbol();
 			if( symbol == null )
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
+				return resolvedSymbol;
 			
 			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
 			

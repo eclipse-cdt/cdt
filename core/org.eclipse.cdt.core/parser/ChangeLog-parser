@@ -1,4 +1,10 @@
 2004-04-06 Andrew Niefer
+	Small changes to help with template parsing
+	 - report line numbers with some problems
+	 - don't throw on SEMANTIC_INVALID_TYPE while doing templates
+	 - handle some NPEs
+
+2004-04-06 Andrew Niefer
 	fix bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=47625
 
 2004-04-06 John Camelon

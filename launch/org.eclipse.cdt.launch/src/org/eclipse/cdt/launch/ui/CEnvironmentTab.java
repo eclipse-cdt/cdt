@@ -5,7 +5,10 @@ package org.eclipse.cdt.launch.ui;
  * All Rights Reserved.
  */
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +20,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -43,6 +47,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -58,6 +63,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	protected Button fBtnNew;
 	protected Button fBtnEdit;
 	protected Button fBtnRemove;
+	protected Button fBtnImport;
 
 	class SimpleSorter extends ViewerSorter {
 		public boolean isSorterProperty(Object element, Object property) {
@@ -290,6 +296,14 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 				newEntry();
 			}
 		});
+		fBtnImport = new Button(composite, SWT.NONE);
+		fBtnImport.setText("Import...");
+		fBtnImport.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fBtnImport.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				importEntries();
+			}
+		});
 		fBtnEdit = new Button(composite, SWT.NONE);
 		fBtnEdit.setText("Edit...");
 		fBtnEdit.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -328,6 +342,62 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		}
 		updateButtons();
 		updateLaunchConfigurationDialog();
+	}
+
+	protected void importEntries() {
+		FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+		final String filename = fileDialog.open();
+		if(filename == null) {
+			return;
+		}
+
+		parseImportFile(filename);
+		
+		updateButtons();
+		updateLaunchConfigurationDialog();
+	}
+	
+	protected void parseImportFile(String filename) {
+		File file = new File(filename);
+		if(!file.exists()) {
+			return;
+		}
+
+		//Iterate through each key/value property we discover
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));	
+
+			String line, key, value;
+			while((line = reader.readLine()) != null) {
+				line = line.trim();
+				if(line.length() == 0) {
+					continue;
+				}
+				
+				int demarcation = line.indexOf("=");
+				if(demarcation == -1) {
+					key = line;
+					value = "";
+				} else {
+					key = line.substring(0, demarcation);
+					value = line.substring(demarcation + 1, line.length());
+				}
+
+				if(fElements.getProperty(key) != null) {
+					boolean overwrite;
+					overwrite = MessageDialog.openQuestion(getShell(), "Existing Environment Variable", "Environment variable \"" + key + "\" exists.\nDo you want to overwrite?");
+					if(!overwrite) {
+						continue;
+					}
+				}
+
+				fElements.setProperty(key, value);
+			}
+		} catch(Exception ex) {
+			
+		}
+
+		fVariableList.refresh();		
 	}
 
 	protected void edit() {

@@ -1484,8 +1484,6 @@ public class CPPSemantics {
 				source = getSourceParameterType( sourceParameters, j );
 				if( source == null )
 				    continue outer;
-				if( source instanceof IProblemBinding )
-					return (IBinding) source;
 				
 				if( j < numTargetParams ){
 					if( targetLength == 0  && j == 0 ){
@@ -1502,11 +1500,7 @@ public class CPPSemantics {
 				if( varArgs ){
 					cost = new Cost( source, null );
 					cost.rank = Cost.ELLIPSIS_CONVERSION;
-				} /*else if ( target.getHasDefault() && source.isType( ITypeInfo.t_void ) && !source.hasPtrOperators() ){
-					//source is just void, ie no parameter, if target had a default, then use that
-					cost = new Cost( source, target );
-					cost.rank = Cost.IDENTITY_RANK;
-				}*/ else if( source.equals( target ) ){
+				} else if( source.equals( target ) ){
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {

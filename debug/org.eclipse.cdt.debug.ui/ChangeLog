@@ -1,3 +1,7 @@
+2004-04-02 Mikhail Khodjaiants
+	Fix for bug 57159: Don't add C views to Debug perspective by default.
+	* plugin.xml
+	
 2004-04-01 Mikhail Khodjaiants
 	Changes in the Shared Libraries and the Signals views.
 	* ActionMessages.properties

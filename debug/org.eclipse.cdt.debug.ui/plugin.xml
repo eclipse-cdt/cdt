@@ -69,24 +69,27 @@
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
                relative="org.eclipse.debug.ui.VariableView"
-               relationship="stack"
-               id="org.eclipse.cdt.debug.ui.MemoryView">
+               visible="false"
+               id="org.eclipse.cdt.debug.ui.MemoryView"
+               relationship="stack">
          </view>
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.MemoryView">
          </viewShortcut>
          <view
                relative="org.eclipse.debug.ui.VariableView"
-               relationship="stack"
-               id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
+               visible="false"
+               id="org.eclipse.cdt.debug.ui.SharedLibrariesView"
+               relationship="stack">
          </view>
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
          </viewShortcut>
          <view
                relative="org.eclipse.debug.ui.VariableView"
-               relationship="stack"
-               id="org.eclipse.cdt.debug.ui.SignalsView">
+               visible="false"
+               id="org.eclipse.cdt.debug.ui.SignalsView"
+               relationship="stack">
          </view>
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.SignalsView">
@@ -292,8 +295,8 @@
          </action>
          <action
                label="%SwitchToDisassemblyAction.label"
-               style="toggle"
                icon="icons/full/clcl16/disassembly.gif"
+               style="toggle"
                helpContextId="switch_to_disassembly_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
                menubarPath="renderGroup"
@@ -308,8 +311,8 @@
          </action>
          <action
                label="%ShowDebuggerConsoleAction.label"
-               style="toggle"
                icon="icons/full/clcl16/debugger_console.gif"
+               style="toggle"
                helpContextId="show_debugger_console_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
                menubarPath="renderGroup"
@@ -714,8 +717,8 @@
                label="%LoadSymbolsAction.label"
                icon="icons/full/clcl16/load_symbols_co.gif"
                helpContextId="load_symbols_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate"
                tooltip="%LoadSymbolsAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate"
                menubarPath="sharedLibrariesGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate">
@@ -734,8 +737,8 @@
                label="%SignalAction.label"
                icon="icons/full/clcl16/signal_co.gif"
                helpContextId="signal_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.SignalActionDelegate"
                tooltip="%SignalAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalActionDelegate">
@@ -747,17 +750,17 @@
             </enablement>
          </action>
          <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.SignalPropertiesActionDelegate"
                label="%SignalPropertiesAction.label"
-               enablesFor="1"
                style="pulldown"
-               id="org.eclipse.cdt.debug.ui.SignalPropertiesAction"
+               helpContextId="signal_properties_action_context"
                tooltip="%SignalPropertiesAction.tooltip"
-               helpContextId="signal_properties_action_context">
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalPropertiesActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.ui.SignalPropertiesAction">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -787,8 +790,8 @@
          <action
                label="%RestoreDefaultTypeAction.label"
                helpContextId="restore_default_type_action_context"
-               tooltip="%RestoreDefaultTypeAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate"
+               tooltip="%RestoreDefaultTypeAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate">
@@ -803,8 +806,8 @@
                label="%CastToTypeAction.label"
                icon="icons/full/clcl16/casttotype_co.gif"
                helpContextId="cast_to_type_action_context"
-               tooltip="%CastToTypeAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate"
+               tooltip="%CastToTypeAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate">
@@ -819,8 +822,8 @@
                label="%CastToArrayAction.label"
                icon="icons/full/clcl16/showasarray_co.gif"
                helpContextId="cast_to_array_action_context"
-               tooltip="%CastToArrayAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate"
+               tooltip="%CastToArrayAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate">
@@ -839,8 +842,8 @@
                label="%ManageFunctionBreakpointAction.label"
                icon="icons/full/obj16/funbrkp_obj.gif"
                helpContextId="manage_function_breakpoint_action_context"
-               tooltip="%ManageFunctionBreakpointAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
+               tooltip="%ManageFunctionBreakpointAction.tooltip"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate">
@@ -859,8 +862,8 @@
                label="%DisableVariablesAction.label"
                icon="icons/full/clcl16/disabled_co.gif"
                helpContextId="disable_variables_action_context"
-               tooltip="%DisableVariablesAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.DisableVariablesActionDelegate"
+               tooltip="%DisableVariablesAction.tooltip"
                menubarPath="variableGroup"
                enablesFor="2+"
                id="org.eclipse.cdt.debug.internal.ui.actions.DisableVariablesActionDelegate">
@@ -872,8 +875,8 @@
                label="%EnableVariablesAction.label"
                icon="icons/full/clcl16/enabled_co.gif"
                helpContextId="enable_variables_action_context"
-               tooltip="%EnableVariablesAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate"
+               tooltip="%EnableVariablesAction.tooltip"
                menubarPath="variableGroup"
                enablesFor="2+"
                id="org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate">
@@ -896,8 +899,8 @@
                disabledIcon="icons/full/dlcl16/restart.gif"
                enablesFor="1"
                icon="icons/full/elcl16/restart.gif"
-               helpContextId="restart_action_context"
                label="%RestartAction.label"
+               helpContextId="restart_action_context"
                tooltip="%RestartAction.tooltip">
             <enablement>
                <pluginState
@@ -915,8 +918,8 @@
                disabledIcon="icons/full/dlcl16/disassembly.gif"
                enablesFor="1"
                icon="icons/full/elcl16/disassembly.gif"
-               helpContextId="switch_to_disassembly_action_context"
                label="%SwitchToDisassemblyAction.label"
+               helpContextId="switch_to_disassembly_action_context"
                tooltip="%SwitchToDisassemblyAction.tooltip">
             <enablement>
                <pluginState
@@ -934,8 +937,8 @@
                disabledIcon="icons/full/dlcl16/debugger_console.gif"
                enablesFor="1"
                icon="icons/full/elcl16/debugger_console.gif"
-               helpContextId="show_debugger_console_action_context"
                label="%ShowDebuggerConsoleAction.label"
+               helpContextId="show_debugger_console_action_context"
                tooltip="%ShowDebuggerConsoleAction.tooltip">
             <enablement>
                <pluginState
@@ -950,11 +953,11 @@
             id="org.eclipse.cdt.debug.ui.debugView.menu">
          <action
                label="%ShowFullPathsAction.label"
-               icon="icons/full/clcl16/show_paths.gif"
                style="toggle"
+               icon="icons/full/clcl16/show_paths.gif"
                helpContextId="show_full_paths_context"
-               tooltip="%ShowFullPathsAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               tooltip="%ShowFullPathsAction.tooltip"
                menubarPath="cDebugActions"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
             <enablement>
@@ -974,11 +977,11 @@
             id="org.eclipse.cdt.debug.ui.breakpointView.menu">
          <action
                label="%ShowFullPathsAction.label"
-               icon="icons/full/clcl16/show_paths.gif"
                style="toggle"
+               icon="icons/full/clcl16/show_paths.gif"
                helpContextId="show_full_paths_context"
-               tooltip="%ShowFullPathsAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               tooltip="%ShowFullPathsAction.tooltip"
                menubarPath="cDebugActions"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
             <enablement>
@@ -1000,8 +1003,8 @@
                disabledIcon="icons/full/dlcl16/watch_globals.gif"
                enablesFor="1"
                icon="icons/full/elcl16/watch_globals.gif"
-               helpContextId="add_globals_action_context"
                label="%AddGlobalsAction.label"
+               helpContextId="add_globals_action_context"
                tooltip="%AddGlobalsAction.tooltip">
             <enablement>
                <pluginState
@@ -1016,11 +1019,11 @@
             id="org.eclipse.debug.ui.sharedLibrariesView.menu">
          <action
                label="%ShowFullPathsAction.label"
-               style="toggle"
                icon="icons/full/clcl16/show_paths.gif"
+               style="toggle"
                helpContextId="show_full_paths_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                tooltip="%ShowFullPathsAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                menubarPath="cDebugActions"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
             <enablement>
@@ -1111,20 +1114,20 @@
    <extension
          point="org.eclipse.debug.core.statusHandlers">
       <statusHandler
-            plugin="org.eclipse.cdt.debug.core"
             code="10000"
+            plugin="org.eclipse.cdt.debug.core"
             class="org.eclipse.cdt.debug.internal.ui.QuestionStatusHandler"
             id="org.eclipse.cdt.debug.internal.ui.QuestionStatusHandler">
       </statusHandler>
       <statusHandler
-            plugin="org.eclipse.cdt.debug.core"
             code="10001"
+            plugin="org.eclipse.cdt.debug.core"
             class="org.eclipse.cdt.debug.internal.ui.InfoStatusHandler"
             id="org.eclipse.cdt.debug.internal.ui.InfoStatusHandler">
       </statusHandler>
       <statusHandler
-            plugin="org.eclipse.cdt.debug.core"
             code="10002"
+            plugin="org.eclipse.cdt.debug.core"
             class="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler"
             id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
       </statusHandler>
@@ -1187,16 +1190,16 @@
          point="org.eclipse.ui.editors">
       <editor
             name="%DisassemblyEditor.name"
-            icon="icons/full/obj16/disassembly_obj.gif"
             extensions="dasm"
+            icon="icons/full/obj16/disassembly_obj.gif"
             class="org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditor"
             id="org.eclipse.cdt.debug.ui.DisassemblyEditor">
       </editor>
       <editor
             name="%CDebugEditor.name"
             icon="icons/full/obj16/filenotfound_obj.gif"
-            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
       </editor>
    </extension>
@@ -1218,8 +1221,8 @@
       <context
             name="Debugging C/C++"
             description="Debugging C/C++ Programs"
-            parentId="org.eclipse.debug.ui.debugging"
-            id="org.eclipse.cdt.debug.ui.debugging">
+            id="org.eclipse.cdt.debug.ui.debugging"
+            parentId="org.eclipse.debug.ui.debugging">
       </context>
    </extension>
    <extension
@@ -1233,23 +1236,23 @@
          point="org.eclipse.debug.ui.contextViewBindings">
       <contextViewBinding
             viewId="org.eclipse.cdt.debug.ui.MemoryView"
-            contextId="org.eclipse.cdt.debug.ui.debugging"
-            autoClose="false">
+            autoClose="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding
             viewId="org.eclipse.cdt.debug.ui.SharedLibrariesView"
-            contextId="org.eclipse.cdt.debug.ui.debugging"
-            autoClose="false">
+            autoClose="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding
             viewId="org.eclipse.cdt.debug.ui.SignalsView"
-            contextId="org.eclipse.cdt.debug.ui.debugging"
-            autoClose="false">
+            autoClose="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding
             viewId="org.eclipse.debug.ui.RegistersView"
-            contextId="org.eclipse.cdt.debug.ui.debugging"
-            autoClose="false">
+            autoClose="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
    </extension>
 

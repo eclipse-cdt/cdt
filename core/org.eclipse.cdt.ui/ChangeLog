@@ -1,3 +1,13 @@
+2002-10-17 Alain Magloire
+
+	Patch form Alex Chapiro.
+
+	* src/.../utils/ui/controls/ControlFactory.java:
+	- createCombo methods created CCombo objects; all this methods
+	where changed to create Combo object. Methods createCCombo
+	were created to keep creation of CCombo cobjects.
+	- general code cleaning
+
 2002-10-16 Alain Magloire
 	By Boosting the level warning of the java compiler,
 	we catch unused imports or variables.  For example

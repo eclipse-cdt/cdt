@@ -310,8 +310,6 @@ public class Elf {
 		public short st_shndx;		
 
 		private String name = null;
-		private String line = null;
-		private String func = null;
 
         private Section sym_section;
 
@@ -655,19 +653,19 @@ public class Elf {
 				attrib.cpu = "excess"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NIOSII :
-				attrib.cpu = "alteranios2";
+				attrib.cpu = "alteranios2"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NIOS :
-				attrib.cpu = "alteranios";
+				attrib.cpu = "alteranios"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_IA_64:
 				attrib.cpu = "ia64"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_AVR:
-				attrib.cpu = "avr";
+				attrib.cpu = "avr"; //$NON-NLS-1$
 			break;
 			case Elf.ELFhdr.EM_MSP430:
-				attrib.cpu = "msp430";
+				attrib.cpu = "msp430"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE:
 			default:

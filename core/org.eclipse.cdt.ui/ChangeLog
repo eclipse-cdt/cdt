@@ -1,3 +1,9 @@
+2004-06-17 Tanya Wolff
+	Fix for PR 60616: [Accessibility] 
+	Removed mnemonics for reusable code Browse & Variables buttons, 
+	fixed other duplicate mnemonices in New Class wizard.
+	*org.eclipse.cdt.ui.wizards/NewWizardMessages.properties
+	
 2004-06-18 Bogdan Gheorghe
 	Part 2 of Fix for Bug 62668: [Search] Search results rely on case of file names in include statement
 	rather then the filesystem

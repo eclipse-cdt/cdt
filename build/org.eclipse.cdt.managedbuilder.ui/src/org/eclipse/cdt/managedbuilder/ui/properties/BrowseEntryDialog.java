@@ -11,7 +11,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -131,7 +131,7 @@ public class BrowseEntryDialog extends Dialog {
 		});
 		
 		// Instantiate the browse button
-		btnBrowse = ControlFactory.createPushButton(composite, CUIPlugin.getResourceString(BROWSE));
+		btnBrowse = ControlFactory.createPushButton(composite, ManagedBuilderUIPlugin.getResourceString(BROWSE));
 		setButtonLayoutData(btnBrowse);
 		btnBrowse.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {

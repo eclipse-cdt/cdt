@@ -302,7 +302,6 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  defaultValue="-gstabs"
                   name="Other debugging flags"
                   category="cygwin.gnu.c.compiler.category.debug"
                   valueType="string"
@@ -371,9 +370,9 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-werror)"
+                  name="Warnings as errors (-Werror)"
                   category="cygwin.c.compiler.category.warnings"
-                  command="-werror"
+                  command="-Werror"
                   valueType="boolean"
                   id="cygwin.gnu.c.compiler.warnings.toerrors">
             </option>
@@ -632,7 +631,6 @@
                </enumeratedOptionValue>
             </option>
             <option
-                  defaultValue="-gstabs"
                   name="Other debugging flags"
                   category="cygwin.gnu.compiler.category.debug"
                   valueType="string"
@@ -701,9 +699,9 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-werror)"
+                  name="Warnings as errors (-Werror)"
                   category="cygwin.compiler.category.warnings"
-                  command="-werror"
+                  command="-Werror"
                   valueType="boolean"
                   id="cygwin.gnu.compiler.warnings.toerrors">
             </option>
@@ -1670,9 +1668,9 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-werror)"
+                  name="Warnings as errors (-Werror)"
                   category="linux.c.compiler.category.warnings"
-                  command="-werror"
+                  command="-Werror"
                   valueType="boolean"
                   id="linux.gnu.c.compiler.warnings.toerrors">
             </option>
@@ -1969,9 +1967,9 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-werror)"
+                  name="Warnings as errors (-Werror)"
                   category="linux.gnu.compiler.category.warnings"
-                  command="-werror"
+                  command="-Werror"
                   valueType="boolean"
                   id="linux.gnu.compiler.warnings.toerrors">
             </option>
@@ -2846,9 +2844,9 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-werror)"
+                  name="Warnings as errors (-Werror)"
                   category="solaris.c.compiler.category.warnings"
-                  command="-werror"
+                  command="-Werror"
                   valueType="boolean"
                   id="solaris.gnu.c.compiler.warnings.toerrors">
             </option>
@@ -3130,9 +3128,9 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Warnings as errors (-werror)"
+                  name="Warnings as errors (-Werror)"
                   category="solaris.gnu.compiler.category.warnings"
-                  command="-werror"
+                  command="-Werror"
                   valueType="boolean"
                   id="solaris.gnu.compiler.warnings.toerrors">
             </option>

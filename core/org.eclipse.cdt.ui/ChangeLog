@@ -1,3 +1,12 @@
+2003-11-13 Sean Evoy
+	There is a duplicate set of string resources in the standard and managed make
+	UI plugins, so there is little need to keep these resources in the common UI 
+	plugin if the managed builder is the only one using them. Moving them also 
+	reduces the dependencies between the builder UI and the core UI packages. The 
+	managed builder UI is the only client of these strings, so there should be no  
+	impact.
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+
 2003-11-10 Bogdan Gheorghe
 	fix bug 45688: must highlight keyword  to use "Open Declarations" or  "Add Include"
 	

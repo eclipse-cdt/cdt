@@ -192,10 +192,6 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * @param category
 	 */
 	private void displayOptionsForCategory(IOptionCategory category) {
-		// Do nothing if the selected category is is unchanged
-		if (category == selectedCategory) {
-			return;
-		}
 		selectedTool = null;
 		selectedCategory = category;
 		
@@ -241,7 +237,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		// save the last page build options.
 		// If the last page is tool page then parse all the options
 		// and put it in the appropriate preference store.
-		if (oldPage != null){
+		if (oldPage != null && oldPage != currentSettingsPage){
 			if(oldPage instanceof BuildOptionSettingsPage) {
 				((BuildOptionSettingsPage)oldPage).storeSettings();
 			}
@@ -254,7 +250,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		if(currentSettingsPage instanceof BuildOptionSettingsPage)
 			((BuildOptionSettingsPage)currentSettingsPage).updateFields();
 		
-		if (oldPage != null)
+		if (oldPage != null  && oldPage != currentSettingsPage)
 			oldPage.setVisible(false);
 
 		// Set the size of the scrolled area
@@ -267,9 +263,6 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 	 * @param tool
 	 */
 	private void displayOptionsForTool(ITool tool) {
-		if (tool == selectedTool) {
-			return;
-		}
 		// Unselect the category
 		selectedCategory = null;
 		// record that the tool selection has changed
@@ -316,7 +309,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		currentSettingsPage.setVisible(true);
 
 		// Save the last page build options.
-		if (oldPage != null){
+		if (oldPage != null && oldPage != currentSettingsPage){
 			if(oldPage instanceof BuildOptionSettingsPage) {
 				((BuildOptionSettingsPage)oldPage).storeSettings();
 			}
@@ -329,7 +322,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		if(currentSettingsPage instanceof BuildToolSettingsPage)
 			((BuildToolSettingsPage)currentSettingsPage).updateAllOptionField();
 
-		if (oldPage != null)
+		if (oldPage != null && oldPage != currentSettingsPage)
 			oldPage.setVisible(false);
 
 		// Set the size of the scrolled area
@@ -409,6 +402,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 			// There is a selected tool defined
 			primary = selectedTool;
 		} else if (selectedCategory != null) {
+//		if (selectedCategory != null) {
 			// There is a selected option or category
 			primary = selectedCategory;
 		} else {
@@ -423,7 +417,7 @@ public class ToolsSettingsBlock extends AbstractCOptionPage {
 		}
 		
 		if (primary != null) {
-			optionList.setSelection(new StructuredSelection(primary));
+			optionList.setSelection(new StructuredSelection(primary), true);
 		}
 	}
 

@@ -17,10 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -44,7 +46,9 @@ import org.eclipse.cdt.internal.core.parser2.IParameterCollection;
 import org.eclipse.cdt.internal.core.parser2.ParameterCollection;
 import org.eclipse.cdt.internal.core.parser2.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatement;
+import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTConditionalExpression;
+import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.parser2.c.CASTUnaryExpression;
 
 /**
@@ -4568,6 +4572,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTUnaryExpression createUnaryExpression() {
         return new CASTUnaryExpression();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createCompoundStatementExpression()
+     */
+    protected IGCCASTCompoundStatementExpression createCompoundStatementExpression() {
+        return new CASTCompoundStatementExpression();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createExpressionList()
+     */
+    protected IASTExpressionList createExpressionList() {
+        return new CASTExpressionList();
     }
 
 }

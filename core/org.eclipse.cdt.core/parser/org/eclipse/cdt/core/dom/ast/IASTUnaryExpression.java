@@ -23,12 +23,15 @@ public interface IASTUnaryExpression extends IASTExpression {
     public static final int op_tilde      = 6;
     public static final int op_not        = 7;
     public static final int op_sizeof     = 8;
-    public static final int op_last       = op_sizeof;
+    public static final int op_postFixIncr = 9;
+    public static final int op_postFixDecr = 10;
+    public static final int op_last       = op_postFixDecr;
     
     public int getOperator();
     public void setOperator( int value );
     
     public static final ASTNodeProperty OPERAND = new ASTNodeProperty( "Operand" ); //$NON-NLS-1$
+    
     
     public IASTExpression getOperand();
     public void setOperand( IASTExpression expression );

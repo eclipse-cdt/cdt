@@ -30,7 +30,7 @@ public class CASTSimpleDeclaration extends CASTNode implements
         return declSpecifier;
     }
 
-    private int currentIndex = 0;
+
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
@@ -76,7 +76,7 @@ public class CASTSimpleDeclaration extends CASTNode implements
         currentIndex = newSize;
     }
 
-    
+    private int currentIndex = 0;    
     private IASTDeclarator [] declarators = null;
     private static final int DEFAULT_DECLARATORS_LIST_SIZE = 4;
     private IASTDeclSpecifier declSpecifier;

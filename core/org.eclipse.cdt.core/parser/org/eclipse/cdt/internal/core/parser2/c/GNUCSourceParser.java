@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -26,9 +27,11 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -58,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -75,6 +79,7 @@ import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
  * @author jcamelon
  */
 public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
+    
 
     private final boolean supportGCCStyleDesignators;
 
@@ -824,10 +829,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTExpression postfixExpression() throws EndOfFileException,
             BacktrackException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
 
         IASTExpression firstExpression = null;
         switch (LT(1)) {
@@ -860,74 +861,39 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 // array access
                 consume(IToken.tLBRACKET);
                 secondExpression = expression();
-                int endOffset = consume(IToken.tRBRACKET).getEndOffset();
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * IASTExpression.Kind.POSTFIX_SUBSCRIPT,
-                                             * firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e2) {
-                                             * throwBacktrack(e2.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("postfixExpression_3::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                consume(IToken.tRBRACKET);
+                IASTArraySubscriptExpression s  = createArraySubscriptExpression();
+                s.setOffset( firstExpression.getOffset() );
+                s.setArrayExpression( firstExpression );
+                firstExpression.setParent( s );
+                firstExpression.setPropertyInParent( IASTArraySubscriptExpression.ARRAY );
+                s.setSubscriptExpression( secondExpression );
+                secondExpression.setParent( s );
+                secondExpression.setPropertyInParent( IASTArraySubscriptExpression.SUBSCRIPT );
+                firstExpression = s;
                 break;
             case IToken.tLPAREN:
                 // function call
                 consume(IToken.tLPAREN);
-
                 secondExpression = expression();
-                endOffset = consume(IToken.tRPAREN).getEndOffset();
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * IASTExpression.Kind.POSTFIX_FUNCTIONCALL,
-                                             * firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e3) {
-                                             * throwBacktrack(e3.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("postfixExpression_4::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                consume(IToken.tRPAREN);
+                IASTFunctionCallExpression f = createFunctionCallExpression();
+                f.setOffset( firstExpression.getOffset() );
+                f.setFunctionNameExpression( firstExpression );
+                firstExpression.setParent( f );
+                firstExpression.setPropertyInParent( IASTFunctionCallExpression.FUNCTION_NAME );
+                f.setParameterExpression( secondExpression );
+                secondExpression.setParent( f );
+                secondExpression.setPropertyInParent( IASTFunctionCallExpression.PARAMETERS );
+                firstExpression = f;
                 break;
             case IToken.tINCR:
-                endOffset = consume(IToken.tINCR).getEndOffset();
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * IASTExpression.Kind.POSTFIX_INCREMENT,
-                                             * firstExpression, null, null,
-                                             * null, null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e1) {
-                                             * throwBacktrack(e1.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("postfixExpression_5::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                int offset = consume(IToken.tINCR).getOffset();
+            	firstExpression = buildUnaryExpression( IASTUnaryExpression.op_postFixIncr, firstExpression, offset );
                 break;
             case IToken.tDECR:
-                endOffset = consume().getEndOffset();
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * IASTExpression.Kind.POSTFIX_DECREMENT,
-                                             * firstExpression, null, null,
-                                             * null, null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e4) {
-                                             * throwBacktrack(e4.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("postfixExpression_6::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                offset = consume().getOffset();
+        		firstExpression = buildUnaryExpression( IASTUnaryExpression.op_postFixDecr, firstExpression, offset );
                 break;
             case IToken.tDOT:
                 // member access
@@ -963,6 +929,20 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 return firstExpression;
             }
         }
+    }
+
+    /**
+     * @return
+     */
+    private IASTFunctionCallExpression createFunctionCallExpression() {
+        return new CASTFunctionCallExpression();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTArraySubscriptExpression createArraySubscriptExpression() {
+        return new CASTArraySubscriptExpression();
     }
 
     /**
@@ -1039,29 +1019,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	    	return literalExpression;
         case IToken.tLPAREN:
             t = consume();
+        	//TODO - do we need to return a wrapper?
             IASTExpression lhs = expression();
-            int endOffset = consume(IToken.tRPAREN).getEndOffset();
-            try {
-                return null; /*
-                              * astFactory.createExpression(scope,
-                              * IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION,
-                              * lhs, null, null, null, null, EMPTY_STRING,
-                              * null); } catch (ASTSemanticException e6) {
-                              * throwBacktrack(e6.getProblem());
-                              */
-            } catch (Exception e) {
-                logException("primaryExpression_7::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(t.getOffset(), endOffset, t.getLineNumber(), t
-                        .getFilename());
-            }
+            consume(IToken.tRPAREN);
+            return lhs;
         case IToken.tIDENTIFIER:
 
             int startingOffset = LA(1).getOffset();
             int line = LA(1).getLineNumber();
             IToken t1 = identifier();
-
-            endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-
             IASTIdExpression idExpression = createIdExpression();
             IASTName name = createName(t1);
             idExpression.setName(name);
@@ -1782,7 +1748,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    private ICASTElaboratedTypeSpecifier createElaboratedTypeSpecifier() {
+    protected ICASTElaboratedTypeSpecifier createElaboratedTypeSpecifier() {
         return new CASTElaboratedTypeSpecifier();
     }
 
@@ -2189,6 +2155,20 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTUnaryExpression createUnaryExpression() {
         return new CASTUnaryExpression();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createCompoundStatementExpression()
+     */
+    protected IGCCASTCompoundStatementExpression createCompoundStatementExpression() {
+        return new CASTCompoundStatementExpression();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createExpressionList()
+     */
+    protected IASTExpressionList createExpressionList() {
+        return new CASTExpressionList();
     }
 
 }

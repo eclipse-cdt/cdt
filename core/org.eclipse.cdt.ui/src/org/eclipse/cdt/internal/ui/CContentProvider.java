@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -122,16 +123,13 @@ public class CContentProvider extends BaseCElementContentProvider implements ITr
 			}
 		}
 
-		if (element instanceof ITranslationUnit) {
+		if (element instanceof ITranslationUnit ||
+		    element instanceof IBinary || element instanceof IArchive) {
 			if (kind == ICElementDelta.CHANGED) {
 				postRefresh(element);
 				return;
 			}
 		}
-
-		// we don't show the contents of a compilation or IClassFile, so don't go any deeper
-		//if (element instanceof ITranslationUnit)
-		//	return;
 
 		//if (isBuildPathChange(delta)) {
 			// throw the towel and do a full refresh of the affected C project. 

@@ -1,5 +1,10 @@
 2004-11-05 Chris Wiebe
 
+	Fix for 56204 - empty source files are no longer created
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+
+2004-11-05 Chris Wiebe
+
 	Remove option to use an existing class as enclosing type (defer to future release)
 	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
 	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java

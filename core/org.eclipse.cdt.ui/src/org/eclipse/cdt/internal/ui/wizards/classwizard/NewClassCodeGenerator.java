@@ -110,6 +110,12 @@ public class NewClassCodeGenerator {
         IWorkingCopy sourceWorkingCopy = null;
         try {
             if (fHeaderPath != null) {
+
+                // get method stubs
+                List publicMethods = getStubs(ASTAccessVisibility.PUBLIC, false);
+                List protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, false);
+                List privateMethods = getStubs(ASTAccessVisibility.PRIVATE, false);
+                
 	            IFile headerFile = NewSourceFileGenerator.createHeaderFile(fHeaderPath, true, new SubProgressMonitor(monitor, 50));
 	            if (headerFile != null) {
 	                headerTU = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
@@ -119,7 +125,7 @@ public class NewClassCodeGenerator {
 	            headerWorkingCopy = headerTU.getWorkingCopy();
 	            // headerWorkingCopy = headerTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 	
-	            String headerContent = constructHeaderFileContent(headerTU, headerWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
+	            String headerContent = constructHeaderFileContent(headerTU, publicMethods, protectedMethods, privateMethods, headerWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
 	            headerWorkingCopy.getBuffer().setContents(headerContent);
 	
 	            if (monitor.isCanceled()) {
@@ -136,27 +142,39 @@ public class NewClassCodeGenerator {
             }
 
             if (fSourcePath != null) {
-	            IFile sourceFile = NewSourceFileGenerator.createSourceFile(fSourcePath, true, new SubProgressMonitor(monitor, 50));
-	            if (sourceFile != null) {
-	                sourceTU = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
-	            }
-	            monitor.worked(50);
-	
-	            // create a working copy with a new owner
-	            sourceWorkingCopy = sourceTU.getWorkingCopy();
-	
-	            String sourceContent = constructSourceFileContent(sourceTU, headerTU, new SubProgressMonitor(monitor, 100));
-	            sourceWorkingCopy.getBuffer().setContents(sourceContent);
-	
-	            if (monitor.isCanceled()) {
-	                throw new InterruptedException();
-	            }
-	
-	            sourceWorkingCopy.reconcile();
-	            sourceWorkingCopy.commit(true, monitor);
-	            monitor.worked(50);
-	
-	            fCreatedSourceTU = sourceTU;
+                
+                // get method stubs
+                List publicMethods = getStubs(ASTAccessVisibility.PUBLIC, true);
+                List protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, true);
+                List privateMethods = getStubs(ASTAccessVisibility.PRIVATE, true);
+                
+                if (publicMethods.isEmpty() && protectedMethods.isEmpty() && privateMethods.isEmpty()) {
+                    //TODO need prefs option
+                    // don't create source file if no method bodies
+                    monitor.worked(100);
+                } else {
+		            IFile sourceFile = NewSourceFileGenerator.createSourceFile(fSourcePath, true, new SubProgressMonitor(monitor, 50));
+		            if (sourceFile != null) {
+		                sourceTU = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
+		            }
+		            monitor.worked(50);
+		
+		            // create a working copy with a new owner
+		            sourceWorkingCopy = sourceTU.getWorkingCopy();
+		
+		            String sourceContent = constructSourceFileContent(sourceTU, headerTU, publicMethods, protectedMethods, privateMethods, new SubProgressMonitor(monitor, 100));
+		            sourceWorkingCopy.getBuffer().setContents(sourceContent);
+		
+		            if (monitor.isCanceled()) {
+		                throw new InterruptedException();
+		            }
+		
+		            sourceWorkingCopy.reconcile();
+		            sourceWorkingCopy.commit(true, monitor);
+		            monitor.worked(50);
+		
+		            fCreatedSourceTU = sourceTU;
+                }
             }
         } finally {
             if (headerWorkingCopy != null) {
@@ -171,7 +189,7 @@ public class NewClassCodeGenerator {
         return fCreatedClass;
     }
 
-    public String constructHeaderFileContent(ITranslationUnit headerTU, String oldContents, IProgressMonitor monitor) throws CodeGeneratorException {
+    public String constructHeaderFileContent(ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) throws CodeGeneratorException {
 
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header"), 100); //$NON-NLS-1$
         
@@ -217,10 +235,6 @@ public class NewClassCodeGenerator {
         text.append(fLineDelimiter);
 
         //TODO sort methods (eg constructor always first?)
-        List publicMethods = getStubs(ASTAccessVisibility.PUBLIC, false);
-        List protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, false);
-        List privateMethods = getStubs(ASTAccessVisibility.PRIVATE, false);
-
         if (!publicMethods.isEmpty()
 	            || !protectedMethods.isEmpty()
 	            || !privateMethods.isEmpty()) {
@@ -265,6 +279,7 @@ public class NewClassCodeGenerator {
         }
         return insertPos;
     }
+    
     private void beginNamespace(StringBuffer text) {
         for (int i = 0; i < fNamespace.segmentCount(); ++i) {
 	        text.append("namespace "); //$NON-NLS-1$
@@ -553,8 +568,8 @@ public class NewClassCodeGenerator {
 	    }
 	    return list;
     }
-
-    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, IProgressMonitor monitor) {
+    
+    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, IProgressMonitor monitor) {
 
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.source"), 150); //$NON-NLS-1$
         
@@ -567,10 +582,6 @@ public class NewClassCodeGenerator {
         }
         
         //TODO sort methods (eg constructor always first?)
-        List publicMethods = getStubs(ASTAccessVisibility.PUBLIC, true);
-        List protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, true);
-        List privateMethods = getStubs(ASTAccessVisibility.PRIVATE, true);
-
         if (publicMethods.isEmpty()
                 && protectedMethods.isEmpty()
                 && privateMethods.isEmpty()) {

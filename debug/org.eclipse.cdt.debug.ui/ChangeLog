@@ -1,4 +1,7 @@
 2002-12-19 Mikhail Khodjaiants
+	Added the 'org.eclipse.cdt.debug.internal.ui.dialogfields' package. 
+
+2002-12-19 Mikhail Khodjaiants
 	Added new utility class - SWTUtil
 	* SWTUtil.java
 	* AttachSourceLocationBlock.java

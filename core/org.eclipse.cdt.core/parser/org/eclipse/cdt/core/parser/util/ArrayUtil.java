@@ -39,6 +39,8 @@ public class ArrayUtil {
      * @return
      */
     static public Object [] append( Class c, Object[] array, Object obj ){
+    	if( obj == null )
+    		return array;
         if( array == null || array.length == 0){
             array = (Object[]) Array.newInstance( c, DEFAULT_LENGTH );
             array[0] = obj;

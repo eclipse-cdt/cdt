@@ -153,9 +153,9 @@ public class CPPVisitor implements ICPPASTVisitor {
 		{
 			binding = CPPSemantics.resolveBinding( name ); 
 			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName ){
-				if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND ){
+				//if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND ){
 					parent = parent.getParent();
-				}
+				//}
 			} else {
 				return binding;
 			}
@@ -190,10 +190,10 @@ public class CPPVisitor implements ICPPASTVisitor {
 	    IASTName name = gotoStatement.getName();
 	    IBinding binding;
         try {
-            binding = functionScope.getBinding( name );
+            binding = functionScope.getBinding( name, false );
             if( binding == null ){
-    	        binding = new CPPLabel( gotoStatement.getName() );
-    	        functionScope.addBinding( binding );
+    	        binding = new CPPLabel( name );
+    	        functionScope.addName( name );
     	    }
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -207,12 +207,12 @@ public class CPPVisitor implements ICPPASTVisitor {
 	    IASTName name = labelStatement.getName();
 	    IBinding binding;
         try {
-            binding = functionScope.getBinding( name );
+            binding = functionScope.getBinding( name, false );
             if( binding == null ){
-    	        binding = new CPPLabel( labelStatement.getName() );
-    	        functionScope.addBinding( binding );
+    	        binding = new CPPLabel( name );
+    	        functionScope.addName( name );
     	    } else {
-    	        ((CPPLabel)binding).setLabelStatement( labelStatement.getName() );
+    	        ((CPPLabel)binding).setLabelStatement( name );
     	    }
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -225,10 +225,10 @@ public class CPPVisitor implements ICPPASTVisitor {
         ICPPScope scope = (ICPPScope) getContainingScope( enumerator );
         IBinding enumtor;
         try {
-            enumtor = scope.getBinding( enumerator.getName() );
+            enumtor = scope.getBinding( enumerator.getName(), false );
             if( enumtor == null ){
                 enumtor = new CPPEnumerator( enumerator.getName() );
-                scope.addBinding( enumtor );
+                scope.addName( enumerator.getName() );
             }
         } catch ( DOMException e ) {
             enumtor = e.getProblem();
@@ -242,10 +242,10 @@ public class CPPVisitor implements ICPPASTVisitor {
         ICPPScope scope = (ICPPScope) getContainingScope( specifier );
         IBinding enumeration;
         try {
-            enumeration = scope.getBinding( specifier.getName() );
+            enumeration = scope.getBinding( specifier.getName(), false );
             if( enumeration == null ){
                 enumeration = new CPPEnumeration( specifier.getName() );
-                scope.addBinding( enumeration );
+                scope.addName( specifier.getName() );
             }
         } catch ( DOMException e ) {
             enumeration = e.getProblem();
@@ -307,11 +307,12 @@ public class CPPVisitor implements ICPPASTVisitor {
 		    }
 		}
         try {
-            binding = scope.getBinding( elabType.getName() );
+            binding = scope.getBinding( elabType.getName(), false );
             if( binding == null ){
-    			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
+    			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum ){
     				binding = new CPPClassType( elabType.getName() );
-    			scope.addBinding( binding );
+    				scope.addName( elabType.getName() );
+    			}
     		} else if( binding instanceof ICPPClassType ){
     			((CPPClassType)binding).addDeclaration( elabType );
     		}
@@ -330,10 +331,10 @@ public class CPPVisitor implements ICPPASTVisitor {
 		ICPPScope scope = (ICPPScope) getContainingScope( name );
 		IBinding binding;
         try {
-            binding = scope.getBinding( compType.getName() );
+            binding = scope.getBinding( compType.getName(), false );
             if( binding == null || !(binding instanceof ICPPClassType) ){
     			binding = new CPPClassType( compType.getName() );
-    			scope.addBinding( binding );
+    			scope.addName( compType.getName() );
     		} else {
     			((CPPClassType)binding).addDefinition( compType );
     		}
@@ -349,10 +350,10 @@ public class CPPVisitor implements ICPPASTVisitor {
 			ICPPScope scope = (ICPPScope) getContainingScope( namespaceDef );
 			IBinding binding;
             try {
-                binding = scope.getBinding( namespaceDef.getName() );
+                binding = scope.getBinding( namespaceDef.getName(), false );
                 if( binding == null ){
     				binding = new CPPNamespace( namespaceDef.getName() );
-    				scope.addBinding( binding );
+    				scope.addName( namespaceDef.getName() );
     			}
             } catch ( DOMException e ) {
                 binding = e.getProblem();
@@ -370,13 +371,19 @@ public class CPPVisitor implements ICPPASTVisitor {
 	}
 	private static IBinding createBinding( IASTDeclarator declarator ){
 		IASTNode parent = declarator.getParent();
-
+		
 		if( parent instanceof IASTTypeId )
 		    return CPPSemantics.resolveBinding( declarator.getName() );
 		    
 		while( declarator.getNestedDeclarator() != null )
 			declarator = declarator.getNestedDeclarator();
 
+		IASTName name = declarator.getName();
+		if( name instanceof ICPPASTQualifiedName ){
+			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+			name = ns[ ns.length - 1 ];
+		}
+		
 		while( parent instanceof IASTDeclarator ){
 			parent = parent.getParent();
 		}
@@ -402,7 +409,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		
 		IBinding binding;
         try {
-            binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;
+            binding = ( scope != null ) ? scope.getBinding( declarator.getName(), false ) : null;
         } catch ( DOMException e ) {
             binding = null;
         }
@@ -470,7 +477,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 
 		if( scope != null && binding != null ){
             try {
-                scope.addBinding( binding );
+                scope.addName( name );
             } catch ( DOMException e1 ) {
             }
 		}
@@ -591,6 +598,10 @@ public class CPPVisitor implements ICPPASTVisitor {
 						return ((ICPPClassType)binding).getCompositeScope();
 					} else if( binding instanceof ICPPNamespace ){
 						return ((ICPPNamespace)binding).getNamespaceScope();
+					} else if( binding instanceof IProblemBinding ){
+						if( binding instanceof ICPPScope )
+							return (IScope) binding;
+						return new CPPScope.CPPScopeProblem( -1, names[i-1].toCharArray() );
 					}
 				}
 				else if( ((ICPPASTQualifiedName)parent).isFullyQualified() )

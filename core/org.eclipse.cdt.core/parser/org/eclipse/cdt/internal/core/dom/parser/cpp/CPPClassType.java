@@ -388,7 +388,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
      */
-    public ICPPConstructor[] getConstructors() {
+    public ICPPConstructor[] getConstructors() throws DOMException {
         if( definition == null ){
             checkForDefinition();
             if( definition == null ){
@@ -397,23 +397,24 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         }
         
         ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
+        if( scope.isFullyCached() )
+        	return ((CPPClassScope)scope).getConstructors( true );
+        	
         IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
         for( int i = 0; i < members.length; i++ ){
 			if( members[i] instanceof IASTSimpleDeclaration ){
 			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
 			    for( int j = 0; j < dtors.length; j++ ){
 			        if( dtors[j] == null ) break;
-			        if( CPPVisitor.isConstructor( scope, dtors[j] ) )
-			            dtors[j].getName().resolveBinding();
+		            scope.addName( dtors[j].getName() );
 			    }
 			} else if( members[i] instanceof IASTFunctionDefinition ){
 			    IASTDeclarator dtor = ((IASTFunctionDefinition)members[i]).getDeclarator();
-			    if( CPPVisitor.isConstructor( scope, dtor ) )
-			        dtor.getName().resolveBinding();
+			    scope.addName( dtor.getName() );
 			}
         }
         
-        return ((CPPClassScope)scope).getConstructors();
+        return ((CPPClassScope)scope).getConstructors( true );
     }
 
     /* (non-Javadoc)

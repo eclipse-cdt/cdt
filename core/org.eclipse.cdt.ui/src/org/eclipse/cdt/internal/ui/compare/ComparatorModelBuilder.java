@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.internal.ui.compare;
 
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,6 +25,7 @@ import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.Macro;
+import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
-
 
 /**
  * @author alain
@@ -45,7 +44,6 @@ public class ComparatorModelBuilder {
 
 	IStructurizerCallback callback;
 	String code;
-
 
 	/**
 	 */
@@ -66,36 +64,35 @@ public class ComparatorModelBuilder {
 		generateModelElements(domBuilder.getTranslationUnit());
 	}
 
-	protected void generateModelElements(TranslationUnit tu){
+	protected void generateModelElements(TranslationUnit tu) {
 		Iterator i = tu.iterateOffsetableElements();
-		while (i.hasNext()){
-			IOffsetable offsetable = (IOffsetable)i.next();
-			if (offsetable instanceof Inclusion){
-				createInclusion((Inclusion) offsetable); 		
+		while (i.hasNext()) {
+			IOffsetable offsetable = (IOffsetable) i.next();
+			if (offsetable instanceof Inclusion) {
+				createInclusion((Inclusion) offsetable);
+			} else if (offsetable instanceof Macro) {
+				createMacro((Macro) offsetable);
+			} else if (offsetable instanceof Declaration) {
+				generateModelElements((Declaration) offsetable);
 			}
-			else if (offsetable instanceof Macro){
-				createMacro((Macro) offsetable);				
-			}else if(offsetable instanceof Declaration){
-				generateModelElements ((Declaration) offsetable);
-			}
-		} 
-	}	
-	
-	protected void generateModelElements (Declaration declaration){
+		}
+	}
+
+	protected void generateModelElements(Declaration declaration) {
 		// Namespace Definition 
-		if (declaration instanceof NamespaceDefinition){
+		if (declaration instanceof NamespaceDefinition) {
 			NamespaceDefinition nsDef = (NamespaceDefinition) declaration;
 			createNamespace(nsDef);
 			List nsDeclarations = nsDef.getDeclarations();
-			Iterator nsDecls = 	nsDeclarations.iterator();
-			while (nsDecls.hasNext()){
+			Iterator nsDecls = nsDeclarations.iterator();
+			while (nsDecls.hasNext()) {
 				Declaration subNsDeclaration = (Declaration) nsDecls.next();
-				generateModelElements(subNsDeclaration);			
+				generateModelElements(subNsDeclaration);
 			}
-		}// end Namespace Definition
+		} // end Namespace Definition
 
 		// Simple Declaration 
-		if (declaration instanceof SimpleDeclaration){
+		if (declaration instanceof SimpleDeclaration) {
 			SimpleDeclaration simpleDeclaration = (SimpleDeclaration) declaration;
 
 			/*-------------------------------------------
@@ -103,159 +100,200 @@ public class ComparatorModelBuilder {
 			 *-------------------------------------------*/
 			TypeSpecifier typeSpec = simpleDeclaration.getTypeSpecifier();
 			// Enumeration
-			if (typeSpec instanceof EnumerationSpecifier){
+			if (typeSpec instanceof EnumerationSpecifier) {
 				EnumerationSpecifier enumSpecifier = (EnumerationSpecifier) typeSpec;
-				createEnumeration (enumSpecifier);
-			} else if (typeSpec instanceof ClassSpecifier){ // Structure
+				createEnumeration(enumSpecifier);
+			} else if (typeSpec instanceof ClassSpecifier) { // Structure
 				ClassSpecifier classSpecifier = (ClassSpecifier) typeSpec;
-				createClass (simpleDeclaration, classSpecifier, false);
+				createClass(simpleDeclaration, classSpecifier, false);
 				// create the sub declarations 
 				List declarations = classSpecifier.getDeclarations();
 				Iterator j = declarations.iterator();
-				while (j.hasNext()){
-					Declaration subDeclaration = (Declaration)j.next();
-					generateModelElements(subDeclaration);					
+				while (j.hasNext()) {
+					Declaration subDeclaration = (Declaration) j.next();
+					generateModelElements(subDeclaration);
 				} // end while j
 			}
 			/*-----------------------------------------
 			 * Create declarators of simple declaration
 			 * ----------------------------------------*/
-			List declarators  = simpleDeclaration.getDeclarators();
+			List declarators = simpleDeclaration.getDeclarators();
 			Iterator d = declarators.iterator();
-			while (d.hasNext()){ 		
-				Declarator declarator = (Declarator)d.next();
+			while (d.hasNext()) {
+				Declarator declarator = (Declarator) d.next();
 				createElement(simpleDeclaration, declarator);
 			} // end while d		
 		} // end if SimpleDeclaration
-		
+
 		// Template Declaration 
-		if(declaration instanceof TemplateDeclaration){
-			TemplateDeclaration templateDeclaration = (TemplateDeclaration)declaration;
-			SimpleDeclaration simpleDeclaration = (SimpleDeclaration)templateDeclaration.getDeclarations().get(0);
+		if (declaration instanceof TemplateDeclaration) {
+			TemplateDeclaration templateDeclaration = (TemplateDeclaration) declaration;
+			SimpleDeclaration simpleDeclaration = (SimpleDeclaration) templateDeclaration.getDeclarations().get(0);
 			TypeSpecifier typeSpec = simpleDeclaration.getTypeSpecifier();
-			if (typeSpec instanceof ClassSpecifier){
+			if (typeSpec instanceof ClassSpecifier) {
 				ClassSpecifier classSpecifier = (ClassSpecifier) typeSpec;
 				createClass(simpleDeclaration, classSpecifier, true);
 				// create the sub declarations 
 				List declarations = classSpecifier.getDeclarations();
 				Iterator j = declarations.iterator();
-				while (j.hasNext()){
-					Declaration subDeclaration = (Declaration)j.next();
-					generateModelElements(subDeclaration);					
+				while (j.hasNext()) {
+					Declaration subDeclaration = (Declaration) j.next();
+					generateModelElements(subDeclaration);
 				} // end while j
 			}
-			List declarators  = simpleDeclaration.getDeclarators();
+			List declarators = simpleDeclaration.getDeclarators();
 			Iterator d = declarators.iterator();
-			while (d.hasNext()){ 		
-				Declarator declarator = (Declarator)d.next();
+			while (d.hasNext()) {
+				Declarator declarator = (Declarator) d.next();
 				createTemplateElement(templateDeclaration, simpleDeclaration, declarator);
 			} // end while d		
-			
-		}// end Template Declaration
+
+		} // end Template Declaration
 
 	}
-		
-	private void createElement(SimpleDeclaration simpleDeclaration, Declarator declarator){
+
+	private void createElement(SimpleDeclaration simpleDeclaration, Declarator declarator) {
 		// typedef
-		if (simpleDeclaration.getDeclSpecifier().isTypedef()){
+		if (simpleDeclaration.getDeclSpecifier().isTypedef()) {
 			createTypeDef(declarator, simpleDeclaration);
 		} else {
 			ParameterDeclarationClause pdc = declarator.getParms();
-			if (pdc == null){
-				createVariableSpecification(simpleDeclaration, declarator); 
-			}
-			else{
+			if (pdc == null) {
+				createVariableSpecification(simpleDeclaration, declarator);
+			} else {
 				createFunctionSpecification(simpleDeclaration, declarator, pdc, false);
 			}
-		}				
+		}
 	}
 
-	private void createTemplateElement(TemplateDeclaration templateDeclaration, SimpleDeclaration simpleDeclaration, Declarator declarator){
+	private void createTemplateElement(
+		TemplateDeclaration templateDeclaration,
+		SimpleDeclaration simpleDeclaration,
+		Declarator declarator) {
 		// TODO: no template in the old parser
 		ParameterDeclarationClause pdc = declarator.getParms();
-		if (pdc != null){
+		if (pdc != null) {
 			createFunctionSpecification(simpleDeclaration, declarator, pdc, true);
 		}
 	}
 
-	private void createInclusion(Inclusion inclusion){
-		callback.includeDecl(inclusion.getName(), inclusion.getStartingOffset(), inclusion.getTotalLength(),0, 0);
+	private void createInclusion(Inclusion inclusion) {
+		callback.includeDecl(inclusion.getName(), inclusion.getStartingOffset(), inclusion.getTotalLength(), 0, 0);
 	}
-	
-	private void createMacro(Macro macro){
-		callback.defineDecl(macro.getName(), macro.getStartingOffset(), macro.getTotalLength(), 0, 0);	
+
+	private void createMacro(Macro macro) {
+		callback.defineDecl(macro.getName(), macro.getStartingOffset(), macro.getTotalLength(), 0, 0);
 	}
-	
-	private void createNamespace(NamespaceDefinition nsDef){
+
+	private void createNamespace(NamespaceDefinition nsDef) {
 		// TODO:  the old parser callback does not know about namespace.
 	}
 
-	private void createEnumeration(EnumerationSpecifier enumSpecifier){
-		callback.structDeclBegin(enumSpecifier.getName().toString(), ICElement.C_ENUMERATION,
-			enumSpecifier.getName().getStartOffset(), enumSpecifier.getName().length(),
-			enumSpecifier.getStartingOffset(), 0, 0);
+	private void createEnumeration(EnumerationSpecifier enumSpecifier) {
+		callback.structDeclBegin(
+			enumSpecifier.getName().toString(),
+			ICElement.C_ENUMERATION,
+			enumSpecifier.getName().getStartOffset(),
+			enumSpecifier.getName().length(),
+			enumSpecifier.getStartingOffset(),
+			0,
+			0);
 		callback.structDeclEnd(enumSpecifier.getTotalLength(), 0);
 	}
-	
-	private void createClass(SimpleDeclaration simpleDeclaration, ClassSpecifier classSpecifier, boolean isTemplate){
+
+	private void createClass(SimpleDeclaration simpleDeclaration, ClassSpecifier classSpecifier, boolean isTemplate) {
 		// create element
-		String className = (classSpecifier.getName() == null ) ? "" : classSpecifier.getName().toString();
+		String className = (classSpecifier.getName() == null) ? "" : classSpecifier.getName().toString();
 		int kind;
-		switch( classSpecifier.getClassKey() )
-		{
-			case ClassKey.t_class:
+		switch (classSpecifier.getClassKey()) {
+			case ClassKey.t_class :
 				kind = ICElement.C_CLASS;
 				break;
-			case ClassKey.t_struct:
+			case ClassKey.t_struct :
 				kind = ICElement.C_STRUCT;
-				break;	
-			default:
+				break;
+			default :
 				kind = ICElement.C_UNION;
 				break;
 		}
-		
+
 		// set element position 
-		if( classSpecifier.getName()  != null )
-		{
-			callback.structDeclBegin(className, kind,
-				classSpecifier.getName().getStartOffset(), classSpecifier.getName().length(),
-				classSpecifier.getStartingOffset(), 0, 0);
+		if (classSpecifier.getName() != null) {
+			callback.structDeclBegin(
+				className,
+				kind,
+				classSpecifier.getName().getStartOffset(),
+				classSpecifier.getName().length(),
+				classSpecifier.getStartingOffset(),
+				0,
+				0);
+		} else {
+			callback.structDeclBegin(
+				className,
+				kind,
+				classSpecifier.getClassKeyToken().getOffset(),
+				classSpecifier.getClassKeyToken().getLength(),
+				classSpecifier.getStartingOffset(),
+				0,
+				0);
+
 		}
-		else
-		{
-			callback.structDeclBegin(className, kind,
-				classSpecifier.getClassKeyToken().getOffset(), classSpecifier.getClassKeyToken().getLength(),
-				classSpecifier.getStartingOffset(), 0, 0);
-			
-		}
-		callback.structDeclBegin(className, kind,
-			classSpecifier.getClassKeyToken().getOffset(), classSpecifier.getClassKeyToken().getLength(),
-			classSpecifier.getStartingOffset(), 0, 0);
+		callback.structDeclBegin(
+			className,
+			kind,
+			classSpecifier.getClassKeyToken().getOffset(),
+			classSpecifier.getClassKeyToken().getLength(),
+			classSpecifier.getStartingOffset(),
+			0,
+			0);
 		callback.structDeclEnd(classSpecifier.getTotalLength(), 0);
 	}
-	
-	private void createTypeDef(Declarator declarator, SimpleDeclaration simpleDeclaration){
+
+	private void createTypeDef(Declarator declarator, SimpleDeclaration simpleDeclaration) {
 		// TODO:No typedef in the old callback
-		String declaratorName = declarator.getName().toString();		
-		callback.fieldDecl(declaratorName,
-			declarator.getName().getStartOffset(), declarator.getName().length(),
-			simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength(),
-			0, 0, 0);
+		Name domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
+		String declaratorName = domName.toString();
+		callback.fieldDecl(
+			declaratorName,
+			domName.getStartOffset(),
+			domName.length(),
+			simpleDeclaration.getStartingOffset(),
+			simpleDeclaration.getTotalLength(),
+			0,
+			0,
+			0);
 	}
 
-	private void createVariableSpecification(SimpleDeclaration simpleDeclaration, Declarator declarator){	
-		String declaratorName = declarator.getName().toString();
-		callback.fieldDecl(declaratorName, declarator.getName().getStartOffset(), declarator.getName().length(),
-		simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength(), 0, 0, 0);
+	private void createVariableSpecification(SimpleDeclaration simpleDeclaration, Declarator declarator) {
+		Name domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
+		String declaratorName = domName.toString();
+		callback.fieldDecl(
+			declaratorName,
+			domName.getStartOffset(),
+			domName.length(),
+			simpleDeclaration.getStartingOffset(),
+			simpleDeclaration.getTotalLength(),
+			0,
+			0,
+			0);
 	}
 
-	private void createFunctionSpecification(SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
-		String declaratorName = declarator.getName().toString();
-		callback.functionDeclBegin(declaratorName,
-			declarator.getName().getStartOffset(), declarator.getName().length(),
-			simpleDeclaration.getStartingOffset(), 0, 0, 0);
+	private void createFunctionSpecification(
+		SimpleDeclaration simpleDeclaration,
+		Declarator declarator,
+		ParameterDeclarationClause pdc,
+		boolean isTemplate) {
+		Name domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
+		String declaratorName = domName.toString();
+		callback.functionDeclBegin(
+			declaratorName,
+			domName.getStartOffset(),
+			domName.length(),
+			simpleDeclaration.getStartingOffset(),
+			0,
+			0,
+			0);
 		callback.functionDeclEnd(simpleDeclaration.getTotalLength(), 0, simpleDeclaration.isFunctionDefinition());
 	}
-	
-}
 
+}

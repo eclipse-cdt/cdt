@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.IBinaryElement;
 import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -26,11 +27,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class BinaryModule extends Parent implements IBinaryModule {
 
-	IPath path;
+	IPath fPath;
 
 	public BinaryModule(Binary parent, IPath p) {
 		super(parent, p.lastSegment(), ICElement.C_VCONTAINER);
-		path = p;
+		fPath = p;
 	}
 
 	/* (non-Javadoc)
@@ -61,6 +62,11 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
 	 */
 	public IResource getResource() {
+		IWorkspaceRoot root =  getCModel().getWorkspace().getRoot();
+		IPath path = getPath();
+		if (path != null) {
+			return root.getFileForLocation(fPath);
+		}
 		return null;
 	}
 
@@ -82,7 +88,7 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
 	public IPath getPath() {
-		return path;
+		return fPath;
 	}
 
 	/* (non-Javadoc)

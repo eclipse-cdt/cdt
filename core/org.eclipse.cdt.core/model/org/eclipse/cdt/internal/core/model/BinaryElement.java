@@ -113,6 +113,9 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 						tu = (ITranslationUnit)e;
 					}
 				}
+				// do not give up yet in C++ the methods may be inline in the headers
+				ICProject cproject = getCProject();
+				tu = mgr.createTranslationUnitFrom(cproject, path);
 			} else {
 				// TODO-model: handle non-absolute paths when finding source files
 				// ??? assert()

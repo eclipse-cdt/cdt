@@ -11,12 +11,12 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.IBinaryFunction;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IFunction;
 
 /**
  */
-public class BinaryFunction extends BinaryElement implements IFunction {
+public class BinaryFunction extends BinaryElement implements IBinaryFunction {
 
 	public BinaryFunction(ICElement parent, String name, long a) {
 		super(parent, name, ICElement.C_FUNCTION, a);

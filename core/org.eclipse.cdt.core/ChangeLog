@@ -1,4 +1,10 @@
 2004-09-14 Alain Magloire
+	Try to find the function in the header.
+	* model/org/eclipse/cdt/internal/core/model/BinaryElement.java
+	* model/org/eclipse/cdt/internal/core/model/BinaryFunction.java
+	* model/org/eclipse/cdt/internal/core/model/BinaryModule.java
+
+2004-09-14 Alain Magloire
 
 	Define for the contentType extensions for
 	type of files.  Note this is incomplete

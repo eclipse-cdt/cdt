@@ -18,14 +18,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class ConvertToMakeProjectWizard extends ConversionWizard {
 
-	private MakeProjectWizardOptionPage optionsPage;
 	private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
 	private static final String WZ_DESC = "WizardMakeProjectConversion.description"; //$NON-NLS-1$
 	private static final String PREFIX = "WizardMakeConversion"; //$NON-NLS-1$
 	private static final String WINDOW_TITLE = "WizardMakeConversion.windowTitle"; //$NON-NLS-1$
-
-	private static final String WZ_SETTINGS_TITLE = "WizardMakeProjectConversionSettings.title"; //$NON-NLS-1$
-	private static final String WZ_SETTINGS_DESC = "WizardMakeProjectConversionSettings.description"; //$NON-NLS-1$
 
 	/**
 	 * ConvertToStdMakeConversionWizard Wizard constructor
@@ -89,16 +85,18 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	 */
 	public void addPages() {
 		addPage(mainPage = new ConvertToMakeProjectWizardPage(getPrefix()));
-		addPage(optionsPage = new MakeProjectWizardOptionPage(MakeUIPlugin.getResourceString(WZ_SETTINGS_TITLE), MakeUIPlugin.getResourceString(WZ_SETTINGS_DESC)));
 	}
 
 	public String getProjectID() {
-		return MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
+		return MakeCorePlugin.MAKE_PROJECT_ID;
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Converting to Make Project...", 2);
-		super.doRun(new SubProgressMonitor(monitor, 1));
-		optionsPage.performApply(new SubProgressMonitor(monitor, 1));
+		try {
+			super.doRun(new SubProgressMonitor(monitor, 1));
+		} finally {
+			monitor.done();
+		}
 	}
 }

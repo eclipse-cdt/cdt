@@ -49,6 +49,6 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 	}
 	
 	public String getProjectID() {
-		return MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
+		return MakeCorePlugin.MAKE_PROJECT_ID;
 	}
 }

@@ -5,9 +5,17 @@ package org.eclipse.cdt.make.ui.wizards;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.wizards.conversion.ConvertProjectWizardPage;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
  *
@@ -64,4 +72,24 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
     public boolean isCandidate(IProject project) { 
 		return true; // all 
     }    
+    
+	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
+		monitor.beginTask("Converting Make project...", 3);
+		try {
+			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+			MakeProjectNature.addNature(project, new SubProgressMonitor(monitor, 1));
+			CCorePlugin.getDefault().mapCProjectOwner(project, projectID, true);
+		} finally {
+			monitor.done();
+		}
+	}
+
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		IStructuredSelection sel = ((BasicNewResourceWizard)getWizard()).getSelection();
+		if ( sel != null) {
+			tableViewer.setCheckedElements(sel.toArray());
+		}
+	}
+
 }

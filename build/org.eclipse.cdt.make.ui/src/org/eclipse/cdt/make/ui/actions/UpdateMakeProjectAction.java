@@ -32,6 +32,7 @@ import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -86,21 +87,14 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		}
 
 	}
-	
+
 	public static IProject[] getOldProjects() {
 		IProject[] project = MakeUIPlugin.getWorkspace().getRoot().getProjects();
 		Vector result = new Vector();
 		try {
 			for (int i = 0; i < project.length; i++) {
-				if (project[i].isAccessible()) {
-					IProjectDescription desc = project[i].getDescription();
-					ICommand builder[] = desc.getBuildSpec();
-					for (int j = 0; j < builder.length; j++) {
-						if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
-							result.add(project[i]);
-							break;
-						}
-					}
+				if (isOldProject(project[i])) {
+					result.add(project[i]);
 				}
 			}
 		} catch (CoreException e) {
@@ -110,6 +104,18 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		return (IProject[]) result.toArray(new IProject[result.size()]);
 	}
 
+	protected static boolean isOldProject(IProject project) throws CoreException {
+		if (project.isAccessible()) {
+			IProjectDescription desc = project.getDescription();
+			ICommand builder[] = desc.getBuildSpec();
+			for (int j = 0; j < builder.length; j++) {
+				if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	static public void run(boolean fork, IRunnableContext context, final IProject[] projects) {
 		try {
@@ -135,7 +141,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 			MakeUIPlugin.logException(e, "Error", "Error updating Make Projects");
 		}
 	}
-	
+
 	public static class TargetConvertVisitor implements IResourceProxyVisitor {
 		private final int TOTAL_WORK = 100;
 		private int halfWay = TOTAL_WORK / 2;
@@ -198,7 +204,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					new SubProgressMonitor(monitor, 1));
 
 				// convert .cdtproject
-				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.getUniqueIdentifier() + ".make", true);
+				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.MAKE_PROJECT_ID, true);
 				// add new nature
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
 
@@ -242,6 +248,20 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
+		boolean enabled = false;
 		fSelection = selection;
+		if (fSelection instanceof IStructuredSelection) {
+			Object sel = ((IStructuredSelection) fSelection).getFirstElement();
+			if (sel instanceof IAdaptable) {
+				IResource res = (IResource) ((IAdaptable) sel).getAdapter(IResource.class);
+				try {
+					if (res instanceof IProject && isOldProject((IProject) res)) {
+						enabled = true;
+					}
+				} catch (CoreException e) {
+				}
+			}
+		}
+		action.setEnabled(enabled);
 	}
 }

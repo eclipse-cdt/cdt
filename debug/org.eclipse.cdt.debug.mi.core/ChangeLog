@@ -1,3 +1,10 @@
+2003-11-20 Alain Magloire
+
+	Fixfor PR 46313: NPE when setting breakpoint while the target is running.
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+
 2003-11-19 Mikhail Khodjaiants
 
 	Fix for PR 45533: MIException while creating MISession can leave an orphan gdb process.

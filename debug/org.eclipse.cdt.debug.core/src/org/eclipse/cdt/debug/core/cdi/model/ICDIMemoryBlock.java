@@ -10,7 +10,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
  * 
- * A contiguos segment of memory in an execution context. A memory 
+ * A contiguous segment of memory in an execution context. A memory
  * block is represented by a starting memory address and a length.
  * 
  * @since Jul 18, 2002
@@ -71,7 +71,7 @@ public interface ICDIMemoryBlock extends ICDIObject
 	 */
 	void setValue( long offset, byte[] bytes ) throws CDIException;
 
-	boolean isFreezed();
+	boolean isFrozen();
 	
-	void setFreezed( boolean freezed );
+	void setFrozen( boolean frozen );
 }

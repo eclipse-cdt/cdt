@@ -12,11 +12,9 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
-import org.eclipse.cdt.debug.mi.core.command.MIVarInfoNumChildren;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIVarInfoNumChildrenInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 
 /**

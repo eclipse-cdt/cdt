@@ -100,6 +100,7 @@ public class Elf {
 		public final static int EM_ARM = 40;
 		public final static int EM_SH = 42;
 		public final static int EM_SPARCV9 = 43;
+		public final static int EM_TRICORE = 44;
 		public final static int EM_H8_300 = 46;
 		public final static int EM_H8_300H = 47;
 		public final static int EM_IA_64 = 50;
@@ -114,6 +115,8 @@ public class Elf {
 		public final static int EM_MSP430 = 105;
 		public final static int EM_EXCESS = 111;
 		public final static int EM_NIOSII = 113;
+		public final static int EM_C166 = 116;
+		public final static int EM_M16C = 117;
 		public final static int EM_NIOS = 0xFEBB;
 		public final static int EM_CYGNUS_POWERPC = 0x9025;
 		public final static int EM_CYGNUS_M32R = 0x9041;
@@ -813,6 +816,15 @@ public class Elf {
 			case Elf.ELFhdr.EM_XILINX_MICROBLAZE:
 				attrib.cpu = "microblaze"; //$NON-NLS-1$
 				break;
+			case Elf.ELFhdr.EM_C166:
+				attrib.cpu = "c166"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_TRICORE:
+				attrib.cpu = "TriCore"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_M16C:
+				attrib.cpu = "M16C"; //$NON-NLS-1$
+				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :
 				attrib.cpu = "none"; //$NON-NLS-1$
@@ -928,9 +940,9 @@ public class Elf {
 				sections = new Section[0];
 				return sections;
 			}
-			efile.seek(ehdr.e_shoff);
 			sections = new Section[ehdr.e_shnum];
 			for (int i = 0; i < ehdr.e_shnum; i++) {
+				efile.seek(ehdr.e_shoff + i * ehdr.e_shentsize);
 				sections[i] = new Section();
 				sections[i].sh_name = efile.readIntE();
 				sections[i].sh_type = efile.readIntE();

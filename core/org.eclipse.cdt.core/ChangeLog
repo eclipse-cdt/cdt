@@ -1,3 +1,10 @@
+2005-03-24 Eric ter Haar
+	Added some e_machine types and made section reading seek to each section
+	before reading encase section records are extended.
+	
+	* util/org/eclipse/cdt/utils/elf/Elf.java	
+	
+
 2005-03-24 Vladimir Hirsl
 	New DOM AST based indexer.
 	Indexer infrastructure and CPP/C AST visitors.

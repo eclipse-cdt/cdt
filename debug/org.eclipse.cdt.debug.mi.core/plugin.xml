@@ -44,7 +44,7 @@
             name="%GDBServer.name"
             modes="run"
             cpu="*"
-            class="org.eclipse.cdt.debug.mi.core.GDBServerDebugger"
+            class="org.eclipse.cdt.debug.mi.core.GDBServerCDIDebugger"
             id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
       </debugger>
    </extension>

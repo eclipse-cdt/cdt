@@ -304,6 +304,9 @@ public class MIPlugin extends Plugin {
 					throw new MIException(getResourceString("src.common.No_answer")); //$NON-NLS-1$
 				}
 				session.getMIInferior().setInferiorPID(pid);
+				// @@@ for attach we nee to manually set the connected state
+				// attach does not send the ^connected ack
+				session.getMIInferior().setConnected();
 			}
 		} catch (MIException e) {
 			pgdb.destroy();

@@ -1,3 +1,8 @@
+2003-09-24 Alain Magloire
+
+	* src/org/eclipse/cdt/core/ErrorParserManager.java
+	Possible NPE fix, when hitting cancel.
+
 2003-09-24 David Inglis
 	
 	* src/org/eclipse/cdt/internal/core/CExtensionInfo.java

@@ -1,3 +1,6 @@
+2004-04-14 Hoda Amer
+	Partial fix for bug#58178 : [Content Assist] No completion on GL_TRUE
+	
 2004-04-13 Hoda Amer
 	Fix for bug#57804: [Refactoring] Constructor and Destructor are not refactored when class is defined inside a namespace
 	

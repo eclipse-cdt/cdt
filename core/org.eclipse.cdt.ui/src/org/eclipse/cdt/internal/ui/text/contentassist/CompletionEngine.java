@@ -396,18 +396,20 @@ public class CompletionEngine implements RelevanceConstants {
 			String key = (String) i.next();
 			String value = ""; //$NON-NLS-1$
 			if(key.length() > prefix.length()) {
-				value = key.substring(0, prefix.length());
+				value = key.substring(0, prefix.length()).toUpperCase();
 			}else {
 				value = key;
 			}
-			if( value.equalsIgnoreCase( prefix ) ) {
+			String newPrefix = prefix.toUpperCase();
+			
+			if( value.equals( newPrefix ) ) {
 				IMacroDescriptor macroD = (IMacroDescriptor)macroMap.get(key);
 				if (macroD.getMacroType() == IMacroDescriptor.MacroType.FUNCTION_LIKE )
 					resultSet.add( macroD.getCompleteSignature() );
 				else 
 					resultSet.add( macroD.getName() );
 			}
-			else if( value.compareToIgnoreCase( prefix ) > 0 ) 
+			else if( value.compareTo( newPrefix ) > 0 )					
 				break;
 		}
 		return resultSet;		
@@ -619,12 +621,12 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 	
 	public IASTCompletionNode complete(IWorkingCopy sourceUnit, int completionOffset) {
+		log(""); //$NON-NLS-1$
+
 		long startTime = System.currentTimeMillis();
 		
 		// 1- Parse the translation unit
 		IASTCompletionNode completionNode = parse(sourceUnit, completionOffset);
-		
-		log(""); //$NON-NLS-1$
 		
 		if (completionNode == null){
 			log("Null Completion Node Error"); //$NON-NLS-1$

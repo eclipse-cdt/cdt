@@ -209,16 +209,48 @@ public abstract class Parser extends ExpressionParser implements IParser
                     break;
                 }
             }
+            catch( Exception e )
+			{
+            	logException( "translationUnit", e ); //$NON-NLS-1$
+            	failParse();
+			}
+            catch( ParseError perr )
+			{
+            	throw perr;
+			}
             catch (Throwable e)
             {
-            	if( e instanceof Exception )
-            		logException( "translationUnit", (Exception) e ); //$NON-NLS-1$
+            	logThrowable( "translationUnit", e ); //$NON-NLS-1$
 				failParse();
             }
         }
         compilationUnit.exitScope( requestor, astFactory.getReferenceManager() );
     }
     /**
+	 * @param string
+	 * @param e
+	 */
+	private void logThrowable(String methodName, Throwable e) {
+		if( e != null )
+		{
+			StringBuffer buffer = new StringBuffer();
+			buffer.append( "Parser: Unexpected throwable in "); //$NON-NLS-1$
+			buffer.append( methodName );
+			buffer.append( ":"); //$NON-NLS-1$
+			buffer.append( e.getClass().getName() );
+			buffer.append( "::"); //$NON-NLS-1$
+			buffer.append( e.getMessage() );
+			buffer.append( ". w/"); //$NON-NLS-1$
+			buffer.append( scanner.toString() );
+			if( log.isTracing() )
+				log.traceLog( buffer.toString() );
+			log.errorLog( buffer.toString() );
+		}
+}
+
+
+
+	/**
      * This function is called whenever we encounter and error that we cannot backtrack out of and we 
      * still wish to try and continue on with the parse to do a best-effort parse for our client. 
      * 

@@ -1,7 +1,7 @@
 2004-01-29 Alain Magloire
 
 	The CDT debug ui prefers things to be in ascending
-	number
+	number. It makes life easier so we comply.
 
 	* src/org/eclipse/cdt/debug/mi/core/output/MIInfoThreadsInfo.java
 

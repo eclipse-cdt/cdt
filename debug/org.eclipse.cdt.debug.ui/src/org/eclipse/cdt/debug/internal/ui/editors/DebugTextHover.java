@@ -83,7 +83,6 @@ public class DebugTextHover implements ITextHover
 				{
 					IDebugTarget target = (IDebugTarget)iterator.next();
 					ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
-					boolean first = true;
 					if ( ee.canEvaluate() )
 					{
 						String result = evaluateExpression( ee, expression );
@@ -91,17 +90,14 @@ public class DebugTextHover implements ITextHover
 						{
 							if ( result != null )
 							{
-								if ( !first )
-								{
-									buffer.append( '\n' );
-								}
-								first = false;
 								if ( showDebugTarget )
 								{
 									buffer.append( '[' );
 									buffer.append( target.getName() );
 									buffer.append( "]: " );
 								}
+								buffer.append( expression );
+								buffer.append( '=' );
 								buffer.append( result );
 							}
 						}

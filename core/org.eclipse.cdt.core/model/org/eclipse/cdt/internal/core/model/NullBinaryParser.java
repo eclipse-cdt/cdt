@@ -11,10 +11,6 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * @author alain
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class NullBinaryParser implements IBinaryParser {
 

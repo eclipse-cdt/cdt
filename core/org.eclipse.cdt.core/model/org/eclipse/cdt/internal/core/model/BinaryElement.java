@@ -1,8 +1,6 @@
 /*
- * Created on Mar 30, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.cdt.internal.core.model;
 
@@ -19,10 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @author alain
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class BinaryElement extends CElement implements IBinaryElement, ISourceManipulation, ISourceReference {
 

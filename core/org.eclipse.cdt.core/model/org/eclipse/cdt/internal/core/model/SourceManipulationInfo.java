@@ -7,14 +7,14 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.IOException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /** 
  * Element info for ISourceReference elements. 
@@ -46,10 +46,12 @@ class SourceManipulationInfo extends CElementInfo {
 		ITranslationUnit tu = getTranslationUnit();
 		if (tu != null) {
 			try {
-				IFile file = ((CFile)tu).getFile();
-				StringBuffer buffer = Util.getContent(file);
-				return  buffer.substring(getElement().getStartPos(),
-						getElement().getStartPos() + getElement().getLength());
+				IResource res = tu.getResource();
+				if (res != null && res instanceof IFile) {
+					StringBuffer buffer = Util.getContent((IFile)res);
+					return  buffer.substring(getElement().getStartPos(),
+							getElement().getStartPos() + getElement().getLength());
+				}
 			} catch (IOException e) {
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
 			}

@@ -1,3 +1,15 @@
+2005-01-20
+	PR 82964
+	* icons/full/cview16/view_menu.gif
+	* src/org/eclipse/cdt/internal.ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/actions/ActionMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CSourceViewer.java
+	* src/org/eclipse/cdt/internal/ui/text/CCodeScanner.java
+	* src/org/eclipse/cdt/internal/ui/text/COperatorRule.java
+	* src/org/eclipse/cdt/internal/ui/text/COutlineInformationControl.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* src/org/eclipse/cdt/internal/ui/text/contenassist/CCompletionProcessor.java
+
 2005-01-19 Alain Magloire
 	PR 83151
 	* src/org/eclipse/cdt/ui/CElementContentProvider.java

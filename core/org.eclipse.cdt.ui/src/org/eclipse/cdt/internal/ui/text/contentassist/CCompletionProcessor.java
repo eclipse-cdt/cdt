@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -32,8 +33,8 @@ import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -315,7 +316,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		fCurrentSourceUnit = unit;
 		fTextViewer = viewer;
 		
-		ArrayList completions = new ArrayList();
+		final List completions = new Vector();
 		
 		if (fCurrentSourceUnit == null)
 			return null;
@@ -327,12 +328,30 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		if (fCurrentCompletionNode != null) {
 			addProposalsFromSearch(fCurrentCompletionNode, completions);
 			addProposalsFromCompletionContributors(fCurrentCompletionNode, completions);
-			addProposalsFromTemplates(viewer, fCurrentCompletionNode, completions);		
+			addProposalsFromTemplates(viewer, fCurrentCompletionNode, completions);
+            removeRepeatedProposals(completions);
 			return order( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]));
 		}
 		return null;			
 	}
-	
+
+	/**
+     * Removes duplicated proposals. 
+     * @param completions Completions to check.
+	 */
+    private void removeRepeatedProposals(List completions) {
+        final int size = completions.size();
+        final ICompletionProposal[] proposalsToCheck = (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[size]);
+        for (int i = 0; i < size; i++) {
+            for (int j = i + 1; j < size; j++) {
+                if (proposalsToCheck[i].equals(proposalsToCheck[j])) {
+                    completions.remove(proposalsToCheck[j]);
+                    break;
+                }
+            }
+        }
+    }
+    
 	private void addProposalsFromTemplates(ITextViewer viewer, IASTCompletionNode completionNode, List completions){
 		if (completionNode == null)
 			return;

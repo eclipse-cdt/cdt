@@ -14,6 +14,7 @@ import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoIndentStrategy;
@@ -54,7 +55,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	/** Key used to look up display tab width */
 	public final static String PREFERENCE_TAB_WIDTH= "org.eclipse.cdt.editor.tab.width"; //$NON-NLS-1$
 
-	private CTextTools fTextTools;
+    private CTextTools fTextTools;
 	private CEditor fEditor;
 	
 	/**
@@ -121,14 +122,15 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
      */
     public IInformationPresenter getOutlinePresenter(CEditor editor)
     {
-        final InformationPresenter presenter = new InformationPresenter(getOutlineContolCreator(editor));
-        presenter.setSizeConstraints(20, 20, true, false);
+        final IInformationControlCreator outlineControlCreator = getOutlineContolCreator(editor);
+        final InformationPresenter presenter = new InformationPresenter(outlineControlCreator);
         final IInformationProvider provider = new CElementContentProvider(getEditor());
         presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
         presenter.setInformationProvider(provider, ICPartitions.C_MULTILINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
         presenter.setInformationProvider(provider, ICPartitions.C_STRING);
-        
+        presenter.setSizeConstraints(20, 20, true, false);
+        presenter.setRestoreInformationControlBounds(getSettings("outline_presenter_bounds"), true, true); //$NON-NLS-1$        
         return presenter;
     }
 
@@ -438,12 +440,25 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
             {
                 int shellStyle= SWT.RESIZE;
                 int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
-                return new COutlineInformationControl(editor, parent, shellStyle, treeStyle);                
+                return new COutlineInformationControl(editor, parent, shellStyle, treeStyle);   
             }
         };
         return conrolCreator;
     }
 
-
+    /**
+     * Returns the settings for the given section.
+     *
+     * @param sectionName the section name
+     * @return the settings
+     */
+    private IDialogSettings getSettings(String sectionName) {
+        IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+        if (settings == null) {
+            settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+        }
+        
+        return settings;
+    }
     
 }

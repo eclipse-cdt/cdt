@@ -105,11 +105,13 @@ public class CPluginImages {
 
 	// build console
 	public static final String IMG_VIEW_BUILD = NAME_PREFIX + "buildconsole.gif"; //$NON-NLS-1$
+    public static final String IMG_VIEW_MENU = NAME_PREFIX + "view_menu.gif";   //$NON-NLS-1$
 
 	// unknow type
 	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.gif"; //$NON-NLS-1$
 	
     public static final ImageDescriptor DESC_BUILD_CONSOLE = createManaged(T_VIEW, IMG_VIEW_BUILD);
+    public static final ImageDescriptor IMG_VIEW_MENU_DESC = createManaged(T_VIEW, IMG_VIEW_MENU);
 
 	public static final ImageDescriptor DESC_OBJS_VARIABLE= createManaged(T_OBJ, IMG_OBJS_VARIABLE);
 	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE= createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
@@ -182,7 +184,7 @@ public class CPluginImages {
 	public static final String IMG_TOOL_GOTO_PREV_ERROR= NAME_PREFIX + "prev_error_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOL_GOTO_NEXT_ERROR= NAME_PREFIX + "next_error_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_EDIT_PROPERTIES= NAME_PREFIX + "prop_edt.gif";	 //$NON-NLS-1$
-
+    
 	public static final String IMG_ACTION_SHOW_FIELDS= NAME_PREFIX + "fields_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ACTION_SHOW_PUBLIC= NAME_PREFIX + "public_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ACTION_SHOW_STATIC= NAME_PREFIX + "static_co.gif"; //$NON-NLS-1$

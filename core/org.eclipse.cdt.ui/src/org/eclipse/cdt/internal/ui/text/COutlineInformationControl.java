@@ -1,13 +1,15 @@
 /*
  * COutlineInformationControl.java 2004-12-14 / 08:17:41
 
- * $Revision: 1.1 $ $Date: 2004/12/14 18:46:19 $
+ * $Revision: 1.2 $ $Date: 2004/12/23 19:38:20 $
  *
  * @author P.Tomaszewski
  */
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.cdt.internal.core.model.CElement;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinerProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
@@ -16,7 +18,11 @@ import org.eclipse.cdt.internal.ui.viewsupport.StandardCElementLabelProvider;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension3;
@@ -39,6 +45,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -58,8 +66,12 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -67,36 +79,35 @@ import org.eclipse.swt.widgets.TreeItem;
  * Control which shows outline information in C/C++ editor. Based on
  * AbstracInformationContol/JavaOutlineInformationControl from JDT.
  * 
- * TODO: Bounds restoring, sorting.
+ * TODO: Sorting.
  * 
  * @author P.Tomaszewski
  */
 public class COutlineInformationControl implements IInformationControl,
         IInformationControlExtension, IInformationControlExtension3 {
+
+    /** If this option is set, location is not restored. */
+    private static final String STORE_RESTORE_SIZE= "ENABLE_RESTORE_SIZE"; //$NON-NLS-1$
+    /** If this option is set, size is not restore. */
+    private static final String STORE_RESTORE_LOCATION= "ENABLE_RESTORE_LOCATION"; //$NON-NLS-1$
+
     /** Border thickness in pixels. */
     private static final int BORDER = 1;
-
     /** Right margin in pixels. */
     private static final int RIGHT_MARGIN = 3;
-
     /** Minimum width set by setSizeConstrains to tree viewer. */
     private static final int MIN_WIDTH = 300;
 
     /** Source viewer which shows this control. */
     CEditor fEditor;
-
     /** Shell for this control. */
     Shell fShell;
-
     /** Control's composite. */
     Composite fComposite;
-
     /** Tree viewer used to display outline. */
     TreeViewer fTreeViewer;
-
     /** Text control for filter. */
-    private Text fFilterText;
-
+    Text fFilterText;
     /** Content provider for tree control. */
     IContentProvider fTreeContentProvider;
 
@@ -105,24 +116,28 @@ public class COutlineInformationControl implements IInformationControl,
 
     /** Control bounds. */
     Rectangle fBounds;
-
     /** Control trim. */
     Rectangle fTrim;
-
-    /** Deactivation adapter. */
-    private Listener fDeactivateListener;
 
     /** This prevents to notify listener when it is adding. */
     boolean fIsDeactivationActive;
 
+    /** Deactivation adapter. */
+    private Listener fDeactivateListener;
     /** Shell adapter, used for control deactivation. */
     private ShellListener fShellListener;
-
     /** Control adapter for shell, used in resize action. */
     private ControlListener fControlListener;
 
     /** Should outline be sorted. */
     boolean fSort = true;
+
+    /** Tool bar displayed on the top of the outline. */ 
+    ToolBar fToolBar;
+    /** Composite for tool bar. */
+    private Composite fToolbarComposite;
+    /** Menu manager for options menu. */
+    private MenuManager fViewMenuManager;
 
     /**
      * Creates new outline control.
@@ -142,7 +157,7 @@ public class COutlineInformationControl implements IInformationControl,
         this.fEditor = editor;
         createShell(parent, shellStyle);
         createComposite();
-        createFilterText();
+        createToolbar();
         createHorizontalSeparator();
         createTreeeViewer(treeStyle);
     }
@@ -323,16 +338,27 @@ public class COutlineInformationControl implements IInformationControl,
      * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
      */
     public boolean restoresLocation() {
-        // TODO: To implement.
-        return false;
+        return getSettings().getBoolean(STORE_RESTORE_LOCATION);
     }
 
     /**
      * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
      */
     public boolean restoresSize() {
-        // TODO: To implement.
-        return false;
+        return getSettings().getBoolean(STORE_RESTORE_SIZE);
+    }
+
+    /**
+     * Returns view manager instance. If instance does not exit it is created.
+     * @return View manager.
+     */
+    MenuManager getViewMenuManager() {
+        if (fViewMenuManager == null) {
+            fViewMenuManager= new MenuManager();
+            fViewMenuManager.add(new RememberBoundsAction());
+            fViewMenuManager.add(new MoveAction());
+        }
+        return fViewMenuManager;
     }
 
     /**
@@ -363,7 +389,7 @@ public class COutlineInformationControl implements IInformationControl,
      * 
      */
     private void createComposite() {
-        fComposite = new org.eclipse.swt.widgets.Composite(fShell, SWT.RESIZE);
+        fComposite = new Composite(fShell, SWT.RESIZE);
         GridLayout layout = new GridLayout(1, false);
         fComposite.setLayout(layout);
         fComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -371,6 +397,7 @@ public class COutlineInformationControl implements IInformationControl,
 
     /**
      * Creates tree viewer control.
+     * @param treeStyle Tree style.
      */
     private void createTreeeViewer(int treeStyle) {
         final IWorkingCopyManager manager = CUIPlugin.getDefault()
@@ -393,14 +420,37 @@ public class COutlineInformationControl implements IInformationControl,
     }
 
     /**
+     * Creates horizontal separator between filter text and outline.
+     */
+    private void createHorizontalSeparator() {
+        Label separator = new Label(fComposite, SWT.SEPARATOR | SWT.HORIZONTAL
+                | SWT.LINE_DOT);
+        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    }
+
+    /**
+     * Creates toolbar.
+     */
+    private void createToolbar() {
+        fToolbarComposite = new Composite(fComposite, SWT.NONE);
+        final GridLayout layout = new GridLayout(2, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        fToolbarComposite.setLayout(layout);
+        fToolbarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        createFilterText();
+        createViewMenu();
+    }
+    
+    /**
      * Creates control for filter text.
      */
     private void createFilterText() {
-        fFilterText = new Text(fComposite, SWT.NONE);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        GC gc = new GC(fComposite);
+        fFilterText = new Text(fToolbarComposite, SWT.NONE);
+        final GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        final GC gc = new GC(fComposite);
         gc.setFont(fComposite.getFont());
-        FontMetrics fontMetrics = gc.getFontMetrics();
+        final FontMetrics fontMetrics = gc.getFontMetrics();
         gc.dispose();
 
         data.heightHint = Dialog.convertHeightInCharsToPixels(fontMetrics, 1);
@@ -413,14 +463,43 @@ public class COutlineInformationControl implements IInformationControl,
     }
 
     /**
-     * Creates horizontal separator between filter text and outline.
+     * Creates view menu for toolbar. In this menu options will be displayed.
      */
-    private void createHorizontalSeparator() {
-        Label separator = new Label(fComposite, SWT.SEPARATOR | SWT.HORIZONTAL
-                | SWT.LINE_DOT);
-        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    private void createViewMenu() {
+        fToolBar= new ToolBar(fToolbarComposite, SWT.FLAT);
+        final ToolItem viewMenuButton= new ToolItem(fToolBar, SWT.PUSH, 0);
+
+        final GridData data= new GridData();
+        data.horizontalAlignment= GridData.END;
+        data.verticalAlignment= GridData.BEGINNING;
+        fToolBar.setLayoutData(data);
+
+        viewMenuButton.setImage(CPluginImages.get(CPluginImages.IMG_VIEW_MENU));
+        createSelectionListenerForOptions(viewMenuButton);
     }
 
+    /**
+     * Creates selection listener for options.
+     * @param viewMenuButton Button to create selection adapter.
+     */
+    private void createSelectionListenerForOptions(ToolItem viewMenuButton) {
+        viewMenuButton.addSelectionListener(new SelectionAdapter() {
+            /**
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+                fIsDeactivationActive = false;
+
+                final Menu menu = getViewMenuManager().createContextMenu(fShell);
+                final Rectangle bounds = fToolBar.getBounds();
+                final Point topLeft = fShell.toDisplay(new Point(bounds.x, bounds.y + bounds.height));
+                menu.setLocation(topLeft.x, topLeft.y);
+
+                menu.setVisible(true);        
+            }
+        });
+    }
+    
     /**
      * Creates mouse listener for tree viewer.
      * 
@@ -446,7 +525,10 @@ public class COutlineInformationControl implements IInformationControl,
                         fEditor.setSelection(selectedElement);
                         dispose();
                     }
-                    fBounds = fComposite.getBounds();
+                    if (fComposite != null && !fComposite.isDisposed())
+                    {
+                        fBounds = fComposite.getBounds();
+                    }
                 }
             }
         };
@@ -506,15 +588,14 @@ public class COutlineInformationControl implements IInformationControl,
             /**
              * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
-            public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 // Does not need implementation.
             }
 
             /**
              * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
              */
-            public void widgetDefaultSelected(
-                    org.eclipse.swt.events.SelectionEvent e) {
+            public void widgetDefaultSelected(SelectionEvent e) {
                 final TreeItem[] selection = ((Tree) fTreeViewer.getControl())
                         .getSelection();
                 if (selection.length > 0) {
@@ -535,6 +616,9 @@ public class COutlineInformationControl implements IInformationControl,
      */
     private KeyListener createKeyListenerForTreeViewer() {
         final KeyListener listener = new KeyListener() {
+            /**
+             * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+             */
             public void keyPressed(KeyEvent e) {
                 if (e.keyCode == 0x1B) // ESC
                 {
@@ -542,6 +626,9 @@ public class COutlineInformationControl implements IInformationControl,
                 }
             }
 
+            /**
+             * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+             */
             public void keyReleased(KeyEvent e) {
                 // Does not need implementation.
             }
@@ -562,8 +649,7 @@ public class COutlineInformationControl implements IInformationControl,
                 if (length > 0 && text.charAt(length - 1) != '*') {
                     text = text + '*';
                 }
-                ((CContentOutlinerProvider) fTreeContentProvider)
-                        .updateFilter(text);
+                ((CContentOutlinerProvider) fTreeContentProvider).updateFilter(text);
             }
         };
         return modifyListener;
@@ -672,6 +758,21 @@ public class COutlineInformationControl implements IInformationControl,
     }
 
     /**
+     * Returns setting for this control.
+     * @return Settings.
+     */
+    IDialogSettings getSettings() {
+        final String sectionName = "org.eclipse.jdt.internal.ui.text.QuickOutline"; //$NON-NLS-1$
+        IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
+        if (settings == null)
+        {
+            settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+        }
+
+        return settings;
+    }
+
+    /**
      * 
      * Border fill layout. Copied from AbstractInformationControl.
      * 
@@ -729,18 +830,17 @@ public class COutlineInformationControl implements IInformationControl,
         }
 
         /**
-         * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
-         *      boolean)
+         * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
          */
         protected void layout(Composite composite, boolean flushCache) {
 
-            Control[] children = composite.getChildren();
-            Point minSize = new Point(composite.getClientArea().width,
+            final Control[] children = composite.getChildren();
+            final Point minSize = new Point(composite.getClientArea().width,
                     composite.getClientArea().height);
 
             if (children != null) {
                 for (int i = 0; i < children.length; i++) {
-                    Control child = children[i];
+                    final Control child = children[i];
                     child.setSize(minSize.x - fBorderSize * 2, minSize.y
                             - fBorderSize * 2);
                     child.setLocation(fBorderSize, fBorderSize);
@@ -812,4 +912,62 @@ public class COutlineInformationControl implements IInformationControl,
         }
     }
 
+    /**
+     * The view menu's Remember Size and Location action.
+     */
+    private class RememberBoundsAction extends Action {
+
+        /**
+         * Creates new action.
+        */
+        RememberBoundsAction() {
+            super(ActionMessages.getString("COutlineInformationControl.viewMenu.remember.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+            setChecked(getSettings().getBoolean(STORE_RESTORE_LOCATION));
+        }
+
+        /**
+         * @see org.eclipse.jface.action.Action#run()
+         */
+        public void run() {
+            final IDialogSettings settings = getSettings();
+
+            final boolean newValue = isChecked();
+            
+            // store new value
+            settings.put(STORE_RESTORE_LOCATION, newValue);
+            settings.put(STORE_RESTORE_SIZE, newValue);
+
+            fIsDeactivationActive = true;
+        }
+    }
+
+    /**
+     * 
+     * The view menu's Move action.
+     *
+     * @author P.Tomaszewski
+     */
+    private class MoveAction extends Action {
+
+        /**
+         * Creates new action.
+         */
+        MoveAction() {
+            super(ActionMessages.getString("COutlineInformationControl.viewMenu.move.label"), IAction.AS_PUSH_BUTTON); //$NON-NLS-1$
+        }
+
+        /**
+         * @see org.eclipse.jface.action.Action#run()
+         */
+        public void run() {
+            final Tracker tracker= new Tracker(fShell.getDisplay(), SWT.NONE);
+            tracker.setStippled(true);
+            final Rectangle[] r= new Rectangle[] { fFilterText.getShell().getBounds() };
+            tracker.setRectangles(r);
+            if (tracker.open()) {
+                fShell.setBounds(tracker.getRectangles()[0]);
+            }
+        }
+    }
+    
 }

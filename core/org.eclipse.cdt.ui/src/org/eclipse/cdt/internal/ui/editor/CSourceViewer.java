@@ -65,10 +65,8 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
     public void configure(SourceViewerConfiguration configuration)
     {
         super.configure(configuration);
-        System.out.println("Configuration...");
         if (configuration instanceof CSourceViewerConfiguration)
         {            
-            System.out.println("configured");
             fOutlinePresenter = ((CSourceViewerConfiguration) configuration).getOutlinePresenter(editor);
             fOutlinePresenter.install(this);
         }

@@ -25,6 +25,7 @@ public class COperatorRule extends SingleCharRule
     {
         return (ch == ';' || ch == '.' || ch == ':' || ch == '=' || ch == '-'
             || ch == '+' || ch == '\\' || ch == '*' || ch == '!' || ch == '%'
-            || ch == '^' || ch == '&' || ch == '~' || ch == '>' || ch == '<');
+            || ch == '^' || ch == '&' || ch == '~' || ch == '>' || ch == '<')
+            || ch == '|';
     }
 }

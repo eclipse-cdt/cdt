@@ -30,8 +30,8 @@ public final class CCodeScanner extends AbstractCScanner {
 	/** Constants which are additionally colored. */
     private static String[] fgConstants= { "NULL", "__DATE__", "__LINE__",  	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
 			                           "__TIME__", "__FILE__", "__STDC__",      //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                       "bool", "TRUE", "FALSE"}; 	            //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+                                       "bool", "TRUE", "FALSE", 	            //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                       "EXT_TEXT"};                             //$NON-NLS-1$
     /** Properties for tokens. */
 	private static String[] fgTokenProperties= {
 		ICColorConstants.C_KEYWORD,

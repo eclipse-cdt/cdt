@@ -121,7 +121,7 @@ public class AR {
 	}
 
 	public static boolean isARHeader(byte[] ident) {
-		if (ident.length < 8
+		if (ident == null || ident.length < 8
 			|| ident[0] != '<'
 			|| ident[1] != 'b'
 			|| ident[2] != 'i'

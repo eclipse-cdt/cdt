@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
@@ -607,5 +608,38 @@ public class AST2Tests extends TestCase {
 		assertSame( structA_1, structA_2 );
 		assertSame( structA_2, structA_3 );
 		assertSame( structA_3, structA_4 );
+    }
+    
+    public void testSimpleFunction() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "void f();              \n" ); //$NON-NLS-1$
+    	buffer.append( "void g() {             \n" ); //$NON-NLS-1$
+    	buffer.append( "   f();                \n" ); //$NON-NLS-1$
+    	buffer.append( "}                      \n" ); //$NON-NLS-1$
+    	buffer.append( "void f(){ }            \n" ); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	//void f();
+    	IASTSimpleDeclaration fdecl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) fdecl.getDeclarators().get(0);
+    	IASTName name_f = fdtor.getName();
+    	
+    	//void g() {
+    	IASTFunctionDefinition gdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	IASTFunctionDeclarator gdtor = gdef.getDeclarator();
+    	IASTName name_g = gdtor.getName();
+    	
+    	//   f();
+    	IASTCompoundStatement compound = (IASTCompoundStatement) gdef.getBody();
+    	IASTStatement statement = (IASTStatement) compound.getStatements().get(0);
+    	assertTrue( statement instanceof IASTExpressionStatement );
+    	IASTExpressionStatement expStatement = (IASTExpressionStatement) statement;
+    	IASTExpression exp = expStatement.getExpression();
+    	
+    	//void f() {}
+    	IASTFunctionDefinition fdef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
+    	fdtor = fdef.getDeclarator();
+    	IASTName name_fdef = fdtor.getName();
     }
 }

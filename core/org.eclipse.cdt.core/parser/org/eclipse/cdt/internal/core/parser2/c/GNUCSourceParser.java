@@ -891,16 +891,21 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tLPAREN:
                 // function call
                 consume(IToken.tLPAREN);
-                secondExpression = expression();
+            	if( LT(1) != IToken.tRPAREN )
+            	    secondExpression = expression();
                 consume(IToken.tRPAREN);
                 IASTFunctionCallExpression f = createFunctionCallExpression();
                 f.setOffset( firstExpression.getOffset() );
                 f.setFunctionNameExpression( firstExpression );
                 firstExpression.setParent( f );
                 firstExpression.setPropertyInParent( IASTFunctionCallExpression.FUNCTION_NAME );
-                f.setParameterExpression( secondExpression );
-                secondExpression.setParent( f );
-                secondExpression.setPropertyInParent( IASTFunctionCallExpression.PARAMETERS );
+                
+                if( secondExpression != null )
+                {
+                    f.setParameterExpression( secondExpression );
+	                secondExpression.setParent( f );
+	                secondExpression.setPropertyInParent( IASTFunctionCallExpression.PARAMETERS );
+                }
                 firstExpression = f;
                 break;
             case IToken.tINCR:

@@ -1,0 +1,21 @@
+<contexts>
+
+<context id ="default_cs_help">
+   <description>Click below to see help.</description>
+   <topic href="default_cs_help.htm"
+   	label="Default Context Sensitive Help"/>
+</context>
+
+<context id ="cdt_make_builder_page">
+   <description>Define the build settings for the current project. </description>
+   <topic href="cdt_u_newproj_buildset.htm"
+   	label="Make Builder page, C/C++ Properties window"/>
+</context>
+
+<context id ="cdt_paths_symbols_page">
+   <description>Enter include paths and symbols. </description>
+   <topic href="cdt_u_newproj_pathsymb.htm"
+   	label="Paths and Symbols page, C/C++ Properties window"/>
+</context>
+
+</contexts>

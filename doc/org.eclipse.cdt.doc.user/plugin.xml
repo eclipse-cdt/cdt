@@ -9,7 +9,7 @@
 
    name = "C/C++ Development User Guide"
    id = "org.eclipse.cdt.doc.user"
-   version = "1.0"
+   version = "1.2.0.57"
   provider-name = "Rational Software: IBM Software Group">
    <!-- Configure the help contribution for this plugin --> 
    <!-- This part should be in a documentation plugin -->
@@ -17,12 +17,18 @@
        <toc file="toc.xml" primary="true" /> 
    </extension>
    <extension point="org.eclipse.help.contexts">
-       <contexts file="contextHelp.xml" plugin="org.eclipse.cdt.ui"/> 
+       <contexts file="contexts_CDT.xml" plugin="org.eclipse.cdt.ui"/> 
    </extension>
    <extension point="org.eclipse.help.contexts">
-       <contexts file="contextHelp.xml" plugin="org.eclipse.debug.ui"/> 
+       <contexts file="contexts_CDT_DEBUGGER.xml" plugin="org.eclipse.cdt.debug.ui"/> 
    </extension>
    <extension point="org.eclipse.help.contexts">
-       <contexts file="contextHelp.xml" plugin="org.eclipse.cdt.debug.ui"/> 
+       <contexts file="contexts_CDT_DEBUGGER_MI.xml" plugin="org.eclipse.cdt.debug.mi.ui"/> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contexts_CDT_make.xml" plugin="org.eclipse.cdt.make.ui"/> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contexts_CDT_LAUNCH.xml" plugin="org.eclipse.cdt.launch"/> 
    </extension>
 </plugin>

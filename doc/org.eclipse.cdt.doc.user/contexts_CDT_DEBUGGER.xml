@@ -1,0 +1,57 @@
+<contexts>
+
+<context id ="default_cs_help">
+   <description>Click below to see help.</description>
+   <topic href="default_cs_help.htm"
+   	label="Default Context Sensitive Help"/>
+</context>
+
+<context id ="registers_view_context">
+   <description>The registers view displays the register values of a selected stack frame. </description>
+   <topic href="cdt_u_registersview.htm"
+   	label="Registers view"/>
+</context>
+
+<context id ="registers_preference_page_context">
+   <description>Change the color in which register values are displayed. </description>
+   <topic href="cdt_u_reg_view_pref.htm"
+   	label="Registers view preferences"/>
+</context>
+
+<context id ="memory_view_context">
+   <description>The memory view displays process memory. </description>
+   <topic href="cdt_u_memoryview.htm"
+   	label="Memory view"/>
+</context>
+
+<context id ="memory_preference_page_context">
+   <description>Click below to see help</description>
+   <topic href="cdt_u_mem_view_pref.htm"
+   	label="Memory view preferences"/>
+</context>
+
+<context id ="shared_libraries_view_context">
+   <description>Click below to see help</description>
+   <topic href="cdt_u_shared_lib_view.htm"
+   	label="Shared Libraries view"/>
+</context>
+
+<context id ="shared_libraries_preference_page_context">
+   <description>Set the refresh preference for the Shared Libraries view. </description>
+   <topic href="cdt_u_shared_lib_view_pref.htm"
+   	label="Shared Libraries view preferences"/>
+</context>
+
+<context id ="signals_view_context">
+   <description>Click below to see help</description>
+   <topic href="cdt_u_signals_view.htm"
+   	label="Signals view"/>
+</context>
+
+<context id ="c_debug_preference_page_context">
+   <description>View information about your program as you debug. </description>
+   <topic href="cdt_u_dbg_pref.htm"
+   	label="Debug preferences"/>
+</context>
+
+</contexts>

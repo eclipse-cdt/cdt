@@ -670,7 +670,11 @@ public class CDebugTarget extends CDebugElement
 	public void handleDebugEvent( ICDIEvent event )
 	{
 		ICDIObject source = event.getSource();
-		if ( source.getTarget().equals( getCDITarget() ) )
+		if ( source == null && event instanceof ICDIDestroyedEvent )
+		{
+			handleTerminatedEvent( (ICDIDestroyedEvent)event );
+		}		
+		else if ( source.getTarget().equals( getCDITarget() ) )
 		{
 			if ( event instanceof ICDICreatedEvent )
 			{
@@ -702,11 +706,7 @@ public class CDebugTarget extends CDebugElement
 			}
 			else if ( event instanceof ICDIDestroyedEvent )
 			{
-				if ( source instanceof ICDITarget )
-				{
-					handleTerminatedEvent( (ICDIDestroyedEvent)event );
-				}
-				else if ( source instanceof ICDIThread )
+				if ( source instanceof ICDIThread )
 				{
 					handleThreadTerminatedEvent( (ICDIDestroyedEvent)event );
 				}
@@ -1052,6 +1052,18 @@ public class CDebugTarget extends CDebugElement
 	{
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );
+		IProcess process = getProcess();
+		if ( process != null )
+		{
+			try
+			{
+				process.terminate();
+			}
+			catch( DebugException e )
+			{
+				CDebugCorePlugin.log( e.getStatus() );
+			}
+		}
 		terminated();
 	}
 
@@ -1059,6 +1071,18 @@ public class CDebugTarget extends CDebugElement
 	{
 		setCurrentStateId( IState.DISCONNECTED );
 		setCurrentStateInfo( null );
+		IProcess process = getProcess();
+		if ( process != null )
+		{
+			try
+			{
+				process.terminate();
+			}
+			catch( DebugException e )
+			{
+				CDebugCorePlugin.log( e.getStatus() );
+			}
+		}
 		disconnected();
 	}
 

@@ -7,7 +7,9 @@ import java.io.OutputStream;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
+import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
 
@@ -112,6 +114,7 @@ public class MIInferior extends Process {
 	 * @see java.lang.Process#destroy()
 	 */
 	public void destroy() {
+/*
 		if (!isTerminated()) {
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
@@ -121,6 +124,19 @@ public class MIInferior extends Process {
 				session.getRxThread().fireEvent(new MIInferiorExitEvent());
 			} catch (MIException e) {
 			}
+		}
+*/
+		if (!isSuspended())
+		{
+			// interrupt execution
+		}
+		CommandFactory factory = session.getCommandFactory();
+		MIGDBExit exit = factory.createMIGDBExit();
+		try {
+			session.postCommand(exit);
+			setTerminated();
+			session.getRxThread().fireEvent(new MIExitEvent());
+		} catch (MIException e) {
 		}
 	}
 

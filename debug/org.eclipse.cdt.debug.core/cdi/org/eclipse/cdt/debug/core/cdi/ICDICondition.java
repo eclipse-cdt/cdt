@@ -38,4 +38,6 @@ public interface ICDICondition {
 	 * @return  the thread Ids for this condition.
 	 */
 	String[] getThreadIds();
+
+	boolean equals(ICDICondition cond);
 }

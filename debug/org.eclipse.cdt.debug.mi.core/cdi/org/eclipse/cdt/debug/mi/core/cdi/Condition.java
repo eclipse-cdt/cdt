@@ -50,9 +50,9 @@ public class Condition implements ICDICondition {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals( Object obj ) {
-		if (obj instanceof ICDICondition) {
-			ICDICondition cond = (ICDICondition)obj;
+	public boolean equals(ICDICondition obj) {
+		if (obj instanceof Condition) {
+			Condition cond = (Condition)obj;
 			if (cond.getIgnoreCount() != this.getIgnoreCount())
 				return false;
 			if (cond.getExpression().compareTo(this.getExpression()) != 0)
@@ -60,8 +60,9 @@ public class Condition implements ICDICondition {
 			if (cond.getThreadIds().length != this.getThreadIds().length)
 				return false;
 			for (int i = 0; i < cond.getThreadIds().length; ++i) {
-				if ( cond.getThreadIds()[i].compareTo(this.getThreadIds()[i]) != 0)
+				if (cond.getThreadIds()[i].compareTo(this.getThreadIds()[i]) != 0) {
 					return false;
+				}
 			}
 			return true;
 		}

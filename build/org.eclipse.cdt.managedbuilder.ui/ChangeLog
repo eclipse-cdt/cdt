@@ -1,3 +1,13 @@
+2003-10-14  Alain Magloire
+
+	ICOptionPage was added a new method
+		Preferences getPreferences();
+	This is needed to get the preference store when saving
+	On the plugin.  We had the equivalent for project
+		IProject getProject();
+
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/NewManagedProjectOptionPage
+
 2003-10-01 Sean Evoy
 	Fix for bugs 43490 (trivial), 44020, and 43980.
 	A massive change has occurred in the plugin file. I added new C tools that apply 

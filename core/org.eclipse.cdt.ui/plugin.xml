@@ -475,6 +475,45 @@
             class="org.eclipse.cdt.internal.ui.BuildConsole">
       </CBuildConsole>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <scope
+            name="%scope.cEditor.name"
+            parent="org.eclipse.ui.textEditorScope"
+            description="%cEditor.description"
+            id="org.eclipse.cdt.ui.cEditorScope">
+      </scope>
+      <category
+            name="%category.source.name"
+            descrption="%category.source.description"
+            id="org.eclipse.cdt.ui.category.source">
+      </category>
+      <command
+            name="%ActionDefinition.comment.name"
+            description="%ActionDefinition.comment.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.comment">
+      </command>
+      <keyBinding
+            string="Ctrl+/"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.comment"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.uncomment.name"
+            description="%ActionDefinition.uncomment.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.uncomment">
+      </command>
+      <keyBinding
+            string="Ctrl+\"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.uncomment"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   
 <!--
    <extension
          point="org.eclipse.ui.views">

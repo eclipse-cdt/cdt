@@ -1,3 +1,13 @@
+2004-03-15 Andrew Niefer
+	Templates:
+	- added ISourceElementRequestor.acceptTemplateParameterReference
+	- added throws ASTSemanticException to IASTFactory.createTemplateDeclaration & createTemplateParameter
+	- IASTTemplateDeclaration extends IASTScope, IASTTemplateParameter extends ISourceElementCallbackDelegate
+	- modified DeclarationWrapper.createASTNode & createMethodASTNode to handle member templates
+	- Add functionality to ASTTemplateDeclaration
+	- implemented CompleteParseASTFactory.createTemplateDeclaration & createTemplateParameter
+	- changes to symbol table to make it easier for the parser to use 
+
 2004-03-12 Andrew Niefer
 	handle case causing NPE in CompleteParseASTFactory.createElaboratedTypeSpecifier
 

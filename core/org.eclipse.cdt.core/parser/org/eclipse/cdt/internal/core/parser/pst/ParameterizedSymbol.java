@@ -193,7 +193,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		int size = ( getParameterList() == null ) ? 0 : getParameterList().size();
 		int fsize = ( function.getParameterList() == null ) ? 0 : function.getParameterList().size();
 		if( fsize != size ){
-			return false;
+			return false; 
 		}
 		if( fsize == 0 )
 			return true;
@@ -205,8 +205,11 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		TypeInfo fInfo = null;
 	
 		for( int i = size; i > 0; i-- ){
-			info = ((BasicSymbol)iter.next()).getTypeInfo();
-			fInfo = ((BasicSymbol) fIter.next()).getTypeInfo();
+			ISymbol p = (ISymbol) iter.next();
+			ISymbol pf = (ISymbol) fIter.next();
+			
+			info = p.getTypeInfo();
+			fInfo = pf.getTypeInfo();
 			
 			//parameters that differ only in the use of equivalent typedef types are equivalent.
 			info = ParserSymbolTable.getFlatTypeInfo( info );
@@ -259,6 +262,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 */
 	public void setReturnType( ISymbol type ){
 		_returnType = type;
+		_returnType.setContainingSymbol( this );
+		_returnType.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 	}
 
 	/* (non-Javadoc)

@@ -11,26 +11,62 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory;
+import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTTemplateDeclaration extends ASTNode implements IASTTemplateDeclaration
+public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDeclaration
 {
+	final private List templateParameters;
+	
+	private IASTScope ownerScope;
+	private ITemplateFactory factory;
+	private NamedOffsets offsets = new NamedOffsets();
+	
+	private ITemplateSymbol getTemplateSymbol(){
+		ISymbol symbol = getSymbol();
+		return (ITemplateSymbol) (( symbol instanceof ITemplateSymbol ) ? symbol : null);
+	}
     /**
      * 
      */
-    public ASTTemplateDeclaration()
+    public ASTTemplateDeclaration( ITemplateSymbol template, IASTScope scope, List parameters )
     {
-        super();
-        // TODO Auto-generated constructor stub
+        super( template );
+        
+        IContainerSymbol container = ((ASTScope)scope).getContainerSymbol();
+        if( container instanceof ITemplateFactory ){
+        	factory = (ITemplateFactory) container;
+        } else {
+        	factory = template.getSymbolTable().newTemplateFactory();
+        	factory.setContainingSymbol( container );
+        	factory.setASTExtension( new StandardSymbolExtension(factory, this ) );
+        }
+
+        factory.pushTemplate( template );
+        
+        templateParameters = parameters;
+        ownerScope = scope;
     }
+    
+    public IASTScope getOwnerScope(){
+    	return ownerScope;
+    }
+	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration#isExported()
      */
@@ -44,62 +80,61 @@ public class ASTTemplateDeclaration extends ASTNode implements IASTTemplateDecla
      */
     public IASTDeclaration getOwnedDeclaration()
     {
-        // TODO Auto-generated method stub
+    	IContainerSymbol owned = getTemplateSymbol().getTemplatedSymbol();
+    	if( owned != null && owned.getASTExtension() != null ){
+    		return owned.getASTExtension().getPrimaryDeclaration();
+    	}
         return null;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#setOwnedDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
-     */
-    public void setOwnedDeclaration(IASTDeclaration declaration)
-    {
-        // TODO Auto-generated method stub
+    
+    public void releaseFactory(){
+    	factory = null;
     }
+    
+    public IContainerSymbol getContainerSymbol()
+	{
+       	return factory != null ? (IContainerSymbol) factory : getTemplateSymbol();
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameterList#getTemplateParameters()
      */
     public Iterator getTemplateParameters()
     {
-        // TODO Auto-generated method stub
-        return null;
+    	return templateParameters.iterator();
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
     public void setStartingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        // TODO Auto-generated method stub
+    	offsets.setStartingOffsetAndLineNumber(offset, lineNumber);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
      */
     public void setEndingOffsetAndLineNumber(int offset, int lineNumber)
     {
-        // TODO Auto-generated method stub
+    	offsets.setEndingOffsetAndLineNumber( offset, lineNumber );
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
     public int getStartingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+    	return offsets.getStartingOffset();
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getEndingOffset();
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
-     */
-    public IASTScope getOwnerScope()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
@@ -112,28 +147,55 @@ public class ASTTemplateDeclaration extends ASTNode implements IASTTemplateDecla
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+    	try
+        {
+            requestor.enterTemplateDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+    	try
+        {
+            requestor.exitTemplateDeclaration(this);
+        }
+        catch (Exception e)
+        {
+            /* do nothing */
+        }
     }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
 	 */
 	public int getStartingLine() {
-		// TODO Auto-generated method stub
-		return 0;
+		return offsets.getStartingLine();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingLine()
 	 */
 	public int getEndingLine() {
+		return offsets.getEndingLine();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplate#setOwnedDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+	 */
+	public void setOwnedDeclaration(IASTDeclaration declaration) {
 		// TODO Auto-generated method stub
-		return 0;
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
+	 */
+	public Iterator getDeclarations() throws ASTNotImplementedException {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
     

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 
 /**
  * @author jcamelon
@@ -43,7 +44,13 @@ public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
 				if( parent instanceof IASTScopedElement  )
 					parent = ((IASTScopedElement)parent).getOwnerScope();				
 			}
-			else
+			else if( parent instanceof IASTTemplateDeclaration )
+			{
+				if( parent instanceof IASTScopedElement  )
+					parent = ((IASTScopedElement)parent).getOwnerScope();
+				continue;
+			}
+			else 
 				break;
 		}
 		if (names.size() != 0)

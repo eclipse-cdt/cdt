@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
@@ -458,5 +459,14 @@ public class NullSourceElementRequestor implements ISourceElementRequestor
 	 */
 	public Reader createReader(String finalPath) {
 		return InternalParserUtil.createFileReader( finalPath );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTemplateParameterReference(org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference)
+	 */
+	public void acceptTemplateParameterReference(IASTTemplateParameterReference reference) 
+	{
+		// TODO Auto-generated method stub
+		
 	} 
 }

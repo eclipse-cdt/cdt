@@ -1217,4 +1217,27 @@ public final class TemplateEngine {
 		
 		return null;
 	}
+	
+	static protected boolean templateParametersAreEquivalent( ISymbol p1, ISymbol p2 ){
+		if( !p1.isType( TypeInfo.t_templateParameter ) || !p2.isType( TypeInfo.t_templateParameter ) ||
+			 p1.getTypeInfo().getTemplateParameterType() != p2.getTypeInfo().getTemplateParameterType() )
+		{
+			return false;
+		}
+		
+		ITemplateSymbol t1 = (ITemplateSymbol) p1.getContainingSymbol();
+		ITemplateSymbol t2 = (ITemplateSymbol) p2.getContainingSymbol();
+		
+		if( p1.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName )
+		{
+			List l1 = t1.getParameterList(), l2 = t2.getParameterList();
+			return ( l1 != null && l2 != null &&  l1.indexOf( p1 ) == l2.indexOf( p2 ) ); 
+		} else if( p1.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
+			ITemplateSymbol pt1 = (ITemplateSymbol)p1.getTypeSymbol();
+			ITemplateSymbol pt2 = (ITemplateSymbol)p2.getTypeSymbol();
+			return checkTemplateParameterListsAreEquivalent( pt1.getParameterList(), pt2.getParameterList() );
+		} else {
+			return p1.getTypeInfo().equals( p2.getTypeInfo() );
+		}
+	}
 }

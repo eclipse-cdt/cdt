@@ -719,7 +719,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#templateLookup(java.lang.String, java.util.List)
 	 */
-	public ISymbol lookupTemplate( String name, List arguments ) throws ParserSymbolTableException
+	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException
 	{
 		LookupData data = new LookupData( name, TypeInfo.t_any );
 		
@@ -737,47 +737,55 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 
-	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List parameters, List arguments ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name, TypeInfo.t_any );
-		
-		ParserSymbolTable.lookup( data, this );
-		
-		Object look = null;
-		try{
-			look = ParserSymbolTable.resolveAmbiguities( data );
-		} catch ( ParserSymbolTableException e ){
-			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
-				throw e;
-			}
-			if( !data.foundItems.isEmpty() ){
-				look = data.foundItems.get( name );
-				if(!( look instanceof List ) ){
-					throw new ParserSymbolTableError();
-				}
-			}
-		}
-		
-		ITemplateSymbol template = (ITemplateSymbol) (( look instanceof ITemplateSymbol ) ? look : null);
-		if( template == null ){
-			if( look instanceof ISymbol ){
-				ISymbol symbol = (ISymbol) look;
-				if( symbol.isTemplateMember() && symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
-					template = (ITemplateSymbol) symbol.getContainingSymbol();
-				}	
-			}
-			
-		}
-		if( template != null ){
-			template = TemplateEngine.selectTemplateOrSpecialization( template, parameters, arguments );
-			if( template != null ){
-				return new TemplateFactory( template, parameters, arguments );
-			}
-		} else if ( look instanceof List ){
-			return new TemplateFactory( new HashSet( (List)look ), parameters, arguments );
-		}
-		
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupTemplateIdForDefinition(java.lang.String, java.util.List)
+	 */
+	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments) throws ParserSymbolTableException {
+		// TODO Auto-generated method stub
 		return null;
 	}
+	
+//	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List parameters, List arguments ) throws ParserSymbolTableException{
+//		LookupData data = new LookupData( name, TypeInfo.t_any );
+//		
+//		ParserSymbolTable.lookup( data, this );
+//		
+//		Object look = null;
+//		try{
+//			look = ParserSymbolTable.resolveAmbiguities( data );
+//		} catch ( ParserSymbolTableException e ){
+//			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
+//				throw e;
+//			}
+//			if( !data.foundItems.isEmpty() ){
+//				look = data.foundItems.get( name );
+//				if(!( look instanceof List ) ){
+//					throw new ParserSymbolTableError();
+//				}
+//			}
+//		}
+//		
+//		ITemplateSymbol template = (ITemplateSymbol) (( look instanceof ITemplateSymbol ) ? look : null);
+//		if( template == null ){
+//			if( look instanceof ISymbol ){
+//				ISymbol symbol = (ISymbol) look;
+//				if( symbol.isTemplateMember() && symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
+//					template = (ITemplateSymbol) symbol.getContainingSymbol();
+//				}	
+//			}
+//			
+//		}
+//		if( template != null ){
+//			template = TemplateEngine.selectTemplateOrSpecialization( template, parameters, arguments );
+//			if( template != null ){
+//				return new TemplateFactory( template, parameters, arguments );
+//			}
+//		} else if ( look instanceof List ){
+//			return new TemplateFactory( new HashSet( (List)look ), parameters, arguments );
+//		}
+//		
+//		return null;
+//	}
 	
 
 	public List prefixLookup( TypeFilter filter, String prefix, boolean qualified ) throws ParserSymbolTableException{
@@ -1055,5 +1063,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	private 	LinkedList	_contents;				//ordered list of all contents of this symbol
 	private		LinkedList	_usingDirectives;		//collection of nominated namespaces
 	private		Map 		_containedSymbols;		//declarations contained by us.
+
 
 }

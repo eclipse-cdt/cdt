@@ -1,3 +1,14 @@
+2004-03-15 Andrew Niefer
+	Added CompleteParseASTTest.testTemplateClassDeclaration
+		  CompleteParseASTTest.testTemplateFunction
+		  CompleteParseASTTest.testTemplateFunctionDefinition
+		  CompleteParseASTTest.testClassMemberTemplate
+  	started CompleteParseASTTest.testOverloadedFunctionTemplates
+  	Updated CompleteParseBaseTest to handle templates
+  	updated ParserSymbolTableTemplateTests to reflect changes to ITemplateFactory
+  	Commented out a couple of ParserSymbolTableTemplateTests until I figure out how the parser will
+  	handle those cases
+
 2004-03-12 Sean Evoy
 	Commit for Jeremiah Lott. 
 	Allows the managed build system to resolve "forward references" within its 

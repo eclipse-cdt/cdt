@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
@@ -94,6 +95,7 @@ public interface ISourceElementRequestor {
 	public void acceptMethodReference( IASTMethodReference reference );
 	public void acceptEnumeratorReference( IASTEnumeratorReference reference );
 	public void acceptParameterReference(IASTParameterReference reference);
+	public void acceptTemplateParameterReference( IASTTemplateParameterReference reference );
 	
 	public void exitTemplateDeclaration( IASTTemplateDeclaration declaration );
 	public void exitTemplateSpecialization( IASTTemplateSpecialization specialization );

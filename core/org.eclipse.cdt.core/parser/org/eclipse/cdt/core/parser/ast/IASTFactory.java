@@ -208,9 +208,9 @@ public interface IASTFactory
 	
 	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine ) ;
 	
-	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset, int startingLine ) ; 
+	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset, int startingLine ) throws ASTSemanticException; 
 
-	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ) ; 
+	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ) throws ASTSemanticException; 
 
 	public IASTTemplateInstantiation createTemplateInstantiation(IASTScope scope, int startingOffset, int startingLine); 
 	

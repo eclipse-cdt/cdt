@@ -495,11 +495,15 @@ public abstract class Parser extends ExpressionParser implements IParser
                 throw backtrack;
             }
             templateDecl.enterScope( requestor );
-            declaration(scope, templateDecl, null );
-			templateDecl.setEndingOffsetAndLineNumber(
-				lastToken.getEndOffset(), lastToken.getLineNumber() );
+            try{
+            	declaration(templateDecl, templateDecl, null );
+            } catch( EndOfFileException e ){
+            	templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
+    			templateDecl.exitScope( requestor );
+    			throw e;
+            }
+            templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
 			templateDecl.exitScope( requestor );
-            
         }
         catch (BacktrackException bt)
         {

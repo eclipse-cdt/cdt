@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -322,7 +323,15 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTDeclaration createASTNode(Declarator declarator) throws ASTSemanticException, BacktrackException
     {
-        boolean isWithinClass = (getScope() instanceof IASTClassSpecifier); //TODO fix this for COMPLETE_PARSE
+    	IASTScope scope = getScope();
+    	
+        boolean isWithinClass = false;//(getScope() instanceof IASTClassSpecifier); //TODO fix this for COMPLETE_PARSE
+    	if( scope instanceof IASTClassSpecifier ){
+    		isWithinClass = true;
+    	} else if ( scope instanceof IASTTemplateDeclaration ){
+    		isWithinClass = (((IASTTemplateDeclaration)scope).getOwnerScope() instanceof IASTClassSpecifier);
+    	}
+    	
         boolean isFunction = declarator.isFunction();
         boolean hasInnerDeclarator = ( declarator.getOwnedDeclarator() != null );
                 
@@ -430,6 +439,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTMethod createMethodASTNode(Declarator declarator, boolean nested) throws ASTSemanticException
     {
+    	IASTScope classifierScope = getScope();
+    	if( classifierScope instanceof IASTTemplateDeclaration ){
+    		classifierScope = ((IASTTemplateDeclaration)classifierScope).getOwnerScope();
+    	}
 		return astFactory.createMethod(scope, nested ? declarator
 				.getOwnedDeclarator().getNameDuple() : declarator
 				.getNameDuple(),
@@ -443,7 +456,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 						.getNameStartOffset(), declarator.getNameEndOffset(),
 				declarator.getNameLine(), templateDeclaration, declarator
 						.isConst(), declarator.isVolatile(), virtual, explicit,
-				declarator.isPureVirtual(), ((IASTClassSpecifier) scope)
+				declarator.isPureVirtual(), ((IASTClassSpecifier) classifierScope)
 						.getCurrentVisibilityMode(), declarator
 						.getConstructorMemberInitializers(), declarator
 						.hasFunctionBody(), declarator.hasFunctionTryBlock(),

@@ -37,6 +37,8 @@ import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
@@ -1282,6 +1284,178 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( i.hasNext() );
 	}
 	
+	public void testTemplateClassDeclaration() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T > class A {  T t;  }; " );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		Iterator params = template.getTemplateParameters();
+		
+		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
+		assertEquals( T.getIdentifier(), "T" );
+		assertFalse( params.hasNext() );
+		assertFalse( i.hasNext() );
+		
+		i = getDeclarations( template );
+
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertEquals( classA.getName(), "A" );
+		
+		assertFalse( i.hasNext() );
+		
+		i = getDeclarations( classA );
+		
+		IASTField t = (IASTField) i.next();
+		assertEquals( t.getName(), "t" );
+
+		IASTSimpleTypeSpecifier specifier = (IASTSimpleTypeSpecifier) t.getAbstractDeclaration().getTypeSpecifier();
+		assertEquals( specifier.getTypename(), "T" );
+		//assertEquals( specifier.getTypeSpecifier(), T ); //TODO uncomment when bug 54029 is fixed
+	}
+	
+	public void testTemplateFunction() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T > void f( T t ){} " );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		
+		Iterator params = template.getTemplateParameters();
+		
+		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
+		assertEquals( T.getIdentifier(), "T" );
+		assertFalse( params.hasNext() );
+		assertFalse( i.hasNext() );
+		
+		i = getDeclarations( template );
+		IASTFunction f = (IASTFunction) i.next();
+		assertEquals( f.getName(), "f" );
+		
+		params = f.getParameters();
+		IASTParameterDeclaration t = (IASTParameterDeclaration) params.next();
+		assertEquals( t.getName(), "t" );
+		IASTSimpleTypeSpecifier typeSpec = (IASTSimpleTypeSpecifier) t.getTypeSpecifier();
+		assertEquals( typeSpec.getTypename(), "T" );
+		//assertEquals( typeSpec.getTypeSpecifier(), T );  //TODO uncomment when bug 54029 is fixed
+	}
+	
+	public void testTemplateFunctionDefinition() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template <class T> void f( T t );" );
+		writer.write( "template <class U> void f( U u ) { }" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		
+		Iterator params = template.getTemplateParameters();
+		
+		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
+		assertEquals( T.getIdentifier(), "T" );
+		assertFalse( params.hasNext() );
+		
+		Iterator tempDecls = getDeclarations( template );
+		IASTFunction f = (IASTFunction) tempDecls.next();
+		assertEquals( f.getName(), "f" );
+		assertFalse( f.hasFunctionBody() );
+		assertFalse( tempDecls.hasNext() );
+		
+		params = f.getParameters();
+		IASTParameterDeclaration t = (IASTParameterDeclaration) params.next();
+		assertEquals( t.getName(), "t" );
+		IASTSimpleTypeSpecifier typeSpec = (IASTSimpleTypeSpecifier) t.getTypeSpecifier();
+		assertEquals( typeSpec.getTypename(), "T" );
+		//assertEquals( typeSpec.getTypeSpecifier(), T );  //TODO uncomment when bug 54029 is fixed
+		
+		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
+		
+		params = template2.getTemplateParameters();
+		
+		IASTTemplateParameter U = (IASTTemplateParameter) params.next();
+		assertEquals( U.getIdentifier(), "U" );
+		assertFalse( params.hasNext() );
+		
+		tempDecls = getDeclarations( template2 );
+		IASTFunction f2 = (IASTFunction) tempDecls.next();
+		assertEquals( f2.getName(), "f" );
+		assertTrue( f2.previouslyDeclared() );
+		
+		params = f2.getParameters();
+		IASTParameterDeclaration u = (IASTParameterDeclaration) params.next();
+		assertEquals( u.getName(), "u" );
+		typeSpec = (IASTSimpleTypeSpecifier) u.getTypeSpecifier();
+		assertEquals( typeSpec.getTypename(), "U" );
+		//assertEquals( typeSpec.getTypeSpecifier(), U );  //TODO uncomment when bug 54029 is fixed
+		
+		assertFalse( i.hasNext() );
+	}
+	
+	public void testClassMemberTemplate() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "namespace N { " );
+		writer.write( "   class A { " );
+		writer.write( "      template < class T > T f();" );
+		writer.write( "   }; " );
+		writer.write( "}" );
+		writer.write( "template <class U> U N::A::f() {} " );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTNamespaceDefinition N = (IASTNamespaceDefinition) i.next();
+		
+		Iterator i2 = getDeclarations( N );
+		
+		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i2.next()).getTypeSpecifier();
+		assertFalse( i2.hasNext() );
+		
+		i2 = getDeclarations( A );
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i2.next();
+		Iterator params = template.getTemplateParameters();
+		IASTTemplateParameter T = (IASTTemplateParameter) params.next();
+		assertFalse( params.hasNext() );
+		assertFalse( i2.hasNext() );
+		
+		i2 = getDeclarations( template );
+		
+		IASTMethod f = (IASTMethod) i2.next();
+		assertEquals( ((IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier()).getTypename(), "T" );
+		assertFalse( i2.hasNext() );
+		
+		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
+		params = template.getTemplateParameters();
+		IASTTemplateParameter U = (IASTTemplateParameter) params.next();
+		assertFalse( params.hasNext() );
+		assertFalse( i.hasNext() );
+		
+		i2 = getDeclarations( template2 );
+		
+		IASTMethod f2 = (IASTMethod) i2.next();
+		assertEquals( ((IASTSimpleTypeSpecifier)f2.getReturnType().getTypeSpecifier()).getTypename(), "U" );
+		assertQualifiedName( f2.getFullyQualifiedName(), new String [] { "N", "A", "f" } );
+		assertTrue( f2.previouslyDeclared() );
+		assertFalse( i2.hasNext() );
+	}
+	
+	public void testOverloadedFunctionTemplates() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( " template < class T > void f ( T )   {} " );
+		writer.write( " template < class T > void f ( T * ) {} " );
+		writer.write( " int * p;" );
+		writer.write( " void main () {" );
+		writer.write( "    f( p );" );
+		writer.write( "    f( *p );" );
+		writer.write( " }" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+	}
 	public void testBug54639() throws Exception
 	{
 		Writer writer = new StringWriter();

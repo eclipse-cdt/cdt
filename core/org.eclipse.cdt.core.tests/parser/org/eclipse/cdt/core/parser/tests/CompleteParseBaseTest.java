@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
@@ -347,7 +348,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void enterTemplateDeclaration(IASTTemplateDeclaration declaration)
         {
-            // TODO Auto-generated method stub
+        	pushScope( declaration );
         }
     
         /* (non-Javadoc)
@@ -408,8 +409,8 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void exitTemplateDeclaration(IASTTemplateDeclaration declaration)
         {
-            // TODO Auto-generated method stub
-            
+            popScope();
+            getCurrentScope().addDeclaration( declaration );
         }
     
         /* (non-Javadoc)
@@ -679,6 +680,14 @@ public class CompleteParseBaseTest extends TestCase
 		 */
 		public Reader createReader(String finalPath) {
 			return ParserUtil.createReader(finalPath);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTemplateParameterReference(org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference)
+		 */
+		public void acceptTemplateParameterReference(IASTTemplateParameterReference reference) {
+			processReference( reference );
+			
 		}
     
     }

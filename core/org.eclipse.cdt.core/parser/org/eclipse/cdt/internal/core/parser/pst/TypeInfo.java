@@ -470,24 +470,30 @@ public class TypeInfo {
 		boolean result = ( _typeInfo == type._typeInfo );
 		result &= ( _type == type._type );
 		
-		if( _typeDeclaration != null && type._typeDeclaration != null &&
-			_typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) &&
-			type._typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
-		{
-			//if typeDeclaration is a basic type, then only need the types the same
-			result &= ( _typeDeclaration.getType() == type._typeDeclaration.getType() );	
-		} else if( _typeDeclaration != null && type._typeDeclaration != null &&
-				  _typeDeclaration.isType( TypeInfo.t_function ) &&
-				  type._typeDeclaration.isType( TypeInfo.t_function ) )
-		{
-			//function pointers... functions must have same parameter lists and return types
-			IParameterizedSymbol f1 = (IParameterizedSymbol) _typeDeclaration;
-			IParameterizedSymbol f2 = (IParameterizedSymbol) type._typeDeclaration;
-			
-			result &= f1.hasSameParameters( f2 );
-			result &= f1.getReturnType().getTypeInfo().equals( f2.getReturnType().getTypeInfo() );
+		if( _typeDeclaration != null && type._typeDeclaration != null ){
+			if( _typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) &&
+				type._typeDeclaration.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
+			{
+				//if typeDeclaration is a basic type, then only need the types the same
+				result &= ( _typeDeclaration.getType() == type._typeDeclaration.getType() );	
+			} else if( _typeDeclaration.isType( TypeInfo.t_function ) &&
+					   type._typeDeclaration.isType( TypeInfo.t_function ) )
+			{
+				//function pointers... functions must have same parameter lists and return types
+				IParameterizedSymbol f1 = (IParameterizedSymbol) _typeDeclaration;
+				IParameterizedSymbol f2 = (IParameterizedSymbol) type._typeDeclaration;
+				
+				result &= f1.hasSameParameters( f2 );
+				result &= f1.getReturnType().getTypeInfo().equals( f2.getReturnType().getTypeInfo() );
+			} else if( _typeDeclaration.isType( TypeInfo.t_templateParameter ) &&
+					   type._typeDeclaration.isType( TypeInfo.t_templateParameter ) ){
+				//template parameters
+				result &= TemplateEngine.templateParametersAreEquivalent( _typeDeclaration, type._typeDeclaration );
+			} else {
+				//otherwise, its a user defined type, need the decls the same
+				result &= ( _typeDeclaration == type._typeDeclaration );
+			}	
 		} else {
-			//otherwise, its a user defined type, need the decls the same
 			result &= ( _typeDeclaration == type._typeDeclaration );
 		}
 			

@@ -69,6 +69,7 @@ import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
@@ -146,6 +147,12 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void acceptParameterReference(IASTParameterReference reference)
 	{
 		check( REFERENCES, reference );        
+	}
+	
+
+	public void acceptTemplateParameterReference(IASTTemplateParameterReference reference) 
+	{
+		check( REFERENCES, reference );	
 	}
 	
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef){

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
@@ -68,7 +69,11 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		} else if( node instanceof IASTParameterDeclaration ){
 			if( searchFor != VAR || !canAccept( limit ) )
 				return IMPOSSIBLE_MATCH;
+		} else if( node instanceof IASTTemplateParameter ){
+			if( searchFor != VAR || !canAccept( limit ) )
+				return IMPOSSIBLE_MATCH;
 		} else return IMPOSSIBLE_MATCH;
+		
 		
 		String nodeName = ((IASTOffsetableNamedElement)node).getName();
 		

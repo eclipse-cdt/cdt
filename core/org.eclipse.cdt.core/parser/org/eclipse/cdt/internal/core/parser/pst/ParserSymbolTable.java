@@ -89,6 +89,11 @@ public class ParserSymbolTable {
 	public ISpecializedSymbol newSpecializedSymbol( String name ){
 		return new SpecializedSymbol( this, name );
 	}
+	
+	public ITemplateFactory newTemplateFactory(){
+		return new TemplateFactory( this );
+	}
+	
 //	public ISpecializedSymbol newSpecializedSymbol( String name, TypeInfo.eType type ){
 //		return new Declaration( this, name, type );
 //	}		
@@ -461,7 +466,9 @@ public class ParserSymbolTable {
 				foundSymbol = symbol;
 				
 				if( foundSymbol.isType( TypeInfo.t_function ) ){
-					if( foundSymbol.isForwardDeclaration() && foundSymbol.getTypeSymbol() != null ){
+					if( foundSymbol.isForwardDeclaration() && foundSymbol.getTypeSymbol() != null &&
+						foundSymbol.getTypeSymbol().getContainingSymbol() == foundSymbol.getContainingSymbol() )
+					{
 						foundSymbol = foundSymbol.getTypeSymbol();
 					}
 					if( foundSymbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
@@ -555,7 +562,7 @@ public class ParserSymbolTable {
 		}
 		
 		if( numTemplateFunctions > 0 ){
-			if( data.parameters != null ){
+			if( data.parameters != null && !data.exactFunctionsOnly ){
 				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.parameters );
 				functionSet.addAll( fns );
 				numFunctions = functionSet.size();
@@ -939,6 +946,16 @@ public class ParserSymbolTable {
 		}
 		
 		reduceToViable( data, functions );
+		
+		if( data.exactFunctionsOnly ){
+			if( functions.size() == 1 ){
+				return (IParameterizedSymbol) functions.get( 0 );
+			} else if( functions.size() == 0 ){
+				return null;
+			} else {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+			}
+		}
 		
 		int numSourceParams = ( data.parameters == null ) ? 0 : data.parameters.size();
 		int numFns = functions.size();
@@ -1932,7 +1949,9 @@ public class ParserSymbolTable {
 				returnInfo.setTypeSymbol( null );
 				returnInfo.addPtrOperator( info.getPtrOperators() );
 			}
-			
+			if( returnInfo.isType( TypeInfo.t_templateParameter ) ){
+				returnInfo.setTypeSymbol( typeSymbol );
+			}
 			returnInfo.applyOperatorExpressions( topInfo.getOperatorExpressions() );
 			
 			if( topInfo.hasPtrOperators() ){
@@ -2034,6 +2053,7 @@ public class ParserSymbolTable {
 		public HashSet inheritanceChain;		//used to detect circular inheritance
 		
 		public List parameters;                 //parameter info for resolving functions
+		public List templateParameters;			//template parameters
 		public HashSet associated;				//associated namespaces for argument dependant lookup
 		public ISymbol stopAt;					//stop looking along the stack once we hit this declaration
 		public TypeFilter filter = null;

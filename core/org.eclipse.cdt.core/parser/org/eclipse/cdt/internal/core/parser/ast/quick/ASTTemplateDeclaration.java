@@ -11,9 +11,11 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -150,5 +152,14 @@ public class ASTTemplateDeclaration extends ASTDeclaration implements IASTTempla
     public int getEndingLine() {
     	return offsets.getEndingLine();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
+	 */
+	public Iterator getDeclarations() throws ASTNotImplementedException {
+		List decls = new LinkedList();
+		decls.add( getOwnedDeclaration() );
+		return decls.iterator();
+	}
     
 }

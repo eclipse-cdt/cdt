@@ -116,7 +116,9 @@ public interface IContainerSymbol extends ISymbol {
 	 *      r_Ambiguous if (14.5.4.1) more than one specialization can be used and none is more specializaed than all the others
 	 *      r_BadTemplateArgument if (14.3.1, 14.3.2) a template argument is invalid
 	 */
-	public ISymbol lookupTemplate( String name, List arguments ) throws ParserSymbolTableException;
+	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException;
+	
+	public IContainerSymbol lookupTemplateIdForDefinition( String name, List arguments ) throws ParserSymbolTableException;
 	
 	/**
 	 * 
@@ -129,8 +131,8 @@ public interface IContainerSymbol extends ISymbol {
 	 *      r_BadTemplateParameter if (14.5.1-3) the parameters provided can't be matched up to a template declaration
 	 *      r_BadTemplate if the parameter and argument list can't be resolved to either the template or a specialization
 	 */
-	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List templateParameters, 
-			                                                                List templateArguments ) throws ParserSymbolTableException;
+//	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List templateParameters, 
+//			                                                                List templateArguments ) throws ParserSymbolTableException;
 	
 	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol );
 	

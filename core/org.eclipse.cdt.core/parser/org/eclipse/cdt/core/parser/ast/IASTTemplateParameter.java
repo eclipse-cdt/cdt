@@ -11,12 +11,13 @@
 package org.eclipse.cdt.core.parser.ast;
 
 import org.eclipse.cdt.core.parser.Enum;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTTemplateParameter  extends IASTTemplateParameterList {
+public interface IASTTemplateParameter  extends IASTTemplateParameterList, ISourceElementCallbackDelegate {
 
 	public class ParamKind extends Enum
 	{

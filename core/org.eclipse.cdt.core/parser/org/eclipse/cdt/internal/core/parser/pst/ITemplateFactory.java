@@ -16,16 +16,10 @@ import java.util.List;
  * @author aniefer
  **/
 
-public interface ITemplateFactory {
-	
-	public void addSymbol( ISymbol symbol ) throws ParserSymbolTableException;
-	
-	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException;
-	public IParameterizedSymbol lookupMemberFunctionForDefinition( String name, List params ) throws ParserSymbolTableException;
-	
-	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List templateParameters, 
-			                                                                List templateArguments ) throws ParserSymbolTableException;
+public interface ITemplateFactory extends IDerivableContainerSymbol {
 	public ITemplateSymbol getPrimaryTemplate();
 	
-	public ISymbol lookupParam( String name ) throws ParserSymbolTableException;
+	public void pushTemplate( ITemplateSymbol template );
+	public void pushSymbol( ISymbol symbol );
+	public void pushTemplateId( ISymbol symbol, List args );
 }

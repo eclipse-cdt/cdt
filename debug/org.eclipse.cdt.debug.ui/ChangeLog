@@ -1,4 +1,9 @@
 2003-08-13 Mikhail Khodjaiants
+	* CDebugImages.java: new images for the 'Cast to type" and 'Display As Array' dialogs
+	* CastToTypeActionDelegate.java: new image
+	* CastToArrayActionDelegate.java: removed the 'type' field, added new image
+
+2003-08-13 Mikhail Khodjaiants
 	Display the proper image for reference types.
 	* CDTDebugModelPresentation.java
 

@@ -17,5 +17,5 @@ public interface ICastToArray extends ICastToType
 {
 	boolean supportsCastToArray();
 
-	void castToArray( String type, int startIndex, int length ) throws DebugException;
+	void castToArray( int startIndex, int length ) throws DebugException;
 }

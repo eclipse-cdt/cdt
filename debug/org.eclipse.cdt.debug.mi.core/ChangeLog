@@ -1,5 +1,10 @@
 2003-08-11 Mikhail Khodjaiants
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	Removed the 'type' parameter from the 'getVariableObjectAsArray' method.
+
+2003-08-11 Mikhail Khodjaiants
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java:
 	The 'type' argument of the 'getVariableObjectAsArray' method shouldn't be null.
  
 2003-08-11 Mikhail Khodjaiants

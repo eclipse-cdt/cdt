@@ -1,4 +1,9 @@
 2003-08-13 Mikhail Khodjaiants
+	* ICDIVariableManager.java: removed the 'type' parameter from the 'getVariableObjectAsArray' method
+	* ICastToArray.java: removed the 'type' parameter from the 'castToArray' method
+	* CVariable.java: changed the implementation of the 'ICastToArray' interface
+
+2003-08-13 Mikhail Khodjaiants
 	* ICDIVariable.java: removed the 'isEditable' method
 	* ICDIVariableObject.java: added the 'isEditable', 'getQualifiedName' and 'sizeof' methods
 	* ICDIArrayValue.java: added the 'getVariables(int start, int length)' method

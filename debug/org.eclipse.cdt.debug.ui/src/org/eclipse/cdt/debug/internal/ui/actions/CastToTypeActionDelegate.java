@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICastToType;
+import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
@@ -55,6 +56,16 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		{
 			super( parentShell, "Cast To Type", "Enter type:", initialValue, new CastToTypeInputValidator() );
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+		 */
+		protected void configureShell( Shell shell )
+		{
+			super.configureShell( shell );
+			shell.setImage( CDebugImages.get( CDebugImages.IMG_LCL_CAST_TO_TYPE ) );
+		}
+
 	}
 
 	private ICastToType fCastToType = null;

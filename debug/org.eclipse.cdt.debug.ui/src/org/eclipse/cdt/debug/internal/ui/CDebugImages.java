@@ -95,6 +95,8 @@ public class CDebugImages
 	public static final String IMG_LCL_MEMORY_CLEAR = NAME_PREFIX + "memory_clear.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_SHOW_ASCII = NAME_PREFIX + "show_ascii.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_LOAD_ALL_SYMBOLS = NAME_PREFIX + "load_all_symbols_co.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_CAST_TO_TYPE = NAME_PREFIX + "casttotype_co.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_DISPLAY_AS_ARRAY = NAME_PREFIX + "showasarray_co.gif";	//$NON-NLS-1$
 
 	public static final String IMG_TOOLS_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "adddirsource_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "addprjsource_wiz.gif";	//$NON-NLS-1$
@@ -110,6 +112,7 @@ public class CDebugImages
 	private static final String T_OVR = "ovr16"; //$NON-NLS-1$
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	private static final String T_LCL = "lcl16"; //$NON-NLS-1$
+	private static final String T_CLCL = "clcl16"; //$NON-NLS-1$
 	private static final String T_CTOOL = "ctool16"; //$NON-NLS-1$
 //	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
 //	private static final String T_DTOOL = "dtool16"; //$NON-NLS-1$
@@ -153,6 +156,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOLS_ADD_PRJ_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION ); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOLS_ADD_DIR_SOURCE_LOCATION = createManaged( T_CTOOL, IMG_TOOLS_ADD_DIR_SOURCE_LOCATION ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_LCL_CAST_TO_TYPE = createManaged( T_CLCL, IMG_LCL_CAST_TO_TYPE ); 		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_CLCL, IMG_LCL_DISPLAY_AS_ARRAY ); 		//$NON-NLS-1$
 
 	/**
 	 * Returns the image managed under the given key in this registry.

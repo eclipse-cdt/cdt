@@ -48,7 +48,7 @@ public interface ICDIVariableManager extends ICDIManager {
 	 * @return ICDIVariableObject
 	 * @throws CDIException
 	 */
-	ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject var, String type, int start, int length) throws CDIException;
+	ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject var, int start, int length) throws CDIException;
 
 	/**
 	 * Consider the variable object as type.

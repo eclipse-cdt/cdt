@@ -292,17 +292,15 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, int, int)
 	 */
-	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int length)
+	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, int start, int length)
 		throws CDIException {
 		VariableObject obj = null;
 		if (object instanceof VariableObject) {
 			obj = (VariableObject) object;
 		}
 		if (obj != null) {
-			// Check if the type is valid.
-			checkType(type);
 			VariableObject vo =
 				new VariableObject(
 					obj.getTarget(),

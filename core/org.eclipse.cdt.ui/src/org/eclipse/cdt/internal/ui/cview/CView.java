@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -188,6 +189,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	final String WORKING_GROUP_MARKER = "workingSetGroup";
 	final String WORKING_GROUP_MARKER_END = "end-workingSetGroup";
 
+	// Menu tags for the build
+	final String BUILD_GROUP_MARKER = "buildGroup";
+	final String BUILD_GROUP_MARKER_END = "end-buildGroup";
+	
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
 			if (part instanceof IEditorPart) {
@@ -791,9 +796,12 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	void addBuildMenu(IMenuManager menu, IStructuredSelection selection) {
 		IAdaptable element = (IAdaptable)selection.getFirstElement();
 		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null)
+		if (resource == null) {
 			return;
-
+		}
+		
+		menu.add(new GroupMarker(BUILD_GROUP_MARKER));
+		
 		//if (resource instanceof IProject) {
 			// Allow manual incremental build only if auto build is off.
 			//if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
@@ -826,6 +834,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		
 			menu.add(makeTargetAction);
 		}
+		menu.add(new GroupMarker(BUILD_GROUP_MARKER_END));
 	}
 
 	void addRefreshMenu (IMenuManager menu, IStructuredSelection selection) {

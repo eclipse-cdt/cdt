@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -94,13 +95,16 @@ public class SourceLookupBlock
 			table.setHeaderVisible( true );		
 
 			new TableColumn( table, SWT.NULL );
-			tableLayout.addColumnData( new ColumnWeightData( 1, true ) );
+			tableLayout.addColumnData( new ColumnWeightData( 2, true ) );
+			new TableColumn( table, SWT.NULL );
+			tableLayout.addColumnData( new ColumnWeightData( 2, true ) );
 			new TableColumn( table, SWT.NULL );
 			tableLayout.addColumnData( new ColumnWeightData( 1, true ) );
 
 			TableColumn[] columns = table.getColumns();
 			columns[0].setText( "Location" );
 			columns[1].setText( "Association" );
+			columns[2].setText( "Search subfolders" );
 			
 			return viewer;
 		}
@@ -147,13 +151,23 @@ public class SourceLookupBlock
 					return ((IDirectorySourceLocation)element).getAssociation().toOSString();
 				}
 			}
+			else if ( columnIndex == 2 )
+			{
+				if ( element instanceof IDirectorySourceLocation )
+					return  ( ((IDirectorySourceLocation)element).searchSubfolders() ) ? YES_VALUE : NO_VALUE;
+			}
 			return "";
 		}
 	}
 
+	// String constants
+	protected static final String YES_VALUE = "yes";
+	protected static final String NO_VALUE = "no";
+
 	// Column properties
 	private static final String CP_LOCATION = "location";
 	private static final String CP_ASSOCIATION = "association";
+	private static final String CP_SEARCH_SUBFOLDERS = "searchSubfolders";
 
 	private Composite fControl = null;
 	private Shell fShell = null;
@@ -280,9 +294,10 @@ public class SourceLookupBlock
 
 		TableViewer viewer = fAddedSourceListField.getTableViewer();
 		Table table = viewer.getTable();
-		CellEditor cellEditor = new TextCellEditor( table );
-		viewer.setCellEditors( new CellEditor[]{ null, cellEditor } );
-		viewer.setColumnProperties( new String[]{ CP_LOCATION, CP_ASSOCIATION } );
+		CellEditor textCellEditor = new TextCellEditor( table );
+		CellEditor comboCellEditor = new ComboBoxCellEditor( table, new String[]{ YES_VALUE, NO_VALUE } );
+		viewer.setCellEditors( new CellEditor[]{ null, textCellEditor, comboCellEditor } );
+		viewer.setColumnProperties( new String[]{ CP_LOCATION, CP_ASSOCIATION, CP_SEARCH_SUBFOLDERS } );
 		viewer.setCellModifier( createCellModifier() );
 		
 //		new Separator().doFillIntoGrid( fControl, 3, converter.convertHeightInCharsToPixels( 1 ) );
@@ -296,7 +311,7 @@ public class SourceLookupBlock
 					{
 						public boolean canModify( Object element, String property )
 						{
-							return ( element instanceof CDirectorySourceLocation && property.equals( CP_ASSOCIATION ) );
+							return ( element instanceof CDirectorySourceLocation && ( property.equals( CP_ASSOCIATION ) || property.equals( CP_SEARCH_SUBFOLDERS ) ) );
 						}
 
 						public Object getValue( Object element, String property )
@@ -306,20 +321,35 @@ public class SourceLookupBlock
 								return ( ((CDirectorySourceLocation)element).getAssociation() != null ) ? 
 												((CDirectorySourceLocation)element).getAssociation().toOSString() : "";
 							}
+							if ( element instanceof CDirectorySourceLocation && property.equals( CP_SEARCH_SUBFOLDERS ) )
+							{
+								return ( ((CDirectorySourceLocation)element).searchSubfolders() ) ? new Integer( 0 ) : new Integer( 1 );
+							}
 							return null;
 						}
 
 						public void modify( Object element, String property, Object value )
 						{
 							Object entry = getSelection();
-							if ( entry instanceof CDirectorySourceLocation && 
-								 property.equals( CP_ASSOCIATION ) && 
-								 value instanceof String )
+							if ( entry instanceof CDirectorySourceLocation )
 							{
-								Path association = new Path( (String)value );
-								if ( association.isValidPath( (String)value ) )
+								boolean changed = false;
+								if ( property.equals( CP_ASSOCIATION ) && value instanceof String )
 								{
-									((CDirectorySourceLocation)entry).setAssociation( association );
+									Path association = new Path( (String)value );
+									if ( association.isValidPath( (String)value ) )
+									{
+										((CDirectorySourceLocation)entry).setAssociation( association );
+										changed = true;
+									}
+								}
+								if ( property.equals( CP_SEARCH_SUBFOLDERS ) && value instanceof Integer )
+								{
+									((CDirectorySourceLocation)entry).setSearchSubfolders( ((Integer)value).intValue() == 0 );
+									changed = true;
+								}
+								if ( changed )
+								{
 									getAddedSourceListField().refresh();
 									updateLaunchConfigurationDialog();
 								}

@@ -16,5 +16,8 @@ import org.eclipse.core.runtime.IPath;
 public interface IDirectorySourceLocation extends ICSourceLocation
 {
 	IPath getDirectory();
+
 	IPath getAssociation();
+
+	boolean searchSubfolders();
 }

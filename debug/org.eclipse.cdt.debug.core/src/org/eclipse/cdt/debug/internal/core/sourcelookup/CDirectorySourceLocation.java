@@ -6,10 +6,14 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,6 +50,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	private static final String ELEMENT_NAME = "cDirectorySourceLocation";
 	private static final String ATTR_DIRECTORY = "directory";
 	private static final String ATTR_ASSOCIATION = "association";
+	private static final String ATTR_SEARCH_SUBFOLDERS = "searchSubfolders";
 
 	/**
 	 * The root directory of this source location
@@ -59,6 +64,10 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 
 	private boolean fSearchForDuplicateFiles = false;
 
+	private boolean fSearchSubfolders = false;
+
+	private File[] fFolders = null;
+
 	/**
 	 * Constructor for CDirectorySourceLocation.
 	 */
@@ -69,18 +78,11 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	/**
 	 * Constructor for CDirectorySourceLocation.
 	 */
-	public CDirectorySourceLocation( IPath directory )
-	{
-		setDirectory( directory );
-	}
-
-	/**
-	 * Constructor for CDirectorySourceLocation.
-	 */
-	public CDirectorySourceLocation( IPath directory, IPath association )
+	public CDirectorySourceLocation( IPath directory, IPath association, boolean searchSubfolders )
 	{
 		setDirectory( directory );
 		setAssociation( association );
+		setSearchSubfolders( searchSubfolders );
 	}
 
 	/* (non-Javadoc)
@@ -163,8 +165,40 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		File file = new File( name );
 		if ( !file.isAbsolute() )
 			return null;
+		File[] folders = getFolders();
+		if ( folders != null )
+		{
+			LinkedList list = new LinkedList();		
+			for ( int i = 0; i < folders.length; ++i )
+			{
+				Object result = findFileByAbsolutePath( folders[i], name );
+				if ( result instanceof List )
+				{
+					if ( searchForDuplicateFiles() )
+						list.addAll( (List)result );
+					else
+						return list.getFirst();
+				}
+				else if ( result != null )
+				{
+					if ( searchForDuplicateFiles() )
+						list.add( result );
+					else
+						return result;
+				}
+			}
+			return list;
+		}
+		return null;
+	}
+
+	private Object findFileByAbsolutePath( File folder, String name )
+	{
+		File file = new File( name );
+		if ( !file.isAbsolute() )
+			return null;
 		IPath filePath = new Path( name );
-		IPath path = getDirectory();
+		IPath path = new Path( folder.getAbsolutePath() );
 		IPath association = getAssociation();
 		if ( isPrefix( path, filePath ) )
 		{
@@ -201,27 +235,53 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 
 	private Object findFileByRelativePath( String fileName )
 	{
-		IPath path = getDirectory();
-		if ( path != null )
+		File[] folders = getFolders();
+		if ( folders != null )
 		{
-			path = path.append( fileName );	
-			File file = path.toFile();
-			if ( file.exists() )
+			LinkedList list = new LinkedList();		
+			for ( int i = 0; i < folders.length; ++i )
 			{
-				path = new Path( file.getAbsolutePath() ); // can't use getCanonicalPath because of links
-				IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
-				LinkedList list = new LinkedList();
-				for ( int j = 0; j < wsFiles.length; ++j )
-					if ( wsFiles[j].exists() )
-						if ( !searchForDuplicateFiles() )
-							return wsFiles[j];
-						else
-							list.add( wsFiles[j] );
-				if ( list.size() > 0 ) 
-					return ( list.size() == 1 ) ? list.getFirst() : list;
-				else
-					return createExternalFileStorage( path );
+				Object result = findFileByRelativePath( folders[i], fileName );
+				if ( result instanceof List )
+				{
+					if ( searchForDuplicateFiles() )
+						list.addAll( (List)result );
+					else
+						return list.getFirst();
+				}
+				else if ( result != null )
+				{
+					if ( searchForDuplicateFiles() )
+						list.add( result );
+					else
+						return result;
+				}
 			}
+			return list;
+		}
+		return null;
+	}
+
+	private Object findFileByRelativePath( File folder, String fileName )
+	{
+		IPath path = new Path( folder.getAbsolutePath() );
+		path = path.append( fileName );	
+		File file = path.toFile();
+		if ( file.exists() )
+		{
+			path = new Path( file.getAbsolutePath() );
+			IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
+			LinkedList list = new LinkedList();
+			for ( int j = 0; j < wsFiles.length; ++j )
+				if ( wsFiles[j].exists() )
+					if ( !searchForDuplicateFiles() )
+						return wsFiles[j];
+					else
+						list.add( wsFiles[j] );
+			if ( list.size() > 0 ) 
+				return ( list.size() == 1 ) ? list.getFirst() : list;
+			else
+				return createExternalFileStorage( path );
 		}
 		return null;
 	}
@@ -242,6 +302,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		node.setAttribute( ATTR_DIRECTORY, getDirectory().toOSString() );
 		if ( getAssociation() != null )
 			node.setAttribute( ATTR_ASSOCIATION, getAssociation().toOSString() );
+		node.setAttribute( ATTR_SEARCH_SUBFOLDERS, new Boolean( searchSubfolders() ).toString() );
 		try
 		{
 			return CDebugUtils.serializeDocument( doc, " " );
@@ -276,7 +337,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			else
 			{
 				IPath path = new Path( dir );
-				if ( path.isValidPath( dir ) && path.toFile().isDirectory() )
+				if ( path.isValidPath( dir ) && path.toFile().isDirectory() && path.toFile().exists() )
 				{
 					setDirectory( path );
 				}
@@ -302,6 +363,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 					setAssociation( null );
 				}
 			}
+			setSearchSubfolders( Boolean.valueOf( root.getAttribute( ATTR_SEARCH_SUBFOLDERS ) ).booleanValue() );
 			return;
 		}
 		catch( ParserConfigurationException e )
@@ -384,5 +446,60 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	public boolean searchForDuplicateFiles()
 	{
 		return fSearchForDuplicateFiles;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation#searchSubfolders()
+	 */
+	public boolean searchSubfolders()
+	{
+		return fSearchSubfolders;
+	}
+
+	public void setSearchSubfolders( boolean search )
+	{
+		fSearchSubfolders = search;
+	}
+
+	protected File[] getFolders()
+	{
+		if ( fFolders == null )
+			initializeFolders();
+		return fFolders;
+	}
+
+	protected void resetFolders()
+	{
+		fFolders = null;
+	}
+
+	private void initializeFolders()
+	{
+		if ( getDirectory() != null )
+		{
+			ArrayList list = new ArrayList();
+			File root = getDirectory().toFile();
+			list.add( root );
+			if ( searchSubfolders() )
+				list.addAll( getFileFolders( root ) );
+			fFolders = (File[])list.toArray( new File[list.size()] );
+		}
+	}
+
+	private List getFileFolders( File file )
+	{
+		ArrayList list = new ArrayList();
+		File[] folders = file.listFiles( 
+									new FileFilter()
+										{
+											public boolean accept( File pathname )
+											{
+												return pathname.isDirectory();
+											}
+										} );
+		list.addAll( Arrays.asList( folders ) );
+		for ( int i = 0; i < folders.length; ++i )
+			list.addAll( getFileFolders( folders[i] ) );
+		return list;
 	}
 }

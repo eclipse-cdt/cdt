@@ -37,6 +37,7 @@ public class AddDirectorySourceLocationBlock
 	private Text fLocationText = null;
 	private Text fAssociationText = null;
 	private Button fAssocitedCheckButton = null;
+	private Button fSearchSubfoldersButton = null;
 	private Shell fShell = null;
 	
 	private IPath fInitialAssosciationPath = null;
@@ -59,6 +60,7 @@ public class AddDirectorySourceLocationBlock
 
 		createLocationControls( fControl );
 		createAssociationControls( fControl );
+		createSearchSubfoldersButton( fControl );
 		
 		setInitialAssociationPath();
 	}
@@ -146,6 +148,16 @@ public class AddDirectorySourceLocationBlock
 			fAssociationText.setText( "" );
 	}
 
+	protected void createSearchSubfoldersButton( Composite parent )
+	{
+		Composite composite = new Composite( parent, SWT.NONE );
+		composite.setLayout( new GridLayout() );
+		GridData data = new GridData( GridData.FILL_BOTH );
+		composite.setLayoutData( data );
+		fSearchSubfoldersButton = new Button( composite, SWT.CHECK );
+		fSearchSubfoldersButton.setText( "Search sub&folders" );
+	}
+
 	protected Button createButton( Composite parent, String label )
 	{
 		Button button = new Button( parent, SWT.PUSH );
@@ -172,12 +184,17 @@ public class AddDirectorySourceLocationBlock
 		return "";
 	}
 
+	public boolean searchSubfolders()
+	{
+		return ( fSearchSubfoldersButton != null ) ? fSearchSubfoldersButton.getSelection() : false;
+	}
+
 	public IDirectorySourceLocation	getSourceLocation()
 	{
 		if ( isLocationPathValid() )
 		{
 			Path association = ( isAssociationPathValid() ) ? new Path( getAssociationPath() ) : null;
-			return SourceLocationFactory.createDirectorySourceLocation( new Path( getLocationPath() ), association );
+			return SourceLocationFactory.createDirectorySourceLocation( new Path( getLocationPath() ), association, searchSubfolders() );
 		}			
 		return null;
 	}

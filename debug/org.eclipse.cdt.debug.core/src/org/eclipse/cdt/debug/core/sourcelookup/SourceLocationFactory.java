@@ -28,13 +28,8 @@ public class SourceLocationFactory
 		return new CProjectSourceLocation( project, generated );
 	}
 
-	public static IDirectorySourceLocation createDirectorySourceLocation( IPath directory )
+	public static IDirectorySourceLocation createDirectorySourceLocation( IPath directory, IPath association, boolean searchSubfolders )
 	{
-		return new CDirectorySourceLocation( directory );
-	}
-
-	public static IDirectorySourceLocation createDirectorySourceLocation( IPath directory, IPath association )
-	{
-		return new CDirectorySourceLocation( directory, association );
+		return new CDirectorySourceLocation( directory, association, searchSubfolders );
 	}
 }

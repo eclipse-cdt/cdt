@@ -37,6 +37,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -406,6 +407,10 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	{
 		ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
 
+		MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), 
+											  CDebugCorePlugin.INTERNAL_ERROR, 
+											  "Error initializing directory source location.", 
+											  null );
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for ( int i = 0; i < length; ++i )
@@ -450,11 +455,20 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 						CDebugCorePlugin.log( "Unable to restore source location." );
 						continue;
 					}
-					location.initializeFrom( data );
-					sourceLocations.add( location );
+					try
+					{
+						location.initializeFrom( data );
+						sourceLocations.add( location );
+					}
+					catch( CoreException e )
+					{
+						status.addAll( e.getStatus() );
+					}
 				}
 			}
 		}
+		if ( status.getSeverity() > IStatus.OK )
+			throw new CoreException( status );
 	}
 
 	private void addOldLocations( Element root, List sourceLocations ) throws CoreException

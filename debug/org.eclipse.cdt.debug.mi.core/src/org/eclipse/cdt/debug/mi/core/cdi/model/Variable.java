@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -130,7 +131,8 @@ public class Variable extends CObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		MISession mi = ((Session)(getTarget().getSession())).getMISession();
+		Session session = (Session)(getTarget().getSession());
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarAssign var = factory.createMIVarAssign(miVar.getVarName(), expression);
 		try {
@@ -143,9 +145,17 @@ public class Variable extends CObject implements ICDIVariable {
 			throw new MI2CDIException(e);
 		}
 		
-		// If the assign was succesfull fire a MIVarChangedEvent()
+		ICDIVariableManager mgr = session.getVariableManager();
+		// If the assign was succesfull fire a MIVarChangedEvent() for the variable
+		// Note GDB will not fire an event for the changed variable we have to do it manually.
 		MIVarChangedEvent change = new MIVarChangedEvent(var.getToken(), miVar.getVarName());
 		mi.fireEvent(change);
+		// Changing values may have side effects i.e. affecting other variable
+		// if the manager is on autoupdate check all the other variables.
+		// Note: This maybe very costly.
+		if (mgr.isAutoUpdate()) {
+			mgr.update();
+		}
 	}
 
 	/**

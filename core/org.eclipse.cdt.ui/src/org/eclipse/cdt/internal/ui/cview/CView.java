@@ -998,10 +998,11 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			IEditorReference[] editorReferences = page.getEditorReferences();
 			for (int i = 0; i < editorReferences.length; ++i) {
 				IEditorPart editor = editorReferences[i].getEditor(false);
-				IEditorInput input = editor.getEditorInput();
-				if (input instanceof IFileEditorInput
-				&& file.equals(((IFileEditorInput)input).getFile())) {
-					page.bringToTop(editor);
+				if(null != editor) {
+					IEditorInput input = editor.getEditorInput();
+					if (input instanceof IFileEditorInput && file.equals(((IFileEditorInput)input).getFile())) {
+						page.bringToTop(editor);
+					}
 					return;
 				}
 			}
@@ -1014,15 +1015,16 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			IEditorReference editorReferences[] = page.getEditorReferences();
 			for (int i = 0; i < editorReferences.length; ++i) {
 				IEditorPart editor = editorReferences[i].getEditor(false);
-				IEditorInput input = editor.getEditorInput();
-				if (input instanceof IFileEditorInput
-				&& res.equals(((IFileEditorInput)input).getFile())) {
-					page.bringToTop(editor);
-					if (editor instanceof CEditor) {
-						CEditor e = (CEditor)editor;
-						e.selectionChanged (new SelectionChangedEvent (e.getOutlinePage (), selection));
+				if(null != editor) {
+					IEditorInput input = editor.getEditorInput();
+					if (input instanceof IFileEditorInput && res.equals(((IFileEditorInput)input).getFile())) {
+						page.bringToTop(editor);
+						if (editor instanceof CEditor) {
+							CEditor e = (CEditor)editor;
+							e.selectionChanged (new SelectionChangedEvent (e.getOutlinePage (),selection));
+						}
+						return;
 					}
-					return;
 				}
 			}
 			

@@ -275,14 +275,19 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	protected void createOptionsComposite( Composite parent ) {
 		Composite optionsComp = new Composite( parent, SWT.NONE );
-		GridLayout layout = new GridLayout( 2, true );
-		optionsComp.setLayout( layout );
-		optionsComp.setLayoutData( new GridData( GridData.FILL, GridData.CENTER, true, false, 1, 1 ) );
 
 		if (fAttachMode == true) {
-			createVerticalSpacer(optionsComp, 1);
+			GridLayout layout = new GridLayout( 1, false );
+			optionsComp.setLayout( layout );
+			optionsComp.setLayoutData( new GridData( GridData.END, GridData.CENTER, true, false, 1, 1 ) );
 		} else {
+			GridLayout layout = new GridLayout( 2, false );
+			optionsComp.setLayout( layout );
+			optionsComp.setLayoutData( new GridData( GridData.END, GridData.CENTER, true, false, 1, 1 ) );
 			fStopInMain = createCheckButton( optionsComp, LaunchMessages.getString( "CDebuggerTab.Stop_at_main_on_startup" ) ); //$NON-NLS-1$
+			GridData data = new GridData();
+			data.horizontalAlignment = GridData.BEGINNING;
+			fStopInMain.setLayoutData( data );
 			fStopInMain.addSelectionListener( new SelectionAdapter() {
 				
 				public void widgetSelected( SelectionEvent e ) {

@@ -12,7 +12,6 @@ package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.launch.ui.CArgumentsTab;
 import org.eclipse.cdt.launch.ui.CDebuggerTab;
-import org.eclipse.cdt.launch.ui.CEnvironmentTab;
 import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.cdt.launch.ui.CSourceLookupTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
@@ -29,7 +28,7 @@ public class LocalRunLaunchConfigurationTabGroup extends AbstractLaunchConfigura
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new CMainTab(),
 			new CArgumentsTab(),
-			new CEnvironmentTab(),
+			new MigratingCEnvironmentTab(),
 			new CDebuggerTab(false),
 			new CSourceLookupTab(),
 			new CommonTab() 

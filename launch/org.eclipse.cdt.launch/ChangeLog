@@ -1,3 +1,16 @@
+2004-10-22 David Inglis
+	Added variables support to arguments, environment and working directory.
+
+	* plugin.xml
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchMessages.properties
+	* src/org/eclipse/cdt/launch/internal/ui/LocalRunLaunchConfigurationTabGroup.java
+	* src/org/eclipse/cdt/launch/internal/ui/WorkingDirectoryBlock.java
+	* src/org/eclipse/cdt/launch/ui/CArgumentsTab.java
+	* src/org/eclipse/cdt/launch/ui/CDebuggerTab.java
+	* src/org/eclipse/cdt/launch/internal/ui/MigratingCEnvironmentTab.java
+	
 2004-10-18 Alain Magloire
 	Adjust to changes in CDI
 	* src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java

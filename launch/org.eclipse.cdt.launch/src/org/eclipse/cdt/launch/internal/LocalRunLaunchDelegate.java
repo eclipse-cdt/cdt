@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Properties;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.model.ICProject;
@@ -67,32 +65,31 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				ICDebugConfiguration debugConfig = getDebugConfig(config);
 				ICDISession dsession = null;
 				String debugMode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-														ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 				if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
-					dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));
+					dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile,
+							new SubProgressMonitor(monitor, 8));
 					try {
-						ICDITarget[] dtargets = dsession.getTargets();
-						for (int i = 0; i < dtargets.length; ++i) {
-							ICDIRuntimeOptions opt = dtargets[i].getRuntimeOptions();
-							opt.setArguments(arguments);
-							File wd = getWorkingDirectory(config);
-							if (wd != null) {
-								opt.setWorkingDirectory(wd.getAbsolutePath());
-							}
-							opt.setEnvironment(expandEnvironment(config));
-						}
-					} catch (CDIException e) {
 						try {
-							dsession.terminate();
-						} catch (CDIException ex) {
-							// ignore
+							ICDITarget[] dtargets = dsession.getTargets();
+							for (int i = 0; i < dtargets.length; ++i) {
+								ICDIRuntimeOptions opt = dtargets[i].getRuntimeOptions();
+								opt.setArguments(arguments);
+								File wd = getWorkingDirectory(config);
+								if (wd != null) {
+									opt.setWorkingDirectory(wd.getAbsolutePath());
+								}
+								opt.setEnvironment(getEnvironmentProperty(config));
+							}
+						} catch (CDIException e) {
+							abort(
+									LaunchMessages
+											.getString("LocalRunLaunchDelegate.Failed_setting_runtime_option_though_debugger"), e, //$NON-NLS-1$
+									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 						}
-						abort(LaunchMessages.getString("LocalRunLaunchDelegate.Failed_setting_runtime_option_though_debugger"), e, //$NON-NLS-1$
-								ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-					}
-					monitor.worked(1);
-					try {
-						boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
+						monitor.worked(1);
+						boolean stopInMain = config
+								.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 
 						ICDITarget[] targets = dsession.getTargets();
 						for (int i = 0; i < targets.length; i++) {
@@ -102,7 +99,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 								iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(exePath.toOSString()));
 							}
 							CDIDebugModel.newDebugTarget(launch, project.getProject(), targets[i], renderTargetLabel(debugConfig),
-														iprocess, exeFile, true, false, stopInMain, true);
+									iprocess, exeFile, true, false, stopInMain, true);
 						}
 					} catch (CoreException e) {
 						try {
@@ -121,9 +118,9 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				ArrayList command = new ArrayList(1 + arguments.length);
 				command.add(exePath.toOSString());
 				command.addAll(Arrays.asList(arguments));
-				String[] commandArray = (String[])command.toArray(new String[command.size()]);
+				String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 				monitor.worked(5);
-				Process process = exec(commandArray, getEnvironmentProperty(config), wd);
+				Process process = exec(commandArray, getEnvironmentArray(config), wd);
 				monitor.worked(3);
 				DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 			}
@@ -148,26 +145,14 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 	 *         cancelled
 	 * @see Runtime
 	 */
-	protected Process exec(String[] cmdLine, Properties environ, File workingDirectory) throws CoreException {
+	protected Process exec(String[] cmdLine, String[] environ, File workingDirectory) throws CoreException {
 		Process p = null;
-		Properties props = getDefaultEnvironment();
-		props.putAll(expandEnvironment(environ));
-		String[] envp = null;
-		ArrayList envList = new ArrayList();
-		Enumeration names = props.propertyNames();
-		if (names != null) {
-			while (names.hasMoreElements()) {
-				String key = (String)names.nextElement();
-				envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
-			}
-			envp = (String[])envList.toArray(new String[envList.size()]);
-		}
 		try {
 
 			if (workingDirectory == null) {
-				p = ProcessFactory.getFactory().exec(cmdLine, envp);
+				p = ProcessFactory.getFactory().exec(cmdLine, environ);
 			} else {
-				p = ProcessFactory.getFactory().exec(cmdLine, envp, workingDirectory);
+				p = ProcessFactory.getFactory().exec(cmdLine, environ, workingDirectory);
 			}
 		} catch (IOException e) {
 			if (p != null) {
@@ -180,14 +165,14 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 			// directory
 
 			IStatus status = new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(),
-					ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED,
-					LaunchMessages.getString("LocalRunLaunchDelegate.Does_not_support_working_dir"), //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, LaunchMessages
+							.getString("LocalRunLaunchDelegate.Does_not_support_working_dir"), //$NON-NLS-1$
 					e);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 
 			if (handler != null) {
 				Object result = handler.handleStatus(status, this);
-				if (result instanceof Boolean && ((Boolean)result).booleanValue()) {
+				if (result instanceof Boolean && ((Boolean) result).booleanValue()) {
 					p = exec(cmdLine, environ, null);
 				}
 			}

@@ -16,13 +16,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
@@ -36,7 +34,6 @@ import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -52,9 +49,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
@@ -77,149 +78,21 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * Return the save environment variables in the configuration. The array
 	 * does not include the default environment of the target. array[n] :
 	 * name=value
+	 * @throws CoreException
 	 */
-	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
-		Map env = null;
+	protected String[] getEnvironmentArray(ILaunchConfiguration config) throws CoreException {
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+			// Migrate old env settings to new.
+			Map map = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+			if (map != null) {
+				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+				wc.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
+				wc.doSave();
+			}
 		} catch (CoreException e) {
-		}
-		if (env == null) {
-			return new String[0];
-		}
-		String[] array = new String[env.size()];
-		Iterator entries = env.entrySet().iterator();
-		Entry entry;
-		for (int i = 0; entries.hasNext() && i < array.length; i++) {
-			entry = (Entry)entries.next();
-			array[i] = ((String)entry.getKey()) + "=" + ((String)entry.getValue()); //$NON-NLS-1$
-		}
-		return array;
-	}
-
-	/**
-	 * Return the save environment variables of this configuration. The array
-	 * does not include the default environment of the target.
-	 */
-	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
-		Properties prop = new Properties();
-		Map env = null;
-		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
-		} catch (CoreException e) {
-		}
-		if (env == null)
-			return prop;
-		Iterator entries = env.entrySet().iterator();
-		Entry entry;
-		while (entries.hasNext()) {
-			entry = (Entry)entries.next();
-			prop.setProperty((String)entry.getKey(), (String)entry.getValue());
-		}
-		return prop;
-	}
-
-	/**
-	 * Return the default Environment of the target.
-	 */
-	protected Properties getDefaultEnvironment() {
-		return EnvironmentReader.getEnvVars();
-	}
-
-	/**
-	 * Expand the variable with the format ${key}. example: HOME=/foobar NEWHOME =
-	 * ${HOME}/project The environement NEWHOME will be /foobar/project.
-	 */
-	protected Properties expandEnvironment(ILaunchConfiguration config) {
-		return expandEnvironment(getEnvironmentProperty(config));
-	}
-
-	/**
-	 * Expand the variable with the format ${key}. example: HOME=/foobar NEWHOME =
-	 * ${HOME}/project The environement NEWHOME will be /foobar/project.
-	 */
-	protected Properties expandEnvironment(Properties props) {
-		Enumeration names = props.propertyNames();
-		if (names != null) {
-			while (names.hasMoreElements()) {
-				String key = (String)names.nextElement();
-				String value = props.getProperty(key);
-				if (value != null && value.indexOf('$') != -1) {
-					StringBuffer sb = new StringBuffer();
-					StringBuffer param = new StringBuffer();
-					char prev = '\n';
-					char ch = prev;
-					boolean inMacro = false;
-					boolean inSingleQuote = false;
-
-					for (int i = 0; i < value.length(); i++) {
-						ch = value.charAt(i);
-						switch (ch) {
-							case '\'' :
-								if (prev != '\\') {
-									inSingleQuote = !inSingleQuote;
-								}
-								break;
-
-							case '$' :
-								if (!inSingleQuote && prev != '\\') {
-									if (i < value.length() && value.indexOf('}', i) > 0) {
-										char c = value.charAt(i + 1);
-										if (c == '{') {
-											param.setLength(0);
-											inMacro = true;
-											prev = ch;
-											continue;
-										}
-									}
-								}
-								break;
-
-							case '}' :
-								if (inMacro) {
-									inMacro = false;
-									String v = null;
-									String p = param.toString();
-									/*
-									 * Search in the current property only if it
-									 * is not the same name.
-									 */
-									if (!p.equals(key)) {
-										v = props.getProperty(p);
-									}
-									/* Fallback to the default Environemnt. */
-									if (v == null) {
-										Properties def = getDefaultEnvironment();
-										if (def != null) {
-											v = def.getProperty(p);
-										}
-									}
-									if (v != null) {
-										sb.append(v);
-									}
-									param.setLength(0);
-									/* Skip the trailing } */
-									prev = ch;
-									continue;
-								}
-								break;
-						} /* switch */
-
-						if (!inMacro) {
-							sb.append(ch);
-						} else {
-							/* Do not had the '{' */
-							if (! (ch == '{' && prev == '$')) {
-								param.append(ch);
-							}
-						}
-						prev = (ch == '\\' && prev == '\\') ? '\n' : ch;
-					} /* for */
-					props.setProperty(key, sb.toString());
-				} /* !if (value ..) */
-			} /* while() */
-		} /* if (names != null) */
-		return props;
+		}		
+		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(config);
 	}
 
 	/**
@@ -253,10 +126,27 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		return verifyWorkingDirectory(configuration);
 	}
 
+	/**
+	 * Expands and returns the working directory attribute of the given launch
+	 * configuration. Returns <code>null</code> if a working directory is not
+	 * specified. If specified, the working is verified to point to an existing
+	 * directory in the local file system.
+	 * 
+	 * @param configuration launch configuration
+	 * @return an absolute path to a directory in the local file system, or
+	 * <code>null</code> if unspecified
+	 * @throws CoreException if unable to retrieve the associated launch
+	 * configuration attribute, if unable to resolve any variables, or if the
+	 * resolved location does not point to an existing directory in the local
+	 * file system
+	 */
 	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
-		String path = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-		if (path != null) {
-			return new Path(path);
+		String location = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		if (location != null) {
+			String expandedLocation = getStringVariableManager().performStringSubstitution(location);
+			if (expandedLocation.length() > 0) {
+				return new Path(expandedLocation);
+			}
 		}
 		return null;
 	}
@@ -316,6 +206,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		}
 		return new Path(path);
 	}
+	
+	private static IStringVariableManager getStringVariableManager() {
+		return VariablesPlugin.getDefault().getStringVariableManager();
+	}	
 
 	/**
 	 * @param launch
@@ -371,7 +265,11 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return the program arguments as a String
 	 */
 	public String getProgramArguments(ILaunchConfiguration config) throws CoreException {
-		return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
+		String args = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
+		if (args != null) {
+			args = getStringVariableManager().performStringSubstitution(args);
+		}
+		return args;
 
 	}
 	/**
@@ -545,7 +443,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 						LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
 						new FileNotFoundException(
 								LaunchMessages.getFormattedString(
-																	"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
+																	"AbstractCLaunchDelegate.WORKINGDIRECTORY_PATH_not_found", path.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
@@ -556,7 +454,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 						LaunchMessages.getString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
 						new FileNotFoundException(
 								LaunchMessages.getFormattedString(
-																	"AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
+																	"AbstractCLaunchDelegate.WORKINGDIRECTORY_PATH_not_found", path.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
@@ -867,6 +765,27 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		} catch (IOException e) {
 		}
 		return null;
+	}
+
+	/**
+	 * @param config
+	 * @return
+	 * @throws CoreException
+	 */
+	protected Properties getEnvironmentProperty(ILaunchConfiguration config) throws CoreException {
+		String[] envp = getEnvironmentArray(config);
+		Properties p = new Properties( );
+		for( int i = 0; i < envp.length; i++ ) {
+			int idx = envp[i].indexOf('=');
+			if (idx != -1) {
+				String key = envp[i].substring(0, idx);
+				String value = envp[i].substring(idx + 1);
+				p.setProperty(key, value);
+			} else {
+				p.setProperty(envp[i], ""); //$NON-NLS-1$
+			}
+		}
+		return p;
 	}
 
 }

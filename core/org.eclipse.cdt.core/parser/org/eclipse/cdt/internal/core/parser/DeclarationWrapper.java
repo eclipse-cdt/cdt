@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -325,7 +324,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     }
     public Iterator getDeclarators()
     {
-        return Collections.unmodifiableList(declarators).iterator();
+        return declarators.iterator();
     }
     /**
      * @return

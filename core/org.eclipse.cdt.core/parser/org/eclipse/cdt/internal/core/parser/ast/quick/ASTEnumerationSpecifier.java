@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -100,7 +99,7 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
      */
     public Iterator getEnumerators()
     {
-        return Collections.unmodifiableList( enumerators ).iterator();
+        return enumerators.iterator();
     }
 
     public void addEnumerator(IASTEnumerator enumerator)

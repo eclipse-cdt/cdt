@@ -127,7 +127,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public List getPointerOperators()
     {
-        return Collections.unmodifiableList( ptrOps );
+        return ptrOps;
     }
 
 	public void addPointerOperator( ASTPointerOperator ptrOp )

@@ -41,6 +41,9 @@ public interface ISymbol extends Cloneable {
 	public ISymbol getTypeSymbol();
 	public void setTypeSymbol( ISymbol type );
 
+	public boolean isForwardDeclaration();
+	public void setIsForwardDeclaration( boolean forward );
+	
 	public int compareCVQualifiersTo( ISymbol symbol );
 	public LinkedList getPtrOperators();
 	public void addPtrOperator( TypeInfo.PtrOp ptrOp );

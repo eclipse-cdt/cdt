@@ -1,3 +1,6 @@
+2003-07-31 Andrew Niefer
+	Added better support to the parser symbol table for forward declarations
+
 2003-07-31 Victor Mozgin
 	Fixed PR 39540 : Parser fails on const qualifier after class specifier.
 

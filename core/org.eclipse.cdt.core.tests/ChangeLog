@@ -1,3 +1,7 @@
+2003-07-31 Andrew Niefer
+	Added ParserSymbolTableTest.testForwardClassDeclaration
+	Added ParserSymbolTableTest.testForwardDeclarationUsedAsFunctionParam
+
 2003-07-31 Victor Mozgin
 	Moved testBug39540() from ASTFailedTests.java to QuickParseASTTests.java.
 

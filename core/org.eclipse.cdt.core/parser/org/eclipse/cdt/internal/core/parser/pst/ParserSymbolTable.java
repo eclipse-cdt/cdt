@@ -440,6 +440,13 @@ public class ParserSymbolTable {
 		TypeInfo.eType origType = origSymbol.getType();
 		TypeInfo.eType newType  = newSymbol.getType();
 		
+		//handle forward decls
+		if( origSymbol.getTypeInfo().isForwardDeclaration() &&
+			origSymbol.getTypeSymbol() == newSymbol )
+		{
+			return true;
+		}
+		
 		if( (origType.compareTo(TypeInfo.t_class) >= 0 && origType.compareTo(TypeInfo.t_enumeration) <= 0) && //class name or enumeration ...
 			( newType == TypeInfo.t_type || (newType.compareTo( TypeInfo.t_function ) >= 0 /*&& newType <= TypeInfo.typeMask*/) ) ){
 				
@@ -570,10 +577,17 @@ public class ParserSymbolTable {
 			} else {
 				//if this is a class-name, other stuff hides it
 				if( decl.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
-					if( cls == null ) {
+					if( cls == null ){
 						cls = (IContainerSymbol) decl;
 					} else {
-						throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ); 
+						if( cls.getTypeInfo().isForwardDeclaration() && cls.getTypeSymbol() == decl ){
+							//cls is a forward declaration of decl, we want decl.
+							cls = (IContainerSymbol) decl;
+						} else if( decl.getTypeInfo().isForwardDeclaration() && decl.getTypeSymbol() == cls ){
+							//decl is a forward declaration of cls, we already have what we want (cls)
+						} else {
+							throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+						}
 					}
 				} else {
 					//an object, can only have one of these
@@ -1049,6 +1063,15 @@ public class ParserSymbolTable {
 			source = getFlatTypeInfo( source );
 		}
 		
+		if( target.isType( TypeInfo.t_type ) ){
+			ISymbol symbol = target.getTypeSymbol();
+			if( symbol != null && symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null ){
+				target = new TypeInfo( target );
+				target.setType( TypeInfo.t_type );
+				target.setTypeSymbol( symbol.getTypeSymbol() );
+			}
+		}
+		
 		Cost cost = new Cost( source, target );
 		TypeInfo.PtrOp op = null;
 		
@@ -1401,7 +1424,7 @@ public class ParserSymbolTable {
 			
 			info = topInfo.getTypeSymbol().getTypeInfo();
 			
-			while( info.getType() == TypeInfo.t_type ){
+			while( info.getType() == TypeInfo.t_type || ( info.isForwardDeclaration() && info.getTypeSymbol() != null ) ){
 				typeSymbol = info.getTypeSymbol();
 				
 				//returnInfo.addCVQualifier( info.getCVQualifier() );
@@ -2045,7 +2068,7 @@ public class ParserSymbolTable {
 		{
 			super();
 			_name = name;
-			_typeInfo = new TypeInfo( typeInfo, 0, this );
+			_typeInfo = new TypeInfo( typeInfo, 0, null );
 		}
 		
 		public ParserSymbolTable getSymbolTable(){
@@ -2077,35 +2100,49 @@ public class ParserSymbolTable {
 		}
 	
 		public void setType(TypeInfo.eType t){
-			_typeInfo.setType( t );	 
+			getTypeInfo().setType( t );	 
 		}
 	
 		public TypeInfo.eType getType(){ 
-			return _typeInfo.getType(); 
+			return getTypeInfo().getType(); 
 		}
 	
 		public boolean isType( TypeInfo.eType type ){
-			return _typeInfo.isType( type, TypeInfo.t_undef ); 
+			return getTypeInfo().isType( type, TypeInfo.t_undef ); 
 		}
 
 		public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType ){
-			return _typeInfo.isType( type, upperType );
+			return getTypeInfo().isType( type, upperType );
 		}
 		
-		public ISymbol getTypeSymbol(){	
-			return _typeInfo.getTypeSymbol(); 
+		public ISymbol getTypeSymbol(){
+			ISymbol symbol = getTypeInfo().getTypeSymbol();
+			
+			if( symbol != null && symbol.getTypeInfo().isForwardDeclaration() && symbol.getTypeSymbol() != null ){
+				return symbol.getTypeSymbol();
+			}
+			
+			return symbol;
 		}
 	
 		public void setTypeSymbol( ISymbol type ){
-			_typeInfo.setTypeSymbol( type ); 
+			getTypeInfo().setTypeSymbol( type ); 
 		}
 
 		public TypeInfo getTypeInfo(){
-			return _typeInfo;
+			return _typeInfo; 
 		}
 		
 		public void setTypeInfo( TypeInfo info ) {
 			_typeInfo = info;
+		}
+		
+		public boolean isForwardDeclaration(){
+			return getTypeInfo().isForwardDeclaration();
+		}
+		
+		public void setIsForwardDeclaration( boolean forward ){
+			getTypeInfo().setIsForwardDeclaration( forward );
 		}
 		
 		/**
@@ -2141,10 +2178,10 @@ public class ParserSymbolTable {
 		}
 		
 		public LinkedList getPtrOperators(){
-			return _typeInfo.getPtrOperators();
+			return getTypeInfo().getPtrOperators();
 		}
 		public void addPtrOperator( TypeInfo.PtrOp ptrOp ){
-			_typeInfo.addPtrOperator( ptrOp );
+			getTypeInfo().addPtrOperator( ptrOp );
 		}	
 		
 		public int getDepth(){
@@ -2391,12 +2428,6 @@ public class ParserSymbolTable {
 			_needsDefinition = need;
 		}
 	
-		
-
-		//public void addPtrOperator( String ptrStr, boolean isConst, boolean isVolatile ){
-		//	_typeInfo.addPtrOperator( ptrStr, isConst, isVolatile );
-		//}
-	
 		public ISymbol getReturnType(){
 			return _returnType;
 		}
@@ -2555,11 +2586,11 @@ public class ParserSymbolTable {
 		
 			if( origObj != null )
 			{
-				Declaration origDecl = null;
+				ISymbol origDecl = null;
 				LinkedList  origList = null;
 		
-				if( origObj.getClass() == Declaration.class ){
-					origDecl = (Declaration)origObj;
+				if( origObj instanceof ISymbol ){
+					origDecl = (ISymbol)origObj;
 				} else if( origObj.getClass() == LinkedList.class ){
 					origList = (LinkedList)origObj;
 				} else {

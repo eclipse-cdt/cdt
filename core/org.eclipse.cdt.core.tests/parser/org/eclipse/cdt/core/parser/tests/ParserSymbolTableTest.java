@@ -1573,7 +1573,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * @throws Exception
 	 *
 	 * class A {};
-	 * typedef A * B;
+	 * typedef B A *;
 	 * 
 	 * void f( A * );
 	 * void f( A );
@@ -1600,6 +1600,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol B = table.newSymbol( "B" );
 		B.setType( TypeInfo.t_type );
 		B.setTypeSymbol( A );
+		B.getTypeInfo().setBit( true, TypeInfo.isTypedef );
 		B.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
 		compUnit.addSymbol( B );
 		
@@ -2330,6 +2331,146 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
+	}
+	
+	/**
+	 * class A;
+	 *
+	 * A * a;
+	 *
+	 * class A {};
+	 *
+	 * @throws Exception
+	 */
+	public void testForwardClassDeclaration() throws Exception{
+		newTable();
+		
+		ISymbol forwardSymbol = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		forwardSymbol.setIsForwardDeclaration( true );
+		
+		table.getCompilationUnit().addSymbol( forwardSymbol );
+		
+		/*...*/
+		
+		ISymbol lookup = table.getCompilationUnit().Lookup( "A" );
+		ISymbol otherLookup = table.getCompilationUnit().ElaboratedLookup( TypeInfo.t_class, "A" );
+		
+		assertEquals( lookup, otherLookup );
+		assertEquals( lookup, forwardSymbol );
+		
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		a.setTypeSymbol( forwardSymbol );
+		a.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
+		
+		table.getCompilationUnit().addSymbol( a );
+		
+		/*...*/
+		
+		lookup = table.getCompilationUnit().Lookup( "A" );
+		IDerivableContainerSymbol classA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		assertTrue( lookup.isForwardDeclaration() );
+		lookup.setTypeSymbol( classA ); 
+		
+		table.getCompilationUnit().addSymbol( classA );
+		
+		lookup = table.getCompilationUnit().Lookup( "a" );
+		assertEquals( lookup, a );
+		assertEquals( a.getTypeSymbol(), classA );
+		
+		lookup = table.getCompilationUnit().Lookup( "A" );
+		assertEquals( lookup, classA );
+		
+		lookup = table.getCompilationUnit().ElaboratedLookup( TypeInfo.t_class, "A" );
+		assertEquals( lookup, classA );
+	}
+	
+	/**
+	 * class A;
+	 * 
+	 * class B {
+	 *    static void f( A * );
+	 *    static void f( int );
+	 * };
+	 * 
+	 * A* a1;
+	 * 
+	 * class A {};
+	 * 
+	 * void B::f( A * ) {}
+	 * void B::f( int ) {}
+	 * 
+	 * A* a2;
+	 * 
+	 * B::f( a1 );
+	 * B::f( a2 );
+	 * 
+	 * @throws Exception
+	 */
+	public void testForwardDeclarationUsedAsFunctionParam() throws Exception{
+		newTable();
+		
+		ISymbol forwardSymbol = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		forwardSymbol.setIsForwardDeclaration( true );
+		table.getCompilationUnit().addSymbol( forwardSymbol );
+		
+		/*...*/
+	
+		IDerivableContainerSymbol classB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
+			
+		IParameterizedSymbol fn1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		ISymbol lookup = table.getCompilationUnit().Lookup( "A" );
+		assertEquals( lookup, forwardSymbol );
+		fn1.addParameter( lookup, new PtrOp( PtrOp.t_pointer ), false );
+		fn1.getTypeInfo().setBit( true, TypeInfo.isStatic );
+		classB.addSymbol( fn1 );
+		
+		IParameterizedSymbol fn2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		fn2.addParameter( TypeInfo.t_int, 0, null, false );
+		fn2.getTypeInfo().setBit( true, TypeInfo.isStatic );
+		classB.addSymbol( fn2 );
+		
+		table.getCompilationUnit().addSymbol( classB );
+		
+		/*...*/
+		
+		ISymbol a1 = table.newSymbol( "a1", TypeInfo.t_type );
+		lookup = table.getCompilationUnit().Lookup( "A" );
+		assertEquals( lookup, forwardSymbol );
+		a1.setTypeSymbol( lookup );
+		a1.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
+		
+		table.getCompilationUnit().addSymbol( a1 );
+		
+		/*...*/
+		
+		lookup = table.getCompilationUnit().Lookup( "A" );
+		IDerivableContainerSymbol classA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		assertTrue( lookup.isForwardDeclaration() );
+		lookup.setTypeSymbol( classA ); 
+		table.getCompilationUnit().addSymbol( classA );
+		
+		/*..*/
+		ISymbol a2 = table.newSymbol( "a2", TypeInfo.t_type );
+		lookup = table.getCompilationUnit().Lookup( "A" );
+		assertEquals( lookup, classA );
+		a2.setTypeSymbol( lookup );
+		a2.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
+		
+		table.getCompilationUnit().addSymbol( a2 );
+		
+		/*..*/
+		
+		LinkedList paramList = new LinkedList();
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, a1 );
+		paramList.add( p1 );
+		ISymbol look = classB.MemberFunctionLookup( "f", paramList );
+		assertEquals( look, fn1 );
+		
+		paramList.clear();
+		p1 = new TypeInfo( TypeInfo.t_type, 0, a2 );
+		paramList.add( p1 );
+		look = classB.MemberFunctionLookup( "f", paramList );
+		assertEquals( look, fn1 );
 	}
 }
 

@@ -84,6 +84,7 @@ public class TypeInfo {
 	public static final int isUnsigned = 0x20000;
 	public static final int isShort    = 0x40000;
 	public static final int isLong     = 0x80000;
+	public static final int isForward  = 0x100000;
 	
 	// Types (maximum type is typeMask
 	// Note that these should be considered ordered and if you change
@@ -378,6 +379,14 @@ public class TypeInfo {
 		return _defaultValue;
 	}
 
+	public boolean isForwardDeclaration(){
+		return checkBit( isForward );
+	}
+	
+	public void setIsForwardDeclaration( boolean forward ){
+		setBit( forward, isForward );
+	}
+	
 	/**
 	 * canHold
 	 * @param type

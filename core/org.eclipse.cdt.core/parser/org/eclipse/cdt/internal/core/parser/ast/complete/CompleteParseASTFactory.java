@@ -1355,7 +1355,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
 	protected ITypeInfo usualArithmeticConversions( IASTScope scope, ITypeInfo lhs, ITypeInfo rhs) throws ASTSemanticException{
-		
+		if( lhs == null ) return null;
+		if( rhs == null ) return null;
 		// if you have a variable of type basic type, then we need to go to the basic type first
 		while( (lhs.getType() == ITypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
 			lhs = lhs.getTypeSymbol().getTypeInfo();  

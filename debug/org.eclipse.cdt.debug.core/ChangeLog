@@ -1,3 +1,7 @@
+2004-06-24 Mikhail Khodjaiants
+	Temporary fix for bug 56520: Debug Perspective doesn't get called when a breakpoint is hit.
+	* CThread.java
+	
 2004-06-23 Mikhail Khodjaiants
 	Fix for bug 68316: Exception shutting down Eclipse with an active debug session.
 	* CStackFrame.java

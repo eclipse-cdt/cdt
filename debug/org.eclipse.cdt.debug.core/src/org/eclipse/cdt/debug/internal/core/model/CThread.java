@@ -850,7 +850,9 @@ public class CThread extends CDebugElement
 				}
 				else
 				{
-					fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+//					fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+					// Temporary fix for bug 56520
+					fireSuspendEvent( DebugEvent.BREAKPOINT );
 				}
 			}
 			return;

@@ -1,3 +1,17 @@
+2002-11-08 Judy N. Green
+	* src/org/eclipse/cdt/internal/core/COwner.java
+	fixed check in constructor to throw error when ownerID is invalid
+	
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+		made all constants static and changed visibility of DESCRIPTION_FILE_NAME
+		to package to be used by tge CDescriptorManager 
+		
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	 Added to event in order to catch when the .cdtprject file is deleted.
+	 delete reference to the CDT project Descriptor when a missing file is detected.
+	 
+	 Added new public method removeExistingCdtProjectFile(IProject project), required when converting a project.
+
 2002-11-06 Alain Magloire
 
 	* src/org/eclipse/cdt/ErrorParserManager.java (parse):

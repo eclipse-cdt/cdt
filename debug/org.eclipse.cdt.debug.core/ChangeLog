@@ -4,6 +4,13 @@
 
 2002-10-11 Mikhail Khodjaiants
 	* DisassemblyStorage.java: Changed the format of the disassembly view's output.
+2002-10-11 Alain Magloire
+
+	* ICDISourceManager.java (getMixedInstructions): Three
+	new methods to get the src and the intructions.
+	
+	* ICIDMixedInstruction:  New Class that return the mixed
+	of source location and assembly instructions.
 
 2002-10-10 Mikhail Khodjaiants
 	* CVariable.java: Made the 'fChanged' field protected to access to it from the derived class (CRegister).

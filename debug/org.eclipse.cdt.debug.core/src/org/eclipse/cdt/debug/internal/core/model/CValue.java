@@ -122,7 +122,7 @@ public class CValue extends CDebugElement implements ICValue
 
 	protected synchronized List getVariables0() throws DebugException 
 	{
-		if ( !isAllocated() )
+		if ( !isAllocated() || !hasVariables() )
 			return Collections.EMPTY_LIST;
 		if ( fVariables.size() == 0 )
 		{

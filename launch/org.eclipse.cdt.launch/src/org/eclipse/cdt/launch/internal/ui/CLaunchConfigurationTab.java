@@ -1,7 +1,7 @@
 package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICProjectDescriptor;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -41,7 +41,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				if (!ss.isEmpty()) {
 					Object obj = ss.getFirstElement();
 					if (obj instanceof ICElement) {
-						ICProjectDescriptor descriptor =
+						ICDescriptor descriptor =
 							CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject());
 						if (descriptor.getPlatform().equals(getPlatform(config)))
 							return (ICElement) obj;
@@ -53,7 +53,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 							ce = CoreModel.getDefault().create(pro);
 						}
 						if (ce != null) {
-							ICProjectDescriptor descriptor =
+							ICDescriptor descriptor =
 								CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
 							if (descriptor.getPlatform().equals(getPlatform(config)))
 								return ce;

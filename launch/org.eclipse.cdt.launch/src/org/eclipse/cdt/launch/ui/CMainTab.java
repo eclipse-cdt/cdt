@@ -8,7 +8,7 @@ package org.eclipse.cdt.launch.ui;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICProjectDescriptor;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -272,7 +272,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		ICProject cproject[] = CoreModel.getDefault().getCRoot().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
 		for (int i = 0; i < cproject.length; i++) {
-			ICProjectDescriptor cdesciptor = null;
+			ICDescriptor cdesciptor = null;
 			try {
 				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource());
 				if (cdesciptor.getPlatform().equals("*") || filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {

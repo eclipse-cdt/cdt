@@ -704,8 +704,13 @@ public class CPPSemantics {
 		
 		int size = directives.size();
 		for( int i = 0; i < size; i++ ){
-			IASTName qualName = ((ICPPASTUsingDirective)directives.get(i)).getQualifiedName();
-			IBinding binding = qualName.resolveBinding();
+			Object d = directives.get(i);
+			IBinding binding = null;
+			if( d instanceof ICPPASTUsingDirective ){
+				binding = ((ICPPASTUsingDirective)d).getQualifiedName().resolveBinding();
+			} else if( d instanceof ICPPASTNamespaceDefinition ){
+				binding = ((ICPPASTNamespaceDefinition)d).getName().resolveBinding();
+			}
 			if( binding instanceof ICPPNamespace ){
 				temp = ((ICPPNamespace)binding).getNamespaceScope();
 			} else
@@ -803,7 +808,11 @@ public class CPPSemantics {
 				break;
 			
 			if( item != blockItem || data.includeBlockItem( item ) ){
-				if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {
+				if( !data.ignoreUsingDirectives &&
+					( item instanceof ICPPASTUsingDirective  ||
+					  (item instanceof ICPPASTNamespaceDefinition &&
+					   ((ICPPASTNamespaceDefinition)item).getName().toCharArray().length == 0) ) )
+				{
 					if( usingDirectives != null )
 						usingDirectives.add( item );
 				} else {

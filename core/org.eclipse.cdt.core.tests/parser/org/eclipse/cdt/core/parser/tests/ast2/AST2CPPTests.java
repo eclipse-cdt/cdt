@@ -1363,8 +1363,42 @@ public class AST2CPPTests extends AST2BaseTest {
        assertSame( f2, fref );
        assertNotNull( f1 );
        assertNotNull( f2 );
-       
-       
+   }
+   
+   public void testBug84610() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("namespace { int i; } //1\n" ); //$NON-NLS-1$
+   		buffer.append("void f(){ i; }          \n" ); //$NON-NLS-1$
+   		buffer.append("namespace A {           \n" ); //$NON-NLS-1$
+   		buffer.append("   namespace {          \n" ); //$NON-NLS-1$
+   		buffer.append("      int i;    //2     \n" ); //$NON-NLS-1$
+   		buffer.append("      int j;            \n" ); //$NON-NLS-1$
+   		buffer.append("   }                    \n" ); //$NON-NLS-1$
+   		buffer.append("   void g(){ i; }       \n" ); //$NON-NLS-1$
+   		buffer.append("}                       \n" ); //$NON-NLS-1$
+   		buffer.append("using namespace A;      \n" ); //$NON-NLS-1$
+   		buffer.append("void h() {              \n" ); //$NON-NLS-1$
+   		buffer.append("   i;    //ambiguous    \n" ); //$NON-NLS-1$
+   		buffer.append("   A::i; //i2           \n" ); //$NON-NLS-1$
+   		buffer.append("   j;                   \n" ); //$NON-NLS-1$
+   		buffer.append("}                       \n" ); //$NON-NLS-1$
+   		
+   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); 
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        assertEquals( 17, col.size() );
+        
+        IVariable i1 = (IVariable) col.getName(1).resolveBinding();
+        IVariable i2 = (IVariable) col.getName(6).resolveBinding();
+        IVariable j = (IVariable) col.getName(7).resolveBinding();
+        
+        assertInstances( col, i1, 2 );
+        assertInstances( col, i2, 4 );
+        assertInstances( col, j, 2 );
+        
+        IProblemBinding problem = (IProblemBinding) col.getName(12).resolveBinding();
+        assertEquals( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID() );
    }
 }
 

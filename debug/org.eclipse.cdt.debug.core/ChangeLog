@@ -1,3 +1,8 @@
+2005-03-24 Alain Magloire
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlock.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlockManagement.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CMemoryBlockExtension.java
+
 2005-03-23 Alain Magloire
 	Change is the ICDIMemoryBlock&& ICDIMemoryManagement API
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlock.java

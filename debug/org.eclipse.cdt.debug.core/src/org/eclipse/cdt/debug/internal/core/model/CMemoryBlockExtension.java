@@ -401,7 +401,8 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressibleSize()
 	 */
 	public int getAddressibleSize() {
-		return fWordSize;
+		ICDIMemoryBlock block = getCDIBlock();
+		return ( block != null ) ? block.getWordSize() : fWordSize;
 	}
 
 	/* (non-Javadoc)

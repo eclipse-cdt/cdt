@@ -56,7 +56,8 @@ public interface ICDIMemoryBlock extends ICDIObject {
 	/**
 	 * Returns the values of the bytes currently contained
 	 * in this this memory block.
-	 * 
+	 * Note: the number maybe greater or lower to what
+	 * was requested.
 	 * @return the values of the bytes currently contained
 	 *  in this this memory block
 	 * @exception CDIException if this method fails.  Reasons include:

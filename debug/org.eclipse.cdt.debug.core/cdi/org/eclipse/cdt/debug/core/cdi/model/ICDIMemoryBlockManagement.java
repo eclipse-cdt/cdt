@@ -24,7 +24,6 @@ public interface ICDIMemoryBlockManagement {
 
 	/**
 	 * Returns a memory block specified by given identifier.
-	 * total = units * wordSize;
 	 * @param address 
 	 * @param units - number of units
 	 * @param wordSize - The size of each memory word in bytes

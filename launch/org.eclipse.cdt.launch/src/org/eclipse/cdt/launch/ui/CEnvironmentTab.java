@@ -380,7 +380,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Enviroment";
+		return "Environment";
 	}
 
 	/**

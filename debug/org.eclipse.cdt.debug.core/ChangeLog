@@ -1,3 +1,11 @@
+2003-05-06 Mikhail Khodjaiants
+	Added tooltips to breakpoints and watchpoints.
+	* CAddressBreakpoint.java
+	* CBreakpoint.java
+	* CFunctionBreakpoint.java
+	* CLineBreakpoint.java
+	* CWatchpoint.java
+
 2003-05-05 Mikhail Khodjaiants
 	Added a status functionality to the CDebugElement class. 
 	This allows to reflect the problems occured in the element in UI.

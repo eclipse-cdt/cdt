@@ -106,4 +106,29 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
+	 */
+	protected String getMarkerMessage() throws CoreException
+	{
+		StringBuffer sb = new StringBuffer( "Function breakpoint:" );
+		String name = ensureMarker().getResource().getName();
+		if ( name != null && name.length() > 0 )
+		{
+			sb.append( ' ' );
+			sb.append( name );
+		}
+		String function = getFunction();
+		if ( function != null && function.trim().length() > 0 )
+		{
+			sb.append( " [" );
+			sb.append( "function:" );
+			sb.append( ' ' );
+			sb.append( function.trim() );
+			sb.append( ']' );
+		}
+		sb.append( getConditionText() );
+		return sb.toString();
+	}
 }

@@ -116,6 +116,7 @@ public abstract class CBreakpoint extends Breakpoint
 	public void setCondition( String condition ) throws CoreException
 	{
 		setAttribute( CONDITION, condition );
+		setAttribute( IMarker.MESSAGE, getMarkerMessage() );
 	}
 
 	/* (non-Javadoc)
@@ -132,6 +133,7 @@ public abstract class CBreakpoint extends Breakpoint
 	public void setIgnoreCount( int ignoreCount ) throws CoreException
 	{
 		setAttribute( IGNORE_COUNT, ignoreCount );
+		setAttribute( IMarker.MESSAGE, getMarkerMessage() );
 	}
 
 	/* (non-Javadoc)
@@ -255,5 +257,26 @@ public abstract class CBreakpoint extends Breakpoint
 	public boolean isConditional() throws CoreException
 	{
 		return ( (getCondition() != null && getCondition().trim().length() > 0) || getIgnoreCount() > 0 );
+	}
+
+	protected String getConditionText() throws CoreException
+	{
+		StringBuffer sb = new StringBuffer();
+		int ignoreCount = getIgnoreCount();
+		if ( ignoreCount > 0 )
+		{
+			sb.append( " [" );
+			sb.append( "ignore count:" );
+			sb.append( ' ' );
+			sb.append( ignoreCount );
+			sb.append( ']' );
+		}
+		String condition = getCondition();
+		if ( condition != null && condition.length() > 0 )
+		{
+			sb.append( " if " ); 
+			sb.append( condition );
+		}
+		return sb.toString();
 	}
 }

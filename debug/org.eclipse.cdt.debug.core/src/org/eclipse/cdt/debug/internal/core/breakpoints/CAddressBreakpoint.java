@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -84,5 +85,31 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 	public static String getMarkerType()
 	{
 		return C_ADDRESS_BREAKPOINT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
+	 */
+	protected String getMarkerMessage() throws CoreException
+	{
+		StringBuffer sb = new StringBuffer( "Address breakpoint:" );
+		String name = ensureMarker().getResource().getName();
+		if ( name != null && name.length() > 0 )
+		{
+			sb.append( ' ' );
+			sb.append( name );
+		}
+		try
+		{
+			long address = Long.parseLong( getAddress() );
+			sb.append( " [address: " );
+			sb.append( CDebugUtils.toHexAddressString( address ) );
+			sb.append( ']' );
+		}
+		catch( NumberFormatException e )
+		{
+		}
+		sb.append( getConditionText() );
+		return sb.toString();
 	}
 }

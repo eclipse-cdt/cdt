@@ -69,4 +69,29 @@ public class CLineBreakpoint extends CBreakpoint implements ICLineBreakpoint
 	{
 		return C_LINE_BREAKPOINT;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
+	 */
+	protected String getMarkerMessage() throws CoreException
+	{
+		StringBuffer sb = new StringBuffer( "Line breakpoint:" );
+		String fileName = ensureMarker().getResource().getName();
+		if ( fileName != null && fileName.length() > 0 )
+		{
+			sb.append( ' ' );
+			sb.append( fileName );
+		}
+		int lineNumber = getLineNumber();
+		if ( lineNumber > 0 )
+		{
+			sb.append( " [" );
+			sb.append( "line:" );
+			sb.append( ' ' );
+			sb.append( lineNumber );
+			sb.append( ']' );
+		}
+		sb.append( getConditionText() );
+		return sb.toString();
+	}
 }

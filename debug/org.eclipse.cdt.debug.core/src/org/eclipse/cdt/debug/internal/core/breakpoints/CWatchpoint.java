@@ -68,4 +68,34 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint
 	{
 		return C_WATCHPOINT;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
+	 */
+	protected String getMarkerMessage() throws CoreException
+	{
+		StringBuffer sb = new StringBuffer();
+		if ( isWriteType() && !isReadType() )
+			sb.append( "Write " );
+		else if ( !isWriteType() && isReadType() )
+			sb.append( "Read " );
+		else if ( isWriteType() && isReadType() )
+			sb.append( "Access " );
+		sb.append( "watchpoint: " );
+		String fileName = ensureMarker().getResource().getName();
+		if ( fileName != null && fileName.length() > 0 )
+		{
+			sb.append( ' ' );
+			sb.append( fileName );
+		}
+		String expression = getExpression();
+		if ( expression != null && expression.length() > 0 )
+		{
+			sb.append( " at \'" ); 
+			sb.append( expression );
+			sb.append( '\'' );
+		}
+		sb.append( getConditionText() );
+		return sb.toString();
+	}
 }

@@ -51,6 +51,9 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			IEditorInput input= editor.getEditorInput();
 			IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();				
 			IWorkingCopy copy = manager.getWorkingCopy(input);
+			if (copy == null) {
+				return null;
+			}
 			
 			String expression;
 			try {

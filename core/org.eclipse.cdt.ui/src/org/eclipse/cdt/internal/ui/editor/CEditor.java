@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.IAction;
@@ -902,7 +904,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		// Figure out if this is a C or C++ source file
 		IWorkingCopyManager mgr = CUIPlugin.getDefault().getWorkingCopyManager();
 		ITranslationUnit unit = mgr.getWorkingCopy(getEditorInput());
-		String fileType = (unit != null && unit.isCXXLanguage()) ? LANGUAGE_CPP : LANGUAGE_C;
+		String fileType = LANGUAGE_CPP;
+		if (unit != null) {
+			// default is C++ unless the project as C Nature Only
+			// we can then be smarter.
+			IProject p = unit.getCProject().getProject();
+			if (!CoreModel.hasCCNature(p)) {
+				fileType = unit.isCXXLanguage() ? LANGUAGE_CPP : LANGUAGE_C;
+			}
+		}
 
 		fAnnotationAccess = createAnnotationAccess();
 		

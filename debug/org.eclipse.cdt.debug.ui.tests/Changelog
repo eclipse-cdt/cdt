@@ -1,3 +1,7 @@
+2003-01-21 Peter Graves
+	* src/org/eclipse/cdt/debug/testplugin/CDebugHelper.java: Updated to use new parameters to 
+	ICDISession.createCSession
+
 2002-12-17 Peter Graves
 
 	* plugin.xml,test.xml:  Some simple cleanups to remove refrences to the jdt and

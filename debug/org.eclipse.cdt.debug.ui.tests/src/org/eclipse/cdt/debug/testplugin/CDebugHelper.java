@@ -39,7 +39,7 @@ public class CDebugHelper {
             exename+="sol/" + exe;
         else
            return(null);
-        session=mi.createCSession(null, exename);
+        session=mi.createCSession(null, null, null, exename);
 		return(session);
 	}
 	

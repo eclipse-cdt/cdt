@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
@@ -75,46 +77,36 @@ import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author aniefer
  */
 public class CompleteParsePluginTest extends TestCase {
-    NullProgressMonitor		monitor;
-    IWorkspace 				workspace;
-    IProject 				project;
-    FileManager 			fileManager;
+    static NullProgressMonitor		monitor;
+    static IWorkspace 				workspace;
+    static IProject 				project;
+    static FileManager 				fileManager;
     
-    public CompleteParsePluginTest()
     {
-        super();
-        try{
-            initProject();
-        } catch( Exception e){ /*boo*/ }
-    }
-    /**
-     * @param name
-     */
-    public CompleteParsePluginTest(String name)
-    {
-        super(name);
-        try{
-            initProject();
-        } catch( Exception e){ /*boo*/ }
-    }
-    protected void initProject() throws Exception {
 		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		
 		workspace = ResourcesPlugin.getWorkspace();
 		
-		ICProject cPrj = CProjectHelper.createCCProject("ParserTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
-		project = cPrj.getProject();
-		project.setSessionProperty(IndexManager.activationKey,new Boolean(false));
-		
+		ICProject cPrj; 
+        try {
+            cPrj = CProjectHelper.createCCProject("ParserTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+        
+            project = cPrj.getProject();
+            project.setSessionProperty(IndexManager.activationKey,new Boolean(false));
+        } catch ( CoreException e ) {
+            /*boo*/
+        }
 		if (project == null)
 			fail("Unable to create project"); //$NON-NLS-1$
 
@@ -122,6 +114,48 @@ public class CompleteParsePluginTest extends TestCase {
 		fileManager = new FileManager();
 	}
     
+    public CompleteParsePluginTest()
+    {
+        super();
+    }
+    /**
+     * @param name
+     */
+    public CompleteParsePluginTest(String name)
+    {
+        super(name);
+    }
+    
+    public static Test suite() {
+        TestSuite suite = new TestSuite( CompleteParsePluginTest.class );
+        suite.addTest( new CompleteParsePluginTest("cleanupProject") );    //$NON-NLS-1$
+	    return suite;
+    }
+    
+    public void cleanupProject() throws Exception {
+        try{
+	        project.delete( true, false, monitor );
+	        project = null;
+	    } catch( Throwable e ){
+	        /*boo*/
+	    }
+    }
+    
+    protected void tearDown() throws Exception {
+        if( project == null || !project.exists() ) 
+            return;
+        
+        IResource [] members = project.members();
+        for( int i = 0; i < members.length; i++ ){
+            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+                continue;
+            try{
+                members[i].delete( false, monitor );
+            } catch( Throwable e ){
+                /*boo*/
+            }
+        }
+	}
     protected IFile importFile(String fileName, String contents ) throws Exception{
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
@@ -256,10 +290,12 @@ public class CompleteParsePluginTest extends TestCase {
     protected IASTScope parse(IFile code, List callbackList, ParserLanguage language) throws Exception
     {
     	callback = new CallbackTracker( callbackList ); 
+    	InputStream stream = code.getContents();
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new CodeReader( code.getLocation().toOSString(), code.getContents() ), new ScannerInfo(), //$NON-NLS-1$
+    		ParserFactory.createScanner( new CodeReader( code.getLocation().toOSString(), stream ), new ScannerInfo(), //$NON-NLS-1$
     			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
+    	stream.close();
     	boolean parseResult = parser.parse();
     	// throw exception if there are generated IProblems
 		if( !parseResult ) throw new ParserException( "FAILURE"); //$NON-NLS-1$

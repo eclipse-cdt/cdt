@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 public class TypeFilter {
 	
 	public TypeFilter(){
+	    //empty
 	}
 	
 	public TypeFilter( ITypeInfo.eType type ){
@@ -66,7 +67,8 @@ public class TypeFilter {
 		if( typeInfo.isType( ITypeInfo.t_function ) )
 		{
 			if( ( acceptedKinds.containsKey( LookupKind.FUNCTIONS ) && !symbolIsMember ) ||
-				( acceptedKinds.containsKey( LookupKind.METHODS )   &&  symbolIsMember ) )
+				( acceptedKinds.containsKey( LookupKind.METHODS )   &&  symbolIsMember ) ||
+				( acceptedKinds.containsKey( LookupKind.MEMBERS )   &&  symbolIsMember ) )
 			{
 				return true;
 			} 
@@ -84,7 +86,8 @@ public class TypeFilter {
 		{
 			if( ( acceptedKinds.containsKey( LookupKind.VARIABLES ) 	   && !symbolIsMember && !symbolIsLocal ) ||
 				( acceptedKinds.containsKey( LookupKind.LOCAL_VARIABLES ) && !symbolIsMember && symbolIsLocal )  ||
-				( acceptedKinds.containsKey( LookupKind.FIELDS )          && symbolIsMember ) )
+				( acceptedKinds.containsKey( LookupKind.FIELDS )          && symbolIsMember ) ||
+				( acceptedKinds.containsKey( LookupKind.MEMBERS )         && symbolIsMember ) )
 			{
 				return true;
 			} 

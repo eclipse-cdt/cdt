@@ -1,4 +1,8 @@
 2003-10-30 Mikhail Khodjaiants
+	Fix for PR 45818 doesn't solve the problem. Fall back to the previous version.
+	* CDebugElement.java
+
+2003-10-30 Mikhail Khodjaiants
 	Fix for PR 45818: NPE when closing the workbench.
 	* CDebugElement.java
 

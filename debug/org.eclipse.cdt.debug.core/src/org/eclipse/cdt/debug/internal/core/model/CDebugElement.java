@@ -122,8 +122,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	protected void fireEvent(DebugEvent event)
 	{
-		if ( DebugPlugin.getDefault() != null ) // Quick fix for PR 45818. Revise later.
-			DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { event } );
+		DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { event } );
 	}
 
 	/**

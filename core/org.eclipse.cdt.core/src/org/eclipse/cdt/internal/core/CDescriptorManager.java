@@ -56,8 +56,6 @@ public class CDescriptorManager implements IResourceChangeListener {
 			return;
 		}
 		IResource resource = event.getResource();
-		
-		Object source = event.getSource();
 				
 		int eventType = event.getType();
 		

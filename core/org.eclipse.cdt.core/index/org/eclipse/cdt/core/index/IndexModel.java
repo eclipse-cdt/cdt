@@ -33,14 +33,17 @@ public class IndexModel {
 	}
 
 	public void setEnabled(IProject project, boolean on) {
-		String prop = new Boolean(on).toString();
 		try {
 			if (project != null) {
-				project.setPersistentProperty(activationKey, prop);
-				if (on) {
-					addResource(project);
-				} else {
-					removeResource(project);
+				Boolean newValue = new Boolean(on);
+				Boolean oldValue = new Boolean(isEnabled(project));
+				if (!oldValue.equals(newValue)) {
+					project.setPersistentProperty(activationKey, newValue.toString());
+					if (on) {
+						addResource(project);
+					} else {
+						removeResource(project);
+					}
 				}
 			}
 		} catch (CoreException e) {

@@ -8,7 +8,9 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
+
 public class VCErrorParser implements IErrorParser {
+	
 	public boolean processLine(String line, ErrorParserManager eoParser) {
 		// msdev: filname(linenumber) : error/warning error_desc
 		int firstColon = line.indexOf(':');
@@ -28,6 +30,9 @@ public class VCErrorParser implements IErrorParser {
 				} catch (SecurityException e) {
 				}
 			}
+		}
+
+		if (firstColon != -1) {
 			String firstPart = line.substring(0, firstColon);
 			StringTokenizer tok = new StringTokenizer(firstPart, "()"); //$NON-NLS-1$
 			if (tok.hasMoreTokens()) {

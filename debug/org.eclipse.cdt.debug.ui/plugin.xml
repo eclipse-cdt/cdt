@@ -95,6 +95,12 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
+            name="%SharedLibrariesPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.SharedLibrariesViewPreferencePage"
+            id="org.eclipse.cdt.debug.ui.SharedLibrariesViewPreferencePage">
+      </page>
+      <page
             name="%MemoryPreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage"
@@ -256,8 +262,8 @@
                tooltip="Resume Ignoring Signal">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>

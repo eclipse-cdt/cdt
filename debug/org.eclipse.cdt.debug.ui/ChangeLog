@@ -1,4 +1,13 @@
 2003-02-07 Mikhail Khodjaiants
+	Implementing the preference page for the 'Shared Libraries' view.
+	* ICDebugHelpContextIds.java
+	* ICDebugPreferenceConstants.java
+	* SharedLibrariesViewPreferencePage.java: new
+	* CDebugUIPlugin.java
+	* plugin.xml
+	* plugin.properties
+
+2003-02-07 Mikhail Khodjaiants
 	The viewer type of the 'Shared Libraries' view changed to 'TableTreeViewer'.
 	* CDTDebugModelPresentation.java
 	* AbstractDebugEventHandler.java

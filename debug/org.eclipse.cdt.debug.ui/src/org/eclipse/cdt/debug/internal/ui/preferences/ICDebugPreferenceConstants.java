@@ -110,4 +110,11 @@ public interface ICDebugPreferenceConstants
 	 * When <code>true</code> the 'Auto-Refresh' option will be checked.
 	 */
 	public static final String PREF_MEMORY_AUTO_REFRESH = ICDebugUIConstants.PLUGIN_ID + "Memory.auto_refresh"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether the shared libraries view will be
+	 * refreshed every time when the execution of program stops. When
+	 * <code>true</code> the 'Auto-Refresh' option will be checked.
+	 */
+	public static final String PREF_SHARED_LIBRARIES_AUTO_REFRESH = ICDebugUIConstants.PLUGIN_ID + "SharedLibraries.auto_refresh"; //$NON-NLS-1$
 }

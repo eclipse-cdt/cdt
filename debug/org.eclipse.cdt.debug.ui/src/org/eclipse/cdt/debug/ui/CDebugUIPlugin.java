@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
+import org.eclipse.cdt.debug.internal.ui.preferences.SharedLibrariesViewPreferencePage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -166,6 +167,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	{
 		MemoryViewPreferencePage.initDefaults( pstore );
 		RegistersViewPreferencePage.initDefaults( pstore );
+		SharedLibrariesViewPreferencePage.initDefaults( pstore );
 		CDebugPreferencePage.initDefaults( pstore );
 	}
 	

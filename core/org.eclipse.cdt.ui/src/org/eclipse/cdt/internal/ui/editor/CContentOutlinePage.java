@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
@@ -48,7 +49,8 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
-	private WorkingCopy fInput;
+	//private WorkingCopy fInput;
+	private IWorkingCopy fInput;
 	private ProblemTreeViewer treeViewer;
 	private ListenerList selectionChangedListeners = new ListenerList();
 	private TogglePresentationAction fTogglePresentation;
@@ -284,5 +286,16 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void setSelection(ISelection selection) {
 		if (treeViewer != null) 
 			treeViewer.setSelection(selection);
+	}
+
+	/**
+	 * @param unit
+	 */
+	public void setInput(IWorkingCopy unit) {
+		fInput = unit;
+		if (treeViewer != null) {
+			treeViewer.setInput (fInput);
+		}
+		contentUpdated();		
 	}
 }

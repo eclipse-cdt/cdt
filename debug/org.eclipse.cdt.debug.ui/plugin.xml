@@ -803,6 +803,41 @@
             </enablement>
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.debug.core.model.ICastToType"
+            id="org.eclipse.cdt.debug.ui.VariableActions">
+         <action
+               label="%RestoreDefaultTypeAction.label"
+               helpContextId="restore_default_type_action_context"
+               tooltip="%RestoreDefaultTypeAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%CastToTypeAction.label"
+               icon="icons/full/clcl16/casttotype_co.gif"
+               helpContextId="cast_to_type_action_context"
+               tooltip="%CastToTypeAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

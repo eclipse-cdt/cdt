@@ -1,3 +1,10 @@
+2003-03-09 Mikhail Khodjaiants
+	The implementation of the "Cast To Type" and "Restore Default Type" actions.
+	* plugin.xml
+	* plugin.propeties
+	* CastToTypeActionDelegate.java: new
+	* RestoreDefaultTypeActionDelegate.java: new
+
 2003-03-05 Mikhail Khodjaiants
 	The extension of CEditor that displays the 'Source Not Found' form.
 	* plugin.properties

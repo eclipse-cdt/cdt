@@ -435,6 +435,38 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICProject#findSourceRoot()
+	 */
+	public ISourceRoot findSourceRoot(IResource res) {
+	    try {
+			ISourceRoot[] roots = getAllSourceRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].isOnSourceEntry(res)) {
+					return roots[i];
+				}
+			}
+	    } catch (CModelException e) {
+	    }
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICProject#findSourceRoot()
+	 */
+	public ISourceRoot findSourceRoot(IPath path) {
+	    try {
+			ISourceRoot[] roots = getAllSourceRoots();
+			for (int i = 0; i < roots.length; i++) {
+			    if (roots[i].getPath().equals(path)) {
+					return roots[i];
+				}
+			}
+	    } catch (CModelException e) {
+	    }
+		return null;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoots()
 	 */
 	public ISourceRoot[] getSourceRoots() throws CModelException {

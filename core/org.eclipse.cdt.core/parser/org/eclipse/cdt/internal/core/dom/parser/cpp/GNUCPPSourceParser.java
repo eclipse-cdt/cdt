@@ -345,6 +345,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          switch (LT(1)) {
             case IToken.tIDENTIFIER:
             case IToken.tCOMPLETION:
+            case IToken.tEOC:
                last = consume();
                last = consumeTemplateArguments(last, argumentList);
                if (last.getType() == IToken.tGT)
@@ -2601,7 +2602,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	  // We're a single token
       CPPASTName name = new CPPASTName(duple.toCharArray());
 	  IToken token = duple.getFirstToken();
-	  if (token.getType() == IToken.tCOMPLETION) {
+	  switch (token.getType()) {
+	  case IToken.tCOMPLETION:
+	  case IToken.tEOC:
 		  createCompletionNode(token);
 		  completionNode.addName(name);
 	  }

@@ -64,8 +64,11 @@ public class MISession extends Observable {
 	CommandQueue rxQueue;
 	Queue eventQueue;
 
-	PipedInputStream miInPipe;
-	PipedOutputStream miOutPipe;
+	PipedInputStream miInConsolePipe;
+	PipedOutputStream miOutConsolePipe;
+	PipedInputStream miInLogPipe;
+	PipedOutputStream miOutLogPipe;
+
 
 	CommandFactory factory;
 
@@ -133,17 +136,31 @@ public class MISession extends Observable {
 	 * get MI Console Stream.
 	 * The parser will make available the MI console stream output.
 	 */
-	public InputStream getMIStream() {
-		if (miInPipe == null) {
+	public InputStream getMIConsoleStream() {
+		if (miInConsolePipe == null) {
 			try {
-				miOutPipe = new PipedOutputStream();
-				miInPipe = new PipedInputStream(miOutPipe);
+				miOutConsolePipe = new PipedOutputStream();
+				miInConsolePipe = new PipedInputStream(miOutConsolePipe);
 			} catch (IOException e) {
 			}
 		}
-		return miInPipe;
+		return miInConsolePipe;
 	}
 
+	/**
+	 * get MI Console Stream.
+	 * The parser will make available the MI console stream output.
+	 */
+	public InputStream getMILogStream() {
+		if (miInLogPipe == null) {
+			try {
+				miOutLogPipe = new PipedOutputStream();
+				miInLogPipe = new PipedInputStream(miOutLogPipe);
+			} catch (IOException e) {
+			}
+		}
+		return miInLogPipe;
+	}
 
 	/**
 	 * For example the CDI/MI bridge uses the command
@@ -349,9 +366,18 @@ public class MISession extends Observable {
 
 		// Destroy the MI console stream.
 		try {
-			miInPipe = null;
-			if (miOutPipe != null) {
-				miOutPipe.close();
+			miInConsolePipe = null;
+			if (miOutConsolePipe != null) {
+				miOutConsolePipe.close();
+			}
+		} catch (IOException e) {
+		}
+
+		// Destroy the MI log stream.
+		try {
+			miInLogPipe = null;
+			if (miOutLogPipe != null) {
+				miOutLogPipe.close();
 			}
 		} catch (IOException e) {
 		}
@@ -394,7 +420,11 @@ public class MISession extends Observable {
 
 
 	OutputStream getConsolePipe() {
-		return miOutPipe;
+		return miOutConsolePipe;
+	}
+
+	OutputStream getLogPipe() {
+		return miOutLogPipe;
 	}
 
 	CommandQueue getTxQueue() {

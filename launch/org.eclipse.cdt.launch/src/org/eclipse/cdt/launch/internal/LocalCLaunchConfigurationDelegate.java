@@ -80,9 +80,9 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					dsession = debugConfig.getDebugger().createLaunchSession(config, exe);
 					ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
 					opt.setArguments(getProgramArgumentsArray(config));
-					File wd = getWorkingDir(config);
+					File wd = getWorkingDirectory(config);
 					if (wd != null) {
-						opt.setWorkingDirectory(wd.toString());
+						opt.setWorkingDirectory(wd.getAbsolutePath());
 					}
 					opt.setEnvironment(getEnvironmentProperty(config));
 					ICDITarget dtarget = dsession.getTargets()[0];
@@ -127,7 +127,11 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 			}
 		} else {
-			Process process = exec(commandArray, getEnvironmentArray(config), getWorkingDir(config));
+			File wd = getWorkingDirectory(config);
+			if (wd == null) {
+				wd = new File(System.getProperty("user.home", ".")); //NON-NLS-1;
+			}
+			Process process = exec(commandArray, getEnvironmentArray(config), wd);
 			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray[0]));
 		}
 		monitor.done();

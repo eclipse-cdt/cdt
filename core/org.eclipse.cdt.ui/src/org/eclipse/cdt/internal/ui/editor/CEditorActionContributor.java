@@ -20,14 +20,14 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
+import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
 
-public class CEditorActionContributor extends BasicTextEditorActionContributor {
+public class CEditorActionContributor extends TextEditorActionContributor {
 
 	protected static class SelectionAction extends TextEditorAction implements ISelectionChangedListener {
 		

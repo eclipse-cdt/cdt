@@ -88,9 +88,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -101,7 +101,7 @@ import org.eclipse.ui.views.tasklist.TaskList;
 /**
  * C specific text editor.
  */
-public class CEditor extends AbstractTextEditor implements ISelectionChangedListener {
+public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 
 	/** The outline page */

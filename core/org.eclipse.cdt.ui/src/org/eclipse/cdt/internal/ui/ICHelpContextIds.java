@@ -36,5 +36,7 @@ public interface ICHelpContextIds {
 	public static final String CLEAR_CONSOLE_ACTION= PREFIX + "clear_console_action_context";
 	public static final String CLEAR_CONSOLE_VIEW= PREFIX + "clear_console_view_context";
 
+	public static final String TOGGLE_PRESENTATION_ACTION= 	PREFIX + "toggle_presentation_action_context"; //$NON-NLS-1$
+	public static final String TOGGLE_TEXTHOVER_ACTION= PREFIX + "toggle_texthover_action_context"; //$NON-NLS-1$
 
 }

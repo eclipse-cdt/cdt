@@ -1,5 +1,31 @@
 2003-04-04 Alain Magloire
 
+	The TextEditor provides a way to select a range to be edited.
+	We provide the same functionnality; "Show Source of Selected Element Only"
+
+	* icons/full/clcl16/segment_edit.gif:
+	* icons/full/dlcl16/segment_edit.gif:
+	* icons/full/elcl16/segment_edit.gif:
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java:
+	descriptor for segment_edit.gif.
+
+	* src/org/eclipse/cdt/ui/PreferenceConstants.java:
+	Move the preference constants so they can be visible to other plugins.
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
+	* src/org/eclipse/cdt/internal/preference/CPlugigPreferencePage.java:
+
+	* src/org/eclipse/cdt/internal/editor/CContentOutlinePage.java:
+	* src/org/eclipse/cdt/internal/editor/CEditorActionContributor.java:
+	* src/org/eclipse/cdt/internal/editor/CEditorMessages.properties:
+	* src/org/eclipse/cdt/internal/editor/CTextEditorActiionConstant.java:
+	* src/org/eclipse/cdt/internal/editor/ICEditorActionDefinitonsIds.java:
+	* src/org/eclipse/cdt/internal/editor/TogglePresentationAction.java:
+	 
+	
+	
+
+2003-04-04 Alain Magloire
+
 	The way to register actions change from 2.0 to 2.1
 	Action must have an ID.  This fixes the editor to
 	be activate on Ctrl+space.

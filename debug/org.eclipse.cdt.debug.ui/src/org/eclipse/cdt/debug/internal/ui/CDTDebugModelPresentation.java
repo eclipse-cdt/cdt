@@ -526,9 +526,11 @@ public class CDTDebugModelPresentation extends LabelProvider
 			StringBuffer label = new StringBuffer();
 			label.append( info.getLevel() );
 			label.append( ' ' );
-			if ( info.getFunction() != null )
+
+			String function = info.getFunction();
+			if ( function != null )
 			{
-				String function = info.getFunction().trim();
+				function = function.trim();
 				if ( function.length() > 0 )
 				{
 					label.append( function );
@@ -547,7 +549,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					}
 				}
 			}
-			else
+			if ( isEmpty( function ) )
 				label.append( "<symbol is not available>" );
 			return label.toString();
 		}
@@ -1000,5 +1002,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 	public void dispose()
 	{
 		fImageCache.disposeAll();
+	}
+
+	private boolean isEmpty( String str )
+	{
+		return ( str == null || str.length() == 0 );
 	}
 }

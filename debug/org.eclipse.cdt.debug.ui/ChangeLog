@@ -1,3 +1,7 @@
+2003-11-21 Mikhail Khodjaiants
+	Use "symbol not available" for empty function names when generating a stack frame label.
+	* CDTDebugModelPresentation.java 
+	
 2003-11-13 Mikhail Khodjaiants
 	Use 'StringBuffer' instead of 'String' when generating stack frame labels.
 	Added a label for dummy stack frames instead of using the name provided by the rendered object.

@@ -394,8 +394,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		List usingDecs = new LinkedList();
 		List usingRefs = new LinkedList();
 		
+		UsingDeclarationSymbol usingDeclaration = new UsingDeclarationSymbol( getSymbolTable(), usingRefs, usingDecs );
+		boolean addedUsingToContained = false;
+		
 		while( symbol != null ){
 			if( ParserSymbolTable.okToAddUsingDeclaration( symbol, this ) ){
+				if( ! addedUsingToContained ){
+					getContents().add( usingDeclaration );
+					addedUsingToContained = true;
+				}
 				clone = (ISymbol) symbol.clone(); //7.3.3-9
 				addSymbol( clone );
 			} else {
@@ -412,7 +419,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 		
-		return new UsingDeclarationSymbol( getSymbolTable(), usingRefs, usingDecs );
+		return usingDeclaration;
 	}
 	
 	/* (non-Javadoc)
@@ -992,6 +999,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 							next = symbol.getTypeSymbol();
 							return true;
 						}
+					} else if( extensible instanceof IUsingDeclarationSymbol ){
+						IUsingDeclarationSymbol using = (IUsingDeclarationSymbol) extensible;
+						alreadyReturned.addAll( using.getDeclaredSymbols() );
 					}
 					next = extensible;
 					return true;
@@ -1018,6 +1028,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 							alreadyReturned.add( symbol.getTypeSymbol() );
 							return symbol.getTypeSymbol();
 						}
+					} else if( extensible instanceof IUsingDeclarationSymbol ){
+						IUsingDeclarationSymbol using = (IUsingDeclarationSymbol) extensible;
+						alreadyReturned.addAll( using.getDeclaredSymbols() );
 					}
 					return extensible;
 				}

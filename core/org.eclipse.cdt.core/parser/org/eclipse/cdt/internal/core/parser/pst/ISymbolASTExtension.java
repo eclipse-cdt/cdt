@@ -10,8 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
+
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol;
 
 /**
@@ -25,7 +27,8 @@ public interface ISymbolASTExtension extends ISymbolOwner
 	}
 	
 	
-	public ASTSymbol       getPrimaryDeclaration();
+	public ASTNode       getPrimaryDeclaration();
+	public IExtensibleSymbol getExtensibleSymbol();
 	public Iterator        getAllDefinitions();
 	public void            addDefinition( ASTSymbol definition ) throws ExtensionException; 	
 

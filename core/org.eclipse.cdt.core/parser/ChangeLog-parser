@@ -1,3 +1,10 @@
+2004-04-21 Andrew Niefer
+	fixing 52695 & 45372
+	- updated CompleteParseASTFactory.createUsingDirective & createUsingDeclaration
+	- added CompleteParseASTFactory.attachSymbolExtension( IExtensibleSymbol symbol, ASTNode astNode )
+	- updated ContainerSymbol.addUsingDeclaration
+	- modified ISymbolASTExtension and added ExtensibleSymbolExtension.java
+
 2004-04-21 John Camelon
 	Partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=59468
 

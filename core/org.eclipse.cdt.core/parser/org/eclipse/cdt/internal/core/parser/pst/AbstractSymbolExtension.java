@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol;
 
 /**
@@ -38,7 +39,11 @@ public abstract class AbstractSymbolExtension implements ISymbolASTExtension
 		return symbol;
 	}
 
-    public ASTSymbol getPrimaryDeclaration()
+	public IExtensibleSymbol getExtensibleSymbol(){
+		return symbol;
+	}
+	
+    public ASTNode getPrimaryDeclaration()
     {
         return primaryDeclaration;
     }

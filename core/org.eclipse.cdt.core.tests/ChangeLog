@@ -1,3 +1,8 @@
+2004-04-21 Andrew Niefer
+	fox bugs 52695 & 45372
+	added parser/CompleteParseASTSymbolIteratorTest.testUsingDirectives()
+	added parser/CompleteParseASTSymbolIteratorTest.testUsingDeclaration()
+
 2004-04-21 John Camelon
 	Removed unused testInclusions() test from ScannerTestCase. 
 

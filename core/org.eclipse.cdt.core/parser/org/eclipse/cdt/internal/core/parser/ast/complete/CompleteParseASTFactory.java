@@ -75,10 +75,12 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.pst.ExtensibleSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IDeferredTemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
@@ -469,7 +471,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				handleProblem( pste.createProblemID(), duple.toString(), startingOffset, endingOffset, startingLine );
 			}
 		
-		return new ASTUsingDirective( scopeToSymbol(scope), usingDirective, startingOffset, startingLine, endingOffset, endingLine, references );
+		ASTUsingDirective using = new ASTUsingDirective( scopeToSymbol(scope), usingDirective, startingOffset, startingLine, endingOffset, endingLine, references );
+		attachSymbolExtension( usingDirective, using );
+		
+		return using;
     }
     
 
@@ -547,9 +552,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					addReference( references, reference );
 				}
 			}
-
-        return new ASTUsingDeclaration( scope, name.getLastToken().getImage(),
-        	endResult.getReferencedSymbols(), isTypeName, startingOffset, startingLine, endingOffset, endingLine, references );
+		ASTUsingDeclaration using = new ASTUsingDeclaration( scope, name.getLastToken().getImage(),
+	        	endResult.getReferencedSymbols(), isTypeName, startingOffset, startingLine, endingOffset, endingLine, references );
+		attachSymbolExtension( endResult, using );
+		
+        return using; 
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createASMDefinition(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, int, int)
@@ -626,6 +633,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	return compilationUnit; 
     }
     
+    protected void attachSymbolExtension( IExtensibleSymbol symbol, ASTNode astNode )
+    {
+    	ISymbolASTExtension extension = new ExtensibleSymbolExtension( symbol, astNode );
+    	symbol.setASTExtension( extension );
+    }
     
 	protected void attachSymbolExtension(
 		ISymbol symbol,
@@ -902,7 +914,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return new ASTEnumeratorReference( offset, referenceElementName, (IASTEnumerator)symbol.getASTExtension().getPrimaryDeclaration() );
 		else if(( symbol.getType() == TypeInfo.t_function ) || (symbol.getType() == TypeInfo.t_constructor))
 		{
-			ASTSymbol referenced = symbol.getASTExtension().getPrimaryDeclaration(); 
+			ASTNode referenced = symbol.getASTExtension().getPrimaryDeclaration(); 
 			if( referenced instanceof IASTMethod )
 				return new ASTMethodReference( offset, referenceElementName, (IASTMethod)referenced ); 
 			else
@@ -936,7 +948,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 			else
 			{
-				ASTSymbol s = symbol.getASTExtension().getPrimaryDeclaration();
+				ASTNode s = symbol.getASTExtension().getPrimaryDeclaration();
 				if(s instanceof IASTVariable)
 					return new ASTVariableReference( offset, referenceElementName, (IASTVariable)s);
 				else if (s instanceof IASTParameterDeclaration)

@@ -87,7 +87,8 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
     {
     	IContainerSymbol owned = getTemplateSymbol().getTemplatedSymbol();
     	if( owned != null && owned.getASTExtension() != null ){
-    		return owned.getASTExtension().getPrimaryDeclaration();
+    		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
+    		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
     	}
         return null;
     }

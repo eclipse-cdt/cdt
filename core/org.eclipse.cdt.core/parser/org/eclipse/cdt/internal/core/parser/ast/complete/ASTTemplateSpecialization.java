@@ -33,8 +33,10 @@ public class ASTTemplateSpecialization extends ASTTemplateDeclaration implements
 
     public IASTDeclaration getOwnedDeclaration()
     {
-    	if( owned != null && owned.getASTExtension() != null )
-    		return owned.getASTExtension().getPrimaryDeclaration();
+    	if( owned != null && owned.getASTExtension() != null ){
+    		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
+    		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
+    	}
     	
     	return null;
     }

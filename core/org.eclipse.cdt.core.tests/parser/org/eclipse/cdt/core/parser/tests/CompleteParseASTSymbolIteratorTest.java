@@ -30,8 +30,9 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -334,4 +335,21 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 		assertFalse( i.hasNext() );
 	}
 	
+	public void testUsingDirectives() throws Exception
+	{
+		Iterator i = parse( "namespace NS { int i; }  using namespace NS;" ).getDeclarations();
+		
+		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
+		IASTUsingDirective using = (IASTUsingDirective) i.next();
+		assertFalse( i.hasNext() );
+	}
+	
+	public void testUsingDeclaration() throws Exception
+	{
+		Iterator i = parse( "namespace NS{ void f(); void f( int ); };  using NS::f;" ).getDeclarations();
+		
+		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
+		IASTUsingDeclaration using = (IASTUsingDeclaration) i.next();
+		assertFalse( i.hasNext() );
+	}
 }

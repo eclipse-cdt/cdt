@@ -1,18 +1,15 @@
-package org.eclipse.cdt.core.model.tests;
-
-
-
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors: 
- * Rational Software - Initial API and implementation
+ * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.core.model.tests;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -333,12 +330,12 @@ public class StructuralCModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)var3, 75, 75);
 		
 		// MyPackage ---> function pointer: orig_malloc_hook
-/*		IVariable vDecl2 = (IVariable) nsVars.get(3);
+		IVariable vDecl2 = (IVariable) nsVars.get(3);
 		assertEquals(vDecl2.getElementName(), new String("orig_malloc_hook"));
 		checkElementOffset((CElement)vDecl2);
-		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, size_t)"));
+		assertEquals(vDecl2.getTypeName(), new String ("void*(*)(const char*, int, int)"));
 		checkLineNumbers((CElement)vDecl2, 81, 81);
-*/		
+		
 	}
 
 	private void checkVariableDeclarations(IParent namespace) throws CModelException{

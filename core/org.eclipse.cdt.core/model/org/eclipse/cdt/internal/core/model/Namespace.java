@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 
@@ -21,7 +22,7 @@ public class Namespace extends SourceManipulation implements INamespace{
 		super(parent, name, CElement.C_NAMESPACE);
 	}
 
-	/**
+	/*
 	 * Returns the typeName.
 	 * @return String
 	 */
@@ -29,12 +30,22 @@ public class Namespace extends SourceManipulation implements INamespace{
 		return typeName;
 	}
 
-	/**
+	/*
 	 * Sets the typeName.
 	 * @param typeName The typeName to set
 	 */
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		// TODO Auto-generated method stub
+		return (super.equals(other) 
+				&& (this.getStartPos() == ((Namespace)other).getStartPos())
+				&& (this.getLength() == ((Namespace)other).getLength())				
+		);
 	}
 
 }

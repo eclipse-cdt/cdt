@@ -436,37 +436,16 @@ public class CModelBuilder {
 		String nsName = (nsDef.getName() == null )  
 						? ""  //$NON-NLS-1$
 						: nsDef.getName().toString();
-
-		// check if there is another namespace with the same name for the same parent
-		boolean alreadyThere = false;
-		Namespace oldElement = null;
-		
-		List siblings = parent.getChildrenOfType(ICElement.C_NAMESPACE); 
-		if(siblings.size() > 0){
-			Iterator i = siblings.iterator();
-			while (i.hasNext()){
-				Namespace n = (Namespace)i.next();
-				if(n.getElementName().equals(nsName)){
-					alreadyThere = true;
-					oldElement = n;
-				}
-			}
-		} 
-		if( (alreadyThere) && (oldElement != null)) {
-			return oldElement;
-		} else {
-			// this is the first namespace
-			Namespace element = new Namespace (parent, nsName );
-			// add to parent
-			parent.addChild(element);
-			element.setIdPos(nsDef.getNameOffset(), 
-			(nsName.length() == 0) ? type.length() : (nsDef.getNameEndOffset() - nsDef.getNameOffset()));
-			element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
-			element.setLines( nsDef.getStartingLine(), nsDef.getEndingLine() );
-			element.setTypeName(type);
-			this.newElements.put(element, element.getElementInfo());		
-			return element;
-		}
+		Namespace element = new Namespace (parent, nsName );
+		// add to parent
+		parent.addChild(element);
+		element.setIdPos(nsDef.getNameOffset(), 
+		(nsName.length() == 0) ? type.length() : (nsDef.getNameEndOffset() - nsDef.getNameOffset()));
+		element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
+		element.setLines( nsDef.getStartingLine(), nsDef.getEndingLine() );
+		element.setTypeName(type);
+		this.newElements.put(element, element.getElementInfo());		
+		return element;
 	}
 
 	private Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier) throws CModelException{

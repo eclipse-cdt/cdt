@@ -1,3 +1,6 @@
+2004-06-15 Hoda Amer
+	Fix for PR 63207:  ITranslationUnit.getElementAtOffset(i) does not factor in multiple namespace decl
+	
 2004-06-14 Hoda Amer
 	Fix for PR 63243: [Outline View] Missing user defined type if declare variable along with the C++ elem (struct, enum, union)
 	

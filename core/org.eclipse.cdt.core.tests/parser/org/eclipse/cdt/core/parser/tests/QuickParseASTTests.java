@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
@@ -1791,5 +1792,23 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		parse("int* gp_down = static_cast<int*>(gp_stat);");
 	}
+	
+	public void testBug42985() throws Exception
+	{
+		parse( "const int x = 4; int y = ::x;");
+	}
+
+    public void testBug40419() throws ParserException
+	{
+		Writer code = new StringWriter();
+		try
+		{ 
+			code.write( "template <class T, class U>	struct SuperSubclass {\n"  );
+			code.write( "enum { value = (::Loki::Conversion<const volatile U*, const volatile T*>::exists && \n" );
+			code.write( "!::Loki::Conversion<const volatile T*, const volatile void*>::sameType) };	};" );
+		} catch( IOException ioe ){}
+		parse( code.toString() );
+	}
+		
 		
 }

@@ -1,4 +1,8 @@
 2003-09-12 John Camelon
+	Fixed Bug 42985 : Search: Qualified function call is treated as a declaration 
+	Fixed Bug 40419 : parser fails on heavily templated expressions 
+
+2003-09-12 John Camelon
 	Fixed Bug 43013 : IASTParameterDeclaration does not derive from IASTOffsetableNamedElement 
 	
 2003-09-12 Andrew Niefer

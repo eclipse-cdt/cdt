@@ -936,7 +936,10 @@ public class Parser implements IParser
             {
                 IASTDeclaration declaration = (IASTDeclaration)i.next();
                 declaration.enterScope( requestor );
-   
+   			
+   				if ( !( declaration instanceof IASTScope ) ) 
+   					throw backtrack;
+   					
                 handleFunctionBody((IASTScope)declaration, 
                 	sdw.isInline() );
 				((IASTOffsetableElement)declaration).setEndingOffset(
@@ -4450,6 +4453,7 @@ public class Parser implements IParser
                     throw backtrack;
                 }
             case IToken.tIDENTIFIER :
+            case IToken.tCOLONCOLON :
                 ITokenDuple duple = name();
                 //TODO should be an ID Expression really
                 try

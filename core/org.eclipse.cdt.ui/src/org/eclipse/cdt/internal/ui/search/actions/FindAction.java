@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -48,6 +47,7 @@ import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchOperation;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -58,6 +58,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchSite;
@@ -113,8 +114,8 @@ public abstract class FindAction extends Action {
 	 /**
 	 * @param node
 	 */
-	 protected CSearchOperation createSearchOperation(String pattern, SearchFor searchFor) {
-		CSearchOperation op = null;
+	 protected CSearchQuery createSearchQuery(String pattern, SearchFor searchFor) {
+	 	CSearchQuery op = null;
 		ICSearchScope scope = getScope();
 		String scopeDescription = getScopeDescription();
 	
@@ -126,7 +127,7 @@ public abstract class FindAction extends Action {
 		
 		LimitTo limitTo = getLimitTo();
 		
-		op = new CSearchOperation(CCorePlugin.getWorkspace(), pattern,true,search,limitTo,scope,scopeDescription,collector);
+		op = new CSearchQuery(CCorePlugin.getWorkspace(), pattern,true,search,limitTo,scope,scopeDescription,collector);
 		return op;
 		
 	}
@@ -199,10 +200,11 @@ public abstract class FindAction extends Action {
 			operationNotAvailableDialog();
 			return;
 		}
+	
+		CSearchQuery job = createSearchQuery(selectedText.getText(),getSearchForFromNode(node));
+		NewSearchUI.activateSearchResultView();
 		
-		CSearchOperation op = createSearchOperation(selectedText.getText(),getSearchForFromNode(node));
-		
-		performSearch(op);
+		NewSearchUI.runQuery(job);
 	}
 	
 	private SearchFor getSearchForFromNode(IASTNode node){
@@ -244,18 +246,6 @@ public abstract class FindAction extends Action {
 			}
 			
 			return searchFor;
-	}
-	
-	protected void performSearch(CSearchOperation op){
-		 try {
-		 	SearchUI.activateSearchResultView();
-		 	
-	 		 ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(fSite.getShell());
-	 		 progressMonitor.run(true, true, op);
-	
-		 } catch(Exception x) {
-		 		 CUIPlugin.getDefault().log(x);
-		 }
 	}
 	
 	private void operationNotAvailableDialog(){

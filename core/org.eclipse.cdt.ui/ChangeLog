@@ -1,3 +1,18 @@
+2004-04-19 Bogdan Gheorghe
+	Fix for 58477 - Search UI does not work
+	Fix for 59077 - Selection Search does not work
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java
+    * src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchTableContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/LevelTreeContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/NewSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/FindAction.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultLabelProvider.java
+	
 2004-04-19 Alain Magloire
 
 	The Core Model interfaces now is throwing CModelException

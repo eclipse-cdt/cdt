@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corp. - Rational Software - initial implementation
+ ******************************************************************************/
 /*
  * Created on Mar 26, 2004
  *
@@ -8,7 +18,6 @@ package org.eclipse.cdt.internal.ui.search;
 
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -20,6 +29,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -39,7 +49,8 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	private boolean					_caseSensitive;
 	private LimitTo					_limitTo;
 	private List					_searchFor;
-	
+	private CSearchResult  			_result;
+	 
 	public CSearchQuery(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_stringPattern = pattern;
@@ -53,7 +64,8 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		_scope = scope;
 		_scopeDescription = scopeDescription;
 		_collector = collector;
-		_collector.setOperation( this );
+		if (_collector != null)
+			_collector.setOperation( this );
 	}
 
 	/**
@@ -116,9 +128,20 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
-		_collector.setProgressMonitor( monitor );	
+		
+		final CSearchResult textResult= (CSearchResult) getSearchResult();
+		textResult.removeAll();
 		
 		SearchEngine engine = new SearchEngine( CUIPlugin.getSharedWorkingCopies() );
+		int matchCount= 0;
+		
+
+		int totalTicks= 1000;
+
+		monitor.beginTask("", totalTicks); //$NON-NLS-1$
+		IProgressMonitor mainSearchPM= new SubProgressMonitor(monitor, 1000);
+
+		NewSearchResultCollector finalCollector= new NewSearchResultCollector(textResult, mainSearchPM);
 
 		ICSearchPattern pattern = null;
 		if( _searchFor.size() > 1 ){
@@ -136,11 +159,13 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		}
 		
 		try {
-			engine.search( _workspace, pattern, _scope, _collector, false );
+			engine.search( _workspace, pattern, _scope, finalCollector, false );
 		} catch (InterruptedException e) {
 		}
 		
-		return new Status(IStatus.OK, CUIPlugin.getPluginId(),0,"",null); //$NON-NLS-1$
+		matchCount = finalCollector.getMatchCount();
+		
+		return new Status(IStatus.OK, CUIPlugin.getPluginId(), 0,"", null); //$NON-NLS-1$	
 	}
 
 	/* (non-Javadoc)
@@ -163,7 +188,7 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	 * @see org.eclipse.search.ui.ISearchQuery#canRerun()
 	 */
 	public boolean canRerun() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -177,7 +202,10 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	 * @see org.eclipse.search.ui.ISearchQuery#getSearchResult()
 	 */
 	public ISearchResult getSearchResult() {
-		// TODO Auto-generated method stub
-		return null;
+		if (_result == null)
+			_result= new CSearchResult(this);
+		return _result;
 	}
+	
+	
 }

@@ -615,6 +615,14 @@
             id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
       </page>
    </extension>
+    <extension
+         point="org.eclipse.search.searchResultViewPages">
+      <viewPage
+            targetClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
+            class="org.eclipse.cdt.internal.ui.search.CSearchResultPage"
+            id="org.eclipse.cdt.ui.CSearchResultPage">
+      </viewPage>
+   </extension>
 <!--
    <extension
          point="org.eclipse.ui.propertyPages">

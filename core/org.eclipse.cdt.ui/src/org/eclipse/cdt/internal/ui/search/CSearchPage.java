@@ -16,13 +16,11 @@ package org.eclipse.cdt.internal.ui.search;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -44,7 +42,6 @@ import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -77,8 +74,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	public static final String EXTENSION_POINT_ID= "org.eclipse.cdt.ui.CSearchPage"; //$NON-NLS-1$
 	
 	public boolean performAction() {
-		SearchUI.activateSearchResultView();
-
+	
 		SearchPatternData data = getPatternData();
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 		
@@ -109,8 +105,6 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		
 		data.cElement= null;
 		
-		CSearchResultCollector collector= new CSearchResultCollector();
-		
 		List searching = null;
 		
 		if( data.searchFor.contains( UNKNOWN_SEARCH_FOR ) ){
@@ -126,25 +120,10 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		} else {
 			searching = data.searchFor;
 		}
-//TODO: Remove
-/*	
-		CSearchOperation op = new CSearchOperation(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
 
+		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, null);
+		NewSearchUI.activateSearchResultView();
 		
-		try {
-			getContainer().getRunnableContext().run(true, true, op);
-		} catch (InvocationTargetException ex) {
-			Shell shell = getControl().getShell();
-			//ExceptionHandler.handle(ex, shell, CSearchMessages.getString("Search.Error.search.title"), CSearchMessages.getString("Search.Error.search.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			return false;
-		} catch (InterruptedException ex) {
-			return false;
-		}
-*/
-		
-		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
-		//NewSearchUI.activateSearchResultView();
-	    CSearchResult result = new CSearchResult(job);
 		NewSearchUI.runQuery(job);
 		
 		return true;

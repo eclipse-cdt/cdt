@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
+import org.eclipse.cdt.internal.ui.search.CSearchResultPage;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -46,6 +47,14 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		_sortOrder = SHOW_PATH;
 	}
 	
+	/**
+	 * @param page
+	 */
+	public CSearchResultLabelProvider(CSearchResultPage page) {
+		
+		// TODO Auto-generated constructor stub
+	}
+
 	public Image getImage( Object element ) {
 		IMatch match = null;
 		
@@ -167,5 +176,4 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	private int _imageFlags;
 	
 	private static final Point SMALL_SIZE= new Point(16, 16);
-	
 }

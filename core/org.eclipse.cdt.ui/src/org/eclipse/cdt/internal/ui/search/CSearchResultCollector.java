@@ -60,7 +60,7 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		
 		_matchCount = 0;
 		
-		_view = SearchUI.getSearchResultView();
+		//_view = NewSearchUI.getSearchResultView();
 	
 		
 		CSearchResultLabelProvider labelProvider = new CSearchResultLabelProvider();
@@ -180,7 +180,7 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 	 * @see org.eclipse.cdt.core.search.ICSearchResultCollector#done()
 	 */
 	public void done() {
-		if( !getProgressMonitor().isCanceled() ){
+	/*	if( !getProgressMonitor().isCanceled() ){
 			String matchesString;
 			if( _matchCount == 1 ){
 				matchesString = MATCH;
@@ -196,7 +196,7 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		}
 		
 		_view    = null;
-		_monitor = null;
+		_monitor = null;*/
 	}
 
 	/* (non-Javadoc)

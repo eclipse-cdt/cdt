@@ -13,7 +13,9 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -35,7 +37,7 @@ public class MemoryPresentation
 	private List fAddressZones;
 	private List fChangedZones;
 	private List fDirtyZones;
-	
+
 	private boolean fDisplayAscii = true;
 		
 	/**
@@ -78,15 +80,6 @@ public class MemoryPresentation
 		return sb.toString();
 	}
 
-	public int getItemSize( int offset )
-	{
-		return -1;
-	}
-	
-	public void setItem( int offset, String item )
-	{
-	}
-	
 	public String[] getText( Point[] zones )
 	{
 		return new String[0];
@@ -452,5 +445,28 @@ public class MemoryPresentation
 		if ( getMemoryBlock() != null )
 			return getMemoryBlock().displayASCII();
 		return false;
+	}
+	
+	protected void textChanged( int offset, char newChar, char[] replacedText )
+	{
+		byte b = 0;
+		if ( isInDataArea( offset ) )
+		{
+		}
+		if ( isInAsciiArea( offset ) )
+		{
+			b = CDebugUtils.charToByte( newChar );
+		}
+		if ( getMemoryBlock() != null )
+		{
+			try
+			{
+				getMemoryBlock().setValue( offset, new byte[] { b } );
+			}
+			catch( DebugException e )
+			{
+				// ignore
+			}
+		}
 	}
 }

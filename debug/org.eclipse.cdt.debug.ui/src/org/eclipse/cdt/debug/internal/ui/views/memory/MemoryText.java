@@ -83,9 +83,9 @@ public class MemoryText
 	{
 		if ( event.length != 1 )
 			return;
-		int offset = fText.getCaretOffset() - 1;
-		int size = fPresentation.getItemSize( offset );
-		fPresentation.setItem( offset, fText.getText().substring( offset, offset + size ) );
+		fPresentation.textChanged( event.start, 
+								   fText.getText().charAt( event.start ),
+								   event.replacedText.toCharArray() );
 		Point[] zones = fPresentation.getDirtyZones();
 		refresh( zones, fPresentation.getText( zones ) );
 	}

@@ -406,9 +406,9 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				ICSearchConstants.TYPE,	ICSearchConstants.REFERENCES, false ));
 			IStructure structure = (IStructure) fCElement;
 			if(structure.getElementType() == ICElement.C_CLASS){
-				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + "::" + structure.getElementName(),	//$NON-NLS-1$
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( "~"+ searchPrefix,	 //$NON-NLS-1$
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + "::~" + structure.getElementName(),	 //$NON-NLS-1$
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
 			}
 		}

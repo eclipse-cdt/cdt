@@ -253,12 +253,15 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
 				Control ctrl= fViewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()){
-					fViewer.refresh(element);
 					if(element instanceof IWorkingCopy){
-						fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
+						if(fViewer.testFindItem(element) != null){
+							fViewer.refresh(element);													
+						}else {
+							fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
+						}
+					} else {
+						fViewer.refresh(element);						
 					}
-					
-					
 				}
 			}
 		});
@@ -271,11 +274,15 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
 				Control ctrl= fViewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()){
-					fViewer.refresh(parent);
 					if(parent instanceof IWorkingCopy){
-						fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
+						if(fViewer.testFindItem(parent) != null){
+							fViewer.refresh(parent);													
+						}else {
+							fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
+						}
+					}else {
+						fViewer.refresh(parent);						
 					}
-					
 				}
 			}
 		});
@@ -289,13 +296,16 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				Control ctrl= fViewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
 					Object parent = internalGetParent(element);
-					fViewer.refresh(parent);
 					if(parent instanceof IWorkingCopy){
-						fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
+						if(fViewer.testFindItem(parent) != null){
+							fViewer.refresh(parent);													
+						}else {
+							fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
+						}
+					}else {
+						fViewer.refresh(parent);						
 					}
-					
 				}
-
 			}
 		});
 	}

@@ -1,4 +1,7 @@
 2004-04-13 Hoda Amer
+	Fix for bug#57804: [Refactoring] Constructor and Destructor are not refactored when class is defined inside a namespace
+	
+2004-04-13 Hoda Amer
 	From Chris Wiebe
 	This patch makes sure the class wizard works as long as the selection 
 	supports IAdaptable. It also prevents the class wizard from attempting 

@@ -200,6 +200,19 @@ public class PEArchive {
 		}
 	}
 
+	public static boolean isARHeader(byte[] ident) {
+		if (ident.length < 7
+			|| ident[0] != '!'
+			|| ident[1] != '<'
+			|| ident[2] != 'a'
+			|| ident[3] != 'r'
+			|| ident[4] != 'c'
+			|| ident[5] != 'h'
+			|| ident[6] != '>')
+			return false;
+		return true;
+	}
+
 	/**
 	 *  Creates a new <code>AR</code> object from the contents of 
 	 *  the given file.

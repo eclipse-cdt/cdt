@@ -17,13 +17,17 @@ public class CPPFilt {
 	private Process cppfilt;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
-			
-	public CPPFilt() throws IOException {
-		String[] args = {"c++filt"};
+
+	public CPPFilt(String command) throws IOException {		
+		String[] args = {command};
 		cppfilt = ProcessFactory.getFactory().exec(args);
 		//cppfilt = new Spawner(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(cppfilt.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(cppfilt.getInputStream()));
+	}
+
+	public CPPFilt() throws IOException {
+		this("c++filt");
 	}
 
 	public String getFunction(String symbol) throws IOException {

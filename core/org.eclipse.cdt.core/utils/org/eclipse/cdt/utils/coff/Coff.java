@@ -267,7 +267,7 @@ public class Coff {
 			buffer.append("s_nreloc = ").append(s_nreloc).append(NL);
 			buffer.append("s_nlnno = ").append(s_nlnno).append(NL);
 			buffer.append("s_flags = ").append(s_flags).append(NL);
-/*
+///*
 			try {
 				Reloc[] rcs = getRelocs();
 				for (int i = 0; i < rcs.length; i++) {
@@ -282,7 +282,7 @@ public class Coff {
 				}
 			} catch (IOException e) {
 			}
-*/
+//*/
 			return buffer.toString();
 		}
 	}
@@ -406,8 +406,10 @@ public class Coff {
 		public String getName(byte[] table) {
 			if (table.length > 0 && isLongName()) {
 				ReadMemoryAccess memory = new ReadMemoryAccess(_n_name, true);
-				memory.getInt();
-				int offset = memory.getInt();
+				memory.getInt(); // pass over the first 4 bytes.
+				// The first for bytes of the string table represent the
+				// number of bytes in the string table.
+				int offset = memory.getInt() - 4;
 				if (offset > 0) {
 					for (int i = offset; i < table.length; i++) {
 						if (table[i] == 0) {

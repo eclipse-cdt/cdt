@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,12 +47,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModelManager implements IResourceChangeListener {
 
-	/**
-	 * Unique handle onto the CModel
-	 */
-	final CModel cModel = new CModel();
+    /**
+     * Unique handle onto the CModel
+     */
+    final CModel cModel = new CModel();
     
-	public static HashSet OptionNames = new HashSet(20);
+    public static HashSet OptionNames = new HashSet(20);
         
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
@@ -97,6 +98,11 @@ public class CModelManager implements IResourceChangeListener {
 	 * The list of started BinaryRunners on projects.
 	 */
 	private HashMap binaryRunners = new HashMap();
+
+	/**
+	 * Map of the binary parser for each project.
+	 */
+	private HashMap binaryParsersMap = new HashMap();
 	
 	/**
 	 * The lis of the SourceMappers on projects.
@@ -188,7 +194,7 @@ public class CModelManager implements IResourceChangeListener {
 			case IResource.FOLDER :
 				return create(parent, (IFolder)resource);
 			case IResource.ROOT :
-				return create(parent, (IWorkspaceRoot)resource);
+				return create((IWorkspaceRoot)resource);
 			default :
 				return null;
 		}
@@ -345,7 +351,14 @@ public class CModelManager implements IResourceChangeListener {
 
 	public IBinaryParser getBinaryParser(IProject project) {
 		try {
-			return CCorePlugin.getDefault().getBinaryParser(project);
+			IBinaryParser parser =  (IBinaryParser)binaryParsersMap.get(project);
+			if (parser == null) {
+				parser = CCorePlugin.getDefault().getBinaryParser(project);
+			}
+			if (parser != null) {
+				binaryParsersMap.put(project, parser);
+				return parser;
+			}
 		} catch (CoreException e) {
 		}
 		return new NullBinaryParser();
@@ -354,8 +367,22 @@ public class CModelManager implements IResourceChangeListener {
 	public IBinaryFile createBinaryFile(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());
-			return parser.getBinary(file.getLocation());
+			InputStream is = file.getContents();
+			byte[] bytes = new byte[128];
+			int count = is.read(bytes);
+			is.close();
+			if (count > 0 && count < bytes.length) {
+				byte[] array = new byte[count];
+				System.arraycopy(bytes, 0, array, 0, count);
+				bytes = array;
+			}
+			IPath location = file.getLocation();
+			if (parser.isBinary(bytes, location)) {
+				return parser.getBinary(location);
+			}
 		} catch (IOException e) {
+		} catch (CoreException e) {
+			//e.printStackTrace();
 		}
 		return null;
 	}
@@ -372,6 +399,7 @@ public class CModelManager implements IResourceChangeListener {
 				// but it has the side of effect of removing the CProject also
 				// so we have to recall create again.
 				releaseCElement(celement);
+				binaryParsersMap.remove(project);
 				celement = create(project);
 				Parent parent = (Parent)celement.getParent();
 				CElementInfo info = (CElementInfo)parent.getElementInfo();
@@ -504,13 +532,14 @@ public class CModelManager implements IResourceChangeListener {
 		return ok;
 	}
 
-	public BinaryRunner getBinaryRunner(ICProject cProject) {
+	public BinaryRunner getBinaryRunner(ICProject project) {
 		BinaryRunner runner = null;
 		synchronized(binaryRunners) {
-			runner = (BinaryRunner)binaryRunners.get(cProject);
+			runner = (BinaryRunner)binaryRunners.get(project.getProject());
 			if (runner == null) {
-				runner = new BinaryRunner(cProject);
-				binaryRunners.put(cProject, runner);
+				runner = new BinaryRunner(project.getProject());
+				binaryRunners.put(project.getProject(), runner);
+				runner.start();
 			}
 		}
 		return runner;
@@ -574,8 +603,8 @@ public class CModelManager implements IResourceChangeListener {
 				case IResourceChangeEvent.PRE_DELETE :
 				try{
 					if (resource.getType() == IResource.PROJECT && 	
-						( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
-						  ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
+					    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
+					      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
 						this.deleting((IProject) resource);}
 				}catch (CoreException e){
 				}
@@ -729,10 +758,27 @@ public class CModelManager implements IResourceChangeListener {
 			}			
 			break;
 		case IResource.PROJECT :
-			// TO BE COMPLETED ...
-			break;
+			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+				IProject project = (IProject) resource;
+				if (!project.isOpen()) {
+					// project closing... stop the runner.
+					BinaryRunner runner = (BinaryRunner)binaryRunners.get(project);
+					if (runner != null ) {
+						runner.stop();
+					}
+				} else {
+					if ( binaryRunners.get(project) == null ) { 
+						// project opening... lets add the runner to the 
+						// map but no need to start it since the deltas 
+						// will populate containers
+						binaryRunners.put(project, new BinaryRunner(project));
+					}
+				}
+			}
+		break;
 		}
 	}
+
 	/** 
 	 * Returns the set of elements which are out of synch with their buffers.
 	 */
@@ -788,9 +834,7 @@ public class CModelManager implements IResourceChangeListener {
 
 		BinaryRunner[] runners = (BinaryRunner[])binaryRunners.values().toArray(new BinaryRunner[0]);
 		for (int i = 0; i < runners.length; i++) {
-			if (runners[i].isAlive()) {
-				runners[i].interrupt();
-			}
+			runners[i].stop();
 		}
 	}
 	
@@ -801,5 +845,10 @@ public class CModelManager implements IResourceChangeListener {
 	public void deleting(IProject project){
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
+		BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
+		if (runner != null) {
+			runner.stop();
+		}
+		binaryParsersMap.remove(project);
 	}
 }

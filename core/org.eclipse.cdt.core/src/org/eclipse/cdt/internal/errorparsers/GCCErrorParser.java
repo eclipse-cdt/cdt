@@ -54,37 +54,40 @@ public class GCCErrorParser implements IErrorParser {
 
 		if (firstColon != -1) {
 			try {
-				int secondColon= line.indexOf(':', firstColon + 1);
-				if (secondColon != -1) {
-					String fileName = line.substring(0, firstColon);
-					String lineNumber = line.substring(firstColon + 1, secondColon);
-					String varName = null;
-					String desc = line.substring(secondColon + 1).trim();
-					int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
-					int	num  = -1;
-					int col = -1;
+				int secondColon = -1;
+				int	num  = -1;
 
+				while ((secondColon = line.indexOf(':', firstColon + 1)) != -1) {
+					String lineNumber = line.substring(firstColon + 1, secondColon);
 					try {
 						num = Integer.parseInt(lineNumber);
 					} catch (NumberFormatException e) {
+						// Failed.
 					}
+					if (num != -1) {
+						break; // Find possible match.
+					}
+					firstColon = secondColon;
+				}
 
-					if (num == -1) {
-						// Bail out not recognizable format. i.e. no line numbers
-						return false;
-					} else {
-						/* Then check for the column  */
-						int thirdColon= line.indexOf(':', secondColon + 1);
-						if (thirdColon != -1) {
-							String columnNumber = line.substring(secondColon + 1, thirdColon);
-							try {
-								col = Integer.parseInt(columnNumber);
-							} catch (NumberFormatException e) {
-							}
+				if (secondColon != -1) {
+					int col = -1;
+
+					String fileName = line.substring(0, firstColon);
+					String varName = null;
+					String desc = line.substring(secondColon + 1).trim();
+					int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
+					/* Then check for the column  */
+					int thirdColon= line.indexOf(':', secondColon + 1);
+					if (thirdColon != -1) {
+						String columnNumber = line.substring(secondColon + 1, thirdColon);
+						try {
+							col = Integer.parseInt(columnNumber);
+						} catch (NumberFormatException e) {
 						}
-						if (col != -1) {
-							desc = line.substring(thirdColon + 1).trim();
-						}
+					}
+					if (col != -1) {
+						desc = line.substring(thirdColon + 1).trim();
 					}
 
 					// gnu c: filename:no: (Each undeclared identifier is reported
@@ -103,9 +106,11 @@ public class GCCErrorParser implements IErrorParser {
 
 					/* See if we can get a var name
 					 * Look for:
-					 * 'foo' undeclared
-					 * 'foo' defined but not used
-					 * conflicting types for 'foo'
+					 * `foo' undeclared
+					 * `foo' defined but not used
+					 * conflicting types for `foo'
+					 * previous declaration of `foo'
+					 * parse error before `foo'
 					 *
 					 */ 
 					 int s;
@@ -141,26 +146,43 @@ public class GCCErrorParser implements IErrorParser {
 						}
 					 }
 
+					/*
+					 *	In file included from b.h:2,
+					 *					 from a.h:3,
+					 *					 from hello.c:3:
+					 *	 c.h:2:15: missing ')' in macro parameter list
+					 *
+					 * We reconstruct the multiline gcc errors to multiple errors:
+					 *    c.h:3:15: missing ')' in macro parameter list
+					 *    b.h:2:  in inclusion c.h:3:15
+					 *    a.h:3:  in inclusion b.h:2
+					 *    hello.c:3:  in inclusion a.h:3
+					 *     
+					 */
 					if (eoParser.getScratchBuffer().startsWith("In file included from ")) {
 						if (line.startsWith("from ")) {
+							// We want the last error in the chain, so continue.
 							eoParser.appendToScratchBuffer(line);
 							return false;
 						}
 						String buffer = eoParser.getScratchBuffer();
 						eoParser.clearScratchBuffer();
 						int from = -1;
-						while ((from = buffer.lastIndexOf("from ")) != -1) {
-							String buf = buffer.substring(from + 5);
-							buffer = buffer.substring(0, from);
-							if (buf.endsWith(",")) {
-								int coma = buf.lastIndexOf(',');
-								StringBuffer b = new StringBuffer(buf);
-								b.setCharAt(coma, ':');
-								b.append(' ').append(buffer).append(" from ").append(line);
-								buf = b.toString();
+						String inclusionError = fileName + ":" + num;
+						while ((from = buffer.indexOf("from ")) != -1) {
+							int coma = buffer.indexOf(',', from);
+							String buf;
+							if (coma != -1) {
+								buf = buffer.substring(from + 5, coma) + ':';
+								buffer = buffer.substring(coma);
 							} else {
-								buf = buf + ' ' + buffer + " from " + line;
+								buf = buffer.substring(from + 5);
+								buffer = "";
 							}
+							String t = buf;
+							buf += " in inclusion " + inclusionError;
+							inclusionError = t;
+							// Call the parsing process again.
 							processLine(buf, eoParser);
 						}
 					}
@@ -196,6 +218,7 @@ public class GCCErrorParser implements IErrorParser {
 					if (file == null) {
 						desc = desc +"[" + fileName + "]";
 					}
+
 					eoParser.generateMarker(file, num, desc, severity, varName);
 				} else {
 					if (line.startsWith("In file included from ")) {

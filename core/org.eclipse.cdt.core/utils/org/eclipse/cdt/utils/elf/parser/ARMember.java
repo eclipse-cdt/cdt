@@ -1,14 +1,23 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
+import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.IToolsProvider;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
@@ -19,8 +28,8 @@ import org.eclipse.core.runtime.IPath;
 public class ARMember extends BinaryObject {
 	AR.ARHeader header;
 
-	public ARMember(IPath p, AR.ARHeader h) throws IOException {
-		super(p);
+	public ARMember(IPath p, AR.ARHeader h, IToolsProvider provider) throws IOException {
+		super(p, new ElfHelper(h.getElf()), provider);
 		header = h;
 	}
 
@@ -58,15 +67,13 @@ public class ARMember extends BinaryObject {
 		throw new IOException("No file assiocated with Binary");
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type) {
+	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
-			Symbol sym = new Symbol();
+			Symbol sym = new Symbol(this);
 			sym.type = type;
 			sym.name = array[i].toString();
 			sym.addr = array[i].st_value;
-			addSymbol(sym);
-			// This can fail if we use addr2line
-			// but we can safely ignore the error.
+			list.add(sym);
 		}
 	}
 

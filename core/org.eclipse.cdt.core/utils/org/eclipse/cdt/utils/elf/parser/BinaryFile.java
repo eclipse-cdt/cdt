@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -11,24 +16,42 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.utils.*;
+import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
+ *
  */
 public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 
 	protected IPath path;
+	protected IToolsProvider toolsProvider;
+	protected long timestamp;
 
 	public BinaryFile(IPath p) {
 		path = p;
 	}
 
-	/**
-	 * @return
-	 */
-	protected abstract Attribute getAttribute();
+	public void setToolsProvider(IToolsProvider p) {
+		toolsProvider = p;
+	}
+
+	public Addr2line getAddr2Line() {
+		if (toolsProvider != null)
+			return toolsProvider.getAddr2Line(path);
+		return null;
+	}
+
+	public CPPFilt getCPPFilt() {
+		if (toolsProvider != null)
+			return toolsProvider.getCPPFilt();
+		return null;
+	}
+
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
@@ -59,4 +82,16 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 		return stream;
 	}
 
+	/**
+	 * @return
+	 */
+	protected abstract Attribute getAttribute();
+
+	protected boolean hasChanged() {
+		long modification = getPath().toFile().lastModified();
+		boolean changed = modification != timestamp;
+		timestamp = modification;
+		return changed;
+	}
+ 
 }

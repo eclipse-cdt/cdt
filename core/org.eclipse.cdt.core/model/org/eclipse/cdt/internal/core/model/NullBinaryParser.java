@@ -28,4 +28,11 @@ public class NullBinaryParser implements IBinaryParser {
 		return "Null Format";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
+	 */
+	public boolean isBinary(byte[] array, IPath path) {
+		return false;
+	}
+
 }

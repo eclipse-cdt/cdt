@@ -49,7 +49,16 @@ public interface ICDISignal extends ICDIObject {
 	/**
 	 * Continue program giving it this signal.
 	 * 
-	 * Method signal.
+	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void signal() throws CDIException ;
+
+	/**
+	 * Change the way debugger handles this signal.
+	 * 
+	 * @param ignore - if true the debugger should not allow your program to see this signal
+	 * @param stop - if true the debugger should stop your program when this signal happens
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	void handle(boolean ignore, boolean stop) throws CDIException;
 }

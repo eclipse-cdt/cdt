@@ -1,4 +1,9 @@
 2003-02-03 Mikhail Khodjaiants
+	Implemention of the 'handle' command of the 'Signals' view.
+	* ICDISignal.java: added the 'handle' method
+	* CSignal.java: implementation of the 'handle' command.
+
+2003-02-03 Mikhail Khodjaiants
 	Implementing the 'Signals' view.
 	* CSignalManager.java: new
 	* CSignal.java: new

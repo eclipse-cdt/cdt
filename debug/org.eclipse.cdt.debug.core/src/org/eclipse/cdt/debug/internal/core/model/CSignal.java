@@ -69,6 +69,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public void setPassEnabled( boolean enable ) throws DebugException
 	{
+		handle( enable, isStopEnabled() );
 	}
 
 	/* (non-Javadoc)
@@ -76,6 +77,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public void setStopEnabled( boolean enable ) throws DebugException
 	{
+		handle( isPassEnabled(), enable );
 	}
 
 	/* (non-Javadoc)
@@ -112,4 +114,16 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	{
 		return fCDISignal;
 	}
+	
+	private void handle( boolean pass, boolean stop ) throws DebugException
+	{
+		try
+		{
+			getCDISignal().handle( !pass, stop );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+	}	
 }

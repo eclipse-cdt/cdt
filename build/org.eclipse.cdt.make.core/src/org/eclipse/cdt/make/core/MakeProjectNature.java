@@ -100,8 +100,8 @@ public class MakeProjectNature implements IProjectNature {
 		*/
 	public void configure() throws CoreException {
 		addBuildSpec();
-		IMakeBuilderInfo info = MakeCorePlugin.create(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
-		IMakeBuilderInfo projectInfo = MakeCorePlugin.create(getProject(), MakeBuilder.BUILDER_ID);
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
+		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(getProject(), MakeBuilder.BUILDER_ID);
 		projectInfo.setBuildLocation(info.getBuildLocation());
 
 

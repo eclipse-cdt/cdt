@@ -10,6 +10,8 @@
 		<project>org.eclipse.cdt.core.win32</project>
 		<project>org.eclipse.cdt.make.core</project>
 		<project>org.eclipse.cdt.ui</project>
+		<project>org.eclipse.core.resources</project>
+		<project>org.eclipse.ui.workbench</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

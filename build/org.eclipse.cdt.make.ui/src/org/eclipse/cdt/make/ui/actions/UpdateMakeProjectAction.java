@@ -118,7 +118,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
 				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
 				String location = project[i].getPersistentProperty(qlocation);
-				IMakeBuilderInfo newInfo = MakeCorePlugin.create(project[i], MakeBuilder.BUILDER_ID);
+				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
 				newInfo.setBuildCommand(new Path(location));
 				
 				//remove old properties

@@ -67,7 +67,7 @@ public class MakeBuilder extends ACBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		boolean bPerformBuild = true;
-		IMakeBuilderInfo info = MakeCorePlugin.create(args, MakeBuilder.BUILDER_ID);
+		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(args, MakeBuilder.BUILDER_ID);
 		if (!shouldBuild(kind, info)) {
 			return new IProject[0];
 		}
@@ -99,7 +99,7 @@ public class MakeBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Invoking Make Builder: " + currProject.getName(), IProgressMonitor.UNKNOWN);
+		monitor.beginTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
 		try {
 			IPath buildCommand = info.getBuildCommand();
@@ -118,7 +118,7 @@ public class MakeBuilder extends ACBuilder {
 					isClean = true;
 				// Before launching give visual cues via the monitor
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-				subMonitor.subTask("Invoking Command: " + buildCommand.toString());
+				subMonitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Command") + buildCommand.toString()); //$NON-NLS-1$
 
 				String errMsg = null;
 				CommandLauncher launcher = new CommandLauncher();
@@ -174,7 +174,7 @@ public class MakeBuilder extends ACBuilder {
 					isCanceled = monitor.isCanceled();
 					monitor.setCanceled(false);
 					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-					subMonitor.subTask("Updating project...");
+					subMonitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
 					try {
 						currProject.refreshLocal(IResource.DEPTH_INFINITE, subMonitor);

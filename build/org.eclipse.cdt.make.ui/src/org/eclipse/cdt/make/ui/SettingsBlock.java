@@ -262,9 +262,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 		monitor.beginTask("Applying Settings...", 1);
 		IMakeBuilderInfo info;
 		if (getContainer().getProject() != null) {
-			info = MakeCorePlugin.create(getContainer().getProject(), fBuilderID);
+			info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
 		} else {
-			info = MakeCorePlugin.create(fPrefs, fBuilderID, false);
+			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
 		}
 		info.setStopOnError(isStopOnError());
 		info.setUseDefaultBuildCmd(useDefaultBuildCmd());
@@ -305,9 +305,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 	public void performDefaults() {
 		IMakeBuilderInfo info;
 		if (getContainer().getProject() != null) {
-			info = MakeCorePlugin.create(fPrefs, fBuilderID, false);
+			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
 		} else {
-			info = MakeCorePlugin.create(fPrefs, fBuilderID, true);
+			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, true);
 		}
 		if (info.isStopOnError())
 			stopRadioButtons.setSelectValue(STOP_ARG);
@@ -359,11 +359,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 		super.setContainer(container);
 		if (getContainer().getProject() != null) {
 			try {
-				fBuildInfo = MakeCorePlugin.create(getContainer().getProject(), fBuilderID);
+				fBuildInfo = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
 			} catch (CoreException e) {
 			}
 		} else {
-			fBuildInfo = MakeCorePlugin.create(fPrefs, fBuilderID, false);
+			fBuildInfo = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
 		}
 	}
 

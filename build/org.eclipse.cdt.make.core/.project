@@ -8,6 +8,7 @@
 		<project>org.eclipse.cdt.core.qnx</project>
 		<project>org.eclipse.cdt.core.solaris</project>
 		<project>org.eclipse.cdt.core.win32</project>
+		<project>org.eclipse.core.resources</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

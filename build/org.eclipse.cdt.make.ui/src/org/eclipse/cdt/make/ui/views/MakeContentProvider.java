@@ -7,9 +7,10 @@ package org.eclipse.cdt.make.ui.views;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetListener;
-import org.eclipse.cdt.make.core.IMakeTargetProvider;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeTargetEvent;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -27,12 +28,9 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 */
 	public Object[] getChildren(Object obj) {
 		if (obj instanceof IContainer) {
-			if (viewer != null) {
-				Object input = viewer.getInput();
-				if (input instanceof IMakeTargetProvider) {
-					IMakeTargetProvider provider = (IMakeTargetProvider)obj;
-					return provider.getTargets((IContainer)obj);
-				}
+			try {
+				return MakeCorePlugin.getDefault().getTargetProvider().getTargets((IContainer)obj);
+			} catch (CoreException e) {
 			}
 		}
 		return new Object[0];
@@ -69,12 +67,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 */
 	public void dispose() {
 		if (viewer != null) {
-			Object obj = viewer.getInput();
-			if (obj instanceof IMakeTargetProvider) {
-				IMakeTargetProvider provider = (IMakeTargetProvider)obj;
-				provider.removeListener(this);
-				provider = null;
-			}
+			MakeCorePlugin.getDefault().getTargetProvider().removeListener(this);
 		}
 	}
 
@@ -82,17 +75,10 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (this.viewer == null) {
+			MakeCorePlugin.getDefault().getTargetProvider().addListener(this);
+		}
 		this.viewer = viewer;
-		if (oldInput != null) {
-			if (oldInput instanceof IMakeTargetProvider) {
-				((IMakeTargetProvider)oldInput).removeListener(this);
-			}
-		}
-		if (newInput != null) {
-			if (newInput instanceof IMakeTargetProvider) {
-				((IMakeTargetProvider)newInput).addListener(this);
-			}
-		}
 	}
 
 	/* (non-Javadoc)

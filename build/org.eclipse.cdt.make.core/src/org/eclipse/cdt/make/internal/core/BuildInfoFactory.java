@@ -221,7 +221,7 @@ public class BuildInfoFactory {
 			builder = MakeProjectNature.getBuildSpec(project, builderID);
 			if (builder == null) {
 				throw new CoreException(
-					new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Missing Builder: " + builderID, null));
+					new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
 			}
 			args = builder.getArguments();
 		}

@@ -11,14 +11,29 @@
 package org.eclipse.cdt.make.core;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface IMakeTarget {
-	IMakeTargetProvider getProvider();
 	String getName();
-	IContainer getContainer();
+	String getTargetBuilderID();
+	
+	String getBuilderID();
+
 	boolean isStopOnError();
+	void setStopOnError(boolean stopOnError);
+
 	boolean isDefaultBuildCmd();
+	void setUseDefaultBuildCmd(boolean useDefault);
+
 	IPath getBuildCommand();
+	void setBuildCommand(IPath command);
+	
 	String getBuildArguments();
+	void setBuildArguments();
+	
+	IContainer getContainer();
+	
+	void build(IProgressMonitor monitor) throws CoreException;
 }

@@ -6,6 +6,7 @@ package org.eclipse.cdt.make.ui.views;
  */
 
 import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -20,6 +21,7 @@ public class MakeLabelProvider extends LabelProvider {
 	public Image getImage(Object obj) {
 		Image image = null;
 		if (obj instanceof IMakeTarget) {
+			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKE_TARGET);
 		} else if (obj instanceof IContainer) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
@@ -35,6 +37,6 @@ public class MakeLabelProvider extends LabelProvider {
 		} else if (obj instanceof IContainer) {
 			return ((IContainer)obj).getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

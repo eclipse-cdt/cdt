@@ -91,7 +91,7 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	protected void initializeDefaultPluginPreferences() {
-		IMakeBuilderInfo info = create(getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
+		IMakeBuilderInfo info = createBuildInfo(getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
 		try {
 			info.setBuildCommand(new Path("make")); //$NON-NLS-1$
 			info.setBuildLocation(new Path("")); //$NON-NLS-1$
@@ -108,15 +108,15 @@ public class MakeCorePlugin extends Plugin {
 		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
 	}
 	
-	public static IMakeBuilderInfo create(Preferences prefs, String builderID, boolean useDefaults) {
+	public static IMakeBuilderInfo createBuildInfo(Preferences prefs, String builderID, boolean useDefaults) {
 		return BuildInfoFactory.create(prefs, builderID, useDefaults);
 	}
 
-	public static IMakeBuilderInfo create(IProject project, String builderID) throws CoreException {
+	public static IMakeBuilderInfo createBuildInfo(IProject project, String builderID) throws CoreException {
 		return BuildInfoFactory.create(project, builderID);
 	}
 
-	public static IMakeBuilderInfo create(Map args, String builderID) {
+	public static IMakeBuilderInfo createBuildInfo(Map args, String builderID) {
 		return BuildInfoFactory.create(args, builderID);
 	}
 

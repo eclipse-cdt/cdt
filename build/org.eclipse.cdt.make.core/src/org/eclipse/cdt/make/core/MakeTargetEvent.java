@@ -12,12 +12,17 @@ package org.eclipse.cdt.make.core;
 
 import java.util.EventObject;
 
+import org.eclipse.core.resources.IProject;
+
 public class MakeTargetEvent extends EventObject {
-	public final int TARGET_ADD = 1;
-	public final int TARGET_CHANGED = 2;
-	public final int TARGET_REMOVED = 3;
+	public static final int TARGET_ADD = 1;
+	public static final int TARGET_CHANGED = 2;
+	public static final int TARGET_REMOVED = 3;
+	public static final int PROJECT_ADDED = 4;
+	public static final int PROJECT_REMOVED = 5;
 
 	IMakeTarget target;
+	IProject project;
 	int type;
 
 	/**
@@ -29,6 +34,12 @@ public class MakeTargetEvent extends EventObject {
 		this.target = target;
 	}
 
+	public MakeTargetEvent(Object source, int type, IProject project) {
+		super(source);
+		this.type = type;
+		this.project = project;
+	}
+	
 	public int getType() {
 		return type;
 	}

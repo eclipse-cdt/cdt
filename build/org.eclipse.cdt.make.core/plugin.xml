@@ -15,7 +15,10 @@
       <import plugin="org.apache.xerces"/>
    </requires>
 
-	<extension
+
+   <extension-point id="MakeTargetBuilder" name="%extensionTargetBuilder.name" schema="schema/MakeTargetBuilder.exsd"/>
+
+   <extension
          id="MakeScannerProvider"
          point="org.eclipse.cdt.core.ScannerInfoProvider">
       <cextension>
@@ -44,8 +47,10 @@
          id="makeBuilder"
          name="%builderMake.name"
          point="org.eclipse.core.resources.builders">
-      <builder hasNature="true">
-         <run class="org.eclipse.cdt.make.core.MakeBuilder">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.make.core.MakeBuilder">
             <parameter
                   name="defaultCommand"
                   value="make">
@@ -61,4 +66,12 @@
             class="org.eclipse.cdt.make.internal.core.MakeProject">
       </cproject>
    </extension>
+   <extension
+         point="org.eclipse.cdt.make.core.MakeTargetBuilder">
+         <builder
+         	builderID="org.eclipse.cdt.core.make.makeBuilder"
+         	id="org.eclipse.cdt.make.MakeTargetBuilder">
+         </builder>
+   </extension>
+
 </plugin>

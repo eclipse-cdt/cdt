@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 
 /**
  * An expression is a snippet of code that can be evaluated to 
@@ -46,4 +47,12 @@ public interface ICDIExpression extends ICDIObject {
 	 */
 	ICDIValue getValue(ICDIStackFrame context) throws CDIException;
 
+	/**
+	 * Return the type of this expression
+	 * 
+	 * @param context frame context
+	 * @return
+	 * @throws CDIException
+	 */
+	ICDIType getType(ICDIStackFrame context) throws CDIException;
 }

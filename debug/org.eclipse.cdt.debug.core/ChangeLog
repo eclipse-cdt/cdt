@@ -1,3 +1,8 @@
+2004-10-28 Alain Magloire
+	Add getType() method.
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIExpression.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIValue.java
+
 2004-10-26 Alain Magloire
 	Remove ICDIMemoryManager for ICDIMemoryBlockManagement
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java

@@ -24,6 +24,13 @@ import org.eclipse.core.runtime.Preferences;
  * GDB/MI Plugin.
  */
 public class MIPlugin extends Plugin {
+
+	/**
+	 * The plug-in identifier of the Java core support
+	 * (value <code>"org.eclipse.jdt.core"</code>).
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.mi.core" ; //$NON-NLS-1$
+
 	//The shared instance.
 	private static MIPlugin plugin;
 
@@ -186,20 +193,30 @@ public class MIPlugin extends Plugin {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return "org.eclipse.cdt.debug.mi.core"; //$NON-NLS-1$
+			return PLUGIN_ID;
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
 	public static void debugLog(String message) {
-		//	if ( getDefault().isDebugging() ) {
-		//		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
-		if (message.endsWith("\n")) {
-			System.err.print(message);
-		} else {
-			System.err.println(message);
+		if (getDefault().isDebugging()) {
+			// This is to verbose for a log file, better use the console.
+			//	getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
+			// ALERT:FIXME: For example for big buffers say 4k length,
+			// the console will simply blow taking down eclipse.
+			// This seems only to happen in Eclipse-gtk and Eclipse-motif
+			// on GNU/Linux, so it will be break in smaller chunks.
+			while (message.length() > 100) {
+				String partial = message.substring(0, 100);
+				message = message.substring(100);
+				System.err.println(partial + "\\");
+			}
+			if (message.endsWith("\n")) {
+				System.err.print(message);
+			} else {
+				System.err.println(message);
+			}
 		}
-		//	}
 	}
 
 	/* (non-Javadoc)

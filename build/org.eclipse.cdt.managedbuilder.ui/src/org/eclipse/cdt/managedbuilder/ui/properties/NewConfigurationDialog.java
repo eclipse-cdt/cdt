@@ -73,7 +73,7 @@ public class NewConfigurationDialog extends StatusDialog {
 	/**
 	 * @param parentShell
 	 * @param managedTarget
-	 * @param nameList A list of names that have been added by the user but have not yet been added to the target 
+	 * @param nameList A list of names (Strings) that have been added by the user but have not yet been added to the target 
 	 * @param title The title of the dialog
 	 */
 	protected NewConfigurationDialog(Shell parentShell, IManagedProject managedProject, ArrayList nameList, String title) {
@@ -324,7 +324,7 @@ public class NewConfigurationDialog extends StatusDialog {
 		}
 		Iterator iter = reservedNames.listIterator();
 		while (iter.hasNext()) {
-			if (((IConfiguration)iter.next()).getName().equalsIgnoreCase(newName)) {
+			if (((String)iter.next()).equalsIgnoreCase(newName)) {
 				return true;
 			}
 		}

@@ -1,3 +1,7 @@
+2005-03-16 Alain Magloire
+	Patch from Tracy Miranda to fix PR 88160
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/NewConfigurationDialog.java
+
 2004-07-21 Tanya Wolff
 	Fix for 70217: C++ Build Properties view: Platform overlaps field
 	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java

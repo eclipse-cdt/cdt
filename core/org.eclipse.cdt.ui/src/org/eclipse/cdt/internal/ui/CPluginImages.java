@@ -271,7 +271,7 @@ public class CPluginImages {
 
 		ImageDescriptor desc = getImageRegistry().getDescriptor(relPath);
 		if(desc == null) {
-			desc = createManaged(T + "e" + type, relPath);
+			desc = createManaged(T + "c" + type, relPath);
 		}	
 		action.setImageDescriptor(desc);
 	}

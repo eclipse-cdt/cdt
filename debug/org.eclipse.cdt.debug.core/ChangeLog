@@ -1,4 +1,10 @@
 2003-06-09 Mikhail Khodjaiants
+	Added default format preferences for variables, registers and expressions.
+	* CExpression.java
+	* CRegister.java
+	* CVariable.java
+
+2003-06-09 Mikhail Khodjaiants
 	Renamed the 'refresh' method of ICVariable to 'reset'. Added new method - 
 	'reset' to CValue instead of using the 'setChanged' method.
 	* ICVariable.java

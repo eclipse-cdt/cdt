@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegister;
@@ -27,6 +29,7 @@ public class CRegister extends CGlobalVariable implements IRegister
 	public CRegister( CRegisterGroup parent, ICDIRegister cdiRegister )
 	{
 		super( parent, cdiRegister );
+		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT );
 	}
 
 	/* (non-Javadoc)

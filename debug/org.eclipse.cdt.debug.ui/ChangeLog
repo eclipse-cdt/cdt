@@ -1,4 +1,8 @@
 2003-06-09 Mikhail Khodjaiants
+	Added default format preferences for variables, registers and expressions.
+	* CDebugPreferencePage.java
+
+2003-06-09 Mikhail Khodjaiants
 	Renamed the 'refresh' method of ICVariable to 'reset'.
 	* VariableFormatActionDelegate.java
 

@@ -7,6 +7,8 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.LinkedList;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -102,7 +104,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * The current format of this variable.
 	 */
-	private int fFormat = ICDIFormat.NATURAL;
+	protected int fFormat = ICDIFormat.NATURAL;
 
 	/**
 	 * Constructor for CVariable.
@@ -114,6 +116,7 @@ public abstract class CVariable extends CDebugElement
 		fParent = parent;
 		fCDIVariable = cdiVariable;
 		fShadow = null;
+		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
 		getCDISession().getEventManager().addEventListener( this );
 	}
 

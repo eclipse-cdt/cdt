@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
@@ -32,6 +33,7 @@ public class CExpression extends CModificationVariable
 	public CExpression( CDebugTarget target, ICDIExpression cdiExpression )
 	{
 		super( target, cdiExpression );
+		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT );
 	}
 
 	/**
@@ -42,6 +44,7 @@ public class CExpression extends CModificationVariable
 	public CExpression( CDebugTarget target, ICDIVariable cdiVariable )
 	{
 		super( target, cdiVariable );
+		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT );
 	}
 
 	/* (non-Javadoc)

@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -93,7 +92,7 @@ public class CFunction implements IFunction, ICInternalBinding {
 	        if( tu != null ){
 	            CPPVisitor.getDeclarations( tu, this );
 	        }
-	        declarators = (ICPPASTFunctionDeclarator[]) ArrayUtil.trim( ICPPASTFunctionDeclarator.class, declarators );
+	        declarators = (IASTStandardFunctionDeclarator[]) ArrayUtil.trim( IASTStandardFunctionDeclarator.class, declarators );
 	        bits |= FULLY_RESOLVED;
 	        bits &= ~RESOLUTION_IN_PROGRESS;
 	    }
@@ -312,10 +311,13 @@ public class CFunction implements IFunction, ICInternalBinding {
         
         
         IASTFunctionDeclarator dtor = definition;
-        IASTDeclSpecifier declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
-        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-            bits |= 3 << 2;
-            return true;
+        IASTDeclSpecifier declSpec = null;
+        if( dtor != null ){
+	        declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
+	        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+	            bits |= 3 << 2;
+	            return true;
+	        }
         }
         
         for( int i = 0; i < declarators.length; i++ ){

@@ -3002,4 +3002,13 @@ public class AST2Tests extends AST2BaseTest {
     	assertTrue( col.getName(2).isDeclaration() );
     	assertFalse( col.getName(2).isReference() );
     }
+    
+    public void test88460() throws Exception {
+    	IASTTranslationUnit tu = parse( "void f();", ParserLanguage.C ); //$NON-NLS-1$
+    	CNameCollector col = new CNameCollector();
+    	tu.accept( col );
+    	
+    	IFunction f = (IFunction) col.getName(0).resolveBinding();
+    	assertFalse( f.isStatic() );
+    }
 }

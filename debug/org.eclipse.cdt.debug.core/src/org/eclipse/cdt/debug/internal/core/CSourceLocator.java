@@ -215,4 +215,78 @@ public class CSourceLocator implements ICSourceLocator
 		}
 		return null;		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElement(String)
+	 */
+	public Object getSourceElement( String fileName )
+	{
+		return findFile( fProject, fileName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElementForAddress(long)
+	 */
+	public Object getSourceElementForAddress( long address )
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElementForFunection(String)
+	 */
+	public Object getSourceElementForFunection( String function )
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#contains(IResource)
+	 */
+	public boolean contains( IResource resource )
+	{
+		if ( resource instanceof IProject )
+		{
+			if ( fProject.equals( resource ) )
+			{
+				return true;
+			}
+			IProject[] projects = getReferencedProjects();
+			for ( int i = 0; i < projects.length; ++i )
+			{
+				if ( projects[i].equals( resource ) )
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		if ( fProject.exists( resource.getFullPath() ) )
+		{
+			return true;
+		}
+		IProject[] projects = getReferencedProjects();
+		for ( int i = 0; i < projects.length; ++i )
+		{
+			if ( projects[i].exists( resource.getFullPath() ) )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected IProject[] getReferencedProjects()
+	{
+		IProject[] projects = new IProject[0];
+		try
+		{
+			projects = fProject.getReferencedProjects();
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
+		return projects;
+	}
 }

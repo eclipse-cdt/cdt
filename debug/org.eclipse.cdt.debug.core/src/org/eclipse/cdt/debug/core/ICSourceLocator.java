@@ -5,7 +5,9 @@
  */
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISourceLocator;
 
@@ -46,4 +48,39 @@ public interface ICSourceLocator extends ISourceLocator
 	 * 		   or -1 if line number information is unavailable
 	 */
 	int getLineNumber( IStackFrameInfo frameInfo );
+
+	/**
+	 * Returns a source element that corresponds to the given file name, or
+	 * <code>null</code> if a source element could not be located.
+	 * 
+	 * @param fileName the file name for which to locate source
+	 * @return an object representing a source element. 
+	 */
+	Object getSourceElement( String fileName );
+	
+	/**
+	 * Returns a source element that corresponds to the given function, or
+	 * <code>null</code> if a source element could not be located.
+	 * 
+	 * @param function the function name for which to locate source
+	 * @return an object representing a source element. 
+	 */
+	Object getSourceElementForFunection( String function );
+	
+	/**
+	 * Returns a source element that corresponds to the given address, or
+	 * <code>null</code> if a source element could not be located.
+	 * 
+	 * @param address the address for which to locate source
+	 * @return an object representing a source element. 
+	 */
+	Object getSourceElementForAddress( long address );
+	
+	/**
+	 * Returns whether the given resource is contained in this source locator.
+	 * 
+	 * @param resource the resource
+	 * @return whether the given resource is contained in this source locator
+	 */
+	boolean contains( IResource resource ); 
 }

@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -750,5 +751,12 @@ public class Target  implements ICDITarget {
 	public ICDILocation createLocation(BigInteger address) {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.createLocation(address);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRuntimeOptions()
+	 */
+	public ICDIRuntimeOptions getRuntimeOptions() {
+		return new RuntimeOptions(this);
 	}
 }

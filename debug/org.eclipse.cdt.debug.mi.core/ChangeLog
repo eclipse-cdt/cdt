@@ -1,3 +1,9 @@
+2004-10-18 Alain Magloire
+	Adjust to changes in CDI
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/RuntimeOptions.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/Session.java
+
 2004-10-17 Alain Magloire
 	Remove deprecated method in CDI adjust the implementation.
 

@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
@@ -198,9 +197,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	public void setCurrentTarget(Target target) throws CDIException {
 		ProcessManager pMgr = getProcessManager();
 		pMgr.setCurrentTarget((Target)target);
-//		} else {
-//			throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
-//		}
+//		throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
 	}
 
 	/**
@@ -221,13 +218,6 @@ public class Session implements ICDISession, ICDISessionObject {
 		configuration = conf;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getRuntimeOptions()
-	 */
-	public ICDIRuntimeOptions getRuntimeOptions() {
-		return new RuntimeOptions(this);
-	}
-	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionObject#getSession()
 	 */

@@ -1,3 +1,31 @@
+2002-10-19 Alain Magloire
+
+	The responsability to generate Events for modify memory blocks is push
+	on the CDI implementation.  The way we do this is every time consuming,
+	when the inferior is suspended(see EventManager.processSuspendedEvent()),
+	MemoryManager.update() is called, the method will go through the list of MemoryBlocks
+	that are not MemoryBlocks.setFrozen() and fetch the new memories, the data is compare
+	and MemoryChangedEvents are fired for blocks with changed values.
+	Gdb/mi var objects does not seem to provide any support for Memory ranges.
+
+	* src/.../core/cdi/MemoryChangedEvent.java: New File implements ICDIMemoryChangedEvent.
+	* src/.../core/cdi/EventManager.java (update): Process MIMemoryChangedEvent's.
+	(processSuspendedEvent): call MemoryManager.update().
+	* src/.../core/cdi/MemoryBlock.java (getExpression): New method.
+	(getMIDataReadMemoryInfo): New method.
+	(setMIDataReadMemoryInfo): New method.
+	* src/.../core/cdi/MemoryManager.java (update): New method.
+	(compareBlock): New method.
+	(listMemoryBlocks): New method.
+
+	* src/.../core/cdi/CTarget.java (setCurrentThread): Catch null pointer.
+	(getCThreads): Likewise.
+	* src/.../core/event/MIMemoryChangedEvent.java: New File.
+	* src/.../core/event/MIThreadExitEvent.java: Indentation fixes.
+	* src/.../core/event/MIVarChangedEvent.java: Indentation fixes.
+
+
+	
 2002-10-16 Alain Magloire
 
 	* src/.../mi/core/cdi/MemoryManager.java (createMemoryBlock):

@@ -30,6 +30,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
@@ -1166,6 +1168,14 @@ public class CDebugTarget extends CDebugElement
 		{
 			handleSuspendedBySignal( (ICDISignal)reason );
 		}
+		else if ( reason instanceof ICDIWatchpointTrigger )
+		{
+			handleWatchpointTrigger( (ICDIWatchpointTrigger)reason );
+		}
+		else if ( reason instanceof ICDIWatchpointScope )
+		{
+			handleWatchpointScope( (ICDIWatchpointScope)reason );
+		}
 	}
 
 	private void handleResumedEvent( ICDIResumedEvent event )
@@ -1201,6 +1211,16 @@ public class CDebugTarget extends CDebugElement
 	}
 
 	private void handleBreakpointHit( ICDIBreakpointHit breakpointHit )
+	{
+		fireSuspendEvent( DebugEvent.BREAKPOINT );
+	}
+
+	private void handleWatchpointTrigger( ICDIWatchpointTrigger wt )
+	{
+		fireSuspendEvent( DebugEvent.BREAKPOINT );
+	}
+	
+	private void handleWatchpointScope( ICDIWatchpointScope ws )
 	{
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}

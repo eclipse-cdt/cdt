@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -290,8 +291,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 					if ( info != null && info instanceof ICDISignal )
 					{
 						String label = target.getName() + 
-									   MessageFormat.format( " (Signal \'{0}\' received. Meaning: {1})", 
+									   MessageFormat.format( " (Signal ''{0}'' received. Meaning: {1})", 
 									   						 new String[] { ((ICDISignal)info).getName(), ((ICDISignal)info).getMeaning() } );
+						return label;
+					}
+					if ( info != null && info instanceof ICDIWatchpointTrigger )
+					{
+						String label = target.getName() + 
+									   MessageFormat.format( " (Watchpoint triggered. Old value: ''{0}''. New value: ''{1}'')", 
+									   						 new String[] { ((ICDIWatchpointTrigger)info).getOldValue(), 
+									   						 				((ICDIWatchpointTrigger)info).getNewValue() } );
 						return label;
 					}
 /*

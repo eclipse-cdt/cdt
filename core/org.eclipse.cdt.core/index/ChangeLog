@@ -1,4 +1,9 @@
 2004-11-02 Bogdan Gheorghe
+	Fixed a bug in the index merge.
+	
+	* index/org/eclipse/cdt/internal/core/index/impl/MergeFactory.java
+	
+2004-11-02 Bogdan Gheorghe
 	Partial Fix for Bug 74427: Indexer needs to store more info
 	
 	* index/org/eclipse/cdt/core/index/IIndexDelta.java	

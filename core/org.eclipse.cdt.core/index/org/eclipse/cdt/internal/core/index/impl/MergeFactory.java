@@ -210,6 +210,7 @@ public class MergeFactory {
 				addsInput.moveToNextWordEntry();
 			} else {
 				word1.catRefs(word1);
+				word2.catRefs(word2);
 				word1.mapRefs(mappingOld);
 				word2.mapRefs(mappingAdds);
 				word1.addRefs(word2.getRefs(),word2.getRefsIndexFlags());

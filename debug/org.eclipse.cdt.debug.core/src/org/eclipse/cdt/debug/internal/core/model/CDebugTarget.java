@@ -826,6 +826,8 @@ public class CDebugTarget extends CDebugElement
 		}
 		if ( adapter.equals( ICMemoryManager.class ) )
 			return getMemoryManager();
+		if ( adapter.equals( IDebuggerProcessSupport.class ) )
+			return this;
 		return super.getAdapter( adapter );
 	}
 	
@@ -1958,5 +1960,4 @@ public class CDebugTarget extends CDebugElement
 	{
 		return ( fDebuggerProcess != null );
 	}
-
 }

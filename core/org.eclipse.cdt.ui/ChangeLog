@@ -1,3 +1,7 @@
+2005-03-30 Alain Magloire
+	Fix PR 87334
+	* src/org/eclipse/cdt/internal/ui/compare/CMergeViewer.java
+
 2005-03-29 Chris Wiebe
 	prevent duplicate #includes
 	* src/org/eclipse/cdt/internal/ui/wizards/NewClassCodeGenerator.java

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.core.tests"
+   name="org.eclipse.cdt.core.tests"
+   version="1.2.0.5"
+   class="org.eclipse.cdt.testplugin.CTestPlugin">
+
+   <runtime>
+      <library name="cdtcoretests.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.junit"/>
+   </requires>
+
+
+   <extension
+         id="buildTest"
+         name="Tools for Build Test"
+         point="org.eclipse.cdt.core.ManagedBuildInfo">
+      <target
+            isTest="true"
+            name="Test Root"
+            defaultExtension="toor"
+            isAbstract="false"
+            id="test.root">
+         <tool
+               sources="foo,bar"
+               name="Root Tool"
+               outputs="toor"
+               command="doIt"
+               id="root.tool">
+            <optionCategory
+                  owner="root.tool"
+                  name="Category"
+                  id="category">
+            </optionCategory>
+            <option
+                  name="List Option in Top"
+                  command="-L"
+                  valueType="stringList"
+                  id="list.option">
+               <optionValue
+                     value="a">
+               </optionValue>
+               <optionValue
+                     value="b">
+               </optionValue>
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Boolean Option in Top"
+                  command="-b"
+                  valueType="boolean"
+                  id="boolean.option">
+            </option>
+            <option
+                  defaultValue="x"
+                  name="String Option in Category"
+                  category="category"
+                  valueType="string"
+                  id="string.option">
+            </option>
+            <option
+                  name="Enumerated Option in Category"
+                  category="category"
+                  valueType="enumerated"
+                  id="enumerated.option">
+               <optionEnum
+                     name="Default Enum"
+                     isDefault="true"
+                     command="-e1"
+                     id="default.enum.option">
+               </optionEnum>
+               <optionEnum
+                     name="Another Enum"
+                     command="-e2"
+                     id="another.enum.option">
+               </optionEnum>
+            </option>
+         </tool>
+         <configuration
+               name="Root Config"
+               id="root.config">
+         </configuration>
+         <configuration
+               name="Root Override Config"
+               id="root.override.config">
+            <toolRef
+                  id="root.tool">
+               <optionRef
+                     defaultValue="y"
+                     id="string.option">
+               </optionRef>
+               <optionRef
+                     defaultValue="true"
+                     id="boolean.option">
+               </optionRef>
+            </toolRef>
+         </configuration>
+      </target>
+      <target
+            isTest="true"
+            name="Test Sub"
+            parent="test.root"
+            defaultExtension="bus"
+            isAbstract="false"
+            id="test.sub">
+         <configuration
+               name="Sub Config"
+               id="sub.config">
+         </configuration>
+         <tool
+               name="Sub Tool"
+               id="tool.sub">
+         </tool>
+      </target>
+   </extension>
+
+</plugin>

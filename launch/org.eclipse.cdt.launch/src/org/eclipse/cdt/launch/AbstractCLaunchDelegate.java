@@ -422,11 +422,11 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		}
 		ICProject cproject = getCProject(config);
 		if (cproject == null) {
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (!project.exists()) {
+			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (!proj.exists()) {
 				abort(LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
-			} else if (!project.isOpen()) {
+			} else if (!proj.isOpen()) {
 				abort(LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
@@ -589,7 +589,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Recursively creates a set of projects referenced by the current project
 	 * 
-	 * @param project
+	 * @param proj
 	 *            The current project
 	 * @param referencedProjSet
 	 *            A set of referenced projects
@@ -597,8 +597,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *             if an error occurs while getting referenced projects from the
 	 *             current project
 	 */
-	private void getReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException {
-		IProject[] projects = project.getReferencedProjects();
+	private void getReferencedProjectSet(IProject proj, HashSet referencedProjSet) throws CoreException {
+		IProject[] projects = proj.getReferencedProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject refProject = projects[i];
 			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
@@ -620,7 +620,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	private List getBuildOrder(List resourceCollection) {
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
-			List orderedProjects = new ArrayList(resourceCollection.size());
+			List orderedProjs = new ArrayList(resourceCollection.size());
 			//Projects may not be in the build order but should be built if
 			// selected
 			List unorderedProjects = new ArrayList(resourceCollection.size());
@@ -629,26 +629,26 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
 				for (int j = 0; j < resourceCollection.size(); j++) {
-					IProject project = (IProject)resourceCollection.get(j);
-					if (project.getName().equals(projectName)) {
-						orderedProjects.add(project);
-						unorderedProjects.remove(project);
+					IProject proj = (IProject)resourceCollection.get(j);
+					if (proj.getName().equals(projectName)) {
+						orderedProjs.add(proj);
+						unorderedProjects.remove(proj);
 						break;
 					}
 				}
 			}
 			//Add anything not specified before we return
-			orderedProjects.addAll(unorderedProjects);
-			return orderedProjects;
+			orderedProjs.addAll(unorderedProjects);
+			return orderedProjs;
 		}
 
 		// Try the project prerequisite order then
 		IProject[] projects = new IProject[resourceCollection.size()];
 		projects = (IProject[])resourceCollection.toArray(projects);
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
-		ArrayList orderedProjects = new ArrayList();
-		orderedProjects.addAll(Arrays.asList(po.projects));
-		return orderedProjects;
+		ArrayList orderedProjs = new ArrayList();
+		orderedProjs.addAll(Arrays.asList(po.projects));
+		return orderedProjs;
 	}
 
 	/**

@@ -1,4 +1,10 @@
 2004-11-04 Mikhail Khodjaiants
+	No need of "ICSignalManager".
+	* ICSignalManager.java: removed
+	* CSignalManager.java
+	* CDebugTarget.java
+
+2004-11-04 Mikhail Khodjaiants
 	CSignalManager no longer extends CUpdateManager.
 	* CSignalManager.java
  

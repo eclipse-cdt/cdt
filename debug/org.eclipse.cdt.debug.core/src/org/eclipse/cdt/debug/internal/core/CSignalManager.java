@@ -12,12 +12,12 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.util.ArrayList;
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSignal;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -26,7 +26,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Manages the collection of signals on a debug target.
  */
-public class CSignalManager implements ICSignalManager {
+public class CSignalManager implements IAdaptable {
 
 	/**
 	 * The debug target associated with this manager.
@@ -86,11 +86,11 @@ public class CSignalManager implements ICSignalManager {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter( Class adapter ) {
-		if ( adapter.equals( ICSignalManager.class ) ) {
-			return this;
-		}
 		if ( adapter.equals( CSignalManager.class ) ) {
 			return this;
+		}
+		if ( adapter.equals( CDebugTarget.class ) ) {
+			return getDebugTarget();
 		}
 		return null;
 	}

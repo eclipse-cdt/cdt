@@ -30,7 +30,6 @@ import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
-import org.eclipse.cdt.debug.core.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -854,7 +853,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return getBreakpointManager();
 		if ( adapter.equals( ICSharedLibraryManager.class ) )
 			return getSharedLibraryManager();
-		if ( adapter.equals( ICSignalManager.class ) )
+		if ( adapter.equals( CSignalManager.class ) )
 			return getSignalManager();
 		if ( adapter.equals( ICRegisterManager.class ) )
 			return getRegisterManager();
@@ -1702,7 +1701,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getSignals()
 	 */
 	public ICSignal[] getSignals() throws DebugException {
-		ICSignalManager sm = getSignalManager();
+		CSignalManager sm = getSignalManager();
 		if ( sm != null ) {
 			return sm.getSignals();
 		}
@@ -1724,7 +1723,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#hasSignals()
 	 */
 	public boolean hasSignals() throws DebugException {
-		ICSignalManager sm = getSignalManager();
+		CSignalManager sm = getSignalManager();
 		if ( sm != null ) {
 			return (sm.getSignals().length > 0);
 		}

@@ -65,7 +65,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * CEditorHoverConfigurationBlock
  */
 public class CEditorHoverConfigurationBlock {
-	private static final String DELIMITER= PreferencesMessages.getString("CEditorHoverConfigurationBlock.delimiter"); //$NON-NLS-1$
+	static final String DELIMITER= PreferencesMessages.getString("CEditorHoverConfigurationBlock.delimiter"); //$NON-NLS-1$
 
 	private static final int ENABLED_PROP= 0;
 	private static final int MODIFIER_PROP= 1;
@@ -73,9 +73,9 @@ public class CEditorHoverConfigurationBlock {
 	// Data structure to hold the values which are edited by the user
 	private static class HoverConfig {
 		
-		private String fModifierString;
-		private boolean fIsEnabled;
-		private int fStateMask;
+		String fModifierString;
+		boolean fIsEnabled;
+		int fStateMask;
 
 		private HoverConfig(String modifier, int stateMask, boolean enabled) {
 			fModifierString= modifier;
@@ -142,11 +142,11 @@ public class CEditorHoverConfigurationBlock {
 	}
 
 	
-	private OverlayPreferenceStore fStore;
-	private HoverConfig[] fHoverConfigs;
-	private Text fModifierEditor;
-	private Table fHoverTable;
-	private TableViewer fHoverTableViewer;
+	OverlayPreferenceStore fStore;
+	HoverConfig[] fHoverConfigs;
+	Text fModifierEditor;
+	Table fHoverTable;
+	TableViewer fHoverTableViewer;
 	private TableColumn fNameColumn;
 	private TableColumn fModifierColumn;
 	private Text fDescription;
@@ -157,7 +157,7 @@ public class CEditorHoverConfigurationBlock {
 
 	private StatusInfo fStatus;
 	
-	private Map fCheckBoxes= new HashMap();
+	Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
@@ -370,7 +370,7 @@ public class CEditorHoverConfigurationBlock {
 		layouter.addColumnData(new ColumnWeightData(60, true));
 	}
 
-	private CEditorTextHoverDescriptor[] getContributedHovers() {
+	CEditorTextHoverDescriptor[] getContributedHovers() {
 		CEditorTextHoverDescriptor[] hoverDescriptors= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 
 		// Move Best Match hover to front
@@ -509,7 +509,7 @@ public class CEditorHoverConfigurationBlock {
 		}
 	}
 
-	private void handleModifierModified() {
+	void handleModifierModified() {
 		int i= fHoverTable.getSelectionIndex();
 		String modifiers= fModifierEditor.getText();
 		fHoverConfigs[i].fModifierString= modifiers;
@@ -525,7 +525,7 @@ public class CEditorHoverConfigurationBlock {
 		updateStatus();
 	}
 
-	private void handleHoverListSelection() {	
+	void handleHoverListSelection() {	
 		int i= fHoverTable.getSelectionIndex();
 		
 		if (i < 0) {
@@ -549,7 +549,7 @@ public class CEditorHoverConfigurationBlock {
 		return fStatus;
 	}
 
-	private void updateStatus() {
+	void updateStatus() {
 		int i= 0;
 		HashMap stateMasks= new HashMap(fHoverConfigs.length);
 		while (fStatus.isOK() && i < fHoverConfigs.length) {

@@ -340,7 +340,7 @@ public class EditTemplateDialog extends StatusDialog {
 		
 		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {			
 			public void getName(AccessibleEvent e) {
-				e.result = TemplateMessages.getString("EditTemplateDialog.pattern");
+				e.result = TemplateMessages.getString("EditTemplateDialog.pattern"); //$NON-NLS-1$
 		}});
 		
 		viewer.addTextListener(new ITextListener() {

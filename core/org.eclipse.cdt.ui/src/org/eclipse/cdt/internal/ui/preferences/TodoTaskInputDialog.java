@@ -135,7 +135,7 @@ public class TodoTaskInputDialog extends StatusDialog {
 		return composite;
 	}
 		
-	private void doValidation() {
+	void doValidation() {
 		StatusInfo status= new StatusInfo();
 		String newText= fNameDialogField.getText();
 		if (newText.length() == 0) {

@@ -319,7 +319,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	
 		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {			
 			public void getName(AccessibleEvent e) {
-				e.result = TemplateMessages.getString("TemplatePreferencePage.preview");
+				e.result = TemplateMessages.getString("TemplatePreferencePage.preview"); //$NON-NLS-1$
 		}});
 		
 		return viewer;

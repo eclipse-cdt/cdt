@@ -170,7 +170,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	private IOpenable fOwner;
 	private IFile fFile;
 	private ITextFileBuffer fTextFileBuffer;
-	private IDocument fDocument;
+	IDocument fDocument;
 
 	private DocumentSetCommand fSetCmd= new DocumentSetCommand();
 	private DocumentReplaceCommand fReplaceCmd= new DocumentReplaceCommand();

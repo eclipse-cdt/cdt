@@ -124,7 +124,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		return result;
 	}
 	
-	private void doDialogFieldChanged(DialogField field) {	
+	void doDialogFieldChanged(DialogField field) {	
 		updateStatus(getValidationStatus());
 	}
 	

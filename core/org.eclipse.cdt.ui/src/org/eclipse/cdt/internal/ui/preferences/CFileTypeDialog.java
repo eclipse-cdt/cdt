@@ -128,11 +128,11 @@ public class CFileTypeDialog extends Dialog {
 		return CCorePlugin.getDefault().getResolverModel();
 	}
 	
-	private Button getOkayButton() {
+	Button getOkayButton() {
 		return getButton(IDialogConstants.OK_ID);
 	}
 	
-	private String getPatternFromControl() {
+	String getPatternFromControl() {
 		return fTextPattern.getText().trim();
 	}
 	

@@ -10,12 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.core.filetype.IResolverModel;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;

@@ -6,7 +6,6 @@ package org.eclipse.cdt.internal.ui;
  */
  
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;

@@ -60,13 +60,13 @@ public class CustomFiltersDialog extends SelectionDialog {
 	private String[] fPatterns;
 	private String[] fEnabledFilterIds;
 
-	private FilterDescriptor[] fBuiltInFilters;
+	FilterDescriptor[] fBuiltInFilters;
 
-	private CheckboxTableViewer fCheckBoxList;
-	private Button fEnableUserDefinedPatterns;
-	private Text fUserDefinedPatterns;
+	CheckboxTableViewer fCheckBoxList;
+	Button fEnableUserDefinedPatterns;
+	Text fUserDefinedPatterns;
 
-	private Stack fFilterDescriptorChangeHistory;
+	Stack fFilterDescriptorChangeHistory;
 
 	
 	/**
@@ -212,8 +212,9 @@ public class CustomFiltersDialog extends SelectionDialog {
 				Object element= event.getElement();
 				if (element instanceof FilterDescriptor) {
 					// renew if already touched
-					if (fFilterDescriptorChangeHistory.contains(element))
+					if (fFilterDescriptorChangeHistory.contains(element)) {
 						fFilterDescriptorChangeHistory.remove(element);
+					}
 					fFilterDescriptorChangeHistory.push(element);
 				}
 			}});
@@ -238,8 +239,9 @@ public class CustomFiltersDialog extends SelectionDialog {
 			public void widgetSelected(SelectionEvent e) {
 				fCheckBoxList.setAllChecked(true);
 				fFilterDescriptorChangeHistory.clear();
-				for (int i= 0; i < fBuiltInFilters.length; i++)
+				for (int i= 0; i < fBuiltInFilters.length; i++) {
 					fFilterDescriptorChangeHistory.push(fBuiltInFilters[i]);
+				}
 			}
 		};
 		selectButton.addSelectionListener(listener);

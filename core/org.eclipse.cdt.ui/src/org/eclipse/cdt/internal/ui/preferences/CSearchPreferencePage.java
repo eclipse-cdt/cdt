@@ -41,7 +41,7 @@ public class CSearchPreferencePage extends PreferencePage
 		implements
 			IWorkbenchPreferencePage {
 	
-	private Combo fExternLinks;
+	Combo fExternLinks;
 	private Button fExternEnabled;
 	
 	protected OverlayPreferenceStore fOverlayStore;

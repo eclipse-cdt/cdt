@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Table;
 
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -288,14 +289,14 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		fWorkingValues.put(PREF_TRANSLATION_TASK_PRIORITIES, prios.toString());
 	}
 		
-	private void doTodoButtonPressed(int index) {
+	void doTodoButtonPressed(int index) {
 		TodoTask edited= null;
 		if (index != 0) {
 			edited= (TodoTask) fTodoTasksList.getSelectedElements().get(0);
 		}
 		
 		TodoTaskInputDialog dialog= new TodoTaskInputDialog(getShell(), edited, fTodoTasksList.getElements());
-		if (dialog.open() == TodoTaskInputDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			if (edited != null) {
 				fTodoTasksList.replaceElement(edited, dialog.getResult());
 			} else {

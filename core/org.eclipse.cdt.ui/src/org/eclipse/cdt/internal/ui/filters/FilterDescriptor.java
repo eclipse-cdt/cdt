@@ -61,7 +61,7 @@ public class FilterDescriptor implements Comparable {
 	private static FilterDescriptor[] fgFilterDescriptors;
 
 
-	private IConfigurationElement fElement;
+	IConfigurationElement fElement;
 
 	/**
 	 * Returns all contributed Java element filters.
@@ -92,7 +92,7 @@ public class FilterDescriptor implements Comparable {
 	/**
 	 * Creates a new filter descriptor for the given configuration element.
 	 */
-	private FilterDescriptor(IConfigurationElement element) {
+	FilterDescriptor(IConfigurationElement element) {
 		fElement= element;
 		// it is either a pattern filter or a custom filter
 		Assert.isTrue(isPatternFilter() ^ isCustomFilter(), "An extension for extension-point org.eclipse.cdt.ui.CElementFilters does not specify a correct filter"); //$NON-NLS-1$

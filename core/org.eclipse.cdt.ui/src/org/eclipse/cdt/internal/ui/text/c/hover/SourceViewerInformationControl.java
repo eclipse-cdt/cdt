@@ -49,7 +49,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/** Border thickness in pixels. */
 	private static final int BORDER= 1;
 	/** The control's shell */
-	private Shell fShell;
+	Shell fShell;
 	/** The control's text widget */
 	private StyledText fText;
 	/** The control's source viewer */

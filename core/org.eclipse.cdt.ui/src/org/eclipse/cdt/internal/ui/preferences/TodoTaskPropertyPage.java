@@ -26,6 +26,7 @@ import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -53,7 +54,7 @@ public class TodoTaskPropertyPage extends PropertyPage {
 	private SelectionButtonDialogField fUseWorkspaceSettings;
 	private SelectionButtonDialogField fChangeWorkspaceSettings;
 	private SelectionButtonDialogField fUseProjectSettings;
-	private IStatus fBlockStatus;
+	IStatus fBlockStatus;
 	
 
 	public TodoTaskPropertyPage() {
@@ -139,7 +140,7 @@ public class TodoTaskPropertyPage extends PropertyPage {
 		return fUseProjectSettings.isSelected();
 	}
 	
-	private void doDialogFieldChanged(DialogField field) {
+	void doDialogFieldChanged(DialogField field) {
 		if (field == fChangeWorkspaceSettings) {
 			TodoTaskPreferencePage page= new TodoTaskPreferencePage();
 			showPreferencePage(TodoTaskPreferencePage.ID, page);
@@ -151,7 +152,7 @@ public class TodoTaskPropertyPage extends PropertyPage {
 	/**
 	 * Method statusChanged.
 	 */
-	private void doStatusChanged() {
+	void doStatusChanged() {
 		updateStatus(useProjectSettings() ? fBlockStatus : new StatusInfo());
 	}
 	
@@ -210,7 +211,7 @@ public class TodoTaskPropertyPage extends PropertyPage {
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());
-				result[0]= (dialog.open() == PreferenceDialog.OK);
+				result[0]= (dialog.open() == Window.OK);
 			}
 		});
 		return result[0];

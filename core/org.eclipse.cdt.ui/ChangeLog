@@ -1,3 +1,13 @@
+2003-04-14 Alain Magloire
+
+	The problem: the old parser can still hangs and bring chaos, this
+	temporary code(since the new parser does not have yet a callback
+	mechanism) allow us to use the new parser when doing the visual diffs.
+	It is key on the preference setting, to enable/disable the old parser.
+
+	* src/org/eclipse/cdt/internal/ui/comparator/CStructureCreator.java:
+	* src/org/eclipse/cdt/internal/ui/comparator/ComparatorModelbuilder.java:
+
 2003-04-10 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java:

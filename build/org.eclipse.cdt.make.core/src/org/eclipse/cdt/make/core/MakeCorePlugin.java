@@ -204,11 +204,11 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	public void shutdown() throws CoreException {
-		super.shutdown();
 		if ( fTargetManager != null) {
 			fTargetManager.shutdown();
 			fTargetManager = null;
 		}
+		super.shutdown();
 	}
 
 	/*

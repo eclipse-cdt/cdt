@@ -11,20 +11,24 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceManipulation;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @see ITranslationUnit
@@ -473,19 +477,28 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * Parse the buffer contents of this element.
 	 */
 	public Map parse(){
+		removeChildren(this);
+		final CModelBuilder modelBuilder = new CModelBuilder(this);
+		final boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 		try {
-				removeChildren();
-				CModelBuilder modelBuilder = new CModelBuilder(this);
-				
-				boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
-				return modelBuilder.parse(quickParseMode);
+			return modelBuilder.parse(quickParseMode);
 		} catch (Exception e) {
-			// FIXME: use the debug log for this exception.
-			//System.out.println(e);
+			// use the debug log for this exception.
+			Util.debugLog( "Exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
 			return null;
-		}
+		}							
 	}
 	
+	public void removeChildren(ICElement element){
+		if (element instanceof Parent){
+			Parent parent = (Parent) element;
+			ICElement[] children = parent.getChildren();
+			for(int i =0; i< children.length; ++i){
+				removeChildren(children[i]);
+			}
+			parent.removeChildren();
+		}
+	}
 
 	
 }

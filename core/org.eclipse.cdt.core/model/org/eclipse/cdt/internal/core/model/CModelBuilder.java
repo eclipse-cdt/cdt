@@ -70,7 +70,7 @@ public class CModelBuilder {
 	private IASTCompilationUnit compilationUnit;
 	// indicator if the unit has parse errors
 	private boolean hasNoErrors = false;
-		
+	
 	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
 		this.translationUnit = tu ;
 		this.newElements = new HashMap();
@@ -150,6 +150,7 @@ public class CModelBuilder {
 	
 
 	public Map parse(boolean quickParseMode) throws Exception {
+		long startTime = System.currentTimeMillis();
 		try
 		{
 			compilationUnit = parse( translationUnit, quickParseMode, true);		
@@ -160,7 +161,9 @@ public class CModelBuilder {
 			Util.debugLog( "Parse Exception in CModelBuilder", IDebugLogConstants.MODEL );  //$NON-NLS-1$
 			//e.printStackTrace();
 		}
-		long startTime = System.currentTimeMillis();
+		Util.debugLog("CModel parsing: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		startTime = System.currentTimeMillis();
 		try
 		{ 
 			generateModelElements();
@@ -170,13 +173,12 @@ public class CModelBuilder {
 		catch( NullPointerException npe )
 		{
 			Util.debugLog( "NullPointer exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
-			//npe.printStackTrace();
 		}
 				 
 		// For the debuglog to take place, you have to call
 		// Util.setDebugging(true);
 		// Or set debug to true in the core plugin preference 
-		Util.debugLog("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
+		Util.debugLog("CModel building: "+ ( System.currentTimeMillis() - startTime ) + "ms", IDebugLogConstants.MODEL); //$NON-NLS-1$ //$NON-NLS-2$
 		return this.newElements;
 		
 	}	
@@ -344,6 +346,7 @@ public class CModelBuilder {
 		element.setLines( macro.getStartingLine(), macro.getEndingLine() );
 		this.newElements.put(element, element.getElementInfo());
 		return element;
+		
 	}
 	
 	private Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef){
@@ -656,4 +659,10 @@ public class CModelBuilder {
 		return element;
 	}
 
+	/**
+	 * @return Returns the newElements.
+	 */
+	public Map getNewElements() {
+		return newElements;
+	}
 }

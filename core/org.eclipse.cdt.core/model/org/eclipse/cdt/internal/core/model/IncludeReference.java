@@ -114,9 +114,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 					}
 				}
 			}
-			ICElement[] children = new ICElement[vChildren.size()];
-			vChildren.toArray(children);
-			info.setChildren(children);
+			info.setChildren(vChildren);
 			return true;
 	}
 

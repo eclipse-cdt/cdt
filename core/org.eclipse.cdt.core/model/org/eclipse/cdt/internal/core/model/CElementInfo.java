@@ -6,6 +6,8 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
@@ -16,11 +18,6 @@ import org.eclipse.core.resources.IResource;
  */
 class CElementInfo {
 
-	/**
-	 * Shared empty collection used for efficiency.
-	 */
-	static Object[] NO_NON_C_RESOURCES = new Object[] {};
-
 	protected CElement element;
 
 	/**
@@ -28,12 +25,7 @@ class CElementInfo {
 	 * object. This is an empty array if this element has
 	 * no children.
 	 */
-	protected ICElement[] fChildren;
-
-	/**
-	 * Shared empty collection used for efficiency.
-	 */
-	protected static ICElement[] fgEmptyChildren = new ICElement[]{};
+	protected List fChildren;
 
 	/**
 	 * Is the structure of this element known
@@ -45,7 +37,7 @@ class CElementInfo {
 
 	protected CElementInfo(CElement element) {
 		this.element = element;
-		fChildren = fgEmptyChildren;
+		fChildren = new ArrayList();
 	}
 
 	protected CElement getElement() {
@@ -53,41 +45,21 @@ class CElementInfo {
 	}
 
 	protected void addChild(ICElement child) {
-		if (fChildren == fgEmptyChildren) {
-			setChildren(new ICElement[] {child});
-		} else {
-			if (!includesChild(child)) {
-				setChildren(growAndAddToArray(fChildren, child));
-			}
-		}
+		fChildren.add(child);
 	}
 
 	protected ICElement[] getChildren() {
-		return fChildren;
+		ICElement[] array= new ICElement[fChildren.size()];		
+		return (ICElement[]) fChildren.toArray( array );
 	}
 
-	/**
-	 * Adds the new element to a new array that contains all of the elements of the old array.
-	 * Returns the new array.
-	 */
-	protected ICElement[] growAndAddToArray(ICElement[] array, ICElement addition) {
-		ICElement[] old = array;
-		array = new ICElement[old.length + 1];
-		System.arraycopy(old, 0, array, 0, old.length);
-		array[old.length] = addition;
-		return array;
-	}
 
 	/**
 	 * Returns <code>true</code> if this child is in my children collection
 	 */
-	protected boolean includesChild(ICElement child) {
-	
-		for (int i= 0; i < fChildren.length; i++) {
-			if (fChildren[i].equals(child)) {
-				return true;
-			}
-		}
+	protected boolean includesChild(ICElement child) {	
+		if(fChildren.contains(child))
+			return true;
 		return false;
 	}
 
@@ -98,42 +70,20 @@ class CElementInfo {
 		return fIsStructureKnown;
 	}
 
-	/**
-	 * Returns an array with all the same elements as the specified array except for
-	 * the element to remove. Assumes that the deletion is contained in the array.
-	 */
-	protected ICElement[] removeAndShrinkArray(ICElement[] array, ICElement deletion) {
-		ICElement[] old = array;
-		array = new ICElement[old.length - 1];
-		int j = 0;
-		for (int i = 0; i < old.length; i++) {
-			if (!old[i].equals(deletion)) {
-				array[j] = old[i];
-			} else {
-				System.arraycopy(old, i + 1, array, j, old.length - (i + 1));
-				return array;
-			}
-			j++;
-		}
-		return array;
-	}
-
 	protected void removeChild(ICElement child) {
-		if (includesChild(child)) {
-			setChildren(removeAndShrinkArray(fChildren, child));
-		}
+		fChildren.remove(child);
 	}
 
 	protected void removeChildren () {
-		fChildren = fgEmptyChildren;
+		fChildren.clear();
 	}
 
-	protected void setChildren(ICElement[] children) {
-		fChildren = children;
+	protected void setChildren(List children) {
+		fChildren.addAll(children);
 	}
 
 	protected boolean hasChildren() {
-		return fChildren.length > 0;
+		return fChildren.size() > 0;
 	}
 
 	protected void setChanged() {

@@ -4,6 +4,9 @@ package org.eclipse.cdt.internal.core.model;
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatus;
@@ -24,7 +27,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * The elements related to the failure, or <code>null</code>
 	 * if no elements are involved.
 	 */
-	protected ICElement[] fElements = new ICElement[0];
+	protected List fElements = new ArrayList();
 	/**
 	 * The path related to the failure, or <code>null</code>
 	 * if no path is involved.
@@ -59,7 +62,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus(int code) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		fElements= CElementInfo.fgEmptyChildren;
+		fElements.clear();
 	}
 
 	/**
@@ -68,7 +71,8 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus(int code, ICElement[] elements) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		fElements= elements;
+		for(int i=0; i<elements.length; ++i)
+			fElements.add(elements[i]);
 		fPath= null;
 	}
 
@@ -81,7 +85,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 
 	public CModelStatus(int severity, int code, String string) {
 		super(severity, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		fElements= CElementInfo.fgEmptyChildren;
+		fElements.clear();
 		fPath= null;
 		fString = string;
 	}	
@@ -91,7 +95,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus(int code, Throwable throwable) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", throwable); //$NON-NLS-1$
-		fElements= CElementInfo.fgEmptyChildren;
+		fElements.clear();
 	}
 
 	/**
@@ -99,7 +103,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus(int code, IPath path) {
 		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		fElements= CElementInfo.fgEmptyChildren;
+		fElements.clear();
 		fPath= path;
 	}
 
@@ -150,7 +154,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * @see ICModelStatus
 	 */
 	public ICElement[] getElements() {
-		return fElements;
+		return (ICElement[])fElements.toArray(new ICElement[fElements.size()]);
 	}
 
 	/**

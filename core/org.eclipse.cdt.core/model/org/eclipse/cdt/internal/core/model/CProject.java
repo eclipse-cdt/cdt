@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -425,8 +426,6 @@ public class CProject extends Openable implements ICProject {
 		System.arraycopy(children, 0, roots, 0, length);
 			
 		return roots;
-
-		//return computeSourceRoots();
 	}
 
 	/**
@@ -441,10 +440,10 @@ public class CProject extends Openable implements ICProject {
 			if (pinfo.sourceRoots != null) {
 				roots = pinfo.sourceRoots;
 			} else {
-				roots = pinfo.sourceRoots = computeSourceRoots();				
+				roots = pinfo.sourceRoots = (ISourceRoot[])computeSourceRoots().toArray(new ISourceRoot[computeSourceRoots().size()]);				
 			}
 		} else {
-			roots = computeSourceRoots();
+			roots = (ISourceRoot[])computeSourceRoots().toArray(new ISourceRoot[computeSourceRoots().size()]);
 		}
 		return roots;
 	}
@@ -535,7 +534,7 @@ public class CProject extends Openable implements ICProject {
 		return validInfo;
 	}
 
-	protected ISourceRoot[] computeSourceRoots() throws CModelException {
+	protected List computeSourceRoots() throws CModelException {
 		IPathEntry[] entries = getResolvedPathEntries();
 		ArrayList list = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
@@ -547,9 +546,7 @@ public class CProject extends Openable implements ICProject {
 				}
 			}
 		}
-		ISourceRoot[] roots = new ISourceRoot[list.size()];
-		list.toArray(roots);
-		return roots;
+		return list;
 	}
 
 	protected boolean computeSourceRoots(OpenableInfo info, IResource res) throws CModelException {

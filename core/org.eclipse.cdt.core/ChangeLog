@@ -1,3 +1,8 @@
+2004-04-12 Hoda Amer
+	CModelBuilder and scalability problems: Building the CModel takes a long time
+	when translation unit has lots of children (25,000 children taking ~ 45 sec to build model).
+	Revising Parent.addChild() and TranslationUnit.removeChildren() (now 25,000 children taking ~ 160 ms).
+	
 2004-04-07 David Inglis
 	
 	Fixed event problem 

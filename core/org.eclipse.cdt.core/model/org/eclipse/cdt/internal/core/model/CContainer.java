@@ -213,9 +213,7 @@ public class CContainer extends Openable implements ICContainer {
 			//e.printStackTrace();
 			throw new CModelException(e);
 		}
-		ICElement[] children = new ICElement[vChildren.size()];
-		vChildren.toArray(children);
-		info.setChildren(children);
+		info.setChildren(vChildren);
 		if (info instanceof CContainerInfo) {
 			((CContainerInfo) info).setNonCResources(null);
 		}

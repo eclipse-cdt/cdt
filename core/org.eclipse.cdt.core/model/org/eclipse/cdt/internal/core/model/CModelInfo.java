@@ -41,7 +41,7 @@ public class CModelInfo extends OpenableInfo {
 			}
 		}
 		if (index == 0) {
-			return NO_NON_C_RESOURCES;
+			return new Object[] {}; // NO_NON_C_RESOURCES
 		}
 		if (index < length) {
 			System.arraycopy(nonCProjects, 0, nonCProjects = new Object[index], 0, index);

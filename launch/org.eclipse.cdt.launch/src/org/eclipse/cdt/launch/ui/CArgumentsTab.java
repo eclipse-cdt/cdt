@@ -97,7 +97,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fArgumentVariablesButton= createPushButton(argsComp, "Varianbles...", null); //$NON-NLS-1$
+		fArgumentVariablesButton= createPushButton(argsComp, LaunchMessages.getString("CArgumentsTab.Variables"), null); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fArgumentVariablesButton.setLayoutData(gd);
 		fArgumentVariablesButton.addSelectionListener(new SelectionAdapter() {

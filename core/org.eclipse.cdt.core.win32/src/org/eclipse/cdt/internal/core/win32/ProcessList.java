@@ -12,9 +12,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 
 /*
  * Currently this will only work for Windows XP since tasklist
@@ -31,9 +31,10 @@ public class ProcessList implements IProcessList {
 		Process p = null;
 		String command = null;
 		InputStream in = null;
-		IPluginDescriptor desc = CCorePlugin.getDefault().getDescriptor();
+		Bundle bundle = Platform.getBundle(CCorePlugin.PLUGIN_ID);
+
 		try {
-			URL url = desc.find(new Path("$os$/listtasks.exe")); //$NON-NLS-1$
+			URL url = Platform.find(bundle, new Path("$os$/listtasks.exe")); //$NON-NLS-1$
 			url = Platform.resolve(url);
 			String path = url.getFile();
 			File file = new File(path);

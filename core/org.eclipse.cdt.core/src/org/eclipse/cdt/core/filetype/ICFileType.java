@@ -30,9 +30,9 @@ public interface ICFileType {
     public String getId();
 
 	/**
-     * @return Language id associated with this file type.
+     * @return Language associated with this file type.
      */
-	public String getLanguageId();
+	public ICLanguage getLanguage();
 
 	/**
      * @return Name of this file type.

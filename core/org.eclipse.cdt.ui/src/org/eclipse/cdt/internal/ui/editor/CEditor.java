@@ -449,7 +449,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			IFile file= ((IFileEditorInput) originalElement).getFile();
 			if (file != null) {
 				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-				oldLanguage = type.getLanguageId();
+				oldLanguage = type.getLanguage().getId();
 				if (oldLanguage == null) {
 					return false;
 				}
@@ -461,7 +461,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			IFile file = ((IFileEditorInput) movedElement).getFile();
 			if (file != null) {
 				ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
-				newLanguage = type.getLanguageId();
+				newLanguage = type.getLanguage().getId();
 				if (newLanguage == null) {
 					return false;
 				}

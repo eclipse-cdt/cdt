@@ -11,8 +11,11 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
+import org.eclipse.cdt.core.filetype.tests.ResolverTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;
 import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
+import org.eclipse.cdt.core.internal.errorparsers.tests.GCCErrorParserTests;
+import org.eclipse.cdt.core.internal.errorparsers.tests.GenericErrorParserTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
@@ -51,6 +54,8 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
+		//suite.addTest(GCCErrorParserTests.suite());
+		suite.addTest(ResolverTests.suite());
 		suite.addTest(StandardBuildTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());

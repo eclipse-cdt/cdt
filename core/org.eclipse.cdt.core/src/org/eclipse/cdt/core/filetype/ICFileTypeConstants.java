@@ -39,9 +39,9 @@ public interface ICFileTypeConstants {
 	
 	public static String FT_C_HEADER	= FT_PREFIX + "c_header"; //$NON-NLS-1$
 	
-	public static String FT_CXX_HEADER	= FT_PREFIX + "cxx_source"; //$NON-NLS-1$
-	
-	public static String FT_CXX_SOURCE	= FT_PREFIX + "cxx_header"; //$NON-NLS-1$
-	
+	public static String FT_CXX_SOURCE	= FT_PREFIX + "cxx_source"; //$NON-NLS-1$
+
+	public static String FT_CXX_HEADER	= FT_PREFIX + "cxx_header"; //$NON-NLS-1$
+
 	public static String FT_ASM_SOURCE	= FT_PREFIX + "asm_source"; //$NON-NLS-1$
 }

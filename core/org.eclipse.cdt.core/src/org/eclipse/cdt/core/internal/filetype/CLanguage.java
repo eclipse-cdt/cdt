@@ -21,6 +21,9 @@ public class CLanguage implements ICLanguage {
 	private String	fName;
 
 	public CLanguage(String id, String name) {
+		Argument.check(id);
+		Argument.check(name);
+		
 		fId		= id;
 		fName	= name;
 	}
@@ -31,5 +34,17 @@ public class CLanguage implements ICLanguage {
 
 	public String getName() {
 		return fName;
+	}
+
+	public boolean equals(Object object) {
+		if (!(object instanceof ICLanguage)) {
+			return false;
+		}
+
+		ICLanguage rhs = (ICLanguage) object;
+		boolean eq = fId.equals(rhs.getId());
+		if (eq) eq = fName.equals(rhs.getName());
+
+		return eq;
 	}
 }

@@ -11,20 +11,26 @@
 package org.eclipse.cdt.core.internal.filetype;
 
 import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICLanguage;
 
 /**
  * Representation of a declared file type.
  */
 public class CFileType implements ICFileType {
 
-	private String	fId;
-	private String	fLangId;
-	private String	fName;
-	private int		fType;
+	private ICLanguage	fLang;
+	private String		fId;
+	private String		fName;
+	private int			fType;
 
-	public CFileType(String id, String languageId, String name, int type) {
+	public CFileType(String id, ICLanguage language, String name, int type) {
+		Argument.check(id);
+		Argument.check(language);
+		Argument.check(name);
+		Argument.check(type, ICFileType.TYPE_UNKNOWN, ICFileType.TYPE_HEADER);
+		
 		fId		= id;
-		fLangId	= languageId;	
+		fLang	= language;	
 		fName	= name;
 		fType	= type;
 	}
@@ -33,8 +39,8 @@ public class CFileType implements ICFileType {
 		return fId;
 	}
 
-	public String getLanguageId() {
-		return fLangId;
+	public ICLanguage getLanguage() {
+		return fLang;
 	}
 
 	public String getName() {
@@ -55,5 +61,20 @@ public class CFileType implements ICFileType {
 
 	public boolean isTranslationUnit() {
 		return (isSource() || isHeader());
+	}
+	
+	public boolean equals(Object object) {
+		if (!(object instanceof ICFileType)) {
+			return false;
+		}
+
+		ICFileType rhs = (ICFileType) object;
+		boolean eq = (fType == rhs.getType());
+
+		if (eq) eq = fId.equals(rhs.getId());
+		if (eq) eq = fLang.equals(rhs.getLanguage());
+		if (eq) eq = fName.equals(rhs.getName());
+
+		return eq;
 	}
 }

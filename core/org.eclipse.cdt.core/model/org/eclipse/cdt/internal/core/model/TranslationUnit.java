@@ -537,7 +537,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public boolean isCLanguage() {
 		IProject project = getCProject().getProject();
 		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
-		String lid = type.getLanguageId();
+		String lid = type.getLanguage().getId();
 		return lid != null && lid.equals(ICFileTypeConstants.LANG_C);
 	}
 
@@ -547,7 +547,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public boolean isCXXLanguage() {
 		IProject project = getCProject().getProject();
 		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
-		String lid = type.getLanguageId();
+		String lid = type.getLanguage().getId();
 		return lid != null && lid.equals(ICFileTypeConstants.LANG_CXX);
 	}
 
@@ -557,7 +557,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public boolean isASMLanguage() {
 		IProject project = getCProject().getProject();
 		ICFileType type = CCorePlugin.getDefault().getFileType(project, getPath().lastSegment());
-		String lid = type.getLanguageId();
+		String lid = type.getLanguage().getId();
 		return lid != null && lid.equals(ICFileTypeConstants.LANG_ASM);
 	}
 

@@ -1,3 +1,6 @@
+2004-05-19 Alain Magloire
+	New test provided by Sam Rob added for the resolver.
+
 2004-05-03 Bogdan Gheorghe
 	Changed search and indexer tests to work with new index enablement
 	

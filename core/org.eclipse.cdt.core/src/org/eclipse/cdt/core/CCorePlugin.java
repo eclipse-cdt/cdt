@@ -920,6 +920,7 @@ public class CCorePlugin extends Plugin {
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ; //$NON-NLS-1$
+	private static final String RESOLVER = CCorePlugin.PLUGIN_ID + "/debug/typeresolver" ; //$NON-NLS-1$
 	//private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 
 	/**
@@ -955,7 +956,10 @@ public class CCorePlugin extends Plugin {
 			
 			option = Platform.getDebugOption(MATCH_LOCATOR);
 			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
-			
+
+			option = Platform.getDebugOption(RESOLVER);
+			if(option != null) CFileTypeResolver.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+
 			if (indexFlag == true){
 			   JobManager.VERBOSE = true; 	
 			}

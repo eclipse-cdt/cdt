@@ -23,3 +23,9 @@ org.eclipse.cdt.core/debug/matchlocator=false
 
 # Reports delta processor tree activity
 org.eclipse.cdt.core/debug/deltaprocessor=false
+
+# Reports file type resolver activity
+org.eclipse.cdt.core/debug/typeresolver=false
+
+# Reports file type resolver activity
+org.eclipse.cdt.core/debug/typeresolver=false

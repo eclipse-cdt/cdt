@@ -15,22 +15,12 @@ package org.eclipse.cdt.core.filetype;
  * associated file type.
  *
  * Accessed by ICFileTypeResolver and file type management UI.
- *  
- * The implementation checks for a match for the provided file name
- *   - By looking for an exact filename match ("iostream" == "iostream")
- *   - By looking for an extension match ("foo.c" == "*.c")
- *   - By looking for a pattern match ("libfoo.so.1.0" == "*.so*")
  */
 public interface ICFileTypeResolver {
 	/**
-	 * Determine which file type corresponds to the given
-	 * file name.
-	 * 
-	 * @param fileName file name to check.
-	 * 
-	 * @return file type for the provided file name
+	 * @return array containing all known languages.
 	 */
-	public ICFileType getFileType(String fileName);  
+	public ICLanguage[] getLanguages();  
 
 	/**
 	 * @return array containing all known file types.
@@ -42,6 +32,34 @@ public interface ICFileTypeResolver {
 	 */
 	public ICFileTypeAssociation[] getFileTypeAssociations();  
 
+	/**
+	 * Add a new language to the resolver's list.
+	 * 
+	 * @param language language to add.
+	 *
+	 * @return true if the language was added.
+	 */
+	public boolean addLanguage(ICLanguage language);
+
+	/**
+	 * Remove a language from the resolver's list.
+	 * 
+	 * @param language language to remove.
+	 *
+	 * @return true if the language was removed.
+	 */
+	public boolean removeLanguage(ICLanguage language);
+
+	/**
+	 * Get the language that has the specified id.
+	 * Returns null if no language has that id.
+	 * 
+	 * @param languageId language id
+	 * 
+	 * @return language with the specified id, or null
+	 */
+	public ICLanguage getLanguageById(String languageId);
+	
 	/**
 	 * Add a new file type to the resolver's list.
 	 * 
@@ -62,6 +80,26 @@ public interface ICFileTypeResolver {
 	public boolean removeFileType(ICFileType type);
 
 	/**
+	 * Determine which file type corresponds to the given
+	 * file name.
+	 * 
+	 * @param fileName file name to check.
+	 * 
+	 * @return file type for the provided file name
+	 */
+	public ICFileType getFileType(String fileName);  
+
+	/**
+	 * Get the file type that has the specified id.
+	 * Returns null if no file type has that id.
+	 * 
+	 * @param typeId file type id
+	 * 
+	 * @return file type with the specified id, or null
+	 */
+	public ICFileType getFileTypeById(String typeId);
+
+	/**
 	 * Add a new file type association to the resolver's list.
 	 * 
 	 * @param pattern file name pattern to add.
@@ -79,5 +117,4 @@ public interface ICFileTypeResolver {
 	 * @return true if the file type association was removed.
 	 */
 	public boolean removeFileTypeAssociation(ICFileTypeAssociation assoc);
-
 }

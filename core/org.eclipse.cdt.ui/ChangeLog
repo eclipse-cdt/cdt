@@ -1,5 +1,9 @@
 2004-05-19 Alain Magloire
 
+	Contribution from Sam Robb, for PR 52864.
+
+2004-05-19 Alain Magloire
+
 	Comply with Eclipse-3.0 and use the theme
 	extension to change the CEditor text font.
 	Move the CBuildConsole font in the same category.

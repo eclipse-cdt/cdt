@@ -33,13 +33,12 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * @author sam.robb
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Implementation of the file type resolver interface.
  */
 public class CFileTypeResolver implements ICFileTypeResolver {
 
+	public static boolean VERBOSE = false;
+	
 	private static final String EXTENSION_LANG	= "CLanguage"; //$NON-NLS-1$
 	private static final String EXTENSION_TYPE	= "CFileType"; //$NON-NLS-1$
 	private static final String EXTENSION_ASSOC = "CFileTypeAssociation"; //$NON-NLS-1$
@@ -52,40 +51,37 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	private static final String ATTR_VAL_SOURCE = "source"; //$NON-NLS-1$
 	private static final String ATTR_VAL_HEADER = "header"; //$NON-NLS-1$
 	
+	private static final String NAME_UNKNOWN	= "Unknown";
+	
 	/**
 	 * Default language, returned when no other language matches a language id.
 	 */
 	public static final ICLanguage DEFAULT_LANG_TYPE =
-		new CLanguage(ICFileTypeConstants.LANG_UNKNOWN, ""); //$NON-NLS-1$	
+		new CLanguage(ICFileTypeConstants.LANG_UNKNOWN, NAME_UNKNOWN);	
 
 	/**
 	 * Default file type, returned when no other file type matches a file name.
 	 */
 	public static final ICFileType DEFAULT_FILE_TYPE =
-		new CFileType(ICFileTypeConstants.FT_UNKNOWN, ICFileTypeConstants.LANG_UNKNOWN, "", ICFileType.TYPE_UNKNOWN); //$NON-NLS-1$	
+		new CFileType(ICFileTypeConstants.FT_UNKNOWN, DEFAULT_LANG_TYPE, NAME_UNKNOWN, ICFileType.TYPE_UNKNOWN);	
 
 	// Singleton
-	private static ICFileTypeResolver instance = new CFileTypeResolver();
+	private static ICFileTypeResolver instance = null;
 
 	// Private ctor to preserve singleton status
 	private CFileTypeResolver() {
 		loadLanguages();
 		loadTypes();
 		loadAssociations();
-		
-		if (CCorePlugin.getDefault().isDebugging()) {
-			String[] test = { "foo.c", "bar.h", "baz.s", "numeric" }; 
-			for (int i = 0; i < test.length; i++) {
-				ICFileType ft = getFileType(test[i]);
-				System.out.println("Self test: " + test[i] + " mapped to " + ft.getId());
-			}
-		}
 	}
 
 	/**
 	 * @return the default instance of this singleton
 	 */
-	public static ICFileTypeResolver getDefault() {
+	synchronized public static ICFileTypeResolver getDefault() {
+		if (null == instance) {
+			instance = new CFileTypeResolver();
+		}
 		return instance;
 	}
 	
@@ -185,12 +181,13 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	 * @return true if the language is added, false otherwise
 	 */
 	public boolean addLanguage(ICLanguage lang) {
-		if (CCorePlugin.getDefault().isDebugging()) {
-			System.out.println("File Type Resolver: adding language " + lang.getId() + " as " + lang.getName());
+		if (VERBOSE) {
+			debugLog("+ language " + lang.getId() + " as " + lang.getName());
 		}
 		boolean added = false;
 		if (!fLangMap.containsValue(lang)) {
-			added = (null != fTypeMap.put(lang.getId(), lang));
+			fLangMap.put(lang.getId(), lang);
+			added = true;
 		}
 		return added;
 	}
@@ -203,11 +200,11 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	 * @return true if the language is removed, false otherwise
 	 */
 	public boolean removeLanguage(ICLanguage lang) {
-		if (CCorePlugin.getDefault().isDebugging()) {
-			System.out.println("File Type Resolver: removing language " + lang.getId() + " as " + lang.getName());
+		if (VERBOSE) {
+			debugLog("- language " + lang.getId() + " as " + lang.getName());
 		}
 		// TODO: must remove any file types based on this language as well
-		return (null != fLangMap.remove(lang));
+		return (null != fLangMap.remove(lang.getId()));
 	}
 
 	/**
@@ -222,12 +219,13 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	 * @return true if the file type is added, false otherwise
 	 */
 	public boolean addFileType(ICFileType type) {
-		if (CCorePlugin.getDefault().isDebugging()) {
-			System.out.println("File Type Resolver: adding type " + type.getId() + " as " + type.getName());
+		if (VERBOSE) {
+			debugLog("+ type " + type.getId() + " as " + type.getName());
 		}
 		boolean added = false;
 		if (!fTypeMap.containsValue(type)) {
-			added = (null != fTypeMap.put(type.getId(), type));
+			fTypeMap.put(type.getId(), type);
+			added = true;
 		}
 		return added;
 	}
@@ -240,11 +238,11 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	 * @return true if the file type is removed, false otherwise
 	 */
 	public boolean removeFileType(ICFileType type) {
-		if (CCorePlugin.getDefault().isDebugging()) {
-			System.out.println("File Type Resolver: removing type " + type.getId() + " as " + type.getName());
+		if (VERBOSE) {
+			debugLog("- type " + type.getId() + " as " + type.getName());
 		}
 		// TODO: must remove any associations based on this file type as well
-		return (null != fTypeMap.remove(type));
+		return (null != fTypeMap.remove(type.getId()));
 	}
 
 	/**
@@ -259,8 +257,8 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	 * @return true if the association is added, false otherwise
 	 */
 	public boolean addFileTypeAssociation(ICFileTypeAssociation assoc) {
-		if (CCorePlugin.getDefault().isDebugging()) {
-			System.out.println("File Type Resolver: adding association " + assoc.getPattern() + " as " + assoc.getType().getId());
+		if (VERBOSE) {
+			debugLog("+ association " + assoc.getPattern() + " as " + assoc.getType().getId());
 		}
 		boolean added = false;
 		if (!fAssocList.contains(assoc)) {
@@ -270,8 +268,8 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	}
 
 	public boolean removeFileTypeAssociation(ICFileTypeAssociation assoc) {
-		if (CCorePlugin.getDefault().isDebugging()) {
-			System.out.println("File Type Resolver: removing association " + assoc.getPattern() + " as " + assoc.getType().getId());
+		if (VERBOSE) {
+			debugLog("- association " + assoc.getPattern() + " as " + assoc.getType().getId());
 		}
 		return fAssocList.remove(assoc);
 	}
@@ -287,9 +285,14 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 		for (int i = 0; i < extensions.length; i++) {
 			elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
-				String id	= elements[j].getAttribute(ATTR_ID);
+				String id   = elements[j].getAttribute(ATTR_ID);
 				String name = elements[j].getAttribute(ATTR_NAME);
-				addLanguage(new CLanguage(id, name));
+ 
+				try {
+					addLanguage(new CLanguage(id, name));
+				} catch (IllegalArgumentException e) {
+					CCorePlugin.log(e);
+				}
 			}
 		}
 		
@@ -310,7 +313,13 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 				String	lang = elements[j].getAttribute(ATTR_LANGUAGE);
 				String	name = elements[j].getAttribute(ATTR_NAME);
 				String	type = elements[j].getAttribute(ATTR_TYPE);
-				addFileType(new CFileType(id, lang, name, parseType(type)));
+				
+				try {
+					addFileType(new CFileType(id, getLanguageById(lang), name, parseType(type)));
+				} catch (IllegalArgumentException e) {
+					CCorePlugin.log(e);
+				}
+			
 			}
 		}
 	}
@@ -381,7 +390,11 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 		if (null != attr) {
 			String[] item = attr.split(",");
 			for (int i = 0; i < item.length; i++) {
-				addFileTypeAssociation(new CFileTypeAssociation(item[i].trim(), typeRef));
+				try {
+					addFileTypeAssociation(new CFileTypeAssociation(item[i].trim(), typeRef));
+				} catch (IllegalArgumentException e) {
+					CCorePlugin.log(e);
+				}
 			}
 		}
 	}
@@ -413,12 +426,20 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 				in		= new BufferedReader(new InputStreamReader(fileURL.openStream()));
 		        line	= in.readLine();
 		        while (null != line) {
-		        	addFileTypeAssociation(new CFileTypeAssociation(line, typeRef));
+		        	try {
+			        	addFileTypeAssociation(new CFileTypeAssociation(line, typeRef));
+					} catch (IllegalArgumentException e) {
+						CCorePlugin.log(e);
+					}
 		        	line = in.readLine();
 		        }
 		        in.close();
 		    } catch (IOException e) {
 		    }
 		}
+	}
+	
+	private void debugLog(String message) {
+		System.out.println("CDT Resolver: " + message);
 	}
 }

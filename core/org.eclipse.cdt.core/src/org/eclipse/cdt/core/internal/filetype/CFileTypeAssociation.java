@@ -24,6 +24,9 @@ public class CFileTypeAssociation implements ICFileTypeAssociation {
 	private StringMatcher 	fMatcher;
 	
 	public CFileTypeAssociation(String pattern, ICFileType type) {
+		Argument.check(pattern);
+		Argument.check(type);
+		
 		fPattern	= pattern;
 		fType	 	= type;
 		fMatcher	= new StringMatcher(pattern, false, false);
@@ -38,6 +41,22 @@ public class CFileTypeAssociation implements ICFileTypeAssociation {
 	}
 	
 	public boolean matches(String fileName) {
+		if (null == fileName) {
+			return (null == fPattern);
+		}
 		return fMatcher.match(fileName);
 	}
+	
+	public boolean equals(Object object) {
+		if (!(object instanceof ICFileTypeAssociation)) {
+			return false;
+		}
+
+		ICFileTypeAssociation rhs = (ICFileTypeAssociation) object;
+		boolean eq = fPattern.equals(rhs.getPattern());
+		
+		if (eq) eq = fType.equals(rhs.getType());
+
+		return eq;
+	}	
 }

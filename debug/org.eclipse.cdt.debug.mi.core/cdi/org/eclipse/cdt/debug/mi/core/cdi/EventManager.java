@@ -150,7 +150,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something change we do not know what
 					// Let the signal manager handle it with an update().
 					try {
-						session.getSignalManager().update();
+						SignalManager sMgr = (SignalManager)session.getSignalManager();
+						sMgr.update(currentTarget);
 					} catch (CDIException e) {
 					}
 				} else {

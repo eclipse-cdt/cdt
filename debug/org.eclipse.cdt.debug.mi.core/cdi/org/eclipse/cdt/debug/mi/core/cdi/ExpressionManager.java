@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -94,16 +95,26 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 	}
 
 	/**
+	 * This should bo remove to evaluate an expression we nee a context.
+	 * 
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
 	 */
 	public ICDIExpression createExpression(String name) throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return createExpression(target, name);
 	}
+	/**
+	 * This should bo remove to evaluate an expression we nee a context.
+	 * 
+	 * @deprecated
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
+	 */
 	public ICDIExpression createExpression(Target target, String name) throws CDIException {
 		Expression expression = null;
-		ICDITarget currentTarget = getSession().getCurrentTarget();
-		getSession().setCurrentTarget(target);
+		Session session = (Session)getSession();
+		Target currentTarget = session.getCurrentTarget();
+		session.setCurrentTarget(target);
 		try {
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
@@ -120,7 +131,7 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			getSession().setCurrentTarget(currentTarget);
+			session.setCurrentTarget(currentTarget);
 		}
 		return expression;
 	}
@@ -132,8 +143,10 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		Expression expression = null;
 		Session session = (Session)getSession();
 		Target target = (Target)frame.getTarget();
+		Target currentTarget = session.getCurrentTarget();
 		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		session.setCurrentTarget(target);
 		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
@@ -152,6 +165,7 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
+			session.setCurrentTarget(currentTarget);
 			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
@@ -159,11 +173,19 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
 	 */
 	public ICDIExpression[] getExpressions() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		return getExpressions(target);
+		ICDITarget[] targets = getSession().getTargets();
+		List list = new ArrayList(targets.length);
+		for (int i = 0; i < targets.length; i++) {
+			if (targets[i] instanceof Target) {
+				ICDIExpression[] exprs = getExpressions((Target)targets[i]);
+				list.addAll(Arrays.asList(exprs));
+			}
+		}
+		return (ICDIExpression[]) list.toArray(new ICDIExpression[list.size()]);
 	}
 
 	public ICDIExpression[] getExpressions(Target target) throws CDIException {
@@ -209,14 +231,6 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		return null;
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#update()
-	 */
-	public void update() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		update(target);
-	}
 	public void update(Target target) throws CDIException {
 		List eventList = new ArrayList();
 		MISession mi = target.getMISession();

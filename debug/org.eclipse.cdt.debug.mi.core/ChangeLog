@@ -1,3 +1,6 @@
+2004-10-17 Alain Magloire
+	Remove deprecated method in CDI adjust the implementation.
+
 2004-10-15 Alain Magloire
 
 	The way we do breakpoints is changing. gdb does not have

@@ -106,11 +106,7 @@ public class ThreadManager extends Manager { //implements ICDIThreadManager {
 		return new ThreadSet(cthreads, currentThreadId);
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.derug.core.cdi.ICDIThreadManager#update()
-	 */
-	public void update() throws CDIException {
+	public void update(Target target) throws CDIException {
 	}
 
 }

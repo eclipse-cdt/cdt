@@ -169,10 +169,11 @@ public class SignalManager extends Manager implements ICDISignalManager {
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#getSignals()
 	 */
 	public ICDISignal[] getSignals() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return getSignals(target);
 	}
 
@@ -187,14 +188,7 @@ public class SignalManager extends Manager implements ICDISignalManager {
 		}
 		return EMPTY_SIGNALS;
 	}
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#update()
-	 */
-	public void update() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		update(target);
-	}
+
 	public void update(Target target) throws CDIException {
 		MISession miSession = target.getMISession();
 		MISigHandle[] miSigs = getMISignals(miSession);

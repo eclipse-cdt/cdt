@@ -12,7 +12,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorCreatedEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 
 /**
  */
@@ -88,7 +87,6 @@ public class ProcessManager extends Manager {
 	}
 
 	/**
-	 * @deprecated
 	 * @return
 	 */
 	public Target getCurrentTarget() {
@@ -96,17 +94,13 @@ public class ProcessManager extends Manager {
 	}
 
 	/**
-	 * @deprecated
 	 * @param current
 	 */
 	public void setCurrentTarget(Target current) {
 		currentTarget = current;
 	}
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.derug.core.cdi.ICDIManager#update()
-	 */
-	public void update() throws CDIException {
+
+	public void update(Target target) throws CDIException {
 	}
 
 }

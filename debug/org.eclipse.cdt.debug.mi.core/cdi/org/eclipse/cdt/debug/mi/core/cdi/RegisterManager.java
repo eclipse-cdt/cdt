@@ -20,7 +20,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
@@ -65,12 +64,13 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
 	 */
 	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return getRegisterObjects(target);
 	}
 	public ICDIRegisterObject[] getRegisterObjects(Target target) throws CDIException {
-		ICDITarget currentTarget = getSession().getCurrentTarget();
-		getSession().setCurrentTarget(target);
+		Session session = (Session)getSession();
+		Target currentTarget = session.getCurrentTarget();
+		session.setCurrentTarget(target);
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListRegisterNames registers = factory.createMIDataListRegisterNames();
@@ -92,7 +92,7 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			getSession().setCurrentTarget(currentTarget);
+			session.setCurrentTarget(currentTarget);
 		}
 	}
 
@@ -191,14 +191,6 @@ public class RegisterManager extends Manager implements ICDIRegisterManager {
 		return null;
 	}
 
-	/**
-	 * @deprecated
-	 * Call the by the EventManager when the target is suspended.
-	 */
-	public void update() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		update(target);
-	}
 	public void update(Target target) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();

@@ -105,11 +105,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		return pMgr.getTarget(miSession);
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getCurrentTarget()
-	 */
-	public ICDITarget getCurrentTarget() {
+	public Target getCurrentTarget() {
 		ProcessManager pMgr = getProcessManager();
 		return pMgr.getCurrentTarget();
 	}
@@ -199,13 +195,12 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setCurrentTarget()
 	 */
-	public void setCurrentTarget(ICDITarget target) throws CDIException {
+	public void setCurrentTarget(Target target) throws CDIException {
 		ProcessManager pMgr = getProcessManager();
-		if (target instanceof Target) {
-			pMgr.setCurrentTarget((Target)target);
-		} else {
-			throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
-		}
+		pMgr.setCurrentTarget((Target)target);
+//		} else {
+//			throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
+//		}
 	}
 
 	/**

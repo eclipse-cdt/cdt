@@ -11,9 +11,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
@@ -36,8 +33,11 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharValue;
@@ -316,22 +316,22 @@ public class Variable extends VariableObject implements ICDIVariable {
 		if (this instanceof Register) {
 			// If register was on autoupdate, update all the other registers
 			// assigning may have side effects i.e. affecting other registers.
-			ICDIRegisterManager mgr = target.getSession().getRegisterManager();
+			RegisterManager mgr = (RegisterManager)target.getSession().getRegisterManager();
 			if (mgr.isAutoUpdate()) {
-				mgr.update();
+				mgr.update(target);
 			}
 		} else if (this instanceof Expression) {
 			// If expression was on autoupdate, update all the other expression
 			// assigning may have side effects i.e. affecting other expressions.
-			ICDIExpressionManager mgr = target.getSession().getExpressionManager();
+			ExpressionManager mgr = (ExpressionManager)target.getSession().getExpressionManager();
 			if (mgr.isAutoUpdate()) {
-				mgr.update();
+				mgr.update(target);
 			}
 		} else {
 			// FIXME: Should we always call the Variable Manager ?
-			ICDIVariableManager mgr = target.getSession().getVariableManager();
+			VariableManager mgr = (VariableManager)target.getSession().getVariableManager();
 			if (mgr.isAutoUpdate()) {
-				mgr.update();
+				mgr.update(target);
 			}
 		}
 	}

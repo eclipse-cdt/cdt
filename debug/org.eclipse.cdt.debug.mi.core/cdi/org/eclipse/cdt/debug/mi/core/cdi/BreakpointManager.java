@@ -317,16 +317,6 @@ public class BreakpointManager extends Manager {
 	}
 
 	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#update()
-	 */
-	public void update() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		update(target);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#update()
 	 */
 	public void update(Target target) throws CDIException {
 		MISession miSession = target.getMISession();

@@ -72,7 +72,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 				String exp = miBreakpoints[0].getCondition();
 				condition = new Condition(icount, exp, tids);
 			} else {
-				condition =  new Condition(0, "", null);
+				condition =  new Condition(0, new String(), null);
 			}
 		}
 		return condition;

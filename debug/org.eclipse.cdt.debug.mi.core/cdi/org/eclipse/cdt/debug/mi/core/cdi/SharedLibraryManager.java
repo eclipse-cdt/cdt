@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -85,14 +84,6 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 		return miLibs;
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#update()
-	 */
-	public void update() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		update(target);
-	}
 	public void update(Target target) throws CDIException {
 		MISession mi = target.getMISession();
 		List eventList = updateState(target);
@@ -190,10 +181,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
 	 */
 	public void setAutoLoadSymbols(boolean set) throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		setAutoLoadSymbols(target, set);
 	}
 	public void setAutoLoadSymbols(Target target, boolean set) throws CDIException {
@@ -209,9 +201,10 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 */
 	public boolean isAutoLoadSymbols() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return isAutoLoadSymbols(target);
 	}
 	public boolean isAutoLoadSymbols(Target target) throws CDIException {
@@ -231,8 +224,13 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 		return false;
 	}
 
+	/**
+	 * @deprecated
+	 * @param set
+	 * @throws CDIException
+	 */
 	public void setStopOnSolibEvents(boolean set) throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		setStopOnSolibEvents(target, set);
 	}
 	public void setStopOnSolibEvents(Target target, boolean set) throws CDIException {
@@ -247,8 +245,13 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 		}
 	}
 
+	/**
+	 * @deprecated
+	 * @return
+	 * @throws CDIException
+	 */
 	public boolean isStopOnSolibEvents() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return isStopOnSolibEvents(target);
 	}
 	public boolean isStopOnSolibEvents(Target target) throws CDIException {
@@ -269,10 +272,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
 	 */
 	public void setSharedLibraryPaths(String[] libPaths) throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		setSharedLibraryPaths(target, libPaths);
 	}
 	public void setSharedLibraryPaths(Target target, String[] libPaths) throws CDIException {
@@ -288,10 +292,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#getSharedLibraryPaths()
 	 */
 	public String[] getSharedLibraryPaths() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return getSharedLibraryPaths(target);
 	}
 	public String[] getSharedLibraryPaths(Target target) throws CDIException {
@@ -308,10 +313,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#getSharedLibraries()
 	 */
 	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return getSharedLibraries(target);
 	}
 	public ICDISharedLibrary[] getSharedLibraries(Target target) throws CDIException {
@@ -323,10 +329,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols()
 	 */
 	public void loadSymbols() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		loadSymbols(target);
 	}
 	public void loadSymbols(Target target) throws CDIException {
@@ -342,14 +349,15 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		update();
+		update(target);
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols(ICDISharedLibrary[])
 	 */
 	public void loadSymbols(ICDISharedLibrary[] libs) throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		loadSymbols(target, libs);
 	}
 	public void loadSymbols(Target target, ICDISharedLibrary[] libs) throws CDIException {

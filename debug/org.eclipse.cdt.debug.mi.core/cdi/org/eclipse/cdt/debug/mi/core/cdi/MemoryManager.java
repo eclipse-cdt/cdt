@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -62,24 +61,6 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 * are registered and fired any event if changed.
 	 * Note: Frozen blocks are not updated.
 	 *
-	 * @deprecated  use update(Target)
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
-	 */
-	public void update() {
-		Session session = (Session)getSession();
-		ICDITarget[] targets = session.getTargets();
-		for (int i = 0; i < targets.length; ++i) {
-			update((Target)targets[i]);
-		}
-	}
-
-	/**
-	 * This method will be call by the eventManager.processSuspended() every time the
-	 * inferior comes to a Stop/Suspended.  It will allow to look at the blocks that
-	 * are registered and fired any event if changed.
-	 * Note: Frozen blocks are not updated.
-	 *
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
 	 */
 	public void update(Target target) {
 		MISession miSession = target.getMISession();
@@ -189,7 +170,7 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 */
 	public ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException {
 		Session session = (Session)getSession();
-		return createMemoryBlock((Target)session.getCurrentTarget(), address, length);
+		return createMemoryBlock(session.getCurrentTarget(), address, length);
 	}
 	public ICDIMemoryBlock createMemoryBlock(Target target, String address, int length) throws CDIException {
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), address, length);
@@ -205,7 +186,7 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlocks()
 	 */
 	public ICDIMemoryBlock[] getMemoryBlocks() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		return getMemoryBlocks(target);
 	}
 	public MemoryBlock[] getMemoryBlocks(MISession miSession) {
@@ -223,7 +204,7 @@ public class MemoryManager extends Manager implements ICDIMemoryManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeAllBlocks()
 	 */
 	public void removeAllBlocks() throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
+		Target target = ((Session)getSession()).getCurrentTarget();
 		removeAllBlocks(target);
 	}
 

@@ -14,6 +14,8 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  * Manager
@@ -42,10 +44,19 @@ public abstract class Manager extends SessionObject implements ICDIManager {
 		return autoUpdate;
 	}
 
+	protected abstract void update (Target target) throws CDIException;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.impl.Manager#update()
 	 */
-	public abstract void update() throws CDIException;
+	public void update() throws CDIException {
+		ICDITarget[] targets = getSession().getTargets();
+		for (int i = 0; i < targets.length; ++i) {
+			if (targets[i] instanceof Target) {
+				update((Target)targets[i]);
+			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])

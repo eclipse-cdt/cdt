@@ -288,9 +288,6 @@ public class Target  implements ICDITarget {
 		return cthreads;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCurrentThread()
-	 */
 	public ICDIThread getCurrentThread() throws CDIException {
 		ICDIThread[] threads = getThreads();
 		for (int i = 0; i < threads.length; i++) {

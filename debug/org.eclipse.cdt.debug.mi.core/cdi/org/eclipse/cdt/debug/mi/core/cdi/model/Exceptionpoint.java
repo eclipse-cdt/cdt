@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
-import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
  * Exceptionpoint

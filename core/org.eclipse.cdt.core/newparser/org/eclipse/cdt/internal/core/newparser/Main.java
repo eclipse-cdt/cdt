@@ -39,7 +39,7 @@ public class Main {
 		}
 		
 		Scanner scanner = new Scanner();
-		scanner.initializeScanner( reader, fileName );
+		scanner.initialize( reader, fileName );
 		
 		// Now pass on the preprocessing options
 		for (int i = 0; i < args.length; ++i) {

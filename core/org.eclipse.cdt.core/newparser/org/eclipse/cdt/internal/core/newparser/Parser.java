@@ -37,17 +37,18 @@ public class Parser {
 	}
 	
 	public Parser(String code) throws Exception {
-		this(new Scanner().initializeScanner( new StringReader( code ), null 
+		this(new Scanner().initialize( new StringReader( code ), null
 ));
 	}
 
 	public Parser(String code, IParserCallback c) throws Exception {
-		this(new Scanner().initializeScanner( new StringReader( code ), null 
+		this(new Scanner().initialize( new StringReader( code ), null
 ), c, false);
 	}
 
 	public Parser(InputStream stream, IParserCallback c, boolean quick) throws Exception {
-		this(new Scanner().initializeScanner( new InputStreamReader(stream), null ), c, quick);
+		this(new Scanner().initialize( new InputStreamReader(stream), null ), 
+c, quick);
 	}
 	
 	private static int parseCount = 0;

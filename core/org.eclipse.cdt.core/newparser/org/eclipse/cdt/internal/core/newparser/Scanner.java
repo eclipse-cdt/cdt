@@ -34,165 +34,138 @@ import java.util.Vector;
  */
 
 public class Scanner implements IScanner {
-	
-	public IScanner initializeScanner( Reader reader, String filename )
-	{
-		initialize( reader, filename );
+
+	public IScanner initialize(Reader reader, String filename) {
+		init(reader, filename);
 		return this;
 	}
-	
-	protected void initialize( Reader reader, String filename )
-	{ 	
+
+	protected void init(Reader reader, String filename) {
 		// this is a hack to get around a sudden EOF experience
 		contextStack.push(
-			new ScannerContext().initialize( new StringReader("\n"), START, NOCHAR));
-		if( filename == null )
-			currentContext = new ScannerContext().initialize( reader, TEXT, NOCHAR );
+			new ScannerContext().initialize(
+				new StringReader("\n"),
+				START,
+				NOCHAR));
+		if (filename == null)
+			currentContext =
+				new ScannerContext().initialize(reader, TEXT, NOCHAR);
 		else
-			currentContext= new ScannerContext().initialize( reader, filename, 
-NOCHAR);
-	}
-	
-	public Scanner()
-	{
-	}
-	
-	protected Scanner(Reader reader, String filename, Hashtable defns)
-	{
-		initializeScanner(reader, filename);
-		definitions= defns;
+			currentContext =
+				new ScannerContext().initialize(reader, filename, NOCHAR);
 	}
 
-	protected void updateContext(Reader reader, String filename)
-	{
+	public Scanner() {
+	}
+
+	protected Scanner(Reader reader, String filename, Hashtable defns) {
+		initialize(reader, filename);
+		definitions = defns;
+	}
+
+	protected void updateContext(Reader reader, String filename) {
 		if (callback != null)
-			callback.inclusionBegin(filename);		// not quite right ... fix me!!!
-			
+			callback.inclusionBegin(filename); // not quite right ... fix me!!!
+
 		contextStack.push(currentContext);
-		currentContext= new ScannerContext().initialize( reader, filename, 
-NOCHAR);
+		currentContext =
+			new ScannerContext().initialize(reader, filename, NOCHAR);
 	}
 
-	protected boolean rollbackContext()
-	{
-		try
-		{
+	protected boolean rollbackContext() {
+		try {
 			currentContext.getReader().close();
-		}
-		catch (IOException ie)
-		{
+		} catch (IOException ie) {
 			System.out.println("Error closing reader");
 		}
 
-		if (contextStack.isEmpty())
-		{
-			currentContext= null;
+		if (contextStack.isEmpty()) {
+			currentContext = null;
 			return false;
 		}
 
 		//if (callback != null)
 		//	callback.inclusionEnd();
-			
-		currentContext= (ScannerContext) contextStack.pop();
+
+		currentContext = (ScannerContext) contextStack.pop();
 		return true;
 	}
 
-	public void addIncludePath(String includePath)
-	{
+	public void addIncludePath(String includePath) {
 		includePaths.add(includePath);
 	}
-	
-	public void overwriteIncludePath( List newIncludePaths )
-	{
-		includePaths = null; 
-		includePaths = new ArrayList(); 
-		includePaths.addAll( newIncludePaths );
+
+	public void overwriteIncludePath(List newIncludePaths) {
+		includePaths = null;
+		includePaths = new ArrayList();
+		includePaths.addAll(newIncludePaths);
 	}
 
-	public void addDefinition(String key, IMacroDescriptor macro)
-	{
+	public void addDefinition(String key, IMacroDescriptor macro) {
 		definitions.put(key, macro);
 	}
 
-	public void addDefinition(String key, String value)
-	{
+	public void addDefinition(String key, String value) {
 		definitions.put(key, value);
 	}
 
-	public final Object getDefinition(String key)
-	{
+	public final Object getDefinition(String key) {
 		return definitions.get(key);
 	}
 
-	public final Object[] getIncludePaths()
-	{
+	public final Object[] getIncludePaths() {
 		return includePaths.toArray();
 	}
 
-	protected void skipOverWhitespace()
-	{
-		int c= getChar();
+	protected void skipOverWhitespace() {
+		int c = getChar();
 		while ((c != NOCHAR) && ((c == ' ') || (c == '\t')))
-			c= getChar();
+			c = getChar();
 		if (c != NOCHAR)
 			ungetChar(c);
 
 	}
 
-	protected String getRestOfPreprocessorLine() throws ScannerException
-	{
-		StringBuffer buffer= new StringBuffer();
+	protected String getRestOfPreprocessorLine() throws ScannerException {
+		StringBuffer buffer = new StringBuffer();
 		skipOverWhitespace();
-		int c= getChar();
+		int c = getChar();
 
-		while (true)
-		{
+		while (true) {
 			while ((c != '\n')
 				&& (c != '\r')
 				&& (c != '\\')
 				&& (c != '/')
-				&& (c != NOCHAR))
-			{
+				&& (c != NOCHAR)) {
 				buffer.append((char) c);
-				c= getChar();
+				c = getChar();
 			}
-			if (c == '/')
-			{
+			if (c == '/') {
 				// we need to peek ahead at the next character to see if 
 				// this is a comment or not
-				int next= getChar();
-				if (next == '/')
-				{
+				int next = getChar();
+				if (next == '/') {
 					// single line comment
 					skipOverTextUntilNewline();
 					break;
-				}
-				else if (next == '*')
-				{
+				} else if (next == '*') {
 					// multiline comment
 					if (skipOverMultilineComment())
 						break;
 					else
-						c= getChar();
+						c = getChar();
 					continue;
-				}
-				else
-				{
+				} else {
 					// we are not in a comment
 					buffer.append((char) c);
-					c= next;
+					c = next;
 					continue;
 				}
-			}
-			else
-			{
-				if (c != '\\')
-				{
+			} else {
+				if (c != '\\') {
 					ungetChar(c);
-				}
-				else
-				{
-					c= getChar();
+				} else {
+					c = getChar();
 				}
 				break;
 			}
@@ -201,12 +174,9 @@ NOCHAR);
 		return buffer.toString();
 	}
 
-	protected void skipOverTextUntilNewline()
-	{
-		for (;;)
-		{
-			switch (getChar())
-			{
+	protected void skipOverTextUntilNewline() {
+		for (;;) {
+			switch (getChar()) {
 				case NOCHAR :
 				case '\n' :
 					return;
@@ -226,31 +196,28 @@ NOCHAR);
 		setCurrentToken(new Token(t, i, c));
 		return currentToken;
 	}
-	
+
 	protected Token newToken(int t, String i) {
 		setCurrentToken(new Token(t, i));
 		return currentToken;
 	}
-	
-	protected String getNextIdentifier()
-	{
-		StringBuffer buffer= new StringBuffer();
+
+	protected String getNextIdentifier() {
+		StringBuffer buffer = new StringBuffer();
 		skipOverWhitespace();
-		int c= getChar();
+		int c = getChar();
 
 		if (((c >= 'a') && (c <= 'z'))
-			|| ((c >= 'A') && (c <= 'Z')) | (c == '_'))
-		{
+			|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
 			buffer.append((char) c);
 
-			c= getChar();
+			c = getChar();
 			while (((c >= 'a') && (c <= 'z'))
 				|| ((c >= 'A') && (c <= 'Z'))
 				|| ((c >= '0') && (c <= '9'))
-				|| (c == '_'))
-			{
+				|| (c == '_')) {
 				buffer.append((char) c);
-				c= getChar();
+				c = getChar();
 			}
 		}
 		ungetChar(c);
@@ -258,37 +225,31 @@ NOCHAR);
 		return buffer.toString();
 	}
 
-	protected void handleInclusion(String fileName) throws ScannerException
-	{
+	protected void handleInclusion(String fileName) throws ScannerException {
 		// Skip over inclusions in quickScan mode
 		if (quickScan)
 			return;
-			
+
 		// iterate through the include paths 
-		Iterator iter= includePaths.iterator();
+		Iterator iter = includePaths.iterator();
 
-		while (iter.hasNext())
-		{
-			String path= (String) iter.next();
+		while (iter.hasNext()) {
+			String path = (String) iter.next();
 
-			java.io.File pathFile= new java.io.File(path);
-			if (pathFile.isDirectory())
-			{
-				String newPath= pathFile + "\\" + fileName;
+			java.io.File pathFile = new java.io.File(path);
+			if (pathFile.isDirectory()) {
+				String newPath = pathFile + "\\" + fileName;
 
-				java.io.File includeFile= new java.io.File(newPath);
+				java.io.File includeFile = new java.io.File(newPath);
 
-				if (includeFile.exists() && includeFile.isFile())
-				{
-					try
-					{
-						FileReader inclusionReader= new FileReader(includeFile);
+				if (includeFile.exists() && includeFile.isFile()) {
+					try {
+						FileReader inclusionReader =
+							new FileReader(includeFile);
 						//System.out.println( "Parsing inclusion file " + newPath );
 						updateContext(inclusionReader, newPath);
 						return;
-					}
-					catch (FileNotFoundException fnf)
-					{
+					} catch (FileNotFoundException fnf) {
 						// do nothing	
 					}
 				}
@@ -299,480 +260,374 @@ NOCHAR);
 	}
 
 	// constants
-	private static final int NOCHAR= -1;
-	private static final int IGNORE_SENTINEL= -1;
-	private static final String TEXT= "<text>";
-	private static final String START= "<initial reader>";
-	private static final String EXPRESSION= "<expression>";
-	private static final String BAD_PP=
+	private static final int NOCHAR = -1;
+
+	private static final String TEXT = "<text>";
+	private static final String START = "<initial reader>";
+	private static final String EXPRESSION = "<expression>";
+	private static final String BAD_PP =
 		"Invalid preprocessor directive encountered at offset ";
-	private static final String DEFINED= "defined";
-	private static final String POUND_DEFINE= "#define ";
+	private static final String DEFINED = "defined";
+	private static final String POUND_DEFINE = "#define ";
 
 	private IScannerContext currentContext;
-	private Stack contextStack= new Stack();
+	private Stack contextStack = new Stack();
 
-	private List includePaths= new ArrayList();
-	private Hashtable definitions= new Hashtable();
-	private int count= 0;
-	private static HashMap keywords= new HashMap();
-	private static HashMap ppDirectives= new HashMap();
+	private List includePaths = new ArrayList();
+	private Hashtable definitions = new Hashtable();
+	private int count = 0;
+	private static HashMap keywords = new HashMap();
+	private static HashMap ppDirectives = new HashMap();
 
-	private Token currentToken= null;
+	private Token currentToken = null;
 
-	private int ignore= IGNORE_SENTINEL;
-	private int depth= 0;
+	private boolean passOnToClient = true; 
 	private BranchTracker branches = new BranchTracker();
-	
+
 	// these are scanner configuration aspects that we perhaps want to tweak
 	// eventually, these should be configurable by the client, but for now
 	// we can just leave it internal
-	private boolean throwExceptionPPError= true;
-	private boolean throwExceptionOnRedefinition= false;
-	private boolean throwExceptionOnBadPPDirective= true;
-	private boolean throwExceptionOnInclusionNotFound= true;
-	private boolean throwExceptionOnBadMacroExpansion= true;
-	private boolean throwExceptionOnUnboundedString= true;
-	private boolean throwExceptionOnEOFWithinMultilineComment= true;
-	private boolean throwExceptionOnEOFWithoutBalancedEndifs= true;
-	private boolean providedDefinedMacro= true;
+	private boolean throwExceptionPPError = true;
+	private boolean throwExceptionOnRedefinition = false;
+	private boolean throwExceptionOnBadPPDirective = true;
+	private boolean throwExceptionOnInclusionNotFound = true;
+	private boolean throwExceptionOnBadMacroExpansion = true;
+	private boolean throwExceptionOnUnboundedString = true;
+	private boolean throwExceptionOnEOFWithinMultilineComment = true;
+	private boolean throwExceptionOnEOFWithoutBalancedEndifs = true;
+	private boolean providedDefinedMacro = true;
 
 	private boolean quickScan = false;
-	public void setQuickScan(boolean qs) { quickScan = qs; }
-	
+	public void setQuickScan(boolean qs) {
+		quickScan = qs;
+	}
+
 	private IParserCallback callback;
-	public void setCallback(IParserCallback c) { callback = c; }
-	
+	public void setCallback(IParserCallback c) {
+		callback = c;
+	}
+
 	private int getChar() {
 		int c = NOCHAR;
-		
-		boolean done; 
-		do
-		{
-			done= true;
 
-			if (currentContext.getUndo() != NOCHAR)
-			{
-				c= currentContext.getUndo();
+		boolean done;
+		do {
+			done = true;
+
+			if (currentContext.getUndo() != NOCHAR) {
+				c = currentContext.getUndo();
 				currentContext.setUndo(NOCHAR);
-			}
-			else
-			{
-				try
-				{
-					c= currentContext.read();
-					if (c == NOCHAR)
-					{
-						if (rollbackContext() == false)
-						{
-							c= NOCHAR;
+			} else {
+				try {
+					c = currentContext.read();
+					if (c == NOCHAR) {
+						if (rollbackContext() == false) {
+							c = NOCHAR;
 							break;
-						}
-						else
-						{
-							done= false;
+						} else {
+							done = false;
 						}
 					}
-				}
-				catch (IOException e)
-				{
-					if (rollbackContext() == false)
-					{
-						c= NOCHAR;
-					}
-					else
-					{
-						done= false;
+				} catch (IOException e) {
+					if (rollbackContext() == false) {
+						c = NOCHAR;
+					} else {
+						done = false;
 					}
 				}
 			}
-		}
-		while (!done);
+		} while (!done);
 
-		if (c == '\\')
-		{
-			c= getChar();
-			if (c == '\r')
-			{
-				c= getChar();
+		if (c == '\\') {
+			c = getChar();
+			if (c == '\r') {
+				c = getChar();
 				if (c == '\n')
-					c= getChar();
-			}
-			else if (c == '\n')
-				c= getChar();
+					c = getChar();
+			} else if (c == '\n')
+				c = getChar();
 		}
 
 		return c;
 	}
 
-	private void ungetChar(int c)
-	{
+	private void ungetChar(int c) {
 		// Should really check whether there already is a char there
 		// If so, we should be using a buffer, instead of a single char
 		currentContext.setUndo(c);
 	}
 
-	public Token nextToken() throws ScannerException
-	{
+	public Token nextToken() throws ScannerException {
 
 		count++;
 
-		int c= getChar();
+		int c = getChar();
 
-		while (c != NOCHAR)
-		{
-			if (ignore != IGNORE_SENTINEL)
-			{
-				while (c != '#')
-				{
-					c= getChar();
+		while (c != NOCHAR) {
+			if ( ! passOnToClient ) {
+				while (c != '#') {
+					c = getChar();
 				}
 			}
 
-			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n'))
-			{
-				c= getChar();
+			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
+				c = getChar();
 				continue;
-			}
-			else if (
+			} else if (
 				((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) | (c == '_'))
-			{
+					|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
 				// String buffer is slow, we need a better way such as memory mapped files
-				StringBuffer buff= new StringBuffer();
+				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
 
-				c= getChar();
+				c = getChar();
 				while (((c >= 'a') && (c <= 'z'))
 					|| ((c >= 'A') && (c <= 'Z'))
 					|| ((c >= '0') && (c <= '9'))
-					|| (c == '_'))
-				{
+					|| (c == '_')) {
 					buff.append((char) c);
-					c= getChar();
+					c = getChar();
 				}
 
 				ungetChar(c);
 
-				String ident= buff.toString();
+				String ident = buff.toString();
 
-				if (providedDefinedMacro)
-				{
-					if (ident.equals(DEFINED))
-					{
+				if (providedDefinedMacro) {
+					if (ident.equals(DEFINED)) {
 						return newToken(Token.tINTEGER, handleDefinedMacro());
 					}
 				}
 
-				Object mapping= definitions.get(ident);
+				Object mapping = definitions.get(ident);
 
-				if (mapping != null)
-				{
+				if (mapping != null) {
 					expandDefinition(ident, mapping);
-					c= getChar();
+					c = getChar();
 					continue;
 				}
 
-				Object tokenTypeObject= keywords.get(ident);
-				int tokenType= Token.tIDENTIFIER;
+				Object tokenTypeObject = keywords.get(ident);
+				int tokenType = Token.tIDENTIFIER;
 				if (tokenTypeObject != null)
-					tokenType= ((Integer) tokenTypeObject).intValue();
+					tokenType = ((Integer) tokenTypeObject).intValue();
 
 				return newToken(tokenType, ident, currentContext);
-			}
-			else if (c == '"')
-			{
+			} else if (c == '"') {
 				// string
-				StringBuffer buff= new StringBuffer();
-				c= getChar();
+				StringBuffer buff = new StringBuffer();
+				c = getChar();
 
-				while (c != '"' && c != '\n')
-				{
+				while (c != '"' && c != '\n') {
 					buff.append((char) c);
-					c= getChar();
+					c = getChar();
 				}
 
-				if (c != '\n')
-				{
-					return newToken(Token.tSTRING, buff.toString(), currentContext);
-				}
-				else
-				{
+				if (c != '\n') {
+					return newToken(
+						Token.tSTRING,
+						buff.toString(),
+						currentContext);
+				} else {
 					if (throwExceptionOnUnboundedString)
 						throw new ScannerException(
 							"Unbounded string found at offset "
 								+ currentContext.getOffset());
 				}
 
-			}
-			else if ((c >= '0') && (c <= '9'))
-			{
-				StringBuffer buff= new StringBuffer();
+			} else if ((c >= '0') && (c <= '9')) {
+				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
 
-				c= getChar();
-				boolean hex= false;
-				if (c == 'x')
-				{
-					hex= true;
-					c= getChar();
+				c = getChar();
+				boolean hex = false;
+				if (c == 'x') {
+					hex = true;
+					c = getChar();
 				}
 
 				while ((c >= '0' && c <= '9')
-					|| (hex && ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))))
-				{
+					|| (hex
+						&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) {
 					buff.append((char) c);
-					c= getChar();
+					c = getChar();
 				}
 
 				ungetChar(c);
-				return newToken(Token.tINTEGER, buff.toString(), currentContext);
-			}
-			else if (c == '#')
-			{
+				return newToken(
+					Token.tINTEGER,
+					buff.toString(),
+					currentContext);
+			} else if (c == '#') {
 				// lets prepare for a preprocessor statement
-				StringBuffer buff= new StringBuffer();
+				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);
 
 				// we are allowed arbitrary whitespace after the '#' and before the rest of the text
 				skipOverWhitespace();
 
-				c= getChar();
+				c = getChar();
 				while (((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) | (c == '_'))
-				{
+					|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
 					buff.append((char) c);
-					c= getChar();
+					c = getChar();
 				}
 				ungetChar(c);
 
-				String token= buff.toString();
+				String token = buff.toString();
 
-				Object directive= ppDirectives.get(token);
-				if (directive == null)
-				{
+				Object directive = ppDirectives.get(token);
+				if (directive == null) {
 					if (throwExceptionOnBadPPDirective)
 						throw new ScannerException(
 							BAD_PP + currentContext.getOffset());
 
-				}
-				else
-				{
-					int type= ((Integer) directive).intValue();
-					switch (type)
-					{
+				} else {
+					int type = ((Integer) directive).intValue();
+					switch (type) {
 						case PreprocessorDirectives.DEFINE :
-							if (ignore != IGNORE_SENTINEL)
-							{
+							if ( ! passOnToClient ) {
 								skipOverTextUntilNewline();
-								c= getChar();
+								c = getChar();
 								continue;
 							}
 
 							poundDefine();
 
-							c= getChar();
+							c = getChar();
 							continue;
 
 						case PreprocessorDirectives.INCLUDE :
-							if (ignore != IGNORE_SENTINEL)
-							{
+							if (! passOnToClient ) {
 								skipOverTextUntilNewline();
-								c= getChar();
+								c = getChar();
 								continue;
 							}
 
 							poundInclude();
 
-							c= getChar();
+							c = getChar();
 							continue;
 						case PreprocessorDirectives.UNDEFINE :
-							if (ignore != IGNORE_SENTINEL)
-							{
+							if (! passOnToClient) {
 								skipOverTextUntilNewline();
-								c= getChar();
+								c = getChar();
 								continue;
 							}
 							skipOverWhitespace();
 							// definition 
-							String toBeUndefined= getNextIdentifier();
+							String toBeUndefined = getNextIdentifier();
 							// TODO -- Should we throw an exception if we
 							// do not have this in our table?
 							definitions.remove(toBeUndefined);
 							skipOverTextUntilNewline();
-							c= getChar();
+							c = getChar();
 							continue;
 						case PreprocessorDirectives.IF :
-							++depth;
-							if (ignore != IGNORE_SENTINEL)
-							{
-								skipOverTextUntilNewline();
-								c= getChar();
-								continue;
-							}
-
 							// get the rest of the line		
-							String expression= getRestOfPreprocessorLine();
+							String expression = getRestOfPreprocessorLine();
 
-							boolean expressionEvalResult=
+							boolean expressionEvalResult =
 								evaluateExpression(expression);
-
-							if (expressionEvalResult == false)
-							{
-								ignore= depth;
-							}
-
-							c= getChar();
+							
+							passOnToClient = branches.poundif( expressionEvalResult ); 
+							c = getChar();
 							continue;
 
 						case PreprocessorDirectives.IFDEF :
-							++depth;
-							if (ignore != IGNORE_SENTINEL)
-							{
-								skipOverTextUntilNewline();
-								c= getChar();
-								continue;
-							}
-
 							skipOverWhitespace();
-							String definition= getNextIdentifier();
-							Object mapping= definitions.get(definition);
+							String definition = getNextIdentifier();
+							Object mapping = definitions.get(definition);
 
-							if (mapping == null)
-							{
+							if (mapping == null) {
 								// not defined	
-								ignore= depth;
+								passOnToClient = branches.poundif( false );
 								skipOverTextUntilNewline();
-							}
-							else
-							{
+							} else {
+								passOnToClient = branches.poundif( true ); 
 								// continue along, act like nothing is wrong :-)
-								c= getChar();
+								c = getChar();
 							}
 							continue;
 						case PreprocessorDirectives.ENDIF :
 							// TODO - make sure there is nothing after endif
 
-							--depth;
-							if (depth < ignore)
-							{
-								ignore= IGNORE_SENTINEL;
-							}
-							c= getChar();
+							passOnToClient = branches.poundendif(); 
+							c = getChar();
 							continue;
 
 						case PreprocessorDirectives.IFNDEF :
-							++depth;
-							if (ignore != IGNORE_SENTINEL)
-							{
-								skipOverTextUntilNewline();
-								c= getChar();
-								continue;
-							}
-
 							skipOverWhitespace();
-							String def= getNextIdentifier();
-							Object map= definitions.get(def);
+							String def = getNextIdentifier();
+							Object map = definitions.get(def);
 
-							if (map != null)
-							{
+							if (map != null) {
 								// not defined	
-								ignore= depth;
 								skipOverTextUntilNewline();
-							}
-							else
-							{
+								passOnToClient = branches.poundif( false ); 
+							} else {
+								passOnToClient = branches.poundif( true ); 
 								// continue along, act like nothing is wrong :-)
-								c= getChar();
+								c = getChar();
 							}
 							continue;
 
 						case PreprocessorDirectives.ELSE :
-							if (ignore == depth)
-							{
-								ignore= IGNORE_SENTINEL;
-							}
-							else if (ignore == IGNORE_SENTINEL)
-							{
-								ignore= depth;
-							}
+							passOnToClient = branches.poundelse(); 
 
 							skipOverTextUntilNewline();
-							c= getChar();
+							c = getChar();
 							continue;
 
 						case PreprocessorDirectives.ELIF :
 
-							// if we took a previous branch then we do not 
-							// care how this evaluates out							
-							if (ignore == IGNORE_SENTINEL)
-							{
-								skipOverTextUntilNewline();
-								ignore= depth;
-								c= getChar();
-								continue;
-							}
+							String elsifExpression = getRestOfPreprocessorLine();
 
-							if (ignore == depth)
-							{
-								String elsifExpression= getRestOfPreprocessorLine();
+							if (elsifExpression.equals(""))
+								if (throwExceptionOnBadPPDirective)
+									throw new ScannerException("Malformed #elsif clause");
 
-								if (elsifExpression.equals(""))
-									if (throwExceptionOnBadPPDirective)
-										throw new ScannerException("Malformed #elsif clause");
-
-								boolean elsifResult=
+							boolean elsifResult =
 									evaluateExpression(elsifExpression);
 
-								if (elsifResult == false)
-								{
-									ignore= depth;
-								}
-								else
-								{
-									ignore= IGNORE_SENTINEL;
-								}
-							}
-							c= getChar();
+							passOnToClient = branches.poundelif( elsifResult ); 
+							c = getChar();
 							continue;
 
 						case PreprocessorDirectives.LINE :
 							//TO DO 
 							skipOverTextUntilNewline();
-							c= getChar();
+							c = getChar();
 							continue;
 						case PreprocessorDirectives.ERROR :
-							if (ignore != IGNORE_SENTINEL)
-							{
+							if (! passOnToClient) {
 								skipOverTextUntilNewline();
-								c= getChar();
+								c = getChar();
 								continue;
 							}
 
-							String error= getRestOfPreprocessorLine();
+							String error = getRestOfPreprocessorLine();
 
-							if (throwExceptionPPError)
-							{
+							if (throwExceptionPPError) {
 								throw new ScannerException("#error " + error);
 							}
-							c= getChar();
+							c = getChar();
 							continue;
 						case PreprocessorDirectives.PRAGMA :
 							//TO DO 
 							skipOverTextUntilNewline();
-							c= getChar();
+							c = getChar();
 							continue;
 						case PreprocessorDirectives.BLANK :
-							String remainderOfLine=
+							String remainderOfLine =
 								getRestOfPreprocessorLine().trim();
-							if (!remainderOfLine.equals(""))
-							{
+							if (!remainderOfLine.equals("")) {
 								if (throwExceptionOnBadPPDirective)
 									throw new ScannerException(
 										BAD_PP + currentContext.getOffset());
 							}
 
-							c= getChar();
+							c = getChar();
 							continue;
 						default :
 							if (throwExceptionOnBadPPDirective)
@@ -781,15 +636,11 @@ NOCHAR);
 
 					}
 				}
-			}
-			else
-			{
-				switch (c)
-				{
+			} else {
+				switch (c) {
 					case ':' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case ':' :
 								return newToken(
 									Token.tCOLONCOLON,
@@ -797,7 +648,10 @@ NOCHAR);
 									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tCOLON, ":", currentContext);
+								return newToken(
+									Token.tCOLON,
+									":",
+									currentContext);
 						}
 					case ';' :
 						return newToken(Token.tSEMI, ";", currentContext);
@@ -818,35 +672,41 @@ NOCHAR);
 					case '}' :
 						return newToken(Token.tRBRACE, "}", currentContext);
 					case '+' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tPLUSASSIGN,
 									"+=",
 									currentContext);
 							case '+' :
-								return newToken(Token.tINCR, "++", currentContext);
+								return newToken(
+									Token.tINCR,
+									"++",
+									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tPLUS, "+", currentContext);
+								return newToken(
+									Token.tPLUS,
+									"+",
+									currentContext);
 						}
 					case '-' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tMINUSASSIGN,
 									"-=",
 									currentContext);
 							case '-' :
-								return newToken(Token.tDECR, "--", currentContext);
+								return newToken(
+									Token.tDECR,
+									"--",
+									currentContext);
 							case '>' :
-								c= getChar();
-								switch (c)
-								{
+								c = getChar();
+								switch (c) {
 									case '*' :
 										return newToken(
 											Token.tARROWSTAR,
@@ -861,12 +721,14 @@ NOCHAR);
 								}
 							default :
 								ungetChar(c);
-								return newToken(Token.tMINUS, "-", currentContext);
+								return newToken(
+									Token.tMINUS,
+									"-",
+									currentContext);
 						}
 					case '*' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tSTARASSIGN,
@@ -874,12 +736,14 @@ NOCHAR);
 									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tSTAR, "*", currentContext);
+								return newToken(
+									Token.tSTAR,
+									"*",
+									currentContext);
 						}
 					case '%' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tMODASSIGN,
@@ -887,12 +751,14 @@ NOCHAR);
 									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tMOD, "%", currentContext);
+								return newToken(
+									Token.tMOD,
+									"%",
+									currentContext);
 						}
 					case '^' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tXORASSIGN,
@@ -900,68 +766,89 @@ NOCHAR);
 									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tXOR, "^", currentContext);
+								return newToken(
+									Token.tXOR,
+									"^",
+									currentContext);
 						}
 					case '&' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tAMPERASSIGN,
 									"&=",
 									currentContext);
 							case '&' :
-								return newToken(Token.tAND, "&&", currentContext);
+								return newToken(
+									Token.tAND,
+									"&&",
+									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tAMPER, "&", currentContext);
+								return newToken(
+									Token.tAMPER,
+									"&",
+									currentContext);
 						}
 					case '|' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
 								return newToken(
 									Token.tBITORASSIGN,
 									"|=",
 									currentContext);
 							case '|' :
-								return newToken(Token.tOR, "||", currentContext);
+								return newToken(
+									Token.tOR,
+									"||",
+									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tBITOR, "|", currentContext);
+								return newToken(
+									Token.tBITOR,
+									"|",
+									currentContext);
 						}
 					case '~' :
 						return newToken(Token.tCOMPL, "~", currentContext);
 					case '!' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
-								return newToken(Token.tNOTEQUAL, "!=", currentContext);
+								return newToken(
+									Token.tNOTEQUAL,
+									"!=",
+									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tNOT, "!", currentContext);
+								return newToken(
+									Token.tNOT,
+									"!",
+									currentContext);
 						}
 					case '=' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '=' :
-								return newToken(Token.tEQUAL, "==", currentContext);
+								return newToken(
+									Token.tEQUAL,
+									"==",
+									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tASSIGN, "=", currentContext);
+								return newToken(
+									Token.tASSIGN,
+									"=",
+									currentContext);
 						}
 					case '<' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '<' :
-								c= getChar();
-								switch (c)
-								{
+								c = getChar();
+								switch (c) {
 									case '=' :
 										return newToken(
 											Token.tSHIFTLASSIGN,
@@ -975,19 +862,20 @@ NOCHAR);
 											currentContext);
 								}
 							case '=' :
-								return newToken(Token.tLTEQUAL, "<=", currentContext);
+								return newToken(
+									Token.tLTEQUAL,
+									"<=",
+									currentContext);
 							default :
 								ungetChar(c);
 								return newToken(Token.tLT, "<", currentContext);
 						}
 					case '>' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '>' :
-								c= getChar();
-								switch (c)
-								{
+								c = getChar();
+								switch (c) {
 									case '=' :
 										return newToken(
 											Token.tSHIFTRASSIGN,
@@ -1001,19 +889,20 @@ NOCHAR);
 											currentContext);
 								}
 							case '=' :
-								return newToken(Token.tGTEQUAL, ">=", currentContext);
+								return newToken(
+									Token.tGTEQUAL,
+									">=",
+									currentContext);
 							default :
 								ungetChar(c);
 								return newToken(Token.tGT, ">", currentContext);
 						}
 					case '.' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '.' :
-								c= getChar();
-								switch (c)
-								{
+								c = getChar();
+								switch (c) {
 									case '.' :
 										return newToken(
 											Token.tELIPSE,
@@ -1024,24 +913,29 @@ NOCHAR);
 								}
 								break;
 							case '*' :
-								return newToken(Token.tDOTSTAR, ".*", currentContext);
+								return newToken(
+									Token.tDOTSTAR,
+									".*",
+									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tDOT, ".", currentContext);
+								return newToken(
+									Token.tDOT,
+									".",
+									currentContext);
 						}
 						break;
 					case '/' :
-						c= getChar();
-						switch (c)
-						{
+						c = getChar();
+						switch (c) {
 							case '/' :
-								c= getChar();
+								c = getChar();
 								while (c != '\n' && c != NOCHAR)
-									c= getChar();
+									c = getChar();
 								continue;
 							case '*' :
 								skipOverMultilineComment();
-								c= getChar();
+								c = getChar();
 								continue;
 							case '=' :
 								return newToken(
@@ -1050,7 +944,10 @@ NOCHAR);
 									currentContext);
 							default :
 								ungetChar(c);
-								return newToken(Token.tDIV, "/", currentContext);
+								return newToken(
+									Token.tDIV,
+									"/",
+									currentContext);
 						}
 					default :
 						break;
@@ -1063,7 +960,7 @@ NOCHAR);
 			}
 		}
 
-		if (throwExceptionOnEOFWithoutBalancedEndifs && (depth != 0))
+		if (throwExceptionOnEOFWithoutBalancedEndifs && (getDepth() != 0))
 			throw new ScannerException("End of file encountered without terminating #endif");
 
 		// we're done
@@ -1149,13 +1046,17 @@ NOCHAR);
 		keywords.put("xor_eq", new Integer(Token.t_xor_eq));
 
 		ppDirectives.put("#define", new Integer(PreprocessorDirectives.DEFINE));
-		ppDirectives.put("#undef", new Integer(PreprocessorDirectives.UNDEFINE));
+		ppDirectives.put(
+			"#undef",
+			new Integer(PreprocessorDirectives.UNDEFINE));
 		ppDirectives.put("#if", new Integer(PreprocessorDirectives.IF));
 		ppDirectives.put("#ifdef", new Integer(PreprocessorDirectives.IFDEF));
 		ppDirectives.put("#ifndef", new Integer(PreprocessorDirectives.IFNDEF));
 		ppDirectives.put("#else", new Integer(PreprocessorDirectives.ELSE));
 		ppDirectives.put("#endif", new Integer(PreprocessorDirectives.ENDIF));
-		ppDirectives.put("#include", new Integer(PreprocessorDirectives.INCLUDE));
+		ppDirectives.put(
+			"#include",
+			new Integer(PreprocessorDirectives.INCLUDE));
 		ppDirectives.put("#line", new Integer(PreprocessorDirectives.LINE));
 		ppDirectives.put("#error", new Integer(PreprocessorDirectives.ERROR));
 		ppDirectives.put("#pragma", new Integer(PreprocessorDirectives.PRAGMA));
@@ -1164,109 +1065,98 @@ NOCHAR);
 
 	}
 
-	static public class PreprocessorDirectives
-	{
-		static public final int DEFINE= 0;
-		static public final int UNDEFINE= 1;
-		static public final int IF= 2;
-		static public final int IFDEF= 3;
-		static public final int IFNDEF= 4;
-		static public final int ELSE= 5;
-		static public final int ENDIF= 6;
-		static public final int INCLUDE= 7;
-		static public final int LINE= 8;
-		static public final int ERROR= 9;
-		static public final int PRAGMA= 10;
-		static public final int BLANK= 11;
-		static public final int ELIF= 12;
+	static public class PreprocessorDirectives {
+		static public final int DEFINE = 0;
+		static public final int UNDEFINE = 1;
+		static public final int IF = 2;
+		static public final int IFDEF = 3;
+		static public final int IFNDEF = 4;
+		static public final int ELSE = 5;
+		static public final int ENDIF = 6;
+		static public final int INCLUDE = 7;
+		static public final int LINE = 8;
+		static public final int ERROR = 9;
+		static public final int PRAGMA = 10;
+		static public final int BLANK = 11;
+		static public final int ELIF = 12;
 	}
 
-	public final int getCount()
-	{
+	public final int getCount() {
 		return count;
 	}
 
-	public final int getDepth()
-	{
-		return depth;
+	public final int getDepth() {
+		return branches.getDepth(); 
 	}
 
 	protected boolean evaluateExpression(String expression)
-		throws ScannerException
-	{
-		Object expressionEvalResult= null;
-		try
-		{
-			ExpressionEvaluator evaluator= new ExpressionEvaluator();
-			Scanner trial=
-				new Scanner(new StringReader(expression), EXPRESSION, definitions);
-			Parser parser= new Parser(trial, evaluator);
+		throws ScannerException {
+		Object expressionEvalResult = null;
+		try {
+			ExpressionEvaluator evaluator = new ExpressionEvaluator();
+			Scanner trial =
+				new Scanner(
+					new StringReader(expression),
+					EXPRESSION,
+					definitions);
+			Parser parser = new Parser(trial, evaluator);
 			parser.expression();
-			expressionEvalResult= evaluator.getResult();
-		}
-		catch (Exception e)
-		{
+			expressionEvalResult = evaluator.getResult();
+		} catch (Exception e) {
 			System.out.println("Exception from Parser : " + e.toString());
 		}
 
 		if (expressionEvalResult == null)
 			throw new ScannerException(
-				"Expression " + expression + " evaluates to an undefined value");
+				"Expression "
+					+ expression
+					+ " evaluates to an undefined value");
 
-		if (expressionEvalResult.getClass() == java.lang.Integer.class)
-		{
-			int i= ((Integer) expressionEvalResult).intValue();
-			if (i == 0)
-			{
+		if (expressionEvalResult.getClass() == java.lang.Integer.class) {
+			int i = ((Integer) expressionEvalResult).intValue();
+			if (i == 0) {
 				return false;
 			}
 			return true;
-		}
-		else if (expressionEvalResult.getClass() == java.lang.Boolean.class)
-		{
+		} else if (
+			expressionEvalResult.getClass() == java.lang.Boolean.class) {
 			return ((Boolean) expressionEvalResult).booleanValue();
-		}
-		else
-		{
+		} else {
 			throw new ScannerException(
 				"Unexpected expression type - we do not expect "
 					+ expressionEvalResult.getClass().getName());
 		}
 	}
 
-	protected boolean skipOverMultilineComment() throws ScannerException
-	{
-		int state= 0;
-		boolean encounteredNewline= false;
+	protected boolean skipOverMultilineComment() throws ScannerException {
+		int state = 0;
+		boolean encounteredNewline = false;
 		// simple state machine to handle multi-line comments
 		// state 0 == no end of comment in site
 		// state 1 == encountered *, expecting /
 		// state 2 == we are no longer in a comment
 
-		int c= getChar();
-		while (state != 2 && c != NOCHAR)
-		{
+		int c = getChar();
+		while (state != 2 && c != NOCHAR) {
 			if (c == '\n')
-				encounteredNewline= true;
+				encounteredNewline = true;
 
-			switch (state)
-			{
+			switch (state) {
 				case 0 :
 					if (c == '*')
-						state= 1;
+						state = 1;
 					break;
 				case 1 :
 					if (c == '/')
-						state= 2;
+						state = 2;
 					else if (c != '*')
-						state= 0;
+						state = 0;
 					break;
 			}
-			c= getChar();
+			c = getChar();
 		}
 
-		if (c == NOCHAR)
-		{
+		if (c == NOCHAR) {
 			if (throwExceptionOnEOFWithinMultilineComment)
 				throw new ScannerException("Encountered EOF while in multiline comment");
 		}
@@ -1276,30 +1166,24 @@ NOCHAR);
 		return encounteredNewline;
 	}
 
-	protected void poundInclude() throws ScannerException
-	{
+	protected void poundInclude() throws ScannerException {
 		skipOverWhitespace();
-		int c= getChar();
+		int c = getChar();
 
-		StringBuffer fileName= new StringBuffer();
-		if (c == '<')
-		{
-			c= getChar();
-			while ((c != '>'))
-			{
+		StringBuffer fileName = new StringBuffer();
+		if (c == '<') {
+			c = getChar();
+			while ((c != '>')) {
 				fileName.append((char) c);
-				c= getChar();
+				c = getChar();
 			}
 
 			handleInclusion(fileName.toString().trim());
-		}
-		else if (c == '"')
-		{
-			c= getChar();
-			while ((c != '"'))
-			{
+		} else if (c == '"') {
+			c = getChar();
+			while ((c != '"')) {
 				fileName.append((char) c);
-				c= getChar();
+				c = getChar();
 			}
 
 			// TO DO: Make sure the directory of the current file is in the
@@ -1308,17 +1192,14 @@ NOCHAR);
 		}
 	}
 
-	protected void poundDefine() throws ScannerException
-	{
+	protected void poundDefine() throws ScannerException {
 		skipOverWhitespace();
 		// definition 
-		String key= getNextIdentifier();
+		String key = getNextIdentifier();
 
-		if (throwExceptionOnRedefinition)
-		{
-			String checkForRedefinition= (String) definitions.get(key);
-			if (checkForRedefinition != null)
-			{
+		if (throwExceptionOnRedefinition) {
+			String checkForRedefinition = (String) definitions.get(key);
+			if (checkForRedefinition != null) {
 				throw new ScannerException(
 					"Preprocessor symbol "
 						+ key
@@ -1332,118 +1213,104 @@ NOCHAR);
 		// the C++ standard says that macros must not put
 		// whitespace between the end of the definition 
 		// identifier and the opening parenthesis
-		int c= getChar();
-		if (c == '(')
-		{
-			StringBuffer buffer= new StringBuffer();
-			c= getChar();
-			while (c != ')')
-			{
+		int c = getChar();
+		if (c == '(') {
+			StringBuffer buffer = new StringBuffer();
+			c = getChar();
+			while (c != ')') {
 				buffer.append((char) c);
-				c= getChar();
+				c = getChar();
 			}
 
-			String parameters= buffer.toString();
+			String parameters = buffer.toString();
 
 			// replace StringTokenizer later -- not performant
-			StringTokenizer tokenizer= new StringTokenizer(parameters, ",");
-			ArrayList parameterIdentifiers= new ArrayList(tokenizer.countTokens());
-			while (tokenizer.hasMoreTokens())
-			{
+			StringTokenizer tokenizer = new StringTokenizer(parameters, ",");
+			ArrayList parameterIdentifiers =
+				new ArrayList(tokenizer.countTokens());
+			while (tokenizer.hasMoreTokens()) {
 				parameterIdentifiers.add(tokenizer.nextToken().trim());
 			}
 
 			skipOverWhitespace();
 
-			ArrayList macroReplacementTokens= new ArrayList();
-			String replacementString= getRestOfPreprocessorLine();
-			Scanner helperScanner= new Scanner(); 
-			helperScanner.initializeScanner( new StringReader(replacementString), null);
-			Token t= helperScanner.nextToken();
+			ArrayList macroReplacementTokens = new ArrayList();
+			String replacementString = getRestOfPreprocessorLine();
+			Scanner helperScanner = new Scanner();
+			helperScanner.initialize(
+				new StringReader(replacementString),
+				null);
+			Token t = helperScanner.nextToken();
 
-			while (t.type != Token.tEOF)
-			{
+			while (t.type != Token.tEOF) {
 				macroReplacementTokens.add(t);
-				t= helperScanner.nextToken();
+				t = helperScanner.nextToken();
 			}
 
-			IMacroDescriptor descriptor=	new MacroDescriptor(); 
-			descriptor.initialize( key,	parameterIdentifiers,macroReplacementTokens, key + "(" + parameters + ")");
+			IMacroDescriptor descriptor = new MacroDescriptor();
+			descriptor.initialize(
+				key,
+				parameterIdentifiers,
+				macroReplacementTokens,
+				key + "(" + parameters + ")");
 			addDefinition(key, descriptor);
 
-		}
-		else if ((c == ' ') || (c == '\t') || (c == '\n') || ( c =='\r' ))
-		{
+		} else if ((c == ' ') || (c == '\t') || (c == '\n') || (c == '\r')) {
 			// this is a simple definition 
 			skipOverWhitespace();
 
 			// get what we are to map the name to and add it to the definitions list
-			String value= getRestOfPreprocessorLine();
+			String value = getRestOfPreprocessorLine();
 			addDefinition(key, value);
-		}
-		else if (c == '/')
-		{
+		} else if (c == '/') {
 			// this could be a comment	
-			c= getChar();
+			c = getChar();
 			if (c == '/') // one line comment
-			{
+				{
 				skipOverTextUntilNewline();
 				addDefinition(key, "");
-			}
-			else if (c == '*') // multi-line comment
-			{
-				if (skipOverMultilineComment())
+			} else if (c == '*') // multi-line comment
 				{
+				if (skipOverMultilineComment()) {
 					// we have gone over a newline
 					// therefore, this symbol was defined to an empty string
 					addDefinition(key, "");
-				}
-				else
-				{
-					String value= getRestOfPreprocessorLine();
+				} else {
+					String value = getRestOfPreprocessorLine();
 					addDefinition(key, value);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not a comment 
 				// it is a bad statement
 				if (throwExceptionOnBadPPDirective)
-					throw new ScannerException(BAD_PP + currentContext.getOffset());
+					throw new ScannerException(
+						BAD_PP + currentContext.getOffset());
 			}
-		}
-		else
-		{
-			System.out.println( "Unexpected character " + ((char)c) ); 
+		} else {
+			System.out.println("Unexpected character " + ((char) c));
 			if (throwExceptionOnBadPPDirective)
 				throw new ScannerException(BAD_PP + currentContext.getOffset());
 		}
 	}
 
 	protected void expandDefinition(String symbol, Object expansion)
-		throws ScannerException
-	{
-		if (expansion.getClass() == String.class)
-		{
-			String replacementValue= (String) expansion;
+		throws ScannerException {
+		if (expansion.getClass() == String.class) {
+			String replacementValue = (String) expansion;
 			updateContext(
 				new StringReader(replacementValue),
 				POUND_DEFINE + symbol);
-		}
-		else if (expansion.getClass() == MacroDescriptor.class)
-		{
-			IMacroDescriptor macro= (IMacroDescriptor) expansion;
+		} else if (expansion.getClass() == MacroDescriptor.class) {
+			IMacroDescriptor macro = (IMacroDescriptor) expansion;
 			skipOverWhitespace();
-			int c= getChar();
+			int c = getChar();
 
-			if (c == '(')
-			{
-				StringBuffer buffer= new StringBuffer();
-				int bracketCount= 1;
-				c= getChar();
+			if (c == '(') {
+				StringBuffer buffer = new StringBuffer();
+				int bracketCount = 1;
+				c = getChar();
 
-				while (true)
-				{
+				while (true) {
 					if (c == '(')
 						++bracketCount;
 					else if (c == ')')
@@ -1452,71 +1319,61 @@ NOCHAR);
 					if (bracketCount == 0)
 						break;
 					buffer.append((char) c);
-					c= getChar();
+					c = getChar();
 				}
-				String betweenTheBrackets= buffer.toString();
-				StringTokenizer tokenizer=
+				String betweenTheBrackets = buffer.toString();
+				StringTokenizer tokenizer =
 					new StringTokenizer(betweenTheBrackets, ",");
-				Vector parameterValues= new Vector(tokenizer.countTokens());
-				while (tokenizer.hasMoreTokens())
-				{
+				Vector parameterValues = new Vector(tokenizer.countTokens());
+				while (tokenizer.hasMoreTokens()) {
 					parameterValues.add(tokenizer.nextToken().trim());
 				}
 
 				// create a string that represents what needs to be tokenized
-				buffer= new StringBuffer();
-				List tokens= macro.getTokenizedExpansion();
-				List parameterNames= macro.getParameters();
+				buffer = new StringBuffer();
+				List tokens = macro.getTokenizedExpansion();
+				List parameterNames = macro.getParameters();
 
-				if (parameterNames.size() != parameterValues.size())
-				{
+				if (parameterNames.size() != parameterValues.size()) {
 					if (throwExceptionOnBadMacroExpansion)
-						throw new ScannerException("Improper use of macro " + symbol);
+						throw new ScannerException(
+							"Improper use of macro " + symbol);
 				}
 
-				int numberOfTokens= tokens.size();
+				int numberOfTokens = tokens.size();
 
-				for (int i= 0; i < numberOfTokens; ++i)
-				{
-					Token t= (Token) tokens.get(i);
-					if (t.type == Token.tIDENTIFIER)
-					{
-						String identifierName= t.image;
+				for (int i = 0; i < numberOfTokens; ++i) {
+					Token t = (Token) tokens.get(i);
+					if (t.type == Token.tIDENTIFIER) {
+						String identifierName = t.image;
 
 						// is this identifier in the parameterNames
 						// list? 
 
-						int index= parameterNames.indexOf(t.image);
-						if (index == IGNORE_SENTINEL)
-						{
+						int index = parameterNames.indexOf(t.image);
+						if (index == -1 ) {
 							// not found
 							// just add image to buffer
 							buffer.append(t.image);
+						} else {
+							buffer.append(
+								(String) parameterValues.elementAt(index));
 						}
-						else
-						{
-							buffer.append((String) parameterValues.elementAt(index));
-						}
-					}
-					else
-					{
+					} else {
 						buffer.append(t.image);
 					}
 				}
 				updateContext(
 					new StringReader(buffer.toString()),
 					POUND_DEFINE + macro.getSignature());
-			}
-			else
-			{
+			} else {
 				if (throwExceptionOnBadMacroExpansion)
-					throw new ScannerException("Improper use of macro " + symbol);
+					throw new ScannerException(
+						"Improper use of macro " + symbol);
 
 			}
 
-		}
-		else
-		{
+		} else {
 			System.out.println(
 				"Unexpected class stored in definitions table. "
 					+ expansion.getClass().getName());
@@ -1524,32 +1381,28 @@ NOCHAR);
 
 	}
 
-	protected String handleDefinedMacro() throws ScannerException
-	{
+	protected String handleDefinedMacro() throws ScannerException {
 		skipOverWhitespace();
-		
-		int c= getChar();
 
-		if (c != '(')
-		{
+		int c = getChar();
+
+		if (c != '(') {
 			if (throwExceptionOnBadMacroExpansion)
 				throw new ScannerException("Improper use of macro defined()");
 		}
 
-		StringBuffer buffer= new StringBuffer();
-		c= getChar();
-		while ((c != NOCHAR) && (c != ')'))
-		{
+		StringBuffer buffer = new StringBuffer();
+		c = getChar();
+		while ((c != NOCHAR) && (c != ')')) {
 			buffer.append((char) c);
-			c= getChar();
+			c = getChar();
 		}
-		if (c == NOCHAR)
-		{
+		if (c == NOCHAR) {
 			if (throwExceptionOnBadMacroExpansion)
 				throw new ScannerException("Improper use of macro defined()");
 		}
 
-		String definitionIdentifier= buffer.toString().trim();
+		String definitionIdentifier = buffer.toString().trim();
 
 		if (definitions.get(definitionIdentifier) != null)
 			return "1";

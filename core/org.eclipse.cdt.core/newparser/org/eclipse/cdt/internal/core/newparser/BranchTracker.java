@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.newparser;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 /**
@@ -13,40 +14,166 @@ import java.util.Stack;
  */
 public class BranchTracker {
 	
-	private static final Integer BRANCH_AVAILABLE = new Integer( 1 );		// we should evaluate all branches at this level
-	private static final Integer BRANCH_UNAVAILABLE = new Integer( 2 ); 		// we are inside a ppConditional, all others should be neglected
+	private static final int IGNORE_SENTINEL = -1;
 	
+	/**
+	 * Default constructor.  
+	 * 
+	 * @see java.lang.Object#Object()
+	 */
 	public BranchTracker()
 	{
 	}
 	
 	private Stack branches = new Stack();
-		
-	public void createBranch()
+	
+	private int ignore = IGNORE_SENTINEL;
+	private static final Boolean FALSE = new Boolean( false );
+	private static final Boolean TRUE = new Boolean( true );
+	
+	/**
+	 * Method poundif. 
+	 * 
+	 * This method is called whenever one encounters a #if, #ifndef
+	 * or #ifdef preprocessor directive.
+	 * 
+	 * @param	 taken		- boolean indicates whether or not the condition
+	 * evaluates to true or false
+	 * @return boolean		- are we set to continue scanning or not? 
+	 */
+	public boolean poundif( boolean taken )
 	{
-		branches.push( BRANCH_AVAILABLE );
+		if( ignore == IGNORE_SENTINEL )
+		{	
+			// we are entering an if
+			// push the taken value onto the stack
+			branches.push( new Boolean( taken ) );
+			
+			if( taken == false )
+			{					
+				ignore = branches.size();  
+			}
+			
+			return taken;
+		}
+		else
+		{
+			branches.push( FALSE ); 
+			return false; 
+		}
+	}	
+	
+	public boolean poundelif( boolean taken ) throws ScannerException 
+	{
+		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
+		{
+			branches.pop(); 
+			branches.push( FALSE ); 
+			return false; 
+		}
+		
+		// so at this point we are either 
+		//		--> ignore == IGNORE_SENTINEL
+		//		--> ignore >= branches.size()
+		// check the branch queue to see whether or not the branch has already been taken 
+		Boolean branchAlreadyTaken;
+		try
+		{
+			branchAlreadyTaken = (Boolean) branches.peek();
+		}
+		catch( EmptyStackException ese )
+		{
+			throw new ScannerException( "#elif without a #if "); 
+		}
+		
+		if( ignore == IGNORE_SENTINEL )
+		{	
+			if( ! branchAlreadyTaken.booleanValue() )
+			{
+				branches.pop(); 
+				branches.push( new Boolean( taken ) );
+				if( ! taken )
+					ignore = branches.size();
+					
+				return taken;
+			}
+			
+			// otherwise this section is to be ignored as well
+			ignore = branches.size(); 
+			return false;
+		}
+		
+		// if we have gotten this far then ignore == branches.size()
+		if( ! branchAlreadyTaken.booleanValue() )
+		{
+			branches.pop(); 
+			branches.push( new Boolean( taken ) );
+			if( taken )
+				ignore = IGNORE_SENTINEL;
+			
+			return taken; 
+		}
+		ignore = branches.size(); 
+		return false;
 	}
 	
-	public void endBranch()
+	public boolean poundelse() throws ScannerException
 	{
+		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
+		{
+			branches.pop(); 
+			branches.push( FALSE ); 
+			return false; 
+		}
+				
+		Boolean branchAlreadyTaken;
+		try
+		{
+			branchAlreadyTaken = (Boolean) branches.peek();
+		}
+		catch( EmptyStackException ese )
+		{
+			throw new ScannerException( "#else without a #if "); 
+		}
+		
+		if( ignore == IGNORE_SENTINEL )
+		{
+			if( branchAlreadyTaken.booleanValue() )
+			{
+				ignore = branches.size();
+				return false; 
+			}
+			
+			branches.pop(); 
+			branches.push( TRUE );
+			return true;
+			
+		}
+		
+		// now ignore >= branches.size()
+		if( branchAlreadyTaken.booleanValue() )
+		{
+			ignore = branches.size(); 
+			return false;
+		}
+		
 		branches.pop(); 
+		branches.push( TRUE ); 
+		ignore = IGNORE_SENTINEL; 
+		return true;
+		
 	}
 	
-	public void takeBranch()
+	// taken only on an #endif 
+	public boolean poundendif( )
 	{
+		if( ignore == branches.size() )
+			ignore = IGNORE_SENTINEL;
 		branches.pop();
-		branches.push( BRANCH_UNAVAILABLE ); 
+		return ( ignore == IGNORE_SENTINEL );
 	}
 		
-	public boolean isBranchAvailable()
-	{
-		Integer peek = (Integer) branches.peek(); 
-		if( peek == BRANCH_AVAILABLE )
-			return true; 
-		return false; 
-	}
-	
-	public int depth()
+	public int getDepth()
 	{
 		return branches.size(); 
 	}

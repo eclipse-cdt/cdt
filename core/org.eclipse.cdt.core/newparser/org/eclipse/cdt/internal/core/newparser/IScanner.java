@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IScanner {
 	
-	public IScanner initializeScanner( Reader sourceToBeRead, String fileName );
+	public IScanner initialize( Reader sourceToBeRead, String fileName );
 	
 	public void addDefinition(String key, IMacroDescriptor macroToBeAdded );
 	public void addDefinition(String key, String value); 

@@ -11,17 +11,21 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This is a nested declarator most often used to declare function pointers.
+ * This class represents a name in the program that represents a semantic
+ * object in the program.
+ * 
+ * The toString method produces a string representation of the name as
+ * appropriate for the language.
  * 
  * @author Doug Schaefer
  */
-public interface IASTNestedDeclarator extends IASTDeclaratorId {
-
+public interface IASTName extends IASTNode {
+	
 	/**
-	 * Get the nested declarator.
+	 * Return the semantic object this name is referring to.
 	 * 
-	 * @return the nested declarator
+	 * @return binding
 	 */
-	public IASTDeclarator getNestedDeclarator();
+	public IBinding resolveBinding();
 	
 }

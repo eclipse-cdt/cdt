@@ -11,9 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This represents the id of the declarator.
  * @author Doug Schaefer
  */
-public interface IASTDeclaratorId extends IASTNode {
+public interface IFunction extends IBinding {
 
 }

@@ -24,19 +24,27 @@ public interface IASTDeclarator extends IASTNode {
 	 * @return List of IASTPointerOperator
 	 */
 	public List getPointerOperators();
+
+	/**
+	 * If the declarator is nested in parenthesis, this returns the
+	 * declarator as found in those parenethesis.
+	 * 
+	 * @return the nested declarator or null
+	 */
+	public IASTDeclarator getNestedDeclarator();
 	
 	/**
-	 * This returns the id being declared. It could also return an
-	 * nested declarator if this is something like a function pointer.
+	 * This returns the name of the declarator. If this is an abstract
+	 * declarator, this will return null.
 	 * 
-	 * @return
+	 * @return the name of the declarator or null
 	 */
-	public IASTDeclaratorId getDeclaratorId();
+	public IASTName getName();
 	
 	/**
 	 * This is the optional initializer for this declarator.
 	 * 
-	 * @return
+	 * @return the initializer expression or null
 	 */
 	public IASTExpression getInitializer();
 	

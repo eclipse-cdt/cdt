@@ -11,17 +11,9 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This is a name used in an expression.
- * 
  * @author Doug Schaefer
  */
-public interface IASTIdExpression extends IASTExpression {
+public interface IType extends IBinding {
 
-	/**
-	 * Returns the name used in the expression.
-	 * 
-	 * @return the name
-	 */
-	public IASTName getName();
 	
 }

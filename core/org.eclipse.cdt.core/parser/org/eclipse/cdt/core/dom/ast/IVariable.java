@@ -10,15 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
- * In most cases, declarator ids are simple identifiers. This interface brings the
- * two worlds together.
- * 
- * TODO: Check clothes to see if they caught on fire...
- * 
  * @author Doug Schaefer
  */
-public interface IASTSimpleDeclaratorId extends IASTDeclaratorId, IASTIdentifier {
+public interface IVariable extends IBinding {
 
+	/**
+	 * @return the type of the variable
+	 */
+	public IType getType();
 }

@@ -11,17 +11,14 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This is the almighty identifier.
- * 
  * @author Doug Schaefer
  */
-public interface IASTIdentifier {
+public interface IBinding {
 
 	/**
-	 * Returns a copy of the name for the identifier
+	 * The name of the binding.
 	 * 
-	 * @return
+	 * @return name
 	 */
 	public String getName();
-	
 }

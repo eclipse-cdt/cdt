@@ -32,7 +32,7 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier {
 	 * 
 	 * @return the name of the type or null
 	 */
-	public IASTIdentifier getName();
+	public IASTName getName();
 	
 	/**
 	 * Returns a list of member declarations.

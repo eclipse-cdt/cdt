@@ -53,6 +53,12 @@ public class Variable extends CObject implements ICDIVariable {
 			Variable variable = (Variable)children[i];
 			if (name.equals(variable.getMIVar().getVarName())) {
 				return variable;
+			} else {
+				// Look also in the grandchildren.
+				Variable grandChild = variable.getChild(name);
+				if (grandChild != null) {
+					return grandChild;
+				}
 			}
 		}
 		return null;

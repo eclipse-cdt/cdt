@@ -1,3 +1,17 @@
+2003-02-18 Mikhail Khodjaiants
+	New 'Source Lookup' tab.
+	* plugin.xml
+	Added dependency on the 'org.apache.xerces' plugin and the 'sourceLocator' extension.
+	* plugin.properties
+	Name for the source locator.
+	* CoreFileCLaunchConfigurationTabGroup.java
+	* LocalCLaunchConfigurationTabGroup.java
+	Added the 'Source Lookup' tab.
+	* DefaultSourceLocator.java
+	Implementation of 'IPersistableSourceLocator'.
+	* CSourceLookupTab.java
+	Implementation of 'ILaunchConfiguartionTab'.
+
 2003-02-07 David Inglis
 	
 	Refactor LaunchConstants into debug.core and make setting source locator happen before

@@ -2,6 +2,7 @@ package org.eclipse.cdt.launch.internal.ui;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.ui.CMainTab;
+import org.eclipse.cdt.launch.ui.CSourceLookupTab;
 import org.eclipse.cdt.launch.ui.CorefileDebuggerTab;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
@@ -23,6 +24,7 @@ public class CoreFileCLaunchConfigurationTabGroup extends AbstractLaunchConfigur
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new CMainTab(),
 			new CorefileDebuggerTab(),
+			new CSourceLookupTab(),
 			new CommonTab()
 		};
 		setTabs(tabs);

@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.ui"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 
@@ -81,6 +82,14 @@
                id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
       </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="%DefaultSourceLocator.name"
+            class="org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator"
+            id="org.eclipse.cdt.launch.DefaultSourceLocator">
+      </sourceLocator>
    </extension>
 
 </plugin>

@@ -105,7 +105,6 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private String initialBuilderParserId = null;
 	private Map providerParsers = new HashMap();
 	private String initialProviderParserId = null;
-	private boolean fCreatePathContainer = false;
 
 	public DiscoveryOptionsBlock() {
 		super(MakeUIPlugin.getResourceString(DIALOG_TITLE));
@@ -131,7 +130,6 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 				fInitialized = false;
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 			}
-			fCreatePathContainer = true;
 		} else {
 			fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
 		}
@@ -159,11 +157,13 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 				IProject project = getContainer().getProject();
 				if (project != null) {
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
-					if (fCreatePathContainer) {
+					if (isScannerConfigDiscoveryEnabled()) {
 						createDiscoveredPathContainer(project);
-						// create a new discovered scanner config store
-						MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
+					} else {
+						removeDiscoveredPathContainer(project);
 					}
+					// create a new discovered scanner config store
+					MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
 				} else {
 					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
 				}
@@ -203,6 +203,20 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			List newEntries = new ArrayList(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
+				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]),
+						new NullProgressMonitor());
+			}
+		}
+	}
+
+	private void removeDiscoveredPathContainer(IProject project) throws CModelException {
+		IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
+		ICProject cProject = CoreModel.getDefault().create(project);
+		if (cProject != null) {
+			IPathEntry[] entries = cProject.getRawPathEntries();
+			List newEntries = new ArrayList(Arrays.asList(entries));
+			if (newEntries.contains(container)) {
+				newEntries.remove(container);
 				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]),
 						new NullProgressMonitor());
 			}

@@ -436,7 +436,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             register,
             staticc,
             startingOffset,
-            declarator.getNameEndOffset(),
+            declarator.getNameStartOffset(),
             ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
     }
     private List createParameterList(List currentParameters)
@@ -486,7 +486,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             register,
             staticc,
             getStartingOffset(),
-            declarator.getNameEndOffset());
+            declarator.getNameStartOffset());
     }
     
 	/**

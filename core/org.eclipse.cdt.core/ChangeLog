@@ -1,5 +1,13 @@
 2003-08-31 Alain Magloire
 
+	Add method to save the ErrorParsers
+	Change ErrorParserManger to use the extension point for the ErrorParser.
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ErrorParserManager.java
+
+2003-08-31 Alain Magloire
+
 	Add method to retrieve the Error Parsers in the CCorePlugin.
 	Add extension point  for the ErrorParser.
 

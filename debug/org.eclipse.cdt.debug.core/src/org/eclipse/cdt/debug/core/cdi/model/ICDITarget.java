@@ -60,21 +60,6 @@ public interface ICDITarget extends ICDIObject {
 	void setCurrentThread(ICDIThread current) throws CDIException;
 
 	/**
-	 * Returns the register Object associated with this target.
-	 * 
-	 * @return a collection of register object.
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIRegisterObject[] getRegisterObjects() throws CDIException;
-
-	/**
-	 * Returns the register associated with this target.
-	 * @return a collection of register.
-	 * @throws CDIException if this method fails.
-	 */
-	ICDIRegister[] getRegisters(ICDIRegisterObject[] regObjects) throws CDIException;
-
-	/**
 	 * Evaluates the expression specified by the given string.
 	 * Returns the evaluation result as a String.
 	 * 

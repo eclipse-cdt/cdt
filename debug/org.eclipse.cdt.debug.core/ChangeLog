@@ -1,3 +1,9 @@
+2003-02-12 Mikhail Khodjaiants
+	Use ICDIRegisterManager instead of ICDITarget.
+	* ICDITarget.java
+	* CDebugTarget.java
+	* CRegisterGroup.java
+
 2003-02-11 Mikhail Khodjaiants
 	The 'auto load symbols' action support in ICSharedLibraryManager.
 	* ICSharedLibraryManager.java

@@ -2037,7 +2037,7 @@ public class CDebugTarget extends CDebugElement
 		ICDIRegisterObject[] regObjects = null;
 		try
 		{
-			regObjects = getCDITarget().getRegisterObjects();
+			regObjects = getCDISession().getRegisterManager().getRegisterObjects();
 		}
 		catch( CDIException e )
 		{

@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -1492,7 +1493,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
 
         if (expressionStatement == null && ds != null) {
-
             return ds;
         }
         if (expressionStatement != null && ds == null) {
@@ -1500,7 +1500,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 if (consume() == lastTokenOfExpression)
                     break;
             }
-
             return expressionStatement;
         }
 
@@ -1517,6 +1516,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                         && ((IASTBinaryExpression) lhs).getOperator() == IASTBinaryExpression.op_multiply) {
 
                     return ds;
+                }
+                if( lhs instanceof IASTFunctionCallExpression )
+                {
+                	//lvalue - makes no sense
+                	return ds;
                 }
             }
         }

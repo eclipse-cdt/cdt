@@ -48,6 +48,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     * @see java.lang.Object#toString()
     */
    public String toString() {
+   	  if( signature == null ) return ""; //$NON-NLS-1$
       return signature;
    }
 
@@ -113,7 +114,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     */
    public char[] toCharArray() {
       if (names == null)
-         return null;
+         return "".toCharArray();
       removeNullNames();
 
       //count first

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -2082,7 +2084,13 @@ public class AST2CPPTests extends AST2BaseTest {
     	buffer.append( "int (B::*pb)() = &B::f;\n");  //$NON-NLS-1$
     	buffer.append( "}\n" ); //$NON-NLS-1$
     	String code = buffer.toString();
-    	parse( code, ParserLanguage.CPP );
+    	IASTFunctionDefinition foo = (IASTFunctionDefinition) parse( code, ParserLanguage.CPP ).getDeclarations()[0];
+    	IASTDeclarationStatement decl = (IASTDeclarationStatement) ((IASTCompoundStatement)foo.getBody()).getStatements()[1];
+    	IASTSimpleDeclaration pb = (IASTSimpleDeclaration) decl.getDeclaration();
+    	IASTDeclarator d = pb.getDeclarators()[0];
+    	assertEquals( d.getNestedDeclarator().getPointerOperators().length,  1 );
+    	assertEquals( d.getNestedDeclarator().getName().toString(), "pb" ); //$NON-NLS-1$
+    	assertTrue( d.getNestedDeclarator().getPointerOperators()[0] instanceof ICPPASTPointerToMember );
     }
        
     public void testBug86336() throws Exception {

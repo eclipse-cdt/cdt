@@ -131,18 +131,7 @@ public class CDebugModel
 		if ( stopInMain )
 		{
 			ICDILocation location = cdiTarget.getSession().getBreakpointManager().createLocation( "", "main", 0 );
-			try
-			{
-				ICDIBreakpoint bkpt = cdiTarget.getSession().getBreakpointManager().
-											setLocationBreakpoint( ICDIBreakpoint.REGULAR, //ICDIBreakpoint.TEMPORARY,
-																   location,
-																   null,
-																   null );
-			}
-			catch( CDIException e )
-			{
-				((CDebugElement)target[0]).targetRequestFailed( MessageFormat.format( "{0} occurred setting temporary breakpoint.", new String[] { e.toString() } ), e );
-			}
+			((CDebugTarget)target[0]).setInternalTemporaryBreakpoint( location );
 		}
 		target[0].resume();
 

@@ -186,6 +186,11 @@ public class CDebugTarget extends CDebugElement
 	private List fRegisterGroups;
 
 	/**
+	 * Collection of temporary breakpoints set at this target. Values are of type <code>ICBreakpoint</code>.
+	 */
+	private List fTemporaryBreakpoints;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -204,6 +209,7 @@ public class CDebugTarget extends CDebugElement
 		setProcess( process );
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
+		setTemporaryBreakpoints( new ArrayList() );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
@@ -1095,6 +1101,25 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	/**
+	 * Removes all temporary breakpoints from this target.
+	 * 
+	 */
+	protected void removeAllTemporaryBreakpoints()
+	{
+		ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])getTemporaryBreakpoints().toArray( new ICDIBreakpoint[0] );
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			bm.deleteBreakpoints( cdiBreakpoints );
+			getTemporaryBreakpoints().clear();
+		}
+		catch( CDIException e )
+		{
+			logError( e );
+		}		
+	}
+
 	protected void changeBreakpointProperties( CBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException
 	{
 		ICDIBreakpoint cdiBreakpoint = findCDIBreakpoint( breakpoint );
@@ -1187,6 +1212,7 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.SUSPENDED );
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
+		removeAllTemporaryBreakpoints();
 		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDITarget )
 		{
@@ -1513,6 +1539,24 @@ public class CDebugTarget extends CDebugElement
 	}
 
 	/**
+	 * Returns the list of temporary breakpoints installed in this debug target.
+	 * 
+	 * @return list of installed temporary breakpoints
+	 */
+	protected List getTemporaryBreakpoints()
+	{
+		return fTemporaryBreakpoints;
+	}
+
+	/**
+	 * Uninstalles all temporary breakpoints installed in this debug target.
+	 * 
+	 */
+	protected void deleteTemporaryBreakpoints()
+	{
+	}
+
+	/**
 	 * Sets the map of breakpoints installed in this debug target. 
 	 * 
 	 * @param breakpoints breakpoints map
@@ -1520,6 +1564,16 @@ public class CDebugTarget extends CDebugElement
 	private void setBreakpoints( HashMap breakpoints )
 	{
 		fBreakpoints = breakpoints;
+	}
+	
+	/**
+	 * Sets the list of temporary breakpoints installed in this debug target. 
+	 * 
+	 * @param breakpoints breakpoints list
+	 */
+	private void setTemporaryBreakpoints( List breakpoints )
+	{
+		fTemporaryBreakpoints = breakpoints;
 	}
 	
 	/**
@@ -1714,6 +1768,23 @@ public class CDebugTarget extends CDebugElement
 			{
 				// do nothing
 			}
+		}
+	}
+	
+	public void setInternalTemporaryBreakpoint( ICDILocation location ) throws DebugException
+	{
+		try
+		{
+			ICDIBreakpoint bkpt = getCDISession().getBreakpointManager().
+										setLocationBreakpoint( ICDIBreakpoint.REGULAR, //ICDIBreakpoint.TEMPORARY,
+															   location,
+															   null,
+															   null );
+			getTemporaryBreakpoints().add( bkpt );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
 		}
 	}
 }

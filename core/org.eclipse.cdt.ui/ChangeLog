@@ -1,3 +1,7 @@
+2005-01-19 Alain Magloire
+	PR 83151
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+
 2005-01-18 Alain Magloire
 	DnD fixes, PR 50578
 	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java

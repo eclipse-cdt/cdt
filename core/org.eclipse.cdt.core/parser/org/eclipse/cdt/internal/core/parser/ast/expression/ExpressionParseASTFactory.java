@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
@@ -339,7 +340,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	 *           java.lang.String, int, int, int, int, int, int, int,
 	 *           org.eclipse.cdt.core.parser.ast.IASTExpression)
 	 */
-	public void addEnumerator(
+	public IASTEnumerator addEnumerator(
 		IASTEnumerationSpecifier enumeration,
 		String string,
 		int startingOffset,
@@ -351,7 +352,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		int endLine,
 		IASTExpression initialValue)
 		throws ASTSemanticException {
-		// TODO Auto-generated method stub
+		return null;
 
 	}
 

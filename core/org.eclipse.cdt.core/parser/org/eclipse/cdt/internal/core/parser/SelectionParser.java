@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
@@ -274,7 +275,7 @@ public class SelectionParser extends ContextualParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNode(org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	protected void handleNode(IASTOffsetableNamedElement node) {
+	protected void handleOffsetableNamedElement(IASTOffsetableNamedElement node) {
 		if( node != null )
 			nodeTable.put( node, new Integer( getCurrentFileIndex()) );
 	}
@@ -305,5 +306,17 @@ public class SelectionParser extends ContextualParser {
 			return fileName;
 		}
 		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerator)
+	 */
+	protected void endEnumerator(IASTEnumerator enumerator) throws EndOfFileException {
+		if( ! tokenDupleCompleted() )
+			super.endEnumerator(enumerator);
+		else
+		{
+			contextNode = enumerator;
+			throw new EndOfFileException();
+		}
 	}
 }

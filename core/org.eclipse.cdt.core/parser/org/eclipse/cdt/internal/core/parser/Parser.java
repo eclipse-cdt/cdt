@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
@@ -2449,13 +2450,14 @@ public abstract class Parser extends ExpressionParser implements IParser
                 {
                     try
                     {
-                        astFactory.addEnumerator(
+                        IASTEnumerator enumerator = astFactory.addEnumerator(
                             enumeration,
                             enumeratorIdentifier.getImage(),
                             enumeratorIdentifier.getOffset(),
 							enumeratorIdentifier.getLineNumber(),
                             enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), 
                             enumeratorIdentifier.getLineNumber(), lastToken.getEndOffset(), lastToken.getLineNumber(), initialValue);
+                        endEnumerator(enumerator);
                     }
                     catch (ASTSemanticException e1)
                     {
@@ -2474,12 +2476,13 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 try
                 {
-                    astFactory.addEnumerator(
+                    IASTEnumerator enumerator = astFactory.addEnumerator(
                         enumeration,
                         enumeratorIdentifier.getImage(),
                         enumeratorIdentifier.getOffset(),
 						enumeratorIdentifier.getLineNumber(),
 						enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), enumeratorIdentifier.getLineNumber(), lastToken.getEndOffset(), lastToken.getLineNumber(), initialValue);
+                    endEnumerator(enumerator);
                 }
                 catch (ASTSemanticException e1)
                 {
@@ -3134,7 +3137,13 @@ public abstract class Parser extends ExpressionParser implements IParser
 	{
 		cleanupLastToken();
 		if( declaration instanceof IASTOffsetableNamedElement )
-			handleNode( (IASTOffsetableNamedElement) declaration );
+			handleOffsetableNamedElement( (IASTOffsetableNamedElement) declaration );
+	}
+	
+	protected void endEnumerator( IASTEnumerator enumerator  ) throws EndOfFileException
+	{
+		cleanupLastToken();
+		handleOffsetableNamedElement(enumerator);
 	}
 	
 	/**
@@ -3155,6 +3164,6 @@ public abstract class Parser extends ExpressionParser implements IParser
 	/**
 	 * @param expression
 	 */
-	protected void handleNode(IASTOffsetableNamedElement node ) {
+	protected void handleOffsetableNamedElement(IASTOffsetableNamedElement node ) {
 	}
 }

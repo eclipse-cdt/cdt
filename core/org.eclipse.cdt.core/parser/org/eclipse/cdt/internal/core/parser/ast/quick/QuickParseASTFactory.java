@@ -148,10 +148,11 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier, java.lang.String, int, int)
      */
-    public void addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue)
+    public IASTEnumerator addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue)
     {
      	IASTEnumerator enumerator = new ASTEnumerator( enumeration, string, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endLine, initialValue );
      	((ASTEnumerationSpecifier)enumeration).addEnumerator( enumerator );
+     	return enumerator;
     }
 
 	/* (non-Javadoc)

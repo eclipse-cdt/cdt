@@ -15,10 +15,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -47,20 +48,16 @@ import org.eclipse.cdt.core.search.ICSearchConstants.LimitTo;
 import org.eclipse.cdt.core.search.ICSearchConstants.SearchFor;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchOperation;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchSite;
 
@@ -92,7 +89,7 @@ public abstract class FindAction extends Action {
 		}
 		
 		//C or CPP?
-		ParserLanguage language = CoreModel.getDefault().hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
+		ParserLanguage language = CoreModel.hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
 		
 		IParser parser = null;
 		FileReader reader = null;
@@ -153,8 +150,6 @@ public abstract class FindAction extends Action {
 	}
 	
 	public void run(IStructuredSelection sel){
-		ICElement tempElement = null;
-		
 		IEditorPart temp = fSite.getPage().getActiveEditor();
 		CEditor cTemp = null;
 		if (temp instanceof CEditor){
@@ -205,13 +200,13 @@ public abstract class FindAction extends Action {
 			return;
 		}
 	
-		CSearchQuery job = createSearchQuery(selectedText.getText(),getSearchForFromNode((IASTNode)node));
+		CSearchQuery job = createSearchQuery(selectedText.getText(),getSearchForFromNode(node));
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQuery(job);
 	}
 	
-	private SearchFor getSearchForFromNode(IASTNode node){
+	private SearchFor getSearchForFromNode(IASTOffsetableNamedElement node){
 		SearchFor searchFor = null;
 		
 		if (node instanceof IASTClassSpecifier){
@@ -242,12 +237,13 @@ public abstract class FindAction extends Action {
 			else if (node instanceof IASTEnumerationSpecifier){
 				searchFor = ICSearchConstants.ENUM;
 			}
-			else if (node instanceof IASTEnumerator){
-				searchFor = ICSearchConstants.FIELD;
-			}
 			else if (node instanceof IASTNamespaceDefinition){
 				searchFor = ICSearchConstants.NAMESPACE;
 			}
+			else if( node instanceof IASTTypedefDeclaration)
+				searchFor = ICSearchConstants.TYPEDEF;
+			else if( node instanceof IASTEnumerator )
+				searchFor = ICSearchConstants.ENUMTOR;
 			
 			return searchFor;
 	}

@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  * @author jcamelon
  *
  */
-public interface IASTEnumerator extends IASTOffsetableNamedElement, ISourceElementCallbackDelegate  {
+public interface IASTEnumerator extends IASTOffsetableNamedElement, IASTNode, ISourceElementCallbackDelegate  {
 
 	public IASTEnumerationSpecifier getOwnerEnumerationSpecifier(); 
 	public IASTExpression getInitialValue(); 

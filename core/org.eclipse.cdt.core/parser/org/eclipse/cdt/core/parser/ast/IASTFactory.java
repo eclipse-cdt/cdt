@@ -107,7 +107,7 @@ public interface IASTFactory
         String name,
         int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine) throws ASTSemanticException;
 
-    public void addEnumerator(
+    public IASTEnumerator addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String string,
         int startingOffset,

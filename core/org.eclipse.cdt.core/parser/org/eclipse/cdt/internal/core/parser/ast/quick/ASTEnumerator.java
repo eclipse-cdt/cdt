@@ -16,12 +16,13 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTNode;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTEnumerator
+public class ASTEnumerator extends ASTNode
     implements IASTEnumerator, IASTOffsetableNamedElement
 {
 	private final IASTExpression initialValue;

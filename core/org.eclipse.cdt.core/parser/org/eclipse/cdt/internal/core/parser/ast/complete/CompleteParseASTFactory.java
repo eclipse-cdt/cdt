@@ -1006,7 +1006,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier, java.lang.String, int, int, org.eclipse.cdt.core.parser.ast.IASTExpression)
      */
-    public void addEnumerator(
+    public IASTEnumerator addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String name,
         int startingOffset,
@@ -1029,7 +1029,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ASTEnumerator enumerator = new ASTEnumerator( enumeratorSymbol, enumeration, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endLine, initialValue ); 
         ((ASTEnumerationSpecifier)enumeration).addEnumerator( enumerator );
         attachSymbolExtension( enumeratorSymbol, enumerator, true );
-        
+        return enumerator;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor)

@@ -84,7 +84,7 @@ public class MIFrame {
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func")) {
-				func = ( str != null && str.indexOf( "??" ) != -1 ) ? "" : str;
+				func = ( str != null && str.equals( "??" ) ) ? "" : str;
 			} else if (var.equals("file")) {
 				file = str;
 			} else if (var.equals("line")) {

@@ -19,9 +19,8 @@ import java.util.Iterator;
 public interface IASTAbstractDeclaration extends IASTTypeSpecifierOwner
 {
 	public boolean isConst();
-	 
 	public Iterator getPointerOperators();
-	 
 	public Iterator getArrayModifiers();
+	
 
 }

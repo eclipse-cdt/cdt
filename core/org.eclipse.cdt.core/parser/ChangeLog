@@ -1,4 +1,9 @@
 2003-07-28 John Camelon
+	Fixed Bug 40842 - Parser: NPE while parsing class declaration in full parse mode 
+	Fixed Bug 40843 - Parser: failParse doesn't set parsePassed = false on EOF.
+	Fixed Miscellaneous overrides issues involving parameters & functions. 
+
+2003-07-28 John Camelon
 	Fixed Bug 40730 : Parser is not searching the include path for #include"<name>" 
 
 2003-07-28 Victor Mozgin

@@ -429,7 +429,7 @@ public class QuickParseASTTests extends BaseASTTest
 	}
 	
 	public void testBug36290() throws Exception {
-		parse("typedef void ( A:: * pFunction ) ( void ); ");
+		parse("typedef void ( A:: * pMethod ) ( void ); ");
 		parse("typedef void (boo) ( void ); ");
 		parse("typedef void boo (void); ");
 	}

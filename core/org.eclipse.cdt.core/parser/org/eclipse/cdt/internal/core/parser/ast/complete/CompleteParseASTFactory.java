@@ -713,6 +713,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
         List references = new ArrayList();
     	
+		setParameter( symbol, returnType, false, references );
+		setParameters( symbol, references, parameters.iterator() );
+    	
+    	
     	try
         {
             ownerScope.addSymbol( symbol );
@@ -722,9 +726,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
          	throw new ASTSemanticException();   
         }
     	
-    	setParameter( symbol, returnType, false, references );
-    	setParameters( symbol, references, parameters.iterator() );
-    	
+
         ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references );
         try
         {
@@ -901,6 +903,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
 		List references = new ArrayList();
     	
+		setParameter( symbol, returnType, false, references );
+		setParameters( symbol, references, parameters.iterator() );
+    	
 		try
 		{
 			ownerScope.addSymbol( symbol );
@@ -910,8 +915,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			throw new ASTSemanticException();   
 		}
     	
-		setParameter( symbol, returnType, false, references );
-		setParameters( symbol, references, parameters.iterator() );
+
         
         ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, isConstructor, isDestructor, isPureVirtual, visibility );
         try
@@ -1006,19 +1010,26 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         newSymbol.getTypeInfo().setBit( isStatic, TypeInfo.isStatic );
         newSymbol.getTypeInfo().setBit( abstractDeclaration.isConst(), TypeInfo.isConst );
     }
+    
     protected ISymbol cloneSimpleTypeSymbol(
         String name,
         IASTAbstractDeclaration abstractDeclaration,
         List references)
     {
-        ISymbol newSymbol = null;		
+        ISymbol newSymbol = null;
+		ISymbol symbolToBeCloned = null;		
         if( abstractDeclaration.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
         {
-        	ISymbol symbolToBeCloned = ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
-        	newSymbol = (ISymbol)symbolToBeCloned.clone();
-        	newSymbol.setName( name );
+        	symbolToBeCloned = ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
             references.addAll( ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getReferences() );
         }
+        else if( abstractDeclaration.getTypeSpecifier() instanceof ASTClassSpecifier )
+        {
+        	symbolToBeCloned = ((ASTClassSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
+        }
+		newSymbol = (ISymbol) symbolToBeCloned.clone(); 
+		newSymbol.setName( name );
+
         return newSymbol;
     }
     /* (non-Javadoc)

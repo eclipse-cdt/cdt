@@ -1,3 +1,6 @@
+2003-07-28 John Camelon
+	Added/moved tests as necessary for bugfix 40842 & 40843. 
+
 2003-07-28 Andrew Niefer
 	This patch creates a new failing test class : FullParseFailedTests.  This 
 	is for writing failed tests on the parser doing COMPLETE_PARSE.

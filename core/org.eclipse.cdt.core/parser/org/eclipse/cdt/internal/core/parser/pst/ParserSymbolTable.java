@@ -2485,10 +2485,13 @@ public class ParserSymbolTable {
 				return false;	
 			}
 		
-			int size = getParameterList().size();
-			if( function.getParameterList().size() != size ){
+			int size = ( getParameterList() == null ) ? 0 : getParameterList().size();
+			int fsize = ( function.getParameterList() == null ) ? 0 : function.getParameterList().size();
+			if( fsize != size ){
 				return false;
 			}
+			if( fsize == 0 )
+				return true;
 		
 			Iterator iter = getParameterList().iterator();
 			Iterator fIter = function.getParameterList().iterator();

@@ -88,9 +88,18 @@ public class Parser implements IParser
      */
     protected void failParse() throws EndOfFile
     {
-        if (firstErrorOffset == DEFAULT_OFFSET)
-            firstErrorOffset = LA(1).getOffset();
-        parsePassed = false;
+    	try
+    	{
+	        if (firstErrorOffset == DEFAULT_OFFSET)
+	            firstErrorOffset = LA(1).getOffset();
+    	} catch( EndOfFile eof )
+    	{
+    		throw eof;
+    	}
+    	finally
+    	{
+	        parsePassed = false;
+    	}
     }
     /**
      * This is the standard cosntructor that we expect the Parser to be instantiated 

@@ -98,7 +98,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTestSuite(LokiFailures.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);
-		suite.addTestSuite(FullParseFailedTests.class);
+		suite.addTest(FullParseFailedTests.suite());
 
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("generateReport"));

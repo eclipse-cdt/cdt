@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -810,6 +812,22 @@ public class CompleteParseASTTest extends TestCase
 			 assertEquals( fromAST[i], theTruth[i]);
 		 }
 	 }
-	 
+
+	public void testBug40842() throws Exception{
+		Writer code = new StringWriter();
+		
+		code.write("class A {} a;\n");
+		Iterator i = parse(code.toString()).getDeclarations();
+		IASTVariable instanceA = (IASTVariable)i.next();
+		assertFalse( i.hasNext() );
+	}
+
+	public void testOverride() throws Exception
+	{
+		Iterator i = parse( "void foo();\n void foo( int );\n").getDeclarations();
+		IASTFunction f1 = (IASTFunction)i.next();
+		IASTFunction f2 = (IASTFunction)i.next();
+		assertFalse( i.hasNext() );
+	}	 
 	 
 }

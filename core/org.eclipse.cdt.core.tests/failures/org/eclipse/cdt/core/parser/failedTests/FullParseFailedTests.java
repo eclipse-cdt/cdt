@@ -13,8 +13,8 @@
  */
 package org.eclipse.cdt.core.parser.failedTests;
 
-import java.io.StringWriter;
-import java.io.Writer;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.tests.BaseASTTest;
 
@@ -32,14 +32,10 @@ public class FullParseFailedTests extends BaseASTTest {
 	public FullParseFailedTests(String name) {
 		super(name);
 	}
-
-	public void testBug40842() throws Exception{
-		Writer code = new StringWriter();
-		
-		//note that if the parse fails at EOF, parse.failParse never sets
-		//parsePassed = false because it will throw EOF on LA(1), so get 
-		//around this by adding more code after the error.
-		code.write("class A {} a;\n int x;");
-		assertCodeFailsFullParse(code.toString());
+	
+	public static Test suite() {
+		TestSuite suite = new TestSuite(FullParseFailedTests.class.getName());
+		return suite;
 	}
+
 }

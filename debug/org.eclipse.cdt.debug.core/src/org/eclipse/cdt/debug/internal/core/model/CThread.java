@@ -831,38 +831,32 @@ public class CThread extends CDebugElement
 		setLastStackFrame( null );
 		int state = IState.RUNNING;
 		int detail = DebugEvent.UNSPECIFIED;
-		if ( isCurrent() )
+		switch( event.getType() )
 		{
-			switch( event.getType() )
-			{
-				case ICDIResumedEvent.CONTINUE:
-					detail = DebugEvent.CLIENT_REQUEST;
-					state = IState.RUNNING;
-					disposeStackFrames();
-					break;
-				case ICDIResumedEvent.STEP_INTO:
-				case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
-					detail = DebugEvent.STEP_INTO;
-					state = IState.STEPPING;
-					preserveStackFrames();
-					break;
-				case ICDIResumedEvent.STEP_OVER:
-				case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
-					detail = DebugEvent.STEP_OVER;
-					state = IState.STEPPING;
-					preserveStackFrames();
-					break;
-				case ICDIResumedEvent.STEP_RETURN:
-					detail = DebugEvent.STEP_RETURN;
-					state = IState.STEPPING;
-					preserveStackFrames();
-					break;
-			}
+			case ICDIResumedEvent.CONTINUE:
+				detail = DebugEvent.RESUME;
+				break;
+			case ICDIResumedEvent.STEP_INTO:
+			case ICDIResumedEvent.STEP_INTO_INSTRUCTION:
+				detail = DebugEvent.STEP_INTO;
+				break;
+			case ICDIResumedEvent.STEP_OVER:
+			case ICDIResumedEvent.STEP_OVER_INSTRUCTION:
+				detail = DebugEvent.STEP_OVER;
+				break;
+			case ICDIResumedEvent.STEP_RETURN:
+				detail = DebugEvent.STEP_RETURN;
+				break;
+		}
+		if ( isCurrent() && event.getType() != ICDIResumedEvent.CONTINUE )
+		{
+			preserveStackFrames();
+			state = IState.STEPPING;
 		}
 		else
 		{
 			disposeStackFrames();
-			detail = DebugEvent.CLIENT_REQUEST;
+			state = IState.RUNNING;
 		}
 		setCurrentStateId( state );
 		setCurrentStateInfo( null );

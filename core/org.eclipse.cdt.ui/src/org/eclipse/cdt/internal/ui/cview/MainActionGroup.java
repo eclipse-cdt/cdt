@@ -183,6 +183,11 @@ public class MainActionGroup extends CViewActionGroup {
 			new NewWizardMenu(menu, getCView().getSite().getWorkbenchWindow(), false);
 			menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
 			refactoringActionGroup.fillContextMenu(menu);						
+			menu.add(new Separator());
+			importAction.selectionChanged(resources);
+			menu.add(importAction);
+			exportAction.selectionChanged(resources);
+			menu.add(exportAction);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 			menu.add(new Separator());
@@ -360,6 +365,8 @@ public class MainActionGroup extends CViewActionGroup {
 
 	public void dispose() {
 		IWorkspace workspace = CUIPlugin.getWorkspace();
+		importAction.dispose();
+		exportAction.dispose();
 		refactorGroup.dispose();
 		openFileGroup.dispose();
 		openProjectGroup.dispose();

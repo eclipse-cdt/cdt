@@ -1,5 +1,11 @@
 2004-03-30 Alain Magloire
 
+	Show the import/export menu even when no selection.
+	PR 56650
+	* src/org/eclipse/cdt/internal/cview/MainActiongroup.java
+
+2004-03-30 Alain Magloire
+
 	Change the filter implementation of the CView to match
 	the PackageExplorer functionnality.
 

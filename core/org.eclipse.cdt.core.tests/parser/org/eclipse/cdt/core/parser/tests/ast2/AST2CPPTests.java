@@ -3095,5 +3095,30 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( s[0], "B" ); //$NON-NLS-1$
         assertTrue( alias.isGloballyQualified() );
     }
+    
+    public void testBug89539() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("class A{};              \n"); //$NON-NLS-1$
+    	buffer.append("class B : public A {    \n"); //$NON-NLS-1$
+    	buffer.append("   B () : A() {}        \n"); //$NON-NLS-1$
+    	buffer.append("};                      \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	ICPPClassType A1 = (ICPPClassType) col.getName(0).resolveBinding();
+    	ICPPClassType A2 = (ICPPClassType) col.getName(2).resolveBinding();
+    	assertSame( A1, A2 );
+    	
+    	ICPPConstructor A3 = (ICPPConstructor) col.getName(4).resolveBinding();
+    	assertSame( A3.getScope(), A1.getCompositeScope() );
+    	
+    	tu = parse( buffer.toString(), ParserLanguage.CPP ); //$NON-NLS-1$
+    	col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	assertTrue( col.getName(4).resolveBinding() instanceof ICPPConstructor );
+    }
 }
 

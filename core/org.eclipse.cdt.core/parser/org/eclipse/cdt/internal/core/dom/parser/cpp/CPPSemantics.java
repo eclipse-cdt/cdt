@@ -199,6 +199,8 @@ public class CPPSemantics {
 			IASTNode p1 = astName.getParent();
 			IASTNode p2 = p1.getParent();
 			
+			if( p1 instanceof ICPPASTConstructorChainInitializer )
+				return true;
 			if( p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId )
 				return p2.getParent() instanceof ICPPASTNewExpression;
 			else if( p1 instanceof ICPPASTQualifiedName && p2 instanceof ICPPASTFunctionDeclarator ){
@@ -520,6 +522,15 @@ public class CPPSemantics {
 				else
 					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 	        }
+		} else if( parent instanceof ICPPASTConstructorChainInitializer ){
+			ICPPASTConstructorChainInitializer ctorinit = (ICPPASTConstructorChainInitializer) parent;
+			IASTExpression val = ctorinit.getInitializerValue();
+			if( val instanceof IASTExpressionList )
+				data.functionParameters = ((IASTExpressionList) val ).getExpressions();
+			else if( val != null )
+				data.functionParameters = new IASTExpression [] { val };
+			else
+				data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 		}
 		
 		if( considerAssociatedScopes && !(name.getParent() instanceof ICPPASTQualifiedName) && data.functionCall() ){

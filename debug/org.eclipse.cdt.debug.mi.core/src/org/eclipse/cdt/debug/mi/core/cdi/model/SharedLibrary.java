@@ -25,6 +25,10 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 		miShared = slib;
 	}
 
+	public void setMIShared(MIShared slib) {
+		miShared = slib;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#getFileName()
 	 */

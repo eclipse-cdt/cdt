@@ -260,7 +260,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 				throw new DebugException( new Status( IStatus.ERROR, 
 													  MIPlugin.getUniqueIdentifier(),
 													  DebugException.TARGET_REQUEST_FAILED, 
-													  e.toString(), 
+													  e.getMessage(), 
 													  null ) );
 			}
 		}

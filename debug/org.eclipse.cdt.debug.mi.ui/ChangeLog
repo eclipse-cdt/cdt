@@ -1,3 +1,7 @@
+2003-04-07 Mikhail Khodjaiants
+	Replaced 'toString()' by 'getMessage()' for CDI exceptions.
+	* SetAutoSolibActionDelegate.java
+
 2004-04-04 Alain Magloire
 
 	Code from Monta Vista to do a GDBServer launch.

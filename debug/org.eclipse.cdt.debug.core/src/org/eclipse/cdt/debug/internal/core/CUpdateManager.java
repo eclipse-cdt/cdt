@@ -68,7 +68,7 @@ public abstract class CUpdateManager implements ICUpdateManager, IAdaptable
 			}
 			catch( CDIException e )
 			{
-				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}

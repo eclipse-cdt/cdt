@@ -1,3 +1,12 @@
+2003-04-07 Mikhail Khodjaiants
+	Replaced 'toString()' by 'getMessage()' for CDI exceptions.
+	* CSharedLibraryManager.java
+	* CUpdateManager.java
+	* CDebugTarget.java
+	* CStackFrame.java
+	* CThread.java
+	* CVariable.java
+
 2003-04-01 Mikhail Khodjaiants
 	Moved the 'Auto-Refresh' preferences from CDebugUIPlugin to use it for initialization of update managers.
 	* ICDebugConstants.java

@@ -207,7 +207,7 @@ public abstract class CVariable extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), null );
+			targetRequestFailed( e.getMessage(), null );
 		}
 		return null;
 	}

@@ -156,7 +156,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			}
 			catch( CDIException e )
 			{
-				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}
@@ -175,7 +175,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			}
 			catch( CDIException e )
 			{
-				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}

@@ -529,7 +529,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -597,7 +597,7 @@ public class CDebugTarget extends CDebugElement
 		} 
 		catch( CDIException e ) 
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}	
 	}
 
@@ -614,7 +614,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -801,7 +801,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -1069,7 +1069,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -2092,7 +2092,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -2410,7 +2410,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 	
@@ -2444,7 +2444,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -2491,7 +2491,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
@@ -2519,7 +2519,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), e );
+			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 

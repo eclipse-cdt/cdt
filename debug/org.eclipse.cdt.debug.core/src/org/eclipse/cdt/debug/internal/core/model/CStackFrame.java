@@ -578,7 +578,7 @@ public class CStackFrame extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), null );
+			targetRequestFailed( e.getMessage(), null );
 		}
 		return list;
 	} 
@@ -597,7 +597,7 @@ public class CStackFrame extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( e.toString(), null );
+			targetRequestFailed( e.getMessage(), null );
 		}
 		return list;
 	}

@@ -385,18 +385,21 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean supportsBreakpoint( IBreakpoint breakpoint )
 	{
+/*
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
 		if ( breakpoint instanceof ICBreakpoint )
 		{
 			ISourceLocator sl =  getSourceLocator();
-			if ( sl != null && sl instanceof ICSourceLocator )
+			if ( sl != null && sl instanceof IAdaptable && ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) != null )
 			{
-				return ((ICSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
+				return ((ICSourceLocator)((IAdaptable)sl).getAdapter( ICSourceLocator.class )).contains( breakpoint.getMarker().getResource() );
 			}
 			return true;
 		}
 		return false;
+*/
+		return getConfiguration().supportsBreakpoints();
 	}
 
 	/* (non-Javadoc)

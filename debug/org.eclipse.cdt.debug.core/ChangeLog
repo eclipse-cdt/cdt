@@ -1,3 +1,7 @@
+2002-12-29 Mikhail Khodjaiants
+	 Fix in the 'supportsBreakpoints' method of CDebugTarget
+	 * CDebugTarget.java: No need to check if the breakpoint file belongs to the source locator.
+
 2002-12-18 Mikhail Khodjaiants
 	Implementing the 'Source Lookup' property page.
 	* CDirectorySourceLocation.java

@@ -1,5 +1,11 @@
 2002-11-29 Alain Magloire
 
+	* src/.../mi/core/cdi/MemoryBlock.java (setValue):
+	Check if the change affects other block and fire MemoryChangedEvent
+	when necessary.
+
+2002-11-29 Alain Magloire
+
 	* src/.../mi/core/event/MIBreakpointEvent.java:
 	* src/.../mi/core/event/MIFunctionFinishedEvent.java:
 	* src/.../mi/core/event/MILocationReachedEvent.java:

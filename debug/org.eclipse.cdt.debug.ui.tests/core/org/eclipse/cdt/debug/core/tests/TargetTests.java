@@ -67,7 +67,7 @@ public class TargetTests extends TestCase {
          * Setup the various files, paths and projects that are needed by the
          * tests
          */
-        testProject=CProjectHelper.createCProject("filetest", "none");
+        testProject=CProjectHelper.createCProject("filetest");
         if (testProject==null)
             fail("Unable to create project");
     }
@@ -94,12 +94,6 @@ public class TargetTests extends TestCase {
      * A couple tests to make sure various evaluations work as expected
      */
     public void testEvaluate() throws CoreException, MIException, IOException, CDIException, InterruptedException {
-        ICDISession session;
-        ICDIBreakpointManager breaks;
-        session=CDebugHelper.createSession("main");
-        assertNotNull(session);
-        breaks=session.getBreakpointManager();
-        assertNotNull(breaks);
     
         /***
          * Tests to come

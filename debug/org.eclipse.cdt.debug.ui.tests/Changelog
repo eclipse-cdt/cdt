@@ -1,3 +1,13 @@
+2003-07-03 Peter Graves
+
+	Major cleanup. Pulled all resouces out of the source tree, and fixed the  
+	tests to get them from the new location.  
+	Made sure the debug sessions were all terminated before we try to delete the 
+	the projects (if the tests failed, the session would not be terminated, and 
+	then we would not be able to remove the projects.)	
+	Also updated the breakpoint	tests to only create and build the test project 
+	once per run, not once per test method.
+	
 2003-04-04 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/testplugin/util/VeryfyDialog.java:

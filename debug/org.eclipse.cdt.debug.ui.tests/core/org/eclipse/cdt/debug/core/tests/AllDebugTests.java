@@ -34,7 +34,6 @@ public class AllDebugTests {
         suite.addTest(DebugTests.suite());
         suite.addTest(BreakpointTests.suite());
         suite.addTest(LocationTests.suite());
-        suite.addTest(TargetTests.suite());
         return suite;
         
         

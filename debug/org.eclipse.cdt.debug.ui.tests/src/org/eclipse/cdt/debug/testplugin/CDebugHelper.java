@@ -1,10 +1,15 @@
 package org.eclipse.cdt.debug.testplugin;
 
-import java.io.IOException;
 import java.io.File;
-import org.eclipse.cdt.debug.core.cdi.*;
-import org.eclipse.cdt.debug.mi.core.*;
+import java.io.IOException;
+
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 
 /**
@@ -40,6 +45,26 @@ public class CDebugHelper {
         else
            return(null);
         session=mi.createCSession(null, new File(exename), new File("."), null);
+		return(session);
+	}
+	/**
+	 * Creates a ICDISession.
+	 */	
+	public static ICDISession createSession(String exe, ICProject project) throws IOException, MIException  {
+		MIPlugin mi;
+		String  workspacePath= Platform.getLocation().toOSString();
+		ICDISession session;
+		String os = System.getProperty("os.name");
+		String exename;
+		mi=MIPlugin.getDefault();
+		
+		IBinary bins[] = project.getBinaryContainer().getBinaries();
+		if (bins.length!=1) {
+			//SHOULD NOT HAPPEN
+			return(null);        
+		}
+		
+		session=mi.createCSession(null, new File(workspacePath +bins[0].getPath().toOSString()), new File("."), null);
 		return(session);
 	}
 	

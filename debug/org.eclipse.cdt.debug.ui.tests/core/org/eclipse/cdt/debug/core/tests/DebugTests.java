@@ -8,15 +8,27 @@ package org.eclipse.cdt.debug.core.tests;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.cdt.debug.testplugin.*;
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.debug.mi.core.*;
-import org.eclipse.cdt.debug.core.cdi.*;
+
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.testplugin.CDebugHelper;
+import org.eclipse.cdt.debug.testplugin.CProjectHelper;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Peter Graves
@@ -30,6 +42,7 @@ public class DebugTests extends TestCase {
     IWorkspaceRoot root;
     ICProject testProject;
     NullProgressMonitor monitor;
+	ICDISession session;
     
 
     /**
@@ -61,15 +74,20 @@ public class DebugTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws CoreException,FileNotFoundException {
+    protected void setUp() throws CoreException, InvocationTargetException, IOException {
+		ResourcesPlugin.getWorkspace().getDescription().setAutoBuilding(false);
+		/***
+		 * Create a new project and import the test source.
+		 */
+		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.debug.ui.tests").find(new Path("/")).getFile();
+		pluginRoot=pluginRoot+"resources/debugTest.zip";
+		testProject=CProjectHelper.createCProjectWithImport("filetest", pluginRoot);
+		if (testProject==null)
+			fail("Unable to create project");
+		/* Build the test project.. */
+
+		testProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
             
-        /***
-         * Setup the various files, paths and projects that are needed by the
-         * tests
-         */
-        testProject=CProjectHelper.createCProject("filetest", "none");
-        if (testProject==null)
-            fail("Unable to create project");
     }
     
      /**
@@ -77,7 +95,11 @@ public class DebugTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() throws CoreException {
+    protected void tearDown() throws CoreException, CDIException {
+    	if (session!=null) {
+    		session.terminate();
+    		session=null;
+    	}
         CProjectHelper.delete(testProject);
     }
     
@@ -97,12 +119,11 @@ public class DebugTests extends TestCase {
      * It's not ment to be a real proper test.
      */
     public void testDebug() throws CoreException, MIException, IOException, CDIException {
-        ICDISession session;
         ICDISourceManager source;
         ICDIBreakpointManager breaks;
         ICDILocation location;
 	
-		session=CDebugHelper.createSession("main");
+		session=CDebugHelper.createSession("main",testProject);
         assertNotNull(session);
         source=session.getSourceManager();
         assertNotNull(source);
@@ -112,7 +133,8 @@ public class DebugTests extends TestCase {
 		assertNotNull(location);
 		breaks.setLocationBreakpoint(0, location, null, null);
 		session.getCurrentTarget().resume();
-
+		session.terminate();
+		session=null;
 
    }
        

@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.core.tests;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -31,6 +32,7 @@ public class LocationTests extends TestCase {
     IWorkspaceRoot root;
     ICProject testProject;
     NullProgressMonitor monitor;
+	ICDISession session;
     
 
     /**
@@ -62,15 +64,20 @@ public class LocationTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws CoreException,FileNotFoundException {
+    protected void setUp() throws CoreException, InvocationTargetException, IOException {
+		ResourcesPlugin.getWorkspace().getDescription().setAutoBuilding(false);
+		/***
+		 * Create a new project and import the test source.
+		 */
+		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.debug.ui.tests").find(new Path("/")).getFile();
+		pluginRoot=pluginRoot+"resources/debugTest.zip";
+		testProject=CProjectHelper.createCProjectWithImport("filetest", pluginRoot);
+		if (testProject==null)
+			fail("Unable to create project");
+		/* Build the test project.. */
+
+		testProject.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
             
-        /***
-         * Setup the various files, paths and projects that are needed by the
-         * tests
-         */
-        testProject=CProjectHelper.createCProject("filetest", "none");
-        if (testProject==null)
-            fail("Unable to create project");
     }
     
      /**
@@ -78,7 +85,11 @@ public class LocationTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() throws CoreException {
+    protected void tearDown() throws CoreException, CDIException {
+    	if (session!=null) {
+    		session.terminate();
+    		session=null;
+    	}
         CProjectHelper.delete(testProject);
     }
     
@@ -95,12 +106,11 @@ public class LocationTests extends TestCase {
      * A couple tests to make sure comparing Locations works as expected.
      */
     public void testIsEquals() throws CoreException, MIException, IOException, CDIException {
-        ICDISession session;
         ICDIBreakpointManager breaks;
         ICDILocation location, location2;
         ICDIBreakpoint[] breakpoints;
         ICDILocationBreakpoint curbreak;
-        session=CDebugHelper.createSession("main");
+        session=CDebugHelper.createSession("main",testProject);
         assertNotNull(session);
         breaks=session.getBreakpointManager();
         assertNotNull(breaks);
@@ -160,8 +170,8 @@ public class LocationTests extends TestCase {
 
         
         /* clean up the session */
-        session.terminate();
-
+	    session.terminate();
+		session=null;
     
    }
        

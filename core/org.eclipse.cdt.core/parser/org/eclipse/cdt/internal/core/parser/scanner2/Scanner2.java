@@ -842,6 +842,15 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @return
 	 */
 	private IToken newToken( int signal ) {
+	    if( bufferData[bufferStackPos] instanceof IMacro )
+		{
+			int mostRelevant;
+			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
+				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
+					break;
+			int endOffset = bufferPos[mostRelevant] - ((IMacro)bufferData[bufferStackPos]).getName().length + SimpleToken.getCharImage( signal ).length + 1;
+			return new SimpleToken( signal, endOffset, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
+		}
 		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
 	}
 
@@ -853,7 +862,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
-			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((IMacro)bufferData[bufferStackPos]).getName().length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((IMacro)bufferData[bufferStackPos]).getName().length, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
 		}
 		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		if( buffer != null && buffer.length == 0 )

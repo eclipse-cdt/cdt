@@ -1828,4 +1828,27 @@ public class Scanner2Test extends BaseScanner2Test
         validateToken( IToken.t_true );
         validateToken( IToken.t_false);
     }
+    
+    public void testBug73492() throws Exception{
+        String code = "#define PTR void *\n" +  //$NON-NLS-1$
+                      "PTR;\n"; //$NON-NLS-1$
+        
+        int offset = code.indexOf("PTR;"); //$NON-NLS-1$
+        initializeScanner( code );
+        
+        IToken t = scanner.nextToken();
+        assertEquals( t.getType(), IToken.t_void );
+        assertEquals( t.getOffset(), offset );
+        assertEquals( t.getLineNumber(), 2 );
+        
+        t = scanner.nextToken();
+        assertEquals( t.getType(), IToken.tSTAR );
+        assertEquals( t.getOffset(), offset );
+        assertEquals( t.getLineNumber(), 2 );
+        
+        t = scanner.nextToken();
+        assertEquals( t.getType(), IToken.tSEMI );
+        assertEquals( t.getOffset(), offset + 3 );
+        assertEquals( t.getLineNumber(), 2 );
+    }
 }

@@ -315,11 +315,14 @@ public class SimpleToken extends AbstractToken implements IToken {
 		// do nothing
 	}
 
+	public char[] getCharImage() {
+	    return getCharImage( getType() );
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IToken#getCharImage()
 	 */
-	public char[] getCharImage() {
-		switch ( getType() ) {
+	static public char[] getCharImage( int type ){
+		switch ( type ) {
 		case IToken.tCOLONCOLON :	return Keywords.cpCOLONCOLON; 
 		case IToken.tCOLON :		return Keywords.cpCOLON;
 		case IToken.tSEMI :			return Keywords.cpSEMI;

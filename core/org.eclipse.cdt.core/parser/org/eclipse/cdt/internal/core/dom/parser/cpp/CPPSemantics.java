@@ -550,7 +550,10 @@ public class CPPSemantics {
 		IASTName possible = null;
 		IASTNode [] nodes = null;
 		IASTNode parent = scope.getPhysicalNode();
-	
+		
+		IASTName [] namespaceDefs = null;
+		int namespaceIdx = -1;
+		
 		List found = null;
 		
 		if( parent instanceof IASTCompoundStatement ){
@@ -563,7 +566,12 @@ public class CPPSemantics {
 			ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) parent;
 			nodes = comp.getMembers();
 		} else if ( parent instanceof ICPPASTNamespaceDefinition ){
-			nodes = ((ICPPASTNamespaceDefinition)parent).getDeclarations();
+		    //need binding because namespaces can be split
+		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition)parent).getName().resolveBinding();
+		    namespaceDefs = namespace.getNamespaceDefinitions();
+		    
+			nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
+			namespaceIdx = -1;
 		}
 	
 		int idx = -1;
@@ -595,7 +603,16 @@ public class CPPSemantics {
 			if( idx > -1 && ++idx < nodes.length ){
 				item = nodes[idx];
 			} else {
-				item = null;
+			    item = null;
+			
+			    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
+			        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
+				    if( nodes.length > 0 ){
+				        idx = 0;
+				        item = nodes[0];
+				        break;
+				    }     
+			    }
 			}
 		}
 		return found;

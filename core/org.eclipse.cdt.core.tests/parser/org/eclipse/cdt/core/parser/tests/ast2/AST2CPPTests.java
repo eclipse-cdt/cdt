@@ -873,5 +873,31 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstances( collector, A, 3 );
 		assertInstances( collector, x1, 1 );
     }
+    
+    public void testExtendedNamespaces() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "namespace A {                      \n" ); //$NON-NLS-1$
+        buffer.append( "   int x;                          \n" ); //$NON-NLS-1$
+        buffer.append( "}                                  \n" ); //$NON-NLS-1$
+        buffer.append( "int x;                             \n" ); //$NON-NLS-1$
+        buffer.append( "namespace A {                      \n" ); //$NON-NLS-1$
+        buffer.append( "   void f() { x; }                 \n" ); //$NON-NLS-1$
+        buffer.append( "}                                  \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		assertEquals( collector.size(), 6 );
+		
+		ICPPNamespace A = (ICPPNamespace) collector.getName(0).resolveBinding();
+		IVariable x1 = (IVariable) collector.getName( 1 ).resolveBinding();
+		IVariable x2 = (IVariable) collector.getName( 2 ).resolveBinding();
+		
+		assertInstances( collector, A, 2 );
+		assertInstances( collector, x1, 2 );
+		assertInstances( collector, x2, 1 );
+    }
+	
 }
 

@@ -18,5 +18,4 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @author aniefer
  */
 public interface ICPPNamespaceScope extends ICPPScope {
-	public ICPPASTUsingDirective [] getUsingDirectives();
 }

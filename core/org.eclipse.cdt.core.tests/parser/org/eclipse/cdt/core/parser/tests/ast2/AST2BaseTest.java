@@ -241,9 +241,9 @@ public class AST2BaseTest extends TestCase {
             processNames = true;
         }
         public List nameList = new ArrayList();
-        public boolean processName( IASTName name ){
+        public int processName( IASTName name ){
             nameList.add( name );
-            return true;
+            return PROCESS_CONTINUE;
         }
         public IASTName getName( int idx ){
             if( idx < 0 || idx >= nameList.size() )

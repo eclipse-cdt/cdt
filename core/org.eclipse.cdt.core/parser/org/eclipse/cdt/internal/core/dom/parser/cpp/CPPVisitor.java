@@ -249,10 +249,9 @@ public class CPPVisitor {
 			ICPPScope scope = (ICPPScope) getContainingScope( namespaceDef );
 			CPPNamespace binding = (CPPNamespace) scope.getBinding( namespaceDef.getName() );
 			if( binding == null ){
-				binding = new CPPNamespace( namespaceDef );
+				binding = new CPPNamespace( namespaceDef.getName() );
 				scope.addBinding( binding );
-			} else
-				binding.addDefinition( namespaceDef );
+			} 
 			return binding;
 		} else if( declaration instanceof ICPPASTUsingDirective ){
 			return CPPSemantics.resolveBinding( ((ICPPASTUsingDirective) declaration).getQualifiedName() );
@@ -519,22 +518,28 @@ public class CPPVisitor {
 		public boolean processStatements     = false;
 		public boolean processTypeIds        = false;
 		public boolean processEnumerators    = false;
-		public boolean processBaseSpecifiers;
+		public boolean processBaseSpecifiers = false;
+		public boolean processNamespaces     = false;
 		
 		/**
 		 * @return true to continue visiting, return false to stop
 		 */
-		public boolean processName( IASTName name ) 					{ return true; }
-		public boolean processDeclaration( IASTDeclaration declaration ){ return true; }
-		public boolean processInitializer( IASTInitializer initializer ){ return true; }
-		public boolean processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return true; }
-		public boolean processDeclarator( IASTDeclarator declarator )   { return true; }
-		public boolean processDeclSpecifier( IASTDeclSpecifier declSpec ){return true; }
-		public boolean processExpression( IASTExpression expression )   { return true; }
-		public boolean processStatement( IASTStatement statement )      { return true; }
-		public boolean processTypeId( IASTTypeId typeId )               { return true; }
-		public boolean processEnumerator( IASTEnumerator enumerator )   { return true; }
-		public boolean processBaseSpecifier(ICPPASTBaseSpecifier specifier) { return true; }
+		public final static int PROCESS_SKIP     = 1;
+		public final static int PROCESS_ABORT    = 2;
+		public final static int PROCESS_CONTINUE = 3;
+		
+		public int processName( IASTName name ) 					{ return PROCESS_CONTINUE; }
+		public int processDeclaration( IASTDeclaration declaration ){ return PROCESS_CONTINUE; }
+		public int processInitializer( IASTInitializer initializer ){ return PROCESS_CONTINUE; }
+		public int processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return PROCESS_CONTINUE; }
+		public int processDeclarator( IASTDeclarator declarator )   { return PROCESS_CONTINUE; }
+		public int processDeclSpecifier( IASTDeclSpecifier declSpec ){return PROCESS_CONTINUE; }
+		public int processExpression( IASTExpression expression )   { return PROCESS_CONTINUE; }
+		public int processStatement( IASTStatement statement )      { return PROCESS_CONTINUE; }
+		public int processTypeId( IASTTypeId typeId )               { return PROCESS_CONTINUE; }
+		public int processEnumerator( IASTEnumerator enumerator )   { return PROCESS_CONTINUE; }
+		public int processBaseSpecifier(ICPPASTBaseSpecifier specifier) { return PROCESS_CONTINUE; }
+		public int processNamespace( ICPPASTNamespaceDefinition namespace) { return PROCESS_CONTINUE; }
 	}
 	
 	public static class CollectProblemsAction extends CPPBaseVisitorAction {
@@ -585,41 +590,40 @@ public class CPPVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
-		public boolean processDeclaration(IASTDeclaration declaration) {
+		public int processDeclaration(IASTDeclaration declaration) {
 			if ( declaration instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)declaration).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
-		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
-		public boolean processExpression(IASTExpression expression) {
+		public int processExpression(IASTExpression expression) {
 			if ( expression instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)expression).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
-		public boolean processStatement(IASTStatement statement) {
+		public int processStatement(IASTStatement statement) {
 			if ( statement instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)statement).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
-		public boolean processTypeId(IASTTypeId typeId) {
+		public int processTypeId(IASTTypeId typeId) {
 			if ( typeId instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)typeId).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 	}
 	
@@ -630,14 +634,38 @@ public class CPPVisitor {
 		}
 	}
 
+	public static boolean visitNamespaceDefinition( ICPPASTNamespaceDefinition namespace, CPPBaseVisitorAction action ){
+	    if( action.processNamespaces ){
+	        switch( action.processNamespace( namespace ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+	    }
+	        
+		if( !visitName( namespace.getName(), action ) ) return false;
+		IASTDeclaration [] decls = namespace.getDeclarations();
+		for( int i = 0; i < decls.length; i++ ){
+			if( !visitDeclaration( decls[i], action ) ) return false;
+		}
+	   return true;
+	}
 	/**
 	 * @param declaration
 	 * @param action
 	 * @return
 	 */
 	public static boolean visitDeclaration(IASTDeclaration declaration, CPPBaseVisitorAction action) {
-		if( action.processDeclarations ) 
-			if( !action.processDeclaration( declaration ) ) return false;
+	    if( declaration instanceof ICPPASTNamespaceDefinition )
+	        return visitNamespaceDefinition( (ICPPASTNamespaceDefinition) declaration, action );
+	    
+		if( action.processDeclarations ) {
+		    switch( action.processDeclaration( declaration ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 		
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simple = (IASTSimpleDeclaration) declaration;
@@ -655,13 +683,6 @@ public class CPPVisitor {
 			if( !visitName( ((ICPPASTUsingDeclaration)declaration).getName(), action ) ) return false;
 		} else if( declaration instanceof ICPPASTUsingDirective ){
 			if( !visitName( ((ICPPASTUsingDirective)declaration).getQualifiedName(), action ) ) return false;
-		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
-			ICPPASTNamespaceDefinition namespace = (ICPPASTNamespaceDefinition) declaration;
-			if( !visitName( namespace.getName(), action ) ) return false;
-			IASTDeclaration [] decls = namespace.getDeclarations();
-			for( int i = 0; i < decls.length; i++ ){
-				if( !visitDeclaration( decls[i], action ) ) return false;
-			}
 		} else if( declaration instanceof ICPPASTNamespaceAlias ){
 			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
 			if( !visitName( alias.getQualifiedName(), action ) ) return false;
@@ -690,8 +711,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitName(IASTName name, CPPBaseVisitorAction action) {
-		if( action.processNames )
-			if( !action.processName( name ) ) return false;
+		if( action.processNames ){
+		    switch( action.processName( name ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 		if( name instanceof ICPPASTQualifiedName ){
 			IASTName [] names = ((ICPPASTQualifiedName)name).getNames();
@@ -708,8 +734,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitDeclSpecifier(IASTDeclSpecifier declSpecifier, CPPBaseVisitorAction action) {
-		if( action.processDeclSpecifiers )
-			if( !action.processDeclSpecifier( declSpecifier ) ) return false;
+		if( action.processDeclSpecifiers ){
+		    switch( action.processDeclSpecifier( declSpecifier ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 		if( declSpecifier instanceof ICPPASTCompositeTypeSpecifier ){
 			ICPPASTCompositeTypeSpecifier composite = (ICPPASTCompositeTypeSpecifier) declSpecifier;
@@ -747,8 +778,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitDeclarator(IASTDeclarator declarator, CPPBaseVisitorAction action) {
-		if( action.processDeclarators )
-			if( !action.processDeclarator( declarator ) ) return false;
+		if( action.processDeclarators ){
+		    switch( action.processDeclarator( declarator ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR ){
 			if( !visitName( declarator.getName(), action ) ) return false;
@@ -802,8 +838,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitStatement(IASTStatement statement, CPPBaseVisitorAction action) {
-		if( action.processStatements )
-			if( !action.processStatement( statement ) ) return false;
+		if( action.processStatements ){
+		    switch( action.processStatement( statement ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 		if( statement instanceof IASTCompoundStatement ){
 			IASTStatement [] list = ((IASTCompoundStatement) statement).getStatements();
@@ -865,8 +906,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitExpression(IASTExpression expression, CPPBaseVisitorAction action) {
-		if( action.processExpressions )
-			if( !action.processExpression( expression ) ) return false;
+		if( action.processExpressions ){
+		    switch( action.processExpression( expression ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 		if( expression instanceof IASTArraySubscriptExpression ){
 		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getArrayExpression(), action ) ) return false;
@@ -930,8 +976,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitTypeId(IASTTypeId typeId, CPPBaseVisitorAction action) {
-		if( action.processTypeIds )
-			if( !action.processTypeId( typeId ) ) return false;
+		if( action.processTypeIds ){
+		    switch( action.processTypeId( typeId ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
 		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
 		return true;
@@ -943,8 +994,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitInitializer(IASTInitializer initializer, CPPBaseVisitorAction action) {
-		if( action.processInitializers )
-			if( !action.processInitializer( initializer ) ) return false;
+		if( action.processInitializers ){
+		    switch( action.processInitializer( initializer ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 	    if( initializer instanceof IASTInitializerExpression ){
 	        if( !visitExpression( ((IASTInitializerExpression) initializer).getExpression(), action ) ) return false;
@@ -965,8 +1021,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitEnumerator(IASTEnumerator enumerator, CPPBaseVisitorAction action) {
-		if( action.processEnumerators )
-			if( !action.processEnumerator( enumerator ) ) return false;
+		if( action.processEnumerators ){
+		    switch( action.processEnumerator( enumerator ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 	    if( !visitName( enumerator.getName(), action ) ) return false;
 	    if( enumerator.getValue() != null )
@@ -980,8 +1041,13 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static boolean visitBaseSpecifier(ICPPASTBaseSpecifier specifier, CPPBaseVisitorAction action) {
-		if( action.processBaseSpecifiers )
-			if( !action.processBaseSpecifier( specifier ) ) return false;
+		if( action.processBaseSpecifiers ){
+		    switch( action.processBaseSpecifier( specifier ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 			
 	    if( !visitName( specifier.getName(), action ) ) return false;
 	    return true;

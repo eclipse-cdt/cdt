@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 
 /**
  * @author jcamelon
@@ -83,16 +83,12 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
     private int currentIndex = 0;    
     private IASTDeclaration [] declarations = null;
     private static final int DEFAULT_DECLARATIONS_LIST_SIZE = 4;
-	private ICPPNamespaceScope scope = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getScope()
 	 */
 	public IScope getScope() {
-		if(scope == null )
-			scope = new CPPNamespaceScope( this );
-		
-		return scope;
+	    return ((ICPPNamespace) name.resolveBinding()).getNamespaceScope();
 	}
 
 }

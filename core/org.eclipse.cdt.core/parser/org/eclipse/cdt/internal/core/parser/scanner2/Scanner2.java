@@ -2485,8 +2485,10 @@ public class Scanner2 implements IScanner, IScannerData {
 				case '\r':
 					if (escaped && bufferPos[bufferStackPos] < limit && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
 						escaped = false;
+						bufferPos[bufferStackPos]++;
 						break;
 					} else if (!escaped && bufferPos[bufferStackPos] < limit && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
+						bufferPos[bufferStackPos]++;
 						return;
 					}
 					break;

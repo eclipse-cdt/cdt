@@ -160,4 +160,11 @@ public class ArrayUtil {
         }
         return array;
     }
+    
+    public static boolean contains( Object [] array, Object obj ){
+        if( array == null ) return false;
+        for( int i = 0; i < array.length; i++ )
+            if( array[i] == obj ) return true;
+        return false;
+    }
 }

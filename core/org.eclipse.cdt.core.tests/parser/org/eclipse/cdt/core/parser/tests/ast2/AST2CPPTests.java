@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -2398,6 +2399,134 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( decls[1], col.getName(1) );
         assertSame( decls[2], col.getName(3) );
         assertSame( decls[3], col.getName(5) );
+    }
+    
+    public void testBug86470_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                  \n"); //$NON-NLS-1$
+        buffer.append("   void f( char );             \n"); //$NON-NLS-1$
+        buffer.append("   void f( int );              \n"); //$NON-NLS-1$
+        buffer.append("}                              \n"); //$NON-NLS-1$
+        buffer.append("using A::f;                    \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IBinding b = col.getName(7).resolveBinding();
+        IASTName [] decls = tu.getDeclarations( b );
+        assertEquals( decls.length, 2 );
+        assertSame( decls[0], col.getName(1) );
+        assertSame( decls[1], col.getName(3) );
+    }
+    
+    public void testBug86470_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                  \n"); //$NON-NLS-1$
+        buffer.append("   void f( int );              \n"); //$NON-NLS-1$
+        buffer.append("   void f( double );           \n"); //$NON-NLS-1$
+        buffer.append("}                              \n"); //$NON-NLS-1$
+        buffer.append("namespace B {                  \n"); //$NON-NLS-1$
+        buffer.append("   void f( int );              \n"); //$NON-NLS-1$
+        buffer.append("   void f( double );           \n"); //$NON-NLS-1$
+        buffer.append("   void f( char );             \n"); //$NON-NLS-1$
+        buffer.append("}                              \n"); //$NON-NLS-1$
+        buffer.append("void g() {                     \n"); //$NON-NLS-1$
+        buffer.append("   using A::f;                 \n"); //$NON-NLS-1$
+        buffer.append("   using B::f;                 \n"); //$NON-NLS-1$
+        buffer.append("   f( 'c' );                   \n"); //$NON-NLS-1$
+        buffer.append("}                              \n"); //$NON-NLS-1$
+                
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IFunction f_decl = (IFunction) col.getName(10).resolveBinding();
+        IFunction f_ref = (IFunction) col.getName(19).resolveBinding();
+        
+        assertSame( f_decl, f_ref );
+    }
+    
+    public void testBug86470_3() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                       \n"); //$NON-NLS-1$
+        buffer.append("   struct g {};                     \n"); //$NON-NLS-1$
+        buffer.append("   void g ( char );                 \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        buffer.append("void f() {                          \n"); //$NON-NLS-1$
+        buffer.append("   using A::g;                      \n"); //$NON-NLS-1$
+        buffer.append("   g('a');                          \n"); //$NON-NLS-1$
+        buffer.append("   struct g gg;                     \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IBinding ref1 = col.getName(8).resolveBinding();
+        IBinding ref2 = col.getName(9).resolveBinding();
+        
+        ICPPClassType g_struct = (ICPPClassType) col.getName(1).resolveBinding();
+        IFunction g_func = (IFunction) col.getName(2).resolveBinding();
+        
+        assertSame( g_struct, ref2 );
+        assertSame( g_func, ref1 );
+        
+        ICPPCompositeBinding comp = (ICPPCompositeBinding) col.getName(7).resolveBinding();
+        IASTName [] decls = tu.getDeclarations(comp);
+        assertEquals( decls.length, 2 );
+        assertSame( decls[0], col.getName(1) );
+        assertSame( decls[1], col.getName(2) );
+    }
+    
+    public void testBug86470_4() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                       \n"); //$NON-NLS-1$
+        buffer.append("   int x;                           \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        buffer.append("namespace B {                       \n"); //$NON-NLS-1$
+        buffer.append("   struct x {};                     \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        buffer.append("void f() {                          \n"); //$NON-NLS-1$
+        buffer.append("   using A::x;                      \n"); //$NON-NLS-1$
+        buffer.append("   using B::x;                      \n"); //$NON-NLS-1$
+        buffer.append("   x = 1;                           \n"); //$NON-NLS-1$
+        buffer.append("   struct x xx;                     \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IBinding ref1 = col.getName(11).resolveBinding();
+        IBinding ref2 = col.getName(12).resolveBinding();
+        
+        ICPPClassType x_struct = (ICPPClassType) col.getName(3).resolveBinding();
+        IVariable x_var = (IVariable) col.getName(1).resolveBinding();
+        
+        assertSame( x_struct, ref2 );
+        assertSame( x_var, ref1 );
+    }
+    
+    public void testBug86470_5() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace A {                       \n"); //$NON-NLS-1$
+        buffer.append("   void f( int );                   \n"); //$NON-NLS-1$
+        buffer.append("   void f( double );                \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        buffer.append("void g() {                          \n"); //$NON-NLS-1$
+        buffer.append("   void f( char );                  \n"); //$NON-NLS-1$
+        buffer.append("   using A::f;                      \n"); //$NON-NLS-1$
+        buffer.append("   f( 3.5 );                        \n"); //$NON-NLS-1$
+        buffer.append("}                                   \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IFunction f = (IFunction) col.getName(3).resolveBinding();
+        
+        assertInstances( col, f, 2 );
     }
 }
 

@@ -121,6 +121,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -783,6 +784,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		private static final int KIND_OBJ_FN = 2;
 		private static final int KIND_TYPE   = 3;
 		private static final int KIND_NAMESPACE   = 4;
+		private static final int KIND_COMPOSITE = 5;
 		
 		
 		public CollectDeclarationsAction( IBinding binding ){
@@ -800,7 +802,10 @@ public class CPPVisitor implements ICPPASTVisitor {
 			}
 			else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else 
+			}
+			else if( binding instanceof ICPPCompositeBinding )
+			    kind = KIND_COMPOSITE;
+			else 
 				kind = KIND_OBJ_FN;
 		}
 		
@@ -817,6 +822,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 						break;
 					return PROCESS_CONTINUE;
 				case KIND_TYPE:
+				case KIND_COMPOSITE:
 				    if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
 				        prop == IASTEnumerationSpecifier.ENUMERATION_NAME )
 				    {
@@ -837,8 +843,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 					    }
 					}
         
-				
-					return PROCESS_CONTINUE;
+					if( kind == KIND_TYPE )
+					    return PROCESS_CONTINUE;
 				case KIND_OBJ_FN:
 					if( prop == IASTDeclarator.DECLARATOR_NAME ||
 					    prop == IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME )
@@ -855,14 +861,28 @@ public class CPPVisitor implements ICPPASTVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( binding != null && name.resolveBinding() == binding )
+			if( binding != null )
 			{
-				if( decls.length == idx ){
-					IASTName [] temp = new IASTName[ decls.length * 2 ];
-					System.arraycopy( decls, 0, temp, 0, decls.length );
-					decls = temp;
-				}
-				decls[idx++] = name;
+			    IBinding candidate = name.resolveBinding();
+
+		        boolean found = false;
+		        if( binding instanceof ICPPCompositeBinding ){
+                    try {
+                        found = ArrayUtil.contains( ((ICPPCompositeBinding)binding).getBindings(), candidate ); 
+                    } catch ( DOMException e ) {
+                    }
+			    } else {
+			        found = ( binding == candidate );   
+			    }
+			        
+			    if( found ){
+					if( decls.length == idx ){
+						IASTName [] temp = new IASTName[ decls.length * 2 ];
+						System.arraycopy( decls, 0, temp, 0, decls.length );
+						decls = temp;
+					}
+					decls[idx++] = name;
+			    }
 			}
 			return PROCESS_CONTINUE;
 		}
@@ -887,6 +907,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		private static final int KIND_OBJ_FN = 2;
 		private static final int KIND_TYPE   = 3;
 		private static final int KIND_NAMESPACE   = 4;
+		private static final int KIND_COMPOSITE = 5;
 		
 		
 		public CollectReferencesAction( IBinding binding ){
@@ -904,7 +925,9 @@ public class CPPVisitor implements ICPPASTVisitor {
 			}
 			else if( binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else 
+			} else if( binding instanceof ICPPCompositeBinding )
+			    kind = KIND_COMPOSITE;
+			else 
 				kind = KIND_OBJ_FN;
 		}
 		
@@ -924,6 +947,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 						break;
 					return PROCESS_CONTINUE;
 				case KIND_TYPE:
+				case KIND_COMPOSITE:
 					if( prop == IASTNamedTypeSpecifier.NAME || 
 						prop == ICPPASTPointerToMember.NAME ||
 						prop == ICPPASTTypenameExpression.TYPENAME ||
@@ -942,7 +966,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 							break;
 						}
 					}
-					return PROCESS_CONTINUE;
+					if( kind == KIND_TYPE )
+					    return PROCESS_CONTINUE;
 				case KIND_OBJ_FN:
 					if( prop == IASTIdExpression.ID_NAME || 
 						prop == IASTFieldReference.FIELD_NAME || 
@@ -966,13 +991,46 @@ public class CPPVisitor implements ICPPASTVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( binding != null && name.resolveBinding() == binding ){
-				if( refs.length == idx ){
-					IASTName [] temp = new IASTName[ refs.length * 2 ];
-					System.arraycopy( refs, 0, temp, 0, refs.length );
-					refs = temp;
-				}
-				refs[idx++] = name;
+			if( binding != null ){
+			    IBinding potential = name.resolveBinding();
+			    IBinding [] bs = null;
+			    IBinding candidate = null;
+			    int n = -1;
+			    if( potential instanceof ICPPCompositeBinding ){
+			        try {
+                        bs = ((ICPPCompositeBinding)potential).getBindings();
+                    } catch ( DOMException e ) {
+                        return PROCESS_CONTINUE;
+                    }
+			        candidate = bs[ ++n ];
+			    } else {
+			        candidate = potential;
+			    }
+			        
+			    while( candidate != null ) {
+			        boolean found = false;
+			        if( binding instanceof ICPPCompositeBinding ){
+	                    try {
+	                        found = ArrayUtil.contains( ((ICPPCompositeBinding)binding).getBindings(), candidate ); 
+	                    } catch ( DOMException e ) {
+	                    }
+				    } else {
+				        found = ( binding == candidate );   
+				    }
+				        
+				    if( found ){
+						if( refs.length == idx ){
+							IASTName [] temp = new IASTName[ refs.length * 2 ];
+							System.arraycopy( refs, 0, temp, 0, refs.length );
+							refs = temp;
+						}
+						refs[idx++] = name;
+						break;
+				    }
+				    if( n > -1 && ++n < bs.length ){
+				        candidate = bs[n];
+				    } else break;
+			    }
 			}
 			return PROCESS_CONTINUE;
 		}

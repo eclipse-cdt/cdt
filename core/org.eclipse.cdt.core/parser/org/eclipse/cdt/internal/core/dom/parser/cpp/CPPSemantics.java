@@ -161,9 +161,17 @@ public class CPPSemantics {
 		public boolean forUsingDeclaration(){
 			if( astName == null ) return false;
 			IASTNode p1 = astName.getParent();
-			IASTNode p2 = p1.getParent();
-			return ( ( p1 instanceof ICPPASTUsingDeclaration ) ||
-				     ( p1 instanceof ICPPASTQualifiedName && p2 instanceof ICPPASTUsingDeclaration ) );
+			if( p1 instanceof ICPPASTUsingDeclaration )
+			    return true;
+			
+			if( p1 instanceof ICPPASTQualifiedName ){
+			    IASTNode p2 = p1.getParent();
+			    if( p2 instanceof ICPPASTUsingDeclaration ){
+			        IASTName [] ns = ((ICPPASTQualifiedName) p1 ).getNames();
+			        return (ns[ ns.length - 1 ] == astName);
+			    }
+			}
+			return false;
 		}
 		public boolean forDefinition(){
 			if( astName == null ) return false;
@@ -445,7 +453,7 @@ public class CPPSemantics {
 			        if( binding instanceof ICPPCompositeBinding ){
 			            IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
                         for( int i = 0; i < bs.length; i++ ) {
-   	                        scope.addBinding( binding );
+   	                        scope.addBinding( bs[i] );
     		            }
 			        } else {
                         scope.addBinding( binding );
@@ -1200,6 +1208,7 @@ public class CPPSemantics {
 	        	IBinding [] bindings = ((ICPPCompositeBinding) temp).getBindings();
 	        	//data.foundItems = ArrayUtil.addAll( Object.class, data.foundItems, bindings );
 	        	mergeResults( data, bindings, false );
+	        	items = (Object[]) data.foundItems;
 	        	continue;
 	        } else if( temp instanceof IType ){
 	        	if( type == null ){
@@ -1217,19 +1226,36 @@ public class CPPSemantics {
 	        	}
 	        }
 	    }
-	    
+	    if( data.forUsingDeclaration() ){
+	        IBinding [] bindings = null;
+	        if( obj != null ){
+	            if( fns != null ) return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+	            if( type == null ) return obj;
+	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, obj );
+	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, type );
+	        } else {
+	            if( fns == null ) return type;
+	            bindings = (IBinding[]) ArrayUtil.addAll( IBinding.class, bindings, fns );
+	            bindings = (IBinding[]) ArrayUtil.append( IBinding.class, bindings, type );
+	        }
+	        bindings = (IBinding[]) ArrayUtil.trim( IBinding.class, bindings );
+	        if( bindings.length == 1 ) return bindings[0];
+	        ICPPCompositeBinding composite = new CPPCompositeBinding( bindings );
+	        return composite;	
+	    }
+	        
 	    if( type != null ) {
 	    	if( data.typesOnly() || (obj == null && fns == null) )
 	    		return type;
-	    	IScope typeScope = type.getScope();
-	    	if( obj != null && obj.getScope() != typeScope ){
-	    	    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
-	    	} else if( fns != null ){
-	    		for( int i = 0; i < fns.length && fns[i] != null; i++ ){
-	    			if( ((IBinding)fns[i]).getScope() != typeScope )
-	    			    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
-	    		}
-	    	}
+//	    	IScope typeScope = type.getScope();
+//	    	if( obj != null && obj.getScope() != typeScope ){
+//	    	    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+//	    	} else if( fns != null ){
+//	    		for( int i = 0; i < fns.length && fns[i] != null; i++ ){
+//	    			if( ((IBinding)fns[i]).getScope() != typeScope )
+//	    			    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
+//	    		}
+//	    	}
 	    }
 	    if( fns != null){
 	    	if( obj != null )

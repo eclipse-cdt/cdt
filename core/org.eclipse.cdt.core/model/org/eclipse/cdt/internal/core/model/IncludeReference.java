@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeEntry;
@@ -116,6 +117,17 @@ public class IncludeReference extends Openable implements IIncludeReference {
 			}
 			info.setChildren(vChildren);
 			return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IIncludeReference#isOnIncludeEntry(org.eclipse.core.runtime.IPath)
+	 */
+	public boolean isOnIncludeEntry(IPath path) {
+		if (fIncludeEntry.getIncludePath().isPrefixOf(path) 
+				&& !CoreModelUtil.isExcluded(path, fIncludeEntry.fullExclusionPatternChars())) {
+			return true;
+		}
+		return false;
 	}
 
 }

@@ -42,6 +42,13 @@ public class CoreModel {
 	}
 
 	/**
+	 * Creates a translation form and IPath. Returns null if not found.
+	 */
+	public ITranslationUnit createTranslationUnitFrom(ICProject cproject, IPath path) {
+		return manager.createTranslationUnitFrom(cproject, path);
+	}
+
+	/**
 	 * Creates an ICElement form and IFile. Returns null if not found.
 	 */
 	public ICElement create(IFile file) {

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,8 +35,10 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
@@ -366,6 +369,26 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			//
 		}
 		return celement;	
+	}
+
+	public ITranslationUnit createTranslationUnitFrom(ICProject cproject, IPath path) {
+		if (path == null || cproject == null) {
+			return null;
+		}
+		File file = path.toFile();
+		if (file == null || !file.isFile()) {
+			return null;
+		}
+		try {
+			IIncludeReference[] includeReferences = cproject.getIncludeReferences();
+			for (int i = 0; i < includeReferences.length; i++) {
+				if (includeReferences[i].isOnIncludeEntry(path)) {
+					return new ExternalTranslationUnit(includeReferences[i], path);
+				}
+			}
+		} catch (CModelException e) {
+		}
+		return null;	
 	}
 
 	public void releaseCElement(ICElement celement) {

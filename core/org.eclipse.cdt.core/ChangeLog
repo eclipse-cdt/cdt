@@ -1,3 +1,15 @@
+2004-04-18 Alain Magloire
+
+	Added a new method in CoreModel to get ITranslationUnit
+	for external headers, implementation in CModelManager.
+	Changes to IIncludReference and implementations.
+
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	* model/org/eclipse/cdt/core/model/IInludeEntry.java
+	* model/org/eclipse/cdt/core/model/IIncludeReference.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/IncludeReference.java
+
 2004-04-16 Hoda Amer
 	Reveresed a change in IParent caused by my previous patch.
 	 

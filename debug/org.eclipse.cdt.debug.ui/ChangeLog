@@ -1,3 +1,13 @@
+2004-04-19 Mikhail Khodjaiants
+	Fix for bug 58711: Breakpoint race condition.
+	To avoid race condition all breakpoint marker updates (like increment/decrement the install count, 
+	enable/disable etc.) should be done in the UI thread. At the same time installing breakpoint 
+	at a target should be synchronized with other gdb commands (bug 58711).
+	A special listener (CBreakpointUpdater) has been added to receive notifications from the event 
+	thread and post marker updates to the UI thread.
+	* CDebugUIPlugin.java
+	* CBreakpointUpdater.java: new
+
 2004-04-16 Mikhail Khodjaiants
 	Implementing retargettable actions for Disassembly view.
 	* plugin.xml

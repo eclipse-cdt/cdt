@@ -1,9 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.debug.core;
 
 import java.text.MessageFormat;
@@ -13,6 +17,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
+import org.eclipse.cdt.debug.internal.core.ListenerList;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceUtils;
@@ -32,37 +37,43 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
- * The main plugin class to be used in the desktop.
+ * The plugin class for C/C++ debug core.
  */
-public class CDebugCorePlugin extends Plugin
-{
+public class CDebugCorePlugin extends Plugin {
+
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 1000;
 
-	//The shared instance.
+	/**
+	 * The shared instance.
+	 */
 	private static CDebugCorePlugin plugin;
+
 	private static ResourceBundle fgResourceBundle;
 
 	private HashMap fDebugConfigurations;
 
-	private IAsyncExecutor fAsyncExecutor = null;
+	/**
+	 * Breakpoint listener list.
+	 */
+	private ListenerList fBreakpointListeners;
 
 	private SessionManager fSessionManager = null;
-	
 	static {
 		try {
-			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.debug.core.CDebugCorePluginResources"); //$NON-NLS-1$
-		} catch (MissingResourceException x) {
+			fgResourceBundle = ResourceBundle.getBundle( "org.eclipse.cdt.debug.core.CDebugCorePluginResources" ); //$NON-NLS-1$
+		}
+		catch( MissingResourceException x ) {
 			fgResourceBundle = null;
 		}
 	}
+
 	/**
 	 * The constructor.
 	 */
-	public CDebugCorePlugin( IPluginDescriptor descriptor )
-	{
+	public CDebugCorePlugin( IPluginDescriptor descriptor ) {
 		super( descriptor );
 		plugin = this;
 	}
@@ -72,8 +83,7 @@ public class CDebugCorePlugin extends Plugin
 	 * 
 	 * @return the shared instance
 	 */
-	public static CDebugCorePlugin getDefault()
-	{
+	public static CDebugCorePlugin getDefault() {
 		return plugin;
 	}
 
@@ -82,8 +92,7 @@ public class CDebugCorePlugin extends Plugin
 	 * 
 	 * @return the workspace instance
 	 */
-	public static IWorkspace getWorkspace()
-	{
+	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 
@@ -92,10 +101,8 @@ public class CDebugCorePlugin extends Plugin
 	 * 
 	 * @return the unique identifier of this plugin
 	 */
-	public static String getUniqueIdentifier()
-	{
-		if ( getDefault() == null )
-		{
+	public static String getUniqueIdentifier() {
+		if ( getDefault() == null ) {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
@@ -104,23 +111,26 @@ public class CDebugCorePlugin extends Plugin
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
-	public static String getResourceString(String key) {
+	public static String getResourceString( String key ) {
 		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
+			return fgResourceBundle.getString( key );
+		}
+		catch( MissingResourceException e ) {
 			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (NullPointerException e) {
+		}
+		catch( NullPointerException e ) {
 			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	public static String getFormattedString(String key, String arg) {
-		return MessageFormat.format(getResourceString(key), new String[] { arg });
+
+	public static String getFormattedString( String key, String arg ) {
+		return MessageFormat.format( getResourceString( key ), new String[]{ arg } );
 	}
 
-	public static String getFormattedString(String key, String[] args) {
-		return MessageFormat.format(getResourceString(key), args);
+	public static String getFormattedString( String key, String[] args ) {
+		return MessageFormat.format( getResourceString( key ), args );
 	}
-	
+
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
 	}
@@ -130,15 +140,12 @@ public class CDebugCorePlugin extends Plugin
 	 * 
 	 * @param t throwable to log 
 	 */
-	public static void log( Throwable t )
-	{
+	public static void log( Throwable t ) {
 		Throwable top = t;
-		if ( t instanceof DebugException )
-		{
+		if ( t instanceof DebugException ) {
 			DebugException de = (DebugException)t;
 			IStatus status = de.getStatus();
-			if ( status.getException() != null )
-			{
+			if ( status.getException() != null ) {
 				top = status.getException();
 			}
 		}
@@ -152,52 +159,46 @@ public class CDebugCorePlugin extends Plugin
 	 * 
 	 * @param status status to log
 	 */
-	public static void log( IStatus status )
-	{
+	public static void log( IStatus status ) {
 		getDefault().getLog().log( status );
 	}
-	
+
 	/**
 	 * Logs the specified message with this plug-in's log.
 	 * 
 	 * @param status status to log
 	 */
-	public static void log( String message )
-	{
-		getDefault().getLog().log( new Status( IStatus.ERROR, 
-											   CDebugModel.getPluginIdentifier(),
-											   INTERNAL_ERROR, 
-											   message, 
-											   null ) );
+	public static void log( String message ) {
+		getDefault().getLog().log( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null ) );
 	}
-	
+
 	private void initializeDebugConfiguration() {
-		IPluginDescriptor descriptor= getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebugger"); //$NON-NLS-1$
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fDebugConfigurations = new HashMap(infos.length);
-		for (int i= 0; i < infos.length; i++) {
+		IPluginDescriptor descriptor = getDefault().getDescriptor();
+		IExtensionPoint extensionPoint = descriptor.getExtensionPoint( "CDebugger" ); //$NON-NLS-1$
+		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
+		fDebugConfigurations = new HashMap( infos.length );
+		for( int i = 0; i < infos.length; i++ ) {
 			IConfigurationElement configurationElement = infos[i];
-			DebugConfiguration configType = new DebugConfiguration(configurationElement); 			
-			fDebugConfigurations.put(configType.getID(), configType);
-		}		
+			DebugConfiguration configType = new DebugConfiguration( configurationElement );
+			fDebugConfigurations.put( configType.getID(), configType );
+		}
 	}
 
 	public ICDebugConfiguration[] getDebugConfigurations() {
-		if (fDebugConfigurations == null) {
+		if ( fDebugConfigurations == null ) {
 			initializeDebugConfiguration();
 		}
-		return (ICDebugConfiguration[]) fDebugConfigurations.values().toArray(new ICDebugConfiguration[0]);
+		return (ICDebugConfiguration[])fDebugConfigurations.values().toArray( new ICDebugConfiguration[0] );
 	}
-	
-	public ICDebugConfiguration getDebugConfiguration(String id) throws CoreException {
-		if (fDebugConfigurations == null) {
+
+	public ICDebugConfiguration getDebugConfiguration( String id ) throws CoreException {
+		if ( fDebugConfigurations == null ) {
 			initializeDebugConfiguration();
 		}
-		ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDebugConfigurations.get(id);
+		ICDebugConfiguration dbgCfg = (ICDebugConfiguration)fDebugConfigurations.get( id );
 		if ( dbgCfg == null ) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 100, CDebugCorePlugin.getResourceString("core.CDebugCorePlugin.No_such_debugger"), null); //$NON-NLS-1$
-			throw new CoreException(status);
+			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), 100, CDebugCorePlugin.getResourceString( "core.CDebugCorePlugin.No_such_debugger" ), null ); //$NON-NLS-1$
+			throw new CoreException( status );
 		}
 		return dbgCfg;
 	}
@@ -205,9 +206,9 @@ public class CDebugCorePlugin extends Plugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
-	public void shutdown() throws CoreException
-	{
+	public void shutdown() throws CoreException {
 		setSessionManager( null );
+		disposeBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		super.shutdown();
 	}
@@ -215,63 +216,79 @@ public class CDebugCorePlugin extends Plugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
-	public void startup() throws CoreException
-	{
+	public void startup() throws CoreException {
 		super.startup();
+		createBreakpointListenersList();
 		resetBreakpointsInstallCount();
 		setSessionManager( new SessionManager() );
 	}
 
-	protected void resetBreakpointsInstallCount()
-	{
+	protected void resetBreakpointsInstallCount() {
 		IBreakpointManager bm = DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints = bm.getBreakpoints( getUniqueIdentifier() );
-		for ( int i = 0; i < breakpoints.length; ++i )
-		{
-			if ( breakpoints[i] instanceof CBreakpoint )
-			{
-				try
-				{
+		for( int i = 0; i < breakpoints.length; ++i ) {
+			if ( breakpoints[i] instanceof CBreakpoint ) {
+				try {
 					((CBreakpoint)breakpoints[i]).resetInstallCount();
 				}
-				catch( CoreException e )
-				{
+				catch( CoreException e ) {
 					log( e.getStatus() );
 				}
 			}
 		}
 	}
-	
-	public void setAsyncExecutor( IAsyncExecutor executor )
-	{
-		fAsyncExecutor = executor;
-	}
-	
-	public void asyncExec( Runnable runnable )
-	{
-		if ( fAsyncExecutor != null )
-			fAsyncExecutor.asyncExec( runnable );
-	}
 
-	protected SessionManager getSessionManager()
-	{
+	protected SessionManager getSessionManager() {
 		return fSessionManager;
 	}
 
-	protected void setSessionManager( SessionManager sm )
-	{
+	protected void setSessionManager( SessionManager sm ) {
 		if ( fSessionManager != null )
 			fSessionManager.dispose();
 		fSessionManager = sm;
 	}
 
-	public void saveCommonSourceLocations( ICSourceLocation[] locations )
-	{
+	public void saveCommonSourceLocations( ICSourceLocation[] locations ) {
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento( locations ) );
 	}
 
-	public ICSourceLocation[] getCommonSourceLocations()
-	{
+	public ICSourceLocation[] getCommonSourceLocations() {
 		return SourceUtils.getCommonSourceLocationsFromMemento( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_SOURCE_LOCATIONS ) );
+	}
+
+	/**
+	 * Adds the given breakpoint listener to the debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public void addCBreakpointListener( ICBreakpointListener listener ) {
+		fBreakpointListeners.add( listener );
+	}
+
+	/**
+	 * Removes the given breakpoint listener from the debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public void removeCBreakpointListener( ICBreakpointListener listener ) {
+		fBreakpointListeners.remove( listener );
+	}
+
+	/**
+	 * Returns the list of breakpoint listeners registered with this plugin.
+	 *   
+	 * @return the list of breakpoint listeners registered with this plugin
+	 */
+	public Object[] getCBreakpointListeners() {
+		return fBreakpointListeners.getListeners();
+	}
+
+	private void createBreakpointListenersList() {
+		fBreakpointListeners = new ListenerList( 1 );
+	}
+
+	private void disposeBreakpointListenersList() {
+		fBreakpointListeners.removeAll();
+		fBreakpointListeners = null;
 	}
 }

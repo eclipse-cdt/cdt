@@ -151,4 +151,30 @@ public interface ICBreakpoint extends IBreakpoint {
 	 *  underlying marker
 	 */
 	public void setSourceHandle( String sourceHandle ) throws CoreException;
+
+	/**
+	 * Increments the install count of this breakpoint
+	 * 
+	 * @return the new install count value
+	 * @throws CoreException if unable to access the property 
+	 * 	on this breakpoint's underlying marker
+	 */
+	public int incrementInstallCount() throws CoreException;
+
+	/**
+	 * Decrements the install count of this breakpoint.
+	 * 
+	 * @return the new install caount value
+	 * @throws CoreException if unable to access the property 
+	 * 	on this breakpoint's underlying marker
+	 */
+	public int decrementInstallCount() throws CoreException;
+
+	/**
+	 * Resets the install count of this breakpoint
+	 * 
+	 * @throws CoreException if unable to access the property 
+	 * 	on this breakpoint's underlying marker
+	 */
+	public void resetInstallCount() throws CoreException;
 }

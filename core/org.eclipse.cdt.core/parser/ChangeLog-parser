@@ -1,3 +1,11 @@
+2004-07-30 Alain Magloire
+
+	In the StrutureParseCallback add the
+		IASTUsingDirective
+		IASTUsingDeclaration
+	part of the return declarations
+	* org/eclipse/cdt/internal/core/parser/ast/StructuralParseCallback.java
+
 2004-07-07 Andrew Niefer
 	Symbol Table Refactoring:
 		- TypeInfo._typeDeclaration is no longer used for forward declarations, instead BasicSymbol._instantiatedSymbol

@@ -51,6 +51,7 @@ public interface ICHelpContextIds {
 	public static final String TEMPLATE_PREFERENCE_PAGE = PREFIX + "code_temp"; //$NON-NLS-1$
 	public static final String LAUNCH_PROPERTY_PAGE = PREFIX + "new_launch_property_page_context"; //$NON-NLS-1$
 	public static final String PROJECT_PROPERTY_PAGE = PREFIX + "new_project_property_page_context"; //$NON-NLS-1$
+	public static final String CODEFORMATTER_PREFERENCE_PAGE = PREFIX + "codeformatter_preference_page_context"; //$NON-NLS-1
 
 	public static final String PROJ_CONF_BLOCK = PREFIX + "new_proj_conf_block_context"; //$NON-NLS-1$
 

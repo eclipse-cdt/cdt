@@ -592,6 +592,19 @@ public class CElementDelta implements ICElementDelta {
 	 * The constructor should be used to create the root delta 
 	 * and then a change operation should call this method.
 	 */
+	public void binaryParserChanged(ICElement element) {
+		CElementDelta attachedDelta = new CElementDelta(element);
+		attachedDelta.fKind = CHANGED;
+		attachedDelta.fChangeFlags |= F_BINARY_PARSER_CHANGED;
+		insertDeltaTree(element, attachedDelta);
+	}
+
+	/**
+	 * Creates the nested deltas resulting from a change operation.
+	 * Convenience method for creating change deltas.
+	 * The constructor should be used to create the root delta 
+	 * and then a change operation should call this method.
+	 */
 	public void sourceAttached(ICElement element) {
 		CElementDelta attachedDelta = new CElementDelta(element);
 		attachedDelta.fKind = CHANGED;

@@ -18,7 +18,7 @@ public class MIDataListChangedRegistersInfo extends MIInfo {
 		super(rr);
 	}
 
-	int[] getRegisters() {
+	public int[] getRegisterNumbers() {
 		if (registers == null) {
 			parse();
 		}

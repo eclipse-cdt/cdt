@@ -23,6 +23,7 @@ public interface IBinaryParser {
 		public int EXECUTABLE = 0x02;
 		public int SHARED = 0x04;
 		public int ARCHIVE = 0x08;
+		public int CORE = 0x10;
 
 		public IFile getFile();
 		public int getType();

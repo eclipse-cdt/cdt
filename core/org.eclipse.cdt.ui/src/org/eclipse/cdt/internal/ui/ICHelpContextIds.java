@@ -68,7 +68,7 @@ public interface ICHelpContextIds {
 	public static final String PROJECT_REFERENCES = PREFIX + "std_prop_references";  //$NON-NLS-1$
 	public static final String PROJECT_INCLUDE_PATHS_SYMBOLS = PREFIX + "std_prop_include";  //$NON-NLS-1$
 
-	public static final String APPEARANCE_PREFERENCE_PAGE = PREFIX + "appearance_preference_page_context";
+	public static final String APPEARANCE_PREFERENCE_PAGE = PREFIX + "appearance_preference_page_context"; //$NON-NLS-1$
 
 	// Console view
 	public static final String CLEAR_CONSOLE_ACTION = PREFIX + "clear_console_action_context"; //$NON-NLS-1$

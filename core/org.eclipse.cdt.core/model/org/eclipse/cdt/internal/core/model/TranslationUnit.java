@@ -69,6 +69,19 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
+	public ICElement getElementAtOffset(int pos) throws CModelException {
+		ICElement[] celements = getChildren();
+		for (int i = 0; i < celements.length; i++) {
+			ISourceRange range = ((ISourceReference)celements[i]).getSourceRange();
+			int startPos = range.getStartPos();
+			int endPos = startPos + range.getLength();
+			if (pos >= startPos && pos <= endPos) {
+				return celements[i];
+			}
+		}
+		return null;
+	}
+
 	public ICElement getElement(String name ) {
 		ICElement[] celements = getChildren();
 		for (int i = 0; i < celements.length; i++) {
@@ -250,6 +263,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
+		if (!(o instanceof ITranslationUnit)) return false;
 		return super.equals(o) && !((ITranslationUnit)o).isWorkingCopy();
 	}
 

@@ -93,13 +93,28 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * unit itself at the given position, or if the given position is not
 	 * within the source range of this translation unit.
 	 *
-	 * @param position a source position inside the translation unit
+	 * @param line a position inside the translation unit
 	 * @return the innermost C element enclosing a given source position or <code>null</code>
 	 *	if none (excluding the translation unit).
 	 * @exception CModelException if the translation unit does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	ICElement getElementAtLine(int line) throws CModelException;
+
+	/**
+	 * Returns the smallest element within this translation unit that 
+	 * includes the given source position (that is, a method, field, etc.), or
+	 * <code>null</code> if there is no element other than the translation
+	 * unit itself at the given position, or if the given position is not
+	 * within the source range of this translation unit.
+	 *
+	 * @param position a source position inside the translation unit
+	 * @return the innermost C element enclosing a given source position or <code>null</code>
+	 *	if none (excluding the translation unit).
+	 * @exception CModelException if the translation unit does not exist or if an
+	 *		exception occurs while accessing its corresponding resource
+	 */
+	ICElement getElementAtOffset(int offset) throws CModelException;
 
 	ICElement getElement(String name) throws CModelException;
 

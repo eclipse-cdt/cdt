@@ -1,3 +1,10 @@
+2004-02-19 Alain Magloire
+	
+	PR 52317
+	The children were added in the wrong order.
+
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2004-01-29 Alain Magloire
 
 	CDT Debug UI prefers things to be in ascending number.

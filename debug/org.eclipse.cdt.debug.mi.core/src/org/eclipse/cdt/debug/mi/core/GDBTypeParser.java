@@ -238,23 +238,28 @@ public class GDBTypeParser {
 	}
 
 	void prependChild(int kind, int d) {
-		GDBDerivedType dType = new GDBDerivedType(genericType, kind, d);
-		if (gdbDerivedType != null) {
-			// get to the last node in the list and add the new to it
-			GDBType leaf = genericType;
-			GDBDerivedType node;
-			boolean keepGoing = true;
-			for (node = gdbDerivedType; keepGoing;) {
-				leaf = node.getChild();
-				if (leaf instanceof GDBDerivedType) {
-					node = (GDBDerivedType) leaf;
-				} else {
-					keepGoing = false;
-				}
-			}
-			node.setChild(dType);
+//		GDBDerivedType dType = new GDBDerivedType(genericType, kind, d);
+//		if (gdbDerivedType != null) {
+//			// get to the last node in the list and add the new to it
+//			GDBType leaf = genericType;
+//			GDBDerivedType node;
+//			boolean keepGoing = true;
+//			for (node = gdbDerivedType; keepGoing;) {
+//				leaf = node.getChild();
+//				if (leaf instanceof GDBDerivedType) {
+//					node = (GDBDerivedType) leaf;
+//				} else {
+//					keepGoing = false;
+//				}
+//			}
+//			node.setChild(dType);
+//		} else {
+//			gdbDerivedType = dType;
+//		}
+		if (gdbDerivedType == null) {
+			gdbDerivedType = new GDBDerivedType(genericType, kind, d);
 		} else {
-			gdbDerivedType = dType;
+			gdbDerivedType = new GDBDerivedType(gdbDerivedType, kind, d);
 		}
 	}
 

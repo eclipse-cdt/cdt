@@ -157,6 +157,10 @@ public class ExpressionManager extends Manager {
 			if (vars[i].getMIVar().getVarName().equals(varName)) {
 				return vars[i];
 			}
+			Variable v = vars[i].getChild(varName);
+			if (v != null) {
+				return v;
+			}
 		}
 		return null;
 	}

@@ -122,6 +122,14 @@
                   valueType="string">
             </option>
             <option
+                  defaultValue=""
+                  name="Another String Option in Category"
+                  category="category"
+                  valueType="string"
+                  command="-str"
+                  id="another.string.option">
+            </option>
+            <option
                   name="Enumerated Option in Category"
                   category="category"
                   id="enumerated.option"
@@ -137,6 +145,13 @@
                      command="-e2"
                      id="another.enum.option">
                </enumeratedOptionValue>
+            </option>
+            <option
+                                                name="Boolean Option in Category"
+                  category="category"
+                  valueType="boolean"
+                  id="boolean.false.option"
+                  commandFalse="-nob">
             </option>
          </tool>
          <configuration
@@ -168,8 +183,16 @@
                      id="string.option">
                </optionReference>
                <optionReference
+                     defaultValue="alsooverridden"
+                     id="another.string.option">
+               </optionReference>
+               <optionReference
                      defaultValue="true"
                      id="boolean.option">
+               </optionReference>
+               <optionReference
+                     defaultValue="true"
+                     id="boolean.false.option">
                </optionReference>
                <optionReference
                      defaultValue="-e2"

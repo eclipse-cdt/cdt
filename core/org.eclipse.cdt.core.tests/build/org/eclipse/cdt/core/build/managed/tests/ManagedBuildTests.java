@@ -71,6 +71,7 @@ public class ManagedBuildTests extends TestCase {
 	private static final String projectRename = "ManagedBuildRedux";
 	private static final String rootExt = "toor";
 	private static final String stringVal = "-c -Wall";
+	private static final String anotherStringVal = "thevalue";
 	private static final String subExt = "bus";
 
 	public ManagedBuildTests(String name) {
@@ -365,9 +366,11 @@ public class ManagedBuildTests extends TestCase {
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		options = categories[0].getOptions(null);
-		assertEquals(2, options.length);
+		assertEquals(4, options.length);
 		ManagedBuildManager.setOption(newConfig, options[0], stringVal);
-		ManagedBuildManager.setOption(newConfig, options[1], enumVal);
+		ManagedBuildManager.setOption(newConfig, options[1], anotherStringVal);
+		ManagedBuildManager.setOption(newConfig, options[2], enumVal);
+		ManagedBuildManager.setOption(newConfig, options[3], "False");
 
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project, false);
@@ -574,7 +577,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(1, definedTools.length);
 		ITool rootTool = definedTools[0];
 		
-		// Get the options 2 in top category and 2 in its child
+		// Get the options (2) in top category and (4) in its child
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
 		IOption[] options = topCategory.getOptions(null);
@@ -582,7 +585,7 @@ public class ManagedBuildTests extends TestCase {
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		options = categories[0].getOptions(null);
-		assertEquals(2, options.length);
+		assertEquals(4, options.length);
 		
 		// Set the name back
 		newResource = workspaceRoot.findMember(projectName);
@@ -627,7 +630,7 @@ public class ManagedBuildTests extends TestCase {
 		categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		options = categories[0].getOptions(null);
-		assertEquals(2, options.length);
+		assertEquals(4, options.length);
 	}
 	
 	private void addManagedBuildNature (IProject project) {
@@ -696,7 +699,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(info.getToolForTarget(expectedOutput), expectedCmd);
 		
 		// Now check the build flags
-		assertEquals(info.getFlagsForSource(ext1), "-La -Lb z -e1");
+		assertEquals(info.getFlagsForSource(ext1), "-La -Lb z -e1 -nob");
 		assertEquals(info.getFlagsForSource(ext1), info.getFlagsForSource(ext2));
 		
 	}
@@ -727,7 +730,7 @@ public class ManagedBuildTests extends TestCase {
 
 		// Check that the options in the new config contain overridden values
 		IOption[] rootOptions = rootTool.getOptions();
-		assertEquals(4, rootOptions.length);
+		assertEquals(6, rootOptions.length);
 		// First is the new list
 		assertEquals("List Option in Top", rootOptions[0].getName());
 		assertEquals(IOption.STRING_LIST, rootOptions[0].getValueType());
@@ -740,22 +743,32 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(IOption.BOOLEAN, rootOptions[1].getValueType());
 		assertEquals(boolVal, rootOptions[1].getBooleanValue());
 		assertEquals("-b", rootOptions[1].getCommand());
-		// Next option is a string category
+		// Next option is a string in category
 		assertEquals("String Option in Category", rootOptions[2].getName());
 		assertEquals(IOption.STRING, rootOptions[2].getValueType());
 		assertEquals(stringVal, rootOptions[2].getStringValue());
-		// Final option is an enumerated
-		assertEquals("Enumerated Option in Category", rootOptions[3].getName());
-		assertEquals(IOption.ENUMERATED, rootOptions[3].getValueType());
-		String selEnum = rootOptions[3].getSelectedEnum();
+		// Next option is a another string in category
+		assertEquals("Another String Option in Category", rootOptions[3].getName());
+		assertEquals(IOption.STRING, rootOptions[3].getValueType());
+		assertEquals(anotherStringVal, rootOptions[3].getStringValue());
+		assertEquals("-str", rootOptions[3].getCommand());
+		// Next option is an enumerated in category
+		assertEquals("Enumerated Option in Category", rootOptions[4].getName());
+		assertEquals(IOption.ENUMERATED, rootOptions[4].getValueType());
+		String selEnum = rootOptions[4].getSelectedEnum();
 		assertEquals(enumVal, selEnum);
-		String[] enums = rootOptions[3].getApplicableValues();
+		String[] enums = rootOptions[4].getApplicableValues();
 		assertEquals(2, enums.length);
 		assertEquals("Default Enum", enums[0]);
 		assertEquals("Another Enum", enums[1]);
-		assertEquals("-e1", rootOptions[3].getEnumCommand(enums[0]));
-		assertEquals("-e2", rootOptions[3].getEnumCommand(enums[1]));
-		assertEquals("-e2", rootOptions[3].getEnumCommand(selEnum));
+		assertEquals("-e1", rootOptions[4].getEnumCommand(enums[0]));
+		assertEquals("-e2", rootOptions[4].getEnumCommand(enums[1]));
+		assertEquals("-e2", rootOptions[4].getEnumCommand(selEnum));
+		// Final option is a boolean in Category
+		assertEquals("Boolean Option in Category", rootOptions[5].getName());
+		assertEquals(IOption.BOOLEAN, rootOptions[5].getValueType());
+		assertEquals(false, rootOptions[5].getBooleanValue());
+		assertEquals("-nob", rootOptions[5].getCommandFalse());
 	}
 	
 	/*
@@ -782,9 +795,9 @@ public class ManagedBuildTests extends TestCase {
 		// Root Tool
 		ITool rootTool = tools[0];
 		assertEquals("Root Tool", rootTool.getName());
-		// 4 Options are defined in the root tool
+		// 6 Options are defined in the root tool
 		IOption[] options = rootTool.getOptions();
-		assertEquals(4, options.length);
+		assertEquals(6, options.length);
 		// First option is a 3-element list with 1 built-in
 		assertEquals("List Option in Top", options[0].getName());
 		assertEquals(IOption.STRING_LIST, options[0].getValueType());
@@ -805,16 +818,27 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("String Option in Category", options[2].getName());
 		assertEquals(IOption.STRING, options[2].getValueType());
 		assertEquals("x", options[2].getStringValue());
-		// Final option is an enumerated
-		assertEquals("Enumerated Option in Category", options[3].getName());
-		assertEquals(IOption.ENUMERATED, options[3].getValueType());
-		assertEquals("Default Enum", options[3].getSelectedEnum());
-		valueList = options[3].getApplicableValues();
+		// Next option is another string category
+		assertEquals("Another String Option in Category", options[3].getName());
+		assertEquals(IOption.STRING, options[3].getValueType());
+		assertEquals("", options[3].getStringValue());
+		assertEquals("-str", options[3].getCommand());
+		// Next option is an enumerated
+		assertEquals("Enumerated Option in Category", options[4].getName());
+		assertEquals(IOption.ENUMERATED, options[4].getValueType());
+		assertEquals("Default Enum", options[4].getSelectedEnum());
+		valueList = options[4].getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
 		assertEquals("Another Enum", valueList[1]);
-		assertEquals("-e1", options[3].getEnumCommand(valueList[0]));
-		assertEquals("-e2", options[3].getEnumCommand(valueList[1]));
+		assertEquals("-e1", options[4].getEnumCommand(valueList[0]));
+		assertEquals("-e2", options[4].getEnumCommand(valueList[1]));
+		// Final option is another boolean
+		assertEquals("Boolean Option in Category", options[5].getName());
+		assertEquals(IOption.BOOLEAN, options[5].getValueType());
+		assertEquals(false, options[5].getBooleanValue());
+		assertNull(options[5].getCommand());
+		assertEquals("-nob", options[5].getCommandFalse());
 		
 		// Option Categories
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
@@ -827,9 +851,11 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(1, categories.length);
 		assertEquals("Category", categories[0].getName());
 		options = categories[0].getOptions(null);
-		assertEquals(2, options.length);
+		assertEquals(4, options.length);
 		assertEquals("String Option in Category", options[0].getName());
-		assertEquals("Enumerated Option in Category", options[1].getName());
+		assertEquals("Another String Option in Category", options[1].getName());
+		assertEquals("Enumerated Option in Category", options[2].getName());
+		assertEquals("Boolean Option in Category", options[3].getName());
 
 		// There should be 3 defined configs
 		IConfiguration[] configs = target.getConfigurations();
@@ -872,24 +898,34 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("-b", options[1].getCommand());
 		categories = topCategory.getChildCategories();
 		options = categories[0].getOptions(configs[1]);
-		assertEquals(2, options.length);
+		assertEquals(4, options.length);
 		assertEquals("String Option in Category", options[0].getName());
 		assertEquals("y", options[0].getStringValue());
-		assertEquals("Enumerated Option in Category", options[1].getName());
-		valueList = options[1].getApplicableValues();
+		assertEquals("Another String Option in Category", options[1].getName());
+		assertEquals("", options[1].getStringValue());
+		assertEquals("Enumerated Option in Category", options[2].getName());
+		valueList = options[2].getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
 		assertEquals("Another Enum", valueList[1]);
-		assertEquals("-e1", options[1].getEnumCommand(valueList[0]));
-		assertEquals("-e2", options[1].getEnumCommand(valueList[1]));
+		assertEquals("-e1", options[2].getEnumCommand(valueList[0]));
+		assertEquals("-e2", options[2].getEnumCommand(valueList[1]));
 		assertEquals(1, tools.length);
-		assertEquals("Root Tool", tools[0].getName());
-		assertEquals("-r", tools[0].getOutputFlag());
-		assertTrue(tools[0].buildsFileType("foo"));
-		assertTrue(tools[0].buildsFileType("bar"));
-		assertTrue(tools[0].producesFileType("toor"));
-		assertTrue(tools[0].isHeaderFile("baz"));
-		assertEquals("doIt", tools[0].getToolCommand());
+		assertEquals("Boolean Option in Category", options[3].getName());
+		assertEquals(false, options[3].getBooleanValue());
+		assertNull(options[3].getCommand());
+		assertEquals("-nob", options[3].getCommandFalse());
+		assertEquals(1, tools.length);
+		ITool tool = tools[0];
+		assertNotNull(tool);
+		assertEquals("Root Tool", tool.getName());
+		assertEquals("-r", tool.getOutputFlag());
+		assertTrue(tool.buildsFileType("foo"));
+		assertTrue(tool.buildsFileType("bar"));
+		assertTrue(tool.producesFileType("toor"));
+		assertTrue(tool.isHeaderFile("baz"));
+		assertEquals("doIt", tool.getToolCommand());
+		assertEquals("-La -Lb -b y -e1 -nob", tool.getToolFlags());
 		
 		// Completely Overridden configuration
 		assertEquals("Complete Override Config", configs[2].getName());
@@ -916,15 +952,25 @@ public class ManagedBuildTests extends TestCase {
 		// Check that there's an overridden enumeration and string
 		categories = topCategory.getChildCategories();
 		options = categories[0].getOptions(configs[2]);
-		assertEquals(2, options.length);
+		assertEquals(4, options.length);
 		assertTrue(options[0] instanceof OptionReference);
 		assertEquals("String Option in Category", options[0].getName());
 		assertEquals(IOption.STRING, options[0].getValueType());
 		assertEquals("overridden", options[0].getStringValue());
 		assertTrue(options[1] instanceof OptionReference);
-		assertEquals("Enumerated Option in Category", options[1].getName());
-		assertEquals(IOption.ENUMERATED, options[1].getValueType());
-		assertEquals("-e2", options[1].getSelectedEnum());
+		assertEquals("Another String Option in Category", options[1].getName());
+		assertEquals(IOption.STRING, options[1].getValueType());
+		assertEquals("alsooverridden", options[1].getStringValue());
+		assertTrue(options[2] instanceof OptionReference);
+		assertEquals("Enumerated Option in Category", options[2].getName());
+		assertEquals(IOption.ENUMERATED, options[2].getValueType());
+		assertEquals("-e2", options[2].getSelectedEnum());
+		assertTrue(options[3] instanceof OptionReference);
+		assertEquals("Boolean Option in Category", options[3].getName());
+		assertEquals(IOption.BOOLEAN, options[3].getValueType());
+		assertEquals(true, options[3].getBooleanValue());
+		tool = tools[0];
+		assertEquals("-b overridden -stralsooverridden", tool.getToolFlags());
 	}
 
 	/*

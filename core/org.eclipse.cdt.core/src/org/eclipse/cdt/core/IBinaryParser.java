@@ -65,7 +65,7 @@ public interface IBinaryParser extends IAdaptable {
 		 * 
 		 * @return the binary contents.
 		 */
-		InputStream getContents();
+		InputStream getContents() throws IOException;
 
 		/**
 		 * Return the binary parser

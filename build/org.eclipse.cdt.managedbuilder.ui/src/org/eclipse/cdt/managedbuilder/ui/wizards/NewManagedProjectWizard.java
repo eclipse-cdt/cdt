@@ -98,7 +98,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
 			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_BUILDER));
 			ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
-			desc = CCorePlugin.getDefault().getCProjectDescription(newProject);
+			desc = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
 			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 			desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);

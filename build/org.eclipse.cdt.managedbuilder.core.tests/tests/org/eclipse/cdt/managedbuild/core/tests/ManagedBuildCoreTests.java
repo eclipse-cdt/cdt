@@ -706,7 +706,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		// Associate the project with the managed builder so the clients can get proper information
 		ICDescriptor desc = null;
 		try {
-			desc = CCorePlugin.getDefault().getCProjectDescription(project);
+			desc = CCorePlugin.getDefault().getCProjectDescription(project, true);
 			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 		} catch (CoreException e) {

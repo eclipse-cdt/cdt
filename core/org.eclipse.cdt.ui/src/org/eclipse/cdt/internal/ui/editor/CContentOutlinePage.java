@@ -10,17 +10,19 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -59,13 +61,42 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	private OpenIncludeAction fOpenIncludeAction;
 	private ToggleLinkingAction fToggleLinkingAction;
+	private IncludeGroupingAction fIncludeGroupingAction;
 	
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
 	private ActionGroup fOpenViewActionGroup;
-	
+
+	public class IncludeGroupingAction extends Action {
+		CContentOutlinePage outLine;
+
+		public IncludeGroupingAction(CContentOutlinePage outlinePage) {
+			super(ActionMessages.getString("IncludesGroupingAction.label")); //$NON-NLS-1$
+			setDescription(ActionMessages.getString("IncludesGroupingAction.description")); //$NON-NLS-1$
+			setToolTipText(ActionMessages.getString("IncludeGroupingAction.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$		
+			WorkbenchHelp.setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
+
+			boolean enabled= isIncludesGroupingEnabled();
+			setChecked(enabled);
+			outLine = outlinePage;
+		}
+
+		/**
+		 * Runs the action.
+		 */
+		public void run() {
+			boolean oldValue = isIncludesGroupingEnabled();
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, isChecked());
+			if (oldValue != isChecked()) {
+				outLine.contentUpdated();
+			}
+		}
+
+	}
+
 	/**
 	 * This action toggles whether this C Outline page links
 	 * its selection to the active editor.
@@ -189,7 +220,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void createControl(Composite parent) {
 		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		
-		treeViewer.setContentProvider(new CElementContentProvider(true, true));
+		//treeViewer.setContentProvider(new CElementContentProvider(true, true));
+		treeViewer.setContentProvider(new CContentOutlinerProvider(this));
 		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
@@ -286,12 +318,14 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
 		fMemberFilterActionGroup.fillActionBars(actionBars);
 		
-/*		IMenuManager menu= actionBars.getMenuManager();
+		IMenuManager menu= actionBars.getMenuManager();
 		menu.add(new Separator("EndFilterGroup")); //$NON-NLS-1$
 		
-		fToggleLinkingAction= new ToggleLinkingAction(this);
-		menu.add(fToggleLinkingAction);
-*/	}
+		//fToggleLinkingAction= new ToggleLinkingAction(this);
+		//menu.add(fToggleLinkingAction);
+		fIncludeGroupingAction= new IncludeGroupingAction(this);
+		menu.add(fIncludeGroupingAction);
+	}
 
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
@@ -315,6 +349,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on IPage (and Page).
 	 */
@@ -323,6 +358,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			return null;
 		return treeViewer.getControl();
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
@@ -331,6 +367,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			return StructuredSelection.EMPTY;
 		return treeViewer.getSelection();
 	}
+
 	/**
 	 * Returns this page's tree viewer.
 	 *
@@ -340,12 +377,14 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	protected TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.remove(listener);
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionChangeListener.
 	 * Gives notification that the tree selection has changed.
@@ -353,12 +392,14 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void selectionChanged(SelectionChangedEvent event) {
 		fireSelectionChanged(event.getSelection());
 	}
+
 	/**
 	 * Sets focus to a part in the page.
 	 */
 	public void setFocus() {
 		treeViewer.getControl().setFocus();
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
@@ -366,6 +407,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (treeViewer != null) 
 			treeViewer.setSelection(selection);
 	}
+
 	/**
 	 * Set the current input to the content provider.  
 	 * @param unit
@@ -377,6 +419,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		contentUpdated();		
 	}
-
+	
+	public boolean isIncludesGroupingEnabled () {
+		return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES);
+	}
 
 }

@@ -269,9 +269,19 @@ public class PreferenceConstants {
 	public static final String OPEN_TYPE_HIERARCHY_IN_VIEW_PART= "viewPart"; //$NON-NLS-1$
 
 	/**
-	 * Returns the JDT-UI preference store.
+	 * A named preference that controls if the C Browsing views are linked to the active editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
 	 * 
-	 * @return the JDT-UI preference store
+	 * @see #LINK_PACKAGES_TO_EDITOR
+	 */
+	public static final String OUTLINE_GROUP_INCLUDES= "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
+
+	/**
+	 * Returns the CDT-UI preference store.
+	 * 
+	 * @return the CDT-UI preference store
 	 */
 	public static IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();

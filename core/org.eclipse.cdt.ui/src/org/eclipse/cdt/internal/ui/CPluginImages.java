@@ -91,7 +91,9 @@ public class CPluginImages {
 	public static final String IMG_OBJS_ARCHIVE_WSRC= NAME_PREFIX + "ar_src_obj.gif"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_PROJECT=NAME_PREFIX + "prj_obj.gif"; //$NON-NLS-1$
-	
+
+	public static final String IMG_OBJS_INCCONT= NAME_PREFIX + "incc_obj.gif"; 			//$NON-NLS-1$
+
 	// Breakpoint images
 	public static final String IMG_OBJS_BREAKPOINT = NAME_PREFIX + "breakpoint.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "breakpoint_disabled.gif"; //$NON-NLS-1$
@@ -157,6 +159,8 @@ public class CPluginImages {
 
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_PROBLEM= createManaged(T_OBJ, IMG_OBJS_FIXABLE_PROBLEM);
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_ERROR= createManaged(T_OBJ, IMG_OBJS_FIXABLE_ERROR);
+
+	public static final ImageDescriptor DESC_OBJS_INCCONT= createManaged(T_OBJ, IMG_OBJS_INCCONT);
 
 	public static final ImageDescriptor DESC_OBJS_UNKNOWN = createManaged(T_OBJ, IMG_OBJS_UNKNOWN);
 	// Breakpoint image descriptors

@@ -971,17 +971,45 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 	public void testBug64939() throws Exception
 	{
 		try{
-			parse( "template < class T > class A : public A< T * > {}; A<int> a;" ).getDeclarations(); //NON-NLS-1$
+			parse( "template < class T > class A : public A< T * > {}; A<int> a;" ).getDeclarations(); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
 		
 		try{
-			parse( "template < class T > class A { A<T*> f(); }; A< int > a;" ).getDeclarations(); //NON-NLS-1$
+			parse( "template < class T > class A { A<T*> f(); }; A< int > a;" ).getDeclarations(); //$NON-NLS-1$
 			assertTrue( false );
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
 		}
+	}
+	
+	public void testBug65114() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < typename _Tp, typename _Alloc > class _simple_alloc {};    \n" ); //$NON-NLS-1$
+		writer.write( "template < int _inst > class __malloc_alloc {};                       \n" ); //$NON-NLS-1$
+		writer.write( "template < typename _Tp, int __inst>                                  \n" ); //$NON-NLS-1$
+		writer.write( "struct _Alloc_traits {                                                \n" ); //$NON-NLS-1$
+		writer.write( "   typedef _simple_alloc< _Tp, __malloc_alloc<__inst> > _Alloc_type;  \n" ); //$NON-NLS-1$
+		writer.write( "};                                                                    \n" ); //$NON-NLS-1$
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration simple_alloc = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration malloc_alloc = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration alloc_traits = (IASTTemplateDeclaration) i.next();
+		
+		IASTClassSpecifier alloc = (IASTClassSpecifier) alloc_traits.getOwnedDeclaration();
+		i = alloc_traits.getTemplateParameters();
+		IASTTemplateParameter _Tp = (IASTTemplateParameter) i.next();
+		IASTTemplateParameter inst = (IASTTemplateParameter) i.next();
+		
+		IASTClassSpecifier simple = (IASTClassSpecifier) simple_alloc.getOwnedDeclaration();
+		IASTClassSpecifier malloc = (IASTClassSpecifier) malloc_alloc.getOwnedDeclaration();
+		
+		assertAllReferences( 4, createTaskList( new Task( simple ), new Task( _Tp ),
+				                                new Task( malloc ), new Task( inst ) ) );
 	}
 }

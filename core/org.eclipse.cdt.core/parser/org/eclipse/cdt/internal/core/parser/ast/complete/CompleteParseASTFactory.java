@@ -3450,7 +3450,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( refs == null || refs.isEmpty() ) return;
 		for( int i =0; i < refs.size(); ++i)
 			cache.returnReference((IASTReference) refs.get(i));
-		
+		refs.clear();
 	}
 
 	/* (non-Javadoc)

@@ -294,5 +294,6 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 		if( references == null || references.isEmpty() ) return;
 		for (int i = 0; i < references.size(); ++i)
 			manager.returnReference( (IASTReference) references.get(i));
+		references.clear();
 	}
 }

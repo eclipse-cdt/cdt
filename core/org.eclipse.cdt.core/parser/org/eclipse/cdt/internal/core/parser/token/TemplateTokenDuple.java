@@ -112,6 +112,7 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			{
 				IASTExpression e = (IASTExpression) argLists[i].get(j);
 				e.freeReferences(manager);
+				
 			}
 		}
 	}

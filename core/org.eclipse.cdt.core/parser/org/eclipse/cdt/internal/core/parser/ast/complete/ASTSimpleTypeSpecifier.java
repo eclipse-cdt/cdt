@@ -156,6 +156,6 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
 		if( refs == null || refs.isEmpty() ) return;
 		for( int i = 0; i < refs.size(); ++i )
 			referenceManager.returnReference( (ASTReference)refs.get(i));
-		
+		refs.clear();
 	}
 }

@@ -231,7 +231,7 @@ public class ASTTypeId implements IASTTypeId
 		if( references.isEmpty() ) return;
 		for( int i =0; i < references.size(); ++i)
 			manager.returnReference( (IASTReference) references.get(i));
-		
+		references.clear();
 	}
 
 

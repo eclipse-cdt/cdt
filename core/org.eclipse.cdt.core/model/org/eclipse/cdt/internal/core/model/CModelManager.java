@@ -154,7 +154,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 			// Register to the workspace;
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
-				 IResourceChangeEvent.PRE_AUTO_BUILD
+				 IResourceChangeEvent.PRE_BUILD
 				| IResourceChangeEvent.POST_CHANGE
 				| IResourceChangeEvent.PRE_DELETE
 				| IResourceChangeEvent.PRE_CLOSE);
@@ -679,7 +679,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				}
 				break;
 
-				case IResourceChangeEvent.PRE_AUTO_BUILD :
+				case IResourceChangeEvent.PRE_BUILD :
 					// No need now.
 					if(delta != null) {
 						this.checkProjectsBeingAddedOrRemoved(delta);

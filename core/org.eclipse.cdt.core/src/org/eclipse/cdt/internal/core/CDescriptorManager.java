@@ -105,7 +105,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 			}
 		});
 		getWorkspace().addResourceChangeListener(this,
-				IResourceChangeEvent.PRE_AUTO_BUILD | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
+				IResourceChangeEvent.PRE_BUILD | IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 						}
 					}
 					break;
-				case IResourceChangeEvent.PRE_AUTO_BUILD :
+				case IResourceChangeEvent.PRE_BUILD :
 					IResourceDelta resDelta = event.getDelta();
 					if (resDelta == null) {
 						break;

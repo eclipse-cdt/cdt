@@ -151,9 +151,7 @@ public class Util implements ICLogConstants {
 	 * Add a log entry
 	 */
 	public static void log(Throwable e, String message, LogConst logType) {
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault()
-				.getDescriptor().getUniqueIdentifier(), IStatus.ERROR, message,
-				e);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, message,e);
 		Util.log(status, logType);
 	}
 
@@ -166,9 +164,7 @@ public class Util implements ICLogConstants {
 	}
 
 	public static void log(String message, LogConst logType) {
-		IStatus status = new Status(IStatus.INFO, CCorePlugin.getDefault()
-				.getDescriptor().getUniqueIdentifier(), IStatus.INFO, message,
-				null);
+		IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, IStatus.INFO, message,	null);
 		Util.log(status, logType);
 	}
 

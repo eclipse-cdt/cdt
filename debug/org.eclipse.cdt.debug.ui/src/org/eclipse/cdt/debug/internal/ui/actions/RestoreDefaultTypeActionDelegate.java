@@ -103,7 +103,7 @@ public class RestoreDefaultTypeActionDelegate extends ActionDelegate
 			Object element = ((IStructuredSelection)selection).getFirstElement();
 			if ( element instanceof ICastToType )
 			{
-				boolean enabled = ((ICastToType)element).supportsCasting() && ((ICastToType)element).isCasted();
+				boolean enabled = ((ICastToType)element).isCasted();
 				action.setEnabled( enabled );
 				if ( enabled )
 				{

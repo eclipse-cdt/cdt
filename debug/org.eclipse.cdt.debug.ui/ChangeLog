@@ -1,3 +1,7 @@
+2003-03-14 Mikhail Khodjaiants
+	Fix for the 'Restore Default Type' action.
+	* RestoreDefaultTypeActionDelegate.java
+
 2003-03-11 Mikhail Khodjaiants
 	The implementation of the "Display As Array" action.
 	* CastToArrayActionDelegate.java

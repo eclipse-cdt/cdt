@@ -1,3 +1,6 @@
+2004-01-22 Hoda Amer
+	Solved a small problem in the ASTCompleteParseASTFactory sent to me by Dave.
+	
 2004-01-20 John Camelon
 	Added traceLog() call into Scanner.handleProblem() and updated ParserFactory.createPreprocessor() for extra error handling.  
 

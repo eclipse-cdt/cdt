@@ -920,7 +920,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					if(containingScope != null){
 						return (IContainerSymbol)containingScope;
 					} else {
-						throw new ASTSemanticException();							
+						return (IContainerSymbol)firstContainingScope;
 					}
 				} else {
 					throw new ASTSemanticException();						

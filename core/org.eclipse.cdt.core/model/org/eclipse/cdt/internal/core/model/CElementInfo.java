@@ -6,8 +6,8 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
@@ -43,7 +43,7 @@ class CElementInfo {
 	protected CElementInfo(CElement element) {
 		this.element = element;
 		// Array list starts with size = 0
-		fChildren = new ArrayList(0);
+		fChildren = new Vector(0);
 	}
 
 	protected CElement getElement() {

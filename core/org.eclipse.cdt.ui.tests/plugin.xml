@@ -93,6 +93,17 @@
          </visibility>
       </viewerContribution>
    </extension>
+   <extension
+         point="org.eclipse.cdt.ui.CElementFilters">
+      <filter
+            targetId="org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"
+            name="Problem Filter"
+            enabled="false"
+            description="Filter Problems"
+            class="org.eclipse.cdt.ui.tests.DOMAST.ProblemHolderFilter"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.ProblemHolderFilter">
+      </filter>
+   </extension>
 
 
 </plugin>

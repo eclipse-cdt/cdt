@@ -47,6 +47,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -106,15 +107,16 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class DOMAST extends ViewPart {
+   private static final String DOMAST_FILTER_GROUP_ID = "org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"; //$NON-NLS-1$
    private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
-private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
-private static final String EXTENSION_CC = "CC"; //$NON-NLS-1$
-private static final String EXTENSION_C = "C"; //$NON-NLS-1$
-private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
-private static final String LOAD_ACTIVE_EDITOR = "Load Active Editor"; //$NON-NLS-1$
-private static final String COLLAPSE_ALL = "Collapse ALL"; //$NON-NLS-1$
-private static final String EXPAND_ALL = "Expand All"; //$NON-NLS-1$
-private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1$
+   private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
+   private static final String EXTENSION_CC = "CC"; //$NON-NLS-1$
+   private static final String EXTENSION_C = "C"; //$NON-NLS-1$
+   private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
+   private static final String LOAD_ACTIVE_EDITOR = "Load Active Editor"; //$NON-NLS-1$
+   private static final String COLLAPSE_ALL = "Collapse ALL"; //$NON-NLS-1$
+   private static final String EXPAND_ALL = "Expand All"; //$NON-NLS-1$
+   private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1$
    private static final String VIEW_NAME         = "DOM View";         //$NON-NLS-1$
    private static final String POPUPMENU         = "#PopupMenu";       //$NON-NLS-1$
    private static final String OPEN_DECLARATIONS = "Open Declarations"; //$NON-NLS-1$
@@ -131,6 +133,8 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
    private IFile               file              = null;
    private IEditorPart         part              = null;
    private ParserLanguage              lang              = null;
+   
+   private CustomFiltersActionGroup customFiltersActionGroup;
 
    /*
     * The content provider class is responsible for providing objects to the
@@ -338,6 +342,8 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
       makeActions();
       hookContextMenu();
       hookSingleClickAction();
+
+      customFiltersActionGroup = new CustomFiltersActionGroup(DOMAST_FILTER_GROUP_ID, viewer);
       contributeToActionBars();
    }
 
@@ -379,6 +385,7 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
       IActionBars bars = getViewSite().getActionBars();
       fillLocalPullDown(bars.getMenuManager());
       fillLocalToolBar(bars.getToolBarManager());
+      customFiltersActionGroup.fillActionBars(bars);
    }
 
    private void fillLocalPullDown(IMenuManager manager) {

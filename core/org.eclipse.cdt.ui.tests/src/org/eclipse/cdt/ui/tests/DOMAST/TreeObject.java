@@ -107,6 +107,11 @@ public class TreeObject implements IAdaptable {
 	private IASTNode node = null;
 	private TreeParent parent;
 	
+	// used for applying filters to the tree, since it is lazily populated
+	// all parents of the desired tree object to display need to have a flag as well
+	private int filterFlag = 0; 
+	public static final int FLAG_PROBLEM = 0x1;
+	
 	public TreeObject(IASTNode node) {
 		this.node = node;
 	}
@@ -468,5 +473,17 @@ public class TreeObject implements IAdaptable {
 	   if( location.length == 1 )
 	      return location[0].getNodeLength();
 	   return 0;
+	}
+	
+	public void setFiltersFlag(int flag) {
+		filterFlag |= flag;
+		
+		if (parent != null ) {
+			parent.setFiltersFlag(flag);
+		}
+	}
+	
+	public int getFiltersFlag() {
+		return filterFlag;
 	}
 }

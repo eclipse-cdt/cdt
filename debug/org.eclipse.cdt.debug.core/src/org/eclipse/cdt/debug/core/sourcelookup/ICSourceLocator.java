@@ -51,5 +51,16 @@ public interface ICSourceLocator extends ISourceLocator
 	 */
 	boolean contains( IResource resource );
 	
+	/**
+	 * Returns an object representing the source code
+	 * for a type with the specified name, or <code>null</code>
+	 * if none could be found. The source element 
+	 * returned is implementation specific - for example, a
+	 * resource, a local file, a zip file entry, etc.
+	 * 
+	 * @param name the name of the object for which source is being searched for
+	 * 
+	 * @return source element
+	 */
 	Object findSourceElement( String fileName );
 }

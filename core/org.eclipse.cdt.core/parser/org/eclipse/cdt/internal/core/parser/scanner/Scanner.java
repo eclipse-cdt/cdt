@@ -471,8 +471,7 @@ public final class Scanner implements IScanner, IScannerData {
 					break;
 				} else if (next == '*') {
 					// multiline comment
-					if (skipOverMultilineComment())
-						break;
+					skipOverMultilineComment();
 					c = getChar( true );
 					continue;
 				} else {

@@ -1919,4 +1919,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	{
     	parse( "class Sample;\nstruct Sample { /* ... */ };" ); //$NON-NLS-1$
 	}
+    
+    public void testBug64268() throws Exception
+	{
+    	Writer writer = new StringWriter();
+		writer.write("#define BODY \\\n"); //$NON-NLS-1$
+		writer.write("for (;;) {	 \\\n"); //$NON-NLS-1$
+		writer.write("/* this multi-line comment messes \\\n"); //$NON-NLS-1$
+		writer.write("up the parser.  */ }\n"); //$NON-NLS-1$
+		writer.write("	void abc() {\n"); //$NON-NLS-1$
+		writer.write("BODY\n"); //$NON-NLS-1$
+		writer.write("}\n"); //$NON-NLS-1$
+		parse( writer.toString() );
+	}
 }

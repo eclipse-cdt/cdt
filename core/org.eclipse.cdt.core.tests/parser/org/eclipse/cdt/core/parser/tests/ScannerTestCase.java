@@ -1631,4 +1631,18 @@ public class ScannerTestCase extends BaseScannerTest
     	validateToken( IToken.tSEMI );
     	validateEOF();
 	}
+    
+    public void testBug64268() throws Exception
+	{
+      	Writer writer = new StringWriter();
+		writer.write("#define BODY \\\n"); //$NON-NLS-1$
+		writer.write(" {	 \\\n"); //$NON-NLS-1$
+		writer.write(" /* this multi-line comment messes \\\n"); //$NON-NLS-1$
+		writer.write(" up the parser.  */ }\n"); //$NON-NLS-1$
+		writer.write("BODY "); //$NON-NLS-1$
+		initializeScanner( writer.toString() );
+		validateToken( IToken.tLBRACE);
+		validateToken( IToken.tRBRACE);
+		validateEOF();
+	}
 }

@@ -1,6 +1,8 @@
 Release CDT-3.0
 
-	* Block Comment style(/* */) added in the CEditor context menu.
+	* Key binding(Ctrl+Shift+P to go to matching bracket in the C Editor.
+
+	* Block Comment style "/*..*/"(Ctrl+Shift+/, Ctrl+Shift+\) added in the C Editor context menu.
 
 	* All the CEditor text preference settings are now common with the text editors.
 	  To access use Window --> Preferences --> General --> Editors --> Text Editors

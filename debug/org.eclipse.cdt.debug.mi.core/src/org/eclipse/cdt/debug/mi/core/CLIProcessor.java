@@ -55,7 +55,7 @@ public class CLIProcessor {
 			session.fireEvent(new MIBreakpointChangedEvent(0));
 		} else if (isSettingSignal(operation)) {
 			// We do no know which signal let the upper layer find it.
-			session.fireEvent(new MISignalChangedEvent(""));
+			session.fireEvent(new MISignalChangedEvent("")); //$NON-NLS-1$
 		} else if (isDetach(operation)) {
 			// if it was a "detach" command change the state.
 			session.getMIInferior().setDisconnected();
@@ -68,27 +68,27 @@ public class CLIProcessor {
 		int type = -1;
 		/* execution commands: n, next, s, step, si, stepi, u, until, finish,
 		   c, continue, fg */
-		if (operation.equals("n") || operation.equals("next")) {
+		if (operation.equals("n") || operation.equals("next")) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.NEXT;
-		} else if (operation.equals("ni") || operation.equals("nexti")) {
+		} else if (operation.equals("ni") || operation.equals("nexti")) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.NEXTI;
-		} else if (operation.equals("s") || operation.equals("step")) {
+		} else if (operation.equals("s") || operation.equals("step")) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.STEP;
-		} else if (operation.equals("si") || operation.equals("stepi")) {
+		} else if (operation.equals("si") || operation.equals("stepi")) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.STEPI;
-		} else if (operation.equals("u") ||
-			   (operation.startsWith("unt") &&  "until".indexOf(operation) != -1)) {
+		} else if (operation.equals("u") || //$NON-NLS-1$
+			   (operation.startsWith("unt") &&  "until".indexOf(operation) != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 				type = MIRunningEvent.UNTIL;
-		} else if (operation.startsWith("fin") && "finish".indexOf(operation) != -1) {
+		} else if (operation.startsWith("fin") && "finish".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.FINISH;
-		} else if (operation.equals("c") || operation.equals("fg") ||
-			   (operation.startsWith("cont") && "continue".indexOf(operation) != -1)) {
+		} else if (operation.equals("c") || operation.equals("fg") || //$NON-NLS-1$ //$NON-NLS-2$
+			   (operation.startsWith("cont") && "continue".indexOf(operation) != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.CONTINUE;
-		} else if (operation.startsWith("sig") && "signal".indexOf(operation) != -1) {
+		} else if (operation.startsWith("sig") && "signal".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.CONTINUE;
-		} else if (operation.startsWith("j") && "jump".indexOf(operation) != -1) {
+		} else if (operation.startsWith("j") && "jump".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.CONTINUE;
-		} else if (operation.equals("r") || operation.equals("run")) {
+		} else if (operation.equals("r") || operation.equals("run")) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.CONTINUE;
 		}
 		return type;
@@ -98,11 +98,11 @@ public class CLIProcessor {
 		boolean isbreak = false;
 		/* breakpoints: b, break, hbreak, tbreak, rbreak, thbreak */
 		/* watchpoints: watch, rwatch, awatch, tbreak, rbreak, thbreak */
-		if ((operation.startsWith("b")   && "break".indexOf(operation)   != -1) ||
-		    (operation.startsWith("tb")  && "tbreak".indexOf(operation)  != -1) ||
-		    (operation.startsWith("hb")  && "hbreak".indexOf(operation)  != -1) ||
-		    (operation.startsWith("thb") && "thbreak".indexOf(operation) != -1) ||
-		    (operation.startsWith("rb")  && "rbreak".indexOf(operation)  != -1)) {
+		if ((operation.startsWith("b")   && "break".indexOf(operation)   != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("tb")  && "tbreak".indexOf(operation)  != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("hb")  && "hbreak".indexOf(operation)  != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("thb") && "thbreak".indexOf(operation) != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("rb")  && "rbreak".indexOf(operation)  != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 			isbreak = true;
 		}
 		return isbreak;
@@ -111,9 +111,9 @@ public class CLIProcessor {
 	boolean isSettingWatchpoint(String operation) {
 		boolean isWatch = false;
 		/* watchpoints: watch, rwatch, awatch, tbreak, rbreak, thbreak */
-		if ((operation.startsWith("wa")  && "watch".indexOf(operation)   != -1) ||
-		    (operation.startsWith("rw")  && "rwatch".indexOf(operation)  != -1) ||
-		    (operation.startsWith("aw")  && "awatch".indexOf(operation)  != -1)) {
+		if ((operation.startsWith("wa")  && "watch".indexOf(operation)   != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("rw")  && "rwatch".indexOf(operation)  != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("aw")  && "awatch".indexOf(operation)  != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 			isWatch = true;
 		}
 		return  isWatch;
@@ -122,8 +122,8 @@ public class CLIProcessor {
 	boolean isDeletingBreakpoint(String operation) {
 		boolean isDelete = false;
 		/* deleting breaks: clear, delete */
-		if ((operation.startsWith("cl")  && "clear".indexOf(operation)   != -1) ||
-		    (operation.equals("d") || (operation.startsWith("del") && "delete".indexOf(operation)  != -1))) {
+		if ((operation.startsWith("cl")  && "clear".indexOf(operation)   != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.equals("d") || (operation.startsWith("del") && "delete".indexOf(operation)  != -1))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			isDelete = true;
 		}
 		return isDelete;
@@ -132,11 +132,11 @@ public class CLIProcessor {
 	boolean isChangeBreakpoint(String operation) {
 		boolean isChange = false;
 		/* changing breaks: enable, disable */
-		if ((operation.equals("dis") || operation.equals("disa") ||
-			(operation.startsWith("disa")  && "disable".indexOf(operation) != -1)) ||
-		    (operation.equals("en") || (operation.startsWith("en") && "enable".indexOf(operation) != -1)) ||
-		    (operation.startsWith("ig") && "ignore".indexOf(operation) != -1) ||
-		    (operation.startsWith("cond") && "condition".indexOf(operation) != -1)) {
+		if ((operation.equals("dis") || operation.equals("disa") || //$NON-NLS-1$ //$NON-NLS-2$
+			(operation.startsWith("disa")  && "disable".indexOf(operation) != -1)) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.equals("en") || (operation.startsWith("en") && "enable".indexOf(operation) != -1)) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		    (operation.startsWith("ig") && "ignore".indexOf(operation) != -1) || //$NON-NLS-1$ //$NON-NLS-2$
+		    (operation.startsWith("cond") && "condition".indexOf(operation) != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 			isChange = true;
 		}
 		return isChange;
@@ -145,7 +145,7 @@ public class CLIProcessor {
 	boolean isSettingSignal(String operation) {
 		boolean isChange = false;
 		/* changing signal: handle, signal */
-		if (operation.startsWith("ha")  && "handle".indexOf(operation) != -1) {
+		if (operation.startsWith("ha")  && "handle".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			isChange = true;
 		}
 		return isChange;
@@ -156,7 +156,7 @@ public class CLIProcessor {
 	 * @return
 	 */
 	boolean isDetach(String operation) {
-		return (operation.startsWith("det")  && "detach".indexOf(operation) != -1);
+		return (operation.startsWith("det")  && "detach".indexOf(operation) != -1); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 

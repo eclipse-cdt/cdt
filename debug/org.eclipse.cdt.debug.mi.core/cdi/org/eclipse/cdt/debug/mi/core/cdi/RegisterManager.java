@@ -34,16 +34,14 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class RegisterManager extends SessionObject implements ICDIRegisterManager {
+public class RegisterManager extends Manager implements ICDIRegisterManager {
 
 	private List regList;
-	private boolean autoupdate;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public RegisterManager(Session session) {
-		super(session);
+		super(session, true);
 		regList = Collections.synchronizedList(new ArrayList());
-		autoupdate = true;
 	}
 
 	/**
@@ -59,7 +57,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 			MIDataListRegisterNamesInfo info =
 				registers.getMIDataListRegisterNamesInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			String[] names = info.getRegisterNames();
 			List regsList = new ArrayList(names.length);
@@ -86,7 +84,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 			Register reg = getRegister(regObject);
 			if (reg == null) {
 				try {
-					String name = "$" + regObj.getName();
+					String name = "$" + regObj.getName(); //$NON-NLS-1$
 					Session session = (Session)getSession();
 					MISession mi = session.getMISession();
 					CommandFactory factory = mi.getCommandFactory();
@@ -94,7 +92,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 					mi.postCommand(var);
 					MIVarCreateInfo info = var.getMIVarCreateInfo();
 					if (info == null) {
-						throw new CDIException("No answer");
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
 					reg = new Register(regObj, info.getMIVar());
 					regList.add(reg);
@@ -104,7 +102,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 			}
 			return reg;
 		}
-		throw new CDIException("Wrong register type");
+		throw new CDIException(CdiResources.getString("cdi.RegisterManager.Wrong_register_type")); //$NON-NLS-1$
 	}
 
 	public Register createRegister(RegisterObject v, MIVar mivar) throws CDIException {
@@ -118,20 +116,6 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	 */
 	public void destroyRegister(ICDIRegister reg) {
 		regList.remove(reg);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
 	}
 
 	/**
@@ -180,7 +164,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 			MIDataListChangedRegistersInfo info =
 				changed.getMIDataListChangedRegistersInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			int[] regnos = info.getRegisterNumbers();
 			List eventList = new ArrayList(regnos.length);
@@ -197,7 +181,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 						mi.postCommand(update);
 						MIVarUpdateInfo updateInfo = update.getMIVarUpdateInfo();
 						if (updateInfo == null) {
-							throw new CDIException("No answer");
+							throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 						}
 						changes = updateInfo.getMIVarChanges();
 					} catch (MIException e) {

@@ -58,14 +58,14 @@ public class GDBTypeParser {
 		// Initialize.
 		line = s;
 		index = 0;
-		token = "";
-		dataType = "";
-		name = "";
+		token = ""; //$NON-NLS-1$
+		dataType = ""; //$NON-NLS-1$
+		name = ""; //$NON-NLS-1$
 		gdbDerivedType = null;
 
 		// Fetch the datatype.
 		while (getToken() == NAME) {
-			dataType += " " + token;
+			dataType += " " + token; //$NON-NLS-1$
 		}
 
 		// Hack for GDB, the typename can be something like
@@ -97,7 +97,7 @@ public class GDBTypeParser {
 		}
 
 		public GDBType(int t) {
-			this("", t);
+			this("", t); //$NON-NLS-1$
 		}
 
 		GDBType(String n, int t) {
@@ -151,23 +151,23 @@ public class GDBTypeParser {
 
 		public String toString() {
 			StringBuffer sb = new StringBuffer();
-			String childTypeName = (hasChild() ? child.toString() : "");
+			String childTypeName = (hasChild() ? child.toString() : ""); //$NON-NLS-1$
 			sb.append(childTypeName);
 			switch (getType()) {
 				case FUNCTION :
-					sb.append("()");
+					sb.append("()"); //$NON-NLS-1$
 					//sb.append(" function returning " + (hasChild() ? child.toString() : ""));
 					break;
 				case ARRAY :
-					sb.append("[" + dimension + "]");
+					sb.append("[" + dimension + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					//sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.toString() : ""));
 					break;
 				case REFERENCE :
-					sb.append("&");
+					sb.append("&"); //$NON-NLS-1$
 					//sb.append(" reference to " + (hasChild() ? child.toString() : ""));
 					break;
 				case POINTER :
-					sb.append("*");
+					sb.append("*"); //$NON-NLS-1$
 					//sb.append(" pointer to " + (hasChild() ? child.toString() : ""));
 					break;
 			}
@@ -178,16 +178,16 @@ public class GDBTypeParser {
 			StringBuffer sb = new StringBuffer();
 			switch (getType()) {
 				case FUNCTION :
-					sb.append(" function returning " + (hasChild() ? child.verbose() : ""));
+					sb.append(" function returning " + (hasChild() ? child.verbose() : "")); //$NON-NLS-2$
 					break;
 				case ARRAY :
-					sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.verbose() : ""));
+					sb.append(" array[" + dimension + "]" + " of " + (hasChild() ? child.verbose() : "")); //$NON-NLS-2$ //$NON-NLS-4$
 					break;
 				case REFERENCE :
-					sb.append(" reference to " + (hasChild() ? child.verbose() : ""));
+					sb.append(" reference to " + (hasChild() ? child.verbose() : "")); //$NON-NLS-2$
 					break;
 				case POINTER :
-					sb.append(" pointer to " + (hasChild() ? child.verbose() : ""));
+					sb.append(" pointer to " + (hasChild() ? child.verbose() : "")); //$NON-NLS-2$
 					break;
 			}
 			return sb.toString();
@@ -247,7 +247,7 @@ public class GDBTypeParser {
 
 	// method returns the next token
 	int getToken() {
-		token = "";
+		token = ""; //$NON-NLS-1$
 
 		int c = getch();
 
@@ -260,7 +260,7 @@ public class GDBTypeParser {
 
 		if (c == '(') {
 			if ((c = getch()) == ')') {
-				token = "()";
+				token = "()"; //$NON-NLS-1$
 				tokenType = PARENS;
 			} else {
 				ungetch();
@@ -272,7 +272,7 @@ public class GDBTypeParser {
 			}
 			tokenType = BRACKETS;
 		} else if (isCIdentifierStart(c)) {
-			token = "" + (char) c;
+			token = "" + (char) c; //$NON-NLS-1$
 			while (isCIdentifierPart((c = getch())) && c != EOF) {
 				token += (char) c;
 			}
@@ -336,7 +336,7 @@ public class GDBTypeParser {
 			}
 		} else if (tokenType == NAME) {
 			// Useless we do not need the name of the variable
-			name = " " + token;
+			name = " " + token; //$NON-NLS-1$
 		} else if (tokenType == PARENS) {
 			prependChild(GDBType.FUNCTION);
 		} else if (tokenType == BRACKETS) {			
@@ -376,40 +376,40 @@ public class GDBTypeParser {
 
 		GDBTypeParser parser = new GDBTypeParser();
 
-		System.out.println("struct link { int i; int j; struct link * next} *");
-		parser.parse("struct link { int i; int j; struct link * next} *");
+		System.out.println("struct link { int i; int j; struct link * next} *"); //$NON-NLS-1$
+		parser.parse("struct link { int i; int j; struct link * next} *"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("char **argv");
-		parser.parse("unsigned long long int **argv");
+		System.out.println("char **argv"); //$NON-NLS-1$
+		parser.parse("unsigned long long int **argv"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("int (*daytab)[13]");
-		parser.parse("int (*daytab)[13]");
+		System.out.println("int (*daytab)[13]"); //$NON-NLS-1$
+		parser.parse("int (*daytab)[13]"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("int *daytab[13]");
-		parser.parse("int *daytab[13]");
+		System.out.println("int *daytab[13]"); //$NON-NLS-1$
+		parser.parse("int *daytab[13]"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("void *comp()");
-		parser.parse("void *comp()");
+		System.out.println("void *comp()"); //$NON-NLS-1$
+		parser.parse("void *comp()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("void (*comp)()");
-		parser.parse("void (*comp)()");
+		System.out.println("void (*comp)()"); //$NON-NLS-1$
+		parser.parse("void (*comp)()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("int (*func[15])()");
-		parser.parse("int (*func[15])()");
+		System.out.println("int (*func[15])()"); //$NON-NLS-1$
+		parser.parse("int (*func[15])()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("char (*(*x())[])()");
-		parser.parse("char (*(*x())[])()");
+		System.out.println("char (*(*x())[])()"); //$NON-NLS-1$
+		parser.parse("char (*(*x())[])()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 
-		System.out.println("char (*(*x[3])())[5]");
-		parser.parse("char (*(*x[3])())[5]");
+		System.out.println("char (*(*x[3])())[5]"); //$NON-NLS-1$
+		parser.parse("char (*(*x[3])())[5]"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
 	}
 }

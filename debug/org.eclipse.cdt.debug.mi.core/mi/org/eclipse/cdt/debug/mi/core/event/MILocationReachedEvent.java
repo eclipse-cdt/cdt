@@ -30,7 +30,7 @@ public class MILocationReachedEvent extends MIStoppedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		buffer.append("thread-id=").append(getThreadId()).append('\n'); //$NON-NLS-1$
 		MIFrame f = getFrame();
 		if (f != null) {
 			buffer.append(f.toString());

@@ -37,7 +37,7 @@ public class MIDataDisassembleInfo extends MIInfo {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("asm_insns=[");
+		buffer.append("asm_insns=["); //$NON-NLS-1$
 		
 		if (isMixed()) {
 			MISrcAsm[] array = getMISrcAsms();

@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIGDBShowSolibSearchPath extends MIGDBShow {
 	public MIGDBShowSolibSearchPath() {
-		super(new String[] { "solib-search-path" });
+		super(new String[] { "solib-search-path" }); //$NON-NLS-1$
 	}
 
 	public MIGDBShowSolibSearchPathInfo getMIGDBShowSolibSearchPathInfo() throws MIException {

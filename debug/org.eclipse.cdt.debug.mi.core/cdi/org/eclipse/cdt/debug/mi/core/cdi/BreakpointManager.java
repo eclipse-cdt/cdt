@@ -47,19 +47,17 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 /**
  * Breakpoint Manager for the CDI interface.
  */
-public class BreakpointManager extends SessionObject implements ICDIBreakpointManager {
+public class BreakpointManager extends Manager implements ICDIBreakpointManager {
 
 	List breakList;
 	List deferredList;
 	boolean allowInterrupt;
-	boolean autoupdate;
 
 	public BreakpointManager(Session session) {
-		super(session);
+		super(session, false);
 		breakList = Collections.synchronizedList(new ArrayList());
 		deferredList = Collections.synchronizedList(new ArrayList());
 		allowInterrupt = true;
-		autoupdate = false;
 	}
 
 	public MIBreakpoint[] getMIBreakpoints() throws CDIException {
@@ -70,7 +68,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			s.getMISession().postCommand(breakpointList);
 			MIBreakListInfo info = breakpointList.getMIBreakListInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			return info.getMIBreakpoints();
 		} catch (MIException e) {
@@ -141,7 +139,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			&& breakList.contains(breakpoint)) {
 			number = ((Breakpoint) breakpoint).getMIBreakpoint().getNumber();
 		} else {
-			throw new CDIException("Not a CDT breakpoint");
+			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
 		boolean state = suspendInferior(breakpoint.getTarget());
 		Session session = (Session)getSession();
@@ -151,7 +149,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			session.getMISession().postCommand(breakEnable);
 			MIInfo info = breakEnable.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -171,7 +169,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			&& breakList.contains(breakpoint)) {
 			number = ((Breakpoint) breakpoint).getMIBreakpoint().getNumber();
 		} else {
-			throw new CDIException("Not a CDT breakpoint");
+			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
 
 		Session session = (Session)getSession();
@@ -183,7 +181,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			session.getMISession().postCommand(breakDisable);
 			MIInfo info = breakDisable.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -202,7 +200,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			&& breakList.contains(breakpoint)) {
 			number = ((Breakpoint) breakpoint).getMIBreakpoint().getNumber();
 		} else {
-			throw new CDIException("Not a CDT breakpoint");
+			throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 		}
 
 		Session session = (Session)getSession();
@@ -212,7 +210,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		// reset the values to sane states.
 		String exprCond = condition.getExpression();
 		if (exprCond == null) {
-			exprCond = "";
+			exprCond = ""; //$NON-NLS-1$
 		}
 		int ignoreCount = condition.getIgnoreCount();
 		if (ignoreCount < 0) { 
@@ -225,14 +223,14 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			session.getMISession().postCommand(breakCondition);
 			MIInfo info = breakCondition.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			MIBreakAfter breakAfter =
 				factory.createMIBreakAfter(number, ignoreCount);
 			session.getMISession().postCommand(breakAfter);
 			info = breakAfter.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -332,7 +330,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				numbers[i] =
 					((Breakpoint) breakpoints[i]).getMIBreakpoint().getNumber();
 			} else {
-				throw new CDIException("Not a CDT breakpoint");
+				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 			}
 		}
 		Session session = (Session)getSession();
@@ -343,7 +341,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			session.getMISession().postCommand(breakDelete);
 			MIInfo info = breakDelete.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -376,7 +374,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	 */
 	public ICDICatchpoint setCatchpoint( int type, ICDICatchEvent event, String expression,
 		ICDICondition condition) throws CDIException {
-		throw new CDIException("Not Supported");
+		throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_Supported")); //$NON-NLS-1$
 	}
 
 	/**
@@ -467,11 +465,11 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			session.getMISession().postCommand(breakInsert);
 			MIBreakInsertInfo info = breakInsert.getMIBreakInsertInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			points = info.getMIBreakpoints();
 			if (points == null || points.length == 0) {
-				throw new CDIException("Error parsing");
+				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -503,10 +501,10 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			MIBreakWatchInfo info = breakWatch.getMIBreakWatchInfo();
 			points = info.getMIBreakpoints();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			if (points == null || points.length == 0) {
-				throw new CDIException("Parsing Error");
+				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -541,20 +539,6 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	 */
 	public ICDILocation createLocation(long address) {
 		return new Location(address);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 }

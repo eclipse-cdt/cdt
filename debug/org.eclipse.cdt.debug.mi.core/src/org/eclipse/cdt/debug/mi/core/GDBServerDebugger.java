@@ -51,7 +51,7 @@ public class GDBServerDebugger implements ICDebugger {
 				mgr.setSharedLibraryPaths(paths);
 			}
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.Error_initializing") + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -59,12 +59,12 @@ public class GDBServerDebugger implements ICDebugger {
 		Session session = null;
 		boolean failed = false;
 		try {
-			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid");
-				remote += ":";
+				remote += ":"; //$NON-NLS-1$
 				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid");
 				String[] args = new String[] {"remote", remote};
 				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), 0, args, cwd, gdbinit);
@@ -78,31 +78,31 @@ public class GDBServerDebugger implements ICDebugger {
 				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), -1, null, cwd, gdbinit);
 				MISession miSession = session.getMISession();
 				CommandFactory factory = miSession.getCommandFactory();
-				MIGDBSet setRemoteBaud = factory.createMIGDBSet(new String[]{"remotebaud", remoteBaud});
+				MIGDBSet setRemoteBaud = factory.createMIGDBSet(new String[]{"remotebaud", remoteBaud}); //$NON-NLS-1$
 				// Set serial line parameters
 				miSession.postCommand(setRemoteBaud, launchTimeout);
 				MIInfo info = setRemoteBaud.getMIInfo();
 				if (info == null) {
-					throw new MIException ("Can not set Baud");
+					throw new MIException (MIPlugin.getResourceString("src.GDBServerDebugger.Can_not_set_Baud")); //$NON-NLS-1$
 				}
 				MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote});
 				miSession.postCommand(select, launchTimeout);
 				select.getMIInfo();
 				if (info == null) {
-					throw new MIException ("No answer");
+					throw new MIException (MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
 				}
 			}
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
 			failed = true;
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.Error_initializing") + e.getMessage()); //$NON-NLS-1$
 		} catch (MIException e) {
 			failed = true;
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.Error_initializing") + e.getMessage()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			failed = true;
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.Error_initializing") + e.getMessage()); //$NON-NLS-1$
 		} finally {
 			if (failed) {
 				if (session != null) {
@@ -117,10 +117,10 @@ public class GDBServerDebugger implements ICDebugger {
 	}
 
 	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException {
-		throw new CDIException("GDBServer does not support attaching");
+		throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_attaching_unsupported")); //$NON-NLS-1$
 	}
 
 	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
-		throw new CDIException("GDBServer does not support core files");
+		throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_corefiles_unsupported")); //$NON-NLS-1$
 	}
 }

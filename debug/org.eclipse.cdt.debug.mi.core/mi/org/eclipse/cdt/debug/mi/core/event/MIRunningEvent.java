@@ -34,6 +34,6 @@ public class MIRunningEvent extends MIEvent {
 	}
 
 	public String toString() {
-		return "Running";
+		return "Running"; //$NON-NLS-1$
 	}
 }

@@ -56,7 +56,7 @@ public class GDBDebugger implements ICDebugger {
 				manager.setSharedLibraryPaths(paths);
 			}
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing shared library options: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_initializing_shared_lib_options") + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -64,21 +64,21 @@ public class GDBDebugger implements ICDebugger {
 		Session session = null;
 		boolean failed = false;
 		try {
-			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} catch (MIException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} finally {
 			if (failed) {
 				if (session != null) {
@@ -96,21 +96,21 @@ public class GDBDebugger implements ICDebugger {
 		Session session = null;
 		boolean failed = false;
 		try {
-			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), pid, null, cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} catch (MIException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} finally {
 			if (failed) {
 				if (session != null) {
@@ -128,21 +128,21 @@ public class GDBDebugger implements ICDebugger {
 		Session session = null;
 		boolean failed = false;
 		try {
-			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
+			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb"); //$NON-NLS-1$
 			File cwd = exe.getProject().getLocation().toFile();
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} catch (MIException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} catch (CoreException e) {
 			failed = true;
-			throw new CDIException("Error creating session: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session") + e.getMessage()); //$NON-NLS-1$
 		} finally {
 			if (failed) {
 				if (session != null) {

@@ -46,20 +46,18 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class VariableManager extends SessionObject implements ICDIVariableManager {
+public class VariableManager extends Manager implements ICDIVariableManager {
 
 	// We put a restriction on how deep we want to
 	// go when doing update of the variables.
 	// If the number is to high, gdb will just hang.
 	int MAX_STACK_DEPTH = 200;
 	List variableList;
-	boolean autoupdate;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public VariableManager(Session session) {
-		super(session);
+		super(session, true);
 		variableList = Collections.synchronizedList(new ArrayList());
-		autoupdate = true;
 	}
 
 	/**
@@ -132,13 +130,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				mi.postCommand(ptype);
 				MIPTypeInfo info = ptype.getMIPtypeInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
 		} else {
-			throw new CDIException("Unknown type");
+			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_type")); //$NON-NLS-1$
 		}
 	}
 
@@ -206,7 +204,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					mi.postCommand(var);
 					MIVarCreateInfo info = var.getMIVarCreateInfo();
 					if (info == null) {
-						throw new CDIException("No answer");
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
 					argument = new Argument(argObj, info.getMIVar());
 					variableList.add(argument);
@@ -220,7 +218,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			return argument;
 		}
-		throw new CDIException("Wrong variable type");
+		throw new CDIException(CdiResources.getString("cdi.VariableManager.Wrong_variable_type")); //$NON-NLS-1$
 	}
 
 	/**
@@ -245,7 +243,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			mi.postCommand(listArgs);
 			MIStackListArgumentsInfo info = listArgs.getMIStackListArgumentsInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$ 
 			}
 			MIFrame[] miFrames = info.getMIFrames();
 			if (miFrames != null && miFrames.length == 1) {
@@ -281,10 +279,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		}
 		StringBuffer buffer = new StringBuffer();
 		if (filename.length() > 0) {
-			buffer.append('\'').append(filename).append('\'').append("::");
+			buffer.append('\'').append(filename).append('\'').append("::"); //$NON-NLS-1$
 		}
 		if (function.length() > 0) {
-			buffer.append(function).append("::");
+			buffer.append(function).append("::"); //$NON-NLS-1$
 		}
 		buffer.append(name);
 		ICDITarget target = getSession().getCurrentTarget();
@@ -313,7 +311,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			vo.setCastingArrayEnd(length);
 			return vo;
 		}
-		throw new CDIException("Unknown variable object");
+		throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_variable_object")); //$NON-NLS-1$
 	}
 
 	/**
@@ -337,12 +335,12 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					obj.getStackDepth());
 			String casting = obj.getCastingType();
 			if (casting != null && casting.length() > 0) {
-				type = "(" + type + ")" + "(" + casting + " )";
+				type = "(" + type + ")" + "(" + casting + " )"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			vo.setCastingType(type);
 			return vo;
 		}
-		throw new CDIException("Unknown variable object");
+		throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_variable_object")); //$NON-NLS-1$
 	}
 
 	/**
@@ -364,7 +362,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			mi.postCommand(locals);
 			MIStackListLocalsInfo info = locals.getMIStackListLocalsInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			args = info.getLocals();
 			if (args != null) {
@@ -423,7 +421,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					mi.postCommand(var);
 					MIVarCreateInfo info = var.getMIVarCreateInfo();
 					if (info == null) {
-						throw new CDIException("No answer");
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
 					variable = new Variable(varObj, info.getMIVar());
 					variableList.add(variable);
@@ -437,7 +435,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			return variable;
 		}
-		throw new CDIException("Wrong variable type");
+		throw new CDIException(CdiResources.getString("cdi.VariableManager.Wrong_variable_type")); //$NON-NLS-1$
 	}
 
 	/**
@@ -452,20 +450,6 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			MISession mi = session.getMISession();
 			mi.fireEvent(del);
 		}
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 	/**
@@ -517,7 +501,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					mi.postCommand(update);
 					MIVarUpdateInfo info = update.getMIVarUpdateInfo();
 					if (info == null) {
-						throw new CDIException("No answer");
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
 					changes = info.getMIVarChanges();
 				} catch (MIException e) {

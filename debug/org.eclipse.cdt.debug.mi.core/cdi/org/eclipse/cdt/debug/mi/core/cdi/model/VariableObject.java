@@ -28,6 +28,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIWhatis;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 
 /**
  */
@@ -119,7 +120,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		String fn = getFullName();
 		if (castingLength > 0 || castingIndex > 0) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("*(");
+			buffer.append("*("); //$NON-NLS-1$
 			buffer.append('(').append(fn).append(')');
 			if (castingIndex != 0) {
 				buffer.append('+').append(castingIndex);
@@ -129,7 +130,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			fn = buffer.toString();
 		} else if (castingType != null && castingType.length() > 0) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("((").append(castingType).append(')');
+			buffer.append("((").append(castingType).append(')'); //$NON-NLS-1$
 			buffer.append(fn).append(')');
 			fn = buffer.toString();
 		}
@@ -185,13 +186,13 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			Session session = (Session) (target.getSession());
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			String exp = "sizeof(" + getTypeName() + ")";
+			String exp = "sizeof(" + getTypeName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression(exp);
 			try {
 				mi.postCommand(evaluate);
 				MIDataEvaluateExpressionInfo info = evaluate.getMIDataEvaluateExpressionInfo();
 				if (info == null) {
-					throw new CDIException("Target is not responding");
+					throw new CDIException(CdiResources.getString("cdi.model.VariableObject.Target_not_responding")); //$NON-NLS-1$
 				}
 				sizeof = info.getExpression();
 			} catch (MIException e) {
@@ -244,7 +245,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 				mi.postCommand(whatis);
 				MIWhatisInfo info = whatis.getMIWhatisInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 				typename = info.getType();
 			} catch (MIException e) {

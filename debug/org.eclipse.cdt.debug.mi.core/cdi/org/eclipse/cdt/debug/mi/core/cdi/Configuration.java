@@ -117,7 +117,7 @@ public class Configuration implements ICDIConfiguration {
 	public boolean supportsSuspend() {
 		String os = null;
 		try {
-			os = System.getProperty("os.name", "");
+			os = System.getProperty("os.name", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (SecurityException e) {
 		}
 		Process gdb = miSession.getGDBProcess();
@@ -130,7 +130,7 @@ public class Configuration implements ICDIConfiguration {
 
 			// If we have a pty, sending a control-c will work
 			// except for solaris.
-			if (os.equals("SunOS")) {
+			if (os.equals("SunOS")) { //$NON-NLS-1$
 				MIInferior inferior = miSession.getMIInferior();
 				if (inferior.getPTY() != null) {
 					// FIXME: bug in Solaris gdb when using -tty, sending a control-c

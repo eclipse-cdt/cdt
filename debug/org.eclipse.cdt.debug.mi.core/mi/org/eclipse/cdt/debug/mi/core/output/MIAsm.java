@@ -38,10 +38,10 @@ public class MIAsm {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('{');
-		buffer.append("address=\"" + Long.toHexString(address) +"\""); //$NON-NLS-2$
-		buffer.append(",func-name=\"" + function + "\""); //$NON-NLS-2$
-		buffer.append(",offset=\"").append(offset).append('"');
-		buffer.append(",inst=\"" + getInstruction() + "\""); //$NON-NLS-2$
+		buffer.append("address=\"" + Long.toHexString(address) +"\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",func-name=\"" + function + "\"");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append(",offset=\"").append(offset).append('"'); //$NON-NLS-1$
+		buffer.append(",inst=\"" + getInstruction() + "\"");  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append('}');
 		return buffer.toString();
 	}
@@ -57,19 +57,19 @@ public class MIAsm {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("address")) {
+			if (var.equals("address")) { //$NON-NLS-1$
 				try {
 					address = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("func-name")) {
+			} else if (var.equals("func-name")) { //$NON-NLS-1$
 				function = str;
-			} else if (var.equals("offset")) {
+			} else if (var.equals("offset")) { //$NON-NLS-1$
 				try {
 					offset = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
-			} else if (var.equals("inst")) {
+			} else if (var.equals("inst")) { //$NON-NLS-1$
 				/* for the instruction, we do not want the C string but the
 				translated string since the only thing we are doing is
 				displaying it. */

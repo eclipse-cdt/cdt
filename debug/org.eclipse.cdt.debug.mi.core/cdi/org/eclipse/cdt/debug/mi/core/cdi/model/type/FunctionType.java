@@ -13,7 +13,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
  */
 public class FunctionType extends DerivedType implements ICDIFunctionType {
 
-	String params = "";
+	String params = ""; //$NON-NLS-1$
 
 	public FunctionType(ICDITarget target, String typename) {
 		super(target, typename);

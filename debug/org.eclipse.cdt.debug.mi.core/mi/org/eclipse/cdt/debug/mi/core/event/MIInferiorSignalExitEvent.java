@@ -47,8 +47,8 @@ public class MIInferiorSignalExitEvent extends MIDestroyedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("signal-name=" + sigName + "\n"); //$NON-NLS-2$
-		buffer.append("signal-meaning=" + sigMeaning + "\n"); //$NON-NLS-2$
+		buffer.append("signal-name=" + sigName + "\n");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("signal-meaning=" + sigMeaning + "\n");  //$NON-NLS-1$//$NON-NLS-2$
 		return buffer.toString();
 	}
 

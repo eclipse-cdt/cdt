@@ -10,6 +10,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
@@ -37,7 +38,7 @@ public class Value extends CObject implements ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getValueString()
 	 */
 	public String getValueString() throws CDIException {
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		MISession mi = ((Session)(getTarget().getSession())).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarEvaluateExpression var =
@@ -46,7 +47,7 @@ public class Value extends CObject implements ICDIValue {
 			mi.postCommand(var);
 			MIVarEvaluateExpressionInfo info = var.getMIVarEvaluateExpressionInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			result = info.getValue();
 		} catch (MIException e) {

@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -42,11 +44,19 @@ public class MIPlugin extends Plugin {
 	private static MIPlugin plugin;
 
 	// GDB init command file
-	private static final String GDBINIT = ".gdbinit";
+	private static final String GDBINIT = ".gdbinit"; //$NON-NLS-1$
 
 	// GDB command
-	private static final String GDB = "gdb";
+	private static final String GDB = "gdb"; //$NON-NLS-1$
 
+	private static ResourceBundle fgResourceBundle;
+	static {
+		try {
+			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.debug.mi.core.MIPluginResources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			fgResourceBundle = null;
+		}
+	}
 	/**
 	 * The constructor
 	 * @see org.eclipse.core.runtime.Plugin#Plugin(IPluginDescriptor)
@@ -153,15 +163,15 @@ public class MIPlugin extends Plugin {
 		String[] args;
 		if (pty != null) {
 			if (program == null) {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1"};
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program.getAbsolutePath()};
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			}
 		} else {
 			if (program == null) {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1"};
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			} else {
-				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1", program.getAbsolutePath()};
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			}
 		}
 
@@ -177,12 +187,12 @@ public class MIPlugin extends Plugin {
 		// Try to detect if we have been attach via "target remote localhost:port"
 		// and set the state to be suspended.
 		try {
-			CLICommand cmd = new CLICommand("info remote-process");
+			CLICommand cmd = new CLICommand("info remote-process"); //$NON-NLS-1$
 			session.postCommand(cmd);
 			MIInfo info = cmd.getMIInfo();
 			if (info == null) {
 				pgdb.destroy();
-				throw new MIException("No answer");
+				throw new MIException(getResourceString("src.common.No_answer")); //$NON-NLS-1$
 			}
 			//@@@ We have to manually set the suspended state when we attach
 			session.getMIInferior().setSuspended();
@@ -212,9 +222,9 @@ public class MIPlugin extends Plugin {
 		
 		String[] args;
 		if (program == null) {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath()};
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()};
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		}
 		Process pgdb = getGDBProcess(args);
 		MISession session;
@@ -245,9 +255,9 @@ public class MIPlugin extends Plugin {
 
 		String[] args;
 		if (program == null) {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1"};
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		} else {
-			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()};
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
 		Process pgdb = getGDBProcess(args);
 		MISession session;
@@ -264,7 +274,7 @@ public class MIPlugin extends Plugin {
 				session.postCommand(target);
 				MIInfo info = target.getMIInfo();
 				if (info == null) {
-					throw new MIException("No answer");
+					throw new MIException(getResourceString("src.common.No_answer")); //$NON-NLS-1$
 				}
 			}
 			if (pid > 0) {
@@ -272,7 +282,7 @@ public class MIPlugin extends Plugin {
 				session.postCommand(attach);
 				MIInfo info = attach.getMIInfo();
 				if (info == null) {
-					throw new MIException("No answer");
+					throw new MIException(getResourceString("src.common.No_answer")); //$NON-NLS-1$
 				}
 				session.getMIInferior().setInferiorPID(pid);
 			}
@@ -302,7 +312,7 @@ public class MIPlugin extends Plugin {
 	public void debugLog(String message) {
 		if (getDefault().isDebugging()) {			
 			// Time stamp
-			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
+			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } ); //$NON-NLS-1$
 			// This is to verbose for a log file, better use the console.
 			//	getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
 			// ALERT:FIXME: For example for big buffers say 4k length,
@@ -312,16 +322,24 @@ public class MIPlugin extends Plugin {
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);
-				System.err.println(partial + "\\");
+				System.err.println(partial + "\\"); //$NON-NLS-1$
 			}
-			if (message.endsWith("\n")) {
+			if (message.endsWith("\n")) { //$NON-NLS-1$
 				System.err.print(message);
 			} else {
 				System.err.println(message);
 			}
 		}
 	}
-
+	public static String getResourceString(String key) {
+		try {
+			return fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		} catch (NullPointerException e) {
+			return '#' + key + '#';
+		}
+	}
 	/**
 	 * Do some basic synchronisation, gdb may take some time to load
 	 * for whatever reasons.
@@ -341,7 +359,7 @@ public class MIPlugin extends Plugin {
 			getDefault().debugLog( sb.toString() );
 		}
 		final Process pgdb = ProcessFactory.getFactory().exec(args);
-		Thread syncStartup = new Thread("GDB Start") {
+		Thread syncStartup = new Thread("GDB Start") { //$NON-NLS-1$
 			public void run() {
 				try {
 					String line;
@@ -351,7 +369,7 @@ public class MIPlugin extends Plugin {
 					while ((line = reader.readLine()) != null) {
 						line = line.trim();
 						//System.out.println("GDB " + line);
-						if (line.endsWith("(gdb)")) {
+						if (line.endsWith("(gdb)")) { //$NON-NLS-1$
 							break;
 						}
 					}

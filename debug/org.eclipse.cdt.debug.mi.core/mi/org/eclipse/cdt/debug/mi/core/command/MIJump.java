@@ -20,7 +20,7 @@ public class MIJump extends CLICommand {
 	MIOutput out;
 
 	public MIJump(String loc) {
-		super("jump " + loc);
+		super("jump " + loc); //$NON-NLS-1$
 	}
 
 	/**

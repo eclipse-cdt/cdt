@@ -19,11 +19,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIInfoSignals extends CLICommand 
 {
 	public MIInfoSignals() {
-		super("info signals");
+		super("info signals"); //$NON-NLS-1$
 	}
 
 	public MIInfoSignals(String name) {
-		super("info signal " + name);
+		super("info signal " + name); //$NON-NLS-1$
 	}
 
 	public MIInfoSignalsInfo getMIInfoSignalsInfo() throws MIException {

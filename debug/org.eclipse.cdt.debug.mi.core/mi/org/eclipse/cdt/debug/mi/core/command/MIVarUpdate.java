@@ -27,7 +27,7 @@ public class MIVarUpdate extends MICommand {
 	}
 	
 	public MIVarUpdate(String name) {
-		super("-var-update", new String[] { name });
+		super("-var-update", new String[] { name }); //$NON-NLS-1$
 	}
 	
 	public MIVarUpdateInfo getMIVarUpdateInfo() throws MIException {

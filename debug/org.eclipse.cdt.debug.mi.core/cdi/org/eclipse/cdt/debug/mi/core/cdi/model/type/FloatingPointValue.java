@@ -64,14 +64,14 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	}
 
 	private boolean isPositiveInfinity(String valueString) {
-		return (valueString != null) ? valueString.indexOf("inf") != -1 : false;
+		return (valueString != null) ? valueString.indexOf("inf") != -1 : false; //$NON-NLS-1$
 	}
 
 	private boolean isNegativeInfinity(String valueString) {
-		return (valueString != null) ? valueString.indexOf("-inf") != -1 : false;
+		return (valueString != null) ? valueString.indexOf("-inf") != -1 : false; //$NON-NLS-1$
 	}
 
 	private boolean isNaN(String valueString) {
-		return (valueString != null) ? valueString.indexOf("nan") != -1 : false;
+		return (valueString != null) ? valueString.indexOf("nan") != -1 : false; //$NON-NLS-1$
 	}
 }

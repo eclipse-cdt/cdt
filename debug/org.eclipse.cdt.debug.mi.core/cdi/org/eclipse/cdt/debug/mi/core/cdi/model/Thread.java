@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -99,7 +100,7 @@ public class Thread extends CObject implements ICDIThread {
 				mi.postCommand(frames);
 				MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 				MIFrame[] miFrames = info.getMIFrames();
 				for (int i = 0; i < miFrames.length; i++) {
@@ -146,7 +147,7 @@ public class Thread extends CObject implements ICDIThread {
 					// Catch the first exception gdb can recover the second time.
 					info = depth.getMIStackInfoDepthInfo();
 					if (info == null) {
-						throw new CDIException("No answer");
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
 					stackdepth = info.getDepth();
 				} catch (MIException e) {
@@ -155,7 +156,7 @@ public class Thread extends CObject implements ICDIThread {
 					mi.postCommand(depth);
 					info = depth.getMIStackInfoDepthInfo();
 					if (info == null) {
-						throw new CDIException("No answer");
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 					}
 					stackdepth = info.getDepth();
 					if (stackdepth > 0) {
@@ -199,7 +200,7 @@ public class Thread extends CObject implements ICDIThread {
 				mi.postCommand(frames);
 				MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 				MIFrame[] miFrames = info.getMIFrames();
 				for (int i = 0; i < miFrames.length; i++) {
@@ -264,7 +265,7 @@ public class Thread extends CObject implements ICDIThread {
 			mi.postCommand(frame);
 			MIInfo info = frame.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			currentFrame = stackframe;
 			// Resetting stackframe may change the value of

@@ -66,11 +66,11 @@ public class MIInferior extends Process {
 				StringBuffer buf = new StringBuffer();
 				public void write(int b) throws IOException {
 					if (!isRunning()) {
-						throw new IOException("target is suspended");
+						throw new IOException(MIPlugin.getResourceString("src.MIInferior.target_is_suspended")); //$NON-NLS-1$
 					}
 					OutputStream channel = session.getChannelOutputStream();
 					if (channel == null) {
-						throw new IOException("No MI Session");
+						throw new IOException(MIPlugin.getResourceString("src.MIInferior.No_session")); //$NON-NLS-1$
 					}
 					channel.write(b);
 				}
@@ -214,7 +214,7 @@ public class MIInferior extends Process {
 
 		// If we've failed throw an exception up.
 		if (state == RUNNING) {
-			throw new MIException("Failed to interrupt");
+			throw new MIException(MIPlugin.getResourceString("src.MIInferior.Failed_to_interrupt")); //$NON-NLS-1$
 		}
 	}
 

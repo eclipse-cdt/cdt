@@ -25,19 +25,19 @@ public class MIVarSetFormat extends MICommand
 {
 	public MIVarSetFormat(String name, int fmt) {
 		super("-var-set-format"); //$NON-NLS-1$
-		String format = "hexadecimal";
+		String format = "hexadecimal"; //$NON-NLS-1$
 		switch (fmt) {
 		case MIFormat.NATURAL:
-			format = "natural";
+			format = "natural"; //$NON-NLS-1$
 			break;
 		case MIFormat.DECIMAL:
-			format = "decimal";
+			format = "decimal"; //$NON-NLS-1$
 			break;
 		case MIFormat.BINARY:
-			format = "binary";
+			format = "binary"; //$NON-NLS-1$
 			break;
 		case MIFormat.OCTAL:
-			format = "octal";
+			format = "octal"; //$NON-NLS-1$
 		break;
 		/*
 		case MIFormat.HEXADECIMAL:

@@ -21,7 +21,7 @@ public class TxThread extends Thread {
 	CLIProcessor cli;
 
 	public TxThread(MISession s) {
-		super("MI TX Thread");
+		super("MI TX Thread"); //$NON-NLS-1$
 		session = s;
 		cli = new CLIProcessor(session);
 	}

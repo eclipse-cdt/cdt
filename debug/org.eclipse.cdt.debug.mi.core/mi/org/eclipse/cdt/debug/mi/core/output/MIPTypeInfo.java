@@ -32,7 +32,7 @@ public class MIPTypeInfo extends MIInfo {
 					// We are interested in the shared info
 					if (str != null) {
 						str = str.trim();
-						if (str.startsWith ("type")) {
+						if (str.startsWith ("type")) { //$NON-NLS-1$
 							int equal = str.indexOf('=');
 							if (equal > 0) {
 								str = str.substring(equal + 1);

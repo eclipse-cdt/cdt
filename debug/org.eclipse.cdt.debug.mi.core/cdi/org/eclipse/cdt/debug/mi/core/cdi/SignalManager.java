@@ -25,15 +25,13 @@ import org.eclipse.cdt.debug.mi.core.output.MISigHandle;
 
 /**
  */
-public class SignalManager extends SessionObject implements ICDISignalManager {
+public class SignalManager extends Manager implements ICDISignalManager {
 
-	boolean autoupdate;
 	MISigHandle[] noSigs =  new MISigHandle[0];
 	List signalsList = null;
 
 	public SignalManager(Session session) {
-		super(session);
-		autoupdate = false;
+		super(session, false);
 	}
 	
 	MISigHandle[] getMISignals() throws CDIException {
@@ -46,7 +44,7 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 			mi.postCommand(sigs);
 			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			miSigs =  info.getMISignals();
 		} catch (MIException e) {
@@ -65,7 +63,7 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 			mi.postCommand(sigs);
 			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			MISigHandle[] miSigs =  info.getMISignals();
 			if (miSigs.length > 0) {
@@ -127,17 +125,17 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		StringBuffer buffer = new StringBuffer(sig.getName());
-		buffer.append(" ");
+		buffer.append(" "); //$NON-NLS-1$
 		if (isIgnore) {
-			buffer.append("ignore");
+			buffer.append(CdiResources.getString("cdi.SignalManager.ignore")); //$NON-NLS-1$
 		} else {
-			buffer.append("noignore");
+			buffer.append(CdiResources.getString("cdi.SignalManager.noignore")); //$NON-NLS-1$
 		}
-		buffer.append(" ");
+		buffer.append(" "); //$NON-NLS-1$
 		if (isStop) {
-			buffer.append("stop");
+			buffer.append(CdiResources.getString("cdi.SignalManager.stop")); //$NON-NLS-1$
 		} else  {
-			buffer.append("nostop");
+			buffer.append(CdiResources.getString("cdi.SignalManager.nostop")); //$NON-NLS-1$
 		}
 		MIHandle handle = factory.createMIHandle(buffer.toString());
 		try {
@@ -158,20 +156,6 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 			update();
 		}
 		return (ICDISignal[])signalsList.toArray(new ICDISignal[0]);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 	/**

@@ -42,10 +42,10 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 			mi.postCommand(arguments);
 			MIInfo info = arguments.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Unable to set arguments: target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.RuntimeOptions.Unable_to_set_args_target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
-			throw new CDIException("Unable to set arguments: " + e.getMessage());
+			throw new CDIException(CdiResources.getString("cdi.RuntimeOptions.Unable_to_set_args") + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -73,10 +73,10 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 				mi.postCommand(set);
 				MIInfo info = set.getMIInfo();
 				if (info == null) {
-					throw new CDIException("Unable to set environment: target is not responding");
+					throw new CDIException(CdiResources.getString("cdi.RuntimeOptions.Unable_to_set_args_target_not_responding")); //$NON-NLS-1$
 				}
 			} catch (MIException e) {
-				throw new CDIException("Unable to set environment: " + e.getMessage());
+				throw new CDIException(CdiResources.getString("cdi.RuntimeOptions.Unable_to_set_environment") + e.getMessage()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -95,10 +95,10 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 			mi.postCommand(cd);
 			MIInfo info = cd.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Unable to set working directory: target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.RuntimeOptions.Unable_to_set_args_target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
-			throw new CDIException("Unable to set working directory: " + e.getMessage());
+			throw new CDIException(CdiResources.getString("cdi.RuntimeOptions.Unable_to_set_working_dir") + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 

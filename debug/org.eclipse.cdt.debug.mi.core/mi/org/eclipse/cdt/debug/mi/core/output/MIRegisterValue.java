@@ -31,8 +31,8 @@ public class MIRegisterValue {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("number=\"").append(number).append('"');
-		buffer.append(',').append("value=\"" + value + "\"");
+		buffer.append("number=\"").append(number).append('"'); //$NON-NLS-1$
+		buffer.append(',').append("value=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		return buffer.toString();
 	}
 

@@ -119,7 +119,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			return new Location(frame.getFile(), frame.getFunction(),
 					frame.getLine(), frame.getAddress());
 		}
-		return new Location("", "", 0, 0);
+		return new Location("", "", 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

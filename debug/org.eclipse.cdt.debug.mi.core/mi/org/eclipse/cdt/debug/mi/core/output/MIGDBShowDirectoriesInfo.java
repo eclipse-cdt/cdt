@@ -35,7 +35,7 @@ public class MIGDBShowDirectoriesInfo extends MIInfo {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord)oobs[i];
 					String str = cons.getString();
-					if (str.startsWith("Source directories searched:")) {
+					if (str.startsWith("Source directories searched:")) { //$NON-NLS-1$
 						int j = str.indexOf(':');
 						if (j != -1) {
 							String sub = str.substring(j + 1).trim();

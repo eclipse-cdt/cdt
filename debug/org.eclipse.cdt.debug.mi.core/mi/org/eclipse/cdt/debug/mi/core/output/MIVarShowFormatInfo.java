@@ -34,15 +34,15 @@ public class MIVarShowFormatInfo extends MIInfo {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getString();
-							if ("binary".equals(str)) {
+							if ("binary".equals(str)) { //$NON-NLS-1$
 								format = MIFormat.BINARY;
-							} else if ("decimal".equals(str)) {
+							} else if ("decimal".equals(str)) { //$NON-NLS-1$
 								format = MIFormat.DECIMAL;
-							} else if ("hexadecimal".equals(str)) {
+							} else if ("hexadecimal".equals(str)) { //$NON-NLS-1$
 								format = MIFormat.HEXADECIMAL;
-							} else if ("octal".equals(str)) {
+							} else if ("octal".equals(str)) { //$NON-NLS-1$
 								format = MIFormat.OCTAL;
-							} else if ("natural".equals(str)) {
+							} else if ("natural".equals(str)) { //$NON-NLS-1$
 								format = MIFormat.NATURAL;
 							}
 						}

@@ -80,7 +80,7 @@ public class MIConst extends MIValue {
 		} else if (c == 'f') {
 			s = "\f"; //$NON-NLS-1$
 		} else if (c == 'n') {
-			s = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ $NON-NLS-2$
+			s = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$ $NON-NLS-2$
 		} else if (c == 'r') {
 			s = "\r"; //$NON-NLS-1$
 		} else if (c == 't') {

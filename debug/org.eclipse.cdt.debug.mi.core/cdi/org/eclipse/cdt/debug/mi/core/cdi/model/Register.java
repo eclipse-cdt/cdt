@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -36,7 +37,7 @@ public class Register extends Variable implements ICDIRegister {
 				mi.postCommand(var);
 				MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 				MIVar[] vars = info.getMIVars();
 				children = new Register[vars.length];

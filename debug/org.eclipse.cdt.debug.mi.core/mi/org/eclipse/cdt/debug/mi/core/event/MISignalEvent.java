@@ -42,9 +42,9 @@ public class MISignalEvent extends MIStoppedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("signal-name=" + sigName + "\n");
-		buffer.append("signal-meaning=" + sigMeaning + "\n");
-		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		buffer.append("signal-name=" + sigName + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("signal-meaning=" + sigMeaning + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append("thread-id=").append(getThreadId()).append('\n'); //$NON-NLS-1$
 		MIFrame f = getFrame();
 		if (f != null) {
 			buffer.append(f.toString());

@@ -44,6 +44,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 
 /**
  */
@@ -89,7 +90,7 @@ public class Target  implements ICDITarget {
 		if (cthread instanceof Thread) {
 			setCurrentThread(cthread, true);
 		} else {
-			throw new CDIException("Unknown thread");
+			throw new CDIException(CdiResources.getString("cdi.model.Target.Unknown_thread")); //$NON-NLS-1$
 		}
 	}
 	
@@ -97,7 +98,7 @@ public class Target  implements ICDITarget {
 		if (cthread instanceof Thread) {
 			setCurrentThread((Thread)cthread, doUpdate);
 		} else {
-			throw new CDIException("Unknown thread");
+			throw new CDIException(CdiResources.getString("cdi.model.Target.Unknown_thread")); //$NON-NLS-1$
 		}
 	}
 
@@ -121,7 +122,7 @@ public class Target  implements ICDITarget {
 				mi.postCommand(select);
 				MIThreadSelectInfo info = select.getMIThreadSelectInfo();
 				if (info == null) {
-					throw new CDIException("Target is not responding");
+					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 				}
 				currentThreadId = info.getNewThreadId();
 			} catch (MIException e) {
@@ -148,7 +149,7 @@ public class Target  implements ICDITarget {
 			// thread is gone.  Generate a Thread destroyed.
 			MISession mi = session.getMISession();
 			mi.fireEvent(new MIThreadExitEvent(id));
-			throw new CDIException("Can not swith to thread " + id);
+			throw new CDIException(CdiResources.getString("cdi.model.Target.Cannot_switch_to_thread") + id); //$NON-NLS-1$
 		}
 	}
 
@@ -318,7 +319,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(run);
 			MIInfo info = run.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -331,7 +332,7 @@ public class Target  implements ICDITarget {
 	public void resume() throws CDIException {
 		MISession mi = session.getMISession();
 		if (mi.getMIInferior().isRunning()) {
-			throw new CDIException("Inferior is already running");
+			throw new CDIException(CdiResources.getString("cdi.model.Target.Inferior_already_running")); //$NON-NLS-1$
 		} else if (mi.getMIInferior().isSuspended()) {
 			CommandFactory factory = mi.getCommandFactory();
 			MIExecContinue cont = factory.createMIExecContinue();
@@ -340,7 +341,7 @@ public class Target  implements ICDITarget {
 				mi.postCommand(cont);
 				MIInfo info = cont.getMIInfo();
 				if (info == null) {
-					throw new CDIException("Target is not responding");
+					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
@@ -364,7 +365,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(step);
 			MIInfo info = step.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -383,7 +384,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(stepi);
 			MIInfo info = stepi.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -402,7 +403,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(next);
 			MIInfo info = next.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -421,7 +422,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(nexti);
 			MIInfo info = nexti.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -457,7 +458,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(finish);
 			MIInfo info = finish.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -475,7 +476,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(ret);
 			MIInfo info = ret.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -505,7 +506,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(detach);
 			MIInfo info = detach.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -523,13 +524,13 @@ public class Target  implements ICDITarget {
 	public void runUntil(ICDILocation location) throws CDIException {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String loc = "";
+		String loc = ""; //$NON-NLS-1$
 		if (location.getFile() != null && location.getFile().length() > 0) {
-			loc = location.getFile() + ":" + location.getLineNumber();
+			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
 		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
 			loc = location.getFunction();
 		} else if (location.getAddress() != 0) {
-			loc = "*" + location.getAddress();
+			loc = "*" + location.getAddress(); //$NON-NLS-1$
 		}
 		MIExecUntil until = factory.createMIExecUntil(loc);
 		lastExecutionCommand = until;
@@ -537,7 +538,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(until);
 			MIInfo info = until.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -551,13 +552,13 @@ public class Target  implements ICDITarget {
 	public void jump(ICDILocation location) throws CDIException {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String loc = "";
+		String loc = ""; //$NON-NLS-1$
 		if (location.getFile() != null && location.getFile().length() > 0) {
-			loc = location.getFile() + ":" + location.getLineNumber();
+			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
 		} else if (location.getFunction() != null && location.getFunction().length() > 0) {
 			loc = location.getFunction();
 		} else if (location.getAddress() != 0) {
-			loc = "*" + location.getAddress();
+			loc = "*" + location.getAddress(); //$NON-NLS-1$
 		}
 		MIJump jump = factory.createMIJump(loc);
 		lastExecutionCommand = jump;
@@ -565,7 +566,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(jump);
 			MIInfo info = jump.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -586,7 +587,7 @@ public class Target  implements ICDITarget {
 			MIDataEvaluateExpressionInfo info =
 				evaluate.getMIDataEvaluateExpressionInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 			return info.getExpression();
 		} catch (MIException e) {
@@ -644,12 +645,12 @@ public class Target  implements ICDITarget {
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MISignal signal = factory.createMISignal("0");
+		MISignal signal = factory.createMISignal("0"); //$NON-NLS-1$
 		try {
 			mi.postCommand(signal);
 			MIInfo info = signal.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -668,7 +669,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(sig);
 			MIInfo info = sig.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Target is not responding");
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);

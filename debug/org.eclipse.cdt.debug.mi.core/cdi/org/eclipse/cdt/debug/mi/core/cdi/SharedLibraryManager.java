@@ -38,16 +38,14 @@ import org.eclipse.cdt.debug.mi.core.output.MIShared;
 /**
  * Manager of the CDI shared libraries.
  */
-public class SharedLibraryManager extends SessionObject implements ICDISharedLibraryManager {
+public class SharedLibraryManager extends Manager implements ICDISharedLibraryManager {
 
 	List sharedList;
-	boolean autoupdate;
 	boolean isDeferred;
 
 	public SharedLibraryManager (Session session) {
-		super(session);
+		super(session, true);
 		sharedList = new ArrayList(1);
-		autoupdate = true;
 	}
 
 	MIShared[] getMIShareds() throws CDIException {
@@ -59,7 +57,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			session.getMISession().postCommand(infoShared);
 			MIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			miLibs = info.getMIShared();
 		} catch (MIException e) {
@@ -171,13 +169,13 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIGDBShow show = factory.createMIGDBShow(new String[]{"auto-solib-add"});
+		MIGDBShow show = factory.createMIGDBShow(new String[]{"auto-solib-add"}); //$NON-NLS-1$
 		try {
 			mi.postCommand(show);
 			MIGDBShowInfo info = show.getMIGDBShowInfo();
 			String value = info.getValue();
 			if (value != null) {
-				return value.equalsIgnoreCase("on");
+				return value.equalsIgnoreCase("on"); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -202,13 +200,13 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIGDBShow show = factory.createMIGDBShow(new String[]{"stop-on-solib-events"});
+		MIGDBShow show = factory.createMIGDBShow(new String[]{"stop-on-solib-events"}); //$NON-NLS-1$
 		try {
 			mi.postCommand(show);
 			MIGDBShowInfo info = show.getMIGDBShowInfo();
 			String value = info.getValue();
 			if (value != null) {
-				return value.equalsIgnoreCase("1");
+				return value.equalsIgnoreCase("1"); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -268,7 +266,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			mi.postCommand(sharedlibrary);
 			MIInfo info = sharedlibrary.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -292,7 +290,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 				session.getMISession().postCommand(sharedlibrary);
 				MIInfo info = sharedlibrary.getMIInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
@@ -300,20 +298,6 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			((SharedLibrary)libs[i]).getMIShared().setSymbolsRead(true);
 			mi.fireEvent(new MISharedLibChangedEvent(libs[i].getFileName()));
 		}
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 	/* (non-Javadoc)

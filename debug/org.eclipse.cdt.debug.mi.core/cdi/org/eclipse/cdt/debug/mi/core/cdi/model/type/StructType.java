@@ -25,21 +25,21 @@ public class StructType extends AggregateType implements ICDIStructType {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType#isClass()
 	 */
 	public boolean isClass() {
-		return getDetailTypeName().startsWith("class");
+		return getDetailTypeName().startsWith("class"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType#isStruct()
 	 */
 	public boolean isStruct() {
-		return getDetailTypeName().startsWith("struct");
+		return getDetailTypeName().startsWith("struct"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType#isUnion()
 	 */
 	public boolean isUnion() {
-		return getDetailTypeName().startsWith("union");
+		return getDetailTypeName().startsWith("union"); //$NON-NLS-1$
 	}
 
 }

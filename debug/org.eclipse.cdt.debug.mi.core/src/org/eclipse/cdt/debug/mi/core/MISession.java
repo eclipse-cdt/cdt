@@ -119,7 +119,7 @@ public class MISession extends Observable {
 				// the reader may throw a NPE.
 			}
 			if (line == null) {
-				line = "Process Terminated";
+				line = MIPlugin.getResourceString("src.MISession.Process_Terminated"); //$NON-NLS-1$
 			}
 			throw new MIException(line);
 		} catch (IllegalThreadStateException e) {
@@ -138,15 +138,15 @@ public class MISession extends Observable {
 		// Like confirmation and screen size.
 
 		try {
-			MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
+			MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(confirm, launchTimeout);
 			confirm.getMIInfo(); 
 
-			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
+			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(width, launchTimeout);
 			confirm.getMIInfo(); 
 
-			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
+			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"}); //$NON-NLS-1$ //$NON-NLS-2$
 			postCommand(height, launchTimeout);
 			confirm.getMIInfo();
 
@@ -291,7 +291,7 @@ public class MISession extends Observable {
 
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
-			throw new MIException("{R,T}xThread terminated");
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Thread_Terminated")); //$NON-NLS-1$
 		}
 
 		// Test if we are in the right state?
@@ -299,12 +299,12 @@ public class MISession extends Observable {
 			// REMINDER: if we support -exec-interrupt
 			// Let it throught:
 			if (!(cmd instanceof MIExecInterrupt)) {
-				throw new MIException("Target is not suspended");
+				throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_suspended")); //$NON-NLS-1$
 			}
 		}
 
 		if (isTerminated()) {
-			throw new MIException("Session terminated");
+			throw new MIException(MIPlugin.getResourceString("src.MISession.Session_terminated")); //$NON-NLS-1$
 		}
 
 		// TRACING: print the command;
@@ -320,7 +320,7 @@ public class MISession extends Observable {
 				try {
 					cmd.wait(timeout);
 					if (cmd.getMIOutput() == null) {
-						throw new MIException("Target is not responding (timed out)");
+						throw new MIException(MIPlugin.getResourceString("src.MISession.Target_not_responding")); //$NON-NLS-1$
 					}
 				} catch (InterruptedException e) {
 				}

@@ -42,8 +42,8 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("number=").append(bkptno).append('\n');
-		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		buffer.append("number=").append(bkptno).append('\n'); //$NON-NLS-1$
+		buffer.append("thread-id=").append(getThreadId()).append('\n'); //$NON-NLS-1$
 		buffer.append(frame.toString());
 		return buffer.toString();
 	}

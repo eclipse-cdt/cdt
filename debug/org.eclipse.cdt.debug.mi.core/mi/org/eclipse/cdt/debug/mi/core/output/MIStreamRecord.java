@@ -25,12 +25,12 @@ public abstract class MIStreamRecord extends MIOOBRecord {
 
 	public String toString() {
 		if (this instanceof MIConsoleStreamOutput) {
-			return "~\"" + cstring + "\"\n"; //$NON-NLS-1$
+			return "~\"" + cstring + "\"\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (this instanceof MITargetStreamOutput) {
-			return "@\"" + cstring + "\"\n"; //$NON-NLS-1$
+			return "@\"" + cstring + "\"\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (this instanceof MILogStreamOutput) {
-			return "&\"" + cstring + "\"\n"; //$NON-NLS-1$
+			return "&\"" + cstring + "\"\n"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return  "\"" + cstring + "\"\n"; //$NON-NLS-1$
+		return  "\"" + cstring + "\"\n"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

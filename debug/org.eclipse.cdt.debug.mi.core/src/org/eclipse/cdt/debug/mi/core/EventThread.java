@@ -17,7 +17,7 @@ public class EventThread extends Thread {
 	MISession session;
 
 	public EventThread(MISession s) {
-		super("MI Event Thread");
+		super("MI Event Thread"); //$NON-NLS-1$
 		session = s;
 	}
 

@@ -172,7 +172,7 @@ public class Session implements ICDISession, ICDISessionObject {
 		if (target instanceof Target) {
 			ctarget = (Target)target;
 		} else {
-			throw new CDIException("Unkown target");
+			throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
 		}
 	}
 

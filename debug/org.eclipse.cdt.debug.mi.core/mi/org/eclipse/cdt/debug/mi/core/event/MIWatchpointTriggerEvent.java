@@ -53,11 +53,11 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("number=").append(number).append('\n');
-		buffer.append("expression=" + exp + "\n"); //$NON-NLS-2$
-		buffer.append("old=" + oldValue + "\n"); //$NON-NLS-2$
-		buffer.append("new=" + newValue + "\n"); //$NON-NLS-2$
-		buffer.append("thread-id=").append(getThreadId()).append('\n');
+		buffer.append("number=").append(number).append('\n'); //$NON-NLS-1$
+		buffer.append("expression=" + exp + "\n");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("old=" + oldValue + "\n");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("new=" + newValue + "\n");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("thread-id=").append(getThreadId()).append('\n'); //$NON-NLS-1$
 		MIFrame f = getFrame();
 		if (f != null) {
 			buffer.append(f.toString());

@@ -17,6 +17,6 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIExecArguments extends MICommand 
 {
 	public MIExecArguments(String[] args) {
-		super("-exec-arguments", args);
+		super("-exec-arguments", args); //$NON-NLS-1$
 	}
 }

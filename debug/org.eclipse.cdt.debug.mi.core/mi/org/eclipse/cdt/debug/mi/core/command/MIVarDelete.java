@@ -23,7 +23,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarDeleteInfo;
 public class MIVarDelete extends MICommand 
 {
 	public MIVarDelete(String name) {
-		super("-var-delete", new String[]{name});
+		super("-var-delete", new String[]{name}); //$NON-NLS-1$
 	}
 	
 	public MIVarDeleteInfo getMIVarDeleteInfo() throws MIException {

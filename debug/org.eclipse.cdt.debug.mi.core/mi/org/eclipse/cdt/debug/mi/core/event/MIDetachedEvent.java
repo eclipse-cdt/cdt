@@ -18,6 +18,6 @@ public class MIDetachedEvent extends MIDestroyedEvent {
 	}
 
 	public String toString() {
-		return "Detached";
+		return "Detached"; //$NON-NLS-1$
 	}
 }

@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIHandle extends CLICommand {
 
 	public MIHandle(String arg) {
-		super("handle " + arg);
+		super("handle " + arg); //$NON-NLS-1$
 	}
 
 }

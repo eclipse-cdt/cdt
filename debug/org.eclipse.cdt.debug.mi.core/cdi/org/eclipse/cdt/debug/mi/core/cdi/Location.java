@@ -12,8 +12,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 public class Location implements ICDILocation {
 
 	long addr;
-	String file = "";
-	String function = "";
+	String file = ""; //$NON-NLS-1$
+	String function = ""; //$NON-NLS-1$
 	int line;
 
 	public Location(String f, String fnct, int l) {

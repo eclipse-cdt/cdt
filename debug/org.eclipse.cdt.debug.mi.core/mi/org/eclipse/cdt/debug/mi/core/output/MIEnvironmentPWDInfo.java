@@ -32,8 +32,8 @@ public class MIEnvironmentPWDInfo extends MIInfo {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord)oobs[i];
 					String str = cons.getString();
-					if (str.startsWith("Working directory")) {
-						int len = "Working directory".length();
+					if (str.startsWith("Working directory")) { //$NON-NLS-1$
+						int len = "Working directory".length(); //$NON-NLS-1$
 						str = str.substring(len).trim();
 						len = str.indexOf('.');
 						if (len != -1) {

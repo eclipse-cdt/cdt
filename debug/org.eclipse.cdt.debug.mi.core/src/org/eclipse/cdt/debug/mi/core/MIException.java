@@ -12,7 +12,7 @@ package org.eclipse.cdt.debug.mi.core;
  *
  */
 public class MIException extends Exception {
-	String log = "";
+	String log = ""; //$NON-NLS-1$
 
 	public MIException(String s) {
 		super(s);

@@ -58,7 +58,7 @@ public class RxThread extends Thread {
 	List oobList;
 
 	public RxThread(MISession s) {
-		super("MI RX Thread");
+		super("MI RX Thread"); //$NON-NLS-1$
 		session = s;
 		oobList = new ArrayList();
 	}
@@ -74,7 +74,7 @@ public class RxThread extends Thread {
 			while ((line = reader.readLine()) != null) {
 				// TRACING: print the output.
 				MIPlugin.getDefault().debugLog(line);
-				processMIOutput(line + "\n");
+				processMIOutput(line + "\n"); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 			//e.printStackTrace();
@@ -91,7 +91,7 @@ public class RxThread extends Thread {
 					session.terminate();
 				}
 			};
-			Thread clean = new Thread(cleanup, "GDB Died");
+			Thread clean = new Thread(cleanup, "GDB Died"); //$NON-NLS-1$
 			clean.setDaemon(true);
 			clean.start();
 		}
@@ -132,7 +132,7 @@ public class RxThread extends Thread {
 
 				// Check if the state changed.
 				String state = rr.getResultClass();
-				if ("running".equals(state)) {
+				if ("running".equals(state)) { //$NON-NLS-1$
 					int type = 0;
 					// Check the type of command
 					// if it was a step instruction set state stepping
@@ -158,12 +158,12 @@ public class RxThread extends Thread {
 					session.getMIInferior().setRunning();
 					MIEvent event = new MIRunningEvent(id, type);
 					session.fireEvent(event);
-				} else if ("exit".equals(state)) {
+				} else if ("exit".equals(state)) { //$NON-NLS-1$
 					// No need to do anything, terminate() will.
 					session.getMIInferior().setTerminated();
-				} else if ("connected".equals(state)) {
+				} else if ("connected".equals(state)) { //$NON-NLS-1$
 					session.getMIInferior().setConnected();
-				} else if ("error".equals(state)) {
+				} else if ("error".equals(state)) { //$NON-NLS-1$
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
 						MIEvent event = new MIErrorEvent(rr, oobRecords);
@@ -216,13 +216,13 @@ public class RxThread extends Thread {
 			MIExecAsyncOutput exec = (MIExecAsyncOutput) async;
 			// Change of state.
 			String state = exec.getAsyncClass();
-			if ("stopped".equals(state)) {
+			if ("stopped".equals(state)) { //$NON-NLS-1$
 				MIEvent e = null;
 				MIResult[] results = exec.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
 					MIValue val = results[i].getMIValue();
-					if (var.equals("reason")) {
+					if (var.equals("reason")) { //$NON-NLS-1$
 						if (val instanceof MIConst) {
 							String reason = ((MIConst) val).getString();
 							e = createEvent(reason, exec);
@@ -323,7 +323,7 @@ public class RxThread extends Thread {
 		MIResult[] results = rr.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
-			if (var.equals("reason")) {
+			if (var.equals("reason")) { //$NON-NLS-1$
 				MIValue value = results[i].getMIValue();
 				if (value instanceof MIConst) {
 					String reason = ((MIConst) value).getString();
@@ -346,7 +346,7 @@ public class RxThread extends Thread {
 
 	MIEvent createEvent(String reason, MIResultRecord rr, MIExecAsyncOutput exec) {
 		MIEvent event = null;
-		if ("breakpoint-hit".equals(reason)) {
+		if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MIBreakpointHitEvent(exec);
 			} else if (rr != null) {
@@ -354,58 +354,58 @@ public class RxThread extends Thread {
 			}
 			session.getMIInferior().setSuspended();
 		} else if (
-			"watchpoint-trigger".equals(reason)
-				|| "read-watchpoint-trigger".equals(reason)
-				|| "access-watchpoint-trigger".equals(reason)) {
+			"watchpoint-trigger".equals(reason) //$NON-NLS-1$
+				|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$
+				|| "access-watchpoint-trigger".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MIWatchpointTriggerEvent(exec);
 			} else if (rr != null) {
 				event = new MIWatchpointTriggerEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("watchpoint-scope".equals(reason)) {
+		} else if ("watchpoint-scope".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MIWatchpointScopeEvent(exec);
 			} else if (rr != null) {
 				event = new MIWatchpointScopeEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("end-stepping-range".equals(reason)) {
+		} else if ("end-stepping-range".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MISteppingRangeEvent(exec);
 			} else if (rr != null) {
 				event = new MISteppingRangeEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("signal-received".equals(reason)) {
+		} else if ("signal-received".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MISignalEvent(exec);
 			} else if (rr != null) {
 				event = new MISignalEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("location-reached".equals(reason)) {
+		} else if ("location-reached".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MILocationReachedEvent(exec);
 			} else if (rr != null) {
 				event = new MILocationReachedEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("function-finished".equals(reason)) {
+		} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MIFunctionFinishedEvent(exec);
 			} else if (rr != null) {
 				event = new MIFunctionFinishedEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("exited-normally".equals(reason) || "exited".equals(reason)) {
+		} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (exec != null) {
 				event = new MIInferiorExitEvent(exec);
 			} else if (rr != null) {
 				event = new MIInferiorExitEvent(rr);
 			}
 			session.getMIInferior().setTerminated();
-		} else if ("exited-signalled".equals(reason)) {
+		} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
 				event = new MIInferiorSignalExitEvent(exec);
 			} else if (rr != null) {

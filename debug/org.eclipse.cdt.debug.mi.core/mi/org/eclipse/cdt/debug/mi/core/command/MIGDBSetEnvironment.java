@@ -19,7 +19,7 @@ public class MIGDBSetEnvironment extends MIGDBSet {
 		super(paths);
 		// Overload the parameter
 		String[] newPaths = new String[paths.length + 1];
-		newPaths[0] = "environment";
+		newPaths[0] = "environment"; //$NON-NLS-1$
 		System.arraycopy(paths, 0, newPaths, 1, paths.length);
 		setParameters(newPaths);
 	}

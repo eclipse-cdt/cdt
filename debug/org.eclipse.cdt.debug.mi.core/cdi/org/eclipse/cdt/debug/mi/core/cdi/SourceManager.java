@@ -51,14 +51,12 @@ import org.eclipse.cdt.debug.mi.core.output.MISrcAsm;
 
 /**
  */
-public class SourceManager extends SessionObject implements ICDISourceManager {
+public class SourceManager extends Manager implements ICDISourceManager {
 
-	boolean autoupdate;
 	GDBTypeParser gdbTypeParser;
 
 	public SourceManager(Session session) {
-		super(session);
-		autoupdate = false;
+		super(session, false);
 		gdbTypeParser = new GDBTypeParser();
 	}
 
@@ -131,7 +129,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String hex = "0x";
+		String hex = "0x"; //$NON-NLS-1$
 		String sa = hex + Long.toHexString(start);
 		String ea = hex + Long.toHexString(end);
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, false);
@@ -185,7 +183,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		Session session = (Session)getSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String hex = "0x";
+		String hex = "0x"; //$NON-NLS-1$
 		String sa = hex + Long.toHexString(start);
 		String ea = hex + Long.toHexString(end);
 		MIDataDisassemble dis = factory.createMIDataDisassemble(sa, ea, true);
@@ -201,20 +199,6 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 	/**
@@ -271,7 +255,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		if (headType != null) {
 			return headType;
 		}
-		throw new CDIException("Unknown type");
+		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 	
 	Type toCDIType(ICDITarget target, String name) throws CDIException {
@@ -282,37 +266,37 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		String typename = name.trim();
 
 		// Check the primitives.
-		if (typename.equals("char")) {
+		if (typename.equals("char")) { //$NON-NLS-1$
 			return new CharType(target, typename);
-		} else if (typename.equals("wchar_t")) {
+		} else if (typename.equals("wchar_t")) { //$NON-NLS-1$
 			return new WCharType(target, typename);
-		} else if (typename.equals("short")) {
+		} else if (typename.equals("short")) { //$NON-NLS-1$
 			return new ShortType(target, typename);
-		} else if (typename.equals("int")) {
+		} else if (typename.equals("int")) { //$NON-NLS-1$
 			return new IntType(target, typename);
-		} else if (typename.equals("long")) {
+		} else if (typename.equals("long")) { //$NON-NLS-1$
 			return new LongType(target, typename);
-		} else if (typename.equals("unsigned")) {
+		} else if (typename.equals("unsigned")) { //$NON-NLS-1$
 			return new IntType(target, typename, true);
-		} else if (typename.equals("signed")) {
+		} else if (typename.equals("signed")) { //$NON-NLS-1$
 			return new IntType(target, typename);
-		} else if (typename.equals("bool")) {
+		} else if (typename.equals("bool")) { //$NON-NLS-1$
 			return new BoolType(target, typename);
-		} else if (typename.equals("_Bool")) {
+		} else if (typename.equals("_Bool")) { //$NON-NLS-1$
 			return new BoolType(target, typename);
-		} else if (typename.equals("float")) {
+		} else if (typename.equals("float")) { //$NON-NLS-1$
 			return new FloatType(target, typename);
-		} else if (typename.equals("double")) {
+		} else if (typename.equals("double")) { //$NON-NLS-1$
 			return new DoubleType(target, typename);
-		} else if (typename.equals("void")) {
+		} else if (typename.equals("void")) { //$NON-NLS-1$
 			return new VoidType(target, typename);
-		} else if (typename.equals("enum")) {
+		} else if (typename.equals("enum")) { //$NON-NLS-1$
 			return new EnumType(target, typename);
-		} else if (typename.equals("union")) {
+		} else if (typename.equals("union")) { //$NON-NLS-1$
 			return new StructType(target, typename);
-		} else if (typename.equals("struct")) {
+		} else if (typename.equals("struct")) { //$NON-NLS-1$
 			return new StructType(target, typename);
-		} else if (typename.equals("class")) {
+		} else if (typename.equals("class")) { //$NON-NLS-1$
 			return new StructType(target, typename);
 		}
 
@@ -325,24 +309,24 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 
 			// ISOC allows permutations:
 			// "signed int" and "int signed" are equivalent
-			boolean isUnsigned =  (first.equals("unsigned") || second.equals("unsigned"));
-			boolean isSigned =    (first.equals("signed") || second.equals("signed"));
-			boolean isChar =      (first.equals("char") || second.equals("char"));
-			boolean isInt =       (first.equals("int") || second.equals("int"));
-			boolean isLong =      (first.equals("long") || second.equals("long"));
-			boolean isShort =     (first.equals("short") || second.equals("short"));
-			boolean isLongLong =  (first.equals("long") && second.equals("long"));
+			boolean isUnsigned =  (first.equals("unsigned") || second.equals("unsigned")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isSigned =    (first.equals("signed") || second.equals("signed")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isChar =      (first.equals("char") || second.equals("char")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isInt =       (first.equals("int") || second.equals("int")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isLong =      (first.equals("long") || second.equals("long")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isShort =     (first.equals("short") || second.equals("short")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isLongLong =  (first.equals("long") && second.equals("long")); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			boolean isDouble =    (first.equals("double") || second.equals("double"));
-			boolean isFloat =     (first.equals("float") || second.equals("float"));
-			boolean isComplex =   (first.equals("complex") || second.equals("complex") ||
-			                       first.equals("_Complex") || second.equals("_Complex"));
-			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary"));
+			boolean isDouble =    (first.equals("double") || second.equals("double")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isFloat =     (first.equals("float") || second.equals("float")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isComplex =   (first.equals("complex") || second.equals("complex") || //$NON-NLS-1$ //$NON-NLS-2$
+			                       first.equals("_Complex") || second.equals("_Complex")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary")); //$NON-NLS-1$ //$NON-NLS-2$
 
-			boolean isStruct =     first.equals("struct");
-			boolean isClass =      first.equals("class");
-			boolean isUnion =      first.equals("union");
-			boolean isEnum =       first.equals("enum");
+			boolean isStruct =     first.equals("struct"); //$NON-NLS-1$
+			boolean isClass =      first.equals("class"); //$NON-NLS-1$
+			boolean isUnion =      first.equals("union"); //$NON-NLS-1$
+			boolean isEnum =       first.equals("enum"); //$NON-NLS-1$
 
 			if (isChar && (isSigned || isUnsigned)) {
 				return new CharType(target, typename, isUnsigned);
@@ -379,17 +363,17 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			String second = st.nextToken();
 			String third = st.nextToken();
 
-			boolean isSigned =    (first.equals("signed") || second.equals("signed") || third.equals("signed"));
-			boolean unSigned =    (first.equals("unsigned") || second.equals("unsigned") || third.equals("unsigned"));
-			boolean isInt =       (first.equals("int") || second.equals("int") || third.equals("int"));
-			boolean isLong =      (first.equals("long") || second.equals("long") || third.equals("long"));
-			boolean isShort =     (first.equals("short") || second.equals("short") || third.equals("short"));
-			boolean isLongLong =  (first.equals("long") && second.equals("long")) ||
-			                       (second.equals("long") && third.equals("long"));
-			boolean isDouble =    (first.equals("double") || second.equals("double") || third.equals("double"));
-			boolean isComplex =   (first.equals("complex") || second.equals("complex") || third.equals("complex") ||
-			                       first.equals("_Complex") || second.equals("_Complex") || third.equals("_Complex"));
-			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary") || third.equals("_Imaginary"));
+			boolean isSigned =    (first.equals("signed") || second.equals("signed") || third.equals("signed")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean unSigned =    (first.equals("unsigned") || second.equals("unsigned") || third.equals("unsigned")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean isInt =       (first.equals("int") || second.equals("int") || third.equals("int")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean isLong =      (first.equals("long") || second.equals("long") || third.equals("long")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean isShort =     (first.equals("short") || second.equals("short") || third.equals("short")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean isLongLong =  (first.equals("long") && second.equals("long")) || //$NON-NLS-1$ //$NON-NLS-2$
+			                       (second.equals("long") && third.equals("long")); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean isDouble =    (first.equals("double") || second.equals("double") || third.equals("double")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean isComplex =   (first.equals("complex") || second.equals("complex") || third.equals("complex") || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			                       first.equals("_Complex") || second.equals("_Complex") || third.equals("_Complex")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean isImaginery = (first.equals("_Imaginary") || second.equals("_Imaginary") || third.equals("_Imaginary")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 
 			if (isShort && isInt && (isSigned || unSigned)) {
@@ -411,18 +395,18 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			String third = st.nextToken();
 			String fourth = st.nextToken();
 
-			boolean unSigned = (first.equals("unsigned") || second.equals("unsigned") || third.equals("unsigned") || fourth.equals("unsigned"));
-			boolean isSigned = (first.equals("signed") || second.equals("signed") || third.equals("signed") || fourth.equals("signed"));
-			boolean isInt =    (first.equals("int") || second.equals("int") || third.equals("int") || fourth.equals("int"));
-			boolean isLongLong =   (first.equals("long") && second.equals("long"))
-				|| (second.equals("long") && third.equals("long"))
-				|| (third.equals("long") && fourth.equals("long"));
+			boolean unSigned = (first.equals("unsigned") || second.equals("unsigned") || third.equals("unsigned") || fourth.equals("unsigned")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			boolean isSigned = (first.equals("signed") || second.equals("signed") || third.equals("signed") || fourth.equals("signed")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			boolean isInt =    (first.equals("int") || second.equals("int") || third.equals("int") || fourth.equals("int")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			boolean isLongLong =   (first.equals("long") && second.equals("long")) //$NON-NLS-1$ //$NON-NLS-2$
+				|| (second.equals("long") && third.equals("long")) //$NON-NLS-1$ //$NON-NLS-2$
+				|| (third.equals("long") && fourth.equals("long")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (isLongLong && isInt && (isSigned || unSigned)) {
 				return new LongLongType(target, typename, unSigned);
 			}
 		}
-		throw new CDIException("Unknown type");
+		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 
 	public String getDetailTypeName(String typename) throws CDIException {
@@ -434,7 +418,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			mi.postCommand(ptype);
 			MIPTypeInfo info = ptype.getMIPtypeInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			return info.getType();
 		} catch (MIException e) {

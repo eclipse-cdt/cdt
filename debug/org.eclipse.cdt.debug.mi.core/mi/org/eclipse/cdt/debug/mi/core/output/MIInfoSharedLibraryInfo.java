@@ -91,7 +91,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 						name = sub;
 						break;
 					case 1 :
-						if (sub.equalsIgnoreCase("Yes")) {
+						if (sub.equalsIgnoreCase("Yes")) { //$NON-NLS-1$
 							syms = true;
 						}
 						break;

@@ -21,7 +21,7 @@ public class MISignal extends CLICommand {
 	MIOutput out;
 
 	public MISignal(String arg) {
-		super("signal " + arg);
+		super("signal " + arg); //$NON-NLS-1$
 	}
 
 	/**

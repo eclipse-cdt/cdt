@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIInfoProgram extends CLICommand 
 {
 	public MIInfoProgram() {
-		super("info program");
+		super("info program"); //$NON-NLS-1$
 	}
 
 	public MIInfoProgramInfo getMIInfoProgramInfo() throws MIException {

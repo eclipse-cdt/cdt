@@ -34,16 +34,14 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class ExpressionManager extends SessionObject implements ICDIExpressionManager{
+public class ExpressionManager extends Manager implements ICDIExpressionManager{
 
 	private List expList;
-	private boolean autoupdate;
 	MIVarChange[] noChanges = new MIVarChange[0];
 
 	public ExpressionManager(Session session) {
-		super(session);
+		super(session, true);
 		expList = Collections.synchronizedList(new ArrayList());
-		autoupdate = true;
 	}
 
 	/**
@@ -91,7 +89,7 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 			mi.postCommand(var);
 			MIVarCreateInfo info = var.getMIVarCreateInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			VariableObject varObj = new VariableObject(currentTarget, name, null, 0, 0);
 			expression = new Expression(varObj, info.getMIVar());
@@ -119,7 +117,7 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 			mi.postCommand(var);
 			MIVarCreateInfo info = var.getMIVarCreateInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			ICDITarget tgt = frame.getThread().getTarget();
 			VariableObject varObj = new VariableObject(tgt, name, frame, 0, 0);
@@ -189,7 +187,7 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 				mi.postCommand(update);
 				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 				changes = info.getMIVarChanges();
 			} catch (MIException e) {
@@ -209,20 +207,6 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 		}
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 }

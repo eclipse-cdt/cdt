@@ -60,7 +60,7 @@ public class MIInfoSignalsInfo extends MIInfo {
 			// Pass the header and th tailer.
 			// ~"Signal        Stop\tPrint\tPass to program\tDescription\n"
 			// ~"Use the \"handle\" command to change these tables.\n"
-			if (!str.startsWith("Signal ") && !str.startsWith("Use ")) {
+			if (!str.startsWith("Signal ") && !str.startsWith("Use ")) { //$NON-NLS-1$ //$NON-NLS-2$
 				String signal = ""; //$NON-NLS-1$
 				boolean stop = false;
 				boolean print = false;
@@ -71,7 +71,7 @@ public class MIInfoSignalsInfo extends MIInfo {
 				for (int i = 0; tokenizer.hasMoreTokens(); i++) {
 					String sub = null;
 					if (i == 4) {
-						sub = tokenizer.nextToken("\n");
+						sub = tokenizer.nextToken("\n"); //$NON-NLS-1$
 					} else {
 						sub = tokenizer.nextToken();
 					}
@@ -100,7 +100,7 @@ public class MIInfoSignalsInfo extends MIInfo {
 	}
 	
 	static boolean getBoolean(String value) {
-		if (value != null && value.equalsIgnoreCase("Yes")) {
+		if (value != null && value.equalsIgnoreCase("Yes")) { //$NON-NLS-1$
 			return true;
 		}
 		return false;

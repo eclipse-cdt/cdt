@@ -81,7 +81,7 @@ public class MIBreakpoint {
 	}
 
 	public boolean isTemporary() {
-		return getDisposition().equals("del");
+		return getDisposition().equals("del"); //$NON-NLS-1$
 	}
 
 	public boolean isWatchpoint() {
@@ -219,7 +219,7 @@ public class MIBreakpoint {
 			} else if (var.equals("disp")) { //$NON-NLS-1$
 				disp = str;
 			} else if (var.equals("enabled")) { //$NON-NLS-1$
-				enabled = str.equals("y");
+				enabled = str.equals("y"); //$NON-NLS-1$
 			} else if (var.equals("addr")) { //$NON-NLS-1$
 				try {
 					address = Long.decode(str.trim()).longValue();

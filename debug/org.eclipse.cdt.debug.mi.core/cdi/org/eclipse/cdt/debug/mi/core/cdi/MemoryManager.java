@@ -24,15 +24,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 
 /**
  */
-public class MemoryManager extends SessionObject implements ICDIMemoryManager {
+public class MemoryManager extends Manager implements ICDIMemoryManager {
 
 	List blockList;
-	boolean autoupdate;
 
 	public MemoryManager(Session session) {
-		super(session);
+		super(session, true);
 		blockList = new ArrayList();
-		autoupdate = true;
 	}
 
 	/**
@@ -136,7 +134,7 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 			mi.postCommand(mem);
 			MIDataReadMemoryInfo info = mem.getMIDataReadMemoryInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			return info;
 		} catch (MIException e) {
@@ -149,7 +147,7 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 */
 	public ICDIMemoryBlock createMemoryBlock(long address, int length)
 		throws CDIException {
-		String addr = "0x" + Long.toHexString(address);
+		String addr = "0x" + Long.toHexString(address); //$NON-NLS-1$
 		return createMemoryBlock(addr, length);
 	}
 		
@@ -195,20 +193,6 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 		for (int i = 0; i < memoryBlocks.length; i++) {
 			removeBlock(memoryBlocks[i]);
 		}
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#isAutoUpdate()
-	 */
-	public boolean isAutoUpdate() {
-		return autoupdate;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#setAutoUpdate(boolean)
-	 */
-	public void setAutoUpdate(boolean update) {
-		autoupdate = update;
 	}
 
 }

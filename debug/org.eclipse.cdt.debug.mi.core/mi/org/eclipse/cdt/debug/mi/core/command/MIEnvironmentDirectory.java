@@ -16,7 +16,7 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIEnvironmentDirectory extends MICommand 
 {
 	public MIEnvironmentDirectory(String[] paths) {
-		super("-environment-directory", paths);
+		super("-environment-directory", paths); //$NON-NLS-1$
 	}
 
 }

@@ -61,7 +61,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 				manager.setSharedLibraryPaths(paths);
 			}
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing shared library options: " + e.getMessage());
+			throw new CDIException(MIPlugin.getResourceString("src.CygwinGDBDebugger.Error_init_shared_lib_options") + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -76,11 +76,11 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			MISession mi = session.getMISession();
 			try {
 				CommandFactory factory = mi.getCommandFactory();
-				MIGDBSet set = factory.createMIGDBSet(new String[] { "new-console" });
+				MIGDBSet set = factory.createMIGDBSet(new String[] { "new-console" }); //$NON-NLS-1$
 				mi.postCommand(set);
 				MIInfo info = set.getMIInfo();
 				if (info == null) {
-					throw new MIException("No answer");
+					throw new MIException(MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
 				}
 			} catch (MIException e) {
 				// We ignore this exception, for example

@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIInfoThreads extends CLICommand 
 {
 	public MIInfoThreads() {
-		super("info threads");
+		super("info threads"); //$NON-NLS-1$
 	}
 
 	public MIInfoThreadsInfo getMIInfoThreadsInfo() throws MIException {

@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIInfoSharedLibrary extends CLICommand 
 {
 	public MIInfoSharedLibrary() {
-		super("info sharedlibrary");
+		super("info sharedlibrary"); //$NON-NLS-1$
 	}
 
 	public MIInfoSharedLibraryInfo getMIInfoSharedLibraryInfo() throws MIException {

@@ -1,3 +1,11 @@
+2003-08-27 Thomas Fletcher
+	
+	Update code completion to include () for functions and methods and
+	to position the cursor appropriately.
+
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	* src/org/eclipse/cdt/ui/FunctionPrototypeSummary.java
+
 2003-08-26 Alain Magloire
 
 	PR 41416, Not enough info in the error message for

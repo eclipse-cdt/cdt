@@ -5,25 +5,49 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.search.BasicSearchResultCollector;
+import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.cdt.core.search.OrPattern;
+import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludeOperation;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -31,8 +55,31 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		
 	private ITextEditor fEditor;
-	private IRequiredInclude [] fCachedRequiredIncludes;	
-	
+
+	class RequiredIncludes implements IRequiredInclude {
+		String name;
+
+		RequiredIncludes(String n) {
+			name = n;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.ui.IRequiredInclude#getIncludeName()
+		 */
+		public String getIncludeName() {
+			return name;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.ui.IRequiredInclude#isStandard()
+		 */
+		public boolean isStandard() {
+			return true;
+		}
+		
+	}
+
+
 	public AddIncludeOnSelectionAction() {
 		this(null);
 	}
@@ -52,14 +99,14 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
 			dialog.run(false, true, op);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), e.getTargetException().getMessage()); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// Do nothing. Operation has been canceled.
 		}
 	}
 	
-	private ITranslationUnit getTranslationUnit () {
+	ITranslationUnit getTranslationUnit () {
 		ITranslationUnit unit = null;
 		if(fEditor != null) {
 			IEditorInput editorInput= fEditor.getEditorInput();
@@ -104,15 +151,11 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 */
 	public void run() {
 		IRequiredInclude [] requiredIncludes;
-		if(fCachedRequiredIncludes != null) {
-			requiredIncludes = fCachedRequiredIncludes;
-		} else {
-			requiredIncludes = extractIncludes(fEditor);		
-		}
+		requiredIncludes = extractIncludes(fEditor);		
 
-		if(requiredIncludes != null && requiredIncludes.length > 0) {
+		if (requiredIncludes != null && requiredIncludes.length > 0) {
 			ITranslationUnit tu= getTranslationUnit();
-			if(tu != null) {
+			if (tu != null) {
 				addInclude(requiredIncludes, tu);
 			}
 		} 
@@ -146,11 +189,21 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 					
 			String name= doc.get(nameStart, len).trim();
 					
-			//IType[] types= StubUtility.findAllTypes(typeName, cu.getJavaProject(), null);
-			//IType chosen= selectResult(types, packName, getShell());
 			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(name);
 			if(fs != null) {
 				requiredIncludes = fs.getIncludes();
+			}
+
+			// Try the type caching.
+			if (requiredIncludes == null) {
+				ITypeInfo[] types= findTypeInfos(name);
+				requiredIncludes = selectResult(types, name, getShell());
+			}
+
+			// Do a full search
+			if (requiredIncludes == null) {
+				IMatch[] matches = findMatches(name);
+				requiredIncludes = selectResult(matches, name, getShell());				
 			}
 		} catch (BadLocationException e) {
 			MessageDialog.openError(getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message3"), CEditorMessages.getString("AddIncludeOnSelection.error.message4") + e.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
@@ -159,43 +212,152 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		return requiredIncludes;
 	}
 
-/*	private IType selectResult(IType[] results, String packName, Shell shell) {
+	/**
+	 * Finds a type by the simple name.
+	 */
+	ITypeInfo[] findTypeInfos(final String name) {
+		final ITypeInfo[][] infos = new ITypeInfo[1][];
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				ITranslationUnit unit = getTranslationUnit();
+				int[] types= {ICElement.C_CLASS, ICElement.C_UNION, ICElement.C_STRUCT, ICElement.C_ENUMERATION, ICElement.C_TYPEDEF};
+				ITypeSearchScope scope = new TypeSearchScope();
+				scope.add(unit.getCProject().getProject());
+				infos[0] = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types);				
+			}
+		};
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
+		} catch (InvocationTargetException e) {
+			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
+		} catch (InterruptedException e) {
+			// Do nothing. Operation has been canceled.
+		}
+		return infos[0];
+	}
+
+	IMatch[] findMatches(final String name) {
+		final BasicSearchResultCollector searchResultCollector = new BasicSearchResultCollector();
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				ICProject cproject = getTranslationUnit().getCProject();
+				ICSearchScope scope = SearchEngine.createCSearchScope(new ICElement[]{cproject}, true);
+				OrPattern orPattern = new OrPattern();
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						name, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false));
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						name, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false));
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						name, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false));				
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						name, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false));
+				orPattern.addPattern(SearchEngine.createSearchPattern( 
+						name, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false));
+
+				SearchEngine searchEngine = new SearchEngine();
+				searchEngine.setWaitingPolicy(ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
+				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
+			}
+		};
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
+		} catch (InvocationTargetException e) {
+			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
+		} catch (InterruptedException e) {
+			// Do nothing. Operation has been canceled.
+		}
+
+		Set set = searchResultCollector.getSearchResults();
+		if (set != null) {
+			IMatch[] matches = new IMatch[set.size()];
+			set.toArray(matches);
+			return matches;
+		}
+		return null;
+	}
+
+	private IRequiredInclude[] selectResult(ITypeInfo[] results, String name, Shell shell) {
 		int nResults= results.length;
-		
+		IProject project = getTranslationUnit().getCProject().getProject();
 		if (nResults == 0) {
 			return null;
 		} else if (nResults == 1) {
-			return results[0];
-		}
-		
-		if (packName.length() != 0) {
-			for (int i= 0; i < results.length; i++) {
-				IType curr= (IType) results[i];
-				if (packName.equals(curr.getPackageFragment().getElementName())) {
-					return curr;
-				}
+			ITypeReference ref = results[0].getResolvedReference();
+			if (ref != null) {
+				return new IRequiredInclude[] {new RequiredIncludes(ref.getRelativeIncludePath(project).toString())};
 			}
 		}
 		
-		JavaPlugin plugin= JavaPlugin.getDefault();
-		
-		int flags= (JavaElementLabelProvider.SHOW_DEFAULT | JavaElementLabelProvider.SHOW_CONTAINER_QUALIFICATION);
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider(flags), true, false);
-		dialog.setTitle(JavaEditorMessages.getString("AddImportOnSelection.dialog.title")); //$NON-NLS-1$
-		dialog.setMessage(JavaEditorMessages.getString("AddImportOnSelection.dialog.message")); //$NON-NLS-1$
-		if (dialog.open(results) == dialog.OK) {
-			return (IType) dialog.getSelectedElement();
+		if (name.length() != 0) {
+			for (int i= 0; i < results.length; i++) {
+				ITypeInfo curr= results[i];
+				if (name.equals(curr.getName())) {
+					ITypeReference ref = results[0].getResolvedReference();
+					if (ref != null) {
+						return new IRequiredInclude[]{new RequiredIncludes(ref.getRelativeIncludePath(project).toString())};
+					}
+				}
+			}
+		}
+
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new WorkbenchLabelProvider());
+		dialog.setElements(results);
+		dialog.setTitle(CEditorMessages.getString("AddIncludeOnSelection.label")); //$NON-NLS-1$
+		dialog.setMessage(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
+		if (dialog.open() == Window.OK) {
+			ITypeInfo[] selects = (ITypeInfo[])dialog.getResult();
+			IRequiredInclude[] reqs = new IRequiredInclude[selects.length];
+			for (int i = 0; i < reqs.length; i++) {
+				ITypeReference ref = selects[0].getResolvedReference();
+				if (ref != null) {
+					reqs[i] = new RequiredIncludes(ref.getRelativeIncludePath(project).toString());
+				} else {
+					reqs[i] = new RequiredIncludes(""); //$NON-NLS-1$
+				}
+			}
+			return reqs;
 		}
 		return null;
-	} */
+	}
 	
+	private IRequiredInclude[] selectResult(IMatch[] results, String name, Shell shell) {
+		int nResults = results.length;
+		if (nResults == 0) {
+			return null;
+		} else if (nResults == 1) {
+			return new IRequiredInclude[] {new RequiredIncludes(results[0].getLocation().lastSegment())};
+		}
+		
+		if (name.length() != 0) {
+			for (int i= 0; i < results.length; i++) {
+				IMatch curr= results[i];
+				if (name.equals(curr.getName())) {
+					return new IRequiredInclude[]{new RequiredIncludes(curr.getLocation().lastSegment())};
+				}
+			}
+		}
+
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new WorkbenchLabelProvider());
+		dialog.setElements(results);
+		dialog.setTitle(CEditorMessages.getString("AddIncludeOnSelection.label")); //$NON-NLS-1$
+		dialog.setMessage(CEditorMessages.getString("AddIncludeOnSelection.description")); //$NON-NLS-1$
+		if (dialog.open() == Window.OK) {
+			IMatch[] selects = (IMatch[])dialog.getResult();
+			IRequiredInclude[] reqs = new IRequiredInclude[selects.length];
+			for (int i = 0; i < reqs.length; i++) {
+				reqs[i] = new RequiredIncludes(selects[i].getLocation().lastSegment());
+			}
+			return reqs;
+		}
+		return null;
+	}
+
 	public void setContentEditor(ITextEditor editor) {
 		fEditor= editor;
 	}
 	
 	public void update() {
-		fCachedRequiredIncludes = extractIncludes(fEditor);
-		setEnabled(fCachedRequiredIncludes != null);
+		setEnabled(true);
 	}
 }
 

@@ -1231,6 +1231,37 @@ public class DOMTests extends TestCase {
 		TranslationUnit tu = parse( "A::A():B( (char *)0 ){}", true ); 
 		assertEquals( tu.getDeclarations().size(), 1 );  
 	}
+
+	public void testPointersToFunctions() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "void (*name)( void );\n");
+		code.write( "static void * (*orig_malloc_hook)(const char *file, int line, size_t size);\n");
+
+		TranslationUnit tu = parse( code.toString() );
+		assertEquals( tu.getDeclarations().size(), 2 );
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_void );
+		assertEquals( declaration.getDeclarators().size(), 1);
+		assertNull( ((Declarator)declaration.getDeclarators().get(0)).getName() );
+		assertNotNull( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator() );
+		assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator().getName().toString(), "name" );
+		ParameterDeclarationClause clause = ((Declarator)declaration.getDeclarators().get(0)).getParms();
+		assertEquals( clause.getDeclarations().size(), 1 );
+		assertEquals( ((ParameterDeclaration)clause.getDeclarations().get(0)).getDeclarators().size(), 1 );  
+		assertNull(	((Declarator)((ParameterDeclaration)clause.getDeclarations().get(0)).getDeclarators().get(0)).getName() );
+		assertEquals( ((ParameterDeclaration)clause.getDeclarations().get(0)).getDeclSpecifier().getType(), DeclSpecifier.t_void );
+		
+		declaration = (SimpleDeclaration)tu.getDeclarations().get(1); 
+		assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_void );
+		assertTrue( declaration.getDeclSpecifier().isStatic() );
+		assertEquals( declaration.getDeclarators().size(), 1);
+		assertNull( ((Declarator)declaration.getDeclarators().get(0)).getName() );
+		assertNotNull( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator() );
+		assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getDeclarator().getName().toString(), "orig_malloc_hook" );
+		clause = ((Declarator)declaration.getDeclarators().get(0)).getParms();
+		assertEquals( clause.getDeclarations().size(), 3 );
+	}
 	
 	public void testBug36247() throws Exception
 	{
@@ -1287,6 +1318,5 @@ public class DOMTests extends TestCase {
 		}
 		
 	}
-	 
 }
 

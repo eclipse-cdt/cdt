@@ -1,3 +1,7 @@
+2003-04-13 John Camelon
+	Minor cleanup of callbacks due to removal of NewModelBuilder.
+	Added parser support to partially fix bug36416 & bug36294.  Also added minimal C-Model support for these fixes. 
+
 2003-04-11 John Camelon
 	Minimized the number of objects being returned from Parser callbacks.  
 	Fixed CModelBuilder to handle errors better. 

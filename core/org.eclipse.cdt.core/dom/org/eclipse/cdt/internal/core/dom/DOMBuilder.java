@@ -79,16 +79,30 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorBegin()
 	 */
 	public Object declaratorBegin(Object container) {
-		DeclSpecifier.Container decl = (DeclSpecifier.Container )container; 
-		Declarator declarator = new Declarator(decl);
-		decl.addDeclarator(declarator);
-		return declarator; 
+		if( container instanceof DeclSpecifier.IContainer )
+		{
+			DeclSpecifier.IContainer decl = (DeclSpecifier.IContainer )container; 
+			Declarator declarator = new Declarator(decl);
+			return declarator;
+		}
+		else if( container instanceof IDeclaratorOwner )
+		{
+			IDeclaratorOwner owner = (IDeclaratorOwner)container;
+			Declarator declarator = new Declarator(owner); 
+			return declarator; 
+		}
+		return null; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorEnd()
 	 */
 	public void declaratorEnd(Object declarator) {
+		Declarator d = (Declarator)declarator;
+		if( d.getDeclaration() != null ) 
+			d.getDeclaration().addDeclarator(d);
+		else if( d.getOwnerDeclarator() != null )
+			d.getOwnerDeclarator().setDeclarator(d); 
 	}
 
 	/**
@@ -102,14 +116,8 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void simpleDeclSpecifier(Object Container, Token specifier) {
-		DeclSpecifier.Container decl = (DeclSpecifier.Container)Container;
+		DeclSpecifier.IContainer decl = (DeclSpecifier.IContainer)Container;
 		DeclSpecifier declSpec = decl.getDeclSpecifier(); 
-		if( declSpec == null )
-		{
-			declSpec = new DeclSpecifier(); 
-			decl.setDeclSpecifier( declSpec ); 
-		}
-
 		declSpec.setType( specifier );
 	}
 
@@ -280,12 +288,8 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
 	 */
-	public void declaratorAbort(Object container, Object declarator) {
-		DeclSpecifier.Container decl = (DeclSpecifier.Container )container;
-		Declarator toBeRemoved = (Declarator)declarator;
-		decl.removeDeclarator( toBeRemoved ); 
+	public void declaratorAbort(Object declarator) {
 		currName = null;
-		toBeRemoved = null; 
 	}
 
 	/**
@@ -309,12 +313,6 @@ public class DOMBuilder implements IParserCallback
 	public void classSpecifierAbort(Object classSpecifier) {
 		ClassSpecifier cs = (ClassSpecifier)classSpecifier;
 		cs.getOwner().setTypeSpecifier(null);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
-	 */
-	public void classSpecifierSafe(Object classSpecifier) {
 	}
 
 	/**
@@ -359,7 +357,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierName(java.lang.Object)
 	 */
 	public void simpleDeclSpecifierName(Object declaration) {
-		DeclSpecifier.Container decl = (DeclSpecifier.Container)declaration;
+		DeclSpecifier.IContainer decl = (DeclSpecifier.IContainer)declaration;
 		DeclSpecifier declSpec = decl.getDeclSpecifier(); 
 		declSpec.setName( currName ); 
 	}

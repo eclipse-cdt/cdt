@@ -32,7 +32,7 @@ public interface IParserCallback {
 	
 	public Object declaratorBegin(Object container);
 	public void declaratorId(Object declarator);
-	public void declaratorAbort( Object container, Object declarator );
+	public void declaratorAbort( Object declarator );
 	public void declaratorPureVirtual( Object declarator );
 	public void declaratorCVModifier( Object declarator, Token modifier );
 	public void declaratorThrowsException( Object declarator ); 
@@ -58,7 +58,6 @@ public interface IParserCallback {
 	public Object classSpecifierBegin(Object container, Token classKey);
 	public void classSpecifierName(Object classSpecifier);
 	public void classSpecifierAbort( Object classSpecifier ); 
-	public void classSpecifierSafe( Object classSpecifier );
 	public void classMemberVisibility( Object classSpecifier, Token visibility );
 	public void classSpecifierEnd(Object classSpecifier, Token closingBrace );
 	

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container, IOffsetable, TypeSpecifier.IOwner {
+public class SimpleDeclaration extends Declaration implements DeclSpecifier.IContainer, IOffsetable, TypeSpecifier.IOwner {
 
 	private int startingOffset = 0, totalLength = 0;
 	private AccessSpecifier accessSpecifier = null;
@@ -25,11 +25,6 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.Cont
 		return declSpec;
 	}
 		
-	public void setDeclSpecifier( DeclSpecifier in )
-	{
-		declSpec = in; 
-	} 
-
 	/**
 	 * This is valid when the type is t_type.  It points to a
 	 * classSpecifier, etc.
@@ -63,12 +58,6 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.Cont
 		return Collections.unmodifiableList( declarators );
 	}
 
-	/**
-	 * @see org.eclipse.cdt.internal.core.newparser.util.DeclarationSpecifier.Container#removeDeclarator(java.lang.Object)
-	 */
-	public void removeDeclarator(Object declarator) {
-		declarators.remove( declarator );
-	}
 	/**
 	 * @return
 	 */

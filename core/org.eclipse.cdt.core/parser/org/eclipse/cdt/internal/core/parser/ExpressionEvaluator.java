@@ -185,7 +185,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
 	 */
-	public void declaratorAbort(Object container, Object declarator) {
+	public void declaratorAbort(Object declarator) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorEnd(java.lang.Object)
@@ -274,12 +274,6 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
 	 */
 	public void classSpecifierAbort(Object classSpecifier) {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
-	 */
-	public void classSpecifierSafe(Object classSpecifier) {
 	}
 
 	/**

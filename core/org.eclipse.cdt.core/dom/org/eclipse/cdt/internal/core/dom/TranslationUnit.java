@@ -3,7 +3,6 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -12,7 +11,7 @@ import java.util.NoSuchElementException;
  */
 public class TranslationUnit implements IScope {
 
-	private List declarations = new LinkedList();
+	private List declarations = new ArrayList();
 	private List macros = new ArrayList(); 
 	private List inclusions = new ArrayList(); 
 	

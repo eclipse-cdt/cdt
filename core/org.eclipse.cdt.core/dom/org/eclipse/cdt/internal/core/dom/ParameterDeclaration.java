@@ -14,7 +14,7 @@ import java.util.List;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ParameterDeclaration extends Declaration implements DeclSpecifier.Container, TypeSpecifier.IOwner {
+public class ParameterDeclaration extends Declaration implements DeclSpecifier.IContainer, TypeSpecifier.IOwner {
 
 	private DeclSpecifier declSpec = null; 
 	private TypeSpecifier typeSpecifier;
@@ -51,12 +51,6 @@ public class ParameterDeclaration extends Declaration implements DeclSpecifier.C
 		return declSpec; 
 	}
 
-	/**
-	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#setDeclSpecifier(org.eclipse.cdt.internal.core.dom.DeclarationSpecifier)
-	 */
-	public void setDeclSpecifier(DeclSpecifier in) {
-		declSpec = in; 
-	}
 	private List declarators = new LinkedList();
 	
 	public void addDeclarator(Object declarator) {
@@ -67,10 +61,4 @@ public class ParameterDeclaration extends Declaration implements DeclSpecifier.C
 		return Collections.unmodifiableList( declarators );
 	}
 
-	/**
-	 * @see org.eclipse.cdt.internal.core.newparser.util.DeclarationSpecifier.Container#removeDeclarator(java.lang.Object)
-	 */
-	public void removeDeclarator(Object declarator) {
-		declarators.remove( declarator );
-	}
 }

@@ -44,8 +44,6 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.ParserException;
-
 public class CModelBuilder {
 	
 	org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
@@ -368,7 +366,8 @@ public class CModelBuilder {
 	}
 
 	private FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
-		String declaratorName = declarator.getName().toString();
+		boolean pointerToFunction = declarator.getDeclarator() != null; 
+		String declaratorName = pointerToFunction ? declarator.getDeclarator().getName().toString() : declarator.getName().toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		// getParameterTypes
 		List parameterList = pdc.getDeclarations();
@@ -439,7 +438,10 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );		
+		if( pointerToFunction )
+			element.setIdPos( declarator.getDeclarator().getName().getStartOffset(), declarator.getDeclarator().getName().length() );
+		else
+			element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );		
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
 		return element;
 	}

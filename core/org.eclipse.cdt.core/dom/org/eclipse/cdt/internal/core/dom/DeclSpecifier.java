@@ -252,14 +252,10 @@ public class DeclSpecifier {
 		return declSpecifierSeq & typeMask;
 	}
 
-	public interface Container {
+	public interface IContainer {
 
 		public DeclSpecifier getDeclSpecifier();
-
-		public void setDeclSpecifier(DeclSpecifier in);
-
 		public void addDeclarator(Object declarator);
-		public void removeDeclarator(Object declarator);
 		public List getDeclarators();
 
 	};

@@ -1026,12 +1026,11 @@ c, quick);
 			
 			if (LT(1) == Token.tLPAREN) {
 				consume();
-				declarator(declarator);
+				Object subDeclarator = declarator(declarator);
 				consume(Token.tRPAREN);
-				return declarator;
+				try{ callback.declaratorEnd( subDeclarator );} catch( Exception e ) {}
 			}
-			
-			if( LT(1) == Token.t_operator )
+			else if( LT(1) == Token.t_operator )
 			{
 				// we know this is an operator
 				Token operatorToken = consume( Token.t_operator );
@@ -1263,7 +1262,7 @@ c, quick);
 			
 			if( LA(1).getType() == Token.tIDENTIFIER )
 			{
-				try{ callback.declaratorAbort( container, declarator ); } catch( Exception e ) {}
+				try{ callback.declaratorAbort( declarator ); } catch( Exception e ) {}
 				declarator = null;
 			}
 			else
@@ -1433,8 +1432,6 @@ c, quick);
 			backup( mark ); 
 			throw backtrack; 
 		}
-		else
-			try{ callback.classSpecifierSafe( classSpec ); } catch( Exception e ){}
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {

@@ -101,7 +101,7 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorAbort(java.lang.Object, java.lang.Object)
 	 */
-	public void declaratorAbort(Object container, Object declarator) {
+	public void declaratorAbort(Object declarator) {
 	}
 
 	/* (non-Javadoc)
@@ -209,13 +209,6 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
 	 */
 	public void classSpecifierAbort(Object classSpecifier) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierSafe(java.lang.Object)
-	 */
-	public void classSpecifierSafe(Object classSpecifier) {
-
 	}
 
 	/* (non-Javadoc)

@@ -6,19 +6,27 @@ import java.util.List;
 
 
 
-public class Declarator implements IExpressionOwner {
+public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 	
-	public Declarator(DeclSpecifier.Container declaration) {
+	public Declarator(DeclSpecifier.IContainer declaration) {
 		this.declaration = declaration;
+		this.ownerDeclarator = null; 
 	}
 	
-	private DeclSpecifier.Container declaration;
+	public Declarator( IDeclaratorOwner owner )
+	{
+		this.ownerDeclarator = owner;
+		this.declaration = null;
+	}
+	
+	private final DeclSpecifier.IContainer declaration;
+	private final IDeclaratorOwner ownerDeclarator;
 	
 	/**
 	 * Returns the declaration.
 	 * @return SimpleDeclaration
 	 */
-	public DeclSpecifier.Container getDeclaration() {
+	public DeclSpecifier.IContainer getDeclaration() {
 		return declaration;
 	}
 
@@ -27,7 +35,7 @@ public class Declarator implements IExpressionOwner {
 	 * @param declaration The declaration to set
 	 */
 	public void setDeclaration(SimpleDeclaration declaration) {
-		this.declaration = declaration;
+		
 	}
 
 	private Name name;
@@ -176,6 +184,28 @@ public class Declarator implements IExpressionOwner {
 	 */
 	public void setPureVirtual(boolean isPureVirtual) {
 		this.isPureVirtual = isPureVirtual;
+	}
+
+	private Declarator innerDeclarator = null; 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IDeclaratorOwner#getDeclarator()
+	 */
+	public Declarator getDeclarator() {
+		return innerDeclarator;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IDeclaratorOwner#setDeclarator(org.eclipse.cdt.internal.core.dom.Declarator)
+	 */
+	public void setDeclarator(Declarator input) {
+		innerDeclarator = input; 		
+	}
+
+	/**
+	 * @return
+	 */
+	public IDeclaratorOwner getOwnerDeclarator() {
+		return ownerDeclarator;
 	}
 
 }

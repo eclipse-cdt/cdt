@@ -58,7 +58,11 @@ public class NewClassCodeGenerator {
 	private boolean fCreateIncludePaths = true;
 	
 	public static class CodeGeneratorException extends Exception {
-        public CodeGeneratorException(String message) {
+        /**
+		 * Comment for <code>serialVersionUID</code>
+		 */
+		private static final long serialVersionUID = 1L;
+		public CodeGeneratorException(String message) {
         }
         public CodeGeneratorException(Throwable e) {
         }

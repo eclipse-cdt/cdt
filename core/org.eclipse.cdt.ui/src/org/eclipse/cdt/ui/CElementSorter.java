@@ -225,9 +225,8 @@ public class CElementSorter extends ViewerSorter {
 			if (root1 == null) {
 				if (root2 == null) {
 					return 0;
-				} else {
-					return 1;
 				}
+				return 1;
 			} else if (root2 == null) {
 				return -1;
 			}			

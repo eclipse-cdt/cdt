@@ -192,12 +192,12 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		fMenuManager.addMenuListener(fMenuListener);
 	}
 	
-	private void removePreviousLRUWorkingSetActions(IMenuManager mm) {
+	void removePreviousLRUWorkingSetActions(IMenuManager mm) {
 		for (int i= 1; i <= fLRUMenuCount; i++)
 			mm.remove(WorkingSetMenuContributionItem.getId(i));
 	}
 
-	private void addLRUWorkingSetActions(IMenuManager mm) {
+	void addLRUWorkingSetActions(IMenuManager mm) {
 		IWorkingSet[] workingSets= PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
 		List sortedWorkingSets= Arrays.asList(workingSets);
 		Collections.sort(sortedWorkingSets, new WorkingSetComparator());
@@ -240,7 +240,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	/*
 	 * Called by the working set change listener
 	 */
-	private void doPropertyChange(PropertyChangeEvent event) {
+	void doPropertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
 			fChangeListener.propertyChange(event);

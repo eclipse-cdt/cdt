@@ -136,28 +136,26 @@ public class WorkingSetFilter extends ViewerFilter {
 				// compare Java elements
 				ICElement searchedElement= element;
 				while (scopeElement != null && searchedElement != null) {
-					if (searchedElement.equals(scopeElement))
+					if (searchedElement.equals(scopeElement)) {
 						return true;
-					else {
-						if (scopeElement instanceof ICProject && searchedElement instanceof ISourceRoot) {
-//							ISourceRoot pkgRoot= (ISourceRoot)searchedElement;
-//							if (pkgRoot.isExternal() && pkgRoot.isArchive()) {
-//								if (((ICProject)scopeElement).isOnClasspath(searchedElement))
-//									return true;
-//							}
-						}
-						searchedElement= searchedElement.getParent();
-						if (searchedElement != null && searchedElement.getElementType() == ICElement.C_UNIT) {
-							ITranslationUnit cu= (ITranslationUnit)searchedElement;
-							cu= CModelUtil.toOriginal(cu);
-						}
+					}
+					if (scopeElement instanceof ICProject && searchedElement instanceof ISourceRoot) {
+//						ISourceRoot pkgRoot= (ISourceRoot)searchedElement;
+//						if (pkgRoot.isExternal() && pkgRoot.isArchive()) {
+//						if (((ICProject)scopeElement).isOnClasspath(searchedElement))
+//						return true;
+//						}
+					}
+					searchedElement= searchedElement.getParent();
+					if (searchedElement != null && searchedElement.getElementType() == ICElement.C_UNIT) {
+						ITranslationUnit cu= (ITranslationUnit)searchedElement;
+						cu= CModelUtil.toOriginal(cu);
 					}
 				}
 				while (scopeElement != null && element != null) {
 					if (element.equals(scopeElement))
 						return true;
-					else
-						scopeElement= scopeElement.getParent();
+					scopeElement= scopeElement.getParent();
 				}
 			} else {
 				// compare resource paths

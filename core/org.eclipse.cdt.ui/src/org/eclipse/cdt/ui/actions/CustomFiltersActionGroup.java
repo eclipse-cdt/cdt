@@ -86,10 +86,10 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	class FilterActionMenuContributionItem extends ContributionItem {
 
 		private int fItemNumber;
-		private boolean fState;
-		private String fFilterId;
+		boolean fState;
+		String fFilterId;
 		private String fFilterName;
-		private CustomFiltersActionGroup fActionGroup;
+		CustomFiltersActionGroup fActionGroup;
 
 		/**
 		 * Constructor for FilterActionMenuContributionItem.
@@ -272,7 +272,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	 * @param filterId the id of the filter
 	 * @param state the filter state
 	 */
-	private void setFilter(String filterId, boolean state) {
+	void setFilter(String filterId, boolean state) {
 		// Renew filter id in LRU stack
 		fLRUFilterIdsStack.remove(filterId);
 		fLRUFilterIdsStack.add(0, filterId);
@@ -366,7 +366,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		fMenuManager.addMenuListener(fMenuListener);
 	}
 
-	private void removePreviousLRUFilterActions(IMenuManager mm) {
+	void removePreviousLRUFilterActions(IMenuManager mm) {
 		if (fFilterIdsUsedInLastViewMenu == null)
 			return;
 		
@@ -374,7 +374,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 			mm.remove(fFilterIdsUsedInLastViewMenu[i]);
 	}
 
-	private void addLRUFilterActions(IMenuManager mm) {
+	void addLRUFilterActions(IMenuManager mm) {
 		if (fLRUFilterIdsStack.isEmpty()) {
 			fFilterIdsUsedInLastViewMenu= null;
 			return;
@@ -704,7 +704,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	
 	// ---------- dialog related code ----------
 
-	private void openDialog() {
+	void openDialog() {
 		CustomFiltersDialog dialog= new CustomFiltersDialog(
 			fViewer.getControl().getShell(),
 			fTargetId,

@@ -205,9 +205,8 @@ public class OpenViewActionGroup extends ActionGroup {
 	public static boolean canActionBeAdded(ISelection selection) {
 		if(selection instanceof ITextSelection) {
 			return (((ITextSelection)selection).getLength() > 0);
-		} else {
-			return getElement(selection) != null;
 		}
+		return getElement(selection) != null;
 	}
 	
 	private static ICElement getElement(ISelection sel) {

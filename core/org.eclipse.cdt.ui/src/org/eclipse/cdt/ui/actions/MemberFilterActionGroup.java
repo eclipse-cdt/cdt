@@ -54,7 +54,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 	private MemberFilterAction[] fFilterActions;
 	private MemberFilter fFilter;
 	
-	private StructuredViewer fViewer;
+	StructuredViewer fViewer;
 	private String fViewerId;
 	private boolean fInViewMenu;
 	

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -22,13 +21,11 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.actions.RedoRefactoringAction;
 import org.eclipse.cdt.internal.ui.refactoring.actions.RenameRefactoringAction;
 import org.eclipse.cdt.internal.ui.refactoring.actions.UndoRefactoringAction;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -278,13 +275,4 @@ public class RefactoringActionGroup extends ActionGroup {
 		return 0;
 	}
 			
-	private ICElement getEditorInput() {
-		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(
-			fEditor.getEditorInput());		
-	}
-	
-	private IDocument getDocument() {
-		return CUIPlugin.getDefault().getDocumentProvider().
-			getDocument(fEditor.getEditorInput());
-	}
 }

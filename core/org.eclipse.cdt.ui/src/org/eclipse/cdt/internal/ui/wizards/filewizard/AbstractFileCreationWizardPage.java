@@ -69,7 +69,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	private static final int SOURCE_FOLDER_ID = 1;
 	protected static final int NEW_FILE_ID = 2;
 	private static final int ALL_FIELDS = SOURCE_FOLDER_ID | NEW_FILE_ID;
-	private int fLastFocusedField = 0;
+	int fLastFocusedField = 0;
 	private StringButtonDialogField fSourceFolderDialogField;
 	private IStatus fSourceFolderStatus;
 	private IStatus fNewFileStatus;
@@ -380,9 +380,8 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 					if (resType == IResource.PROJECT) {
 						status.setError(NewFileWizardMessages.getString("AbstractFileCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
 						return status;
-					} else {
-						status.setWarning(NewFileWizardMessages.getString("AbstractFileCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
 					}
+					status.setWarning(NewFileWizardMessages.getString("AbstractFileCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
 				}
 			    ICElement e = CoreModel.getDefault().create(res.getFullPath());
 			    if (CModelUtil.getSourceFolder(e) == null) {
@@ -496,7 +495,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	 */		
 	protected abstract void setFocus();
 				
-	private IPath chooseSourceFolder(IPath initialPath) {
+	IPath chooseSourceFolder(IPath initialPath) {
 	    ICElement initElement = getSourceFolderFromPath(initialPath);
 	    if (initElement instanceof ISourceRoot) {
 	        ICProject cProject = initElement.getCProject();

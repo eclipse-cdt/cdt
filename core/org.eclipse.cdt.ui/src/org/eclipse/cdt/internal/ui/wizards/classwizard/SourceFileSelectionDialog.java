@@ -64,24 +64,24 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class SourceFileSelectionDialog extends SelectionStatusDialog {
     
-    private TreeViewer fViewer;
+    TreeViewer fViewer;
     private final ITreeContentProvider fContentProvider = new CElementContentProvider();
     private final ILabelProvider fLabelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
-    private IStatus fCurrStatus = new StatusInfo();
-    private IStatus fFolderNameStatus = new StatusInfo();
-    private IStatus fFileNameStatus = new StatusInfo();
-    private ICElement fInput;
+    IStatus fCurrStatus = new StatusInfo();
+    IStatus fFolderNameStatus = new StatusInfo();
+    IStatus fFileNameStatus = new StatusInfo();
+    ICElement fInput;
     private int fWidth = 60;
     private int fHeight = 18;
-    private StringDialogField fFolderNameDialogField;
-    private StringDialogField fFileNameDialogField;
+    StringDialogField fFolderNameDialogField;
+    StringDialogField fFileNameDialogField;
     private IWorkspaceRoot fWorkspaceRoot;
     private final FieldsAdapter fFieldsAdapter = new FieldsAdapter();
     
 	private ICElement fCurrentFolder = null;
 	private String fCurrentFileString = null;
-    private String fInitialFolderName = null;
-    private String fInitialFileName = null;
+    String fInitialFolderName = null;
+    String fInitialFileName = null;
     
     private final class FieldsAdapter extends SelectionAdapter
     	implements ISelectionChangedListener, IDoubleClickListener, IDialogFieldListener {
@@ -149,7 +149,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         }
     }
     
-    private static final Class[] FILTER_TYPES = new Class[] {
+    static final Class[] FILTER_TYPES = new Class[] {
             ICModel.class,
             ICProject.class,
             ICContainer.class,
@@ -247,7 +247,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		updateStatus(StatusUtil.getMostSevere(status));
 	}
 	
-	private IStatus folderNameChanged() {
+	IStatus folderNameChanged() {
         StatusInfo status = new StatusInfo();
         
 		fCurrentFolder = null;
@@ -277,9 +277,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 					if (resType == IResource.PROJECT) {
 						status.setError(NewClassWizardMessages.getString("SourceFileSelectionDialog.warning.NotACProject")); //$NON-NLS-1$
 						return status;
-					} else {
-						status.setWarning(NewClassWizardMessages.getString("SourceFileSelectionDialog.warning.NotInACProject")); //$NON-NLS-1$
 					}
+					status.setWarning(NewClassWizardMessages.getString("SourceFileSelectionDialog.warning.NotInACProject")); //$NON-NLS-1$
 				}
 			} else {
 				status.setError(NewClassWizardMessages.getFormattedString("SourceFileSelectionDialog.error.NotAFolder", str)); //$NON-NLS-1$
@@ -292,7 +291,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         return status;
 	}
 
-	private IStatus fileNameChanged() {
+	IStatus fileNameChanged() {
         StatusInfo status = new StatusInfo();
         
         fCurrentFileString = null;
@@ -382,7 +381,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
             }
         });
     }
-    private void superCreate() {
+    void superCreate() {
         super.create();
     }
     
@@ -496,7 +495,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         return path;
     }
 
-    private void setPathFields(String folderName, String fileName) {
+    void setPathFields(String folderName, String fileName) {
 	    fFolderNameDialogField.setTextWithoutUpdate(folderName != null ? folderName : ""); //$NON-NLS-1$
 	    fFileNameDialogField.setTextWithoutUpdate(fileName != null ? fileName : ""); //$NON-NLS-1$
 		fFolderNameStatus = folderNameChanged();

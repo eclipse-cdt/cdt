@@ -61,7 +61,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	protected Button browseButton;
 	private Label resolvedPathLabelText;
 	private Label resolvedPathLabelData;
-	private boolean preventDialogFieldChanged = false;
+	boolean preventDialogFieldChanged = false;
 	
 	public LinkToFileGroup(IStringButtonAdapter adapter, Listener listener) {
 		super(adapter);

@@ -780,7 +780,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		return null;
 	}
 
-	private void updateFilesFromClassName(String className) {
+	void updateFilesFromClassName(String className) {
 	    String headerName = ""; //$NON-NLS-1$
 	    String sourceName = ""; //$NON-NLS-1$
 		if (className.length() > 0) {
@@ -922,9 +922,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					if (resType == IResource.PROJECT) {
 						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
 						return status;
-					} else {
-						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
 					}
+					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
 				}
 			    ICElement e = CoreModel.getDefault().create(res.getFullPath());
 			    if (CModelUtil.getSourceFolder(e) == null) {
@@ -1018,25 +1017,24 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
 		            }
 	                return status;
-			    } else {
-			        // look for other types
-			        exactMatch = false;
-			        for (int i = 0; i < types.length; ++i) {
-			            ITypeInfo currType = types[i];
-						if (currType.getCElementType() != ICElement.C_NAMESPACE) {
-							exactMatch = currType.getQualifiedTypeName().equals(typeName);
-						    if (exactMatch) {
-						        // found a matching type
-						        break;
-						    }
-						}
-			        }
-		            if (exactMatch) {
-		                status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
-		            } else {
-		                status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
-		            }
 			    }
+		        // look for other types
+		        exactMatch = false;
+		        for (int i = 0; i < types.length; ++i) {
+		        	ITypeInfo currType = types[i];
+		        	if (currType.getCElementType() != ICElement.C_NAMESPACE) {
+		        		exactMatch = currType.getQualifiedTypeName().equals(typeName);
+		        		if (exactMatch) {
+		        			// found a matching type
+		        			break;
+		        		}
+		        	}
+		        }
+		        if (exactMatch) {
+		        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExists")); //$NON-NLS-1$
+		        } else {
+		        	status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingNamespaceExistsDifferentCase")); //$NON-NLS-1$
+		        }
 		    } else {
 		        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
 		    }
@@ -1169,27 +1167,26 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
 		            }
 	                return status;
-			    } else {
-			        // look for other types
-			        exactMatch = false;
-			        for (int i = 0; i < types.length; ++i) {
-			            ITypeInfo currType = types[i];
-						if (currType.getCElementType() != ICElement.C_CLASS
-						        && currType.getCElementType() != ICElement.C_STRUCT) {
-							exactMatch = currType.getQualifiedTypeName().equals(fullyQualifiedName);
-						    if (exactMatch) {
-						        // found a matching type
-						        break;
-						    }
-						}
-			        }
-		            if (exactMatch) {
-		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
-		            } else {
-		                status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExistsDifferentCase")); //$NON-NLS-1$
-		            }
-		            return status;
 			    }
+		        // look for other types
+		        exactMatch = false;
+		        for (int i = 0; i < types.length; ++i) {
+		        	ITypeInfo currType = types[i];
+		        	if (currType.getCElementType() != ICElement.C_CLASS
+		        			&& currType.getCElementType() != ICElement.C_STRUCT) {
+		        		exactMatch = currType.getQualifiedTypeName().equals(fullyQualifiedName);
+		        		if (exactMatch) {
+		        			// found a matching type
+		        			break;
+		        		}
+		        	}
+		        }
+		        if (exactMatch) {
+		        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExists")); //$NON-NLS-1$
+		        } else {
+		        	status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.TypeMatchingClassExistsDifferentCase")); //$NON-NLS-1$
+		        }
+		        return status;
 		    }
 	    }
 		return status;
@@ -1240,19 +1237,18 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (baseProject != null) {
 		    if (baseProject.equals(project)) {
 		        return true;
-		    } else {
-		        ITypeReference ref = type.getResolvedReference();
-		        for (int i = 0; i < includePaths.length; ++i) {
-		            IPath includePath = new Path(includePaths[i]);
-		            if (ref != null) {
-		                if (includePath.isPrefixOf(ref.getLocation()))
-		                    return true;
-		            } else {
-		                // we don't have the real location, so just check the project path
-		                if (baseProject.getLocation().isPrefixOf(includePath))
-		                    return true;
-		            }
-		        }
+		    }
+		    ITypeReference ref = type.getResolvedReference();
+		    for (int i = 0; i < includePaths.length; ++i) {
+		    	IPath includePath = new Path(includePaths[i]);
+		    	if (ref != null) {
+		    		if (includePath.isPrefixOf(ref.getLocation()))
+		    			return true;
+		    	} else {
+		    		// we don't have the real location, so just check the project path
+		    		if (baseProject.getLocation().isPrefixOf(includePath))
+		    			return true;
+		    	}
 		    }
 		}
 		return false;
@@ -2175,15 +2171,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    return null;
 	}
 
-    private IPath updateSourceFolderFromPath(IPath filePath) {
+    IPath updateSourceFolderFromPath(IPath filePath) {
         ICElement folder = getSourceFolderFromPath(filePath);
         if (folder != null) {
             return folder.getPath();
-        } else {
-            IProject proj = PathUtil.getEnclosingProject(filePath);
-            if (proj != null)
-                return proj.getFullPath(); 
         }
+        IProject proj = PathUtil.getEnclosingProject(filePath);
+        if (proj != null)
+        	return proj.getFullPath(); 
         return null;
     }
 }

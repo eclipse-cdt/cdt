@@ -32,8 +32,8 @@ import org.eclipse.ui.PlatformUI;
 public class WorkingSetMenuContributionItem extends ContributionItem {
 
 	private int fId;
-	private IWorkingSet fWorkingSet;
-	private WorkingSetFilterActionGroup fActionGroup;
+	IWorkingSet fWorkingSet;
+	WorkingSetFilterActionGroup fActionGroup;
 	private Image fImage;
 
 	/**

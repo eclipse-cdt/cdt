@@ -67,8 +67,8 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
 	private Text text;
-	private CheckboxTreeViewer tree;
-	private IWorkingSet workingSet;
+	CheckboxTreeViewer tree;
+	IWorkingSet workingSet;
 	private boolean firstCheck = false;		// set to true if selection is set in setSelection
 
 	/**
@@ -245,7 +245,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * 
 	 * @param event the checked state change event.
 	 */
-	private void handleCheckStateChange(final CheckStateChangedEvent event) {
+	void handleCheckStateChange(final CheckStateChangedEvent event) {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				IResource resource = (IResource) event.getElement();
@@ -343,7 +343,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @param checkExpandedState true=recurse into sub-containers and set the 
 	 * 	checked state. false=only set checked state of members of this container
 	 */
-	private void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
+	void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
 		// checked state is set lazily on expand, don't set it if container is collapsed
 		if (container.isAccessible() == false || (tree.getExpandedState(container) == false && state && checkExpandedState)) {
 			return;
@@ -379,7 +379,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * @param child the resource whose parent checked state should 
 	 * 	be set.
 	 */
-	private void updateParentState(IResource child) {
+	void updateParentState(IResource child) {
 		if (child == null || child.getParent() == null)
 			return;
 
@@ -405,7 +405,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * Validates the working set name and the checked state of the 
 	 * resource tree.
 	 */
-	private void validateInput() {
+	void validateInput() {
 		String errorMessage = null;
 		String newText = text.getText();
 

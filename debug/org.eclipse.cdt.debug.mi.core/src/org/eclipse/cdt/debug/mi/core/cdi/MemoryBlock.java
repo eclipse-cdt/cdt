@@ -115,7 +115,17 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	public void refresh() throws CDIException {
 		MemoryManager mgr = (MemoryManager)getCTarget().getCSession().getMemoryManager();
 		setDirty(true);
-		mgr.update(this, null);
+		Long[] addresses = mgr.update(this, null);
+		// Check if this affects other blocks.
+		if (addresses.length > 0) {
+			MemoryBlock[] blocks = mgr.listMemoryBlocks();
+			for (int i = 0; i < blocks.length; i++) {
+				if (! blocks[i].equals(this) && blocks[i].contains(addresses)) {
+					blocks[i].setDirty(false);
+					mgr.update(blocks[i], null);
+				}
+			}
+		}
 	}
 
 	/**

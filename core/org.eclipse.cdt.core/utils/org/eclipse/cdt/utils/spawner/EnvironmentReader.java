@@ -29,16 +29,17 @@ public class EnvironmentReader {
 		InputStream in = null;
 		boolean check_ready = false;
 		boolean isWin32 = false;
+		if (OS.startsWith("windows 9") || OS.startsWith("windows me")) { // 95, 98, me
+			command = "command.com /c set";
+			//The buffered stream doesn't always like windows 98
+			check_ready = true;
+			isWin32 = true;
+		} else 
+		if (OS.startsWith("windows ")) {
+			command = "cmd.exe /c set";
+			isWin32 = true;
+		}
 		try {
-			if (OS.indexOf("windows 9") > -1) {
-				command = "command.com /c set";
-				//The buffered stream doesn't always like windows 98
-				check_ready = true;
-				isWin32 = true;
-			} else if ((OS.indexOf("nt") > -1) || (OS.indexOf("windows 2000") > -1) || (OS.indexOf("windows xp") > -1)) {
-				command = "cmd.exe /c set";
-				isWin32 = true;
-			}
 			p = ProcessFactory.getFactory().exec(command);
 			in = p.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));

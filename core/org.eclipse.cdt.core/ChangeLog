@@ -1,3 +1,6 @@
+2003-08-25 John Camelon
+	Updated Structure.java to keep JDK 1.3 compliance.  
+
 2003-08-21 Hoda Amer
 	- C Model cleanups + solutions to bug#38985 & bug#38986
 		getField(String)		Implemented

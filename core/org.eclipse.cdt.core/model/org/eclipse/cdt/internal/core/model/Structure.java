@@ -6,9 +6,9 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IField;
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class Structure extends SourceManipulation implements  IStructure {
 	
-	Map superClassesNames = new LinkedHashMap();
+	Map superClassesNames = new TreeMap();
 
 	public Structure(ICElement parent, int kind, String name) {
 		super(parent, name, kind);

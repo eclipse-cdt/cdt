@@ -46,6 +46,7 @@ import org.eclipse.cdt.make.internal.core.makefile.SuffixesRule;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
+import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -145,7 +146,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			}
 
 			// 1- Try command first, since we can not strip '#' in command line
-			if (GNUMakefileUtil.isCommand(line)) {
+			if (PosixMakefileUtil.isCommand(line)) {
 				Command cmd = new Command(this, line);
 				cmd.setLines(startLine, endLine);
 				if (!conditions.empty()) {
@@ -257,7 +258,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			}
 
 			// - Check for inference rule.
-			if (GNUMakefileUtil.isInferenceRule(line)) {
+			if (PosixMakefileUtil.isInferenceRule(line)) {
 				InferenceRule irule = parseInferenceRule(line);
 				irule.setLines(startLine, endLine);
 				addDirective(conditions, irule);
@@ -267,10 +268,12 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 			// - Variable Definiton ?
 			if (GNUMakefileUtil.isVariableDefinition(line)) {
-				Directive stmt = parseVariableDefinition(line);
-				stmt.setLines(startLine, endLine);
-				addDirective(conditions, stmt);
-				continue;
+				VariableDefinition vd = parseVariableDefinition(line);
+				vd.setLines(startLine, endLine);
+				addDirective(conditions, vd);
+				if (!vd.isTargetSpecific()) {
+					continue;					
+				}
 			}
 
 			// - GNU Static Target rule ?
@@ -345,19 +348,19 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 	protected SpecialRule processSpecialRules(String line) {
 		SpecialRule stmt = null;
-		if (GNUMakefileUtil.isIgnoreRule(line)) {
+		if (PosixMakefileUtil.isIgnoreRule(line)) {
 			stmt = parseSpecialRule(line);
-		} else if (GNUMakefileUtil.isPosixRule(line)) {
+		} else if (PosixMakefileUtil.isPosixRule(line)) {
 			stmt = parseSpecialRule(line);
-		} else if (GNUMakefileUtil.isPreciousRule(line)) {
+		} else if (PosixMakefileUtil.isPreciousRule(line)) {
 			stmt = parseSpecialRule(line);
-		} else if (GNUMakefileUtil.isSilentRule(line)) {
+		} else if (PosixMakefileUtil.isSilentRule(line)) {
 			stmt = parseSpecialRule(line);
-		} else if (GNUMakefileUtil.isSuffixesRule(line)) {
+		} else if (PosixMakefileUtil.isSuffixesRule(line)) {
 			stmt = parseSpecialRule(line);
-		} else if (GNUMakefileUtil.isDefaultRule(line)) {
+		} else if (PosixMakefileUtil.isDefaultRule(line)) {
 			stmt = parseSpecialRule(line);
-		} else if (GNUMakefileUtil.isSccsGetRule(line)) {
+		} else if (PosixMakefileUtil.isSccsGetRule(line)) {
 			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isPhonyRule(line)) {
 			stmt = parseSpecialRule(line);
@@ -390,7 +393,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		if (index != -1) {
 			keyword = line.substring(0, index).trim();
 			String req = line.substring(index + 1);
-			reqs = GNUMakefileUtil.findPrerequisites(req);
+			reqs = PosixMakefileUtil.findPrerequisites(req);
 		} else {
 			keyword = line;
 			reqs = new String[0];
@@ -558,7 +561,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		if (index != -1) {
 			// Break the targets
 			String target = line.substring(0, index);
-			targetNames = GNUMakefileUtil.findTargets(target.trim());
+			targetNames = PosixMakefileUtil.findTargets(target.trim());
 
 			// Some TargetRule have "::" for separator
 			String req = line.substring(index + 1);
@@ -587,10 +590,10 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				orderReq = ""; //$NON-NLS-1$
 			}
 
-			normalReqs = GNUMakefileUtil.findPrerequisites(normalReq.trim());
-			orderReqs = GNUMakefileUtil.findPrerequisites(orderReq.trim());
+			normalReqs = PosixMakefileUtil.findPrerequisites(normalReq.trim());
+			orderReqs = PosixMakefileUtil.findPrerequisites(orderReq.trim());
 		} else {
-			targetNames = GNUMakefileUtil.findTargets(line);
+			targetNames = PosixMakefileUtil.findTargets(line);
 			normalReqs = new String[0];
 			orderReqs = new String[0];
 		}
@@ -621,7 +624,8 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		StringBuffer value = new StringBuffer();
 
 		// Check for Target: Variable-assignment
-		if (GNUMakefileUtil.isTargetVariable(line)) {
+		isTargetVariable = GNUMakefileUtil.isTargetVariable(line);
+		if (isTargetVariable) {
 			// move to the first ':'
 			int colon = Util.indexOf(line, ':');
 			if (colon != -1) {
@@ -692,8 +696,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 		if (isTargetVariable) {
 			vd = new TargetVariable(this, targetName, name, value, isOverride, type);
-		}
-		if (isOverride && isDefine) {
+		} else if (isOverride && isDefine) {
 			vd = new OverrideDefine(this, name, value);
 		} else if (isDefine) {
 			vd = new DefineVariable(this, name, value);
@@ -715,7 +718,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		int colon = Util.indexOf(line, ':');
 		if (colon > 1) {
 			String targetLine = line.substring(0, colon).trim();
-			targets = GNUMakefileUtil.findTargets(targetLine);
+			targets = PosixMakefileUtil.findTargets(targetLine);
 			// second colon: Target-Pattern
 			line = line.substring(colon + 1);
 			colon = Util.indexOf(line, ':');

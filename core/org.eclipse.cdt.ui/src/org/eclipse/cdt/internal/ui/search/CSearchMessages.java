@@ -26,8 +26,15 @@ import java.util.ResourceBundle;
 public class CSearchMessages {
 	private static final String RESOURCE_BUNDLE= CSearchMessages.class.getName();
 
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
+	private static ResourceBundle fgResourceBundle;
+	static {
+		try {
+			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+		} catch (MissingResourceException x) {
+			fgResourceBundle = null;
+		}
+	}
+	
 	private CSearchMessages() {
 	}
 
@@ -36,6 +43,8 @@ public class CSearchMessages {
 			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		} catch (NullPointerException e) {
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/**

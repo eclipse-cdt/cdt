@@ -1,3 +1,16 @@
+2004-03-02 Tanya Wolff
+
+	Fixed missing key for Working Set name and content on 
+	new C/C++ Working set dialog. Also added error handling for when 
+	properties files are not found. 
+	
+	All *Messages.java files are affected by the error handling.
+	
+	The fix for working set is in:
+	
+	* src/org/eclipse/cdt/internal/ui/workingsets/CElementWorkingSetPage.java
+
+
 2004-03-02 Alain Magloire
 
 	From Dave Daoust:

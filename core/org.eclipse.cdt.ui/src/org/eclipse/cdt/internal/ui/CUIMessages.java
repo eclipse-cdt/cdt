@@ -18,8 +18,15 @@ public class CUIMessages {
 
 	private static final String RESOURCE_BUNDLE= "org.eclipse.cdt.internal.ui.CUIMessages";//$NON-NLS-1$
 
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
+	private static ResourceBundle fgResourceBundle;
+	static {
+		try {
+			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+		} catch (MissingResourceException x) {
+			fgResourceBundle = null;
+		}
+	}
+	
 	private CUIMessages() {
 	}
 
@@ -28,6 +35,8 @@ public class CUIMessages {
 			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
+		} catch (NullPointerException e) {
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

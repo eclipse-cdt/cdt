@@ -60,7 +60,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
 	final private static String PAGE_TITLE= WorkingSetMessages.getString("CElementWorkingSetPage.title"); //$NON-NLS-1$
-	final private static String PAGE_ID= WorkingSetMessages.getString("CElementWorkingSetPage"); //$NON-NLS-1$
+	//final private static String PAGE_ID= WorkingSetMessages.getString("CElementWorkingSetPage"); //$NON-NLS-1$
+	final private static String PAGE_ID= "CElementWorkingSetPage"; //$NON-NLS-1$
 
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
@@ -118,7 +119,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 		//WorkbenchHelp.setHelp(composite, IHelpContextIds.WORKING_SET_RESOURCE_PAGE);		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.getString("CElementWorkingSetPage.content")); //$NON-NLS-1$
+		label.setText(WorkingSetMessages.getString("CElementWorkingSetPage.name")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(data);
 		label.setFont(font);
@@ -136,7 +137,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		text.setFocus();
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(WorkingSetMessages.getString("CElementWorkingSetPage.label.tree")); //$NON-NLS-1$
+		label.setText(WorkingSetMessages.getString("CElementWorkingSetPage.content")); //$NON-NLS-1$
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(data);
 		label.setFont(font);

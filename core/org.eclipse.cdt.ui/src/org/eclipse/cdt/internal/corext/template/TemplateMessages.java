@@ -12,8 +12,14 @@ import java.util.ResourceBundle;
 public class TemplateMessages {
 
 	private static final String RESOURCE_BUNDLE= TemplateMessages.class.getName();
-	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
+	private static ResourceBundle fgResourceBundle;
+	static {
+		try {
+			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+		} catch (MissingResourceException x) {
+			fgResourceBundle = null;
+		}
+	}
 	private TemplateMessages() {
 	}
 
@@ -22,6 +28,8 @@ public class TemplateMessages {
 			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
+		} catch (NullPointerException e) {
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

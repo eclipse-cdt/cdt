@@ -19,16 +19,25 @@ public class TextManipulationMessages {
 
 	private static final String BUNDLE_NAME= "org.eclipse.cdt.internal.corext.textmanipulation.Messages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
-
+	private static ResourceBundle fgResourceBundle;
+	static {
+		try {
+			fgResourceBundle = ResourceBundle.getBundle(BUNDLE_NAME);
+		} catch (MissingResourceException x) {
+			fgResourceBundle = null;
+		}
+	}
+	
 	private TextManipulationMessages() {
 	}
 
 	public static String getString(String key) {
 		try {
-			return RESOURCE_BUNDLE.getString(key);
+			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
+		} catch (NullPointerException e) {
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

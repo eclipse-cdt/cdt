@@ -5,6 +5,7 @@
 package org.eclipse.cdt.launch;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -17,11 +18,11 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.*;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -32,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -244,11 +246,9 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 * @param code error code
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		String newMessage = message;
-		if (exception != null) {
-			newMessage = message + " : " + exception.getLocalizedMessage();
-		}
-		throw new CoreException(new Status(IStatus.ERROR, getPluginID(), code, newMessage, exception));
+		MultiStatus status = new MultiStatus(getPluginID(),code, message,exception);
+		status.add(new Status(IStatus.ERROR,getPluginID(),code, exception == null ? "" : exception.getLocalizedMessage(),exception));
+		throw new CoreException(status);
 	}
 
 	protected void cancel(String message, int code) throws CoreException {
@@ -298,7 +298,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				if (cProject == null) {
 					abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 				}
-				sourceLocator = new DefaultSourceLocator();
+				sourceLocator = CDebugUIPlugin.createDefaultSourceLocator();
 				sourceLocator.initializeDefaults(configuration);
 			} else {
 				sourceLocator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(id);
@@ -383,16 +383,16 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = getProjectName(config);
 		if (name == null) {
-			abort("C project not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+			abort("C Project not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		ICProject cproject = getCProject(config);
 		if (cproject == null) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!project.exists()) {
-				abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				abort("Project '"+ name + "' does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
 			else if (!project.isOpen()) {
-				abort("Project is closed", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				abort("Project '"+ name + "' is closed", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 			}
 			abort("Project is not a C/C++ project", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
@@ -408,7 +408,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 
 		IFile programPath = ((IProject) cproject.getResource()).getFile(fileName);
 		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
-			abort("Program file does not exist", null, ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+			abort("Program file does not exist", new FileNotFoundException(programPath.getLocation() + " not found."), ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 		return programPath;
 	}
@@ -446,7 +446,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				else {
 					abort(
 						"Working directory does not exist",
-						null,
+						new FileNotFoundException(path.toOSString() + " not found."),
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 			}
@@ -458,7 +458,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				else {
 					abort(
 						"Working directory does not exist",
-						null,
+					    new FileNotFoundException(path.toOSString() + "Does not exsit."),
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 			}

@@ -1,3 +1,40 @@
+2003-10-27 
+	Fixed 46129
+	
+	AbstractCLaunchDelegate.java
+	
+2003-10-27 Mikhail Khodjaiants
+	Changed the initialization of 'SourceLookupBlock'.
+	* CSourceLookupTab.java
+
+2003-10-27 Mikhail Khodjaiants
+	Moved the 'org.eclipse.debug.core.sourceLocators' extension from the launcher.
+	* plugin.xml
+	* plugin.properties
+
+2003-10-27 Mikhail Khodjaiants
+	Removed the dependency to 'org.apache.xerces'.
+	* plugin.xml
+	* .classpath
+	* .project 
+
+2003-10-27 Mikhail Khodjaiants
+	Moved 'DefaultSourceLocator' from the 'org.eclipse.cdt.launch' plugin and merge it with 'CUISourceLocator'.
+	Removed the 'org.eclipse.cdt.launch.internal.ui.sourcelookup' package.
+	* DefaultSourceLocator.java: moved to the 'org.eclipse.cdt.debug.ui' plugin.
+
+2003-11-22 Mikhail Khodjaiants
+	src/org/eclipse/cdt/launch/ui/CSourceLookupTab.java: 
+	Dispose 'SourceLookupBlock' when disposing 'CSourceLookupTab'.
+
+2003-11-17 Mikhail Khodjaiants
+	src/org/eclipse/cdt/launch/ui/CSourceLookupTab.java: 
+	"Search for duplicate source files" option support.
+	
+2003-10-07 Mikhail Khodjaiants
+	src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java: 
+	use 'MultiStatus' instead of 'Status' in the 'abort' method.
+
 2003-09-22 David Inglis
 	Add help context IDs to plugin and associate ids to each launch tab control.
 	

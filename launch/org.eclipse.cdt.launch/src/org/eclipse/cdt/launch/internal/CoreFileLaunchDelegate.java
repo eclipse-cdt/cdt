@@ -80,7 +80,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final String res[] = { null };
 		if (shell == null) {
-			abort("No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort("No Shell available in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {

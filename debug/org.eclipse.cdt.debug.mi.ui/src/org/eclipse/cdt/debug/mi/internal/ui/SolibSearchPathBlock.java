@@ -93,7 +93,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			fBrowseButton.addSelectionListener( new SelectionAdapter() {
 
 				public void widgetSelected( SelectionEvent evt ) {
-					DirectoryDialog dialog = new DirectoryDialog( getShell() );
+					DirectoryDialog dialog = new DirectoryDialog( AddDirectoryDialog.this.getShell() );
 					dialog.setMessage( MIUIMessages.getString( "SolibSearchPathBlock.5" ) ); //$NON-NLS-1$
 					String res = dialog.open();
 					if ( res != null ) {

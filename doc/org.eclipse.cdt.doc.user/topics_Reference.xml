@@ -70,6 +70,7 @@
 			<topic label="File Types" href="reference/cdt_u_mprop_file_types.htm"/>
 			<topic label="Indexer" href="reference/cdt_u_mprop_indexer.htm"/>
 			<topic label="Error Parser" href="reference/cdt_u_mprop_merror.htm"/>
+			<topic label="Binary Parser" href="reference/cdt_u_mprop_mbinary.htm"/>
 			<topic label="Project References" href="reference/cdt_u_mprop_ref.htm"/>
 		</topic>
 		<topic label="Standard Make Projects" href="reference/cdt_o_smake_proj.htm">

@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Makefile</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
@@ -102,35 +102,43 @@ Test2.o : Test2.h
 <h2>Frequently Asked Questions:</h2>
 Your Console view can be very useful for debugging a build.
 
-<p><font size="+1"><b>Q1</b>.  My Console view says <tt>â€œError launching builderâ€?</tt>. What does that mean?<p></font>
+<p><font size="+1"><b>Q1</b>.  My Console view says <tt>"Error launching builder"</tt>. What does that mean?<p></font>
 <pre>
-Error launching builder (make â€“k clean all )
+Error launching builder (make -k clean all )
 (Exec error:Launching failed)
 </pre>
 
-<p>Most probably, the build command (by default â€œmakeâ€?) is not on your path. You can put it on your path and restart Eclipse.<br>
-You can also change the build command to something that is on your path. If you are using MinGW tools to compile, you should replace the build command with â€œmingw32-makeâ€?.</p>
+<p>Most probably, the build command (by default "make") is not on your path. You can put it on your path and restart Eclipse.<br>
+You can also change the build command to something that is on your path. If you are using MinGW tools to compile, you should replace the build command with "mingw32-make".</p>
 
-<p><font size="+1"><b>Q2</b>. My Console view says <tt>â€œNo rule to make target â€˜Xâ€™â€?</tt>.</p></font>
+<p><font size="+1"><b>Q2</b>. My Console view says <tt>"No rule to make target 'X'"</tt>.</p></font>
 <pre>
 make -k clean all 
-make: *** No rule to make target `clean'.
-make: *** No rule to make target `all'.
+make: *** No rule to make target 'clean'.
+make: *** No rule to make target 'all'.
 </pre>
-<p>By default, the make program looks for a file most commonly called â€œMakefileâ€? or â€œmakefileâ€?.  If it cannot find such a file in the working directory, or if that file is empty or the file does not contain rules for the command line goals (â€œcleanâ€? and â€œallâ€? in this case), it will normally fail with an error message similar to those shown.  </p>
-<p>If you already have a valid Makefile, you may need to change the working directory of your build.  The default working directory for the build command is the projectâ€™s root directory.  You can change this by specifying an alternate Build Directory in the Make Project properties.  
-Or, if your Makefile is named something else (eg. <tt>buildFile.mk</tt>), you can specify the name by setting the default Build command to <tt>make â€“f  buildFile.mk</tt>.</p>
+
+<p>By default, the make program looks for a file most commonly called "Makefile" or "makefile".  
+If it cannot find such a file in the working directory, or if that file is empty or the file does not 
+contain rules for the command line goals ("clean" and "all" in this case), it will normally fail 
+with an error message similar to those shown.  </p>
+
+<p>If you already have a valid Makefile, you may need to change the working directory of your build.  The default working directory for the build command is the project's root directory.  You can change this by specifying an alternate Build Directory in the Make Project properties.  
+Or, if your Makefile is named something else (eg. <tt>buildFile.mk</tt>), you can specify the name by setting the default Build command to <tt>make -f  buildFile.mk</tt>.</p>
 
 <p>If you do not have a valid Makefile, create a new file named Makefile in the root directory.  You can then add the contents of the sample Makefile (above), and modify it as appropriate.</p>
 
-<p><font size="+1"><b>Q3</b>. My Console view says <tt>â€œmissing separatorâ€?</tt>.</p></font>
+<p><font size="+1"><b>Q3</b>. My Console view says <tt>"missing separator"</tt>.</p></font>
 <pre>
 make -k clean all 
 makefile:12: *** missing separator.  Stop.
 </pre>
-<p>The standard syntax of Makefiles dictates that every line in a build rule must be preceded by a Tab character.  This Tab character is often accidentally replaced with spaces, and because both result in white-space indentation, this problem is easily overlooked.  In the sample provided, the error message can be pinpointed to line 12 of the file â€œmakefileâ€?; to fix the problem, insert a tab at the beginning of that line.</p>
+<p>The standard syntax of Makefiles dictates that every line in a build rule must be preceded by a Tab character.  
+This Tab character is often accidentally replaced with spaces, and because both result in white-space indentation, 
+this problem is easily overlooked.  In the sample provided, the error message can be pinpointed to line 12 of the 
+file "makefile"; to fix the problem, insert a tab at the beginning of that line.</p>
 
-<p><font size="+1"><b>Q4</b>. My Console view says <tt>"Target `all' not remade because of errors"</tt>.</p></font>
+<p><font size="+1"><b>Q4</b>. My Console view says <tt>"Target 'all' not remade because of errors"</tt>.</p></font>
 <pre>
 make -k clean all 
 make: *** [clean] Error 255
@@ -141,7 +149,7 @@ make: *** [Test2.o] Error 255
 make: *** [Main.o] Error 255
 g++ -g -o Test2.o -c Test2.cpp
 g++ -g -o Main.o -c Main.cpp
-make: Target `all' not remade because of errors.
+make: Target 'all' not remade because of errors.
 </pre>
 <p>The likely culprit here is that g++ is not on your Path.<br>
 <p>The Error 255 is produced by make as a result of its command shell not being able to find a command for a particular rule.<br>

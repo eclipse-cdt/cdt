@@ -15,16 +15,18 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.model.*;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
+import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
+import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIRegisterCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListChangedRegistersInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 
 /**
  */
@@ -69,14 +71,35 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createRegister()
 	 */
 	public ICDIRegister createRegister(ICDIRegisterObject regObject) throws CDIException {
-		Register reg = getRegister(regObject);
-		if (reg == null) {
-			Session session = (Session)getSession();
-			reg = new Register(session.getCurrentTarget(), regObject);
-			regList.add(reg);
-			MISession mi = session.getMISession();
-			mi.fireEvent(new MIRegisterCreatedEvent(reg.getName(), reg.getID()));
+		if (regObject instanceof RegisterObject) {
+			RegisterObject regObj = (RegisterObject)regObject;
+			Register reg = getRegister(regObject);
+			if (reg == null) {
+				try {
+					String name = "$" + regObj.getName();
+					Session session = (Session)getSession();
+					MISession mi = session.getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIVarCreate var = factory.createMIVarCreate(name);
+					mi.postCommand(var);
+					MIVarCreateInfo info = var.getMIVarCreateInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+					reg = new Register(regObj, info.getMIVar());
+					regList.add(reg);
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				}
+			}
+			return reg;
 		}
+		throw new CDIException("Wrong register type");
+	}
+
+	public Register createRegister(RegisterObject v, MIVar mivar) throws CDIException {
+		Register reg = new Register(v, mivar);
+		regList.add(reg);
 		return reg;
 	}
 
@@ -104,16 +127,28 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	/**
 	 * Use by the eventManager to find the Register;
 	 */
-	public Register getRegister(int regno) throws CDIException {
+	public Register getRegister(String name) throws CDIException {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
-			if (regs[i].getID() == regno) {
+			if (regs[i].getName().equals(name)) {
 				return regs[i];
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Use by the eventManager to find the Register;
+	 */
+	public Register getRegister(int regno) throws CDIException {
+		Register[] regs = getRegisters();
+		for (int i = 0; i < regs.length; i++) {
+			if (regs[i].getVariableObject().getPosition() == regno) {
+				return regs[i];
+			}
+		}
+		return null;
+	}
 	/**
 	 * Call the by the EventManager when the target is suspended.
 	 */

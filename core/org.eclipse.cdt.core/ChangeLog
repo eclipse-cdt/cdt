@@ -1,3 +1,10 @@
+2005-03-02 Alain Magloire
+	Fix for PR 85043: NPE when calling Ar.isARHeader(null);
+	* utils/org/eclipse/cdt/utils/elf/AR.java
+	* utils/org/eclipse/cdt/utils/macho/AR.java
+	* utils/org/elcipse/cdt/utils/som/AR.java
+	* utils/org/eclipse/cdt/utils/xcoff/AR.java
+
 2005-02-24 Alain Magloire
 	Part of 79596
 	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java

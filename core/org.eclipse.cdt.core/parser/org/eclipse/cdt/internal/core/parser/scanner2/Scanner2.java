@@ -839,7 +839,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		}
 		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
-		if( buffer != null && buffer.length == 0 )
+		if( buffer != null && buffer.length == 0 && signal != IToken.tSTRING  && signal != IToken.tLSTRING )
 			bufferPos[bufferStackPos] += 1; //ensure we don't hit infinite loops
 		return i;
 	}

@@ -2095,4 +2095,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write( "}\n" ); //$NON-NLS-1$
 		parse( writer.toString() , false );
 	}
+    
+    public void testBug74328() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "int main(int argc, char **argv) { char *sign; sign = \"\";\n" );
+    	writer.write( "  return argc;\n }" );
+    	parse( writer.toString() );
+	}
 }

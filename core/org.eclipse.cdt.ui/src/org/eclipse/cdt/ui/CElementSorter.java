@@ -60,20 +60,20 @@ public class CElementSorter extends ViewerSorter {
 
 	private static final int CMODEL = 0;
 	private static final int PROJECTS = 10;
-	private static final int OUTPUTREFCONTAINER = 11;
+	//private static final int OUTPUTREFCONTAINER = 11;
 	private static final int BINARYCONTAINER = 12;
 	private static final int ARCHIVECONTAINER = 13;
 	private static final int INCLUDEREFCONTAINER = 14;
 	private static final int LIBRARYREFCONTAINER = 15;
 	private static final int SOURCEROOTS = 16;
 	private static final int CCONTAINERS = 17;
-	private static final int TRANSLATIONUNIT_HEADERS = 18;
-	private static final int TRANSLATIONUNIT_SOURCE = 19;
-	private static final int TRANSLATIONUNITS = 20;
-	private static final int BINARIES = 21;
-	private static final int ARCHIVES = 22;
-	private static final int LIBRARYREFERENCES = 23;
-	private static final int INCLUDEREFERENCES = 24;
+	private static final int LIBRARYREFERENCES = 18;
+	private static final int INCLUDEREFERENCES = 19;
+	private static final int TRANSLATIONUNIT_HEADERS = 20;
+	private static final int TRANSLATIONUNIT_SOURCE = 21;
+	private static final int TRANSLATIONUNITS = 22;
+	private static final int BINARIES = 23;
+	private static final int ARCHIVES = 24;
 	
 	private static final int INCLUDES = 30;
 	private static final int MACROS = 31;

@@ -1,3 +1,9 @@
+2002-11-01
+	
+	* src/.../internal/ui/CElementLabelProvider.java
+	change cpu display string to use isLittleEndian method on IBinary
+	
+	
 2002-10-31 Judy N. Green
 	Removed the ReferenceBlock from the Project Properties display. Eclipse
 	adds a Project Properties entry to the Project Properties.

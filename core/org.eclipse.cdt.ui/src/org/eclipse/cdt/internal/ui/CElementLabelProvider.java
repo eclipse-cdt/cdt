@@ -65,7 +65,8 @@ public class CElementLabelProvider extends LabelProvider {
 				name += "();";
 			}
 			if (celem instanceof IBinary) {
-				name += " - [" + ((IBinary)celem).getCPU() + "]";
+				IBinary bin = (IBinary)celem;
+				name += " - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]";
 			}
 			return name;
 		}

@@ -48,10 +48,6 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         scope = SearchEngine.createWorkspaceScope();
 		resultCollector = new BasicSearchResultCollector();
 		searchEngine = new SearchEngine();
-		try{
-		    project.setSessionProperty( IndexManager.activationKey, new Boolean( true ) );
-		} catch ( CoreException e ) { //boo
-		}
     }
     public SearchRegressionTests()
     {
@@ -67,6 +63,10 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     
     protected void setUp() throws Exception {
         super.setUp();
+		try{
+		    project.setSessionProperty( IndexManager.activationKey, new Boolean( true ) );
+		} catch ( CoreException e ) { //boo
+		}
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
         indexManager.addIndexChangeListener( this );
     }
@@ -77,7 +77,10 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
     
         IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
         indexManager.removeIndexChangeListener( this );
-        
+		try{
+		    project.setSessionProperty( IndexManager.activationKey, new Boolean( false ) );
+		} catch ( CoreException e ) { //boo
+		}
         super.tearDown();
 	}
     
@@ -122,10 +125,16 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         fail( "Match at offset " + offset + " in \"" + file.getLocation() + "\" not found." );    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
     }
  
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
+    public static Test suite(){
+        return suite( true );
+    }
+    public static Test suite( boolean cleanup ) {
+        TestSuite suite = new TestSuite("SearchRegressionTests"); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testClassDeclarationReference") ); //$NON-NLS-1$
-        suite.addTest( new SearchRegressionTests("cleanupProject") );    //$NON-NLS-1$
+        
+        if( cleanup )
+            suite.addTest( new SearchRegressionTests( "cleanupProject" ) ); //$NON-NLS-1$
+        
 	    return suite;
     }
     

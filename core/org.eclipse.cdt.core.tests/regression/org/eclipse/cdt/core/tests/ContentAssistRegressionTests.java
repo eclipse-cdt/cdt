@@ -61,10 +61,16 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 		return results;
     }
     
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
+    public static Test suite(){
+        return suite( true );
+    }
+    public static Test suite( boolean cleanup ) {
+        TestSuite suite = new TestSuite("ContentAssistRegressionTests"); //$NON-NLS-1$
         suite.addTest( new ContentAssistRegressionTests("testMemberCompletion") ); //$NON-NLS-1$
-        suite.addTest( new ContentAssistRegressionTests("cleanupProject") );    //$NON-NLS-1$
+        
+        if( cleanup )
+            suite.addTest( new ContentAssistRegressionTests("cleanupProject") );    //$NON-NLS-1$
+        
 	    return suite;
     }
 

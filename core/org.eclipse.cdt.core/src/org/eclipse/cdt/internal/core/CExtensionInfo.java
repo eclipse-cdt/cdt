@@ -15,13 +15,17 @@ import java.util.HashMap;
 public class CExtensionInfo {
 
 	protected HashMap attribMap = new HashMap(4);
-	
+
 	protected HashMap getAttributes() {
 		return attribMap;
 	}
 
 	public void setAttribute(String key, String value) {
-		attribMap.put(key, value);
+		if (value == null) {
+			attribMap.remove(key);
+		} else {
+			attribMap.put(key, value);
+		}
 	}
 
 	public String getAttribute(String key) {

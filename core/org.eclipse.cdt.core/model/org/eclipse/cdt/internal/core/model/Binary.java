@@ -24,6 +24,10 @@ import org.eclipse.core.runtime.Path;
 
 public class Binary extends Openable implements IBinary {
 
+	private int fBinType;
+
+	private long fLastModification;
+
 	IBinaryFile binaryFile;
 
 	public Binary(ICElement parent, IFile file, IBinaryFile bin) {
@@ -37,31 +41,19 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	public boolean isSharedLib() {
-		if (binaryFile != null) {
-			return binaryFile.getType() == IBinaryObject.SHARED;
-		}
-		return false;
+		return getType() == IBinaryObject.SHARED;
 	}
 
 	public boolean isExecutable() {
-		if (binaryFile != null) {
-			return binaryFile.getType() == IBinaryObject.EXECUTABLE;
-		}
-		return false;
+		return getType() == IBinaryObject.EXECUTABLE;
 	}
 
 	public boolean isObject() {
-		if (binaryFile != null) {
-			return binaryFile.getType() == IBinaryObject.OBJECT;
-		}
-		return false;
+		return getType() == IBinaryObject.OBJECT;
 	}
 
 	public boolean isCore() {
-		if (binaryFile != null) {
-			return binaryFile.getType() == IBinaryObject.CORE;
-		}
-		return false;
+		return getType() == IBinaryObject.CORE;
 	}
 
 	public boolean hasDebug() {
@@ -83,6 +75,15 @@ public class Binary extends Openable implements IBinary {
 			return ((IBinaryExecutable)binaryFile).getNeededSharedLibs();
 		}
 		return new String[0];
+	}
+	
+	protected int getType() {
+		IResource res = getResource();
+		if (binaryFile != null && (fBinType == 0 || res.getModificationStamp() != fLastModification )) {
+			fLastModification = res.getModificationStamp();
+			fBinType = binaryFile.getType();
+		}
+		return fBinType;
 	}
 
 	public long getText() {

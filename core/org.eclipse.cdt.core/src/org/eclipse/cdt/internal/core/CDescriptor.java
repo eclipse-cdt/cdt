@@ -80,8 +80,7 @@ public class CDescriptor implements ICDescriptor {
 		fProject = project;
 		IPath projectLocation = project.getDescription().getLocation();
 
-		final boolean isDefaultLocation = projectLocation == null;
-		if (isDefaultLocation) {
+		if (projectLocation == null) {
 			projectLocation = getProjectDefaultLocation(project);
 		}
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
@@ -116,8 +115,7 @@ public class CDescriptor implements ICDescriptor {
 		fProject = project;
 		IPath projectLocation = project.getDescription().getLocation();
 
-		final boolean isDefaultLocation = projectLocation == null;
-		if (isDefaultLocation) {
+		if (projectLocation == null) {
 			projectLocation = getProjectDefaultLocation(project);
 		}
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
@@ -133,8 +131,7 @@ public class CDescriptor implements ICDescriptor {
 		fProject = project;
 		IPath projectLocation = project.getDescription().getLocation();
 
-		final boolean isDefaultLocation = projectLocation == null;
-		if (isDefaultLocation) {
+		if (projectLocation == null) {
 			projectLocation = getProjectDefaultLocation(project);
 		}
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
@@ -160,7 +157,13 @@ public class CDescriptor implements ICDescriptor {
 			Document document = parser.parse(file);
 			Node node = document.getFirstChild();
 			if (node.getNodeName().equals(PROJECT_DESCRIPTION)) {
-				return readProjectDescription(node);
+				String ownerID = node.getAttributes().getNamedItem("id").getNodeValue();
+				if ( ownerID != null) {
+					readProjectDescription(node);
+					return ownerID;
+				}
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Missing owner id", null);
+				throw new CoreException(status);
 			}
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Missing cdtproject element", null);
 			throw new CoreException(status);
@@ -316,30 +319,35 @@ public class CDescriptor implements ICDescriptor {
 		return s.toString("UTF8"); //$NON-NLS-1$		
 	}
 
-	private String readProjectDescription(Node node) throws CoreException {
+	private void readProjectDescription(Node node) {
 		Node childNode;
 		ArrayList pathEntries = new ArrayList();
-		String ownerID = node.getAttributes().getNamedItem("id").getNodeValue();
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			childNode = list.item(i);
-			if ( childNode.getNodeType() == Node.ELEMENT_NODE ) {
+			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				if (childNode.getNodeName().equals(PROJECT_EXTENSION)) {
-					//decodeProjectExtension((Element)node);
-					decodeProjectExtension((Element)childNode);
+					try {
+						decodeProjectExtension((Element) childNode);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
 				} else if (childNode.getNodeName().equals(PATH_ENTRY)) {
-					//ICPathEntry entry = decodePathEntry((Element)node);
-					ICPathEntry entry = decodePathEntry((Element)childNode);
-					if (entry != null) {
-						pathEntries.add(entry);
+					try {
+						pathEntries.add(decodePathEntry((Element) childNode));
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
 					}
 				} else if (childNode.getNodeName().equals(PROJECT_DATA)) {
-					decodeProjectData((Element)childNode);
+					try {
+						decodeProjectData((Element)childNode);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}
 		fPathEntries = (ICPathEntry[]) pathEntries.toArray(new ICPathEntry[0]);
-		return ownerID;
 	}
 
 	private void decodeProjectExtension(Element element) throws CoreException {
@@ -542,6 +550,9 @@ public class CDescriptor implements ICDescriptor {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
 		IExtension extension = extensionPoint.getExtension(ext.getID());
+		if ( extension == null) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Extension provider not found.", null));
+		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
 			if (element[i].getName().equalsIgnoreCase("cextension")) {

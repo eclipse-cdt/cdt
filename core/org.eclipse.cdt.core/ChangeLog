@@ -1,3 +1,14 @@
+2003-09-24 David Inglis
+	
+	* src/org/eclipse/cdt/internal/core/CExtensionInfo.java
+	null should removed attributes.
+	
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java	
+	Fixed bug# 43533
+	
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+	Help with slow IBinary interface.
+	
 2003-09-22 Bogdan Gheorghe
 
 	Took out old CTags code from CCorePlugin

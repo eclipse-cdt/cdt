@@ -4,9 +4,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Parser;
-import org.eclipse.cdt.internal.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
@@ -182,7 +183,7 @@ public class ScannerTestCase extends BaseScannerTest
 			validateFloatingPointLiteral( "3."); 
 			validateFloatingPointLiteral( "4E5");
 			validateFloatingPointLiteral( "2.01E-03" );
-			validateToken( Token.tELIPSE );
+			validateToken( IToken.tELIPSE );
 			validateEOF();
 		}
 		catch( ScannerException se )
@@ -207,42 +208,42 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner("#define SIMPLE_NUMERIC 5\nint x = SIMPLE_NUMERIC");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateDefinition("SIMPLE_NUMERIC", "5");
 			validateIdentifier("x");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("5");
 			validateEOF();
 
 			initializeScanner("#define SIMPLE_STRING \"This is a simple string.\"\n\nconst char * myVariable = SIMPLE_STRING;");
-			validateToken(Token.t_const);
+			validateToken(IToken.t_const);
 			validateDefinition("SIMPLE_STRING", "\"This is a simple string.\"");
-			validateToken(Token.t_char);
-			validateToken(Token.tSTAR);
+			validateToken(IToken.t_char);
+			validateToken(IToken.tSTAR);
 			validateIdentifier("myVariable");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateString("This is a simple string.");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#define FOOL 5  \n int tryAFOOL = FOOL + FOOL;");
 
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("tryAFOOL");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("5");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("5");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#define FOOL 5  \n int FOOLer = FOOL;");
 
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("FOOLer");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("5");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			// the case we were failing against in ctype.h
@@ -384,13 +385,13 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner("#define F1 3\n#define F2 F1##F1\nint x=F2;");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateDefinition("F1", "3");
 			validateDefinition( "F2", "F1##F1");
 			validateIdentifier("x");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("33");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 			
 			initializeScanner("#define PREFIX RT_\n#define RUN PREFIX##Run"); 
@@ -406,18 +407,18 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner( "#define DECLARE_HANDLE(name) struct name##__ { int unused; }; typedef struct name##__ *name\n DECLARE_HANDLE( joe )" );
-			validateToken( Token.t_struct );
+			validateToken( IToken.t_struct );
 			validateIdentifier( "joe__"); 
-			validateToken( Token.tLBRACE);  
-			validateToken( Token.t_int ); 
+			validateToken( IToken.tLBRACE);  
+			validateToken( IToken.t_int ); 
 			validateIdentifier( "unused"); 
-			validateToken( Token.tSEMI ); 
-			validateToken( Token.tRBRACE );
-			validateToken( Token.tSEMI ); 
-			validateToken( Token.t_typedef ); 
-			validateToken( Token.t_struct ); 
+			validateToken( IToken.tSEMI ); 
+			validateToken( IToken.tRBRACE );
+			validateToken( IToken.tSEMI ); 
+			validateToken( IToken.t_typedef ); 
+			validateToken( IToken.t_struct ); 
 			validateIdentifier( "joe__" ); 
-			validateToken( Token.tSTAR ); 
+			validateToken( IToken.tSTAR ); 
 			validateIdentifier( "joe");  
 			validateEOF();
 		}
@@ -434,36 +435,36 @@ public class ScannerTestCase extends BaseScannerTest
 
 			initializeScanner("#define SYMBOL 5\n#ifdef SYMBOL\nint counter(SYMBOL);\n#endif");
 
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("counter");
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tLPAREN);
 			validateInteger("5");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#define SYMBOL 5\n#ifndef SYMBOL\nint counter(SYMBOL);\n#endif");
 			validateEOF();
 
 			initializeScanner("#ifndef DEFINED\n#define DEFINED 100\n#endif\nint count = DEFINED;");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateDefinition("DEFINED", "100");
 
 			validateIdentifier("count");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("100");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#ifndef DEFINED\n#define DEFINED 100\n#endif\nint count = DEFINED;");
 			scanner.addDefinition("DEFINED", "101");
 
 			validateDefinition("DEFINED", "101");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("count");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("101");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 			
 			initializeScanner( "/* NB: This is #if 0'd out */"); 
@@ -483,7 +484,7 @@ public class ScannerTestCase extends BaseScannerTest
 		code.write( "	+ 44\n\nCOMPLEX_MACRO");
 		initializeScanner( code.toString() );
 		validateInteger( "33" );
-		validateToken( Token.tPLUS );
+		validateToken( IToken.tPLUS );
 		validateInteger( "44" );
 	}
 
@@ -504,32 +505,32 @@ public class ScannerTestCase extends BaseScannerTest
 		{
 			initializeScanner("#ifndef ONE\n#define ONE 1\n#ifdef TWO\n#define THREE ONE + TWO\n#endif\n#endif\nint three(THREE);");
 
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateDefinition("ONE", "1");
 			validateAsUndefined("TWO");
 			validateAsUndefined("THREE");
 			validateIdentifier("three");
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tLPAREN);
 			validateIdentifier("THREE");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 			validateBalance();
 
 			initializeScanner("#ifndef ONE\n#define ONE 1\n#ifdef TWO\n#define THREE ONE + TWO\n#endif\n#endif\nint three(THREE);");
 			scanner.addDefinition("TWO", "2");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateDefinition("ONE", "1");
 			validateDefinition("TWO", "2");
 			validateDefinition("THREE", "ONE + TWO");
 
 			validateIdentifier("three");
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tLPAREN);
 			validateInteger("1");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("2");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 			validateBalance();
 
@@ -685,7 +686,7 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner("#if ! 0\n#error Correct!\n#endif");
-			Token t= scanner.nextToken();
+			IToken t= scanner.nextToken();
 			fail(EXPECTED_FAILURE);
 		}
 		catch (ScannerException se)
@@ -704,12 +705,12 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner("#define GO(x) x+1\nint y(5);\ny = GO(y);");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("y");
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tLPAREN);
 			validateInteger("5");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
 
 			IMacroDescriptor descriptor=
 				(IMacroDescriptor) scanner.getDefinition("GO");
@@ -721,18 +722,18 @@ public class ScannerTestCase extends BaseScannerTest
 			List expansion= descriptor.getTokenizedExpansion();
 			assertNotNull(parms);
 			assertTrue(expansion.size() == 3);
-			assertTrue(((Token) expansion.get(0)).type == Token.tIDENTIFIER);
+			assertTrue(((Token) expansion.get(0)).type == IToken.tIDENTIFIER);
 			assertTrue(((Token) expansion.get(0)).image.equals("x"));
-			assertTrue(((Token) expansion.get(1)).type == Token.tPLUS);
-			assertTrue(((Token) expansion.get(2)).type == Token.tINTEGER);
+			assertTrue(((Token) expansion.get(1)).type == IToken.tPLUS);
+			assertTrue(((Token) expansion.get(2)).type == IToken.tINTEGER);
 			assertTrue(((Token) expansion.get(2)).image.equals("1"));
 
 			validateIdentifier("y");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateIdentifier("y");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("1");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 			validateBalance();
 
@@ -740,25 +741,25 @@ public class ScannerTestCase extends BaseScannerTest
 				"#define ONE 1\n"
 					+ "#define SUM(a,b,c,d,e,f,g) ( a + b + c + d + e + f + g )\n"
 					+ "int daSum = SUM(ONE,3,5,7,9,11,13);");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("daSum");
-			validateToken(Token.tASSIGN);
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tASSIGN);
+			validateToken(IToken.tLPAREN);
 			validateInteger("1");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("3");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("5");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("7");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("9");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("11");
-			validateToken(Token.tPLUS);
+			validateToken(IToken.tPLUS);
 			validateInteger("13");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			IMacroDescriptor macro= (IMacroDescriptor) scanner.getDefinition("SUM");
@@ -772,61 +773,61 @@ public class ScannerTestCase extends BaseScannerTest
 
 			initializeScanner("#define LOG( format, var1)   printf( format, var1 )\nLOG( \"My name is %s\", \"Bogdan\" );\n");
 			validateIdentifier("printf");
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tLPAREN);
 			validateString("My name is %s");
-			validateToken(Token.tCOMMA);
+			validateToken(IToken.tCOMMA);
 			validateString("Bogdan");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#define INCR( x )   ++x\nint y(2);\nINCR(y);");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateIdentifier("y");
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.tLPAREN);
 			validateInteger("2");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tSEMI);
-			validateToken(Token.tINCR);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tSEMI);
+			validateToken(IToken.tINCR);
 			validateIdentifier("y");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#define CHECK_AND_SET( x, y, z )     if( x ) { \\\n y = z; \\\n }\n\nCHECK_AND_SET( 1, balance, 5000 );\nCHECK_AND_SET( confused(), you, dumb );");
-			validateToken(Token.t_if);
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.t_if);
+			validateToken(IToken.tLPAREN);
 			validateInteger("1");
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tLBRACE);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tLBRACE);
 			validateIdentifier("balance");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("5000");
-			validateToken(Token.tSEMI);
-			validateToken(Token.tRBRACE);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
+			validateToken(IToken.tRBRACE);
+			validateToken(IToken.tSEMI);
 
-			validateToken(Token.t_if);
-			validateToken(Token.tLPAREN);
+			validateToken(IToken.t_if);
+			validateToken(IToken.tLPAREN);
 			validateIdentifier("confused");
-			validateToken(Token.tLPAREN);
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tRPAREN);
-			validateToken(Token.tLBRACE);
+			validateToken(IToken.tLPAREN);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tRPAREN);
+			validateToken(IToken.tLBRACE);
 			validateIdentifier("you");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateIdentifier("dumb");
-			validateToken(Token.tSEMI);
-			validateToken(Token.tRBRACE);
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
+			validateToken(IToken.tRBRACE);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 
 			initializeScanner("#define ON 7\n#if defined(ON)\nint itsOn = ON;\n#endif");
-			validateToken(Token.t_int);
+			validateToken(IToken.t_int);
 			validateBalance(1);
 			validateIdentifier("itsOn");
-			validateToken(Token.tASSIGN);
+			validateToken(IToken.tASSIGN);
 			validateInteger("7");
-			validateToken(Token.tSEMI);
+			validateToken(IToken.tSEMI);
 			validateEOF();
 			validateBalance();
 
@@ -851,11 +852,11 @@ public class ScannerTestCase extends BaseScannerTest
 		{
 			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif" );
 			scanner.setQuickScan( true );
-			validateToken( Token.t_int ); 
+			validateToken( IToken.t_int ); 
 			validateIdentifier( "found" ); 
-			validateToken( Token.tASSIGN ); 
+			validateToken( IToken.tASSIGN ); 
 			validateInteger( "1"); 
-			validateToken( Token.tSEMI );
+			validateToken( IToken.tSEMI );
 			validateEOF(); 
 			 	
 		} 
@@ -997,46 +998,46 @@ public class ScannerTestCase extends BaseScannerTest
 	{
 		initializeScanner( "X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , er( rtg_arg.er ){}" );
 		validateIdentifier("X");
-		validateToken( Token.tCOLONCOLON);
+		validateToken( IToken.tCOLONCOLON);
 		validateIdentifier("X");
-		validateToken( Token.tLPAREN );
-		validateToken( Token.t_const );
+		validateToken( IToken.tLPAREN );
+		validateToken( IToken.t_const );
 		validateIdentifier("X");
-		validateToken( Token.tAMPER );
+		validateToken( IToken.tAMPER );
 		validateIdentifier( "rtg_arg");
-		validateToken( Token.tRPAREN );  
-		validateToken( Token.tCOLON );
+		validateToken( IToken.tRPAREN );  
+		validateToken( IToken.tCOLON );
 		validateIdentifier( "U");
-		validateToken( Token.tLPAREN );
+		validateToken( IToken.tLPAREN );
 		validateIdentifier( "rtg_arg");
-		validateToken( Token.tRPAREN );
-		validateToken( Token.tCOMMA );
+		validateToken( IToken.tRPAREN );
+		validateToken( IToken.tCOMMA );
 		validateIdentifier( "Z");
-		validateToken( Token.tLPAREN );
+		validateToken( IToken.tLPAREN );
 		validateIdentifier( "rtg_arg");
-		validateToken( Token.tDOT );
+		validateToken( IToken.tDOT );
 		validateIdentifier( "Z");
-		validateToken( Token.tRPAREN );
-		validateToken( Token.tCOMMA );
+		validateToken( IToken.tRPAREN );
+		validateToken( IToken.tCOMMA );
 		validateIdentifier( "er");
-		validateToken( Token.tLPAREN );
+		validateToken( IToken.tLPAREN );
 		validateIdentifier( "rtg_arg");
-		validateToken( Token.tDOT );
+		validateToken( IToken.tDOT );
 		validateIdentifier( "er");
-		validateToken( Token.tRPAREN );
-		validateToken( Token.tLBRACE);
-		validateToken( Token.tRBRACE);
+		validateToken( IToken.tRPAREN );
+		validateToken( IToken.tLBRACE);
+		validateToken( IToken.tRBRACE);
 		validateEOF();
 		
 		initializeScanner( "foo.*bar");
 		validateIdentifier("foo");
-		validateToken( Token.tDOTSTAR );
+		validateToken( IToken.tDOTSTAR );
 		validateIdentifier("bar");
 		validateEOF();
 		
 		initializeScanner( "foo...bar");
 		validateIdentifier("foo");
-		validateToken( Token.tELIPSE );
+		validateToken( IToken.tELIPSE );
 		validateIdentifier("bar");
 		validateEOF();
 	}
@@ -1097,41 +1098,41 @@ public class ScannerTestCase extends BaseScannerTest
 						break;
 				}
 					
-				validateToken( Token.t_int ); 
+				validateToken( IToken.t_int ); 
 				validateIdentifier( "foobar"); 
-				validateToken( Token.tLPAREN ); 
-				validateToken( Token.t_int ); 
+				validateToken( IToken.tLPAREN ); 
+				validateToken( IToken.t_int ); 
 				validateIdentifier( "a" ); 
-				validateToken( Token.tRPAREN ); 
-				validateToken( Token.tLBRACE ); 
-				validateToken( Token.t_if ); 
-				validateToken( Token.tLPAREN );
+				validateToken( IToken.tRPAREN ); 
+				validateToken( IToken.tLBRACE ); 
+				validateToken( IToken.t_if ); 
+				validateToken( IToken.tLPAREN );
 				validateIdentifier( "a" );
-				validateToken( Token.tEQUAL );
+				validateToken( IToken.tEQUAL );
 				validateInteger( "0" );
-				validateToken( Token.tRPAREN );
-				validateToken( Token.tLBRACE );
+				validateToken( IToken.tRPAREN );
+				validateToken( IToken.tLBRACE );
 				
 				if( i <= 1 )
 				{
-					validateToken( Token.tRBRACE ); 
-					validateToken( Token.t_else ); 
-					validateToken( Token.tLBRACE );
-					validateToken( Token.tRBRACE );
+					validateToken( IToken.tRBRACE ); 
+					validateToken( IToken.t_else ); 
+					validateToken( IToken.tLBRACE );
+					validateToken( IToken.tRBRACE );
 				}
 					
 				if( i == 2 )
 				{
-					validateToken( Token.tRBRACE ); 
-					validateToken( Token.t_else ); 
-					validateToken( Token.tLBRACE );
-					validateToken( Token.tRBRACE );
+					validateToken( IToken.tRBRACE ); 
+					validateToken( IToken.t_else ); 
+					validateToken( IToken.tLBRACE );
+					validateToken( IToken.tRBRACE );
 				}
 					
-				validateToken( Token.t_return ); 
+				validateToken( IToken.t_return ); 
 				validateInteger( "0"); 
-				validateToken( Token.tSEMI ); 
-				validateToken( Token.tRBRACE ); 
+				validateToken( IToken.tSEMI ); 
+				validateToken( IToken.tRBRACE ); 
 				validateEOF();
 			}
 		} catch( ScannerException se )
@@ -1160,7 +1161,7 @@ public class ScannerTestCase extends BaseScannerTest
 	
 		validateIdentifier("B");
 		validateDefinition("A", "B->A");
-		validateToken(Token.tARROW);
+		validateToken(IToken.tARROW);
 		validateIdentifier("A");
 		validateEOF();
 	}
@@ -1218,14 +1219,14 @@ public class ScannerTestCase extends BaseScannerTest
 		initializeScanner( writer.toString() ); 
 		//printf("x1=%d, x2= %s", x1, x2); 
 		validateIdentifier( "printf" ); 
-		validateToken( Token.tLPAREN ); 
+		validateToken( IToken.tLPAREN ); 
 		validateString("x1= %d, x2= %s"); 
-		validateToken(Token.tCOMMA); 
+		validateToken(IToken.tCOMMA); 
 		validateIdentifier("x1"); 
-		validateToken(Token.tCOMMA); 
+		validateToken(IToken.tCOMMA); 
 		validateIdentifier("x2"); 
-		validateToken(Token.tRPAREN); 
-		validateToken(Token.tSEMI); 
+		validateToken(IToken.tRPAREN); 
+		validateToken(IToken.tSEMI); 
 		validateEOF();
 	}
 	
@@ -1249,12 +1250,12 @@ public class ScannerTestCase extends BaseScannerTest
 		                         
 		initializeScanner( writer.toString() ); 
 		validateIdentifier("fputs"); 
-		validateToken(Token.tLPAREN); 
+		validateToken(IToken.tLPAREN); 
 		validateString("strncmp ( \\\"abc\\\\0d\\\" , \\\"abc\\\" , '\\\\4' ) == 0"); 
-		validateToken(Token.tCOMMA); 
+		validateToken(IToken.tCOMMA); 
 		validateIdentifier("s"); 
-		validateToken(Token.tRPAREN); 
-		validateToken(Token.tSEMI); 
+		validateToken(IToken.tRPAREN); 
+		validateToken(IToken.tSEMI); 
 	}
 	
 	public void testBug36770() throws Exception

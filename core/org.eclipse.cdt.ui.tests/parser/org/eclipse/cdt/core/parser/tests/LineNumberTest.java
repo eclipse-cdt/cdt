@@ -20,6 +20,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Scanner;
-import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -57,25 +57,25 @@ public class LineNumberTest extends TestCase {
 		Reader reader = new StringReader( "int x = 3;\n foo\nfire\nfoe ");
 		scanner.initialize( reader, "string");
 		scanner.mapLineNumbers(true);
-		Token t = scanner.nextToken(); 
-		assertEquals( t.getType(), Token.t_int );
+		IToken t = scanner.nextToken(); 
+		assertEquals( t.getType(), IToken.t_int );
 		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
 		t = scanner.nextToken(); 
 		assertEquals( t.getImage(), "x");
 		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
 		t = scanner.nextToken(); 
-		assertEquals( t.getType(), Token.tASSIGN );
+		assertEquals( t.getType(), IToken.tASSIGN );
 		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
 		t = scanner.nextToken(); 
 		assertEquals( t.getImage(), "3" );
 		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
 		t = scanner.nextToken(); 
-		assertEquals( t.getType(), Token.tSEMI);
+		assertEquals( t.getType(), IToken.tSEMI);
 		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
 		for( int i = 2; i < 5; ++i )
 		{ 
 			t = scanner.nextToken(); 
-			assertEquals( t.getType(), Token.tIDENTIFIER);
+			assertEquals( t.getType(), IToken.tIDENTIFIER);
 			assertEquals( scanner.getLineNumberForOffset(t.getOffset()), i );
 		}
 

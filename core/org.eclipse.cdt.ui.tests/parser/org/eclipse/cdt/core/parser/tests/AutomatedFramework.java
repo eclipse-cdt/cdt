@@ -24,7 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.internal.core.parser.IParserCallback;
+import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 
 /**

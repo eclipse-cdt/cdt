@@ -2,8 +2,8 @@ package org.eclipse.cdt.core.parser.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.BranchTracker;
-import org.eclipse.cdt.internal.core.parser.ScannerException;
 
 /**
  * @author jcamelon

@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
-import org.eclipse.cdt.core.parser.failedTests.*;
 
 /**
  * @author jcamelon

@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.ASMDefinition;
 import org.eclipse.cdt.internal.core.dom.AccessSpecifier;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
@@ -356,7 +357,7 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( 1, exp.elements().size() ); 
 		Token t = (Token)exp.elements().get(0); 
 		assertEquals( t.getImage(), "5" );
-		assertEquals( t.getType(), Token.tINTEGER);
+		assertEquals( t.getType(), IToken.tINTEGER);
 	}
 	
 	/**
@@ -574,10 +575,10 @@ public class DOMTests extends BaseDOMTest {
 		Token t1 = (Token)initialValueParm1.elements().get( 0 );
 		Token t2 = (Token)initialValueParm1.elements().get( 1 ); 
 		Token t3 = (Token)initialValueParm1.elements().get( 2 );
-		assertEquals( t1.getType(), Token.tINTEGER );
+		assertEquals( t1.getType(), IToken.tINTEGER );
 		assertEquals( t1.getImage(), "3" ); 
-		assertEquals( t3.getType(), Token.tSTAR ); 
-		assertEquals( t2.getType(), Token.tINTEGER );
+		assertEquals( t3.getType(), IToken.tSTAR ); 
+		assertEquals( t2.getType(), IToken.tINTEGER );
 		assertEquals( t2.getImage(), "4" );   
 
 		ParameterDeclaration parm2 = (ParameterDeclaration)parameterDecls.get( 1 );
@@ -794,7 +795,7 @@ public class DOMTests extends BaseDOMTest {
 		assertFalse( po1.isVolatile() );
 		assertEquals( po1.getType(), PointerOperator.t_pointer );
 		Token t1 = (Token)initValue1.elements().get(0);
-		assertEquals( t1.getType(), Token.tINTEGER ); 
+		assertEquals( t1.getType(), IToken.tINTEGER ); 
 		assertEquals( t1.getImage(), "0");
 
 		Declarator declarator2 = (Declarator)decl1.getDeclarators().get( 1 );
@@ -932,7 +933,7 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( expression.getExpression().elements().size(), 1 );
 		Token t = (Token)expression.getExpression().elements().get(0);
 		assertEquals( t.getImage(), "0");
-		assertEquals( t.getType(), Token.tINTEGER );
+		assertEquals( t.getType(), IToken.tINTEGER );
 		
 		
 		

@@ -15,10 +15,10 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Scanner;
-import org.eclipse.cdt.internal.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author jcamelon
@@ -43,13 +43,13 @@ public class BaseScannerTest extends TestCase {
 	{
 		try
 		{
-			Token t= scanner.nextToken();
+			IToken t= scanner.nextToken();
 			while (t != null)
 			{
 				if (verbose)
 					System.out.println("Token t = " + t);
 
-				if ((t.type < 1) || (t.type > Token.tLAST))
+				if ((t.getType()> IToken.tLAST))
 					System.out.println("Unknown type for token " + t);
 				t= scanner.nextToken();
 			}
@@ -66,9 +66,9 @@ public class BaseScannerTest extends TestCase {
 	public void validateIdentifier(String expectedImage) throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tIDENTIFIER);
-			assertTrue(t.image.equals(expectedImage));
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == IToken.tIDENTIFIER);
+			assertTrue(t.getImage().equals(expectedImage));
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
 		}
@@ -77,9 +77,9 @@ public class BaseScannerTest extends TestCase {
 	public void validateInteger(String expectedImage) throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tINTEGER);
-			assertTrue(t.image.equals(expectedImage));
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == IToken.tINTEGER);
+			assertTrue(t.getImage().equals(expectedImage));
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
 		}
@@ -88,9 +88,9 @@ public class BaseScannerTest extends TestCase {
 	public void validateFloatingPointLiteral(String expectedImage) throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == Token.tFLOATINGPT);
-			assertTrue(t.image.equals(expectedImage));
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == IToken.tFLOATINGPT);
+			assertTrue(t.getImage().equals(expectedImage));
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
 		}
@@ -99,8 +99,8 @@ public class BaseScannerTest extends TestCase {
 	public void validateChar( char expected )throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.getType() == Token.tCHAR );
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == IToken.tCHAR );
 			Character c = new Character( expected ); 
 			assertEquals( t.getImage(), c.toString() ); 
 		} catch (Parser.EndOfFile e) {
@@ -110,8 +110,8 @@ public class BaseScannerTest extends TestCase {
 	public void validateChar( String expected ) throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.getType() == Token.tCHAR );
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == IToken.tCHAR );
 			assertEquals( t.getImage(), expected ); 
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
@@ -126,11 +126,11 @@ public class BaseScannerTest extends TestCase {
 	public void validateString(String expectedImage, boolean lString ) throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
+			IToken t= scanner.nextToken();
 			if( lString )
-				assertTrue(t.getType() == Token.tLSTRING);
+				assertTrue(t.getType() == IToken.tLSTRING);
 			else
-				assertTrue(t.getType() == Token.tSTRING);
+				assertTrue(t.getType() == IToken.tSTRING);
 			assertTrue(t.getImage().equals(expectedImage));
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
@@ -140,8 +140,8 @@ public class BaseScannerTest extends TestCase {
 	public void validateToken(int tokenType) throws ScannerException
 	{
 		try {
-			Token t= scanner.nextToken();
-			assertTrue(t.type == tokenType);
+			IToken t= scanner.nextToken();
+			assertTrue(t.getType() == tokenType);
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
 		}

@@ -1,3 +1,7 @@
+2004-11-12 Mikhail Khodjaiants
+	Implemented the "equals' method of the "Condition" class.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Condition.java
+
 2004-11-12 Alain Magloire
 	Fix for PR 78488
 	* mi/org/eclipse/cdt/debug/mi/core/command/MICommand.java

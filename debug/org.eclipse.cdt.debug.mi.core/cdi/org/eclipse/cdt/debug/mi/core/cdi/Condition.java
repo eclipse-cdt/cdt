@@ -46,4 +46,25 @@ public class Condition implements ICDICondition {
 	public String[] getThreadIds() {
 		return tids;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals( Object obj ) {
+		if (obj instanceof ICDICondition) {
+			ICDICondition cond = (ICDICondition)obj;
+			if (cond.getIgnoreCount() != this.getIgnoreCount())
+				return false;
+			if (cond.getExpression().compareTo(this.getExpression()) != 0)
+				return false;
+			if (cond.getThreadIds().length != this.getThreadIds().length)
+				return false;
+			for (int i = 0; i < cond.getThreadIds().length; ++i) {
+				if ( cond.getThreadIds()[i].compareTo(this.getThreadIds()[i]) != 0)
+					return false;
+			}
+			return true;
+		}
+		return false;
+	}
 }

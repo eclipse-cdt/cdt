@@ -722,36 +722,6 @@
             <separator name="emptyRefreshGroup"/>
          </menu>
          <action
-               helpContextId="refresh_registers_context"
-               label="%RefreshAction.label"
-               tooltip="%RefreshAction.tooltip"
-               icon="icons/full/elcl16/refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction"
-               style="push"
-               menubarPath="refreshGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="auto_refresh_registers_context"
-               label="%AutoRefreshAction.label"
-               tooltip="%AutoRefreshAction.tooltip"
-               icon="icons/full/elcl16/auto_refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshRegistersActionDelegate"
-               style="toggle"
-               menubarPath="refreshGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshRegistersActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
                label="%DisableVariablesAction.label"
                icon="icons/full/clcl16/disabled_co.gif"
                helpContextId="disable_variables_action_context"
@@ -988,41 +958,6 @@
             <separator name="refreshGroup"/>
             <separator name="emptyRefreshGroup"/>
          </menu>
-         <action
-               helpContextId="refresh_registers_context"
-               disabledIcon="icons/full/dlcl16/refresh_co.gif"
-               hoverIcon="icons/full/clcl16/refresh_co.gif"
-               toolbarPath="refreshGroup"
-               label="%RefreshAction.label"
-               tooltip="%RefreshAction.tooltip"
-               icon="icons/full/elcl16/refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction"
-               style="push"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshRegistersAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="auto_refresh_registers_context"
-               disabledIcon="icons/full/dlcl16/auto_refresh_co.gif"
-               hoverIcon="icons/full/clcl16/auto_refresh_co.gif"
-               toolbarPath="refreshGroup"
-               label="%AutoRefreshAction.label"
-               tooltip="%AutoRefreshAction.tooltip"
-               icon="icons/full/elcl16/auto_refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshRegistersActionDelegate"
-               style="toggle"
-               state="false"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshRegistersActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
       </viewContribution>
    </extension>
    <extension

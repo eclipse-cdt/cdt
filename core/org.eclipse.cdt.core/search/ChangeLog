@@ -1,29 +1,58 @@
+2003-07-10 Bogdan Gheorghe
+	Provided implementation for ICSearchScope.java, CSearchScope.java
+	
+	Hooked up new CWorkspaceScope, PathCollector, PatternSearchJob in SearchEngine.java
+	
+	Provided implementation for PatternSearchJob.java - PatternSearchJob is where the first part
+	of the search occurs - using an IndexSelector to filter the indexes, it gets the indexes from
+	the IndexManager and then uses the passed in pattern to find the index matched. Once it finds
+	an index match it adds the file path to the PathCollector.
+	
+	Modified CSearchPattern - added support to find index entries.
+	
+	Modified ClassDeclarationPattern - added support to decode, match and report
+	index entries.
+	
+	
+	Added:
+		* search/org/eclipse/cdt/internal/core/search/CWorkspaceScope.java
+		* search/org/eclipse/cdt/internal/core/search/IIndexSearchRequestor.java
+		* search/org/eclipse/cdt/internal/core/search/IndexSelector.java
+		* search/org/eclipse/cdt/internal/core/search/PathCollector.java
+		
+	Modified:
+		* search/org/eclipse/cdt/core/search/ICSearchScope.java
+		* search/org/eclipse/cdt/core/search/SearchEngine.java
+		* search/org/eclipse/cdt/internal/core/search/CSearchScope.java
+		* search/org/eclipse/cdt/internal/core/search/PatternSearchJob.java
+		* search/org/eclipse/cdt/internal/core/search/matching/ClassDeclarationPattern.java
+		* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
+				
 2003-07-04 Andrew Niefer
-	* Modified ICSearchConstants to use new nested classes SearchFor and LimitTo instead of int
-	  for stronger type safety
-	* Updated MatchLocator to invoke parser to do actual search.
+	Modified ICSearchConstants to use new nested classes SearchFor and LimitTo instead of int
+	for stronger type safety
+	
+	Updated MatchLocator to invoke parser to do actual search.
 
 2003-06-27 Andrew Niefer
-Modified:
-	search/org.eclipse.cdt.core.search.matching/MatchLocator.java
-		- enter/exitInclusion
-		- enterClassSpecifier
-	search/org.eclipse.cdt.core.search.matching/CSearchPattern.java
-		- createClassPattern
-		- matchesName
-	search/org.eclipse.cdt.core.search.matching/ClassDeclarationPattern.java
-		- matchLevel
-	search/org.eclipse.cdt.core.search/ICSearchPattern.java
-	search/org.eclipse.cdt.core.search/ICSearchResultCollector.java
-	search/org.eclipse.cdt.core.search/SearchEngine.java
+	Modified:
+		search/org.eclipse.cdt.core.search.matching/MatchLocator.java
+			- enter/exitInclusion
+			- enterClassSpecifier
+		search/org.eclipse.cdt.core.search.matching/CSearchPattern.java
+			- createClassPattern
+			- matchesName
+		search/org.eclipse.cdt.core.search.matching/ClassDeclarationPattern.java
+			- matchLevel
+		search/org.eclipse.cdt.core.search/ICSearchPattern.java
+		search/org.eclipse.cdt.core.search/ICSearchResultCollector.java
+		search/org.eclipse.cdt.core.search/SearchEngine.java
 
 2003-06-25	Bogdan Gheorghe
-
-Modified:
-	
-	* search/org/eclipse/cdt/core/search/ICSearchConstants.java
-	* search/org/eclipse/cdt/internal/core/search/Utils.java
-	 - moved to index/org/eclipse/cdt/internal/core/search/Utils.java
-	* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
-	* search/org/eclipse/cdt/internal/core/search/processing/IJob.java
-	* search/org/eclipse/cdt/internal/core/search/processing/JobManager.java
+	Modified:
+		* search/org/eclipse/cdt/core/search/ICSearchConstants.java
+		* search/org/eclipse/cdt/internal/core/search/Utils.java
+		 - moved to index/org/eclipse/cdt/internal/core/search/Utils.java
+		* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
+		* search/org/eclipse/cdt/internal/core/search/processing/IJob.java
+		* search/org/eclipse/cdt/internal/core/search/processing/JobManager.java

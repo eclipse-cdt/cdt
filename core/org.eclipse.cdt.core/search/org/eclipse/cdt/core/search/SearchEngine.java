@@ -1,23 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     IBM Corp. - Rational Software - initial implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 /*
  * Created on Jun 11, 2003
  */
 package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
+import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.Util;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.core.resources.IWorkspace;
@@ -36,6 +39,12 @@ public class SearchEngine implements ICSearchConstants{
 	private boolean VERBOSE = false;
 
 	/**
+	 * A list of working copies that take precedence over their original 
+	 * compilation units.
+	 */
+	private IWorkingCopy[] workingCopies = null;
+	
+	/**
 	 * 
 	 */
 	public SearchEngine() {
@@ -43,12 +52,16 @@ public class SearchEngine implements ICSearchConstants{
 		// TODO Auto-generated constructor stub
 	}
 
+	public SearchEngine(IWorkingCopy[] workingCopies) {
+		this.workingCopies = workingCopies;
+	}
+	
 	/**
 	 * @return
 	 */
 	public static ICSearchScope createWorkspaceScope() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CWorkspaceScope();
 	}
 
 	/**
@@ -97,13 +110,21 @@ public class SearchEngine implements ICSearchConstants{
 				progressMonitor.beginTask( Util.bind("engine.searching"), 100 ); //$NON_NLS-1$
 			}
 			
+			/* index search */
+			PathCollector pathCollector = new PathCollector();
+					
 			CModelManager modelManager = CModelManager.getDefault();
 			IndexManager indexManager = modelManager.getIndexManager();
 			
 			SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
-			
+	
 			indexManager.performConcurrentJob( 
-				new PatternSearchJob(),
+				new PatternSearchJob(
+					(CSearchPattern) pattern,
+					scope,
+					pathCollector,
+					indexManager
+				),
 				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
 				subMonitor );
 			
@@ -114,7 +135,8 @@ public class SearchEngine implements ICSearchConstants{
 			if( progressMonitor != null && progressMonitor.isCanceled() )
 				throw new OperationCanceledException();
 			
-			//matchLocator.locateMatches( pathCollector.getPaths(), workspace, workingCopies );
+			//TODO: BOG Filter Working Copies...
+			matchLocator.locateMatches( pathCollector.getPaths(), workspace, this.workingCopies);
 		} finally {
 			collector.done();
 		}

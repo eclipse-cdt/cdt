@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.impl;
 
-import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 
 /**
  * An indexerOutput is used by an indexer to add documents and word references to

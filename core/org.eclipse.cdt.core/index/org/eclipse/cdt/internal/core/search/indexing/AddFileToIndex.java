@@ -12,11 +12,11 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.search.processing.JobManager;
 
 public abstract class AddFileToIndex extends IndexRequest {
 	IFile resource;

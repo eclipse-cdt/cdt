@@ -11,6 +11,9 @@
 
 package org.eclipse.cdt.internal.core.search.indexing;
 
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.search.Util;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,9 +22,6 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.cdt.internal.core.search.Util;
-import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.search.processing.JobManager;
 
 class AddFolderToIndex extends IndexRequest {
 	IPath folderPath;

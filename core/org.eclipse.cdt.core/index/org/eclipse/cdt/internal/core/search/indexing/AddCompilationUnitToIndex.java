@@ -13,10 +13,10 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 public class AddCompilationUnitToIndex extends AddFileToIndex {
 	char[] contents;

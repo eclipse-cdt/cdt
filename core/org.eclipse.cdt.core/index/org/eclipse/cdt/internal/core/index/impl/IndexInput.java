@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.index.impl;
 
 import java.io.IOException;
+
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IQueryResult;

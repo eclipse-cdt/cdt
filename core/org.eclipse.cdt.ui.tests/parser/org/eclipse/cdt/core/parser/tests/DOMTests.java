@@ -25,6 +25,11 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  */
 public class DOMTests extends TestCase {
 
+	public DOMTests( String arg )
+	{
+		super( arg );
+	}
+	
 	public TranslationUnit parse(String code) throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();
 		Parser parser = new Parser(code, domBuilder);

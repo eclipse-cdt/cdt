@@ -19,6 +19,12 @@ import org.eclipse.cdt.internal.core.parser.ParserSymbolTableException;
 public class ParserSymbolTableTest extends TestCase {
 
 	public ParserSymbolTable table = null;
+	
+	public ParserSymbolTableTest( String arg )
+	{
+		super( arg );
+	}
+	
 	public ParserSymbolTable newTable(){
 		table = new ParserSymbolTable();
 		return table;

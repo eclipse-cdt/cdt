@@ -58,6 +58,10 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator, String[] parsersIDs) {
+		this(project, project.getLocation(), markerGenerator, parsersIDs);
+	}
+
+	public ErrorParserManager(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator, String[] parsersIDs) {
 		fProject = project;
 		if (parsersIDs == null) {
 			enableAllParsers();
@@ -69,10 +73,10 @@ public class ErrorParserManager extends OutputStream {
 			}
 		}
 		fMarkerGenerator = markerGenerator;
-		initErrorParserManager();
+		initErrorParserManager(workingDirectory);
 	}
 
-	private void initErrorParserManager() {
+	private void initErrorParserManager(IPath workingDirectory) {
 		fFilesInProject = new HashMap();
 		fNameConflicts = new ArrayList();
 		fDirectoryStack = new Vector();
@@ -83,7 +87,7 @@ public class ErrorParserManager extends OutputStream {
 		fNameConflicts.clear();
 
 		List collectedFiles = new ArrayList();
-		fBaseDirectory = fProject.getLocation();
+		fBaseDirectory = (workingDirectory == null || workingDirectory.isEmpty()) ? fProject.getLocation() : workingDirectory;
 		collectFiles(fProject, collectedFiles);
 
 		for (int i = 0; i < collectedFiles.size(); i++) {

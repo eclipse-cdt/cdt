@@ -119,8 +119,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 				} catch (CoreException e) {
 					ManagedBuilderUIPlugin.log(e);
 				}
-				String artifactName = newProject.getName();
-				newTarget.setArtifactName(artifactName);
+				newTarget.setArtifactName(getBuildGoalName());
 				IConfiguration [] selectedConfigs = targetConfigurationPage.getSelectedConfigurations();
 				Random r = new Random();
 				r.setSeed(System.currentTimeMillis());
@@ -153,6 +152,19 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_SAVE));
 		ManagedBuildManager.saveBuildInfo(newProject, true);
 		monitor.done();
+	}
+
+	/**
+	 * @return
+	 */
+	private String getBuildGoalName() {
+		String name = new String();
+		// Check for spaces
+		String[] tokens = newProject.getName().split("\\s");	//$NON-NLS-1$
+		for (int index = 0; index < tokens.length; ++index) {
+			name += tokens[index];
+		}
+		return name;
 	}
 
 	/* (non-Javadoc)

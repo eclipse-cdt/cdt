@@ -12,6 +12,7 @@ import org.eclipse.cdt.ui.AbstractCOptionPage;
 import org.eclipse.cdt.ui.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -221,9 +222,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 			public void widgetSelected(SelectionEvent e) {
 				ContainerSelectionDialog dialog =
 					new ContainerSelectionDialog(getShell(), getContainer().getProject(), false, null);
-					dialog.open();
-					Object[] result = dialog.getResult();
- 
+				dialog.open();
+				Object[] result = dialog.getResult();
+				if (result != null && result.length > 0) {
+					buildLocation.setText(((IContainer) result[0]).getProjectRelativePath().toOSString());
+				}
 			}
 		});
 		buildLocation.setText(fBuildInfo.getBuildLocation().toOSString());
@@ -238,7 +241,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			ControlFactory.createLabel(composite, "Missing builder information on project.");
 			return;
 		}
-		
+
 		createSettingControls(composite);
 		createBuildCmdControls(composite);
 		createWorkBenchBuildControls(composite);
@@ -300,7 +303,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 		info.setIncrementalBuildTarget(targetIncr.getText().trim());
 		info.setFullBuildEnable(fullButton.getSelection());
 		info.setFullBuildTarget(targetFull.getText().trim());
-		info.setBuildLocation(new Path(buildLocation.getText().trim()));		
+		if (buildLocation != null) {
+			info.setBuildLocation(new Path(buildLocation.getText().trim()));
+		}
 	}
 
 	public void performDefaults() {

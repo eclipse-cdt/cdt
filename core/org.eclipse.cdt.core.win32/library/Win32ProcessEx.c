@@ -733,25 +733,16 @@ unsigned int _stdcall waitProcTermination(void* pv)
 // Return number of bytes in target or -1 in case of error
 int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 {
-#ifdef DEBUG_MONITOR
-	char buffer[1000];
-#endif
 	BOOL bSlash = FALSE;
 	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
 	BOOL bQoutedTerm = FALSE;
 
-#ifdef DEBUG_MONITOR
-	sprintf(buffer, "copyTo start: %s %d %d\n", source, cpyLength, availSpace);
-	OutputDebugString(buffer);
-#endif
 
 	if(availSpace <= cpyLength) // = to reserve space for final '\0'
 		return -1;
-	//strncpy(target, source, cpyLength);
-	//return cpyLength;
 
-	if(('\"' == *source) && ('\"' == *(source + cpyLength)))
+	if(('\"' == *source) && ('\"' == *(source + cpyLength - 1)))
 		bQoutedTerm = TRUE; // Already quoted
 	else
 	if(strchr(source, ' ') == NULL)
@@ -768,19 +759,19 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 		if(source[i] == '\\')
 			bSlash = TRUE;
 		else
-		if((source[i] == '\"') && (!bQoutedTerm || (i != 0) || i != (cpyLength)) ) 
 			{
-			if(!bSlash)
+			if(source[i] == '\"' && (!bQoutedTerm || ((i != 0) && (i != (cpyLength - 1))) ) )
 				{
-				if(j == availSpace)
-					return -1;
-				target[j] = '\\';
-				++j;
+				if(!bSlash) // If still not escaped
+					{
+					if(j == availSpace)
+						return -1;
+					target[j] = '\\';
+					++j;
+					}
 				}
 			bSlash = FALSE;
 			}
-		else
-			bSlash = FALSE;
 
 		if(j == availSpace)
 			return -1;
@@ -795,10 +786,6 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 		++j;
 		}
 
-#ifdef DEBUG_MONITOR
-	sprintf(buffer, "copyTo: %s %d %d\n", source, j, cpyLength);
-	OutputDebugString(buffer);
-#endif
 	return j;
 }
 

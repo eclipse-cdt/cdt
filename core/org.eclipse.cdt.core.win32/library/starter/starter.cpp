@@ -188,11 +188,10 @@ int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
 	BOOL bQoutedTerm = FALSE;
-
 	if(availSpace <= cpyLength)  // = to reserve space for '\0'
 		return -1;
 
-	if((_T('\"') == *source) && (_T('\"') == *(source + cpyLength)))
+	if((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1)))
 		bQoutedTerm = TRUE; // Already quoted
 	else
 	if(_tcschr(source, _T(' ')) == NULL)
@@ -209,7 +208,8 @@ int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 		if(source[i] == _T('\\'))
 			bSlash = TRUE;
 		else
-		if((source[i] == _T('\"')) && (!bQoutedTerm || (i != 0) || i != (cpyLength)) ) 
+		// Escape double quote only if quotation mark is not start or end character
+		if((source[i] == _T('\"')) && (!bQoutedTerm || ((i != 0) && (i != (cpyLength - 1)))) ) 
 			{
 			if(!bSlash)
 				{
@@ -235,7 +235,6 @@ int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 		target[j] = _T('\"');
 		++j;
 		}
-
 	return j;
 }
 

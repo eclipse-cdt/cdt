@@ -1,5 +1,13 @@
 2004-03-23 Alain Magloire
 
+	An implementation of IScannerInfoProvider on top
+	of the IPathEntry.
+
+	* src/org/eclipse/cdt/core/resources/ScannerInfo.java
+	* src/org/eclipse/cdt/core/resources/ScannerInfoProvider.java
+
+2004-03-23 Alain Magloire
+
 	Show the objects on the IOuputEntry path should
 	be save in the BinaryContainer.
 

@@ -1,3 +1,11 @@
+2004-02-03 Alain Magloire
+	PR 51143
+
+	In testing the duplication of errors, we did not look at the right
+	severity.
+
+	* src/org/eclipse/cdt/core/resources/ACBuilder.java
+
 2004-01-29 Alain Magloire
 
 	PR 50846 from Alex Chapiro.

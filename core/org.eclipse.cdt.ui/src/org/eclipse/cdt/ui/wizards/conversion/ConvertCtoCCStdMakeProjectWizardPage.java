@@ -5,8 +5,9 @@ package org.eclipse.cdt.ui.wizards.conversion;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -67,8 +68,8 @@ public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPa
      */
     public boolean isCandidate(IProject project) {
         try {
-            if (project.hasNature(CoreModel.C_NATURE_ID) 
-                    && !project.hasNature(CoreModel.CC_NATURE_ID))
+            if (project.hasNature(CProjectNature.C_NATURE_ID) 
+                    && !project.hasNature(CCProjectNature.CC_NATURE_ID))
                 return true;
         } catch (CoreException e) {
            CPlugin.log(e);

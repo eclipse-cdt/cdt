@@ -5,8 +5,8 @@ package org.eclipse.cdt.ui.wizards.conversion;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -70,7 +70,7 @@ public class ConvertSimpleToCCStdMakeProjectWizardPage extends ConvertSimpleToCS
         boolean noCCNature = false;
 
        try {
-            noCCNature = !project.hasNature(CoreModel.CC_NATURE_ID);
+            noCCNature = !project.hasNature(CCProjectNature.CC_NATURE_ID);
        } catch (CoreException e) {
            noCCNature = true;
         }

@@ -6,7 +6,7 @@ package org.eclipse.cdt.ui.wizards.conversion;
  */
  
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -68,7 +68,7 @@ public class ConvertSimpleToCStdMakeProjectWizardPage extends ConvertProjectWiza
     public boolean isCandidate(IProject project) {       
         boolean noCNature = false;
         try {
-            noCNature =  !project.hasNature(CoreModel.C_NATURE_ID);
+            noCNature =  !project.hasNature(CProjectNature.C_NATURE_ID);
        } catch (CoreException e) {
            noCNature = true;
        }

@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupError;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 

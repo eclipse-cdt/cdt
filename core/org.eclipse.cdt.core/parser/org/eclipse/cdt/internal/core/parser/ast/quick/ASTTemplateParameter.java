@@ -98,7 +98,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind[], org.eclipse.cdt.core.parser.ast.IASTNode)
 	 */
-	public ILookupResult lookup(String prefix, LookupKind[] kind, IASTNode context) throws LookupError, ASTNotImplementedException {
+	public ILookupResult lookup(String prefix, LookupKind[] lookupKind, IASTNode context) throws LookupError, ASTNotImplementedException {
 		// TODO Auto-generated method stub
 		return null;
 	}

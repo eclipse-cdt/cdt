@@ -23,5 +23,5 @@ public interface IASTEnumerator extends IASTOffsetableNamedElement, IASTNode, IS
 	/**
 	 * @param referenceManager
 	 */
-	public void freeReferences(IReferenceManager referenceManager); 
+	public void freeReferences(); 
 }

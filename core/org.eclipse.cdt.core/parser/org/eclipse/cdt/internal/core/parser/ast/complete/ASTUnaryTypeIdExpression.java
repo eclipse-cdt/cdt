@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -26,9 +25,9 @@ public class ASTUnaryTypeIdExpression extends ASTUnaryExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
-	public void freeReferences(IReferenceManager manager) {
-		super.freeReferences(manager);
-		typeId.freeReferences(manager);
+	public void freeReferences() {
+		super.freeReferences();
+		typeId.freeReferences();
 	}
 	private final IASTTypeId typeId;
 
@@ -53,9 +52,9 @@ public class ASTUnaryTypeIdExpression extends ASTUnaryExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression#processCallbacks()
 	 */
-	protected void processCallbacks( ISourceElementRequestor requestor, IReferenceManager manager ) {
-		super.processCallbacks(requestor, manager);
-		typeId.acceptElement( requestor, manager );
+	protected void processCallbacks( ISourceElementRequestor requestor ) {
+		super.processCallbacks(requestor );
+		typeId.acceptElement( requestor );
 	}
 
 	public String toString(){

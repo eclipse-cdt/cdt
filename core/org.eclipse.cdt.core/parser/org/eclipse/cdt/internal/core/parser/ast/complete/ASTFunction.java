@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
@@ -166,7 +166,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
         try
         {
@@ -179,33 +179,33 @@ public class ASTFunction extends ASTScope implements IASTFunction
         {
             /* do nothing */
         }
-        functionCallbacks(requestor, manager);
+        functionCallbacks(requestor);
     }
     
-    protected  void functionCallbacks(ISourceElementRequestor requestor, IReferenceManager manager)
+    protected  void functionCallbacks(ISourceElementRequestor requestor )
     {
-        manager.processReferences(references, requestor);
+        Parser.processReferences(references, requestor);
         references = null;
-        processParameterInitializersAndArrayMods(requestor, manager);
+        processParameterInitializersAndArrayMods(requestor);
         if( getReturnType() != null )
-        	getReturnType().acceptElement(requestor, manager);
+        	getReturnType().acceptElement(requestor);
     }
     /**
      * @param requestor
      * @param manager
      */
-    protected void processParameterInitializersAndArrayMods(ISourceElementRequestor requestor, IReferenceManager manager)
+    protected void processParameterInitializersAndArrayMods(ISourceElementRequestor requestor )
     {
         int size = parameters.size();
         for( int i = 0; i < size; i++ )
         {
         	IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.get(i);
         	if( parm.getDefaultValue() != null )
-        		parm.getDefaultValue().acceptElement(requestor, manager);
+        		parm.getDefaultValue().acceptElement(requestor);
         	Iterator arrays = parm.getArrayModifiers();
         	while( arrays.hasNext() )
         	{
-        		((IASTArrayModifier)arrays.next()).acceptElement(requestor, manager);
+        		((IASTArrayModifier)arrays.next()).acceptElement(requestor);
         	}
         }
     }
@@ -214,7 +214,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
 		try
         {
@@ -224,12 +224,12 @@ public class ASTFunction extends ASTScope implements IASTFunction
         {
             /* do nothing */
         }
-		functionCallbacks( requestor, manager );
+		functionCallbacks( requestor );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
         try
         {

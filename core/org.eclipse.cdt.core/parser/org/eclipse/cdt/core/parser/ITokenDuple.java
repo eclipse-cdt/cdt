@@ -13,8 +13,6 @@ package org.eclipse.cdt.core.parser;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
-
 
 /**
  * @author jcamelon
@@ -68,6 +66,6 @@ public interface ITokenDuple {
 	 */
 	public abstract String [] toQualifiedName();
 	
-	public void freeReferences( IReferenceManager manager );
-	public void acceptElement( ISourceElementRequestor requestor, IReferenceManager manager );
+	public void freeReferences( );
+	public void acceptElement( ISourceElementRequestor requestor );
 }

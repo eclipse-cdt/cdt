@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
@@ -109,24 +108,24 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager) {
+	public void acceptElement(ISourceElementRequestor requestor) {
 		if( defaultValue != null )
-			defaultValue.acceptElement( requestor, manager );
+			defaultValue.acceptElement( requestor );
 		if( parameter != null )
-			parameter.acceptElement( requestor, manager );
+			parameter.acceptElement( requestor );
 		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager) {
+	public void enterScope(ISourceElementRequestor requestor) {
 		// TODO Auto-generated method stub
 		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
 	 */
-	public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager) {
+	public void exitScope(ISourceElementRequestor requestor) {
 		// TODO Auto-generated method stub
 		
 	}

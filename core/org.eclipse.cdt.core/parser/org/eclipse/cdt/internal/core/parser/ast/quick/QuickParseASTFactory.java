@@ -54,7 +54,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
@@ -392,13 +391,4 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	public void constructExpressions(boolean flag) {
 		temporarilyDisableNodeConstruction = flag;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getReferenceManager()
-	 */
-	public IReferenceManager getReferenceManager() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

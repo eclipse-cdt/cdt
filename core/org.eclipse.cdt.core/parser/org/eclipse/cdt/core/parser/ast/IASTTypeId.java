@@ -42,5 +42,5 @@ public interface IASTTypeId extends ISourceElementCallbackDelegate
 	/**
 	 * @param manager
 	 */
-	public void freeReferences(IReferenceManager manager); 
+	public void freeReferences(); 
 }

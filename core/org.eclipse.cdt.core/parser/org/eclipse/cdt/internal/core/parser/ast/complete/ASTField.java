@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
@@ -53,7 +53,7 @@ public class ASTField extends ASTVariable implements IASTField
         return visibility;
     }
     
-	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+	public void acceptElement(ISourceElementRequestor requestor)
 	{
 		try
         {
@@ -63,12 +63,12 @@ public class ASTField extends ASTVariable implements IASTField
         {
             /* do nothing */
         }
-		manager.processReferences(references, requestor);
+		Parser.processReferences(references, requestor);
 		references = null;
 		
 		if( getInitializerClause() != null )
-			getInitializerClause().acceptElement(requestor, manager);
+			getInitializerClause().acceptElement(requestor);
 		if( getAbstractDeclaration() != null )
-			getAbstractDeclaration().acceptElement(requestor, manager);			
+			getAbstractDeclaration().acceptElement(requestor);			
 	}
 }

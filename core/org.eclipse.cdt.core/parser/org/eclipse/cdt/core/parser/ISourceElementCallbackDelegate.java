@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
  * @author jcamelon
@@ -18,7 +17,7 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
  */
 public interface ISourceElementCallbackDelegate
 {
-	public void acceptElement( ISourceElementRequestor requestor, IReferenceManager manager );
-	public void enterScope( ISourceElementRequestor requestor, IReferenceManager manager );
-	public void exitScope( ISourceElementRequestor requestor, IReferenceManager manager );
+	public void acceptElement( ISourceElementRequestor requestor );
+	public void enterScope( ISourceElementRequestor requestor );
+	public void exitScope( ISourceElementRequestor requestor );
 }

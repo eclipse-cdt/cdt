@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
@@ -161,16 +161,16 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void acceptElement(ISourceElementRequestor requestor)
     {
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void enterScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void enterScope(ISourceElementRequestor requestor)
     {
-    	manager.processReferences( references, requestor );
+    	Parser.processReferences( references, requestor );
     	references = null;
         try
         {
@@ -186,15 +186,15 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
         {
         	IParentSymbol pw = (IParentSymbol)bases.get(i); 
     		IASTBaseSpecifier baseSpec = new ASTBaseSpecifier( pw.getParent(), pw.isVirtual(), pw.getAccess(), pw.getOffset(), pw.getReferences() );
-        	baseSpec.acceptElement(requestor, manager);
+        	baseSpec.acceptElement(requestor);
         }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
-    public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
+    public void exitScope(ISourceElementRequestor requestor)
     {
-    	manager.processReferences( this.resolvedCrossReferences, requestor );
+    	Parser.processReferences( this.resolvedCrossReferences, requestor );
         try
         {
             requestor.exitClassSpecifier(this);
@@ -271,7 +271,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 	/**
 	 * @param references2
 	 */
-	public void setExtraReferences(List references, ReferenceCache cache ) {
+	public void setExtraReferences(List references ) {
 		if( references != null && !references.isEmpty())
 		{
 			for( int i = 0; i < references.size(); ++i )

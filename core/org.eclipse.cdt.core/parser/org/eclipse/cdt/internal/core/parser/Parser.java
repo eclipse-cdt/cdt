@@ -10,8 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -25,9 +29,12 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
@@ -49,6 +56,9 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
@@ -60,13 +70,19 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
+import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * This is our first implementation of the IParser interface, serving as a
@@ -76,9 +92,9 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  * 
  * @author jcamelon
  */
-public abstract class Parser implements IParserData, IParser 
+public final class Parser implements IParserData, IParser 
 {
-	
+	protected final ParserMode mode;
 	protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
 	private static int FIRST_ERROR_UNSET = -1;
 	protected boolean parsePassed = true;
@@ -415,7 +431,7 @@ public abstract class Parser implements IParserData, IParser
 
 		if (failed) {
 			if (expression != null)
-				expression.freeReferences(astFactory.getReferenceManager());
+				expression.freeReferences();
 			throwBacktrack(startingOffset, 0, startingLineNumber, fn );
 		}
 
@@ -541,47 +557,6 @@ public abstract class Parser implements IParserData, IParser
 			TemplateParameterManager.returnInstance(argumentList);
 		}
 
-	}
-
-	/**
-	 * @param scope
-	 * @param kind
-	 * @param key
-	 */
-	protected void setCompletionValuesNoContext(IASTScope scope,
-			CompletionKind kind, KeywordSetKey key) throws EndOfFileException {
-	}
-	/**
-	 * @param tokenDuple
-	 */
-	protected void setGreaterNameContext(ITokenDuple tokenDuple) {
-		//do nothing in this implementation
-	}
-
-	/**
-	 * @param scope
-	 * @param kind
-	 */
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind,
-			IASTNode context) throws EndOfFileException {
-	}
-
-	/**
-	 * @param scope
-	 * @param kind
-	 */
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind)
-			throws EndOfFileException {
-	}
-
-	/**
-	 * @param scope
-	 * @param kind
-	 * @param key
-	 * @param node
-	 */
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind,
-			KeywordSetKey key, IASTNode node) throws EndOfFileException {
 	}
 
 	/**
@@ -811,7 +786,7 @@ public abstract class Parser implements IParserData, IParser
 				continue;
 			}
 			if (nameDuple != null)
-				nameDuple.freeReferences(astFactory.getReferenceManager());
+				nameDuple.freeReferences();
 			backup(mark);
 			return result;
 		}
@@ -857,12 +832,6 @@ public abstract class Parser implements IParserData, IParser
 		return assignmentExpression;
 	}
 
-	/**
-	 * @param assignmentExpression
-	 */
-	protected void setParameterListExpression(
-			IASTExpression assignmentExpression) {
-	}
 	/**
 	 * @param expression
 	 * @throws BacktrackException
@@ -1414,8 +1383,7 @@ public abstract class Parser implements IParserData, IParser
 								secondExpression, null, null, null,
 								EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						firstExpression.freeReferences(astFactory
-								.getReferenceManager());
+						firstExpression.freeReferences();
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
 						logException(
@@ -1498,7 +1466,7 @@ public abstract class Parser implements IParserData, IParser
 				} catch (BacktrackException bte) {
 					backup(mark);
 					if (typeId != null)
-						typeId.freeReferences(astFactory.getReferenceManager());
+						typeId.freeReferences();
 					throw bte;
 				}
 				
@@ -1511,7 +1479,7 @@ public abstract class Parser implements IParserData, IParser
 				{
 					backup( mark );
 					if (typeId != null)
-						typeId.freeReferences(astFactory.getReferenceManager());
+						typeId.freeReferences();
 					return unaryExpression(scope, kind, key);
 				}
 				int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
@@ -2014,12 +1982,6 @@ public abstract class Parser implements IParserData, IParser
 	}
 
 	/**
-	 * @param functionName 
-	 */
-	protected void setCurrentFunctionName(char[] functionName) {
-	}
-
-	/**
 	 * @param expression
 	 * @throws BacktrackException
 	 */
@@ -2314,7 +2276,7 @@ public abstract class Parser implements IParserData, IParser
 				case IToken.tLPAREN :
 					// function call
 					consume(IToken.tLPAREN);
-					IASTNode context = null;
+					IASTNode cntext = null;
 					if (firstExpression != null) {
 						if (firstExpression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION)
 							setCurrentFunctionName(firstExpression
@@ -2324,7 +2286,7 @@ public abstract class Parser implements IParserData, IParser
 										.getIdExpressionCharArray() != null) {
 							setCurrentFunctionName(firstExpression
 									.getRHSExpression().getIdExpressionCharArray());
-							context = astFactory
+							cntext = astFactory
 									.expressionToMostPreciseASTNode(scope,
 											firstExpression.getLHSExpression());
 						}
@@ -2334,7 +2296,7 @@ public abstract class Parser implements IParserData, IParser
 						templateIdScopes.push(IToken.tLPAREN);
 					}
 					setCompletionValues(scope,
-							CompletionKind.FUNCTION_REFERENCE, context);
+							CompletionKind.FUNCTION_REFERENCE, cntext);
 					secondExpression = expression(scope,
 							CompletionKind.FUNCTION_REFERENCE, key);
 					setCurrentFunctionName(EMPTY_STRING);
@@ -2487,7 +2449,8 @@ public abstract class Parser implements IParserData, IParser
 	}
 
 	protected void checkEndOfFile() throws EndOfFileException {
-		LA(1);
+		if( mode != ParserMode.SELECTION_PARSE )
+			LA(1);
 	}
 
 	protected IASTExpression simpleTypeConstructorExpression(IASTScope scope,
@@ -2724,18 +2687,6 @@ public abstract class Parser implements IParserData, IParser
 		} 
 	}
 
-	/**
-	 * @param value
-	 */
-	protected void handleNewToken(IToken value) {
-	}
-
-	protected void handleOffsetLimitException(
-			OffsetLimitReachedException exception) throws EndOfFileException {
-		// unexpected, throw EOF instead (equivalent)
-		throw new EndOfFileException();
-	}
-
 	protected IASTExpression assignmentOperatorExpression(IASTScope scope,
 			IASTExpression.Kind kind, IASTExpression lhs,
 			CompletionKind completionKind, KeywordSetKey key)
@@ -2756,25 +2707,6 @@ public abstract class Parser implements IParserData, IParser
 		return null;
 	}
 
-	protected void setCompletionValues(IASTScope scope,
-			IASTCompletionNode.CompletionKind kind, KeywordSetKey key)
-			throws EndOfFileException {
-	}
-
-	protected void setCompletionValues(IASTScope scope,
-			IASTCompletionNode.CompletionKind kind, KeywordSetKey key,
-			IASTNode node, String prefix) throws EndOfFileException {
-	}
-
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind,
-			KeywordSetKey key, IASTExpression firstExpression,
-			Kind expressionKind) throws EndOfFileException {
-	}
-
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind,
-			IToken first, IToken last, KeywordSetKey key)
-			throws EndOfFileException {
-	}
 
 	protected IASTExpression unaryOperatorCastExpression(IASTScope scope,
 			IASTExpression.Kind kind, CompletionKind completionKind,
@@ -2854,11 +2786,6 @@ public abstract class Parser implements IParserData, IParser
 	    return first;
 	}
 
-
-	public boolean validateCaches() {
-		return true;
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -2914,20 +2841,24 @@ public abstract class Parser implements IParserData, IParser
     /**
 	 * This is the standard cosntructor that we expect the Parser to be
 	 * instantiated with.
+     * @param mode TODO
 	 *  
 	 */
     public Parser(
         IScanner scanner,
+        ParserMode mode,
         ISourceElementRequestor callback,
-        ParserLanguage language,
-        IParserLogService log, IParserExtension extension )
+        ParserLanguage language, IParserLogService log, IParserExtension extension )
     {
 		this.scanner = scanner;
 		this.language = language;
 		this.log = log;
 		this.extension = extension;
+		this.mode = mode;
 		setupASTFactory(scanner, language);
     	requestor = callback;
+		if( this.mode == ParserMode.QUICK_PARSE ) 
+			constructInitializersInDeclarations = false;
     }
     
     
@@ -3008,11 +2939,11 @@ public abstract class Parser implements IParserData, IParser
             return;
         }
 
-		compilationUnit.enterScope( requestor, astFactory.getReferenceManager() );
+		compilationUnit.enterScope( requestor );
 		try {
 			setCompletionValues(compilationUnit, CompletionKind.VARIABLE_TYPE, KeywordSetKey.DECLARATION );
 		} catch (EndOfFileException e1) {
-			compilationUnit.exitScope( requestor, astFactory.getReferenceManager() );
+			compilationUnit.exitScope( requestor );
 			return;
 		}
 		
@@ -3082,7 +3013,7 @@ public abstract class Parser implements IParserData, IParser
 				}
             }
         }
-        compilationUnit.exitScope( requestor, astFactory.getReferenceManager() );
+        compilationUnit.exitScope( requestor );
     }
     /**
 	 * @param string
@@ -3173,7 +3104,7 @@ public abstract class Parser implements IParserData, IParser
                 	logException( "usingClause:createUsingDirective", e1 ); //$NON-NLS-1$
                     throwBacktrack(firstToken.getOffset(), last.getEndOffset(), firstToken.getLineNumber(), last.getFilename());
                 }
-                astUD.acceptElement(requestor, astFactory.getReferenceManager());
+                astUD.acceptElement(requestor );
                 return astUD;
             }
             endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
@@ -3221,7 +3152,7 @@ public abstract class Parser implements IParserData, IParser
             	else
             	    throwBacktrack(firstToken.getOffset(), last.getEndOffset(), firstToken.getLineNumber(), firstToken.getFilename());
             }
-            declaration.acceptElement( requestor, astFactory.getReferenceManager() );
+            declaration.acceptElement( requestor );
             setCompletionValues(scope, getCompletionKindForDeclaration(scope, null), KeywordSetKey.DECLARATION );
             return declaration;
         }
@@ -3268,7 +3199,7 @@ public abstract class Parser implements IParserData, IParser
                 throwBacktrack(firstToken.getOffset(), lbrace.getEndOffset(), lbrace.getLineNumber(), lbrace.getFilename());
             }
             
-            linkage.enterScope( requestor, astFactory.getReferenceManager() );
+            linkage.enterScope( requestor );
             try
 			{
 	            linkageDeclarationLoop : while (LT(1) != IToken.tRBRACE)
@@ -3300,7 +3231,7 @@ public abstract class Parser implements IParserData, IParser
 			}
             finally
 			{
-            	linkage.exitScope( requestor, astFactory.getReferenceManager() );
+            	linkage.exitScope( requestor );
 			}
             return linkage;
         }
@@ -3322,14 +3253,14 @@ public abstract class Parser implements IParserData, IParser
             throwBacktrack(firstToken.getOffset(), endOffset, firstToken.getLineNumber(), firstToken.getFilename());
             return null;
         }
-		linkage.enterScope( requestor, astFactory.getReferenceManager() );
+		linkage.enterScope( requestor );
 		try
 		{
 			declaration(linkage, null, null, KeywordSetKey.DECLARATION);
 		}
 		finally
 		{
-			linkage.exitScope( requestor, astFactory.getReferenceManager() );
+			linkage.exitScope( requestor );
 		}
 		return linkage;
 
@@ -3382,14 +3313,14 @@ public abstract class Parser implements IParserData, IParser
                 throwBacktrack(firstToken.getOffset(), firstToken.getEndOffset(), firstToken.getLineNumber(), firstToken.getFilename());
                 return null;
             }
-            templateInstantiation.enterScope( requestor, astFactory.getReferenceManager() );
+            templateInstantiation.enterScope( requestor );
             try
 			{
             	declaration(templateInstantiation, templateInstantiation, null, KeywordSetKey.DECLARATION);
             	templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
 			} finally
 			{
-				templateInstantiation.exitScope( requestor, astFactory.getReferenceManager() );
+				templateInstantiation.exitScope( requestor );
 			}
  
             return templateInstantiation;
@@ -3415,7 +3346,7 @@ public abstract class Parser implements IParserData, IParser
                 throwBacktrack(firstToken.getOffset(), gt.getEndOffset(), gt.getLineNumber(), gt.getFilename());
                 return null;
             }
-			templateSpecialization.enterScope(requestor, astFactory.getReferenceManager());
+			templateSpecialization.enterScope(requestor);
 			try
 			{
 				declaration(templateSpecialization, templateSpecialization, null, KeywordSetKey.DECLARATION);
@@ -3424,7 +3355,7 @@ public abstract class Parser implements IParserData, IParser
 			}
 			finally
 			{
-				templateSpecialization.exitScope(requestor, astFactory.getReferenceManager());
+				templateSpecialization.exitScope(requestor);
 			}
             return templateSpecialization;
         }
@@ -3450,13 +3381,13 @@ public abstract class Parser implements IParserData, IParser
                 throwBacktrack(firstToken.getOffset(), gt.getEndOffset(), gt.getLineNumber(), gt.getFilename());
                 return null;
             }
-            templateDecl.enterScope( requestor, astFactory.getReferenceManager() );
+            templateDecl.enterScope( requestor );
             try{
             	declaration(templateDecl, templateDecl, null, KeywordSetKey.DECLARATION );
             	templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
             } finally
 			{
-    			templateDecl.exitScope( requestor, astFactory.getReferenceManager() );
+    			templateDecl.exitScope( requestor );
             }
 			return templateDecl;
         }
@@ -3716,7 +3647,7 @@ public abstract class Parser implements IParserData, IParser
                 }
                 // if we made it this far, then we have all we need
                 // do the callback
- 				resultDeclaration.acceptElement(requestor, astFactory.getReferenceManager());
+ 				resultDeclaration.acceptElement(requestor);
  				setCompletionValues(scope, kind, KeywordSetKey.DECLARATION );
                 break;
             case IToken.t_namespace :
@@ -3742,13 +3673,6 @@ public abstract class Parser implements IParserData, IParser
     	endDeclaration( resultDeclaration );
     }
     
-    /**
-	 * @param scope
-	 * @return
-	 */
-	protected IASTCompletionNode.CompletionKind getCompletionKindForDeclaration(IASTScope scope, CompletionKind overide) {
-		return null;
-	}
 	
 	protected IASTDeclaration simpleDeclarationStrategyUnion(
         IASTScope scope,
@@ -3867,7 +3791,7 @@ public abstract class Parser implements IParserData, IParser
                 throwBacktrack(first.getOffset(), lbrace.getEndOffset(), first.getLineNumber(), first.getFilename());
                 return null;
             }
-            namespaceDefinition.enterScope( requestor, astFactory.getReferenceManager() );
+            namespaceDefinition.enterScope( requestor );
             try
 			{
 	            setCompletionValues(scope,CompletionKind.VARIABLE_TYPE, KeywordSetKey.DECLARATION );
@@ -3905,7 +3829,7 @@ public abstract class Parser implements IParserData, IParser
 			} 
             finally
 			{
-            	namespaceDefinition.exitScope( requestor, astFactory.getReferenceManager() );
+            	namespaceDefinition.exitScope( requestor );
 			}
             return namespaceDefinition;
         }
@@ -4110,20 +4034,20 @@ public abstract class Parser implements IParserData, IParser
 			            declaration = (IASTDeclaration)l.get(i);
 			            ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
 			                lastToken.getEndOffset(), lastToken.getLineNumber());
-			            declaration.acceptElement( requestor, astFactory.getReferenceManager() );
+			            declaration.acceptElement( requestor );
 			            if( sdw.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier )
-			            	((IASTSimpleTypeSpecifier)sdw.getTypeSpecifier()).releaseReferences( astFactory.getReferenceManager() );
+			            	((IASTSimpleTypeSpecifier)sdw.getTypeSpecifier()).releaseReferences( );
 
 			        }
 			        return declaration;
 			    }
 			    IASTDeclaration declaration = (IASTDeclaration)l.get(0);
 			    endDeclaration( declaration );
-			    declaration.enterScope( requestor, astFactory.getReferenceManager() );
+			    declaration.enterScope( requestor );
 			    try
 				{
 				    if( sdw.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier )
-				    	((IASTSimpleTypeSpecifier)sdw.getTypeSpecifier()).releaseReferences( astFactory.getReferenceManager() );
+				    	((IASTSimpleTypeSpecifier)sdw.getTypeSpecifier()).releaseReferences( );
 	
 					if ( !( declaration instanceof IASTScope ) ) 
 						throwBacktrack(firstOffset, endOffset, firstLine, fn);
@@ -4134,7 +4058,7 @@ public abstract class Parser implements IParserData, IParser
 				}
 			    finally
 				{
-			    	declaration.exitScope( requestor, astFactory.getReferenceManager() );
+			    	declaration.exitScope( requestor );
 				}
 					
 				if( hasFunctionTryBlock )
@@ -4155,7 +4079,7 @@ public abstract class Parser implements IParserData, IParser
 			                sdw.getStartingOffset(),
 			                sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
 							sdw.isFriend(), lastToken.getFilename());
-					declaration.acceptElement(requestor, astFactory.getReferenceManager());
+					declaration.acceptElement(requestor);
 					return declaration;
 				}
 			}
@@ -4169,20 +4093,35 @@ public abstract class Parser implements IParserData, IParser
 		} catch( BacktrackException be ) 
 		{
 			if( simpleTypeSpecifier != null )
-				simpleTypeSpecifier.releaseReferences(astFactory.getReferenceManager());
+				simpleTypeSpecifier.releaseReferences();
 			throwBacktrack(be);
 			return null;
 		}
 		catch( EndOfFileException eof )
 		{
 			if( simpleTypeSpecifier != null )
-				simpleTypeSpecifier.releaseReferences(astFactory.getReferenceManager());
+				simpleTypeSpecifier.releaseReferences();
 			throw eof;			
 		}
     }
 
 
-	protected abstract void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException;
+	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
+	{
+		if( mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE  )
+			skipOverCompoundStatement();
+		else if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			if( scanner.isOnTopContext() )
+				functionBody(scope);
+			else
+				skipOverCompoundStatement();
+		}
+		else if( mode == ParserMode.COMPLETE_PARSE )
+			functionBody(scope);
+			
+
+	}
 
     protected void skipOverCompoundStatement() throws BacktrackException, EndOfFileException
     {
@@ -4450,7 +4389,7 @@ public abstract class Parser implements IParserData, IParser
 					for (int j = 0; j < arrayOfLists[i].size(); ++j) {
 						IASTExpression e = (IASTExpression) arrayOfLists[i]
 								.get(j);
-						e.freeReferences(astFactory.getReferenceManager());
+						e.freeReferences();
 
 					}
 				}
@@ -4830,7 +4769,7 @@ public abstract class Parser implements IParserData, IParser
 		if (isForewardDecl)
 		{
 			((IASTElaboratedTypeSpecifier) elaboratedTypeSpec).acceptElement(
-					requestor, astFactory.getReferenceManager());
+					requestor);
 		}
 	}
 	/**
@@ -5235,8 +5174,7 @@ public abstract class Parser implements IParserData, IParser
 								}
 
 								if (queryName != null)
-									queryName.freeReferences(astFactory
-											.getReferenceManager());
+									queryName.freeReferences();
 								backup(newMark);
 							}
 						}
@@ -5327,9 +5265,7 @@ public abstract class Parser implements IParserData, IParser
 													.add(exceptionTypeId);
 											exceptionTypeId
 													.acceptElement(
-															requestor,
-															astFactory
-																	.getReferenceManager());
+															requestor);
 										} catch (BacktrackException e) {
 											failParse(e);
 											consume();
@@ -5553,10 +5489,9 @@ public abstract class Parser implements IParserData, IParser
 				}
 				if (LT(1) != IToken.tCOMMA) {
 					enumeration
-							.freeReferences(astFactory.getReferenceManager());
+							.freeReferences();
 					if (enumerator != null)
-						enumerator.freeReferences(astFactory
-								.getReferenceManager());
+						enumerator.freeReferences();
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 					throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(), mark.getFilename());
 				}
@@ -5583,8 +5518,7 @@ public abstract class Parser implements IParserData, IParser
 			IToken t = consume(IToken.tRBRACE);
 			enumeration.setEndingOffsetAndLineNumber(t.getEndOffset(), t
 					.getLineNumber());
-			enumeration.acceptElement(requestor, astFactory
-					.getReferenceManager());
+			enumeration.acceptElement(requestor);
 			sdw.setTypeSpecifier(enumeration);
 		} else {
 			// enumSpecifierAbort
@@ -5677,8 +5611,7 @@ public abstract class Parser implements IParserData, IParser
 			consume(IToken.tLBRACE);
 			setCompletionValues(astClassSpecifier, CompletionKind.FIELD_TYPE,
 					KeywordSetKey.MEMBER);
-			astClassSpecifier.enterScope(requestor, astFactory
-					.getReferenceManager());
+			astClassSpecifier.enterScope(requestor);
 			
 			try
 			{
@@ -5735,8 +5668,7 @@ public abstract class Parser implements IParserData, IParser
 			}
 			finally
 			{
-				astClassSpecifier.exitScope(requestor, astFactory
-						.getReferenceManager());				
+				astClassSpecifier.exitScope(requestor);				
 			}
 
 
@@ -5883,8 +5815,7 @@ public abstract class Parser implements IParserData, IParser
 				IASTExpression constant_expression = constantExpression(scope,
 						CompletionKind.SINGLE_NAME_REFERENCE,
 						KeywordSetKey.EXPRESSION);
-				constant_expression.acceptElement(requestor, astFactory
-						.getReferenceManager());
+				constant_expression.acceptElement(requestor);
 				endExpression(constant_expression);
 				consume(IToken.tCOLON);
 				statement(scope);
@@ -5965,8 +5896,7 @@ public abstract class Parser implements IParserData, IParser
 					IASTExpression finalExpression = expression(scope,
 							CompletionKind.SINGLE_NAME_REFERENCE,
 							KeywordSetKey.DECLARATION);
-					finalExpression.acceptElement(requestor, astFactory
-							.getReferenceManager());
+					finalExpression.acceptElement(requestor);
 					endExpression(finalExpression);
 				}
 				consume(IToken.tRPAREN);
@@ -5989,8 +5919,7 @@ public abstract class Parser implements IParserData, IParser
 					IASTExpression retVal = expression(scope,
 							CompletionKind.SINGLE_NAME_REFERENCE,
 							KeywordSetKey.EXPRESSION);
-					retVal.acceptElement(requestor, astFactory
-							.getReferenceManager());
+					retVal.acceptElement(requestor);
 					endExpression(retVal);
 				}
 				consume(IToken.tSEMI);
@@ -6035,15 +5964,13 @@ public abstract class Parser implements IParserData, IParser
 							CompletionKind.SINGLE_NAME_REFERENCE,
 							KeywordSetKey.STATEMENT);
 					consume(IToken.tSEMI);
-					expressionStatement.acceptElement(requestor, astFactory
-							.getReferenceManager());
+					expressionStatement.acceptElement(requestor);
 					endExpression(expressionStatement);
 					return;
 				} catch (BacktrackException b) {
 					backup(mark);
 					if (expressionStatement != null)
-						expressionStatement.freeReferences(astFactory
-								.getReferenceManager());
+						expressionStatement.freeReferences();
 				}
 
 				// declarationStatement
@@ -6052,36 +5979,51 @@ public abstract class Parser implements IParserData, IParser
 
 	}
 	protected void catchHandlerSequence(IASTScope scope)
-			throws EndOfFileException, BacktrackException {
-		
-		if (LT(1) != IToken.t_catch)
+	throws EndOfFileException, BacktrackException {
+		if( LT(1) != IToken.t_catch )
 		{
 			IToken la = LA(1);
 			throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber(), la.getFilename()); // error, need at least one of these
 		}
-		while (LT(1) == IToken.t_catch) {
+		while (LT(1) == IToken.t_catch)
+		{
 			consume(IToken.t_catch);
+			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,KeywordSetKey.EMPTY );
 			consume(IToken.tLPAREN);
-
-			try {
-				if (LT(1) == IToken.tELLIPSIS)
-					consume(IToken.tELLIPSIS);
-				else
-					simpleDeclaration(SimpleDeclarationStrategy.TRY_VARIABLE,
-							scope, null, CompletionKind.EXCEPTION_REFERENCE, true,
-							KeywordSetKey.DECL_SPECIFIER_SEQUENCE);
+			setCompletionValues(scope,CompletionKind.EXCEPTION_REFERENCE,KeywordSetKey.DECL_SPECIFIER_SEQUENCE);
+			try
+			{
+				if( LT(1) == IToken.tELLIPSIS )
+					consume( IToken.tELLIPSIS );
+				else 
+					simpleDeclaration( SimpleDeclarationStrategy.TRY_VARIABLE, scope, null, CompletionKind.EXCEPTION_REFERENCE, true, KeywordSetKey.DECLARATION); 
 				consume(IToken.tRPAREN);
-	
+			
 				catchBlockCompoundStatement(scope);
-			} catch (BacktrackException b) {
-				failParse(b);
+			}
+			catch( BacktrackException bte )
+			{
+				failParse( bte );
 				failParseWithErrorHandling();
 			}
 		}
 	}
 
-	protected abstract void catchBlockCompoundStatement(IASTScope scope)
-			throws BacktrackException, EndOfFileException;
+	protected void catchBlockCompoundStatement(IASTScope scope)
+			throws BacktrackException, EndOfFileException
+	{
+		if( mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE  )
+			skipOverCompoundStatement();
+		else if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			if( scanner.isOnTopContext() )
+				compoundStatement(scope, true);
+			else
+				skipOverCompoundStatement();
+		}
+		else if( mode == ParserMode.COMPLETE_PARSE )
+			compoundStatement(scope, true);
+	}
 
 	protected void singleStatementScope(IASTScope scope)
 			throws EndOfFileException, BacktrackException {
@@ -6094,11 +6036,11 @@ public abstract class Parser implements IParserData, IParser
 			throwBacktrack(la.getOffset(), la.getEndOffset(), la.getLineNumber(), la.getFilename());
 			return;
 		}
-		newScope.enterScope(requestor, astFactory.getReferenceManager());
+		newScope.enterScope(requestor);
 		try {
 			statement(newScope);
 		} finally {
-			newScope.exitScope(requestor, astFactory.getReferenceManager());
+			newScope.exitScope(requestor);
 		}
 	}
 
@@ -6109,8 +6051,7 @@ public abstract class Parser implements IParserData, IParser
 			EndOfFileException {
 		IASTExpression someExpression = expression(scope,
 				CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION);
-		someExpression.acceptElement(requestor, astFactory
-				.getReferenceManager());
+		someExpression.acceptElement(requestor);
 
 		endExpression(someExpression);
 	}
@@ -6126,7 +6067,7 @@ public abstract class Parser implements IParserData, IParser
 					CompletionKind.SINGLE_NAME_REFERENCE,
 					KeywordSetKey.DECLARATION);
 			consume(IToken.tSEMI);
-			e.acceptElement(requestor, astFactory.getReferenceManager());
+			e.acceptElement(requestor);
 
 		} catch (BacktrackException bt) {
 			backup(mark);
@@ -6158,7 +6099,7 @@ public abstract class Parser implements IParserData, IParser
 				logException("compoundStatement:createNewCodeBlock", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, line, fn);
 			}
-			newScope.enterScope(requestor, astFactory.getReferenceManager());
+			newScope.enterScope(requestor);
 		}
 
 		try
@@ -6185,7 +6126,7 @@ public abstract class Parser implements IParserData, IParser
 		finally
 		{	
 			if (createNewScope)
-				newScope.exitScope(requestor, astFactory.getReferenceManager());
+				newScope.exitScope(requestor);
 		}
 	}
 
@@ -6220,13 +6161,6 @@ public abstract class Parser implements IParserData, IParser
 	    return firstErrorLine;
 	}
 
-	protected void setCompletionToken(IToken token) {
-		// do nothing!
-	}
-
-	protected IToken getCompletionToken() {
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -6235,7 +6169,12 @@ public abstract class Parser implements IParserData, IParser
 	 */
 	public ISelectionParseResult parse(int startingOffset, int endingOffset)
 			throws ParseError {
-		throw new ParseError(ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED);
+		if( mode != ParserMode.SELECTION_PARSE )
+			throw new ParseError(ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED);
+		offsetRange = new OffsetDuple( startingOffset, endingOffset );
+		translationUnit();
+		return reconcileTokenDuple();
+
 	}
 
 	/*
@@ -6244,7 +6183,15 @@ public abstract class Parser implements IParserData, IParser
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int)
 	 */
 	public IASTCompletionNode parse(int offset) throws ParseError {
-		throw new ParseError(ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED);
+		if( mode != ParserMode.COMPLETION_PARSE )
+			throw new ParseError(ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED);
+		scanner.setOffsetBoundary(offset);
+		//long startTime = System.currentTimeMillis();
+		translationUnit();
+		//long stopTime = System.currentTimeMillis();
+		//System.out.println("Completion Parse time: " + (stopTime - startTime) + "ms");
+		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ), String.valueOf(getCompletionFunctionName()), getParameterListExpression() );
+
 	}
 
 	/*
@@ -6254,8 +6201,9 @@ public abstract class Parser implements IParserData, IParser
 	 *      org.eclipse.cdt.core.parser.ParserLanguage)
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
-		// do nothing as of yet
-		// subclasses will need to implement this method
+		astFactory = ParserFactory.createASTFactory( mode, language);
+		scanner.setASTFactory(astFactory);
+		astFactory.setLogger(log);
 	}
 
 	/*
@@ -6269,12 +6217,13 @@ public abstract class Parser implements IParserData, IParser
 
 	protected void endDeclaration(IASTDeclaration declaration)
 			throws EndOfFileException {
-		cleanupLastToken();
-	}
-
-	protected void endEnumerator(IASTEnumerator enumerator)
-			throws EndOfFileException {
-		cleanupLastToken();
+		if( mode != ParserMode.SELECTION_PARSE || ! tokenDupleCompleted() )
+			cleanupLastToken();
+		else
+		{
+			contextNode = declaration;
+			throw new EndOfFileException();
+		}
 	}
 
 	/**
@@ -6286,19 +6235,7 @@ public abstract class Parser implements IParserData, IParser
 		simpleDeclarationMark = null;
 	}
 
-	protected void endExpression(IASTExpression expression)
-			throws EndOfFileException {
-		cleanupLastToken();
-	}
-
-	protected void handleClassSpecifier(IASTClassSpecifier classSpecifier)
-			throws EndOfFileException {
-		cleanupLastToken();
-	}
-
-	protected void handleEnumeration(IASTEnumerationSpecifier enumeration) throws EndOfFileException {
-		cleanupLastToken();
-	}	/**
+	/**
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#cancel()
@@ -6306,5 +6243,604 @@ public abstract class Parser implements IParserData, IParser
 	public synchronized void cancel() {
 		isCancelled = true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#validateCaches()
+	 */
+	public boolean validateCaches() {
+		if( astFactory instanceof CompleteParseASTFactory)
+			return ((CompleteParseASTFactory)astFactory).validateCaches();
+		return true;
+	}
 
+	protected IASTScope contextualScope;
+	protected CompletionKind cKind;
+	protected IASTNode context;
+	protected IToken finalToken;
+	protected Set keywordSet;
+	protected char[] functionOrConstructorName = EMPTY_STRING;
+	protected char[] currentFunctionName = EMPTY_STRING;
+	protected IASTExpression parameterListExpression;
+
+	/**
+	 * @return
+	 */
+	protected IASTScope getCompletionScope() {
+		return contextualScope;
+	}
+
+	
+
+	/**
+	 * @return
+	 */
+	protected IASTCompletionNode.CompletionKind getCompletionKind() {
+		return cKind;
+	}
+
+	/**
+	 * @return
+	 */
+	protected String getCompletionPrefix() {
+		return ( finalToken == null ? String.valueOf(EMPTY_STRING) : finalToken.getImage() ); 
+	}
+
+	/**
+	 * @return
+	 */
+	protected IASTNode getCompletionContext() {
+		return context;
+	}
+
+	protected void setCompletionContext(IASTNode node) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			this.context = node;
+	}
+
+	protected void setCompletionKind(IASTCompletionNode.CompletionKind kind) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			this.cKind = kind;
+	}
+
+	/**
+	 * @param compilationUnit
+	 * @param kind2
+	 * @param set
+	 * @param object
+	 * @param string
+	 */
+	protected void setCompletionValues(CompletionKind kind, Set keywordSet, String prefix) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionScope(compilationUnit);
+			this.keywordSet = keywordSet;
+			setCompletionKind(kind);
+			setCompletionContext(null);
+			setCompletionFunctionName( );
+			setCompletionToken( TokenFactory.createStandAloneToken( IToken.tIDENTIFIER, prefix ) );
+		}
+	}
+
+	/**
+	 */
+	protected void setCompletionFunctionName() {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			functionOrConstructorName = currentFunctionName;
+	}
+	
+	
+
+	protected void setCompletionKeywords(KeywordSetKey key) {
+		this.keywordSet = KeywordSets.getKeywords( key, language );
+	}
+
+	protected void setCompletionToken(IToken token) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			finalToken = token;
+	}
+
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTNode node, String prefix) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionToken( TokenFactory.createStandAloneToken( IToken.tIDENTIFIER, prefix ) );
+			setCompletionValues(scope, kind, key, node );
+		}
+	}
+
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			setCompletionValues(scope, kind, key, null );
+	}
+
+	
+	
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTNode node) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionScope(scope);
+			setCompletionKeywords(key);
+			setCompletionKind(kind);
+			setCompletionContext(node);
+			setCompletionFunctionName( );
+			checkEndOfFile();
+		}
+	}
+
+	
+	
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, KeywordSetKey key ) throws EndOfFileException{
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionScope( scope );
+			setCompletionKind( kind );
+			setCompletionKeywords(key);
+			ITokenDuple duple = TokenFactory.createTokenDuple( first, last );
+			try {
+				setCompletionContext( astFactory.lookupSymbolInContext( scope, duple, null ) );
+			} catch (ASTNotImplementedException e) {
+			}
+			setCompletionFunctionName();
+		}
+	}
+
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			IASTNode node = astFactory.expressionToMostPreciseASTNode( scope, firstExpression );
+			if( kind == CompletionKind.MEMBER_REFERENCE )
+			{
+				if( ! validMemberOperation( node, expressionKind ))
+					node =null;
+			}
+			setCompletionValues(scope,kind,key, node  );
+		}
+	}
+
+	/**
+	 * @param node
+	 * @param expressionKind
+	 * @return
+	 */
+	private boolean validMemberOperation(IASTNode node, Kind expressionKind) {
+		if( expressionKind == Kind.POSTFIX_ARROW_IDEXPRESSION || expressionKind == Kind.POSTFIX_ARROW_TEMPL_IDEXP )
+			return astFactory.validateIndirectMemberOperation( node );
+		else if( expressionKind == Kind.POSTFIX_DOT_IDEXPRESSION || expressionKind == Kind.POSTFIX_DOT_TEMPL_IDEXPRESS )
+			return astFactory.validateDirectMemberOperation( node );
+		return false;
+	}	
+
+	protected void setCompletionScope(IASTScope scope) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			this.contextualScope = scope;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind)
+	 */
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionScope(scope);
+			setCompletionKind(kind);
+			setCompletionFunctionName( );
+			checkEndOfFile();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind,
+			IASTNode context) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionScope(scope);
+			setCompletionKind(kind);
+			setCompletionContext(context);
+			setCompletionFunctionName( );
+			checkEndOfFile();	
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	protected char[] getCompletionFunctionName() {
+		return functionOrConstructorName;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCurrentFunctionName(java.lang.String)
+	 */
+	protected void setCurrentFunctionName(char[] functionName) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			currentFunctionName = functionName;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValuesNoContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key)
+	 */
+	protected void setCompletionValuesNoContext(IASTScope scope,
+			CompletionKind kind, KeywordSetKey key) throws EndOfFileException {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+		{
+			setCompletionScope(scope);
+			setCompletionKeywords(key);
+			setCompletionKind(kind);
+			checkEndOfFile();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setParameterListExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	protected void setParameterListExpression(
+			IASTExpression assignmentExpression) {
+		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			parameterListExpression = assignmentExpression;
+	}
+	/**
+	 * @return Returns the parameterListExpression.
+	 */
+	public final IASTExpression getParameterListExpression() {
+		return parameterListExpression;
+	}
+
+	private OffsetDuple offsetRange;
+	private IToken firstTokenOfDuple = null, lastTokenOfDuple = null;
+	private IASTScope ourScope = null;
+	private IASTCompletionNode.CompletionKind ourKind = null;
+	private IASTNode ourContext = null;
+	private ITokenDuple greaterContextDuple = null;
+	private boolean pastPointOfSelection = false;
+	private IASTNode contextNode = null;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
+	 */
+	protected void handleNewToken(IToken value) {
+		if( mode != ParserMode.SELECTION_PARSE ) return;
+		if( value != null && scanner.isOnTopContext() )
+		{
+			TraceUtil.outputTrace(log, "IToken provided w/offsets ", null, value.getOffset(), " & ", value.getEndOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean change = false;
+			if( value.getOffset() == offsetRange.getFloorOffset() )
+			{
+				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getCharImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				firstTokenOfDuple = value;
+				change = true;
+			}
+			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
+			{
+				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getCharImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				change = true;
+				lastTokenOfDuple = value;
+			}
+			if( change && tokenDupleCompleted() )
+			{
+				if ( ourScope == null )
+					ourScope = getCompletionScope();
+				if( ourContext == null )
+					ourContext = getCompletionContext();
+				if( ourKind == null )
+					ourKind = getCompletionKind();
+			}
+		}
+	}
+
+	
+	
+	
+	/**
+	 * @return
+	 */
+	protected boolean tokenDupleCompleted() {
+		return lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset();
+	}
+
+
+	/**
+	 * 
+	 */
+	protected ISelectionParseResult reconcileTokenDuple() throws ParseError {
+		if( firstTokenOfDuple == null || lastTokenOfDuple == null )
+			throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
+		
+		if( getCompletionKind() == IASTCompletionNode.CompletionKind.UNREACHABLE_CODE )
+			throw new ParseError( ParseError.ParseErrorKind.OFFSETDUPLE_UNREACHABLE );
+		
+		ITokenDuple duple = TokenFactory.createTokenDuple( firstTokenOfDuple, lastTokenOfDuple );
+		
+		if( ! duple.syntaxOfName() )
+			throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
+		
+		return provideSelectionNode(duple);
+	}
+
+	/**
+	 * @param duple
+	 * @return
+	 */
+	protected ISelectionParseResult provideSelectionNode(ITokenDuple duple) {
+		
+		ITokenDuple finalDuple = null;
+		// reconcile the name to look up first
+		if( ! duple.equals( greaterContextDuple ))
+		{
+			// 3 cases			
+			// duple is prefix of greaterContextDuple
+			// or duple is suffix of greaterContextDuple
+			// duple is a sub-duple of greaterContextDuple
+			if( duple.getFirstToken().equals( greaterContextDuple.getFirstToken() ))
+				finalDuple = duple; //	=> do not use greaterContextDuple
+			else if( duple.getLastToken().equals( greaterContextDuple.getLastToken() ))
+				finalDuple = greaterContextDuple; //  => use greaterContextDuple
+			else
+				throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
+		}
+		else
+			finalDuple = greaterContextDuple;
+		
+		IASTNode node = lookupNode(finalDuple);
+		if( node == null ) return null;
+		if( !(node instanceof IASTOffsetableNamedElement )) return null;
+		return new SelectionParseResult( (IASTOffsetableNamedElement) node, new String( ((IASTOffsetableElement)node).getFilename() )); 
+	}
+
+
+
+
+	/**
+	 * @param finalDuple
+	 * @return
+	 */
+	protected IASTNode lookupNode(ITokenDuple finalDuple) {
+		if( contextNode == null ) return null;
+		if( contextNode instanceof IASTDeclaration )
+		{
+			if( contextNode instanceof IASTOffsetableNamedElement )
+			{
+				if( ((IASTOffsetableNamedElement)contextNode).getName().equals( finalDuple.toString() ) )
+					return contextNode;
+			}
+			if( contextNode instanceof IASTQualifiedNameElement )
+			{
+				String [] elementQualifiedName = ((IASTQualifiedNameElement)contextNode).getFullyQualifiedName();
+				if( Arrays.equals( elementQualifiedName, finalDuple.toQualifiedName() ) )
+					return contextNode;
+			}
+			try {
+				if( ourKind == IASTCompletionNode.CompletionKind.NEW_TYPE_REFERENCE )
+				{
+					if( contextNode instanceof IASTVariable )
+					{
+						IASTInitializerClause initializer = ((IASTVariable)contextNode).getInitializerClause();
+						if( initializer != null )
+						{
+							IASTExpression ownerExpression = initializer.findExpressionForDuple( finalDuple );
+							return astFactory.lookupSymbolInContext( ourScope, finalDuple, ownerExpression );
+						}
+					}
+				}
+					
+				return astFactory.lookupSymbolInContext( ourScope, finalDuple, null );
+			} catch (ASTNotImplementedException e) {
+				return null;
+			}
+		}
+		else if( contextNode instanceof IASTExpression )
+		{
+			try {
+				return astFactory.lookupSymbolInContext( ourScope, finalDuple, contextNode );
+			} catch (ASTNotImplementedException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setGreaterNameContext(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	protected void setGreaterNameContext(ITokenDuple tokenDuple) {
+		if( mode != ParserMode.SELECTION_PARSE ) return;
+		if( pastPointOfSelection ) return;
+		if( greaterContextDuple == null && scanner.isOnTopContext() && lastTokenOfDuple != null && firstTokenOfDuple != null )
+		{
+			if( tokenDuple.getStartOffset() > lastTokenOfDuple.getEndOffset() )
+			{
+				pastPointOfSelection = true;
+				return;
+			}
+			int tokensFound = 0;
+
+			for( IToken token = tokenDuple.getFirstToken(); token != null; token = token.getNext() )
+			{
+				if( token == firstTokenOfDuple ) ++tokensFound;
+				if( token == lastTokenOfDuple ) ++tokensFound;
+				if( token == tokenDuple.getLastToken() )
+					break;
+			}
+			if( tokensFound == 2 )
+			{
+				greaterContextDuple = tokenDuple;
+				pastPointOfSelection = true;
+			}
+			
+		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endExpressionStatement(org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	protected void endExpression(IASTExpression expression)
+			throws EndOfFileException {
+		if( mode != ParserMode.SELECTION_PARSE || ! tokenDupleCompleted() )
+			cleanupLastToken();
+		else
+		{
+			contextNode = expression;
+			throw new EndOfFileException();
+		}
+		
+	}
+
+	
+	public static class SelectionParseResult implements ISelectionParseResult 
+	{
+
+		public SelectionParseResult( IASTOffsetableNamedElement node, String fileName )
+		{
+			this.node = node;
+			this.fileName = fileName;
+		}
+		
+		private final String fileName;
+		private final IASTOffsetableNamedElement node;
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.IParser.ISelectionParseResult#getNode()
+		 */
+		public IASTOffsetableNamedElement getOffsetableNamedElement() {
+			return node;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.IParser.ISelectionParseResult#getFilename()
+		 */
+		public String getFilename() {
+			return fileName;
+		}
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerator)
+	 */
+	protected void endEnumerator(IASTEnumerator enumerator) throws EndOfFileException {
+		if( mode != ParserMode.SELECTION_PARSE || ! tokenDupleCompleted() )
+			cleanupLastToken();
+		else
+		{
+			contextNode = enumerator;
+			throw new EndOfFileException();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
+	 */
+	protected void handleClassSpecifier(IASTClassSpecifier classSpecifier)
+			throws EndOfFileException {
+		if( mode != ParserMode.SELECTION_PARSE ||  ! tokenDupleCompleted() )
+			cleanupLastToken();
+		else
+		{
+			contextNode = classSpecifier;
+			throw new EndOfFileException();
+		}
+	}
+	
+	protected void handleEnumeration(IASTEnumerationSpecifier enumeration) throws EndOfFileException {
+		if( mode != ParserMode.SELECTION_PARSE || ! tokenDupleCompleted() )
+			cleanupLastToken();
+		else
+		{
+			contextNode = enumeration;
+			throw new EndOfFileException();
+		}
+	}
+
+	/**
+	 * @param set
+	 * @param string
+	 * @return
+	 */
+	private Set reconcileKeywords(Set keywords, String prefix) {
+		if( keywords == null ) return null;
+		if( prefix.equals( "")) return keywords; //$NON-NLS-1$
+		Set resultSet = new TreeSet(); 
+		Iterator i = keywords.iterator(); 
+		while( i.hasNext() )
+		{
+			String value = (String) i.next();
+			if( value.startsWith( prefix ) ) 
+				resultSet.add( value );
+			else if( value.compareTo( prefix ) > 0 ) 
+				break;
+		}
+		return resultSet;
+	}
+
+
+	/**
+	 * @return
+	 */
+	protected Set getKeywordSet() {
+		return keywordSet;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleOffsetLimitException()
+	 */
+	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
+		if( mode != ParserMode.COMPLETION_PARSE )
+			throw new EndOfFileException();
+
+		if( exception.getCompletionNode() == null )
+		{	
+			setCompletionToken( exception.getFinalToken() );
+			if( (finalToken!= null )&& (!finalToken.canBeAPrefix() ))
+				setCompletionToken(null);
+		}
+		else
+		{
+			ASTCompletionNode node = (ASTCompletionNode) exception.getCompletionNode();
+			setCompletionValues( node.getCompletionKind(), node.getKeywordSet(), node.getCompletionPrefix() );
+		}
+	
+		throw exception;
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#getCompletionKindForDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	protected CompletionKind getCompletionKindForDeclaration(IASTScope scope, CompletionKind overide) {
+		if( mode != ParserMode.COMPLETION_PARSE ) return null;
+		IASTCompletionNode.CompletionKind kind = null;
+		if( overide != null )
+			kind = overide;
+		else if( scope instanceof IASTClassSpecifier )
+			kind = CompletionKind.FIELD_TYPE;
+		else if (scope instanceof IASTCodeScope)
+			kind = CompletionKind.SINGLE_NAME_REFERENCE;
+		else
+			kind = CompletionKind.VARIABLE_TYPE;
+		return kind;
+	}	
+	
+	
+	protected IToken getCompletionToken()
+	{ 
+		if( mode != ParserMode.COMPLETION_PARSE )
+			return null;
+		return finalToken;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTReferenceStore#processReferences()
+	 */
+	public static void processReferences(List references, ISourceElementRequestor requestor )
+	{
+		if( references == null || references.isEmpty() )
+			return;
+	    
+	    for( int i = 0; i < references.size(); ++i )
+	    {
+	    	IASTReference reference = ((IASTReference)references.get(i));
+			reference.acceptElement(requestor );
+	    }
+	    
+	    references.clear();
+	}
 }

@@ -290,13 +290,15 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 							for (int i = 0; i < nElements; i++) {
 								if (elements[i] instanceof IAdaptable) {
 									IResource r = (IResource) ((IAdaptable) elements[i]).getAdapter(IResource.class);
-									ICProject cproject = CoreModel.getDefault().create(r.getProject());
-									if (cproject != null) {
-										IBinary[] bins = cproject.getBinaryContainer().getBinaries();
+									if (r != null) {
+										ICProject cproject = CoreModel.getDefault().create(r.getProject());
+										if (cproject != null) {
+											IBinary[] bins = cproject.getBinaryContainer().getBinaries();
 
-										for (int j = 0; j < bins.length; j++) {
-											if (bins[j].isExecutable()) {
-												results.add(bins[j]);
+											for (int j = 0; j < bins.length; j++) {
+												if (bins[j].isExecutable()) {
+													results.add(bins[j]);
+												}
 											}
 										}
 									}

@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.output;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * GDB/MI memory parsing.
  */
 public class MIMemory {
 	String addr;
 	long [] data = new long[0];
+	List badOffsets = new ArrayList();
 	String ascii = ""; //$NON-NLS-1$
 
 	public MIMemory(MITuple tuple) {
@@ -27,6 +31,15 @@ public class MIMemory {
 	}
 
 	public long [] getData() {
+		return data;
+	}
+
+	public int[] getBadOffsets() {
+		int[] data = new int[badOffsets.size()];
+		for (int i = 0; i < data.length; ++i) {
+			Integer o = (Integer)badOffsets.get(i);
+			data[i] = o.intValue();
+		}
 		return data;
 	}
 
@@ -85,6 +98,7 @@ public class MIMemory {
 				try {
 					data[i] = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
+					badOffsets.add(new Integer(i));
 					data[i] = 0;
 				}
 			}

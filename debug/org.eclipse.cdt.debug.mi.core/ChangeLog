@@ -1,3 +1,8 @@
+2005-01-10 Mikhail Khodjaiants
+	PR 82601 changes to the memory block interface
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/ICDIMemoryBlock.java
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIMemory.java
+
 2005-01-10 Alain Magloire
 	Fix for PR 82506
 	* mi/org/eclipse/cdt/debug/mi/core/MISession.java

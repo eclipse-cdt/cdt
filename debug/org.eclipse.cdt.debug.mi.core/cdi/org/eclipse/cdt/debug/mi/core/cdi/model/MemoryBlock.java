@@ -12,8 +12,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
@@ -39,8 +37,9 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	boolean dirty;
 
 	private MIDataReadMemoryInfo mem;
-	private BigInteger cStartAddress; //cashed start address
-	private byte[]   cBytes; //cashed bytes 
+	private BigInteger cStartAddress; //cached start address
+	private byte[] cBytes; //cached bytes
+	private int[] badOffsets;
 
 	public MemoryBlock(Target target, String exp, MIDataReadMemoryInfo info) {
 		super(target);
@@ -117,20 +116,51 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 * 
 	 */
 	private byte[] getBytes(MIDataReadMemoryInfo m) {
+		byte[] bytes = new byte[0];
+
+		// sanity.
+		if (m == null) {
+			return bytes;
+		}
+
+		// collect the data
 		MIMemory[] miMem = m.getMemories();
-		List aList = new ArrayList();
-		for (int i = 0; i < miMem.length; i++) {
+		for (int i = 0; i < miMem.length; ++i) {
 			long[] data = miMem[i].getData();
-			for (int j = 0; j < data.length; j++) {
-					aList.add(new Long(data[j]));
+			if (data.length > 0) {
+				int blen = bytes.length;
+				byte[] newBytes = new byte[blen + data.length];
+				System.arraycopy(bytes, 0, newBytes, 0, blen);
+				for (int j = 0; j < data.length; ++j, ++blen) {
+					newBytes[blen] = (byte)data[j];
+				}
+				bytes = newBytes;
 			}
 		}
-		byte[] bytes = new byte[aList.size()];
-		for (int i = 0; i < aList.size(); i++) {
-			Long l = (Long)aList.get(i);
-			bytes[i] = l.byteValue();
-		}
 		return bytes;
+	}
+
+	private int[] getBadOffsets(MIDataReadMemoryInfo m) {
+		int[] offsets = new int[0];
+
+		// sanity
+		if (m == null) {
+			return offsets;
+		}
+
+		// collect the data
+		MIMemory[] miMem = m.getMemories();
+		for (int i = 0; i < miMem.length; i++) {
+			int[] data = miMem[i].getBadOffsets();
+			if (data.length > 0) {
+				int olen = offsets.length;
+				int[] newOffsets = new int[olen + data.length];
+				System.arraycopy(offsets, 0, newOffsets, 0, olen);
+				System.arraycopy(data, 0, newOffsets, olen, data.length);
+				offsets = newOffsets;
+			}
+		}
+		return offsets;
 	}
 
 	public byte[] getBytes() throws CDIException {
@@ -212,6 +242,23 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		}
 		// If the assign was succesfull fire a MIChangedEvent() via refresh.
 		refresh();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getFlags(int)
+	 */
+	public synchronized byte getFlags(int offset) {
+		if (badOffsets == null) {
+			badOffsets = getBadOffsets(mem);
+		}
+		if (badOffsets != null) {
+			for (int i = 0; i < badOffsets.length; ++i) {
+				if (badOffsets[i] == offset) {
+					return VALID;
+				}
+			}
+		}
+		return 0;
 	}
 
 }

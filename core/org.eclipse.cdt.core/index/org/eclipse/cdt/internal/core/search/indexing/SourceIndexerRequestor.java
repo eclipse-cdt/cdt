@@ -96,7 +96,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public boolean acceptProblem(IProblem problem) {
 	
-		  IASTInclusion include = peekInclude();
+/*		  IASTInclusion include = peekInclude();
 		  IFile tempFile = resourceFile;
 		  int lineNumber = problem.getSourceLineNumber();
 		  
@@ -118,7 +118,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		  }
 		  
 	    addMarkers(tempFile,problem, lineNumber); 
-	      
+	      */
 		return DefaultProblemHandler.ruleOnProblem( problem, ParserMode.COMPLETE_PARSE );
 	}
 
@@ -219,7 +219,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void enterInclusion(IASTInclusion inclusion) {
 		// TODO Auto-generated method stub
-		IPath newPath = new Path(inclusion.getFullFileName());
+/*		IPath newPath = new Path(inclusion.getFullFileName());
 		IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(newPath);
 		if (tempFile !=null){
 			removeMarkers(tempFile);
@@ -227,7 +227,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		else{
 		 //File is out of workspace
 		 
-		}
+		}*/
 		
 		IASTInclusion parent = peekInclude();
 		indexer.addInclude(inclusion, parent);

@@ -587,7 +587,9 @@ import org.eclipse.core.runtime.Platform;
    private String[] convertToLocalPath(String[] model) {
 	   IPath defaultPath = Platform.getLocation();
 	   String pathString = defaultPath.toOSString();
-       if (pathString.charAt(pathString.length() - 1) == '\\')
+	   char endChar = pathString.charAt(pathString.length() - 1);
+       if (endChar == '/' ||
+       	   endChar	== '\\')
        {
        	 pathString = pathString.substring(0, pathString.length() - 1);
        }

@@ -46,7 +46,7 @@ public class DeclSpecifier {
 	
 	private boolean checkBit(int mask) {
 		int masked =(declSpecifierSeq & mask); 
-		return  (masked == 1);
+		return  (masked != 0);
 	}
 	
 	public void setAuto(boolean b) { setBit(b, isAuto); }

@@ -30,7 +30,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#expressionOperator(Token)
 	 */
-	public void expressionOperator(Object expression, Token operator) throws Exception {
+	public void expressionOperator(Object expression, Token operator) {
 		
 		int second = popInt(); 
 		int first; 
@@ -88,20 +88,20 @@ public class ExpressionEvaluator implements IParserCallback {
 				stack.push( new Integer( ( second == 0 ) ? 1 : 0 ) ); 
 				break;
 			default:
-				throw new ExpressionException("Unhandled operator: " + operator );
+				// throw new ExpressionException("Unhandled operator: " + operator );
 		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#expressionTerminal(Token)
 	 */
-	public void expressionTerminal(Object expression, Token terminal) throws Exception {
+	public void expressionTerminal(Object expression, Token terminal) {
 		switch (terminal.getType()) {
 			case Token.tINTEGER:
 				stack.push(new Integer(terminal.getImage()));
 				break;
 			default:
-				throw new ExpressionException("Unhandled terminal: " + terminal.getImage());
+				// throw new ExpressionException("Unhandled terminal: " + terminal.getImage());
 		}
 	}
 	
@@ -311,7 +311,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionAbort(java.lang.Object)
 	 */
 	public void expressionAbort(Object expression) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -319,7 +319,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classMemberVisibility(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void classMemberVisibility(Object classSpecifier, Token visibility) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -327,7 +327,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public Object pointerOperatorBegin(Object container) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -335,7 +335,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorEnd(java.lang.Object)
 	 */
 	public void pointerOperatorEnd(Object ptrOperator) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -343,7 +343,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorName(java.lang.Object)
 	 */
 	public void pointerOperatorName(Object ptrOperator) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -351,7 +351,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorType(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void pointerOperatorType(Object ptrOperator, Token type) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -359,7 +359,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void pointerOperatorCVModifier(Object ptrOperator, Token modifier) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -367,7 +367,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorCVModifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void declaratorCVModifier(Object declarator, Token modifier) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -375,7 +375,7 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#arrayBegin(java.lang.Object)
 	 */
 	public Object arrayDeclaratorBegin(Object declarator) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -383,14 +383,14 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#arrayEnd(java.lang.Object)
 	 */
 	public void arrayDeclaratorEnd(Object arrayQualifier ) {
-		// TODO Auto-generated method stub;
+		;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#exceptionSpecificationTypename(java.lang.Object)
 	 */
 	public void declaratorThrowExceptionName(Object declarator) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -398,7 +398,170 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorThrowsException(java.lang.Object)
 	 */
 	public void declaratorThrowsException(Object declarator) {
-		// TODO Auto-generated method stub
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
+	 */
+	public Object namespaceDefinitionBegin(Object container) {
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
+	 */
+	public void namespaceDefinitionId(Object namespace) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationAbort(java.lang.Object)
+	 */
+	public void namespaceDefinitionAbort(Object namespace) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
+	 */
+	public void namespaceDefinitionEnd(Object namespace) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationBegin(java.lang.Object, java.lang.String)
+	 */
+	public Object linkageSpecificationBegin(Object container, String literal) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationEnd(java.lang.Object)
+	 */
+	public void linkageSpecificationEnd(Object linkageSpec) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveBegin(java.lang.Object)
+	 */
+	public Object usingDirectiveBegin(Object container) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveNamespaceId(java.lang.Object)
+	 */
+	public void usingDirectiveNamespaceId(Object container) {
+
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveEnd(java.lang.Object)
+	 */
+	public void usingDirectiveEnd(Object directive) {
+
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationBegin(java.lang.Object)
+	 */
+	public Object usingDeclarationBegin(Object container) {
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object)
+	 */
+	public void usingDeclarationMapping(Object container, boolean isTypename) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationEnd(java.lang.Object)
+	 */
+	public void usingDeclarationEnd(Object directive) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveAbort(java.lang.Object)
+	 */
+	public void usingDirectiveAbort(Object directive) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationAbort(java.lang.Object)
+	 */
+	public void usingDeclarationAbort(Object declaration) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
+	 */
+	public Object enumSpecifierBegin(Object container) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
+	 */
+	public void enumSpecifierId(Object enumSpec) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierAbort(java.lang.Object)
+	 */
+	public void enumSpecifierAbort(Object enumSpec) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
+	 */
+	public void enumSpecifierEnd(Object enumSpec) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
+	 */
+	public Object enumDefinitionBegin(Object enumSpec) {
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
+	 */
+	public void enumDefinitionId(Object enumDefn) {
+		
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
+	 */
+	public void enumDefinitionEnd(Object enumDefn) {
+		
 		
 	}
 

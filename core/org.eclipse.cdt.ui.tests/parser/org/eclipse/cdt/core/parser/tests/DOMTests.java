@@ -12,12 +12,18 @@ import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.Declarator;
+import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
+import org.eclipse.cdt.internal.core.dom.EnumeratorDefinition;
 import org.eclipse.cdt.internal.core.dom.Expression;
+import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
+import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.PointerOperator;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
+import org.eclipse.cdt.internal.core.dom.UsingDeclaration;
+import org.eclipse.cdt.internal.core.dom.UsingDirective;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -40,6 +46,228 @@ public class DOMTests extends TestCase {
 		if( ! parser.parse() ) throw new ParserException( "Parse failure" ); 
 		
 		return domBuilder.getTranslationUnit();
+	}
+	
+	public void testNamespaceDefinition() throws Exception
+	{
+		for( int i = 0; i < 2; ++i )
+		{
+			TranslationUnit translationUnit; 
+			if( i == 0  )
+				translationUnit = parse("namespace KingJohn { int x; }");
+			else
+				translationUnit = parse("namespace { int x; }");
+				
+			List declarations = translationUnit.getDeclarations();
+			assertEquals( declarations.size(), 1 );
+			NamespaceDefinition namespace = (NamespaceDefinition)declarations.get(0);
+			
+			if( i == 0 )
+				assertEquals( namespace.getName().toString(), "KingJohn" );
+			else
+				assertNull( namespace.getName() );
+			List namespaceDeclarations = namespace.getDeclarations();
+			assertEquals( namespaceDeclarations.size(), 1 );
+			SimpleDeclaration simpleDec = (SimpleDeclaration)namespaceDeclarations.get(0);
+			assertEquals( simpleDec.getDeclSpecifier().getType(), DeclSpecifier.t_int ); 
+			List declarators = simpleDec.getDeclarators(); 
+			assertEquals( declarators.size(), 1 );
+			Declarator declarator = (Declarator)declarators.get(0);
+			assertEquals( declarator.getName().toString(), "x");
+		}
+	}
+	
+	public void testLinkageSpecification() throws Exception
+	{
+		for( int i = 0; i < 2; ++i )
+		{
+			TranslationUnit translationUnit; 
+			if( i == 0  )
+				translationUnit = parse("extern \"C\" { int x(void); }");
+			else
+				translationUnit = parse("extern \"ADA\" int x(void);");
+				
+			List declarations = translationUnit.getDeclarations();
+			assertEquals( declarations.size(), 1 );
+			LinkageSpecification linkage = (LinkageSpecification)declarations.get(0);
+			if( i == 0 )
+				assertEquals( "C", linkage.getLanguageLinkage() );
+			else
+				assertEquals( "ADA", linkage.getLanguageLinkage() );
+			
+			List subDeclarations = linkage.getDeclarations();
+			assertEquals( subDeclarations.size(), 1 );
+			
+			SimpleDeclaration simpleDec = (SimpleDeclaration)subDeclarations.get(0);
+			assertEquals( simpleDec.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+			List declarators = simpleDec.getDeclarators();
+			assertEquals( declarators.size(), 1 );
+			Declarator declarator = (Declarator)declarators.get(0);
+			assertEquals( declarator.getName().toString(), "x" );
+			assertNotNull( declarator.getParms() );
+		}
+		
+	}
+	
+	public void testEnumSpecifier() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "enum { yo, go = 3, away };\n");
+		code.write( "enum hasAName { last = 666 };");
+		TranslationUnit translationUnit = parse( code.toString() );
+		List declarations = translationUnit.getDeclarations(); 
+		assertEquals( declarations.size(), 2 );
+		
+		SimpleDeclaration declaration1 = (SimpleDeclaration)declarations.get(0);
+		EnumerationSpecifier enumSpecifier = (EnumerationSpecifier)declaration1.getTypeSpecifier();
+		assertNull( enumSpecifier.getName() ); 
+		List firstEnumItems = enumSpecifier.getEnumeratorDefinitions();
+		assertEquals( 3, firstEnumItems.size());
+		EnumeratorDefinition enumDef1_1 = (EnumeratorDefinition)firstEnumItems.get(0);
+		assertEquals( enumDef1_1.getName().toString(), "yo" );
+		assertNull( enumDef1_1.getExpression() );
+
+		EnumeratorDefinition enumDef1_2 = (EnumeratorDefinition)firstEnumItems.get(1);
+		assertEquals( enumDef1_2.getName().toString(), "go" );
+		assertNotNull( enumDef1_2.getExpression() );
+		
+		EnumeratorDefinition enumDef1_3 = (EnumeratorDefinition)firstEnumItems.get(2);
+		assertEquals( enumDef1_3.getName().toString(), "away" );
+		assertNull( enumDef1_3.getExpression() );
+
+		SimpleDeclaration declaration2 = (SimpleDeclaration)declarations.get(1);
+		EnumerationSpecifier enumSpecifier2 = (EnumerationSpecifier)declaration2.getTypeSpecifier();
+		assertEquals( enumSpecifier2.getName().toString(), "hasAName" ); 
+		
+	}
+	public void testUsingClauses() throws Exception
+	{
+		Writer code = new StringWriter();
+		
+		code.write("using namespace A::B::C;\n");
+		code.write("using namespace C;\n");
+		code.write("using B::f;\n");
+		code.write("using ::f;\n");
+		code.write("using typename crap::de::crap;");
+		TranslationUnit translationUnit = parse(code.toString());
+		
+		List declarations = translationUnit.getDeclarations(); 
+		assertEquals( declarations.size(), 5 );
+		
+		UsingDirective first, second; 
+		UsingDeclaration third, fourth, fifth; 
+		
+		first = (UsingDirective) declarations.get(0);
+		assertEquals( first.getNamespaceName().toString(), "A::B::C" ); 
+		
+		second = (UsingDirective) declarations.get(1);
+		assertEquals( second.getNamespaceName().toString(), "C" ); 
+		
+		third = (UsingDeclaration) declarations.get(2);
+		assertEquals( third.getMappedName().toString(), "B::f" );
+		assertFalse( third.isTypename() ); 
+		
+		fourth = (UsingDeclaration) declarations.get(3);
+		assertEquals( fourth.getMappedName().toString(), "::f" );
+		assertFalse( fourth.isTypename() ); 
+		
+		fifth = (UsingDeclaration) declarations.get(4);
+		assertTrue( fifth.isTypename() );
+		assertEquals( fifth.getMappedName().toString(), "crap::de::crap" );
+	}
+	
+	public void testDeclSpecifier() throws Exception
+	{
+		DeclSpecifier d = new DeclSpecifier();
+		d.setTypedef( true ); 
+		assertTrue( d.isTypedef() );
+		d.setTypedef( false ); 
+		assertFalse( d.isTypedef() ); 
+		d.setAuto(true);
+		assertTrue( d.isAuto() ); 
+		d.setAuto(false);
+		assertFalse( d.isAuto());
+		d.setRegister(true); 
+		assertTrue( d.isRegister() );
+		d.setRegister(false); 
+		assertFalse( d.isRegister() );
+		d.setStatic(true);
+		assertTrue( d.isStatic() );
+		d.setStatic(false);
+		assertFalse( d.isStatic() );
+		 
+		d.setExtern(true);
+		assertTrue( d.isExtern() );
+		d.setExtern(false);
+		assertFalse( d.isExtern() );
+	 
+		d.setMutable(true); 
+		assertTrue( d.isMutable() );
+		d.setMutable(false); 
+		assertFalse( d.isMutable() );
+	
+		d.setInline(true);
+		assertTrue( d.isInline() );
+		d.setInline(false);
+		assertFalse( d.isInline() );
+	
+		d.setVirtual(true); 
+		assertTrue( d.isVirtual() );
+		d.setVirtual(false); 
+		assertFalse( d.isVirtual() );
+	
+		d.setExplicit(true); 
+		assertTrue( d.isExplicit() );
+		d.setExplicit(false); 
+		assertFalse( d.isExplicit() );
+	
+		d.setTypedef(true);
+		assertTrue( d.isTypedef() );
+		d.setTypedef(false);
+		assertFalse( d.isTypedef() );
+	
+		d.setFriend(true);
+		assertTrue( d.isFriend()); 
+		d.setFriend(false);
+		assertFalse( d.isFriend()); 
+	
+		d.setConst(true);
+		assertTrue( d.isConst() );
+		d.setConst(false);
+		assertFalse( d.isConst() );
+	
+		d.setVolatile(true); 
+		assertTrue( d.isVolatile() );
+		d.setVolatile(false); 
+		assertFalse( d.isVolatile() );
+
+		d.setUnsigned(true);
+		assertTrue( d.isUnsigned()); 
+		d.setUnsigned(false);
+		assertFalse( d.isUnsigned()); 
+	 
+		d.setShort(true);
+		assertTrue( d.isShort()); 
+		d.setShort(false);
+		assertFalse( d.isShort()); 
+		
+		d.setLong(true);
+		assertTrue( d.isLong() );
+		d.setLong(false);
+		assertFalse( d.isLong() ); 
+
+		for( int i = 0; i <= 7; ++i )
+		{ 
+			d.setType( i ); 
+			for( int j = 0; j <= 7; ++j )
+			{
+				if( j == i )
+					assertTrue( d.getType() == j ); 
+				else
+					assertFalse( d.getType() == j );
+			}
+		}
+ 
 	}
 	
 	/**
@@ -176,17 +404,17 @@ public class DOMTests extends TestCase {
 		BaseSpecifier bs = (BaseSpecifier)baseClasses.get( 0 ); 
 		assertEquals( bs.getAccess(), BaseSpecifier.t_public );
 		assertEquals( bs.isVirtual(), false ); 
-		assertEquals( bs.getName(), "B" ); 
+		assertEquals( bs.getName().toString(), "B" ); 
 		
 		bs = (BaseSpecifier)baseClasses.get( 1 );
 		assertEquals( bs.getAccess(), BaseSpecifier.t_private );
 		assertEquals( bs.isVirtual(), false ); 
-		assertEquals( bs.getName(), "C" );
+		assertEquals( bs.getName().toString(), "C" );
 		 
 		bs = (BaseSpecifier)baseClasses.get( 2 );
 		assertEquals( bs.getAccess(), BaseSpecifier.t_protected );
 		assertEquals( bs.isVirtual(), true ); 
-		assertEquals( bs.getName(), "D" ); 
+		assertEquals( bs.getName().toString(), "D" ); 
 		
 		
 		// Get the member declaration

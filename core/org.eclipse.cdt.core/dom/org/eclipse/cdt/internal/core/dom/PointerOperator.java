@@ -15,8 +15,6 @@ package org.eclipse.cdt.internal.core.dom;
 /**
  * @author jcamelon
  *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class PointerOperator {
 

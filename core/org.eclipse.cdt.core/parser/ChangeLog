@@ -1,3 +1,9 @@
+2003-03-24 John Camelon
+	Added callback support for namespace definitions.  
+	Updated Parser exception hierarchy. 
+	Added callback support for linkage specifications.
+	Added callback support for using declarations and directives.
+
 2003-03-23 John Camelon
 	Added callback support for class member visibility.
 	Added callback support for pointer and reference operators on declarators.

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Created on Mar 23, 2003
+ * Created on Mar 25, 2003
  *
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -12,39 +12,44 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.util.Name;
+
 /**
  * @author jcamelon
  *
  */
-public class ArrayQualifier implements IExpressionOwner {
+public class EnumeratorDefinition implements IExpressionOwner {
 
-	private Expression constantExpression; 
-
+	private Expression initialValue = null;
+	private Name name = null; 
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
 	 */
 	public Expression getExpression() {
-		return constantExpression;
+		return initialValue;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
 	 */
 	public void setExpression(Expression exp) {
-		constantExpression = exp;
-	}	
-	
-	public ArrayQualifier( Declarator owner )
-	{
-		ownerDeclarator = owner;
+		initialValue = exp;
 	}
-	
-	private Declarator ownerDeclarator; 
+
 	/**
-	 * @return Declarator
+	 * @return Name
 	 */
-	public Declarator getOwnerDeclarator() {
-		return ownerDeclarator;
+	public Name getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the name.
+	 * @param name The name to set
+	 */
+	public void setName(Name name) {
+		this.name = name;
 	}
 
 }

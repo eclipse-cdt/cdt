@@ -1,9 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
@@ -14,7 +11,6 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  */
 public class DOMBuilder implements IParserCallback 
 {
-
 	private TranslationUnit translationUnit;
 	
 	public TranslationUnit getTranslationUnit() {
@@ -120,7 +116,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionOperator(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionOperator(Object expression, Token operator) throws Exception {
+	public void expressionOperator(Object expression, Token operator){
 		Expression e = (Expression)expression;
 		e.add( operator ); 
 	}
@@ -128,7 +124,7 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#expressionTerminal(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void expressionTerminal(Object expression, Token terminal) throws Exception {
+	public void expressionTerminal(Object expression, Token terminal){
 		Expression e = (Expression)expression;
 		e.add( terminal );
 	}
@@ -251,7 +247,7 @@ public class DOMBuilder implements IParserCallback
 	
 	public void baseSpecifierName( Object baseSpecifier )
 	{
-		((BaseSpecifier)baseSpecifier).setName(currName.toString());		
+		((BaseSpecifier)baseSpecifier).setName(currName);		
 	}
 	
 	public Object parameterDeclarationBegin( Object container )
@@ -294,6 +290,8 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#classSpecifierAbort(java.lang.Object)
 	 */
 	public void classSpecifierAbort(Object classSpecifier) {
+		ClassSpecifier cs = (ClassSpecifier)classSpecifier;
+		cs.getDeclaration().setTypeSpecifier(null);
 	}
 
 	/**
@@ -306,6 +304,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#elaboratedTypeSpecifierBegin(java.lang.Object)
 	 */
 	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
+		SimpleDeclaration declaration = (SimpleDeclaration)container;
 		int kind = ClassSpecifier.t_struct;
 		
 		switch (classKey.getType()) {
@@ -320,7 +319,8 @@ public class DOMBuilder implements IParserCallback
 				break;			
 		}
 
-		ElaboratedTypeSpecifier elab = new ElaboratedTypeSpecifier( kind, (SimpleDeclaration)container );
+		ElaboratedTypeSpecifier elab = new ElaboratedTypeSpecifier( kind, declaration );
+		declaration.setTypeSpecifier( elab );
 		return elab; 
 	}
 
@@ -481,5 +481,173 @@ public class DOMBuilder implements IParserCallback
 	public void declaratorThrowsException(Object declarator) {
 		Declarator decl = (Declarator)declarator; 
 		decl.throwsExceptions(); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
+	 */
+	public Object namespaceDefinitionBegin(Object container) {
+		IScope ownerScope = (IScope)container;
+		NamespaceDefinition namespace = new NamespaceDefinition(ownerScope);
+		return namespace;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
+	 */
+	public void namespaceDefinitionId(Object namespace) {
+		NamespaceDefinition ns = (NamespaceDefinition)namespace;
+		ns.setName( currName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationAbort(java.lang.Object)
+	 */
+	public void namespaceDefinitionAbort(Object namespace) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
+	 */
+	public void namespaceDefinitionEnd(Object namespace) {
+		NamespaceDefinition ns = (NamespaceDefinition)namespace; 
+		ns.getOwnerScope().addDeclaration(ns);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationBegin(java.lang.Object, java.lang.String)
+	 */
+	public Object linkageSpecificationBegin(Object container, String literal) {
+		IScope scope = (IScope)container; 
+		LinkageSpecification linkage = new LinkageSpecification( scope, literal );
+		return linkage; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationEnd(java.lang.Object)
+	 */
+	public void linkageSpecificationEnd(Object linkageSpec) {
+		LinkageSpecification linkage = (LinkageSpecification)linkageSpec;
+		linkage.getOwnerScope().addDeclaration(linkage );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveBegin(java.lang.Object)
+	 */
+	public Object usingDirectiveBegin(Object container) {
+		IScope scope = (IScope)container;
+		UsingDirective directive = new UsingDirective( scope );
+		return directive;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveNamespaceId(java.lang.Object)
+	 */
+	public void usingDirectiveNamespaceId(Object dir) {
+		UsingDirective directive = (UsingDirective)dir;
+		directive.setNamespaceName( currName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveEnd(java.lang.Object)
+	 */
+	public void usingDirectiveEnd(Object dir) {
+		UsingDirective directive = (UsingDirective)dir;
+		directive.getOwnerScope().addDeclaration( directive );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationBegin(java.lang.Object)
+	 */
+	public Object usingDeclarationBegin(Object container) {
+		IScope scope = (IScope)container;
+		UsingDeclaration declaration = new UsingDeclaration( scope );
+		return declaration;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationMapping(java.lang.Object)
+	 */
+	public void usingDeclarationMapping(Object decl, boolean isTypename) {
+		UsingDeclaration declaration = (UsingDeclaration)decl;
+		declaration.setMappedName( currName );
+		declaration.setTypename( isTypename );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationEnd(java.lang.Object)
+	 */
+	public void usingDeclarationEnd(Object decl) {
+		UsingDeclaration declaration = (UsingDeclaration)decl;
+		declaration.getOwnerScope().addDeclaration( declaration );		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDirectiveAbort(java.lang.Object)
+	 */
+	public void usingDirectiveAbort(Object directive) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#usingDeclarationAbort(java.lang.Object)
+	 */
+	public void usingDeclarationAbort(Object declaration) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
+	 */
+	public Object enumSpecifierBegin(Object container) {
+		SimpleDeclaration decl = (SimpleDeclaration)container;
+		EnumerationSpecifier es = new EnumerationSpecifier( decl );
+		decl.setTypeSpecifier(es); 
+		return es;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
+	 */
+	public void enumSpecifierId(Object enumSpec) {
+		EnumerationSpecifier es = (EnumerationSpecifier)enumSpec;
+		es.setName( currName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierAbort(java.lang.Object)
+	 */
+	public void enumSpecifierAbort(Object enumSpec) {
+		EnumerationSpecifier es = (EnumerationSpecifier)enumSpec;
+		es.getDeclaration().setTypeSpecifier(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
+	 */
+	public void enumSpecifierEnd(Object enumSpec) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
+	 */
+	public Object enumDefinitionBegin(Object enumSpec) {
+		EnumerationSpecifier es = (EnumerationSpecifier)enumSpec;
+		EnumeratorDefinition definition = new EnumeratorDefinition();
+		es.addEnumeratorDefinition(definition);
+		return definition; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
+	 */
+	public void enumDefinitionId(Object enumDefn) {
+		EnumeratorDefinition definition = (EnumeratorDefinition)enumDefn;
+		definition.setName( currName );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
+	 */
+	public void enumDefinitionEnd(Object enumDefn) {
 	}
 }

@@ -19,8 +19,6 @@ import org.eclipse.cdt.internal.core.parser.Token;
 /**
  * @author jcamelon
  *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class Expression {
 

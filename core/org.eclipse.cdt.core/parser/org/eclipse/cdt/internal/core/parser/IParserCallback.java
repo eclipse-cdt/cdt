@@ -67,12 +67,40 @@ public interface IParserCallback {
 	public void  	baseSpecifierEnd( Object baseSpecifier );
 	
 	public Object 	expressionBegin( Object container ); 
-	public void 	expressionOperator(Object expression, Token operator) throws Exception;
-	public void 	expressionTerminal(Object expression, Token terminal) throws Exception;
+	public void 	expressionOperator(Object expression, Token operator);
+	public void 	expressionTerminal(Object expression, Token terminal);
 	public void     expressionAbort( Object expression ); 
 	public void 	expressionEnd(Object expression );
 	
 	public Object	elaboratedTypeSpecifierBegin( Object container, Token classKey ); 
 	public void  	elaboratedTypeSpecifierName( Object elab ); 
 	public void 	elaboratedTypeSpecifierEnd( Object elab );
+	
+	public Object	namespaceDefinitionBegin( Object container ); 
+	public void		namespaceDefinitionId( Object namespace );
+	public void 	namespaceDefinitionAbort( Object namespace );
+	public void		namespaceDefinitionEnd( Object namespace );
+
+	public Object   linkageSpecificationBegin( Object container, String literal );
+	public void     linkageSpecificationEnd( Object linkageSpec );
+	
+	public Object	usingDirectiveBegin( Object container );
+	public void		usingDirectiveNamespaceId( Object directive );
+	public void 	usingDirectiveAbort( Object directive ); 
+	public void		usingDirectiveEnd( Object directive );
+	
+	public Object	usingDeclarationBegin( Object container );
+	public void		usingDeclarationMapping( Object declaration, boolean isTypeName );
+	public void		usingDeclarationAbort( Object declaration );
+	public void		usingDeclarationEnd( Object declaration );
+
+	public Object	enumSpecifierBegin( Object container );
+	public void		enumSpecifierId( Object enumSpec );
+	public void		enumSpecifierAbort( Object enumSpec );
+	public void 	enumSpecifierEnd( Object enumSpec );
+	
+	public Object	enumDefinitionBegin( Object enumSpec );
+	public void		enumDefinitionId( Object enumDefn );
+	public void		enumDefinitionEnd( Object enumDefn );
+	
 }

@@ -79,8 +79,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 			
 			// instantiate the right element   
 			List clause =currentDeclarator.getParameterDeclarationClause(); 
-			if( clause == null )
-			{
+			if( clause == null && !isTypedef())
+			{ 
 				// TODO - this was to get rid of the NULL pointer we've been seeing
 				if (currentDeclarator.getName() == null)
 					return;
@@ -101,6 +101,11 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 						declaration = createVariable( parentElement, currentDeclarator.getName().toString() );						
 					}
 				}
+			}
+			else if( isTypedef() )
+			{
+				// do nothing just yet
+				//TODO : update this -- typedefs do not have a parameterdeclarationclause
 			}
 			else
 			{

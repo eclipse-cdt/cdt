@@ -59,7 +59,7 @@ c, quick);
 	
 	private static int parseCount = 0;
 	
-	public boolean parse() throws Exception {
+	public boolean parse() throws Backtrack {
 		long startTime = System.currentTimeMillis();
 		translationUnit();
 		System.out.println("Parse " + (++parseCount) + ": "
@@ -74,7 +74,7 @@ c, quick);
 	 * : (declaration)*
 	 * 
 	 */
-	protected void translationUnit() throws Exception {
+	protected void translationUnit() throws Backtrack {
 		Object translationUnit = callback.translationUnitBegin();
 		Token lastBacktrack = null;
 		Token lastToken;
@@ -114,6 +114,137 @@ c, quick);
 	}
 	
 	/**
+	 * 
+	 * The merger of using-declaration and using-directive.  
+	 * 
+	 * using-declaration:
+	 *	using typename? ::? nested-name-specifier unqualified-id ;
+	 *	using :: unqualified-id ;
+	 * using-directive:
+	 *  using namespace ::? nested-name-specifier? namespace-name ;
+	 * 
+	 * @param container
+	 * @throws Backtrack
+	 */
+	protected void usingClause( Object container ) throws Backtrack
+	{
+		consume( Token.t_using );
+		
+		if( LT(1) == Token.t_namespace )
+		{
+			Object directive = callback.usingDirectiveBegin( container );
+			// using-directive
+			consume( Token.t_namespace );
+			
+			// optional :: and nested classes handled in name	
+			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
+			{
+				name();
+				callback.usingDirectiveNamespaceId( directive );
+			}
+			else
+			{
+				callback.usingDirectiveAbort(directive);
+				throw backtrack;
+			}
+			
+			if( LT(1) == Token.tSEMI )
+			{
+				consume( Token.tSEMI );
+				callback.usingDirectiveEnd( directive );
+				return;
+			}
+			else
+			{
+				callback.usingDirectiveAbort(directive);
+				throw backtrack;				
+			}
+		}
+		else
+		{
+			Object usingDeclaration = callback.usingDeclarationBegin( container );
+			
+			boolean typeName = false;
+			if( LT(1) == Token.t_typename )
+			{
+				typeName = true;
+				consume( Token.t_typename );
+			}
+			
+			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
+			{
+				//	optional :: and nested classes handled in name
+				name();
+				callback.usingDeclarationMapping( usingDeclaration, typeName ); 
+			}
+			else
+			{
+				callback.usingDeclarationAbort( usingDeclaration );
+				throw backtrack;
+			}
+		
+			if( LT(1) == Token.tSEMI )
+			{
+				consume( Token.tSEMI );
+				callback.usingDeclarationEnd( usingDeclaration );
+			}
+			else
+			{
+				callback.usingDeclarationAbort( usingDeclaration );
+				throw backtrack;
+			}
+
+					
+		}
+		
+		
+		
+	}
+	
+	/**
+	 * linkageSpecification
+	 * : extern "string literal" declaration
+	 * | extern "string literal" { declaration-seq } 
+	 * @param container
+	 * @throws Exception
+	 */
+	protected void linkageSpecification( Object container ) throws Backtrack
+	{
+		consume( Token.t_extern );
+
+		if( LT(1) != Token.tSTRING )
+			throw backtrack;
+
+		Object linkageSpec = callback.linkageSpecificationBegin( container, consume( Token.tSTRING ).getImage() );
+
+		if( LT(1) == Token.tLBRACE )
+		{
+			consume(Token.tLBRACE); 
+			linkageDeclarationLoop:
+			while (LT(1) != Token.tRBRACE) {
+				Token lastToken = LA(1);
+				switch (LT(1)) {
+					case Token.tRBRACE:
+						consume(Token.tRBRACE);
+						break linkageDeclarationLoop;
+					default:
+						declaration(linkageSpec);
+				}
+				if (lastToken == LA(1))
+					consumeToNextSemicolon();
+			}
+			// consume the }
+			consume();
+			callback.linkageSpecificationEnd( linkageSpec );
+		}
+		else // single declaration
+		{
+			declaration( linkageSpec );
+			callback.linkageSpecificationEnd( linkageSpec );
+		}
+	}
+	
+	/**
 	 * declaration
 	 * : {"asm"} asmDefinition
 	 * | {"namespace"} namespaceDefinition
@@ -131,19 +262,17 @@ c, quick);
 	 *   - explicitInstantiation and explicitSpecialization into
 	 *       templateDeclaration
 	 */
-	protected void declaration( Object container ) throws Exception {
+	protected void declaration( Object container ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_asm:
 				// asmDefinition( );
 				consume();
 				return; 
 			case Token.t_namespace:
-				// namespaceDefinition();
-				consume();
+				namespaceDefinition( container );
 				return; 
 			case Token.t_using:
-				// usingDeclaration();
-				consume();
+				usingClause( container );
 				return; 
 			case Token.t_export:
 			case Token.t_template:
@@ -151,19 +280,61 @@ c, quick);
 				consume();
 				return; 
 			case Token.t_extern:
-				if (LT(2) == Token.tSTRING)
-				{
-					// linkageSpecification();
-					consume();
-					return; 
-				}
-					
-				// else drop through
+				linkageSpecification( container ); 
+				return;
 			default:
 				simpleDeclaration( container ); 
 		}
 	}
 	
+	/**
+	 *  namespaceDefinition()
+	 * 
+	 * 	namespace-definition:
+	 *		namespace identifier { namespace-body } | namespace { namespace-body }
+	 *	 namespace-body:
+	 *		declaration-seq?
+	 * 
+	 */
+	
+	protected void namespaceDefinition( Object container ) throws Backtrack
+	{
+		consume( Token.t_namespace);
+		Object namespace = callback.namespaceDefinitionBegin( container );
+
+		// optional name 		
+		if( LT(1) == Token.tIDENTIFIER )
+		{
+			name();
+			callback.namespaceDefinitionId( namespace );
+		}
+	
+		if( LT(1) == Token.tLBRACE )
+		{
+			consume(); 
+			namepsaceDeclarationLoop:
+			while (LT(1) != Token.tRBRACE) {
+				Token lastToken = LA(1);
+				switch (LT(1)) {
+					case Token.tRBRACE:
+						consume(Token.tRBRACE);
+						break namepsaceDeclarationLoop;
+					default:
+						declaration(namespace);
+				}
+				if (lastToken == LA(1))
+					consumeToNextSemicolon();
+			}
+			// consume the }
+			consume();
+			callback.namespaceDefinitionEnd( namespace );
+		}
+		else
+		{
+			callback.namespaceDefinitionAbort( namespace );
+			throw backtrack;
+		}
+	}
 	
 	
 	/**
@@ -177,7 +348,7 @@ c, quick);
 	 * To do:
 	 * - work in ctorInitializer and functionTryBlock
 	 */
-	protected void simpleDeclaration( Object container ) throws Exception {
+	protected void simpleDeclaration( Object container ) throws Backtrack {
 		Object simpleDecl = callback.simpleDeclarationBegin( container);
 		declSpecifierSeq(simpleDecl, false);
 
@@ -240,7 +411,7 @@ c, quick);
 	}
 	
 	
-	protected void parameterDeclaration( Object containerObject ) throws Exception
+	protected void parameterDeclaration( Object containerObject ) throws Backtrack
 	{
 		Object parameterDecl = callback.parameterDeclarationBegin( containerObject );
 		declSpecifierSeq( parameterDecl, true );
@@ -274,7 +445,7 @@ c, quick);
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	protected void declSpecifierSeq( Object decl, boolean parm ) throws Exception {
+	protected void declSpecifierSeq( Object decl, boolean parm ) throws Backtrack {
 		boolean encounteredTypename = false;
 		boolean encounteredRawType = false;
 		declSpecifiers:		
@@ -345,15 +516,34 @@ c, quick);
 						name(); 
 						callback.elaboratedTypeSpecifierName( elab ); 
 						callback.elaboratedTypeSpecifierEnd( elab );
-						
+						break;
 					}
 				case Token.t_enum:
-					enumSpecifier(decl);
+					try
+					{
+						enumSpecifier(decl);
+						return;
+					}
+					catch( Backtrack bt )
+					{
+						// this is an elaborated class specifier
+						Object elab = callback.elaboratedTypeSpecifierBegin( decl, consume() ); 
+						name(); 
+						callback.elaboratedTypeSpecifierName( elab ); 
+						callback.elaboratedTypeSpecifierEnd( elab );
+					}
 					break;
 				default:
 					break declSpecifiers;
 			}
 		}
+	}
+
+
+	protected void identifier() throws Backtrack {
+		Token first = consume(Token.tIDENTIFIER); // throws backtrack if its not that
+		callback.nameBegin(first);
+		callback.nameEnd(first);
 	}
 	
 	/**
@@ -367,7 +557,7 @@ c, quick);
 	 * - Handle template ids
 	 * - Handle unqualifiedId
 	 */
-	protected boolean name() throws Exception {
+	protected void name() throws Backtrack {
 		Token first = LA(1);
 		Token last = null;
 		
@@ -402,14 +592,13 @@ c, quick);
 
 		callback.nameEnd(last);
 
-		return true;
 	}
 
 	/**
 	 * cvQualifier
 	 * : "const" | "volatile"
 	 */
-	protected void cvQualifier( Object ptrOp ) throws Exception {
+	protected void cvQualifier( Object ptrOp ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_const:
 			case Token.t_volatile:
@@ -427,7 +616,7 @@ c, quick);
 	 * To Do:
 	 * - handle initializers
 	 */
-	protected void initDeclarator( Object owner ) throws Exception {
+	protected void initDeclarator( Object owner ) throws Backtrack {
 		Object declarator = declarator( owner );
 		
 		// handle = initializerClause
@@ -503,7 +692,7 @@ c, quick);
 	 * declaratorId
 	 * : name
 	 */
-	protected Object declarator( Object container ) throws Exception {
+	protected Object declarator( Object container ) throws Backtrack {
 		
 		do
 		{
@@ -632,7 +821,7 @@ c, quick);
 	 * | "&"
 	 * | name "*" (cvQualifier)*
 	 */
-	protected void ptrOperator(Object owner) throws Exception {
+	protected void ptrOperator(Object owner) throws Backtrack {
 		int t = LT(1);
 		Object ptrOp = callback.pointerOperatorBegin( owner ); 
 		
@@ -671,46 +860,84 @@ c, quick);
 
 
 	/**
-	 * enumSpecifier
-	 * 		"enum" (name)? "{" (enumerator-list) "}" 
+	 * enumSpecifier:
+	 * 		"enum" (name)? "{" (enumerator-list) "}"
+	 * enumerator-list:
+	 * 	enumerator-definition
+	 *	enumerator-list , enumerator-definition
+	 * enumerator-definition:
+	 * 	enumerator
+	 *  enumerator = constant-expression
+	 * enumerator: identifier 
 	 */
-	protected void enumSpecifier( Object owner ) throws Exception
+	protected void enumSpecifier( Object owner ) throws Backtrack
 	{
-		if( LT(1) != Token.t_enum )
-			throw backtrack; 
-		consume();
+		consume( Token.t_enum );
 
-		// insert beginEnum callback here
+		Object enumSpecifier = callback.enumSpecifierBegin( owner );
 
-		if( LT(1) == Token.tIDENTIFIER ) 
-			consume(); 
+		if( LT(1) == Token.tIDENTIFIER )
+		{ 
+			identifier();
+			callback.enumSpecifierId( enumSpecifier );
+		} 
 		
-
 		if( LT(1) == Token.tLBRACE )
 		{
-			consume(); 
-			// for the time being to get the CModel working ignore the enumerator list
-			int depth = 1;
-			while (depth > 0) {
-				switch (consume().getType()) {
-					case Token.tRBRACE:
-						--depth;
-						break;
-					case Token.tLBRACE:
-						++depth;
-						break;
+			consume( Token.tLBRACE );
+			
+			while( LT(1) != Token.tRBRACE )
+			{
+				Object defn;
+				if( LT(1) == Token.tIDENTIFIER )
+				{
+					defn = callback.enumDefinitionBegin( enumSpecifier );
+					identifier();
+					callback.enumDefinitionId( defn ); 
 				}
+				else
+				{
+					callback.enumSpecifierAbort( enumSpecifier );
+					throw backtrack; 
+				}
+				
+				if( LT(1) == Token.tASSIGN )
+				{
+					consume( Token.tASSIGN );
+					Object expression = callback.expressionBegin( defn );
+					constantExpression( expression ); 
+					callback.expressionEnd( expression );
+				}
+				
+				callback.enumDefinitionEnd( defn );
+				
+				if( LT(1) == Token.tRBRACE )
+					break;
+				
+				if( LT(1) != Token.tCOMMA )
+				{
+					callback.enumSpecifierAbort( enumSpecifier );
+					throw backtrack; 					
+				}
+				consume(Token.tCOMMA); // if we made it this far 
 			}
+			consume( Token.tRBRACE );
+			
+			callback.enumSpecifierEnd( enumSpecifier );
+		}
+		else
+		{
+			// enumSpecifierAbort
+			throw backtrack; 
 		}
 
-		// insert endEnum callback here
 	}
 
 	/**
 	 * classSpecifier
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
-	protected void classSpecifier( Object owner ) throws Exception {
+	protected void classSpecifier( Object owner ) throws Backtrack {
 		Token classKey = null;
 		
 		Token mark = mark();
@@ -756,7 +983,7 @@ c, quick);
 			
 			memberDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
-				Token lastToken = currToken;
+				Token lastToken = LA(1);
 			
 				switch (LT(1)) {
 					case Token.t_public:
@@ -771,7 +998,7 @@ c, quick);
 					default:
 						declaration(classSpec);
 				}
-				if (lastToken == currToken)
+				if (lastToken == LA(1))
 					consumeToNextSemicolon();
 			}
 			// consume the }
@@ -781,7 +1008,7 @@ c, quick);
 		callback.classSpecifierEnd(classSpec);
 	}
 
-	protected void baseSpecifier( Object classSpecOwner ) throws Exception {
+	protected void baseSpecifier( Object classSpecOwner ) throws Backtrack {
 
 		Object baseSpecifier = callback.baseSpecifierBegin( classSpecOwner ); 		
 		
@@ -795,8 +1022,7 @@ c, quick);
 				case Token.t_public:
 				case Token.t_protected:
 				case Token.t_private:
-					callback.baseSpecifierVisibility( baseSpecifier, currToken );
-					consume();					
+					callback.baseSpecifierVisibility( baseSpecifier, consume() );
 					break;
 				case Token.tCOLONCOLON:
 				case Token.tIDENTIFIER:
@@ -815,12 +1041,12 @@ c, quick);
 		callback.baseSpecifierEnd( baseSpecifier ); 
 	}
 	
-	protected void functionBody() throws Exception {
+	protected void functionBody() throws Backtrack {
 		compoundStatement();
 	}
 	
 	// Statements
-	protected void statement() throws Exception {
+	protected void statement() throws Backtrack {
 		Object expression = null; 
 		switch (LT(1)) {
 			case Token.t_case:
@@ -952,15 +1178,15 @@ c, quick);
 		}
 	}
 	
-	protected void condition() throws Exception {
+	protected void condition() throws Backtrack {
 		// TO DO
 	}
 	
-	protected void forInitStatement() throws Exception {
+	protected void forInitStatement() throws Backtrack {
 		// TO DO
 	}
 	
-	protected void compoundStatement() throws Exception {
+	protected void compoundStatement() throws Backtrack {
 		consume(Token.tLBRACE);
 		while (LT(1) != Token.tRBRACE)
 			statement();
@@ -968,11 +1194,11 @@ c, quick);
 	}
 	
 	// Expressions
-	protected void constantExpression( Object expression ) throws Exception {
+	protected void constantExpression( Object expression ) throws Backtrack {
 		conditionalExpression( expression );
 	}
 	
-	public void expression( Object expression ) throws Exception {
+	public void expression( Object expression ) throws Backtrack {
 		assignmentExpression( expression );
 		
 		while (LT(1) == Token.tCOMMA) {
@@ -982,7 +1208,7 @@ c, quick);
 		}
 	}
 	
-	protected void assignmentExpression( Object expression ) throws Exception {
+	protected void assignmentExpression( Object expression ) throws Backtrack {
 		if (LT(1) == Token.t_throw) {
 			throwExpression(expression);
 			return;
@@ -1010,7 +1236,7 @@ c, quick);
 		}
 	}
 	
-	protected void throwExpression( Object expression ) throws Exception {
+	protected void throwExpression( Object expression ) throws Backtrack {
 		consume(Token.t_throw);
 		
 		try {
@@ -1019,7 +1245,7 @@ c, quick);
 		}
 	}
 	
-	protected boolean conditionalExpression( Object expression ) throws Exception {
+	protected boolean conditionalExpression( Object expression ) throws Backtrack {
 		logicalOrExpression( expression );
 		
 		if (LT(1) == Token.tQUESTION) {
@@ -1032,7 +1258,7 @@ c, quick);
 			return false;
 	}
 	
-	protected void logicalOrExpression( Object expression ) throws Exception {
+	protected void logicalOrExpression( Object expression ) throws Backtrack {
 		logicalAndExpression( expression );
 		
 		while (LT(1) == Token.tOR) {
@@ -1042,7 +1268,7 @@ c, quick);
 		}
 	}
 	
-	protected void logicalAndExpression( Object expression ) throws Exception {
+	protected void logicalAndExpression( Object expression ) throws Backtrack {
 		inclusiveOrExpression( expression );
 		
 		while (LT(1) == Token.tAND) {
@@ -1052,7 +1278,7 @@ c, quick);
 		}
 	}
 	
-	protected void inclusiveOrExpression( Object expression ) throws Exception {
+	protected void inclusiveOrExpression( Object expression ) throws Backtrack {
 		exclusiveOrExpression(expression);
 		
 		while (LT(1) == Token.tBITOR) {
@@ -1062,7 +1288,7 @@ c, quick);
 		}
 	}
 	
-	protected void exclusiveOrExpression( Object expression ) throws Exception {
+	protected void exclusiveOrExpression( Object expression ) throws Backtrack {
 		andExpression( expression );
 		
 		while (LT(1) == Token.tXOR) {
@@ -1072,7 +1298,7 @@ c, quick);
 		}
 	}
 	
-	protected void andExpression( Object expression ) throws Exception {
+	protected void andExpression( Object expression ) throws Backtrack {
 		equalityExpression(expression);
 		
 		while (LT(1) == Token.tAMPER) {
@@ -1082,7 +1308,7 @@ c, quick);
 		}
 	}
 	
-	protected void equalityExpression(Object expression) throws Exception {
+	protected void equalityExpression(Object expression) throws Backtrack {
 		relationalExpression(expression);
 		
 		for (;;) {
@@ -1099,7 +1325,7 @@ c, quick);
 		}
 	}
 	
-	protected void relationalExpression(Object expression) throws Exception {
+	protected void relationalExpression(Object expression) throws Backtrack {
 		shiftExpression(expression);
 		
 		for (;;) {
@@ -1121,7 +1347,7 @@ c, quick);
 		}
 	}
 	
-	protected void shiftExpression( Object expression ) throws Exception {
+	protected void shiftExpression( Object expression ) throws Backtrack {
 		additiveExpression(expression);
 		
 		for (;;) {
@@ -1138,7 +1364,7 @@ c, quick);
 		}
 	}
 	
-	protected void additiveExpression( Object expression ) throws Exception {
+	protected void additiveExpression( Object expression ) throws Backtrack {
 		multiplicativeExpression(expression);
 		
 		for (;;) {
@@ -1155,7 +1381,7 @@ c, quick);
 		}
 	}
 	
-	protected void multiplicativeExpression( Object expression ) throws Exception {
+	protected void multiplicativeExpression( Object expression ) throws Backtrack {
 		pmExpression( expression );
 		
 		for (;;) {
@@ -1173,7 +1399,7 @@ c, quick);
 		}
 	}
 	
-	protected void pmExpression( Object expression ) throws Exception {
+	protected void pmExpression( Object expression ) throws Backtrack {
 		castExpression( expression );
 		
 		for (;;) {
@@ -1195,7 +1421,7 @@ c, quick);
 	 * : unaryExpression
 	 * | "(" typeId ")" castExpression
 	 */
-	protected void castExpression( Object expression ) throws Exception {
+	protected void castExpression( Object expression ) throws Backtrack {
 		// TO DO: we need proper symbol checkint to ensure type name
 		if (false && LT(1) == Token.tLPAREN) {
 			Token mark = mark();
@@ -1215,7 +1441,7 @@ c, quick);
 		unaryExpression(expression);
 	}
 	
-	protected void typeId() throws Exception {
+	protected void typeId() throws Backtrack {
 		try {
 			name();
 			return;
@@ -1223,7 +1449,7 @@ c, quick);
 		}
 	}
 	
-	protected void deleteExpression( Object expression ) throws Exception {
+	protected void deleteExpression( Object expression ) throws Backtrack {
 		if (LT(1) == Token.tCOLONCOLON) {
 			// global scope
 			consume();
@@ -1240,7 +1466,7 @@ c, quick);
 		castExpression( expression );
 	}
 	
-	protected void newExpression( Object expression ) throws Exception {
+	protected void newExpression( Object expression ) throws Backtrack {
 		if (LT(1) == Token.tCOLONCOLON) {
 			// global scope
 			consume();
@@ -1251,7 +1477,7 @@ c, quick);
 		//TODO: finish this horrible mess...
 	}
 	
-	protected void unaryExpression( Object expression ) throws Exception {
+	protected void unaryExpression( Object expression ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.tSTAR:
 			case Token.tAMPER:
@@ -1298,7 +1524,7 @@ c, quick);
 		}
 	}
 
-	protected void postfixExpression( Object expression) throws Exception {
+	protected void postfixExpression( Object expression) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_typename:
 				consume();
@@ -1364,7 +1590,7 @@ c, quick);
 		}
 	}
 	
-	protected void primaryExpression( Object expression ) throws Exception {
+	protected void primaryExpression( Object expression ) throws Backtrack {
 		int type = LT(1);
 		switch (type) {
 			// TO DO: we need more literals...
@@ -1507,7 +1733,7 @@ c, quick);
 	}
 
 	// Utility routines that require a knowledge of the grammar
-	protected static String generateName(Token startToken) throws Exception {
+	protected static String generateName(Token startToken) throws ParserException {
 		Token currToken = startToken.getNext();
 		
 		if (currToken == null || currToken.getType() != Token.tCOLONCOLON)

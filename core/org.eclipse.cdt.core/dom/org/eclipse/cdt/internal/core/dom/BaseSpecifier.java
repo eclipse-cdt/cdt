@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.util.Name;
+
 /**
  * @author dschaefe
  *
@@ -38,7 +40,7 @@ public class BaseSpecifier {
 	public void setAccess(int access) { this.access = access; }
 	public int getAccess() { return access; }
 	
-	private String name;
-	public void setName(String name) { this.name = name; }
-	public String getName() { return name; }
+	private Name name;
+	public void setName(Name name) { this.name = name; }
+	public Name getName() { return name; }
 }

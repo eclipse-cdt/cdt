@@ -40,34 +40,31 @@ public class CProjectHelper {
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createCProject(final String projectName, String binFolderName){
+	public static ICProject createCProject(final String projectName, String binFolderName) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IProject newProject[] = new IProject[1];
-		try {
-			ws.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IWorkspaceRoot root = ws.getRoot();
-					IProject project = root.getProject(projectName);
-					if (!project.exists()) {
-						project.create(null);
-					} else {
-						project.refreshLocal(IResource.DEPTH_INFINITE, null);
-					}
-					if (!project.isOpen()) {
-						project.open(null);
-					}
-					if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-						String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
-						addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-						CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
-					}
-					newProject[0] = project;
+		ws.run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IWorkspaceRoot root = ws.getRoot();
+				IProject project = root.getProject(projectName);
+				if (!project.exists()) {
+					project.create(null);
+				} else {
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
-			}, null);
-		} catch (CoreException e) {
-			Assert.fail(getMessage(e.getStatus()));
-		}
-		
+				if (!project.isOpen()) {
+					project.open(null);
+				}
+				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
+					String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
+					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
+					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
+				}
+				newProject[0] = project;
+			}
+		}, null);
+
 		return CCorePlugin.getDefault().getCoreModel().create(newProject[0]);
 	}
 	
@@ -84,22 +81,19 @@ public class CProjectHelper {
 		return message.toString();
 	}
 
-	public static ICProject createCCProject(final String projectName, final String binFolderName) {
+	public static ICProject createCCProject(final String projectName, final String binFolderName) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final ICProject newProject[] = new ICProject[1];
-		try {
-			ws.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ICProject cproject = createCProject(projectName, binFolderName);
-					if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
-						addNatureToProject(cproject.getProject(), CCProjectNature.CC_NATURE_ID, null);
-					}
-					newProject[0] = cproject;
+		ws.run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				ICProject cproject = createCProject(projectName, binFolderName);
+				if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
+					addNatureToProject(cproject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 				}
-			}, null);
-		} catch (CoreException e) {
-			Assert.fail(getMessage(e.getStatus()));
-		}
+				newProject[0] = cproject;
+			}
+		}, null);
 		return newProject[0];
 	}
 
@@ -145,11 +139,10 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Adds a folder container to a ICProject and imports all files contained
-	 * in the given Zip file.
+	 * Adds a folder container to a ICProject and imports all files contained in the given Zip file.
 	 */
 	public static ICContainer addCContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile)
-		throws InvocationTargetException, CoreException {
+			throws InvocationTargetException, CoreException {
 		ICContainer root = addCContainer(cproject, containerName);
 		importFilesFromZip(zipFile, root.getPath(), null);
 		return root;
@@ -170,11 +163,9 @@ public class CProjectHelper {
 		int x;
 		IArchive[] myArchives;
 		IArchiveContainer archCont;
-		/***********************************************************************
-		 * Since ArchiveContainer.getArchives does not wait until all the
-		 * archives in the project have been parsed before returning the list,
-		 * we have to do a sync ArchiveContainer.getChildren first to make sure
-		 * we find all the archives.
+		/***************************************************************************************************************************
+		 * Since ArchiveContainer.getArchives does not wait until all the archives in the project have been parsed before returning
+		 * the list, we have to do a sync ArchiveContainer.getChildren first to make sure we find all the archives.
 		 */
 		archCont = testProject.getArchiveContainer();
 		myArchives = archCont.getArchives();
@@ -211,12 +202,12 @@ public class CProjectHelper {
 	public static IBinary findObject(ICProject testProject, String name) {
 		ICElement[] sourceRoots = testProject.getChildren();
 		for (int i = 0; i < sourceRoots.length; i++) {
-			ISourceRoot root = (ISourceRoot)sourceRoots[i];
+			ISourceRoot root = (ISourceRoot) sourceRoots[i];
 			ICElement[] myElements = root.getChildren();
 			for (int x = 0; x < myElements.length; x++) {
 				if (myElements[x].getElementName().equals(name)) {
 					if (myElements[x] instanceof IBinary) {
-						return ((IBinary)myElements[x]);
+						return ((IBinary) myElements[x]);
 					}
 				}
 			}
@@ -230,12 +221,12 @@ public class CProjectHelper {
 	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) {
 		ICElement[] sourceRoots = testProject.getChildren();
 		for (int i = 0; i < sourceRoots.length; i++) {
-			ISourceRoot root = (ISourceRoot)sourceRoots[i];
+			ISourceRoot root = (ISourceRoot) sourceRoots[i];
 			ICElement[] myElements = root.getChildren();
 			for (int x = 0; x < myElements.length; x++) {
 				if (myElements[x].getElementName().equals(name)) {
 					if (myElements[x] instanceof ITranslationUnit) {
-						return ((ITranslationUnit)myElements[x]);
+						return ((ITranslationUnit) myElements[x]);
 					}
 				}
 			}
@@ -249,7 +240,7 @@ public class CProjectHelper {
 	public static ICElement findElement(ICProject testProject, String name) {
 		ICElement[] sourceRoots = testProject.getChildren();
 		for (int i = 0; i < sourceRoots.length; i++) {
-			ISourceRoot root = (ISourceRoot)sourceRoots[i];
+			ISourceRoot root = (ISourceRoot) sourceRoots[i];
 			ICElement[] myElements = root.getChildren();
 			for (int x = 0; x < myElements.length; x++) {
 				if (myElements[x].getElementName().equals(name)) {
@@ -271,11 +262,11 @@ public class CProjectHelper {
 	}
 
 	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor)
-		throws InvocationTargetException {
+			throws InvocationTargetException {
 		ZipFileStructureProvider structureProvider = new ZipFileStructureProvider(srcZipFile);
 		try {
-			ImportOperation op =
-				new ImportOperation(destPath, structureProvider.getRoot(), structureProvider, new ImportOverwriteQuery());
+			ImportOperation op = new ImportOperation(destPath, structureProvider.getRoot(), structureProvider,
+					new ImportOverwriteQuery());
 			op.run(monitor);
 		} catch (InterruptedException e) {
 			// should not happen
@@ -283,6 +274,7 @@ public class CProjectHelper {
 	}
 
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+
 		public String queryOverwrite(String file) {
 			return ALL;
 		}

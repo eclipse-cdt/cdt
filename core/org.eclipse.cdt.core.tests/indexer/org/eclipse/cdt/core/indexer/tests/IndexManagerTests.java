@@ -125,7 +125,7 @@ public class IndexManagerTests extends TestCase {
 	/*
 	 * Utils
 	 */
-	private IProject createProject(String projectName) {
+	private IProject createProject(String projectName) throws CoreException {
 		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin");
 		return cPrj.getProject();
 	}

@@ -238,15 +238,17 @@ public class ProjectTargets {
 		NodeList kids = rootElement.getChildNodes();
 		for (int i = 0; i < kids.getLength(); i++) {
 			rootElement.removeChild(kids.item(i));
+			i--;
 		}
 
 		//Extract the root of our temporary document
 		Node node = doc.getFirstChild();
-		//Create a copy which is a part of the new document
-		Node appendNode = rootElement.getOwnerDocument().importNode(node, true);
-		//Put the copy into the document in the appropriate location
-		rootElement.appendChild(appendNode);
-
+		if (node.hasChildNodes()) {
+			//Create a copy which is a part of the new document
+			Node appendNode = rootElement.getOwnerDocument().importNode(node, true);
+			//Put the copy into the document in the appropriate location
+			rootElement.appendChild(appendNode);
+		}
 		//Save the results
 		descriptor.saveProjectData();
 	}
@@ -259,25 +261,29 @@ public class ProjectTargets {
 	 * @return
 	 */
 	protected Document translateCDTProjectToDocument() {
+		Document document = null;
+		Element rootElement = null;
 		try {
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			ICDescriptor descriptor;
 			descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject());
 
-			Element rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
-			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-
-			Element element = rootElement.getOwnerDocument().getDocumentElement();
-			NodeList list = rootElement.getChildNodes();
-			for (int i = 0; i < list.getLength(); i++) {
-				if ( list.item(i).getNodeType() == Node.ELEMENT_NODE) {
-					Node appendNode = document.importNode(list.item(i), true);
-					document.appendChild(appendNode);
-				}
-			}
+			rootElement = descriptor.getProjectData(MAKE_TARGET_KEY);
+		} catch ( ParserConfigurationException e) {
 			return document;
-		} catch (Exception ex) {
-			return null;
+		} catch ( CoreException e) {
+			return document;
 		}
+		Element element = rootElement.getOwnerDocument().getDocumentElement();
+		NodeList list = rootElement.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			if ( list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+				Node appendNode = document.importNode(list.item(i), true);
+				document.appendChild(appendNode);
+				break; // show never have multiple <buildtargets>
+			}
+		}
+		return document;
 	}
 
 	/**

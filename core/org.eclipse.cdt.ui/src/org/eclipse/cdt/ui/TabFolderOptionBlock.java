@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,7 +35,7 @@ public abstract class TabFolderOptionBlock {
 
 	private Label messageLabel;
 	private TabItem fCurrentItem;
-	private TabFolder folder;
+	private TabFolder fFolder;
 	private ArrayList tabs;
 	private ICOptionContainer fParent;
 
@@ -47,14 +47,14 @@ public abstract class TabFolderOptionBlock {
 		if (tabs == null) {
 			tabs = new ArrayList();
 		}
-		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(tab.getLabel());
+		TabItem item = new TabItem(fFolder, SWT.NONE);
+		item.setText(tab.getTitle());
 		Image img = tab.getImage();
 		if (img != null)
 			item.setImage(img);
 		item.setData(tab);
 		tab.setContainer(fParent);
-		tab.createControl(folder);
+		tab.createControl(item.getParent());
 		item.setControl(tab.getControl());
 		tabs.add(tab);
 		return item;
@@ -72,22 +72,20 @@ public abstract class TabFolderOptionBlock {
 		Label separator = new Label(composite, SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		folder = new TabFolder(composite, SWT.NONE);
-		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		folder.setLayout(new TabFolderLayout());
+		fFolder = new TabFolder(composite, SWT.NONE);
+		fFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fFolder.setLayout(new TabFolderLayout());
 
 		fCurrentItem = addTabs();
 
-		folder.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
+		fFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fCurrentItem = (TabItem) e.item;
 				fParent.updateContainer();
 			}
 		});
 
-		messageLabel.setText(((ICOptionPage) tabs.get(0)).getMessage());
+		messageLabel.setText(((ICOptionPage) tabs.get(0)).getDescription());
 		return composite;
 	}
 	
@@ -100,7 +98,7 @@ public abstract class TabFolderOptionBlock {
 			try {
 				tab.performApply(new NullProgressMonitor());
 			} catch (CoreException e) {
-				CUIPlugin.errorDialog(folder.getShell(), "Error", "Error setting options", e);
+				CUIPlugin.errorDialog(fFolder.getShell(), "Error", "Error setting options", e);
 				return false;
 			}
 		}
@@ -117,7 +115,7 @@ public abstract class TabFolderOptionBlock {
 			tab.setVisible(visible);
 		}
 		update();
-		folder.setFocus();
+		fFolder.setFocus();
 	}
 
 	public void update() {
@@ -134,7 +132,7 @@ public abstract class TabFolderOptionBlock {
 		if (ok && fCurrentItem != null) {
 			setErrorMessage(null);
 			ICOptionPage tab = (ICOptionPage) fCurrentItem.getData();
-			messageLabel.setText(tab.getMessage());
+			messageLabel.setText(tab.getDescription());
 		}
 		setValid(ok);
 	}

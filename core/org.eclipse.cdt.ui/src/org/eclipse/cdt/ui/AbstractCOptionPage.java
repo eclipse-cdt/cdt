@@ -12,17 +12,27 @@ package org.eclipse.cdt.ui;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
-public abstract class AbstractCOptionPage implements ICOptionPage {
+public abstract class AbstractCOptionPage extends DialogPage implements ICOptionPage {
 
-	private String fErrorMessage;
-	private String fMessage;
 	private boolean bIsValid = true;
-	private Control fControl;
 	private ICOptionContainer fContainer;
+	
+
+	public AbstractCOptionPage() {
+		super();
+	}
+
+	public AbstractCOptionPage(String title) {
+		super(title);
+	}
+
+	public AbstractCOptionPage(String title, ImageDescriptor image) {
+		super(title, image);
+	}
 
 	public void setContainer(ICOptionContainer container) {
 		fContainer = container;
@@ -32,22 +42,6 @@ public abstract class AbstractCOptionPage implements ICOptionPage {
 		return fContainer;
 	}
 
-	public Image getImage() {
-		return null;
-	}
-
-	public abstract void createControl(Composite parent);
-
-	public abstract String getLabel();
-
-	public Control getControl() {
-		return fControl;
-	}
-
-	protected void setControl(Control control) {
-		fControl = control;
-	}
-	
 	protected void setValid(boolean isValid) {
 		bIsValid = isValid;
 	}
@@ -56,28 +50,10 @@ public abstract class AbstractCOptionPage implements ICOptionPage {
 		return bIsValid;
 	}
 
-	public String getMessage() {
-		return fMessage;
-	}
-	
-	protected void setMessage(String message) {
-		fMessage = message;
-	}
-
-	public String getErrorMessage() {
-		return fErrorMessage;
-	}
-
-	protected void setErrorMessage(String message) {
-		fErrorMessage = message;
-	}
-	
-	public void setVisible(boolean visible) {
-	}
-	
 	public abstract void performApply(IProgressMonitor monitor) throws CoreException;
 
-	public void performDefaults() {
-	}
+	public abstract void performDefaults();
+	
+	public abstract void createControl(Composite parent);
 
 }

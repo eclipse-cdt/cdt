@@ -12,30 +12,14 @@ package org.eclipse.cdt.ui;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.jface.dialogs.IDialogPage;
 
-public interface ICOptionPage {
+public interface ICOptionPage extends IDialogPage {
 
 	public void setContainer(ICOptionContainer container);
 		
-	public String getLabel();
-
-	public Image getImage();
-	
-	public void createControl(Composite parent);
-
-	public Control getControl();
-
 	public boolean isValid();
 	
-	public String getMessage();
-
-	public String getErrorMessage();
-	
-	public void setVisible(boolean visible);
-
 	public void performApply(IProgressMonitor monitor) throws CoreException;
 
 	public void performDefaults();

@@ -343,7 +343,7 @@ public class CModelManager implements IResourceChangeListener {
 				CProjectInfo info = (CProjectInfo)peekAtInfo(cproject);
 				if (info != null && info.vBin != null) {
 					if (peekAtInfo(info.vBin) != null) {
-						ICElement[] bins = info.getChildren();
+						ICElement[] bins = info.vBin.getChildren();
 						for (int i = 0; i < bins.length; i++) {
 							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
 								CElementDelta delta = new CElementDelta(getCModel());

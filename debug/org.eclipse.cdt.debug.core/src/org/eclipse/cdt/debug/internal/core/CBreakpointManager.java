@@ -406,7 +406,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				cdiBreakpoint.setEnabled( false );
 			}
 			catch( CDIException e ) {
-				DebugPlugin.log( e );
+				// ignore
 			}
 		}
 	}
@@ -500,9 +500,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			cdiTarget.deleteAllBreakpoints();
 		}
 		catch( CDIException e ) {
-			// Do we care ?
-			// No, we don't.
-//			CDebugCorePlugin.log( e.getMessage() );
+			// ignore
 		}
 		ICBreakpoint[] breakpoints = getBreakpointMap().getAllCBreakpoints();
 		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
@@ -754,10 +752,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				}
 			}
 			catch( CoreException e ) {
-				DebugPlugin.log( e.getStatus() );
+				// ignore
 			}
 			catch( CDIException e ) {
-				DebugPlugin.log( e );
+				// ignore
 			}
 		}
 	}
@@ -768,7 +766,8 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			ICDebugTarget[] tfs = breakpoint.getTargetFilters();
 			result = Arrays.asList( tfs ).contains( target );
 		}
-		catch( CoreException e1 ) {
+		catch( CoreException e ) {
+			// ignore
 		}
 		return result;
 	}

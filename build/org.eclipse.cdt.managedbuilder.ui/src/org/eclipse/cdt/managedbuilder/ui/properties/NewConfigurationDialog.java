@@ -12,11 +12,14 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,7 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class NewConfigurationDialog extends Dialog {
+public class NewConfigurationDialog extends StatusDialog {
 	// String constants
 	private static final String PREFIX = "NewConfiguration";	//$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
@@ -43,37 +46,45 @@ public class NewConfigurationDialog extends Dialog {
 	private static final String GROUP = LABEL + ".group";	//$NON-NLS-1$
 	private static final String COPY = LABEL + ".copy";	//$NON-NLS-1$
 	private static final String CLONE = LABEL + ".clone";	//$NON-NLS-1$
-	private static final String TITLE = ERROR + ".title";	//$NON-NLS-1$	
 	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
+	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
+	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
 
 	// Widgets
 	private Button btnClone;
 	private Button btnCopy;
-	private Button btnOk;
 	private Text configName;
 	private Combo copyConfigSelector;
 	private Combo cloneConfigSelector;
 		
 	// Bookeeping
 	private boolean clone;
+	/** Default configurations defined in the toolchain description */
 	private IConfiguration[] defaultConfigs;
+	/** Configurations defined in the target */
 	private IConfiguration[] definedConfigs;
 	private IConfiguration parentConfig;
 	private IManagedProject managedProject;
 	private String newName;
-	private String title = ""; //$NON-NLS-1$
+	/** A list containing config names that have been defined but not added to the target */
+	final private ArrayList reservedNames;
+	final private String title;
 
 	
 	/**
 	 * @param parentShell
+	 * @param managedTarget
+	 * @param nameList A list of names that have been added by the user but have not yet been added to the target 
+	 * @param title The title of the dialog
 	 */
-	protected NewConfigurationDialog(Shell parentShell, IManagedProject managedProject, String title) {
+	protected NewConfigurationDialog(Shell parentShell, IManagedProject managedProject, ArrayList nameList, String title) {
 		super(parentShell);
 		this.title = title;
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 		newName = new String();
 		parentConfig = null;
 		this.managedProject = managedProject;
+		reservedNames = nameList;
 		
 		// The default behaviour is to clone the settings
 		clone = true;
@@ -133,13 +144,12 @@ public class NewConfigurationDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		btnOk = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		super.createButtonsForButtonBar(parent);
 		configName.setFocus();
 		if (configName != null) {
 			configName.setText(newName);
 		}
-		updateButtonState();
+		validateState();
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -163,7 +173,7 @@ public class NewConfigurationDialog extends Dialog {
 		configName.setLayoutData(gd);
 		configName.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateButtonState();
+				validateState();
 			}
 		});
 		
@@ -201,7 +211,7 @@ public class NewConfigurationDialog extends Dialog {
 		copyConfigSelector.setLayoutData(gd);
 		copyConfigSelector.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateButtonState();		
+				validateState();		
 			}
 		});	
 		copyConfigSelector.setEnabled(false);
@@ -225,13 +235,12 @@ public class NewConfigurationDialog extends Dialog {
 		cloneConfigSelector.setLayoutData(gd);
 		cloneConfigSelector.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateButtonState();		
+				validateState();		
 			}
 		});	
 
 		return composite;
 	}
-
 
 	/**
 	 * @return the <code>IConfiguration</code> the user selected as 
@@ -285,26 +294,41 @@ public class NewConfigurationDialog extends Dialog {
 	 * @return
 	 */
 	protected boolean isDuplicateName(String newName) {
-		// Return true if there is already a config of that name defined
-		IConfiguration [] configs = managedProject.getConfigurations();
-		for (int index = 0; index < configs.length; index++) {
-			IConfiguration configuration = configs[index];
+		// Return true if there is already a config of that name defined on the target
+		for (int index = 0; index < definedConfigs.length; index++) {
+			IConfiguration configuration = definedConfigs[index];
 			if (configuration.getName().equals(newName)) {
 				return true;
 			}
 		}
+		if (reservedNames.contains(newName)) {
+			return true;
+		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
-	 * Enable the OK button if there is a valid name in the text widget
-	 * and there is a valid selection in the base configuration combo 
+	 * Answers <code>true</code> if the name entered by the user differs 
+	 * only in case from an existing name.
+	 * 
+	 * @param newName
+	 * @return
 	 */
-	private void updateButtonState() {
-		if (btnOk != null) {
-			int selectionIndex = copyConfigSelector.getSelectionIndex();			
-			btnOk.setEnabled(validateName() && selectionIndex != -1);
+	protected boolean isSimilarName(String newName) {
+		// Return true if there is already a config of that name defined on the target
+		for (int index = 0; index < definedConfigs.length; index++) {
+			IConfiguration configuration = definedConfigs[index];
+			if (configuration.getName().equalsIgnoreCase(newName)) {
+				return true;
+			}
 		}
+		Iterator iter = reservedNames.listIterator();
+		while (iter.hasNext()) {
+			if (((IConfiguration)iter.next()).getName().equalsIgnoreCase(newName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -316,17 +340,60 @@ public class NewConfigurationDialog extends Dialog {
 		copyConfigSelector.setEnabled(!clone);
 	}
 
-	private boolean validateName() {
-		String currentName = configName.getText().trim(); 
-		int nameLength = currentName.length();
-		// Make sure the name is not a duplicate
-		if (isDuplicateName(currentName)) {
-			MessageDialog.openError(getShell(), 
-					ManagedBuilderUIMessages.getResourceString(TITLE), 
-					ManagedBuilderUIMessages.getFormattedString(DUPLICATE, currentName)); //$NON-NLS-1$
+	/* (non-Javadoc)
+	 * Checks the argument for leading whitespaces and invalid directory name characters. 
+	 * @param name
+	 * @return <I>true</i> is the name is a valid directory name with no whitespaces
+	 */
+	private boolean validateName(String name) {
+		// Iterate over the name checking for bad characters
+		char[] chars = name.toCharArray();
+		// No whitespaces at the start of a name
+		if (Character.isWhitespace(chars[0])) {
 			return false;
 		}
-		// TODO make sure there are no invalid chars in name
-		return (nameLength > 0);
+		for (int index = 0; index < chars.length; ++index) {
+			// Config name must be a valid dir name too, so we ban "\ / : * ? " < >" in the names
+			if (!Character.isLetterOrDigit(chars[index])) {
+				switch (chars[index]) {
+				case '/':
+				case '\\':
+				case ':':
+				case '*':
+				case '?':
+				case '\"':
+				case '<':
+				case '>':
+					return false;
+				default:
+					break;
+				}
+			}
+		}
+		return true;
+	}
+	/* (non-Javadoc)
+	 * Update the status message and button state based on the input selected
+	 * by the user
+	 * 
+	 */
+	private void validateState() {
+		StatusInfo status= new StatusInfo();
+		String currentName = configName.getText(); 
+		int nameLength = currentName.length();
+		// Make sure the name is not a duplicate
+		if (nameLength == 0) {
+			// Not an error
+			status.setError("");	//$NON-NLS-1$
+		} else if (isDuplicateName(currentName)) {
+			status.setError(ManagedBuilderUIMessages.getFormattedString(DUPLICATE, currentName));
+		} else if (isSimilarName(currentName)) {
+			status.setError(ManagedBuilderUIMessages.getFormattedString(CASE, currentName));
+		} else if (!validateName(currentName)) {
+			status.setError(ManagedBuilderUIMessages.getFormattedString(INVALID, currentName));	//$NON-NLS-1$
+		} 
+		
+		updateStatus(status);
+		return;
 	}
 }

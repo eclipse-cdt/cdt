@@ -57,8 +57,10 @@ public class ManageConfigDialog extends Dialog {
 	private SortedMap existingConfigs;
 	// The target the configs belong to
 	private IManagedProject managedProject;
-	// Map of new configurations chosen by the user
-	private SortedMap newConfigs;
+	/** All new configs added by the user but not yet part of target */
+	private SortedMap newAddedConfigs;
+	/** All new configs removed by the user but not yet part of target */
+	private SortedMap removedNewConfigs;
 	// The title of the dialog.
 	private String title = ""; //$NON-NLS-1$
 	
@@ -269,12 +271,33 @@ public class ManageConfigDialog extends Dialog {
 	 * @return Map   
 	 */
 	public SortedMap getNewConfigs() {
-		if (newConfigs == null) {
-			newConfigs = new TreeMap();
+		if (newAddedConfigs == null) {
+			newAddedConfigs = new TreeMap();
 		}
-		return newConfigs;
+		return newAddedConfigs;
 	}
 
+	// Answers a list of new configuration names that have been added-- 
+	// or added and removed--by the user, but that have not yet been added 
+	// to the target
+	private ArrayList getNewConfigNames() {
+		ArrayList names = new ArrayList();
+		names.addAll(getNewConfigs().keySet());
+		names.addAll(getRemovedNewConfigs().keySet());
+		return names;
+	}
+	
+	
+	// This data structure hangs on to a new configuration that is added
+	// by the user, then removed before it is added to the target. This is 
+	// a required bookeeping step because the user may change their minds and 
+	// restore the deleted configuration. 
+	private SortedMap getRemovedNewConfigs() {
+		if (removedNewConfigs == null) {
+			removedNewConfigs = new TreeMap();
+		}
+		return removedNewConfigs;
+	}
 	/*
 	 * @return the <code>IProject</code> associated with the managed project
 	 */
@@ -286,8 +309,10 @@ public class ManageConfigDialog extends Dialog {
 	 * Event handler for the add button
 	 */
 	protected void handleNewPressed() {
+		// Pop-up a dialog to properly handle the request
 		NewConfigurationDialog dialog = new NewConfigurationDialog(getShell(), 
 																   managedProject, 
+																   getNewConfigNames(),
 																   ManagedBuilderUIMessages.getResourceString(CONF_DLG));
 		if (dialog.open() == NewConfigurationDialog.OK) {
 			// Get the new name and configuration to base the new config on
@@ -309,18 +334,18 @@ public class ManageConfigDialog extends Dialog {
 		int selectionIndex = currentConfigList.getSelectionIndex();
 		if (selectionIndex != -1){
 			String selectedConfigName = currentConfigList.getItem(selectionIndex);
-			String selectedConfigId = null;
 			
-			// If this is a newly added config, remove it from that map
+			// If this is a newly added config, remove it from the new map 
+			// and add it to a special map to support the restore use case
 			if (getNewConfigs().containsKey(selectedConfigName)) {
 				IConfiguration selectedConfig = (IConfiguration) getNewConfigs().get(selectedConfigName); 
-				selectedConfigId = selectedConfig.getId();
+				getRemovedNewConfigs().put(selectedConfigName, selectedConfig);
 				getNewConfigs().remove(selectedConfigName);
 			} else {
 				// If it is not a new item, the ID is in the existing list
-				selectedConfigId = (String) getExistingConfigs().get(selectedConfigName);
+				String selectedConfigId = (String) getExistingConfigs().get(selectedConfigName);
+				getDeletedConfigs().put(selectedConfigName, selectedConfigId);
 			}
-			getDeletedConfigs().put(selectedConfigName, selectedConfigId);
 
 			// Clean up the UI lists
 			currentConfigList.remove(selectionIndex);
@@ -337,21 +362,20 @@ public class ManageConfigDialog extends Dialog {
 	protected void handleRestorePressed() {
 		// Determine which configuration was selected
 		int selectionIndex = deletedConfigList.getSelectionIndex();
-		// Move the selected element from the deleted list to the current list
+		// Move the selected element from the correct deleted list to the current list
 		if (selectionIndex != -1){
 			// Get the name of the item to delete
 			String selectedConfigName = deletedConfigList.getItem(selectionIndex);
-			String selectedConfigId = (String) getDeletedConfigs().get(selectedConfigName);
 			
-			// If this was a new config (it won't be in the existing list) then add it back there
-			if (!getExistingConfigs().containsKey(selectedConfigName)) {
-				IConfiguration restoredConfig = managedProject.getConfiguration(selectedConfigId);
+			// The deleted config may be one of the existing configs or one of the
+			// new configs that have not been added to the target yet
+			if (getRemovedNewConfigs().containsKey(selectedConfigName)) {
+				IConfiguration restoredConfig = managedProject.getConfiguration(selectedConfigName);
 				getNewConfigs().put(selectedConfigName, restoredConfig);
+				getRemovedNewConfigs().remove(selectedConfigName);
+			} else {
+				getDeletedConfigs().remove(selectedConfigName);
 			}
-			
-			// Remove it from the deleted map
-			getDeletedConfigs().remove(selectedConfigName);
-
 			// Clean up the UI
 			deletedConfigList.remove(selectionIndex);
 			deletedConfigList.setSelection(selectionIndex - 1);

@@ -1,3 +1,11 @@
+2004-02-17 Alain Magloire
+
+	If we attach save the PID for later
+	for example to be able to suspend.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2004-02-11 Alain Magloire
 
 	Use String.endsWith("(gdb)") to detect the prompt.

@@ -46,7 +46,7 @@ public class MIInferior extends Process {
 	PipedOutputStream errPiped;
 	PTY pty;
 
-	int inferiorPid;
+	int inferiorPID;
 
 	MIInferior(MISession mi, PTY p) {
 		session = mi;
@@ -200,9 +200,9 @@ public class MIInferior extends Process {
 				} catch (InterruptedException e) {
 				}
 			}
-			if ((state == RUNNING) && inferiorPid > 0) {
+			if ((state == RUNNING) && getInferiorPID() > 0) {
 				// lets try something else.
-				gdbSpawner.raise(inferiorPid, gdbSpawner.INT);
+				gdbSpawner.raise(getInferiorPID(), gdbSpawner.INT);
 				for (int i = 0;(state == RUNNING) && i < 5; i++) {
 					try {
 						wait(1000);
@@ -315,7 +315,8 @@ public class MIInferior extends Process {
 	}
 
 	public void update() {
-		if (inferiorPid == 0) {
+		if (getInferiorPID() == 0) {
+			int pid = 0;
 			// Do not try this on attach session.
 			if (!isConnected()) {
 				// Try to discover the pid
@@ -324,15 +325,21 @@ public class MIInferior extends Process {
 				try {
 					session.postCommand(prog);
 					MIInfoProgramInfo info = prog.getMIInfoProgramInfo();
-					inferiorPid = info.getPID();
+					pid = info.getPID();
 				} catch (MIException e) {
 					// no rethrown.
 				}
 			}
 			// We fail permantely.
-			if (inferiorPid == 0) {
-				inferiorPid = -1;
-			}
+			setInferiorPID((pid == 0) ? -1: pid);
 		}
+	}
+
+	public void setInferiorPID(int pid) {
+		inferiorPID = pid;
+	}
+
+	public int getInferiorPID() {
+		return inferiorPID;
 	}
 }

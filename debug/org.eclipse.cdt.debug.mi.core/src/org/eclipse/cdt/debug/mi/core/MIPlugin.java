@@ -274,6 +274,7 @@ public class MIPlugin extends Plugin {
 				if (info == null) {
 					throw new MIException("No answer");
 				}
+				session.getMIInferior().setInferiorPID(pid);
 			}
 		} catch (MIException e) {
 			pgdb.destroy();

@@ -217,7 +217,9 @@ public class DoBuild implements IPlatformRunnable {
 		ftp.chdir(ftpPath);
 		
 		IPath resultDir = Platform.getLocation().removeLastSegments(1).append("results");
-		OutputStream stream = new FileOutputStream(resultDir.append("index.html").toOSString());
+		String indexFile = resultDir.append("index.html").toOSString();
+		System.out.println("Index file at: " + indexFile);
+		OutputStream stream = new FileOutputStream(indexFile);
 		ftp.get(stream, "index.html");
 		stream.close();
 
@@ -271,7 +273,7 @@ public class DoBuild implements IPlatformRunnable {
 		OutputStream stream = new FileOutputStream(versionTxt);
 		PrintStream versionText = new PrintStream(stream);
 		versionText.println(version);
-		stream.close();
+		versionText.close();
 		
 		System.out.println("Version: " + version);
 

@@ -18,9 +18,13 @@ public class PTY {
 	public int master;
 	InputStream in;
 	OutputStream out;
+
+	private static boolean hasPTY;
 	
 	public PTY() throws IOException {
-		slave= forkpty();
+		if (hasPTY) {
+			slave= forkpty();
+		}
 		if (slave == null) {
 			throw new IOException("Can not create pty");
 		}
@@ -43,7 +47,12 @@ public class PTY {
 	native String forkpty();
 
 	static {
-		System.loadLibrary("pty");
+		try {
+			System.loadLibrary("pty");
+			hasPTY = true;
+		} catch (SecurityException e) {
+		} catch (UnsatisfiedLinkError e) {
+		}			
 	}
 	
 }

@@ -36,6 +36,8 @@ public class ScannerUtility {
 	 */
 	static String reconcilePath(String originalPath ) {
 		if( originalPath == null ) return null;
+		originalPath = removeQuotes( originalPath );
+		
 		String [] segments = originalPath.split( "[/\\\\]" ); //$NON-NLS-1$
 		if( segments.length == 1 ) return originalPath;
 		Vector results = new Vector(); 
@@ -63,6 +65,21 @@ public class ScannerUtility {
 	}
 
 	
+	/**
+	 * @param originalPath
+	 * @return
+	 */
+	private static String removeQuotes(String originalPath) {
+		String [] segments = originalPath.split( "\"");
+		if( segments.length == 1 ) return originalPath;
+		StringBuffer result = new StringBuffer();
+		for( int i = 0; i < segments.length; ++ i )
+			if( segments[i] != null )
+				result.append( segments[i]);
+		return result.toString();
+	}
+
+
 	static CodeReader createReaderDuple( String path, String fileName, ISourceElementRequestor requestor, Iterator workingCopies )
 	{
 		String finalPath = createReconciledPath(path, fileName);

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -271,18 +272,27 @@ public class Scanner2 implements IScanner, IScannerData {
 	private boolean finished = false;
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
 	 */
 	public IToken nextToken() throws ScannerException, EndOfFileException {
 		if (finished)
-			throw EOF;
+		{
+			if( offsetBoundary == -1 )
+				throw EOF;			
+			throwOLRE();
+		}
 		
 		if (nextToken == null) {
 			nextToken = fetchToken();
 			if (nextToken == null)
-				throw EOF;
+			{
+				if( offsetBoundary == -1 )
+					throw EOF;
+				throwOLRE();
+			}
 		}
 		
 		if (lastToken != null)
@@ -310,12 +320,13 @@ public class Scanner2 implements IScanner, IScannerData {
 				nextToken = null;
 				return nextToken();
 			}
-		} else if (lastToken.getType() == IToken.tSTRING) {
-			while (nextToken != null && nextToken.getType() == IToken.tSTRING) {
+		} else if (lastToken.getType() == IToken.tSTRING || lastToken.getType() ==IToken.tLSTRING ) {
+			while (nextToken != null && ( nextToken.getType() == IToken.tSTRING || nextToken.getType() == IToken.tLSTRING )) {
 				// Concatenate the adjacent strings
-				String t1 = lastToken.getImage();
-				String t2 = nextToken.getImage();
-				lastToken = new ImagedToken(IToken.tSTRING, t1 + t2);
+				int tokenType = IToken.tSTRING; 
+				if( lastToken.getType() == IToken.tLSTRING || nextToken.getType() == IToken.tLSTRING )
+					tokenType = IToken.tLSTRING;
+				lastToken = new ImagedToken(tokenType, lastToken.getImage() + nextToken.getImage(), nextToken.getEndOffset()); //TODO Fix this
 				if (oldToken != null)
 					oldToken.setNext(lastToken);
 				nextToken = fetchToken();
@@ -325,6 +336,15 @@ public class Scanner2 implements IScanner, IScannerData {
 		return lastToken;
 	}
 	
+	/**
+	 * 
+	 */
+	private void throwOLRE() throws OffsetLimitReachedException {
+		if( lastToken != null && lastToken.getEndOffset() != offsetBoundary )
+			throw new OffsetLimitReachedException( (IToken)null );
+		throw new OffsetLimitReachedException( lastToken );
+	}
+
 	// Return null to signify end of file
 	private IToken fetchToken() throws ScannerException {
 		++count;
@@ -350,7 +370,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (pos + 1 < limit && buffer[pos + 1] == '"')
 						return scanString();
 					if (pos + 1 < limit && buffer[pos + 1] == '\'')
-						return scanCharLiteral();
+						return scanCharLiteral(true);
 					
 					IToken t = scanIdentifier();
 					if (t instanceof MacroExpansionToken)
@@ -362,7 +382,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					return scanString();
 					
 				case '\'':
-					return scanCharLiteral();
+					return scanCharLiteral(false);
 
 				case 'a':
 				case 'b':
@@ -452,71 +472,71 @@ public class Scanner2 implements IScanner, IScannerData {
 								if (pos + 2 < limit) {
 									if (buffer[pos + 2] == '.') {
 										bufferPos[bufferStackPos] += 2;
-										return new SimpleToken(IToken.tELLIPSIS);
+										return new SimpleToken(IToken.tELLIPSIS, bufferPos[bufferStackPos] + 1 );
 									}
 								}
 							case '*':
 								++bufferPos[bufferStackPos];
-								return new SimpleToken(IToken.tDOTSTAR);
+								return new SimpleToken(IToken.tDOTSTAR, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tDOT);
+					return new SimpleToken(IToken.tDOT, bufferPos[bufferStackPos]+ 1);
 					
 				case '#':
 					if (pos + 1 < limit && buffer[pos + 1] == '#') {
 						++bufferPos[bufferStackPos];
-						return new SimpleToken(IToken.tPOUNDPOUND);
+						return new SimpleToken(IToken.tPOUNDPOUND, bufferPos[bufferStackPos]+ 1);
 					}
 					
 					// Should really check to make sure this is the first
 					// non whitespace character on the line
-					handlePPDirective();
+					handlePPDirective(pos);
 					continue;
 				
 				case '{':
-					return new SimpleToken(IToken.tLBRACE);
+					return new SimpleToken(IToken.tLBRACE, bufferPos[bufferStackPos]+ 1);
 				
 				case '}':
-					return new SimpleToken(IToken.tRBRACE);
+					return new SimpleToken(IToken.tRBRACE, bufferPos[bufferStackPos]+ 1);
 				
 				case '[':
-					return new SimpleToken(IToken.tLBRACKET);
+					return new SimpleToken(IToken.tLBRACKET, bufferPos[bufferStackPos]+ 1);
 				
 				case ']':
-					return new SimpleToken(IToken.tRBRACKET);
+					return new SimpleToken(IToken.tRBRACKET, bufferPos[bufferStackPos]+ 1);
 				
 				case '(':
-					return new SimpleToken(IToken.tLPAREN);
+					return new SimpleToken(IToken.tLPAREN, bufferPos[bufferStackPos]+ 1);
 				
 				case ')':
-					return new SimpleToken(IToken.tRPAREN);
+					return new SimpleToken(IToken.tRPAREN, bufferPos[bufferStackPos]+ 1);
 
 				case ';':
-					return new SimpleToken(IToken.tSEMI);
+					return new SimpleToken(IToken.tSEMI, bufferPos[bufferStackPos]+ 1);
 				
 				case ':':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == ':') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tCOLONCOLON);
+							return new SimpleToken(IToken.tCOLONCOLON, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tCOLON);
+					return new SimpleToken(IToken.tCOLON, bufferPos[bufferStackPos]+ 1);
 					
 				case '?':
-					return new SimpleToken(IToken.tQUESTION);
+					return new SimpleToken(IToken.tQUESTION, bufferPos[bufferStackPos]+ 1);
 				
 				case '+':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '+') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tINCR);
+							return new SimpleToken(IToken.tINCR, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tPLUSASSIGN);
+							return new SimpleToken(IToken.tPLUSASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tPLUS);
+					return new SimpleToken(IToken.tPLUS, bufferPos[bufferStackPos]+ 1);
 				
 				case '-':
 					if (pos + 1 < limit) {
@@ -524,140 +544,140 @@ public class Scanner2 implements IScanner, IScannerData {
 							if (pos + 2 < limit) {
 								if (buffer[pos + 2] == '*') {
 									bufferPos[bufferStackPos] += 2;
-									return new SimpleToken(IToken.tARROWSTAR);
+									return new SimpleToken(IToken.tARROWSTAR, bufferPos[bufferStackPos]+ 1);
 								}
 							}
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tARROW);
+							return new SimpleToken(IToken.tARROW, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '-') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tDECR);
+							return new SimpleToken(IToken.tDECR, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tMINUSASSIGN);
+							return new SimpleToken(IToken.tMINUSASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tMINUS);
+					return new SimpleToken(IToken.tMINUS, bufferPos[bufferStackPos]+ 1);
 				
 				case '*':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tSTARASSIGN);
+							return new SimpleToken(IToken.tSTARASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tSTAR);
+					return new SimpleToken(IToken.tSTAR, bufferPos[bufferStackPos]+ 1);
 				
 				case '/':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tDIVASSIGN);
+							return new SimpleToken(IToken.tDIVASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tDIV);
+					return new SimpleToken(IToken.tDIV, bufferPos[bufferStackPos]+ 1);
 				
 				case '%':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tMODASSIGN);
+							return new SimpleToken(IToken.tMODASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tMOD);
+					return new SimpleToken(IToken.tMOD, bufferPos[bufferStackPos]+ 1);
 				
 				case '^':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tXORASSIGN);
+							return new SimpleToken(IToken.tXORASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tXOR);
+					return new SimpleToken(IToken.tXOR, bufferPos[bufferStackPos]+ 1);
 				
 				case '&':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '&') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tAND);
+							return new SimpleToken(IToken.tAND, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tAMPERASSIGN);
+							return new SimpleToken(IToken.tAMPERASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tAMPER);
+					return new SimpleToken(IToken.tAMPER, bufferPos[bufferStackPos]+ 1);
 				
 				case '|':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '|') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tOR);
+							return new SimpleToken(IToken.tOR, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tBITORASSIGN);
+							return new SimpleToken(IToken.tBITORASSIGN, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tBITOR);
+					return new SimpleToken(IToken.tBITOR, bufferPos[bufferStackPos]+ 1);
 				
 				case '~':
-					return new SimpleToken(IToken.tCOMPL);
+					return new SimpleToken(IToken.tCOMPL, bufferPos[bufferStackPos]+ 1);
 				
 				case '!':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tNOTEQUAL);
+							return new SimpleToken(IToken.tNOTEQUAL, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tNOT);
+					return new SimpleToken(IToken.tNOT, bufferPos[bufferStackPos]+ 1);
 				
 				case '=':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tEQUAL);
+							return new SimpleToken(IToken.tEQUAL, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tASSIGN);
+					return new SimpleToken(IToken.tASSIGN, bufferPos[bufferStackPos]+ 1);
 				
 				case '<':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tLTEQUAL);
+							return new SimpleToken(IToken.tLTEQUAL, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '<') {
 							if (pos + 2 < limit) {
 								if (buffer[pos + 2] == '=') {
 									bufferPos[bufferStackPos] += 2;
-									return new SimpleToken(IToken.tSHIFTLASSIGN);
+									return new SimpleToken(IToken.tSHIFTLASSIGN, bufferPos[bufferStackPos]+ 1);
 								}
 							}
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tSHIFTL);
+							return new SimpleToken(IToken.tSHIFTL, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tLT);
+					return new SimpleToken(IToken.tLT, bufferPos[bufferStackPos]+ 1);
 				
 				case '>':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tGTEQUAL);
+							return new SimpleToken(IToken.tGTEQUAL, bufferPos[bufferStackPos]+ 1);
 						} else if (buffer[pos + 1] == '>') {
 							if (pos + 2 < limit) {
 								if (buffer[pos + 2] == '=') {
 									bufferPos[bufferStackPos] += 2;
-									return new SimpleToken(IToken.tSHIFTRASSIGN);
+									return new SimpleToken(IToken.tSHIFTRASSIGN, bufferPos[bufferStackPos]+ 1);
 								}
 							}
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tSHIFTR);
+							return new SimpleToken(IToken.tSHIFTR, bufferPos[bufferStackPos]+ 1);
 						}
 					}
-					return new SimpleToken(IToken.tGT);
+					return new SimpleToken(IToken.tGT, bufferPos[bufferStackPos]+ 1);
 				
 				case ',':
-					return new SimpleToken(IToken.tCOMMA);
+					return new SimpleToken(IToken.tCOMMA, bufferPos[bufferStackPos]+ 1);
 
 				default:
 					// skip over anything we don't handle
@@ -727,8 +747,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		int tokenType = keywords.get(buffer, start, len);
 		char [] result = removedEscapedNewline( CharArrayUtils.extract( buffer, start, len ) );
 		if (tokenType == keywords.undefined)
-			return new ImagedToken(IToken.tIDENTIFIER, new String( result));
-		return new SimpleToken(tokenType);
+			return new ImagedToken(IToken.tIDENTIFIER, new String( result), bufferPos[bufferStackPos]+ 1);
+		return new SimpleToken(tokenType, start + len);
 	}
 	
 	private IToken scanString() {
@@ -762,25 +782,27 @@ public class Scanner2 implements IScanner, IScannerData {
 		// We should really throw an exception if we didn't get the terminating
 		// quote before the end of buffer
 		
-		return new ImagedToken(tokenType, new String(buffer, stringStart, stringLen));
+		return new ImagedToken(tokenType, new String(buffer, stringStart, stringLen), stringStart + stringLen+ 1);
 	}
 
-	private IToken scanCharLiteral() {
+	private IToken scanCharLiteral(boolean b) {
 		char[] buffer = bufferStack[bufferStackPos];
-		int start = bufferPos[bufferStackPos] + 1;
+		int start = bufferPos[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 
 		int tokenType = IToken.tCHAR;
+		int length = 1;
 		if (buffer[bufferPos[bufferStackPos]] == 'L') {
 			++bufferPos[bufferStackPos];
 			tokenType = IToken.tLCHAR;
+			++length;
 		}
 
 		if (start >= limit) {
-			return new ImagedToken(tokenType, new String(emptyCharArray));
+			return new ImagedToken(tokenType, new String(emptyCharArray), start);
 		}
 
-		int length = 0;
+		
 		boolean escaped = false;
 		while (++bufferPos[bufferStackPos] < limit) {
 			++length;
@@ -794,13 +816,13 @@ public class Scanner2 implements IScanner, IScannerData {
 			}
 			escaped = false;
 		}
-		--length;
+		
 		
 		char[] image = length > 0
 			? CharArrayUtils.extract(buffer, start, length)
 			: emptyCharArray;
 
-		return new ImagedToken(IToken.tCHAR, new String(image));
+		return new ImagedToken(tokenType, new String(image), start + length+ 1 );
 	}
 	
 	private IToken scanNumber() {
@@ -978,10 +1000,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		return new ImagedToken(isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER,
 				new String(buffer, start,
-						bufferPos[bufferStackPos] - start + 1));
+						bufferPos[bufferStackPos] - start + 1), bufferPos[bufferStackPos]+ 1);
 	}
 	
-	private void handlePPDirective() throws ScannerException {
+	private void handlePPDirective(int pos) throws ScannerException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 	
@@ -1008,13 +1030,13 @@ public class Scanner2 implements IScanner, IScannerData {
 			if (type != ppKeywords.undefined) {
 				switch (type) {
 					case ppInclude:
-						handlePPInclude(false);
+						handlePPInclude(pos,false);
 						return;
 					case ppInclude_next:
-						handlePPInclude(true);
+						handlePPInclude(pos, true);
 						return;
 					case ppDefine:
-						handlePPDefine();
+						handlePPDefine(pos);
 						return;
 					case ppUndef:
 						handlePPUndef();
@@ -1052,12 +1074,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 	}		
 
-	private void handlePPInclude(boolean next) {
+	private void handlePPInclude(int pos2, boolean next) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
 		skipOverWhiteSpace();
-		int startOffset = bufferPos[bufferStackPos]; //TODO - WRONG should be #include directive
+		int startOffset = pos2;
 		int pos = ++bufferPos[bufferStackPos];
 		if (pos >= limit)
 			return;
@@ -1134,10 +1156,14 @@ public class Scanner2 implements IScanner, IScannerData {
 			Object expObject = definitions.get(buffer, startPos, len );
 			
 			if (expObject != null) {
+				--bufferPos[bufferStackPos];
 				if (expObject instanceof FunctionStyleMacro) 
 				{
-					--bufferPos[bufferStackPos];
 					filename = new String( handleFunctionStyleMacro((FunctionStyleMacro)expObject, false) );
+				}
+				else if ( expObject instanceof ObjectStyleMacro )
+				{
+					filename = new String( ((ObjectStyleMacro)expObject).expansion );
 				}
 			}
 		}
@@ -1199,11 +1225,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 	}
 	
-	private void handlePPDefine() {
+	private void handlePPDefine(int pos2) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
-		int startingOffset = bufferPos[bufferStackPos]; //TODO this is wrong
+		int startingOffset = pos2;
 		int startingLine = 0, endingLine = 0, nameLine = 0;
 		skipOverWhiteSpace();
 		
@@ -2142,6 +2168,8 @@ public class Scanner2 implements IScanner, IScannerData {
 			new char[][] { "arg".toCharArray() } ); //$NON-NLS-1$
 
 	private IASTFactory astFactory;
+
+	private int offsetBoundary = -1;
 	
 	protected void setupBuiltInMacros() {
 
@@ -2320,15 +2348,15 @@ public class Scanner2 implements IScanner, IScannerData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setASTFactory(org.eclipse.cdt.core.parser.ast.IASTFactory)
 	 */
-	public void setASTFactory(IASTFactory f) {
+	public final void setASTFactory(IASTFactory f) {
 		astFactory = f;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#setOffsetBoundary(int)
 	 */
-	public void setOffsetBoundary(int offset) {
-		// TODO Auto-generated method stub
-
+	public final void setOffsetBoundary(int offset) {
+		offsetBoundary = offset;
+		bufferLimit[0] = offset;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#setScannerContext(org.eclipse.cdt.internal.core.parser.scanner.IScannerContext)

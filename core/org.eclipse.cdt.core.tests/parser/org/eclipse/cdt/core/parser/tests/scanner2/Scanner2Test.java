@@ -1683,4 +1683,12 @@ public class Scanner2Test extends BaseScanner2Test
     	validateString("hi"); //$NON-NLS-1$
     	validateEOF();
     }
+    
+    public void testWideToNarrowConcatenation() throws Exception
+	{
+    	initializeScanner( "\"ONE\" L\"TWO\""); //$NON-NLS-1$
+    	validateString( "ONETWO", true); //$NON-NLS-1$
+    	validateEOF();
+	}
+
 }

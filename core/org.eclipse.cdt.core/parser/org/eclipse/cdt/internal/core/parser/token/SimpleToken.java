@@ -23,9 +23,10 @@ public class SimpleToken extends AbstractToken implements IToken {
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public SimpleToken( int t )
+	public SimpleToken( int t, int endOffset )
 	{
 		super( t );
+		setOffsetAndLength( endOffset );
 	}
 
 	protected int offset;
@@ -45,6 +46,11 @@ public class SimpleToken extends AbstractToken implements IToken {
 	 */
 	protected void setOffsetAndLength(IScannerContext context) {
 		offset = context.getOffset() - getLength();		
+	}
+	
+	protected void setOffsetAndLength( int endOffset )
+	{
+		this.offset = endOffset - getLength();
 	}
 	
 	public String getImage() { 

@@ -136,7 +136,7 @@ public class BaseScanner2Test extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tCHAR );
 			Character c = new Character( expected ); 
-			assertEquals( t.getImage(), c.toString() ); 
+			assertEquals( t.getImage(), '\'' + c.toString() + '\'' ); 
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}
@@ -147,7 +147,7 @@ public class BaseScanner2Test extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tCHAR );
-			assertEquals( t.getImage(), expected ); 
+			assertEquals( t.getImage(), '\'' + expected + '\''); 
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		} 
@@ -240,7 +240,7 @@ public class BaseScanner2Test extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			assertEquals(IToken.tLCHAR, t.getType());
-			assertEquals(t.getImage(), string); 
+			assertEquals(t.getImage(), "L\'" + string + "\'"); 
 		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}		

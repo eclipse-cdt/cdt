@@ -551,6 +551,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
 				node.getCompletionContext(), null );
 
+		assertNotNull( result );
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
 		assertEquals( field.getName(), "aPrivate" ); //$NON-NLS-1$
@@ -575,6 +576,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				new IASTNode.LookupKind[] { IASTNode.LookupKind.ALL }, 
 				node.getCompletionContext(), null );
 
+		assertNotNull( result );
 		assertEquals( result.getResultsSize(), 1 );
 		IASTField field = (IASTField) result.getNodes().next();
 		assertEquals( field.getName(), "aPrivate" ); //$NON-NLS-1$

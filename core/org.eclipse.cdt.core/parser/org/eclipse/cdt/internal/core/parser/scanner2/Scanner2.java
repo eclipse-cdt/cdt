@@ -3172,6 +3172,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		return workingCopies.iterator();
 	}
 
+	public char[] getMainFilename() {
+		if( bufferData[0] instanceof CodeReader && bufferData != null && bufferData[0] != null )
+			return ((CodeReader)bufferData[0]).filename;
+
+		return emptyCharArray;
+	}
 	
 	public final char[] getCurrentFilename() {
 		for( int i = bufferStackPos; i >= 0; --i )

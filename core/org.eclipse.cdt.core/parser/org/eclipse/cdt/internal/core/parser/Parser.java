@@ -103,6 +103,7 @@ public class Parser implements IParserData, IParser
 	protected int firstErrorLine = FIRST_ERROR_UNSET;
 	private BacktrackException backtrack = new BacktrackException();
 	private int backtrackCount = 0;
+	private char[] parserStartFilename = null;
 
 	protected final void throwBacktrack( IProblem problem ) throws BacktrackException {
 		++backtrackCount;
@@ -2909,6 +2910,7 @@ public class Parser implements IParserData, IParser
         ISourceElementRequestor callback,
         ParserLanguage language, IParserLogService log, IParserExtension extension )
     {
+    	this.parserStartFilename = scanner.getMainFilename();
 		this.scanner = scanner;
 		this.language = language;
 		this.log = log;
@@ -6576,7 +6578,7 @@ public class Parser implements IParserData, IParser
 	 */
 	protected void handleNewToken(IToken value) {
 		if( mode != ParserMode.SELECTION_PARSE ) return;
-		if( value != null && scanner.isOnTopContext() )
+		if( value != null && CharArrayUtils.equals(value.getFilename(), parserStartFilename))
 		{
 			TraceUtil.outputTrace(log, "IToken provided w/offsets ", null, value.getOffset(), " & ", value.getEndOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean change = false;
@@ -6729,7 +6731,7 @@ public class Parser implements IParserData, IParser
 	protected void setGreaterNameContext(ITokenDuple tokenDuple) {
 		if( mode != ParserMode.SELECTION_PARSE ) return;
 		if( pastPointOfSelection ) return;
-		if( greaterContextDuple == null && scanner.isOnTopContext() && lastTokenOfDuple != null && firstTokenOfDuple != null )
+		if( greaterContextDuple == null && lastTokenOfDuple != null && firstTokenOfDuple != null && CharArrayUtils.equals(tokenDuple.getFilename(), parserStartFilename))
 		{
 			if( tokenDuple.getStartOffset() > lastTokenOfDuple.getEndOffset() )
 			{

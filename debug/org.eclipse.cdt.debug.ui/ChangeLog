@@ -1,3 +1,7 @@
+2004-11-11 Mikhail Khodjaiants
+	Fix for bug 73801: Function breakpoints set from C View aren't shown in editor.
+	* ToggleBreakpointAdapter.java
+
 2004-11-10 Mikhail Khodjaiants
 	Fix for bug 77437: Disassembly blocks with no associated source code has PC pointer on wrong line.
 	* DisassemblyEditorInput.java

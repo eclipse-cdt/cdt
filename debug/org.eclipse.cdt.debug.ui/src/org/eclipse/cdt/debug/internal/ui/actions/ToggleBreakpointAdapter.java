@@ -179,6 +179,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						if ( sourceRange != null ) {
 							charStart = sourceRange.getStartPos();
 							charEnd = charStart + sourceRange.getLength();
+							if ( charEnd <= 0 ) {
+								charStart = -1;
+								charEnd = -1;
+							}
 							lineNumber = sourceRange.getStartLine();
 						}
 					}

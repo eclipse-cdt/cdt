@@ -315,6 +315,10 @@
             name="%IncludeSymbolProperties.name"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.make.core.makeNature">
+         </filter>
       </page>
       <page
             objectClass="org.eclipse.core.resources.IProject"
@@ -324,7 +328,7 @@
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
          <filter
                name="nature"
-               value="org.eclipse.cdt.core.cnature">
+               value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page>
         

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
@@ -43,6 +44,8 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	
 	public static final String POTENTIAL_MATCH = CSearchMessages.getString("CSearchResultLabelProvider.potentialMatch"); //$NON-NLS-1$
 
+	private CSearchResultPage searchPage = null;
+	
 	public CSearchResultLabelProvider(){
 		_sortOrder = SHOW_PATH;
 	}
@@ -51,8 +54,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	 * @param page
 	 */
 	public CSearchResultLabelProvider(CSearchResultPage page) {
-		
-		// TODO Auto-generated constructor stub
+		searchPage = page;
 	}
 
 	public Image getImage( Object element ) {
@@ -160,6 +162,18 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		String result = ""; //$NON-NLS-1$
 		String path = (resource != null ) ? resource.getFullPath().toString() : ""; //$NON-NLS-1$
 		
+	//	Object key = computeGroupByKey(match);
+		
+		if (searchPage != null){
+			int matchCount = searchPage.getDisplayedMatchCount(new Match(match,match.getStartOffset(),match.getEndOffset() - match.getStartOffset()));
+			if (matchCount < 2){
+				System.out.println("Singular");
+			}else{
+			System.out.println("Plural"); //$NON-NLS-1$
+			}
+		}
+		
+		
 		switch( getOrder() ){
 			case SHOW_NAME_ONLY:
 				result = match.getName();
@@ -200,6 +214,11 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	}
 	public void setOrder(int orderFlag) {
 		_sortOrder = orderFlag;
+	}
+	
+	public Object computeGroupByKey(IMatch match) {
+		
+		return match.getParentName() + "::" + match.getName() + " - " + match.getLocation(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private int _sortOrder;

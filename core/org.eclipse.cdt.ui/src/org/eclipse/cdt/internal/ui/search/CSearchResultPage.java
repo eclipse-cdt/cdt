@@ -154,7 +154,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
 	 */
 	protected void configureTableViewer(TableViewer viewer) {
-		viewer.setLabelProvider(new CountLabelProvider(this, new CSearchResultLabelProvider()));
+		viewer.setLabelProvider(new CountLabelProvider(this, new CSearchResultLabelProvider(this)));
 		_contentProvider=new CSearchTableContentProvider(viewer);
 		viewer.setContentProvider(_contentProvider);
 		setSortOrder(_currentSortOrder);
@@ -248,6 +248,8 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		if (getLayout() != FLAG_LAYOUT_FLAT)
 			addGroupActions(tbm);
 	}
+	
+	
 		
 	
 }

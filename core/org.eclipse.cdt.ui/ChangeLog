@@ -1,3 +1,9 @@
+2003-01-02 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java(createAnnotationModel):
+	Check for IStorageEditorInput and use the getAdapter() to find a resource for the
+	annotation model.
+
 2002-12-12 Judy N Green
 	*src/org/eclipse/cdt/internal/ui/editor/CEditor.java
 	Fixed Bugzilla bug PR 25176

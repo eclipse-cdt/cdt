@@ -201,15 +201,8 @@ public class CElementLabelProvider extends LabelProvider {
 			for (int i= 0; i < fAdornmentProviders.length; i++) {
 				imageFlags |= fAdornmentProviders[i].computeAdornmentFlags(element);
 			}
-		}
-		
-		if(element instanceof ICElement) {
-			Image result= fImageLabelProvider.getImageLabel(element, imageFlags);
-			if (result != null) {
-				return result;
-			}
-		}
-		return fWorkbenchLabelProvider.getImage(element);
+		}		
+		return fImageLabelProvider.getImageLabel(element, imageFlags);
 	}
 
 	/**

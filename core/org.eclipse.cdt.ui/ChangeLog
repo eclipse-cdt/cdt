@@ -1,3 +1,10 @@
+2004-03-07 Alain Magloire
+
+	Fix the point size of the icon in the CElementLabelProvider.
+	There were too big.
+
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java
+
 2004-03-05 Alain Magloire
 
 	New icons.

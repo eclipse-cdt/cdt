@@ -14,13 +14,19 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.wizards.UpdateMakeProjectWizard;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -102,6 +108,57 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 			MakeUIPlugin.logException(e, "Error", "Error updating Make Projects");
 		}
 	}
+	
+	public static class TargetConvertVisitor implements IResourceProxyVisitor {
+		private final int TOTAL_WORK = 100;
+		private int halfWay = TOTAL_WORK / 2;
+		private int currentIncrement = 4;
+		private int nextProgress = currentIncrement;
+		private int worked = 0;
+		IProgressMonitor monitor;
+
+		public TargetConvertVisitor(IProgressMonitor monitor) {
+			this.monitor = monitor;
+			monitor.beginTask("Converting Make Targets...", TOTAL_WORK);
+		}
+
+		public boolean visit(IResourceProxy proxy) throws CoreException {
+			try {
+				if (proxy.getType() != IResource.FOLDER && proxy.getType() != IResource.PROJECT) {
+					return false;
+				}
+				IContainer container = (IContainer) proxy.requestResource();
+				monitor.subTask(container.getProjectRelativePath().toString());
+				QualifiedName qName = new QualifiedName("org.eclipse.cdt.make", "goals");
+				String goal = container.getPersistentProperty(qName);
+				if (goal != null) {
+					goal = goal.trim();
+					IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
+					String[] builder = manager.getTargetBuilders(container.getProject());
+					IMakeTarget target = manager.createTarget(container.getProject(), goal, builder[0]);
+					target.setBuildTarget(goal);
+					manager.addTarget(container, target);
+					container.setPersistentProperty(qName, null);
+				}
+				return true;
+			} finally {
+				if (--nextProgress <= 0) {
+					//we have exhausted the current increment, so report progress
+					monitor.worked(1);
+					worked++;
+					if (worked >= halfWay) {
+						//we have passed the current halfway point, so double the
+						//increment and reset the halfway point.
+						currentIncrement *= 2;
+						halfWay += (TOTAL_WORK - halfWay) / 2;
+					}
+					//reset the progress counter to another full increment
+					nextProgress = currentIncrement;
+				}
+
+			}
+		}
+	}
 
 	protected static void doProjectUpdate(IProgressMonitor monitor, IProject[] project) throws CoreException {
 		monitor.beginTask("Updating make Projects...", project.length * 3);
@@ -112,29 +169,44 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					project[i],
 					MakeCorePlugin.OLD_BUILDER_ID,
 					new SubProgressMonitor(monitor, 1));
-				
+
 				// convert .cdtproject
 				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.getUniqueIdentifier() + ".make", true);
 				// add new nature
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
-				
+
 				// move existing build properties to new
 				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
-				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
-				String location = project[i].getPersistentProperty(qlocation);
-				if ( location != null) {
-					newInfo.setBuildCommand(new Path(location));
+				final int LOCATION = 0, FULL_ARGS = 1, INC_ARGS = 2, STOP_ERORR = 3, USE_DEFAULT = 4;
+				QualifiedName[] qName = new QualifiedName[USE_DEFAULT + 1];
+				qName[LOCATION] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
+				qName[FULL_ARGS] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildFullArguments");
+				qName[INC_ARGS] = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildIncrementalArguments");
+				qName[STOP_ERORR] = new QualifiedName(CCorePlugin.PLUGIN_ID, "stopOnError");
+				qName[USE_DEFAULT] = new QualifiedName(CCorePlugin.PLUGIN_ID, "useDefaultBuildCmd");
+
+				String property = project[i].getPersistentProperty(qName[LOCATION]);
+				if (property != null) {
+					newInfo.setBuildCommand(new Path(property));
 				}
-				
-				//remove old properties
-				QualifiedName[] qName = 
-					{
-						new QualifiedName(CCorePlugin.PLUGIN_ID, "buildFullArguments"),
-						new QualifiedName(CCorePlugin.PLUGIN_ID, "buildIncrementalArguments"),
-						new QualifiedName("org.eclipse.cdt", "make.goals")};
+				property = project[i].getPersistentProperty(qName[FULL_ARGS]);
+				if (property != null) {
+					newInfo.setBuildArguments(property);
+				}
+				property = project[i].getPersistentProperty(qName[STOP_ERORR]);
+				if (property != null) {
+					newInfo.setStopOnError(Boolean.valueOf(property).booleanValue());
+				}
+				property = project[i].getPersistentProperty(qName[USE_DEFAULT]);
+				if (property != null) {
+					newInfo.setUseDefaultBuildCmd(Boolean.valueOf(property).booleanValue());
+				}
 				for (int j = 0; j < qName.length; j++) {
 					project[i].setPersistentProperty(qName[j], null);
 				}
+
+				IProgressMonitor subMon = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+				project[i].accept(new TargetConvertVisitor(subMon), 0);
 				monitor.worked(1);
 			}
 		} finally {
@@ -145,5 +217,4 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}
-
 }

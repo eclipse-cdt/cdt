@@ -38,7 +38,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	public MakeContentProvider() {
 		this(false);
 	}
-	
+
 	public MakeContentProvider(boolean flat) {
 		bFlatten = flat;
 	}
@@ -80,10 +80,10 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	}
 
 	public Object[] getElements(Object obj) {
-		if ( bFlatten ) {
+		if (bFlatten) {
 			List list = new ArrayList();
 			Object[] children = getChildren(obj);
-			for( int i = 0; i < children.length; i++ ) {
+			for (int i = 0; i < children.length; i++) {
 				list.add(children[i]);
 				list.addAll(Arrays.asList(getElements(children[i])));
 			}
@@ -145,7 +145,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					ctrl.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							if (ctrl != null && !ctrl.isDisposed()) {
-								viewer.refresh(event.getTarget().getContainer());
+								if (bFlatten) {
+									viewer.refresh();
+								} else {
+									viewer.refresh(event.getTarget().getContainer());
+								}
 							}
 						}
 					});

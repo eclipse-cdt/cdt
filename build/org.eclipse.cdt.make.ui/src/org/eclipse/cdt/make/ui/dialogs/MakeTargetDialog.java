@@ -175,9 +175,10 @@ public class MakeTargetDialog extends Dialog {
 				if (newName.equals("")) {
 					fStatusLine.setErrorMessage("Must specify a target name.");
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				} else if (fTarget != null
-					&& fTarget.getName().equals(newName)
-					|| fTargetManager.findTarget(fContainer, newName) == null) {
+				} else if (
+					fTarget != null
+						&& fTarget.getName().equals(newName)
+						|| fTargetManager.findTarget(fContainer, newName) == null) {
 					fStatusLine.setErrorMessage(null);
 					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				} else {
@@ -298,50 +299,47 @@ public class MakeTargetDialog extends Dialog {
 
 	protected void okPressed() {
 		IMakeTarget target = fTarget;
-		if (fTarget == null) {
-			target = fTargetManager.createTarget(targetNameText.getText().trim(), targetBuildID);
-		}
+		try {
+			if (fTarget == null) {
+				target = fTargetManager.createTarget(fContainer.getProject(), targetNameText.getText().trim(), targetBuildID);
+			}
 
-		target.setStopOnError(isStopOnError());
-		target.setUseDefaultBuildCmd(useDefaultBuildCmd());
-		if (!useDefaultBuildCmd()) {
-			String bldLine = getBuildLine();
-			int start = 0;
-			int end = -1;
-			if (!bldLine.startsWith("\"")) { //$NON-NLS-1$
-				end = bldLine.indexOf(' ');
-			} else {
-				start = 1;
-				end = bldLine.indexOf('"', 1);
+			target.setStopOnError(isStopOnError());
+			target.setUseDefaultBuildCmd(useDefaultBuildCmd());
+			if (!useDefaultBuildCmd()) {
+				String bldLine = getBuildLine();
+				int start = 0;
+				int end = -1;
+				if (!bldLine.startsWith("\"")) { //$NON-NLS-1$
+					end = bldLine.indexOf(' ');
+				} else {
+					start = 1;
+					end = bldLine.indexOf('"', 1);
+				}
+				IPath path;
+				if (end == -1) {
+					path = new Path(bldLine);
+				} else {
+					path = new Path(bldLine.substring(start, end));
+				}
+				target.setBuildCommand(path);
+				String args = ""; //$NON-NLS-1$
+				if (end != -1) {
+					args = bldLine.substring(end + 1);
+				}
+				target.setBuildArguments(args);
 			}
-			IPath path;
-			if (end == -1) {
-				path = new Path(bldLine);
-			} else {
-				path = new Path(bldLine.substring(start, end));
-			}
-			target.setBuildCommand(path);
-			String args = ""; //$NON-NLS-1$
-			if (end != -1) {
-				args = bldLine.substring(end + 1);
-			}
-			target.setBuildArguments(args);
-		}
-		target.setBuildTarget(targetText.getText().trim());
+			target.setBuildTarget(targetText.getText().trim());
 
-		if (fTarget == null) {
-			try {
+			if (fTarget == null) {
 				fTargetManager.addTarget(fContainer, target);
-			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(getShell(), "Make Target Error", "Error adding target", e);
-			}
-		} else {
-			if (!target.getName().equals(targetNameText.getText().trim())) {
-				try {
+			} else {
+				if (!target.getName().equals(targetNameText.getText().trim())) {
 					fTargetManager.renameTarget(target, targetNameText.getText().trim());
-				} catch (CoreException e) {
 				}
 			}
+		} catch (CoreException e) {
+			MakeUIPlugin.errorDialog(getShell(), "Make Target Error", "Error adding target", e);
 		}
 		super.okPressed();
 	}

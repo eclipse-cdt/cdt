@@ -9,11 +9,12 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class MakeLabelProvider extends LabelProvider {
+public class MakeLabelProvider extends LabelProvider implements ITableLabelProvider {
 	private IPath pathPrefix;
 
 	WorkbenchLabelProvider fLableProvider = new WorkbenchLabelProvider();
@@ -21,7 +22,7 @@ public class MakeLabelProvider extends LabelProvider {
 	public MakeLabelProvider() {
 		this(null);
 	}
-	
+
 	public MakeLabelProvider(IPath removePrefix) {
 		pathPrefix = removePrefix;
 	}
@@ -33,7 +34,7 @@ public class MakeLabelProvider extends LabelProvider {
 		if (obj instanceof IMakeTarget) {
 			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_BUILD_TARGET);
 		} else if (obj instanceof IContainer) {
-			return fLableProvider.getImage(obj);			
+			return fLableProvider.getImage(obj);
 		}
 		return image;
 	}
@@ -42,37 +43,40 @@ public class MakeLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getText(Object)
 	 */
 	public String getText(Object obj) {
-		StringBuffer str = new StringBuffer();
 		if (obj instanceof IMakeTarget) {
-			if ( pathPrefix != null) {
-				IPath targetPath = ((IMakeTarget)obj).getContainer().getProjectRelativePath();
-				if ( pathPrefix.isPrefixOf(targetPath) ) {
-					targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
-				}
-				str.append(targetPath.toString());
-				if (targetPath.segmentCount() > 0) {
-					str.append("/");
-				}
-			}
-			str.append(((IMakeTarget)obj).getName());
+			return ((IMakeTarget) obj).getName();
 		} else if (obj instanceof IContainer) {
-			if ( pathPrefix != null ) {
-				IPath targetPath = ((IContainer)obj).getProjectRelativePath();
-				if ( pathPrefix.isPrefixOf(targetPath) ) {
-					targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
-				}
-				str.append(targetPath.toString());
-				str.append("/");
-			} else {
-				return fLableProvider.getText(obj);
-			}			
+			return fLableProvider.getText(obj);
 		}
-		return str.toString();
+		return "";
 	}
-	
+
 	public void dispose() {
 		super.dispose();
 		fLableProvider.dispose();
 	}
 
+	public Image getColumnImage(Object obj, int columnIndex) {
+		return columnIndex == 0 ? getImage(obj) : null;
+	}
+
+	public String getColumnText(Object obj, int columnIndex) {
+		switch (columnIndex) {
+			case 0 :
+				return getText(obj);
+			case 1 :
+				if (obj instanceof IMakeTarget) {
+					if (pathPrefix != null) {
+						IPath targetPath = ((IMakeTarget) obj).getContainer().getProjectRelativePath();
+						if (pathPrefix.isPrefixOf(targetPath)) {
+							targetPath = targetPath.removeFirstSegments(pathPrefix.segmentCount());
+						}
+						if (targetPath.segmentCount() > 0) {
+							return targetPath.toString();
+						}
+					}
+				}
+		}
+		return "";
+	}
 }

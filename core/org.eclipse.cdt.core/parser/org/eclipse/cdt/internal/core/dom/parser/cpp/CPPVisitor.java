@@ -73,8 +73,11 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -83,6 +86,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -98,6 +102,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -751,6 +756,109 @@ public class CPPVisitor {
 			return PROCESS_CONTINUE;
 		}
 	}
+	
+	public static class CollectReferencesAction extends CPPBaseVisitorAction {
+		private static final int DEFAULT_LIST_SIZE = 8;
+		private IASTName [] refs;
+		private IBinding binding;
+		private int idx = 0;
+		private int kind;
+		
+		private static final int KIND_LABEL  = 1;
+		private static final int KIND_OBJ_FN = 2;
+		private static final int KIND_TYPE   = 3;
+		private static final int KIND_NAMEPSACE   = 4;
+		
+		
+		public CollectReferencesAction( IBinding binding ){
+			this.binding = binding;
+			this.refs = new IASTName[ DEFAULT_LIST_SIZE ];
+			
+			processNames = true;
+			if( binding instanceof ILabel )
+				kind = KIND_LABEL;
+			else if( binding instanceof ICompositeType || 
+					 binding instanceof ITypedef || 
+					 binding instanceof IEnumeration)
+			{
+				kind = KIND_TYPE;
+			}
+			else if( binding instanceof ICPPNamespace) {
+				kind = KIND_NAMEPSACE;
+			} else 
+				kind = KIND_OBJ_FN;
+		}
+		
+		public int processName( IASTName name ){
+			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
+			
+			ASTNodeProperty prop = name.getPropertyInParent();
+			
+			switch( kind ){
+				case KIND_LABEL:
+					if( prop == IASTGotoStatement.NAME )
+						break;
+					return PROCESS_CONTINUE;
+				case KIND_TYPE:
+					if( prop == IASTNamedTypeSpecifier.NAME || 
+							prop == ICPPASTPointerToMember.NAME ||
+							prop == ICPPASTTypenameExpression.TYPENAME ||
+							prop == ICPPASTUsingDeclaration.NAME ||
+							prop == ICPPASTQualifiedName.SEGMENT_NAME)
+						break;
+					else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
+						IASTNode p = name.getParent().getParent();
+						if( !(p instanceof IASTSimpleDeclaration) ||
+							((IASTSimpleDeclaration)p).getDeclarators().length > 0 )
+						{
+							break;
+						}
+					}
+					return PROCESS_CONTINUE;
+				case KIND_OBJ_FN:
+					if( prop == IASTIdExpression.ID_NAME || 
+						prop == IASTFieldReference.FIELD_NAME || 
+						prop == ICASTFieldDesignator.FIELD_NAME ||
+						prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						prop == ICPPASTQualifiedName.SEGMENT_NAME)
+					{
+						break;
+					}
+					return PROCESS_CONTINUE;
+				case KIND_NAMEPSACE:
+					if( prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
+							prop == ICPPASTNamespaceAlias.MAPPING_NAME ||
+							prop == ICPPASTUsingDeclaration.NAME ||
+							prop == ICPPASTQualifiedName.SEGMENT_NAME) {
+						break;
+					}					
+					return PROCESS_CONTINUE;
+			}
+			
+			if( CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) &&
+					name.resolveBinding() == binding ){
+				if( refs.length == idx ){
+					IASTName [] temp = new IASTName[ refs.length * 2 ];
+					System.arraycopy( refs, 0, temp, 0, refs.length );
+					refs = temp;
+				}
+				refs[idx++] = name;
+			}
+			return PROCESS_CONTINUE;
+		}
+		public IASTName[] getReferences(){
+			if( idx < refs.length ){
+				IASTName [] temp = new IASTName[ idx ];
+				System.arraycopy( refs, 0, temp, 0, idx );
+				refs = temp;
+			}
+			return refs;
+		}
+	}
+
 	
 	public static void visitTranslationUnit( IASTTranslationUnit tu, CPPBaseVisitorAction action ){
 		IASTDeclaration [] decls = tu.getDeclarations();
@@ -1508,4 +1616,14 @@ public class CPPVisitor {
 		return action.getProblems();
 	}
 
+	/**
+	 * @param unit
+	 * @param binding
+	 * @return
+	 */
+	public static IASTName[] getReferences(IASTTranslationUnit tu, IBinding binding) {
+		CollectReferencesAction action = new CollectReferencesAction( binding );
+		visitTranslationUnit( tu, action );
+		return action.getReferences();
+	}
 }

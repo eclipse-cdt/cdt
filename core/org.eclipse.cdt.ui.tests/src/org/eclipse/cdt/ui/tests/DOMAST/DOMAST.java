@@ -636,7 +636,8 @@ public class DOMAST extends ViewPart {
      		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
-     			// TODO Devin when implemented in CPPVisitor
+     			IASTName[] names = CPPVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
+     			displayNames(names, OPEN_REFERENCES, pattern.toString());
      		} else {
      			IASTName[] names = CVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
      			displayNames(names, OPEN_REFERENCES, pattern.toString());

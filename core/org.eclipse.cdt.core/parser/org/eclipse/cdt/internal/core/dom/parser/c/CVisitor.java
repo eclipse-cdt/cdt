@@ -454,7 +454,8 @@ public class CVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( name.resolveBinding() == binding ){
+			if( CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) && 
+					name.resolveBinding() == binding ){
 				if( refs.length == idx ){
 					IASTName [] temp = new IASTName[ refs.length * 2 ];
 					System.arraycopy( refs, 0, temp, 0, refs.length );

@@ -106,13 +106,17 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 	public ICDISignal getSignal(String name) {
 		ICDISignal sig = findSignal(name);
 		if (sig == null) {
+			MISigHandle miSig = null;
 			try {
-				MISigHandle miSig = getMISignal(name);
+				miSig = getMISignal(name);
 				sig = new Signal(this, miSig);
 				if (signalsList != null) {
 					signalsList.add(sig);
 				}
 			} catch (CDIException e) {
+				// The session maybe terminated because of the signal.
+				miSig = new MISigHandle(name, false, false, false, name);
+				sig = new Signal(this, miSig);
 			}
 		}
 		return sig;

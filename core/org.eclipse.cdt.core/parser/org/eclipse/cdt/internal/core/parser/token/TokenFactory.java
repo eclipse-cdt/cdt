@@ -45,6 +45,7 @@ public class TokenFactory {
 
 	public static ITokenDuple createTokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
 		if( secondDuple == null ) return firstDuple;
+		if( firstDuple == null ) return secondDuple;
 		List [] f1 = firstDuple.getTemplateIdArgLists();
 		List [] f2 = secondDuple.getTemplateIdArgLists();
 		if( f1 == null && f2 == null )

@@ -2066,4 +2066,19 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	parse( "namespace {  int abc; }");//$NON-NLS-1$
     	assertTrue( callback.problems.isEmpty() );
 	}
+    
+    public void testBug73615() throws Exception
+	{
+    	for( int i = 0; i < 2; ++i )
+    	{
+    		StringWriter writer = new StringWriter();
+    		if( i == 0 )
+    			writer.write( "class B;\n");
+    		writer.write( "class A { A( B * ); };\n");
+    		if( i == 0 )
+    			parse( writer.toString() );
+    		else
+    			parse( writer.toString(), false );
+    	}
+	}
 }

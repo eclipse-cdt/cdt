@@ -175,7 +175,9 @@ public final class TemplateEngine {
 		} else {
 			Cost cost = null;
 			try {
-				cost = ParserSymbolTable.checkStandardConversionSequence( arg, param.getTypeInfo());
+				TypeInfo info = new TypeInfo( param.getTypeInfo() );
+				info.setType( info.getTemplateParameterType() );
+				cost = ParserSymbolTable.checkStandardConversionSequence( arg, info );
 			} catch (ParserSymbolTableException e) {
 			}
 			

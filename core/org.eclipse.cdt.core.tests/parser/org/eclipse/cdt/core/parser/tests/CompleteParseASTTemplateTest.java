@@ -656,4 +656,47 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		
 		parse( writer.toString () );
 	}
+	
+	public void testBug44338() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < bool T > class A {   ");
+		writer.write( "   void foo( bool b = T );      ");
+		writer.write( "};                              ");
+		writer.write( "typedef A< 1 < 2 > A_TRUE;      ");
+		writer.write( "typedef A< ( 1 > 2 ) > A_FALSE; ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTypedefDeclaration  a_true = (IASTTypedefDeclaration) i.next();
+		IASTTypedefDeclaration  a_false = (IASTTypedefDeclaration) i.next();
+	}
+	
+	public void testBug44338_2() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "template < int i > class X {};   ");
+		writer.write( "template < class T > class Y {}; ");
+		writer.write( "Y< X < 1 > > y1;                 ");
+		writer.write( "Y< X < 6 >> 1 > > y2;            ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration templateX = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateY = (IASTTemplateDeclaration) i.next();
+		IASTVariable y1 = (IASTVariable) i.next();
+		IASTVariable y2 = (IASTVariable) i.next();
+	}
+	
+	public void testBug4338_3() throws Exception
+	{
+		try{
+			//this is expected to fail the parse
+			parse( "template < int i > class X {};  X< 1 > 2 > x; " );
+			assertTrue( false );
+		} catch ( ParserException e ){
+			assertTrue( e.getMessage().equals( "FAILURE" ) );
+		}
+	}
 }

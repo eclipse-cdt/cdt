@@ -1,4 +1,7 @@
 2004-04-07 Andrew Niefer
+	fix bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=44338
+
+2004-04-07 Andrew Niefer
 	small changes to get through iostream under standard make with discovered symbols
 	- check null pointer in GCCScannerExtension.handlePreprocessorDirective, the null is probably a symptom of whatever 
 	  is giving us an unbalanced preprocessor directive

@@ -204,7 +204,6 @@ public class TokenDuple implements ITokenDuple {
 	    	if( ! iter.hasNext() )
 	    		return token;
 	    	
-	    	token = (IToken) iter.next();
 	    	LinkedList scopes = new LinkedList();
 	        scopes.add( LT );
 	        

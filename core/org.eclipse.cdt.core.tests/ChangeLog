@@ -1,3 +1,9 @@
+2004-04-07 Andrew Niefer
+	fix bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=44338
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testBug44338() 
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testBug44338_2() 
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testBug44338_3() 
+
 2004-04-07 John Camelon
 	Updated test cases that used IExpressionParser::expression().  
 	Added CompletionParseTest::testCompletionInFunctionBodyFullyQualified(). 

@@ -1,9 +1,13 @@
 Release CDT-3.0
 
+	* Drag && Drop support
+	  for ICElement classes , in the C/C++ project view and C Outliner.
+
 	* C/C++ Editor:
 		- coloring of operators, braces and numbers,
 		- outline in selectable dialog (Ctrl O) with search input.
 			* sorting action
+
 	* Template Preference Page for C/C++ Editor
 
 	

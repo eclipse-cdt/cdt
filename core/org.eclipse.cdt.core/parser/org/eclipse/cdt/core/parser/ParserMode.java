@@ -16,8 +16,6 @@ package org.eclipse.cdt.core.parser;
  */
 public class ParserMode extends Enum {
 	
-	public static final ParserMode EXPRESSION_PARSE = new ParserMode( 0 );
-	
 	// do not follow inclusions, do not parse function/method bodies
 	public static final ParserMode QUICK_PARSE = new ParserMode( 1 );
 

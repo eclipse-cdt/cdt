@@ -32,8 +32,8 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeId;
 import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.ASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.GCCASTCompleteExtension;
-import org.eclipse.cdt.internal.core.parser.ast.expression.GCCASTExpressionExtension;
 import org.eclipse.cdt.internal.core.parser.ast.gcc.ASTGCCDesignator;
+import org.eclipse.cdt.internal.core.parser.ast.quick.GCCASTExpressionExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
@@ -141,7 +141,7 @@ public abstract class GCCASTExtension implements IASTFactoryExtension {
 	 * @return
 	 */
 	public static IASTFactoryExtension createExtension(ParserMode parseMode) {
-		if( parseMode == ParserMode.EXPRESSION_PARSE ||	parseMode == ParserMode.QUICK_PARSE )
+		if( parseMode == ParserMode.QUICK_PARSE )
 			return new GCCASTExpressionExtension( parseMode );
 		
 		return new GCCASTCompleteExtension( parseMode );

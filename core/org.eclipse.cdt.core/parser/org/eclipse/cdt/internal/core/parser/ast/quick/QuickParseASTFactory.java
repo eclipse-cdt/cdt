@@ -60,7 +60,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionFactory;
 
 /**
 

@@ -13,26 +13,26 @@ import java.util.List;
  * GDB/MI register response parsing.
  */
 public class MIRegisterValue {
-	int name;
-	long value;
+	int number;
+	String value;
 
-	public MIRegisterValue(int number, long value) {
-		this.name = name;
-		this.value = value;
+	public MIRegisterValue(int n, String v) {
+		number = n;
+		value = v;
 	}
 
 	public int getNumber() {
-		return name;
+		return number;
 	}
 
-	public long getValue() {
+	public String getValue() {
 		return value;
 	} 
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("number=\"").append(name).append('"');
-		buffer.append(',').append("value=\"" + Long.toHexString(value) + "\"");
+		buffer.append("number=\"").append(number).append('"');
+		buffer.append(',').append("value=\"" + value + "\"");
 		return buffer.toString();
 	}
 
@@ -82,8 +82,7 @@ public class MIRegisterValue {
 
 			try {
 				int reg = Integer.parseInt(aName.trim());
-				long val = Long.decode(aValue.trim()).longValue();
-				arg = new MIRegisterValue(reg, val);
+				arg = new MIRegisterValue(reg, aValue.trim());
 			} catch (NumberFormatException e) {
 			}
 		}

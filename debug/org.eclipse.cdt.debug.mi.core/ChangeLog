@@ -1,3 +1,12 @@
+2003-01-29 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java (getSharedLibraryPaths):
+	New method.
+	(setSharedLibraryPaths): New method.
+	(setAutoLoadSymbols): New methos set autosolib.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java (setAutoSolib):
+	Move to SharedLibraryManager.java
+	
 2003-01-28 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/command/MIInfoSignals.java:

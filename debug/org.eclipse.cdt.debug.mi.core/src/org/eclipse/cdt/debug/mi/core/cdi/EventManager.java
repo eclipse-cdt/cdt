@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
@@ -46,37 +47,52 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	public void update(Observable o, Object arg) {
 		MIEvent miEvent = (MIEvent)arg;
 		CSession session = getCSession();
-		ICDIEvent cdiEvent = null;
+		List cdiList = new ArrayList(1);
 
 		if (miEvent instanceof MIStoppedEvent) {
 			processSuspendedEvent(miEvent);
-			cdiEvent = new SuspendedEvent(session, miEvent);
+			cdiList.add(new SuspendedEvent(session, miEvent));
 		} else if (miEvent instanceof MIRunningEvent) {
-			cdiEvent = new ResumedEvent(session, (MIRunningEvent)miEvent);
+			cdiList.add(new ResumedEvent(session, (MIRunningEvent)miEvent));
 		} else if (miEvent instanceof MIChangedEvent) {
 			if (miEvent instanceof MIVarChangedEvent) {
 				MIVarChangedEvent eventChanged = (MIVarChangedEvent)miEvent;
+				// We will receive a MIVarChangeEvent if the variable is
+				// no longer in scope in this case fire up a DestroyEvent
 				if (eventChanged.isInScope()) {
-					cdiEvent = new ChangedEvent(session, (MIVarChangedEvent)miEvent);
+					cdiList.add(new ChangedEvent(session, eventChanged));
 				} else {
-					cdiEvent = new DestroyedEvent(session, (MIVarChangedEvent)miEvent);
+					cdiList.add(new DestroyedEvent(session, eventChanged));
 				}
 			} else if (miEvent instanceof MIRegisterChangedEvent) {
-				cdiEvent = new ChangedEvent(session, (MIRegisterChangedEvent)miEvent);
+				cdiList.add(new ChangedEvent(session, (MIRegisterChangedEvent)miEvent));
+			} else if (miEvent instanceof MIMemoryChangedEvent) {
+				// We need to fire an event for all the register blocks
+				// that may contain the modified addresses.
+				MemoryManager mgr = (MemoryManager)session.getMemoryManager();
+				MemoryBlock[] blocks = mgr.listMemoryBlocks();
+				MIMemoryChangedEvent miMem = (MIMemoryChangedEvent)miEvent;
+				Long[] addresses = miMem.getAddresses();
+				for (int i = 0; i < blocks.length; i++) {
+					if (blocks[i].contains(addresses)) {
+						cdiList.add(new MemoryChangedEvent(session, blocks[i], miMem));
+					}
+				}
 			}
 		} else if (miEvent instanceof MIThreadExitEvent) {
-			cdiEvent = new DestroyedEvent(session,(MIThreadExitEvent)miEvent); 
+			cdiList.add(new DestroyedEvent(session,(MIThreadExitEvent)miEvent)); 
 		} else if (miEvent instanceof MIInferiorExitEvent) {
-			cdiEvent = new ExitedEvent(session, (MIInferiorExitEvent)miEvent);
+			cdiList.add(new ExitedEvent(session, (MIInferiorExitEvent)miEvent));
 		} else if (miEvent instanceof MIGDBExitEvent) {
-			cdiEvent = new DestroyedEvent(session);
+			cdiList.add(new DestroyedEvent(session));
 		} else if (miEvent instanceof MIDetachedEvent) {
-			cdiEvent = new DisconnectedEvent(session);
+			cdiList.add(new DisconnectedEvent(session));
 		}
 
 		// Fire the event;
 		if (isEnable) {
-			fireEvent(cdiEvent);
+			ICDIEvent[] cdiEvents = (ICDIEvent[])cdiList.toArray(new ICDIEvent[0]);
+			fireEvent(cdiEvents);
 		}
 	}
 
@@ -98,6 +114,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		list.remove(listener);
 	}
 
+	private void fireEvent(ICDIEvent[] cdiEvents) {
+		if (cdiEvents != null) {
+			for (int i = 0; i < cdiEvents.length; i++) {
+				fireEvent(cdiEvents[i]);
+			}
+		}
+	}
+
 	private void fireEvent(ICDIEvent cdiEvent) {
 		if (cdiEvent != null) {
 			ICDIEventListener[] listeners =
@@ -110,6 +134,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 
 	/**
 	 * When suspended arrives, reset managers and target.
+	 * Alse the variable and the memory needs to be updated and events
+	 * fired for changes.
 	 */
 	void processSuspendedEvent(MIEvent event) {
 		int threadId = 0;
@@ -139,11 +165,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 		target.updateState(threadId);
 
+		// Update the managers.
 		VariableManager varMgr = getCSession().getVariableManager();
 		RegisterManager regMgr = getCSession().getRegisterManager();
+		MemoryManager memMgr = (MemoryManager)getCSession().getMemoryManager();
 		try {
 			varMgr.update();
 			regMgr.update();
+			memMgr.update();
 		} catch (CDIException e) {
 			//System.out.println(e);
 		}

@@ -17,7 +17,6 @@ public class MakeUtil {
 
     final static String MAKE_GOALS = "goals";
     final static String MAKE_DIR = "buildir";
-    final static String MAKE_CONSOLE_MODE = "consoleMode";
 	final static String TARGET_ID = "org.eclipse.cdt.make";
 
     public static String [] decodeTargets (String property) {
@@ -54,11 +53,6 @@ public class MakeUtil {
     public static QualifiedName getQualifiedNameDir () {
 		return new QualifiedName(TARGET_ID, MAKE_DIR);
     }
-
-    public static QualifiedName getQualifiedNameConsoleMode () {
-		return new QualifiedName(TARGET_ID, MAKE_CONSOLE_MODE);
-    }
-
 
     public static String getSessionTarget(IResource resource) {
 		try {
@@ -123,24 +117,6 @@ public class MakeUtil {
 		}
     }
 
-	public static void setSessionConsoleMode(IResource resource, boolean mode) {
-		try {
-		    resource.setSessionProperty(getQualifiedNameConsoleMode(), 
-		    	new Boolean(mode));
-		} catch (CoreException e) {
-		}
-	}
-
-	public static boolean getSessionConsoleMode(IResource resource) {
-		try {
-		    Boolean b = (Boolean)resource.getSessionProperty(getQualifiedNameConsoleMode());
-		    if(null != b)
-				return b.booleanValue();
-		} catch (CoreException e) {
-		}
-		return true; // Clean console before session
-	}
-	
     public static void addPersistentTarget(IResource resource, String target) {
 		String[] targets = MakeUtil.getPersistentTargets (resource);
 		for (int i = 0; i < targets.length; i++) {

@@ -199,7 +199,6 @@ public class CBuildConfigView extends ViewPart implements IResourceChangeListene
 			try {
 				MakeUtil.setSessionBuildDir(m_prj, m_prj.getLocation().toOSString());
 				MakeUtil.setSessionTarget(m_prj, m_target);
-				MakeUtil.setSessionConsoleMode(m_prj, true);
 				m_prj.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 			} 
 			catch (CoreException e) { }

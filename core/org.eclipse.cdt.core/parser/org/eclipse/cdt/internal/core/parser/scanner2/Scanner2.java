@@ -1170,7 +1170,6 @@ public class Scanner2 implements IScanner, IScannerData {
 						continue;
 					
 					// not ours
-					--bufferPos[bufferStackPos];
 					break;
 					
 				case 'f':

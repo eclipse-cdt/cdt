@@ -25,7 +25,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 
 public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 	private ICOptionContainer optionContainer;
@@ -56,19 +56,20 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 		Iterator iter = optionPages.iterator();
 		for( int i = 0; i < 4 && iter.hasNext(); i++ ){
 			ICOptionPage page = (ICOptionPage) iter.next();
+			IWorkbenchHelpSystem helpSystem = MakeUIPlugin.getDefault().getWorkbench().getHelpSystem();
 			if( optionContainer != null && optionContainer instanceof MakePropertyPage )
 				switch( i ){
-					case 0 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BUILDER_SETTINGS); break;
-					case 1 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_ERROR_PARSER );    break;
-					case 2 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BINARY_PARSER );   break;
-					case 3 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_DISCOVERY );       break;
+					case 0 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BUILDER_SETTINGS); break;
+					case 1 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_ERROR_PARSER );    break;
+					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_BINARY_PARSER );   break;
+					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PROP_DISCOVERY );       break;
 				}
 			else 
 				switch( i ){
-					case 0 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);             break;
-					case 1 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_ERROR_PARSER );           break;
-					case 2 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_BINARY_PARSER );          break;
-					case 3 : WorkbenchHelp.setHelp(page.getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS ); break;
+					case 0 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);             break;
+					case 1 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_ERROR_PARSER );           break;
+					case 2 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.MAKE_PREF_BINARY_PARSER );          break;
+					case 3 : helpSystem.setHelp(page.getControl(), IMakeHelpContextIds.SCANNER_CONFIG_DISCOVERY_OPTIONS ); break;
 				}
 		}
 

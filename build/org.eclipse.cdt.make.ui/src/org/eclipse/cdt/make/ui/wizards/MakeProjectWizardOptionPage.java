@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
@@ -20,7 +21,6 @@ import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -68,7 +68,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 					case 4 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_DISCOVERY_TAB;    break;
 					case 5 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_INDEXER_TAB;      break;
 				}
-				WorkbenchHelp.setHelp(page.getControl(), id);	
+				MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(page.getControl(), id);	
 			}
 		}
 	}

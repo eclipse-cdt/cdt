@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  */
@@ -70,7 +69,7 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 		IWizardPage [] pages = getPages();
 		
 		if( pages != null && pages.length == 2 ){
-			WorkbenchHelp.setHelp(pages[0].getControl(), IMakeHelpContextIds.MAKE_PROJ_WIZ_NAME_PAGE);
+			MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(pages[0].getControl(), IMakeHelpContextIds.MAKE_PROJ_WIZ_NAME_PAGE);
 	
 			MakeProjectWizardOptionPage optionPage = (MakeProjectWizardOptionPage) pages[1];
 			optionPage.setupHelpContextIds();

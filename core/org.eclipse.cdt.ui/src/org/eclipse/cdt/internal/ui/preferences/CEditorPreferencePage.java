@@ -560,9 +560,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	private Control fBracketHighlightColor;
 	private Button fLineHighlightButton;
 	private Control fLineHighlightColor;
-	protected Button fPrintMarginButton;
-	protected Control fPrintMarginColor;
-	protected Control fPrintMarginColumn;
 	private Button fProblemIndicationButton;
 	private Control fProblemIndicationColor;
 	private Control fFindScopeColor;
@@ -588,14 +585,11 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		addTextField(behaviorComposite, label, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 2, 0, true);
 		
 		label= "Print margin col&umn:";
-		fPrintMarginColumn= addTextField(behaviorComposite, label, CEditor.PRINT_MARGIN_COLUMN, 4, 0, true);
+		addTextField(behaviorComposite, label, CEditor.PRINT_MARGIN_COLUMN, 4, 0, true);
 		
 		label= "Insert &space for tabs";
 		addCheckBox(behaviorComposite, label, CEditor.SPACES_FOR_TABS, 0);
-		
-		//label= "Show overview &ruler";
-		//addCheckBox(behaviorComposite, label, CompilationUnitEditor.OVERVIEW_RULER, 0);
-		
+				
 		label= "Highlight &matching brackets";
 		fBracketHighlightButton= addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
@@ -615,17 +609,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(behaviorComposite, label, CEditor.OVERVIEW_RULER, 0);
 		
 		label= "Show print &margin";
-		fPrintMarginButton= addCheckBox(behaviorComposite, label, CEditor.PRINT_MARGIN, 0);
-		
-		fPrintMarginButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean enabled= fPrintMarginButton.getSelection();
-				setEnabled(fPrintMarginColor, enabled);
-				setEnabled(fPrintMarginColumn, enabled);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
+		addCheckBox(behaviorComposite, label, CEditor.PRINT_MARGIN, 0);
 		
 		Label l= new Label(behaviorComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);

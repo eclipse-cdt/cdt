@@ -1,4 +1,3 @@
-
 /**********************************************************************
  * Copyright (c) 2002-2004 IBM Canada and others.
  * All rights reserved.   This program and the accompanying materials

@@ -1707,7 +1707,95 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], name_xy );
     }
-    
+
+    public void testMoreGetDeclarations1() throws Exception {
+        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+   		buffer.append( "struct S {\n" ); //$NON-NLS-1$
+   		buffer.append( " int a;\n" ); //$NON-NLS-1$
+   		buffer.append( " int b;\n" ); //$NON-NLS-1$
+   		buffer.append( "} s;\n" ); //$NON-NLS-1$
+   		buffer.append( "int f() {\n" ); //$NON-NLS-1$
+   		buffer.append( "struct S s = {.a=1,.b=2};\n}\n" ); //$NON-NLS-1$
+   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+   		IASTSimpleDeclaration S_decl = (IASTSimpleDeclaration)tu.getDeclarations()[0];
+   		IASTFunctionDefinition f_def = (IASTFunctionDefinition)tu.getDeclarations()[1];
+
+   		IASTName a1 = ((IASTSimpleDeclaration)((IASTCompositeTypeSpecifier)S_decl.getDeclSpecifier()).getMembers()[0]).getDeclarators()[0].getName();
+   		IASTName b1 = ((IASTSimpleDeclaration)((IASTCompositeTypeSpecifier)S_decl.getDeclSpecifier()).getMembers()[1]).getDeclarators()[0].getName();
+   		IASTName a2 = ((ICASTFieldDesignator)((ICASTDesignatedInitializer)((IASTInitializerList)((IASTSimpleDeclaration)((IASTDeclarationStatement)((IASTCompoundStatement)f_def.getBody()).getStatements()[0]).getDeclaration()).getDeclarators()[0].getInitializer()).getInitializers()[0]).getDesignators()[0]).getName();
+   		IASTName b2 = ((ICASTFieldDesignator)((ICASTDesignatedInitializer)((IASTInitializerList)((IASTSimpleDeclaration)((IASTDeclarationStatement)((IASTCompoundStatement)f_def.getBody()).getStatements()[0]).getDeclaration()).getDeclarators()[0].getInitializer()).getInitializers()[1]).getDesignators()[0]).getName();
+   		
+   		assertEquals( a1.resolveBinding(), a2.resolveBinding() );
+   		assertEquals( b1.resolveBinding(), b2.resolveBinding() );
+   		
+   		IASTName[] decls = tu.getDeclarations(a1.resolveBinding());
+   		assertEquals( decls.length, 1 );
+   		assertEquals( a1, decls[0] );
+   		
+   		decls = tu.getDeclarations(b1.resolveBinding());
+   		assertEquals( decls.length, 1 );
+   		assertEquals( b1, decls[0] );
+    }
+
+    public void testMoreGetDeclarations2() throws Exception {
+        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+   		buffer.append( " struct S { \n" ); //$NON-NLS-1$
+   		buffer.append( " int a; \n" ); //$NON-NLS-1$
+   		buffer.append( " int b; \n" ); //$NON-NLS-1$
+   		buffer.append( "} s = {.a=1,.b=2};\n" ); //$NON-NLS-1$
+   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+   		IASTSimpleDeclaration S_decl = (IASTSimpleDeclaration)tu.getDeclarations()[0];
+
+   		IASTName a1 = ((IASTSimpleDeclaration)((IASTCompositeTypeSpecifier)S_decl.getDeclSpecifier()).getMembers()[0]).getDeclarators()[0].getName();
+   		IASTName b1 = ((IASTSimpleDeclaration)((IASTCompositeTypeSpecifier)S_decl.getDeclSpecifier()).getMembers()[1]).getDeclarators()[0].getName();
+   		IASTName a2 = ((ICASTFieldDesignator)((ICASTDesignatedInitializer)((IASTInitializerList)S_decl.getDeclarators()[0].getInitializer()).getInitializers()[0]).getDesignators()[0]).getName();
+   		IASTName b2 = ((ICASTFieldDesignator)((ICASTDesignatedInitializer)((IASTInitializerList)S_decl.getDeclarators()[0].getInitializer()).getInitializers()[1]).getDesignators()[0]).getName(); 
+   		
+   		assertEquals( a1.resolveBinding(), a2.resolveBinding() );
+   		assertEquals( b1.resolveBinding(), b2.resolveBinding() );
+   		
+   		IASTName[] decls = tu.getDeclarations(a1.resolveBinding());
+   		assertEquals( decls.length, 1 );
+   		assertEquals( a1, decls[0] );
+   		
+   		decls = tu.getDeclarations(b1.resolveBinding());
+   		assertEquals( decls.length, 1 );
+   		assertEquals( b1, decls[0] );
+    }
+
+    public void testMoreGetDeclarations3() throws Exception {
+        StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+   		buffer.append( " typedef struct S { \n" ); //$NON-NLS-1$
+   		buffer.append( " int a; \n" ); //$NON-NLS-1$
+   		buffer.append( " int b; \n" ); //$NON-NLS-1$
+   		buffer.append( "} s;\n" ); //$NON-NLS-1$
+   		buffer.append( "typedef s t;\n" ); //$NON-NLS-1$
+   		buffer.append( "typedef t y;\n" ); //$NON-NLS-1$
+   		buffer.append( "y x = {.a=1,.b=2};\n" ); //$NON-NLS-1$
+   		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C ); // TODO Devin make sure that loop I put in works properly for types
+    	
+   		IASTSimpleDeclaration S_decl = (IASTSimpleDeclaration)tu.getDeclarations()[0];
+   		IASTSimpleDeclaration x_decl = (IASTSimpleDeclaration)tu.getDeclarations()[3]; 
+
+   		IASTName a1 = ((IASTSimpleDeclaration)((IASTCompositeTypeSpecifier)S_decl.getDeclSpecifier()).getMembers()[0]).getDeclarators()[0].getName();
+   		IASTName b1 = ((IASTSimpleDeclaration)((IASTCompositeTypeSpecifier)S_decl.getDeclSpecifier()).getMembers()[1]).getDeclarators()[0].getName();
+   		IASTName a2 = ((ICASTFieldDesignator)((ICASTDesignatedInitializer)((IASTInitializerList)x_decl.getDeclarators()[0].getInitializer()).getInitializers()[0]).getDesignators()[0]).getName();
+   		IASTName b2 = ((ICASTFieldDesignator)((ICASTDesignatedInitializer)((IASTInitializerList)x_decl.getDeclarators()[0].getInitializer()).getInitializers()[1]).getDesignators()[0]).getName();
+   		
+   		assertEquals( a1.resolveBinding(), a2.resolveBinding() );
+   		assertEquals( b1.resolveBinding(), b2.resolveBinding() );
+   		
+   		IASTName[] decls = tu.getDeclarations(a1.resolveBinding());
+   		assertEquals( decls.length, 1 );
+   		assertEquals( a1, decls[0] );
+   		
+   		decls = tu.getDeclarations(b1.resolveBinding());
+   		assertEquals( decls.length, 1 );
+   		assertEquals( b1, decls[0] );
+    }
+
     public void testFnReturningPtrToFn() throws Exception {
     	IASTTranslationUnit tu = parse( "void ( * f( int ) )(){}", ParserLanguage.C ); //$NON-NLS-1$
     	

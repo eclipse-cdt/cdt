@@ -667,30 +667,35 @@ public class CVisitor {
 		} else if( node instanceof ICASTFieldDesignator ) {
 			IASTNode blockItem = getContainingBlockItem( node );
 			
-			IASTNode parent = node.getParent();
-			while ( parent != null && !(parent.getParent() instanceof IASTTranslationUnit) )
-				parent = parent.getParent();
-			
-			if ( parent.getParent() instanceof IASTTranslationUnit &&
-					blockItem instanceof IASTDeclarationStatement &&
-					((IASTDeclarationStatement)blockItem).getDeclaration() instanceof IASTSimpleDeclaration &&
-					((IASTSimpleDeclaration)((IASTDeclarationStatement)blockItem).getDeclaration()).getDeclSpecifier() instanceof IASTNamedTypeSpecifier ) {
-				// TODO use getDefinitions below instead of getDeclarations (i.e. want collection of defined members and the declaration doesn't always have it)
-				IASTName declNames[] = ((IASTTranslationUnit)parent.getParent()).getDeclarations(((IASTNamedTypeSpecifier)((IASTSimpleDeclaration)((IASTDeclarationStatement)blockItem).getDeclaration()).getDeclSpecifier()).getName().resolveBinding());
-				for (int i=0; i<declNames.length; i++) {
-					IASTNode declBlockItem = getContainingBlockItem(declNames[i]);
-					if ( declBlockItem instanceof IASTSimpleDeclaration ) {
-						if (((IASTSimpleDeclaration)declBlockItem).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) {
-							IASTDeclaration[] decls = ((IASTCompositeTypeSpecifier)((IASTSimpleDeclaration)declBlockItem).getDeclSpecifier()).getMembers();
-							for (int j=0; j<decls.length; j++) {
-								if (decls[j] instanceof IASTSimpleDeclaration) {
-									IASTDeclarator[] decltors = ((IASTSimpleDeclaration)decls[j]).getDeclarators();
-									for(int k=0; k<decltors.length; k++)
-										if (CharArrayUtils.equals(decltors[k].getName().toCharArray(), ((ICASTFieldDesignator)node).getName().toCharArray()))
-											return decltors[k].getName().resolveBinding();
-								}
-							}
+			if ( (blockItem instanceof IASTSimpleDeclaration ||
+					(blockItem instanceof IASTDeclarationStatement && ((IASTDeclarationStatement)blockItem).getDeclaration() instanceof IASTSimpleDeclaration)) ) {
+				
+				IASTSimpleDeclaration simpleDecl = null;
+				if (blockItem instanceof IASTDeclarationStatement &&
+					((IASTDeclarationStatement)blockItem).getDeclaration() instanceof IASTSimpleDeclaration )
+					simpleDecl = (IASTSimpleDeclaration)((IASTDeclarationStatement)blockItem).getDeclaration();
+				else if ( blockItem instanceof IASTSimpleDeclaration )
+					simpleDecl = (IASTSimpleDeclaration)blockItem;
+		
+				if ( simpleDecl != null ) {
+					IBinding struct = null;
+					if ( simpleDecl.getDeclSpecifier() instanceof IASTNamedTypeSpecifier )
+						struct = ((IASTNamedTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+					else if ( simpleDecl.getDeclSpecifier() instanceof IASTElaboratedTypeSpecifier )
+						struct = ((IASTElaboratedTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+					else if ( simpleDecl.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier )
+						struct = ((IASTCompositeTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
+					
+					if ( struct instanceof CStructure ) {
+						return ((CStructure)struct).findField(((ICASTFieldDesignator)node).getName().toString());
+					} else if ( struct instanceof ITypeContainer ) {
+						IType type = ((ITypeContainer)struct).getType();
+						while ( type instanceof ITypeContainer && !(type instanceof CStructure) ) {
+							type = ((ITypeContainer)type).getType();
 						}
+						
+						if ( type instanceof CStructure )
+							return ((CStructure)type).findField(((ICASTFieldDesignator)node).getName().toString());
 					}
 				}
 			}

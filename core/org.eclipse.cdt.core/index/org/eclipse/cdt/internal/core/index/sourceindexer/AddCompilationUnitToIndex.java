@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 public class AddCompilationUnitToIndex extends AddFileToIndex {
-	char[] contents;
+	protected char[] contents;
 
 	public AddCompilationUnitToIndex(IFile resource, IPath indexedContainer, SourceIndexer indexer, boolean checkEncounteredHeaders) {
 		super(resource, indexedContainer, indexer, checkEncounteredHeaders);

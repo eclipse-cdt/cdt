@@ -1,3 +1,26 @@
+2005-03-24 Vladimir Hirsl
+	New DOM AST based indexer.
+	Indexer infrastructure and CPP/C AST visitors.
+	Generates the same index as the old one.
+	Work in progress: 
+		- include directives dependency
+		- problem marker generation
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMAddCompilationUnitToIndex.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexer.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	+ index/org/eclipse/cdt/internal/core/index/domsourceindexer/IndexerEncoderUtil.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AbstractIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddCompilationUnitToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/AddFileToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRequestor.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRunner.java
+	+ index/org/eclipse/cdt/internal/core/search/indexing/IIndexEncodingConstants.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* plugin.xml
+	
 2005-03-23 Alain Magloire
 	Fix PR 87443.
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java

@@ -12,10 +12,15 @@
 package org.eclipse.cdt.internal.core.index.sourceindexer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
@@ -35,15 +40,28 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSearchConstants {
-	
-	IIndexerOutput output;
+    protected static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+    protected static final String INDEXER_MARKER_ORIGINATOR =  ICModelMarker.INDEXER_MARKER + ".originator";  //$NON-NLS-1$
+    private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
+
+	protected IIndexerOutput output;
 	final static int CLASS = 1;
 	final static int STRUCT = 2;
 	final static int UNION = 3;
@@ -58,6 +76,10 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	
 	public static boolean VERBOSE = false;
 	
+    // problem marker related
+    private int problemMarkersEnabled = 0;
+    private Map problemsMap = null;
+    
 	//IDs defined in plugin.xml for file types
 	private final static String C_SOURCE_ID = "org.eclipse.cdt.core.fileType.c_source"; //$NON-NLS-1$
 	private final static String C_HEADER_ID = "org.eclipse.cdt.core.fileType.c_header"; //$NON-NLS-1$
@@ -840,5 +862,205 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 		int BOGUS_ENTRY = 1;
 		this.output.addRef(encodeEntry(incName, INCLUDE_REF, INCLUDE_REF_LENGTH),fileNumber);
 	}
+
+    abstract private class Problem {
+        public IFile file;
+        public IFile originator;
+        public Problem( IFile file, IFile orig ){
+            this.file = file;
+            this.originator = orig;
+        }
+        
+        abstract public boolean isAddProblem();
+        abstract public Object getProblem();
+    }
+
+    private class AddMarkerProblem extends Problem {
+        private Object problem;
+        public AddMarkerProblem(IFile file, IFile orig, Object problem) {
+            super( file, orig );
+            this.problem = problem;
+        }
+        public boolean isAddProblem(){
+            return true;
+        }
+        public Object getProblem(){
+            return problem;
+        }
+    }
+
+    private class RemoveMarkerProblem extends Problem {
+        public RemoveMarkerProblem(IFile file, IFile orig) {
+            super(file, orig);
+        }
+        public boolean isAddProblem() {
+            return false;
+        }
+        public Object getProblem() {
+            return null;
+        }
+    }
+
+    // Problem markers ******************************
+    
+    
+    public boolean areProblemMarkersEnabled(){
+        return problemMarkersEnabled != 0;
+    }
+    public int getProblemMarkersEnabled() {
+        return problemMarkersEnabled;
+    }
+    
+    public void setProblemMarkersEnabled(int value) {
+        if (value != 0) {
+            problemsMap = new HashMap();
+        }
+        this.problemMarkersEnabled = value;
+    }
+    
+    /**
+     * @param tempFile - not null
+     * @param resourceFile
+     * @param problem
+     */
+    public void generateMarkerProblem(IFile tempFile, IFile resourceFile, Object problem) {
+        Problem tempProblem = new AddMarkerProblem(tempFile, resourceFile, problem);
+        if (problemsMap.containsKey(tempFile)) {
+            List list = (List) problemsMap.get(tempFile);
+            list.add(tempProblem);
+        } else {
+            List list = new ArrayList();
+            list.add(new RemoveMarkerProblem(tempFile, resourceFile));  //remove existing markers
+            list.add(tempProblem);
+            problemsMap.put(tempFile, list);
+        }
+    }
+
+    public void requestRemoveMarkers(IFile resource, IFile originator ){
+        if (!areProblemMarkersEnabled())
+            return;
+        
+        Problem prob = new RemoveMarkerProblem(resource, originator);
+        
+        //a remove request will erase any previous requests for this resource
+        if( problemsMap.containsKey(resource) ){
+            List list = (List) problemsMap.get(resource);
+            list.clear();
+            list.add(prob);
+        } else {
+            List list = new ArrayList();
+            list.add(prob);
+            problemsMap.put(resource, list);
+        }
+    }
+    
+    public void reportProblems() {
+        if (!areProblemMarkersEnabled())
+            return;
+        
+        Iterator i = problemsMap.keySet().iterator();
+        
+        while (i.hasNext()){
+            IFile resource = (IFile) i.next();
+            List problemList = (List) problemsMap.get(resource);
+
+            //only bother scheduling a job if we have problems to add or remove
+            if (problemList.size() <= 1) {
+                IMarker [] marker;
+                try {
+                    marker = resource.findMarkers( ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_ZERO);
+                } catch (CoreException e) {
+                    continue;
+                }
+                if( marker.length == 0 )
+                    continue;
+            }
+            String jobName = INDEXER_MARKER_PROCESSING;
+            jobName += " ("; //$NON-NLS-1$
+            jobName += resource.getFullPath();
+            jobName += ')';
+            
+            ProcessMarkersJob job = new ProcessMarkersJob(resource, problemList, jobName);
+            
+            IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+            IProgressMonitor group = indexManager.getIndexJobProgressGroup();
+            
+            job.setRule(resource);
+            if (group != null)
+                job.setProgressGroup(group, 0);
+            job.setPriority(Job.DECORATE);
+            job.schedule();
+        }
+    }
+    
+    private class ProcessMarkersJob extends Job {
+        protected final List problems;
+        private final IFile resource;
+        public ProcessMarkersJob(IFile resource, List problems, String name) {
+            super(name);
+            this.problems = problems;
+            this.resource = resource;
+        }
+
+        protected IStatus run(IProgressMonitor monitor) {
+            IWorkspaceRunnable job = new IWorkspaceRunnable( ) {
+                public void run(IProgressMonitor monitor) {
+                    processMarkers( problems );
+                }
+            };
+            try {
+                CCorePlugin.getWorkspace().run(job, resource, 0, null);
+            } catch (CoreException e) {
+            }
+            return Status.OK_STATUS;
+        }
+    }
+    
+    protected void processMarkers(List problemsList) {
+        Iterator i = problemsList.iterator();
+        while (i.hasNext()) {
+            Problem prob = (Problem) i.next();
+            if (prob.isAddProblem()) {
+                addMarkers(prob.file, prob.originator, prob.getProblem());
+            } else {
+                removeMarkers(prob.file, prob.originator);
+            }
+        }
+    }
+
+    abstract protected void addMarkers(IFile tempFile, IFile originator, Object problem);
+    
+    public void removeMarkers(IFile resource, IFile originator) {
+        if (originator == null) {
+            //remove all markers
+            try {
+                resource.deleteMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
+            } catch (CoreException e) {
+            }
+            return;
+        }
+        // else remove only those markers with matching originator
+        IMarker[] markers;
+        try {
+            markers = resource.findMarkers(ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE);
+        } catch (CoreException e1) {
+            return;
+        }
+        String origPath = originator.getFullPath().toString();
+        IMarker mark = null;
+        String orig = null;
+        for (int i = 0; i < markers.length; i++) {
+            mark = markers[ i ];
+            try {
+                orig = (String) mark.getAttribute(INDEXER_MARKER_ORIGINATOR);
+                if( orig != null && orig.equals(origPath )) {
+                    mark.delete();
+                }
+            } catch (CoreException e) {
+            }
+        }
+    }
+    
+
 }
 

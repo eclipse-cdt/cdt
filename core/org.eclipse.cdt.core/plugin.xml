@@ -538,6 +538,16 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         name="DOM AST C/C++ Indexer"
+         id="domsourceindexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <cextension>
+         <run 
+            	class="org.eclipse.cdt.internal.core.index.domsourceindexer.DOMSourceIndexer">
+         </run>
+      </cextension>
+   </extension>
 
 <!-- =================================================================================== -->
 <!-- Dynamic Variables                                                          -->	

@@ -131,11 +131,7 @@ public class IndexerBlock extends AbstractCOptionPage {
           // create a composite for discovery profile options
             Composite indexPageComposite = ControlFactory.createComposite(composite, 1);
             indexPageComposite.setFont(font);
-            GridData gd = (GridData) indexPageComposite.getLayoutData();
-            gd.grabExcessHorizontalSpace = true;
-    //        gd.grabExcessVerticalSpace = true;
-            gd.horizontalAlignment = GridData.FILL;
-            gd.verticalAlignment = GridData.FILL;
+            indexPageComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
             indexPageComposite.setLayout(new TabFolderLayout());
             // Must set the composite parent to super class.
             parentComposite = indexPageComposite;
@@ -162,9 +158,9 @@ public class IndexerBlock extends AbstractCOptionPage {
                 page.setContainer(getContainer());
                 page.createControl(parentComposite);
                 parentComposite.layout(true);
-                parentComposite.pack(true);
-            } else {
-                page.setVisible(false);
+//                parentComposite.pack(true);
+            } if (currentPage != null) {
+                currentPage.setVisible(false);
             }
             page.setVisible(true);
         }

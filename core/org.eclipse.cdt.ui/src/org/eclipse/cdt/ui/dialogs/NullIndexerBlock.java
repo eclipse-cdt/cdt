@@ -14,6 +14,7 @@ import org.eclipse.cdt.ui.index.AbstractIndexerPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -49,7 +50,8 @@ public class NullIndexerBlock extends AbstractIndexerPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-        setControl(parent);
+        Composite comp = new Composite(parent, SWT.NULL);
+        setControl(comp);
 	}
 
 }

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public abstract class AddFileToIndex extends IndexRequest {
-	IFile resource;
+	protected IFile resource;
 	private boolean checkEncounteredHeaders;
 
 	public AddFileToIndex(IFile resource, IPath indexPath, SourceIndexer indexer, boolean checkEncounteredHeaders) {

@@ -1,3 +1,10 @@
+2005-03-24 Vladimir Hirsl
+	Ironing of the Indexer property page block.
+	DOM AST based indexer property options page.
+	* src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/NullIndexerBlock.java
+	* plugin.xml
+
 2005-03-20 Alain Magloire
 	Fix for 77978.
 	* src/org/eclipse/cdt/internal/ui/actions/AddBlockCommentAction.java

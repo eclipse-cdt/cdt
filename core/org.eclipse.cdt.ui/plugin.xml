@@ -1337,6 +1337,11 @@
             indexerID="org.eclipse.cdt.core.nullindexer"
             name="No Indexer"
             id="org.eclipse.cdt.ui.nullindexerUI"/>
+      <indexerUI
+            class="org.eclipse.cdt.ui.dialogs.SourceIndexerBlock"
+            id="org.eclipse.cdt.ui.DOMASTSourceIndexerUI"
+            indexerID="org.eclipse.cdt.core.domsourceindexer"
+            name="DOM AST C/C++ Indexer"/>
    </extension>
 	<extension
          point="org.eclipse.cdt.ui.completionContributors">

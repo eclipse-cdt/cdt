@@ -89,9 +89,9 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	
 	private CIndexStorage		indexStorage = null;
 	public 	ReadWriteMonitor	storageMonitor = null;
-	private IndexManager  		indexManager = null; 
+    protected IndexManager  	indexManager = null; 
 	
-	private HashSet 			jobSet = null;
+	protected HashSet 			jobSet = null;
 	private boolean				indexEnabled = false;
 	
 	

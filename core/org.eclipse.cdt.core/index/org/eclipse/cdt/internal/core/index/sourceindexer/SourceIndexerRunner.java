@@ -23,8 +23,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -36,7 +38,9 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -73,8 +77,8 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile);
 		
 		int problems = indexer.indexProblemsEnabled( resourceFile.getProject() );
-		requestor.setProblemMarkersEnabled( problems );
-		requestor.requestRemoveMarkers( resourceFile, null );
+		setProblemMarkersEnabled( problems );
+		requestRemoveMarkers( resourceFile, null );
 		
 		//Get the scanner info
 		IProject currentProject = resourceFile.getProject();
@@ -129,7 +133,7 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		finally{
 			//if the user disable problem reporting since we last checked, don't report the collected problems
 			if( indexer.indexProblemsEnabled( resourceFile.getProject() ) != 0 )
-				requestor.reportProblems();
+				reportProblems();
 			
 			//Report events
 			ArrayList filesTrav = requestor.getFilesTraversed();
@@ -158,4 +162,56 @@ public class SourceIndexerRunner extends AbstractIndexer {
 	public boolean haveEncounteredHeader(IPath fullPath, Path path) {
 		return indexer.haveEncounteredHeader(fullPath, path);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object)
+     */
+    protected void addMarkers(IFile tempFile, IFile originator, Object problem) {
+        if (problem instanceof IProblem) {
+            IProblem iProblem = (IProblem) problem;
+            
+            try {
+               //we only ever add index markers on the file, so DEPTH_ZERO is far enough
+               IMarker[] markers = tempFile.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+               
+               boolean newProblem = true;
+               
+               if (markers.length > 0) {
+                   IMarker tempMarker = null;
+                   Integer tempInt = null; 
+                   String tempMsgString = null;
+                   
+                   for (int i=0; i<markers.length; i++) {
+                       tempMarker = markers[i];
+                       tempInt = (Integer) tempMarker.getAttribute(IMarker.LINE_NUMBER);
+                       tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+                       if (tempInt != null && tempInt.intValue()==iProblem.getSourceLineNumber() &&
+                           tempMsgString.equalsIgnoreCase( INDEXER_MARKER_PREFIX + iProblem.getMessage())) 
+                       {
+                           newProblem = false;
+                           break;
+                       }
+                   }
+               }
+               
+               if (newProblem) {
+                   IMarker marker = tempFile.createMarker(ICModelMarker.INDEXER_MARKER);
+                   int start = iProblem.getSourceStart();
+                   int end = iProblem.getSourceEnd();
+                   if (end <= start)
+                       end = start + 1;
+                   marker.setAttribute(IMarker.LOCATION, iProblem.getSourceLineNumber());
+                   marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + iProblem.getMessage());
+                   marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                   marker.setAttribute(IMarker.LINE_NUMBER, iProblem.getSourceLineNumber());
+                   marker.setAttribute(IMarker.CHAR_START, start);
+                   marker.setAttribute(IMarker.CHAR_END, end); 
+                   marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString() );
+               }
+               
+            } catch (CoreException e) {
+                // You need to handle the cases where attribute value is rejected
+            }
+        }
+    }
 }

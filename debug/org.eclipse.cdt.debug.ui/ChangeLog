@@ -1,3 +1,8 @@
+2004-11-26 Mikhail Khodjaiants
+	Do not use "void" if parameter's list is empty when constructing a function or 
+	method name for function breakpoints. Name mapping should be done on the implementation level.
+	* ToggleBreakpointAdapter.java
+
 2004-11-25 Mikhail Khodjaiants
 	Fix for bug 79452: Unable to set a breakpoint on a class method.
 	* plugin.xml

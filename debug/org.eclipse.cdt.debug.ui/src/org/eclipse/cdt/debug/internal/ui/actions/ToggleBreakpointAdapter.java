@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -384,19 +385,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		StringBuffer name = new StringBuffer( functionName );
 		ITranslationUnit tu = function.getTranslationUnit();
 		if ( tu != null && tu.isCXXLanguage() ) {
-			String[] params = function.getParameterTypes();
-			name.append( '(' );
-			if ( params.length == 0 ) {
-				name.append( "void" ); //$NON-NLS-1$
-			}
-			else {
-				for( int i = 0; i < params.length; ++i ) {
-					name.append( params[i] );
-					if ( i != params.length - 1 )
-						name.append( ',' );
-				}
-			}
-			name.append( ')' );
+			appendParameters( name, function );
 		}
 		return name.toString();
 	}
@@ -410,20 +399,19 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			parent = parent.getParent();
 		}
 		name.append( methodName );
-		String[] params = method.getParameterTypes();
-		name.append( '(' );
-		if ( params.length == 0 ) {
-			name.append( "void" ); //$NON-NLS-1$
-		}
-		else {
-			for( int i = 0; i < params.length; ++i ) {
-				name.append( params[i] );
-				if ( i != params.length - 1 )
-					name.append( ',' );
-			}
-		}
-		name.append( ')' );
+		appendParameters( name, method );
 		return name.toString();
+	}
+
+	private void appendParameters( StringBuffer sb, IFunctionDeclaration fd ) {
+		String[] params = fd.getParameterTypes();
+		sb.append( '(' );
+		for( int i = 0; i < params.length; ++i ) {
+			sb.append( params[i] );
+			if ( i != params.length - 1 )
+				sb.append( ',' );
+		}
+		sb.append( ')' );
 	}
 
 	private String getVariableName( IVariable variable ) {

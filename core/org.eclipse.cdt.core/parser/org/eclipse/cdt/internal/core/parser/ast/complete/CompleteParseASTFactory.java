@@ -2793,7 +2793,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		
 		ASTTemplateDeclaration ast = new ASTTemplateDeclaration( template, scope, templateParameters);
-		
+		ast.setStartingOffsetAndLineNumber( startingOffset, startingLine );
         attachSymbolExtension( template, ast, false );
 
         return ast; 

@@ -2079,4 +2079,35 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         
         parse( writer.toString() );
     }
+    
+    
+    public void testBug68528() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "namespace N526026\n" );
+    	writer.write( "{\n" );
+    	writer.write( "template <typename T>\n" );
+    	writer.write( "class T526026\n" );
+    	writer.write( "{\n" );
+    	writer.write( "typedef int diff;\n" );
+    	writer.write( "};\n" );
+    	writer.write( "\n" );
+    	writer.write( "template<typename T>\n" );
+    	writer.write( "inline T526026< T >\n" ); 
+    	writer.write( "operator+(typename T526026<T>::diff d, const T526026<T> & x )\n" ); 
+    	writer.write( "{ return T526026< T >(); }\n" );
+    	writer.write( "}\n" );
+    	parse( writer.toString(), false );
+	}
+    
+    public void testBug71094() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "using namespace DOESNOTEXIST;\n" ); 
+    	writer.write( "class A { int x; };\n" );
+    	Iterator i = parse( writer.toString(), false ).getDeclarations();
+    	assertTrue( i.hasNext() );
+    	assertTrue( i.next() instanceof IASTAbstractTypeSpecifierDeclaration );
+    	assertFalse( i.hasNext() );
+	}
 }

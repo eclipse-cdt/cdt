@@ -504,6 +504,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void exitCompilationUnit(IASTCompilationUnit cu )
         {
+        	popScope();
         }
     
         
@@ -525,12 +526,14 @@ public class CompleteParseBaseTest extends TestCase
         {
         	Scope s = (Scope)scopes.pop();
         	h.put( s.getScope(), s );
+        	--depth;
         	return s; 
         }
         
         protected void pushScope( IASTScope scope )
         {
         	scopes.push( new Scope( scope ));
+        	++depth;
         }
         
         Hashtable h = new Hashtable();
@@ -547,6 +550,7 @@ public class CompleteParseBaseTest extends TestCase
         
     
     	List problems = new ArrayList();
+		private int depth = 0;
     	
     	public Iterator getProblems() { 
     		return problems.iterator(); 
@@ -709,6 +713,7 @@ public class CompleteParseBaseTest extends TestCase
         protected void pushCodeScope(IASTCodeScope scope)
         {
 			scopes.push( new CodeScope( scope ) );
+			++depth;
         }
 
         /* (non-Javadoc)
@@ -757,6 +762,13 @@ public class CompleteParseBaseTest extends TestCase
 		public void acceptFriendDeclaration(IASTDeclaration declaration) {
 			getCurrentScope().addDeclaration( declaration );
 		}
+
+		/**
+		 * @return
+		 */
+		public boolean isBalanced() {
+			return depth == 0;
+		}
     }
     
     protected Iterator getNestedScopes( IASTCodeScope scope )
@@ -797,7 +809,10 @@ public class CompleteParseBaseTest extends TestCase
     	// throw exception if there are generated IProblems
 		if( (! parseResult || callback.getProblems().hasNext() ) && throwOnError ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
 		if( parseResult  )
+		{
 			assertTrue( ((CompleteParser)parser).validateCaches());
+			assertTrue( callback.isBalanced() );
+		}
         return callback.getCompilationUnit();
     }
         

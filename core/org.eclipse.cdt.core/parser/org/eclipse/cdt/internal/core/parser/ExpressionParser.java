@@ -2896,7 +2896,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	protected void errorHandling() throws EndOfFileException {
 		int depth = ( LT(1) == IToken.tLBRACE ) ? 1 : 0;
-	    consume();    
+	    int type = consume().getType();
+	    if( type == IToken.tSEMI ) return;
 	    while (!((LT(1) == IToken.tSEMI && depth == 0)
 	        || (LT(1) == IToken.tRBRACE && depth == 1)))
 	    {

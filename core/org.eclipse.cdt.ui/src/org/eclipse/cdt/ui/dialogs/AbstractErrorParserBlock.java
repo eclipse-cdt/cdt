@@ -73,6 +73,11 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		return null;
 	}
 
+	public void updateValues() {
+		fErrorParserList.removeAllElements();
+		setValues();	
+	}
+	
 	/**
 	 * Returns a label provider for the error parsers
 	 *
@@ -111,9 +116,18 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	/**
 	 * To be implemented, abstract method.
 	 * @param project
-	 * @param list
+	 * @return String[]
 	 */
 	protected abstract String[] getErrorParserIDs(IProject project);
+
+	/**
+	 * To be overloaded by subclasses with another method of getting the error parsers.
+	 * For example, the managed builder new project wizard uses the selected Target.
+	 * @return String[]
+	 */
+	protected String[] getErrorParserIDs() {
+		return new String[0];
+	}
 
 	/**
 	 * To be implemented. abstract method.
@@ -143,12 +157,19 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	protected void initializeValues() {
 		initMapParsers();
+		setValues();
+	}
 
+	protected void setValues() {
 		String[] parserIDs;
 		IProject project = getContainer().getProject();
 		if (project == null) {
-			// From a Preference.
-			parserIDs =getErrorParserIDs(fPrefs);
+			if (fPrefs != null) {
+				// From a Preference.
+				parserIDs = getErrorParserIDs(fPrefs);
+			} else {
+				parserIDs = getErrorParserIDs();
+			}
 		} else {
 			// From the Project.
 			parserIDs = getErrorParserIDs(project);
@@ -227,6 +248,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			String[] parserIDs = (String[])list.toArray(EMPTY);
 
 			if (project == null) {
+				//  Save to preferences
 				saveErrorParsers(fPrefs, parserIDs);
 			} else {
 				saveErrorParsers(project, parserIDs);

@@ -1,3 +1,8 @@
+2004-04-22 Sean Evoy
+	This is the first part of the patch supplied by Leo at Intel 
+	to add error parsers to a managed build project, and to manipulate 
+	the list of error parsers that apply to a project.
+	
 2004-04-22 Hoda Amer
 	Backing out previous changes regarding new JFace interfaces.
 	

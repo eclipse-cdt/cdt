@@ -808,7 +808,10 @@ public class Elf {
 				attrib.cpu = "st100"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_X86_64:
-				attrib.cpu = "x86_64";
+				attrib.cpu = "x86_64"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_XILINX_MICROBLAZE:
+				attrib.cpu = "microblaze"; //$NON-NLS-1$
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

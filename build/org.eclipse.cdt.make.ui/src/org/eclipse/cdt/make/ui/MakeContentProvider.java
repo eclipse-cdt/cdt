@@ -1,8 +1,7 @@
 package org.eclipse.cdt.make.ui;
 
 /*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+ * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
 
 import java.util.ArrayList;
@@ -194,7 +193,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				if (viewer instanceof AbstractTreeViewer) {
 					((AbstractTreeViewer) viewer).remove(affected.toArray());
 				} else {
-					((StructuredViewer) viewer).refresh(resource);
+					viewer.refresh(resource);
 				}
 			}
 		}
@@ -212,7 +211,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				if (viewer instanceof AbstractTreeViewer) {
 					((AbstractTreeViewer) viewer).add(resource, affected.toArray());
 				} else {
-					((StructuredViewer) viewer).refresh(resource);
+					viewer.refresh(resource);
 				}
 			}
 		}
@@ -223,7 +222,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		Control ctrl = viewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
 			// Do a sync exec, not an async exec, since the resource delta
-			// must be traversed in this method.  It is destroyed
+			// must be traversed in this method. It is destroyed
 			// when this method returns.
 			ctrl.getDisplay().syncExec(new Runnable() {
 				public void run() {

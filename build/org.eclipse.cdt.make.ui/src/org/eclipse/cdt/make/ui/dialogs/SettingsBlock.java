@@ -12,7 +12,6 @@ import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -43,7 +42,6 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_MESSAGE = PREFIX + ".message"; //$NON-NLS-1$
 
 	private static final String MAKE_SETTING_GROUP = PREFIX + ".makeSetting.group_label"; //$NON-NLS-1$
-	private static final String MAKE_SETTING_KEEP_GOING = PREFIX + ".makeSetting.keepOnGoing"; //$NON-NLS-1$
 	private static final String MAKE_SETTING_STOP_ERROR = PREFIX + ".makeSetting.stopOnError"; //$NON-NLS-1$
 
 	private static final String MAKE_CMD_GROUP = PREFIX + ".makeCmd.group_label"; //$NON-NLS-1$
@@ -61,10 +59,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_BROWSE = PREFIX + ".makeDir.browse"; //$NON-NLS-1$
 
-	private static final String KEEP_ARG = "keep"; //$NON-NLS-1$
-	private static final String STOP_ARG = "stop"; //$NON-NLS-1$
-
-	RadioButtonsArea stopRadioButtons;
+	Button stopOnErrorButton;
 
 	Button defButton;
 	Text buildCommand;
@@ -90,18 +85,12 @@ public class SettingsBlock extends AbstractCOptionPage {
 	}
 
 	protected void createSettingControls(Composite parent) {
-		String[][] radios = new String[][] { { MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR), STOP_ARG }, {
-				MakeUIPlugin.getResourceString(MAKE_SETTING_KEEP_GOING), KEEP_ARG }
-		};
-		stopRadioButtons = new RadioButtonsArea(parent, MakeUIPlugin.getResourceString(MAKE_SETTING_GROUP), 1, radios);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		stopRadioButtons.setLayout(layout);
-		if (fBuildInfo.isStopOnError())
-			stopRadioButtons.setSelectValue(STOP_ARG);
-		else
-			stopRadioButtons.setSelectValue(KEEP_ARG);
+		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_SETTING_GROUP), 1);
+		stopOnErrorButton = new Button(group, SWT.CHECK);
+		stopOnErrorButton.setText(MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR));
+		if (fBuildInfo.isStopOnError()) {
+			stopOnErrorButton.setSelection(true);
+		}
 	}
 
 	protected void createBuildCmdControls(Composite parent) {
@@ -117,11 +106,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
 					buildCommand.setEnabled(false);
-					stopRadioButtons.setEnabled(true);
+					stopOnErrorButton.setEnabled(true);
 					getContainer().updateContainer();
 				} else {
 					buildCommand.setEnabled(true);
-					stopRadioButtons.setEnabled(false);
+					stopOnErrorButton.setEnabled(false);
 					getContainer().updateContainer();
 				}
 			}
@@ -154,7 +143,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (fBuildInfo.isDefaultBuildCmd()) {
 			buildCommand.setEnabled(false);
 		} else {
-			stopRadioButtons.setEnabled(false);
+			stopOnErrorButton.setEnabled(false);
 		}
 		defButton.setSelection(fBuildInfo.isDefaultBuildCmd());
 	}
@@ -254,8 +243,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 			return;
 		}
 
-		createSettingControls(composite);
 		createBuildCmdControls(composite);
+		createSettingControls(composite);
 		createWorkBenchBuildControls(composite);
 
 		if (getContainer().getProject() != null) {
@@ -335,9 +324,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, true);
 		}
 		if (info.isStopOnError())
-			stopRadioButtons.setSelectValue(STOP_ARG);
+			stopOnErrorButton.setSelection(true);
 		else
-			stopRadioButtons.setSelectValue(KEEP_ARG);
+			stopOnErrorButton.setSelection(false);
 		if (info.getBuildCommand() != null) {
 			StringBuffer cmd = new StringBuffer(info.getBuildCommand().toOSString());
 			if (!info.isDefaultBuildCmd()) {
@@ -351,8 +340,10 @@ public class SettingsBlock extends AbstractCOptionPage {
 		}
 		if (info.isDefaultBuildCmd()) {
 			buildCommand.setEnabled(false);
+			stopOnErrorButton.setEnabled(true);
 		} else {
-			stopRadioButtons.setEnabled(false);
+			buildCommand.setEnabled(true);
+			stopOnErrorButton.setEnabled(false);
 		}
 		defButton.setSelection(info.isDefaultBuildCmd());
 		autoButton.setSelection(info.isAutoBuildEnable());
@@ -364,7 +355,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	}
 
 	private boolean isStopOnError() {
-		return stopRadioButtons.getSelectedValue().equals(STOP_ARG);
+		return stopOnErrorButton.getSelection();
 	}
 
 	private boolean useDefaultBuildCmd() {

@@ -45,7 +45,7 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 		public SingleTokenScanner(TextAttribute attribute) {
 			setDefaultReturnToken(new Token(attribute));
 		}
-	};
+	}
 
 	/**
 	 * Constructor for MakeConfiguration

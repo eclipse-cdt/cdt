@@ -1,3 +1,9 @@
+2004-03-31 Mikhail Khodjaiants
+	The Registers view has been contibuted and moved to the Eclipse platform.
+	To enable updating set the default value of the auto-refresh flag of the registers to true.
+	Remove it when the "Refresh" and "Auto-Refresh" actions are contributed.
+	* CDebugCorePlugin.java
+
 2004-03-17 Alain Magloire
 
 	Changes to get some performances.  The array of

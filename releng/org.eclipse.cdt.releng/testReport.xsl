@@ -52,6 +52,9 @@
 			<td><xsl:value-of select="format-number(@time, '0.000')"/></td>
 			<td>
 				<xsl:value-of select="../@name"/><br></br>::<xsl:value-of select="@name"/>
+				<xsl:if test="@result != 'pass'">
+					<br></br><font color="red">**<xsl:value-of select="text()"/></font>
+				</xsl:if>
 			</td>
 		</tr>
 	</xsl:template>

@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
@@ -474,6 +475,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 					if ( info != null && info instanceof ICDIBreakpointHit )
 					{
 						return target.getName() + " (Breakpoint hit)";
+					}
+					if ( info != null && info instanceof ICDISharedLibraryEvent )
+					{
+						return target.getName() + " (Stopped on shared library event)";
 					}
 					if ( info != null && info instanceof ICDISession )
 					{

@@ -1,3 +1,7 @@
+2003-08-29 Mikhail Khodjaiants
+	Label for target suspended by shared library event.
+	* CDTDebugModelPresentation.java
+
 2003-08-19 Mikhail Khodjaiants
 	* plugin.properties: "Restore Default Type" changed to "Restore Original Type".
 

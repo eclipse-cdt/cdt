@@ -1,3 +1,9 @@
+2004-07-17 Brad Jarvinen.
+
+	Fix Pr 70252
+
+	* src/org/eclipse/cdt/internal/errorparsers/GCCErrorParser.java
+
 2004-07-16 Vladimir Hirsl
 	1. Implementation of HP-UX SOM binary parser.
                                                                                                                              

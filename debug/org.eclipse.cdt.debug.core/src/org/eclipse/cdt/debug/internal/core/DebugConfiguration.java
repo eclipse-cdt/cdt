@@ -44,7 +44,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	public String[] getPlatforms() {
 		String platform = getConfigurationElement().getAttribute("platform");
 		if ( platform == null ) {
-			return new String[] {"*"};
+			return new String[] {"local"};
 		}
 		StringTokenizer stoken = new StringTokenizer(platform, ",");
 		String[] platforms = new String[stoken.countTokens()];

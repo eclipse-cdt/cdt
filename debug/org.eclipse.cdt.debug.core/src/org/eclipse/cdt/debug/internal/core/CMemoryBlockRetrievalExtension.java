@@ -29,54 +29,64 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 
 /**
  * Implements the memory retrieval features based on the CDI model.
  */
-public class CMemoryBlockExtensionRetrieval implements IMemoryBlockExtensionRetrieval {
+public class CMemoryBlockRetrievalExtension implements IMemoryBlockRetrievalExtension {
+
+	CDebugTarget fDebugTarget;
 
 	/** 
-	 * Constructor for CMemoryBlockExtensionRetrieval. 
+	 * Constructor for CMemoryBlockRetrievalExtension. 
 	 */
-	public CMemoryBlockExtensionRetrieval() {
+	public CMemoryBlockRetrievalExtension(CDebugTarget debugTarget) {
+		fDebugTarget = debugTarget;	
 	}
 
+	protected CDebugTarget getDebugTarget() {
+		return fDebugTarget;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval#getExtendedMemoryBlock(java.lang.String, org.eclipse.debug.core.model.IDebugElement)
 	 */
-	public IMemoryBlockExtension getExtendedMemoryBlock( String expression, IDebugElement selected ) throws DebugException {
+	public IMemoryBlockExtension getExtendedMemoryBlock( String expression, Object selected ) throws DebugException {
 		String address = null;
 		CExpression exp = null;
 		String msg = null;
 		try {
-			CStackFrame frame = getStackFrame( selected );
-			if ( frame != null ) {
-				// We need to provide a better way for retrieving the address of expression
-				ICDIExpression cdiExpression = frame.getCDITarget().createExpression( expression );
-				exp = new CExpression( frame, cdiExpression, null );
-				IValue value = exp.getValue();
-				if ( value instanceof ICValue ) {
-					ICType type = ((ICValue)value).getType();
-					if ( type != null && (type.isPointer() || type.isIntegralType()) ) {
-						address = value.getValueString();
-						IDebugTarget target = selected.getDebugTarget();
-						if ( target instanceof CDebugTarget ) {
-							if ( address != null ) {
-								// ???
-								BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
-								return new CMemoryBlockExtension( (CDebugTarget)target, expression, a );
+			if (selected instanceof IDebugElement) {
+				IDebugElement debugElement = (IDebugElement)selected;
+				CStackFrame frame = getStackFrame( debugElement );
+				if ( frame != null ) {
+					// We need to provide a better way for retrieving the address of expression
+					ICDIExpression cdiExpression = frame.getCDITarget().createExpression( expression );
+					exp = new CExpression( frame, cdiExpression, null );
+					IValue value = exp.getValue();
+					if ( value instanceof ICValue ) {
+						ICType type = ((ICValue)value).getType();
+						if ( type != null && (type.isPointer() || type.isIntegralType()) ) {
+							address = value.getValueString();
+							IDebugTarget target = debugElement.getDebugTarget();
+							if ( target instanceof CDebugTarget ) {
+								if ( address != null ) {
+									// ???
+									BigInteger a = ( address.startsWith( "0x" ) ) ? new BigInteger( address.substring( 2 ), 16 ) : new BigInteger( address ); //$NON-NLS-1$
+									return new CMemoryBlockExtension( (CDebugTarget)target, expression, a );
+								}
 							}
+						}
+						else {
+							msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.1" ), new String[] { expression } ); //$NON-NLS-1$
 						}
 					}
 					else {
-						msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockExtensionRetrieval.1" ), new String[] { expression } ); //$NON-NLS-1$
+						msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.2" ), new String[] { expression } ); //$NON-NLS-1$
 					}
-				}
-				else {
-					msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockExtensionRetrieval.2" ), new String[] { expression } ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -84,7 +94,7 @@ public class CMemoryBlockExtensionRetrieval implements IMemoryBlockExtensionRetr
 			msg = e.getMessage();
 		}
 		catch( NumberFormatException e ) {
-			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockExtensionRetrieval.0" ), new String[] { expression, address } ); //$NON-NLS-1$
+			msg = MessageFormat.format( InternalDebugCoreMessages.getString( "CMemoryBlockRetrievalExtension.0" ), new String[] { expression, address } ); //$NON-NLS-1$
 		}
 		throw new DebugException( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, msg, null ) );
 	}
@@ -93,7 +103,6 @@ public class CMemoryBlockExtensionRetrieval implements IMemoryBlockExtensionRetr
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
 	public boolean supportsStorageRetrieval() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
@@ -101,8 +110,10 @@ public class CMemoryBlockExtensionRetrieval implements IMemoryBlockExtensionRetr
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
 	public IMemoryBlock getMemoryBlock( long startAddress, long length ) throws DebugException {
-		// TODO Auto-generated method stub
-		return null;
+		String expression = Long.toHexString(startAddress);
+		BigInteger address = new BigInteger(expression, 16);
+		expression += "0x"; //$NON-NLS-1$
+		return new CMemoryBlockExtension( getDebugTarget(), expression, address );
 	}
 
 	private CStackFrame getStackFrame( IDebugElement selected ) throws DebugException {

@@ -78,7 +78,7 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
-import org.eclipse.cdt.debug.internal.core.CMemoryBlockExtensionRetrieval;
+import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
 import org.eclipse.cdt.debug.internal.core.CSignalManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -106,8 +106,8 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -208,7 +208,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/**
 	 * Support for the memory retrival on this target.
 	 */
-	private CMemoryBlockExtensionRetrieval fMemoryBlockRetrieval;
+	private CMemoryBlockRetrievalExtension fMemoryBlockRetrieval;
 
 	/**
 	 * Constructor for CDebugTarget.
@@ -232,7 +232,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		setRegisterManager( new CRegisterManager( this ) );
 		setBreakpointManager( new CBreakpointManager( this ) );
 		setGlobalVariableManager( new CGlobalVariableManager( this ) );
-		setMemoryBlockRetrieval( new CMemoryBlockExtensionRetrieval() );
+		setMemoryBlockRetrieval( new CMemoryBlockRetrievalExtension( this ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
@@ -808,7 +808,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return getGlobalVariableManager();
 		if ( adapter.equals( ICDISession.class ) )
 			return getCDISession();
-		if ( adapter.equals( IMemoryBlockExtensionRetrieval.class ) )
+		if ( adapter.equals( IMemoryBlockRetrievalExtension.class ) )
 			return getMemoryBlockRetrieval();
 		if ( adapter.equals( IMemoryBlockRetrieval.class ) )
 			return getMemoryBlockRetrieval();
@@ -1725,11 +1725,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return fAddressFactory;
 	}
 
-	private CMemoryBlockExtensionRetrieval getMemoryBlockRetrieval() {
+	private CMemoryBlockRetrievalExtension getMemoryBlockRetrieval() {
 		return fMemoryBlockRetrieval;
 	}
 
-	private void setMemoryBlockRetrieval( CMemoryBlockExtensionRetrieval memoryBlockRetrieval ) {
+	private void setMemoryBlockRetrieval( CMemoryBlockRetrievalExtension memoryBlockRetrieval ) {
 		fMemoryBlockRetrieval = memoryBlockRetrieval;
 	}
 

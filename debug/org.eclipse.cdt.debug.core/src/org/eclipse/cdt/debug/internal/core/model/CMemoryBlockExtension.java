@@ -80,7 +80,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getExpression()
 	 */
-	public String getExpression() throws DebugException {
+	public String getExpression() {
 		return fExpression;
 	}
 
@@ -99,6 +99,14 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
+	 */
+	public int getAddressableSize() throws DebugException {
+		ICDIMemoryBlock block = getCDIBlock();
+		return ( block != null ) ? block.getWordSize() : fWordSize;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportBaseAddressModification()
 	 */
 	public boolean supportBaseAddressModification() {
@@ -111,10 +119,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	public void setBaseAddress( BigInteger address ) throws DebugException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(long, long)
-	 */
-	public MemoryByte[] getBytesFromOffset( long offset, long length ) throws DebugException {
+	public MemoryByte[] getBytesFromOffset(BigInteger unitOffset, long addressableUnits) throws DebugException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -148,9 +153,17 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 				fBytes = new MemoryByte[bytes.length];
 				for ( int i = 0; i < bytes.length; ++i ) {
 					byte cdiFlags = getCDIBlock().getFlags( i );
-					byte flags = MemoryByte.KNOWN;
-					flags |= ( (cdiFlags & ICDIMemoryBlock.VALID) != 0 ) ? MemoryByte.VALID : MemoryByte.READONLY; // ????
-					flags |= ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) ? MemoryByte.READONLY : 0;
+					byte flags = 0;
+					if ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) {
+						flags |= MemoryByte.READABLE;
+					} else {
+						flags |= MemoryByte.READABLE | MemoryByte.WRITABLE;
+					}
+					if (isBigEndian()) {
+						flags |= MemoryByte.ENDIANESS_KNOWN | MemoryByte.BIG_ENDIAN;
+					}
+//					flags |= ( (cdiFlags & ICDIMemoryBlock.VALID) != 0 ) ? MemoryByte.VALID : MemoryByte.READONLY; // ????
+//					flags |= ( (cdiFlags & ICDIMemoryBlock.READ_ONLY) != 0 ) ? MemoryByte.READABLE : 0;
 					if ( hasChanged( getRealBlockAddress().add( BigInteger.valueOf( i ) ) ) )
 						flags |= MemoryByte.CHANGED;
 					fBytes[i] = new MemoryByte( bytes[i], flags );
@@ -171,10 +184,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#isBigEndian()
-	 */
-	public boolean isBigEndian() {
+	private boolean isBigEndian() {
 		IExecFileInfo info = (IExecFileInfo)getDebugTarget().getAdapter( IExecFileInfo.class );
 		if ( info != null ) {
 			return info.isLittleEndian();
@@ -243,11 +253,15 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
 	 */
 	public void setValue( long offset, byte[] bytes ) throws DebugException {
+		setValue(BigInteger.valueOf(offset), bytes);
+	}
+
+	public void setValue(BigInteger offset, byte[] bytes) throws DebugException {
 		ICDIMemoryBlock block = getCDIBlock();
 		if ( block != null ) {
 			BigInteger base = getBigBaseAddress();
 			BigInteger real = getRealBlockAddress();
-			long realOffset = base.add( BigInteger.valueOf( offset ) ).subtract( real ).longValue();
+			long realOffset = base.add( offset ).subtract( real ).longValue();
 			try {
 				block.setValue( realOffset, bytes );
 			}
@@ -371,12 +385,9 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		// TODO Auto-generated method stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getConnected()
-	 */
-	public Object[] getConnected() {
+	public Object[] getConnections() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Object[0];
 	}
 
 	/* (non-Javadoc)
@@ -398,14 +409,6 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressibleSize()
-	 */
-	public int getAddressibleSize() {
-		ICDIMemoryBlock block = getCDIBlock();
-		return ( block != null ) ? block.getWordSize() : fWordSize;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter( Class adapter ) {
@@ -413,4 +416,22 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 			return getMemoryBlockRetrieval();
 		return super.getAdapter( adapter );
 	}
+
+	public BigInteger getMemoryBlockStartAddress() throws DebugException {
+		return null; // return null to mean not bounded ... according to the spec
+	}
+
+	public BigInteger getMemoryBlockEndAddress() throws DebugException {
+		return null;// return null to maen not bounded ... according to the spec
+	}
+
+	public BigInteger getBigLength() throws DebugException {
+		ICDIMemoryBlock block = getCDIBlock();
+		if (block != null) {
+			BigInteger length = new BigInteger(Long.toHexString(block.getLength()), 16);
+			return length;
+		}
+		return BigInteger.ZERO;
+	}
+
 }

@@ -1,3 +1,10 @@
+2005-04-04 Alain Magloire
+	Move to Eclipse-31M6
+	- src/org/eclipse/cdt/debug/internal/core/CMemoryBlockExtensionRetrieval.java
+	+ src/org/eclipse/cdt/debug/internal/core/CMemoryBlockRetrievalExtension.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CDebugTarget.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CMemoryBlockExtension.java
+
 2005-03-24 Alain Magloire
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlock.java
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlockManagement.java

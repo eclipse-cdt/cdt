@@ -214,9 +214,8 @@ public class Buffer implements IBuffer {
 	public boolean isReadOnly() {
 		if (this.file == null) {
 			return (this.flags & F_IS_READ_ONLY) != 0;
-		} else {
-			return this.file.isReadOnly();
 		}
+		return this.file.isReadOnly();
 	}
 
 	/**

@@ -11,7 +11,6 @@ package org.eclipse.cdt.internal.core.model;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.INamespace;
 
@@ -19,7 +18,7 @@ public class Namespace extends SourceManipulation implements INamespace{
 
 	String typeName = ""; //$NON-NLS-1$
 	public Namespace(ICElement parent, String name) {
-		super(parent, name, CElement.C_NAMESPACE);
+		super(parent, name, ICElement.C_NAMESPACE);
 	}
 
 	/*

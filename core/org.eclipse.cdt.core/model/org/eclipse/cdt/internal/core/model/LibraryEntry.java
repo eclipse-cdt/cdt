@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ILibraryEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -35,7 +36,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 */
 	public LibraryEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath libraryPath, IPath sourceAttachmentPath,
 		IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		super(ILibraryEntry.CDT_LIBRARY, basePath, baseRef, resourcePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
+		super(IPathEntry.CDT_LIBRARY, basePath, baseRef, resourcePath, APathEntry.NO_EXCLUSION_PATTERNS, isExported);
 		this.libraryPath = (libraryPath == null) ? Path.EMPTY : libraryPath;
 		this.sourceAttachmentPath = sourceAttachmentPath;
 		this.sourceAttachmentRootPath = sourceAttachmentRootPath;
@@ -144,9 +145,9 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 			}
 			p = loc.append(lib);
 			return p;
-		} else {
-			p = lib;
 		}
+
+		p = lib;
 		if (!p.isAbsolute()) {
 			IPath resPath = getPath();
 			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);

@@ -62,9 +62,8 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 		IWorkspace workspace = resource.getWorkspace();
 		if (resource.exists()) {
 			return workspace.getRuleFactory().modifyRule(resource);
-		} else {
-			return workspace.getRuleFactory().createRule(resource);
 		}
+		return workspace.getRuleFactory().createRule(resource);
 	}
 	
 	/**

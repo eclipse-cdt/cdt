@@ -11,12 +11,13 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.runtime.IPath;
 
 public class ContainerEntry extends PathEntry implements IContainerEntry {
 
 	public ContainerEntry(IPath path, boolean isExported) {
-		super(IContainerEntry.CDT_CONTAINER, path, isExported);
+		super(IPathEntry.CDT_CONTAINER, path, isExported);
 	}
 
 	public boolean equals(Object obj) {

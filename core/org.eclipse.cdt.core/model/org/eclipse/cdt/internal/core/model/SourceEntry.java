@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.core.runtime.IPath;
 
@@ -21,7 +22,7 @@ public class SourceEntry extends APathEntry implements ISourceEntry {
 	 * @param exclusionPatterns
 	 */
 	public SourceEntry(IPath sourcePath, IPath[] exclusionPatterns) {
-		super(ISourceEntry.CDT_SOURCE, null, null, sourcePath, exclusionPatterns, false);
+		super(IPathEntry.CDT_SOURCE, null, null, sourcePath, exclusionPatterns, false);
 	}
 
 	public boolean equals (Object obj) {

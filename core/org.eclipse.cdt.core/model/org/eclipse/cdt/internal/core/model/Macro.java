@@ -11,7 +11,7 @@ import org.eclipse.cdt.core.model.IMacro;
 public class Macro extends SourceManipulation implements IMacro {
 	
 	public Macro(ICElement parent, String name) {
-		super(parent, name, CElement.C_MACRO);
+		super(parent, name, ICElement.C_MACRO);
 	}
 
 	public String getIdentifierList() {

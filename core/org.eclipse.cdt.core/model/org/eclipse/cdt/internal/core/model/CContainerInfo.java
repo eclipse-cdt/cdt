@@ -83,11 +83,10 @@ public class CContainerInfo extends OpenableInfo {
 							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename) &&
 									root.isOnSourceEntry(member)) {
 								continue;
-							} else {
-								if (root.isOnSourceEntry(member)) {
-									if (CModelManager.getDefault().createBinaryFile((IFile)member) != null) {
-										continue;
-									}
+							}
+							if (root.isOnSourceEntry(member)) {
+								if (CModelManager.getDefault().createBinaryFile((IFile)member) != null) {
+									continue;
 								}
 							}
 							break;

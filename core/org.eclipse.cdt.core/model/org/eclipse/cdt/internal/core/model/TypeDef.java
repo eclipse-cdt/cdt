@@ -18,7 +18,7 @@ public class TypeDef extends SourceManipulation implements ITypeDef{
 	
 	String typeName= ""; //$NON-NLS-1$
 	public TypeDef(ICElement parent, String name) {
-		super(parent, name, CElement.C_TYPEDEF);
+		super(parent, name, ICElement.C_TYPEDEF);
 	}
 	/**
 	 * Returns the typeName.

@@ -64,7 +64,7 @@ import org.eclipse.core.runtime.Platform;
 
 public class CModelManager implements IResourceChangeListener, ICDescriptorListener, IResolverChangeListener {
 
-	public static boolean VERBOSE = false;
+	public static boolean VERBOSE = true;
 
 	/**
 	 * Unique handle onto the CModel

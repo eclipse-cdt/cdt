@@ -47,17 +47,9 @@ public class ElementCache extends OverflowingLRUCache {
 		try {
 			if (element.hasUnsavedChanges()) {
 				return false;
-			} /*else {
-				// We must close an entire JarPackageFragmentRoot at once.
-				if (element instanceof JarPackageFragment) {
-					JarPackageFragment packageFragment= (JarPackageFragment) element;
-					JarPackageFragmentRoot root = (JarPackageFragmentRoot) packageFragment.getParent();
-					root.close();
-				}*/ else {
-					element.close();
-				}
-				return true;
-		//	}
+			}
+			element.close();
+			return true;
 		} catch (CModelException npe) {
 			return false;
 		}

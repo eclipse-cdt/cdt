@@ -23,7 +23,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	boolean isDestructor = false;
 
 	public MethodDeclaration(ICElement parent, String name){
-		super(parent, name, CElement.C_METHOD_DECLARATION);
+		super(parent, name, ICElement.C_METHOD_DECLARATION);
 	}
 
 	public MethodDeclaration(ICElement parent, String name, int type){

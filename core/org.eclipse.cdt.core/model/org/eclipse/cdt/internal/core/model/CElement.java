@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -290,12 +291,12 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public String toDebugString() {
-			return getElementName() + " " + getTypeString(getElementType()); //$NON-NLS-1$
+			return getElementName() + " " + getTypeString(); //$NON-NLS-1$
 	}
 
 	// util
-	public static String getTypeString(int type) {
-		switch (type) {
+	public String getTypeString() {
+		switch (getElementType()) {
 			case C_MODEL:
 				return "CMODEL";  //$NON-NLS-1$
 			case C_PROJECT:
@@ -303,6 +304,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			case C_CCONTAINER:
 				return "CCONTAINER"; //$NON-NLS-1$
 			case C_UNIT:
+				if (this instanceof IWorkingCopy) {
+					return "WORKING_UNIT";  //$NON-NLS-1$
+				}
 				return "TRANSLATION_UNIT";  //$NON-NLS-1$
 			case C_FUNCTION:
 				return "C_FUNCTION";  //$NON-NLS-1$

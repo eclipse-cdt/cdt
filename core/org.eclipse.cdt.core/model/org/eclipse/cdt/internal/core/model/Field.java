@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 public class Field extends VariableDeclaration implements IField {
 	
 	public Field(ICElement parent, String name) {
-		super(parent, name, CElement.C_FIELD);
+		super(parent, name, ICElement.C_FIELD);
 	}
 
 	public boolean isMutable() throws CModelException{

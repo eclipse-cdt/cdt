@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class BinaryContainer extends Openable implements IBinaryContainer {
 
 	public BinaryContainer (CProject cProject) {
-		super (cProject, null, CCorePlugin.getResourceString("CoreModel.BinaryContainer.Binaries"), CElement.C_VCONTAINER); //$NON-NLS-1$
+		super (cProject, null, CCorePlugin.getResourceString("CoreModel.BinaryContainer.Binaries"), ICElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
 	public IBinary[] getBinaries() throws CModelException {

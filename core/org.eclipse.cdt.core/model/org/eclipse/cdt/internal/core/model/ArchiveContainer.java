@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class ArchiveContainer extends Openable implements IArchiveContainer {
 
 	public ArchiveContainer (CProject cProject) {
-		super (cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), CElement.C_VCONTAINER); //$NON-NLS-1$
+		super (cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), ICElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
 	public IArchive[] getArchives() throws CModelException {

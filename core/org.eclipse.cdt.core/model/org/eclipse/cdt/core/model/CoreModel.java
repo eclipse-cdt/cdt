@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -368,7 +369,7 @@ public class CoreModel {
 	 *  
 	 */
 	public static IOutputEntry newOutputEntry(IPath outputPath) {
-		return newOutputEntry(outputPath, OutputEntry.NO_EXCLUSION_PATTERNS);
+		return newOutputEntry(outputPath, APathEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -410,7 +411,7 @@ public class CoreModel {
 	 *  
 	 */
 	public static ISourceEntry newSourceEntry(IPath sourcePath) {
-		return newSourceEntry(sourcePath, SourceEntry.NO_EXCLUSION_PATTERNS);
+		return newSourceEntry(sourcePath, APathEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -467,7 +468,7 @@ public class CoreModel {
 	 * @return IIncludeEntry
 	 */
 	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude) {
-		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, IncludeEntry.NO_EXCLUSION_PATTERNS);
+		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, APathEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -540,7 +541,7 @@ public class CoreModel {
 	 * @return
 	 */
 	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue) {
-		return newMacroEntry(resourcePath, macroName, macroValue, MacroEntry.NO_EXCLUSION_PATTERNS);
+		return newMacroEntry(resourcePath, macroName, macroValue, APathEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -589,7 +590,7 @@ public class CoreModel {
 	 * @return
 	 */
 	public static IMacroEntry newMacroRefEntry(IPath resourcePath, IPath baseRef, String macroName) {
-		return new MacroEntry(resourcePath, baseRef, macroName, null, MacroEntry.NO_EXCLUSION_PATTERNS, false);
+		return new MacroEntry(resourcePath, baseRef, macroName, null, APathEntry.NO_EXCLUSION_PATTERNS, false);
 	}
 
 	/**

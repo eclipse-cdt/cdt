@@ -117,10 +117,10 @@ public abstract class MultiOperation extends CModelOperation {
 	 * if there are no renamings specified.
 	 */
 	protected String getNewNameFor(ICElement element) {
-		if (fRenamings != null)
+		if (fRenamings != null) {
 			return (String) fRenamings.get(element);
-		else
-			return null;
+		}
+		return null;
 	}
 
 	/**

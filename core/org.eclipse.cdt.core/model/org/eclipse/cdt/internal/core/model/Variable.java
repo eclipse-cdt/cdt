@@ -11,7 +11,7 @@ import org.eclipse.cdt.core.model.IVariable;
 public class Variable extends VariableDeclaration implements IVariable {
 	
 	public Variable(ICElement parent, String name) {
-		super(parent, name, CElement.C_VARIABLE);
+		super(parent, name, ICElement.C_VARIABLE);
 	}
 
 	public Variable(ICElement parent, String name, int kind) {

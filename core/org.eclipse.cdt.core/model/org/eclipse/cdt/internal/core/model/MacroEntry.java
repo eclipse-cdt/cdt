@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.runtime.IPath;
 
 public class MacroEntry extends APathEntry implements IMacroEntry {
@@ -19,7 +20,7 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	String macroValue;
 
 	public MacroEntry (IPath path, IPath baseRef, String macroName, String macroValue, IPath[] exclusionPatterns, boolean isExported) {
-		super(IMacroEntry.CDT_MACRO, null, baseRef, path, exclusionPatterns, isExported);
+		super(IPathEntry.CDT_MACRO, null, baseRef, path, exclusionPatterns, isExported);
 		if ( macroName == null) {
 			throw new IllegalArgumentException("Macro name cannot be null"); //$NON-NLS-1$
 		}

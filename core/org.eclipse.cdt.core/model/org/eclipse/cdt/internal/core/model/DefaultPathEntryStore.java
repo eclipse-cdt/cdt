@@ -194,9 +194,9 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				if (projSegment != null && projSegment.equals(project.getName())) { // this
 					// project
 					return CoreModel.newSourceEntry(path, exclusionPatterns);
-				} else { // another project
-					return CoreModel.newProjectEntry(path, isExported);
 				}
+				// another project
+				return CoreModel.newProjectEntry(path, isExported);
 			}
 			case IPathEntry.CDT_OUTPUT :
 				return CoreModel.newOutputEntry(path, exclusionPatterns);

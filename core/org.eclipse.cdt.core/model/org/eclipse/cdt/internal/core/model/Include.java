@@ -14,7 +14,7 @@ public class Include extends SourceManipulation implements IInclude {
 	private String fullPath;
 	
 	public Include(ICElement parent, String name, boolean isStandard) {
-		super(parent, name, CElement.C_INCLUDE);
+		super(parent, name, ICElement.C_INCLUDE);
 		standard = isStandard;
 	}
 

@@ -21,7 +21,7 @@ public class FunctionTemplate extends FunctionDeclaration implements ITemplate{
 	protected String[] templateParameterTypes;
 	
 	public FunctionTemplate(ICElement parent, String name) {
-		super(parent, name, CElement.C_TEMPLATE_FUNCTION);
+		super(parent, name, ICElement.C_TEMPLATE_FUNCTION);
 		templateParameterTypes= fgEmptyList;
 	}
 	

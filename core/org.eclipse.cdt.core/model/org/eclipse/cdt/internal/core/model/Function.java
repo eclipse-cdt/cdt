@@ -11,6 +11,6 @@ import org.eclipse.cdt.core.model.IFunction;
 public class Function extends FunctionDeclaration implements IFunction {
 	
 	public Function(ICElement parent, String name) {
-		super(parent, name, CElement.C_FUNCTION);
+		super(parent, name, ICElement.C_FUNCTION);
 	}
 }

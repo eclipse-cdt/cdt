@@ -19,7 +19,7 @@ public class Using extends SourceManipulation implements IUsing {
 	boolean directive;
 
 	public Using(ICElement parent, String name, boolean isDirective) {
-		super(parent, name, CElement.C_USING);
+		super(parent, name, ICElement.C_USING);
 		directive = isDirective;
 	}
 

@@ -12,7 +12,7 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 public class VariableDeclaration extends SourceManipulation implements IVariableDeclaration {
 	
 	public VariableDeclaration(ICElement parent, String name) {
-		super(parent, name, CElement.C_VARIABLE_DECLARATION);
+		super(parent, name, ICElement.C_VARIABLE_DECLARATION);
 	}
 
 	public VariableDeclaration(ICElement parent, String name, int type) {

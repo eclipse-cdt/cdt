@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.model.IEnumeration;
 public class Enumeration extends SourceManipulation implements IEnumeration{
 
 	public Enumeration(ICElement parent, String name) {
-		super(parent, name, CElement.C_ENUMERATION);		
+		super(parent, name, ICElement.C_ENUMERATION);		
 	}
 
 	protected CElementInfo createElementInfo () {

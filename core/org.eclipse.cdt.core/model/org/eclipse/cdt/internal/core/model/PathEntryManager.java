@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
@@ -1209,13 +1210,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				return true;
 			}
 			// project change, traverse children.
-		} else if (kind == ICElementDelta.ADDED || kind == ICElementDelta.REMOVED) {
+		} 
+		if (element instanceof IWorkingCopy) {
+			return false;
+		}
+		if (kind == ICElementDelta.ADDED || kind == ICElementDelta.REMOVED) {
 			return true; // add/remove we validate all paths
 		}
-		ICElementDelta[] affectedChildren = delta.getAffectedChildren();
-		for (int i = 0; i < affectedChildren.length; i++) {
-			if (processDelta(affectedChildren[i]) == true) {
-				return true;
+		if (type == ICElement.C_MODEL || type == ICElement.C_CCONTAINER || type == ICElement.C_PROJECT) {
+			ICElementDelta[] affectedChildren = delta.getAffectedChildren();
+			for (int i = 0; i < affectedChildren.length; i++) {
+				if (processDelta(affectedChildren[i]) == true) {
+					return true;
+				}
 			}
 		}
 		return false;

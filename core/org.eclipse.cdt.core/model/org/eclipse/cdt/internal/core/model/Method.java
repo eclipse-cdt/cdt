@@ -11,6 +11,6 @@ import org.eclipse.cdt.core.model.IMethod;
 public class Method extends MethodDeclaration implements IMethod{
 	
 	public Method(ICElement parent, String name){
-		super(parent, name, CElement.C_METHOD);
+		super(parent, name, ICElement.C_METHOD);
 	}
 }

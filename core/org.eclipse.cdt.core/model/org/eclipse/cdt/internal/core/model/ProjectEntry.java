@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.core.runtime.IPath;
 
@@ -17,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 public class ProjectEntry extends PathEntry implements IProjectEntry {
 
 	public ProjectEntry(IPath path, boolean isExported) {
-		super(IProjectEntry.CDT_PROJECT, path, isExported);
+		super(IPathEntry.CDT_PROJECT, path, isExported);
 	}
 
 	public boolean equals(Object obj) {

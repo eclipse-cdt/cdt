@@ -336,16 +336,15 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {
 				throw (CModelException)ce;
-			} else {
-				// translate the core exception to a c model exception
-				if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
-					Throwable e = ce.getStatus().getException();
-					if (e instanceof CModelException) {
-						throw (CModelException) e;
-					}
-				}
-				throw new CModelException(ce);
 			}
+			// translate the core exception to a c model exception
+			if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
+				Throwable e = ce.getStatus().getException();
+				if (e instanceof CModelException) {
+					throw (CModelException) e;
+				}
+			}
+			throw new CModelException(ce);
 		}
 	}
 
@@ -379,9 +378,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	public ICModel getCModel() {
 		if (fElementsToProcess == null || fElementsToProcess.length == 0) {
 			return getParentElement().getCModel();
-		} else {
-			return fElementsToProcess[0].getCModel();
 		}
+		return fElementsToProcess[0].getCModel();
 	}
 
 	/**

@@ -270,15 +270,15 @@ private void insertPositions(ICElement[] elements, boolean isNew) {
  * none of the internal calls need to use the locally cached contents
  * of the old translation unit.
  */
-private boolean isIdentical(CElement e1, CElement e2) {
-	if (e1 == null ^ e2 == null)
-		return false;
-	
-	if (e1 == null)
-		return true;
-
-	return e1.isIdentical(e2);					
-}
+//private boolean isIdentical(CElement e1, CElement e2) {
+//	if (e1 == null ^ e2 == null)
+//		return false;
+//	
+//	if (e1 == null)
+//		return true;
+//
+//	return e1.isIdentical(e2);					
+//}
 /**
  * Answers true if the elements position has not changed.
  * Takes into account additions so that elements following
@@ -296,9 +296,8 @@ private boolean isPositionedCorrectly(ICElement element) {
 	
 	if (oldPrevious == null) {
 		return newPrevious == null;
-	} else {
-		return oldPrevious.equals(newPrevious);
-	}	
+	}
+	return oldPrevious.equals(newPrevious);
 }
 private void putElementInfo(ICElement element, CElementInfo info) {
 	this.infos.put(element, info);

@@ -21,7 +21,7 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 	protected String[] templateParameterTypes;
 	
 	public MethodTemplate(ICElement parent, String name) {
-		super(parent, name, CElement.C_TEMPLATE_METHOD);
+		super(parent, name, ICElement.C_TEMPLATE_METHOD);
 		templateParameterTypes= fgEmptyList;
 	}
 	

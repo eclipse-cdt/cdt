@@ -18,7 +18,7 @@ public class Enumerator extends SourceManipulation implements IEnumerator{
 	String constantExpression = ""; //$NON-NLS-1$
 	
 	public Enumerator(ICElement parent, String name) {
-		super(parent, name, CElement.C_ENUMERATOR);
+		super(parent, name, ICElement.C_ENUMERATOR);
 	}
 	
 	protected CElementInfo createElementInfo () {

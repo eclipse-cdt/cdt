@@ -56,10 +56,9 @@ public class BufferManager implements IBufferFactory {
 			IBuffer buffer= (IBuffer) entry._fValue;
 			if (buffer.hasUnsavedChanges()) {
 				return false;
-			} else {
-				buffer.close();
-				return true;
 			}
+			buffer.close();
+			return true;
 		}
 		/**
 		 * Returns a new instance of the reciever.

@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
 
 /**
  * This operation deletes a collection of resources and all of their children.
@@ -44,6 +45,6 @@ public class DeleteResourceElementsOperation extends MultiOperation {
 	 */
 	protected void verify(ICElement element) throws CModelException {
 		if (element == null || !element.exists())
-			error(CModelStatus.ELEMENT_DOES_NOT_EXIST, element);
+			error(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, element);
 	}
 }

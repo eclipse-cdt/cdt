@@ -18,7 +18,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	protected String returnType;
 	
 	public FunctionDeclaration(ICElement parent, String name) {
-		super(parent, name, CElement.C_FUNCTION_DECLARATION);
+		super(parent, name, ICElement.C_FUNCTION_DECLARATION);
 		fParameterTypes= fgEmptyList;
 	}
 
@@ -28,10 +28,10 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	public String getReturnType(){
-		if (returnType != null)
+		if (returnType != null) {
 			return returnType;
-		else
-			return ""; //$NON-NLS-1$
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	public void setReturnType(String type){

@@ -336,7 +336,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		return bestPrefix( prefix, (char) 0, namespaceName, containingTypes, matchMode, isCaseSensitive );
 	}	
 		
-	public static final char[] bestVariablePrefix( LimitTo limitTo, char[] varName, int matchMode, boolean isCaseSenstive ){
+	public static final char[] bestVariablePrefix( LimitTo limitTo, char[] varName, char[][] containingTypes, int matchMode, boolean isCaseSenstive ){
 		char [] prefix = null;
 		if( limitTo == REFERENCES ){
 			prefix = TYPE_REF;
@@ -346,7 +346,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			return TYPE_ALL;
 		}
 		
-		return bestPrefix( prefix, VAR_SUFFIX, varName, null, matchMode, isCaseSenstive );	
+		return bestPrefix( prefix, VAR_SUFFIX, varName, containingTypes, matchMode, isCaseSenstive );	
 	}
 
 	public static final char[] bestFieldPrefix( LimitTo limitTo, char[] fieldName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {

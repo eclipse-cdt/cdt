@@ -80,10 +80,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == METHOD || searchFor == FUNCTION ){
 			pattern = createMethodPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == FIELD){
-			pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == VAR ){
-			pattern = createVariablePattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == FIELD || searchFor == VAR ){
+			pattern = createFieldPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == NAMESPACE ){
 			pattern = createNamespacePattern( patternString, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == MACRO ){
@@ -170,28 +168,11 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createVariablePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createFieldPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 		if( limitTo == ALL_OCCURRENCES ){
 			OrPattern orPattern = new OrPattern();
-			orPattern.addPattern( createVariablePattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
-			orPattern.addPattern( createVariablePattern( patternString, REFERENCES, matchMode, caseSensitive ) );
-			return orPattern;
-		}
-		return new VariableDeclarationPattern( patternString.toCharArray(), matchMode, limitTo, caseSensitive );
-	}
-
-	/**
-	 * @param patternString
-	 * @param limitTo
-	 * @param matchMode
-	 * @param caseSensitive
-	 * @return
-	 */
-	private static CSearchPattern createFieldPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		if( limitTo == ALL_OCCURRENCES ){
-			OrPattern orPattern = new OrPattern();
-			orPattern.addPattern( createFieldPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
-			orPattern.addPattern( createFieldPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFieldPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFieldPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
 			return orPattern;
 		}
 		
@@ -201,7 +182,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char [] name = (char []) list.removeLast();
 		char [][] qualifications = new char[0][];
 		
-		return new FieldDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, limitTo, caseSensitive );
+		return new FieldDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, searchFor, limitTo, caseSensitive );
 	}
 
 	/**

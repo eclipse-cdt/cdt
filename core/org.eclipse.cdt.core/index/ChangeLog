@@ -1,3 +1,7 @@
+2003-08-12 Bogdan Gheorghe
+	- Changed var prefix in AbstractIndexer to pass in fully
+	  qualified names
+	  
 2003-08-11 Bogdan Gheorghe
 	- Added macro declarations to the index
 	- Added macro prefix to AbstractIndexer

@@ -17,7 +17,9 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
@@ -33,7 +35,7 @@ import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class FieldDeclarationPattern extends VariableDeclarationPattern {
+public class FieldDeclarationPattern extends CSearchPattern {
 
 	/**
 	 * @param name
@@ -42,18 +44,27 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 	 * @param limitTo
 	 * @param caseSensitive
 	 */
-	public FieldDeclarationPattern(char[] name, char[][] qual, int matchMode, LimitTo limitTo, boolean caseSensitive) {
-		super( name, matchMode, limitTo, caseSensitive );
+	public FieldDeclarationPattern(char[] name, char[][] qual, int matchMode, SearchFor sfor, LimitTo limitTo, boolean caseSensitive) {
+		super( matchMode, caseSensitive, limitTo );
 		qualifications = qual;
+		searchFor = sfor;
+		simpleName = name;
 	}
 
 
 	public int matchLevel(ISourceElementCallbackDelegate node, LimitTo limit ) {
-		if( !(node instanceof IASTField) ){
-			return IMPOSSIBLE_MATCH;
-		}
+		if( node instanceof IASTField ){
+			if( searchFor != FIELD || !canAccept( limit ) )
+				return IMPOSSIBLE_MATCH;
+		} else if ( node instanceof IASTVariable ){
+			if( searchFor != VAR || !canAccept( limit ) )
+				return IMPOSSIBLE_MATCH;			
+		} else return IMPOSSIBLE_MATCH;
 		
-		if( super.matchLevel( node, limit ) == IMPOSSIBLE_MATCH ){
+		String nodeName = ((IASTOffsetableNamedElement)node).getName();
+		
+		//check name, if simpleName == null, its treated the same as "*"	
+		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
@@ -73,7 +84,16 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 	}
 	
 	public char[] indexEntryPrefix() {
-		return AbstractIndexer.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+		if( searchFor == FIELD ){
+			return AbstractIndexer.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+		} else if( searchFor == VAR ) {
+			return AbstractIndexer.bestVariablePrefix(
+							_limitTo,
+							simpleName, qualifications,
+							_matchMode, _caseSensitive
+			);
+		}
+		return null;		
 	}
 	
 	protected void resetIndexInfo(){
@@ -84,11 +104,18 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 	protected void decodeIndexEntry(IEntryResult entryResult) {
 		char[] word = entryResult.getWord();
 		int size = word.length;
+		int firstSlash = 0;
+		int slash = 0;
 		
-		int firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
-		
-		int slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
-		
+		if( searchFor == FIELD ){
+			firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
+			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+		} else if( searchFor == VAR ) {
+			int realStart = CharOperation.indexOf( SEPARATOR, word, 0 );
+			firstSlash = CharOperation.indexOf( SEPARATOR, word, realStart + 1);
+			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+		}
+				
 		this.decodedSimpleName = CharOperation.subarray(word, firstSlash + 1, slash);
 		
 		if( slash != -1 && slash+1 < size ){
@@ -130,4 +157,9 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 	
 	private char [][] qualifications;
 	private char [][] decodedQualifications;
+	private char []   simpleName;
+	private char []   decodedSimpleName;
+	private char      decodedType;
+
+	private SearchFor searchFor;
 }

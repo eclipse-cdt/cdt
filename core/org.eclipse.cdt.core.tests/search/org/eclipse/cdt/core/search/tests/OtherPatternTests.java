@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
-import org.eclipse.cdt.internal.core.search.matching.VariableDeclarationPattern;
 
 /**
  * @author aniefer
@@ -59,18 +58,18 @@ public class OtherPatternTests extends BaseSearchTest {
 	
 	public void testVariableIndexPrefix(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "c", VAR, DECLARATIONS, true );
-		assertTrue( pattern instanceof VariableDeclarationPattern );
+		assertTrue( pattern instanceof FieldDeclarationPattern );
 		
-		VariableDeclarationPattern variablePattern = (VariableDeclarationPattern)pattern;
+		FieldDeclarationPattern variablePattern = (FieldDeclarationPattern)pattern;
 		assertEquals( CharOperation.compareWith( "typeDecl/V/c".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
 		
-		variablePattern = (VariableDeclarationPattern) SearchEngine.createSearchPattern( "rt*", VAR, DECLARATIONS, true );
+		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "rt*", VAR, DECLARATIONS, true );
 		assertEquals( CharOperation.compareWith( "typeDecl/V/rt".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
 				
-		variablePattern = (VariableDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false );
+		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "Ac", VAR, REFERENCES, false );
 		assertEquals( CharOperation.compareWith( "typeRef/V/".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
 		
-		variablePattern = (VariableDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true );
+		variablePattern = (FieldDeclarationPattern) SearchEngine.createSearchPattern( "A?c", VAR, REFERENCES, true );
 		assertEquals( CharOperation.compareWith( "typeRef/V/A".toCharArray(), variablePattern.indexEntryPrefix() ), 0);
 	}
 	

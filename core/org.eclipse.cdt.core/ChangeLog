@@ -1,3 +1,9 @@
+2004-09-22 Chris Wiebe
+
+	added file naming conventions
+	* index/org/eclipse/cdt/internal/core/messages.properties
+	* src/org/eclipse/cdt/core/CConventions.java
+
 2004-09-21 Alain Magloire
 	* model/org/eclipse/cdt/core/model/IBinary.java
 	* model/org/eclipse/cdt/internal/core/model/Archive.java

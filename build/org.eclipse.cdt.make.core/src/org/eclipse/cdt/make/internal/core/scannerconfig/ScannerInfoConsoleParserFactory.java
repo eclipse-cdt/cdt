@@ -75,8 +75,15 @@ public class ScannerInfoConsoleParserFactory {
 		try {
 			// get the SC builder settings
 			if (currentProject.hasNature(ScannerConfigNature.NATURE_ID)) {
-				IScannerConfigBuilderInfo scBuildInfo = MakeCorePlugin.
-					createScannerConfigBuildInfo(currentProject, ScannerConfigBuilder.BUILDER_ID);
+				IScannerConfigBuilderInfo scBuildInfo;
+				try {
+					scBuildInfo = MakeCorePlugin.
+						createScannerConfigBuildInfo(currentProject, ScannerConfigBuilder.BUILDER_ID);
+				}
+				catch (CoreException e) {
+					// builder not installed or disabled
+					scBuildInfo = null;
+				}
 				if (scBuildInfo != null && scBuildInfo.isMakeBuilderConsoleParserEnabled()) {
 					// get the make builder console parser 
 					IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().

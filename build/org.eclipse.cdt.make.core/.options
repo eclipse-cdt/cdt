@@ -1,0 +1,4 @@
+org.eclipse.cdt.make.core/debug=true
+
+# Reports scanner config discovery activity
+org.eclipse.cdt.make.core/debug/scdiscovery=false

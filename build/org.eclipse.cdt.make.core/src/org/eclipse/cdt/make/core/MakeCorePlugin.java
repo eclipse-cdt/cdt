@@ -29,6 +29,7 @@ import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -40,6 +41,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
@@ -317,5 +319,28 @@ public class MakeCorePlugin extends Plugin {
 			log(e);
 		}
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		
+		//Set debug tracing options
+		configurePluginDebugOptions();
+	}
+
+	private static final String SCANNER_CONFIG = MakeCorePlugin.getUniqueIdentifier() + "/debug/scdiscovery"; //$NON-NLS-1$
+	/**
+	 * 
+	 */
+	private void configurePluginDebugOptions() {
+		if (isDebugging()) {
+			String option = Platform.getDebugOption(SCANNER_CONFIG);
+			if (option != null) {
+				TraceUtil.SCANNER_CONFIG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			}
+		}
 	}
 }

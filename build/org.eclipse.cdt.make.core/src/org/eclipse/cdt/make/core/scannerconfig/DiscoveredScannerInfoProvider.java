@@ -10,9 +10,26 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,10 +45,14 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Provider of both user specified and discovered scanner info
@@ -124,7 +145,8 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 	private DiscoveredScannerInfo loadScannerInfo(IProject project) throws CoreException {
 		LinkedHashMap includes = new LinkedHashMap();
 		LinkedHashMap symbols = new LinkedHashMap();
-		loadDiscoveredScannerInfoFromCDescriptor(project, includes, symbols);
+//		loadDiscoveredScannerInfoFromCDescriptor(project, includes, symbols);
+		loadDiscoveredScannerInfoFromState(project, includes, symbols);
 		MakeScannerInfo userInfo = MakeScannerProvider.getDefault().loadScannerInfo(project);
 		DiscoveredScannerInfo info = new DiscoveredScannerInfo(project);
 		info.setUserScannerInfo(userInfo);
@@ -143,6 +165,15 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 	private void loadDiscoveredScannerInfoFromCDescriptor(IProject project, LinkedHashMap includes, LinkedHashMap symbols) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		Node child = descriptor.getProjectData(CDESCRIPTOR_ID).getFirstChild();
+		loadDiscoveredScannerInfo(includes, symbols, child);
+	}
+
+	/**
+	 * @param includes
+	 * @param symbols
+	 * @param child
+	 */
+	private void loadDiscoveredScannerInfo(LinkedHashMap includes, LinkedHashMap symbols, Node child) {
 		while (child != null) {
 			if (child.getNodeName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
@@ -152,7 +183,7 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 				// Add the symbol to the symbol list
 				String symbol = ((Element)child).getAttribute(SYMBOL);
 				String removed = ((Element)child).getAttribute(REMOVED);
-				boolean bRemoved = (removed != null && removed == "true");	//$NON-NLS-1$
+				boolean bRemoved = (removed != null && removed.equals("true"));	// $NON-NLS-1$
 				ScannerConfigUtil.scAddSymbolString2SymbolEntryMap(symbols, symbol, !bRemoved);
 			}
 			child = child.getNextSibling();
@@ -193,7 +224,8 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 			project.setSessionProperty(scannerInfoProperty, scannerInfo);
 		}
 
-		saveDiscoveredScannerInfoToCDescriptor(scannerInfo, project);
+//		saveDiscoveredScannerInfoToCDescriptor(scannerInfo, project);
+		saveDiscoveredScannerInfoToState(scannerInfo, project);
 		
 		MakeScannerProvider.updateScannerInfo(scannerInfo.getUserScannerInfo());
 // listeners are notified by MakeScannerProvider.updateScannerInfo
@@ -218,11 +250,20 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 			rootElement.removeChild(child);
 			child = rootElement.getFirstChild();
 		}
+		Document doc = rootElement.getOwnerDocument();
 
+		saveDiscoveredScannerInfo(scannerInfo, rootElement, doc);
+	}
+
+	/**
+	 * @param scannerInfo
+	 * @param rootElement
+	 * @param doc
+	 */
+	private static void saveDiscoveredScannerInfo(DiscoveredScannerInfo scannerInfo, Element rootElement, Document doc) {
 		// Save the build info
 		if (scannerInfo != null) {
 			// Serialize the include paths
-			Document doc = rootElement.getOwnerDocument();
 			Map discoveredIncludes = scannerInfo.getDiscoveredIncludePaths();
 			Iterator iter = discoveredIncludes.keySet().iterator();
 			while (iter.hasNext()) {
@@ -258,5 +299,88 @@ public class DiscoveredScannerInfoProvider extends AbstractCExtension implements
 // descriptor is saved by MakeScannerProvider.updateScannerInfo
 //			descriptor.saveProjectData();
 		}
+	}
+
+	private void loadDiscoveredScannerInfoFromState(IProject project, LinkedHashMap includes, LinkedHashMap symbols) throws CoreException {
+		// Save the document
+		IPath path = MakeCorePlugin.getWorkingDirectory();
+		path = path.append(project.getName() + ".sc");
+		if (path.toFile().exists()) {
+			try {
+				FileInputStream file = new FileInputStream(path.toFile());
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document document = parser.parse(file);
+				Node rootElement = document.getFirstChild();
+				if (rootElement.getNodeName().equals("scannerInfo")) {
+					Node child = rootElement.getFirstChild();
+					loadDiscoveredScannerInfo(includes, symbols, child);
+				}
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR,
+						MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeCorePlugin.getResourceString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
+			} catch (ParserConfigurationException e) {
+				MakeCorePlugin.log(e);
+			} catch (FactoryConfigurationError e) {
+				MakeCorePlugin.log(e);
+			} catch (SAXException e) {
+				MakeCorePlugin.log(e);
+			}
+		}
+	}
+	
+	private static void saveDiscoveredScannerInfoToState(DiscoveredScannerInfo scannerInfo, IProject project) throws CoreException {
+		// Create document
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.newDocument();
+			Element rootElement = doc.createElement("scannerInfo");
+			rootElement.setAttribute("id", CDESCRIPTOR_ID);
+			doc.appendChild(rootElement);
+
+			saveDiscoveredScannerInfo(scannerInfo, rootElement, doc);
+		
+			// Transform the document to something we can save in a file
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");	//$NON-NLS-1$
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(stream);
+			transformer.transform(source, result);
+			
+			// Save the document
+			IPath path = MakeCorePlugin.getWorkingDirectory();
+			path = path.append(project.getName() + ".sc");
+			try {
+				FileOutputStream file = new FileOutputStream(path.toFile());
+				file.write(stream.toByteArray());
+				file.close();
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR,
+						MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeCorePlugin.getResourceString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
+			}
+			
+			// Close the streams
+			stream.close();
+		} catch (ParserConfigurationException e) {
+			MakeCorePlugin.log(e);
+		} catch (FactoryConfigurationError e) {
+			MakeCorePlugin.log(e);
+		} catch (TransformerConfigurationException e) {
+			MakeCorePlugin.log(e);
+		} catch (TransformerFactoryConfigurationError e) {
+			MakeCorePlugin.log(e);
+		} catch (TransformerException e) {
+			MakeCorePlugin.log(e);
+		} catch (IOException e) {
+			MakeCorePlugin.log(e);
+		} catch (CoreException e) {
+			// Save to IFile failed
+			MakeCorePlugin.log(e.getStatus());
+		}
+		
 	}
 }

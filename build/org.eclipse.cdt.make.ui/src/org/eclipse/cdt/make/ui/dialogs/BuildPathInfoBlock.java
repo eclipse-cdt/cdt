@@ -228,7 +228,12 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		}
 		// First store scanner config options
 		if (scOptionsDialog.isInitialized()) {
-			scOptionsDialog.performApply(monitor);
+			try {
+				scOptionsDialog.performApply(monitor);
+			} 
+			catch (CoreException e) {
+				// builder was disabled while scOptionsDialog was initialized
+			}
 		}
 		
 		IProject project = getContainer().getProject();

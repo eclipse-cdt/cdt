@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -94,7 +95,9 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		}
 			
 		ScannerInfoCollector.getInstance().contributeToScannerConfig(project, includes, symbols, null);
-			
+		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
+				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
+		
 		return rc;
 	}
 

@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -23,9 +22,9 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -105,16 +104,31 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 
 			rc = true;
 			String fileName = null;
-			String desc = "Found";
 			while (scanner.hasMoreTokens()) {
 				token = scanner.nextToken();
 				if (token.startsWith("-D")) {//$NON-NLS-1$
 					String symbol = token.substring(2);
+					if (symbol.length() == 0) {
+						if (scanner.hasMoreTokens()) {
+							symbol = scanner.nextToken();
+						}
+						else {
+							continue;
+						}
+					}
 					if (!symbols.contains(symbol))
 						symbols.add(symbol);
 				}
 				else if (token.startsWith("-I")) {//$NON-NLS-1$
 					String iPath = token.substring(2);
+					if (iPath.length() == 0) {
+						if (scanner.hasMoreTokens()) {
+							iPath = scanner.nextToken();
+						}
+						else {
+							continue;
+						}
+					}
 					String nPath = fUtil.normalizePath(iPath);
 					if (!includes.contains(nPath))
 						includes.add(nPath);
@@ -146,35 +160,29 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			
 			IProject project = fProject;   
 			IFile file = null;
+			List translatedIncludes = includes;
 			if (includes.size() > 0) {
 				if (fileName != null) {
 					file = fUtil.findFile(fileName);
 					if (file != null) {
 						project = file.getProject();
-						includes = fUtil.translateRelativePaths(file, fileName, includes);
+						translatedIncludes = fUtil.translateRelativePaths(file, fileName, includes);
 					}
 				}
 				else {
-					fUtil.generateMarker(fProject, -1, "Unable to find file name: " + line, 
-							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
+					TraceUtil.outputError("Unable to find file name: ", line);	//$NON-NLS-1$
+//					fUtil.generateMarker(fProject, -1, "Unable to find file name: " + line, //$NON-NLS-1$
+//							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
 				}
 			}
 			// Contribute discovered includes and symbols to the ScannerInfoCollector
-			ScannerInfoCollector.getInstance().
-				contributeToScannerConfig(project, includes, symbols, targetSpecificOptions);
-			
-			// TODO : VMIR remove when debugging is done
-			int severity = IMarkerGenerator.SEVERITY_INFO;
-			
-			for (Iterator i = includes.iterator(); i.hasNext(); ) {
-				String iPath = (String)i.next();
-				fUtil.generateMarker(file, -1, "Found an include path: "+iPath, severity, iPath);
+			if (translatedIncludes.size() > 0 || symbols.size() > 0) {
+				ScannerInfoCollector.getInstance().
+					contributeToScannerConfig(project, translatedIncludes, symbols, targetSpecificOptions);
+				
+				TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
+						"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$
 			}
-			for (Iterator i = symbols.iterator(); i.hasNext(); ) {
-				String symbol = (String)i.next();
-				fUtil.generateMarker(file, -1, "Found a symbol definition: "+symbol, severity, symbol);
-			}
-			
 		}
 		return rc;
 	}

@@ -202,7 +202,7 @@ public class ScannerConfigOptionsDialog extends Dialog {
 				fInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
 			}
 			catch (CoreException e) {
-//				fInitialized = false;
+				fInitialized = false;
 				fInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 			}
 		}

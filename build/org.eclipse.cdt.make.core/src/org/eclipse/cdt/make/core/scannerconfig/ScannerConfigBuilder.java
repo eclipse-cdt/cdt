@@ -36,10 +36,23 @@ public class ScannerConfigBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	protected IProject [] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 100); //$NON-NLS-1$
-		monitor.subTask(MakeCorePlugin.getResourceString("ScannerConfigBuilder.Invoking_Builder") +	//$NON-NLS-1$ 
-				getProject().getName());
-		ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), new SubProgressMonitor(monitor, 100));
+		// If auto discovery is disabled, do nothing
+		boolean autodiscoveryEnabled;
+		try {
+			IScannerConfigBuilderInfo buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(getProject(), BUILDER_ID);
+			autodiscoveryEnabled = buildInfo.isAutoDiscoveryEnabled();
+		} 
+		catch (CoreException e) {
+			// builder not installed or disabled
+			autodiscoveryEnabled = false;
+		}
+		
+		if (autodiscoveryEnabled) {
+			monitor.beginTask("ScannerConfigBuilder.Invoking_Builder", 100); //$NON-NLS-1$
+			monitor.subTask(MakeCorePlugin.getResourceString("ScannerConfigBuilder.Invoking_Builder") +	//$NON-NLS-1$ 
+					getProject().getName());
+			ScannerInfoCollector.getInstance().updateScannerConfiguration(getProject(), new SubProgressMonitor(monitor, 100));
+		}
 		return getProject().getReferencedProjects();
 	}
 }

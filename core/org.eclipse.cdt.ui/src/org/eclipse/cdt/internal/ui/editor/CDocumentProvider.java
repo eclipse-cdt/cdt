@@ -102,7 +102,7 @@ public class CDocumentProvider extends FileDocumentProvider {
 		return super.createAnnotationModel(element);
 	}
 	
-	protected ElementInfo createeeElementInfo(Object element) throws CoreException {
+	protected ElementInfo createElementInfo(Object element) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			
 			IFileEditorInput input= (IFileEditorInput) element;

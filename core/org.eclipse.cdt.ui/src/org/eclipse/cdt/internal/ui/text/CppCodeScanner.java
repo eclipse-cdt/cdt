@@ -164,7 +164,7 @@ public final class CppCodeScanner extends AbstractCScanner {
 
 	private static String[] fgTypes= { "bool", "char", "double", "float", "int", "long", "short", "signed", "unsigned", "void", "wchar_t", "_Bool", "_Complex", "_Imaginary"};
 	private static String[] fgConstants= { "false", "NULL", "true", "__DATE__", "__LINE__", "__TIME__", "__FILE__", "__STDC__"};
-	private static String[] fgPreprocessor= { "#define", "#include", "#error", "#pragma", "#ifdef", "#ifndef", "#line", "#undef", "#if", "#else", "#elif", "#endif"};
+	private static String[] fgPreprocessor= { "#define", "#undef", "#include", "#error", "#warning", "#pragma", "#ifdef", "#ifndef", "#line", "#undef", "#if", "#else", "#elif", "#endif"};
 
 	
 	private static String[] fgTokenProperties= {

@@ -52,7 +52,7 @@ public final class CCodeScanner extends AbstractCScanner {
 
 	private static String[] fgTypes= { "char", "double", "float", "int", "long", "short", "signed", "unsigned", "void", "_Bool", "_Complex", "_Imaginary"};
 	private static String[] fgConstants= { "NULL", "__DATE__", "__LINE__", "__TIME__", "__FILE__", "__STDC__"};
-	private static String[] fgPreprocessor= { "#define", "#include", "#error", "#pragma", "#ifdef", "#ifndef", "#if", "#else", "#elif", "#endif", "#line"};
+	private static String[] fgPreprocessor= { "#define", "#undef", "#include", "#error", "#warning", "#pragma", "#ifdef", "#ifndef", "#if", "#else", "#elif", "#endif", "#line"};
 
 	
 	private static String[] fgTokenProperties= {

@@ -1,5 +1,15 @@
 2002-10-11 Alain Magloire
+
+	* internal/ui/text/CCodeScanner.java:
+	* internal/ui/text/CppCodeScanner.java:
+	This updates the C/C++ scanner to include some missing
+	pre-processor pieces.
+	From Thomas Fletcher.
+
+2002-10-11 Alain Magloire
+
 	* CEditorTextHoverDispatcher.java (getCurrentTextHover):
 	This fixes a null pointer exception received when we hover 
 	over the code in the C/C++ Editor colour preference dialog.
 	From Thomas Fletcher.
+

@@ -1,3 +1,8 @@
+2003-04-29 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/internal/ui/editor/CDebugDocumentProvider.java (doSetInput):
+	Disconnect the old input from the working manager.
+
 2003-04-27 Alain Magloire
 
 	Bug PR 36759, the outliner was not updated, when using

@@ -102,13 +102,7 @@ public class EditorUtility {
 	 */     
 	public static void revealInEditor(IEditorPart part, ICElement element) {
 		if (element != null && part instanceof CEditor) {
-			if (element instanceof ISourceReference) {
-				try {
-					ISourceRange range = ((ISourceReference) element).getSourceRange();
-					((CEditor) part).setSelection(range, true);
-				} catch (CModelException e) {
-				}
-			}
+			((CEditor) part).setSelection(element);
 		}
 	}
 

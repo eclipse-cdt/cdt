@@ -79,6 +79,7 @@ public class DebugTextHover implements ITextHover
 				StringBuffer buffer = new StringBuffer();
 				boolean showDebugTarget = targetList.size() > 1;
 				Iterator iterator = targetList.iterator();
+				boolean first = true;
 				while ( iterator.hasNext() )
 				{
 					IDebugTarget target = (IDebugTarget)iterator.next();
@@ -90,6 +91,14 @@ public class DebugTextHover implements ITextHover
 						{
 							if ( result != null )
 							{
+								if ( first )
+								{
+									first = false;
+								}
+								else
+								{
+									buffer.append( '\n' );
+								}
 								if ( showDebugTarget )
 								{
 									buffer.append( '[' );

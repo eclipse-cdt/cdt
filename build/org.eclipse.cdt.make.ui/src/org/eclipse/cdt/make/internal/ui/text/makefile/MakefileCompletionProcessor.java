@@ -108,6 +108,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			}
 			if (name != null && name.startsWith(wordPart.getString())) {
 				IContextInformation info = new ContextInformation(name, infoString);
+				String displayString = (name.equals(infoString) ? name : name + " - " + infoString);
 				ICompletionProposal result =
 					new CompletionProposal(
 						name,
@@ -115,7 +116,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 						wordPart.getString().length(),
 						name.length(),
 						image,
-						name,
+						displayString,
 						info,
 						infoString);
 				proposalList.add(result);

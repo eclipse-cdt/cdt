@@ -394,4 +394,12 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return Util.combineHashCodes(fName.hashCode(), fParent.hashCode());
 	}
 	
+	/*
+	 * Test to see if two objects are identical
+	 * Subclasses should override accordingly
+	 */
+	public boolean isIdentical( CElement otherElement){
+		return this.equals(otherElement);
+	}
+	
 }

@@ -15,16 +15,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public class CProjectOwner implements ICProjectOwnerInfo {
 	String pluginId;
 	IExtension extension;
 	
-	public CProjectOwner(String id) {
+	public CProjectOwner(String id) throws CoreException {
 		pluginId = id;
 		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProjectOwner");
 		if (extpoint != null) {
 			extension =  extpoint.getExtension(pluginId);
+		} else {
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, -1, "Invalid CDTProject owner ID", (Throwable)null);
+			throw new CoreException(status);
 		}
 	}
 
@@ -73,7 +78,14 @@ public class CProjectOwner implements ICProjectOwnerInfo {
 	
 	void configure(IProject project, ICProjectDescriptor cproject) throws CoreException {
 		IConfigurationElement element[] = extension.getConfigurationElements();
-		ICProjectOwner owner = (ICProjectOwner) element[0].createExecutableExtension("class");
-		owner.configure(cproject);
+		for( int i = 0; i < element.length; i++ ) {
+			if ( element[i].getName().equalsIgnoreCase("run") ) {
+				ICProjectOwner owner = (ICProjectOwner) element[i].createExecutableExtension("class");
+				owner.configure(cproject);
+				return;
+			}
+		}
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.getDefault().PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
+		throw new CoreException(status);
 	}
 }

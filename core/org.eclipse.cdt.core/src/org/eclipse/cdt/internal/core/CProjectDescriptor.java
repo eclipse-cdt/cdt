@@ -25,6 +25,7 @@ import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICProjectDescriptor;
+import org.eclipse.cdt.core.ICProjectOwner;
 import org.eclipse.cdt.core.ICProjectOwnerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -44,16 +46,16 @@ import org.xml.sax.SAXException;
 public class CProjectDescriptor implements ICProjectDescriptor {
 	/** constants */
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private String ownerId;
-	private IProject project;
-
-	private String builderID;
+	private ICProjectOwnerInfo fOwner;
+	private IProject fProject;
+	private String fPlatform = "*";
 	
-	private static final String PROJECT_DESCRIPTION = ".cdtproject";
+	private static final String PROJECT_DESCRIPTION = "cdtproject";
+	private static final String PROJECT_PLATFORM = "platform";
 
 	private CProjectDescriptor(IProject project, String id) throws CoreException {
-		this.project = project;
-		ownerId = id;
+		fProject = project;
+		fOwner = new CProjectOwner(id);
 		IPath projectLocation = project.getDescription().getLocation();
 
 		final boolean isDefaultLocation = projectLocation == null;
@@ -69,7 +71,7 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 	}
 		
 	private CProjectDescriptor(IProject project) throws CoreException {
-		this.project = project;
+		fProject = project;
 		FileInputStream file = null;
 		IPath projectLocation = project.getDescription().getLocation();
 
@@ -87,8 +89,9 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 			file = new FileInputStream(projectLocation.toFile());
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(file);
-			Node attrib = (Node) read(document.getFirstChild());
-			ownerId = searchNode(attrib, "id").getNodeValue();
+			Node node = document.getFirstChild();
+			if (node.getNodeName().equals(PROJECT_DESCRIPTION))
+				fOwner = readProjectDescription(node);
 		}
 		catch (IOException e) {
 		}
@@ -112,11 +115,11 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 	}
 	
 	public ICProjectOwnerInfo getProjectOwner() {
-		return new CProjectOwner(ownerId);
+		return fOwner;
 	}
 	
 	public String getPlatform() {
-		return "";
+		return fPlatform;
 	}
 	
 	protected String getString(Node target, String tagName) {
@@ -144,8 +147,6 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 			return null;
 		switch (node.getNodeType()) {
 			case Node.ELEMENT_NODE :
-				if (node.getNodeName().equals(PROJECT_DESCRIPTION))
-					return node.getAttributes();
 /*
 				if (node.getNodeName().equals(BUILDER))
 					return readBuildSpec(node);
@@ -160,6 +161,20 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 		}
 	}
 
+	private ICProjectOwnerInfo readProjectDescription(Node node) {
+		ICProjectOwnerInfo owner = null;
+		NamedNodeMap attrib = node.getAttributes();
+		try {
+			owner = new CProjectOwner(attrib.getNamedItem("id").getNodeValue());
+		}
+		catch (CoreException e) {
+			return null;
+		}
+		fPlatform = getString(node, PROJECT_PLATFORM);
+		return owner;
+	}
+
+
 	protected Node searchNode(Node target, String tagName) {
 		NodeList list = target.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -170,7 +185,7 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 	}
 	
 	public IProject getProject() {
-		return project;
+		return fProject;
 	}
 	
 	public void saveInfo() throws CoreException {
@@ -212,7 +227,7 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 		Document doc = new DocumentImpl();
 		Element configRootElement = doc.createElement(PROJECT_DESCRIPTION);
 		doc.appendChild(configRootElement);
-		configRootElement.setAttribute("id", ownerId); //$NON-NLS-1$
+		configRootElement.setAttribute("id", fOwner.getID()); //$NON-NLS-1$
 		element= createBuilderElement(doc);
 		if ( element != null )
 			configRootElement.appendChild(element);
@@ -221,11 +236,13 @@ public class CProjectDescriptor implements ICProjectDescriptor {
 
 		
 	protected Element createBuilderElement(Document doc) {
+/*
 		if ( builderID != null ) {
 			Element element = doc.createElement("cdtBuilder");
 			element.setAttribute("id", builderID);
 			return element;
 		}
+*/
 		return null;
 	}
 

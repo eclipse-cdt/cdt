@@ -38,11 +38,12 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 
 	public MakePropertyPage() {
 		super();
+	    fOptionBlock = new MakeProjectOptionBlock();
 	}
 
 	public void setContainer(IPreferencePageContainer preferencePageContainer) {
 	    super.setContainer(preferencePageContainer);
-	    fOptionBlock = new MakeProjectOptionBlock(this);
+	    fOptionBlock.setOptionContainer(this);
 	}	
 	
 	protected Control createContents(Composite parent) {

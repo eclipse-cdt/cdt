@@ -16,6 +16,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,9 +30,14 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 	public NewMakeProjectPreferencePage() {
 		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
 		setDescription(MakeUIPlugin.getResourceString("MakePreferencePage.description")); //$NON-NLS-1$
-		fOptionBlock = new MakeProjectOptionBlock(this);
+		fOptionBlock = new MakeProjectOptionBlock();
 	}
 
+	
+	public void setContainer(IPreferencePageContainer preferencePageContainer) {
+		super.setContainer(preferencePageContainer);
+		fOptionBlock.setOptionContainer(this);
+	}
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */

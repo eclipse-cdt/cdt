@@ -18,6 +18,10 @@ import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 
 public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 
+	public MakeProjectOptionBlock() {
+		super(true);
+	}
+	
 	public MakeProjectOptionBlock(ICOptionContainer parent) {
 		super(parent);
 	}

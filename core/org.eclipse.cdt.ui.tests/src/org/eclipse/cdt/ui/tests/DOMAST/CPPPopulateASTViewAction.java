@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
+import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
 
 /**
  * @author dsteffle
@@ -67,7 +68,7 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	private void addRoot(IASTNode node) {
 		if (node == null) return;
 		
-		TreeParent parent = root.findParentOfNode(node);
+		TreeParent parent = root.findTreeParentForNode(node);
 		
 		if (parent == null)
 			parent = root;
@@ -76,12 +77,12 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 		parent.addChild(tree);
 		
 		// set filter flags
-		if (node instanceof IASTProblemHolder)
-			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
-		if (node instanceof IASTProblem)
+		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) 
 			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
 		if (node instanceof IASTPreprocessorStatement)
 			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);
+		if (node instanceof IASTPreprocessorIncludeStatement)
+			tree.setFiltersFlag(TreeObject.FLAG_INCLUDE_STATEMENTS);
 	}
 	
 	/* (non-Javadoc)
@@ -246,9 +247,40 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 			mergePreprocessorProblems(tu.getPreprocesorProblems());
 			
 			// merge include directives
-			mergeIncludeDirectives(tu.getIncludeDirectives());
+			IASTPreprocessorIncludeStatement[] includes = tu.getIncludeDirectives();
+			mergeIncludeDirectives(includes);
+			
+			// group #includes
+			groupIncludes(includes);
 		}
 		
 		return root;
+	}
+	
+	private void groupIncludes(IASTPreprocessorIncludeStatement[] includes) {
+		// get the tree model elements corresponding to the includes
+		TreeParent[] treeIncludes = new TreeParent[includes.length];
+		for (int i=0; i<treeIncludes.length; i++) {
+			treeIncludes[i] = root.findTreeObject(includes[i]);
+		}
+		
+		// loop through the includes and make sure that all of the nodes 
+		// that are children of the TU are in the proper include (based on offset)
+		TreeObject child = null;
+		for (int i=treeIncludes.length-1; i>=0; i--) {
+			if (treeIncludes[i] == null) continue;
+
+			for(int j=root.getChildren().length-1; j>=0; j--) {
+				child = root.getChildren()[j]; 
+			
+				if (treeIncludes[i] != child &&
+						includes[i] instanceof ASTInclusionStatement &&
+						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)includes[i]).startOffset &&
+						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)includes[i]).endOffset) {
+					root.removeChild(child);
+					treeIncludes[i].addChild(child);
+				}
+			}
+		}
 	}
 }

@@ -111,6 +111,14 @@
             class="org.eclipse.cdt.ui.tests.DOMAST.PreprocessorFilter"
             id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.PreprocessorFilter">
       </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"
+            name="Include Statements Filter"
+            enabled="false"
+            description="Filter Include Statements"
+            class="org.eclipse.cdt.ui.tests.DOMAST.IncludeStatementFilter"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.IncludeStatementFilter">
+      </filter>
    </extension>
 
 

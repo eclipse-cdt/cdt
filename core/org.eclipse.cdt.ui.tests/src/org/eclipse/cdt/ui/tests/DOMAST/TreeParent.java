@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -60,14 +61,21 @@ public class TreeParent extends TreeObject {
 		return children.size()>0;
 	}
 
-	private TreeParent findParentOfNode(TreeObject[] trees, IASTNode node) {
+	/**
+	 * Returns the TreeParent whose IASTNode is the parent of the IASTNode.
+	 * 
+	 * @param trees
+	 * @param node
+	 * @return
+	 */
+	private TreeParent findTreeParentForNode(TreeObject[] trees, IASTNode node) {
 		for (int i=0; i<trees.length; i++) {
 			
 			if (trees[i] != null && trees[i] instanceof TreeParent) {
 				if ( ((TreeParent)trees[i]).getNode() == node.getParent() ) {
 					return (TreeParent)trees[i];
 				} else if ( ((TreeParent)trees[i]).hasChildren() ){
-					TreeParent tree = findParentOfNode( ((TreeParent)trees[i]).getChildren(), node );
+					TreeParent tree = findTreeParentForNode( ((TreeParent)trees[i]).getChildren(), node );
 					if (tree != null) return tree;
 				}
 			}
@@ -76,7 +84,13 @@ public class TreeParent extends TreeObject {
 		return null; // nothing found
 	}
 	
-	public TreeParent findParentOfNode(IASTNode node) {
+	/**
+	 * Returns the TreeParent whose IASTNode is the parent of the IASTNode.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public TreeParent findTreeParentForNode(IASTNode node) {
 		if (node == null || node.getParent() == null) return null;
 		
 		Iterator itr = children.iterator();
@@ -86,7 +100,7 @@ public class TreeParent extends TreeObject {
 				if ( ((TreeParent)o).getNode() == node.getParent() ) {
 					return (TreeParent)o;
 				} else if ( ((TreeParent)o).hasChildren() ){
-					TreeParent tree = findParentOfNode( ((TreeParent)o).getChildren(), node );
+					TreeParent tree = findTreeParentForNode( ((TreeParent)o).getChildren(), node );
 					if (tree != null) return tree;
 				}
 			}
@@ -96,7 +110,7 @@ public class TreeParent extends TreeObject {
 		IASTNode parent = node.getParent();
 		TreeParent tree = null;
 		while (parent != null && tree == null) {
-			tree = findParentOfNode(parent);
+			tree = findTreeParentForNode(parent);
 			if (tree != null) return tree;
 			
 			parent = parent.getParent();
@@ -104,6 +118,55 @@ public class TreeParent extends TreeObject {
 		
 		return null; // nothing found
 	}
+
+	/**
+	 * Returns the TreeParent that corresponds to the IASTNode.  This is the TreeParent
+	 * that represents the IASTNode in the DOM AST View.
+	 * 
+	 * @param trees
+	 * @param node
+	 * @return
+	 */
+	private TreeParent findTreeObject(TreeObject[] trees, IASTNode node) {
+		for (int i=0; i<trees.length; i++) {
+			
+			if (trees[i] != null && trees[i] instanceof TreeParent) {
+				if ( ((TreeParent)trees[i]).getNode() == node ) {
+					return (TreeParent)trees[i];
+				} else if ( ((TreeParent)trees[i]).hasChildren() ){
+					TreeParent tree = findTreeObject( ((TreeParent)trees[i]).getChildren(), node );
+					if (tree != null) return tree;
+				}
+			}
+		}
+		
+		return null; // nothing found
+	}
 	
+	/**
+	 * Returns the TreeParent that corresponds to the IASTNode.  This is the TreeParent
+	 * that represents the IASTNode in the DOM AST View.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public TreeParent findTreeObject(IASTNode node) {
+		if (node == null) return null;
+		
+		Iterator itr = children.iterator();
+		while (itr.hasNext()) {
+			Object o = itr.next();
+			if (o != null && o instanceof TreeParent) {
+				if ( ((TreeParent)o).getNode() == node ) {
+					return (TreeParent)o;
+				} else if ( ((TreeParent)o).hasChildren() ){
+					TreeParent tree = findTreeObject( ((TreeParent)o).getChildren(), node );
+					if (tree != null) return tree;
+				}
+			}
+		}
+		
+		return null; // nothing found
+	}
 
 }

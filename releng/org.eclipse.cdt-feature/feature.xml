@@ -18,8 +18,6 @@
       <update label="%updateSiteName" url="http://update.eclipse.org/tools/cdt/updates/release"/>
    </url>
 
-   <includes id="org.eclipse.cdt.source" version="2.0.0"/>
-   
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.team.core"/>

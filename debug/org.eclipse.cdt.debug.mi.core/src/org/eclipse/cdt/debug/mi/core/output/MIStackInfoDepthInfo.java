@@ -1,8 +1,12 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
-
-
 /**
+ * GDB/MI stack info depth parsing.
  */
 public class MIStackInfoDepthInfo extends MIInfo {
 

@@ -1,8 +1,11 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core.output;
 
-
-
 /**
+ * GDB/MI thread select parsing.
  */
 public class MIThreadSelectInfo extends MIInfo {
 

@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core;
 
 import java.io.InputStream;
@@ -7,7 +11,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
 /**
- *
+ * GDB/MI Plugin.
  */
 public class MIPlugin extends Plugin {
 

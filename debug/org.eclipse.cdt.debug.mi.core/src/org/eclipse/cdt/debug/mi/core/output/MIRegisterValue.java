@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core.output;
 
 import java.util.ArrayList;
@@ -6,6 +10,7 @@ import java.util.List;
 
 
 /**
+ * GDB/MI register response parsing.
  */
 public class MIRegisterValue {
 	int name;

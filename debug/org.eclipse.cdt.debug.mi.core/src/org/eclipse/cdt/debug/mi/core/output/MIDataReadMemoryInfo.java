@@ -1,11 +1,15 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
+ * GDB/MI data read memor info extraction.
  */
 public class MIDataReadMemoryInfo extends MIInfo {
 

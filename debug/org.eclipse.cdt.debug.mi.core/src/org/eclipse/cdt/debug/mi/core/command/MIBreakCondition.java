@@ -8,10 +8,11 @@ package org.eclipse.cdt.debug.mi.core.command;
 
 /**
  * 
- *    -break-after NUMBER COUNT
- *  The breakpoint number NUMBER is not in effect until it has been hit
- *  COUNT times.
  * 
+ *   -break-condition NUMBER EXPR
+ *
+ * Breakpoint NUMBER will stop the program only if the condition in
+ * EXPR is true.  The condition becomes part of the `-break-list' output
  * Result:
  *  ^done
  */

@@ -1,8 +1,13 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 
-
 /**
+ * GDB/MI Data evalue expression parsing response.
  */
 public class MIDataEvaluateExpressionInfo extends MIInfo{
 

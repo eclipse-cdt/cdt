@@ -1,6 +1,12 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 /**
+ * base Abstract class for the OOB stream MI responses. 
  */
 public abstract class MIAsyncRecord extends MIOOBRecord {
 

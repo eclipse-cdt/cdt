@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
@@ -49,22 +50,81 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  * 
  *
  */
-public class MIDataReadMemory extends MICommand 
-{
+public class MIDataReadMemory extends MICommand {
 
-	public MIDataReadMemory (int offset, String address, 
-				String wordFormat, int wordSize,
-				int rows, int cols, Character asChar) {
+	public MIDataReadMemory(
+		long offset,
+		String address,
+		int wordFormat,
+		int wordSize,
+		int rows,
+		int cols,
+		Character asChar) {
 		super("-data-read-memory");
 		if (offset != 0) {
-			setOptions(new String[]{"-o", Integer.toString(offset)});
+			setOptions(new String[] { "-o", Long.toString(offset)});
 		}
+
+		String format = "x";
+		switch (wordFormat) {
+			case MIFormat.UNSIGNED :
+				format = "u";
+				break;
+
+			case MIFormat.FLOAT :
+				format = "f";
+				break;
+
+			case MIFormat.ADDRESS :
+				format = "a";
+				break;
+
+			case MIFormat.INSTRUCTION :
+				format = "i";
+				break;
+
+			case MIFormat.CHAR :
+				format = "c";
+				break;
+
+			case MIFormat.STRING :
+				format = "s";
+				break;
+
+			case MIFormat.DECIMAL :
+				format = "d";
+				break;
+
+			case MIFormat.BINARY :
+				format = "t";
+				break;
+
+			case MIFormat.OCTAL :
+				format = "o";
+				break;
+
+			case MIFormat.HEXADECIMAL :
+			default :
+				format = "x";
+				break;
+		}
+
 		if (asChar == null) {
-			setParameters(new String[]{address, wordFormat, Integer.toString(wordSize),
-					Integer.toString(rows), Integer.toString(cols)});
+			setParameters(
+				new String[] {
+					address,
+					format,
+					Integer.toString(wordSize),
+					Integer.toString(rows),
+					Integer.toString(cols)});
 		} else {
-			setParameters(new String[]{address, wordFormat, Integer.toString(wordSize),
-					Integer.toString(rows), Integer.toString(cols),
+			setParameters(
+				new String[] {
+					address,
+					format,
+					Integer.toString(wordSize),
+					Integer.toString(rows),
+					Integer.toString(cols),
 					asChar.toString()});
 		}
 	}

@@ -26,17 +26,4 @@ public class MIExecStepInstruction extends MICommand
 	public MIExecStepInstruction() {
 		super("-exec-step-instruction");
 	}
-/*
-	public MIInfo getMIInfo() throws MIException {
-		MIInfo info = null;
-		MIOutput out = getMIOutput();
-		if (out != null) {
-			info = new MIExecStepInstructionInfo(out);
-			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
-			}
-		}
-		return info;
-	}
-*/
 }

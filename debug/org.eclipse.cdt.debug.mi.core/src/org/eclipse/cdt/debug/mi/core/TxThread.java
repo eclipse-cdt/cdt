@@ -1,15 +1,19 @@
-package org.eclipse.cdt.debug.mi.core;
-
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
+
+package org.eclipse.cdt.debug.mi.core;
  
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
 
+/**
+ * Transmission command thread blocks on the command Queue
+ * and wake cmd are available and push them to gdb out channel.
+ */
 public class TxThread extends Thread {
 
 	MISession session;

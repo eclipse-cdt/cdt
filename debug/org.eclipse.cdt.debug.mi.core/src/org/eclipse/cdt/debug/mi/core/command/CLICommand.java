@@ -10,7 +10,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
- * 
  * Represents a CLI command.
  */
 public class CLICommand extends Command
@@ -28,6 +27,8 @@ public class CLICommand extends Command
 	 * @return the text representation of this command
 	 */
 	public String toString(){
-		return operation;
+		if (operation.endsWith("\n"))
+			return operation;
+		return operation + "\n";
 	}
 }

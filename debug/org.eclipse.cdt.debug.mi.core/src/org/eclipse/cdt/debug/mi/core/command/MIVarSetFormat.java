@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIFormat;
+
 /**
  * 
  *    -var-set-format NAME FORMAT-SPEC
@@ -21,33 +23,27 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIVarSetFormat extends MICommand 
 {
-	public final static int HEXADECIMAL = 0;
-	public final static int OCTAL = 1;
-	public final static int BINARY = 2;
-	public final static int DECIMAL = 3;
-//	public final static int RAW = 4;
-	public final static int NATURAL = 5;
-
 	public MIVarSetFormat(String name, int fmt) {
 		super("-var-set-format");
 		String format = "hexadecimal";
 		switch (fmt) {
-		case NATURAL:
+		case MIFormat.NATURAL:
 			format = "natural";
 			break;
-		case DECIMAL:
+		case MIFormat.DECIMAL:
 			format = "decimal";
 			break;
-		case BINARY:
+		case MIFormat.BINARY:
 			format = "binary";
 			break;
-		case OCTAL:
+		case MIFormat.OCTAL:
 			format = "octal";
 		break;
 		/*
-		case HEXADECIMAL:
+		case MIFormat.HEXADECIMAL:
+		case MIFormat.RAW:
 		default:
-			format = "x";
+			format = "hexadecimal";
 			break;
 		*/
 		}

@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
@@ -24,13 +25,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MIDataListRegisterValues extends MICommand 
 {
-	public final static int HEXADECIMAL = 0;
-	public final static int OCTAL = 1;
-	public final static int BINARY = 2;
-	public final static int DECIMAL = 3;
-	public final static int RAW = 4;
-	public final static int NATURAL = 5;
-
 	public MIDataListRegisterValues(int fmt) {
 		this(fmt, null);
 	}
@@ -40,27 +34,30 @@ public class MIDataListRegisterValues extends MICommand
 
 		String format = "x";
 		switch (fmt) {
-		case NATURAL:
-			format = "N";
+			case MIFormat.NATURAL:
+				format = "N";
 			break;
-		case RAW:
-			format = "r";
+
+			case MIFormat.RAW:
+				format = "r";
 			break;
-		case DECIMAL:
-			format = "d";
+
+			case MIFormat.DECIMAL:
+				format = "d";
 			break;
-		case BINARY:
-			format = "t";
+
+			case MIFormat.BINARY:
+				format = "t";
 			break;
-		case OCTAL:
-			format = "o";
+
+			case MIFormat.OCTAL:
+				format = "o";
 			break;
-		/*
-		case HEXADECIMAL:
-		default:
-			format = "x";
+
+			case MIFormat.HEXADECIMAL:
+			default:
+				format = "x";
 			break;
-		*/
 		}
 
 		setOptions(new String[]{format});

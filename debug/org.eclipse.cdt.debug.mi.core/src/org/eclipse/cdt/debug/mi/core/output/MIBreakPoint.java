@@ -1,6 +1,12 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 /**
+ * Contain info about the GDB/MI breakpoint info.
  */
 public class MIBreakPoint {
 

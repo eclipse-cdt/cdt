@@ -1,6 +1,12 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 /**
+ * GDB/MI const value represents a ios-c string.
  */
 public class MIConst extends MIValue {
 	String cstring = "";

@@ -4,20 +4,24 @@
  */
 package org.eclipse.cdt.debug.mi.core.output;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
- * GDB/MI var-show-attributes
+ * GDB/MI show parsing.
  */
-public class MIVarShowAttributesInfo extends MIInfo {
+public class MIGDBShowInfo extends MIInfo {
 
-	String attr = "";
+	String value = "";
 
-	public MIVarShowAttributesInfo(MIOutput record) {
-		super(record);
+	public MIGDBShowInfo(MIOutput o) {
+		super(o);
 		parse();
 	}
 
-	public String getAttributes () {
-		return attr;
+	public String getValue() {
+		return value;
 	}
 
 	void parse() {
@@ -28,10 +32,10 @@ public class MIVarShowAttributesInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("attr")) {
-						MIValue value = results[i].getMIValue();
-						if (value instanceof MIConst) {
-							attr = ((MIConst)value).getString();
+					if (var.equals("value")) {
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIConst) {
+							value = ((MIConst)val).getString();
 						}
 					}
 				}

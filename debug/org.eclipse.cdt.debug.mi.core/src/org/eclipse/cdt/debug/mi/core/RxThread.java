@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core;
 
 import java.io.BufferedReader;
@@ -31,12 +35,9 @@ import org.eclipse.cdt.debug.mi.core.output.MIStreamRecord;
 import org.eclipse.cdt.debug.mi.core.output.MITargetStreamOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIValue;
 
-/*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**
+ * Receiving thread of gdb, read the input channel.
  */
- 
-
 public class RxThread extends Thread {
 
 	final MISession session;

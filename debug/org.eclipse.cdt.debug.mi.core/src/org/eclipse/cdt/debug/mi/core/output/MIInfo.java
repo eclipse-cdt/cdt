@@ -1,8 +1,11 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core.output;
 
-
-
 /**
+ * Base class for teh parsing/info GDB/MI classes.
  */
 public class MIInfo {
 

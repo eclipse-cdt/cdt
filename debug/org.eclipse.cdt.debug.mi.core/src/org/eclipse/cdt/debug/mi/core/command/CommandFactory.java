@@ -1,9 +1,12 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.command;
 
-
-
 /**
- *
+ * Factory to create GDB commands.
  */
 public class CommandFactory {
 
@@ -68,8 +71,8 @@ public class CommandFactory {
 		return new MIDataListRegisterValues(fmt, regno);
 	}
 
-	public MIDataReadMemory createMIDataReadMemory(int offset, String address,
-							String wordFormat, int wordSize,
+	public MIDataReadMemory createMIDataReadMemory(long offset, String address,
+							int wordFormat, int wordSize,
 							int rows, int cols, Character asChar) {
 		return new MIDataReadMemory(offset, address, wordFormat, wordSize,
 						rows, cols, asChar);
@@ -145,6 +148,14 @@ public class CommandFactory {
 
 	public MIGDBExit createMIGDBExit() {
 		return new MIGDBExit();
+	}
+
+	public MIGDBSet createMIGDBSet(String[] params) {
+		return new MIGDBSet(params);
+	}
+
+	public MIGDBShow createMIGDBShow(String[] params) {
+		return new MIGDBShow(params);
 	}
 
 	public MIStackInfoDepth createMIStackInfoDepth(int depth) {

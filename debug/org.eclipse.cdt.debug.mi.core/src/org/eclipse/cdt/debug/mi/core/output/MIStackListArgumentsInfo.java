@@ -1,11 +1,16 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
+ * GDB/MI stack list arguments parsing.
  */
 public class MIStackListArgumentsInfo extends MIInfo {
 

@@ -11,11 +11,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
- * 
  * A base class for all mi requests.
- * 
- * @author Mikhail Khodjaiants
- * @since Jul 11, 2002
  */
 public abstract class Command
 {

@@ -7,33 +7,32 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.output.MIEnvironmentPWDInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
  * 
- *      -environment-pwd
+ *      -gdb-show
  *
- *   Show the current working directory.
+ *   Show the current value of a GDB variable.
  * 
  */
-public class MIEnvironmentPWD extends MICommand 
+public class MIGDBShow extends MICommand 
 {
-	public MIEnvironmentPWD() {
-		super("-environment-pwd");
+	public MIGDBShow(String[] params) {
+		super("-gdb-show", params);
 	}
 
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
 		if (out != null) {
-			info = new MIEnvironmentPWDInfo(out);
+			info = new MIGDBShowInfo(out);
 			if (info.isError()) {
 				throw new MIException(info.getErrorMsg());
 			}
 		}
 		return info;
         }
-
 }

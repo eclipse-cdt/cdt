@@ -1393,7 +1393,11 @@ public class Scanner implements IScanner {
 						handleInvalidCompletion();	
 					return null;
 				}
-				handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, getRestOfPreprocessorLine(), beginningOffset, false, true );
+				String restOfErrorLine = getRestOfPreprocessorLine();
+				if( isLimitReached() )
+					handleInvalidCompletion();	
+
+				handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, restOfErrorLine, beginningOffset, false, true );
 				return null;
 				
 			case PreprocessorDirectives.PRAGMA :
@@ -2522,6 +2526,9 @@ public class Scanner implements IScanner {
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
 		String includeLine = getRestOfPreprocessorLine();
+		if( isLimitReached() )
+			handleInvalidCompletion();
+
 		int endLine = scannerData.getContextStack().getCurrentLineNumber();
 
 		ScannerUtility.InclusionDirective directive = null;

@@ -30,9 +30,30 @@ public class CVariable implements IVariable {
 	final IASTName name;
 	
 	public CVariable( IASTName name ){
+	    name = checkForDefinition( name );
 		this.name = name;
 	}
 	
+	private IASTName checkForDefinition( IASTName nm ){
+	    IASTDeclarator dtor = (IASTDeclarator) nm.getParent();
+	    IASTSimpleDeclaration dcl = (IASTSimpleDeclaration) dtor.getParent();
+	    IASTDeclSpecifier declSpec = dcl.getDeclSpecifier();
+	    if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern ){
+	        IASTDeclarator prev = dtor, tmp = CVisitor.findDefinition( dtor, CVisitor.AT_BEGINNING );
+	        while( tmp != null && tmp != prev ){
+	            CASTName n = (CASTName) tmp.getName();
+	            IASTDeclSpecifier spec = ((IASTSimpleDeclaration)tmp.getParent()).getDeclSpecifier();
+	            if( spec.getStorageClass() != IASTDeclSpecifier.sc_extern ){
+	                nm = n;
+	            }
+	            n.setBinding( this );
+	            prev = tmp;
+	            tmp = CVisitor.findDefinition( tmp, CVisitor.AT_NEXT );
+	        }
+	    }
+	    
+	    return nm;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */

@@ -110,6 +110,10 @@ public class CVisitor {
 	private static final int COMPLETE = 0;		
 	private static final int CURRENT_SCOPE = 1;
 	private static final int TAGS = 2;
+	
+	//definition lookup start loc
+	protected static final int AT_BEGINNING = 1;
+	protected static final int AT_NEXT = 2; 
 
 	static protected void createBinding( CASTName name ){
 		IBinding binding = null;
@@ -489,15 +493,18 @@ public class CVisitor {
 		return null;
 	}
 	
+	protected static IASTDeclarator findDefinition( IASTDeclarator declarator, int beginAtLoc ){
+	    return (IASTDeclarator) findDefinition( declarator, declarator.getName().toString(), beginAtLoc );
+	}
 	protected static IASTFunctionDeclarator findDefinition( IASTFunctionDeclarator declarator ){
-		return (IASTFunctionDeclarator) findDefinition( declarator, declarator.getName().toString() );
+		return (IASTFunctionDeclarator) findDefinition( declarator, declarator.getName().toString(), AT_BEGINNING );
 	}
 	protected static IASTDeclSpecifier findDefinition( ICASTElaboratedTypeSpecifier declSpec ){
 		String elabName = declSpec.getName().toString();
-		return (IASTDeclSpecifier) findDefinition(declSpec, elabName);
+		return (IASTDeclSpecifier) findDefinition(declSpec, elabName, AT_BEGINNING);
 	}
 
-	private static IASTNode findDefinition(IASTNode decl, String declName) {
+	private static IASTNode findDefinition(IASTNode decl, String declName, int beginAtLoc) {
 		IASTNode blockItem = getContainingBlockItem( decl );
 		IASTNode parent = blockItem.getParent();
 		List list = null;
@@ -508,29 +515,44 @@ public class CVisitor {
 			IASTTranslationUnit translation = (IASTTranslationUnit) parent;
 			list = translation.getDeclarations();
 		}
+		boolean begun = ( beginAtLoc == AT_BEGINNING );
 		if( list != null ){
 			for( int i = 0; i < list.size(); i++ ){
 				IASTNode node = (IASTNode) list.get(i);
-				if( node == blockItem )
+				if( node == blockItem ){
+				    begun = true;
 					continue;
-				if( node instanceof IASTDeclarationStatement ){
-					node = ((IASTDeclarationStatement) node).getDeclaration();
 				}
 				
-				if( node instanceof IASTFunctionDefinition && decl instanceof IASTFunctionDeclarator ){
-					IASTFunctionDeclarator dtor = ((IASTFunctionDefinition) node).getDeclarator();
-					IASTName name = dtor.getName();
-					if( name.toString().equals( declName )){
-						return dtor;
+				if( begun ) {
+					if( node instanceof IASTDeclarationStatement ){
+						node = ((IASTDeclarationStatement) node).getDeclaration();
 					}
-				} else if( node instanceof IASTSimpleDeclaration && decl instanceof ICASTElaboratedTypeSpecifier){
-					IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
-					if( simpleDecl.getDeclSpecifier() instanceof ICASTCompositeTypeSpecifier ){
-						ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier();
-						IASTName name = compTypeSpec.getName();
-						if( name.toString().equals( declName ) ){
-							return compTypeSpec;
+					
+					if( node instanceof IASTFunctionDefinition && decl instanceof IASTFunctionDeclarator ){
+						IASTFunctionDeclarator dtor = ((IASTFunctionDefinition) node).getDeclarator();
+						IASTName name = dtor.getName();
+						if( name.toString().equals( declName )){
+							return dtor;
 						}
+					} else if( node instanceof IASTSimpleDeclaration && decl instanceof ICASTElaboratedTypeSpecifier){
+						IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
+						if( simpleDecl.getDeclSpecifier() instanceof ICASTCompositeTypeSpecifier ){
+							ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) simpleDecl.getDeclSpecifier();
+							IASTName name = compTypeSpec.getName();
+							if( name.toString().equals( declName ) ){
+								return compTypeSpec;
+							}
+						}
+					} else if( node instanceof IASTSimpleDeclaration && decl instanceof IASTDeclarator ){
+					    IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) node;
+					    List dtors = simpleDecl.getDeclarators();
+					    for( int j = 0; j < dtors.size(); j++ ){
+					        IASTDeclarator dtor = (IASTDeclarator) dtors.get( j );
+					        if( dtor.getName().toString().equals( declName ) ){
+					            return dtor;
+					        }
+					    }
 					}
 				}
 			}
@@ -590,6 +612,7 @@ public class CVisitor {
 			List list = ((IASTFunctionDeclarator)declarator).getParameters();
 			for( int i = 0; i < list.size(); i++ ){
 				IASTParameterDeclaration param = (IASTParameterDeclaration) list.get(i);
+				if( !visitDeclSpecifier( param.getDeclSpecifier(), action ) ) return false;
 				if( !visitDeclarator( param.getDeclarator(), action ) ) return false;
 			}
 		}

@@ -323,4 +323,214 @@ public class GCCTests extends AST2BaseTest {
         assertInstances( collector, getmask, 2 );
         assertInstances( collector, f, 2 );
     }
+    
+    public void testGCC20000403() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "extern unsigned long aa[], bb[];                                     \n"); //$NON-NLS-1$
+        buffer.append( "int seqgt( unsigned long a, unsigned short win, unsigned long b );   \n"); //$NON-NLS-1$
+        buffer.append( "int seqgt2 ( unsigned long a, unsigned short win, unsigned long b ); \n"); //$NON-NLS-1$
+        buffer.append( "main() {                                                             \n"); //$NON-NLS-1$
+        buffer.append( "   if( !seqgt( *aa, 0x1000, *bb) || !seqgt2( *aa, 0x1000, *bb) )     \n"); //$NON-NLS-1$
+        buffer.append( "      return -1;                                                     \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                                                         \n"); //$NON-NLS-1$
+        buffer.append( "}                                                                    \n"); //$NON-NLS-1$
+        buffer.append( "int seqgt( unsigned long a, unsigned short win, unsigned long b) {   \n"); //$NON-NLS-1$
+        buffer.append( "   return (long) ((a + win) - b) > 0;                                \n"); //$NON-NLS-1$
+        buffer.append( "}                                                                    \n"); //$NON-NLS-1$
+        buffer.append( "int seqgt2( unsigned long a, unsigned short win, unsigned long b) {  \n"); //$NON-NLS-1$
+        buffer.append( "   long l = ((a + win) - b);                                         \n"); //$NON-NLS-1$
+        buffer.append( "   return 1 > 0;                                                     \n"); //$NON-NLS-1$
+        buffer.append( "}                                                                    \n"); //$NON-NLS-1$
+        buffer.append( "unsigned long aa[] = { (1UL << (sizeof(long) *8 - 1)) = 0xfff };     \n"); //$NON-NLS-1$
+        buffer.append( "unsigned long bb[] = { (1UL << (sizeof(long) *8 - 1)) = 0xfff };     \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 36 );
+        IVariable aa = (IVariable) collector.getName( 0 ).resolveBinding();
+        IVariable bb = (IVariable) collector.getName( 1 ).resolveBinding();
+        IFunction seqgt = (IFunction) collector.getName( 2 ).resolveBinding();
+        IParameter a1 = (IParameter) collector.getName( 3 ).resolveBinding();
+        IParameter win1 = (IParameter) collector.getName( 4 ).resolveBinding();
+        IParameter b1 = (IParameter) collector.getName( 5 ).resolveBinding();
+        IFunction seqgt2 = (IFunction) collector.getName( 6 ).resolveBinding();
+        IParameter a2 = (IParameter) collector.getName( 7 ).resolveBinding();
+        IParameter win2 = (IParameter) collector.getName( 8 ).resolveBinding();
+        IParameter b2 = (IParameter) collector.getName( 9 ).resolveBinding();
+        
+        assertInstances( collector, aa, 4 );
+        assertInstances( collector, bb, 4 );
+        assertInstances( collector, seqgt, 3 );
+        assertInstances( collector, a1, 3 );
+        assertInstances( collector, win1, 3 );
+        assertInstances( collector, b1, 3 );
+        assertInstances( collector, seqgt2, 3 );
+        assertInstances( collector, a2, 3 );
+        assertInstances( collector, win2, 3 );
+        assertInstances( collector, b2, 3 );
+    }
+    
+    public void testGCC20000412_1 () throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "short int i = -1;                                               \n" ); //$NON-NLS-1$
+        buffer.append( "const char * const wordlist[207];                               \n" ); //$NON-NLS-1$
+        buffer.append( "const char * const * foo( void ) {                              \n" ); //$NON-NLS-1$
+        buffer.append( "   register const char * const *wordptr = &wordlist[207u + i];  \n" ); //$NON-NLS-1$
+        buffer.append( "   return wordptr;                                              \n" ); //$NON-NLS-1$
+        buffer.append( "}                                                               \n" ); //$NON-NLS-1$
+        buffer.append( "int main() {                                                    \n" ); //$NON-NLS-1$
+        buffer.append( "   if( foo() != &wordlist[206] )                                \n" ); //$NON-NLS-1$
+        buffer.append( "      return -1;                                                \n" ); //$NON-NLS-1$
+        buffer.append( "   return 0;                                                    \n" ); //$NON-NLS-1$
+        buffer.append( "}                                                               \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 11 );
+        IVariable i = (IVariable) collector.getName( 0 ).resolveBinding();
+        IVariable wordlist = (IVariable) collector.getName( 1 ).resolveBinding();
+        IFunction foo = (IFunction) collector.getName( 2 ).resolveBinding();
+        IVariable wordptr = (IVariable) collector.getName( 4 ).resolveBinding();
+        
+        assertInstances( collector, i, 2 );
+        assertInstances( collector, wordlist, 3 );
+        assertInstances( collector, foo, 2 );
+        assertInstances( collector, wordptr, 2 );
+    }
+    
+    public void testGCC20000412_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "int f( int a, int *y ) {                 \n"); //$NON-NLS-1$
+        buffer.append( "   int x = a;                            \n"); //$NON-NLS-1$
+        buffer.append( "   if( a == 0 )  return *y;              \n"); //$NON-NLS-1$
+        buffer.append( "   return f( a-1, &x );                  \n"); //$NON-NLS-1$
+        buffer.append( "}                                        \n"); //$NON-NLS-1$
+        buffer.append( "int main( int argc, char** argv){        \n"); //$NON-NLS-1$
+        buffer.append( "   if( f(100, (int *) 0 ) != 1)          \n"); //$NON-NLS-1$
+        buffer.append( "      return -1;                         \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                             \n"); //$NON-NLS-1$
+        buffer.append( "}                                        \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 14 );
+        IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
+        IParameter a = (IParameter) collector.getName( 1 ).resolveBinding();
+        IParameter y = (IParameter) collector.getName( 2 ).resolveBinding();
+        IVariable x = (IVariable) collector.getName( 3 ).resolveBinding();
+        
+        assertInstances( collector, f, 3 );
+        assertInstances( collector, a, 4 );
+        assertInstances( collector, y, 2 );
+        assertInstances( collector, x, 2 );
+    }
+    
+    public void testGCC20000412_3() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "typedef struct {                         \n"); //$NON-NLS-1$
+        buffer.append( "   char y;                               \n"); //$NON-NLS-1$
+        buffer.append( "   char x[32];                           \n"); //$NON-NLS-1$
+        buffer.append( "} X;                                     \n"); //$NON-NLS-1$
+        buffer.append( "int z(void) {                            \n"); //$NON-NLS-1$
+        buffer.append( "   X xxx;                                \n"); //$NON-NLS-1$
+        buffer.append( "   xxx.x[0] = xxx.x[31] = '0';           \n"); //$NON-NLS-1$
+        buffer.append( "   xxx.y = 0xf;                          \n"); //$NON-NLS-1$
+        buffer.append( "   return f( xxx, xxx );                 \n"); //$NON-NLS-1$
+        buffer.append( "}                                        \n"); //$NON-NLS-1$
+        buffer.append( "int main (void) {                        \n"); //$NON-NLS-1$
+        buffer.append( "   int val;                              \n"); //$NON-NLS-1$
+        buffer.append( "   val = z();                            \n"); //$NON-NLS-1$
+        buffer.append( "   if( val != 0x60 ) return -1;          \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                             \n"); //$NON-NLS-1$
+        buffer.append( "}                                        \n"); //$NON-NLS-1$
+        buffer.append( "int f( X x, X y ) {                      \n"); //$NON-NLS-1$
+        buffer.append( "   if( x.y != y.y )                      \n"); //$NON-NLS-1$
+        buffer.append( "      return 'F';                        \n"); //$NON-NLS-1$
+        buffer.append( "   return x.x[0] + y.x[0];               \n"); //$NON-NLS-1$
+        buffer.append( "}                                        \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 36 );
+        IField    y = (IField) collector.getName( 1 ).resolveBinding();
+        IField    x = (IField) collector.getName( 2 ).resolveBinding();
+        ITypedef  X = (ITypedef) collector.getName( 3 ).resolveBinding();
+        IFunction z = (IFunction) collector.getName( 4 ).resolveBinding();
+        IVariable xxx = (IVariable) collector.getName( 7 ).resolveBinding();
+        IVariable val = (IVariable) collector.getName( 19 ).resolveBinding();
+        IParameter px = (IParameter) collector.getName( 25 ).resolveBinding();
+        IParameter py = (IParameter) collector.getName( 27 ).resolveBinding();
+        
+        assertInstances( collector, y, 4 );
+        assertInstances( collector, x, 5 );
+        assertInstances( collector, X, 4 );
+        assertInstances( collector, z, 2 );
+        assertInstances( collector, xxx, 6 );
+        assertInstances( collector, val, 3 );
+        assertInstances( collector, px, 3 );
+        assertInstances( collector, py, 3 );
+    }
+    
+    public void testGCC20000412_4() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "void f(int i, int j, int radius, int width, int N) { \n"); //$NON-NLS-1$
+        buffer.append( "   const int diff = i - radius;                      \n"); //$NON-NLS-1$
+        buffer.append( "   const int lowk = (diff > 0 ? diff : 0 );          \n"); //$NON-NLS-1$
+        buffer.append( "   int k;                                            \n"); //$NON-NLS-1$
+        buffer.append( "   for( k = lowk; k <= 2; k++ ){                     \n"); //$NON-NLS-1$
+        buffer.append( "      int idx = ((k-i+radius) * width - j + radius); \n"); //$NON-NLS-1$
+        buffer.append( "      if( idx < 0 ) return -1;                       \n"); //$NON-NLS-1$
+        buffer.append( "   }                                                 \n"); //$NON-NLS-1$
+        buffer.append( "   for( k = lowk; k <= 2; k++ ) ;                    \n"); //$NON-NLS-1$
+        buffer.append( "}                                                    \n"); //$NON-NLS-1$
+        buffer.append( "int main (int argc, char** argv ){                   \n"); //$NON-NLS-1$
+        buffer.append( "   int exc_rad = 2;                                  \n"); //$NON-NLS-1$
+        buffer.append( "   int N = 8;                                        \n"); //$NON-NLS-1$
+        buffer.append( "   int i;                                            \n"); //$NON-NLS-1$
+        buffer.append( "   for( i = 1; i < 4; i++ )                          \n"); //$NON-NLS-1$
+        buffer.append( "      f( i, 1, exc_rad, 2*exc_rad + 1, N );          \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                                         \n"); //$NON-NLS-1$
+        buffer.append( "}                                                    \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 43 );
+        IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
+        IParameter i1 = (IParameter) collector.getName( 1 ).resolveBinding();
+        IParameter j = (IParameter) collector.getName( 2 ).resolveBinding();
+        IParameter radius = (IParameter) collector.getName( 3 ).resolveBinding();
+        IParameter width = (IParameter) collector.getName( 4 ).resolveBinding();
+        IParameter N1 = (IParameter) collector.getName( 5 ).resolveBinding();
+        IVariable diff = (IVariable) collector.getName( 6 ).resolveBinding();
+        IVariable lowk = (IVariable) collector.getName( 9 ).resolveBinding();
+        IVariable k = (IVariable) collector.getName( 12 ).resolveBinding();
+        IVariable idx = (IVariable) collector.getName( 17 ).resolveBinding();
+        IVariable exc_rad = (IVariable) collector.getName( 32 ).resolveBinding();
+        IVariable N2 = (IVariable) collector.getName( 33 ).resolveBinding();
+        IVariable i2 = (IVariable) collector.getName( 34 ).resolveBinding();
+
+        assertInstances( collector, f, 2 );
+        assertInstances( collector, i1, 3 );
+        assertInstances( collector, j, 2 );
+        assertInstances( collector, radius, 4 );
+        assertInstances( collector, width, 2 );
+        assertInstances( collector, N1, 1 );
+        assertInstances( collector, diff, 3 );
+        assertInstances( collector, lowk, 3 );
+        assertInstances( collector, k, 8 );
+        assertInstances( collector, idx, 2 );
+        assertInstances( collector, exc_rad, 3 );
+        assertInstances( collector, N2, 2 );
+        assertInstances( collector, i2, 5 );
+    }
 }

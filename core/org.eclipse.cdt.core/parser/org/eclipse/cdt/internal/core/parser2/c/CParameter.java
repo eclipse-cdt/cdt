@@ -11,12 +11,15 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 
 /**
  * Created on Nov 5, 2004
@@ -51,7 +54,16 @@ public class CParameter implements IParameter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
-	public IType getType() {
+	
+    public IType getType() {
+		IASTDeclSpecifier declSpec = parameterDeclaration.getDeclSpecifier();
+		if( declSpec instanceof ICASTTypedefNameSpecifier ){
+			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
+			return (IType) nameSpec.getName().resolveBinding();
+		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
+			return (IType) elabTypeSpec.getName().resolveBinding();
+		}
 		return null;
 	}
 

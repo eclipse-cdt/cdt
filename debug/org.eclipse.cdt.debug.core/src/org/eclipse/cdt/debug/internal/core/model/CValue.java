@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIIntegralType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongLongValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
@@ -296,6 +297,8 @@ public class CValue extends CDebugElement implements ICValue
 				return getDoubleValueString( (ICDIDoubleValue)cdiValue );
 			else if ( cdiValue instanceof ICDIPointerValue )
 				return getPointerValueString( (ICDIPointerValue)cdiValue );
+			else if ( cdiValue instanceof ICDIReferenceValue )
+				return getReferenceValueString( (ICDIReferenceValue)cdiValue );
 			else
 				return cdiValue.getValueString();
 		}
@@ -460,6 +463,25 @@ public class CValue extends CDebugElement implements ICValue
 	private String getPointerValueString( ICDIPointerValue value ) throws CDIException
 	{
 		long longValue = value.pointerValue();
+		switch( getParentVariable().getFormat() )
+		{
+			case ICDIFormat.DECIMAL:
+				return Long.toString( longValue );
+			case ICDIFormat.NATURAL:
+			case ICDIFormat.HEXADECIMAL:
+			{
+				StringBuffer sb = new StringBuffer( "0x" ); 
+				String stringValue = Long.toHexString( longValue );
+				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+				return sb.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getReferenceValueString( ICDIReferenceValue value ) throws CDIException
+	{
+		long longValue = value.referenceValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.DECIMAL:

@@ -1,3 +1,7 @@
+2004-11-09 Alain Magloire
+	Put possiblity to set Exception breakpoint
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDIBreakpointManagement.java
+
 2004-11-08 Alain Magloire
 	Bug in CVariableFactory for globals, the filename of the 
 	binary was use instead of the filename of the symbol.
@@ -6,7 +10,7 @@
 2004-11-08 Alain Magloire
 	New class ICDIFunctionFinished.
 	It return the return value of the function.
-	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ICDIFunctionFinished.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDIFunctionFinished.java
 
 2004-11-04 Mikhail Khodjaiants
 	Removed "Refresh" and "Auto-Refresh" actions support for shared libraries.

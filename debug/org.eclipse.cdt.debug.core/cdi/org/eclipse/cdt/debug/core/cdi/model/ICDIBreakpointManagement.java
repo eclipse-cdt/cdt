@@ -33,6 +33,6 @@ public interface ICDIBreakpointManagement {
 
 	void deleteAllBreakpoints() throws CDIException;
 
-//	ICDIExceptionBreakpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch) throws CDIException;
+	ICDIExceptionpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch) throws CDIException;
 
 }

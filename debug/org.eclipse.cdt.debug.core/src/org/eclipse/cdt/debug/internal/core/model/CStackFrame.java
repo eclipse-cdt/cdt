@@ -107,7 +107,8 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	}
 
 	protected synchronized List getVariables0() throws DebugException {
-		if ( fVariables == null ) {
+		((CThread)getThread()).switchToFrame( this );
+		if ( fVariables == null ) {			
 			List vars = getAllCDIVariableObjects();
 			fVariables = new ArrayList( vars.size() );
 			Iterator it = vars.iterator();
@@ -569,10 +570,6 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return list;
 	}
 
-	/*
-	 * protected List getAllCDIVariables() throws DebugException { List list = new ArrayList(); list.addAll( getCDIArguments() ); list.addAll(
-	 * getCDILocalVariables() ); return list; }
-	 */
 	protected List getAllCDIVariableObjects() throws DebugException {
 		List list = new ArrayList();
 		list.addAll( getCDIArgumentObjects() );

@@ -272,6 +272,7 @@ public class CThread extends CDebugElement
 	{
 		try
 		{
+			((CDebugTarget)getDebugTarget()).setCurrentThread( this );
 			return getCDIThread().getStackFrames( lowFrame, highFrame );
 		}
 		catch( CDIException e )
@@ -1010,12 +1011,13 @@ public class CThread extends CDebugElement
 	 */
 	public void switchToFrame( IStackFrame frame ) throws DebugException
 	{
-		if ( frame == null || !(frame instanceof CStackFrame) || frame.equals( getLastStackFrame() ) )
+		if ( frame == null || !(frame instanceof CStackFrame) /*|| frame.equals( getLastStackFrame() )*/ )
 		{
 			return;
 		}
 		try
 		{
+			((CDebugTarget)getDebugTarget()).setCurrentThread( this );
 			if ( getLastStackFrame() != null )
 			{ 
 				((CDebugTarget)getDebugTarget()).resetRegisters();

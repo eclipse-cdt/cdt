@@ -311,10 +311,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public void start( BundleContext context ) throws Exception {
 		super.start( context );
-		IWorkbenchWindow ww = getActiveWorkbenchWindow();
-		if ( ww != null ) {
-			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-		}
+		listenSelection( true, this );
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 	}
 
@@ -325,13 +322,26 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-		IWorkbenchWindow ww = getActiveWorkbenchWindow();
-		if ( ww != null ) {
-			ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-		}
+		listenSelection( false, this );
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();
 		}
 		super.stop( context );
+	}
+
+	void listenSelection( final boolean enable, final ISelectionListener listener ) {
+		Runnable r = new Runnable() {
+			
+			public void run() {
+				IWorkbenchWindow ww = getActiveWorkbenchWindow();
+				if ( ww != null ) {
+					if ( enable )
+						ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, listener );
+					else
+						ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, listener );
+				}
+			}
+		};
+		getWorkbench().getDisplay().asyncExec( r );
 	}
 }

@@ -1,3 +1,7 @@
+2004-06-29 Mikhail Khodjaiants
+	Temporary fix for bug 68915: Invalid values in the Variables view.
+	* CDebugUIPlugin.java
+
 2004-06-22 Mikhail Khodjaiants
 	Replaced global resource bundles by messages.
 

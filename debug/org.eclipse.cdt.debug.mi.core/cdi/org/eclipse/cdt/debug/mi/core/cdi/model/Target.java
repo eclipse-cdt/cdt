@@ -46,6 +46,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
@@ -130,6 +131,15 @@ public class Target  implements ICDITarget {
 					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
 				}
 				currentThreadId = info.getNewThreadId();
+
+				// @^&#@^$*^$
+				// GDB reset the currentFrame to  some other level 0 when switching thread.
+				// we need to reposition the current stack level.
+				MIFrame miFrame = info.getFrame();
+				if (miFrame != null) {
+					int depth = cthread.getStackFrameCount();
+					cthread.currentFrame = new StackFrame(cthread, miFrame, depth - miFrame.getLevel());
+				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}

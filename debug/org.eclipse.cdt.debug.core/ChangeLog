@@ -1,4 +1,8 @@
-2002-10-31 Mikhail Khodjaiants
+2002-11-01 Mikhail Khodjaiants
+	Added conversion utilities to support decimal format in the Memory View.
+	* CDebugUtils.java
+
+2002-11-01 Mikhail Khodjaiants
 	Added the 'IExecFileInfo' interface to provide access to the executable file information.
 	* IExecFileInfo.java: definition
 	* CDebugTarget.java: implementation

@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.core;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -131,5 +133,112 @@ public class CDebugUtils
 		{
 		}
 		return 0;
-	} 
+	}
+	
+	public static short toShort( char[] bytes, boolean le )
+	{
+		if ( bytes.length != 2 )
+			return 0;
+		return Short.parseShort( bytesToString( bytes, le, true ), 16 );
+	}  
+	
+	public static int toUnsignedShort( char[] bytes, boolean le )
+	{
+		if ( bytes.length != 2 )
+			return 0;
+		return Integer.parseInt( bytesToString( bytes, le, false ), 16 );
+	}  
+	
+	public static int toInt( char[] bytes, boolean le )
+	{
+		if ( bytes.length != 4 )
+			return 0;
+		return Integer.parseInt( bytesToString( bytes, le, true ), 16 );
+	}  
+	
+	public static long toUnsignedInt( char[] bytes, boolean le )
+	{
+		if ( bytes.length != 4 )
+			return 0;
+		return Long.parseLong( bytesToString( bytes, le, false ), 16 );
+	}  
+	
+	public static long toLong( char[] bytes, boolean le )
+	{
+		return toInt( bytes, le );
+	}
+	
+	public static long toUnsignedLong( char[] bytes, boolean le )
+	{
+		return toUnsignedInt( bytes, le );
+	}
+	
+	private static String bytesToString( char[] bytes, boolean le, boolean signed )
+	{
+		char[] copy = new char[bytes.length];
+		if ( le )
+		{
+			for ( int i = 0; i < bytes.length / 2; ++i )
+			{
+				copy[2 * i] = bytes[bytes.length - 2 * i - 2];
+				copy[2 * i + 1] = bytes[bytes.length - 2 * i - 1];
+			}
+		}
+		else
+		{
+			System.arraycopy( bytes, 0, copy, 0, copy.length );
+		}
+		StringBuffer sb = new StringBuffer( copy.length );
+		if ( signed )
+		{
+			switch( copy[0] )
+			{
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+					break;
+				case '8':
+				case '9':
+				case 'a':
+				case 'A':
+				case 'b':
+				case 'B':
+				case 'c':
+				case 'C':
+				case 'd':
+				case 'D':
+				case 'e':
+				case 'E':
+				case 'f':
+				case 'F':
+					sb.append( '-' );
+					copy[0] -= '8';
+					break;
+			}
+		}
+		sb.append( copy );
+ 		return sb.toString();
+	}
+	
+	public static String prependString( String text, int length, char ch )
+	{
+		StringBuffer sb = new StringBuffer( length );
+		if ( text.length() > length )
+		{
+			sb.append( text.substring( 0, length ) );
+		}
+		else
+		{
+			char[] prefix = new char[length - text.length()];
+			Arrays.fill( prefix, ch );
+			sb.append( prefix );
+			sb.append( text );
+		}
+		return sb.toString();
+	}  
 }

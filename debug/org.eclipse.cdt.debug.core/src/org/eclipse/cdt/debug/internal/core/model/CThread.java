@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IInstructionStep;
 import org.eclipse.cdt.debug.core.model.IRestart;
@@ -36,12 +36,7 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
-import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -273,6 +268,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
+			setStatus( ICDebugElementErrorStatus.WARNING, "Stack is not available: " + e.getMessage() );
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return new ICDIStackFrame[0];
@@ -744,6 +740,7 @@ public class CThread extends CDebugElement
 		}
 		fStackFrames.clear();
 		setLastStackDepth( 0 );
+		resetStatus();
 		setRefreshChildren( true );
 	}
 
@@ -1084,12 +1081,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),
-												  ICDebugInternalConstants.STATUS_CODE_ERROR,
-												  "Stack is not available.",
-												  null );
-			status.add( new Status( IStatus.ERROR, status.getPlugin(), status.getCode(), e.getMessage(), null ) );
-			CDebugUtils.error( status, getDebugTarget() );
+			setStatus( ICDebugElementErrorStatus.WARNING, "Stack is not available: " + e.getMessage() );
 		}
 		return depth;
 	}

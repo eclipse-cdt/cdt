@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IStatus;
@@ -30,9 +31,13 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * @since Aug 1, 2002
  */
 public class CDebugElement extends PlatformObject 
-						   implements IDebugElement
+						   implements IDebugElement,
+						   			  ICDebugElementErrorStatus
 {
 	private CDebugTarget fDebugTarget;
+
+	private int fSeverity = ICDebugElementErrorStatus.OK;
+	private String fMessage = null;
 
 	/**
 	 * Constructor for CDebugElement.
@@ -283,5 +288,43 @@ public class CDebugElement extends PlatformObject
 		if ( adapter.equals( ICDISession.class ) )
 			return getCDISession(); 
 		return super.getAdapter(adapter);
+	}
+
+	protected void setStatus( int severity, String message )
+	{
+		fSeverity = severity;
+		fMessage = message;
+		if ( fMessage != null )
+			fMessage.trim();
+	}
+
+	protected void resetStatus()
+	{
+		fSeverity = ICDebugElementErrorStatus.OK;
+		fMessage = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus#isOK()
+	 */
+	public boolean isOK()
+	{
+		return ( fSeverity == ICDebugElementErrorStatus.OK );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus#getSeverity()
+	 */
+	public int getSeverity()
+	{
+		return fSeverity;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus#getMessage()
+	 */
+	public String getMessage()
+	{
+		return fMessage;
 	}
 }

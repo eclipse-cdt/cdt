@@ -1173,6 +1173,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected void cleanup()
 	{
+		resetStatus();
 		removeAllThreads();
 		getCDISession().getEventManager().removeEventListener( this );
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
@@ -1401,6 +1402,7 @@ public class CDebugTarget extends CDebugElement
 		setSuspended( false );
 		setCurrentStateId( IState.RUNNING );
 		setCurrentStateInfo( null );
+		resetStatus();
 		resumeThreads( event );
 		int detail = DebugEvent.UNSPECIFIED;
 		switch( event.getType() )

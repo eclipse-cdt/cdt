@@ -137,11 +137,14 @@ public class BinaryContainerAdapter extends Container implements IFolder {
 		if (f == null) {
 			// Pass it to parent to create a fake/phantom if the object
 			// is not in the archive.
-			f = getParent().getFile(path);
-			// Add it to the list of phantoms
-			if (! phantomResources.contains(f)) {
-				phantomResources.add(f);
-				phantomResources.trimToSize();
+			IContainer container = getParent();
+			if (container != null) {
+				f = container.getFile(path);
+				// Add it to the list of phantoms
+				if (! phantomResources.contains(f)) {
+					phantomResources.add(f);
+					phantomResources.trimToSize();
+				}
 			}
 		}
 		return f;
@@ -176,10 +179,14 @@ public class BinaryContainerAdapter extends Container implements IFolder {
 	public IFolder getFolder(IPath path) {
 		// Only Files in the archive pass this to the parent
 		// to create a phatom resource
-		IFolder f = getParent().getFolder(path);
-		if (!phantomResources.contains(f)) {
-			phantomResources.add(f);
-			phantomResources.trimToSize();
+		IFolder f = null;
+		IContainer container = getParent();
+		if (container != null) {
+			f = container.getFolder(path);
+			if (!phantomResources.contains(f)) {
+				phantomResources.add(f);
+				phantomResources.trimToSize();
+			}
 		}
 		return f;
 	}
@@ -205,8 +212,8 @@ public class BinaryContainerAdapter extends Container implements IFolder {
 		for (int i = 0; i < children.size(); i++) {
 			IResource child = (IResource)children.get(i);
 			if (includeTeamPrivateMember && child.isTeamPrivateMember() || !child.isTeamPrivateMember()) {
-		    	aList.add(child);
-		    }	    
+				aList.add(child);
+			}	    
 		}
 
 		if (includePhantoms) {

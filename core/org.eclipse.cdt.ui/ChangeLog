@@ -1,3 +1,8 @@
+2004-09-03 Alain Magloire
+
+	Fix for PR 73250
+	* plugin.xml
+
 2004-08-19 Bogdan Gheorghe
 	Fix for 69925: ShowIn C/C++ Projects explorer does not work in certain cases
 	

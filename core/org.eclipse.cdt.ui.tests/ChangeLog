@@ -1,3 +1,6 @@
+2003-06-13 Victor Mozgin
+	Renamed NullParserCallback into NullSourceElementRequester in AutomatedFramework.
+
 2003-06-13 John Camelon
 	Merged ParserSymbolTable branch back into HEAD.
 

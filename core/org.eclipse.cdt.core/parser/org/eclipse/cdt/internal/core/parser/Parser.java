@@ -98,7 +98,7 @@ public class Parser implements IParser {
 	 * @param s				IScanner instance that has been initialized to the code input 
 	 */	
 	public Parser( IScanner s) {
-		this(s, new NullParserCallback(), false);
+		this(s, new NullSourceElementRequestor(), false);
 	}
 	
 	

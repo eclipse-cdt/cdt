@@ -1,3 +1,7 @@
+2003-06-13 Victor Mozgin
+	Renamed NullParserCallback into NullSourceElementRequester.
+	NullSourceElementRequester now dummy-implements both IParserCallback and ISourceElementRequester.
+
 2003-06-13 John Camelon
 	Merged ParserSymbolTable branch back into HEAD.
 

@@ -158,7 +158,7 @@ public class MakeBuilder extends ACBuilder {
 						String[] newArgs = makeArray(args);						
 						buildArguments = new String[targets.length + newArgs.length];
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
-						System.arraycopy(targets, 0, buildArguments, newArgs.length + 1, targets.length);
+						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
 					}
 				}
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);

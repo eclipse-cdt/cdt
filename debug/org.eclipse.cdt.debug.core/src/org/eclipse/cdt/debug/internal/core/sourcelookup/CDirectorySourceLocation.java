@@ -508,4 +508,11 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	{
 		return ( getDirectory() != null ) ? getDirectory().toOSString() : "";
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#dispose()
+	 */
+	public void dispose()
+	{
+	}
 }

@@ -216,7 +216,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		fNotFoundCache.add( name );
 	}
 
-	protected void dispose()
+	public void dispose()
 	{
 		fCache.clear();
 		fNotFoundCache.clear();

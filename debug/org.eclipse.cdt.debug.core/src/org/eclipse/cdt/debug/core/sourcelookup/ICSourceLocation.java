@@ -67,4 +67,6 @@ public interface ICSourceLocation extends IAdaptable
 	 * @param search - a value to set
 	 */
 	void setSearchForDuplicateFiles( boolean search );
+
+	void dispose();
 }

@@ -287,6 +287,25 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return ParserSymbolTable.resolveAmbiguities( data ); 
 	}
 	
+	public IParameterizedSymbol lookupFunctionForFriendship( String name, List parameters ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name, TypeInfo.t_any, getTemplateInstance() );
+		
+		data.parameters = parameters;
+		
+		IContainerSymbol enclosing = getContainingSymbol();
+		if( enclosing != null && enclosing.isType( TypeInfo.t_namespace, TypeInfo.t_union ) ){
+			while( enclosing != null && ( enclosing.getType() != TypeInfo.t_namespace) )
+			{                                        		
+				enclosing = enclosing.getContainingSymbol();
+			}
+		}
+		data.stopAt = enclosing;
+		
+		ParserSymbolTable.lookup( data, this );
+		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data );
+	}
+	
+	
 	public List getFriends(){ 
 		if( _friends == null ){
 			_friends = new LinkedList();

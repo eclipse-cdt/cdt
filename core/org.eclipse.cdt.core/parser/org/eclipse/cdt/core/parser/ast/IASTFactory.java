@@ -180,7 +180,7 @@ public interface IASTFactory
     
     public IASTMethod createMethod(
         IASTScope scope,
-        String name,
+        ITokenDuple name,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,

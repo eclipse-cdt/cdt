@@ -1,3 +1,7 @@
+2004-01-08 Andrew Niefer
+	Added CompleteParseASTTest::testBug48307_FriendFunction_1
+	Added CompleteParseASTTest::testBug48307_FriendFunction_2
+	
 2004-01-06 Andrew Niefer
 	Added ContextualParseTest::testCompletionLookup_LookupKindTHIS
 

@@ -463,7 +463,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             return astFactory
                 .createMethod(
                     scope,
-                    nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+                    nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
             		createParameterList(declarator.getParameters()),
                     astFactory.createAbstractDeclaration(
                         constt,

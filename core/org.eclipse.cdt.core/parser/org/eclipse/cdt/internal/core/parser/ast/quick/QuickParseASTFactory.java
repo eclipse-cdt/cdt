@@ -193,9 +193,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createMethod(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration, boolean, boolean, boolean, boolean, boolean, boolean, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
      */
-	public IASTMethod createMethod(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments )
+	public IASTMethod createMethod(IASTScope scope, ITokenDuple name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments )
 	{
-        return new ASTMethod(scope, name, nameEndOffset, parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, nameOffset, ownerTemplate, isConst, isVolatile, false, false, isVirtual, isExplicit, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments);
+        return new ASTMethod(scope, name.toString(), nameEndOffset, parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, nameOffset, ownerTemplate, isConst, isVolatile, false, false, isVirtual, isExplicit, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments);
     }
 
     /* (non-Javadoc)

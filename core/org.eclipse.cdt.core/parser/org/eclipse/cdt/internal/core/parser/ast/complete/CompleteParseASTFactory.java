@@ -107,6 +107,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		public static final LookupType QUALIFIED = new LookupType( 1 );
 		public static final LookupType UNQUALIFIED = new LookupType( 2 );
 		public static final LookupType FORDEFINITION = new LookupType( 3 );
+		public static final LookupType FORFRIENDSHIP = new LookupType( 4 );
 
 		private LookupType( int constant)
 		{
@@ -174,8 +175,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 							result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
 						else if( lookupType == LookupType.UNQUALIFIED )
 							result = startingScope.unqualifiedFunctionLookup( name, new LinkedList( parameters ) );
-						else 
+						else if( lookupType == LookupType.FORDEFINITION )
 							result = startingScope.lookupMethodForDefinition( name, new LinkedList( parameters ) );
+						else if( lookupType == LookupType.FORFRIENDSHIP ){
+							result = ((IDerivableContainerSymbol)startingScope).lookupFunctionForFriendship( name, new LinkedList( parameters) );
+						}
 					}
 				else
 					result = null;
@@ -185,8 +189,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					result = startingScope.qualifiedLookup(name, type);
 				else if( lookupType == LookupType.UNQUALIFIED )
 					result = startingScope.elaboratedLookup( type, name );
-				else
+				else if( lookupType == LookupType.FORDEFINITION )
 					result = startingScope.lookupMemberForDefinition( name );
+				else if( lookupType == LookupType.FORFRIENDSHIP )
+					result = ((IDerivableContainerSymbol)startingScope).lookupForFriendship( name );
 			}
 		} catch (ParserSymbolTableException e) {
 			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction )
@@ -1622,7 +1628,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					name.length() - 1  );
                 return createMethod(
                     methodParentScope,
-                    newName.toString(), 
+                    newName, 
                     parameters,
                     returnType,
                     exception,
@@ -1876,7 +1882,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      
 	public IASTMethod createMethod(
 		IASTScope scope,
-		String name,
+		ITokenDuple name,
 		List parameters,
 		IASTAbstractDeclaration returnType,
 		IASTExceptionSpecification exception,
@@ -1902,7 +1908,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	  
     public IASTMethod createMethod(
         IASTScope scope,
-        String name,
+        ITokenDuple nameDuple,
         List parameters, 
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -1926,7 +1932,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isDestructor = false;
 
 		IContainerSymbol ownerScope = scopeToSymbol( scope );
-		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name, TypeInfo.t_function );
+		IParameterizedSymbol symbol = pst.newParameterizedSymbol( nameDuple.toString(), TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
 		if(references == null)
@@ -1943,9 +1949,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if(parentName.indexOf(DOUBLE_COLON) != -1){				
 				parentName = parentName.substring(parentName.lastIndexOf(DOUBLE_COLON) + DOUBLE_COLON.length());
 			}    	
-			if( parentName.equals(name) ){
+			if( parentName.equals(nameDuple.toString()) ){
 				isConstructor = true; 
-			} else if(name.startsWith(TELTA) && parentName.equals(name.substring(1))){
+			} else if(nameDuple.getFirstToken().getType() == IToken.tCOMPL && parentName.equals(nameDuple.getLastToken().getImage())){
 				isDestructor = true;
 			}
 		}
@@ -1953,7 +1959,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
 		boolean previouslyDeclared = false; 
 		
-		if( isFunctionDefinition )
+		IParameterizedSymbol functionDeclaration = null;
+		
+		if( isFunctionDefinition || isFriend )
 		{
 			List functionParameters = new LinkedList();
 			// the lookup requires a list of type infos
@@ -1964,15 +1972,34 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				functionParameters.add(param.getSymbol().getTypeInfo());
 			}
 			
-			IParameterizedSymbol functionDeclaration = null; 
-
 			List functionReferences = new ArrayList();
-			functionDeclaration = 
-				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name, isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, 0, functionReferences, false, LookupType.FORDEFINITION );                
-
-			if( functionDeclaration != null )
+			
+			if( isFriend )
 			{
-				previouslyDeclared = true;
+				functionDeclaration = 
+					(IParameterizedSymbol) lookupQualifiedName(ownerScope, nameDuple, isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, functionReferences, false, LookupType.FORFRIENDSHIP );
+			} else {
+				functionDeclaration = 
+					(IParameterizedSymbol) lookupQualifiedName(ownerScope, nameDuple.toString(), isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, 0, functionReferences, false, LookupType.FORDEFINITION );
+			}
+			
+			previouslyDeclared = ( functionDeclaration != null );
+			
+			if( isFriend )
+			{
+				if( functionDeclaration != null )
+				{
+					symbol.setTypeSymbol( functionDeclaration );
+					// friend declaration, has no real visibility, set private
+					visibility = ASTAccessVisibility.PRIVATE;		
+				} else
+				{	
+					//for a friend function declaration, if there is no prior declaration, the program is illformed
+					throw new ASTSemanticException();
+				}
+				 
+			} else if( functionDeclaration != null )
+			{
 				functionDeclaration.setTypeSymbol( symbol );
 				// set the definition visibility = declaration visibility
 				ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
@@ -1982,7 +2009,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		try
 		{
-			if( !isConstructor )
+			if( isFriend )
+			{
+				((IDerivableContainerSymbol)ownerScope).addFriend( functionDeclaration );
+			} else if( !isConstructor )
 				ownerScope.addSymbol( symbol );
 			else
 			{

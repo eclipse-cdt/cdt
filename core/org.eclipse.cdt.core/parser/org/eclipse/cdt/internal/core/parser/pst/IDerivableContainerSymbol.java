@@ -40,6 +40,8 @@ public interface IDerivableContainerSymbol extends IContainerSymbol {
 	
 	public void addFriend( ISymbol friend ) throws ParserSymbolTableException;
 	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException;
+	public IParameterizedSymbol lookupFunctionForFriendship( String name, List parameters ) throws ParserSymbolTableException;
+	
 	public List getFriends();
 	
 	public interface IParentSymbol{

@@ -60,11 +60,14 @@ public class UpdateDependency implements IJob {
 	 */
 	public boolean execute(IProgressMonitor progress) {	
 		if (resource == null) return false;	
+		
+		IPath location = resource.getLocation();
+		if (location == null) return false;
 		  
 		PathCollector pathCollector = new PathCollector();
 			//SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
 			ICSearchScope scope = SearchEngine.createWorkspaceScope();
-			CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(),ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES,ICSearchConstants.EXACT_MATCH,true);
+			CSearchPattern pattern = CSearchPattern.createPattern(location.toOSString(),ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES,ICSearchConstants.EXACT_MATCH,true);
 			IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 			indexManager.performConcurrentJob( 
 				new PatternSearchJob(

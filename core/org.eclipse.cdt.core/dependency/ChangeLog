@@ -1,3 +1,7 @@
+2004-02-17 Bogdan Gheorghe
+	- Fix for Bug 52238 from Thomas Fletcher: Check to see if you can
+	  get a location off the resource before attempting to use it
+	  
 2003-11-10 Bogdan Gheorghe
 	- Added a null resource check in UpdateDependency to fix up
 	  a potential NPE in the test suite

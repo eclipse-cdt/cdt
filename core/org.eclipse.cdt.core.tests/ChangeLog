@@ -1,3 +1,6 @@
+2004-02-17 Bogdan Gheorghe
+	-Added DependencyTests::testDependencyUpdateNPE from Thomas
+	
 2004-02-13 Bogdan Gheorghe
     -Modified CompletionProposalsTest to reset the indexer thread at the
      beginning of the test case - this means that the project will be indexed

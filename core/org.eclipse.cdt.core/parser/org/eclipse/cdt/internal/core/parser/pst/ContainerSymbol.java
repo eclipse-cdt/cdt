@@ -26,10 +26,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -55,12 +53,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ContainerSymbol copy = (ContainerSymbol)super.clone();
 			
 		copy._usingDirectives  =  (_usingDirectives != Collections.EMPTY_LIST) ? (List) ((ArrayList)_usingDirectives).clone() : _usingDirectives;
-		
-		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-			copy._containedSymbols = ( _containedSymbols != Collections.EMPTY_MAP )? (Map)((TreeMap) _containedSymbols).clone() : _containedSymbols;
-		else 
-			copy._containedSymbols = ( _containedSymbols != Collections.EMPTY_MAP )? (Map)((HashMap) _containedSymbols).clone() : _containedSymbols;
-		
+		copy._containedSymbols = ( _containedSymbols != Collections.EMPTY_MAP )? (Map)((HashMap) _containedSymbols).clone() : _containedSymbols;
 		copy._contents = (_contents != Collections.EMPTY_LIST) ? (List) ((ArrayList)_contents).clone() : _contents;
 		
 		return copy;	
@@ -435,11 +428,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 	protected void putInContainedSymbols( String key, Object obj ){
 		if( _containedSymbols == Collections.EMPTY_MAP ){
-			if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE ){
-				_containedSymbols = new TreeMap( new SymbolTableComparator() );
-			} else {
-				_containedSymbols = new HashMap( );
-			}
+			_containedSymbols = new HashMap( );
 		}
 		_containedSymbols.put( key, obj );
 	}

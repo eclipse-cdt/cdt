@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -326,11 +326,7 @@ public class ParserSymbolTable {
 		
 		Iterator iterator = null;
 		if( data.isPrefixLookup() && declarations != Collections.EMPTY_MAP ){
-			if( declarations instanceof SortedMap ){
-				iterator = ((SortedMap)declarations).tailMap( data.name.toLowerCase() ).keySet().iterator();
-			} else {
-				throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
-			}
+		    iterator = declarations.keySet().iterator();
 		}
 		
 		String name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
@@ -342,13 +338,15 @@ public class ParserSymbolTable {
 					obj = collectSymbol( data, obj );
 					
 					if( obj != null ){
-						if( found == null )
-							found = new LinkedHashMap();
+						if( found == null ){
+						    if( data.isPrefixLookup() )
+						        found = new TreeMap( new ContainerSymbol.SymbolTableComparator() );
+						    else 
+						        found = new LinkedHashMap();
+						}
 						found.put( name, obj );
 					}
 				}
-			} else {
-				break;
 			}
 						
 			if( iterator != null && iterator.hasNext() ){
@@ -357,6 +355,8 @@ public class ParserSymbolTable {
 				name = null;
 			}
 		} 
+		if( found != null && data.isPrefixLookup() )
+		    found = new LinkedHashMap( found );
 		
 		if( found != null && !data.isPrefixLookup() ){
 			return found;
@@ -401,13 +401,17 @@ public class ParserSymbolTable {
 					if( nameMatches( data, symbol.getName() ) ){
 						obj = collectSymbol( data, symbol );
 						if( obj != null ){
-							if( found == null )
-								found = new LinkedHashMap();
+						    if( found == null ){
+							    if( data.isPrefixLookup() )
+							        found = new TreeMap( new ContainerSymbol.SymbolTableComparator() );
+							    else 
+							        found = new LinkedHashMap();
+							}
 							found.put( symbol.getName(), obj );
 						}
 					}
 				}
-				return found;
+				return ( found instanceof TreeMap ) ? new LinkedHashMap( found ) : found;
 			}
 			
 		}
@@ -415,11 +419,7 @@ public class ParserSymbolTable {
 		if( parameters != Collections.EMPTY_MAP ){
 			iterator = null;
 			if( data.isPrefixLookup() ){
-				if( parameters instanceof SortedMap ){
-					iterator = ((SortedMap) parameters).tailMap( data.name.toLowerCase() ).keySet().iterator();
-				} else {
-					throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
-				}
+			    iterator = parameters.keySet().iterator();
 			}
 			
 			name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
@@ -428,12 +428,14 @@ public class ParserSymbolTable {
 					obj = parameters.get( name );
 					obj = collectSymbol( data, obj );
 					if( obj != null ){
-						if( found == null )
-							found = new LinkedHashMap();
+					    if( found == null ){
+						    if( data.isPrefixLookup() )
+						        found = new TreeMap( new ContainerSymbol.SymbolTableComparator() );
+						    else 
+						        found = new LinkedHashMap();
+						}
 						found.put( name, obj );
 					}
-				} else {
-					break;
 				}
 				
 				if( iterator != null && iterator.hasNext() ){
@@ -443,7 +445,7 @@ public class ParserSymbolTable {
 				}
 			}
 		}
-		return found;
+		return ( found instanceof TreeMap ) ? new LinkedHashMap( found ) : found;
 	}
 
 	private static boolean nameMatches( LookupData data, String name ){
@@ -452,7 +454,7 @@ public class ParserSymbolTable {
 		} 
 		return name.equals( data.name );
 	}
-	private static boolean checkType( LookupData data, ISymbol symbol ) { //, TypeInfo.eType type, TypeInfo.eType upperType ){
+	private static boolean checkType( LookupData data, ISymbol symbol ) {
 		if( data.getFilter() == null ){
 			return true;
 		}

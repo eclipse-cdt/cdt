@@ -19,9 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.TreeMap;
-
-import org.eclipse.cdt.core.parser.ParserMode;
 
 /**
  * @author aniefer
@@ -43,11 +40,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		ParameterizedSymbol copy = (ParameterizedSymbol)super.clone();
 			
 		copy._parameterList = ( _parameterList != Collections.EMPTY_LIST ) ? (List) ((ArrayList)_parameterList).clone() : _parameterList;
-		
-		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-			copy._parameterMap	= ( _parameterMap != Collections.EMPTY_MAP ) ? (Map) ((TreeMap) _parameterMap).clone() : _parameterMap;
-		else 
-			copy._parameterMap	= ( _parameterMap != Collections.EMPTY_MAP ) ? (Map) ((HashMap) _parameterMap).clone() : _parameterMap;
+		copy._parameterMap	= ( _parameterMap != Collections.EMPTY_MAP ) ? (Map) ((HashMap) _parameterMap).clone() : _parameterMap;
 			
 		return copy;	
 	}
@@ -131,10 +124,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		if( name != null && !name.equals(ParserSymbolTable.EMPTY_NAME) )
 		{
 			if( _parameterMap == Collections.EMPTY_MAP ){
-				if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-					_parameterMap = new TreeMap( new SymbolTableComparator() );
-				else 
-					_parameterMap = new HashMap( );
+				_parameterMap = new HashMap( );
 			}
 			
 			if( !_parameterMap.containsKey( name ) )

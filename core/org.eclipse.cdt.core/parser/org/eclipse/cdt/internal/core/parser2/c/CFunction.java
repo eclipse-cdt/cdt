@@ -55,7 +55,7 @@ public class CFunction implements IFunction {
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
 	 */
 	public IScope getFunctionScope() {
-		return null;
+		return functionScope;
 	}
 
 	public IASTDeclaration getDeclaration(){

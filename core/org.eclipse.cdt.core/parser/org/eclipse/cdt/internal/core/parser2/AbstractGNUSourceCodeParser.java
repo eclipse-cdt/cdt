@@ -25,7 +25,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -506,12 +508,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             compoundStatement = compoundStatement();
 
         consume(IToken.tRPAREN);
-        IGCCASTCompoundStatementExpression resultExpression = createCompoundStatementExpression();
+        IGNUASTCompoundStatementExpression resultExpression = createCompoundStatementExpression();
         resultExpression.setOffset( startingOffset );
         resultExpression.setCompoundStatement(compoundStatement);
         compoundStatement.setParent(resultExpression);
         compoundStatement
-                .setPropertyInParent(IGCCASTCompoundStatementExpression.STATEMENT);
+                .setPropertyInParent(IGNUASTCompoundStatementExpression.STATEMENT);
 
         return resultExpression;
     }
@@ -519,7 +521,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     /**
      * @return
      */
-    protected abstract IGCCASTCompoundStatementExpression createCompoundStatementExpression();
+    protected abstract IGNUASTCompoundStatementExpression createCompoundStatementExpression();
 
     protected IASTExpression expression() throws BacktrackException,
             EndOfFileException {
@@ -577,6 +579,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTExpression unaryExpression()
             throws BacktrackException, EndOfFileException;
 
+    protected abstract IASTExpression buildTypeIdExpression(int op_sizeof, IASTTypeId typeId, int startingOffset);
+    
     protected abstract void translationUnit();
 
     protected abstract IASTStatement statement() throws EndOfFileException,
@@ -850,9 +854,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression unaryAlignofExpression()
             throws EndOfFileException, BacktrackException {
-        consume(IGCCToken.t___alignof__);
-        Object d = null;
-        Object unaryExpression = null;
+        int offset = consume(IGCCToken.t___alignof__).getOffset();
+        IASTTypeId d = null;
+        IASTExpression unaryExpression = null;
 
         IToken m = mark();
         if (LT(1) == IToken.tLPAREN) {
@@ -868,34 +872,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         } else {
             unaryExpression = unaryExpression();
         }
-        if (d != null & unaryExpression == null) {
-            //                try {
-            return null; /*
-                          * astFactory.createExpression( scope,
-                          * IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID, null,
-                          * null, null, d, null, EMPTY_STRING, null); } catch
-                          * (ASTSemanticException e2) { throwBacktrack(
-                          * e2.getProblem() ); }
-                          */
-        } else if (unaryExpression != null && d == null)
-            //            try
-            //            {
-            return null; /*
-                          * .createExpression( scope,
-                          * IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION,
-                          * unaryExpression, null, null, null, null,
-                          * EMPTY_STRING, null); } catch (ASTSemanticException
-                          * e1) { throwBacktrack( e1.getProblem() ); }
-                          */
+        if (d != null & unaryExpression == null) 
+            return buildTypeIdExpression( IGNUASTTypeIdExpression.op_alignof, d, offset );
+        else if (unaryExpression != null && d == null)
+            return buildUnaryExpression( IGNUASTUnaryExpression.op_alignOf, unaryExpression, offset );
         return null;
-
     }
 
     protected IASTExpression unaryTypeofExpression() throws EndOfFileException,
             BacktrackException {
-        consume(IGCCToken.t_typeof);
-        Object d = null;
-        Object unaryExpression = null;
+        int offset = consume(IGCCToken.t_typeof).getOffset();
+        IASTTypeId d = null;
+        IASTExpression unaryExpression = null;
 
         IToken m = mark();
         if (LT(1) == IToken.tLPAREN) {
@@ -911,36 +899,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         } else {
             unaryExpression = unaryExpression();
         }
-        if (d != null & unaryExpression == null) {
-            //                try {
-            return null; /*
-                          * astFactory.createExpression( scope,
-                          * IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID, null,
-                          * null, null, d, null, EMPTY_STRING, null); } catch
-                          * (ASTSemanticException e2) { throwBacktrack(
-                          * e2.getProblem() ); }
-                          */
-        } else if (unaryExpression != null && d == null)
-            //            try
-            //            {
-            return null; /*
-                          * astFactory.createExpression( scope,
-                          * IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION,
-                          * unaryExpression, null, null, null, null,
-                          * EMPTY_STRING, null); } catch (ASTSemanticException
-                          * e1) { throwBacktrack( e1.getProblem() ); }
-                          */
+        if (d != null & unaryExpression == null) 
+            return buildTypeIdExpression( IGNUASTTypeIdExpression.op_typeof, d, offset );
+        else if (unaryExpression != null && d == null)
+            return buildUnaryExpression( IGNUASTUnaryExpression.op_typeof, unaryExpression, offset );
         return null;
-    }
-
-    private TypeId typeIdInstance = new TypeId();
-
-    /**
-     * @return
-     */
-    protected TypeId getTypeIdInstance() {
-        typeIdInstance.reset(null);
-        return typeIdInstance;
     }
 
     protected IASTStatement handleFunctionBody() throws BacktrackException,

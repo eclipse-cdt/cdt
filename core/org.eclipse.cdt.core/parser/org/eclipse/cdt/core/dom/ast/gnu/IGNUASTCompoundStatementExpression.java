@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
-package org.eclipse.cdt.core.dom.ast.c.gcc;
+package org.eclipse.cdt.core.dom.ast.gnu;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 /**
  * @author jcamelon
  */
-public interface IGCCASTCompoundStatementExpression extends IASTExpression {
+public interface IGNUASTCompoundStatementExpression extends IASTExpression {
 
     public static final ASTNodeProperty STATEMENT = new ASTNodeProperty( "Statement"); //$NON-NLS-1$
     public IASTCompoundStatement getCompoundStatement();

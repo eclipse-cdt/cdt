@@ -10,13 +10,13 @@
 package org.eclipse.cdt.internal.core.parser2.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 /**
  * @author jcamelon
  */
 public class CASTCompoundStatementExpression extends CASTNode implements
-        IGCCASTCompoundStatementExpression {
+        IGNUASTCompoundStatementExpression {
 
     private IASTCompoundStatement statement;
 

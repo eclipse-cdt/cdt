@@ -1,3 +1,8 @@
+2003-05-23 Alain Magloire
+
+	First draft of the implementing the types, org.eclipse.cdt.debug.core.cdi.model.type.*
+	in the CDI interface.
+
 2003-05-14 Mikhail Khodjaiants
 	Created preference for the maximum number of disassembly instructions.
 	* CDebugTarget.java

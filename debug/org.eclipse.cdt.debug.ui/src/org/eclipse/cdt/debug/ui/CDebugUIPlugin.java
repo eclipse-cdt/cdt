@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.IAsyncExecutor;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.model.ISwitchToThread;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
@@ -60,8 +58,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class CDebugUIPlugin extends AbstractUIPlugin 
 							implements ISelectionListener, 
-									   IDebugEventSetListener,
-									   IAsyncExecutor
+									   IDebugEventSetListener
 {
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
@@ -320,7 +317,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		{
 			fImageDescriptorRegistry.dispose();
 		}
-		CDebugCorePlugin.getDefault().setAsyncExecutor( null );
 		super.shutdown();
 	}
 	
@@ -335,7 +331,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		{
 			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		}
-		CDebugCorePlugin.getDefault().setAsyncExecutor( this );
 		DebugPlugin.getDefault().addDebugEventListener( this );
 	}
 
@@ -484,17 +479,5 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		if ( fDisassemblyDocumentProvider == null )
 			fDisassemblyDocumentProvider = new DisassemblyDocumentProvider();
 		return fDisassemblyDocumentProvider;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IAsyncExecutor#asyncExec(Runnable)
-	 */
-	public void asyncExec( Runnable runnable )
-	{
-		Display display = getStandardDisplay();
-		if ( display != null )
-		{
-			display.asyncExec( runnable );
-		}
 	}
 }

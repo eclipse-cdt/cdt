@@ -1,3 +1,7 @@
+2003-02-13 Mikhail Khodjaiants
+	Use the 'asyncExec' method of the 'DebugPlugin' class.
+	* CDebugUIPlugin.java
+
 2003-02-11 Mikhail Khodjaiants
 	The 'Load Symbole For All' action is added to the 'Shared Libraries' view
 	* CDebugImages.java

@@ -1,3 +1,8 @@
+2003-02-13 Mikhail Khodjaiants
+	Use the 'asyncExec' method of the 'DebugPlugin' class.
+	* IAsyncExecutor.java: removed
+	* CDebugCorePlugin.java
+
 2003-02-12 Mikhail Khodjaiants
 	The gdb-specific 'setAutoSolibMethod' method is removed from ICDISharedLibraryManager.
 	* ICDISharedLibraryManager.java

@@ -1,20 +1,31 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class ChangedEvent implements ICDIChangedEvent {
 
 	CSession session;
 	ICDIObject source;
+
+	public ChangedEvent(CSession s, MIVarChangedEvent var) {
+		session = s;
+		VariableManager mgr = session.getVariableManager();
+		String varName = var.getVarName();
+		VariableManager.Element element = mgr.getElement(varName);
+		if (element != null && element.variable != null) {
+			source = element.variable;
+		} else {
+			source = new CObject(session.getCTarget());
+		}
+	}
 
 	public ChangedEvent(CSession s, ICDIObject src) {
 		session = s;

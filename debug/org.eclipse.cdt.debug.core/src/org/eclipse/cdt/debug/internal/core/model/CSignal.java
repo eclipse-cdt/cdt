@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
@@ -36,7 +37,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public String getDescription()
 	{
-		return "";
+		return getCDISignal().getDescription();
 	}
 
 	/* (non-Javadoc)
@@ -44,7 +45,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public String getName()
 	{
-		return "";
+		return getCDISignal().getName();
 	}
 
 	/* (non-Javadoc)
@@ -52,7 +53,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public boolean isPassEnabled()
 	{
-		return false;
+		return !getCDISignal().isIgnore();
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +61,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public boolean isStopEnabled()
 	{
-		return false;
+		return getCDISignal().isStopSet();
 	}
 
 	/* (non-Javadoc)
@@ -97,5 +98,18 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	 */
 	public void signal() throws DebugException
 	{
+		try
+		{
+			getCDISignal().signal();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+	}
+	
+	protected ICDISignal getCDISignal()
+	{
+		return fCDISignal;
 	}
 }

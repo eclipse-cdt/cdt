@@ -358,7 +358,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					if ( info != null && info instanceof ICDISignalExitInfo)
 					{
 						ICDISignalExitInfo sigInfo = (ICDISignalExitInfo)info;
-						label += MessageFormat.format( " (Signal ''{0}'' received. Meaning: {1})", 
+						label += MessageFormat.format( " (Signal ''{0}'' received. Description: {1})", 
 											  new String[] { sigInfo.getName(), sigInfo.getDescription() } );						
 					}
 					else if ( info != null && info instanceof ICDIExitInfo )
@@ -374,7 +374,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					{
 						ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 						String label = target.getName() + 
-									   MessageFormat.format( " (Signal ''{0}'' received. Meaning: {1})", 
+									   MessageFormat.format( " (Signal ''{0}'' received. Description: {1})", 
 									   						 new String[] { signal.getName(), signal.getDescription() } );
 						return label;
 					}

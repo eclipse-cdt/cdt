@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;
@@ -49,7 +51,9 @@ public class SignalActionDelegate implements IObjectActionDelegate
 		if ( getSignal() != null )
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
-													DebugException.REQUEST_FAILED, "Unable to load symbols of shared library.", null ); 
+													DebugException.REQUEST_FAILED, 
+													MessageFormat.format( "Unable to deliver the signal ''{0}'' to the target.", new String[] { getSignal().getName() } ), 
+													null ); 
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()
 										{

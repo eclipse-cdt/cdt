@@ -5,7 +5,10 @@
  */
 package org.eclipse.cdt.debug.internal.core;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.core.ICSignalManager;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -23,6 +26,7 @@ public class CSignalManager implements ICSignalManager
 {
 	private CDebugTarget fDebugTarget = null;
 	private ICSignal[] fSignals = null;
+	private boolean fIsDisposed = false;
 
 	/**
 	 * Constructor for CSignalManager.
@@ -37,9 +41,21 @@ public class CSignalManager implements ICSignalManager
 	 */
 	public ICSignal[] getSignals() throws DebugException
 	{
-		if ( fSignals == null )
+		if ( !isDisposed() && fSignals == null )
 		{
-			// load signals from target
+			try
+			{
+				ICDISignal[] cdiSignals = ((CDebugTarget)getDebugTarget()).getCDISession().getSignalManager().getSignals();
+				ArrayList list = new ArrayList( cdiSignals.length );
+				for ( int i = 0; i < cdiSignals.length; ++i )
+				{
+					list.add( new CSignal( (CDebugTarget)getDebugTarget(), cdiSignals[i] ) );
+				}
+				fSignals = (ICSignal[])list.toArray( new ICSignal[list.size()] );
+			}
+			catch( CDIException e )
+			{
+			}
 		}
 		return ( fSignals != null ) ? fSignals : new ICSignal[0];
 	}
@@ -55,6 +71,7 @@ public class CSignalManager implements ICSignalManager
 			fSignals[i].dispose();
 		}
 		fSignals = null;
+		fIsDisposed = true;
 	}
 
 	/* (non-Javadoc)
@@ -109,5 +126,10 @@ public class CSignalManager implements ICSignalManager
 		{
 		}
 		return null;
+	}
+	
+	protected boolean isDisposed()
+	{
+		return fIsDisposed;
 	}
 }

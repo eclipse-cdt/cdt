@@ -7,9 +7,11 @@ package org.eclipse.cdt.debug.internal.ui.views.signals;
 
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -106,6 +108,27 @@ public class SignalsViewer extends TableViewer
 
 						public void modify( Object element, String property, Object value )
 						{
+							IStructuredSelection sel = (IStructuredSelection)getSelection();
+							Object entry = sel.getFirstElement();
+							if ( entry instanceof ICSignal && value instanceof Integer )
+							{
+								try
+								{
+									boolean enable = ( ((Integer)value).intValue() == 0 );
+									if ( CP_PASS.equals( property ) )
+									{
+										((ICSignal)entry).setPassEnabled( enable );
+									}
+									else if ( CP_SUSPEND.equals( property ) )
+									{
+										((ICSignal)entry).setStopEnabled( enable );
+									}
+									refresh( entry );
+								}
+								catch( DebugException e )
+								{
+								}
+							}
 						}
 					};
 	}

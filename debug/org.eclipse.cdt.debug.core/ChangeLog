@@ -1,3 +1,8 @@
+2003-02-03 Mikhail Khodjaiants
+	Implementing the 'Signals' view.
+	* CSignalManager.java: new
+	* CSignal.java: new
+
 2003-02-03  Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/event/ICDIExitEvent.java:

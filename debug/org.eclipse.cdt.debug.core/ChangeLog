@@ -1,3 +1,16 @@
+2004-11-03 Mikhail Khodjaiants
+	New implementation of expressions. 
+	Large arrays partitioning based on the framework model.
+	* CoreModelMessages.properties
+	* AbstractCValue.java
+	* CExpression.java
+	* CIndexedValue.java: new
+	* CValue.java
+	* CValueFactory.java
+	* CVariable.java
+	* CArrayPartition.java: removed
+	* CArrayPartitionValue.java: removed
+
 2004-11-02 Alain Magloire
 	Refactor ICDIConfiguratio --> ICDISessionConfiguration and ICDITargetConfiguration
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java

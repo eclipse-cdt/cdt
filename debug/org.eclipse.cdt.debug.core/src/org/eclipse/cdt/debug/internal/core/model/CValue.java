@@ -57,6 +57,8 @@ public class CValue extends AbstractCValue {
 	 */
 	private List fVariables = Collections.EMPTY_LIST;
 
+	private CType fType;
+
 	/**
 	 * Constructor for CValue.
 	 */
@@ -444,8 +446,24 @@ public class CValue extends AbstractCValue {
 	}
 
 	public ICType getType() throws DebugException {
-		AbstractCVariable var = getParentVariable();
-		return ( var instanceof CVariable ) ? ((CVariable)var).getType() : null;
+		ICDIValue cdiValue = getUnderlyingValue();
+		if ( fType == null ) {
+			if ( cdiValue != null ) {
+				synchronized( this ) {
+					if ( fType == null ) {
+						try {
+							fType = new CType( cdiValue.getType() );
+						}
+						catch( CDIException e ) {
+							requestFailed( e.getMessage(), null );
+						}
+					}
+				}
+			}
+		}
+		return fType;
+//		AbstractCVariable var = getParentVariable();
+//		return ( var instanceof CVariable ) ? ((CVariable)var).getType() : null;
 	}
 
 	/* (non-Javadoc)

@@ -11,7 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue;
 import org.eclipse.cdt.debug.core.model.ICValue;
 
@@ -27,8 +27,8 @@ public class CValueFactory {
 		return new CValue( parent, cdiValue );
 	}
 
-	static public CArrayPartitionValue createArrayValue( AbstractCVariable parent, ICDIVariable cdiVariable, int start, int end ) {
-		return new CArrayPartitionValue( parent, cdiVariable, start, end );
+	static public CIndexedValue createIndexedValue( AbstractCVariable parent, ICDIArrayValue cdiValue, int start, int end ) {
+		return new CIndexedValue( parent, cdiValue, start, end - start );
 	}
 
 	static public CValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) {

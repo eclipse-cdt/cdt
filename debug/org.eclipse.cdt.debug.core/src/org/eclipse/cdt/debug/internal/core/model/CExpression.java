@@ -20,8 +20,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -36,6 +38,8 @@ public class CExpression extends CVariable implements IExpression {
 	private CStackFrame fStackFrame;
 
 	private IValue fValue;
+
+	private ICType fType;
 
 	/**
 	 * Constructor for CExpression.
@@ -113,7 +117,25 @@ public class CExpression extends CVariable implements IExpression {
 			if ( context.isSuspended() ) {
 				try {
 					ICDIValue value = fCDIExpression.getValue( context.getCDIStackFrame() );
-					fValue = CValueFactory.createValue( this, value );
+					if ( value != null ) {
+						if ( value instanceof ICDIArrayValue ) {
+							ICType type = null;
+							try {
+								type = new CType( value.getType() );
+							}
+							catch( CDIException e ) {
+								// ignore and use default type
+							}
+							if ( type != null && type.isArray() ) {
+								int[] dims = type.getArrayDimensions();
+								if ( dims.length > 0 && dims[0] > 0 )
+									fValue = CValueFactory.createIndexedValue( this, (ICDIArrayValue)value, 0, dims[0] - 1 );
+							}
+						}
+						else {
+							fValue = CValueFactory.createValue( this, value );
+						}
+					}
 				}
 				catch( CDIException e ) {
 					targetRequestFailed( e.getMessage(), null );
@@ -158,5 +180,29 @@ public class CExpression extends CVariable implements IExpression {
 			fValue = null;
 		}
 		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
+	 */
+	public ICType getType() throws DebugException {
+		if ( fType == null ) {
+			if ( fValue != null ) {
+				synchronized( this ) {
+					if ( fType == null ) {
+						fType = ((AbstractCValue)fValue).getType();
+					}
+				}
+			}
+		}
+		return fType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
+	 */
+	public String getReferenceTypeName() throws DebugException {
+		ICType type = getType();
+		return ( type != null ) ? type.getName() : ""; //$NON-NLS-1$
 	}
 }

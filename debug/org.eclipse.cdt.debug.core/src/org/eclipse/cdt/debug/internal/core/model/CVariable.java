@@ -25,6 +25,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICType;
@@ -225,27 +227,25 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			if ( fValue == null ) {
 				ICDIVariable var = getCDIVariable();
 				if ( var != null ) {
-					ICType type = null;
 					try {
-						type = getType();
-					}
-					catch( DebugException e ) {
-						// ignore and use default type
-					}
-					if ( type != null && type.isArray() ) {
-						int[] dims = type.getArrayDimensions();
-						if ( dims.length > 0 && dims[0] > 0 )
-							fValue = CValueFactory.createArrayValue( getVariable(), var, 0, dims[0] - 1 );
-					}
-					else {
-						try {
-							ICDIValue cdiValue = var.getValue();
-							if ( cdiValue != null )
+						ICDIValue cdiValue = var.getValue();
+						if ( cdiValue != null ) {
+							ICDIType cdiType = cdiValue.getType();
+							if ( cdiValue instanceof ICDIArrayValue && cdiType != null ) {
+								ICType type = new CType( cdiType );
+								if ( type.isArray() ) {
+									int[] dims = type.getArrayDimensions();
+									if ( dims.length > 0 && dims[0] > 0 )
+										fValue = CValueFactory.createIndexedValue( getVariable(), (ICDIArrayValue)cdiValue, 0, dims[0] );
+								}
+							}
+							else {
 								fValue = CValueFactory.createValue( getVariable(), cdiValue );
+							}
 						}
-						catch( CDIException e ) {
-							requestFailed( e.getMessage(), e );
-						}
+					}
+					catch( CDIException e ) {
+						requestFailed( e.getMessage(), e );
 					}
 				}
 			}
@@ -452,7 +452,7 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		ICType type = getType();
-		return ( type != null ) ? type.getName() : null;
+		return ( type != null ) ? type.getName() : ""; //$NON-NLS-1$
 	}
 
 	/*

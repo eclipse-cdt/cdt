@@ -826,7 +826,7 @@ public class ParserSymbolTable {
 	
 	protected static boolean isValidOverload( List origList, ISymbol newSymbol ){
 		if( origList.size() == 1 ){
-			return isValidOverload( (ISymbol)origList.iterator().next(), newSymbol );
+			return isValidOverload( (ISymbol)origList.get(0), newSymbol );
 		} else if ( origList.size() > 1 ){
 			if( newSymbol.isType( TypeInfo.t_template ) ){
 				ITemplateSymbol template = (ITemplateSymbol) newSymbol;
@@ -840,18 +840,18 @@ public class ParserSymbolTable {
 				return false;
 			}
 			
-			Iterator iter = origList.iterator();
-			ISymbol symbol = (ISymbol) iter.next();
-
+			//Iterator iter = origList.iterator();
+			ISymbol symbol = (ISymbol) origList.get(0);
+			int numSymbols = origList.size();
 			if( symbol.isType( TypeInfo.t_template ) ){
 				IParameterizedSymbol template = (IParameterizedSymbol) symbol;
 				symbol = (ISymbol) template.getContainedSymbols().get( template.getName() );	
 			}
 			
 			boolean valid = isValidOverload( symbol, newSymbol );
-			
-			while( valid && iter.hasNext() ){
-				symbol = (ISymbol) iter.next();
+			int idx = 1;
+			while( valid && idx < numSymbols ){
+				symbol = (ISymbol) origList.get(idx++);
 				if( symbol.isType( TypeInfo.t_template ) ){
 					ITemplateSymbol template = (ITemplateSymbol) symbol;
 					symbol = template.getTemplatedSymbol();	
@@ -990,7 +990,7 @@ public class ParserSymbolTable {
 			if( numFns == 0 ){
 				return null;
 			} else if ( numFns == 1 ){
-				return (IParameterizedSymbol)functions.iterator().next();
+				return (IParameterizedSymbol)functions.get(0);
 			} else if ( numFns == 2 ){
 				for (int i = 0; i < numFns; i++) {
 					IParameterizedSymbol fn = (IParameterizedSymbol) functions.get(i);
@@ -1250,12 +1250,12 @@ public class ParserSymbolTable {
 			} 
 			//check for void
 			else if( numParameters == 0 && num == 1 ){
-				ISymbol param = (ISymbol)function.getParameterList().iterator().next();
+				ISymbol param = (ISymbol)function.getParameterList().get(0);
 				if( param.isType( TypeInfo.t_void ) )
 					continue;
 			}
 			else if( numParameters == 1 && num == 0 ){
-				TypeInfo paramType = (TypeInfo) data.getParameters().iterator().next();
+				TypeInfo paramType = (TypeInfo) data.getParameters().get(0);
 				if( paramType.isType( TypeInfo.t_void ) )
 					continue;
 			}
@@ -1399,11 +1399,11 @@ public class ParserSymbolTable {
 			IDerivableContainerSymbol parent = null;
 			IDerivableContainerSymbol.IParentSymbol wrapper;
 			
-			Iterator iter = symbol.getParents().iterator();
-			int size = symbol.getParents().size();
+			List parents = symbol.getParents();
+			int size = parents.size();
 			
-			for( int i = size; i > 0; i-- ){
-				wrapper = (IDerivableContainerSymbol.IParentSymbol) iter.next();	
+			for( int i = 0; i < size; i++ ){
+				wrapper = (IDerivableContainerSymbol.IParentSymbol) parents.get(i);	
 				temp = wrapper.getParent();
 				boolean isVisible = ( wrapper.getAccess() == ASTAccessVisibility.PUBLIC );
 				if ( temp instanceof IDerivableContainerSymbol ){
@@ -2271,13 +2271,13 @@ public void setLanguage( ParserLanguage language ){
 		}
 		
 		List parents = ((IDerivableContainerSymbol) qualifyingSymbol).getParents();
-		Iterator iter = parents.iterator();
+		int numParents = parents.size();
 		IParentSymbol parent = null;
 		ASTAccessVisibility symbolAccess = null;
 		ASTAccessVisibility parentAccess = null;
 		
-		while( iter.hasNext() ){
-			parent = (IParentSymbol) iter.next();
+		for( int i = 0; i < numParents; i++ ){
+			parent = (IParentSymbol) parents.get(i);
 			
 			if( container == parent.getParent() ){
 				parentAccess = parent.getAccess();
@@ -2287,14 +2287,12 @@ public void setLanguage( ParserLanguage language ){
 			}
 		}
 		
-		iter = parents.iterator();
-		
 		//if static or an enumerator, the symbol could be visible through more than one path through the heirarchy,
 		//so we need to check all paths
 		boolean checkAllPaths = ( symbol.isType( TypeInfo.t_enumerator ) || symbol.getTypeInfo().checkBit( TypeInfo.isStatic ) );
 		ASTAccessVisibility resultingAccess = null;
-		while( iter.hasNext() ){
-			parent = (IParentSymbol) iter.next();
+		for( int i = 0; i < numParents; i++ ){
+			parent = (IParentSymbol) parents.get(i);
 			parentAccess = parent.getAccess();
 			
 			ISymbol tmp = parent.getParent();

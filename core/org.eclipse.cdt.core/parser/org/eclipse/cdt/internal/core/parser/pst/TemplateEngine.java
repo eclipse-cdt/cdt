@@ -82,26 +82,23 @@ public final class TemplateEngine {
 		
 		ISpecializedSymbol bestMatch = null;
 		boolean bestMatchIsBest = true;
-		Iterator iter = specs.iterator();
 		ISpecializedSymbol spec = null;
 		List specArgs = null;
-		for( int i = size; i > 0; i-- ){
-			spec = (ISpecializedSymbol) iter.next();
+		for( int i = 0; i < size; i++ ){
+			spec = (ISpecializedSymbol) specs.get(i);
 			specArgs = spec.getArgumentList();
 			if( specArgs == null || specArgs.size() != args.size() ){
 				continue;
 			}
 			
-			Iterator iter1 = specArgs.iterator();
-			Iterator iter2 = args.iterator();
-			
+			int specArgsSize = specArgs.size();			
 			HashMap map = new HashMap();
 			TypeInfo info1 = null, info2 = null;
 
 			boolean match = true;
-			for( int j = specArgs.size(); j > 0; j-- ){
-				info1 = (TypeInfo) iter1.next();
-				info2 = (TypeInfo) iter2.next();
+			for( int j = 0; j < specArgsSize; j++ ){
+				info1 = (TypeInfo) specArgs.get(j);
+				info2 = (TypeInfo) args.get(j);
 				
 				ISymbol sym1 = template.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME );
 				sym1.setTypeInfo( info1 );
@@ -150,16 +147,14 @@ public final class TemplateEngine {
 			
 			List pList = p.getParameterList();
 			List aList = a.getParameterList();
-			
-			if( pList.size() != aList.size() ){
+			int size = pList.size();
+			if( aList.size() != size){
 				return false;
 			}
 			
-			Iterator pIter = pList.iterator();
-			Iterator aIter = aList.iterator();
-			while( pIter.hasNext() ){
-				ISymbol pParam = (ISymbol) pIter.next();
-				ISymbol aParam = (ISymbol) aIter.next();
+			for( int i = 0; i < size; i++){
+				ISymbol pParam = (ISymbol) pList.get(i);
+				ISymbol aParam = (ISymbol) aList.get(i);
 				
 				if( pParam.getType() != aParam.getType() || 
 						pParam.getTypeInfo().getTemplateParameterType() != aParam.getTypeInfo().getTemplateParameterType() )
@@ -521,7 +516,7 @@ public final class TemplateEngine {
 				
 				List pPtrs = p.getPtrOperators();
 				if( pPtrs.size() != 0 ){
-					PtrOp op = (PtrOp) pPtrs.iterator().next();
+					PtrOp op = (PtrOp) pPtrs.get(0);
 					if( op.getType() == PtrOp.t_memberPointer ){
 						TypeInfo info = new TypeInfo( TypeInfo.t_type, 0, aFunction.getContainingSymbol() );
 						if( !deduceTemplateArgument( map, op.getMemberOf(), info ) ){
@@ -889,12 +884,13 @@ public final class TemplateEngine {
 			if( map == null )
 				continue;
 			
-			Iterator paramIter = template.getParameterList().iterator();
-			Iterator argsIter = (templateArguments != null ) ? templateArguments.iterator() : null;
-			List instanceArgs = new ArrayList( template.getParameterList().size() );
-			while( paramIter.hasNext() ){
-				ISymbol param = (ISymbol) paramIter.next();
-				TypeInfo arg = (TypeInfo) (( argsIter != null && argsIter.hasNext() )? argsIter.next() : null);
+			List templateParams = template.getParameterList();
+			int numTemplateParams = templateParams.size();
+			int numTemplateArgs = ( templateArguments != null ) ? templateArguments.size() : 0;
+			List instanceArgs = new ArrayList( templateParams.size() );
+			for( int i = 0; i < numTemplateParams; i++ ){
+				ISymbol param = (ISymbol) templateParams.get(i);
+				TypeInfo arg = (TypeInfo) (  i < numTemplateArgs ? templateArguments.get(i) : null);
 				TypeInfo mapped = (TypeInfo) map.get( param );
 				
 				if( arg != null && mapped != null )
@@ -937,10 +933,9 @@ public final class TemplateEngine {
 				if( arguments.size() != parameters.size() ){
 					forPrimary = false;
 				} else if( !parameters.isEmpty() ){
-					Iterator pIter = parameters.iterator();
-					Iterator aIter = arguments.iterator();
-					while( pIter.hasNext() ){
-						if( pIter.next() != ((TypeInfo) aIter.next()).getTypeSymbol() ){
+					int size = parameters.size();
+					for( int i = 0; i < size; i++ ){
+						if( parameters.get(i) != ((TypeInfo) arguments.get(i)).getTypeSymbol() ){
 							forPrimary = false;
 							break;
 						}
@@ -1156,14 +1151,14 @@ public final class TemplateEngine {
 	
 	static protected List verifyExplicitArguments( ITemplateSymbol template, List arguments, ISymbol symbol ) throws ParserSymbolTableException{
 		List params = template.getParameterList();
-		Iterator args   = arguments.iterator();
 		
 		int numParams = params.size();
+		int numArgs = arguments.size();
 		List actualArgs = new ArrayList( numParams );
 		for( int i = 0; i < numParams; i++ ){
 			ISymbol param = (ISymbol) params.get(i);
-			if( args.hasNext() ){
-				TypeInfo arg = (TypeInfo) args.next();
+			if( i < numArgs ){
+				TypeInfo arg = (TypeInfo) arguments.get(i);
 				if( matchTemplateParameterAndArgument( param, arg ) ){
 					actualArgs.add( arg );
 				} else {
@@ -1200,11 +1195,12 @@ public final class TemplateEngine {
 			
 			if( map == null )
 				continue;			 
-			Iterator pIter = tmpl.getParameterList().iterator();
-			Iterator aIter = args.iterator();
-			while( pIter.hasNext() && aIter.hasNext() ){
-				ISymbol param = (ISymbol) pIter.next();
-				TypeInfo arg = (TypeInfo) aIter.next();
+			List params = tmpl.getParameterList();
+			int numParams = params.size();
+			int numArgs = args.size();
+			for( int i = 0; i < numParams && i < numArgs; i++ ){
+				ISymbol param = (ISymbol) params.get(i);
+				TypeInfo arg = (TypeInfo) args.get(i);
 				if( map.containsKey( param ) ) {
 					if( !map.get( param ).equals( arg )){
 						continue outer;
@@ -1230,13 +1226,13 @@ public final class TemplateEngine {
 		List params = template.getParameterList();
 		Map map = null;
 		
-		Iterator pIter = params.iterator();
-		Iterator aIter = ( args != null ) ? args.iterator() : null;
-		while( pIter.hasNext() ){
-			ISymbol param = (ISymbol) pIter.next();
+		int numParams = params.size();
+		int numArgs = ( args != null ) ? args.size() : 0;
+		for( int i = 0; i < numParams; i++ ){
+			ISymbol param = (ISymbol) params.get(i);
 			TypeInfo arg = null;
-			if( aIter != null && aIter.hasNext() ){
-				arg = (TypeInfo) aIter.next();
+			if( i < numArgs ){
+				arg = (TypeInfo) args.get(i);
 			} else {
 				if( map == null ){
 					map = deduceTemplateArgumentsUsingParameterList( template, fn );

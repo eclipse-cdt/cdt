@@ -76,18 +76,15 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		
 		List paramList = template.getParameterList();
 		int numParams = ( paramList != null ) ? paramList.size() : 0;
+		int numArgs = arguments.size();
 		
 		if( numParams == 0 ){
 			return null;				
 		}
 
 		HashMap map = new HashMap();
-		Iterator paramIter = paramList.iterator();
-		Iterator argIter = arguments.iterator();
-		
 		ISymbol param = null;
 		TypeInfo arg = null;
-		
 		List actualArgs = new ArrayList( numParams );
 		
 		ISymbol templatedSymbol = template.getTemplatedSymbol();
@@ -96,12 +93,12 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		
 		for( int i = 0; i < numParams; i++ ){
-			param = (ISymbol) paramIter.next();
+			param = (ISymbol) paramList.get(i);
 			
 			param = TemplateEngine.translateParameterForDefinition ( templatedSymbol, param, getDefinitionParameterMap() );
 			
-			if( argIter.hasNext() ){
-				arg = (TypeInfo) argIter.next();
+			if( i < numArgs ){
+				arg = (TypeInfo) arguments.get(i);
 				//If the argument is a template parameter, we can't instantiate yet, defer for later
 				if( arg.isType( TypeInfo.t_type ) ){
 					if( arg.getTypeSymbol() == null ) 
@@ -166,10 +163,11 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		TemplateSymbol newTemplate = (TemplateSymbol) super.instantiate( template, argMap );
 		
 		//we don't want to instantiate the template parameters, just the defaults if there are any
-		Iterator iter = newTemplate.getParameterList().iterator();
+		List parameters = newTemplate.getParameterList();
+		int size = parameters.size();
 		ISymbol param = null;
-		while( iter.hasNext() ){
-			param = (ISymbol) iter.next();
+		for( int i = 0; i < size; i++ ){
+			param = (ISymbol) parameters.get(i);
 			Object obj = param.getTypeInfo().getDefault();
 			if( obj instanceof TypeInfo ){
 				param.getTypeInfo().setDefault( TemplateEngine.instantiateTypeInfo( (TypeInfo) obj, template, argMap ) );

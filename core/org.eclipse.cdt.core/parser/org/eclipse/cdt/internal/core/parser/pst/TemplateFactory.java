@@ -512,23 +512,22 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	}
 	
 	private ITemplateSymbol getNextAvailableTemplate() throws ParserSymbolTableException{
-		Iterator tIter = templates.iterator();
-		Iterator sIter = symbols.iterator();
-		
-		while( sIter.hasNext() ){
-			ISymbol symbol = (ISymbol) sIter.next();
+		int numSymbols = symbols.size();
+		int numTemplates = templates.size();
+		int templateIdx = 0;
+		for( int i = 0; i < numSymbols; i++ ){
+			ISymbol symbol = (ISymbol) symbols.get(i);
 			if( symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
-				if( tIter.hasNext() )
-					tIter.next();
+				if( templateIdx < numTemplates )
+					templateIdx++;
 				else
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-				
 			}
 		}
 		
-		if( !tIter.hasNext() )
+		if( templateIdx >= numTemplates )
 			return null;
-		return (ITemplateSymbol) tIter.next();
+		return (ITemplateSymbol) templates.get( templateIdx );
 	}
 
 	

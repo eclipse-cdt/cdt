@@ -60,17 +60,15 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		
 		List actualArgs = new ArrayList( specArgs.size() );
 		
-		Iterator iter1 = specArgs.iterator();
-		Iterator iter2 = arguments.iterator();
-		
 		ISymbol templatedSymbol = getTemplatedSymbol();
 		while( templatedSymbol.isTemplateInstance() ){
 			templatedSymbol = templatedSymbol.getInstantiatedSymbol();
 		}
 		
-		while( iter1.hasNext() ){
-			TypeInfo info = (TypeInfo) iter1.next();
-			TypeInfo mappedInfo = (TypeInfo) iter2.next();
+		int numSpecArgs = specArgs.size();
+		for( int i = 0; i < numSpecArgs; i++ ){
+			TypeInfo info = (TypeInfo) specArgs.get(i);
+			TypeInfo mappedInfo = (TypeInfo) arguments.get(i);
 			
 			//If the argument is a template parameter, we can't instantiate yet, defer for later
 			if( mappedInfo.isType( TypeInfo.t_type ) && mappedInfo.getTypeSymbol().isType( TypeInfo.t_templateParameter ) ){
@@ -93,9 +91,10 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		if( getParameterList().size() != argMap.size() )
 			return null;
 		
-		Iterator params = getParameterList().iterator();
-		while( params.hasNext() ){
-			if( !argMap.containsKey( params.next() ) )
+		List params = getParameterList();
+		int numParams = params.size();
+		for( int i = 0; i < numParams; i++ ){
+			if( !argMap.containsKey( params.get(i) ) )
 				return null;
 		}
 		

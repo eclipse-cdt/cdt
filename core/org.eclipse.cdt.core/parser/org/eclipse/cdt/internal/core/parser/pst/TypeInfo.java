@@ -330,15 +330,13 @@ public class TypeInfo {
 	public boolean hasSamePtrs( TypeInfo type ){
 		int size = getPtrOperators().size();
 		int size2 = type.getPtrOperators().size();
-		Iterator iter1 = getPtrOperators().iterator();
-		Iterator iter2 = type.getPtrOperators().iterator();
 		TypeInfo.PtrOp ptr1 = null, ptr2 = null;
 		
 		if( size == size2 ){
 			if( size > 0 ){
-				for( int i = size; i > 0; i-- ){
-					ptr1 = (TypeInfo.PtrOp)iter1.next();
-					ptr2 = (TypeInfo.PtrOp)iter2.next();
+				for( int i = 0; i < size; i++ ){
+					ptr1 = (TypeInfo.PtrOp)getPtrOperators().get(i);
+					ptr2 = (TypeInfo.PtrOp)type.getPtrOperators().get(i);
 					if( ptr1.getType() != ptr2.getType() ){
 						return false;
 					}

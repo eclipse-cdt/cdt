@@ -51,10 +51,9 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
 		List args = getArguments();
 		List newArgs = new ArrayList( args.size() );
-		Iterator iter = args.iterator();
-		
-		while( iter.hasNext() ){
-			TypeInfo arg = (TypeInfo) iter.next();
+		int size = args.size();
+		for( int i = 0; i < size; i++ ){
+			TypeInfo arg = (TypeInfo) args.get(i);
 			newArgs.add( TemplateEngine.instantiateTypeInfo( arg, template, argMap ) );
 		}
 		

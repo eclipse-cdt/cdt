@@ -686,12 +686,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		//collect associated namespaces & classes.
 		int size = ( parameters == null ) ? 0 : parameters.size();
-		Iterator iter = ( parameters == null ) ? null : parameters.iterator();
-	
+			
 		TypeInfo param = null;
 		ISymbol paramType = null;
-		for( int i = size; i > 0; i-- ){
-			param = (TypeInfo) iter.next();
+		for( int i = 0; i < size; i++ ){
+			param = (TypeInfo) parameters.get(i);
 			paramType = ParserSymbolTable.getFlatTypeInfo( param ).getTypeSymbol();
 		
 			if( paramType == null ){
@@ -703,7 +702,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			//if T is a pointer to a data member of class X, its associated namespaces and classes
 			//are those associated with the member type together with those associated with X
 			if( param.hasPtrOperators() && param.getPtrOperators().size() == 1 ){
-				TypeInfo.PtrOp op = (TypeInfo.PtrOp)param.getPtrOperators().iterator().next();
+				TypeInfo.PtrOp op = (TypeInfo.PtrOp)param.getPtrOperators().get(0);
 				if( op.getType() == TypeInfo.PtrOp.t_pointer && 
 					paramType.getContainingSymbol().isType( TypeInfo.t_class, TypeInfo.t_union ) )
 				{
@@ -994,9 +993,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			
 			IDerivableContainerSymbol derivable = (IDerivableContainerSymbol) symbol;
 			
-			Iterator iter = derivable.getFriends().iterator();
-			while( iter.hasNext() ){
-				ISymbol friend = (ISymbol) iter.next();
+			List friends = derivable.getFriends();
+			int size = friends.size();
+			for( int i = 0; i < size; i++ ){
+				ISymbol friend = (ISymbol) friends.get(i);
 				ISymbol typeSymbol = friend.getTypeSymbol();
 				if( friend == this      || typeSymbol == this ||
 					friend == container || ( container != null && typeSymbol == container ) )

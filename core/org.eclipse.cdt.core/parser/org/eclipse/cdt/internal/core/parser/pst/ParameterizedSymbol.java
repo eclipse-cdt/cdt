@@ -82,15 +82,16 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		
 		//handle template parameter lists in TemplateSymbol, only do function parameter lists here.
 		if( !isType( TypeInfo.t_template ) ){
-			Iterator iter = getParameterList().iterator();
+			List params = getParameterList();
+			int size = params.size();
 			
 			newParameterized.getParameterList().clear();
 			newParameterized.getParameterMap().clear();
 			
 			ISymbol param = null, newParam = null;
 			
-			while( iter.hasNext() ){
-				param = (ISymbol) iter.next();
+			for( int i = 0; i < size; i++ ){
+				param = (ISymbol) params.get(i);
 				newParam = param.instantiate( template, argMap );
 				
 				newParameterized.addParameter( newParam );
@@ -211,15 +212,15 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		if( fsize == 0 )
 			return true;
 	
-		Iterator iter = getParameterList().iterator();
-		Iterator fIter = function.getParameterList().iterator();
+		List params = getParameterList();
+		List functionParams = function.getParameterList();
 	
 		TypeInfo info = null;
 		TypeInfo fInfo = null;
 	
-		for( int i = size; i > 0; i-- ){
-			ISymbol p = (ISymbol) iter.next();
-			ISymbol pf = (ISymbol) fIter.next();
+		for( int i = 0; i < size; i++ ){
+			ISymbol p = (ISymbol) params.get(i);
+			ISymbol pf = (ISymbol) functionParams.get(i);
 			
 			info = p.getTypeInfo();
 			fInfo = pf.getTypeInfo();

@@ -62,12 +62,12 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		
 		DerivableContainerSymbol newSymbol = (DerivableContainerSymbol) super.instantiate( template, argMap );
 		
-		Iterator parents = getParents().iterator();
-		
+		List parents = getParents();
+		int size = parents.size();
 		newSymbol.getParents().clear();
 		ParentWrapper wrapper = null;
-		while( parents.hasNext() ){
-			wrapper = (ParentWrapper) parents.next();
+		for( int i = 0; i < size; i++ ){
+			wrapper = (ParentWrapper) parents.get(i);
 			ISymbol parent = wrapper.getParent();
 			if( parent == null )
 				continue; 
@@ -87,10 +87,11 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	}
 	
 	public void instantiateDeferredParent( ISymbol parent, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
-		Iterator parents = getParents().iterator();
+		List parents = getParents();
+		int size = parents.size();
 		ParentWrapper w = null;
-		while( parents.hasNext() ) {
-			w = (ParentWrapper) parents.next();
+		for( int i = 0; i < size; i++ ){
+			w = (ParentWrapper) parents.get(i);
 			if( w.getParent() == parent ){
 				w.setParent( parent.instantiate( template, argMap ) );
 			}

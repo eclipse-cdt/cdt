@@ -923,4 +923,19 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		//we aren't going to be completely correct about references to explicit specializations
 		//due to limitations in the implementation, see bug 59811
 	}
+	
+	public void testBug64753() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "template < class _T > void foo () {  \n" );
+		writer.write( "   if( 1 ) {                         \n" );
+		writer.write( "      _T p1, p2;                     \n" );
+		writer.write( "      int n = p1 - p2;               \n" );
+		writer.write( "   }                                 \n" );
+		writer.write( "}                                    \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration foo = (IASTTemplateDeclaration) i.next();
+	}
+	
 }

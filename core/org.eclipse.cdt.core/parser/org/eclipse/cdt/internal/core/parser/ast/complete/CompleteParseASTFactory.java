@@ -2561,6 +2561,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		List references = new ArrayList(); 
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
 
+		if( name == null )
+			handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null, startingOffset, nameEndOffset, nameLine );
+		
 		if(name.getSegmentCount() > 1)
 		{
 			ISymbol symbol = lookupQualifiedName( ownerScope, 
@@ -3219,6 +3222,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		IContainerSymbol newScope = pst.newContainerSymbol(EMPTY_STRING, TypeInfo.t_block); 
 		newScope.setContainingSymbol(symbol);
+		newScope.setIsTemplateMember( symbol.isTemplateMember() );
 		
 		ASTCodeScope codeScope = new ASTCodeScope( newScope );
 		attachSymbolExtension( newScope, codeScope, true );

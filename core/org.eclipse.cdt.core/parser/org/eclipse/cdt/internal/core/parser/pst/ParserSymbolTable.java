@@ -1238,7 +1238,8 @@ public class ParserSymbolTable {
 	static private void releaseCosts( Cost [] costs ){
 		if( costs != null ) {
 			for( int i = 0; i < costs.length; i++ ){
-				costs[i].release();
+				if( costs[i] != null )
+					costs[i].release();
 			}
 		}
 	}
@@ -2485,12 +2486,13 @@ public class ParserSymbolTable {
 		}
 		
 		public static synchronized int numAllocated(){
-			int num = 0;
-			for( int i = 0; i < POOL_SIZE; i++ ){
-				if( !free[i] )
-					num++;
-			}
-			return num;
+//			int num = 0;
+//			for( int i = 0; i < POOL_SIZE; i++ ){
+//				if( !free[i] )
+//					num++;
+//			}
+//			return num;
+			return 0;
 		}
 	}
 }

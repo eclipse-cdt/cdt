@@ -3,13 +3,17 @@
 <project name="testsuite" default="run" basedir=".">
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
-<!--  <property name="eclipse-home" value="${basedir}\..\.."/> -->
   <property name="eclipse-home" value="${basedir}"/>
-
+  
+  <!-- This is the default name of the org.eclipse.test plugin. -->
+  <!-- We need to be able to override this for the case where the -->
+  <!-- org.eclipse.test plugin was build as part of a feature and -->
+  <!-- will have a name similar to org.eclipse.test_2.1.0  -->
+  <property name="org.eclipse.test" value="org.eclipse.test"/>
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
   <property name="library-file"
-            value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
+            value="${eclipse-home}/plugins/${org.eclipse.test}/library.xml"/>
 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->

@@ -1,3 +1,7 @@
+3003-06-11 Peter Graves
+    Update the test.xml to get the location of org.eclipse.test from a property
+    if set. If the property is not set, it will default to the old value.
+    
 2003-06-11 Victor Mozgin
 	Old Java TestCase.txt and TestCase2.txt for partioning testing have been replaced with C/C++ files.
 	Modified AutomatedIntegrationSuite.java so it doesn't produce JUnit warning anymore.

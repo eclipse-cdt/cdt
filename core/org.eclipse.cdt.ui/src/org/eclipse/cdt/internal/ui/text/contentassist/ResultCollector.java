@@ -280,7 +280,15 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			// create proposal and add it to completions list
 			CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 
 				arguments, image, completionStart, completionLength, relevance);
+
 			proposal.setTriggerCharacters(VAR_TRIGGERS);
+
+			boolean userMustCompleteParameters= (arguments != null && arguments.length() > 0);
+			if (userMustCompleteParameters) {
+				// set the cursor before the closing bracket
+				proposal.setCursorPosition(replaceString.length() - 1);
+			}			
+			
 			completions.add(proposal);		
 	}
 

@@ -2268,12 +2268,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         	Object ipo = probs.next();
         	assertTrue( ipo instanceof IProblem );
         	IProblem ip = (IProblem)ipo;
-        	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") > 0); //$NON-NLS-1$
+        	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") >= 0); //$NON-NLS-1$
         	assertTrue( probs.hasNext() );
         	ipo = probs.next();
         	assertTrue( ipo instanceof IProblem );
         	ip = (IProblem)ipo;
-        	assertTrue(ip.getArguments().indexOf("octal test") > 0); //$NON-NLS-1$
+        	assertTrue(ip.getArguments().indexOf("octal test") >= 0); //$NON-NLS-1$
     	}
 	}
     
@@ -2352,5 +2352,40 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	 	IASTParameterDeclaration blank = (IASTParameterDeclaration)parms.next();
 		assertEquals( ASTUtil.getType( (IASTAbstractDeclaration)blank ), "volatile int&" ); //$NON-NLS-1$
 	}
+    
+    
+    public void testBug77281() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("void fun2(float a, float b) {}\n"); //$NON-NLS-1$
+		writer.write("int main() { fun2(0.24f, 0.25f); }\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
+    
+    public void testBug77921() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("void f()\n{\n"); //$NON-NLS-1$
+    	writer.write("static float v0[] = { -1.0f, -1.0f,  1.0f };\n}\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
+    
+    public void testBug76763() throws Exception 
+	{
+    	Writer writer = new StringWriter();
+    	writer.write("#error oops!"); //$NON-NLS-1$
+    	try {
+    		parse(writer.toString());
+    	} catch (ParserException pe) {
+    		// expected IProblem
+    	} finally {
+	    	Iterator i = callback.getProblems();
+	    	assertTrue( i.hasNext() );
+	    	Object ipo = i.next();
+	    	assertTrue( ipo instanceof IProblem );
+	    	IProblem ip = (IProblem)ipo;
+	    	assertTrue(new String(ip.getArguments()).equals("oops!")); //$NON-NLS-1$
+	    	assertFalse( i.hasNext() );
+    	}
+	}
+
 }
 

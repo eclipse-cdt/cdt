@@ -69,7 +69,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 															   CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
 					}
 					catch( CDIException e ) {
-						targetRequestFailed( CoreModelMessages.getString( "Disassembly.Unable_to_get_disassembly_instructions_1" ), e ); //$NON-NLS-1$
+						targetRequestFailed( e.getMessage(), e );
 					}
 				}
 				if ( mixedInstrs.length == 0 ||
@@ -81,7 +81,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 							return DisassemblyBlock.create( this, instructions );
 						}
 						catch( CDIException e ) {
-							targetRequestFailed( CoreModelMessages.getString( "Disassembly.Unable_to_get_disassembly_instructions_2" ), e ); //$NON-NLS-1$
+							targetRequestFailed( e.getMessage(), e );
 						}
 					}
 				}

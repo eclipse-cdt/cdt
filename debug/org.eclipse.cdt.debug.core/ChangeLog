@@ -1,4 +1,9 @@
 2004-05-13 Mikhail Khodjaiants
+	Changed the format of the disassembly error messages.
+	* Disassembly.java
+	* CoreModelMessages.properties
+
+2004-05-13 Mikhail Khodjaiants
 	Removed old disassembly implementation.
 	* IDisassemblyStorage.java: deleted
 	* ISourceMode.java: deleted

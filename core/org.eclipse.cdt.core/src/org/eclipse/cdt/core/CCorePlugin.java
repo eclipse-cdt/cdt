@@ -4,7 +4,6 @@ package org.eclipse.cdt.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -19,7 +18,8 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
-import org.eclipse.cdt.core.internal.filetype.CFileTypeResolver;
+import org.eclipse.cdt.core.filetype.IResolverModel;
+import org.eclipse.cdt.core.internal.filetype.ResolverModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -136,7 +136,7 @@ public class CCorePlugin extends Plugin {
 
 	private CoreModel fCoreModel;
 	
-	private ICFileTypeResolver fFileTypeResolver;
+	private ResolverModel fResolverModel;
 
 	// -------- static methods --------
 
@@ -265,7 +265,7 @@ public class CCorePlugin extends Plugin {
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
 
 		// Start file type manager
-		fFileTypeResolver = CFileTypeResolver.getDefault();
+		fResolverModel = ResolverModel.getDefault();
 	}
     
     
@@ -664,26 +664,66 @@ public class CCorePlugin extends Plugin {
 
 	/**
 	 * Returns the file type object corresponding to the provided
+	 * file name, using the workspace resolver.
+	 * 
+	 * If no file type object exists, a default file type object is
+	 * returned.
+	 * 
+	 * @param fileName Name of the file to resolve type info for.
+	 * 
+	 * @return File type object for the provided file name, in the
+	 * context of the workspace
+	 */
+	public ICFileType getFileType(String fileName) {	
+		return getFileTypeResolver().getFileType(fileName);
+	}
+	
+	/**
+	 * Returns the file type object corresponding to the provided
 	 * file name.
 	 * 
 	 * If no file type object exists, a default file type object is
 	 * returned.
 	 * 
-	 * The implementation checks for a match for the provided file name
-     *   - By looking for an exact filename match ("iostream" == "iostream")
-     *   - By looking for an extension match ("foo.c" == "*.c")
-     *   - By looking for a pattern match ("libfoo.so.1.0" == "*.so*")
+	 * @param project Project to resolve type info for.
+	 * @param fileName Name of the file to resolve type info for.
 	 * 
-	 * @param fileName Name of the file to resolve type infor for.
-	 * 
-	 * @return File type object for the provided file name.
+	 * @return File type object for the provided file name, in the context
+	 * of the given project (or the workspace, if project is null)
 	 */
 	public ICFileType getFileType(IProject project, String fileName) {	
-		return fFileTypeResolver.getFileType(fileName);
+		return getFileTypeResolver(project).getFileType(fileName);
 	}
 
+	/**
+	 * Return the file type resolver for the workspace.
+	 * 
+	 * @param project Project to get file type resolver for.
+	 * 
+	 * @return File type resolver for the project.
+	 */
 	public ICFileTypeResolver getFileTypeResolver() {	
-		return fFileTypeResolver;
+		return getResolverModel().getResolver();
+	}
+	
+	/**
+	 * Return the file type resolver for the specified project.
+	 * Specifying a null project returns the file type resolver
+	 * for the workspace.
+	 * 
+	 * @param project Project to get file type resolver for.
+	 * 	 * 
+	 * @return File type resolver for the project.
+	 */
+	public ICFileTypeResolver getFileTypeResolver(IProject project) {	
+		if (null == project) {
+			return getResolverModel().getResolver();
+		}
+		return getResolverModel().getResolver(project);
+	}
+
+	public IResolverModel getResolverModel() {	
+		return fResolverModel;
 	}
 	
 	public CoreModel getCoreModel() {
@@ -958,7 +998,7 @@ public class CCorePlugin extends Plugin {
 			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			option = Platform.getDebugOption(RESOLVER);
-			if(option != null) CFileTypeResolver.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			if(option != null) ResolverModel.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
 			if (indexFlag == true){
 			   JobManager.VERBOSE = true; 	

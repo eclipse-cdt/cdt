@@ -298,6 +298,18 @@
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
       </page>
+      <page
+            name="%CPluginFileTypesPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CFileTypesPreferences">
+      </page>
+      <page
+            name="%WorkInProgress.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage"
+            id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -637,15 +649,6 @@
       </specification>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%WorkInProgress.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage"
-            id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
-      </page>
-   </extension>
-   <extension
          point="org.eclipse.search.searchResultViewPages">
       <viewPage
             targetClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
@@ -667,6 +670,17 @@
         		value="org.eclipse.cdt.core.cnature">
     	     </filter>            
       </page>
+      <page
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            name="%CDTFileTypesProperty.name"
+            class="org.eclipse.cdt.internal.ui.preferences.CFileTypesPropertyPage"
+            id="org.eclipse.cdt.ui.fileTypes">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+       </page>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.PathContainerPage">

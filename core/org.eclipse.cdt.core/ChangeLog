@@ -1,5 +1,10 @@
 2004-05-25 Alain Magloire
 
+	Major Patch from Sam Robb
+	bring to a close PR 52864.
+
+2004-05-25 Alain Magloire
+
 	Ask the IScannerInfo for the IResource.
 
 2004-05-25 Alain Magloire

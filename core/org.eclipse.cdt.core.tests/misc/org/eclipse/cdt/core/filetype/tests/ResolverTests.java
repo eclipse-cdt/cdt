@@ -10,23 +10,38 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.filetype.tests;
 
+import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.core.filetype.ICLanguage;
+import org.eclipse.cdt.core.filetype.IResolverModel;
 import org.eclipse.cdt.core.internal.filetype.CFileType;
 import org.eclipse.cdt.core.internal.filetype.CFileTypeAssociation;
 import org.eclipse.cdt.core.internal.filetype.CLanguage;
+import org.eclipse.cdt.core.internal.filetype.ResolverModel;
+import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ResolverTests extends TestCase {
 
-	private ICFileTypeResolver resolver;
+	private ICFileTypeResolver	workspaceResolver;
+	private ICFileTypeResolver	projectResolver;
+	private IResolverModel		model;
+	private static IProject		project;
+	
 	private static final String PLUGIN_ID = "org.eclipse.cdt.core.filetype.tests";
 	private static final String LANG_TEST = PLUGIN_ID + ".test";
 	private static final String FT_TEST_HEADER = LANG_TEST + ".header";
@@ -36,20 +51,70 @@ public class ResolverTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ResolverTests.class.getName());
 		suite.addTest(new ResolverTests("testInternalCtors"));
-		suite.addTest(new ResolverTests("testFileTypeResolution"));
+		suite.addTest(new ResolverTests("testDefaultFileTypeResolution"));
+		suite.addTest(new ResolverTests("testWorkspaceFileTypeResolution"));
+		suite.addTest(new ResolverTests("testProjectFileTypeResolution"));
 		suite.addTest(new ResolverTests("testGetLanguages"));
 		suite.addTest(new ResolverTests("testGetTypes"));
 		suite.addTest(new ResolverTests("testGetFileTypeAssociations"));
 		suite.addTest(new ResolverTests("testAdd"));
 		suite.addTest(new ResolverTests("testRemove"));
-		return suite;
+
+		TestSetup wrapper = new TestSetup(suite) {
+			protected void setUp() throws Exception {
+				oneTimeSetUp();
+			}
+			protected void tearDown() throws Exception {
+				oneTimeTearDown();
+			}
+		};
+
+		return wrapper;
+	}
+
+	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+		IProjectDescription description = proj.getDescription();
+		String[] prevNatures = description.getNatureIds();
+		String[] newNatures = new String[prevNatures.length + 1];
+		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+		newNatures[prevNatures.length] = natureId;
+		description.setNatureIds(newNatures);
+		proj.setDescription(description, monitor);
+	}
+	
+	static void oneTimeSetUp() throws Exception {
+		IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject("testResolverProject");
+		if (!project.exists()) {
+			project.create(null);
+		} else {
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+		if (!project.isOpen()) {
+			project.open(null);
+		}
+		if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
+			addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
+		}
+		ResolverTests.project = project;
+	}
+
+	static void oneTimeTearDown() throws Exception {
+		project.delete(true, true, null);
 	}
 	
 	/*
 	 * @see TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		resolver = CCorePlugin.getDefault().getFileTypeResolver();
+		model = CCorePlugin.getDefault().getResolverModel();
+		
+		model.setResolver(null);
+		model.setResolver(project, null);
+		
+		workspaceResolver = model.getResolver();
+		projectResolver = model.getResolver(project);
+		
 		super.setUp();
 	}
 
@@ -57,7 +122,10 @@ public class ResolverTests extends TestCase {
 	 * @see TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		resolver = null;
+		workspaceResolver = null;
+		workspaceResolver = null;
+		projectResolver = null;
+		model = null;
 		super.tearDown();
 	}
 
@@ -176,137 +244,254 @@ public class ResolverTests extends TestCase {
 		assertNotNull(assoc);
 	}
 	
-	private void doTestFileTypeResolution(String fileName, String expectedTypeId) { 
+	private void doTestFileTypeResolution(ICFileTypeResolver resolver, String fileName, String expectedTypeId) { 
 		ICFileType typeByName = resolver.getFileType(fileName);
 
 		assertNotNull(typeByName);
 		assertEquals(expectedTypeId, typeByName.getId());
 	
-		ICFileType typeById = resolver.getFileTypeById(typeByName.getId());
+		ICFileType typeById = model.getFileTypeById(typeByName.getId());
 		
 		assertNotNull(typeById);
 		assertEquals(typeByName, typeById);
 		
-		ICLanguage languageById = resolver.getLanguageById(typeByName.getLanguage().getId());
+		ICLanguage languageById = model.getLanguageById(typeByName.getLanguage().getId());
 
 		assertNotNull(languageById);
 		assertEquals(typeByName.getLanguage().getId(), languageById.getId());
 	}
 	
-	public final void testFileTypeResolution() {
+	public final void testDefaultFileTypeResolution() {
 		// - Null string, Empty string, Strings w/spaces
-		doTestFileTypeResolution(null, ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution(" ", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, null, ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, " ", ICFileTypeConstants.FT_UNKNOWN);
 
 		// Odd filenames
-		doTestFileTypeResolution(".", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution(".c.", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution(".cpp.", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("file.c.", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("file.cpp.", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("file.c.input", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("file.cpp.input", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("c", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("cpp", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("numerical", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("some/path/file.c", ICFileTypeConstants.FT_C_SOURCE);
-		doTestFileTypeResolution("some/path/file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, ".", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, ".c.", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, ".cpp.", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.c.", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.cpp.", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.c.input", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.cpp.input", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "c", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "cpp", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "numerical", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "some/path/file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "some/path/file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
 		
 		// C source/header
-		doTestFileTypeResolution("file.c", ICFileTypeConstants.FT_C_SOURCE);
-		doTestFileTypeResolution("file.h", ICFileTypeConstants.FT_C_HEADER);
-		doTestFileTypeResolution("some.file.c", ICFileTypeConstants.FT_C_SOURCE);
-		doTestFileTypeResolution("some.file.h", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.h", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "some.file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "some.file.h", ICFileTypeConstants.FT_C_HEADER);
 		
 		// C++ source/header
-		doTestFileTypeResolution("file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
-		doTestFileTypeResolution("file.cxx", ICFileTypeConstants.FT_CXX_SOURCE);
-		doTestFileTypeResolution("file.cc", ICFileTypeConstants.FT_CXX_SOURCE);
-		doTestFileTypeResolution("file.C", ICFileTypeConstants.FT_CXX_SOURCE);
-		doTestFileTypeResolution("file.hpp", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("file.hxx", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("file.hh", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("file.H", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("some.file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
-		doTestFileTypeResolution("some.file.hxx", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.cxx", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.cc", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.C", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.hpp", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.hxx", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.hh", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.H", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "some.file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "some.file.hxx", ICFileTypeConstants.FT_CXX_HEADER);
 
 		// Assembly
-		doTestFileTypeResolution("file.asm", ICFileTypeConstants.FT_ASM_SOURCE);
-		doTestFileTypeResolution("file.s", ICFileTypeConstants.FT_ASM_SOURCE);
-		doTestFileTypeResolution("file.S", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.asm", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.s", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.S", ICFileTypeConstants.FT_ASM_SOURCE);
 		
 		// Std C++ library
-		doTestFileTypeResolution("algorithm", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("bitset", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("deque", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("exception", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("fstream", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("functional", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("iomanip", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("ios", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("iosfwd", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("iostream", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("istream", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("iterator", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("limits", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("list", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("locale", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("map", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("memory", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("new", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("numeric", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("ostream", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("queue", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("set", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("sstream", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("stack", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("stdexcept", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("streambuf", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("string", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("typeinfo", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("utility", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("valarray", ICFileTypeConstants.FT_CXX_HEADER);
-		doTestFileTypeResolution("vector", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "algorithm", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "bitset", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "deque", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "exception", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "fstream", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "functional", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "iomanip", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "ios", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "iosfwd", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "iostream", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "istream", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "iterator", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "limits", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "list", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "locale", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "map", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "memory", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "new", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "numeric", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "ostream", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "queue", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "set", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "sstream", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "stack", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "stdexcept", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "streambuf", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "string", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "typeinfo", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "utility", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "valarray", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "vector", ICFileTypeConstants.FT_CXX_HEADER);
 		
 		// Failure cases
-		doTestFileTypeResolution("file.txt", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("file.doc", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("files", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("FILES", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("stream", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("streambu", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("streambuff", ICFileTypeConstants.FT_UNKNOWN);
-		doTestFileTypeResolution("sstreams", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.txt", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.doc", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "files", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "FILES", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "stream", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "streambu", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "streambuff", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "sstreams", ICFileTypeConstants.FT_UNKNOWN);
 	}
 
+	public final void testWorkspaceFileTypeResolution() {
 
+		// Reset the resolver
+		model.setResolver(null);
+		workspaceResolver = model.getResolver(); 
+		
+		// Validate that we are using the default resolver set...
+		doTestFileTypeResolution(workspaceResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.h", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.hpp", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.s", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.sam", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.shari", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.delainey", ICFileTypeConstants.FT_UNKNOWN);
+		
+		// Set up a new resolver just for the tests
+		// This one will only recognize '*.c', '*.h', and '*.sam'
+		ICFileTypeResolver resolver = model.createResolver();
+		
+		resolver.addAssociation("*.sam", model.getFileTypeById(ICFileTypeConstants.FT_C_SOURCE));
+		resolver.addAssociation("*.shari", model.getFileTypeById(ICFileTypeConstants.FT_C_HEADER));
+		resolver.addAssociation("*.delainey", model.getFileTypeById(ICFileTypeConstants.FT_ASM_SOURCE));
+		
+		// Set the workspace to use the new resolver
+		model.setResolver(resolver);
+		workspaceResolver = model.getResolver(); 
+
+		// Test the known types
+		doTestFileTypeResolution(workspaceResolver, "file.sam", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.shari", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.delainey", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "some.file.sam", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "some.file.shari", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "some.file.delainey", ICFileTypeConstants.FT_ASM_SOURCE);
+		
+		// Failure cases
+		doTestFileTypeResolution(workspaceResolver, "file.c", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.h", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.cpp", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.hpp", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.s", ICFileTypeConstants.FT_UNKNOWN);
+		
+		// Reset the resolver
+		model.setResolver(null);
+		workspaceResolver = model.getResolver(); 
+		
+		// Validate that we are back to using the default resolver set...
+		doTestFileTypeResolution(workspaceResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.h", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.hpp", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(workspaceResolver, "file.s", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(workspaceResolver, "file.sam", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.shari", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(workspaceResolver, "file.delainey", ICFileTypeConstants.FT_UNKNOWN);
+	}
+	
+	public final void testProjectFileTypeResolution() {
+
+		// Reset the resolver(s)
+		model.setResolver(null);
+		workspaceResolver = model.getResolver();
+		
+		model.setResolver(project, null);
+		projectResolver = model.getResolver(project);
+		
+		// Validate that we are using the default resolver set...
+		doTestFileTypeResolution(projectResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.hpp", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(projectResolver, "file.s", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.sam", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.shari", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.delainey", ICFileTypeConstants.FT_UNKNOWN);
+		
+		// Set up a new resolver just for the tests
+		// This one will only recognize '*.c', '*.h', and '*.sam'
+		ICFileTypeResolver resolver = model.createResolver();
+		
+		resolver.addAssociation("*.sam", model.getFileTypeById(ICFileTypeConstants.FT_C_SOURCE));
+		resolver.addAssociation("*.shari", model.getFileTypeById(ICFileTypeConstants.FT_C_HEADER));
+		resolver.addAssociation("*.delainey", model.getFileTypeById(ICFileTypeConstants.FT_ASM_SOURCE));
+		
+		// Set the workspace to use the new resolver
+		model.setResolver(project, resolver);
+		projectResolver = model.getResolver(project);
+
+		// Test the known types
+		doTestFileTypeResolution(projectResolver, "file.sam", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.shari", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(projectResolver, "file.delainey", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(projectResolver, "some.file.sam", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(projectResolver, "some.file.shari", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(projectResolver, "some.file.delainey", ICFileTypeConstants.FT_ASM_SOURCE);
+		
+		// Failure cases
+		doTestFileTypeResolution(projectResolver, "file.c", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.h", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.cpp", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.hpp", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.s", ICFileTypeConstants.FT_UNKNOWN);
+		
+		// Reset the resolver
+		model.setResolver(project, null);
+		projectResolver = model.getResolver(project);
+		
+		// Validate that we are back to using the default resolver set...
+		doTestFileTypeResolution(projectResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.h", ICFileTypeConstants.FT_C_HEADER);
+		doTestFileTypeResolution(projectResolver, "file.cpp", ICFileTypeConstants.FT_CXX_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.hpp", ICFileTypeConstants.FT_CXX_HEADER);
+		doTestFileTypeResolution(projectResolver, "file.s", ICFileTypeConstants.FT_ASM_SOURCE);
+		doTestFileTypeResolution(projectResolver, "file.sam", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.shari", ICFileTypeConstants.FT_UNKNOWN);
+		doTestFileTypeResolution(projectResolver, "file.delainey", ICFileTypeConstants.FT_UNKNOWN);
+	}
+	
 	public final void testGetLanguages() {
-		ICLanguage[] languages = resolver.getLanguages();
+		ICLanguage[] languages = model.getLanguages();
 
 		assertNotNull(languages);
 
 		for (int i = 0; i < languages.length; i++) {
-			ICLanguage lang = resolver.getLanguageById(languages[i].getId());
+			ICLanguage lang = model.getLanguageById(languages[i].getId());
 			assertNotNull(lang);
 			assertEquals(languages[i], lang);
 		}
 	}
 
 	public final void testGetTypes() {
-		ICFileType[] types = resolver.getFileTypes();
+		ICFileType[] types = model.getFileTypes();
 
 		assertNotNull(types);
 
 		for (int i = 0; i < types.length; i++) {
-			ICFileType type = resolver.getFileTypeById(types[i].getId());
+			ICFileType type = model.getFileTypeById(types[i].getId());
 			assertNotNull(type);
 			assertEquals(types[i], type);
 		}
 	}
 	
 	public final void testGetFileTypeAssociations() {
-		ICFileTypeAssociation[] assocs = resolver.getFileTypeAssociations();
+		ICFileTypeAssociation[] assocs = workspaceResolver.getFileTypeAssociations();
 
 		assertNotNull(assocs);
 
@@ -324,7 +509,7 @@ public class ResolverTests extends TestCase {
 			
 			assertNotNull(type);
 
-			ICFileType typeById = resolver.getFileTypeById(type.getId());
+			ICFileType typeById = model.getFileTypeById(type.getId());
 			
 			assertNotNull(typeById);
 			assertEquals(type, typeById);
@@ -340,7 +525,7 @@ public class ResolverTests extends TestCase {
 			assertNotNull(langId);
 			assertTrue(langId.length() > 0);
 			
-			ICLanguage langOut = resolver.getLanguageById(langId);
+			ICLanguage langOut = model.getLanguageById(langId);
 
 			assertNotNull(langOut);
 			assertEquals(langIn, langOut);
@@ -354,13 +539,13 @@ public class ResolverTests extends TestCase {
 		
 		ICLanguage langIn = new CLanguage(LANG_TEST, "Test Language");
 		
-		result = resolver.removeLanguage(langIn);
+		result = ((ResolverModel) model).removeLanguage(langIn);
 		assertFalse(result);
 
-		result = resolver.addLanguage(langIn);
+		result = ((ResolverModel) model).addLanguage(langIn);
 		assertTrue(result);
 		
-		ICLanguage langOut = resolver.getLanguageById(LANG_TEST);
+		ICLanguage langOut = model.getLanguageById(LANG_TEST);
 		assertNotNull(langOut);
 		assertEquals(langIn, langOut);
 
@@ -372,37 +557,37 @@ public class ResolverTests extends TestCase {
 		
 		// -- header
 		
-		result = resolver.removeFileType(th);
+		result = ((ResolverModel) model).removeFileType(th);
 		assertFalse(result);
 
-		result = resolver.addFileType(th);
+		result = ((ResolverModel) model).addFileType(th);
 		assertTrue(result);
 
-		ICFileType thOut = resolver.getFileTypeById(FT_TEST_HEADER);
+		ICFileType thOut = model.getFileTypeById(FT_TEST_HEADER);
 		assertNotNull(thOut);
 		assertEquals(th, thOut);
 
 		// -- source
 
-		result = resolver.removeFileType(ts);
+		result = ((ResolverModel) model).removeFileType(ts);
 		assertFalse(result);
 
-		result = resolver.addFileType(ts);
+		result = ((ResolverModel) model).addFileType(ts);
 		assertTrue(result);
 
-		ICFileType tsOut = resolver.getFileTypeById(FT_TEST_SOURCE);
+		ICFileType tsOut = model.getFileTypeById(FT_TEST_SOURCE);
 		assertNotNull(tsOut);
 		assertEquals(ts, tsOut);
 
 		// -- unknown
 
-		result = resolver.removeFileType(tu);
+		result = ((ResolverModel) model).removeFileType(tu);
 		assertFalse(result);
 
-		result = resolver.addFileType(tu);
+		result = ((ResolverModel) model).addFileType(tu);
 		assertTrue(result);
 
-		ICFileType tuOut = resolver.getFileTypeById(FT_TEST_WHASAT);
+		ICFileType tuOut = model.getFileTypeById(FT_TEST_WHASAT);
 		assertNotNull(tuOut);
 		assertEquals(tu, tuOut);
 
@@ -414,92 +599,90 @@ public class ResolverTests extends TestCase {
 
 		// -- header
 
-		result = resolver.removeFileTypeAssociation(tha);
+		result = workspaceResolver.removeAssociation(tha);
 		assertFalse(result);
 
-		result = resolver.addFileTypeAssociation(tha);
+		result = workspaceResolver.addAssociation(tha.getPattern(), tha.getType());
 		assertTrue(result);
 
-		ICFileType thaOut = resolver.getFileType("file.aest");
+		ICFileType thaOut = workspaceResolver.getFileType("file.aest");
 		assertNotNull(thaOut);
 		assertEquals(tha.getType(), thaOut);
 		
 		// -- source
 
-		result = resolver.removeFileTypeAssociation(tsa);
+		result = workspaceResolver.removeAssociation(tsa);
 		assertFalse(result);
 
-		result = resolver.addFileTypeAssociation(tsa);
+		result = workspaceResolver.addAssociation(tsa.getPattern(), tsa.getType());
 		assertTrue(result);
 
-		ICFileType tsaOut = resolver.getFileType("file.test");
+		ICFileType tsaOut = workspaceResolver.getFileType("file.test");
 		assertNotNull(tsaOut);
 		assertEquals(tsa.getType(), tsaOut);
 
 
 		// -- unknown
 
-		result = resolver.removeFileTypeAssociation(tua);
+		result = workspaceResolver.removeAssociation(tua);
 		assertFalse(result);
 
-		result = resolver.addFileTypeAssociation(tua);
+		result = workspaceResolver.addAssociation(tua.getPattern(), tua.getType());
 		assertTrue(result);
 
-		ICFileType tuaOut = resolver.getFileType("file.zest");
+		ICFileType tuaOut = workspaceResolver.getFileType("file.zest");
 		assertNotNull(tuaOut);
 		assertEquals(tua.getType(), tuaOut);
 	}
 
 	public final void testRemove() {
 		boolean result = false;
-		
+
 		// Languages
 		
-		ICLanguage lang = resolver.getLanguageById(LANG_TEST);
+		ICLanguage lang = model.getLanguageById(LANG_TEST);
+		ICFileType fth  = model.getFileTypeById(FT_TEST_HEADER);
+		ICFileType fts  = model.getFileTypeById(FT_TEST_SOURCE);
+		ICFileType ftu  = model.getFileTypeById(FT_TEST_WHASAT);
+
+		// Test two file types
+		
+		result = ((ResolverModel) model).removeFileType(fth);
+		assertTrue(result);
+
+		result = ((ResolverModel) model).removeFileType(fth);
+		assertFalse(result);
+
+		result = ((ResolverModel) model).removeFileType(fts);
+		assertTrue(result);
+
+		result = ((ResolverModel) model).removeFileType(fts);
+		assertFalse(result);
+
+		// Removing the language should remove the
+		// remaining file type
+		
 		assertNotNull(lang);
 		assertEquals(LANG_TEST, lang.getId());
 		
-		result = resolver.removeLanguage(lang);
+		result = ((ResolverModel) model).removeLanguage(lang);
 		assertTrue(result);
 
-		result = resolver.removeLanguage(lang);
+		result = ((ResolverModel) model).removeLanguage(lang);
 		assertFalse(result);
 
-		// File types
-
-		ICFileType ft = resolver.getFileTypeById(FT_TEST_HEADER);
-		
-		result = resolver.removeFileType(ft);
-		assertTrue(result);
-
-		result = resolver.removeFileType(ft);
-		assertFalse(result);
-
-		ft = resolver.getFileTypeById(FT_TEST_SOURCE);
-		
-		result = resolver.removeFileType(ft);
-		assertTrue(result);
-
-		result = resolver.removeFileType(ft);
-		assertFalse(result);
-
-		ft = resolver.getFileTypeById(FT_TEST_WHASAT);
-		
-		result = resolver.removeFileType(ft);
-		assertTrue(result);
-
-		result = resolver.removeFileType(ft);
+		result = ((ResolverModel) model).removeFileType(ftu);
 		assertFalse(result);
 
 		// File type associations
 
-		ICFileTypeAssociation[] assocs = resolver.getFileTypeAssociations();
+		ICFileTypeAssociation[] assocs = workspaceResolver.getFileTypeAssociations();
 		assertNotNull(assocs);
 		assertTrue(assocs.length > 3);
 
 		for (int i = 0; i < assocs.length; i++) {
 			if (assocs[i].getType().getLanguage().getId().equals(LANG_TEST)) {
-				resolver.removeFileTypeAssociation(assocs[i]);
+				workspaceResolver.removeAssociation(assocs[i]);
 			}
 		}
 		

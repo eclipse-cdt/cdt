@@ -69,7 +69,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 							CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
 				}
 				catch( CDIException e ) {
-					targetRequestFailed( e.getMessage(), e );
+					// ignore and try to get disassembly without source
 				}
 			}
 			// Double check if debugger returns correct address range.

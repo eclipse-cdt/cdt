@@ -19,7 +19,10 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IEnumerator extends IBinding {
 	/**
-	 * @return the type of the variable
+	 * returns the type of this enumeration.  The type of an enumerator
+	 * is the enumeration in which it is declared.
+	 * 
+	 * @return the type of the enumeration
 	 */
 	public IType getType() throws DOMException;
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 public interface ICPPConstructor extends ICPPMethod {
 
     /**
-     * 
+     * Whether or not this constructor was declared as explicit
      * @return
      * @throws DOMException
      */

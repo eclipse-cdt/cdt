@@ -83,9 +83,17 @@ public interface ICPPClassType extends ICompositeType {
 	public ICPPMethod[] getDeclaredMethods() throws DOMException;
 
     /**
+     * Returns an array of ICPPConstructor objects representing the contructors for this
+     * class.  This list includes both declared and implicit constructors.
      * @return
      */
     public ICPPConstructor[] getConstructors() throws DOMException;
 	
+    /**
+     * return an array of bindings for those classes/functions declared as friends of this
+     * class.
+     * @return
+     * @throws DOMException
+     */
     public IBinding [] getFriends() throws DOMException;
 }

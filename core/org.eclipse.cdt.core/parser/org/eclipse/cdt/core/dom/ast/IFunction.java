@@ -20,9 +20,9 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IFunction extends IBinding {
 
 	/**
-	 * This gets the parameters to the function which are IVariables.
+	 * This gets the parameters to the function
 	 * 
-	 * @return List of IParameter
+	 * @return array of IParameter
 	 * @throws DOMException if this is a problem binding
 	 */
 	public IParameter [] getParameters() throws DOMException;
@@ -36,7 +36,7 @@ public interface IFunction extends IBinding {
 	public IScope getFunctionScope() throws DOMException;
 	
 	/**
-	 * 
+	 * Get the IFunctionType for this function
 	 * @return
 	 * @throws DOMException if this is a problem binding
 	 */

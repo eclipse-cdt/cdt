@@ -18,6 +18,10 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IArrayType extends IType {
-
+    /**
+     * get the type that this is an array of
+     * @return
+     * @throws DOMException
+     */
     IType getType() throws DOMException;
 }

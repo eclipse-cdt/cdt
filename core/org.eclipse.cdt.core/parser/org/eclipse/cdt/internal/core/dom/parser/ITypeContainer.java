@@ -18,9 +18,20 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
+ * internal interface representing types that contain other types
  * @author aniefer
  */
 public interface ITypeContainer extends IType{
+    /**
+     * get the type this contains
+     * @return
+     * @throws DOMException
+     */
     IType getType() throws DOMException;
+    
+    /**
+     * set the type this contains
+     * @param type
+     */
     void setType( IType type );
 }

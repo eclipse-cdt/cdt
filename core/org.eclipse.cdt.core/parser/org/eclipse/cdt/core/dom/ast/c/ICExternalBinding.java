@@ -17,6 +17,10 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
+ * This interface represents a binding for a function or variable that
+ * is assumed to exist in another compilation unit and that would be found
+ * at link time.
+ *  
  * @author aniefer
  */
 public interface ICExternalBinding extends IBinding {

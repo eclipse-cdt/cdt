@@ -21,5 +21,10 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @author aniefer
  */
 public interface ICPPReferenceType extends IType {
+    /**
+     * get the type that this is a reference of
+     * @return
+     * @throws DOMException
+     */
     public IType getType() throws DOMException;
 }

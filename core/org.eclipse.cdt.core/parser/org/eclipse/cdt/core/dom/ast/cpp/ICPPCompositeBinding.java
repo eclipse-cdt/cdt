@@ -17,8 +17,16 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
+ * This binding is a container for other bindings.  It is used in instances
+ * where an IASTName refers to more than one binding, for example a using declaration
+ * refering to a set of overloaded functions. 
  * @author aniefer
  */
 public interface ICPPCompositeBinding extends IBinding {
+    /**
+     * get the bindings 
+     * @return
+     * @throws DOMException
+     */
 	IBinding [] getBindings() throws DOMException;
 }

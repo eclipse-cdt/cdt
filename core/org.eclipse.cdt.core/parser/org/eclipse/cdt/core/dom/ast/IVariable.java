@@ -21,5 +21,10 @@ public interface IVariable extends IBinding {
 	public IType getType() throws DOMException;
 	
 	
+	/**
+	 * whether or not this is a static variable
+	 * @return
+	 * @throws DOMException
+	 */
 	public boolean isStatic() throws DOMException;
 }

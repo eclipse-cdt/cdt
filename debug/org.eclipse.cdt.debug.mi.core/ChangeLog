@@ -1,5 +1,14 @@
 2002-10-25 Alain Magloire
 
+	* src/.../core/cdi/CThread.java (getStackFrames): Save the
+	current thread before changing and restore when operation finish.
+
+	* src/.../core/cdi/MemoryBlock.java (refresh):  Flush the old
+	data and get new memory.
+	(update): New method to compare individual blocks.
+
+2002-10-25 Alain Magloire
+
 	Automatically suspend/resume gdb when setting a breakpoint.
 	The workflow when debuggin which gdb command prompt is to
 	hit CTRL-C set the breakpoint and continue.  The UI debugger

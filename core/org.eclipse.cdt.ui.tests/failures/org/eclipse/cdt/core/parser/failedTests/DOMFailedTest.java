@@ -50,15 +50,6 @@ public class DOMFailedTest extends BaseDOMTest  {
 		code.write("{};\n");
 		failTest(code.toString());
 	}
-
-	
-	public void testBug36714() throws Exception {
-		Writer code = new StringWriter();
-		code.write("unsigned long a = 0UL;\n");
-		code.write("unsigned long a2 = 0L; \n");
-
-		failTest(code.toString());
-	}
 	
 	public void testBug36730(){
 		failTest("FUNCTION_MACRO( 1, a );\n	int i;");

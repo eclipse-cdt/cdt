@@ -1,3 +1,8 @@
+2003-04-25 Andrew Niefer
+	Fixed bug36771	  - Outline view shows include with no name
+	Fixed bug36714	  - Parser fails on initial assignment using floating-suffix 
+	Revisted bug36816 - Incomplete #include stops outline view 
+
 2003-04-25 John Camelon
 	Fixed bug36852  - outline window doesn't show all functions 
 	Fixed bug36764  - Bit fields cause parse errors 

@@ -1691,7 +1691,26 @@ public class DOMTests extends BaseDOMTest {
 		TranslationUnit tu = parse( code.toString() );
 		
 	}
-
-
+	
+	public void testBug36771() throws Exception {
+		Writer code = new StringWriter();
+		code.write("#include /**/ \"foo.h\"\n");
+	
+		TranslationUnit tu = parse( code.toString(), true, true );
+	
+		List includes = tu.getInclusions();
+	
+		assertEquals( includes.size(), 1 );
+		Inclusion include = (Inclusion)includes.get(0);
+		assertTrue( include.getName().equals("foo.h") );
+	}
+	
+	public void testBug36714() throws Exception {
+		Writer code = new StringWriter();
+		code.write("unsigned long a = 0UL;\n");
+		code.write("unsigned long a2 = 0L; \n");
+	
+		TranslationUnit tu = parse( code.toString() );
+	}
 }
 

@@ -226,6 +226,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 						break;
 				}
 			}
+			if ( element instanceof ICVariable && ((ICVariable)element).isArgument() )
+				overlays[OverlayImageDescriptor.TOP_RIGHT] = CDebugImages.DESC_OVRS_ARGUMENT;
+			
 			return fImageCache.getImageFor( new OverlayImageDescriptor( baseImage, overlays ) );
 		}
 		return null;

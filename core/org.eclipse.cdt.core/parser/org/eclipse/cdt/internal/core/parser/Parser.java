@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -781,6 +782,29 @@ public class Parser implements IParser
                 last.getOffset() + last.getLength());
             namespaceDefinition.exitScope( requestor );
         }
+        else if( LT(1) == IToken.tASSIGN )
+        {
+        	consume( IToken.tASSIGN );
+        	
+			if( identifier == null )
+				throw backtrack;
+
+        	ITokenDuple duple = name();
+        	        	
+        	IASTNamespaceAlias alias = null; 
+        	
+        	try
+            {
+                alias = astFactory.createNamespaceAlias( 
+                	scope, identifier.toString(), duple, first.getOffset(), 
+                	identifier.getOffset(), duple.getLastToken().getEndOffset() );
+            }
+            catch (ASTSemanticException e)
+            {
+                failParse();
+                throw backtrack;
+            }
+        }
         else
         {
             throw backtrack;
@@ -926,7 +950,7 @@ public class Parser implements IParser
     }
     protected void handleFunctionBody(Declarator d) throws Backtrack, EndOfFile
     {
-        if ( true ) // TODO - Enable parsing within function bodies i.e. mode == ParserMode.QUICK_PARSE)
+        if ( mode == ParserMode.QUICK_PARSE ) // TODO - Enable parsing within function bodies i.e. mode == ParserMode.QUICK_PARSE)
         {
             // speed up the parser by skiping the body
             // simply look for matching brace and return

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
@@ -1392,4 +1393,44 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
     protected ParserSymbolTable pst = new ParserSymbolTable();
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNamespaceAlias(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ITokenDuple, int, int, int)
+     */
+    public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, String identifier, ITokenDuple alias, int startingOffset, int nameOffset, int endOffset) throws ASTSemanticException
+    {
+        IContainerSymbol startingSymbol = scopeToSymbol(scope);
+        List references = new ArrayList();
+        
+        ISymbol namespaceSymbol = lookupQualifiedName( startingSymbol, alias, references, true );
+        
+        if( namespaceSymbol.getType() != TypeInfo.t_namespace )
+        	throw new ASTSemanticException();
+        
+        ISymbol newSymbol = pst.newContainerSymbol( identifier, TypeInfo.t_namespace );
+        newSymbol.setTypeSymbol( namespaceSymbol );
+        
+        try
+        {
+            startingSymbol.addSymbol( newSymbol );
+        }
+        catch (ParserSymbolTableException e)
+        {
+        	throw new ASTSemanticException();
+        }
+        
+        ASTNamespaceAlias astAlias = new ASTNamespaceAlias(
+        	newSymbol, alias.toString(), (IASTNamespaceDefinition)namespaceSymbol.getASTExtension().getPrimaryDeclaration(), 
+        	startingOffset, nameOffset, endOffset, references ); 
+        try
+        {
+            attachSymbolExtension( newSymbol, astAlias );
+        }
+        catch (ExtensionException e1)
+        {
+			throw new ASTSemanticException();
+        }
+        return astAlias;
+    }
 }

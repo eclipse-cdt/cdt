@@ -81,10 +81,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("class AString { operator char const *() const; };");
     }
-    public void testBug39535() throws Exception
-    {
-        assertCodeFailsParse("namespace bar = foo;");
-    }
+
     public void testBug39536A() throws Exception
     {
         IASTTemplateDeclaration template = (IASTTemplateDeclaration)parse("template<class E> class X { X<E>(); };").getDeclarations().next();

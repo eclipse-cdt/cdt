@@ -1773,6 +1773,11 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		parse("UnitList unit_list (String(\"keV\"));");
 	}
+	
+	public void testBug39535() throws Exception
+	{
+		parse("namespace bar = foo;");
+	}
 
 		
 }

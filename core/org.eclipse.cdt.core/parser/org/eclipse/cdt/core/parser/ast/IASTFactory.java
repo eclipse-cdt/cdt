@@ -51,6 +51,15 @@ public interface IASTFactory
         String identifier,
         int startingOffset,
         int nameOffset) throws ASTSemanticException;
+        
+    public IASTNamespaceAlias    createNamespaceAlias( 
+    	IASTScope scope, 
+    	String identifier, 
+    	ITokenDuple alias, 
+    	int startingOffset, 
+    	int nameOffset, 
+    	int endOffset ) throws ASTSemanticException;
+        
     public IASTCompilationUnit createCompilationUnit();
     public IASTLinkageSpecification createLinkageSpecification(
         IASTScope scope,

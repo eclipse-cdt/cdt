@@ -123,4 +123,11 @@ public interface ICModule extends ICDebugElement {
 	 * @return the address factory
 	 */
 	public IAddressFactory getAddressFactory();
+
+	/**
+	 * Returns the CPU identifier.
+	 * 
+	 * @return the CPU identifier
+	 */
+	public String getCPU();
 }

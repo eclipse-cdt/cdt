@@ -171,6 +171,13 @@ public class CModule extends CDebugElement implements ICModule {
 		return ((CDebugTarget)getDebugTarget()).getAddressFactory();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICModule#getCPU()
+	 */
+	public String getCPU() {
+		return ( fCElement instanceof IBinary ) ? ((IBinary)fCElement).getCPU() : null;
+	}
+
 	public void dispose() {
 		
 	}

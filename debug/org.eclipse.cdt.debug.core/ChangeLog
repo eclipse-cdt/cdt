@@ -1,3 +1,9 @@
+2005-02-11 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
+	Added new "getCPU" method to ICModule.
+	* ICModule.java
+	* CModule.java
+
 2005-02-07 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
 	Core support for the Modules view.

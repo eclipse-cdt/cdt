@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core;
 
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 
 /**
  * Event Thread blocks on the event Queue, wakes up
@@ -31,6 +32,9 @@ public class EventThread extends Thread {
 			} catch (InterruptedException e) {
 				//e.printStackTrace();
 			}
+			if (event instanceof MIStoppedEvent) {
+				processSuspendedEvent((MIStoppedEvent)event);
+			}
 			try {
 				if (event != null) {
 					session.notifyObservers(event);
@@ -40,4 +44,11 @@ public class EventThread extends Thread {
 			}
 		}
 	}
+
+	void processSuspendedEvent(MIStoppedEvent stopped) {
+		// give a chance also to the underlying inferior.
+		session.getMIInferior().update();
+
+	}
+
 }

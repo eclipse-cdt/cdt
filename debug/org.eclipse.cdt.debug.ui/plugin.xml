@@ -1177,6 +1177,15 @@
             %DisassemblyFontDefinition.description
          </description>
       </fontDefinition>
+      <fontDefinition
+            defaultsTo="org.eclipse.jface.textfont"
+            label="%ModulesDetailPaneFontDefinition.label"
+            categoryId="org.eclipse.debug.ui.presentation"
+            id="org.eclipse.cdt.debug.ui.ModulesDetailPaneFont">
+         <description>
+            %ModulesDetailPaneFontDefinition.description
+         </description>
+      </fontDefinition>
    </extension>
    <extension
          point="org.eclipse.debug.core.watchExpressionDelegates">

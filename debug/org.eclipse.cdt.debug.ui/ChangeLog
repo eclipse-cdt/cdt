@@ -1,5 +1,13 @@
 2005-02-07 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
+	Added the definition of detail pane font.
+	* IInternalCDebugUIConstants.java
+	* ModulesView.java
+	* plugin.xml
+	* plugin.properties
+
+2005-02-07 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
 	* CDebugUIMessages.properties
 	* CDebugImages.java
 	* CDebugModelPresentation.java

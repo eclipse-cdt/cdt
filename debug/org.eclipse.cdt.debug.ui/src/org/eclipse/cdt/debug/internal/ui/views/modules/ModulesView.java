@@ -274,6 +274,10 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange( PropertyChangeEvent event ) {
+		String propertyName = event.getProperty();
+		if ( propertyName.equals( IInternalCDebugUIConstants.DETAIL_PANE_FONT ) ) {
+			getDetailViewer().getTextWidget().setFont( JFaceResources.getFont( IInternalCDebugUIConstants.DETAIL_PANE_FONT ) );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -797,5 +801,19 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			}
 		};
 		asyncExec( runnable );		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
+		JFaceResources.getFontRegistry().removeListener( this );
+		Viewer viewer = getViewer();
+		if ( viewer != null ) {
+			getDetailDocument().removeDocumentListener( getDetailDocumentListener() );
+		}
+		super.dispose();
 	}
 }

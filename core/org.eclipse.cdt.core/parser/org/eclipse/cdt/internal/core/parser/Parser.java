@@ -78,9 +78,13 @@ c, quick);
 	public void translationUnit() throws Exception {
 		Object translationUnit = callback.translationUnitBegin();
 		Token lastBacktrack = null;
+		Token lastToken = null; 
 		while (LT(1) != Token.tEOF) {
 			try {
+				lastToken = currToken; 
 				declaration( translationUnit );
+				if( currToken == lastToken )
+					skipToNextSemi();
 			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
@@ -88,12 +92,7 @@ c, quick);
 				if (lastBacktrack != null && lastBacktrack == LA(1)) {
 					// we haven't progressed from the last backtrack
 					// try and find tne next definition
-					for (int t = LT(1); t != Token.tEOF; t = LT(1)) {
-						consume();
-						// TO DO: we should really check for matching braces too
-						if (t == Token.tSEMI)
-							break;
-					}
+					skipToNextSemi();
 				} else {
 					// start again from here
 					lastBacktrack = LA(1);
@@ -101,6 +100,15 @@ c, quick);
 			}
 		}
 		callback.translationUnitEnd(translationUnit);
+	}
+
+	public void skipToNextSemi() {
+		for (int t = LT(1); t != Token.tEOF; t = LT(1)) {
+			consume();
+			// TO DO: we should really check for matching braces too
+			if (t == Token.tSEMI)
+				break;
+		}
 	}
 	
 	/**
@@ -406,10 +414,21 @@ c, quick);
 	 * - handle initializers
 	 */
 	public void initDeclarator( Object owner ) throws Exception {
-		declarator( owner );
+		Object declarator = declarator( owner );
 		
+		// handle = initializerClause
 		if (LT(1) == Token.tASSIGN) {
-			consume();
+			consume(); 
+			
+			// assignmentExpression || { initializerList , } || { }
+			try
+			{
+				assignmentExpression();  
+			}
+			catch( Backtrack b )
+			{
+				// doNothing
+			}
 			
 			if (LT(1) == Token.tLBRACE) {
 				// for now, just consume to matching brace
@@ -430,6 +449,8 @@ c, quick);
 				}
 			}
 		}
+		
+		callback.declaratorEnd( declarator );
 	}
 	
 	/**
@@ -446,12 +467,10 @@ c, quick);
 	 * declaratorId
 	 * : name
 	 */
-	public void declarator( Object container ) throws Exception {
+	public Object declarator( Object container ) throws Exception {
 		
-		boolean aborted; 
 		do
 		{
-			aborted = false;
 			Object declarator = callback.declaratorBegin( container );
 			
 			for (;;) {
@@ -466,7 +485,7 @@ c, quick);
 				consume();
 				declarator(declarator);
 				consume(Token.tRPAREN);
-				return;
+				return declarator;
 			}
 			
 			name();
@@ -509,11 +528,10 @@ c, quick);
 			{
 				callback.declaratorAbort( container, declarator );
 				declarator = null;
-				aborted = true; 
 			}
 			else
-				callback.declaratorEnd(declarator);
-		} while( aborted );
+				return declarator; 
+		} while( true );
 	}
 	
 	/**

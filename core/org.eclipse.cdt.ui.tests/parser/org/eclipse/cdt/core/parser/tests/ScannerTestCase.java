@@ -799,6 +799,10 @@ public class ScannerTestCase extends TestCase
 			initializeScanner("#if defined( NOTHING ) \nint x = NOTHING;\n#endif");
 			validateEOF();
 			validateBalance();
+			
+			
+				
+			
 
 		}
 		catch (Exception e)
@@ -987,4 +991,71 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 
+	public void testConditionalWithBraces()
+	{
+		try
+		{
+			for( int i = 0; i < 4; ++i )
+			{
+				initializeScanner( "int foobar(int a) { if(a == 0) {\n#ifdef THIS\n} else {}\n#elif THAT\n} else {}\n#endif\nreturn 0;}" );
+				switch( i )
+				{
+					case 0:
+						scanner.addDefinition( "THIS", "1");
+						scanner.addDefinition( "THAT", "1" );  
+						break; 
+					case 1:
+						scanner.addDefinition( "THIS", "1");
+						scanner.addDefinition( "THAT", "0" );  
+						break; 						
+					case 2:
+						scanner.addDefinition( "THAT", "1" );
+						break; 
+					case 3: 
+						scanner.addDefinition( "THAT", "0" );
+						break;
+				}
+					
+				validateToken( Token.t_int ); 
+				validateIdentifier( "foobar"); 
+				validateToken( Token.tLPAREN ); 
+				validateToken( Token.t_int ); 
+				validateIdentifier( "a" ); 
+				validateToken( Token.tRPAREN ); 
+				validateToken( Token.tLBRACE ); 
+				validateToken( Token.t_if ); 
+				validateToken( Token.tLPAREN );
+				validateIdentifier( "a" );
+				validateToken( Token.tEQUAL );
+				validateInteger( "0" );
+				validateToken( Token.tRPAREN );
+				validateToken( Token.tLBRACE );
+				
+				if( i <= 1 )
+				{
+					validateToken( Token.tRBRACE ); 
+					validateToken( Token.t_else ); 
+					validateToken( Token.tLBRACE );
+					validateToken( Token.tRBRACE );
+				}
+					
+				if( i == 2 )
+				{
+					validateToken( Token.tRBRACE ); 
+					validateToken( Token.t_else ); 
+					validateToken( Token.tLBRACE );
+					validateToken( Token.tRBRACE );
+				}
+					
+				validateToken( Token.t_return ); 
+				validateInteger( "0"); 
+				validateToken( Token.tSEMI ); 
+				validateToken( Token.tRBRACE ); 
+				validateToken( Token.tEOF );
+			}
+		} catch( ScannerException se )
+		{
+			fail(EXCEPTION_THROWN + se.toString());			
+		}
+	} 
 }

@@ -60,6 +60,13 @@ public interface IASTNode {
 	 	public int getResultsSize();
 	 }
 
+	/**
+	 * @param prefix
+	 * @param kind
+	 * @param context
+	 * @return
+	 * @throws LookupException
+	 */
 	public LookupResult lookup( String prefix, LookupKind[] kind, IASTNode context) throws LookupException;
 }
 

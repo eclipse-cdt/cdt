@@ -8,6 +8,7 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.IParser;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
 
@@ -126,30 +128,39 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		writer.write( "} " );
 		
 		String code = writer.toString();
-		int index = code.indexOf( " a " );
 		
-		IASTCompletionNode node = parse( code, index + 2 );	
-		assertNotNull( node );
-		
-		String prefix = node.getCompletionPrefix();
-		assertNotNull( prefix );
-		assertTrue( node.getCompletionScope() instanceof IASTFunction );
-		assertEquals( prefix, "a" );
-		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
-		
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.ALL; 
-		LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
-		assertEquals( result.getPrefix(), prefix );
-		
-		Iterator iter = result.getNodes();
-		
-		IASTVariable anotherVar = (IASTVariable) iter.next();
-		IASTVariable aVar = (IASTVariable) iter.next();
-				
-		assertFalse( iter.hasNext() );
-		assertEquals( anotherVar.getName(), "anotherVar" );
-		assertEquals( aVar.getName(), "aVar" );
+		for( int i = 0; i < 2; ++i )
+		{	
+			int index = ( i == 0 ? code.indexOf( " a " ) + 2 : code.indexOf( " a ") + 1 );
+			
+			IASTCompletionNode node = parse( code, index );	
+			assertNotNull( node );
+			
+			String prefix = node.getCompletionPrefix();
+			assertNotNull( prefix );
+			assertTrue( node.getCompletionScope() instanceof IASTFunction );
+			assertEquals( prefix, i == 0 ? "a" :"" );
+			assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.STATEMENT_START );
+			
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.ALL; 
+			LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+			assertEquals( result.getPrefix(), prefix );
+			
+			Iterator iter = result.getNodes();
+			
+			IASTVariable anotherVar = (IASTVariable) iter.next();
+			if( i != 0 )
+			{
+				IASTFunction foo = (IASTFunction) iter.next();
+				assertEquals( foo.getName(), "foo");
+			}
+			IASTVariable aVar = (IASTVariable) iter.next();
+					
+			assertFalse( iter.hasNext() );
+			assertEquals( anotherVar.getName(), "anotherVar" );
+			assertEquals( aVar.getName(), "aVar" );
+		}
 	}
 	
 	public void testCompletionLookup_Qualified() throws Exception
@@ -206,6 +217,63 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( aField.getName(), "aField" );
 	}
 	
+	public void testMemberCompletion_Arrow() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "class A {" );
+		writer.write( "   public:   void aPublicBaseMethod();" );
+		writer.write( "   private:  void aPrivateBaseMethod();" );
+		writer.write( "};" );
+		writer.write( "class B : public A {" );
+		writer.write( "   public:   void aMethod();" );
+		writer.write( "};" );		
+		writer.write( "void foo(){" );		
+		writer.write( "   B * b = new B();" );		
+		writer.write( "   b-> \n" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "b->" );
+		
+		IASTCompletionNode node = parse( code, index + 3 );
+		assertNotNull(node);
+		assertEquals( node.getCompletionPrefix(), "" );
+		
+		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.MEMBER_REFERENCE);
+		assertTrue(node.getCompletionScope() instanceof IASTFunction );
+		assertEquals( ((IASTFunction)node.getCompletionScope()).getName(), "foo" ); 
+		assertTrue(node.getCompletionContext() instanceof IASTClassSpecifier );
+		assertEquals( ((IASTClassSpecifier)node.getCompletionContext()).getName(), "B" );
+	}
+	
+	public void testMemberCompletion_Dot() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "class A {" );
+		writer.write( "   public:   void aPublicBaseMethod();" );
+		writer.write( "   private:  void aPrivateBaseMethod();" );
+		writer.write( "};" );
+		writer.write( "class B : public A {" );
+		writer.write( "   public:   void aMethod();" );
+		writer.write( "};" );		
+		writer.write( "void foo(){" );		
+		writer.write( "   B b;" );		
+		writer.write( "   b. \n" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "b." );
+		
+		IASTCompletionNode node = parse( code, index + 2 );
+		assertNotNull(node);
+		assertEquals( node.getCompletionPrefix(), "" );
+		
+		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.MEMBER_REFERENCE);
+		assertTrue(node.getCompletionScope() instanceof IASTFunction );
+		assertEquals( ((IASTFunction)node.getCompletionScope()).getName(), "foo" ); 
+		assertTrue(node.getCompletionContext() instanceof IASTClassSpecifier );
+		assertEquals( ((IASTClassSpecifier)node.getCompletionContext()).getName(), "B" );
+	}
+	
+	
 	public void testCompletionLookup_Pointer() throws Exception{
 		StringWriter writer = new StringWriter();
 		writer.write( "class A {" );
@@ -219,34 +287,40 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		writer.write( "   B * b = new B();" );		
 		writer.write( "   b->a \n" );
 		
-		String code = writer.toString();
-		int index = code.indexOf( "b->a" );
-		
-		IASTCompletionNode node = parse( code, index + 4 );
-		
-		assertNotNull( node );
-		
-		String prefix = node.getCompletionPrefix();
-		assertEquals( prefix, "a" );
-		
-		assertTrue( node.getCompletionScope() instanceof IASTFunction );
-		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
-		assertNotNull( node.getCompletionContext() );
-		assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
-		
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.METHODS; 
-		LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
-		assertEquals( result.getPrefix(), prefix );
-		
-		Iterator iter = result.getNodes();
-		IASTMethod method = (IASTMethod) iter.next();
-		IASTMethod baseMethod = (IASTMethod) iter.next();
-		
-		assertFalse( iter.hasNext() );
-		
-		assertEquals( method.getName(), "aMethod" );
-		assertEquals( baseMethod.getName(), "aPublicBaseMethod" );
+		for( int i = 0; i < 2; ++i )
+		{	
+			String code = writer.toString();
+			
+			int index;
+			
+			index = (i == 0 )? (code.indexOf( "b->a" )+4) :(code.indexOf( "b->") + 3);
+			
+			IASTCompletionNode node = parse( code, index);
+			
+			assertNotNull( node );
+			String prefix = node.getCompletionPrefix();
+			
+			assertEquals( prefix, ( i == 0 ) ? "a" :"");
+			
+			assertTrue( node.getCompletionScope() instanceof IASTFunction );
+			assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
+			assertNotNull( node.getCompletionContext() );
+			assertTrue( node.getCompletionContext() instanceof IASTClassSpecifier );
+			
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.METHODS; 
+			LookupResult result = node.getCompletionScope().lookup( prefix, kinds, node.getCompletionContext() );
+			assertEquals( result.getPrefix(), prefix );
+			
+			Iterator iter = result.getNodes();
+			IASTMethod method = (IASTMethod) iter.next();
+			IASTMethod baseMethod = (IASTMethod) iter.next();
+			
+			assertFalse( iter.hasNext() );
+			
+			assertEquals( method.getName(), "aMethod" );
+			assertEquals( baseMethod.getName(), "aPublicBaseMethod" );		
+		}
 	}
 	
 	public void testCompletionLookup_FriendClass_1() throws Exception{
@@ -334,6 +408,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( method.getName(), "aPrivateMethod" );
 	}
 	
+	
 	public void testCompletionLookup_ParametersAsLocalVariables() throws Exception{
 		StringWriter writer = new StringWriter();
 		writer.write( "int foo( int aParameter ){" );
@@ -353,7 +428,7 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		assertEquals( prefix, "a" );
 		
 		assertTrue( node.getCompletionScope() instanceof IASTCodeScope );
-		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
+		assertEquals( node.getCompletionKind(),  IASTCompletionNode.CompletionKind.STATEMENT_START );
 		assertNull( node.getCompletionContext() );
 				
 		LookupResult result = node.getCompletionScope().lookup( prefix, new IASTNode.LookupKind [] { IASTNode.LookupKind.LOCAL_VARIABLES }, node.getCompletionContext() );
@@ -420,5 +495,71 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 		method = (IASTMethod) iter.next();
 		assertFalse( iter.hasNext() );
 		assertEquals( method.getName(), "aMethod" );
+	}
+	
+	public void testCompletionInConstructor() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("class SimpleTest{");
+		writer.write("	public:");
+		writer.write("SimpleTest();");
+		writer.write("~SimpleTest();");
+		writer.write("int a, b, c, aa, bb, cc, abc;");
+		writer.write("};");
+		writer.write("SimpleTest::~SimpleTest()");
+		writer.write("{}");
+		writer.write("SimpleTest::SimpleTest()");
+		writer.write("{");
+		writer.write("/**/a");
+		writer.write("}");
+
+		IASTCompletionNode node = parse( writer.toString(), writer.toString().indexOf("/**/a") + 5 );
+		assertNotNull(node);
+		assertEquals(node.getCompletionPrefix(), "a");
+		assertTrue(node.getCompletionScope() instanceof IASTMethod);
+		IASTMethod inquestion = (IASTMethod)node.getCompletionScope();
+		assertEquals( inquestion.getName(), "SimpleTest");
+		assertTrue(inquestion.isConstructor());
+		
+		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.STATEMENT_START );
+		assertNull(node.getCompletionContext());
+		LookupKind[] kinds = new LookupKind[ 1 ];
+		kinds[0] = LookupKind.FIELDS;
+		
+		LookupResult result = inquestion.lookup( "a", kinds, null );
+		assertEquals(result.getResultsSize(), 3 );
+	}
+	
+	public void testCompletionInDestructor() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("class SimpleTest{");
+		writer.write("	public:");
+		writer.write("SimpleTest();");
+		writer.write("~SimpleTest();");
+		writer.write("int a, b, c, aa, bb, cc, abc;");
+		writer.write("};");
+		writer.write("SimpleTest::SimpleTest()");
+		writer.write("{}");
+		writer.write("SimpleTest::~SimpleTest()");
+		writer.write("{");
+		writer.write("/**/a");
+		writer.write("}");
+
+		IASTCompletionNode node = parse( writer.toString(), writer.toString().indexOf("/**/a") + 5 );
+		assertNotNull(node);
+		assertEquals(node.getCompletionPrefix(), "a");
+		assertTrue(node.getCompletionScope() instanceof IASTMethod);
+		IASTMethod inquestion = (IASTMethod)node.getCompletionScope();
+		assertEquals( inquestion.getName(), "~SimpleTest");
+		assertTrue(inquestion.isDestructor());
+		
+		assertEquals(node.getCompletionKind(), IASTCompletionNode.CompletionKind.STATEMENT_START );
+		assertNull(node.getCompletionContext());
+		LookupKind[] kinds = new LookupKind[ 1 ];
+		kinds[0] = LookupKind.FIELDS;
+		
+		LookupResult result = inquestion.lookup( "a", kinds, null );
+		assertEquals(result.getResultsSize(), 3 );
 	}
 }

@@ -24,6 +24,7 @@ public interface IASTCompletionNode {
 	{
 		// x.[ ] x->[ ]
 		public static final CompletionKind MEMBER_REFERENCE = new CompletionKind( 0 );
+
 		// x::[ ]
 		public static final CompletionKind SCOPED_REFERENCE = new CompletionKind( 1 );
 		
@@ -68,6 +69,9 @@ public interface IASTCompletionNode {
 		
 		// any place where a type or variable name is expected to be introduced
 		public static final CompletionKind USER_SPECIFIED_NAME = new CompletionKind( 15 );
+				
+		// the beginning of a statement
+		public static final CompletionKind STATEMENT_START = new CompletionKind( 16 );
 		
 		// error condition -- a place in the grammar where there is nothing to lookup
 		public static final CompletionKind NO_SUCH_KIND = new CompletionKind( 200 );

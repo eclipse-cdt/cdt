@@ -1,3 +1,6 @@
+2004-01-13 John Camelon
+	Updated CompletionEngine to handle IASTCompletionKind.CompletionKind.STATEMENT_START
+
 2004-01-08 Hoda Amer
 	Added Content assist log cpabilities
 	

@@ -1,3 +1,6 @@
+2004-01-13 John Camelon
+	Updated ContextualParseTest to accommodate bugfixes 48909 & 49702.  
+
 2004-01-08 Andrew Niefer
 	Added CompleteParseASTTest.testBug43110_XRef
 	Added ParserSymbolTableTest.testBug43110_Ellipses

@@ -42,6 +42,7 @@ public class ContextualParser extends Parser implements IParser {
 	protected IASTNode context;
 	protected IToken finalToken;
 	private Set keywordSet;
+	private int boundaryOffset;
 
 	/**
 	 * @param scanner
@@ -60,6 +61,7 @@ public class ContextualParser extends Parser implements IParser {
 	 */
 	public IASTCompletionNode parse(int offset) throws ParserNotImplementedException {
 		scanner.setOffsetBoundary(offset);
+		boundaryOffset = offset;
 		translationUnit();
 		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ) );
 	}
@@ -164,15 +166,29 @@ public class ContextualParser extends Parser implements IParser {
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleOffsetLimitException()
 	 */
 	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException, OffsetLimitReachedException {
-		finalToken = exception.getFinalToken(); 
+		setCompletionToken( exception.getFinalToken() );
+		if( (finalToken!= null )&& (finalToken.getEndOffset() != boundaryOffset ))
+			setCompletionToken(null);
 		throw exception;
 	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionKeywords(java.lang.String[])
 	 */
-	protected void setCompletionKeywords(Set keywords) {
-		this.keywordSet = keywords;
+	protected void setCompletionKeywords(KeywordSets.Key key) {
+		this.keywordSet = KeywordSets.getKeywords( key, language );
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionToken(org.eclipse.cdt.core.parser.IToken)
+	 */
+	protected void setCompletionToken(IToken token) {
+		finalToken = token;
+	}
+
+	protected IToken getCompletionToken()
+	{ 
+		return finalToken;
+	}
 }

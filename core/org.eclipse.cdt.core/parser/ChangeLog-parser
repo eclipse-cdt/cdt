@@ -1,3 +1,9 @@
+2004-01-12 John Camelon
+	Fixed bug 48909 - Wrong completion node after a . or an ->
+	Fixed bug 49702 - Wrong completion kind sent in const/dest and code blocks
+	Added new CompletionKind - STATEMENT_START to indicate the beginning of a statement line.  
+
+
 2004-01-08 Andrew Niefer
 	fixing bug 43110 - Parser support needed for functions with ellipses
 	Added IParameterizedSymbol.setHasVariableArgs() & hasVariableArgs()

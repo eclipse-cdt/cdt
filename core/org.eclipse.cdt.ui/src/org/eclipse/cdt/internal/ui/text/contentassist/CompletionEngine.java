@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IParser;
@@ -411,6 +410,24 @@ public class CompletionEngine implements RelevanceConstants{
 		addToCompletions (result);
 				
 	}
+	
+	private void completionOnStatementStart( IASTCompletionNode completionNode )
+	{
+		IASTScope searchNode = completionNode.getCompletionScope();
+		
+		LookupResult result = null;
+		// lookup fields and methods with the right visibility
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
+		kinds[0] = IASTNode.LookupKind.FIELDS; 
+		kinds[1] = IASTNode.LookupKind.METHODS;
+		kinds[2] = IASTNode.LookupKind.VARIABLES; 
+		kinds[3] = IASTNode.LookupKind.STRUCTURES; 
+		kinds[4] = IASTNode.LookupKind.ENUMERATIONS; 
+		kinds[5] = IASTNode.LookupKind.NAMESPACES;
+		kinds[6] = IASTNode.LookupKind.FUNCTIONS;
+		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions (result);
+	}
 	private void completionOnScopedReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the name before the qualification 
@@ -630,6 +647,10 @@ public class CompletionEngine implements RelevanceConstants{
 			// CompletionOnKeyword
 			completionOnKeyword(completionNode);
 		}
+		else if(kind == IASTCompletionNode.CompletionKind.STATEMENT_START )
+		{
+			completionOnStatementStart(completionNode);
+		}
 	
 		addKeywordsToCompletions( completionNode.getKeywords());
 		return completionNode;
@@ -703,6 +724,10 @@ public class CompletionEngine implements RelevanceConstants{
 			
 		case 15:
 			kindStr = "USER_SPECIFIED_NAME";
+			break;
+		
+		case 16:
+			kindStr = "STATEMENT_START";
 			break;
 			
 		case 200:

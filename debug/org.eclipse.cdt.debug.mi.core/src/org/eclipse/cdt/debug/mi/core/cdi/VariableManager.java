@@ -222,8 +222,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			CommandFactory factory = mi.getCommandFactory();
 			int depth = frame.getThread().getStackFrameCount();
 			int level = frame.getLevel();
+			// Need the GDB/MI view of leve which the reverse i.e. Highest frame is 0
+			int miLevel = depth - level;
 			MIStackListArguments listArgs =
-			factory.createMIStackListArguments(false, level, level);
+			factory.createMIStackListArguments(false, miLevel, miLevel);
 			MIArg[] args = null;
 			mi.postCommand(listArgs);
 			MIStackListArgumentsInfo info = listArgs.getMIStackListArgumentsInfo();
@@ -238,7 +240,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				ICDITarget tgt = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
 					ArgumentObject arg = new ArgumentObject(tgt, args[i].getName(),
-					 frame, args.length - i, depth);
+					 frame, args.length - i, level);
 					argObjects.add(arg);
 				}
 			}
@@ -379,7 +381,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		try {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			int depth = frame.getThread().getStackFrameCount();
+			int level = frame.getLevel();
 			MIArg[] args = null;
 			MIStackListLocals locals = factory.createMIStackListLocals(false);
 			mi.postCommand(locals);
@@ -392,7 +394,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				ICDITarget tgt = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
 					VariableObject varObj = new VariableObject(tgt, args[i].getName(),
-						 frame, args.length - i, depth);
+						 frame, args.length - i, level);
 					varObjects.add(varObj);
 				}
 			}

@@ -11,9 +11,12 @@
 package org.eclipse.cdt.make.internal.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
@@ -47,11 +50,12 @@ public class BuildInfoFactory {
 	static final String BUILD_INCREMENTAL_ENABLED = PREFIX + ".enabledIncrementalBuild"; //$NON-NLS-1$
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
+	static final String ENVIRONMENT = PREFIX + ".environment"; //$NON-NLS-1$
 
 	private abstract static class Store implements IMakeBuilderInfo {
 
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
-			putValue(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
+			putString(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
 		}
 
 		public boolean isDefaultBuildCmd() {
@@ -62,7 +66,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setBuildCommand(IPath location) throws CoreException {
-			putValue(BUILD_COMMAND, location.toString());
+			putString(BUILD_COMMAND, location.toString());
 		}
 
 		public IPath getBuildCommand() {
@@ -101,7 +105,7 @@ public class BuildInfoFactory {
 		protected abstract String getBuilderID();
 
 		public void setBuildLocation(IPath location) throws CoreException {
-			putValue(BUILD_LOCATION, location.toString());
+			putString(BUILD_LOCATION, location.toString());
 		}
 
 		public IPath getBuildLocation() {
@@ -110,7 +114,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setStopOnError(boolean enabled) throws CoreException {
-			putValue(STOP_ON_ERROR, new Boolean(enabled).toString());
+			putString(STOP_ON_ERROR, new Boolean(enabled).toString());
 		}
 
 		public boolean isStopOnError() {
@@ -118,7 +122,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setAutoBuildTarget(String target) throws CoreException {
-			putValue(BUILD_TARGET_AUTO, target);
+			putString(BUILD_TARGET_AUTO, target);
 		}
 
 		public String getAutoBuildTarget() {
@@ -126,7 +130,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setIncrementalBuildTarget(String target) throws CoreException {
-			putValue(BUILD_TARGET_INCREMENTAL, target);
+			putString(BUILD_TARGET_INCREMENTAL, target);
 		}
 
 		public String getIncrementalBuildTarget() {
@@ -134,7 +138,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setFullBuildTarget(String target) throws CoreException {
-			putValue(BUILD_TARGET_FULL, target);
+			putString(BUILD_TARGET_FULL, target);
 		}
 
 		public String getFullBuildTarget() {
@@ -145,11 +149,11 @@ public class BuildInfoFactory {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}
 
-		public abstract void putValue(String name, String value) throws CoreException;
-		public abstract String getString(String property);
+		protected abstract void putString(String name, String value) throws CoreException;
+		protected abstract String getString(String property);
 
 		public void setAutoBuildEnable(boolean enabled) throws CoreException {
-			putValue(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
 		}
 
 		public boolean isAutoBuildEnable() {
@@ -157,7 +161,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
-			putValue(BUILD_INCREMENTAL_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_INCREMENTAL_ENABLED, new Boolean(enabled).toString());
 		}
 
 		public boolean isIncrementalBuildEnabled() {
@@ -165,7 +169,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setFullBuildEnable(boolean enabled) throws CoreException {
-			putValue(BUILD_FULL_ENABLED, new Boolean(enabled).toString());
+			putString(BUILD_FULL_ENABLED, new Boolean(enabled).toString());
 		}
 
 		public boolean isFullBuildEnabled() {
@@ -177,7 +181,7 @@ public class BuildInfoFactory {
 		}
 
 		public void setBuildArguments(String args) throws CoreException {
-			putValue(BUILD_ARGUMENTS, args);
+			putString(BUILD_ARGUMENTS, args);
 		}
 
 		public String[] getErrorParsers() {
@@ -198,7 +202,59 @@ public class BuildInfoFactory {
 			for (int i = 0; i < parsers.length; i++) {
 				buf.append(parsers[i]).append(';');
 			}
-			putValue(ErrorParserManager.PREF_ERROR_PARSER, buf.toString());
+			putString(ErrorParserManager.PREF_ERROR_PARSER, buf.toString());
+		}
+
+		public Map getEnvironment() {
+			return decodeMap(getString(ENVIRONMENT));
+		}
+
+		public void setEnvironment(Map env) throws CoreException {
+			putString(ENVIRONMENT, encodeMap(env));
+		}
+
+		protected Map decodeMap(String value) {
+			Map map = new HashMap();
+			try {
+				while (value != null && value.length() > 0) {
+					int ndx = 0;
+					while (value.charAt(ndx) != '|' || (ndx != 0 && value.charAt(ndx - 1) == '\\')) {
+						ndx++;
+					}
+					StringBuffer line = new StringBuffer(value.substring(0, ndx));
+					int lndx = 0;
+					while (line.charAt(lndx) != '=' || (lndx != 0 && line.charAt(lndx - 1) == '\\')) {
+						lndx++;
+					}
+					map.put(line.substring(0, lndx), line.substring(lndx + 1));
+					value = value.substring(ndx+1);
+				}
+			} catch (StringIndexOutOfBoundsException e) {
+			}
+			return map;
+		}
+
+		protected String encodeMap(Map values) {
+			StringBuffer str = new StringBuffer();
+			Iterator entries = values.entrySet().iterator();
+			while (entries.hasNext()) {
+				Entry entry = (Entry) entries.next();
+				str.append(escapeChars((String) entry.getKey(), "=|"));
+				str.append("=");
+				str.append(escapeChars((String) entry.getValue(), "=|)"));
+				str.append("|");
+			}
+			return str.toString();
+		}
+
+		protected String escapeChars(String string, String escapeChars) {
+			StringBuffer str = new StringBuffer(string);
+			for(int i = 0; i < str.length(); i++) {
+				if ( escapeChars.indexOf(str.charAt(i)) != -1) {
+					str.insert(i-1, '\\');
+				}
+			}
+			return str.toString();
 		}
 	}
 
@@ -207,13 +263,13 @@ public class BuildInfoFactory {
 		private String builderID;
 		private boolean useDefaults;
 
-		public Preference(Preferences prefs, String builderID, boolean useDefaults) {
+		Preference(Preferences prefs, String builderID, boolean useDefaults) {
 			this.prefs = prefs;
 			this.builderID = builderID;
 			this.useDefaults = useDefaults;
 		}
 
-		public void putValue(String name, String value) {
+		protected void putString(String name, String value) {
 			if (useDefaults) {
 				prefs.setDefault(name, value);
 			} else {
@@ -221,7 +277,7 @@ public class BuildInfoFactory {
 			}
 		}
 
-		public String getString(String property) {
+		protected String getString(String property) {
 			if (useDefaults) {
 				return prefs.getDefaultString(property);
 			}
@@ -238,7 +294,7 @@ public class BuildInfoFactory {
 		private String builderID;
 		private Map args;
 
-		public BuildProperty(IProject project, String builderID) throws CoreException {
+		BuildProperty(IProject project, String builderID) throws CoreException {
 			this.project = project;
 			this.builderID = builderID;
 			ICommand builder;
@@ -249,7 +305,7 @@ public class BuildInfoFactory {
 			args = builder.getArguments();
 		}
 
-		public void putValue(String name, String value) throws CoreException {
+		protected void putString(String name, String value) throws CoreException {
 			String curValue = (String) args.get(name);
 			if (curValue != null && curValue.equals(value)) {
 				return;
@@ -260,12 +316,12 @@ public class BuildInfoFactory {
 			project.setDescription(project.getDescription(), null);
 		}
 
-		public String getString(String name) {
+		protected String getString(String name) {
 			String value = (String) args.get(name);
 			return value == null ? "" : value; //$NON-NLS-1$
 		}
 
-		public String getBuilderID() {
+		protected String getBuilderID() {
 			return builderID;
 		}
 	}
@@ -274,20 +330,20 @@ public class BuildInfoFactory {
 		private Map args;
 		private String builderID;
 
-		public BuildArguments(Map args, String builderID) {
+		BuildArguments(Map args, String builderID) {
 			this.args = args;
 			this.builderID = builderID;
 		}
 
-		public void putValue(String name, String value) {
+		protected void putString(String name, String value) {
 			args.put(name, value);
 		}
 
-		public String getString(String name) {
+		protected String getString(String name) {
 			return (String) args.get(name);
 		}
 
-		public String getBuilderID() {
+		protected String getBuilderID() {
 			return builderID;
 		}
 	}

@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -49,4 +51,7 @@ public interface IMakeBuilderInfo {
 
 	String[] getErrorParsers();
 	void setErrorParsers(String[] parsers) throws CoreException;
+
+	Map getEnvironment();
+	void setEnvironment(Map env) throws CoreException;
 }

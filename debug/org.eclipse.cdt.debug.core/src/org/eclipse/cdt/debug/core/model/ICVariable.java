@@ -25,4 +25,10 @@ public interface ICVariable extends IVariable
 	boolean isEditable();
 	
 	boolean hasChildren();
+
+	boolean isArray();
+
+	int[] getArrayDimensions();
+
+	boolean isStructure();
 }

@@ -15,6 +15,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICastToArray;
@@ -614,5 +618,48 @@ public abstract class CVariable extends CDebugElement
 	protected boolean isPointer()
 	{
 		return isEditable() && hasChildren();
+	}
+
+	public boolean isArray()
+	{
+		return ( getType() instanceof ICDIArrayType );
+	}
+
+	public int[] getArrayDimensions()
+	{
+		int length = 0;
+		ICDIType type = getType();
+		while( type instanceof ICDIArrayType )
+		{
+			++length;
+			type = ( type instanceof ICDIDerivedType ) ? ((ICDIDerivedType)type).getComponentType() : null;
+		}
+		int[] dims = new int[length];
+		type = getType();
+		for ( int i = length; i > 0; --i )
+		{
+			dims[i - 1] = ((ICDIArrayType)type).getDimension();
+			type = ((ICDIDerivedType)type).getComponentType();
+		}
+		return dims;
+	}
+
+	public boolean isStructure()
+	{
+		return ( getType() instanceof ICDIStructType );
+	}
+
+	private ICDIType getType()
+	{
+		ICDIType type = null;
+		try
+		{
+			if ( getCDIVariable() != null )
+				type = getCDIVariable().getType();
+		}
+		catch( CDIException e )
+		{
+		}
+		return type;
 	}
 }

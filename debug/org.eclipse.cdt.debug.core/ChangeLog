@@ -1,3 +1,9 @@
+2003-05-29 Mikhail Khodjaiants
+	Added new methods to ICVariable to vizualize arrays and structures based 
+	on the new CDI types.
+	* ICVariable.java
+	* CVariable.java
+
 2003-05-27 Mikhail Khodjaiants
 	Check if the location of breakpoint is eligible for the target 
 	when setting, removing or changing the propeties.

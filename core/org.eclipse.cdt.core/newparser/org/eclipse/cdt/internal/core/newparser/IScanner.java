@@ -1,6 +1,7 @@
 package org.eclipse.cdt.internal.core.newparser;
 
 import java.io.Reader;
+import java.util.List;
 
 /**
  * @author jcamelon
@@ -14,12 +15,17 @@ import java.io.Reader;
 public interface IScanner {
 	
 	public IScanner initializeScanner( Reader sourceToBeRead, String fileName );
+	
 	public void addDefinition(String key, IMacroDescriptor macroToBeAdded );
 	public void addDefinition(String key, String value); 
 	public Object getDefinition(String key);
-	public Object[] getIncludePaths();
 	
-	public Token nextToken() throws ScannerException; 
+	public Object[] getIncludePaths();
+	public void addIncludePath(String includePath); 
+	public void overwriteIncludePath( List newIncludePaths );
+	
+	public Token nextToken() throws ScannerException;
+	 
 	public void setQuickScan(boolean qs);
 	public void setCallback(IParserCallback c);
 }

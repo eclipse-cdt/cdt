@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -100,6 +101,13 @@ NOCHAR);
 	public void addIncludePath(String includePath)
 	{
 		includePaths.add(includePath);
+	}
+	
+	public void overwriteIncludePath( List newIncludePaths )
+	{
+		includePaths = null; 
+		includePaths = new ArrayList(); 
+		includePaths.addAll( newIncludePaths );
 	}
 
 	public void addDefinition(String key, IMacroDescriptor macro)

@@ -3,8 +3,8 @@ package org.eclipse.cdt.internal.core.newparser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-
-import org.eclipse.cdt.internal.core.dom.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is an attempt at a copyright clean parser.  The grammar is based
@@ -15,7 +15,9 @@ public class Parser {
 	private IParserCallback callback;
 	private boolean quickParse = false;
 	private boolean parsePassed = true;
-	private DeclarativeRegion currRegion = new DeclarativeRegion();
+	
+	// TO DO: convert to a real symbol table
+	private Map currRegion = new HashMap();
 	
 	public Parser(IScanner s, IParserCallback c, boolean quick) throws Exception {
 		callback = c;
@@ -45,8 +47,7 @@ public class Parser {
 	}
 
 	public Parser(InputStream stream, IParserCallback c, boolean quick) throws Exception {
-		this(new Scanner().initializeScanner( new InputStreamReader(stream), 
-null ), c, quick);
+		this(new Scanner().initializeScanner( new InputStreamReader(stream), null ), c, quick);
 	}
 	
 	private static int parseCount = 0;
@@ -66,15 +67,11 @@ null ), c, quick);
 	 * : (declaration)*
 	 * 
 	 */
-	public TranslationUnit translationUnit() throws Exception {
-		TranslationUnit translationUnit = new TranslationUnit();
+	public void translationUnit() throws Exception {
 		Token lastBacktrack = null;
 		while (LT(1) != Token.tEOF) {
 			try {
-				Declaration declaration = declaration();
-				if (declaration != null)
-					// To do: once finished, this should never be null
-					translationUnit.addDeclaration(declaration);
+				declaration();
 			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
@@ -94,8 +91,6 @@ null ), c, quick);
 				}
 			}
 		}
-		
-		return translationUnit;
 	}
 	
 	/**
@@ -116,21 +111,23 @@ null ), c, quick);
 	 *   - explicitInstantiation and explicitSpecialization into
 	 *       templateDeclaration
 	 */
-	public Declaration declaration() throws Exception {
+	public void declaration() throws Exception {
 		switch (LT(1)) {
 			case Token.t_asm:
-				return null; // asmDefinition();
+				return; // asmDefinition();
 			case Token.t_namespace:
-				return null; // namespaceDefinition();
+				return; // namespaceDefinition();
 			case Token.t_using:
-				return null; // usingDeclaration();
+				return; // usingDeclaration();
 			case Token.t_export:
 			case Token.t_template:
-				return null; // templateDeclaration();
+				return; // templateDeclaration();
 			case Token.t_extern:
-				return null; // linkageSpecification();
+				if (LT(1) == Token.tSTRING)
+					return; // linkageSpecification();
+				// else drop through
 			default:
-				return simpleDeclaration(); 
+				simpleDeclaration(); 
 		}
 	}
 	
@@ -145,10 +142,8 @@ null ), c, quick);
 	 * To do:
 	 * - work in ctorInitializer and functionTryBlock
 	 */
-	public SimpleDeclaration simpleDeclaration() throws Exception {
-		SimpleDeclaration simpleDeclaration = new SimpleDeclaration();
-		
-		DeclSpecifierSeq declSpecifierSeq = declSpecifierSeq();
+	public void simpleDeclaration() throws Exception {
+		declSpecifierSeq();
 
 		try {
 			initDeclarator();
@@ -198,8 +193,6 @@ null ), c, quick);
 			default:
 				throw backtrack;
 		}
-		
-		return simpleDeclaration;
 	}
 	
 	/**
@@ -219,103 +212,101 @@ null ), c, quick);
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public DeclSpecifierSeq declSpecifierSeq() throws Exception {
-		DeclSpecifierSeq declSpecifierSeq = new DeclSpecifierSeq();
-
+	public void declSpecifierSeq() throws Exception {
 		declSpecifiers:		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.t_auto:
 					consume();
-					declSpecifierSeq.setAuto(true);
+					//declSpecifierSeq.setAuto(true);
 					break;
 				case Token.t_register:
 					consume();
-					declSpecifierSeq.setRegister(true);
+					//declSpecifierSeq.setRegister(true);
 					break;
 				case Token.t_static:
 					consume();
-					declSpecifierSeq.setStatic(true);
+					//declSpecifierSeq.setStatic(true);
 					break;
 				case Token.t_extern:
 					consume();
-					declSpecifierSeq.setExtern(true);
+					//declSpecifierSeq.setExtern(true);
 					break;
 				case Token.t_mutable:
 					consume();
-					declSpecifierSeq.setMutable(true);
+					//declSpecifierSeq.setMutable(true);
 					break;
 				case Token.t_inline:
 					consume();
-					declSpecifierSeq.setInline(true);
+					//declSpecifierSeq.setInline(true);
 					break;
 				case Token.t_virtual:
 					consume();
-					declSpecifierSeq.setVirtual(true);
+					//declSpecifierSeq.setVirtual(true);
 					break;
 				case Token.t_explicit:
 					consume();
-					declSpecifierSeq.setExplicit(true);
+					//declSpecifierSeq.setExplicit(true);
 					break;
 				case Token.t_typedef:
 					consume();
-					declSpecifierSeq.setTypedef(true);
+					//declSpecifierSeq.setTypedef(true);
 					break;
 				case Token.t_friend:
 					consume();
-					declSpecifierSeq.setFriend(true);
+					//declSpecifierSeq.setFriend(true);
 					break;
 				case Token.t_const:
 					consume();
-					declSpecifierSeq.setConst(true);
+					//declSpecifierSeq.setConst(true);
 					break;
 				case Token.t_volatile:
 					consume();
-					declSpecifierSeq.setVolatile(true);
+					//declSpecifierSeq.setVolatile(true);
 					break;
 				case Token.t_char:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_char);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_char);
 					break;
 				case Token.t_wchar_t:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_wchar_t);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_wchar_t);
 					break;
 				case Token.t_bool:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_bool);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_bool);
 					break;
 				case Token.t_short:
 					consume();
-					declSpecifierSeq.setShort(true);
+					//declSpecifierSeq.setShort(true);
 					break;
 				case Token.t_int:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_int);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_int);
 					break;
 				case Token.t_long:
 					consume();
-					declSpecifierSeq.setLong(true);
+					//declSpecifierSeq.setLong(true);
 					break;
 				case Token.t_signed:
 					consume();
-					declSpecifierSeq.setUnsigned(false);
+					//declSpecifierSeq.setUnsigned(false);
 					break;
 				case Token.t_unsigned:
 					consume();
-					declSpecifierSeq.setUnsigned(true);
+					//declSpecifierSeq.setUnsigned(true);
 					break;
 				case Token.t_float:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_float);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_float);
 					break;
 				case Token.t_double:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_double);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_double);
 					break;
 				case Token.t_void:
 					consume();
-					declSpecifierSeq.setType(DeclSpecifierSeq.t_void);
+					//declSpecifierSeq.setType(DeclSpecifierSeq.t_void);
 					break;
 				case Token.t_typename:
 					consume();
@@ -326,7 +317,7 @@ null ), c, quick);
 					// handle nested later:
 				case Token.tIDENTIFIER:
 					// handle nested later:
-					if (currRegion.getDeclaration(LA(1).getImage()) != null) {
+					if (currRegion.get(LA(1).getImage()) != null) {
 						consume();
 						break;
 					}
@@ -344,7 +335,6 @@ null ), c, quick);
 					break declSpecifiers;
 			}
 		}
-		return declSpecifierSeq;
 	}
 	
 	/**
@@ -395,10 +385,8 @@ null ), c, quick);
 	 * To Do:
 	 * - handle initializers
 	 */
-	public Object initDeclarator() throws Exception {
+	public void initDeclarator() throws Exception {
 		declarator();
-			
-		return null;
 	}
 	
 	/**
@@ -415,7 +403,7 @@ null ), c, quick);
 	 * declaratorId
 	 * : name
 	 */
-	public Declarator declarator() throws Exception {
+	public void declarator() throws Exception {
 		
 		callback.declaratorBegin();
 		
@@ -431,7 +419,7 @@ null ), c, quick);
 			consume();
 			declarator();
 			consume(Token.tRPAREN);
-			return null;
+			return;
 		}
 		
 		callback.declaratorId(LA(1));
@@ -472,7 +460,6 @@ null ), c, quick);
 		}
 		
 		callback.declaratorEnd();
-		return null;
 	}
 	
 	/**
@@ -515,24 +502,19 @@ null ), c, quick);
 	 * classSpecifier
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
-	public ClassSpecifier classSpecifier() throws Exception {
-		ClassSpecifier classSpecifier;
-		
+	public void classSpecifier() throws Exception {
 		String classKey = null;
 		
 		// class key
 		switch (LT(1)) {
 			case Token.t_class:
 				classKey = consume().getImage();
-				classSpecifier = new ClassSpecifier(ClassSpecifier.t_class);
 				break;
 			case Token.t_struct:
 				classKey = consume().getImage();
-				classSpecifier = new ClassSpecifier(ClassSpecifier.t_struct);
 				break;
 			case Token.t_union:
 				classKey = consume().getImage();
-				classSpecifier = new ClassSpecifier(ClassSpecifier.t_union);
 				break;
 			default:
 				throw backtrack;
@@ -543,49 +525,36 @@ null ), c, quick);
 		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
 			name = consume();
-			// TO DO: handles nested names and template ids
-			classSpecifier.setName(name.getImage());
 		}
 
 		callback.classBegin(classKey, name);
-		currRegion.addDeclaration(name.getImage(), classSpecifier);
+		currRegion.put(name.getImage(), classKey);
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {
 			consume();
-			
-			BaseSpecifier baseSpecifier = new BaseSpecifier(classSpecifier);
 			
 			baseSpecifierLoop:
 			for (;;) {
 				switch (LT(1)) {
 					case Token.t_virtual:
 						consume();
-						baseSpecifier.setVirtual(true);
 						break;
 					case Token.t_public:
 						consume();
-						baseSpecifier.setAccess(BaseSpecifier.t_public);
 						break;
 					case Token.t_protected:
 						consume();
-						baseSpecifier.setAccess(BaseSpecifier.t_protected);
 						break;
 					case Token.t_private:
 						consume();
-						baseSpecifier.setAccess(BaseSpecifier.t_private);
 						break;
-					case Token.tCOLON:
+					case Token.tCOLONCOLON:
 					case Token.tIDENTIFIER:
-						if (baseSpecifier.getName() != null) {
-							// already have a name
-							break baseSpecifierLoop;
-						}
 						// TO DO: handle nested names and template ids
-						baseSpecifier.setName(consume().getImage());
+						consume();
 						break;
 					case Token.tCOMMA:
-						baseSpecifier = new BaseSpecifier(classSpecifier);
 						continue baseSpecifierLoop;
 					default:
 						break baseSpecifierLoop;
@@ -597,32 +566,26 @@ null ), c, quick);
 		if (LT(1) == Token.tLBRACE) {
 			consume();
 			
-			int access = classSpecifier.getClassKey() == ClassSpecifier.t_class
-				? MemberDeclaration.t_private : MemberDeclaration.t_public;
-			
 			memberDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
 				switch (LT(1)) {
 					case Token.t_public:
 						consume();
 						consume(Token.tCOLON);
-						access = MemberDeclaration.t_public;
 						break;
 					case Token.t_protected:
 						consume();
 						consume(Token.tCOLON);
-						access = MemberDeclaration.t_public;
 						break;
 					case Token.t_private:
 						consume();
 						consume(Token.tCOLON);
-						access = MemberDeclaration.t_public;
 						break;
 					case Token.tRBRACE:
 						consume(Token.tRBRACE);
 						break memberDeclarationLoop;
 					default:
-						classSpecifier.addMemberDeclaration(new MemberDeclaration(access, declaration()));
+						declaration();
 				}
 			}
 			// consume the }
@@ -630,8 +593,6 @@ null ), c, quick);
 		}
 		
 		callback.classEnd();
-		
-		return classSpecifier;
 	}
 	
 	public void functionBody() throws Exception {

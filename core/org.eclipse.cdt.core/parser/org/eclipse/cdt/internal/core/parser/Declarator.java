@@ -392,4 +392,20 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
         return pointerOperatorNameDuple;
     }
 
+    /**
+     * @return
+     */
+    public boolean hasFunctionBody()
+    {
+        return hasFunctionBody;
+    }
+
+    /**
+     * @param b
+     */
+    public void setHasFunctionBody(boolean b)
+    {
+        hasFunctionBody = b;
+    }
+
 }

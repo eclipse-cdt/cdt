@@ -1966,8 +1966,9 @@ public class Scanner implements IScanner {
 				} else if (t.getType() == IToken.tLT) {
 					
 					try {
-						startOffset = baseOffset + t.getOffset();					
+											
 						t = helperScanner.nextToken(false);
+						startOffset = baseOffset + t.getOffset();
 						
 						while (t.getType() != IToken.tGT) {
 							fileName.append(t.getImage());

@@ -8,29 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser.failedTests;
-
-import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest;
+package org.eclipse.cdt.core.parser.ast;
 
 /**
  * @author jcamelon
  *
  */
-public class FailedCompleteParseASTExpressionTest extends CompleteParseBaseTest
+public interface IASTParameterReference extends IASTReference
 {
-    /**
-     * 
-     */
-    public FailedCompleteParseASTExpressionTest()
-    {
-        super();
-    }
-    /**
-     * @param name
-     */
-    public FailedCompleteParseASTExpressionTest(String name)
-    {
-        super(name);
-    }
-       
 }

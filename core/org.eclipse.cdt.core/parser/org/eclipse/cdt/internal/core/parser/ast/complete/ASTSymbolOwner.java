@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
  */
 public class ASTSymbolOwner implements ISymbolOwner
 {
-    protected final ISymbol symbol;
+    protected ISymbol symbol;
     /**
      * 
      */
@@ -34,4 +34,10 @@ public class ASTSymbolOwner implements ISymbolOwner
     {
         return symbol;
     }
+    
+    public void setSymbol( ISymbol symbol ) 
+    {
+    	this.symbol = symbol; 
+    }
+    
 }

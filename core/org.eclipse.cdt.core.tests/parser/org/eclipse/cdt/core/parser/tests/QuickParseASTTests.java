@@ -1156,7 +1156,7 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		assertEquals( i.getName(), "stdio.h");
 		assertEquals( i.getStartingOffset(), 0 ); 
-		assertEquals( i.getNameOffset(), 9 ); 
+		assertEquals( i.getNameOffset(), 10 ); 
 		assertEquals( i.getEndingOffset(), 19 );
 		
 		
@@ -1779,5 +1779,17 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("namespace bar = foo;");
 	}
 
+	public void testBug39504B() throws Exception
+	{
+		parse("int y = sizeof (int*);");
+	}
+	public void testBug39505A() throws Exception
+	{
+		parse("int AD::* gp_down = static_cast<int AD::*>(gp_stat);");
+	}
+	public void testBug39505B() throws Exception
+	{
+		parse("int* gp_down = static_cast<int*>(gp_stat);");
+	}
 		
 }

@@ -1,3 +1,10 @@
+2003-09-11 John Camelon
+	Fixed Bug 42840 : Search: Cannot find things after double declarations 
+	Fixed Bug 42798 : Selected #include <Angled> off by 1 char 
+	Fixed Bug 42872 : dynamic cast not parsed properly 
+	Partially fixed Bug 39504 : sizeof-expressions are not handled properly 
+	Updated SourceElementRequestor callbacks to include IASTParameterReference callbacks. 
+
 2003-09-09 Hoda Amer
 	- Solved the double reference problem
 	- solution to bugs #42822, #42823, & #42822B

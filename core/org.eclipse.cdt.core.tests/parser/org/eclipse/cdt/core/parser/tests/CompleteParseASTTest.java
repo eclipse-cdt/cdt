@@ -713,4 +713,35 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( ((IASTReference)callback.getReferences().get(0)).getReferencedElement(), enumE );
 		assertEquals( ((IASTReference)callback.getReferences().get(1)).getReferencedElement(),  e1 );
 	}
+	
+	public void testBug42840() throws Exception
+	{
+		Iterator i = parse( "void foo(); void foo() { } class SearchMe { };").getDeclarations();
+		IASTFunction fooDeclaration = (IASTFunction)i.next(); 
+		IASTFunction fooDefinition = (IASTFunction)i.next(); 
+		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertFalse( i.hasNext() );
+		assertTrue( callback.getReferences().isEmpty());
+		
+		i = parse( "class A { void f ( A );	};	void A::f( A ){ return; }" ).getDeclarations();
+		classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTMethod fooMethodDefinition = (IASTMethod)i.next(); 
+		assertFalse( i.hasNext() ); 
+		Iterator subIterator = getDeclarations( classSpec );
+		IASTMethod fooMethodDeclaration = (IASTMethod)subIterator.next(); 
+		assertFalse( subIterator.hasNext());
+		assertEquals( callback.getReferences().size(), 3 );
+		for( int j = 0; j < 3; ++j)
+			assertEquals( ((IASTReference)callback.getReferences().get( j )).getReferencedElement(), classSpec ); 
+		
+	}
+	
+	public void testBug42872() throws Exception
+	{
+		Iterator i = parse( "struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }" ).getDeclarations(); 
+		IASTClassSpecifier structB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTClassSpecifier structD = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTFunction foo = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );
+	}
 }

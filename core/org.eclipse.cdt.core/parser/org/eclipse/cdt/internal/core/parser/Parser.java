@@ -897,7 +897,7 @@ public class Parser implements IParser
             case IToken.tLBRACE :
                 if (forKR)
                     throw backtrack;
-                declarator.hasFunctionBody(true);
+                declarator.setHasFunctionBody(true);
                 hasFunctionBody = true;
                 break;
             default :
@@ -1730,23 +1730,25 @@ public class Parser implements IParser
      * @return			Returns the same object sent in.
      * @throws Backtrack
      */
-    protected boolean cvQualifier(
+    protected IToken cvQualifier(
         Declarator declarator)
         throws Backtrack
     {
+    	IToken result = null; 
         switch (LT(1))
         {
             case IToken.t_const :
-            	consume( IToken.t_const ); 
-                declarator.addPtrOp(ASTPointerOperator.CONST_POINTER);
-                return true;
+            	result = consume( IToken.t_const ); 
+                if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.CONST_POINTER);
+                break;
             case IToken.t_volatile :
-            	consume( IToken.t_volatile ); 
-                declarator.addPtrOp(ASTPointerOperator.VOLATILE_POINTER);
-                return true;
+            	result = consume( IToken.t_volatile ); 
+				if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.VOLATILE_POINTER);
+                break;
             default :
-                return false;
+                
         }
+        return result;
     }
     /**
      * Parses the initDeclarator construct of the ANSI C++ spec.
@@ -2186,15 +2188,15 @@ public class Parser implements IParser
         else
         {
             // must be a conversion function
-            typeId();
-            toSend = lastToken;
+            toSend = typeId().getLastToken();
+            
             try
             {
                 // this ptrOp doesn't belong to the declarator, 
                 // it's just a part of the name
-                consumePointerOperators(d, true);
-                if( lastToken != null )
-                	toSend = lastToken;
+                IToken temp = consumePointerOperators(d, true);
+                if( temp != null )
+                	toSend = temp;
             }
             catch (Backtrack b)
             {
@@ -2220,22 +2222,22 @@ public class Parser implements IParser
      * @param owner 		Declarator that this pointer operator corresponds to.  
      * @throws Backtrack 	request a backtrack
      */
-    protected void consumePointerOperators(Declarator d, boolean consumeOnlyOne) throws Backtrack
+    protected IToken consumePointerOperators(Declarator d, boolean consumeOnlyOne) throws Backtrack
     {
+    	IToken result = null;
     	for( ; ; )
     	{
-	        int t = LT(1);
-	        if (t == IToken.tAMPER)
+	        if (LT(1) == IToken.tAMPER)
 	        {
-	        	consume( IToken.tAMPER ); 
-	            d.addPtrOp(ASTPointerOperator.REFERENCE);
-	            if( consumeOnlyOne ) return;
-	            continue;
+	        	result = consume( IToken.tAMPER ); 
+	            if( d != null ) d.addPtrOp(ASTPointerOperator.REFERENCE);
+	            /*if( consumeOnlyOne ) */return result;
+	            /* continue; */
 	        }
 	        IToken mark = mark();
-	        IToken tokenType = LA(1);
+
 	        ITokenDuple nameDuple = null;
-	        if (t == IToken.tIDENTIFIER || t == IToken.tCOLONCOLON)
+	        if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
 	        {
 	        	try
 	        	{
@@ -2244,34 +2246,33 @@ public class Parser implements IParser
 	        	catch( Backtrack bt )
 	        	{
 	        		backup( mark ); 
-	        		return;
+	        		return null;
 	        	}
-	            t = LT(1);
 	        }
-	        if (t == IToken.tSTAR)
+	        if ( LT(1) == IToken.tSTAR)
 	        {
-	            tokenType = consume(Token.tSTAR); // tokenType = "*"
+	            result = consume(Token.tSTAR); // tokenType = "*"
 	
-				d.setPointerOperatorName(nameDuple);
+				if( d != null ) d.setPointerOperatorName(nameDuple);
 	
-				boolean successful = false;
+				IToken successful = null;
 	            for (;;)
 	            {
-                    boolean newSuccess = cvQualifier(d);
-                    if( newSuccess ) successful = true; 
+                    IToken newSuccess = cvQualifier(d);
+                    if( newSuccess != null ) successful = newSuccess; 
                     else break;
                     
 	            }
 	            
-				if( !successful )
+				if( successful == null )
 				{
-					d.addPtrOp( ASTPointerOperator.POINTER );
+					if( d != null ) d.addPtrOp( ASTPointerOperator.POINTER );
 				}
-				if( consumeOnlyOne ) return;
+				if( consumeOnlyOne ) return result;
 				continue;	            
 	        }
 	        backup(mark);
-	        return;
+	        return result;
     	}
     }
     /**
@@ -3520,12 +3521,6 @@ public class Parser implements IParser
                 if (LT(1) == IToken.t_const)
                     consume();
                 duple = typeId();
-                while (LT(1) == IToken.tSTAR)
-                {
-                    consume(IToken.tSTAR);
-                    if (LT(1) == IToken.t_const || LT(1) == IToken.t_volatile)
-                        consume();
-                }
                 consume(IToken.tRPAREN);
                 IASTExpression castExpression = castExpression(scope);
                 try
@@ -3552,17 +3547,20 @@ public class Parser implements IParser
         }
         return unaryExpression(scope);
     }
+    
     /**
      * @throws Backtrack
      */
-    protected ITokenDuple typeId() throws Backtrack
+    protected ITokenDuple typeId( ) throws Backtrack
     {
         IToken begin = LA(1);
         IToken end = null;
         try
         {
             ITokenDuple d = name();
-            return d;
+            IToken checkForPtrs = consumePointerOperators(null, false);
+            if( checkForPtrs == null ) return d; 
+            return new TokenDuple( d.getFirstToken(), checkForPtrs );
         }
         catch (Backtrack b)
         {
@@ -3599,7 +3597,8 @@ public class Parser implements IParser
             }
             if (end != null)
             {
-                return new TokenDuple(begin, end);
+            	IToken end2 = consumePointerOperators(null, false);
+                return new TokenDuple(begin, end2 == null ? end : end2);
             }
             else if (
                 LT(1) == IToken.t_typename
@@ -3610,7 +3609,8 @@ public class Parser implements IParser
             {
                 consume();
                 ITokenDuple d = name();
-                return new TokenDuple(begin, d.getLastToken());
+				IToken end2 = consumePointerOperators(null, false);
+                return new TokenDuple(begin, ( (end2 == null) ? d.getLastToken() : end2 ) );
             }
             else
                 throw backtrack;
@@ -4273,7 +4273,7 @@ public class Parser implements IParser
                 lhs,
                 null,
                 null,
-                null,
+                duple,
                 "", null);
         }
         catch (ASTSemanticException e)

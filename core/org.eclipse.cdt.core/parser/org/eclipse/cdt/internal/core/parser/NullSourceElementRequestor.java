@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference;
 
 
 public class NullSourceElementRequestor implements ISourceElementRequestor 
@@ -429,6 +430,15 @@ public class NullSourceElementRequestor implements ISourceElementRequestor
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumeratorReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
      */
     public void acceptEnumeratorReference(IASTEnumeratorReference reference)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
+     */
+    public void acceptParameterReference(ASTParameterReference reference)
     {
         // TODO Auto-generated method stub
         

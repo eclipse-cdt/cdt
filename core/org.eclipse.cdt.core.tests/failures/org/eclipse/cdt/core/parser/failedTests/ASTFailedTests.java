@@ -41,18 +41,6 @@ public class ASTFailedTests extends BaseASTTest
     {
       	assertCodeFailsParse("int y = sizeof(x[0]);");
     }
-    public void testBug39504B() throws Exception
-    {
-        assertCodeFailsParse("int y = sizeof (int*);");
-    }
-    public void testBug39505A() throws Exception
-    {
-        assertCodeFailsParse("int AD::* gp_down = static_cast<int AD::*>(gp_stat);");
-    }
-    public void testBug39505B() throws Exception
-    {
-        assertCodeFailsParse("int* gp_down = static_cast<int*>(gp_stat);");
-    }
    
     public void testBug39525() throws Exception
     {

@@ -1,3 +1,6 @@
+2003-09-11 John Camelon
+	Updated SourceElementRequestor callbacks to include IASTParameterReference callbacks. 
+
 2003-09-11 Bogdan Gheorghe
 	- Added Search Menu to CView.java
 	- Added queryWorkingSets to CSearchScopeFactory to bring up the working

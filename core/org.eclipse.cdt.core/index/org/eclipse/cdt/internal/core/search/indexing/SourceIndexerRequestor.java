@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference;
 
 /**
  * @author bgheorgh
@@ -440,6 +441,14 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
     {
      	if( reference.getReferencedElement() instanceof IASTEnumerator )
      		indexer.addEnumeratorReference( (IASTEnumerator)reference.getReferencedElement() );
+        
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
+     */
+    public void acceptParameterReference(ASTParameterReference reference)
+    {
+        // TODO Auto-generated method stub
         
     }
 }

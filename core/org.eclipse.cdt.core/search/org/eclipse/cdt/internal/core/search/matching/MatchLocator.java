@@ -75,6 +75,7 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -472,6 +473,15 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public static void verbose(String log) {
 	  System.out.println("(" + Thread.currentThread() + ") " + log); 
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
+     */
+    public void acceptParameterReference(ASTParameterReference reference)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 
 
 }

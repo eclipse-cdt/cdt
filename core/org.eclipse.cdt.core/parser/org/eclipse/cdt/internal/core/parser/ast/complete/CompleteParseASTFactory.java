@@ -63,7 +63,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
-import org.eclipse.cdt.internal.core.parser.ast.ASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -78,6 +77,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
+
 
 /**
  * @author jcamelon
@@ -210,36 +210,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	                 	throw new ASTSemanticException();    
 	                }
 	                break;
-				case 2: 
-					firstSymbol = name.getFirstToken();
-					if( firstSymbol.getType() != IToken.tCOLONCOLON )
-						throw new ASTSemanticException();
-					try
-					{
-						if(type == TypeInfo.t_function)
-							if(validParameterList(parameters))	                	
-								result = pst.getCompilationUnit().unqualifiedFunctionLookup( name.getLastToken().getImage(), new LinkedList(parameters));
-							else
-								result = null;
-						else
-							result = pst.getCompilationUnit().lookup( name.getLastToken().getImage() );
-						addReference( references, createReference( result, name.getLastToken().getImage(), name.getLastToken().getOffset() ));
-					}
-					catch( ParserSymbolTableException e)
-					{
-						throw new ASTSemanticException();
-					}
-					break;
 				default:
 					Iterator iter = name.iterator();
 					firstSymbol = name.getFirstToken();
 					result = startingScope;
 					if( firstSymbol.getType() == IToken.tCOLONCOLON )
 						result = pst.getCompilationUnit();
+					
 					while( iter.hasNext() )
 					{
 						IToken t = (IToken)iter.next();
 						if( t.getType() == IToken.tCOLONCOLON ) continue;
+						if( t.isPointer() ) break;
 						try
 						{
 							if( t == name.getLastToken() ) 
@@ -659,6 +641,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				symbol.getContainingSymbol().getType() == TypeInfo.t_union )
 			{
 				return new ASTFieldReference( offset, string, (IASTField)symbol.getASTExtension().getPrimaryDeclaration());
+			}
+			else if( symbol.getContainingSymbol().getType() == TypeInfo.t_function && 
+				symbol.getContainingSymbol() instanceof IParameterizedSymbol && 
+				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList() != null && 
+				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList().contains( symbol ) )
+			{
+				return new ASTParameterReference( offset, string, (IASTParameterDeclaration)symbol.getASTExtension().getPrimaryDeclaration() );
 			}
 			else
 			{
@@ -1149,7 +1138,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isExplicit,
 		boolean isPureVirtual,
 		ASTAccessVisibility visibility, 
-		List constructorChain) throws ASTSemanticException
+		List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
 	{
 		List references = new ArrayList();
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
@@ -1208,7 +1197,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				return createMethod(scope, functionName, parameters, returnType,
 				exception, isInline, isFriend, isStatic, startOffset, offset,
 				ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-				visibility, constructorChain,parentName, references);
+				visibility, constructorChain,parentName, references, isFunctionDefinition);
 			}
 		}
 	
@@ -1217,7 +1206,31 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
-	
+		 
+		symbol.setIsForwardDeclaration(!isFunctionDefinition);
+		
+		if( isFunctionDefinition )
+		{
+			List functionParameters = new LinkedList();
+			// the lookup requires a list of type infos
+			// instead of a list of IASTParameterDeclaration
+			Iterator p = parameters.iterator();
+			while (p.hasNext()){
+				ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+				functionParameters.add(getParameterTypeInfo(param));
+			}
+			
+			IParameterizedSymbol functionDeclaration = null; 
+			
+			functionDeclaration = 
+				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name, TypeInfo.t_function, functionParameters, 0, new ArrayList(), false);                
+
+			if( functionDeclaration != null )
+			{
+				functionDeclaration.setTypeSymbol( symbol );
+			}
+		}
+		
 		try
 		{
 			ownerScope.addSymbol( symbol );
@@ -1362,6 +1375,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( newReferences != null )
 			references.addAll( newReferences );
 		
+		if( absDecl instanceof ASTParameterDeclaration )
+		{
+			ASTParameterDeclaration parm = (ASTParameterDeclaration)absDecl;
+			parm.setSymbol( paramSymbol );
+			try
+            {
+                attachSymbolExtension( paramSymbol, parm );
+            }
+            catch (ExtensionException e)
+            {
+                throw new ASTSemanticException();
+            }
+		}
 	}
 
     /**
@@ -1414,12 +1440,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isExplicit,
 		boolean isPureVirtual,
 		ASTAccessVisibility visibility, 
-		List constructorChain) throws ASTSemanticException
+		List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
 	{
 		return createMethod(scope, name, parameters, returnType,
 		exception, isInline, isFriend, isStatic, startOffset, nameOffset,
 		ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-		visibility, constructorChain,scopeToSymbol(scope).getName(), null);
+		visibility, constructorChain,scopeToSymbol(scope).getName(), null, isFunctionDefinition );
 	}   
 	  
     public IASTMethod createMethod(
@@ -1442,7 +1468,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ASTAccessVisibility visibility, 
         List constructorChain,
         String parentName, 
-        List references) throws ASTSemanticException
+        List references, boolean isFunctionDefinition ) throws ASTSemanticException
     {
 		boolean isConstructor = false;
 		boolean isDestructor = false;
@@ -1902,4 +1928,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( lookupSymbol.isType( TypeInfo.t_type, TypeInfo.t_enumeration ) ) return true;
 		return false;
 	}
+
+    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause)
+    {
+        return new ASTParameterDeclaration( null, isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp, parameterName, initializerClause );
+    }
 }

@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference;
 
 /**
  * @author jcamelon
@@ -617,6 +618,14 @@ public class CompleteParseBaseTest extends TestCase
         public void acceptEnumeratorReference(IASTEnumeratorReference reference)
         {
         	references.add( reference );
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
+         */
+        public void acceptParameterReference(ASTParameterReference reference)
+        {
+            references.add( reference );
         }
     
     }

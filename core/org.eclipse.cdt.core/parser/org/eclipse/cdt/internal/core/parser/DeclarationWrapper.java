@@ -37,7 +37,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
  *
  */
 public class DeclarationWrapper implements IDeclaratorOwner
-{
+{ 
     private ITokenDuple name;
     private Type simpleType =
         IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
@@ -435,7 +435,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
 		        virtual,
 	            explicit,
 	            declarator.isPureVirtual(),
-	            ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers());
+	            ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers(), 
+	            declarator.hasFunctionBody());
     }
     /**
      * @param declarator
@@ -465,7 +466,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
 		explicit,
 		declarator.isPureVirtual(),
 		ASTAccessVisibility.PUBLIC,
-		declarator.getConstructorMemberInitializers());
+		declarator.getConstructorMemberInitializers(), 
+		declarator.hasFunctionBody() );
     }
     /**
      * @param declarator

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
  * @author jcamelon
@@ -30,31 +31,45 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
  */
 public class Declarator implements IParameterCollection, IDeclaratorOwner, IDeclarator
 {
-	private static final int DEFAULT_ARRAYLIST_SIZE = 4; 
-	private boolean hasFunctionTryBlock;
-    private ITokenDuple pointerOperatorNameDuple;
-    private ITokenDuple namedDuple;
-    private boolean isFunction;
-    private boolean hasFunctionBody;
-    private IASTExpression constructorExpression;
-    private boolean pureVirtual = false;
-    private final IDeclaratorOwner owner;
-	private Declarator ownedDeclarator = null; 
-	private String name = "";  //$NON-NLS-1$
+	private static final int DEFAULT_ARRAYLIST_SIZE = 4;
+	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
+	
+	private final IDeclaratorOwner owner;
+    private ITokenDuple pointerOperatorNameDuple = null;
+    private ITokenDuple namedDuple = null;
+    private IASTExpression constructorExpression = null;
+    private Declarator ownedDeclarator = null;
 	private IASTInitializerClause initializerClause = null;
 	private IASTExceptionSpecification exceptionSpecification = null;
 	private IASTExpression bitFieldExpression = null;
-	private boolean isConst = false; 
-	private boolean isVolatile = false;
-	private boolean isKandR = false;  
 
+	private int flag = 0;
+	protected void setBit(boolean b, int mask){
+		if( b ){
+			flag = flag | mask; 
+		} else {
+			flag = flag & ~mask; 
+		} 
+	}
+	
+	protected boolean checkBit(int mask){
+		return (flag & mask) != 0;
+	}	
+	
+	protected static final int IS_FUNCTION       =  0x000020;
+	protected static final int HAS_TRY_BLOCK 	 =  0x000040;
+	protected static final int HAS_FUNCTION_BODY =  0x000080;
+	protected static final int IS_PURE_VIRTUAL   =  0x000100;
+	protected static final int IS_VAR_ARGS       =  0x000200;
+	protected static final int IS_VOLATILE       =  0x000400;
+	protected static final int IS_CONST          =  0x000800;
+	
 	private List ptrOps = Collections.EMPTY_LIST;
 	private List parameters = Collections.EMPTY_LIST;
 	private List arrayModifiers = Collections.EMPTY_LIST;
 	private List constructorMemberInitializers = Collections.EMPTY_LIST;
-	private int nameStartOffset, nameEndOffset;
-	private boolean varArgs;
-	private int nameLine; 
+	
+
 
     public Declarator( IDeclaratorOwner owner )
 	{
@@ -66,7 +81,8 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public String getName()
     {
-        return name;
+    	if( namedDuple == null ) return EMPTY_STRING;
+        return namedDuple.toString();
     }
 
     /**
@@ -74,12 +90,14 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public int getNameEndOffset()
     {
-        return nameEndOffset;
+    	if( namedDuple == null ) return -1;
+        return namedDuple.getEndOffset();
     }
 
     public int getNameLine()
 	{
-    	return nameLine;
+    	if( namedDuple == null ) return -1;
+    	return namedDuple.getLineNumber();
     }
     
     /**
@@ -87,7 +105,8 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public int getNameStartOffset()
     {
-        return nameStartOffset;
+    	if( namedDuple == null ) return -1;
+        return namedDuple.getStartOffset();
     }
 
     /**
@@ -98,30 +117,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
         return owner;
     }
 
-    /**
-     * @param string
-     */
-    public void setName(String string)
-    {
-        name = string;
-    }
-
-    /**
-     * @param i
-     */
-    public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
-    {
-        nameEndOffset = offset;
-    }
-
-    /**
-     * @param i
-     */
-    public void setNameStartOffset(int i)
-    {
-        nameStartOffset = i;
-    }
-    
+ 
     /**
      * @return
      */
@@ -186,9 +182,6 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     
     public void setName( ITokenDuple duple )
     {
-		setName( duple.toString() );
-		setNameStartOffset( duple.getFirstToken().getOffset());
-		setNameEndOffsetAndLineNumber( duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber());
 		namedDuple = duple;
     }
 
@@ -205,7 +198,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public boolean isConst()
     {
-        return isConst;
+        return checkBit(IS_CONST);
     }
 
     /**
@@ -213,7 +206,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public boolean isVolatile()
     {
-        return isVolatile;
+        return checkBit( IS_VOLATILE);
     }
 
     /**
@@ -229,7 +222,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void setConst(boolean b)
     {
-        isConst = b;
+        setBit(b, IS_CONST );
     }
 
     /**
@@ -237,23 +230,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void setVolatile(boolean b)
     {
-        isVolatile = b;
-    }
-
-    /**
-     * @return
-     */
-    public boolean isKandR()
-    {
-        return isKandR;
-    }
-
-    /**
-     * @param b
-     */
-    public void setKandR(boolean b)
-    {
-        isKandR = b;
+    	setBit( b, IS_VOLATILE );
     }
 
     /**
@@ -261,7 +238,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void setPureVirtual(boolean b)
     {
-     	pureVirtual = b;
+    	setBit( b, IS_PURE_VIRTUAL );
     }
 
     /**
@@ -269,7 +246,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public boolean isPureVirtual()
     {
-        return pureVirtual;
+        return checkBit( IS_PURE_VIRTUAL );
     }
 
     /**
@@ -329,7 +306,6 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     {
     	if( constructorMemberInitializers == Collections.EMPTY_LIST )
     		constructorMemberInitializers = new ArrayList( DEFAULT_ARRAYLIST_SIZE );
-
         constructorMemberInitializers.add( initializer );
     }
 
@@ -341,20 +317,13 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
         return constructorMemberInitializers;
     }
 
-    /**
-     * @param b
-     */
-    public void hasFunctionBody(boolean b)
-    {
-    	hasFunctionBody = b;
-    }
 
     /**
      * @return
      */
     public boolean isFunction()
     {
-        return isFunction;
+        return checkBit( IS_FUNCTION );
     }
 
     /**
@@ -362,7 +331,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void setIsFunction(boolean b)
     {
-        isFunction = b;
+        setBit( b, IS_FUNCTION );
     }
 
     /* (non-Javadoc)
@@ -370,10 +339,12 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public Iterator getDeclarators()
     {
-		List l = new ArrayList(); 
-		if( ownedDeclarator != null )
-			l.add( ownedDeclarator );
-        return l.iterator();
+		if( ownedDeclarator == null )
+			return EmptyIterator.EMPTY_ITERATOR;
+		
+		List l = new ArrayList(1);
+		l.add( ownedDeclarator );
+		return l.iterator();
     }
 
     /* (non-Javadoc)
@@ -417,7 +388,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public boolean hasFunctionBody()
     {
-        return hasFunctionBody;
+        return checkBit( HAS_FUNCTION_BODY );
     }
 
     /**
@@ -425,7 +396,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void setHasFunctionBody(boolean b)
     {
-        hasFunctionBody = b;
+    	setBit( b, HAS_FUNCTION_BODY );
     }
 
     /**
@@ -433,7 +404,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public void setFunctionTryBlock(boolean b)
     {
-        hasFunctionTryBlock = true;
+        setBit( b, HAS_TRY_BLOCK );
     }
 
     /**
@@ -441,29 +412,21 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
      */
     public boolean hasFunctionTryBlock()
     {
-        return hasFunctionTryBlock;
-    }
-
-    /**
-     * @param b
-     */
-    public void setHasFunctionTryBlock(boolean b)
-    {
-        hasFunctionTryBlock = b;
+        return checkBit( HAS_TRY_BLOCK );
     }
 
 	/**
 	 * @param b
 	 */
 	public void setIsVarArgs(boolean b) {
-		varArgs = b;
+		setBit( b, IS_VAR_ARGS );
 	}
 
 	/**
 	 * @return Returns the varArgs.
 	 */
 	public boolean isVarArgs() {
-		return varArgs;
+		return checkBit( IS_VAR_ARGS );
 	}
 
 	/* (non-Javadoc)

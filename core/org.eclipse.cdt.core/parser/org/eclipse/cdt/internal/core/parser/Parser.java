@@ -1863,6 +1863,8 @@ public abstract class Parser extends ExpressionParser implements IParser
 		simpleDeclarationMark = null; 
 		if( d.getNameDuple() != null )
 			d.getNameDuple().getLastToken().setNext( null );
+		if( d.getPointerOperatorNameDuple() != null )
+			d.getPointerOperatorNameDuple().getLastToken().setNext( null );
 	}
 
 

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -40,43 +41,62 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  *
  */
 public class DeclarationWrapper implements IDeclaratorOwner
-{ 
-    private boolean imaginary, complex;
-    private boolean restrict;
+{
+	private int flag = 0;
+	protected void setBit(boolean b, int mask){
+		if( b ){
+			flag = flag | mask; 
+		} else {
+			flag = flag & ~mask; 
+		} 
+	}
+	
+	protected boolean checkBit(int mask){
+		return (flag & mask) != 0;
+	}	
+
+	private static final int DEFAULT_LIST_SIZE = 4;	
+	
+	protected static final int IS_IMAGINARY   = 0x00000010;
+	protected static final int IS_COMPLEX     = 0x00000020;
+	protected static final int IS_RESTRICT    = 0x00000040;
+	protected static final int IS_SIGNED      = 0x00000080;
+	protected static final int IS_SHORT       = 0x00000100;
+	protected static final int IS_UNSIGNED    = 0x00000200;
+	protected static final int IS_LONG        = 0x00000400;
+	protected static final int IS_TYPENAMED   = 0x00000800;
+	protected static final int IS_VOLATILE    = 0x00001000;
+	protected static final int IS_VIRTUAL     = 0x00002000;
+	protected static final int IS_TYPEDEF     = 0x00004000;
+	protected static final int IS_STATIC      = 0x00008000;
+	protected static final int IS_REGISTER    = 0x00010000;
+	protected static final int IS_EXTERN      = 0x00020000;
+	protected static final int IS_EXPLICIT    = 0x00040000;
+	protected static final int IS_CONST       = 0x00080000;
+	protected static final int IS_AUTO        = 0x00100000;
+	protected static final int IS_GLOBAL      = 0x00200000;
+	protected static final int IS_MUTABLE     = 0x00400000;
+	protected static final int IS_FRIEND      = 0x00800000;
+	protected static final int IS_INLINE      = 0x01000000;
+
+
+    private int startingOffset = 0;
+	private int startingLine;
     private int endOffset;
+    
     private ITokenDuple name;
-    private Type simpleType =
-        IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
-    private boolean isSigned;
-    private boolean isLong;
-    private boolean isShort;
-    private boolean isUnsigned;
+    private Type simpleType = IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
     private final IASTTemplate templateDeclaration;
     private final IASTScope scope;
     private IASTTypeSpecifier typeSpecifier;
-    private List declarators = new ArrayList();
-    private boolean typeNamed = false;
-    private boolean volatil = false;
-    private boolean virtual = false;
-    private boolean typedef = false;
-    private boolean staticc = false;
-    private boolean register = false;
-    private boolean extern = false;
-    private boolean explicit = false;
-    private boolean constt = false;
-    private int startingOffset = 0;
-    private boolean auto = false,
-        mutable = false,
-        friend = false,
-        inline = false;
-	private int startingLine;
-	private boolean global = false;
+	
+    private List declarators = Collections.EMPTY_LIST;
     /**
      * @param b
      */
     public void setAuto(boolean b)
     {
-        auto = b;
+        setBit( b, IS_AUTO );
     }
     /**
      * @return
@@ -85,39 +105,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return scope;
     }
-    
-    public DeclarationWrapper( DeclarationWrapper wrapper )
-    {
-		this( wrapper.getScope(), wrapper.getStartingOffset(), wrapper.getStartingLine(), wrapper.getOwnerTemplate() );
-		setAuto( wrapper.isAuto() );
-		setComplex( wrapper.isComplex() );
-		setConst( wrapper.isConst() );
-		setEndingOffsetAndLineNumber( wrapper.getEndOffset(), wrapper.getEndLine() );
-		setExplicit( wrapper.isExplicit() );
-		setExtern(wrapper.isExtern() );
-		setFriend(wrapper.isFriend());
-		setGloballyQualified( wrapper.isGloballyQualified() );
-		setImaginary( wrapper.isImaginary() );
-		setInline( wrapper.isInline());
-		setLong( wrapper.isLong() );
-		setMutable( wrapper.isMutable() );
-		setName( wrapper.getName() );
-		setRegister(wrapper.isRegister() );
-		setRestrict( wrapper.isRestrict() );
-		setShort(wrapper.isShort());
-		setSigned(wrapper.isSigned());
-		setSimpleType(wrapper.getSimpleType());
-		setStatic(wrapper.isStatic());
-		setTypedef(wrapper.isTypedef());
-		setTypenamed(wrapper.isTypeNamed());
-		setTypeName(wrapper.getName());
-		setTypeSpecifier(wrapper.getTypeSpecifier());
-		setUnsigned(wrapper.isUnsigned());
-		setVirtual(wrapper.isVirtual());
-		setVolatile(wrapper.isVolatile());
-
-    }
-    
+        
     /**
      * @param scope
      */
@@ -136,140 +124,140 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public void setTypenamed(boolean b)
     {
-        typeNamed = b;
+    	setBit( b, IS_TYPENAMED );
     }
     /**
      * @param b
      */
     public void setMutable(boolean b)
     {
-        mutable = b;
+    	setBit( b, IS_MUTABLE);
     }
     /**
      * @param b
      */
     public void setFriend(boolean b)
     {
-        friend = b;
+    	setBit( b, IS_FRIEND );
     }
     /**
      * @param b
      */
     public void setInline(boolean b)
     {
-        inline = b;
+        setBit( b, IS_INLINE );
     }
     /**
      * @param b
      */
     public void setRegister(boolean b)
     {
-        register = b;
+        setBit( b, IS_REGISTER );
     }
     /**
      * @param b
      */
     public void setStatic(boolean b)
     {
-        staticc = b;
+        setBit( b, IS_STATIC );
     }
     /**
      * @param b
      */
     public void setTypedef(boolean b)
     {
-        typedef = b;
+        setBit( b, IS_TYPEDEF );
     }
     /**
      * @param b
      */
     public void setVirtual(boolean b)
     {
-        virtual = b;
+        setBit( b, IS_VIRTUAL );
     }
     /**
      * @param b
      */
     public void setVolatile(boolean b)
     {
-        volatil = b;
+        setBit( b, IS_VOLATILE );
     }
     /**
      * @param b
      */
     public void setExtern(boolean b)
     {
-        extern = b;
+        setBit( b, IS_EXTERN );
     }
     /**
      * @param b
      */
     public void setExplicit(boolean b)
     {
-        explicit = b;
+        setBit( b, IS_EXPLICIT );
     }
     /**
      * @param b
      */
     public void setConst(boolean b)
     {
-        constt = b;
+        setBit( b, IS_CONST );
     }
     /**
      * @return
      */
     public boolean isAuto()
     {
-        return auto;
+        return checkBit( IS_AUTO );
     }
     /**
      * @return
      */
     public boolean isConst()
     {
-        return constt;
+        return checkBit( IS_CONST );
     }
     /**
      * @return
      */
     public boolean isExplicit()
     {
-        return explicit;
+    	return checkBit( IS_EXPLICIT );
     }
     /**
      * @return
      */
     public boolean isExtern()
     {
-        return extern;
+    	return checkBit( IS_EXTERN );
     }
     /**
      * @return
      */
     public boolean isFriend()
     {
-        return friend;
+    	return checkBit( IS_FRIEND );
     }
     /**
      * @return
      */
     public boolean isInline()
     {
-        return inline;
+    	return checkBit( IS_INLINE );
     }
     /**
      * @return
      */
     public boolean isMutable()
     {
-        return mutable;
+    	return checkBit( IS_MUTABLE );
     }
     /**
      * @return
      */
     public boolean isRegister()
     {
-        return register;
+    	return checkBit( IS_REGISTER );
     }
     /**
      * @return
@@ -288,38 +276,40 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public boolean isStatic()
     {
-        return staticc;
+    	return checkBit( IS_STATIC );
     }
     /**
      * @return
      */
     public boolean isTypedef()
     {
-        return typedef;
+    	return checkBit( IS_TYPEDEF );
     }
     /**
      * @return
      */
     public boolean isTypeNamed()
     {
-        return typeNamed;
+    	return checkBit( IS_TYPENAMED );
     }
     /**
      * @return
      */
     public boolean isVirtual()
     {
-        return virtual;
+    	return checkBit( IS_VIRTUAL );
     }
     /**
      * @return
      */
     public boolean isVolatile()
     {
-        return volatil;
+    	return checkBit( IS_VOLATILE );
     }
     public void addDeclarator(Declarator d)
     {
+    	if( declarators == Collections.EMPTY_LIST )
+    		declarators = new ArrayList(DEFAULT_LIST_SIZE);
         declarators.add(d);
     }
     public Iterator getDeclarators()
@@ -426,8 +416,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	IASTAbstractDeclaration abs = null;
             abs =
                     astFactory.createAbstractDeclaration(
-                        constt,
-                        volatil,
+                        isConst(),
+                        isVolatile(),
                         getTypeSpecifier(),
                         declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
@@ -436,16 +426,16 @@ public class DeclarationWrapper implements IDeclaratorOwner
             
         	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? TokenFactory.createTokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
         	
-        	if( typedef )
+        	if( isTypedef() )
 				return astFactory.createTypedef(scope, nameDuple.toString(), abs,
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine());
         	
         	if( isWithinClass )
-        		return astFactory.createField( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
+        		return astFactory.createField( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
         	 
-        	return astFactory.createVariable( scope, nameDuple, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );        	
+        	return astFactory.createVariable( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );        	
         	
         }
        	throw new BacktrackException();
@@ -460,7 +450,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
 		return astFactory.createTypedef(scope, nested ? declarator
 				.getOwnedDeclarator().getName() : declarator.getName(),
-				astFactory.createAbstractDeclaration(constt, volatil,
+				astFactory.createAbstractDeclaration(isConst(), isVolatile(),
 						getTypeSpecifier(), declarator.getPointerOperators(),
 						declarator.getArrayModifiers(), null, null),
 				startingOffset, getStartingLine(), declarator
@@ -481,15 +471,15 @@ public class DeclarationWrapper implements IDeclaratorOwner
 				.getOwnedDeclarator().getNameDuple() : declarator
 				.getNameDuple(),
 				createParameterList(declarator.getParameters()), astFactory
-						.createAbstractDeclaration(constt, volatil,
+						.createAbstractDeclaration(isConst(), isVolatile(),
 								getTypeSpecifier(), declarator
 										.getPointerOperators(), declarator
 										.getArrayModifiers(), null, null),
-				declarator.getExceptionSpecification(), inline, friend,
-				staticc, startingOffset, getStartingLine(), declarator
+				declarator.getExceptionSpecification(), isInline(), isFriend(),
+				isStatic(), startingOffset, getStartingLine(), declarator
 						.getNameStartOffset(), declarator.getNameEndOffset(),
 				declarator.getNameLine(), templateDeclaration, declarator
-						.isConst(), declarator.isVolatile(), virtual, explicit,
+						.isConst(), declarator.isVolatile(), isVirtual(), isExplicit(),
 				declarator.isPureVirtual(), ((IASTClassSpecifier) classifierScope)
 						.getCurrentVisibilityMode(), declarator
 						.getConstructorMemberInitializers(), declarator
@@ -506,15 +496,15 @@ public class DeclarationWrapper implements IDeclaratorOwner
 				.getOwnedDeclarator().getNameDuple() : declarator
 				.getNameDuple(),
 				createParameterList(declarator.getParameters()), astFactory
-						.createAbstractDeclaration(constt, volatil,
+						.createAbstractDeclaration(isConst(), isVolatile(),
 								getTypeSpecifier(), declarator
 										.getPointerOperators(), declarator
 										.getArrayModifiers(), null, null),
-				declarator.getExceptionSpecification(), inline, friend,
-				staticc, startingOffset, getStartingLine(), declarator
+				declarator.getExceptionSpecification(), isInline(), isFriend(),
+				isStatic(), startingOffset, getStartingLine(), declarator
 						.getNameStartOffset(), declarator.getNameEndOffset(),
 				declarator.getNameLine(), templateDeclaration, declarator
-						.isConst(), declarator.isVolatile(), virtual, explicit,
+						.isConst(), declarator.isVolatile(), isVirtual(), isExplicit(),
 				declarator.isPureVirtual(), declarator
 						.getConstructorMemberInitializers(), declarator
 						.hasFunctionBody(), declarator.hasFunctionTryBlock(),
@@ -529,18 +519,18 @@ public class DeclarationWrapper implements IDeclaratorOwner
        return astFactory.createField(
                 scope,
             	nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
-                auto,
+                isAuto(),
                 declarator.getInitializerClause(),
                 declarator.getBitFieldExpression(),
                 astFactory.createAbstractDeclaration(
-                    constt,
-            		volatil,
+                    isConst(),
+            		isVolatile(),
                     getTypeSpecifier(),
                     declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
-                mutable,
-                extern,
-                register,
-                staticc,
+                isMutable(),
+                isExtern(),
+                isRegister(),
+                isStatic(),
                 startingOffset,
                 getStartingLine(),
             	declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
@@ -585,14 +575,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
             declarator.getInitializerClause(),
             declarator.getBitFieldExpression(),
             astFactory.createAbstractDeclaration(
-                constt,
-                volatil,
+                isConst(),
+                isVolatile(),
                 getTypeSpecifier(),
                 declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
-            mutable,
-            extern,
-            register,
-            staticc,
+            isMutable(),
+            isExtern(),
+            isRegister(),
+            isStatic(),
             getStartingOffset(),
             getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression());
 
@@ -610,56 +600,56 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public boolean isUnsigned()
     {
-        return isUnsigned;
+    	return checkBit( IS_UNSIGNED );
     }
     /**
      * @return
      */
     public boolean isSigned()
     {
-        return isSigned;
+    	return checkBit( IS_SIGNED );
     }
     /**
      * @return
      */
     public boolean isShort()
     {
-        return isShort;
+    	return checkBit( IS_SHORT );
     }
     /**
      * @return
      */
     public boolean isLong()
     {
-        return isLong;
+    	return checkBit( IS_LONG );
     }
     /**
      * @param b
      */
     public void setLong(boolean b)
     {
-        isLong = b;
+    	setBit( b, IS_LONG );
     }
     /**
      * @param b
      */
     public void setShort(boolean b)
     {
-        isShort = b;
+    	setBit( b, IS_SHORT );
     }
     /**
      * @param b
      */
     public void setSigned(boolean b)
     {
-        isSigned = b;
+    	setBit( b, IS_SIGNED );
     }
     /**
      * @param b
      */
     public void setUnsigned(boolean b)
     {
-        isUnsigned = b;
+        setBit( b, IS_UNSIGNED );
     }
     /**
      * @return
@@ -685,21 +675,15 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @return
      */
-    public ITokenDuple getName()
+    public final ITokenDuple getName()
     {
         return name;
     }
-    /**
-     * @param duple
-     */
-    public void setName(ITokenDuple duple)
-    {
-        name = duple;
-    }
+
     /**
      * @return
      */
-    public IASTTemplate getOwnerTemplate()
+    public final IASTTemplate getOwnerTemplate()
     {
         return templateDeclaration;
     }
@@ -728,7 +712,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public void setRestrict(boolean b)
     {
-        restrict = b;
+        setBit( b, IS_RESTRICT );
     }
     
 
@@ -737,14 +721,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public boolean isRestrict()
     {
-        return restrict;
+    	return checkBit( IS_RESTRICT );
     }
     /**
      * @param b
      */
     public void setImaginary(boolean b)
     {
-        imaginary = b;
+    	setBit( b, IS_IMAGINARY );
     }
 
     /**
@@ -752,7 +736,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public boolean isComplex()
     {
-        return complex;
+    	return checkBit( IS_COMPLEX );
     }
 
     /**
@@ -760,7 +744,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public boolean isImaginary()
     {
-        return imaginary;
+    	return checkBit( IS_IMAGINARY );
     }
 
     /**
@@ -768,17 +752,17 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     public void setComplex(boolean b)
     {
-        complex = b;
+        setBit( b, IS_COMPLEX );
     }
 	/**
 	 * @param b
 	 */
 	public void setGloballyQualified(boolean b) {
-		global = b;
+		setBit( b, IS_GLOBAL );
 	}
 	
 	public boolean isGloballyQualified(){
-		return global;
+		return checkBit( IS_GLOBAL );
 	}
 	
 	private Hashtable extensionParameters = new Hashtable();

@@ -11,6 +11,9 @@
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -18,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -54,6 +58,7 @@ class UpdateManagedProject12 {
 	private static final String ID_GNU = "gnu";	//$NON-NLS-1$
 	private static final String ID_INCPATHS = "incpaths";	//$NON-NLS-1$
 	private static final String ID_INCLUDE = "include";	//$NON-NLS-1$
+	private static final String ID_LIBS = "libs";	//$NON-NLS-1$
 	private static final String ID_LINUX = "linux";	//$NON-NLS-1$
 	private static final String ID_OPTION = "option";	//$NON-NLS-1$
 	private static final String ID_OPTIONS = "options";	//$NON-NLS-1$
@@ -84,7 +89,15 @@ class UpdateManagedProject12 {
 	private static final int TYPE_EXE = 0;
 	private static final int TYPE_SHARED = 1;
 	private static final int TYPE_STATIC = 2;
+	private static Map configIdMap;
 	
+	/* (non-Javadoc)
+	 * Generates a valid 2.0.x eqivalent ID for an old 1.2 format
+	 * configuration.
+	 * 
+	 * @param oldId
+	 * @return
+	 */
 	protected static String getNewConfigurationId(String oldId){
 		boolean cygwin = false;
 		boolean debug = false;
@@ -131,7 +144,7 @@ class UpdateManagedProject12 {
 		// Figure out what the original parent of the config is
 		String parentId = oldConfig.getAttribute(IConfigurationV2.PARENT);
 		parentId = getNewConfigurationId(parentId);
-
+		
 		newParentConfig = newParent.getConfiguration(parentId);
 		if (newParentConfig == null) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
@@ -141,6 +154,7 @@ class UpdateManagedProject12 {
 		// Generate a random number for the new config id
 		int randomElement = ManagedBuildManager.getRandomNumber();
 		String newConfigId = parentId + ID_SEPARATOR + randomElement;
+
 		// Create the new configuration
 		newConfig = newProject.createConfiguration(newParentConfig, newConfigId);
 		
@@ -160,8 +174,6 @@ class UpdateManagedProject12 {
 				
 			}
 			newConfig.setArtifactName(artName);
-
-//			newConfig(oldTarget.getAttribute(ITarget.ARTIFACT_NAME));
 		}
 		
 		// Convert the tool references
@@ -177,6 +189,8 @@ class UpdateManagedProject12 {
 				throw e;
 			}
 		}
+
+		getConfigIdMap().put(oldConfig.getAttribute(IConfigurationV2.ID), newConfig);
 		monitor.worked(1);
 	}
 	
@@ -184,7 +198,7 @@ class UpdateManagedProject12 {
 								throws CoreException{
 		String[] idTokens = oldId.split("\\.");	//$NON-NLS-1$
 		
-		// New ID will be in for gnu.[compiler|link|lib].[c|c++|both].option.{1.2_component}
+		// New ID will be in for gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
 		Vector newIdVector = new Vector(idTokens.length + 2);
 		
 		// We can ignore the first element of the old IDs since it is just [cygwin|linux|solaris]
@@ -200,7 +214,7 @@ class UpdateManagedProject12 {
 		// In some old IDs the language specifier is missing for librarian and C++ options
 		String langToken = (String)newIdVector.get(1); 
 		if(!langToken.equals(TOOL_LANG_C)) {
-			// In the case of the librarian the language must b set to both
+			// In the case of the librarian the language must be set to both
 			if (langToken.equals(TOOL_NAME_LIB) || langToken.equals(TOOL_NAME_AR)) {
 				newIdVector.add(1, TOOL_LANG_BOTH);
 			} else {
@@ -234,6 +248,7 @@ class UpdateManagedProject12 {
 		// Convert any lingering "incpaths" to "include.paths"
 		String badToken = (String) newIdVector.lastElement();
 		if (badToken.equals(ID_INCPATHS)) {
+			newIdVector.remove(newIdVector.lastElement());
 			newIdVector.addElement(ID_INCLUDE);
 			newIdVector.addElement(ID_PATHS);
 		}
@@ -247,6 +262,21 @@ class UpdateManagedProject12 {
 		if (dirIndex != -1) {
 			newIdVector.remove(dirIndex);
 		}
+		
+		// Another boundary condition to check is the case where the linker option
+		// has gnu.[c|cpp].link.option.libs.paths or gnu.[c|cpp].link.option.libs.paths 
+		// because the new option format does away with the libs in the second last element
+		try {
+			if ((newIdVector.lastElement().equals(ID_PATHS) || newIdVector.lastElement().equals(ID_LIBS)) 
+					&& newIdVector.get(newIdVector.size() - 2).equals(ID_LIBS)) {
+				newIdVector.remove(newIdVector.size() - 2);
+			}
+		} catch (NoSuchElementException e) {
+			// ignore this exception
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// ignore this exception too
+		}
+		
 		
 		// Construct the new ID
 		String optId = new String();
@@ -262,16 +292,20 @@ class UpdateManagedProject12 {
 		
 		IOption options[] = tool.getOptions();		
 		for(int i = 0; i < options.length; i++){
-			IOption curOption = options[i]; 
+			IOption curOption = options[i];
+			// This can be null
 			IOption parent = curOption.getSuperClass();
 			String curOptionId = curOption.getId();
 			
-			if(parent == null)
-				continue;
-			
-			String parentId = parent.getId();
-			if(!parentId.equals(optId))
-				continue;
+			if(parent == null) {
+				if (!curOptionId.equals(optId))
+					continue;
+			} else {
+				String parentId = parent.getId();
+				if(!parentId.equals(optId))
+					continue;
+				
+			}
 				
 			return curOption.getId();
 		}
@@ -397,18 +431,9 @@ class UpdateManagedProject12 {
 					convertConfiguration(newProject, newParent, (Element) configNodes.item(configIndex), monitor);
 				}
 				catch(CoreException e){
-
+					// Keep trying
+					continue;
 				}
-			}
-			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-			IConfiguration[] newConfigs = newProject.getConfigurations();
-			if (newConfigs.length > 0) {
-				info.setDefaultConfiguration(newConfigs[0]);
-				info.setSelectedConfiguration(newConfigs[0]);
-			}
-			else{
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
-						ConverterMessages.getFormattedString("UpdateManagedProject12.7",newProject.getName()), null)); //$NON-NLS-1$
 			}
 		} catch (BuildException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
@@ -525,7 +550,7 @@ class UpdateManagedProject12 {
 	 * @param project the <code>IProject</code> that needs to be upgraded
 	 * @throws CoreException
 	 */
-	static void doProjectUpdate(IProgressMonitor monitor, IProject project) throws CoreException {
+	public static void doProjectUpdate(IProgressMonitor monitor, IProject project) throws CoreException {
 		String[] projectName = new String[]{project.getName()};
 		IFile settingsFile = project.getFile(ManagedBuildManager.SETTINGS_FILE_NAME);
 		if (!settingsFile.exists()) {
@@ -538,6 +563,8 @@ class UpdateManagedProject12 {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		UpdateManagedProjectManager.backupFile(settingsFile, "_12backup", monitor, project); ;	//$NON-NLS-1$
 
+		IManagedProject newProject = null;
+		
 		//Now convert each target to the new format
 		try {
 			// Load the old build file
@@ -553,7 +580,7 @@ class UpdateManagedProject12 {
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
-				IManagedProject newProject = convertTarget(project, oldTarget, monitor);
+				newProject = convertTarget(project, oldTarget, monitor);
 			
 				// Remove the old target
 				if (newProject != null) {
@@ -561,6 +588,28 @@ class UpdateManagedProject12 {
 					monitor.worked(9);
 				}
 			}
+			
+			// Set the default configuration
+			NodeList defaultConfiguration = document.getElementsByTagName(IManagedBuildInfo.DEFAULT_CONFIGURATION);
+			try {
+				Element defaultConfig = (Element) defaultConfiguration.item(0);
+				String oldDefaultConfigId = defaultConfig.getAttribute(IBuildObject.ID);
+				IConfiguration newDefaultConfig = (IConfiguration) getConfigIdMap().get(oldDefaultConfigId);
+				if (newDefaultConfig != null) {
+					info.setDefaultConfiguration(newDefaultConfig);
+					info.setSelectedConfiguration(newDefaultConfig);
+				} else {
+					IConfiguration[] newConfigs = newProject.getConfigurations();
+					if (newConfigs.length > 0) {
+						info.setDefaultConfiguration(newConfigs[0]);
+						info.setSelectedConfiguration(newConfigs[0]);
+					}
+				}
+			} catch (IndexOutOfBoundsException e) {
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+							ConverterMessages.getFormattedString("UpdateManagedProject12.7",newProject.getName()), null)); //$NON-NLS-1$
+			}
+			
 			// Upgrade the version
 			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
 		}catch (CoreException e){
@@ -572,6 +621,17 @@ class UpdateManagedProject12 {
 			ManagedBuildManager.saveBuildInfo(project, false);
 			monitor.done();
 		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @return Returns the configIdMap.
+	 */
+	protected static Map getConfigIdMap() {
+		if (configIdMap == null) {
+			configIdMap = new HashMap();
+		}
+		return configIdMap;
 	}
 
 }

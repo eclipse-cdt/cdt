@@ -1,14 +1,4 @@
 # GNU Make version 3.79.1, by Richard Stallman and Roland McGrath.
-# Built for i386-redhat-linux-gnu
-# Copyright (C) 1988, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 2000
-# 	Free Software Foundation, Inc.
-# This is free software; see the source for copying conditions.
-# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
-# PARTICULAR PURPOSE.
-
-# Report bugs to <bug-make@gnu.org>.
-
-
 # Make data base, printed on Fri Sep 19 21:51:12 2003
 
 # Variables

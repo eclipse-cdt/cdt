@@ -158,5 +158,9 @@
             id="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO">
       </pathEntryContainerInitializer>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.make.internal.core.PreferenceInitializer"/>
+   </extension>
 
 </plugin>

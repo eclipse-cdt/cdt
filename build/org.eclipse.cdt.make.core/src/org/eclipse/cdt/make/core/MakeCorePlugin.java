@@ -16,13 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
@@ -38,7 +36,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
@@ -56,6 +53,7 @@ public class MakeCorePlugin extends Plugin {
 	public static final String EXTERNAL_SI_PROVIDER_SIMPLE_ID = "ExternalScannerInfoProvider"; //$NON-NLS-1$
 	public static final String SI_CONSOLE_PARSER_SIMPLE_ID = "ScannerInfoConsoleParser";	//$NON-NLS-1$
 	public static final String DEFAULT_EXTERNAL_SI_PROVIDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".DefaultExternalScannerInfoProvider"; //$NON-NLS-1$
+
 	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCSpecsConsoleParser"; //$NON-NLS-1$
 	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
 	
@@ -104,41 +102,6 @@ public class MakeCorePlugin extends Plugin {
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-	protected void initializeDefaultPluginPreferences() {
-		IMakeBuilderInfo info = createBuildInfo(getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
-		try {
-			info.setBuildCommand(new Path("make")); //$NON-NLS-1$
-			info.setBuildLocation(new Path("")); //$NON-NLS-1$
-			info.setStopOnError(false);
-			info.setUseDefaultBuildCmd(true);
-			info.setAutoBuildEnable(false);
-			info.setAutoBuildTarget("all"); //$NON-NLS-1$
-			info.setIncrementalBuildEnable(true);
-			info.setIncrementalBuildTarget("all"); //$NON-NLS-1$
-			info.setFullBuildEnable(true);
-			info.setFullBuildTarget("clean all"); //$NON-NLS-1$
-			info.setCleanBuildEnable(true);
-			info.setCleanBuildTarget("clean"); //$NON-NLS-1$
-			info.setErrorParsers(CCorePlugin.getDefault().getAllErrorParsersIDs());
-		} catch (CoreException e) {
-		}
-		getPluginPreferences().setDefault(CCorePlugin.PREF_BINARY_PARSER, CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
-
-		// default plugin preferences for scanner configuration discovery
-		IScannerConfigBuilderInfo scInfo = createScannerConfigBuildInfo(getPluginPreferences(), ScannerConfigBuilder.BUILDER_ID, true);
-		try {
-			scInfo.setAutoDiscoveryEnabled(true);
-			scInfo.setMakeBuilderConsoleParserEnabled(true);
-			scInfo.setESIProviderCommandEnabled(true);
-			scInfo.setUseDefaultESIProviderCmd(true);
-			scInfo.setESIProviderCommand(new Path("gcc")); //$NON-NLS-1$
-			scInfo.setESIProviderArguments("-E -P -v ${plugin_state_location}/${specs_file}");	//$NON-NLS-1$
-			scInfo.setESIProviderConsoleParserId(GCC_SPECS_CONSOLE_PARSER_ID);
-			scInfo.setMakeBuilderConsoleParserId(GCC_SCANNER_INFO_CONSOLE_PARSER_ID);
-		} catch (CoreException e) {
-		}
-	}
-	
 	public static IMakeBuilderInfo createBuildInfo(Preferences prefs, String builderID, boolean useDefaults) {
 		return BuildInfoFactory.create(prefs, builderID, useDefaults);
 	}

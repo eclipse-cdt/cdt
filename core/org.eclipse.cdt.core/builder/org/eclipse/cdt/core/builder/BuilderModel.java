@@ -26,14 +26,14 @@ public class BuilderModel {
 	public static String getBuilderId () {
 		return BUILDER_ID;
 	}
-
+/*
 	public IBuildPath getBuildPath(IProject project) {
 		return null;
 	}
 
 	public void setBuildPath(IProject project, IBuildPath bp) {
 	}
-
+*/
 	public void addBuildListener () {
 	}
 

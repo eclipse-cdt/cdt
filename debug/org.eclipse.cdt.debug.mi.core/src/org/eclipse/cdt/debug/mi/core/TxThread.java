@@ -29,7 +29,8 @@ public class TxThread extends Thread {
 	public void run () {
 		try {
 			// signal by the session of time to die.
-			while (session.getChannelOutputStream() != null) {
+			OutputStream out;
+			while ((out = session.getChannelOutputStream()) != null) {
 				Command cmd = null;
 				CommandQueue txQueue = session.getTxQueue();
 				// removeCommand() will block until a command is available.
@@ -48,10 +49,14 @@ public class TxThread extends Thread {
 					if (cmd.getToken() > 0) {
 						CommandQueue rxQueue = session.getRxQueue();
 						rxQueue.addCommand(cmd);
+					} else {
+						synchronized (cmd) {
+							cmd.notifyAll();
+						}
 					}
+
 					// shove in the pipe
 					String str = cmd.toString();
-					OutputStream out = session.getChannelOutputStream();
 					if (out != null) {
 						out.write(str.getBytes());
 						out.flush();

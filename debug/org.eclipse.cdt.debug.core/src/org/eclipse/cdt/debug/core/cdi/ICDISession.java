@@ -32,6 +32,13 @@ public interface ICDISession {
 	ICDITarget getCurrentTarget();
 
 	/**
+	 * Set the current debug target associatd with this sesion.
+	 * 
+	 * @return ICDITarget the current debug target
+	 */
+	void setCurrentTarget(ICDITarget target) throws CDIException;
+
+	/**
 	 * Sets the value of a debug session attribute.
 	 *
 	 * @param key the attribute key
@@ -62,11 +69,26 @@ public interface ICDISession {
 	ICDISignalManager getSignalManager();
 
 	/**
+	 * Returns the variable manager of this debug session.
+	 * 
+	 * @return the variable manager
+	 */
+	ICDIVariableManager getVariableManager();
+
+	/**
 	 * Returns the expression manager of this debug session.
 	 * 
 	 * @return the expression manager
 	 */
 	ICDIExpressionManager getExpressionManager();
+
+	/**
+	 * Returns the register manager of this debug session.
+	 * 
+	 * @return the register manager
+	 */
+	ICDIRegisterManager getRegisterManager();
+
 
 	/**
 	 * Returns the memory manager of this debug session.

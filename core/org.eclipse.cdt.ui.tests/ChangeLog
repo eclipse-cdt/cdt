@@ -1,3 +1,7 @@
+2003-03-31 John Camelon
+	Added testStruct() to DOMTests.  
+	Added test35892()to ScannerTest. 
+
 2003-03-31 Andrew Niefer
 	In ParserSymbolTableTest, renamed testFunctionResolution_2() to testFunctionResolution_PointersAndBaseClasses(),
 	and modified to reflect changes in function resolution.  

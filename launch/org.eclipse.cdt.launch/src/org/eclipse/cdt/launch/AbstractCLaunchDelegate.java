@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -244,11 +245,9 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 * @param code error code
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		String newMessage = message;
-		if (exception != null) {
-			newMessage = message + " : " + exception.getLocalizedMessage();
-		}
-		throw new CoreException(new Status(IStatus.ERROR, getPluginID(), code, newMessage, exception));
+		MultiStatus status = new MultiStatus(getPluginID(),code, message,exception);
+		status.add(new Status(IStatus.ERROR,getPluginID(),code,exception.getLocalizedMessage(),exception));
+		throw new CoreException(status);
 	}
 
 	protected void cancel(String message, int code) throws CoreException {

@@ -27,7 +27,10 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 
 	public String getReturnType(){
-		return returnType;
+		if (returnType != null)
+			return returnType;
+		else
+			return "";
 	}
 
 	public void setReturnType(String type){

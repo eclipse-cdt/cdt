@@ -345,6 +345,17 @@ public class CDebugTarget extends CDebugElement
 			{
 				if ( bps[i] instanceof ICBreakpoint && isTargetBreakpoint( bps[i] ) && findCDIBreakpoint( bps[i] ) == null ) 
 				{
+					if ( bps[i] instanceof ICAddressBreakpoint )
+					{
+						// disable address breakpoints to prevent the debugger to insert them prematurely 
+						try
+						{
+							bps[i].setEnabled( false );
+						}
+						catch( CoreException e )
+						{
+						}
+					}
 					breakpointAdded( (ICBreakpoint)bps[i] );
 				}
 			}
@@ -352,6 +363,10 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	private void disableAddressBreakpoints()
+	{
+		
+	}
 	private boolean isTargetBreakpoint( IBreakpoint bp )
 	{
 		IProject project = bp.getMarker().getResource().getProject();

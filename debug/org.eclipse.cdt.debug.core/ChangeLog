@@ -1,3 +1,7 @@
+2003-02-10 Mikhail Khodjaiants
+	Disable the address breakpoints to prevent the debugger to insert them prematurely.
+	* CDebugTarget.java
+
 2003-02-05 David Inglis
 
 	Refactor Constants to debug.core

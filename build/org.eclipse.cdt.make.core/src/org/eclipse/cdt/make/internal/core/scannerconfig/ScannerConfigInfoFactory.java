@@ -169,7 +169,7 @@ public class ScannerConfigInfoFactory {
 			if (isDefaultESIProviderCmd()) {
 				String attributes = getESIProviderParameter("defaultAttributes"); //$NON-NLS-1$
 				if (attributes == null) {
-					attributes = "-E -P -v ${plugin_state_location}/{specs_file}"; //$NON-NLS-1$
+					attributes = "-E -P -v -dD ${plugin_state_location}/{specs_file}"; //$NON-NLS-1$
 				}
 				return attributes;
 			}

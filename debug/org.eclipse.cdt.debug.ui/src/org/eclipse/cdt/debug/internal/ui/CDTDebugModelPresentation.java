@@ -564,8 +564,9 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 			}
 			catch( DebugException e ) {
 			}
-			String valueString = value.getValueString().trim();
+			String valueString = value.getValueString();
 			if ( valueString != null ) {
+				valueString = valueString.trim();
 				if ( type != null && type.isCharacter() ) {
 					if ( valueString.length() == 0 )
 						valueString = "."; //$NON-NLS-1$

@@ -346,15 +346,16 @@ MIPlugin.getDefault().debugLog(line);
 			} else if (rr != null) {
 				event = new MIFunctionFinishedEvent(rr);
 			}
-		} else if ("exited-normally".equals(reason)) {
+		} else if ("exited-normally".equals(reason) ||
+			"exited-signalled".equals(reason) ||
+			"exited-signalled".equals(reason) ||
+			"exited".equals(reason)) {
 			session.getMIInferior().setTerminated();
-			event = new MIInferiorExitEvent();
-		} else if ("exited-signalled".equals(reason)) {
-			session.getMIInferior().setTerminated();
-			event = new MIInferiorExitEvent();
-		} else if ("exited".equals(reason)) {
-			session.getMIInferior().setTerminated();
-			event = new MIInferiorExitEvent();
+			if (exec != null) {
+				event = new MIInferiorExitEvent(exec);
+			} else if (rr != null) {
+				event = new MIInferiorExitEvent(rr);
+			}
 		}
 		return event;
 	}

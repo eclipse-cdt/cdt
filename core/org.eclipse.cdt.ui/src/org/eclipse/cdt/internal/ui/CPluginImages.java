@@ -282,10 +282,18 @@ public class CPluginImages {
 	 * Sets all available image descriptors for the given action.
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
-		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
-		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
-		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
+//Use the managed version so that we ensure that there is no resource handle leaks
+//Let the widget itself manage the disabled/hover attribution.  This was a huge leak
+//		relPath= relPath.substring(NAME_PREFIX_LENGTH);
+//		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
+//		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
+//		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
+
+		ImageDescriptor desc = getImageRegistry().getDescriptor(relPath);
+		if(desc == null) {
+			desc = createManaged(T + "e" + type, relPath);
+		}	
+		action.setImageDescriptor(desc);
 	}
 	
 	/**

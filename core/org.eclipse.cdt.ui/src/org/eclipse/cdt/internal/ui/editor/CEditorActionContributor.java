@@ -210,4 +210,11 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		super.contributeToStatusLine(statusLineManager);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
+	 */
+	public void dispose() {
+		setActiveEditor(null);
+		super.dispose();
+	}
 }

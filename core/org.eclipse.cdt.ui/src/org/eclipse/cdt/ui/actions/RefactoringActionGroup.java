@@ -102,9 +102,9 @@ public class RefactoringActionGroup extends ActionGroup {
 	private CEditor fEditor;
 	private String fGroupName= IContextMenuConstants.GROUP_REORGANIZE;
 
-	private SelectionDispatchAction fRenameAction;	
-	private SelectionDispatchAction fRedoAction;	
-	private SelectionDispatchAction fUndoAction;	
+	private RenameRefactoringAction fRenameAction;	
+	private RedoRefactoringAction 	fRedoAction;	
+	private UndoRefactoringAction 	fUndoAction;	
 	private List fEditorActions;
 	
 	private static class NoActionAvailable extends Action {
@@ -148,8 +148,8 @@ public class RefactoringActionGroup extends ActionGroup {
 		
 		ISelectionProvider provider= editor.getSelectionProvider();
 		ISelection selection= provider.getSelection();
-		fEditorActions= new ArrayList();
-		
+		fEditorActions= new ArrayList(3);
+
 		fRenameAction= new RenameRefactoringAction(editor);
 		fRenameAction.update(selection);
 		editor.setAction("RenameElement", fRenameAction); //$NON-NLS-1$
@@ -164,7 +164,7 @@ public class RefactoringActionGroup extends ActionGroup {
 		fRedoAction.update(selection);
 		editor.setAction("RedoAction", fRedoAction); //$NON-NLS-1$
 		fEditorActions.add(fRedoAction);
-}
+	}
 
 	public RefactoringActionGroup(IWorkbenchSite site, String groupName) {
 		fSite= site;
@@ -212,15 +212,34 @@ public class RefactoringActionGroup extends ActionGroup {
 	 */
 	public void dispose() {
 		ISelectionProvider provider= fSite.getSelectionProvider();
-		disposeAction(fRenameAction, provider);
-		disposeAction(fUndoAction, provider);
-		disposeAction(fRedoAction, provider);
+		
+		if (fRenameAction != null) {
+			disposeAction(fRenameAction, provider);
+			fRenameAction= null;
+		}
+		
+		if (fUndoAction != null) {
+			disposeAction(fUndoAction, provider);
+			fUndoAction.dispose();
+			fUndoAction= null;
+		}
+		
+		if (fRedoAction != null) {
+			disposeAction(fRedoAction, provider);
+			fRedoAction.dispose();
+			fRedoAction= null;
+		}
+		
+		if (fEditorActions != null) {
+			fEditorActions.clear();
+			fEditorActions= null;
+		}
+		
 		super.dispose();
 	}
 	
 	private void disposeAction(ISelectionChangedListener action, ISelectionProvider provider) {
-		if (action != null)
-			provider.removeSelectionChangedListener(action);
+		provider.removeSelectionChangedListener(action);
 	}
 	
 	private void addRefactorSubmenu(IMenuManager menu) {

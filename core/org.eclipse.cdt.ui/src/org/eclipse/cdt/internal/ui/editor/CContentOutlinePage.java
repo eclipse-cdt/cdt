@@ -137,9 +137,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		
 		fRefactoringActionGroup.fillContextMenu(menu);
-		
-		
-		
 	}
 	
 	/**
@@ -147,7 +144,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	 */
 	public void createControl(Composite parent) {
 		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		treeViewer.addSelectionChangedListener(this);
 		
 		treeViewer.setContentProvider(new CElementContentProvider(true, true));
 		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
@@ -166,30 +162,55 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		Control control= treeViewer.getControl();
 		Menu menu= manager.createContextMenu(control);
 		control.setMenu(menu);
-
 		
 		// register global actions
 		IPageSite site= getSite();
 		site.registerContextMenu(fContextMenuId, manager, treeViewer);
 		site.setSelectionProvider(treeViewer);
+		
 		IActionBars bars= site.getActionBars();		
 		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION, fTogglePresentation);
-		
-		registerToolbarActions();
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
 		treeViewer.setInput(fInput);
-
 	}
 	
 	public void dispose() {
 		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(treeViewer);
+		
+		if (treeViewer != null) {
+			treeViewer.removeSelectionChangedListener(this);
+		}
+		
+		if (fTogglePresentation != null) {
+			fTogglePresentation.setEditor(null);
+			fTogglePresentation= null;
+		}
+		
 		if (fMemberFilterActionGroup != null) {
 			fMemberFilterActionGroup.dispose();
 			fMemberFilterActionGroup= null;
-		}		
+		}
+		
+		if (fRefactoringActionGroup != null) {
+			fRefactoringActionGroup.dispose();
+			fRefactoringActionGroup= null;
+		}
+		
+		if (fSelectionSearchGroup != null) {
+			fSelectionSearchGroup.dispose();
+			fSelectionSearchGroup= null;
+		}
+				
+		if (selectionChangedListeners != null) {
+			selectionChangedListeners.clear();
+			selectionChangedListeners= null;
+		}
+		
+		fInput= null;
+		
 		super.dispose();
 	}
 
@@ -201,6 +222,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
 		toolBarManager.add(action);
+
+		fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
+		fMemberFilterActionGroup.fillActionBars(actionBars);
 	}
 
 	/* (non-Javadoc)
@@ -276,8 +300,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (treeViewer != null) 
 			treeViewer.setSelection(selection);
 	}
-
 	/**
+	 * Set the current input to the content provider.  
 	 * @param unit
 	 */
 	public void setInput(ITranslationUnit unit) {
@@ -288,16 +312,5 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		contentUpdated();		
 	}
 
-	private void registerToolbarActions() {
-		
-		IToolBarManager toolBarManager= getSite().getActionBars().getToolBarManager();
-		if (toolBarManager != null) {	
-			//toolBarManager.add(new ClassOnlyAction());		
-			//toolBarManager.add(new LexicalSortingAction());
-			
-			fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
-			fMemberFilterActionGroup.contributeToToolBar(toolBarManager);
-		}
-	}
 
 }

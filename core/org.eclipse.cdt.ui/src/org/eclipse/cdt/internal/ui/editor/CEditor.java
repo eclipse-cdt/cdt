@@ -76,13 +76,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
-import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
@@ -103,12 +104,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	protected CContentOutlinePage fOutlinePage;
 	
 	/** Search actions **/
-	
 	private ActionGroup fSelectionSearchGroup;
 	private ActionGroup fRefactoringActionGroup;
+	private ShowInCViewAction fShowInCViewAction;
 	
+	/** Activity Listeners **/
 	protected ISelectionChangedListener fStatusLineClearer;
-    
+    protected ISelectionChangedListener fSelectionUpdateListener;
+	
     /** The property change listener */
     private PropertyChangeListener fPropertyChangeListener = new PropertyChangeListener();
     /** The mouse listener */
@@ -158,29 +161,30 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	public CEditor() {
 		super();
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
+	 */
+	protected void initializeEditor() {
+		//@@@ We should be able to get this from our parent
 		fAnnotationPreferences = new MarkerAnnotationPreferences();
+
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
-		setRangeIndicator(new DefaultRangeIndicator());
-		//setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
-
+	
 		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
-		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
-	}
-
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
-	 */
-	protected void initializeEditor() {
 		IPreferenceStore[] stores = new IPreferenceStore[2];
 		stores[0] = CUIPlugin.getDefault().getPreferenceStore();
 		stores[1] = EditorsUI.getPreferenceStore();
 		IPreferenceStore store = new ChainedPreferenceStore(stores);
 		setPreferenceStore(store);
+
+		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
 	}
 
 	/**
@@ -188,7 +192,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		fCEditorErrorTickUpdater.setAnnotationModel(getDocumentProvider().getAnnotationModel(input));
+		if (fCEditorErrorTickUpdater != null) {
+			fCEditorErrorTickUpdater.setAnnotationModel(getDocumentProvider().getAnnotationModel(input));
+		}
 		setOutlinePageInput(fOutlinePage, input);
 	}
 
@@ -294,16 +300,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			}
 		} finally {
 			super.handlePreferenceStoreChanged(event);
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private void disableBrowserLikeLinks() {
-		if (fMouseListener != null) {
-			fMouseListener.uninstall();
-			fMouseListener= null;
 		}
 	}
 
@@ -437,18 +433,60 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.setAnnotationModel(null);
+			fCEditorErrorTickUpdater.dispose();
 			fCEditorErrorTickUpdater = null;
 		}
-		if (fBracketMatcher != null) {
-			fBracketMatcher.dispose();
-			fBracketMatcher = null;
-		}
+		
         if (fPropertyChangeListener != null) {
 			Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
 			preferences.removePropertyChangeListener(fPropertyChangeListener);			
 			IPreferenceStore preferenceStore = getPreferenceStore();
 			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
+			fPropertyChangeListener = null;
+        
+		}
+        
+        if (fSelectionUpdateListener != null) {
+			getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
+			fSelectionUpdateListener = null;
         }
+        
+       	if (fStatusLineClearer != null) {
+			ISelectionProvider provider = getSelectionProvider();
+       		provider.removeSelectionChangedListener(fStatusLineClearer);
+			fStatusLineClearer = null;
+		}
+        
+        if (fBracketMatcher != null) {
+			fBracketMatcher.dispose();
+			fBracketMatcher = null;
+		}
+		
+		if (fOutlinePage != null) {
+			fOutlinePage.dispose();
+			fOutlinePage = null;
+		}
+		
+		if (fShowInCViewAction != null) {
+			fShowInCViewAction.dispose();
+			fShowInCViewAction = null;
+		}
+		
+		if (fRefactoringActionGroup != null) {
+			fRefactoringActionGroup.dispose();
+			fRefactoringActionGroup = null;
+		}
+		
+		if (fSelectionSearchGroup != null) {
+			fSelectionSearchGroup.dispose();
+			fSelectionSearchGroup = null;
+		}
+		
+		stopTabConversion();
+		disableBrowserLikeLinks();
+		
+		fAnnotationPreferences = null;
+       
 		super.dispose();
 	}
 
@@ -517,11 +555,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action); //$NON-NLS-1$
 
-		action = new ShowInCViewAction(this);
+		fShowInCViewAction = new ShowInCViewAction(this);
+		action = fShowInCViewAction;
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CVIEW);
 		setAction("ShowInCView", action); //$NON-NLS-1$
 		
-		//Selection Search group
+		//Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
@@ -574,7 +613,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		ISelectionChangedListener sListener = new ISelectionChangedListener() {
+		fSelectionUpdateListener = new ISelectionChangedListener() {
 			private Runnable fRunnable = new Runnable() {
 				public void run() {
 					updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
@@ -589,7 +628,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				fDisplay.asyncExec(fRunnable);
 			}
 		};
-		getSelectionProvider().addSelectionChangedListener(sListener);
+		getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
 
 		if (isTabConversionEnabled())
 			startTabConversion();
@@ -660,8 +699,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		if (nextError != null) {
 
-			
-			gotoMarker(nextError);
+			IDE.gotoMarker(this, nextError);
 
 			IWorkbenchPage page = getSite().getPage();
 
@@ -875,10 +913,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		IWorkingCopyManager mgr = CUIPlugin.getDefault().getWorkingCopyManager();
 		ITranslationUnit unit = mgr.getWorkingCopy(getEditorInput());
 		String fileType = (unit != null && unit.isCXXLanguage()) ? LANGUAGE_CPP : LANGUAGE_C;
-		
-		fAnnotationAccess = createAnnotationAccess();
-		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
 
+		fAnnotationAccess = createAnnotationAccess();
+		
+		//TODO: TF NOTE: This can be greatly cleaned up using the parent createOverviewRuler method
+		//It will also totally get rid of the need for the fAnnotationPreferences in this object
+		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
 		fOverviewRuler = new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
 		Iterator e = fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
@@ -899,6 +939,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		
 		configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
+		
+		//TODO: TF NOTE: Add the bracket matching back in here!
 		
 		return sourceViewer;
 	}
@@ -956,9 +998,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
     }  
 
-    //Links
     /**
-     * Enables browser like links.
+     * Enables browser like links, requires disable to clean up 
      */
     private void enableBrowserLikeLinks() {
     	if (fMouseListener == null) {
@@ -968,20 +1009,31 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     	}
     }
     
+   	/**
+	 * Disable browser like links, clean up resources  
+	 */
+	private void disableBrowserLikeLinks() {
+		if (fMouseListener != null) {
+			fMouseListener.uninstall();
+			fMouseListener= null;
+		}
+	}
+    
     /**
-	 * @return
+     * Determine if the hyperlink capability is enabled
+	 * @return boolean indicating if hyperlinking is enabled
 	 */
 	private boolean hyperLinkEnabled() {
 		IPreferenceStore store= getPreferenceStore();
-		boolean Value = store.getBoolean(HYPERLINK_ENABLED);
-		return Value;
+		return store.getBoolean(HYPERLINK_ENABLED);
  	}
      
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled(boolean somethingHasChanged) {
-		if(somethingHasChanged)
+		if(somethingHasChanged && fOutlinePage != null) {
 			fOutlinePage.contentUpdated();
+		}
 	}
 }

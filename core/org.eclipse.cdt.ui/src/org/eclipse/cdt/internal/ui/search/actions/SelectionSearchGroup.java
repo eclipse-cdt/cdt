@@ -90,4 +90,23 @@ public class SelectionSearchGroup extends ActionGroup {
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() {
+		if (fDeclarationsSearchGroup != null) {
+			fDeclarationsSearchGroup.dispose();
+			fDeclarationsSearchGroup= null;
+		}
+		
+		if (fRefSearchGroup != null) {
+			fRefSearchGroup.dispose();
+			fRefSearchGroup= null;
+		}
+		
+		fEditor= null;
+		
+		super.dispose();
+	}
 }

@@ -260,6 +260,10 @@ public class MemberFilterActionGroup extends ActionGroup {
 	 * @see ActionGroup#dispose()
 	 */
 	public void dispose() {
+		fFilterActions= null;
+		fFilter= null;
+		fViewer= null;
+		
 		super.dispose();
 	}
 

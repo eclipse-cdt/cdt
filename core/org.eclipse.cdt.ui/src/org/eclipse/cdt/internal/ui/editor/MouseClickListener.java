@@ -201,18 +201,18 @@ IPropertyChangeListener{
 			fCursor= null;
 		}
 		
-		ISourceViewer sourceViewer= fViewer;
-		if (sourceViewer == null)
-			return;
-		
 		IPreferenceStore preferenceStore= fPrefStore;
 		if (preferenceStore != null)
 			preferenceStore.removePropertyChangeListener(this);
-		
+
+		ISourceViewer sourceViewer= fViewer;
+		if (sourceViewer == null)
+			return;
+
 		StyledText text= sourceViewer.getTextWidget();
 		if (text == null || text.isDisposed())
 			return;
-		
+						
 		text.removeKeyListener(this);
 		text.removeMouseListener(this);
 		text.removeMouseMoveListener(this);

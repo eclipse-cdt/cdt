@@ -1,3 +1,10 @@
+2004-05-26 Alain Magloire
+
+	PR 61965
+	From Thomas Fletcher:
+	2.0 mainline scalability patch to 
+	call dispose methods and remove listeners
+
 2004-05-21 Andrew Niefer
 	Indexer Problem reporting (bug 43014, 62979)
 	 * plugin.xml

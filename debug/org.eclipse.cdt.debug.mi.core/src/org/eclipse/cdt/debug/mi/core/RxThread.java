@@ -118,7 +118,7 @@ public class RxThread extends Thread {
 			// Notify any command waiting for a ResultRecord.
 			MIResultRecord rr = response.getMIResultRecord();
 			if (rr != null) {
-				int id = rr.geToken();
+				int id = rr.getToken();
 				Command cmd = rxQueue.removeCommand(id);
 
 				// Check if the state changed.
@@ -143,7 +143,7 @@ public class RxThread extends Thread {
 						type = MIRunningEvent.CONTINUE;
 					}
 					session.getMIInferior().setRunning();
-					MIEvent event = new MIRunningEvent(type);
+					MIEvent event = new MIRunningEvent(id, type);
 					session.fireEvent(event);
 				} else if ("exit".equals(state)) {
 					// No need to do anything, terminate() will.
@@ -153,7 +153,7 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) {
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
-						MIEvent event = new MIStoppedEvent();
+						MIEvent event = new MIStoppedEvent(id);
 						session.fireEvent(event);
 					}
 				}
@@ -230,7 +230,7 @@ public class RxThread extends Thread {
 				// "reason" ??? still fire a stopped event.
 				if (e == null) {
 					session.getMIInferior().setSuspended();
-					e = new MIStoppedEvent();
+					e = new MIStoppedEvent(exec.getToken());
 					list.add(e);
 				}
 			}

@@ -1881,7 +1881,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
             int size = typeIds.size();
         	for( int i = 0; i < size; i++ )
-        		newTypeIds.add( ((IASTTypeId)typeIds.get(i)).toString() );
+        		newTypeIds.add( typeIds.get(i) );
         	
         }
         return new ASTExceptionSpecification( newTypeIds );

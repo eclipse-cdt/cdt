@@ -650,6 +650,11 @@ public class ParserSymbolTable {
 				//is circular inheritance
 				if( ! data.inheritanceChain.contains( parent ) ){
 					//is this name define in this scope?
+					if( parent instanceof IDeferredTemplateInstance ){
+						parent = ((IDeferredTemplateInstance)parent).getTemplate().getTemplatedSymbol();
+					} else if( parent instanceof ITemplateSymbol ){
+						parent = ((ITemplateSymbol)parent).getTemplatedSymbol();
+					}
 					if( parent instanceof IDerivableContainerSymbol ){
 						temp = lookupInContained( data, (IDerivableContainerSymbol) parent );
 					} else {
@@ -2275,7 +2280,18 @@ public class ParserSymbolTable {
 		while( iter.hasNext() ){
 			parent = (IParentSymbol) iter.next();
 			parentAccess = parent.getAccess();
-			symbolAccess = getVisibility( symbol, (IContainerSymbol) parent.getParent() );
+			
+			ISymbol tmp = parent.getParent();
+			if( tmp instanceof IDeferredTemplateInstance )
+				tmp = ((IDeferredTemplateInstance)tmp).getTemplate().getTemplatedSymbol();
+			else if( tmp instanceof ITemplateSymbol ){
+				tmp = ((ITemplateSymbol)tmp).getTemplatedSymbol();
+			}
+			
+			if( !( tmp instanceof IContainerSymbol ) )
+				return null;
+				
+			symbolAccess = getVisibility( symbol, (IContainerSymbol) tmp );
 			
 			if( symbolAccess != null ){
 				symbolAccess = ( parentAccess.isGreaterThan( symbolAccess ) ) ? parentAccess : symbolAccess; 

@@ -807,4 +807,27 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 
 	}
 	
+	public void testCompletionWithTemplateInstanceAsParent() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "template < class T > class A { public : int a_member; }; ");
+		writer.write( "template < class T > class B : public A< T > { public : int b_member; }; ");
+		writer.write( "void f() { ");
+		writer.write( "   B< int > b; ");
+		writer.write( "   b.SP ");
+		
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		
+		ILookupResult result = node.getCompletionScope().lookup( "", 
+				                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL }, 
+																 node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 2 );
+		
+		Iterator i = result.getNodes();
+		
+		IASTField bmember = (IASTField) i.next();
+		IASTField amember = (IASTField) i.next();
+	}
+	
 }

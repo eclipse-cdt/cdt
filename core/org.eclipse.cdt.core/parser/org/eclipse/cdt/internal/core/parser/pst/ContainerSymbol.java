@@ -850,6 +850,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			ASTAccessVisibility visibility;
 			
 			visibility = ParserSymbolTable.getVisibility( symbol, qualifyingSymbol );
+			if( visibility == null )
+				return false;
 			
 			if( visibility == ASTAccessVisibility.PUBLIC ){
 				return true;

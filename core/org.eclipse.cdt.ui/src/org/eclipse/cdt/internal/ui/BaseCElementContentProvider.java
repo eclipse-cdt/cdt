@@ -121,22 +121,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					ICElement[] children = ((IParent)celement).getChildren();
 					ArrayList list = new ArrayList(children.length);
 					for( int i = 0; i < children.length; i++ ) {
-						// Note, here we are using getBinaries() and getArchives()
-						// instead.  Those methods are async and they start threads
-						// in the background.  This will not freeze the viewer
-						// But we should note that the user should add itself to
-						// the listener of the Core Model so when the threads discover
-						// new binaries/archives to get notification.
-						if (children[i] instanceof IArchiveContainer) {
-							IArchiveContainer carchive = (IArchiveContainer)children[i];
-							if (carchive.getArchives().length == 0) {
-								continue;
-							}
-						} else if (children[i] instanceof IBinaryContainer) {
-							IBinaryContainer cbin = (IBinaryContainer)children[i];
-							if (cbin.getBinaries().length == 0) {
-								continue;
-							}
+						// Note, here we are starting the Archive and binary containers thread upfront.
+						if (children[i] instanceof IArchiveContainer || children[i] instanceof IBinaryContainer) {
+							((IParent)children[i]).getChildren();
+							continue;
 						}
 						list.add(children[i]);
 					}

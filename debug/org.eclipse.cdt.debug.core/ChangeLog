@@ -1,3 +1,8 @@
+2002-10-24 David Inglis
+	* CDebugTarget.java
+	fix exception on shutdown with a connected target, CDI session
+	was not terminated.
+	
 2002-10-23 Mikhail Khodjaiants
 	Support for debugger console.
 	* CDebugModel.java: new factory methods for CDebugTarget

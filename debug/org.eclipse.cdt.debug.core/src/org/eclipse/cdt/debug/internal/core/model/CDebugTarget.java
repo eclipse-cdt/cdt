@@ -712,6 +712,7 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			getCDITarget().disconnect();
+			getCDISession().terminate();
 		}
 		catch( CDIException e )
 		{

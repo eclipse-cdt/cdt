@@ -12,6 +12,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Tracebility related utility functions
@@ -77,4 +78,21 @@ public class TraceUtil {
 			System.out.println("Error: " + string + line); //$NON-NLS-1$
 		}
 	}
+
+	/**
+	 * @param string
+	 * @param string2
+	 * @param string3
+	 * @param map - map of 
+	 */
+	public static void metricsTrace(String title, String subtitlePrefix, String subtitlePostfix, Map map) {
+		System.out.println();
+		System.out.println(title);
+		for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+			String dir = (String) i.next();
+			System.out.println(subtitlePrefix + dir + subtitlePostfix);
+			List directoryCommandList = (List) map.get(dir);
+		}
+	}
+
 }

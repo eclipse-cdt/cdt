@@ -71,7 +71,7 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 	public void testParsingIncludePaths() {
 		final ArrayList sumIncludes = new ArrayList();
 		// initialize it with the utility
-		clParser.startup(null, null, new IScannerInfoCollector() {
+		clParser.startup(null, new IScannerInfoCollector() {
 			public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
 				sumIncludes.addAll(includes);
 			}
@@ -120,7 +120,7 @@ public class ScannerConfigConsoleParserTests extends TestCase {
 	public void testParsingSymbolDefinitions() {
 		final ArrayList sumSymbols = new ArrayList();
 		// initialize it with the utility
-		clParser.startup(null, null, new IScannerInfoCollector() {
+		clParser.startup(null, new IScannerInfoCollector() {
 			public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
 				sumSymbols.addAll(symbols);
 			}

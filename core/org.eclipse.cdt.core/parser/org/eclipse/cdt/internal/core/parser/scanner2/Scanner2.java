@@ -1272,7 +1272,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					// must be float suffix
 					++bufferPos[bufferStackPos];
 
-					if (buffer[bufferPos[bufferStackPos]] == 'i')
+					if (bufferPos[bufferStackPos] < buffer.length && buffer[bufferPos[bufferStackPos]] == 'i')
 						continue; // handle GCC extension 5.10 Complex Numbers 
 
 					break; // fix for 77281 (used to be continue)

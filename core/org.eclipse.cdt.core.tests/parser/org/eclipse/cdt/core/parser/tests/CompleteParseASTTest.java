@@ -2383,5 +2383,23 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write("#endif\r\n"); //$NON-NLS-1$
 		parse(writer.toString());
 	}
+	
+	public void testBug79471() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("void testFloatAccess(float * fp) {\n"); //$NON-NLS-1$
+		writer.write("#define VAL 2.0f\n"); //$NON-NLS-1$
+		writer.write("if(*fp > VAL) { /* Syntax error is here */\n}\n}\n"); //$NON-NLS-1$
+		parse(writer.toString());
+		writer = new StringWriter();
+		writer.write("void testFloatAccess(float * fp) {\n"); //$NON-NLS-1$
+		writer.write("#define VAL 2.0l\n"); //$NON-NLS-1$
+		writer.write("if(*fp > VAL) { /* Syntax error is here */\n}\n}\n"); //$NON-NLS-1$
+		parse(writer.toString());
+		writer = new StringWriter();
+		writer.write("void testFloatAccess(float * fp) {\n"); //$NON-NLS-1$
+		writer.write("#define VAL 2.0f\n"); //$NON-NLS-1$
+		writer.write("if(VAL > VAL) { /* Syntax error is here */\n}\n}\n"); //$NON-NLS-1$
+		parse(writer.toString());
+	}
 }
 

@@ -22,7 +22,18 @@ import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
  */
 public class CDOM {
     
-    private IASTServiceProvider [] services = { new InternalASTServiceProvider() };
+    
+
+    private CDOM() 
+    {
+    }
+    
+    private static CDOM instance = new CDOM();
+    public static CDOM getInstance()
+    {
+        return instance;
+    }
+    private IASTServiceProvider [] services = { new InternalASTServiceProvider() };    
 
     public IASTServiceProvider[] getASTServices() {
         return services;

@@ -5,9 +5,12 @@
  */
 package org.eclipse.cdt.debug.internal.ui;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * 
@@ -23,6 +26,19 @@ public class InfoStatusHandler implements IStatusHandler
 	 */
 	public Object handleStatus( IStatus status, Object source ) throws CoreException
 	{
+		if ( status != null && source != null && source instanceof IDebugTarget )
+		{
+			final String title = ((IDebugTarget)source).getName();
+			final String message = status.getMessage();
+			CDebugUIPlugin.getStandardDisplay().asyncExec(
+					new Runnable()
+						{
+							public void run()
+							{		
+								MessageDialog.openInformation( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
+							}
+						} );
+		}
 		return null;
 	}
 }

@@ -1,5 +1,14 @@
 2003-01-09 Alain Magloire
 
+	* src/.../mi/core/cdi/model/CTarget.java (setCurrentThread): takes
+	a new argument to decide if the events should be fired.
+	* src/.../mi/core/cdi/model/CThread.java (getStackFrameCount): use
+	the setCurrentThread() with events updates disable
+	(getStackFrames): Ditto.
+	(updateState): Wrong subscript in the loop.
+
+2003-01-09 Alain Magloire
+
 	Generate CreatedEvent's for Variable, Argument, Expression, Memory, Thread
 	objects when they are created.  This makes it consistent with the generated
 	DestroyedEvent's.

@@ -818,14 +818,23 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		if (viewer == null) return;
 
 		boolean refreshViewer = false;
+		String property = event.getProperty();
 
-		if (event.getProperty() == PreferenceConstants.PREF_SHOW_CU_CHILDREN) {
+		if (property.equals(PreferenceConstants.PREF_SHOW_CU_CHILDREN)) {
 			boolean showCUChildren = CPluginPreferencePage.showCompilationUnitChildren();
 			((CElementContentProvider) viewer.getContentProvider()).setProvideMembers(showCUChildren);
 			refreshViewer = true;
+		} else if (property.equals(PreferenceConstants.PREF_LINK_TO_EDITOR)) {
+			CViewActionGroup group = getActionGroup();
+			if (group instanceof MainActionGroup) {
+				boolean enable = isLinkingEnabled();
+				((MainActionGroup)group).toggleLinkingAction.setChecked(enable);
+			}
 		}
 
-		if (refreshViewer) viewer.refresh();
+		if (refreshViewer) {
+			viewer.refresh();
+		}
 	}
 
 	/**
@@ -837,6 +846,10 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 */
 	public boolean isLinkingEnabled() {
 		return CPluginPreferencePage.isLinkToEditor();
+	}
+
+	public void setLinkingEnabled(boolean enable) {
+		CPluginPreferencePage.setLinkingEnabled(enable);
 	}
 
 	/**

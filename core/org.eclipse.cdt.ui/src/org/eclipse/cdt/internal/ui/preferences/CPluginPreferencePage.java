@@ -61,6 +61,10 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_LINK_TO_EDITOR);
 	}
 
+	public static void setLinkingEnabled(boolean enable) {
+		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.PREF_LINK_TO_EDITOR, enable);
+	}
+
 	public static boolean showCompilationUnitChildren() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 	}

@@ -66,6 +66,7 @@ public class MainActionGroup extends CViewActionGroup {
 	ShowLibrariesAction clibFilterAction;
 	// Collapsing
 	CollapseAllAction collapseAllAction;
+	ToggleLinkingAction toggleLinkingAction;
 
 	//Search
 	FileSearchAction fFileSearchAction;
@@ -152,6 +153,11 @@ public class MainActionGroup extends CViewActionGroup {
 		exportAction = new ExportResourcesAction(getCView().getSite().getWorkbenchWindow());
 
 		collapseAllAction = new CollapseAllAction(getCView());
+
+		toggleLinkingAction = new ToggleLinkingAction(getCView(), CViewMessages.getString("ToggleLinkingAction.text")); //$NON-NLS-1$
+		toggleLinkingAction.setToolTipText(CViewMessages.getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
+		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
+		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
 		fFileSearchAction = new FileSearchAction(viewer);
 		fFileSearchActionInWorkingSet = new FileSearchActionInWorkingSet(viewer);
@@ -320,11 +326,12 @@ public class MainActionGroup extends CViewActionGroup {
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);
+		toolBar.add(toggleLinkingAction);
 
 		IMenuManager menu = actionBars.getMenuManager();
 		//menu.add (clibFilterAction);
 		menu.add(patternFilterAction);
-
+		menu.add(toggleLinkingAction);
 	}
 
 	public void dispose() {

@@ -13,15 +13,13 @@ package org.eclipse.cdt.internal.ui.cview;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This is the action group for all the view actions.
@@ -57,8 +55,9 @@ public abstract class CViewActionGroup extends ActionGroup {
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
 		String iconPath = "icons/full/"; //$NON-NLS-1$
 		try {
-			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
+			//AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+			//URL installURL = plugin.getDescriptor().getInstallURL();
+			URL installURL = CUIPlugin.getDefault().getDescriptor().getInstallURL();
 			URL url = new URL(installURL, iconPath + relativePath);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException e) {

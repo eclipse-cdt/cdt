@@ -1,3 +1,7 @@
+2003-01-06 Mikhail Khodjaiants
+	Check if project exists when generating the source locations.
+	* CSourceLocator.java
+
 2003-01-06 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/ICDIBreakpointManager.java (createLocation):

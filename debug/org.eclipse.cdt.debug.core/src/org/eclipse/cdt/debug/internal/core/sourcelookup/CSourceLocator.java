@@ -170,7 +170,7 @@ public class CSourceLocator implements ICSourceLocator
 	public static ICSourceLocation[] getDefaultSourceLocations( IProject project )
 	{
 		ArrayList list = new ArrayList();
-		if ( project != null )
+		if ( project != null && project.exists() )
 		{
 			list.add( new CProjectSourceLocation( project ) );
 			addReferencedSourceLocations( list, project );
@@ -187,8 +187,11 @@ public class CSourceLocator implements ICSourceLocator
 				IProject[] projects = project.getReferencedProjects();
 				for ( int i = 0; i < projects.length; i++ )
 				{
-					list.add( new CProjectSourceLocation( projects[i] ) );
-					addReferencedSourceLocations( list, projects[i] );
+					if (  projects[i].exists() )
+					{
+						list.add( new CProjectSourceLocation( projects[i] ) );
+						addReferencedSourceLocations( list, projects[i] );
+					}
 				}
 			}
 			catch( CoreException e )

@@ -118,8 +118,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		public void flush() throws IOException {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					if (BuildConsolePreferencePage.isConsoleOnTop())
-						bringConsoleOnTop();
+					bringConsoleOnTop();
 					try {
 						int len = fDocument.getLength();
 						fDocument.replace(len, 0, readBuffer());
@@ -145,7 +144,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 							//restore focus
 							page.activate(activePart);
 						}
-					} else {
+					}
+					if (cBuild != null && BuildConsolePreferencePage.isConsoleOnTop()) {
 						page.bringToTop(cBuild);
 					}
 				} catch (PartInitException pie) {

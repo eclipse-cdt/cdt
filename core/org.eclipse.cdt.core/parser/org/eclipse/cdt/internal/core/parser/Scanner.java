@@ -86,7 +86,7 @@ public class Scanner implements IScanner {
 		this.language = language;
 		astFactory = ParserFactory.createASTFactory( mode, language );
 		this.backupReader = reader;
-		
+		contextStack = new ContextStack( log );
 		try {
 			//this is a hack to get around a sudden EOF experience
 			contextStack.push(
@@ -411,7 +411,7 @@ public class Scanner implements IScanner {
 	private static final String DEFINED = "defined";
 	private static final String POUND_DEFINE = "#define ";
 
-	private ContextStack contextStack = new ContextStack();
+	private ContextStack contextStack = null;
 	private IScannerContext lastContext = null;
 	
 	private IScannerInfo originalConfig; 

@@ -18,11 +18,10 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
-import org.eclipse.cdt.internal.core.model.Util;
 
 /**
  * @author aniefer
@@ -32,8 +31,10 @@ import org.eclipse.cdt.internal.core.model.Util;
  */
 public class ContextStack {
 
-	public ContextStack(){
-		super();
+	private final IParserLogService log;
+	
+	public ContextStack( IParserLogService l ) {
+		log = l;
 	}
 
     public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
@@ -86,7 +87,7 @@ public class ContextStack {
 		try {
 			currentContext.getReader().close();
 		} catch (IOException ie) {
-			Util.debugLog("ContextStack : Error closing reader ", IDebugLogConstants.PARSER);
+			log.traceLog("ContextStack : Error closing reader ");
 		}
 
 		if( currentContext.getKind() == IScannerContext.INCLUSION )

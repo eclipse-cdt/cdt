@@ -44,7 +44,7 @@
 	</xsl:copy>	
     </xsl:template>
 
-    <xsl:template mode="feature" match="import[starts-with(@plugin,'org.eclipse.cdt')]">
+    <xsl:template mode="feature" match="import[starts-with(@plugin,'org.eclipse.cdt')]|import[starts-with(@feature,'org.eclipse.cdt')]">
         <xsl:copy>
 	    <xsl:attribute name="version">
 	        <xsl:value-of select="$version"/>

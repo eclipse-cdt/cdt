@@ -516,6 +516,8 @@ public class BreakpointManager extends Manager {
 			setLocationBreakpoint(bkpt);
 			List blist = getBreakpointsList(target);
 			blist.add(bkpt);
+			// Force the reset of the location.
+			bkpt.setLocation(null);
 
 			// Fire a created Event.
 			MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();

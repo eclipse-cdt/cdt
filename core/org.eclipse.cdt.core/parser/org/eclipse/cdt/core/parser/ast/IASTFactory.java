@@ -133,6 +133,7 @@ public interface IASTFactory
     public IASTFunction createFunction(
         IASTScope scope,
         String name,
+        int nameEndOffset,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -141,13 +142,12 @@ public interface IASTFactory
         boolean isStatic,
         int startOffset,
         int nameOffset,
-        IASTTemplate ownerTemplate,
+		IASTTemplate ownerTemplate,
 		boolean isConst,
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual,
-		ASTAccessVisibility visibility, List constructorChain, boolean isDefinition ) throws ASTSemanticException;
+		boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition ) throws ASTSemanticException;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         boolean isVolatile,
@@ -156,6 +156,7 @@ public interface IASTFactory
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
+        int nameEndOffset,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -169,8 +170,7 @@ public interface IASTFactory
         boolean isVolatile,
         boolean isVirtual,
         boolean isExplicit,
-        boolean isPureVirtual,
-        ASTAccessVisibility visibility, List constructorChain, boolean isDefinition) throws ASTSemanticException;
+        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition) throws ASTSemanticException;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
 		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression ) throws ASTSemanticException;

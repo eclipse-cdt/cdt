@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
@@ -1119,7 +1120,7 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testConstructorChain() throws Exception
 	{
 		Iterator declarations = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}" ).getDeclarations();
-		IASTDeclaration d = (IASTDeclaration)declarations.next(); // cannot properly do this test now with new callback structure in quickparse mode
+		declarations.next(); // cannot properly do this test now with new callback structure in quickparse mode
 	}
 	
 	public void testBug36237() throws Exception
@@ -1305,7 +1306,7 @@ public class QuickParseASTTests extends BaseASTTest
 		Iterator pointerOps = f.getReturnType().getPointerOperators();
 		assertEquals( (ASTPointerOperator)pointerOps.next(), ASTPointerOperator.REFERENCE ); 
 		assertFalse( pointerOps.hasNext() );
-		assertEquals( f.getName(), "A::operator=");
+		assertEquals( f.getName(), "A::operator =");
 		Iterator parms = f.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parms.next();
 		assertEquals( parm.getName(), "" );
@@ -1551,7 +1552,7 @@ public class QuickParseASTTests extends BaseASTTest
 		Writer code = new StringWriter();
 		code.write("A ( * const fPtr) (void *); \n");
 		code.write("A (* const fPtr2) ( A * ); \n");
-		Iterator declarations = parse(code.toString()).getDeclarations();
+		parse(code.toString()).getDeclarations();
 	}
 
 	// K&R Test hasn't been ported from DOMTests
@@ -1809,6 +1810,10 @@ public class QuickParseASTTests extends BaseASTTest
 		} catch( IOException ioe ){}
 		parse( code.toString() );
 	}
-		
+
+	public void testBug39556() throws Exception
+	{
+		parse("int *restrict ip_fn (void);", true, true, ParserLanguage.C).getDeclarations().next();
+	}		
 		
 }

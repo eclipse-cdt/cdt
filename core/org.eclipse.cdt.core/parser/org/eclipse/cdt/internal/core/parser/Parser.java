@@ -43,7 +43,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -60,6 +59,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
+
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
  * ANSI C and C++.
@@ -70,7 +70,6 @@ import org.eclipse.cdt.internal.core.model.Util;
  */
 public class Parser implements IParser
 {
-    private ClassNameType access;
     private static int DEFAULT_OFFSET = -1;
     // sentinel initial value for offsets 
     private int firstErrorOffset = DEFAULT_OFFSET;
@@ -552,7 +551,7 @@ public class Parser implements IParser
             }
             else if (LT(1) == IToken.t_template)
             {
-                IToken kind = consume(IToken.t_template);
+                consume(IToken.t_template);
                 consume(IToken.tLT);
 
                 List subResult = templateParameterList(scope);
@@ -803,12 +802,10 @@ public class Parser implements IParser
 				throw backtrack;
 
         	ITokenDuple duple = name();
-        	        	
-        	IASTNamespaceAlias alias = null; 
         	
         	try
             {
-                alias = astFactory.createNamespaceAlias( 
+                astFactory.createNamespaceAlias( 
                 	scope, identifier.toString(), duple, first.getOffset(), 
                 	identifier.getOffset(), duple.getLastToken().getEndOffset() );
             }
@@ -881,14 +878,11 @@ public class Parser implements IParser
             }
         }
 
-
-        boolean done = false;
         boolean hasFunctionBody = false;
         switch (LT(1))
         {
             case IToken.tSEMI :
                 consume(IToken.tSEMI);
-                done = true;
                 break;
             case IToken.tCOLON :
                 if (forKR)
@@ -1752,6 +1746,15 @@ public class Parser implements IParser
             	result = consume( IToken.t_volatile ); 
 				if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.VOLATILE_POINTER);
                 break;
+            case IToken.t_restrict : 
+            	if( language == ParserLanguage.C )
+            	{
+            		result = consume( IToken.t_restrict );
+					if( declarator != null ) declarator.addPtrOp(ASTPointerOperator.RESTRICT_POINTER);
+					break;
+            	}
+            	else 
+            		throw backtrack;
             default :
                 
         }
@@ -1805,7 +1808,6 @@ public class Parser implements IParser
     {
         if (LT(1) == IToken.tLBRACE)
         {
-            //TODO - parse this for real
             consume(IToken.tLBRACE);
             if (LT(1) == (IToken.tRBRACE))
             {
@@ -1835,8 +1837,6 @@ public class Parser implements IParser
         // assignmentExpression || { initializerList , } || { }
         try
         {
-  
-            IToken marked = mark();
             IASTExpression assignmentExpression =
                 assignmentExpression(scope);
    
@@ -1847,7 +1847,7 @@ public class Parser implements IParser
         }
         catch (Backtrack b)
         {
-			// who cares
+			// do nothing
         }
         throw backtrack;
     }
@@ -2859,7 +2859,7 @@ public class Parser implements IParser
         IASTExpression assignmentExpression = assignmentExpression(scope);
         while (LT(1) == IToken.tCOMMA)
         {
-            IToken t = consume();
+            consume();
             IASTExpression secondExpression = assignmentExpression(scope);
             try
             {
@@ -2960,7 +2960,7 @@ public class Parser implements IParser
         IASTExpression.Kind kind, IASTExpression lhs )
         throws EndOfFile, Backtrack
     {
-        IToken t = consume();
+        consume();
         IASTExpression assignmentExpression = assignmentExpression(scope);
  
         try
@@ -3058,7 +3058,7 @@ public class Parser implements IParser
         IASTExpression firstExpression = logicalAndExpression(scope);
         while (LT(1) == IToken.tOR)
         {
-            IToken t = consume();
+            consume();
             IASTExpression secondExpression = logicalAndExpression(scope);
 
             try
@@ -3091,7 +3091,7 @@ public class Parser implements IParser
         IASTExpression firstExpression = inclusiveOrExpression( scope );
         while (LT(1) == IToken.tAND)
         {
-            IToken t = consume();
+            consume();
             IASTExpression secondExpression = inclusiveOrExpression( scope );
             try
             {
@@ -3123,7 +3123,7 @@ public class Parser implements IParser
         IASTExpression firstExpression = exclusiveOrExpression(scope);
         while (LT(1) == IToken.tBITOR)
         {
-            IToken t = consume();
+            consume();
             IASTExpression secondExpression = exclusiveOrExpression(scope);
   
             try
@@ -3156,7 +3156,7 @@ public class Parser implements IParser
         IASTExpression firstExpression = andExpression( scope );
         while (LT(1) == IToken.tXOR)
         {
-            IToken t = consume();
+            consume();
             IASTExpression secondExpression = andExpression( scope );
 
             try
@@ -3188,7 +3188,7 @@ public class Parser implements IParser
         IASTExpression firstExpression = equalityExpression(scope);
         while (LT(1) == IToken.tAMPER)
         {
-            IToken t = consume();
+            consume();
             IASTExpression secondExpression = equalityExpression(scope);
  
             try
@@ -3843,8 +3843,7 @@ public class Parser implements IParser
 		}
     }
     protected IASTExpression unaryOperatorCastExpression( IASTScope scope,
-        IASTExpression.Kind kind,
-        IToken consumed)
+        IASTExpression.Kind kind)
         throws Backtrack
     {
         IASTExpression castExpression = castExpression(scope);
@@ -3875,37 +3874,37 @@ public class Parser implements IParser
         switch (LT(1))
         {
             case IToken.tSTAR :
+            	consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION,
-                    consume());
+                    IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
             case IToken.tAMPER :
+				consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION,
-                    consume());
+                    IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
             case IToken.tPLUS :
+				consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION,
-                    consume());
+                    IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
             case IToken.tMINUS :
+				consume();        
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION,
-                    consume());
+                    IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
             case IToken.tNOT :
+            	consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION,
-                    consume());
+                    IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
             case IToken.tCOMPL :
+            	consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION,
-                    consume());
+                    IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
             case IToken.tINCR :
+            	consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_INCREMENT,
-                    consume());
+                    IASTExpression.Kind.UNARY_INCREMENT);
             case IToken.tDECR :
+            	consume();
                 return unaryOperatorCastExpression(scope,
-                    IASTExpression.Kind.UNARY_DECREMENT,
-                    consume());
+                    IASTExpression.Kind.UNARY_DECREMENT);
             case IToken.t_sizeof :
                 consume(IToken.t_sizeof);
                 IToken mark = LA(1);

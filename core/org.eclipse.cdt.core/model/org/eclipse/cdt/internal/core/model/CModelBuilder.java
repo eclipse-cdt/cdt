@@ -573,7 +573,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( functionDeclaration.getNameOffset(), name.length() );
+		element.setIdPos( functionDeclaration.getNameOffset(), functionDeclaration.getNameEndOffset() - functionDeclaration.getNameOffset() );
 		if(!isTemplate){
 			// set the element position		
 			element.setPos(functionDeclaration.getStartingOffset(), functionDeclaration.getEndingOffset() - functionDeclaration.getStartingOffset());	

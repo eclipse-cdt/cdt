@@ -1,3 +1,9 @@
+2003-09-15 John Camelon
+	Fixed Bug 39556 : 'restrict' qualifier is not supported (ANSI C99) 
+	Fixed Bug 43126 : ISourceElementRequestor.acceptParameterReference accesses internal class
+	Fixed Bug 43062 : Outline is confused on operator methods containing spaces 
+	Cleaned up some warnings in the parser. 
+
 2003-09-15 Andrew Niefer
 	bug43106 - added getConditionalOperand to ParserSymbolTable
 

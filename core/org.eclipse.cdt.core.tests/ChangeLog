@@ -1,3 +1,7 @@
+2003-09-15 John Camelon
+	Moved ASTFailedTests::testBug39556() to QuickParseASTTests.
+	Cleaned up some warnings in parser tests.  
+
 2003-09-15 Andrew Niefer
 	added testGetConditionalOperand_bug43106 to ParserSymbolTableTests
 

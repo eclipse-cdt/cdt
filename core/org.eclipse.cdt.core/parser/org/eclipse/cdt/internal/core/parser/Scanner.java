@@ -356,8 +356,7 @@ public class Scanner implements IScanner {
 	private static final String START = "<initial reader>";
 	private static final String EXPRESSION = "<expression>";
 	private static final String PASTING = "<pasting>";
-	private static final String BAD_PP =
-		"Invalid preprocessor directive encountered at offset ";
+
 	private static final String DEFINED = "defined";
 	private static final String POUND_DEFINE = "#define ";
 
@@ -623,8 +622,7 @@ public class Scanner implements IScanner {
 
 		while (c != NOCHAR) {
 			if ( ! passOnToClient ) {
-				
-				int state = 0; 
+			
 				
 				while (c != NOCHAR && c != '#' ) 
 				{
@@ -1565,8 +1563,6 @@ public class Scanner implements IScanner {
                  
                 // string
                 StringBuffer buff = new StringBuffer(); 
-                int beforePrevious = NOCHAR;
-                int previous = c;
                 c = getChar(true);
 
                 for( ; ; )
@@ -1574,8 +1570,6 @@ public class Scanner implements IScanner {
                     if ( c =='"' ) break;
                     if( c == NOCHAR) break;  
                     buff.append((char) c);
-                    beforePrevious = previous;
-                    previous = c;
                     c = getChar(true);
                 }
 
@@ -2279,7 +2273,6 @@ public class Scanner implements IScanner {
 				for (int i = 0; i < numberOfTokens; ++i) {
 					t = (Token) tokens.get(i);
 					if (t.type == IToken.tIDENTIFIER) {
-						String identifierName = t.image;
 
 						// is this identifier in the parameterNames
 						// list? 

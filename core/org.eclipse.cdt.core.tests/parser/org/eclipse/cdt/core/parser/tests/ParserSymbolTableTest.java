@@ -245,7 +245,7 @@ public class ParserSymbolTableTest extends TestCase {
 		a.addParent( b );
 		 
 		try{
-			ISymbol look = a.lookup("foo");
+			a.lookup("foo");
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e) {
 			assertEquals( e.reason, ParserSymbolTableException.r_CircularInheritance );
@@ -2331,7 +2331,7 @@ public class ParserSymbolTableTest extends TestCase {
 		args.add( new TypeInfo( TypeInfo.t_int, 0, null, null, new Integer(2) ) );
 		
 		try{
-			TemplateInstance a5 = a.instantiate( args );
+			a.instantiate( args );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}

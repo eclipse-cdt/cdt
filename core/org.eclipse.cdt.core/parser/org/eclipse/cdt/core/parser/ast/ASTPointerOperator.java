@@ -18,11 +18,11 @@ import org.eclipse.cdt.core.parser.Enum;
  */
 public class ASTPointerOperator extends Enum 
 {
-	public static final ASTPointerOperator REFERENCE 	 			 	= new ASTPointerOperator( 0 ); 
+    public static final ASTPointerOperator REFERENCE 	 			 	= new ASTPointerOperator( 0 ); 
 	public static final ASTPointerOperator POINTER 		 			 	= new ASTPointerOperator( 1 );
 	public static final ASTPointerOperator CONST_POINTER 			 	= new ASTPointerOperator( 2 );
 	public static final ASTPointerOperator VOLATILE_POINTER 		 	= new ASTPointerOperator( 3 );
-
+	public static final ASTPointerOperator RESTRICT_POINTER             = new ASTPointerOperator( 4 );
 
     /**
      * @param enumValue

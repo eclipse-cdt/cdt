@@ -34,7 +34,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 	/**
      * @param scope
      */
-    public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, 
+    public ASTFunction(IASTScope scope, String name, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, 
     			boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate )
     {
         super(ownerTemplate != null ? null : scope  );
@@ -51,8 +51,10 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         offsets.setStartingOffset( startOffset );
         offsets.setNameOffset( nameOffset );
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
+        this.nameEndOffset = nameEndOffset;
     }
     
+    private final int nameEndOffset;
     private boolean hasFunctionBody = false;
     private final IASTQualifiedNameElement qualifiedName; 
     private final IASTTemplate ownerTemplateDeclaration;
@@ -225,5 +227,12 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
         // TODO Auto-generated method stub
         return false;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getNameEndOffset()
+     */
+    public int getNameEndOffset()
+    {
+        return nameEndOffset;
     }
 }

@@ -32,8 +32,8 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -76,7 +77,6 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -513,7 +513,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
      */
-    public void acceptParameterReference(ASTParameterReference reference)
+    public void acceptParameterReference(IASTParameterReference reference)
     {
         // TODO Auto-generated method stub
         

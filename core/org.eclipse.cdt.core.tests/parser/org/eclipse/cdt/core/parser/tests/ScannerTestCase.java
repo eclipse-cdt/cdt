@@ -687,7 +687,7 @@ public class ScannerTestCase extends BaseScannerTest
 		try
 		{
 			initializeScanner("#if ! 0\n#error Correct!\n#endif");
-			IToken t= scanner.nextToken();
+			scanner.nextToken();
 			fail(EXPECTED_FAILURE);
 		}
 		catch (ScannerException se)

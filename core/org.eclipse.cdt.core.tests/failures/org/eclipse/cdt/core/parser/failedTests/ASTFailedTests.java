@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.tests.BaseASTTest;
  */
 public class ASTFailedTests extends BaseASTTest
 {
-    private static final boolean debugging = false;
+ 
     public ASTFailedTests(String name)
     {
         super(name);
@@ -111,13 +111,6 @@ public class ASTFailedTests extends BaseASTTest
     public void testBug39554() throws Exception
     {
         assertCodeFailsParse("_Pragma(\"foobar\")");
-    }
-    public void testBug39556() throws Exception
-    {
-        IASTFunction function = (IASTFunction)parse("int *restrict ip_fn (void);").getDeclarations().next();
-        assertFalse(
-            "The expected error did not occur.",
-            function.getReturnType().getPointerOperators().hasNext() );
     }
     
     //Here C99-specific section ends
@@ -304,6 +297,7 @@ public class ASTFailedTests extends BaseASTTest
     	{
 			IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));");
 			assertNotReached();
+			assertEquals( f.getName(), "func2");
     	} catch( ClassCastException cce )
     	{
     	}

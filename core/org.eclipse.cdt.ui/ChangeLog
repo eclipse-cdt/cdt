@@ -1,3 +1,6 @@
+2003-09-15 John Camelon
+	Fixed Bug 43126 : ISourceElementRequestor.acceptParameterReference accesses internal class
+
 2003-09-13 Andrew Niefer
 	- bug42836 - prepopulate template classes from Outline View
 	- bug43016 - Search: Cannot find macro declarations 

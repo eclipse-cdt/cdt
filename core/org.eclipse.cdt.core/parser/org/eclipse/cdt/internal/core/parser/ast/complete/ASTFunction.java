@@ -40,7 +40,8 @@ public class ASTFunction extends ASTScope implements IASTFunction
     private NamedOffsets offsets = new NamedOffsets(); 
 	private final ASTQualifiedNamedElement qualifiedName;
 	private final List parameters;
-	protected final ASTReferenceStore references;    
+	protected final ASTReferenceStore references;
+	private final int nameEndOffset;  
 	
     /**
      * @param symbol
@@ -52,11 +53,11 @@ public class ASTFunction extends ASTScope implements IASTFunction
      * @param ownerTemplate
      * @param references
      */
-    public ASTFunction(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared )
+    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared )
     {
     	super( symbol );
     	this.parameters = parameters;
-    	
+    	this.nameEndOffset = nameEndOffset;
     	this.returnType = returnType; 
     	this.exception = exception; 
     	setStartingOffset(startOffset);
@@ -260,5 +261,15 @@ public class ASTFunction extends ASTScope implements IASTFunction
     public boolean previouslyDeclared()
     {
         return previouslyDeclared;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getNameEndOffset()
+     */
+    public int getNameEndOffset()
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

@@ -44,14 +44,21 @@ public class BaseASTTest extends TestCase
 	
 	protected IQuickParseCallback quickParseCallback; 
 	protected IParser parser; 
-	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError ) throws ParserException
+	
+	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError, ParserLanguage lang ) throws ParserException
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, ParserLanguage.CPP, quickParseCallback), quickParseCallback, mode, ParserLanguage.CPP );
+		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback), quickParseCallback, mode, lang );
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
-		return quickParseCallback.getCompilationUnit(); 
+		return quickParseCallback.getCompilationUnit(); 		
+	}
+	
+	
+	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError ) throws ParserException
+	{
+		return parse( code, quick, throwExceptionOnError, ParserLanguage.CPP );
 	}
 	
 	protected IASTCompilationUnit parse( String code )throws ParserException

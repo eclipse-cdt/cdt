@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
  */
 public class DeclarationWrapper implements IDeclaratorOwner
 { 
+    private boolean restrict;
     private int endOffset;
     private ITokenDuple name;
     private Type simpleType =
@@ -418,6 +419,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             .createMethod(
                 scope,
                 nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+				declarator.getNameEndOffset(),
                 createParameterList(declarator.getParameters()),
                 astFactory.createAbstractDeclaration(
                     constt,
@@ -432,12 +434,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 declarator.getNameStartOffset(),
                 templateDeclaration,
                 declarator.isConst(),
-                declarator.isVolatile(),
-		        virtual,
+		        declarator.isVolatile(),
+	            virtual,
 	            explicit,
-	            declarator.isPureVirtual(),
-	            ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers(), 
-	            declarator.hasFunctionBody());
+	            declarator.isPureVirtual(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), 
+	            declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody());
     }
     /**
      * @param declarator
@@ -448,6 +449,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         return astFactory.createFunction(
             scope,
 			nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+            declarator.getNameEndOffset(),
             createParameterList(declarator.getParameters()),
             astFactory.createAbstractDeclaration(
                 constt,
@@ -460,15 +462,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
             staticc,
             startingOffset,
             declarator.getNameStartOffset(),
-            templateDeclaration,
+		templateDeclaration,
 		declarator.isConst(),
 		declarator.isVolatile(),
 		virtual,
 		explicit,
 		declarator.isPureVirtual(),
-		ASTAccessVisibility.PUBLIC,
-		declarator.getConstructorMemberInitializers(), 
-		declarator.hasFunctionBody() );
+		ASTAccessVisibility.PUBLIC, 
+		declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody() );
     }
     /**
      * @param declarator
@@ -663,6 +664,22 @@ public class DeclarationWrapper implements IDeclaratorOwner
     public int getEndOffset()
     {
         return endOffset;
+    }
+    /**
+     * @param b
+     */
+    public void setRestrict(boolean b)
+    {
+        restrict = b;
+    }
+    
+
+    /**
+     * @return
+     */
+    public boolean isRestrict()
+    {
+        return restrict;
     }
 
 }

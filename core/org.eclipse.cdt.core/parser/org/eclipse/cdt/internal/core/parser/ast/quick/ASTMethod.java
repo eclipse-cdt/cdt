@@ -54,6 +54,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public ASTMethod(
         IASTScope scope,
         String name,
+        int nameEndOffset,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -74,6 +75,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         super(
             scope,
             name,
+            nameEndOffset, 
             parameters,
             returnType,
             exception,

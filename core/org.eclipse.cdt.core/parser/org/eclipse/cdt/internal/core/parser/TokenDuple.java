@@ -88,6 +88,8 @@ public class TokenDuple implements ITokenDuple {
 		for( ; ; )
 		{
 			buff.append( iter.getImage() );
+			if( iter.getType() == IToken.t_operator )
+				buff.append( ' ');
 			if( iter == lastToken ) break;
 			iter = iter.getNext();
 		}

@@ -1270,6 +1270,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTFunction createFunction(
 	    IASTScope scope,
 	    String name,
+	    int nameEndOffset,
 	    List parameters,
 	    IASTAbstractDeclaration returnType,
 	    IASTExceptionSpecification exception,
@@ -1278,14 +1279,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    boolean isStatic,
 	    int startOffset,
 	    int nameOffset,
-	    IASTTemplate ownerTemplate,
+		IASTTemplate ownerTemplate,
 		boolean isConst,
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual,
-		ASTAccessVisibility visibility, 
-		List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
+		boolean isPureVirtual, 
+		ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
 	{
 		List references = new ArrayList();
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
@@ -1341,7 +1341,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
 					visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
 				}
-				return createMethod(scope, functionName, parameters, returnType,
+				return createMethod(scope, functionName, nameEndOffset, parameters, returnType,
 				exception, isInline, isFriend, isStatic, startOffset, offset,
 				ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
 				visibility, constructorChain,parentName, references, isFunctionDefinition);
@@ -1387,7 +1387,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			throw new ASTSemanticException();   
 		}
-		ASTFunction function = new ASTFunction( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared );        
+		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared );        
 	    try
 	    {
 	        attachSymbolExtension(symbol, function);
@@ -1580,6 +1580,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public IASTMethod createMethod(
 		IASTScope scope,
 		String name,
+		int nameEndOffset,
 		List parameters,
 		IASTAbstractDeclaration returnType,
 		IASTExceptionSpecification exception,
@@ -1593,11 +1594,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual,
-		ASTAccessVisibility visibility, 
-		List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
+		boolean isPureVirtual, 
+		ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
 	{
-		return createMethod(scope, name, parameters, returnType,
+		return createMethod(scope, name, nameEndOffset, parameters, returnType,
 		exception, isInline, isFriend, isStatic, startOffset, nameOffset,
 		ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
 		visibility, constructorChain,scopeToSymbol(scope).getName(), null, isFunctionDefinition );
@@ -1606,6 +1606,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
+        int nameEndOffset, 
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -1669,7 +1670,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean previouslyDeclared = false; 
 		//TODO : Hoda - if symbol was previously declared in PST, then set this to true
   
-        ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
+        ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
         try
         {
             attachSymbolExtension( symbol, method );

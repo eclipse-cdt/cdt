@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
@@ -118,7 +117,6 @@ public class ContextStack {
 		int size = undoStack.size();
 		if( size > 0 )
 		{
-			Iterator iter = undoStack.iterator();
 			for( int i = size; i > 0; i-- )
 			{
 				push( (IScannerContext) undoStack.removeFirst(), requestor );

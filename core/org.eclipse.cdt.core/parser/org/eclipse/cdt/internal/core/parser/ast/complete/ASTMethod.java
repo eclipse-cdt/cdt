@@ -45,11 +45,12 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      * @param ownerTemplate
      * @param references
      */
-    public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, 
+    public ASTMethod(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, 
 	boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain )
     {
         super(
             symbol,
+            nameEndOffset,
             parameters,
             returnType,
             exception,

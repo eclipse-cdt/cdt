@@ -161,6 +161,7 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     {
         offsets.setEndingOffset(o);
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingOffset()
      */
@@ -168,16 +169,13 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     {
         return offsets.getStartingOffset();
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getEndingOffset()
      */
     public int getEndingOffset()
     {
         return offsets.getEndingOffset();
-    }
-
-
-    
-    
+    }    
     
 }

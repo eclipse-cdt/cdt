@@ -34,34 +34,6 @@ public abstract class CBreakpoint extends Breakpoint
 								  			 IDebugEventSetListener
 {
 	/**
-	 * Breakpoint attribute storing the number of debug targets a
-	 * breakpoint is installed in (value <code>"org.eclipse.cdt.debug.core.installCount"</code>).
-	 * This attribute is a <code>int</code>.
-	 */
-	protected static final String INSTALL_COUNT = "org.eclipse.cdt.debug.core.installCount"; //$NON-NLS-1$	
-
-	/**
-	 * Breakpoint attribute storing the the conditional expression 
-	 * associated with this breakpoint (value <code>"org.eclipse.cdt.debug.core.condition"</code>).
-	 * This attribute is a <code>String</code>.
-	 */
-	protected static final String CONDITION = "org.eclipse.cdt.debug.core.condition"; //$NON-NLS-1$	
-
-	/**
-	 * Breakpoint attribute storing a breakpoint's ignore count value 
-	 * (value <code>"org.eclipse.cdt.debug.core.ignoreCount"</code>).
-	 * This attribute is a <code>int</code>.
-	 */
-	protected static final String IGNORE_COUNT = "org.eclipse.cdt.debug.core.ignoreCount"; //$NON-NLS-1$	
-
-	/**
-	 * Breakpoint attribute storing an identifier of the thread this 
-	 * breakpoint is restricted in (value <code>"org.eclipse.cdt.debug.core.threadId"</code>). 
-	 * This attribute is a <code>String</code>.
-	 */
-	protected static final String THREAD_ID = "org.eclipse.cdt.debug.core.threadId"; //$NON-NLS-1$	
-
-	/**
 	 * Constructor for CBreakpoint.
 	 */
 	public CBreakpoint()

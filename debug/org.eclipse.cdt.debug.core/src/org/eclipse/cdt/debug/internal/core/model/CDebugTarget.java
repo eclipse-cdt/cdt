@@ -573,6 +573,15 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void breakpointChanged( IBreakpoint breakpoint, IMarkerDelta delta )
 	{
+		try
+		{
+			if ( breakpoint instanceof CBreakpoint )
+				changeBreakpointProperties( (CBreakpoint)breakpoint, delta );
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
 	}
 
 	/**
@@ -1031,6 +1040,40 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	protected void changeBreakpointProperties( CBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException
+	{
+		ICDIBreakpoint cdiBreakpoint = findCDIBreakpoint( breakpoint );
+		if ( cdiBreakpoint == null )
+			return;
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			boolean enabled = breakpoint.isEnabled();
+			boolean oldEnabled = delta.getAttribute( IBreakpoint.ENABLED, true );
+			int ignoreCount = breakpoint.getIgnoreCount();
+			int oldIgnoreCount = delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 );
+			String condition = breakpoint.getCondition();
+			String oldCondition = delta.getAttribute( ICBreakpoint.CONDITION, "" );
+			if ( enabled != oldEnabled )
+			{
+				cdiBreakpoint.setEnabled( enabled );
+			}
+			if ( ignoreCount != oldIgnoreCount || !condition.equals( oldCondition ) )
+			{
+				ICDICondition cdiCondition = bm.createCondition( ignoreCount, condition );
+				cdiBreakpoint.setCondition( cdiCondition );
+			}
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
+	}
+	
 	/**
 	 * Creates, adds and returns a thread for the given underlying 
 	 * CDI thread. A creation event is fired for the thread.

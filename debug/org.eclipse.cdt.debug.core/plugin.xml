@@ -29,16 +29,16 @@
             value="true">
       </persistent>
       <attribute
-            name="condition">
+            name="org.eclipse.cdt.debug.core.condition">
       </attribute>
       <attribute
-            name="ignoreCount">
+            name="org.eclipse.cdt.debug.core.ignoreCount">
       </attribute>
       <attribute
-            name="threadId">
+            name="org.eclipse.cdt.debug.core.threadId">
       </attribute>
       <attribute
-            name="installCount">
+            name="org.eclipse.cdt.debug.core.installCount">
       </attribute>
    </extension>
    <extension
@@ -74,7 +74,7 @@
             value="true">
       </persistent>
       <attribute
-            name="address">
+            name="org.eclipse.cdt.debug.core.address">
       </attribute>
    </extension>
    <extension
@@ -87,7 +87,7 @@
             value="true">
       </persistent>
       <attribute
-            name="function">
+            name="org.eclipse.cdt.debug.core.function">
       </attribute>
    </extension>
    <extension
@@ -100,7 +100,7 @@
             value="true">
       </persistent>
       <attribute
-            name="expression">
+            name="org.eclipse.cdt.debug.core.expression">
       </attribute>
    </extension>
    <extension

@@ -1,4 +1,8 @@
 2003-01-17 Mikhail Khodjaiants
+	Use the C editor instead of the default editor for files without extensions.
+	* CDTDebugModelPresentation.java
+
+2003-01-17 Mikhail Khodjaiants
 	Added the handlers for the 'Create' and 'Terminate' events to the 'Shared Libraries' view.
 	* SharedLibrariesViewEventHandler.java
 

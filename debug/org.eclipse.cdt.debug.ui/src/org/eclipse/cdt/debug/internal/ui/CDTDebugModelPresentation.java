@@ -35,6 +35,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -170,7 +171,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
 			if ( descriptor != null )
 				return descriptor.getId();
-			return registry.getDefaultEditor().getId();
+			return CUIPlugin.EDITOR_ID;
 		}
 		return null;
 	}

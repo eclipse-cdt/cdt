@@ -1,3 +1,15 @@
+2002-10-22 Mikhail Khodjaiants
+	Implementation of the "Show ASCII" action.
+	Action images:
+		show_ascii.gif (clcl, dlcl, elcl).
+	* ShowAsciiAction.java
+	* MemoryPresentation.java
+	* MemoryText.java
+	* MemoryView.java
+	* MemoryViewer.java
+	* CDebugImages.java
+	* ICDebugHelpContextIds.java
+
 2002-10-21 Mikhail Khodjaiants
 	Framework tries to refresh memory view before the view controls are created.
 	* MemoryViewer.java: Check if CTabFolder has already created when refreshing the view.

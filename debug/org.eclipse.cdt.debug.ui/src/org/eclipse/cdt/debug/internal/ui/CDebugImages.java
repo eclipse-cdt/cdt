@@ -68,6 +68,7 @@ public class CDebugImages
 	public static final String IMG_LCL_REFRESH_MEMORY = NAME_PREFIX + "refresh_mem.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_MEMORY_SAVE = NAME_PREFIX + "memory_save.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_MEMORY_CLEAR = NAME_PREFIX + "memory_clear.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_SHOW_ASCII = NAME_PREFIX + "show_ascii.gif";	//$NON-NLS-1$
 
 	/*
 	 * Set of predefined Image Descriptors.

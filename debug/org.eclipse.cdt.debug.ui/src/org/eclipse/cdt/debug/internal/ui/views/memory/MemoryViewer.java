@@ -193,4 +193,20 @@ public class MemoryViewer extends ContentViewer
 	{
 		((MemoryControlArea)fTabFolder.getSelection().getControl()).clear();
 	}
+	
+	public boolean showAscii()
+	{
+		return ((MemoryControlArea)fTabFolder.getSelection().getControl()).getPresentation().displayASCII();
+	}
+	
+	public void setShowAscii( boolean show )
+	{
+		((MemoryControlArea)fTabFolder.getSelection().getControl()).getPresentation().setDisplayAscii( show );
+		((MemoryControlArea)fTabFolder.getSelection().getControl()).refresh();
+	}
+	
+	public boolean canShowAscii()
+	{
+		return ((MemoryControlArea)fTabFolder.getSelection().getControl()).getPresentation().canDisplayAscii();
+	}
 }

@@ -6,9 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -215,38 +212,38 @@ public class MemoryText
 	
 	public void setChangedColor()
 	{
-		List list = new LinkedList();
 		Point[] zones = fPresentation.getChangedZones();
 		for ( int i = 0; i < zones.length; ++i )
-			list.add( new StyleRange( zones[i].x,
-									  zones[i].y - zones[i].x + 1,
-									  getChangedColor(),
-									  getBackgroundColor() ) );
-		fText.setStyleRanges( (StyleRange[])list.toArray( new StyleRange[list.size()] ) );
+		{
+			fText.setStyleRange( new StyleRange( zones[i].x,
+												 zones[i].y - zones[i].x + 1,
+												 getChangedColor(),
+												 getBackgroundColor() ) );
+		}
 	}
 	
 	public void setAddressColor()
 	{
-		List list = new LinkedList();
 		Point[] zones = fPresentation.getAddressZones();
 		for ( int i = 0; i < zones.length; ++i )
-			list.add( new StyleRange( zones[i].x,
-									  zones[i].y - zones[i].x + 1,
-									  getAddressColor(),
-									  getBackgroundColor() ) );
-		fText.setStyleRanges( (StyleRange[])list.toArray( new StyleRange[list.size()] ) );
+		{
+			fText.setStyleRange( new StyleRange( zones[i].x,
+												 zones[i].y - zones[i].x + 1,
+												 getAddressColor(),
+												 getBackgroundColor() ) );
+		}
 	}
 	
 	public void setDirtyColor()
 	{
-		List list = new LinkedList();
 		Point[] zones = fPresentation.getDirtyZones();
 		for ( int i = 0; i < zones.length; ++i )
-			list.add( new StyleRange( zones[i].x,
-									  zones[i].y - zones[i].x + 1,
-									  getDirtyColor(),
-									  getBackgroundColor() ) );
-		fText.setStyleRanges( (StyleRange[])list.toArray( new StyleRange[list.size()] ) );
+		{
+			fText.setStyleRange( new StyleRange( zones[i].x,
+												 zones[i].y - zones[i].x + 1,
+												 getDirtyColor(),
+												 getBackgroundColor() ) );
+		}
 	}
 	
 	protected void setEditable( boolean editable )

@@ -35,6 +35,8 @@ public class MemoryPresentation
 	private List fAddressZones;
 	private List fChangedZones;
 	private List fDirtyZones;
+	
+	private boolean fDisplayAscii = true;
 		
 	/**
 	 * Constructor for MemoryPresentation.
@@ -166,7 +168,10 @@ public class MemoryPresentation
 			result.append( getInterval( INTERVAL_BETWEEN_DATA_ITEMS ) );
 		}
 		result.append( getInterval( INTERVAL_BETWEEN_DATA_AND_ASCII ) );
-		result.append( row.getASCII() );
+		if ( displayASCII() )
+		{
+			result.append( row.getASCII() );
+		}
 		result.append( '\n' );
 		return result.toString();
 	}
@@ -336,13 +341,18 @@ public class MemoryPresentation
 		return 0;
 	}
 	
-	private boolean displayASCII()
+	protected boolean displayASCII()
 	{
-		if ( getMemoryBlock() != null )
-			return getMemoryBlock().displayASCII();
+		if ( canDisplayAscii() )
+			return fDisplayAscii;
 		return false;
 	}
 	
+	protected void setDisplayAscii( boolean displayAscii )
+	{
+		fDisplayAscii = displayAscii;
+	}
+ 
 	private int getDataBytesPerRow()
 	{
 		if ( getMemoryBlock() != null )
@@ -435,5 +445,12 @@ public class MemoryPresentation
 			}
 		}
 		return -1;
+	}
+	
+	protected boolean canDisplayAscii()
+	{
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().displayASCII();
+		return false;
 	}
 }

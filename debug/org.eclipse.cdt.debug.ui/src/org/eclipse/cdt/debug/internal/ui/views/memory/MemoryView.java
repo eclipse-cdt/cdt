@@ -10,6 +10,7 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ClearMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
+import org.eclipse.cdt.debug.internal.ui.actions.ShowAsciiAction;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
@@ -77,6 +78,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		add( (RefreshMemoryAction)action );
 
 		action = new AutoRefreshMemoryAction( (MemoryViewer)getViewer() );
+		action.setEnabled( false );
 		action.setChecked( false );
 		setAction( "AutoRefreshMemory", action ); //$NON-NLS-1$
 		add( (AutoRefreshMemoryAction)action );
@@ -85,6 +87,12 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		action.setEnabled( false );
 		setAction( "ClearMemory", action ); //$NON-NLS-1$
 		add( (ClearMemoryAction)action );
+
+		action = new ShowAsciiAction( (MemoryViewer)getViewer() );
+		action.setEnabled( false );
+		action.setChecked( false );
+		setAction( "ShowAscii", action ); //$NON-NLS-1$
+		add( (ShowAsciiAction)action );
 
 		// set initial content here, as viewer has to be set
 		setInitialContent();
@@ -109,6 +117,10 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		menu.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
 		menu.add( getAction( "ClearMemory" ) ); //$NON-NLS-1$
 
+		menu.add( new Separator( IDebugUIConstants.EMPTY_RENDER_GROUP ) );
+		menu.add( new Separator( IDebugUIConstants.RENDER_GROUP ) );
+		menu.add( getAction( "ShowAscii" ) ); //$NON-NLS-1$
+
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 	}
 
@@ -122,6 +134,9 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		tbm.add( getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 		tbm.add( getAction( "RefreshMemory" ) ); //$NON-NLS-1$
 		tbm.add( getAction( "ClearMemory" ) ); //$NON-NLS-1$
+
+		tbm.add( new Separator( IDebugUIConstants.RENDER_GROUP ) );
+		tbm.add( getAction( "ShowAscii" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -158,6 +173,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	 */
 	public void dispose()
 	{
+		remove( (ShowAsciiAction)getAction( "ShowAscii" ) );
 		remove( (ClearMemoryAction)getAction( "ClearMemory" ) );
 		remove( (RefreshMemoryAction)getAction( "RefreshMemory" ) );
 		remove( (AutoRefreshMemoryAction)getAction( "AutoRefreshMemory" ) );

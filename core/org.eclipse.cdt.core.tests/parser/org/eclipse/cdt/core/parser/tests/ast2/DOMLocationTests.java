@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -292,6 +293,20 @@ public class DOMLocationTests extends AST2BaseTest {
       }      
    }
    
+   public void testBug84374() throws Exception
+   {
+      String code = "class P1 { public: int x; };\nclass P2 { public: int x; };\nclass B : public P1, public P2 {};\nvoid main() {\nB * b = new B();\n}"; //$NON-NLS-1$
+      IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+      IASTFunctionDefinition main = (IASTFunctionDefinition) tu.getDeclarations()[3];
+      IASTCompoundStatement statement = (IASTCompoundStatement) main.getBody();
+      IASTDeclarationStatement decl = (IASTDeclarationStatement) statement.getStatements()[0];
+      IASTSimpleDeclaration b = (IASTSimpleDeclaration) decl.getDeclaration();
+      IASTInitializerExpression initializerExpression = (IASTInitializerExpression) b.getDeclarators()[0].getInitializer();
+      assertSoleLocation( initializerExpression, code.indexOf( "new B()"), "new B()".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+      ICPPASTNewExpression newExpression = (ICPPASTNewExpression) initializerExpression.getExpression();
+      assertSoleLocation( newExpression, code.indexOf( "new B()"), "new B()".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+   
    public void testBug83737() throws Exception {
       String code = "void f() {  if( a == 0 ) g( a ); else if( a < 0 ) g( a >> 1 ); else if( a > 0 ) g( *(&a + 2) ); }"; //$NON-NLS-1$
       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
@@ -311,8 +326,7 @@ public class DOMLocationTests extends AST2BaseTest {
          assertSoleLocation( first_if, first_if_start, total_if_length );
          assertSoleLocation( second_if, second_if_start, total_if_end - second_if_start );
          assertSoleLocation( third_if, third_if_start, total_if_end - third_if_start );
-      }
-      
+      }      
    }
 
 }

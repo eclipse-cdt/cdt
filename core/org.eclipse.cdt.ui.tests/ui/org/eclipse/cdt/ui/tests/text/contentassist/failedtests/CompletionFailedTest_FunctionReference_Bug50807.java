@@ -32,7 +32,7 @@ public class CompletionFailedTest_FunctionReference_Bug50807  extends Completion
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
 	private final String expectedContextName = "null"; // either the context or the prefix should be meaningful "ASTMethod"
-	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // should be CompletionKind.FUNCTION_REFERENCE; 
+	private final CompletionKind expectedKind = CompletionKind.NO_SUCH_KIND; // should be CompletionKind.FUNCTION_REFERENCE; 
 	private final String expectedPrefix = ""; // should be "xAClassMethod"
 	private final String[] expectedResults = {
 	// should be

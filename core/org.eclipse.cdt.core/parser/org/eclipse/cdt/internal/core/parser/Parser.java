@@ -2754,10 +2754,6 @@ public abstract class Parser extends ExpressionParser implements IParser
                 {
                 	backup( mark );
                 }
-                catch( OffsetLimitReachedException olre )
-				{
-                	backup(mark);
-                }
 
                 // declarationStatement
                 declaration(scope, null, null);

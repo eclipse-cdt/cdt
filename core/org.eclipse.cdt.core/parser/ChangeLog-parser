@@ -1,4 +1,7 @@
 2004-03-03 John Camelon
+	Refactored parser for further content assist work.
+
+2004-03-03 John Camelon
 	Added some trace statements to CompleteParseASTFactory.  
 	Cleaned up usage of Enum.getValue() wrt encapsulation of enumerator value.  
 	Refactored CompleteParseASTFactory for correctness and abstraction. 

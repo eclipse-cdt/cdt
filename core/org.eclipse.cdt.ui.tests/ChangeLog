@@ -1,3 +1,6 @@
+2004-03-03 John Camelon
+	Updated failed test to fail in new way as Content Assist feature work continues on ...
+
 2004-01-30 John Camelon
 	Updated CompletionFailedTest_MacroRef_NoPrefix_Bug50487, renamed it to CompletionTest_MacroRef_NoPrefix and moved to passed test package.
 	Updated CompletionFailedTest_MacroRef_Prefix_Bug50487, renamed it to Y and moved to passed test package.

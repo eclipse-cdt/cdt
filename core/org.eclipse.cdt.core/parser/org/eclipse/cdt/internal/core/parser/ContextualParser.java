@@ -17,7 +17,9 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
 /**
@@ -137,6 +140,25 @@ public class ContextualParser extends CompleteParser {
 		checkEndOfFile();
 	}
 
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last ) throws EndOfFileException{		
+		if( !queryLookaheadCapability() )
+		{
+			setCompletionScope( scope );
+			setCompletionKind( kind );
+			setCompletionKeywords( Key.EMPTY );
+			ITokenDuple duple = new TokenDuple( first, last );
+			ITokenDuple realDuple = duple.getSubrange( 0, duple.length() - 3 );
+			IASTNode node = null;
+			try {
+				node = astFactory.lookupSymbolInContext( scope, realDuple );
+				setCompletionContext( node );
+			} catch (ASTNotImplementedException e) {
+				// assert false;
+			}
+		}
+	}
+
+	
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, boolean isTemplate) throws EndOfFileException {
 		setCompletionValues(scope,kind,key, getCompletionContextForExpression(firstExpression,isTemplate)  );
 	}

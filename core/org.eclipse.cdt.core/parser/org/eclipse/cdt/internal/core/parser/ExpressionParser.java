@@ -173,67 +173,67 @@ public class ExpressionParser implements IExpressionParser {
 	 * 
 	 * name2
 	 * : IDENTIFER
+	 * : template-id
 	 * 
 	 * @throws BacktrackException	request a backtrack
 	 */
 	protected TokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind) throws BacktrackException, EndOfFileException {
+		
 	    IToken first = LA(1);
 	    IToken last = null;
 	    IToken mark = mark();
-	
-	    try
-		{
-	        if (LT(1) == IToken.tCOLONCOLON)
-	            last = consume( IToken.tCOLONCOLON );
-	        // TODO - whacky way to deal with destructors, please revisit
-	        if (LT(1) == IToken.tCOMPL)
-	            consume();
-	        switch (LT(1))
-	        {
-	            case IToken.tIDENTIFIER :
-	                last = consume(IToken.tIDENTIFIER);
-	                IToken secondMark = null;
-	                if( queryLookaheadCapability() )
-	                	secondMark = mark();
-	                else
-	                	return new TokenDuple(last, last);
-	                
-	                try
-	                {
-	                	last = consumeTemplateParameters(last);
-	                } catch( BacktrackException bt )
-	                {
-	                	backup( secondMark );
-	                }
-	                break;
-	            default :
-	                backup(mark);
-	                throw backtrack;
-	        }
-	        while (LT(1) == IToken.tCOLONCOLON)
-	        {
-	            last = consume();
-	            if (LT(1) == IToken.t_template)
-	                consume();
-	            if (LT(1) == IToken.tCOMPL)
-	                consume();
-	            switch (LT(1))
-	            {
-	                case IToken.t_operator :
-	                    backup(mark);
-	                    throw backtrack;
-	                case IToken.tIDENTIFIER :
-	                    last = consume();
-	                    last = consumeTemplateParameters(last);
-	            }
-	        }
-	
-	        return new TokenDuple(first, last);
-	    } catch( OffsetLimitReachedException olre )
-		{
-	    	backup(mark);
-	    	throw backtrack;
-	    }
+	    
+        if (LT(1) == IToken.tCOLONCOLON)
+            last = consume( IToken.tCOLONCOLON );
+
+        if (LT(1) == IToken.tCOMPL)
+            consume();
+        
+        switch (LT(1))
+        {
+            case IToken.tIDENTIFIER :
+                last = consume(IToken.tIDENTIFIER);
+                IToken secondMark = null;
+                
+                secondMark = mark();
+                
+                try
+                {
+                	last = consumeTemplateParameters(last);
+                } catch( BacktrackException bt )
+                {
+                	backup( secondMark );
+                }
+                break;
+        
+            default :
+                backup(mark);
+                throw backtrack;
+        }
+
+        while (LT(1) == IToken.tCOLONCOLON)
+        {
+            last = consume();
+            
+            if (LT(1) == IToken.t_template)
+                consume();
+            
+            if (LT(1) == IToken.tCOMPL)
+                consume();
+
+            switch (LT(1))
+            {
+                case IToken.t_operator :
+                    backup(mark);
+                    throw backtrack;
+                case IToken.tIDENTIFIER :
+                    last = consume();
+                    last = consumeTemplateParameters(last);
+            }
+        }
+
+        return new TokenDuple(first, last);
+
 	}
 
 	/**
@@ -1814,7 +1814,7 @@ public class ExpressionParser implements IExpressionParser {
 	            }
 	            break;
 	        default :
-	            firstExpression = primaryExpression(scope);
+	            firstExpression = primaryExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
 	    }
 	    IASTExpression secondExpression = null;
 	    for (;;)
@@ -1932,7 +1932,7 @@ public class ExpressionParser implements IExpressionParser {
 	        
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
 	                															
-	                secondExpression = primaryExpression(scope);
+	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE);
 	                checkEndOfFile();
 	                
 	                setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,	KeywordSets.Key.EMPTY );
@@ -1973,7 +1973,7 @@ public class ExpressionParser implements IExpressionParser {
 	                
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
 	                															
-	                secondExpression = primaryExpression(scope);
+	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE);
 	                checkEndOfFile();                    
 	
 	                setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,	KeywordSets.Key.EMPTY );
@@ -2062,7 +2062,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression primaryExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
+	protected IASTExpression primaryExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
 	    IToken t = null;
 	    switch (LT(1))
 	    {
@@ -2217,7 +2217,7 @@ public class ExpressionParser implements IExpressionParser {
 	            IToken mark = mark();
 	            try
 	            {
-					duple = name(scope, CompletionKind.SINGLE_NAME_REFERENCE);
+					duple = name(scope, kind);
 	            }
 	            catch( BacktrackException bt )
 	            {
@@ -2248,12 +2248,7 @@ public class ExpressionParser implements IExpressionParser {
 					 
 					 duple = d.getNameDuple();
 	            }
-	            catch(OffsetLimitReachedException olre )
-				{
-	            	backup(mark);
-	            	throw backtrack;
-	            }
-	                            
+	            
 	            checkEndOfFile();
 	            try
 	            {
@@ -2457,6 +2452,9 @@ public class ExpressionParser implements IExpressionParser {
 	}
 
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, boolean isTemplate) throws EndOfFileException {
+	}
+	
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last ) throws EndOfFileException {
 	}
 
 	protected IASTExpression unaryOperatorCastExpression(IASTScope scope, IASTExpression.Kind kind) throws EndOfFileException, BacktrackException {

@@ -30,6 +30,10 @@ public abstract class GNUScannerConfiguration implements IScannerConfiguration {
     public char[] supportAdditionalNumericLiteralSuffixes() {
         return "ij".toCharArray(); //$NON-NLS-1$
     }
+    
+    private static final ObjectStyleMacro __asm__ = new ObjectStyleMacro(
+            "__asm__".toCharArray(), "asm".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+
 
     private static final ObjectStyleMacro __inline__ = new ObjectStyleMacro(
             "__inline__".toCharArray(), "inline".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -108,6 +112,7 @@ public abstract class GNUScannerConfiguration implements IScannerConfiguration {
         realDefinitions.put(__real__.name, __real__);
         realDefinitions.put(__builtin_va_arg.name, __builtin_va_arg);
         realDefinitions.put(__builtin_constant_p.name, __builtin_constant_p);
+        realDefinitions.put( __asm__.name, __asm__ );
         return realDefinitions;
     }
     

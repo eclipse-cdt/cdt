@@ -15,7 +15,6 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -37,14 +36,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.tests.parser2.ProblemCollector;
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -55,13 +52,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
 
 /**
  * @author aniefer
  */
 public class AST2BaseTest extends TestCase {
 
-    private static final ISourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
     private static final IParserLogService NULL_LOG = new NullLogService();
 
     /**
@@ -72,10 +72,15 @@ public class AST2BaseTest extends TestCase {
      */
     protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
         ProblemCollector collector = new ProblemCollector();
-        IScanner scanner = ParserFactory.createScanner(new CodeReader(code
-                .toCharArray()), new ScannerInfo(), ParserMode.COMPLETE_PARSE,
-                lang, NULL_REQUESTOR,
-                NULL_LOG, Collections.EMPTY_LIST);
+        CodeReader codeReader = new CodeReader(code
+                .toCharArray());
+        ScannerInfo scannerInfo = new ScannerInfo();
+        IScannerConfiguration configuration = null;
+        if( lang == ParserLanguage.C )
+            configuration = new GCCScannerConfiguration();
+        else
+            configuration = new GPPScannerConfiguration();
+        IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, SavedCodeReaderFactory.getInstance() );  
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )
         {

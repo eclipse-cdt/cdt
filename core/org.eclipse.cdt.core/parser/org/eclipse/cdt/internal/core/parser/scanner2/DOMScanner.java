@@ -10,8 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import java.util.List;
 
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -24,18 +24,22 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
  */
 public class DOMScanner extends BaseScanner {
 
+    private final ICodeReaderFactory codeReaderFactory;
+
+
     /**
      * @param reader
      * @param info
      * @param parserMode
      * @param language
      * @param log
-     * @param workingCopies
+     * @param readerFactory TODO
      * @param requestor
      */
-    public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, List workingCopies, IScannerConfiguration configuration) {
+    public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerConfiguration configuration, ICodeReaderFactory readerFactory) {
         super(reader, info, parserMode, language, log, configuration);
         this.expressionEvaluator = new ExpressionEvaluator(null, spf);
+        this.codeReaderFactory = readerFactory;
         postConstructorSetup(reader, info);
     }
 
@@ -78,8 +82,7 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#createReaderDuple(java.lang.String)
      */
     protected CodeReader createReaderDuple(String finalPath) {
-        // TODO Auto-generated method stub
-        return null;
+        return codeReaderFactory.createCodeReaderForInclusion(finalPath);
     }
     
 

@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * @author jcamelon
@@ -41,18 +40,6 @@ public class GPPScannerConfiguration extends GNUScannerConfiguration implements
 		additionalCPPKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
 		additionalCPPKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );
 		return additionalCPPKeywords;
-    }
-
-    private static final ObjectStyleMacro __asm__ = new ObjectStyleMacro(
-            "__asm__".toCharArray(), "asm".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalMacros()
-     */
-    public CharArrayObjectMap getAdditionalMacros() {
-        CharArrayObjectMap result = super.getAdditionalMacros();
-        result.put( __asm__.name, __asm__ );
-        return result;
     }
 
 }

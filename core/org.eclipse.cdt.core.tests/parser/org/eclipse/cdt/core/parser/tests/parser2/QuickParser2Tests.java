@@ -12,18 +12,17 @@ package org.eclipse.cdt.core.parser.tests.parser2;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collections;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
@@ -34,6 +33,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPParserExtensionConfigu
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
 
 /**
  * @author jcamelon
@@ -41,7 +44,6 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 public class QuickParser2Tests extends TestCase {
 
     private static final NullLogService NULL_LOG = new NullLogService();
-    private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 
     /**
      *  
@@ -1355,9 +1357,14 @@ public class QuickParser2Tests extends TestCase {
             ParserLanguage lang, boolean gcc) throws Exception {
 
         ProblemCollector collector = new ProblemCollector();
-        IScanner scanner = ParserFactory.createScanner(new CodeReader(code
-                .toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE,
-                lang, NULL_REQUESTOR, NULL_LOG, Collections.EMPTY_LIST);
+        CodeReader codeReader = new CodeReader( code.toCharArray() );
+        IScannerInfo scannerInfo = new ScannerInfo();
+        IScannerConfiguration configuration = null;
+        if( lang == ParserLanguage.C )
+            configuration = new GCCScannerConfiguration();
+        else
+            configuration = new GPPScannerConfiguration();
+        IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, SavedCodeReaderFactory.getInstance() );
         ISourceCodeParser parser2 = null;
         if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;

@@ -13,6 +13,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
@@ -41,12 +42,19 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 
 public class CModelManager implements IResourceChangeListener {
 
 	private HashMap fParsedResources =  new HashMap();	
 
+	final static String BINARY_PARSER= "binaryparser";
+
+	static QualifiedName binaryParserKey = new QualifiedName(CoreModel.CORE_MODEL_ID, BINARY_PARSER);
+	
+	private static HashMap fParsers = new HashMap();
 	private static IBinaryParser defaultBinaryParser = new ElfParser();
+	//private static IBinaryParser defaultBinaryParser = new PEParser();
 
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>IJavaElementDelta</code>s.
@@ -341,11 +349,39 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	public static IBinaryParser getBinaryParser(IProject project) {
+		// It is in the property of the project of the cdtproject
 		// For now the default is Elf.
-		// It is in the porperty of the project of the cdtproject
-		return defaultBinaryParser;
+		IBinaryParser parser = (IBinaryParser)fParsers.get(project);
+		if (parser == null) {
+			String format = null;
+			// FIXME: Ask the .cdtproject second.
+			try {
+				if (project != null) {
+					format = project.getPersistentProperty(binaryParserKey);
+				}
+			} catch (CoreException e) {
+			}
+			if (format != null && format.length() > 0) {
+				parser = CoreModel.getDefault().getBinaryParser(format);
+			}
+			if (parser == null) {
+				parser = defaultBinaryParser;
+			}
+			fParsers.put(project, parser);
+		}
+		return parser;
 	}
 
+	public static void setBinaryParser(IProject project, String format) {
+		try {
+			if (project != null) {
+				project.setPersistentProperty(binaryParserKey, format);
+				fParsers.remove(project);
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
 	public static boolean isSharedLib(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());

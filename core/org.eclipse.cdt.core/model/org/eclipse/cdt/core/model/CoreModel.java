@@ -5,6 +5,7 @@ package org.eclipse.cdt.core.model;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -18,6 +19,8 @@ public class CoreModel {
 
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = null;
+	
+	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel";
 
 	/**
 	 * Creates an ICElement form and IPath.
@@ -126,6 +129,34 @@ public class CoreModel {
 		return manager.hasCCNature(project);
 	}
 
+	/**
+	 * Return the the binaryParser of the Project.
+	 */
+	public static IBinaryParser getBinaryParser(IProject project) {
+		return manager.getBinaryParser(project);
+	}
+	
+	/**
+	 * Return all the known binaryParsers formats.
+	 */
+	public static String[] getBinaryParserFormats() {
+		return CCorePlugin.getDefault().getBinaryParserFormats();
+	}
+
+	/**
+	 * Save the binary parser for the project.
+	 */
+	public static void setBinaryParser(IProject project, String format) {
+		manager.setBinaryParser(project, format);
+	}
+	
+	/**
+	 * Return the BinaryParser corresponding to this format.
+	 */
+	public static IBinaryParser getBinaryParser(String format) {
+		return CCorePlugin.getDefault().getBinaryParser(format);
+	}
+	
 	/**
 	 * Return the singleton.
 	 */

@@ -1,4 +1,9 @@
 2004-10-07 Mikhail Khodjaiants
+	Added images of disabled registers and register groups.
+	* icons/full/obj16/registerd_obj.gif: new
+	* icons/full/obj16/registergroupd_obj.gif: new
+
+2004-10-07 Mikhail Khodjaiants
 	Provide a context for expression evaluation.
 	* CDebugUIUtils.java
 	* CDTDebugModelPresentation.java

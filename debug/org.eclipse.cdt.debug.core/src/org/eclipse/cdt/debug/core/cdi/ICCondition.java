@@ -22,23 +22,10 @@ public interface ICCondition
 	String getExpression();
 	
 	/**
-	 * Sets the condition's expression.
-	 * 
-	 * @param expression - an expression to set
-	 */
-	void setExpression( String expression );
-
-	/**
 	 * Returns the ignore count of this condition.
 	 * 
 	 * @return the ignore count of this condition
 	 */
 	int getIgnoreCount();
 	
-	/**
-	 * Sets the ignore count of this condition.
-	 * 
-	 * @param ignoreCount - a number to set
-	 */
-	void setIgnoreCount( int ignoreCount );
 }

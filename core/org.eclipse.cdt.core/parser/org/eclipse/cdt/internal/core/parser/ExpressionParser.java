@@ -17,6 +17,7 @@ import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.INumericToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
@@ -41,7 +42,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -170,7 +170,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 *  
 	 */
 	public void backup(IToken mark) {
-	    currToken = (SimpleToken)mark;
+	    currToken = mark;
 	    lastToken = null; // this is not entirely right ... 
 	}
 	
@@ -2523,17 +2523,21 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    {
 	        // TO DO: we need more literals...
 	        case IToken.tINTEGER :
+	        case IToken.tHEXINT:
 	            t = consume();
+	        	boolean isHex = ( t.getType() == IToken.tHEXINT );
 	            try
 	            {
-	                return astFactory.createExpression(
-	                    scope,
-	                    IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
-	                    null,
-	                    null,
-	                    null,
-	                    null,
-	                    null, t.getImage(), null);
+	            	if( t instanceof INumericToken )
+	            	{
+		                return astFactory.createExpression(
+		                    IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
+		                    ((INumericToken)t).getIntegerValue(), isHex);
+	            	}
+	            	else
+	            	{
+	            		return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null, null, null, null, null, t.getImage(), null ); 
+	            	}
 	            }
 	            catch (ASTSemanticException e1)
 	            {

@@ -52,4 +52,14 @@ public class ExpressionFactory {
 		
 		return new ASTEmptyExpression( kind, references );
 	}
+
+	/**
+	 * @param kind
+	 * @param literal
+	 * @param isHex
+	 * @return
+	 */
+	public static IASTExpression createExpression(Kind kind, long literal, boolean isHex) {
+		return new ASTLiteralIntegerExpression( kind, literal, isHex );
+	}
 }

@@ -58,7 +58,7 @@ public class ASTInitializerClause implements IASTInitializerClause
 	 */
 	public Iterator getInitializers() {
 		if( initializerClauses == null )
-			return new EmptyIterator();
+			return EmptyIterator.EMPTY_ITERATOR;
 		return initializerClauses.iterator();
 	}
 

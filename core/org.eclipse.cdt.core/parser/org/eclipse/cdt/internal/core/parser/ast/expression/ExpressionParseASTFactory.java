@@ -381,8 +381,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		throws ASTSemanticException {
 			if( extension.overrideCreateExpressionMethod() )
 				return extension.createExpression(scope, kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor );
-			return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ); //$NON-NLS-1$
-		
+			return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ); //$NON-NLS-1$	
 	}
 
 	/*
@@ -906,6 +905,13 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	public boolean validateDirectMemberOperation(IASTNode node) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTTypeId, org.eclipse.cdt.core.parser.ITokenDuple, int, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor)
+	 */
+	public IASTExpression createExpression(Kind kind, long literal, boolean isHex) throws ASTSemanticException {
+		return ExpressionFactory.createExpression( kind, literal, isHex ); 	
 	}
 
 

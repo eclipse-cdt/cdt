@@ -200,7 +200,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public Iterator getConstructorChainInitializers()
     {
 		if( constructorChain == null )
-			return new EmptyIterator(); 
+			return EmptyIterator.EMPTY_ITERATOR; 
         return constructorChain.iterator();
     }
 	/* (non-Javadoc)

@@ -81,7 +81,7 @@ public class GCCASTExtension implements IASTFactoryExtension {
 		if( !idExpression.equals( EMPTY_STRING ) && literal.equals( EMPTY_STRING ))
 			return new ASTIdExpression( kind, idExpression )
 			{
-				public int evaluateExpression() throws ASTExpressionEvaluationException {
+				public long evaluateExpression() throws ASTExpressionEvaluationException {
 					if( getExpressionKind() == Kind.ID_EXPRESSION )
 						return 0;
 					return super.evaluateExpression();

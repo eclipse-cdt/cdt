@@ -116,6 +116,8 @@ public interface IToken {
 	static public final int tEQUAL = 37;
 
 	static public final int tASSIGN = 38;
+	
+	static public final int tHEXINT = 39;
 
 	static public final int tSHIFTL = 40;
 

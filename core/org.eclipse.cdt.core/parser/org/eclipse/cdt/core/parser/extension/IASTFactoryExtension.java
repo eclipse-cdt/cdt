@@ -66,5 +66,4 @@ public interface IASTFactoryExtension {
     
     public boolean overrideCreateDesignatorMethod( IASTDesignator.DesignatorKind kind );
     public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms );
-
 }

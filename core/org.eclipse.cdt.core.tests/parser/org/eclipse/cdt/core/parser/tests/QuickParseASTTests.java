@@ -69,7 +69,7 @@ public class QuickParseASTTests extends BaseASTTest
     public void testIntGlobal() throws Exception
     {
         // Parse and get the translation Unit
-        IASTCompilationUnit translationUnit = parse("int x = 5;");
+        IASTCompilationUnit translationUnit = parse("int x = 5;"); //$NON-NLS-1$
         Iterator i = translationUnit.getDeclarations();
         assertTrue(i.hasNext());
         IASTVariable var = (IASTVariable)i.next();
@@ -82,9 +82,8 @@ public class QuickParseASTTests extends BaseASTTest
                 .getTypeSpecifier())
                 .getType()
                 == IASTSimpleTypeSpecifier.Type.INT);
-        assertEquals(var.getName(), "x");
-        assertNotNull(var.getInitializerClause());
-        assertNotNull(var.getInitializerClause().getAssigmentExpression());
+        assertEquals(var.getName(), "x"); //$NON-NLS-1$
+        assertNull(var.getInitializerClause());
         assertFalse(i.hasNext());
     }
     /**
@@ -95,18 +94,18 @@ public class QuickParseASTTests extends BaseASTTest
     {
         // Parse and get the translation unit
         Writer code = new StringWriter();
-        code.write("class A { } a;");
+        code.write("class A { } a;"); //$NON-NLS-1$
         IASTCompilationUnit translationUnit = parse(code.toString());
         Iterator i = translationUnit.getDeclarations();
         assertTrue(i.hasNext());
         IASTVariable var = (IASTVariable)i.next();
-        assertEquals(var.getName(), "a");
+        assertEquals(var.getName(), "a"); //$NON-NLS-1$
         assertTrue(
             var.getAbstractDeclaration().getTypeSpecifier()
                 instanceof IASTClassSpecifier);
         IASTClassSpecifier classSpec =
             (IASTClassSpecifier)var.getAbstractDeclaration().getTypeSpecifier();
-        assertEquals(classSpec.getName(), "A");
+        assertEquals(classSpec.getName(), "A"); //$NON-NLS-1$
         assertFalse(classSpec.getDeclarations().hasNext());
         assertFalse(i.hasNext());
     }
@@ -118,7 +117,7 @@ public class QuickParseASTTests extends BaseASTTest
     {
         // Parse and get the translaton unit
         Writer code = new StringWriter();
-        code.write("class A { public: int x; };");
+        code.write("class A { public: int x; };"); //$NON-NLS-1$
         IASTCompilationUnit cu = parse(code.toString());
         Iterator i = cu.getDeclarations();
         assertTrue(i.hasNext());
@@ -136,7 +135,7 @@ public class QuickParseASTTests extends BaseASTTest
         assertTrue(j.hasNext());
         IASTField field = (IASTField)j.next();
         assertFalse(j.hasNext());
-        assertTrue(field.getName().equals("x"));
+        assertTrue(field.getName().equals("x")); //$NON-NLS-1$
         assertTrue(
             field.getAbstractDeclaration().getTypeSpecifier()
                 instanceof IASTSimpleTypeSpecifier);
@@ -153,18 +152,18 @@ public class QuickParseASTTests extends BaseASTTest
         {
             IASTCompilationUnit translationUnit;
             if (i == 0)
-                translationUnit = parse("namespace KingJohn { int x; }");
+                translationUnit = parse("namespace KingJohn { int x; }"); //$NON-NLS-1$
             else
-                translationUnit = parse("namespace { int x; }");
+                translationUnit = parse("namespace { int x; }"); //$NON-NLS-1$
             Iterator iter = translationUnit.getDeclarations();
             assertTrue(iter.hasNext());
             IASTNamespaceDefinition namespaceDefinition =
                 (IASTNamespaceDefinition)iter.next();
             assertFalse(iter.hasNext());
             if (i == 0)
-                assertTrue(namespaceDefinition.getName().equals("KingJohn"));
+                assertTrue(namespaceDefinition.getName().equals("KingJohn")); //$NON-NLS-1$
             else
-                assertEquals(namespaceDefinition.getName(), "");
+                assertEquals(namespaceDefinition.getName(), ""); //$NON-NLS-1$
             Iterator j = namespaceDefinition.getDeclarations();
             assertTrue(j.hasNext());
             IASTVariable var = (IASTVariable)j.next();
@@ -178,7 +177,7 @@ public class QuickParseASTTests extends BaseASTTest
                     .getTypeSpecifier())
                     .getType()
                     == IASTSimpleTypeSpecifier.Type.INT);
-            assertEquals(var.getName(), "x");
+            assertEquals(var.getName(), "x"); //$NON-NLS-1$
         }
     }
     
@@ -188,9 +187,9 @@ public class QuickParseASTTests extends BaseASTTest
 		{
 			IASTCompilationUnit compilationUnit; 
 			if( i == 0  )
-				compilationUnit = parse("extern \"C\" { int x(void); }");
+				compilationUnit = parse("extern \"C\" { int x(void); }"); //$NON-NLS-1$
 			else
-				compilationUnit = parse("extern \"ADA\" int x(void);");
+				compilationUnit = parse("extern \"ADA\" int x(void);"); //$NON-NLS-1$
 				
 			Iterator declarations = compilationUnit.getDeclarations();
 			assertTrue( declarations.hasNext() );
@@ -198,9 +197,9 @@ public class QuickParseASTTests extends BaseASTTest
 			assertFalse( declarations.hasNext() );
 			
 			if( i == 0 )
-				assertEquals( "C", linkage.getLinkageString() );
+				assertEquals( "C", linkage.getLinkageString() ); //$NON-NLS-1$
 			else
-				assertEquals( "ADA", linkage.getLinkageString() );
+				assertEquals( "ADA", linkage.getLinkageString() ); //$NON-NLS-1$
 			
 			Iterator subDeclarations = linkage.getDeclarations();
 			assertTrue( subDeclarations.hasNext() );
@@ -208,22 +207,22 @@ public class QuickParseASTTests extends BaseASTTest
 			assertFalse( subDeclarations.hasNext());
 			
 			assertEquals( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT );
-			assertEquals( function.getName(), "x");
+			assertEquals( function.getName(), "x"); //$NON-NLS-1$
 			
 			Iterator parameters = function.getParameters();
 			assertTrue( parameters.hasNext() );
 			IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 			assertFalse( parameters.hasNext() );
 			assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.VOID );
-			assertEquals( parm.getName(), "" );
+			assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 		}
 	}
     
 	public void testEnumSpecifier() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "enum { yo, go = 3, away };\n");
-		code.write( "enum hasAString { last = 666 };");
+		code.write( "enum { yo, go = 3, away };\n"); //$NON-NLS-1$
+		code.write( "enum hasAString { last = 666 };"); //$NON-NLS-1$
 		IASTCompilationUnit translationUnit = parse( code.toString() );
 		Iterator declarations = translationUnit.getDeclarations();
 		
@@ -233,23 +232,23 @@ public class QuickParseASTTests extends BaseASTTest
 			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declarations.next(); 
 			IASTEnumerationSpecifier enumerationSpec = (IASTEnumerationSpecifier)abstractDeclaration.getTypeSpecifier();
 			if( i == 0 )
-				assertEquals( enumerationSpec.getName(), "" );
+				assertEquals( enumerationSpec.getName(), "" ); //$NON-NLS-1$
 			else
-				assertEquals( enumerationSpec.getName(), "hasAString" );
+				assertEquals( enumerationSpec.getName(), "hasAString" ); //$NON-NLS-1$
 			Iterator j = enumerationSpec.getEnumerators();
 			
 			if( i == 0 )
 			{
 				IASTEnumerator enumerator1 = (IASTEnumerator)j.next();
-				assertEquals( enumerator1.getName(), "yo");
+				assertEquals( enumerator1.getName(), "yo"); //$NON-NLS-1$
 				assertNull( enumerator1.getInitialValue() );
 				IASTEnumerator enumerator2 = (IASTEnumerator)j.next();
 				assertNotNull( enumerator2.getInitialValue() );
-				assertEquals( enumerator2.getInitialValue().getLiteralString(), "3");
+				assertEquals( enumerator2.getInitialValue().getLiteralString(), "3"); //$NON-NLS-1$
 				assertEquals( enumerator2.getInitialValue().getExpressionKind(), IASTExpression.Kind.PRIMARY_INTEGER_LITERAL );
-				assertEquals( enumerator2.getName(), "go"); 
+				assertEquals( enumerator2.getName(), "go");  //$NON-NLS-1$
 				IASTEnumerator enumerator3 = (IASTEnumerator)j.next();
-				assertEquals( enumerator3.getName(), "away");
+				assertEquals( enumerator3.getName(), "away"); //$NON-NLS-1$
 				assertNull( enumerator3.getInitialValue() );
 				assertFalse( j.hasNext() );  
 			}
@@ -257,9 +256,9 @@ public class QuickParseASTTests extends BaseASTTest
 			{
 				IASTEnumerator enumerator2 = (IASTEnumerator)j.next();
 				assertNotNull( enumerator2.getInitialValue() );
-				assertEquals( enumerator2.getInitialValue().getLiteralString(), "666");
+				assertEquals( enumerator2.getInitialValue().getLiteralString(), "666"); //$NON-NLS-1$
 				assertEquals( enumerator2.getInitialValue().getExpressionKind(), IASTExpression.Kind.PRIMARY_INTEGER_LITERAL );
-				assertEquals( enumerator2.getName(), "last"); 
+				assertEquals( enumerator2.getName(), "last");  //$NON-NLS-1$
 				assertFalse( j.hasNext() );
 			}
 		}		
@@ -267,20 +266,20 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testTypedef() throws Exception
 	{
-		Iterator i = parse( "typedef const struct A * const cpStructA;").getDeclarations();
+		Iterator i = parse( "typedef const struct A * const cpStructA;").getDeclarations(); //$NON-NLS-1$
 		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)i.next(); 
 		assertFalse( i.hasNext() );
 		assertTrue( typedef.getAbstractDeclarator().isConst() );
 		assertTrue( typedef.getAbstractDeclarator().getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier );
 		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)typedef.getAbstractDeclarator().getTypeSpecifier();
-		assertEquals( elab.getName(), "A");
+		assertEquals( elab.getName(), "A"); //$NON-NLS-1$
 		assertEquals( elab.getClassKind(), ASTClassKind.STRUCT );
 		assertTrue( typedef.getAbstractDeclarator().getPointerOperators().hasNext() );
 		Iterator pIter = typedef.getAbstractDeclarator().getPointerOperators();
 		ASTPointerOperator po =(ASTPointerOperator)pIter.next(); 
 		assertEquals( po, ASTPointerOperator.CONST_POINTER ); 
 		assertFalse( pIter.hasNext() );
-		assertEquals( typedef.getName(), "cpStructA");
+		assertEquals( typedef.getName(), "cpStructA"); //$NON-NLS-1$
 		
 	}
 	
@@ -288,26 +287,26 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		Writer code = new StringWriter();
 		
-		code.write("using namespace A::B::C;\n");
-		code.write("using namespace C;\n");
-		code.write("using B::f;\n");
-		code.write("using ::f;\n");
-		code.write("using typename crap::de::crap;");
+		code.write("using namespace A::B::C;\n"); //$NON-NLS-1$
+		code.write("using namespace C;\n"); //$NON-NLS-1$
+		code.write("using B::f;\n"); //$NON-NLS-1$
+		code.write("using ::f;\n"); //$NON-NLS-1$
+		code.write("using typename crap::de::crap;"); //$NON-NLS-1$
 		Iterator declarations = parse(code.toString()).getDeclarations();
 		
 		IASTUsingDirective usingDirective = (IASTUsingDirective)declarations.next();
-		assertEquals( usingDirective.getNamespaceName(), "A::B::C" );
+		assertEquals( usingDirective.getNamespaceName(), "A::B::C" ); //$NON-NLS-1$
 		
 		usingDirective = (IASTUsingDirective)declarations.next();
-		assertEquals( usingDirective.getNamespaceName(), "C" );
+		assertEquals( usingDirective.getNamespaceName(), "C" ); //$NON-NLS-1$
 		
 		IASTUsingDeclaration usingDeclaration = (IASTUsingDeclaration)declarations.next(); 
-		assertEquals( usingDeclaration.usingTypeName(), "B::f" ); 
+		assertEquals( usingDeclaration.usingTypeName(), "B::f" );  //$NON-NLS-1$
 		
 		usingDeclaration = (IASTUsingDeclaration)declarations.next(); 
-		assertEquals( usingDeclaration.usingTypeName(), "::f" ); 
+		assertEquals( usingDeclaration.usingTypeName(), "::f" );  //$NON-NLS-1$
 		usingDeclaration = (IASTUsingDeclaration)declarations.next();
-		assertEquals( usingDeclaration.usingTypeName(), "crap::de::crap" );
+		assertEquals( usingDeclaration.usingTypeName(), "crap::de::crap" ); //$NON-NLS-1$
 		assertTrue( usingDeclaration.isTypename() ); 
 		  
 		assertFalse( declarations.hasNext());
@@ -320,41 +319,41 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testSimpleClassMembers() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
-		code.write("class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; };");
+		code.write("class A : public B, private C, virtual protected D { public: int x, y; float a,b,c; };"); //$NON-NLS-1$
 		Iterator declarations = parse( code.toString() ).getDeclarations();
 		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
 		assertFalse( declarations.hasNext() );
 		Iterator baseClauses = classSpec.getBaseClauses();
 		IASTBaseSpecifier baseSpec = (IASTBaseSpecifier)baseClauses.next(); 
-		assertEquals( baseSpec.getParentClassName(), "B" );
+		assertEquals( baseSpec.getParentClassName(), "B" ); //$NON-NLS-1$
 		assertEquals( baseSpec.getAccess(), ASTAccessVisibility.PUBLIC );
 		baseSpec = (IASTBaseSpecifier)baseClauses.next();
-		assertEquals( baseSpec.getParentClassName(), "C" );
+		assertEquals( baseSpec.getParentClassName(), "C" ); //$NON-NLS-1$
 		assertEquals( baseSpec.getAccess(), ASTAccessVisibility.PRIVATE);
 		baseSpec = (IASTBaseSpecifier)baseClauses.next();
 		assertEquals( baseSpec.getAccess(), ASTAccessVisibility.PROTECTED );
 		assertTrue( baseSpec.isVirtual() );
-		assertEquals( baseSpec.getParentClassName(), "D" );
+		assertEquals( baseSpec.getParentClassName(), "D" ); //$NON-NLS-1$
 		assertFalse( baseClauses.hasNext() );
 
 		Iterator members = classSpec.getDeclarations();
 		IASTField field = (IASTField)members.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)field.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT ); 
-		assertEquals( field.getName(), "x" ); 
+		assertEquals( field.getName(), "x" );  //$NON-NLS-1$
 		
 		field = (IASTField)members.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)field.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT ); 
-		assertEquals( field.getName(), "y" ); 
+		assertEquals( field.getName(), "y" );  //$NON-NLS-1$
 		
 		field = (IASTField)members.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)field.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.FLOAT ); 
-		assertEquals( field.getName(), "a" ); 
+		assertEquals( field.getName(), "a" );  //$NON-NLS-1$
 		field = (IASTField)members.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)field.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.FLOAT ); 
-		assertEquals( field.getName(), "b" ); 
+		assertEquals( field.getName(), "b" );  //$NON-NLS-1$
 		field = (IASTField)members.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)field.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.FLOAT ); 
-		assertEquals( field.getName(), "c" );
+		assertEquals( field.getName(), "c" ); //$NON-NLS-1$
 		assertFalse( members.hasNext() ); 
 		
 	}
@@ -366,16 +365,16 @@ public class QuickParseASTTests extends BaseASTTest
 		{
 			// Parse and get the translaton unit
 			Writer code = new StringWriter();
-			code.write("void myFunction( void );");
+			code.write("void myFunction( void );"); //$NON-NLS-1$
 			Iterator declarations = parse( code.toString()).getDeclarations();
 			IASTFunction f1 = (IASTFunction)declarations.next(); 
 			assertFalse( declarations.hasNext() ); 
-			assertEquals( f1.getName(), "myFunction");
+			assertEquals( f1.getName(), "myFunction"); //$NON-NLS-1$
 			assertEquals( ((IASTSimpleTypeSpecifier)f1.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.VOID ); 
 			Iterator parameters = f1.getParameters();
 			IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 			assertFalse( parameters.hasNext() );
-			assertEquals( parm.getName(), "" );
+			assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 			assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.VOID );
 			
 		}
@@ -388,20 +387,20 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
-		code.write("bool myFunction( int parm1 = 3 * 4, double parm2 );");
+		code.write("bool myFunction( int parm1 = 3 * 4, double parm2 );"); //$NON-NLS-1$
 		Iterator declarations = parse(code.toString()).getDeclarations();
 		IASTFunction f1 = (IASTFunction)declarations.next(); 
 		assertFalse( declarations.hasNext() ); 
-		assertEquals( f1.getName(), "myFunction");
+		assertEquals( f1.getName(), "myFunction"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)f1.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.BOOL ); 
 		Iterator parameters = f1.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
-		assertEquals( parm.getName(), "parm1" );
+		assertEquals( parm.getName(), "parm1" ); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT );
 		assertEquals( parm.getDefaultValue().getAssigmentExpression().getExpressionKind(), IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY );
 		
 		parm = (IASTParameterDeclaration)parameters.next(); 
-		assertEquals( parm.getName(), "parm2" );
+		assertEquals( parm.getName(), "parm2" ); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.DOUBLE );
 		assertNull( parm.getDefaultValue()  );
 		assertFalse( parameters.hasNext());
@@ -410,426 +409,426 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testAssignmentExpressions() throws Exception 
 	{
-		parse( "int x = y = z = 5;");
+		parse( "int x = y = z = 5;"); //$NON-NLS-1$
 	}
 	
 	public void testBug39348() throws Exception
 	{
-		parse("unsigned char a[sizeof (struct sss)];");
+		parse("unsigned char a[sizeof (struct sss)];"); //$NON-NLS-1$
 	}
 	
 	public void testBug39501() throws Exception
 	{
-		parse("struct A { A() throw (int); };");
+		parse("struct A { A() throw (int); };"); //$NON-NLS-1$
 	}
 	
 	public void testBug39349() throws Exception
 	{
-		parse( "enum foo {  foo1   = 0,  foo2   = 0xffffffffffffffffULL,  foo3   = 0xf0fffffffffffffeLLU };" ); 
+		parse( "enum foo {  foo1   = 0,  foo2   = 0xffffffffffffffffULL,  foo3   = 0xf0fffffffffffffeLLU };" );  //$NON-NLS-1$
 	}
 	
 	public void testBug39544() throws Exception	{
-		parse("wchar_t wc = L'X';"); 
+		parse("wchar_t wc = L'X';");  //$NON-NLS-1$
 	}
 	
 	public void testBug36290() throws Exception {
-		parse("typedef void ( A:: * pMethod ) ( void ); ");
-		parse("typedef void (boo) ( void ); ");
-		parse("typedef void boo (void); ");
+		parse("typedef void ( A:: * pMethod ) ( void ); "); //$NON-NLS-1$
+		parse("typedef void (boo) ( void ); "); //$NON-NLS-1$
+		parse("typedef void boo (void); "); //$NON-NLS-1$
 	}
 	
 	public void testBug36769B() throws Exception {
-		parse("class X { operator int(); } \n");
-		parse("class X { operator int*(); } \n");
-		parse("class X { operator int&(); } \n");
-		parse("class X { operator A(); } \n");
-		parse("class X { operator A*(); } \n");
-		parse("class X { operator A&(); } \n");
+		parse("class X { operator int(); } \n"); //$NON-NLS-1$
+		parse("class X { operator int*(); } \n"); //$NON-NLS-1$
+		parse("class X { operator int&(); } \n"); //$NON-NLS-1$
+		parse("class X { operator A(); } \n"); //$NON-NLS-1$
+		parse("class X { operator A*(); } \n"); //$NON-NLS-1$
+		parse("class X { operator A&(); } \n"); //$NON-NLS-1$
 		
-		parse("X::operator int() { } \n");
-		parse("X::operator int*() { } \n");
-		parse("X::operator int&() { } \n");
-		parse("X::operator A() { } \n");
-		parse("X::operator A*() { } \n");
-		parse("X::operator A&() { } \n");
+		parse("X::operator int() { } \n"); //$NON-NLS-1$
+		parse("X::operator int*() { } \n"); //$NON-NLS-1$
+		parse("X::operator int&() { } \n"); //$NON-NLS-1$
+		parse("X::operator A() { } \n"); //$NON-NLS-1$
+		parse("X::operator A*() { } \n"); //$NON-NLS-1$
+		parse("X::operator A&() { } \n"); //$NON-NLS-1$
 		
-		parse("template <class A,B> class X<A,C> { operator int(); } \n");
-		parse("template <class A,B> class X<A,C> { operator int*(); } \n");
-		parse("template <class A,B> class X<A,C> { operator int&(); } \n");
-		parse("template <class A,B> class X<A,C> { operator A(); } \n");
-		parse("template <class A,B> class X<A,C> { operator A*(); } \n");
-		parse("template <class A,B> class X<A,C> { operator A&(); } \n");
+		parse("template <class A,B> class X<A,C> { operator int(); } \n"); //$NON-NLS-1$
+		parse("template <class A,B> class X<A,C> { operator int*(); } \n"); //$NON-NLS-1$
+		parse("template <class A,B> class X<A,C> { operator int&(); } \n"); //$NON-NLS-1$
+		parse("template <class A,B> class X<A,C> { operator A(); } \n"); //$NON-NLS-1$
+		parse("template <class A,B> class X<A,C> { operator A*(); } \n"); //$NON-NLS-1$
+		parse("template <class A,B> class X<A,C> { operator A&(); } \n"); //$NON-NLS-1$
 
-		parse("template <class A,B> X<A,C>::operator int() { } \n");
-		parse("template <class A,B> X<A,C>::operator int*() { } \n");
-		parse("template <class A,B> X<A,C>::operator int&() { } \n");
-		parse("template <class A,B> X<A,C>::operator A() { } \n");
-		parse("template <class A,B> X<A,C>::operator A*() { } \n");
-		parse("template <class A,B> X<A,C>::operator A&() { } \n");
+		parse("template <class A,B> X<A,C>::operator int() { } \n"); //$NON-NLS-1$
+		parse("template <class A,B> X<A,C>::operator int*() { } \n"); //$NON-NLS-1$
+		parse("template <class A,B> X<A,C>::operator int&() { } \n"); //$NON-NLS-1$
+		parse("template <class A,B> X<A,C>::operator A() { } \n"); //$NON-NLS-1$
+		parse("template <class A,B> X<A,C>::operator A*() { } \n"); //$NON-NLS-1$
+		parse("template <class A,B> X<A,C>::operator A&() { } \n"); //$NON-NLS-1$
 	}
 	public void testBug36932C() throws Exception {
-		parse("X::X( ) : var( new int ) {}");
-		parse("X::X( ) : var( new int(5) ) {}");
-		parse("X::X( ) : var( new int(B) ) {}");
-		parse("X::X( ) : var( new int(B,C) ) {}");
-		parse("X::X( ) : var( new int[5] ) {}");
-		parse("X::X( ) : var( new int[5][10] ) {}");
-		parse("X::X( ) : var( new int[B] ) {}");
-		parse("X::X( ) : var( new int[B][C][D] ) {}");
+		parse("X::X( ) : var( new int ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new int[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new A ) {}");
-		parse("X::X( ) : var( new A(5) ) {}");
-		parse("X::X( ) : var( new A(B) ) {}");
-		parse("X::X( ) : var( new A(B,C) ) {}");
-		parse("X::X( ) : var( new A[5] ) {}");
-		parse("X::X( ) : var( new A[5][10] ) {}");
-		parse("X::X( ) : var( new A[B] ) {}");
-		parse("X::X( ) : var( new A[B][C][D] ) {}");
+		parse("X::X( ) : var( new A ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new A[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (int) ) {}");
-		parse("X::X( ) : var( new (int)(5) ) {}");
-		parse("X::X( ) : var( new (int)(B) ) {}");
-		parse("X::X( ) : var( new (int)(B,C) ) {}");
-		parse("X::X( ) : var( new (int)[5] ) {}");
-		parse("X::X( ) : var( new (int)[5][10] ) {}");
-		parse("X::X( ) : var( new (int)[B] ) {}");
-		parse("X::X( ) : var( new (int)[B][C][D] ) {}");
+		parse("X::X( ) : var( new (int) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (int)[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (A) ) {}");
-		parse("X::X( ) : var( new (A)(5) ) {}");
-		parse("X::X( ) : var( new (A)(B) ) {}");
-		parse("X::X( ) : var( new (A)(B,C) ) {}");
-		parse("X::X( ) : var( new (A)[5] ) {}");
-		parse("X::X( ) : var( new (A)[5][10] ) {}");
-		parse("X::X( ) : var( new (A)[B] ) {}");
-		parse("X::X( ) : var( new (A)[B][C][D] ) {}");
+		parse("X::X( ) : var( new (A) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (A)[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (0) int ) {}");
-		parse("X::X( ) : var( new (0) int(5) ) {}");
-		parse("X::X( ) : var( new (0) int(B) ) {}");
-		parse("X::X( ) : var( new (0) int(B,C) ) {}");
-		parse("X::X( ) : var( new (0) int[5] ) {}");
-		parse("X::X( ) : var( new (0) int[5][10] ) {}");
-		parse("X::X( ) : var( new (0) int[B] ) {}");
-		parse("X::X( ) : var( new (0) int[B][C][D] ) {}");
+		parse("X::X( ) : var( new (0) int ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) int[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (0) A ) {}");
-		parse("X::X( ) : var( new (0) A(5) ) {}");
-		parse("X::X( ) : var( new (0) A(B) ) {}");
-		parse("X::X( ) : var( new (0) A(B,C) ) {}");
-		parse("X::X( ) : var( new (0) A[5] ) {}");
-		parse("X::X( ) : var( new (0) A[5][10] ) {}");
-		parse("X::X( ) : var( new (0) A[B] ) {}");
-		parse("X::X( ) : var( new (0) A[B][C][D] ) {}");
+		parse("X::X( ) : var( new (0) A ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) A[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (0) (int) ) {}");
-		parse("X::X( ) : var( new (0) (int)(5) ) {}");
-		parse("X::X( ) : var( new (0) (int)(B) ) {}");
-		parse("X::X( ) : var( new (0) (int)(B,C) ) {}");
-		parse("X::X( ) : var( new (0) (int)[5] ) {}");
-		parse("X::X( ) : var( new (0) (int)[5][10] ) {}");
-		parse("X::X( ) : var( new (0) (int)[B] ) {}");
-		parse("X::X( ) : var( new (0) (int)[B][C][D] ) {}");
+		parse("X::X( ) : var( new (0) (int) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (int)[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (0) (A) ) {}");
-		parse("X::X( ) : var( new (0) (A)(5) ) {}");
-		parse("X::X( ) : var( new (0) (A)(B) ) {}");
-		parse("X::X( ) : var( new (0) (A)(B,C) ) {}");
-		parse("X::X( ) : var( new (0) (A)[5] ) {}");
-		parse("X::X( ) : var( new (0) (A)[5][10] ) {}");
-		parse("X::X( ) : var( new (0) (A)[B] ) {}");
-		parse("X::X( ) : var( new (0) (A)[B][C][D] ) {}");
+		parse("X::X( ) : var( new (0) (A) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (0) (A)[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (P) int ) {}");
-		parse("X::X( ) : var( new (P) int(5) ) {}");
-		parse("X::X( ) : var( new (P) int(B) ) {}");
-		parse("X::X( ) : var( new (P) int(B,C) ) {}");
-		parse("X::X( ) : var( new (P) int[5] ) {}");
-		parse("X::X( ) : var( new (P) int[5][10] ) {}");
-		parse("X::X( ) : var( new (P) int[B] ) {}");
-		parse("X::X( ) : var( new (P) int[B][C][D] ) {}");
+		parse("X::X( ) : var( new (P) int ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) int[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (P) A ) {}");
-		parse("X::X( ) : var( new (P) A(5) ) {}");
-		parse("X::X( ) : var( new (P) A(B) ) {}");
-		parse("X::X( ) : var( new (P) A(B,C) ) {}");
-		parse("X::X( ) : var( new (P) A[5] ) {}");
-		parse("X::X( ) : var( new (P) A[5][10] ) {}");
-		parse("X::X( ) : var( new (P) A[B] ) {}");
-		parse("X::X( ) : var( new (P) A[B][C][D] ) {}");
+		parse("X::X( ) : var( new (P) A ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) A[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (P) (int) ) {}");
-		parse("X::X( ) : var( new (P) (int)(5) ) {}");
-		parse("X::X( ) : var( new (P) (int)(B) ) {}");
-		parse("X::X( ) : var( new (P) (int)(B,C) ) {}");
-		parse("X::X( ) : var( new (P) (int)[5] ) {}");
-		parse("X::X( ) : var( new (P) (int)[5][10] ) {}");
-		parse("X::X( ) : var( new (P) (int)[B] ) {}");
-		parse("X::X( ) : var( new (P) (int)[B][C][D] ) {}");
+		parse("X::X( ) : var( new (P) (int) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (int)[B][C][D] ) {}"); //$NON-NLS-1$
 
-		parse("X::X( ) : var( new (P) (A) ) {}");
-		parse("X::X( ) : var( new (P) (A)(5) ) {}");
-		parse("X::X( ) : var( new (P) (A)(B) ) {}");
-		parse("X::X( ) : var( new (P) (A)(B,C) ) {}");
-		parse("X::X( ) : var( new (P) (A)[5] ) {}");
-		parse("X::X( ) : var( new (P) (A)[5][10] ) {}");
-		parse("X::X( ) : var( new (P) (A)[B] ) {}");
-		parse("X::X( ) : var( new (P) (A)[B][C][D] ) {}");
+		parse("X::X( ) : var( new (P) (A) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)(5) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)(B) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)(B,C) ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)[5] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)[5][10] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)[B] ) {}"); //$NON-NLS-1$
+		parse("X::X( ) : var( new (P) (A)[B][C][D] ) {}"); //$NON-NLS-1$
 	}
     
 
 	public void testBugSingleton192() throws Exception {
-		parse("int Test::* pMember_;" );
+		parse("int Test::* pMember_;" ); //$NON-NLS-1$
 	}
 	public void testBug36931() throws Exception {
-		parse("A::nested::nested(){}; ");
-		parse("int A::nested::foo() {} ");
-		parse("int A::nested::operator+() {} ");
-		parse("A::nested::operator int() {} ");
-		parse("static const int A::nested::i = 1; ");
+		parse("A::nested::nested(){}; "); //$NON-NLS-1$
+		parse("int A::nested::foo() {} "); //$NON-NLS-1$
+		parse("int A::nested::operator+() {} "); //$NON-NLS-1$
+		parse("A::nested::operator int() {} "); //$NON-NLS-1$
+		parse("static const int A::nested::i = 1; "); //$NON-NLS-1$
         
-		parse("template <class B,C> A<B>::nested::nested(){}; ");
-		parse("template <class B,C> int A::nested<B,D>::foo() {} ");
-		parse("template <class B,C> int A<B,C>::nested<C,B>::operator+() {} ");
-		parse("template <class B,C> A::nested::operator int() {} ");
+		parse("template <class B,C> A<B>::nested::nested(){}; "); //$NON-NLS-1$
+		parse("template <class B,C> int A::nested<B,D>::foo() {} "); //$NON-NLS-1$
+		parse("template <class B,C> int A<B,C>::nested<C,B>::operator+() {} "); //$NON-NLS-1$
+		parse("template <class B,C> A::nested::operator int() {} "); //$NON-NLS-1$
 	}
 	
 	public void testBug37019() throws Exception {
-		parse("static const A a( 1, 0 );");
+		parse("static const A a( 1, 0 );"); //$NON-NLS-1$
 	}	
 
 	public void testBug36766and36769A() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template <class _CharT, class _Alloc>\n");
-		code.write("rope<_CharT, _Alloc>::rope(size_t __n, _CharT __c,\n");
-		code.write("const allocator_type& __a): _Base(__a)\n");
-		code.write("{}\n");
+		code.write("template <class _CharT, class _Alloc>\n"); //$NON-NLS-1$
+		code.write("rope<_CharT, _Alloc>::rope(size_t __n, _CharT __c,\n"); //$NON-NLS-1$
+		code.write("const allocator_type& __a): _Base(__a)\n"); //$NON-NLS-1$
+		code.write("{}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 
 	public void testBug36766and36769B() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template<class _CharT>\n");
-		code.write("bool _Rope_insert_char_consumer<_CharT>::operator()\n");
-		code.write("(const _CharT* __leaf, size_t __n)\n");
-		code.write("{}\n");
+		code.write("template<class _CharT>\n"); //$NON-NLS-1$
+		code.write("bool _Rope_insert_char_consumer<_CharT>::operator()\n"); //$NON-NLS-1$
+		code.write("(const _CharT* __leaf, size_t __n)\n"); //$NON-NLS-1$
+		code.write("{}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 
 	public void testBug36766and36769C() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template <class _CharT, class _Alloc>\n");
-		code.write("_Rope_char_ref_proxy<_CharT, _Alloc>&\n");
+		code.write("template <class _CharT, class _Alloc>\n"); //$NON-NLS-1$
+		code.write("_Rope_char_ref_proxy<_CharT, _Alloc>&\n"); //$NON-NLS-1$
 		code.write(
-			"_Rope_char_ref_proxy<_CharT, _Alloc>::operator= (_CharT __c)\n");
-		code.write("{}\n");
+			"_Rope_char_ref_proxy<_CharT, _Alloc>::operator= (_CharT __c)\n"); //$NON-NLS-1$
+		code.write("{}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 	
 	public void testBug36766and36769D() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template <class _CharT, class _Alloc>\n");
-		code.write("rope<_CharT, _Alloc>::~rope()\n");
-		code.write("{}\n");
+		code.write("template <class _CharT, class _Alloc>\n"); //$NON-NLS-1$
+		code.write("rope<_CharT, _Alloc>::~rope()\n"); //$NON-NLS-1$
+		code.write("{}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
     
 	public void testBug36932A() throws Exception {
-		parse("A::A( ) : var( new char [ (unsigned)bufSize ] ) {}");
+		parse("A::A( ) : var( new char [ (unsigned)bufSize ] ) {}"); //$NON-NLS-1$
 	}
         
 	public void testBug36932B() throws Exception {
-		parse(" p = new int; ");
-		parse(" p = new int(5); ");
-		parse(" p = new int(B); ");
-		parse(" p = new int(B,C); ");
-		parse(" p = new int[5]; ");
-		parse(" p = new int[5][10]; ");
-		parse(" p = new int[B]; ");
-		parse(" p = new int[B][C][D]; ");
+		parse(" p = new int; "); //$NON-NLS-1$
+		parse(" p = new int(5); "); //$NON-NLS-1$
+		parse(" p = new int(B); "); //$NON-NLS-1$
+		parse(" p = new int(B,C); "); //$NON-NLS-1$
+		parse(" p = new int[5]; "); //$NON-NLS-1$
+		parse(" p = new int[5][10]; "); //$NON-NLS-1$
+		parse(" p = new int[B]; "); //$NON-NLS-1$
+		parse(" p = new int[B][C][D]; "); //$NON-NLS-1$
  
-		parse(" p = new A; ");
-		parse(" p = new A(5); ");
-		parse(" p = new A(B); ");
-		parse(" p = new A(B,C); ");
-		parse(" p = new A[5]; ");
-		parse(" p = new A[5][10]; ");
-		parse(" p = new A[B]; ");
-		parse(" p = new A[B][C][D]; ");
+		parse(" p = new A; "); //$NON-NLS-1$
+		parse(" p = new A(5); "); //$NON-NLS-1$
+		parse(" p = new A(B); "); //$NON-NLS-1$
+		parse(" p = new A(B,C); "); //$NON-NLS-1$
+		parse(" p = new A[5]; "); //$NON-NLS-1$
+		parse(" p = new A[5][10]; "); //$NON-NLS-1$
+		parse(" p = new A[B]; "); //$NON-NLS-1$
+		parse(" p = new A[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (int); ");
-		parse(" p = new (int)(5); ");
-		parse(" p = new (int)(B); ");
-		parse(" p = new (int)(B,C); ");
-		parse(" p = new (int)[5]; ");
-		parse(" p = new (int)[5][10]; ");
-		parse(" p = new (int)[B]; ");
-		parse(" p = new (int)[B][C][D]; ");
+		parse(" p = new (int); "); //$NON-NLS-1$
+		parse(" p = new (int)(5); "); //$NON-NLS-1$
+		parse(" p = new (int)(B); "); //$NON-NLS-1$
+		parse(" p = new (int)(B,C); "); //$NON-NLS-1$
+		parse(" p = new (int)[5]; "); //$NON-NLS-1$
+		parse(" p = new (int)[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (int)[B]; "); //$NON-NLS-1$
+		parse(" p = new (int)[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (A); ");
-		parse(" p = new (A)(5); ");
-		parse(" p = new (A)(B); ");
-		parse(" p = new (A)(B,C); ");
-		parse(" p = new (A)[5]; ");
-		parse(" p = new (A)[5][10]; ");
-		parse(" p = new (A)[B]; ");
-		parse(" p = new (A)[B][C][D]; ");
+		parse(" p = new (A); "); //$NON-NLS-1$
+		parse(" p = new (A)(5); "); //$NON-NLS-1$
+		parse(" p = new (A)(B); "); //$NON-NLS-1$
+		parse(" p = new (A)(B,C); "); //$NON-NLS-1$
+		parse(" p = new (A)[5]; "); //$NON-NLS-1$
+		parse(" p = new (A)[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (A)[B]; "); //$NON-NLS-1$
+		parse(" p = new (A)[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (0) int; ");
-		parse(" p = new (0) int(5); ");
-		parse(" p = new (0) int(B); ");
-		parse(" p = new (0) int(B,C); ");
-		parse(" p = new (0) int[5]; ");
-		parse(" p = new (0) int[5][10]; ");
-		parse(" p = new (0) int[B]; ");
-		parse(" p = new (0) int[B][C][D]; ");
+		parse(" p = new (0) int; "); //$NON-NLS-1$
+		parse(" p = new (0) int(5); "); //$NON-NLS-1$
+		parse(" p = new (0) int(B); "); //$NON-NLS-1$
+		parse(" p = new (0) int(B,C); "); //$NON-NLS-1$
+		parse(" p = new (0) int[5]; "); //$NON-NLS-1$
+		parse(" p = new (0) int[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (0) int[B]; "); //$NON-NLS-1$
+		parse(" p = new (0) int[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (0) A; ");
-		parse(" p = new (0) A(5); ");
-		parse(" p = new (0) A(B); ");
-		parse(" p = new (0) A(B,C); ");
-		parse(" p = new (0) A[5]; ");
-		parse(" p = new (0) A[5][10]; ");
-		parse(" p = new (0) A[B]; ");
-		parse(" p = new (0) A[B][C][D]; ");
+		parse(" p = new (0) A; "); //$NON-NLS-1$
+		parse(" p = new (0) A(5); "); //$NON-NLS-1$
+		parse(" p = new (0) A(B); "); //$NON-NLS-1$
+		parse(" p = new (0) A(B,C); "); //$NON-NLS-1$
+		parse(" p = new (0) A[5]; "); //$NON-NLS-1$
+		parse(" p = new (0) A[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (0) A[B]; "); //$NON-NLS-1$
+		parse(" p = new (0) A[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (0) (int); ");
-		parse(" p = new (0) (int)(5); ");
-		parse(" p = new (0) (int)(B); ");
-		parse(" p = new (0) (int)(B,C); ");
-		parse(" p = new (0) (int)[5]; ");
-		parse(" p = new (0) (int)[5][10]; ");
-		parse(" p = new (0) (int)[B]; ");
-		parse(" p = new (0) (int)[B][C][D]; ");
+		parse(" p = new (0) (int); "); //$NON-NLS-1$
+		parse(" p = new (0) (int)(5); "); //$NON-NLS-1$
+		parse(" p = new (0) (int)(B); "); //$NON-NLS-1$
+		parse(" p = new (0) (int)(B,C); "); //$NON-NLS-1$
+		parse(" p = new (0) (int)[5]; "); //$NON-NLS-1$
+		parse(" p = new (0) (int)[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (0) (int)[B]; "); //$NON-NLS-1$
+		parse(" p = new (0) (int)[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (0) (A); ");
-		parse(" p = new (0) (A)(5); ");
-		parse(" p = new (0) (A)(B); ");
-		parse(" p = new (0) (A)(B,C); ");
-		parse(" p = new (0) (A)[5]; ");
-		parse(" p = new (0) (A)[5][10]; ");
-		parse(" p = new (0) (A)[B]; ");
-		parse(" p = new (0) (A)[B][C][D]; ");
+		parse(" p = new (0) (A); "); //$NON-NLS-1$
+		parse(" p = new (0) (A)(5); "); //$NON-NLS-1$
+		parse(" p = new (0) (A)(B); "); //$NON-NLS-1$
+		parse(" p = new (0) (A)(B,C); "); //$NON-NLS-1$
+		parse(" p = new (0) (A)[5]; "); //$NON-NLS-1$
+		parse(" p = new (0) (A)[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (0) (A)[B]; "); //$NON-NLS-1$
+		parse(" p = new (0) (A)[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (P) int; ");
-		parse(" p = new (P) int(5); ");
-		parse(" p = new (P) int(B); ");
-		parse(" p = new (P) int(B,C); ");
-		parse(" p = new (P) int[5]; ");
-		parse(" p = new (P) int[5][10]; ");
-		parse(" p = new (P) int[B]; ");
-		parse(" p = new (P) int[B][C][D]; ");
+		parse(" p = new (P) int; "); //$NON-NLS-1$
+		parse(" p = new (P) int(5); "); //$NON-NLS-1$
+		parse(" p = new (P) int(B); "); //$NON-NLS-1$
+		parse(" p = new (P) int(B,C); "); //$NON-NLS-1$
+		parse(" p = new (P) int[5]; "); //$NON-NLS-1$
+		parse(" p = new (P) int[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (P) int[B]; "); //$NON-NLS-1$
+		parse(" p = new (P) int[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (P) A; ");
-		parse(" p = new (P) A(5); ");
-		parse(" p = new (P) A(B); ");
-		parse(" p = new (P) A(B,C); ");
-		parse(" p = new (P) A[5]; ");
-		parse(" p = new (P) A[5][10]; ");
-		parse(" p = new (P) A[B]; ");
-		parse(" p = new (P) A[B][C][D]; ");
+		parse(" p = new (P) A; "); //$NON-NLS-1$
+		parse(" p = new (P) A(5); "); //$NON-NLS-1$
+		parse(" p = new (P) A(B); "); //$NON-NLS-1$
+		parse(" p = new (P) A(B,C); "); //$NON-NLS-1$
+		parse(" p = new (P) A[5]; "); //$NON-NLS-1$
+		parse(" p = new (P) A[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (P) A[B]; "); //$NON-NLS-1$
+		parse(" p = new (P) A[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (P) (int); ");
-		parse(" p = new (P) (int)(5); ");
-		parse(" p = new (P) (int)(B); ");
-		parse(" p = new (P) (int)(B,C); ");
-		parse(" p = new (P) (int)[5]; ");
-		parse(" p = new (P) (int)[5][10]; ");
-		parse(" p = new (P) (int)[B]; ");
-		parse(" p = new (P) (int)[B][C][D]; ");
+		parse(" p = new (P) (int); "); //$NON-NLS-1$
+		parse(" p = new (P) (int)(5); "); //$NON-NLS-1$
+		parse(" p = new (P) (int)(B); "); //$NON-NLS-1$
+		parse(" p = new (P) (int)(B,C); "); //$NON-NLS-1$
+		parse(" p = new (P) (int)[5]; "); //$NON-NLS-1$
+		parse(" p = new (P) (int)[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (P) (int)[B]; "); //$NON-NLS-1$
+		parse(" p = new (P) (int)[B][C][D]; "); //$NON-NLS-1$
 
-		parse(" p = new (P) (A); ");
-		parse(" p = new (P) (A)(5); ");
-		parse(" p = new (P) (A)(B); ");
-		parse(" p = new (P) (A)(B,C); ");
-		parse(" p = new (P) (A)[5]; ");
-		parse(" p = new (P) (A)[5][10]; ");
-		parse(" p = new (P) (A)[B]; ");
-		parse(" p = new (P) (A)[B][C][D]; ");
+		parse(" p = new (P) (A); "); //$NON-NLS-1$
+		parse(" p = new (P) (A)(5); "); //$NON-NLS-1$
+		parse(" p = new (P) (A)(B); "); //$NON-NLS-1$
+		parse(" p = new (P) (A)(B,C); "); //$NON-NLS-1$
+		parse(" p = new (P) (A)[5]; "); //$NON-NLS-1$
+		parse(" p = new (P) (A)[5][10]; "); //$NON-NLS-1$
+		parse(" p = new (P) (A)[B]; "); //$NON-NLS-1$
+		parse(" p = new (P) (A)[B][C][D]; "); //$NON-NLS-1$
 	}
 
 	public void testBug36769A() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template <class A, B> cls<A, C>::operator op &() const {}\n");
-		code.write("template <class A, B> cls<A, C>::cls() {}\n");
-		code.write("template <class A, B> cls<A, C>::~cls() {}\n");
+		code.write("template <class A, B> cls<A, C>::operator op &() const {}\n"); //$NON-NLS-1$
+		code.write("template <class A, B> cls<A, C>::cls() {}\n"); //$NON-NLS-1$
+		code.write("template <class A, B> cls<A, C>::~cls() {}\n"); //$NON-NLS-1$
 			
 		parse( code.toString());
 	}
 	
 	public void testBug36714() throws Exception {
 		Writer code = new StringWriter();
-		code.write("unsigned long a = 0UL;\n");
-		code.write("unsigned long a2 = 0L; \n");
+		code.write("unsigned long a = 0UL;\n"); //$NON-NLS-1$
+		code.write("unsigned long a2 = 0L; \n"); //$NON-NLS-1$
 	
 		parse( code.toString() );
 	}
 	
 	public void testBugFunctor758() throws Exception {
-		parse( "template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" ); 
+		parse( "template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" );  //$NON-NLS-1$
 	}
 	
 	public void testBug36932() throws Exception
 	{
-		parse( "A::A(): b( new int( 5 ) ), b( new B ), c( new int ) {}" );
+		parse( "A::A(): b( new int( 5 ) ), b( new B ), c( new int ) {}" ); //$NON-NLS-1$
 	}
 
 	public void testBug36704() throws Exception {
 		Writer code = new StringWriter(); 
-		code.write( "template <class T, class U>\n" ); 
-		code.write( "struct Length< Typelist<T, U> >\n" );
-		code.write( "{\n" );
-		code.write( "enum { value = 1 + Length<U>::value };\n" );
-		code.write( "};\n" );
+		code.write( "template <class T, class U>\n" );  //$NON-NLS-1$
+		code.write( "struct Length< Typelist<T, U> >\n" ); //$NON-NLS-1$
+		code.write( "{\n" ); //$NON-NLS-1$
+		code.write( "enum { value = 1 + Length<U>::value };\n" ); //$NON-NLS-1$
+		code.write( "};\n" ); //$NON-NLS-1$
 		parse(code.toString());
 	}
 
 	public void testBug36699() throws Exception {
 		Writer code = new StringWriter();
 		code.write(
-			"template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n");
-		code.write("std::size_t chunkSize = DEFAULT_CHUNK_SIZE,\n");
+			"template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n"); //$NON-NLS-1$
+		code.write("std::size_t chunkSize = DEFAULT_CHUNK_SIZE,\n"); //$NON-NLS-1$
 		code.write(
-			"std::size_t maxSmallObjectSize = MAX_SMALL_OBJECT_SIZE	>\n");
-		code.write("class SmallObject : public ThreadingModel<\n");
+			"std::size_t maxSmallObjectSize = MAX_SMALL_OBJECT_SIZE	>\n"); //$NON-NLS-1$
+		code.write("class SmallObject : public ThreadingModel<\n"); //$NON-NLS-1$
 		code.write(
-			"SmallObject<ThreadingModel, chunkSize, maxSmallObjectSize> >\n");
-		code.write("{};\n");
+			"SmallObject<ThreadingModel, chunkSize, maxSmallObjectSize> >\n"); //$NON-NLS-1$
+		code.write("{};\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 
 	public void testBug36691() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template <class T, class H>\n");
+		code.write("template <class T, class H>\n"); //$NON-NLS-1$
 		code.write(
-			"typename H::template Rebind<T>::Result& Field(H& obj)\n");
-		code.write("{	return obj;	}\n");
+			"typename H::template Rebind<T>::Result& Field(H& obj)\n"); //$NON-NLS-1$
+		code.write("{	return obj;	}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 	
 	
 	public void testBug39554() throws Exception
 	{
-		 parse("_Pragma(\"foobar\")", true, true, ParserLanguage.C );
+		 parse("_Pragma(\"foobar\")", true, true, ParserLanguage.C ); //$NON-NLS-1$
 	}
 	
 	public void testBug36702() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "void mad_decoder_init(struct mad_decoder *, void *,\n" ); 
-		code.write( "			  enum mad_flow (*)(void *, struct mad_stream *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *, struct mad_header const *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *,\n" ); 
-		code.write( "					struct mad_stream const *,\n" ); 
-		code.write( "					struct mad_frame *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *,\n" ); 
-		code.write( "					struct mad_header const *,\n" ); 
-		code.write( "					struct mad_pcm *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *,\n" ); 
-		code.write( "					struct mad_stream *,\n" ); 
-		code.write( "					struct mad_frame *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *, void *, unsigned int *)\n" ); 
-		code.write( ");\n" );  
+		code.write( "void mad_decoder_init(struct mad_decoder *, void *,\n" );  //$NON-NLS-1$
+		code.write( "			  enum mad_flow (*)(void *, struct mad_stream *),\n" );  //$NON-NLS-1$
+		code.write( "			  enum mad_flow (*)(void *, struct mad_header const *),\n" );  //$NON-NLS-1$
+		code.write( "			  enum mad_flow (*)(void *,\n" );  //$NON-NLS-1$
+		code.write( "					struct mad_stream const *,\n" );  //$NON-NLS-1$
+		code.write( "					struct mad_frame *),\n" );  //$NON-NLS-1$
+		code.write( "			  enum mad_flow (*)(void *,\n" );  //$NON-NLS-1$
+		code.write( "					struct mad_header const *,\n" );  //$NON-NLS-1$
+		code.write( "					struct mad_pcm *),\n" );  //$NON-NLS-1$
+		code.write( "			  enum mad_flow (*)(void *,\n" );  //$NON-NLS-1$
+		code.write( "					struct mad_stream *,\n" );  //$NON-NLS-1$
+		code.write( "					struct mad_frame *),\n" );  //$NON-NLS-1$
+		code.write( "			  enum mad_flow (*)(void *, void *, unsigned int *)\n" );  //$NON-NLS-1$
+		code.write( ");\n" );   //$NON-NLS-1$
 		
 		parse( code.toString() );
 		
@@ -838,93 +837,93 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testBug36852() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "int CBT::senseToAllRect( double id_standardQuot = DOSE, double id_minToleranz =15.0,\n" );  
-		code.write( "double id_maxToleranz = 15.0, unsigned int iui_minY = 0, \n" );
-		code.write( "unsigned int iui_maxY = HEIGHT );\n" );
+		code.write( "int CBT::senseToAllRect( double id_standardQuot = DOSE, double id_minToleranz =15.0,\n" );   //$NON-NLS-1$
+		code.write( "double id_maxToleranz = 15.0, unsigned int iui_minY = 0, \n" ); //$NON-NLS-1$
+		code.write( "unsigned int iui_maxY = HEIGHT );\n" ); //$NON-NLS-1$
 		parse( code.toString() );
 	}
 	
 	public void testBug36689() throws Exception {
 		Writer code = new StringWriter();
-		code.write("template\n");
-		code.write("<\n");
-		code.write("class AbstractFact,\n");
+		code.write("template\n"); //$NON-NLS-1$
+		code.write("<\n"); //$NON-NLS-1$
+		code.write("class AbstractFact,\n"); //$NON-NLS-1$
 		code.write(
-			"template <class, class> class Creator = OpNewFactoryUnit,\n");
-		code.write("class TList = typename AbstractFact::ProductList\n");
-		code.write(">\n");
-		code.write("class ConcreteFactory\n");
-		code.write(": public GenLinearHierarchy<\n");
+			"template <class, class> class Creator = OpNewFactoryUnit,\n"); //$NON-NLS-1$
+		code.write("class TList = typename AbstractFact::ProductList\n"); //$NON-NLS-1$
+		code.write(">\n"); //$NON-NLS-1$
+		code.write("class ConcreteFactory\n"); //$NON-NLS-1$
+		code.write(": public GenLinearHierarchy<\n"); //$NON-NLS-1$
 		code.write(
-			"typename TL::Reverse<TList>::Result, Creator, AbstractFact>\n");
-		code.write("{\n");
-		code.write("public:\n");
+			"typename TL::Reverse<TList>::Result, Creator, AbstractFact>\n"); //$NON-NLS-1$
+		code.write("{\n"); //$NON-NLS-1$
+		code.write("public:\n"); //$NON-NLS-1$
 		code.write(
-			"typedef typename AbstractFact::ProductList ProductList;\n");
-		code.write("typedef TList ConcreteProductList;\n");
-		code.write("};\n");
+			"typedef typename AbstractFact::ProductList ProductList;\n"); //$NON-NLS-1$
+		code.write("typedef TList ConcreteProductList;\n"); //$NON-NLS-1$
+		code.write("};\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 	
 	public void testBug36707() throws Exception {
-		parse("enum { exists = sizeof(typename H::Small) == sizeof((H::Test(H::MakeT()))) };");
+		parse("enum { exists = sizeof(typename H::Small) == sizeof((H::Test(H::MakeT()))) };"); //$NON-NLS-1$
 	}
 	
 	public void testBug36717() throws Exception  {
-		parse("enum { eA = A::b };");
+		parse("enum { eA = A::b };"); //$NON-NLS-1$
 	}
 	
 	public void testBug36693() throws Exception {
-		parse("FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p){}");
+		parse("FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p){}"); //$NON-NLS-1$
 	}
 
 	public void testWeirdExpression() throws Exception
 	{
-		parse( "int x = rhs.spImpl_.get();");
+		parse( "int x = rhs.spImpl_.get();"); //$NON-NLS-1$
 	}
 
 	public void testBug36696() throws Exception {
 		Writer code = new StringWriter();
 		code.write(
-			"template <typename P1> RefCounted(const RefCounted<P1>& rhs)\n");
+			"template <typename P1> RefCounted(const RefCounted<P1>& rhs)\n"); //$NON-NLS-1$
 		code.write(
-			": pCount_(reinterpret_cast<const RefCounted&>(rhs).pCount_) {}\n");
+			": pCount_(reinterpret_cast<const RefCounted&>(rhs).pCount_) {}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 
 	public void testArrayOfPointerToFunctions() throws Exception
 	{
-		parse( "unsigned char (*main_data)[MAD_BUFFER_MDLEN];");
+		parse( "unsigned char (*main_data)[MAD_BUFFER_MDLEN];"); //$NON-NLS-1$
 	}
 
 	public void testBug36073() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 
-		writer.write( "class A{\n" ); 
-		writer.write( "int x;\n" ); 
-		writer.write( "public:\n" ); 
-		writer.write( "A(const A&);\n" ); 
-		writer.write( "};\n" ); 
-		writer.write( "A::A(const A&v) : x(v.x) { }\n" );
+		writer.write( "class A{\n" );  //$NON-NLS-1$
+		writer.write( "int x;\n" );  //$NON-NLS-1$
+		writer.write( "public:\n" );  //$NON-NLS-1$
+		writer.write( "A(const A&);\n" );  //$NON-NLS-1$
+		writer.write( "};\n" );  //$NON-NLS-1$
+		writer.write( "A::A(const A&v) : x(v.x) { }\n" ); //$NON-NLS-1$
 		parse( writer.toString() );
 	}
 	
 	
 	public void testTemplateSpecialization() throws Exception
 	{
-		Iterator declarations = parse( "template<> class stream<char> { /* ... */ };").getDeclarations();
+		Iterator declarations = parse( "template<> class stream<char> { /* ... */ };").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier specifier = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)((IASTTemplateSpecialization)declarations.next()).getOwnedDeclaration()).getTypeSpecifier();
 		assertFalse( declarations.hasNext());
-		assertEquals( specifier.getName(), "stream<char>"); 
+		assertEquals( specifier.getName(), "stream<char>");  //$NON-NLS-1$
 		assertFalse( specifier.getDeclarations().hasNext() );		
 	}
 	
 	public void testTemplateInstantiation() throws Exception
 	{
-		Iterator declarations = parse( "template class Array<char>;").getDeclarations();
+		Iterator declarations = parse( "template class Array<char>;").getDeclarations(); //$NON-NLS-1$
 		IASTElaboratedTypeSpecifier specifier = (IASTElaboratedTypeSpecifier)((IASTAbstractTypeSpecifierDeclaration)((IASTTemplateInstantiation)declarations.next()).getOwnedDeclaration()).getTypeSpecifier();
 		assertFalse( declarations.hasNext() );
-		assertEquals( specifier.getName(), "Array<char>");
+		assertEquals( specifier.getName(), "Array<char>"); //$NON-NLS-1$
 		assertEquals( specifier.getClassKind(), ASTClassKind.CLASS );
 	}
 	
@@ -934,7 +933,7 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testMultipleDeclarators() throws Exception
 	{
 		// Parse and get the translaton unit
-		Iterator declarations = parse("class A { int floor( double input ), someInt; };").getDeclarations();
+		Iterator declarations = parse("class A { int floor( double input ), someInt; };").getDeclarations(); //$NON-NLS-1$
 		Iterator members = ((IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier()).getDeclarations(); 
 		assertFalse( declarations.hasNext() );
 		IASTMethod decl1 = (IASTMethod)members.next();
@@ -943,52 +942,52 @@ public class QuickParseASTTests extends BaseASTTest
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.DOUBLE );
 		assertFalse( parameters.hasNext());
-		assertEquals( parm.getName(), "input");
+		assertEquals( parm.getName(), "input"); //$NON-NLS-1$
 		
 		IASTField decl2 = (IASTField)members.next();
-		assertEquals( decl2.getName(), "someInt");
+		assertEquals( decl2.getName(), "someInt"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)decl2.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT ); 
 		assertFalse( members.hasNext());
 	}
 
 	public void testFunctionModifiers() throws Exception
 	{
-		Iterator declarations = parse( "class A {virtual void foo( void ) const throw ( yay, nay, we::dont::care ) = 0;};").getDeclarations();
+		Iterator declarations = parse( "class A {virtual void foo( void ) const throw ( yay, nay, we::dont::care ) = 0;};").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
 		assertFalse( declarations.hasNext());
 		Iterator members = classSpec.getDeclarations();
 		IASTMethod method = (IASTMethod)members.next(); 
 		assertFalse( members.hasNext() );
 		assertTrue( method.isVirtual());
-		assertEquals( method.getName(), "foo");
+		assertEquals( method.getName(), "foo"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)method.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.VOID );
 		Iterator parameters = method.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.VOID );
 		assertFalse( parameters.hasNext());
-		assertEquals( parm.getName(), "");
+		assertEquals( parm.getName(), ""); //$NON-NLS-1$
 		assertTrue( method.isConst() ); 
 		assertTrue( method.isPureVirtual() );
 		assertNotNull( method.getExceptionSpec() );
 		Iterator exceptions = method.getExceptionSpec().getTypeIds();
-		assertEquals( (String)exceptions.next(), "yay");
-		assertEquals( (String)exceptions.next(), "nay");
-		assertEquals( (String)exceptions.next(), "we::dont::care");
+		assertEquals( (String)exceptions.next(), "yay"); //$NON-NLS-1$
+		assertEquals( (String)exceptions.next(), "nay"); //$NON-NLS-1$
+		assertEquals( (String)exceptions.next(), "we::dont::care"); //$NON-NLS-1$
 		assertFalse( exceptions.hasNext() );
 	}
 
 
 	public void testArrays() throws Exception
 	{
-		Iterator declarations = parse("int x [5][];").getDeclarations();
+		Iterator declarations = parse("int x [5][];").getDeclarations(); //$NON-NLS-1$
 		IASTVariable x = (IASTVariable)declarations.next(); 
 		assertFalse( declarations.hasNext() );
 		assertEquals( ((IASTSimpleTypeSpecifier)x.getAbstractDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( x.getName(), "x");
+		assertEquals( x.getName(), "x"); //$NON-NLS-1$
 		Iterator arrayMods = x.getAbstractDeclaration().getArrayModifiers();
 		IASTArrayModifier mod = (IASTArrayModifier)arrayMods.next();
 		assertEquals( mod.getExpression().getExpressionKind(), IASTExpression.Kind.PRIMARY_INTEGER_LITERAL );
-		assertEquals( mod.getExpression().getLiteralString(), "5" );
+		assertEquals( mod.getExpression().getLiteralString(), "5" ); //$NON-NLS-1$
 		mod = (IASTArrayModifier)arrayMods.next();
 		assertNull( mod.getExpression());
 		assertFalse( arrayMods.hasNext() ); 
@@ -996,14 +995,14 @@ public class QuickParseASTTests extends BaseASTTest
 
 	public void testElaboratedParms() throws Exception
 	{
-		Iterator declarations = parse( "int x( struct A myA ) { /* junk */ }" ).getDeclarations();
+		Iterator declarations = parse( "int x( struct A myA ) { /* junk */ }" ).getDeclarations(); //$NON-NLS-1$
 		IASTFunction f = (IASTFunction)declarations.next();
 		assertSimpleReturnType( f, IASTSimpleTypeSpecifier.Type.INT );
 		Iterator parms = f.getParameters(); 
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parms.next();
 		assertFalse( parms.hasNext());
-		assertEquals( parm.getName(), "myA");
-		assertEquals( ((IASTElaboratedTypeSpecifier)parm.getTypeSpecifier()).getName(), "A" );
+		assertEquals( parm.getName(), "myA"); //$NON-NLS-1$
+		assertEquals( ((IASTElaboratedTypeSpecifier)parm.getTypeSpecifier()).getName(), "A" ); //$NON-NLS-1$
 		assertEquals( ((IASTElaboratedTypeSpecifier)parm.getTypeSpecifier()).getClassKind(), ASTClassKind.STRUCT );
 		assertFalse( declarations.hasNext());
 	}
@@ -1011,14 +1010,14 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testMemberDeclarations() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "class A {\n" ); 
-		code.write( "public:\n");
-		code.write( " int is0;\n" );
-		code.write( "private:\n");
-		code.write( " int is1;\n" );
-		code.write( "protected:\n");
-		code.write( " int is2;\n" );
-		code.write( "};");
+		code.write( "class A {\n" );  //$NON-NLS-1$
+		code.write( "public:\n"); //$NON-NLS-1$
+		code.write( " int is0;\n" ); //$NON-NLS-1$
+		code.write( "private:\n"); //$NON-NLS-1$
+		code.write( " int is1;\n" ); //$NON-NLS-1$
+		code.write( "protected:\n"); //$NON-NLS-1$
+		code.write( " int is2;\n" ); //$NON-NLS-1$
+		code.write( "};"); //$NON-NLS-1$
 		Iterator declarations = parse( code.toString()).getDeclarations();
 		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
 		assertFalse(declarations.hasNext());
@@ -1026,7 +1025,7 @@ public class QuickParseASTTests extends BaseASTTest
 		for( int i = 0; i < 3; ++i )
 		{
 			IASTField field = (IASTField)members.next();
-			assertEquals( field.getName(), "is"+ new Integer( i ).toString());
+			assertEquals( field.getName(), "is"+ new Integer( i ).toString()); //$NON-NLS-1$
 			ASTAccessVisibility visibility = null; 
 			switch( i )
 			{
@@ -1049,7 +1048,7 @@ public class QuickParseASTTests extends BaseASTTest
 
 	public void testPointerOperators() throws Exception
 	{
-		Iterator declarations = parse("int * x = 0, & y, * const * volatile * z;").getDeclarations();
+		Iterator declarations = parse("int * x = 0, & y, * const * volatile * z;").getDeclarations(); //$NON-NLS-1$
 		for( int i = 0; i < 3; ++i )
 		{
 			IASTVariable v = (IASTVariable)declarations.next();
@@ -1060,17 +1059,17 @@ public class QuickParseASTTests extends BaseASTTest
 			switch( i )
 			{
 				case 0:
-					assertEquals( v.getName(), "x");
+					assertEquals( v.getName(), "x"); //$NON-NLS-1$
 					assertEquals( pointerOp, ASTPointerOperator.POINTER );
 					assertFalse( pointerOperators.hasNext());
 					break;
 				case 1:
-					assertEquals( v.getName(), "y");
+					assertEquals( v.getName(), "y"); //$NON-NLS-1$
 					assertEquals( pointerOp, ASTPointerOperator.REFERENCE);
 					assertFalse( pointerOperators.hasNext()); 
 					break;
 				case 2:  
-					assertEquals( v.getName(), "z");
+					assertEquals( v.getName(), "z"); //$NON-NLS-1$
 					assertEquals( pointerOp, ASTPointerOperator.CONST_POINTER );
 					assertEquals( pointerOperators.next(), ASTPointerOperator.VOLATILE_POINTER );
 					assertEquals( pointerOperators.next(), ASTPointerOperator.POINTER );
@@ -1084,80 +1083,80 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testBug26467() throws Exception
 	{
 		StringWriter code = new StringWriter(); 
-		code.write(	"struct foo { int fooInt; char fooChar;	};\n" );
-		code.write( "typedef struct foo fooStruct;\n" );
-		code.write( "typedef struct { int anonInt; char anonChar; } anonStruct;\n" );
+		code.write(	"struct foo { int fooInt; char fooChar;	};\n" ); //$NON-NLS-1$
+		code.write( "typedef struct foo fooStruct;\n" ); //$NON-NLS-1$
+		code.write( "typedef struct { int anonInt; char anonChar; } anonStruct;\n" ); //$NON-NLS-1$
 		Iterator declarations = parse( code.toString()).getDeclarations();
 		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
 		assertEquals( classSpec.getClassKind(), ASTClassKind.STRUCT);
-		assertEquals( classSpec.getName(), "foo" );
+		assertEquals( classSpec.getName(), "foo" ); //$NON-NLS-1$
 		Iterator members = classSpec.getDeclarations();
 		IASTField field = (IASTField)members.next(); 
 		assertSimpleType(field, IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( field.getName(), "fooInt");
+		assertEquals( field.getName(), "fooInt"); //$NON-NLS-1$
 		field = (IASTField)members.next(); 
 		assertSimpleType(field, IASTSimpleTypeSpecifier.Type.CHAR );
-		assertEquals( field.getName(), "fooChar");
+		assertEquals( field.getName(), "fooChar"); //$NON-NLS-1$
 		assertFalse( members.hasNext());
 		IASTTypedefDeclaration firstTypeDef = (IASTTypedefDeclaration)declarations.next();
 		assertEquals( ((IASTElaboratedTypeSpecifier)firstTypeDef.getAbstractDeclarator().getTypeSpecifier()).getClassKind(), ASTClassKind.STRUCT );
-		assertEquals( ((IASTElaboratedTypeSpecifier)firstTypeDef.getAbstractDeclarator().getTypeSpecifier()).getName(), "foo");
-		assertEquals( firstTypeDef.getName(), "fooStruct");
+		assertEquals( ((IASTElaboratedTypeSpecifier)firstTypeDef.getAbstractDeclarator().getTypeSpecifier()).getName(), "foo"); //$NON-NLS-1$
+		assertEquals( firstTypeDef.getName(), "fooStruct"); //$NON-NLS-1$
 		IASTTypedefDeclaration secondTypeDef = (IASTTypedefDeclaration)declarations.next();
 		classSpec = (IASTClassSpecifier)secondTypeDef.getAbstractDeclarator().getTypeSpecifier();
 		assertEquals( classSpec.getClassKind(), ASTClassKind.STRUCT);
-		assertEquals( classSpec.getName(), "" );
+		assertEquals( classSpec.getName(), "" ); //$NON-NLS-1$
 		members = classSpec.getDeclarations();
 		field = (IASTField)members.next(); 
 		assertSimpleType(field, IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( field.getName(), "anonInt");
+		assertEquals( field.getName(), "anonInt"); //$NON-NLS-1$
 		field = (IASTField)members.next(); 
 		assertSimpleType(field, IASTSimpleTypeSpecifier.Type.CHAR );
-		assertEquals( field.getName(), "anonChar");
+		assertEquals( field.getName(), "anonChar"); //$NON-NLS-1$
 		assertFalse( members.hasNext());
-		assertEquals( secondTypeDef.getName(), "anonStruct");
+		assertEquals( secondTypeDef.getName(), "anonStruct"); //$NON-NLS-1$
 		
 	}
 	
 	public void testASMDefinition() throws Exception
 	{
-		Iterator declarations = parse( "asm( \"mov ep1 ds2\");" ).getDeclarations();
+		Iterator declarations = parse( "asm( \"mov ep1 ds2\");" ).getDeclarations(); //$NON-NLS-1$
 		IASTASMDefinition asm = (IASTASMDefinition)declarations.next(); 
 		assertFalse( declarations.hasNext());
-		assertEquals( asm.getBody(), "mov ep1 ds2");
+		assertEquals( asm.getBody(), "mov ep1 ds2"); //$NON-NLS-1$
 	}
 	
 	public void testConstructorChain() throws Exception
 	{
-		Iterator declarations = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}" ).getDeclarations();
+		Iterator declarations = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}" ).getDeclarations(); //$NON-NLS-1$
 		declarations.next(); // cannot properly do this test now with new callback structure in quickparse mode
 	}
 	
 	public void testBug36237() throws Exception
 	{
-		parse( "A::A():B( (char *)0 ){}" );   
+		parse( "A::A():B( (char *)0 ){}" );    //$NON-NLS-1$
 	}
 	
 	public void testBug36532() throws Exception
 	{
 		try
 		{
-			parse( "template<int f() {\n" );
-			fail( "We should not make it this far");
+			parse( "template<int f() {\n" ); //$NON-NLS-1$
+			fail( "We should not make it this far"); //$NON-NLS-1$
 		}
 		catch( ParserException pe )
 		{
 		}
 		catch( Exception e )
 		{
-			fail( "We should have gotten a ParserException rather than" + e);
+			fail( "We should have gotten a ParserException rather than" + e); //$NON-NLS-1$
 		}
 	}
 	
 	public void testPreprocessor() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "#include <stdio.h>\n#define DEF VALUE\n");
+		code.write( "#include <stdio.h>\n#define DEF VALUE\n"); //$NON-NLS-1$
 		IASTCompilationUnit tu = parse( code.toString()  );
 		assertFalse( tu.getDeclarations().hasNext());
 		Iterator inclusions = quickParseCallback.getInclusions();
@@ -1166,14 +1165,14 @@ public class QuickParseASTTests extends BaseASTTest
 		IASTInclusion i = (IASTInclusion)inclusions.next(); 
 		assertFalse( inclusions.hasNext());
 		
-		assertEquals( i.getName(), "stdio.h");
+		assertEquals( i.getName(), "stdio.h"); //$NON-NLS-1$
 		assertEquals( i.getStartingOffset(), 0 ); 
 		assertEquals( i.getNameOffset(), 10 ); 
 		assertEquals( i.getEndingOffset(), 19 );
 		
 		
 		IASTMacro m = (IASTMacro)macros.next();
-		assertEquals( m.getName(), "DEF" ); 
+		assertEquals( m.getName(), "DEF" );  //$NON-NLS-1$
 		assertEquals( m.getStartingOffset(), 19 );
 		assertEquals( m.getNameOffset(), 27 );
 		assertEquals( m.getEndingOffset(), 18 + 19);
@@ -1181,192 +1180,192 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testTemplateDeclarationOfFunction() throws Exception
 	{
-		Iterator declarations = parse( "template<class A, typename B=C> A aTemplatedFunction( B bInstance );").getDeclarations();
+		Iterator declarations = parse( "template<class A, typename B=C> A aTemplatedFunction( B bInstance );").getDeclarations(); //$NON-NLS-1$
 		IASTTemplateDeclaration templateDeclaration = (IASTTemplateDeclaration)declarations.next();
 		assertFalse( declarations.hasNext());
 		Iterator templateParms = templateDeclaration.getTemplateParameters();
 		IASTTemplateParameter parm = (IASTTemplateParameter)templateParms.next(); 
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.CLASS );
-		assertEquals( parm.getIdentifier(), "A");
+		assertEquals( parm.getIdentifier(), "A"); //$NON-NLS-1$
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.TYPENAME );
-		assertEquals( parm.getIdentifier(), "B");
-		assertEquals( parm.getDefaultValueIdExpression(), "C" );
+		assertEquals( parm.getIdentifier(), "B"); //$NON-NLS-1$
+		assertEquals( parm.getDefaultValueIdExpression(), "C" ); //$NON-NLS-1$
 		IASTFunction f = (IASTFunction)templateDeclaration.getOwnedDeclaration();
-		assertEquals( f.getName(), "aTemplatedFunction" );
+		assertEquals( f.getName(), "aTemplatedFunction" ); //$NON-NLS-1$
 		assertSimpleReturnType( f, IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME );
-		assertEquals( ((IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier()).getTypename(), "A" );
+		assertEquals( ((IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier()).getTypename(), "A" ); //$NON-NLS-1$
 		Iterator parameters = f.getParameters();
 		IASTParameterDeclaration parmDeclaration = (IASTParameterDeclaration)parameters.next();
 		assertFalse( parameters.hasNext() );
-		assertEquals( parmDeclaration.getName(), "bInstance");
+		assertEquals( parmDeclaration.getName(), "bInstance"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)parmDeclaration.getTypeSpecifier()).getType(),IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME );
-		assertEquals( ((IASTSimpleTypeSpecifier)parmDeclaration.getTypeSpecifier()).getTypename(), "B" );
+		assertEquals( ((IASTSimpleTypeSpecifier)parmDeclaration.getTypeSpecifier()).getTypename(), "B" ); //$NON-NLS-1$
 	}
 	
 	public void testTemplateDeclarationOfClass() throws Exception {
-		Iterator declarations = parse( "template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };").getDeclarations();
+		Iterator declarations = parse( "template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };").getDeclarations(); //$NON-NLS-1$
 		IASTTemplateDeclaration templateDeclaration = (IASTTemplateDeclaration)declarations.next();
 		assertFalse( declarations.hasNext());
 		Iterator templateParms = templateDeclaration.getTemplateParameters();
 		IASTTemplateParameter parm = (IASTTemplateParameter)templateParms.next(); 
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.CLASS );
-		assertEquals( parm.getIdentifier(), "T");
+		assertEquals( parm.getIdentifier(), "T"); //$NON-NLS-1$
 		parm = (IASTTemplateParameter)templateParms.next(); 
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.TYPENAME );
-		assertEquals( parm.getIdentifier(), "Tibor");
-		assertEquals( parm.getDefaultValueIdExpression(), "junk");
+		assertEquals( parm.getIdentifier(), "Tibor"); //$NON-NLS-1$
+		assertEquals( parm.getDefaultValueIdExpression(), "junk"); //$NON-NLS-1$
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.CLASS );
-		assertEquals( parm.getIdentifier(), "");
+		assertEquals( parm.getIdentifier(), ""); //$NON-NLS-1$
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.TYPENAME );
-		assertEquals( parm.getIdentifier(), "");
+		assertEquals( parm.getIdentifier(), ""); //$NON-NLS-1$
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.PARAMETER );
-		assertEquals( parm.getParameterDeclaration().getName(), "x");
+		assertEquals( parm.getParameterDeclaration().getName(), "x"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)parm.getParameterDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT ); 
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.PARAMETER );
-		assertEquals( parm.getParameterDeclaration().getName(), "y");
+		assertEquals( parm.getParameterDeclaration().getName(), "y"); //$NON-NLS-1$
 		assertEquals( ((IASTSimpleTypeSpecifier)parm.getParameterDeclaration().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.FLOAT ); 
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.TEMPLATE_LIST);
-		assertEquals( parm.getIdentifier(), "");
+		assertEquals( parm.getIdentifier(), ""); //$NON-NLS-1$
 		Iterator subParms = parm.getTemplateParameters();
 		parm = (IASTTemplateParameter)subParms.next(); 
 		assertFalse( subParms.hasNext() ); 
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.CLASS ); 
-		assertEquals( parm.getIdentifier(), "Y" );
+		assertEquals( parm.getIdentifier(), "Y" ); //$NON-NLS-1$
 		parm = (IASTTemplateParameter)templateParms.next();
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.TEMPLATE_LIST);
-		assertEquals( parm.getIdentifier(), "AClass");
+		assertEquals( parm.getIdentifier(), "AClass"); //$NON-NLS-1$
 		subParms = parm.getTemplateParameters();
 		parm = (IASTTemplateParameter)subParms.next(); 
 		assertFalse( subParms.hasNext() ); 
 		assertEquals( parm.getTemplateParameterKind(), IASTTemplateParameter.ParamKind.CLASS ); 
-		assertEquals( parm.getIdentifier(), "A" );
+		assertEquals( parm.getIdentifier(), "A" ); //$NON-NLS-1$
 		assertFalse( templateParms.hasNext() );
 		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)templateDeclaration.getOwnedDeclaration()).getTypeSpecifier();
-		assertEquals( classSpec.getName(), "myarray");
+		assertEquals( classSpec.getName(), "myarray"); //$NON-NLS-1$
 		assertFalse( classSpec.getDeclarations().hasNext() );
 	}
 	
 	public void testBug35906() throws Exception
 	{
 		StringWriter code = new StringWriter(); 
-		code.write( "void TTest::MTest() {}\n" ); 
-		code.write( "struct TTest::STest *TTest::FTest (int i) {}\n" ); 
+		code.write( "void TTest::MTest() {}\n" );  //$NON-NLS-1$
+		code.write( "struct TTest::STest *TTest::FTest (int i) {}\n" );  //$NON-NLS-1$
 		Iterator declarations = parse( code.toString() ).getDeclarations();
 		IASTFunction f = (IASTFunction)declarations.next(); 
-		assertEquals( f.getName(), "TTest::MTest");
+		assertEquals( f.getName(), "TTest::MTest"); //$NON-NLS-1$
 		assertSimpleReturnType( f, IASTSimpleTypeSpecifier.Type.VOID 	);
 		f = (IASTFunction)declarations.next();
 		assertFalse( declarations.hasNext()); 
-		assertEquals( f.getName(), "TTest::FTest");
+		assertEquals( f.getName(), "TTest::FTest"); //$NON-NLS-1$
 		assertEquals( ((IASTElaboratedTypeSpecifier)f.getReturnType().getTypeSpecifier()).getClassKind(), ASTClassKind.STRUCT );
-		assertEquals( ((IASTElaboratedTypeSpecifier)f.getReturnType().getTypeSpecifier()).getName(), "TTest::STest");
+		assertEquals( ((IASTElaboratedTypeSpecifier)f.getReturnType().getTypeSpecifier()).getName(), "TTest::STest"); //$NON-NLS-1$
 		Iterator pointerOperators = f.getReturnType().getPointerOperators(); 
 		assertEquals( pointerOperators.next(), ASTPointerOperator.POINTER );
 		assertFalse( pointerOperators.hasNext() ); 
 		Iterator parameters = f.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertFalse( parameters.hasNext() );
-		assertEquals( parm.getName(), "i");
+		assertEquals( parm.getName(), "i"); //$NON-NLS-1$
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.INT );
 	}
 	
 	public void testBug36288() throws Exception
 	{
-		Iterator declarations = parse( "int foo() {}\nlong foo2(){}" ).getDeclarations();  
+		Iterator declarations = parse( "int foo() {}\nlong foo2(){}" ).getDeclarations();   //$NON-NLS-1$
 		IASTFunction f = (IASTFunction)declarations.next();
 		assertSimpleReturnType( f, IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( f.getName(), "foo");
+		assertEquals( f.getName(), "foo"); //$NON-NLS-1$
 		f = (IASTFunction)declarations.next();
 		assertSimpleReturnType( f, IASTSimpleTypeSpecifier.Type.INT );
 		assertTrue( ((IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier()).isLong() ); 
-		assertEquals( f.getName(), "foo2");
+		assertEquals( f.getName(), "foo2"); //$NON-NLS-1$
 		assertFalse( declarations.hasNext() );
 	}
 
 	public void testBug36250() throws Exception
 	{
-		Iterator declarations = parse( "int f( int = 0 );").getDeclarations();
+		Iterator declarations = parse( "int f( int = 0 );").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f = (IASTFunction)declarations.next(); 
 		assertFalse( declarations.hasNext() );
 		assertSimpleReturnType( f, IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( f.getName(), "f");
+		assertEquals( f.getName(), "f"); //$NON-NLS-1$
 		Iterator parameters = f.getParameters(); 
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertFalse( parameters.hasNext() );
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( parm.getName(), "" );
+		assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 		assertEquals( parm.getDefaultValue().getKind(), IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION );
 		assertEquals( parm.getDefaultValue().getAssigmentExpression().getExpressionKind(), IASTExpression.Kind.PRIMARY_INTEGER_LITERAL );
-		assertEquals( parm.getDefaultValue().getAssigmentExpression().getLiteralString(), "0" );
+		assertEquals( parm.getDefaultValue().getAssigmentExpression().getLiteralString(), "0" ); //$NON-NLS-1$
 	}
 
 	public void testBug36240() throws Exception
 	{
-		Iterator declarations = parse( "A & A::operator=( A ){}").getDeclarations();
+		Iterator declarations = parse( "A & A::operator=( A ){}").getDeclarations(); //$NON-NLS-1$
 		IASTFunction f = (IASTFunction)declarations.next(); 
 		IASTSimpleTypeSpecifier typeSpec = (IASTSimpleTypeSpecifier)f.getReturnType().getTypeSpecifier();
 		assertEquals( typeSpec.getType(), IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME );
-		assertEquals( typeSpec.getTypename(), "A");
+		assertEquals( typeSpec.getTypename(), "A"); //$NON-NLS-1$
 		Iterator pointerOps = f.getReturnType().getPointerOperators();
 		assertEquals( pointerOps.next(), ASTPointerOperator.REFERENCE ); 
 		assertFalse( pointerOps.hasNext() );
-		assertEquals( f.getName(), "A::operator =");
+		assertEquals( f.getName(), "A::operator ="); //$NON-NLS-1$
 		Iterator parms = f.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parms.next();
-		assertEquals( parm.getName(), "" );
+		assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 		typeSpec = (IASTSimpleTypeSpecifier)parm.getTypeSpecifier();
 		assertEquals( typeSpec.getType(), IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME );
-		assertEquals( typeSpec.getTypename(), "A" );
+		assertEquals( typeSpec.getTypename(), "A" ); //$NON-NLS-1$
 	}
 	
 	public void testBug36254() throws Exception
 	{
-		Iterator declarations = parse( "unsigned i;\nvoid f( unsigned p1 = 0 );").getDeclarations();
+		Iterator declarations = parse( "unsigned i;\nvoid f( unsigned p1 = 0 );").getDeclarations(); //$NON-NLS-1$
 		IASTVariable v = (IASTVariable)declarations.next(); 
 		assertSimpleType( v, IASTSimpleTypeSpecifier.Type.INT);
 		assertTrue( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).isUnsigned() ); 
 		IASTFunction f = (IASTFunction)declarations.next(); 
 		assertSimpleReturnType(f, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( f.getName(), "f");
+		assertEquals( f.getName(), "f"); //$NON-NLS-1$
 		Iterator parms = f.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parms.next();
-		assertEquals( parm.getName(), "p1");
+		assertEquals( parm.getName(), "p1"); //$NON-NLS-1$
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.INT );
 		assertTrue( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).isUnsigned() ); 
 		assertEquals( parm.getDefaultValue().getKind(), IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION );
 		assertEquals( parm.getDefaultValue().getAssigmentExpression().getExpressionKind(), IASTExpression.Kind.PRIMARY_INTEGER_LITERAL );
-		assertEquals( parm.getDefaultValue().getAssigmentExpression().getLiteralString(), "0" );
+		assertEquals( parm.getDefaultValue().getAssigmentExpression().getLiteralString(), "0" ); //$NON-NLS-1$
 		assertFalse( declarations.hasNext());
 	}
 	
 	public void testBug36432() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "#define CMD_GET		\"g\"\n" ); 	 
-		code.write( "#define CMD_ACTION   	\"a\"\n" ); 	 
-		code.write( "#define CMD_QUIT		\"q\"\n" );
-		code.write( "static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n");
-		code.write( "memevent_get,\n");
-		code.write( "memevent_action,\n");
-		code.write( "memevent_quit,\n");
-		code.write( "};\n");
+		code.write( "#define CMD_GET		\"g\"\n" ); 	  //$NON-NLS-1$
+		code.write( "#define CMD_ACTION   	\"a\"\n" ); 	  //$NON-NLS-1$
+		code.write( "#define CMD_QUIT		\"q\"\n" ); //$NON-NLS-1$
+		code.write( "static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n"); //$NON-NLS-1$
+		code.write( "memevent_get,\n"); //$NON-NLS-1$
+		code.write( "memevent_action,\n"); //$NON-NLS-1$
+		code.write( "memevent_quit,\n"); //$NON-NLS-1$
+		code.write( "};\n"); //$NON-NLS-1$
 		parse( code.toString() );
 	}
 	
 	public void testBug36594() throws Exception
 	{
-		parse( "const int n = sizeof(A) / sizeof(B);");
+		parse( "const int n = sizeof(A) / sizeof(B);"); //$NON-NLS-1$
 	}
 	
 	public void testBug36794() throws Exception
 	{
-		parse( "template<> class allocator<void> {};");
+		parse( "template<> class allocator<void> {};"); //$NON-NLS-1$
 		Iterator i = quickParseCallback.iterateOffsetableElements();
 		while( i.hasNext() )
 			assertNotNull( i.next() );
@@ -1374,27 +1373,27 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug36799() throws Exception
 	{
-		parse( "static const int __WORD_BIT = int(CHAR_BIT*sizeof(unsigned int));");
+		parse( "static const int __WORD_BIT = int(CHAR_BIT*sizeof(unsigned int));"); //$NON-NLS-1$
 	}
 
 
 	public void testBug36764() throws Exception
 	{
-		parse( "struct{ int x : 4; int y : 8; };" );
+		parse( "struct{ int x : 4; int y : 8; };" ); //$NON-NLS-1$
 	}
 	
 	public void testOrder() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "#define __SGI_STL_INTERNAL_ALGOBASE_H\n" ); 
-		code.write( "#include <string.h>\n" ); 
-		code.write( "template <class _Tp>\n" ); 
-		code.write( "inline void swap(_Tp& __a, _Tp& __b) {\n" ); 
-		code.write( "__STL_REQUIRES(_Tp, _Assignable);\n" ); 
-		code.write( "_Tp __tmp = __a;\n" ); 
-		code.write( "__a = __b;\n" ); 
-		code.write( "__b = __tmp;\n" ); 
-		code.write( "}\n" ); 
+		code.write( "#define __SGI_STL_INTERNAL_ALGOBASE_H\n" );  //$NON-NLS-1$
+		code.write( "#include <string.h>\n" );  //$NON-NLS-1$
+		code.write( "template <class _Tp>\n" );  //$NON-NLS-1$
+		code.write( "inline void swap(_Tp& __a, _Tp& __b) {\n" );  //$NON-NLS-1$
+		code.write( "__STL_REQUIRES(_Tp, _Assignable);\n" );  //$NON-NLS-1$
+		code.write( "_Tp __tmp = __a;\n" );  //$NON-NLS-1$
+		code.write( "__a = __b;\n" );  //$NON-NLS-1$
+		code.write( "__b = __tmp;\n" );  //$NON-NLS-1$
+		code.write( "}\n" );  //$NON-NLS-1$
 		
 		parse( code.toString() );
 		Iterator i = quickParseCallback.iterateOffsetableElements();
@@ -1409,14 +1408,14 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug36771() throws Exception {
 		Writer code = new StringWriter();
-		code.write("#include /**/ \"foo.h\"\n");
+		code.write("#include /**/ \"foo.h\"\n"); //$NON-NLS-1$
 	
 		parse( code.toString()  );
 	
 		Iterator includes = quickParseCallback.getInclusions();
 	
 		IASTInclusion include = (IASTInclusion)includes.next();
-		assertTrue( include.getName().equals("foo.h") );
+		assertTrue( include.getName().equals("foo.h") ); //$NON-NLS-1$
 		assertFalse( includes.hasNext() );
 	}
 	
@@ -1424,8 +1423,8 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testBug36811() throws Exception
 	{
 		Writer code = new StringWriter();  
-		code.write( "using namespace std;\n" ); 
-		code.write( "class Test {};" );
+		code.write( "using namespace std;\n" );  //$NON-NLS-1$
+		code.write( "class Test {};" ); //$NON-NLS-1$
 		parse( code.toString() );
 		Iterator i = quickParseCallback.iterateOffsetableElements();
 		while( i.hasNext() )
@@ -1433,87 +1432,87 @@ public class QuickParseASTTests extends BaseASTTest
 	}
 
 	public void testBug36708() throws Exception {
-		Iterator declarations = parse("enum { isPointer = PointerTraits<T>::result };").getDeclarations();
+		Iterator declarations = parse("enum { isPointer = PointerTraits<T>::result };").getDeclarations(); //$NON-NLS-1$
 		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
 		assertFalse( declarations.hasNext() );
 		Iterator enumerators = enumSpec.getEnumerators();	
 		IASTEnumerator enumerator = (IASTEnumerator)enumerators.next(); 
 		assertFalse( enumerators.hasNext() );
-		assertEquals( enumerator.getName(), "isPointer");
+		assertEquals( enumerator.getName(), "isPointer"); //$NON-NLS-1$
 		assertEquals( enumerator.getInitialValue().getExpressionKind(), IASTExpression.Kind.ID_EXPRESSION ); 
-		assertEquals( enumerator.getInitialValue().getIdExpression(), "PointerTraits<T>::result");
+		assertEquals( enumerator.getInitialValue().getIdExpression(), "PointerTraits<T>::result"); //$NON-NLS-1$
 	}
 
 	public void testBug36690() throws Exception {
-		parse("Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}").getDeclarations();
+		parse("Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}").getDeclarations(); //$NON-NLS-1$
 	}
 
 	public void testBug36703() throws Exception {
-		parse("const std::type_info& Get() const;");
+		parse("const std::type_info& Get() const;"); //$NON-NLS-1$
 	}
 	
 	public void testBug36692() throws Exception  {
 		Writer code = new StringWriter();
-		code.write("template <typename T, typename Destroyer>\n");
-		code.write("void SetLongevity(T* pDynObject, unsigned int longevity,\n");
-		code.write("Destroyer d = Private::Deleter<T>::Delete){}\n");
+		code.write("template <typename T, typename Destroyer>\n"); //$NON-NLS-1$
+		code.write("void SetLongevity(T* pDynObject, unsigned int longevity,\n"); //$NON-NLS-1$
+		code.write("Destroyer d = Private::Deleter<T>::Delete){}\n"); //$NON-NLS-1$
 		parse(code.toString());
 	}
 	
 	public void testBug36551() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "class TextFrame {\n" ); 
-		code.write( "BAD_MACRO()\n"); 
-		code.write( "};");
+		code.write( "class TextFrame {\n" );  //$NON-NLS-1$
+		code.write( "BAD_MACRO()\n");  //$NON-NLS-1$
+		code.write( "};"); //$NON-NLS-1$
 		parse( code.toString(), true, false );
 	}
 	
 	public void testBug36247() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "class A {\n" ); 
-		code.write( "INLINE_DEF int f ();\n" ); 
-		code.write( "INLINE_DEF A   g ();" ); 
-		code.write( "INLINE_DEF A * h ();" ); 
-		code.write( "INLINE_DEF A & unlock( void );");
-		code.write( "};" );
+		code.write( "class A {\n" );  //$NON-NLS-1$
+		code.write( "INLINE_DEF int f ();\n" );  //$NON-NLS-1$
+		code.write( "INLINE_DEF A   g ();" );  //$NON-NLS-1$
+		code.write( "INLINE_DEF A * h ();" );  //$NON-NLS-1$
+		code.write( "INLINE_DEF A & unlock( void );"); //$NON-NLS-1$
+		code.write( "};" ); //$NON-NLS-1$
 		parse(code.toString());
 	}
 	
 	public void testStruct() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 
-		writer.write( "struct mad_bitptr { unsigned char const *byte;\n" );
-		writer.write( "unsigned short cache;\n unsigned short left;};" );
+		writer.write( "struct mad_bitptr { unsigned char const *byte;\n" ); //$NON-NLS-1$
+		writer.write( "unsigned short cache;\n unsigned short left;};" ); //$NON-NLS-1$
 		parse( writer.toString() );
 	}
 	
 	public void testBug36559() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "namespace myNameSpace {\n" ); 
-		code.write( "template<typename T=short> class B {};\n" );
-		code.write( "template<> class B<int> {};\n" ); 
-		code.write( "}\n" ); 
+		code.write( "namespace myNameSpace {\n" );  //$NON-NLS-1$
+		code.write( "template<typename T=short> class B {};\n" ); //$NON-NLS-1$
+		code.write( "template<> class B<int> {};\n" );  //$NON-NLS-1$
+		code.write( "}\n" );  //$NON-NLS-1$
 		parse( code.toString() ); 
 	}
 	
 	public void testPointersToFunctions() throws Exception
 	{
 		Writer code = new StringWriter(); 
-		code.write( "void (*name)( void );\n");
-		code.write( "static void * (* const orig_malloc_hook)(const char *file, int line, size_t size);\n");
+		code.write( "void (*name)( void );\n"); //$NON-NLS-1$
+		code.write( "static void * (* const orig_malloc_hook)(const char *file, int line, size_t size);\n"); //$NON-NLS-1$
 
 		Iterator declarations = parse( code.toString() ).getDeclarations();
 		IASTVariable p2f = (IASTVariable)declarations.next();
 		assertSimpleType( p2f, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( p2f.getName(), "name" );
+		assertEquals( p2f.getName(), "name" ); //$NON-NLS-1$
 		Iterator parameters = p2f.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertFalse( parameters.hasNext() );
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( parm.getName(), "" );
+		assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 		
 		p2f = (IASTVariable)declarations.next(); 
 		assertSimpleType( p2f, IASTSimpleTypeSpecifier.Type.VOID );
@@ -1524,35 +1523,35 @@ public class QuickParseASTTests extends BaseASTTest
 		parameters = p2f.getAbstractDeclaration().getParameters();
 		parm = (IASTParameterDeclaration)parameters.next(); 
 	    assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.CHAR );
-	    assertEquals( parm.getName(), "file" );
+	    assertEquals( parm.getName(), "file" ); //$NON-NLS-1$
 	    assertTrue( parm.isConst() );
 	    assertTrue( parm.getPointerOperators().hasNext() );
 		parm = (IASTParameterDeclaration)parameters.next(); 
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.INT );
-		assertEquals( parm.getName(), "line" );
+		assertEquals( parm.getName(), "line" ); //$NON-NLS-1$
 		parm = (IASTParameterDeclaration)parameters.next(); 
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME );
-		assertEquals( parm.getName(), "size" );
+		assertEquals( parm.getName(), "size" ); //$NON-NLS-1$
 		assertFalse( parameters.hasNext() );		
 	}
 	
 	public void testBug36600() throws Exception
 	{
-		IASTVariable p2f = (IASTVariable)parse( "enum mad_flow (*input_func)(void *, struct mad_stream *);").getDeclarations().next();
+		IASTVariable p2f = (IASTVariable)parse( "enum mad_flow (*input_func)(void *, struct mad_stream *);").getDeclarations().next(); //$NON-NLS-1$
 		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier)p2f.getAbstractDeclaration().getTypeSpecifier();
-		assertEquals( elab.getName(), "mad_flow");
+		assertEquals( elab.getName(), "mad_flow"); //$NON-NLS-1$
 		assertEquals( elab.getClassKind(), ASTClassKind.ENUM );
-		assertEquals( p2f.getName(), "input_func");
+		assertEquals( p2f.getName(), "input_func"); //$NON-NLS-1$
 		Iterator parms = p2f.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parms.next();
-		assertEquals( parm.getName(), "" );
+		assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 		assertEquals( parm.getPointerOperators().next(), ASTPointerOperator.POINTER);
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.VOID);
 		parm = (IASTParameterDeclaration)parms.next();
-		assertEquals( parm.getName(), "" );
+		assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 		assertEquals( parm.getPointerOperators().next(), ASTPointerOperator.POINTER);
 		elab = (IASTElaboratedTypeSpecifier)parm.getTypeSpecifier();
-		assertEquals( elab.getName(), "mad_stream");
+		assertEquals( elab.getName(), "mad_stream"); //$NON-NLS-1$
 		assertEquals( elab.getClassKind(), ASTClassKind.STRUCT );
 		
 		
@@ -1560,8 +1559,8 @@ public class QuickParseASTTests extends BaseASTTest
 
 	public void testBug36713() throws Exception {
 		Writer code = new StringWriter();
-		code.write("A ( * const fPtr) (void *); \n");
-		code.write("A (* const fPtr2) ( A * ); \n");
+		code.write("A ( * const fPtr) (void *); \n"); //$NON-NLS-1$
+		code.write("A (* const fPtr2) ( A * ); \n"); //$NON-NLS-1$
 		parse(code.toString()).getDeclarations();
 	}
 
@@ -1643,43 +1642,43 @@ public class QuickParseASTTests extends BaseASTTest
     
 	public void testPointersToMemberFunctions() throws Exception
 	{
-		IASTVariable p2m  = (IASTVariable)parse("void (A::*name)(void);").getDeclarations().next();
+		IASTVariable p2m  = (IASTVariable)parse("void (A::*name)(void);").getDeclarations().next(); //$NON-NLS-1$
 		assertSimpleType( p2m, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( p2m.getName(), "A::* name");
+		assertEquals( p2m.getName(), "A::* name"); //$NON-NLS-1$
 		assertEquals( p2m.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.POINTER);
 		Iterator parameters = p2m.getAbstractDeclaration().getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration)parameters.next(); 
 		assertFalse( parameters.hasNext() );
 		assertParameterSimpleType( parm, IASTSimpleTypeSpecifier.Type.VOID );
-		assertEquals( parm.getName(), "" );
+		assertEquals( parm.getName(), "" ); //$NON-NLS-1$
 	}
      
 	public void testBug39550() throws Exception
 	{
-		parse("double x = 0x1.fp1;").getDeclarations().next();
+		parse("double x = 0x1.fp1;").getDeclarations().next(); //$NON-NLS-1$
 	}
 	
 	public void testBug39552A() throws Exception
 	{
 		Writer code = new StringWriter();
 
-		code.write("%:define glue(x, y) x %:%: y	/* #define glue(x, y) x ## y. */\n");
-		code.write("#ifndef glue\n");
-		code.write("#error glue not defined!\n");
-		code.write("#endif\n");
+		code.write("%:define glue(x, y) x %:%: y	/* #define glue(x, y) x ## y. */\n"); //$NON-NLS-1$
+		code.write("#ifndef glue\n"); //$NON-NLS-1$
+		code.write("#error glue not defined!\n"); //$NON-NLS-1$
+		code.write("#endif\n"); //$NON-NLS-1$
         
-		code.write("%:define str(x) %:x		/* #define str(x) #x */\n");
+		code.write("%:define str(x) %:x		/* #define str(x) #x */\n"); //$NON-NLS-1$
         
-		code.write("int main (int argc, char *argv<::>) /* argv[] */\n");
-		code.write("glue (<, %) /* { */\n");
-		code.write("			 /* di_str[] = */\n");
-		code.write("  const char di_str glue(<, :)glue(:, >) = str(%:%:<::><%%>%:);\n");
-		code.write("  /* Check the glue macro actually pastes, and that the spelling of\n");
-		code.write("	 all digraphs is preserved.  */\n");
-		code.write("  if (glue(strc, mp) (di_str, \"%:%:<::><%%>%:\"))\n");
-		code.write("	err (\"Digraph spelling not preserved!\");\n");
-		code.write("  return 0;\n");
-		code.write("glue (%, >) /* } */\n");
+		code.write("int main (int argc, char *argv<::>) /* argv[] */\n"); //$NON-NLS-1$
+		code.write("glue (<, %) /* { */\n"); //$NON-NLS-1$
+		code.write("			 /* di_str[] = */\n"); //$NON-NLS-1$
+		code.write("  const char di_str glue(<, :)glue(:, >) = str(%:%:<::><%%>%:);\n"); //$NON-NLS-1$
+		code.write("  /* Check the glue macro actually pastes, and that the spelling of\n"); //$NON-NLS-1$
+		code.write("	 all digraphs is preserved.  */\n"); //$NON-NLS-1$
+		code.write("  if (glue(strc, mp) (di_str, \"%:%:<::><%%>%:\"))\n"); //$NON-NLS-1$
+		code.write("	err (\"Digraph spelling not preserved!\");\n"); //$NON-NLS-1$
+		code.write("  return 0;\n"); //$NON-NLS-1$
+		code.write("glue (%, >) /* } */\n"); //$NON-NLS-1$
 
 		parse(code.toString());
 	}
@@ -1688,58 +1687,58 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		Writer code = new StringWriter();
 
-		code.write("??=include <stdio.h>\n");
-		code.write("??=define TWELVE 1??/\n");
-		code.write("2\n");
+		code.write("??=include <stdio.h>\n"); //$NON-NLS-1$
+		code.write("??=define TWELVE 1??/\n"); //$NON-NLS-1$
+		code.write("2\n"); //$NON-NLS-1$
         
-		code.write("static const char str??(??) = \"0123456789??/n\";\n");
+		code.write("static const char str??(??) = \"0123456789??/n\";\n"); //$NON-NLS-1$
         
-		code.write("int\n");
-		code.write("main(void)\n");
-		code.write("??<\n");
-		code.write("  unsigned char x = 5;\n");
-		code.write("  if (sizeof str != TWELVE)\n");
-		code.write("	abort ();\n");
-		code.write("  /* Test ^=, the only multi-character token to come from trigraphs.  */\n");
-		code.write("  x ??'= 3;\n");
-		code.write("  if (x != 6)\n");
-		code.write("	abort ();\n");
-		code.write("  if ((5 ??! 3) != 7)\n");
-		code.write("	abort ();\n");
-		code.write("  return 0;\n");
-		code.write("??>\n");
+		code.write("int\n"); //$NON-NLS-1$
+		code.write("main(void)\n"); //$NON-NLS-1$
+		code.write("??<\n"); //$NON-NLS-1$
+		code.write("  unsigned char x = 5;\n"); //$NON-NLS-1$
+		code.write("  if (sizeof str != TWELVE)\n"); //$NON-NLS-1$
+		code.write("	abort ();\n"); //$NON-NLS-1$
+		code.write("  /* Test ^=, the only multi-character token to come from trigraphs.  */\n"); //$NON-NLS-1$
+		code.write("  x ??'= 3;\n"); //$NON-NLS-1$
+		code.write("  if (x != 6)\n"); //$NON-NLS-1$
+		code.write("	abort ();\n"); //$NON-NLS-1$
+		code.write("  if ((5 ??! 3) != 7)\n"); //$NON-NLS-1$
+		code.write("	abort ();\n"); //$NON-NLS-1$
+		code.write("  return 0;\n"); //$NON-NLS-1$
+		code.write("??>\n"); //$NON-NLS-1$
 		
 		parse(code.toString());
 	}
 	
 	public void testBug39553() throws Exception	
 	{
-		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC");
+		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue( quickParseCallback.getInclusions().hasNext() );
 	}
 	
 	public void testBug39537() throws Exception
 	{
-		parse("typedef foo<(U::id > 0)> foobar;");
+		parse("typedef foo<(U::id > 0)> foobar;"); //$NON-NLS-1$
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
 	
 	public void testBug39546() throws Exception
 	{
-		parse("signed char c = (signed char) 0xffffffff;");
+		parse("signed char c = (signed char) 0xffffffff;"); //$NON-NLS-1$
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
 	
 	public void testIndirectDeclarators() throws Exception
 	{
-		IASTVariable v = (IASTVariable)parse( "void (*x)( int );").getDeclarations().next();
-		assertEquals( v.getName(), "x");
+		IASTVariable v = (IASTVariable)parse( "void (*x)( int );").getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( v.getName(), "x"); //$NON-NLS-1$
 		assertSimpleType( v, IASTSimpleTypeSpecifier.Type.VOID );
 		assertParameterSimpleType( (IASTParameterDeclaration)v.getAbstractDeclaration().getParameters().next(), IASTSimpleTypeSpecifier.Type.INT  );
 		assertEquals( v.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.POINTER );
 		
-		v = (IASTVariable)parse( "const int * (* const something)( const int * const * const  );").getDeclarations().next();
-		assertEquals( v.getName(), "something");
+		v = (IASTVariable)parse( "const int * (* const something)( const int * const * const  );").getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( v.getName(), "something"); //$NON-NLS-1$
 		assertEquals( v.getAbstractDeclaration().getPointerToFunctionOperator(), ASTPointerOperator.CONST_POINTER);
 		assertTrue( v.getAbstractDeclaration().isConst() );
 		assertSimpleType( v, IASTSimpleTypeSpecifier.Type.INT );
@@ -1751,62 +1750,62 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( pointerOps.next(), ASTPointerOperator.CONST_POINTER );
 		assertFalse( pointerOps.hasNext() );
 		
-		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)parse( "typedef void (*life)(int);").getDeclarations().next();
-		assertEquals( typedef.getName(), "life");
+		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)parse( "typedef void (*life)(int);").getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( typedef.getName(), "life"); //$NON-NLS-1$
 		assertSimpleType( typedef, IASTSimpleTypeSpecifier.Type.VOID );
 		assertParameterSimpleType( (IASTParameterDeclaration)typedef.getAbstractDeclarator().getParameters().next(), IASTSimpleTypeSpecifier.Type.INT  );
 		
-		IASTFunction f = (IASTFunction)parse( "void (f)(void);").getDeclarations().next();
-		assertEquals( f.getName(), "f");
+		IASTFunction f = (IASTFunction)parse( "void (f)(void);").getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( f.getName(), "f"); //$NON-NLS-1$
 		
-		typedef = (IASTTypedefDeclaration)parse( "typedef void (life)(int);").getDeclarations().next();
-		assertEquals( typedef.getName(), "life");
+		typedef = (IASTTypedefDeclaration)parse( "typedef void (life)(int);").getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( typedef.getName(), "life"); //$NON-NLS-1$
 		
 	}
 	
 	public void testBug39532() throws Exception
 	{
-		parse("class N1::N2::B : public A {};");
+		parse("class N1::N2::B : public A {};"); //$NON-NLS-1$
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
 	
 	public void testBug39540() throws Exception
 	{
-		parse("class {} const null;");
+		parse("class {} const null;"); //$NON-NLS-1$
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
 	
 	public void testBug39530() throws Exception
 	{
-		parse( "X sPassed(-1)");
+		parse( "X sPassed(-1)"); //$NON-NLS-1$
 	}
 
 	public void testBug39526() throws Exception
 	{
-		parse("UnitList unit_list (String(\"keV\"));");
+		parse("UnitList unit_list (String(\"keV\"));"); //$NON-NLS-1$
 	}
 	
 	public void testBug39535() throws Exception
 	{
-		parse("namespace bar = foo;");
+		parse("namespace bar = foo;"); //$NON-NLS-1$
 	}
 
 	public void testBug39504B() throws Exception
 	{
-		parse("int y = sizeof (int*);");
+		parse("int y = sizeof (int*);"); //$NON-NLS-1$
 	}
 	public void testBug39505A() throws Exception
 	{
-		parse("int AD::* gp_down = static_cast<int AD::*>(gp_stat);");
+		parse("int AD::* gp_down = static_cast<int AD::*>(gp_stat);"); //$NON-NLS-1$
 	}
 	public void testBug39505B() throws Exception
 	{
-		parse("int* gp_down = static_cast<int*>(gp_stat);");
+		parse("int* gp_down = static_cast<int*>(gp_stat);"); //$NON-NLS-1$
 	}
 	
 	public void testBug42985() throws Exception
 	{
-		parse( "const int x = 4; int y = ::x;");
+		parse( "const int x = 4; int y = ::x;"); //$NON-NLS-1$
 	}
 
     public void testBug40419() throws Exception
@@ -1814,16 +1813,16 @@ public class QuickParseASTTests extends BaseASTTest
 		Writer code = new StringWriter();
 		try
 		{ 
-			code.write( "template <class T, class U>	struct SuperSubclass {\n"  );
-			code.write( "enum { value = (::Loki::Conversion<const volatile U*, const volatile T*>::exists && \n" );
-			code.write( "!::Loki::Conversion<const volatile T*, const volatile void*>::sameType) };	};" );
+			code.write( "template <class T, class U>	struct SuperSubclass {\n"  ); //$NON-NLS-1$
+			code.write( "enum { value = (::Loki::Conversion<const volatile U*, const volatile T*>::exists && \n" ); //$NON-NLS-1$
+			code.write( "!::Loki::Conversion<const volatile T*, const volatile void*>::sameType) };	};" ); //$NON-NLS-1$
 		} catch( IOException ioe ){}
 		parse( code.toString() );
 	}
 
 	public void testBug39556() throws Exception
 	{
-		parse("int *restrict ip_fn (void);", true, true, ParserLanguage.C).getDeclarations().next();
+		parse("int *restrict ip_fn (void);", true, true, ParserLanguage.C).getDeclarations().next(); //$NON-NLS-1$
 
 	}
 			
@@ -1835,7 +1834,7 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
-		code.write("struct Example { Example(); Example(int); ~Example();};");
+		code.write("struct Example { Example(); Example(int); ~Example();};"); //$NON-NLS-1$
 		IASTCompilationUnit cu = parse(code.toString());
 		Iterator i = cu.getDeclarations();
 		assertTrue(i.hasNext());
@@ -1857,15 +1856,15 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug43644() throws Exception
 	{
-		Iterator i = parse( "void foo();{ int x; }", true, false ).getDeclarations();
+		Iterator i = parse( "void foo();{ int x; }", true, false ).getDeclarations(); //$NON-NLS-1$
 		IASTFunction f = (IASTFunction)i.next();
-		assertEquals( f.getName(), "foo"); 
+		assertEquals( f.getName(), "foo");  //$NON-NLS-1$
 		assertFalse( i.hasNext() );		
 	}
 	
 	public void testBug43062() throws Exception
 	{
-		Iterator i = parse( "class X { operator short  (); 	operator int unsigned(); operator int signed(); };").getDeclarations();
+		Iterator i = parse( "class X { operator short  (); 	operator int unsigned(); operator int signed(); };").getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier classX = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		assertFalse( i.hasNext() );
 		Iterator members = classX.getDeclarations();
@@ -1873,35 +1872,35 @@ public class QuickParseASTTests extends BaseASTTest
         IASTMethod unsignedMethod = (IASTMethod)members.next();
         IASTMethod signedMethod = (IASTMethod)members.next(); 
         assertFalse( members.hasNext() );
-		assertEquals( shortMethod.getName(), "operator short");
-		assertEquals( unsignedMethod.getName(), "operator int unsigned");
-		assertEquals( signedMethod.getName(), "operator int signed");
+		assertEquals( shortMethod.getName(), "operator short"); //$NON-NLS-1$
+		assertEquals( unsignedMethod.getName(), "operator int unsigned"); //$NON-NLS-1$
+		assertEquals( signedMethod.getName(), "operator int signed"); //$NON-NLS-1$
 	}
 
 	public void testBug39531() throws Exception
 	{
-		parse("class AString { operator char const *() const; };");
+		parse("class AString { operator char const *() const; };"); //$NON-NLS-1$
 	}
 	
 	public void testBug40007() throws Exception
 	{
-		assertCodeFailsParse("int y = #;");
+		assertCodeFailsParse("int y = #;"); //$NON-NLS-1$
 	}
 	
 	public void testBug40759() throws Exception
 	{
-		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration( "#define X SomeName \n class X {};" )).getTypeSpecifier();
+		IASTClassSpecifier classSpec = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration( "#define X SomeName \n class X {};" )).getTypeSpecifier(); //$NON-NLS-1$
 		assertEquals( classSpec.getNameOffset() + 1, classSpec.getNameEndOffset() );
-		assertEquals( classSpec.getName(), "SomeName");
+		assertEquals( classSpec.getName(), "SomeName"); //$NON-NLS-1$
 	}
 	
 	public void testBug44633() throws Exception
 	{
 		Writer writer = new StringWriter(); 
-		writer.write( "template <typename T> class A {};\n" ); 
-		writer.write( "class B {  template <typename T> friend class A;\n" ); 
-		writer.write( "void method();\n" ); 
-		writer.write( "};\n" ); 
+		writer.write( "template <typename T> class A {};\n" );  //$NON-NLS-1$
+		writer.write( "class B {  template <typename T> friend class A;\n" );  //$NON-NLS-1$
+		writer.write( "void method();\n" );  //$NON-NLS-1$
+		writer.write( "};\n" );  //$NON-NLS-1$
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
 		assertTrue( i.next() instanceof IASTTemplateDeclaration );  
@@ -1914,15 +1913,15 @@ public class QuickParseASTTests extends BaseASTTest
 
 	public void testBug39525() throws Exception
 	{
-		parse("C &(C::*DD)(const C &x) = &C::operator=;");
+		parse("C &(C::*DD)(const C &x) = &C::operator=;"); //$NON-NLS-1$
 	}
 
 	public void testBug41935() throws Exception
 	{
-		Iterator i = parse( "namespace A	{  int x; } namespace B = A;" ).getDeclarations();
+		Iterator i = parse( "namespace A	{  int x; } namespace B = A;" ).getDeclarations(); //$NON-NLS-1$
 		assertTrue( i.next() instanceof IASTNamespaceDefinition ); 
 		IASTNamespaceAlias a = (IASTNamespaceAlias)i.next();
-		assertEquals( a.getName(), "B" );
+		assertEquals( a.getName(), "B" ); //$NON-NLS-1$
 		assertFalse( i.hasNext() );
 	}
 
@@ -1931,13 +1930,13 @@ public class QuickParseASTTests extends BaseASTTest
 		Writer code = new StringWriter();
 		try
 		{
-			code.write("struct B: public A {\n");
-			code.write("  A a;\n");
-			code.write("  B() try : A(1), a(2)\n");
-			code.write("	{ throw 1; }\n");
-			code.write("  catch (...)\n");
-			code.write("	{ if (c != 3) r |= 1; }\n");
-			code.write("};\n");
+			code.write("struct B: public A {\n"); //$NON-NLS-1$
+			code.write("  A a;\n"); //$NON-NLS-1$
+			code.write("  B() try : A(1), a(2)\n"); //$NON-NLS-1$
+			code.write("	{ throw 1; }\n"); //$NON-NLS-1$
+			code.write("  catch (...)\n"); //$NON-NLS-1$
+			code.write("	{ if (c != 3) r |= 1; }\n"); //$NON-NLS-1$
+			code.write("};\n"); //$NON-NLS-1$
 		}
 		catch (IOException ioe)
 		{
@@ -1952,18 +1951,18 @@ public class QuickParseASTTests extends BaseASTTest
 
 	public void testBug39538() throws Exception
 	{
-		parse("template C::operator int<float> ();");
+		parse("template C::operator int<float> ();"); //$NON-NLS-1$
 	}
 
 	public void testBug39536() throws Exception
 	{
 		Writer writer = new StringWriter(); 
-		writer.write( "template<class E>\n" );
-		writer.write( "class X {\n" );
-		writer.write( "X<E>();  // This fails \n" );
-		writer.write( "inline X<E>(int); // This also fails \n" );
-		writer.write( "inline ~X<E>(); // This works fine \n" );
-		writer.write( "};\n" );
+		writer.write( "template<class E>\n" ); //$NON-NLS-1$
+		writer.write( "class X {\n" ); //$NON-NLS-1$
+		writer.write( "X<E>();  // This fails \n" ); //$NON-NLS-1$
+		writer.write( "inline X<E>(int); // This also fails \n" ); //$NON-NLS-1$
+		writer.write( "inline ~X<E>(); // This works fine \n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration)assertSoleDeclaration( writer.toString() );
 		IASTClassSpecifier X = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
 		Iterator members = X.getDeclarations();
@@ -1974,93 +1973,91 @@ public class QuickParseASTTests extends BaseASTTest
 
 	public void testBug39536A() throws Exception
 	{
-		IASTTemplateDeclaration template = (IASTTemplateDeclaration)parse("template<class E> class X { X<E>(); };").getDeclarations().next();
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration)parse("template<class E> class X { X<E>(); };").getDeclarations().next(); //$NON-NLS-1$
 		IASTClassSpecifier classX = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)template.getOwnedDeclaration()).getTypeSpecifier();
 		IASTDeclaration d = (IASTDeclaration)classX.getDeclarations().next();
 		assertTrue( d instanceof IASTMethod);    
 	}
 	public void testBug39536B() throws Exception
 	{
-		parse("template<class E> class X { inline X<E>(int); };");
+		parse("template<class E> class X { inline X<E>(int); };"); //$NON-NLS-1$
 	}
 
 	public void testBug39542() throws Exception
 	{
-		parse("void f(int a, struct {int b[a];} c) {}");
+		parse("void f(int a, struct {int b[a];} c) {}"); //$NON-NLS-1$
 	}
 
 	//Here starts C99-specific section
 	public void testBug39549() throws Exception
 	{
-		parse("struct X x = { .b = 40, .z = { sizeof(X), 42 }, .t[3] = 2, .t.f[3].x = A * B };", true, true, ParserLanguage.C);
+		parse("struct X x = { .b = 40, .z = { sizeof(X), 42 }, .t[3] = 2, .t.f[3].x = A * B };", true, true, ParserLanguage.C); //$NON-NLS-1$
 		// with trailing commas
-		parse("struct X x = { .b = 40, .z = { sizeof(X), 42,}, .t[3] = 2, .t.f[3].x = A * B  ,};", true, true, ParserLanguage.C);
+		parse("struct X x = { .b = 40, .z = { sizeof(X), 42,}, .t[3] = 2, .t.f[3].x = A * B  ,};", true, true, ParserLanguage.C); //$NON-NLS-1$
 	}
 	
 	public void testBug39551A() throws Exception
 	{
-		IASTFunction function = (IASTFunction)parse("extern float _Complex conjf (float _Complex);", true, true, ParserLanguage.C).getDeclarations().next();
-		assertEquals( function.getName(), "conjf");
+		IASTFunction function = (IASTFunction)parse("extern float _Complex conjf (float _Complex);", true, true, ParserLanguage.C).getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( function.getName(), "conjf"); //$NON-NLS-1$
 		assertTrue( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).isComplex() );
 	}
 
 	public void testBug39551B() throws Exception
 	{
-		IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * __I__;", true, true, ParserLanguage.C).getDeclarations().next();
-		assertEquals( variable.getName(), "id");
+		IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * __I__;", true, true, ParserLanguage.C).getDeclarations().next(); //$NON-NLS-1$
+		assertEquals( variable.getName(), "id"); //$NON-NLS-1$
 		assertTrue( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).isImaginary() );
 	}
 	
 	public void testCBool() throws Exception
 	{
-		IASTVariable variable = (IASTVariable)assertSoleDeclaration( "_Bool x;", ParserLanguage.C );
+		IASTVariable variable = (IASTVariable)assertSoleDeclaration( "_Bool x;", ParserLanguage.C ); //$NON-NLS-1$
 		assertSimpleType( variable, IASTSimpleTypeSpecifier.Type._BOOL );
 	}
 
 	public void testBug39678() throws Exception
 	{
-		IASTVariable variable = (IASTVariable) assertSoleDeclaration("char *s = L\"a\" \"b\";");
-		IASTExpression exp = variable.getInitializerClause().getAssigmentExpression();
-		assertEquals( exp.getLiteralString(), "ab");
+		IASTVariable variable = (IASTVariable) assertSoleDeclaration("char *s = L\"a\" \"b\";"); //$NON-NLS-1$
 	}
 	
 	public void testBug43110() throws Exception
 	{
-		IASTFunction function = (IASTFunction) assertSoleDeclaration( "void x( int y, ... );");
+		IASTFunction function = (IASTFunction) assertSoleDeclaration( "void x( int y, ... );"); //$NON-NLS-1$
 		assertTrue( function.takesVarArgs() );
-		function = (IASTFunction) assertSoleDeclaration( "void x( int y... );");
+		function = (IASTFunction) assertSoleDeclaration( "void x( int y... );"); //$NON-NLS-1$
 		assertTrue( function.takesVarArgs() );
 	}
 	
 	public void testBug44370() throws Exception
 	{
-		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n");
+		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); //$NON-NLS-1$
 		Iterator macros = quickParseCallback.getMacros();
 		assertNotNull(macros);
 		assertTrue( macros.hasNext());
 		IASTMacro swap = (IASTMacro) macros.next();
 		assertFalse( macros.hasNext() );
-		assertEquals( swap.getName(), "SWAP");
+		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
 		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
 		List params = swap.getParameters();
 		assertEquals( params.size(), 2 );
-		assertEquals( params.get(0), "x");
-		assertEquals( params.get(1), "y");
-		assertEquals( swap.getCompleteSignature().trim(), "#define SWAP(x,y) {x|=y;y|=x;x|=y;}");
-		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}");
+		assertEquals( params.get(0), "x"); //$NON-NLS-1$
+		assertEquals( params.get(1), "y"); //$NON-NLS-1$
+		assertEquals( swap.getCompleteSignature().trim(), "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
 		Iterator tokens = swap.getTokenizedExpansion().iterator();
 		validateToken( (IToken)tokens.next(), IToken.tLBRACE);
-		validateIdentifier( (IToken)tokens.next(), "x");
+		validateIdentifier( (IToken)tokens.next(), "x"); //$NON-NLS-1$
 		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
-		validateIdentifier( (IToken) tokens.next(), "y");
+		validateIdentifier( (IToken) tokens.next(), "y"); //$NON-NLS-1$
 		validateToken( (IToken) tokens.next(), IToken.tSEMI );
-		validateIdentifier( (IToken) tokens.next(), "y");
+		validateIdentifier( (IToken) tokens.next(), "y"); //$NON-NLS-1$
 		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
-		validateIdentifier( (IToken)tokens.next(), "x");
+		validateIdentifier( (IToken)tokens.next(), "x"); //$NON-NLS-1$
 		validateToken( (IToken) tokens.next(), IToken.tSEMI );
-		validateIdentifier( (IToken)tokens.next(), "x");
+		validateIdentifier( (IToken)tokens.next(), "x"); //$NON-NLS-1$
 		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
-		validateIdentifier( (IToken) tokens.next(), "y");
+		validateIdentifier( (IToken) tokens.next(), "y"); //$NON-NLS-1$
 		validateToken( (IToken) tokens.next(), IToken.tSEMI );
 		validateToken( (IToken) tokens.next(), IToken.tRBRACE );
 		assertFalse( tokens.hasNext() );
@@ -2083,88 +2080,88 @@ public class QuickParseASTTests extends BaseASTTest
 	
 	public void testBug47752() throws Exception
 	{
-		parse("void func( cFoo bar ) try {	} catch ( const char * error ){	}" );
+		parse("void func( cFoo bar ) try {	} catch ( const char * error ){	}" ); //$NON-NLS-1$
 	}
 	
 	public void testBug47628() throws Exception
 	{
 		Writer writer = new StringWriter(); 
-		writer.write( "void h(char) { }\n");
-		writer.write( "void h(unsigned char) { }\n");
-		writer.write( "void h(signed char) { }  // not shown in outline, parsed as char\n");
+		writer.write( "void h(char) { }\n"); //$NON-NLS-1$
+		writer.write( "void h(unsigned char) { }\n"); //$NON-NLS-1$
+		writer.write( "void h(signed char) { }  // not shown in outline, parsed as char\n"); //$NON-NLS-1$
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		IASTFunction h1 = (IASTFunction) i.next(); 
-		assertEquals( h1.getName(), "h");
+		assertEquals( h1.getName(), "h"); //$NON-NLS-1$
 		Iterator parms = h1.getParameters();
 		IASTParameterDeclaration parm = (IASTParameterDeclaration) parms.next();
 		assertTrue( parm.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ); 
-		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "char" );
+		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "char" ); //$NON-NLS-1$
 		IASTFunction h2 = (IASTFunction) i.next();
-		assertEquals( h2.getName(), "h");
+		assertEquals( h2.getName(), "h"); //$NON-NLS-1$
 		parms = h2.getParameters();
 		parm = (IASTParameterDeclaration) parms.next();
 		assertTrue( parm.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ); 
-		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "unsigned char" );
+		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "unsigned char" ); //$NON-NLS-1$
 		
 		IASTFunction h3 = (IASTFunction) i.next();
-		assertEquals( h3.getName(), "h");
+		assertEquals( h3.getName(), "h"); //$NON-NLS-1$
 		parms = h3.getParameters();
 		parm = (IASTParameterDeclaration) parms.next();
 		assertTrue( parm.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ); 
-		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "signed char" );
+		assertEquals( ((IASTSimpleTypeSpecifier)parm.getTypeSpecifier()).getTypename(), "signed char" ); //$NON-NLS-1$
 		
 		assertFalse( i.hasNext() );
 	}
 	
 	public void testBug44336() throws Exception
 	{
-		Iterator i = parse( "class A {};  typedef typename A foo;" ).getDeclarations();
+		Iterator i = parse( "class A {};  typedef typename A foo;" ).getDeclarations(); //$NON-NLS-1$
 		IASTClassSpecifier classA = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		assertEquals( classA.getClassKind(), ASTClassKind.CLASS );
-		assertEquals( classA.getName(), "A");
+		assertEquals( classA.getName(), "A"); //$NON-NLS-1$
 		IASTTypedefDeclaration typedefDeclaration = (IASTTypedefDeclaration) i.next();
 		assertFalse( i.hasNext() );
 	}
 	
     public void testBug39705() throws Exception
     {
-        parse("#ident \"@(#)filename.c   1.3 90/02/12\"");
+        parse("#ident \"@(#)filename.c   1.3 90/02/12\""); //$NON-NLS-1$
     }
     
     public void testBug39694() throws Exception
     {
-        IASTVariable variable = (IASTVariable)parse("int ab$cd = 1;").getDeclarations().next();
-        assertEquals( variable.getName(), "ab$cd");
+        IASTVariable variable = (IASTVariable)parse("int ab$cd = 1;").getDeclarations().next(); //$NON-NLS-1$
+        assertEquals( variable.getName(), "ab$cd"); //$NON-NLS-1$
     }
     
     
     public void testBug39704A() throws Exception
     {
-        IASTVariable foo = (IASTVariable) assertSoleDeclaration("__declspec (dllimport) int foo;");
-        assertEquals( foo.getName(), "foo");
+        IASTVariable foo = (IASTVariable) assertSoleDeclaration("__declspec (dllimport) int foo;"); //$NON-NLS-1$
+        assertEquals( foo.getName(), "foo"); //$NON-NLS-1$
     }    
 
 
     public void testBug39704B() throws Exception
     {
-		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
-		assertEquals( d.getName(), "import"); // false assertion 
+		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));"); //$NON-NLS-1$
+		assertEquals( d.getName(), "import"); // false assertion  //$NON-NLS-1$
     }
     public void testBug39704C() throws Exception
     {
- 		IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));");
-		assertEquals( f.getName(), "func2");
+ 		IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));"); //$NON-NLS-1$
+		assertEquals( f.getName(), "func2"); //$NON-NLS-1$
     }
     
     public void testBug39704D() throws Exception
     {
-        IASTFunction func1 = (IASTFunction) assertSoleDeclaration("__declspec(dllexport) int func1 (int a) {}");
-        assertEquals( func1.getName(), "func1");
+        IASTFunction func1 = (IASTFunction) assertSoleDeclaration("__declspec(dllexport) int func1 (int a) {}"); //$NON-NLS-1$
+        assertEquals( func1.getName(), "func1"); //$NON-NLS-1$
     }
     
 	public void testBug45235() throws Exception
 	{
-		Iterator i = parse( "class A { friend class B; friend void f(); }; " ).getDeclarations();
+		Iterator i = parse( "class A { friend class B; friend void f(); }; " ).getDeclarations(); //$NON-NLS-1$
 		
 		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		
@@ -2179,66 +2176,75 @@ public class QuickParseASTTests extends BaseASTTest
 
     public void testBug39695() throws Exception
     {
-        parse("int a = __alignof__ (int);");
+        parse("int a = __alignof__ (int);"); //$NON-NLS-1$
     }
     
     public void testBug39684() throws Exception
     {
-        parse("typeof(foo(1)) bar () { return foo(1); }");
+        parse("typeof(foo(1)) bar () { return foo(1); }"); //$NON-NLS-1$
     }
     
     public void testBug39703() throws Exception
     {
         Writer code = new StringWriter();
-        code.write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n");
-        code.write("__extension__ struct G {\n");
-        code.write("  struct { char z; };\n");
-        code.write("  char g;\n");
-        code.write("};\n");
+        code.write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n"); //$NON-NLS-1$
+        code.write("__extension__ struct G {\n"); //$NON-NLS-1$
+        code.write("  struct { char z; };\n"); //$NON-NLS-1$
+        code.write("  char g;\n"); //$NON-NLS-1$
+        code.write("};\n"); //$NON-NLS-1$
        	IASTAbstractTypeSpecifierDeclaration abs = (IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString());
        	IASTClassSpecifier G = ((IASTClassSpecifier)abs.getTypeSpecifier());
-       	assertEquals( G.getName(), "G" );
+       	assertEquals( G.getName(), "G" ); //$NON-NLS-1$
        	assertEquals( G.getClassKind(), ASTClassKind.STRUCT );
        	Iterator i = G.getDeclarations();
-       	assertEquals( ((IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier()).getName(), "" );
-       	assertEquals( ((IASTField)i.next()).getName(), "g" );
+       	assertEquals( ((IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier()).getName(), "" ); //$NON-NLS-1$
+       	assertEquals( ((IASTField)i.next()).getName(), "g" ); //$NON-NLS-1$
        	assertFalse( i.hasNext() );
     }
 
     public void testBug39698A() throws Exception
     {
-        parse("int c = a <? b;");
+        parse("int c = a <? b;"); //$NON-NLS-1$
     }
     public void testBug39698B() throws Exception
     {
-    	parse("int c = a >? b;");
+    	parse("int c = a >? b;"); //$NON-NLS-1$
     }
     
     public void testBug59179() throws Exception
     {
-    	Iterator i = parse( "class __decl  main{  int main; };", true, false ).getDeclarations();
+    	Iterator i = parse( "class __decl  main{  int main; };", true, false ).getDeclarations(); //$NON-NLS-1$
     	assertFalse( i.hasNext() );
     }
 
     public void testBug57652() throws Exception
 	{
-    	parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, true, ParserLanguage.C ).getDeclarations();
+    	parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, true, ParserLanguage.C ).getDeclarations(); //$NON-NLS-1$
 	}
     
     public void testBug39676_tough() throws Exception
 	{
-    	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, true, ParserLanguage.C );
+    	parse( "int widths[] = { [0 ... 9] = 1, [10 ... 99] = 2, [100] = 3 };", true, true, ParserLanguage.C ); //$NON-NLS-1$
 	}
     
     public void testBug60142() throws Exception
 	{
-    	IASTVariable var = (IASTVariable) assertSoleDeclaration( "unsigned long var;");
-    	assertEquals( var.getName(), "var");
+    	IASTVariable var = (IASTVariable) assertSoleDeclaration( "unsigned long var;"); //$NON-NLS-1$
+    	assertEquals( var.getName(), "var"); //$NON-NLS-1$
     	IASTSimpleTypeSpecifier specifier = ((IASTSimpleTypeSpecifier)var.getAbstractDeclaration().getTypeSpecifier());
-		assertEquals( specifier.getTypename(), "unsigned long" );
+		assertEquals( specifier.getTypename(), "unsigned long" ); //$NON-NLS-1$
 		assertTrue( specifier.isLong() );
 		assertTrue( specifier.isUnsigned() );
 		assertEquals( specifier.getType(), IASTSimpleTypeSpecifier.Type.INT );
 	}
     
+    public void testBug61431() throws Exception
+	{
+    	for( int i = 0; i < 2; ++i )
+    	{
+    		ParserLanguage language = ( i == 0 ) ? ParserLanguage.C : ParserLanguage.CPP;
+			Iterator iter = parse( "int k[][] = { {0, {1}, {2,3}};", true, false, language ).getDeclarations(); //$NON-NLS-1$
+			assertFalse( iter.hasNext() );
+    	}
+	}
 }

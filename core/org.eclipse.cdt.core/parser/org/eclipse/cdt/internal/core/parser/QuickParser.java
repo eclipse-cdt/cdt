@@ -38,6 +38,7 @@ public class QuickParser extends Parser {
 	 */
 	public QuickParser(IScanner scanner, ISourceElementRequestor callback, ParserLanguage language, IParserLogService log, IParserExtension extension) {
 		super(scanner, callback, language, log, extension);
+		constructInitializersInDeclarations = false;
 	}
 
 	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException

@@ -67,7 +67,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public Iterator getPointerOperators()
     {
-    	if( pointerOperators == null ) return new EmptyIterator();
+    	if( pointerOperators == null ) return EmptyIterator.EMPTY_ITERATOR;
         return pointerOperators.iterator();
     }
     /* (non-Javadoc)
@@ -75,7 +75,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public Iterator getArrayModifiers()
     {
-		if( arrayModifiers == null ) return new EmptyIterator();
+		if( arrayModifiers == null ) return EmptyIterator.EMPTY_ITERATOR;
         return arrayModifiers.iterator();
     }
     /* (non-Javadoc)
@@ -83,7 +83,7 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
      */
     public Iterator getParameters()
     {
-		if( parms == null ) return new EmptyIterator();
+		if( parms == null ) return EmptyIterator.EMPTY_ITERATOR;
         return parms.iterator();
     }
     /* (non-Javadoc)

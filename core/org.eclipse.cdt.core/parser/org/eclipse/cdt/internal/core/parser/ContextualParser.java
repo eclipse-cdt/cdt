@@ -110,7 +110,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionKind(kind);
 		setCompletionContext(null);
 		setCompletionFunctionName( );
-		setCompletionToken( TokenFactory.createToken( IToken.tIDENTIFIER, prefix ) );
+		setCompletionToken( TokenFactory.createStandAloneToken( IToken.tIDENTIFIER, prefix ) );
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class ContextualParser extends CompleteParser {
 	}
 
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node, String prefix) throws EndOfFileException {
-		setCompletionToken( TokenFactory.createToken( IToken.tIDENTIFIER, prefix ) );
+		setCompletionToken( TokenFactory.createStandAloneToken( IToken.tIDENTIFIER, prefix ) );
 		setCompletionValues(scope, kind, key, node );
 	}
 

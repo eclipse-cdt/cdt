@@ -51,9 +51,9 @@ public class BaseASTTest extends TestCase
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService(), null), quickParseCallback, mode, lang, null );
+		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService(), null), quickParseCallback, mode, lang, null ); //$NON-NLS-1$
 		if( ! parser.parse() && throwExceptionOnError )
-			throw new ParserException("Parse failure");
+			throw new ParserException("Parse failure"); //$NON-NLS-1$
 		return quickParseCallback.getCompilationUnit(); 		
 	}
 	
@@ -107,13 +107,13 @@ public class BaseASTTest extends TestCase
 		try {
 			parse(code, quick, throwOnError, CPP );
 			testPassed = true;
-			fail( "We should not reach this point");
+			fail( "We should not reach this point"); //$NON-NLS-1$
 		} catch (Throwable e) {
 			if (!(e instanceof ParserException))
-				fail("Unexpected Error: " + e.getMessage());
+				fail("Unexpected Error: " + e.getMessage()); //$NON-NLS-1$
 		}
 		if (testPassed)
-			fail("The expected error did not occur.");
+			fail("The expected error did not occur."); //$NON-NLS-1$
 	}
 
 	public void assertCodeFailsFullParse(String code) {
@@ -121,13 +121,13 @@ public class BaseASTTest extends TestCase
 		try {
 			fullParse(code);
 			testPassed = true;
-			fail( "We should not reach this point");
+			fail( "We should not reach this point"); //$NON-NLS-1$
 		} catch (Throwable e) {
 			if (!(e instanceof ParserException))
-				fail("Unexpected Error: " + e.getMessage());
+				fail("Unexpected Error: " + e.getMessage()); //$NON-NLS-1$
 		}
 		if (testPassed)
-			fail("The expected error did not occur.");
+			fail("The expected error did not occur."); //$NON-NLS-1$
 	}
 	
     protected void assertSimpleReturnType(IASTFunction function, IASTSimpleTypeSpecifier.Type type)
@@ -153,12 +153,12 @@ public class BaseASTTest extends TestCase
 
     protected void failedAsExpected()
     {
-        assertFalse( "The expected error did not occur.", false );
+        assertFalse( "The expected error did not occur.", false ); //$NON-NLS-1$
     }
 
     protected void assertNotReached()
     {
-        fail( "We should not reach this point");
+        fail( "We should not reach this point"); //$NON-NLS-1$
     }
 
     protected void assertQualifiedName(String [] fromAST, String [] theTruth)

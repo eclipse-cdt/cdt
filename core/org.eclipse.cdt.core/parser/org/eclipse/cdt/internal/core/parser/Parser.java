@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,7 +75,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public abstract class Parser extends ExpressionParser implements IParser 
 {
-    private static final List EMPTY_LIST = new ArrayList();
+    protected static final List EMPTY_LIST = Collections.unmodifiableList(new ArrayList());
     protected ISourceElementRequestor requestor = null;
     
     /**
@@ -807,9 +808,8 @@ public abstract class Parser extends ExpressionParser implements IParser
         IASTTemplate ownerTemplate, CompletionKind overrideKind, Key overrideKey)
         throws EndOfFileException, BacktrackException
     {
-        IToken mark = mark();
-        
-        try
+        simpleDeclarationMark = mark();
+		try
         {
             return simpleDeclaration(
                 SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
@@ -819,8 +819,10 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
         catch (BacktrackException bt)
         {
+        	if( simpleDeclarationMark == null )
+        		throw backtrack;
             // did not work 
-            backup(mark);
+            backup(simpleDeclarationMark);
             
             try
             {  
@@ -831,7 +833,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch( BacktrackException bt2 )
             {
-            	backup( mark ); 
+            	if( simpleDeclarationMark == null )
+            		throw backtrack;
+
+            	backup( simpleDeclarationMark ); 
 
 				try
 				{
@@ -842,7 +847,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 				}
 				catch( BacktrackException b3 )
 				{
-					backup( mark );
+					backup( simpleDeclarationMark );
 					throw b3;
 				}
             }
@@ -1018,13 +1023,13 @@ public abstract class Parser extends ExpressionParser implements IParser
         Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
         {
-            declarator = initDeclarator(sdw, strategy, completionKindForDeclaration
+            declarator = initDeclarator(sdw, strategy, completionKindForDeclaration, constructInitializersInDeclarations
             		);
                 
             while (LT(1) == IToken.tCOMMA)
             {
                 consume();
-                initDeclarator(sdw, strategy, completionKindForDeclaration );
+                initDeclarator(sdw, strategy, completionKindForDeclaration, constructInitializersInDeclarations );
             }
         }
 
@@ -1228,6 +1233,9 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
 
     }
+    
+    protected boolean constructInitializersInParameters = true;
+    protected boolean constructInitializersInDeclarations = true;
     /**
      * This routine parses a parameter declaration 
      * 
@@ -1274,7 +1282,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY );     
         if (LT(1) != IToken.tSEMI)
-           initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION, CompletionKind.VARIABLE_TYPE );
+           initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION, CompletionKind.VARIABLE_TYPE, constructInitializersInParameters );
  
  		if( lastToken != null )
  			sdw.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
@@ -1801,24 +1809,25 @@ public abstract class Parser extends ExpressionParser implements IParser
      * 
      * initDeclarator
      * : declarator ("=" initializerClause | "(" expressionList ")")?
+     * @param constructInitializers TODO
      * @param owner			IParserCallback object that represents the owner declaration object.  
      * @return				declarator that this parsing produced.  
      * @throws BacktrackException	request a backtrack
      */
     protected Declarator initDeclarator(
-        DeclarationWrapper sdw, SimpleDeclarationStrategy strategy, CompletionKind kind )
+        DeclarationWrapper sdw, SimpleDeclarationStrategy strategy, CompletionKind kind, boolean constructInitializers )
         throws EndOfFileException, BacktrackException
     {
         Declarator d = declarator(sdw, sdw.getScope(), strategy, kind );
         if( language == ParserLanguage.CPP )
-        	optionalCPPInitializer(d);
+        	optionalCPPInitializer(d, constructInitializers);
         else if( language == ParserLanguage.C )
-        	optionalCInitializer(d);
+        	optionalCInitializer(d, constructInitializers);
         sdw.addDeclarator(d);
         return d;
     }
     
-    protected void optionalCPPInitializer(Declarator d)
+    protected void optionalCPPInitializer(Declarator d, boolean constructInitializers)
         throws EndOfFileException, BacktrackException
     {
         // handle initializer
@@ -1828,7 +1837,8 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             consume(IToken.tASSIGN);
             setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
-            IASTInitializerClause clause = initializerClause(scope);
+            simpleDeclarationMark = null; 
+            IASTInitializerClause clause = initializerClause(scope,constructInitializers);
 			d.setInitializerClause(clause);
 			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
         }
@@ -1853,15 +1863,16 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
     }
     
-    protected void optionalCInitializer( Declarator d ) throws EndOfFileException, BacktrackException
+    protected void optionalCInitializer( Declarator d, boolean constructInitializers ) throws EndOfFileException, BacktrackException
     {
     	final IASTScope scope = d.getDeclarationWrapper().getScope();
     	setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
     	if( LT(1) == IToken.tASSIGN )
     	{
     		consume( IToken.tASSIGN );
+    		simpleDeclarationMark = null; 
     		setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
-			d.setInitializerClause( cInitializerClause(scope, EMPTY_LIST ) );
+			d.setInitializerClause( cInitializerClause(scope, EMPTY_LIST, constructInitializers ) );
 			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
     	}
     }
@@ -1871,7 +1882,7 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected IASTInitializerClause cInitializerClause(
         IASTScope scope,
-        List designators)
+        List designators, boolean constructInitializers)
         throws EndOfFileException, BacktrackException
     {    	
         if (LT(1) == IToken.tLBRACE)
@@ -1888,7 +1899,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 	if( LT(1) == IToken.tASSIGN )
                 		consume( IToken.tASSIGN );
                 IASTInitializerClause initializer =
-                    cInitializerClause(scope, newDesignators );
+                    cInitializerClause(scope, newDesignators, constructInitializers );
                 initializerList.add(initializer);
                 // can end with just a '}'
                 if (LT(1) == IToken.tRBRACE)
@@ -1907,13 +1918,13 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             // consume the closing brace
             consume(IToken.tRBRACE);
-            return astFactory.createInitializerClause(
+            return createInitializerClause(
                 scope,
                 (
 				( designators.size() == 0 ) ? 
 					IASTInitializerClause.Kind.INITIALIZER_LIST : 
 					IASTInitializerClause.Kind.DESIGNATED_INITIALIZER_LIST ),
-                null, initializerList, designators );
+                null, initializerList, designators, constructInitializers );
         }
         // if we get this far, it means that we have not yet succeeded
         // try this now instead
@@ -1923,13 +1934,13 @@ public abstract class Parser extends ExpressionParser implements IParser
             IASTExpression assignmentExpression = assignmentExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION);
             try
             {
-                return astFactory.createInitializerClause(
+                return createInitializerClause(
                     scope,
                     (
 				( designators.size() == 0 ) ? 
 					IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION : 
 					IASTInitializerClause.Kind.DESIGNATED_ASSIGNMENT_EXPRESSION ),
-                    assignmentExpression, null, designators );
+                    assignmentExpression, null, designators, constructInitializers );
             }
             catch (Exception e)
             {
@@ -1946,7 +1957,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     /**
      * 
      */
-    protected IASTInitializerClause initializerClause(IASTScope scope)
+    protected IASTInitializerClause initializerClause(IASTScope scope, boolean constructInitializers)
         throws EndOfFileException, BacktrackException
     {
         if (LT(1) == IToken.tLBRACE)
@@ -1957,10 +1968,10 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.tRBRACE);
                 try
                 {
-                    return astFactory.createInitializerClause(
+                    return createInitializerClause(
                         scope,
                         IASTInitializerClause.Kind.EMPTY,
-                        null, null, EMPTY_LIST );
+                        null, null, EMPTY_LIST, constructInitializers );
                 }
                 catch (Exception e)
                 {
@@ -1970,11 +1981,16 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             
             // otherwise it is a list of initializer clauses
-            List initializerClauses = new ArrayList();
+            List initializerClauses = null;
             for (;;)
             {
-                IASTInitializerClause clause = initializerClause(scope);
-                initializerClauses.add(clause);
+                IASTInitializerClause clause = initializerClause(scope, constructInitializers);
+                if( clause != null )
+                {
+                	if( initializerClauses == null )
+                		initializerClauses = new ArrayList();
+                	initializerClauses.add(clause);
+                }
                 if (LT(1) == IToken.tRBRACE)
                     break;
                 consume(IToken.tCOMMA);
@@ -1982,10 +1998,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             consume(IToken.tRBRACE);
             try
             {
-                return astFactory.createInitializerClause(
+                return createInitializerClause(
                     scope,
                     IASTInitializerClause.Kind.INITIALIZER_LIST,
-                    null, initializerClauses, EMPTY_LIST );
+                    null, initializerClauses == null ? EMPTY_LIST : initializerClauses, EMPTY_LIST, constructInitializers );
             }
             catch (Exception e)
             {
@@ -2004,10 +2020,10 @@ public abstract class Parser extends ExpressionParser implements IParser
    
             try
             {
-                return astFactory.createInitializerClause(
+                return createInitializerClause(
                     scope,
                     IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
-                    assignmentExpression, null, EMPTY_LIST );
+                    assignmentExpression, null, EMPTY_LIST, constructInitializers );
             }
             catch (Exception e)
             {
@@ -2025,6 +2041,17 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
         throw backtrack;
     }
+    
+    
+    protected IASTInitializerClause createInitializerClause( IASTScope scope, IASTInitializerClause.Kind kind, IASTExpression expression,
+    		List initializerClauses, List designators, boolean constructInitializer )
+	{
+    	if( ! constructInitializer ) return null;
+    	return astFactory.createInitializerClause(
+                scope,
+                kind,
+                expression, initializerClauses, designators );
+	}
     
     protected List designatorList(IASTScope scope) throws EndOfFileException, BacktrackException
     {
@@ -3065,6 +3092,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     }
     
     protected IASTCompilationUnit compilationUnit;
+	protected IToken simpleDeclarationMark;
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#getLanguage()
@@ -3152,6 +3180,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	protected void cleanupLastToken() {
 		if( lastToken != null )
 			lastToken.setNext( null );
+		simpleDeclarationMark = null;
 	}
 
 

@@ -278,7 +278,7 @@ public class GCCScannerExtension implements IScannerExtension {
 				get = (Integer) additionalCOperators.get( image );
 		}
 		if( get == null ) return null;
-		return TokenFactory.createToken(get.intValue(),image,scannerData);
+		return TokenFactory.createUniquelyImagedToken(get.intValue(),image,scannerData);
 	}
 
 	/* (non-Javadoc)

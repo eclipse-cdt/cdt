@@ -18,6 +18,27 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
  */
 public class TokenFactory {
 	
+	public static IToken createIntegerToken( String value, IScannerData scannerData )
+	{
+		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
+			return new IntegerExpansionToken( IToken.tINTEGER, Integer.parseInt(value ), scannerData.getContextStack() );
+			
+		return new IntegerToken( IToken.tINTEGER, Integer.parseInt( value ), scannerData.getContextStack() );		
+	}
+	
+	public static IToken createHexadecimalIntegerToken( String value, IScannerData scannerData )
+	{
+		if( value.length() > 15 )
+			return createUniquelyImagedToken( IToken.tHEXINT, value, scannerData );
+		
+		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
+			return new HexIntegerExpansionToken( IToken.tHEXINT, value, scannerData.getContextStack() );
+			
+		return new HexIntegerToken( IToken.tHEXINT, value, scannerData.getContextStack() );		
+		
+	}
+	
+	
 	public static IToken createToken( int tokenType, IScannerData scannerData )
 	{
 		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
@@ -32,15 +53,14 @@ public class TokenFactory {
 	 * @param scannerData
 	 * @return
 	 */
-	public static IToken createToken(int type, String image, IScannerData scannerData) {
+	public static IToken createUniquelyImagedToken(int type, String image, IScannerData scannerData) {
 		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
 			return new ImagedExpansionToken( type, scannerData.getContextStack(), image );
 
 		return new ImagedToken(type, scannerData.getContextStack(), image );
 	}
 	
-	
-	public static IToken createToken( int type, String image )
+	public static IToken createStandAloneToken( int type, String image )
 	{
 		return new ImagedToken( type, image);
 	}

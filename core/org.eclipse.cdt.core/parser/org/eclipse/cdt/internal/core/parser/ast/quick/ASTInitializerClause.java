@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -25,20 +24,14 @@ import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 public class ASTInitializerClause implements IASTInitializerClause {
 
 	private final IASTInitializerClause.Kind kind; 
-	private final IASTExpression assignmentExpression; 
-	private final List initializerClauses; 
-	private final List designators;
 	private IASTVariable ownerDeclaration = null;
 	/**
 	 * @param kind
 	 * @param assignmentExpression
 	 * @param initializerClauses
 	 */
-	public ASTInitializerClause(Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators ) {
+	public ASTInitializerClause(Kind kind ) {
 		this.kind = kind; 
-		this.assignmentExpression = assignmentExpression;
-		this.initializerClauses = initializerClauses; 
-		this.designators = designators; 
 	}
 
 	/* (non-Javadoc)
@@ -52,16 +45,14 @@ public class ASTInitializerClause implements IASTInitializerClause {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getInitializerList()
 	 */
 	public Iterator getInitializers() {
-		if( initializerClauses == null )
-			return new EmptyIterator();
-		return initializerClauses.iterator();
+		return EmptyIterator.EMPTY_ITERATOR;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getAssigmentExpression()
 	 */
 	public IASTExpression getAssigmentExpression() {
-		return assignmentExpression;
+		return null;
 	}
 
     /* (non-Javadoc)
@@ -90,7 +81,7 @@ public class ASTInitializerClause implements IASTInitializerClause {
      */
     public Iterator getDesignators()
     {
-        return designators.iterator();
+        return EmptyIterator.EMPTY_ITERATOR;
     }
 
     /* (non-Javadoc)

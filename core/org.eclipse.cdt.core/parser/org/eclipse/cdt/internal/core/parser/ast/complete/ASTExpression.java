@@ -53,7 +53,7 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#evaluateExpression()
      */
-    public int evaluateExpression() throws ASTExpressionEvaluationException
+    public long evaluateExpression() throws ASTExpressionEvaluationException
     {
 		throw new ASTExpressionEvaluationException();
     }

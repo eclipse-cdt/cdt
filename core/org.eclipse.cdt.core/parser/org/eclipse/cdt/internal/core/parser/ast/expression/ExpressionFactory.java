@@ -68,4 +68,19 @@ public class ExpressionFactory {
 		return new ASTEmptyExpression( kind );
 
 	}
+
+	/**
+	 * @param kind
+	 * @param lhs
+	 * @param rhs
+	 * @param thirdExpression
+	 * @param typeId
+	 * @param string
+	 * @param literal
+	 * @param newDescriptor
+	 * @return
+	 */
+	public static IASTExpression createExpression(Kind kind, long literal, boolean isHex) {
+		return new ASTLiteralIntegerExpression( kind, literal, isHex );
+	}
 }

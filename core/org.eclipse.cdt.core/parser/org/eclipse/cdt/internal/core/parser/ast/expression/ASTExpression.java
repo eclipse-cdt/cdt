@@ -83,7 +83,7 @@ public class ASTExpression implements IASTExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#evaluateExpression()
 	 */
-	public int evaluateExpression() throws ASTExpressionEvaluationException {
+	public long evaluateExpression() throws ASTExpressionEvaluationException {
 		// primary expressions
 		if( getExpressionKind() == IASTExpression.Kind.PRIMARY_INTEGER_LITERAL )
 		{

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
@@ -335,7 +336,15 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 
     public IASTInitializerClause createInitializerClause(IASTScope scope, IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators)
     {
-    	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
+    	if( kind == IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION )
+    		return new ASTExpressionInitializerClause( kind, assignmentExpression );
+    	else if( kind == IASTInitializerClause.Kind.INITIALIZER_LIST )
+    		return new ASTInitializerListInitializerClause( kind, initializerClauses );
+		else if ( kind == IASTInitializerClause.Kind.DESIGNATED_INITIALIZER_LIST )
+			return new ASTDesignatedInitializerListInitializerClause( kind, initializerClauses, designators );
+		else if( kind == IASTInitializerClause.Kind.DESIGNATED_ASSIGNMENT_EXPRESSION )
+			return new ASTDesignatedExpressionInitializerClause( kind, assignmentExpression, designators );
+  		return new ASTInitializerClause( kind );
     }
 
 	/* (non-Javadoc)
@@ -373,5 +382,12 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	public boolean validateDirectMemberOperation(IASTNode node) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, long, boolean)
+	 */
+	public IASTExpression createExpression(Kind kind, long literal, boolean isHex) throws ASTSemanticException {
+		return ExpressionFactory.createExpression(kind, literal, isHex );
 	}
 }

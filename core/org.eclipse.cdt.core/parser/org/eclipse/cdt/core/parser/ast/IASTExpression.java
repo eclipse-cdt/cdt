@@ -259,7 +259,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 	public IASTTypeId getTypeId(); 	
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor(); 
 	
-	public int evaluateExpression() throws ASTExpressionEvaluationException;
+	public long evaluateExpression() throws ASTExpressionEvaluationException;
 	public void reconcileReferences() throws ASTNotImplementedException;
 	public void purgeReferences() throws ASTNotImplementedException;
 	

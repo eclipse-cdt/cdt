@@ -14,13 +14,19 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 
-public class EmptyIterator implements Iterator 
+public final class EmptyIterator implements Iterator 
 {
 
+	public static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator();
+	
+	private EmptyIterator()
+	{
+	}
+	
     /* (non-Javadoc)
      * @see java.util.Iterator#hasNext()
      */
-    public boolean hasNext()
+    public final boolean hasNext()
     {
         return false;
     }
@@ -28,7 +34,7 @@ public class EmptyIterator implements Iterator
     /* (non-Javadoc)
      * @see java.util.Iterator#next()
      */
-    public Object next()
+    public final Object next()
     {
         throw new NoSuchElementException();
     }
@@ -36,7 +42,7 @@ public class EmptyIterator implements Iterator
     /* (non-Javadoc)
      * @see java.util.Iterator#remove()
      */
-    public void remove()
+    public final void remove()
     {
 		throw new UnsupportedOperationException();          
     }

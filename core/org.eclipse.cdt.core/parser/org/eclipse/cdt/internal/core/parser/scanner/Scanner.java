@@ -467,7 +467,14 @@ public class Scanner implements IScanner {
 	}
 
 	protected IToken newToken(int t, String i) {
-		setCurrentToken(TokenFactory.createToken( t, i, scannerData ));
+		IToken token = null;
+		if( t == IToken.tINTEGER )
+			token = TokenFactory.createIntegerToken( i, scannerData );
+		else if( t == IToken.tHEXINT )
+			token = TokenFactory.createHexadecimalIntegerToken( i, scannerData );
+		else
+			token = TokenFactory.createUniquelyImagedToken(t, i, scannerData );
+		setCurrentToken(token);
 		return currentToken;
 	}
 
@@ -1127,13 +1134,15 @@ public class Scanner implements IScanner {
 		if( pasting && pasteIntoInputStream(buff))
 			return null;
 		
-		int tokenType;
+		
 		String result = buff.toString(); 
 		
 		if( floatingPoint && result.equals(".") ) //$NON-NLS-1$
-			tokenType = IToken.tDOT;
-		else
-			tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER; 
+			return newConstantToken( IToken.tDOT );
+		
+		int tokenType = floatingPoint ? IToken.tFLOATINGPT : IToken.tINTEGER;
+		if( tokenType == IToken.tINTEGER && hex )
+			tokenType = IToken.tHEXINT;
 		
 		return newToken(
 			tokenType,
@@ -2670,7 +2679,7 @@ public class Scanner implements IScanner {
 	protected IMacroDescriptor createObjectMacroDescriptor(String key, String value ) {
 		IToken t = null;
 		if( !value.trim().equals( "" ) )  //$NON-NLS-1$
-			t = TokenFactory.createToken( IToken.tIDENTIFIER, value, scannerData );
+			t = TokenFactory.createUniquelyImagedToken( IToken.tIDENTIFIER, value, scannerData );
 	
 		return new ObjectMacroDescriptor( key,  
 				t, 

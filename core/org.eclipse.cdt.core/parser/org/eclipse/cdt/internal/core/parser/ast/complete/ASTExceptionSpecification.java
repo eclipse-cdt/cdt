@@ -40,7 +40,7 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
      */
     public Iterator getTypeIds()
     {
-        if( typeIds == null ) return new EmptyIterator();
+        if( typeIds == null ) return EmptyIterator.EMPTY_ITERATOR;
         return typeIds.iterator();
     }
 

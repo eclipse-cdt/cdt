@@ -45,7 +45,7 @@ public class ScannerData implements IScannerData
 	private final IScanner scanner;
 	private final IScannerInfo originalConfig;
 	private List includePathNames = new ArrayList();
-	private static final Iterator EMPTY_ITERATOR = new EmptyIterator();
+
 	private final Map privateDefinitions;
 	/**
 	 * @return Returns the contextStack.
@@ -183,7 +183,7 @@ public class ScannerData implements IScannerData
 	public Iterator getWorkingCopies() {
 		if( workingCopies != null )
 			return workingCopies.iterator();
-		return EMPTY_ITERATOR;
+		return EmptyIterator.EMPTY_ITERATOR;
 	}
 
 	/* (non-Javadoc)

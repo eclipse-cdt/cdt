@@ -78,7 +78,6 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				}	
 			);
 			long stopTime = System.currentTimeMillis();
-			System.out.println("Completion Parse: " + (stopTime - startTime) + "ms");
 			
 			int repLength = completionNode.getLength();
 			int repOffset = offset - repLength;
@@ -91,16 +90,22 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				if (binding != null && !(binding instanceof IProblemBinding))
 					proposals.add(createBindingCompletionProposal(binding, repOffset, repLength));
 			}
-			
+
+			long propTime = System.currentTimeMillis();
+			System.out.println("Completion Parse: " + (stopTime - startTime) + " + Resolve:"
+					+ (propTime - stopTime));
+			System.out.flush();
+
 			if (!proposals.isEmpty())
 				return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+			else
+				errorMessage = "No completions found";
 		} catch (UnsupportedDialectException e) {
 			errorMessage = "Unsupported Dialect Exception";
 		} catch (Throwable e) {
 			errorMessage = e.toString();
 		}
 		
-		errorMessage = "No completions found";
 		return null;
 	}
 

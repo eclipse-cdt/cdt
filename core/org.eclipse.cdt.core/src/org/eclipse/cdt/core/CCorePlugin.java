@@ -760,7 +760,11 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public String[] getPreferenceErrorParserIDs() {
-		String parserIDs = CCorePlugin.getDefault().getPluginPreferences().getString(PREF_ERROR_PARSER);
+		return getPreferenceErrorParserIDs(CCorePlugin.getDefault().getPluginPreferences());
+	}
+
+	public String[] getPreferenceErrorParserIDs(Preferences prefs) {
+		String parserIDs = prefs.getString(PREF_ERROR_PARSER);
 		String[] empty = new String[0];
 		if (parserIDs != null && parserIDs.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(parserIDs, ";");
@@ -774,11 +778,15 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public void setPreferenceErrorParser(String[] parsersIDs) {
+		setPreferenceErrorParser(CCorePlugin.getDefault().getPluginPreferences(), parsersIDs);
+	}
+
+	public void setPreferenceErrorParser(Preferences prefs, String[] parserIDs) {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < parsersIDs.length; i++) {
-			buf.append(parsersIDs[i]).append(';');
+		for (int i = 0; i < parserIDs.length; i++) {
+			buf.append(parserIDs[i]).append(';');
 		}
-		CCorePlugin.getDefault().getPluginPreferences().setValue(PREF_ERROR_PARSER, buf.toString());
+		prefs.setValue(PREF_ERROR_PARSER, buf.toString());
 	}
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {

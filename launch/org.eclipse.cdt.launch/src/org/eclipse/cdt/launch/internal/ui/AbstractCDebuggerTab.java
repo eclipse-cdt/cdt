@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -158,7 +159,6 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	abstract protected ICDebugConfiguration getConfigForCurrentDebugger();
 	abstract public void createControl(Composite parent);
-	abstract public String getName();
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		setLaunchConfiguration(config);
@@ -210,6 +210,14 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 
 	protected boolean initDefaults() {
 		return fInitDefaults;
+	}
+
+	public Image getImage() {
+		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
+	}
+
+	public String getName() {
+		return "Debugger";
 	}
 
 }

@@ -64,16 +64,15 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		ICDebugConfiguration[] debugConfigs;
 		String configPlatform = getPlatform(config);
 		ICElement ce = getContext(config, null);
-		String projectPlatform = "native";
-		String projectCPU = "native";
+		String projectPlatform = "*";
+		String projectCPU = "*";
 		if (ce != null) {
 			try {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
 				projectPlatform = descriptor.getPlatform();
 				IBinary bin = (IBinary) ce;
 				projectCPU = bin.getCPU();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 			}
 		}
 		fDCombo.removeAll();
@@ -83,15 +82,14 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		for (int i = 0; i < debugConfigs.length; i++) {
 			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
 				String debuggerPlatform = debugConfigs[i].getPlatform();
-				boolean isNative = configPlatform.equals(projectPlatform);
-				if (debuggerPlatform.equalsIgnoreCase(projectPlatform)
-					|| (isNative && debuggerPlatform.equalsIgnoreCase("native"))) {
+				boolean platformMatch = configPlatform.equals(projectPlatform);
+				if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (platformMatch && projectPlatform.equals("*"))) {
 					if (debugConfigs[i].supportsCPU(projectCPU)) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
 						// select first exact matching debugger for platform or requested selection
-						if ((selndx == -1 && debuggerPlatform.equalsIgnoreCase(projectPlatform)) ||
-							selection.equals(debugConfigs[i].getID())) {
+						if ((selndx == -1 && debuggerPlatform.equalsIgnoreCase(projectPlatform))
+							|| selection.equals(debugConfigs[i].getID())) {
 							selndx = x;
 						}
 						x++;
@@ -117,8 +115,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id)) {
 				loadDebuggerComboBox(config, id);
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			return;
 		}
 	}
@@ -141,16 +138,15 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	private boolean validateDebuggerConfig(ILaunchConfiguration config) {
 		String platform = getPlatform(config);
 		ICElement ce = getContext(config, null);
-		String projectPlatform = "native";
-		String projectCPU = "native";
+		String projectPlatform = "*";
+		String projectCPU = "*";
 		if (ce != null) {
 			try {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
 				projectPlatform = descriptor.getPlatform();
 				IBinary bin = (IBinary) ce;
 				projectCPU = bin.getCPU();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 			}
 		}
 		ICDebugConfiguration debugConfig = getDebugConfig();
@@ -158,8 +154,8 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 			return false;
 		}
 		String debuggerPlatform = debugConfig.getPlatform();
-		boolean isNative = platform.equals(projectPlatform);
-		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (isNative && debuggerPlatform.equalsIgnoreCase("native"))) {
+		boolean platformMatch = platform.equals(projectPlatform);
+		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (platformMatch && projectPlatform.equals("*"))) {
 			if (debugConfig.supportsCPU(projectCPU)) {
 				return true;
 			}
@@ -175,10 +171,6 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	protected ICDebugConfiguration getConfigForCurrentDebugger() {
 		int selectedIndex = fDCombo.getSelectionIndex();
 		return (ICDebugConfiguration) fDCombo.getData(Integer.toString(selectedIndex));
-	}
-
-	public String getName() {
-		return "Debugger";
 	}
 
 	/**

@@ -10,7 +10,6 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
-import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -20,7 +19,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -296,13 +294,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		return (ICDebugConfiguration) fDCombo.getData(Integer.toString(selectedIndex));
 	}
 
-	public String getName() {
-		return "Debugger";
-	}
-
-	public Image getImage() {
-		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
-	}
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */

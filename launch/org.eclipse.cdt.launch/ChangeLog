@@ -1,4 +1,11 @@
 2003-07-22 David Inglis
+	* src/org/eclipse/cdt/launch/internal/ui/AbstractCDebuggerTab.java
+	* src/org/eclipse/cdt/launch/ui/CDebuggerTab.java
+	* src/org/eclipse/cdt/launch/ui/CorefileDebuggerTab.java
+	Refactor getName & getImage up into AbstructCDebuggerTab
+	fixed problem with selecting a debugger for a core file from a unknown project platform.
+	
+2003-07-22 David Inglis
 	* src/org/eclipse/cdt/launch/ui/CMainTab.java
 	Use project name for configuration naming when no binary selected
 	

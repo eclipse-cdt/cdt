@@ -1,5 +1,20 @@
 2003-03-27 Alain Magloire
 
+	The selection in the CView to CEditor was not done.
+	We have now a new hierarchy for the binary and Archive:
+	IBinary
+		IBinaryModule
+			IBinaryFunction
+			IBinaryVariable
+				IBinaryElement
+
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+
+2003-03-27 Alain Magloire
+
 	Patch from Thomas Fletcher.
 	
 	* src/org/eclipse/cdt/internal/ui/editor/BracketPainter.java:

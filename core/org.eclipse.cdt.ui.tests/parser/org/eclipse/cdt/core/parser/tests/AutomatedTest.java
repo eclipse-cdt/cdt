@@ -187,7 +187,7 @@ public class AutomatedTest extends TestCase {
 					}
 					
 					fileList.add( file );
-					suite.addTest( new AutomatedTest( file.getName().replaceAll(",", "_") ) );
+					suite.addTest( new AutomatedTest( file.getName().replace(',', '_') ) );
 				}				
 				file = files[ i++ ];
 			}

@@ -1,3 +1,6 @@
+2004-02-19 Andrew Niefer
+	remove order dependancy in ParserSymbolTableTests.testUsingDeclaration_2
+
 2004-02-18 Andrew Niefer
 	modify ParserSymbolTableTests.testUsingDeclaration_2
 

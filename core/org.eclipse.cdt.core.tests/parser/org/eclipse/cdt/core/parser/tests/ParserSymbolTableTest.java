@@ -1177,17 +1177,17 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		using = bar.addUsingDeclaration( "f", A );
 		
-		Iterator iter = using.getReferencedSymbols().iterator();
-		assertEquals( iter.next(), f1 );
-		assertEquals( iter.next(), f2 );
-		assertFalse( iter.hasNext() );
-		
-		iter = using.getDeclaredSymbols().iterator();
-		iter.next();
+		List list = using.getReferencedSymbols();
+		assertTrue( list.contains( f1 ) );
+		assertTrue( list.contains( f2 ) );
+		assertEquals( list.size(), 2 );
+
+		int index = list.indexOf( f2 );
+		list = using.getDeclaredSymbols();
 		
 		look = bar.unqualifiedFunctionLookup( "f", paramList );
 		assertTrue( look != null );
-		assertEquals( look, iter.next() );
+		assertEquals( look, list.get( index ) );
 	}
 	
 	/**

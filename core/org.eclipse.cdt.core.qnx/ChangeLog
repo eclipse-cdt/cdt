@@ -1,0 +1,6 @@
+2002-10-17 Alain Magloire
+
+	* library/spawner.c (exec0) :  This function was
+	leaking memory at every call, the environment array
+	and the argument array was not free().  There is no
+	need to do the strdup() of cwd.

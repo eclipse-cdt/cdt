@@ -833,6 +833,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          thirdExpression.setParent(result);
          thirdExpression
                .setPropertyInParent(IASTConditionalExpression.NEGATIVE_RESULT);
+         ((ASTNode)result).setOffsetAndLength( ((ASTNode)firstExpression).getOffset(), calculateEndOffset(thirdExpression) - ((ASTNode)firstExpression).getOffset() ); 
          return result;
       }
       return firstExpression;

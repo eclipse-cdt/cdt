@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -20,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -218,5 +219,22 @@ public class DOMLocationTests extends AST2BaseTest {
          assertSoleLocation( typeId, code.indexOf( "(jc)") + 1, "jc".length() ); //$NON-NLS-1$ //$NON-NLS-2$
       }
    }
+   
+   public void testBug83853() throws ParserException {
+      String code = "int f() {return (1?0:1);	}"; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p);
+         IASTFunctionDefinition definition = (IASTFunctionDefinition) tu.getDeclarations()[0];
+         IASTCompoundStatement statement = (IASTCompoundStatement) definition.getBody();
+         IASTReturnStatement returnStatement = (IASTReturnStatement) statement.getStatements()[0];
+         IASTUnaryExpression unaryExpression = (IASTUnaryExpression) returnStatement.getReturnValue();
+         assertEquals( unaryExpression.getOperator(), IASTUnaryExpression.op_bracketedPrimary );
+         IASTConditionalExpression conditional = (IASTConditionalExpression) unaryExpression.getOperand();
+         assertSoleLocation( conditional,code.indexOf( "1?0:1"), "1?0:1".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+      
+   }
+   
 
 }

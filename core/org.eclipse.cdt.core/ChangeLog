@@ -1,5 +1,11 @@
 2004-08-18 Alain Magloire
 
+	When running the CDescriptorOperation make sure we have an ICDescriptor.
+
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+
+2004-08-18 Alain Magloire
+
 	The DeltaProcessor should update the sourceRoot also if
 	sourceRoot == ICProject
 

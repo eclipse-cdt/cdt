@@ -358,9 +358,9 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException {
-		ICDescriptor descriptor = getDescriptor(project, false);
+		ICDescriptor descriptor = getDescriptor(project, true);
 		if (descriptor == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Project does not have descriptor", null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Failed to create descriptor", null)); //$NON-NLS-1$
 		}
 		CDescriptorEvent event = null;
 		synchronized (descriptor) {

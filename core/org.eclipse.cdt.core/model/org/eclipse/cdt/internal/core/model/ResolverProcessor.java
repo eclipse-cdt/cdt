@@ -11,17 +11,26 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
+import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
+import org.eclipse.cdt.core.filetype.IResolverModel;
 import org.eclipse.cdt.core.filetype.ResolverChangeEvent;
 import org.eclipse.cdt.core.filetype.ResolverDelta;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -40,26 +49,27 @@ public class ResolverProcessor  {
 		fManager = CModelManager.getDefault();
 		
 		// Go through the events and generate deltas
-		CModelManager manager = CModelManager.getDefault();
 		ResolverDelta[] deltas = event.getDeltas();
-		IContainer container = event.getResolver().getContainer();
-		ICElement celement = CoreModel.getDefault().create(container);
-		for (int i = 0; i < deltas.length; ++i) {
-			ResolverDelta delta = deltas[i];
-			if (delta.getElementType() == ResolverDelta.ELEMENT_ASSOCIATION) {
-				ICFileTypeAssociation association = (ICFileTypeAssociation)delta.getElement();
-				if (association.getType().isTranslationUnit()) {
-					try {
-						switch (delta.getEventType()) {
-						case ResolverDelta.EVENT_ADD:
-							add(celement, association);
-						break;
-						case ResolverDelta.EVENT_REMOVE:
-							remove(celement, association);
-						break;
+		ICElement[] celements = getAffectedElements(event.getResolver());
+		for (int k = 0; k < celements.length; ++k) {
+			ICElement celement = celements[k];
+			for (int i = 0; i < deltas.length; ++i) {
+				ResolverDelta delta = deltas[i];
+				if (delta.getElementType() == ResolverDelta.ELEMENT_ASSOCIATION) {
+					ICFileTypeAssociation association = (ICFileTypeAssociation)delta.getElement();
+					if (association.getType().isTranslationUnit()) {
+						try {
+							switch (delta.getEventType()) {
+							case ResolverDelta.EVENT_ADD:
+								add(celement, association);
+							break;
+							case ResolverDelta.EVENT_REMOVE:
+								remove(celement, association);
+							break;
+							}
+						} catch (CModelException e) {
+							//
 						}
-					} catch (CModelException e) {
-						//
 					}
 				}
 			}
@@ -207,5 +217,32 @@ public class ResolverProcessor  {
 		}
 	}
 
+	private ICElement[] getAffectedElements(ICFileTypeResolver resolver) {
+		try {
+			IResolverModel rmodel = CCorePlugin.getDefault().getResolverModel();
+			ICModel cmodel = CoreModel.getDefault().getCModel();
+			ICProject[] cprojects = cmodel.getCProjects();
+			IContainer container = resolver.getContainer();
 
+			if (container instanceof IProject || container instanceof IFolder) {
+				IProject project = container.getProject();
+				for (int i = 0; i < cprojects.length; i++) {
+					if (project.equals(cprojects[i].getProject())) {
+						return new ICElement[] { cprojects[i] };
+					}
+				}
+			}
+			// Assume a workspace resolver
+			List list = new ArrayList(cprojects.length);
+			for (int i = 0; i < cprojects.length; ++i) {
+				if (!rmodel.hasCustomResolver(cprojects[i].getProject())) {
+					list.add(cprojects[i]);
+				}
+			}
+			return (ICElement[]) list.toArray(new ICElement[list.size()]);
+		} catch (CModelException e) {
+			//
+		}
+		return CElement.NO_ELEMENTS;
+	}
 }

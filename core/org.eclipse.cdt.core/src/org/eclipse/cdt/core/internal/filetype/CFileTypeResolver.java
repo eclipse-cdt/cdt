@@ -112,7 +112,7 @@ public abstract class CFileTypeResolver implements ICFileTypeResolver {
 			Collections.sort(fAssocList, ICFileTypeAssociation.Comparator);
 			addAssocs = (ICFileTypeAssociation[]) addList.toArray(new ICFileTypeAssociation[addList.size()]);
 			delAssocs = (ICFileTypeAssociation[]) delList.toArray(new ICFileTypeAssociation[delList.size()]);
-			doAdjustAssociations(addAssocs, delAssocs, true);
+			doAdjustAssociations(addAssocs, delAssocs, triggerEvent);
 		}
 
 		return changed;

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -39,6 +38,7 @@ public class WorkspaceResolver extends CFileTypeResolver {
 	public static final String PREFS_ASSOCIATIONS_EXCLUSION = CCorePlugin.PLUGIN_ID + ".associationExclusion";
 
 	ResolverModel fModel;
+	List extensionsList;
 	
 	private static final String EXTENSION_ASSOC = "CFileTypeAssociation"; //$NON-NLS-1$
 	private static final String ATTR_TYPE 		= "type"; //$NON-NLS-1$
@@ -59,6 +59,7 @@ public class WorkspaceResolver extends CFileTypeResolver {
 	 */
 	protected void doAdjustAssociations(ICFileTypeAssociation[] addAssocs,
 			ICFileTypeAssociation[] delAssocs, boolean triggerEvent) {
+
 		List deltas = new ArrayList();
 
 		// add
@@ -75,6 +76,62 @@ public class WorkspaceResolver extends CFileTypeResolver {
 			}
 		}
 
+		// add
+		if (null != addAssocs && addAssocs.length > 0) {
+			List newIncList = new ArrayList();
+			List newExcList = new ArrayList();
+			List extensionsList = getExtensionsAssociations();
+			for (int i = 0; i < addAssocs.length; ++i) {
+				if (!extensionsList.contains(addAssocs[i])) {
+					newIncList.add(addAssocs[i]);
+				} else {
+					newExcList.add(addAssocs[i]);
+				}
+			}
+			if (!newIncList.isEmpty()) {
+				List inclusion = getInclusionAssociations();
+				inclusion.addAll(newIncList);
+				ICFileTypeAssociation[] newInclusion =  ((ICFileTypeAssociation[]) inclusion.toArray(new ICFileTypeAssociation[inclusion.size()]));		
+				setInclusionAssociations(newInclusion);
+			}
+			if (!newExcList.isEmpty()) {
+				List exclusion = getExclusionAssociations();
+				exclusion.removeAll(newExcList);
+				ICFileTypeAssociation[] newInclusion =  ((ICFileTypeAssociation[]) exclusion.toArray(new ICFileTypeAssociation[exclusion.size()]));		
+				setInclusionAssociations(newInclusion);				
+			}
+		}
+
+		// remove
+		if (null != delAssocs && delAssocs.length > 0) {
+			List newIncList = new ArrayList();
+			List newExcList = new ArrayList();
+			List extensionsList = getExtensionsAssociations();
+			for (int i = 0; i < delAssocs.length; ++i) {
+				if (extensionsList.contains(delAssocs[i])) {
+					newExcList.add(delAssocs[i]);
+				} else {
+					newIncList.add(delAssocs[i]);
+				}
+			}
+			if (!newExcList.isEmpty()) {
+				List exclusion = getExclusionAssociations();
+				exclusion.addAll(newExcList);
+				ICFileTypeAssociation[] newExclusion =  ((ICFileTypeAssociation[]) exclusion.toArray(new ICFileTypeAssociation[exclusion.size()]));		
+				setExclusionAssociations(newExclusion);
+			}
+			if (!newIncList.isEmpty()) {
+				List inclusion = getInclusionAssociations();
+				inclusion.removeAll(newIncList);
+				ICFileTypeAssociation[] newInclusion =  ((ICFileTypeAssociation[]) inclusion.toArray(new ICFileTypeAssociation[inclusion.size()]));		
+				setInclusionAssociations(newInclusion);				
+			}
+		}
+
+		if ((null != addAssocs && addAssocs.length > 0) || (null != delAssocs && delAssocs.length > 0)) {
+			CCorePlugin.getDefault().savePluginPreferences();
+		}
+
 		// fire the deltas.
 		if (triggerEvent && !deltas.isEmpty()) {
 			ResolverChangeEvent event = new ResolverChangeEvent(fModel, this);
@@ -85,42 +142,27 @@ public class WorkspaceResolver extends CFileTypeResolver {
 			fModel.fireEvent(event);
 		}
 
-		// add
-		if (null != addAssocs && addAssocs.length > 0) {
-			List inclusion = getInclusionAssociations();
-			inclusion.addAll(Arrays.asList(addAssocs));
-			ICFileTypeAssociation[] newInclusion =  ((ICFileTypeAssociation[]) inclusion.toArray(new ICFileTypeAssociation[inclusion.size()]));		
-			setInclusionAssociations(newInclusion);
-		}
-		// remove
-		if (null != delAssocs && delAssocs.length > 0) {
-			List exclusion = getExclusionAssociations();
-			exclusion.addAll(Arrays.asList(delAssocs));
-			ICFileTypeAssociation[] newExclusion =  ((ICFileTypeAssociation[]) exclusion.toArray(new ICFileTypeAssociation[exclusion.size()]));		
-			setExclusionAssociations(newExclusion);
-		}
-		if ((null != addAssocs && addAssocs.length > 0) || (null != delAssocs && delAssocs.length > 0)) {
-			CCorePlugin.getDefault().savePluginPreferences();
-		}
 	}
 
 	public List getExtensionsAssociations() {
-		List					assoc		= new ArrayList();
-		IExtensionPoint			point		= getExtensionPoint(EXTENSION_ASSOC);
-		IExtension[]			extensions	= point.getExtensions();
-		IConfigurationElement[]	elements	= null;
-		
-		for (int i = 0; i < extensions.length; i++) {
-			elements = extensions[i].getConfigurationElements();
-			for (int j = 0; j < elements.length; j++) {
-				ICFileType typeRef = fModel.getFileTypeById(elements[j].getAttribute(ATTR_TYPE));
-				if (null != typeRef) {
-					assoc.addAll(getAssocFromExtension(typeRef, elements[j]));
-					assoc.addAll(getAssocFromFile(typeRef, elements[j]));
+		if (extensionsList == null) {
+			extensionsList		= new ArrayList();
+			IExtensionPoint			point		= getExtensionPoint(EXTENSION_ASSOC);
+			IExtension[]			extensions	= point.getExtensions();
+			IConfigurationElement[]	elements	= null;
+			
+			for (int i = 0; i < extensions.length; i++) {
+				elements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					ICFileType typeRef = fModel.getFileTypeById(elements[j].getAttribute(ATTR_TYPE));
+					if (null != typeRef) {
+						extensionsList.addAll(getAssocFromExtension(typeRef, elements[j]));
+						extensionsList.addAll(getAssocFromFile(typeRef, elements[j]));
+					}
 				}
 			}
 		}
-		return assoc;
+		return extensionsList;
 	}
 
 	public List getDefaultInclusionAssociations() {
@@ -153,8 +195,8 @@ public class WorkspaceResolver extends CFileTypeResolver {
 		String s = prefs.getString(PREFS_ASSOCIATIONS_INCLUSION);
 		if (s.length() > 0) {
 			sb.append(';').append(s);
+			prefs.setValue(PREFS_ASSOCIATIONS_INCLUSION, sb.toString());
 		}
-		prefs.setValue(PREFS_ASSOCIATIONS_INCLUSION, sb.toString());
 	}
 
 	public List getDefaultExclusionAssociations() {

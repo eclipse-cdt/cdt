@@ -124,35 +124,8 @@ public class CFileTypesPropertyPage extends PropertyPage {
 			IProject project = getProject();
 			IResolverModel model = getResolverModel();
 			ICFileTypeResolver workingCopy = fPrefsBlock.getResolverWorkingCopy();
-			if (!model.hasCustomResolver(project)) {
+			if (fPrefsBlock.performOk()) {
 				model.createCustomResolver(project, workingCopy);
-			} else {
-				if (fPrefsBlock.performOk()) {
-					ICFileTypeAssociation[] oldAssocs = fResolver.getFileTypeAssociations();
-					
-					ICFileTypeAssociation[] newAssocs = workingCopy.getFileTypeAssociations();
-					
-					// compare
-					List delList = new ArrayList();
-					List addList = new ArrayList();
-					
-					for (int i = 0; i < oldAssocs.length; i++) {
-						if (Arrays.binarySearch(newAssocs, oldAssocs[i], ICFileTypeAssociation.Comparator) < 0) {
-							delList.add(oldAssocs[i]);
-						}
-					}
-					
-					for (int i = 0; i < newAssocs.length; i++) {
-						if (Arrays.binarySearch(oldAssocs, newAssocs[i], ICFileTypeAssociation.Comparator) < 0) {
-							addList.add(newAssocs[i]);
-						}
-					}
-					
-					ICFileTypeAssociation[] addAssocs = (ICFileTypeAssociation[]) addList.toArray(new ICFileTypeAssociation[addList.size()]);
-					ICFileTypeAssociation[] delAssocs = (ICFileTypeAssociation[]) delList.toArray(new ICFileTypeAssociation[delList.size()]);
-					
-					fResolver.adjustAssociations(addAssocs, delAssocs);
-				}
 			}
 		} else if (fUseWorkspace.getSelection()) {
 			IProject project = getProject();

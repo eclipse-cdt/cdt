@@ -235,10 +235,13 @@ public class ResolverModel implements IResolverModel {
 		ICFileTypeAssociation[] oldAssocs = null;
 		ICFileTypeAssociation[] newAssocs = null;
 
-		// get the old resolver first, creating the new will erase stuff in the cdescriptor.
+		// get the old resolver first
 		ICFileTypeResolver oldResolver = getResolver(project);
-		if (oldResolver != null) {
-			oldAssocs = oldResolver.getFileTypeAssociations();
+		oldAssocs = oldResolver.getFileTypeAssociations();
+
+		// erase the old stuff.
+		if (hasCustomResolver(project)) {
+			CustomResolver.removeCustomResover(project);
 		}
 
 		ICFileTypeResolver newResolver = new CustomResolver(this, project);
@@ -264,26 +267,27 @@ public class ResolverModel implements IResolverModel {
 	 * @see org.eclipse.cdt.core.filetype.IResolverModel#removeCustomResolver(org.eclipse.core.resources.IProject)
 	 */
 	public void removeCustomResolver(IProject project) {
-		ICFileTypeAssociation[] oldAssocs = null;
-		ICFileTypeAssociation[] newAssocs = null;
-
-		// get the old resolver first, creating the new will erase stuff in the cdescriptor.
-		ICFileTypeResolver oldResolver = getResolver(project);
-		if (oldResolver != null) {
+		if (hasCustomResolver(project)) {
+			ICFileTypeAssociation[] oldAssocs = null;
+			ICFileTypeAssociation[] newAssocs = null;
+			
+			ICFileTypeResolver oldResolver = getResolver(project);
 			oldAssocs = oldResolver.getFileTypeAssociations();
+
+			ICFileTypeResolver newResolver = getResolver();
+			newAssocs = newResolver.getFileTypeAssociations();
+			
+			// remove the cache in project session property.
+			try {
+				project.setSessionProperty(QN_CUSTOM_RESOLVER, null);
+			} catch (CoreException e) {
+			}
+			
+			CustomResolver.removeCustomResover(project);
+			
+			ResolverChangeEvent event = new ResolverChangeEvent(this, newResolver, oldResolver);
+			fireResolverChangeEvent(event, newAssocs, oldAssocs);
 		}
-
-		ICFileTypeResolver newResolver = getResolver();
-
-		// cache the result in project session property.
-		try {
-			project.setSessionProperty(QN_CUSTOM_RESOLVER, null);
-		} catch (CoreException e) {
-		}
-
-		CustomResolver.removeCustomResover(project);
-		ResolverChangeEvent event = new ResolverChangeEvent(this, newResolver, oldResolver);
-		fireResolverChangeEvent(event, newAssocs, oldAssocs);
 	}
 	
 

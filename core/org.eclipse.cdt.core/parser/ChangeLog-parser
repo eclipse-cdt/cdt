@@ -1,3 +1,9 @@
+2004-04-02 Andrew Niefer
+	- partial handling template explicit instantiations
+	- bug 56834 - Symbols not available until end of parameter list, fixed for templates using temporary code block
+	- change IASTFactory.createTemplateParameter to take an IASTTypeId for the default value
+	- handle instantiating templates using default value that is a deferred instance
+
 2004-04-02 John Camelon
 	Updated SelectionSearch to work for functions, variables with initializers, etc.
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39705

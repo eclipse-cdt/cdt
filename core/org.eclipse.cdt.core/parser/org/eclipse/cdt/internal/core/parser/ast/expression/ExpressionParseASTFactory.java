@@ -754,9 +754,9 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	public IASTTemplateParameter createTemplateParameter(
 		ParamKind kind,
 		String identifier,
-		String defaultValue,
+		IASTTypeId defaultValue,
 		IASTParameterDeclaration parameter,
-		List parms) {
+		List parms, IASTCodeScope parameterScope) {
 		// TODO Auto-generated method stub
 		return null;
 	}

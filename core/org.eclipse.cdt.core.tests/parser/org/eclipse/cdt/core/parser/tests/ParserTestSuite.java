@@ -41,6 +41,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( SelectionParseTest.class );
 		suite.addTestSuite( CompleteParseASTExpressionTest.class );
 		suite.addTestSuite( CompleteParseASTSymbolIteratorTest.class );
+		suite.addTestSuite( CompleteParseASTTemplateTest.class );
 		return suite;
 	}	
 }

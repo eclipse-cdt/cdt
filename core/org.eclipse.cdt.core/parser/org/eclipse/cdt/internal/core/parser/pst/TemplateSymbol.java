@@ -122,6 +122,10 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 						} else {
 							throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
 						}
+					} else if( arg.isType( TypeInfo.t_type ) && arg.getTypeSymbol() instanceof IDeferredTemplateInstance ){
+						IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) arg.getTypeSymbol();
+						arg = new TypeInfo( arg );
+						arg.setTypeSymbol( deferred.instantiate( this, map ) );
 					}
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );					

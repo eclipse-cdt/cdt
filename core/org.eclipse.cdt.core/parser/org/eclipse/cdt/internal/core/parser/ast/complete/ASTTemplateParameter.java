@@ -13,6 +13,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
+import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
@@ -28,7 +29,7 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 //	private ParamKind kind;
 //	private String identifier;
 	//private ISymbol symbol;
-	private String defaultValue;
+	private IASTTypeId defaultValue;
 	private ASTParameterDeclaration parameter;
 	private List parms;
 	private final NamedOffsets offsets = new NamedOffsets();
@@ -39,7 +40,7 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	 * @param parameter2
 	 * @param parms2
 	 */
-	public ASTTemplateParameter(ISymbol sym, String defVal, IASTParameterDeclaration param, List parms ) {
+	public ASTTemplateParameter(ISymbol sym, IASTTypeId defVal, IASTParameterDeclaration param, List parms ) {
 		super( sym );
 		symbol = sym;
 		defaultValue = defVal;
@@ -69,7 +70,7 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getDefaultValueIdExpression()
 	 */
 	public String getDefaultValueIdExpression() {
-		return defaultValue;
+		return ( defaultValue != null ) ? defaultValue.toString() : ""; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getParameterDeclaration()

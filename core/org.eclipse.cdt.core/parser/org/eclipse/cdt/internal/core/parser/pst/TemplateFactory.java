@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType;
 
@@ -63,8 +64,11 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		ITemplateSymbol template = (ITemplateSymbol) templates.get( templates.size() - 1 );
 		
-		List params = template.getParameterList();
-		if( params.size() == 0 ){
+		List params = ( template != null ) ? template.getParameterList() : null;
+		if( params == null ){
+			//explicit instantiation
+			addExplicitInstantiation( origTemplate, args );
+		} else if( params.size() == 0 ){
 			//explicit specialization
 			 addExplicitSpecialization( origTemplate, symbol, args );
 		} else {
@@ -260,6 +264,15 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		}
 	}
 	
+	private void addExplicitInstantiation( ITemplateSymbol origTemplate, List args ) throws ParserSymbolTableException {
+		ISymbol instance = origTemplate.instantiate( args );
+		
+		if( getASTExtension() != null ){
+			ASTTemplateInstantiation templateInstance = (ASTTemplateInstantiation) getASTExtension().getPrimaryDeclaration();
+			templateInstance.releaseFactory();
+			templateInstance.setInstanceSymbol( instance );
+		}
+	}
 	private void addExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ) throws ParserSymbolTableException {
 		Iterator templatesIter = templates.iterator();
 		Iterator argsIter = arguments.iterator();

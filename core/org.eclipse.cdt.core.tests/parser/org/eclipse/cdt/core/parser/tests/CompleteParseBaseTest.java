@@ -365,8 +365,7 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation)
         {
-            // TODO Auto-generated method stub
-            
+            pushScope( instantiation );
         }
     
         /* (non-Javadoc)
@@ -427,8 +426,8 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation)
         {
-            // TODO Auto-generated method stub
-            
+        	popScope();
+        	getCurrentScope().addDeclaration( instantiation );
         }
     
         /* (non-Javadoc)

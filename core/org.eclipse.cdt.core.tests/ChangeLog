@@ -1,3 +1,12 @@
+2004-04-02 Andrew Niefer
+	- created CompleteParseASTTemplateTest, added it to the ParserTestSuite and moved all the template tests from 
+	  CompleteParseASTTest to it.
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testBug56834()
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testDefaultTemplateParameters()
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testBug56834WithInstantiation()
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testDefaultTemplateParameterWithDeferedInstance()
+	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testExplicitInstantiation()
+
 2004-04-02 John Camelon
 	Added SelectionParseTest::testBaseCase_FunctionDeclaration().  
 	Added SelectionParseTest::testBaseCase_FunctionDeclaration2().  

@@ -445,7 +445,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 throw backtrack;
             }
             templateInstantiation.enterScope( requestor );
-            declaration(scope, templateInstantiation, null);
+            declaration(templateInstantiation, templateInstantiation, null);
             templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
 			templateInstantiation.exitScope( requestor );
  
@@ -546,6 +546,10 @@ public abstract class Parser extends ExpressionParser implements IParser
         // iterate through the template parameter list
         List returnValue = new ArrayList();
  
+        IASTScope parameterScope = astFactory.createNewCodeBlock( scope );
+        if( parameterScope == null )
+        	parameterScope = scope;
+        
         for (;;)
         {
             if (LT(1) == IToken.tGT)
@@ -568,7 +572,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                         if (LT(1) == IToken.tASSIGN) // optional = type-id
                         {
                             consume(IToken.tASSIGN);
-                            typeId = typeId(scope, false); // type-id
+                            typeId = typeId(parameterScope, false); // type-id
                         }
                     }
 
@@ -583,9 +587,10 @@ public abstract class Parser extends ExpressionParser implements IParser
                     	astFactory.createTemplateParameter(
                     		kind,
                     		( id == null )? "" : id.getImage(), //$NON-NLS-1$
-                    		(typeId == null) ? null : typeId.getTypeOrClassName(),
+                    		typeId,
                     		null,
-                    		null));
+                    		null,
+							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null ));
                 }
                 catch (Exception e)
                 {
@@ -598,7 +603,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.t_template);
                 consume(IToken.tLT);
 
-                List subResult = templateParameterList(scope);
+                List subResult = templateParameterList(parameterScope);
                 consume(IToken.tGT);
                 consume(IToken.t_class);
                 IToken optionalId = null;
@@ -610,7 +615,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     if (LT(1) == IToken.tASSIGN) // optional = type-id
                     {
                         consume(IToken.tASSIGN);
-                        optionalTypeId = typeId(scope, false);
+                        optionalTypeId = typeId(parameterScope, false);
     
                     }
                 }
@@ -621,9 +626,10 @@ public abstract class Parser extends ExpressionParser implements IParser
                         astFactory.createTemplateParameter(
                             IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
                             ( optionalId == null )? "" : optionalId.getImage(), //$NON-NLS-1$
-                            ( optionalTypeId == null )  ? "" : optionalTypeId.toString(), //$NON-NLS-1$
+                            optionalTypeId,
                             null,
-                            subResult));
+                            subResult, 
+							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null ));
                 }
                 catch (Exception e)
                 {
@@ -638,7 +644,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             else
             {
                 ParameterCollection c = new ParameterCollection();
-                parameterDeclaration(c, scope);
+                parameterDeclaration(c, parameterScope);
                 DeclarationWrapper wrapper =
                     (DeclarationWrapper)c.getParameters().get(0);
                 Declarator declarator =
@@ -659,7 +665,8 @@ public abstract class Parser extends ExpressionParser implements IParser
                                 null, null, declarator.getName() == null
                                                 ? "" //$NON-NLS-1$
                                                 : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), wrapper.getEndLine()),
-                            null));
+                            null, 
+							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null ));
                 }
                 catch (Exception e)
                 {

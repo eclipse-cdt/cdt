@@ -10,9 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
@@ -133,5 +137,21 @@ public class ASTTemplateInstantiation extends ASTDeclaration implements IASTTemp
     public int getEndingLine() {
     	return offsets.getEndingLine();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation#getInstantiatedTemplate()
+	 */
+	public IASTTemplateDeclaration getInstantiatedTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
+	 */
+	public Iterator getDeclarations() throws ASTNotImplementedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

@@ -159,6 +159,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		this.language = language;
 		this.log = log;
 		this.workingCopies = workingCopies;
+		this.expressionEvaluator = new ExpressionEvaluator(requestor, spf);
 
 		if( language == ParserLanguage.C )
 		    keywords = ckeywords;
@@ -465,7 +466,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				nextToken = null;
 				return nextToken();
 			}
-		} else if (lastToken.getType() == IToken.tSTRING || lastToken.getType() ==IToken.tLSTRING ) {
+		} else if (lastToken != null && (lastToken.getType() == IToken.tSTRING || lastToken.getType() ==IToken.tLSTRING )) {
 			while (nextToken != null && ( nextToken.getType() == IToken.tSTRING || nextToken.getType() == IToken.tLSTRING )) {
 				// Concatenate the adjacent strings
 				int tokenType = IToken.tSTRING; 
@@ -1177,12 +1178,23 @@ public class Scanner2 implements IScanner, IScannerData {
 		boolean hasExponent = false;
 		
 		boolean isHex = false;
+		boolean isOctal = false;
+		boolean isMalformedOctal = false;
+		
 		if (buffer[start] == '0' && start + 1 < limit) {
 			switch (buffer[start + 1]) {
 				case 'x':
 				case 'X':
 					isHex = true;
 					++bufferPos[bufferStackPos];
+					break;
+                default :
+                	if (buffer[start + 1] > '0' && buffer[start + 1] < '7')
+                		isOctal = true;
+                	else if (buffer[start + 1] == '8' || buffer[start + 1] == '9') {
+                		isOctal = true;
+                		isMalformedOctal = true;
+                	}
 			}
 		}
 		
@@ -1199,6 +1211,11 @@ public class Scanner2 implements IScanner, IScannerData {
 				case '7':
 				case '8':
 				case '9':
+					if ((buffer[pos] == '8' || buffer[pos] == '9') && isOctal) {
+						isMalformedOctal = true;
+						break;
+					}
+					
 					continue;
 				
 				case '.':
@@ -1349,9 +1366,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		char[] result = CharArrayUtils.extract( buffer, start, bufferPos[bufferStackPos] - start + 1);
 		int tokenType = isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER;
+		
 		if( tokenType == IToken.tINTEGER && isHex && result.length == 2 ){
 		    handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, start, result );
-		}
+		} else if( tokenType == IToken.tINTEGER && isOctal && isMalformedOctal ){
+		    handleProblem( IProblem.SCANNER_BAD_OCTAL_FORMAT, start, result );
+		}  
 		
 		return newToken( tokenType, result );
 	}
@@ -1450,7 +1470,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						if( isLimitReached() )
 							handleCompletionOnExpression( CharArrayUtils.extract( buffer, start, len ) );
 						branchState( BRANCH_IF );
-						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
+						if (expressionEvaluator.evaluate(buffer, start, len, definitions, getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename()) == 0) {
 							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 							skipOverConditionalCode(true);
 							if( isLimitReached() )
@@ -2051,7 +2071,7 @@ public class Scanner2 implements IScanner, IScannerData {
 										start = bufferPos[bufferStackPos] + 1;
 										skipToNewLine();
 										len = bufferPos[bufferStackPos] - start;
-										if (expressionEvaluator.evaluate(buffer, start, len, definitions) != 0)
+										if (expressionEvaluator.evaluate(buffer, start, len, definitions, getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename()) != 0)
 											// condition passed, we're good
 											return;
 									}

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -27,14 +29,37 @@ public class ExpressionEvaluator {
 	private Object[] bufferData = new Object[bufferInitialSize];
 	private int[] bufferPos = new int[bufferInitialSize];
 	private int[] bufferLimit = new int[bufferInitialSize];
+		
+	private ISourceElementRequestor requestor = null;
+	private ScannerProblemFactory spf = null;
+
+	private int lineNumber = 1;
+	private char[] fileName = null;
+	
+	private int pos = 0;
 	
 	// The macros
 	CharArrayObjectMap definitions;
 
-	public long evaluate(char[] buffer, int pos, int length, CharArrayObjectMap defs) {
+	public ExpressionEvaluator() {
+		super();
+	}
+	
+	public ExpressionEvaluator(ISourceElementRequestor requestor, ScannerProblemFactory spf) {
+		this.requestor = requestor;
+		this.spf = spf;
+	}
+	
+	public long evaluate(char[] buffer, int p, int length, CharArrayObjectMap defs) {
+		return evaluate(buffer, p, length, defs, 0, "".toCharArray()); //$NON-NLS-1$
+	}
+	
+	public long evaluate(char[] buffer, int p, int length, CharArrayObjectMap defs, int ln, char[] fn) {
+		this.lineNumber = ln;
+		this.fileName = fn;
 		bufferStack[++bufferStackPos] = buffer;
-		bufferPos[bufferStackPos] = pos - 1;
-		bufferLimit[bufferStackPos] = pos + length;
+		bufferPos[bufferStackPos] = p - 1;
+		bufferLimit[bufferStackPos] = p + length;
 		this.definitions = defs;
 		tokenType = 0;
 	
@@ -67,8 +92,10 @@ public class ExpressionEvaluator {
 			long r2 = expression();
 			if (LA() == tCOLON)
 				consume();
-			else
+			else {
+				handleProblem(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION, pos);
 				throw new EvalException("bad conditional expression"); //$NON-NLS-1$
+			}
 			long r3 = conditionalExpression();
 			return r1 != 0 ? r2 : r3;
 		} 
@@ -186,14 +213,17 @@ public class ExpressionEvaluator {
 	private long multiplicativeExpression() throws EvalException {
 		long r1 = unaryExpression();
 		for (int t = LA(); t == tMULT|| t == tDIV; t = LA()) {
+			int position = pos; // for IProblem /0 below, need position before consume()
 			consume();
 			long r2 = unaryExpression();
 			if (t == tMULT)
 				r1 = r1 * r2;
 			else if( r2 != 0 )// t == tDIV;
 				r1 = r1 / r2;
-			else
+			else {
+				handleProblem(IProblem.SCANNER_DIVIDE_BY_ZERO, position);
 				throw new EvalException( "Divide by 0 encountered"); //$NON-NLS-1$
+			}
 		}
 		return r1;
 	}
@@ -223,10 +253,11 @@ public class ExpressionEvaluator {
 					consume();
 					return r1;
 				} 
-				throw new EvalException("missing )"); //$NON-NLS-1$
+				handleProblem(IProblem.SCANNER_MISSING_R_PAREN, pos);
+				throw new EvalException("missing )"); //$NON-NLS-1$ 
 			default:
-				throw new EvalException("expression syntax error"); //$NON-NLS-1$
-
+				handleProblem(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, pos);
+				throw new EvalException("expression syntax error"); //$NON-NLS-1$ 
 		}
 	}
 	
@@ -252,7 +283,8 @@ public class ExpressionEvaluator {
 		}
 
 		if (!((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z'))) {
-			throw new EvalException("illegal identifier in defined()"); //$NON-NLS-1$
+			handleProblem(IProblem.SCANNER_ILLEGAL_IDENTIFIER, pos);
+			throw new EvalException("illegal identifier in defined()"); //$NON-NLS-1$ 
 		}
 
 		// consume rest of identifier
@@ -271,9 +303,11 @@ public class ExpressionEvaluator {
 		// consume to the closing paren;
 		if (inParens) {
 			skipWhiteSpace();
-			if (++bufferPos[bufferStackPos] < limit
-					&& buffer[bufferPos[bufferStackPos]] != ')')
+			if (++bufferPos[bufferStackPos] <= limit
+					&& buffer[bufferPos[bufferStackPos]] != ')') {
+				handleProblem(IProblem.SCANNER_MISSING_R_PAREN, pos);
 				throw new EvalException("missing ) on defined"); //$NON-NLS-1$
+			}
 		}
 
 		// Set up the lookahead to whatever comes next
@@ -302,6 +336,10 @@ public class ExpressionEvaluator {
 	private static char[] _defined = "defined".toCharArray(); //$NON-NLS-1$
 	
 	private void nextToken() throws EvalException {
+		boolean isHex = false;
+		boolean isOctal = false;
+		boolean isDecimal = false;
+		
 		contextLoop:
 			while (bufferStackPos >= 0) {
 				
@@ -317,8 +355,20 @@ public class ExpressionEvaluator {
 				// Tokens don't span buffers, stick to our current one
 				char[] buffer = bufferStack[bufferStackPos];
 				int limit = bufferLimit[bufferStackPos];
-				int pos = bufferPos[bufferStackPos];
+				pos = bufferPos[bufferStackPos];
 
+				if (buffer[pos] >= '1' && buffer[pos] <= '9')
+					isDecimal = true;
+				else if (buffer[pos] == '0' && pos + 1 < limit)
+					if (buffer[pos + 1] == 'x' || buffer[pos + 1] == 'X') {
+						isHex = true;
+						++bufferPos[bufferStackPos];
+						if (pos + 2 < limit )
+							if ( (buffer[pos + 2] < '0' || buffer[pos + 2] > '9') && (buffer[pos + 2] < 'a' || buffer[pos + 2] > 'f') && (buffer[pos + 2] < 'A' || buffer[pos + 2] > 'F'))
+								handleProblem(IProblem.SCANNER_BAD_HEX_FORMAT, pos);					
+					} else 
+						isOctal = true;
+				
 				switch (buffer[pos]) {
 					case 'a':
 					case 'b':
@@ -441,24 +491,14 @@ public class ExpressionEvaluator {
 						tokenValue = buffer[pos] - '0';
 						tokenType = tNUMBER;
 						
-						boolean isHex = false;
-						if (buffer[pos] == '0' && pos + 1 < limit) {
-							switch (buffer[pos + 1]) {
-								case 'x':
-								case 'X':
-									isHex = true;
-									++bufferPos[bufferStackPos];
-							}
-						}
-						
 						while (++bufferPos[bufferStackPos] < limit) {
 							char c = buffer[bufferPos[bufferStackPos]];
-							if (c >= '0' && c <= '9') {
-								tokenValue *= (isHex ? 16 : 10);
-								tokenValue += c - '0';
-								continue;
-							} else if (isHex) {
-								if (c >= 'a' && c <= 'f') {
+							if (isHex) {
+								if (c >= '0' && c <= '9') {
+									tokenValue *= 16;
+									tokenValue += c - '0';
+									continue;
+								} else if (c >= 'a' && c <= 'f') {
 									tokenValue = (tokenValue == 0 ? 10 : (tokenValue * 16) + 10);
 									tokenValue += c - 'a';
 									continue;
@@ -466,12 +506,34 @@ public class ExpressionEvaluator {
 									tokenValue = (tokenValue == 0 ? 10 : (tokenValue * 16) + 10);
 									tokenValue += c - 'A';
 									continue;
+								} else {
+									if (bufferPos[bufferStackPos] + 1 < limit)
+										if (!isValidTokenSeparator(c, buffer[bufferPos[bufferStackPos] + 1]))
+											handleProblem(IProblem.SCANNER_BAD_HEX_FORMAT, pos);
 								}
+							} else if (isOctal) {
+								if (c >= '0' && c <= '7') {
+									tokenValue *= 8;
+									tokenValue += c - '0';
+									continue;
+								} 
+								if (bufferPos[bufferStackPos] + 1 < limit)
+								if (!isValidTokenSeparator(c, buffer[bufferPos[bufferStackPos] + 1])) 
+									handleProblem(IProblem.SCANNER_BAD_OCTAL_FORMAT, pos);
+							} else if (isDecimal) {
+								if (c >= '0' && c <= '9') {
+									tokenValue *= 10;
+									tokenValue += c - '0';
+									continue;
+								} 
+								if (bufferPos[bufferStackPos] + 1 < limit)
+									if (!isValidTokenSeparator(c, buffer[bufferPos[bufferStackPos] + 1])) 
+										handleProblem(IProblem.SCANNER_BAD_DECIMAL_FORMAT, pos);
 							}
 							
 							// end of number
-							if (c == 'L') {
-								// eat the long
+							if (c == 'L' || c =='l' || c == 'U' || c =='u') {
+								// eat the long/unsigned
 								++bufferPos[bufferStackPos];
 							}
 							
@@ -557,7 +619,8 @@ public class ExpressionEvaluator {
 							tokenType = tEQUAL;
 							return;
 						}
-						throw new EvalException("assignment not allowed"); //$NON-NLS-1$
+						handleProblem(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED, pos);
+						throw new EvalException("assignment not allowed"); //$NON-NLS-1$ 
 					
 					case '<':
 						if (pos + 1 < limit) {
@@ -619,8 +682,8 @@ public class ExpressionEvaluator {
 
 			skipWhiteSpace();
 			
-			int pos = ++bufferPos[bufferStackPos];
-			char c = buffer[pos];
+			int p = ++bufferPos[bufferStackPos];
+			char c = buffer[p];
 			if (c == ')') {
 				if (parens == 0)
 					// end of macro
@@ -637,7 +700,7 @@ public class ExpressionEvaluator {
 			}
 
 			// peel off the arg
-			int argstart = pos;
+			int argstart = p;
 			int argend = argstart - 1;
 			
 			// Loop looking for end of argument
@@ -679,15 +742,19 @@ public class ExpressionEvaluator {
 				case ' ':
 				case '\t':
 				case '\r':
-				case '\n':
 				case ',':
 				case ')':
 					--bufferPos[bufferStackPos];
 					return;
+				case '\n':
+					lineNumber++;
+					--bufferPos[bufferStackPos];
+					return;
 				case '\\':
-					int pos = bufferPos[bufferStackPos];
-					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
+					int p = bufferPos[bufferStackPos];
+					if (p + 1 < limit && buffer[p + 1] == '\n') {
 						// \n is whitespace
+						lineNumber++;
 						--bufferPos[bufferStackPos];
 						return;
 					}
@@ -721,26 +788,26 @@ public class ExpressionEvaluator {
 		int limit = bufferLimit[bufferStackPos];
 		
 		while (++bufferPos[bufferStackPos] < limit) {
-			int pos = bufferPos[bufferStackPos];
-			switch (buffer[pos]) {
+			int p = bufferPos[bufferStackPos];
+			switch (buffer[p]) {
 				case ' ':
 				case '\t':
 				case '\r':
 					continue;
 				case '/':
-					if (pos + 1 < limit) {
-						if (buffer[pos + 1] == '/') {
+					if (p + 1 < limit) {
+						if (buffer[p + 1] == '/') {
 							// C++ comment, skip rest of line
 							return;
-						} else if (buffer[pos + 1] == '*') {
+						} else if (buffer[p + 1] == '*') {
 							// C comment, find closing */
 							for (bufferPos[bufferStackPos] += 2;
 									bufferPos[bufferStackPos] < limit;
 									++bufferPos[bufferStackPos]) {
-								pos = bufferPos[bufferStackPos];
-								if (buffer[pos] == '*'
-										&& pos + 1 < limit
-										&& buffer[pos + 1] == '/') {
+								p = bufferPos[bufferStackPos];
+								if (buffer[p] == '*'
+										&& p + 1 < limit
+										&& buffer[p + 1] == '/') {
 									++bufferPos[bufferStackPos];
 									break;
 								}
@@ -750,8 +817,9 @@ public class ExpressionEvaluator {
 					}
 					break;
 				case '\\':
-					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
+					if (p + 1 < limit && buffer[p + 1] == '\n') {
 						// \n is a whitespace
+						lineNumber++;
 						++bufferPos[bufferStackPos];
 						continue;
 					}
@@ -761,6 +829,10 @@ public class ExpressionEvaluator {
 			--bufferPos[bufferStackPos];
 			return;
 		}
+		
+		// fell out of while without continuing, we're done
+		--bufferPos[bufferStackPos];
+		return;		
 	}
 	
 	private static final int tNULL		= 0;
@@ -825,4 +897,40 @@ public class ExpressionEvaluator {
 		--bufferStackPos;
 	}
 
+	private void handleProblem(int id, int startOffset) {
+		if (requestor != null && spf != null)
+			requestor.acceptProblem(spf.createProblem( id, startOffset, bufferPos[(bufferStackPos == -1 ? 0 : bufferStackPos)], lineNumber, (fileName == null ? "".toCharArray() : fileName), emptyCharArray, false, true )); //$NON-NLS-1$
+	}
+	
+	private boolean isValidTokenSeparator(char c, char c2) throws EvalException {
+		switch (c) {
+			case '\t':
+			case '\r':
+			case '\n':
+			case ' ':	
+			case '(':
+			case ')':
+			case ':':
+			case '?':
+			case '+':
+			case '-':
+			case '*':
+			case '/':
+			case '%':
+			case '^':
+			case '&':
+			case '|':
+			case '~':
+			case '!':
+			case '<':
+			case '>':
+				return true;
+			case '=':
+				if (c2 == '=')
+					return true;
+				return false;
+		}
+		
+		return false;
+	}
 }

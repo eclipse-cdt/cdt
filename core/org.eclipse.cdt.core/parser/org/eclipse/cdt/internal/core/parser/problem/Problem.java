@@ -194,6 +194,30 @@ public class Problem implements IProblem {
 			new Integer(IProblem.SCANNER_BAD_HEX_FORMAT),
 			ParserMessages.getString("ScannerProblemFactory.error.scanner.badHexFormat")); //$NON-NLS-1$
 		errorMessages.put(
+				new Integer(IProblem.SCANNER_BAD_OCTAL_FORMAT),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.badOctalFormat")); //$NON-NLS-1$
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_BAD_DECIMAL_FORMAT),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.badDecimalFormat")); //$NON-NLS-1$
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.assignmentNotAllowed")); //$NON-NLS-1$		
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_DIVIDE_BY_ZERO),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.divideByZero")); //$NON-NLS-1$
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_MISSING_R_PAREN),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.missingRParen")); //$NON-NLS-1$
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.expressionSyntaxError")); //$NON-NLS-1$
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_ILLEGAL_IDENTIFIER),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.illegalIdentifier")); //$NON-NLS-1$
+		errorMessages.put(
+				new Integer(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION),
+				ParserMessages.getString("ScannerProblemFactory.error.scanner.badConditionalExpression")); //$NON-NLS-1$		
+		errorMessages.put(
 			new Integer(IProblem.SCANNER_UNEXPECTED_EOF),
 			ParserMessages.getString("ScannerProblemFactory.error.scanner.unexpectedEOF")); //$NON-NLS-1$
 		errorMessages.put(

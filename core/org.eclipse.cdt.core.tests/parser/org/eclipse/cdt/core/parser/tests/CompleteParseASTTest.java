@@ -2247,20 +2247,30 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	{
     	try {
         	Writer writer = new StringWriter();
-        	writer.write( "#if 2147483647 == 0x7fffffff\n");
+        	writer.write( "#if 2147483647 == 0x7fffffff\n"); // check reported hex problem
         	writer.write( "#error This was equal, but not for the eclipse.\n");
         	writer.write( "#endif\n");
+        	writer.write( "#if 010 == 8\n"); // check octal
+        	writer.write( "#error octal test\n");
+        	writer.write( "#endif\n");
+        	
         	parse( writer.toString() );
 
         	assertTrue(false);
     	} catch (ParserException pe) {
     		// expected IProblem
     	} finally {
-        	assertTrue( callback.getProblems().hasNext() );
-        	Object ipo = callback.getProblems().next();
+        	Iterator probs = callback.getProblems();
+    		assertTrue( probs.hasNext() );
+        	Object ipo = probs.next();
         	assertTrue( ipo instanceof IProblem );
-        	IProblem ip = (IProblem)callback.getProblems().next();
+        	IProblem ip = (IProblem)ipo;
         	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") > 0);
+        	assertTrue( probs.hasNext() );
+        	ipo = probs.next();
+        	assertTrue( ipo instanceof IProblem );
+        	ip = (IProblem)ipo;
+        	assertTrue(ip.getArguments().indexOf("octal test") > 0);
     	}
 	}
     

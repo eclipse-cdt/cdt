@@ -1510,27 +1510,17 @@ public class CDebugTarget extends CDebugElement
 					Object sourceElement = ((ICSourceLocator)((IAdaptable)getSourceLocator()).getAdapter( ICSourceLocator.class )).findSourceElement( cdiBreakpoint.getLocation().getFile() );
 					if ( sourceElement != null && sourceElement instanceof IFile )
 					{
-						ICLineBreakpoint breakpoint = CDebugModel.createLineBreakpoint( (IFile)sourceElement,
-																						cdiBreakpoint.getLocation().getLineNumber(),
-																						cdiBreakpoint.isEnabled(),
-																						cdiBreakpoint.getCondition().getIgnoreCount(),
-																						cdiBreakpoint.getCondition().getExpression(),
-																						false );
-						getBreakpoints().put( breakpoint, cdiBreakpoint );
-						((CBreakpoint)breakpoint).register( true );
+						createLineBreakpoint( (IFile)sourceElement, cdiBreakpoint );
+					}
+					else if ( cdiBreakpoint.getLocation().getAddress() > 0 )
+					{
+						createAddressBreakpoint( cdiBreakpoint );
 					}
 				}
 			}
 			else if ( cdiBreakpoint.getLocation().getAddress() > 0 )
 			{
-				ICAddressBreakpoint breakpoint = CDebugModel.createAddressBreakpoint( getExecFile(),
-																					  cdiBreakpoint.getLocation().getAddress(),
-																					  cdiBreakpoint.isEnabled(),
-																					  cdiBreakpoint.getCondition().getIgnoreCount(),
-																					  cdiBreakpoint.getCondition().getExpression(),
-																					  false );
-				getBreakpoints().put( breakpoint, cdiBreakpoint );
-				((CBreakpoint)breakpoint).register( true );
+				createAddressBreakpoint( cdiBreakpoint );
 			}
 		}
 		catch( CDIException e )
@@ -1539,6 +1529,30 @@ public class CDebugTarget extends CDebugElement
 		catch( CoreException e )
 		{
 		}
+	}
+
+	private void createLineBreakpoint( IFile file, ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException
+	{
+		ICLineBreakpoint breakpoint = CDebugModel.createLineBreakpoint( file,
+																		cdiBreakpoint.getLocation().getLineNumber(),
+																		cdiBreakpoint.isEnabled(),
+																		cdiBreakpoint.getCondition().getIgnoreCount(),
+																		cdiBreakpoint.getCondition().getExpression(),
+																		false );
+		getBreakpoints().put( breakpoint, cdiBreakpoint );
+		((CBreakpoint)breakpoint).register( true );
+	}
+
+	private void createAddressBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException
+	{
+		ICAddressBreakpoint breakpoint = CDebugModel.createAddressBreakpoint( getExecFile(),
+																			  cdiBreakpoint.getLocation().getAddress(),
+																			  cdiBreakpoint.isEnabled(),
+																			  cdiBreakpoint.getCondition().getIgnoreCount(),
+																			  cdiBreakpoint.getCondition().getExpression(),
+																			  false );
+		getBreakpoints().put( breakpoint, cdiBreakpoint );
+		((CBreakpoint)breakpoint).register( true );
 	}
 
 	private void handleWatchpointCreatedEvent( final ICDIWatchpoint watchpoint )

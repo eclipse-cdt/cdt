@@ -1,3 +1,7 @@
+2003-01-30 Mikhail Khodjaiants
+	Create an address breakpoint if the source locator can not find the file specified by gdb.
+	* CDebugTarget.java
+
 2003-01-29 Mikhail Khodjaiants
 	Managing breakpoints from the gdb console (fixes).
 	* CDebugModel.java

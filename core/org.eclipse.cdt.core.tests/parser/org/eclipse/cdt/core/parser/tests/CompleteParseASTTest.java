@@ -2140,4 +2140,19 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	IASTParameterDeclaration blank = (IASTParameterDeclaration)parms.next();
         assertEquals( ASTUtil.getType( (IASTAbstractDeclaration)blank ), "volatile int&" ); //$NON-NLS-1$
     }
+    
+    public void testBug79751() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "struct _BITFIELD_TYPE01 {\n" );
+    	writer.write( "int          bitfield_a:1;\n" );
+    	writer.write( "unsigned int bitfield_b:2;\n" );
+    	writer.write( "signed int   :3;          /* unnamed field can be used for padding */\n" );
+    	writer.write( "signed int   bitfield_c:10;\n" );
+    	writer.write( "unsigned     bitfield_d:1;\n" );
+    	writer.write( "signed       bitfield_e:16;\n" );
+    	writer.write( "};\n" );
+    	parse( writer.toString() );
+    	assertTrue( callback.problems.isEmpty() );
+	}
 }

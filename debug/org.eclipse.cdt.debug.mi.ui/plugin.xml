@@ -31,7 +31,13 @@
             id="org.eclipse.cdt.debug.mi.CDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugPage>
+      <debugPage
+            class="org.eclipse.cdt.debug.mi.internal.ui.CDebuggerPage"
+            id="org.eclipse.cdt.debug.mi.CygwinCDebuggerPage"
+            debuggerID="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
+       </debugPage>
    </extension>
+
    <extension
          point="org.eclipse.ui.preferencePages">
       <page

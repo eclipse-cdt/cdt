@@ -18,17 +18,24 @@
       <import plugin="org.eclipse.cdt.core"/>
    </requires>
 
-
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
+            platform="native"
             name="%GDBDebugger.name"
             modes="run,core,attach"
+            cpu="native"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
-            id="org.eclipse.cdt.debug.mi.core.CDebugger"
-      		cpu="native"
-      		platform="native">
+            id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>
+      <debugger
+            platform="win32"
+            name="%CygwinGDBDebugger.name"
+            modes="run,core,attach"
+            cpu="native"
+            class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
+            id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
+       </debugger>
    </extension>
 
 </plugin>

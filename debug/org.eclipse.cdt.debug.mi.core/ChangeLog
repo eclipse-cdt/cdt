@@ -1,3 +1,15 @@
+2002-11-26 Doug Schaefer
+
+	* src/.../mi/core/CygwinGDBDebugger.java:
+	New Debugger that provides the Cygwin Command Factory to the MISession
+	* src/.../mi/core/command/CygwinCommandFactory.java:
+	New Command Factory for Cygwin specific implementations of the commands
+	* src/.../mi/core/command/CygwinMIEnvironmentDirectory.java:
+	New.  Subclasses the MIEnvironmentDirectory command to convert the
+	paths using cygpath.
+	* plugin.xml:
+	Defines the new debugger extension.
+
 2002-11-25 Alain Magloire
 
 	* src/.../mi/core/cdi/Watchpoint.java:

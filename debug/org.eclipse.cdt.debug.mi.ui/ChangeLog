@@ -1,0 +1,4 @@
+2002-11-26 Doug Schaefer
+
+	* plugin.xml:
+	Added new debugPage for Cygwin GDB.

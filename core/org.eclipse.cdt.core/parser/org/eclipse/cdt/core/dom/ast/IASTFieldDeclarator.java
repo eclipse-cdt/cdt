@@ -18,6 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTFieldDeclarator extends IASTDeclarator {
 
+    ASTNodeProperty FIELD_SIZE = new ASTNodeProperty( "BitField Size"); //$NON-NLS-1$
 	/**
 	 * This returns the number of bits if this is a bit field.
 	 * If it is not a bit field, it returns null.
@@ -25,5 +26,7 @@ public interface IASTFieldDeclarator extends IASTDeclarator {
 	 * @return size of bit field or null.
 	 */
 	public IASTExpression getBitFieldSize();
+	
+	public void setBitFieldSize( IASTExpression size );
 	
 }

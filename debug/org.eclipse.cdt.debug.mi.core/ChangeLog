@@ -1,3 +1,12 @@
+2002-11-25 Alain Magloire
+
+	* src/.../mi/core/cdi/Watchpoint.java:
+	Check if it was access point also.
+	* src/.../mi/core/output/MIBreakInsertInfo.java (parse):
+	Check for "wpt" variable.
+	* src/.../mi/core/output/MIBreakpoint.java (IsWriteWatchpoint):
+	implemented.
+
 2002-11-20 Mikhail Khodjaiants
 	Fix for bug 26595.
 	* src/.../mi/core/cdi/MemoryManager.java (compareBlocks):

@@ -70,7 +70,7 @@ public class ParserUtil
 				try
 				{
 					in = ((IFile)resultingResource).getContents();
-					return new CodeReader(finalPath, in);
+					return new CodeReader(finalPath, ((IFile)resultingResource).getCharset(), in);
 				} finally {
 					if (in != null)
 					{

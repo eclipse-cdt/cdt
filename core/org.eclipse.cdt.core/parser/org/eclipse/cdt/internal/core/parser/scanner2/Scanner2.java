@@ -715,6 +715,12 @@ public class Scanner2 implements IScanner, IScannerData {
 					return newToken(IToken.tCOMMA );
 
 				default:
+				    if( Character.isLetter( buffer[pos] ) ){
+				        t = scanIdentifier();
+						if (t instanceof MacroExpansionToken)
+							continue;
+						return t;
+				    }
 					// skip over anything we don't handle
 			}
 		}
@@ -756,7 +762,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		while (++bufferPos[bufferStackPos] < limit) {
 			char c = buffer[bufferPos[bufferStackPos]];
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9')) {
+				|| c == '_' || (c >= '0' && c <= '9') || Character.isUnicodeIdentifierPart(c) ) {
 				++len;
 				continue;
 			}
@@ -1329,7 +1335,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			while (++bufferPos[bufferStackPos] < limit) {
 				c = buffer[bufferPos[bufferStackPos]];
 				if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-						|| c == '_' || (c >= '0' && c <= '9')) {
+						|| c == '_' || (c >= '0' && c <= '9') || Character.isUnicodeIdentifierPart(c)) {
 					++len;
 					continue;
 				}
@@ -1464,7 +1470,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			return;
 		
 		char c = buffer[idstart];
-		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_')) {
+		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
 		    handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, null );
 			skipToNewLine();
 			return;
@@ -1474,7 +1480,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		while (++bufferPos[bufferStackPos] < limit) {
 			c = buffer[bufferPos[bufferStackPos]];
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9')) {
+					|| c == '_' || (c >= '0' && c <= '9') || Character.isUnicodeIdentifierPart(c)) {
 				++idlen;
 				continue;
 			}  
@@ -1511,7 +1517,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					bufferPos[bufferStackPos] += 2;
 					arglist[++currarg] = "...".toCharArray(); //$NON-NLS-1$
 					continue;
-				} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')) {
+				} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
 				    handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, name );
 					// yuck
 					skipToNewLine();
@@ -1638,7 +1644,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			return;
 		
 		char c = buffer[idstart];
-		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_')) {
+		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
 			skipToNewLine();
 			return;
 		}
@@ -1647,7 +1653,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		while (++bufferPos[bufferStackPos] < limit) {
 			c = buffer[bufferPos[bufferStackPos]];
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9')) {
+					|| c == '_' || (c >= '0' && c <= '9' || Character.isUnicodeIdentifierPart(c))) {
 				++idlen;
 				continue;
 			} 
@@ -1683,7 +1689,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			return;
 		
 		char c = buffer[idstart];
-		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_')) {
+		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
 			skipToNewLine();
 			return;
 		}
@@ -1692,7 +1698,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		while (++bufferPos[bufferStackPos] < limit) {
 			c = buffer[bufferPos[bufferStackPos]];
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9')) {
+					|| c == '_' || (c >= '0' && c <= '9' || Character.isUnicodeIdentifierPart(c))) {
 				++idlen;
 				continue;
 			} 
@@ -2031,7 +2037,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		while (++bufferPos[bufferStackPos] < limit) {
 			char c = buffer[bufferPos[bufferStackPos]];
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9')) {
+					|| c == '_' || (c >= '0' && c <= '9') || Character.isUnicodeIdentifierPart(c)) {
 				continue;
 			} 
 			break;
@@ -2257,14 +2263,14 @@ public class Scanner2 implements IScanner, IScannerData {
 		while (++pos < limit) {
 			char c = expansion[pos];
 			
-			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Character.isUnicodeIdentifierPart(c)) {
 
 				wsstart = -1;
 				int idstart = pos;
 				while (++pos < limit) {
 					c = expansion[pos];
 					if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-							|| (c >= '0' && c <= '9') || c == '_')) {
+							|| (c >= '0' && c <= '9') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
 						break;
 					}
 				}
@@ -2465,11 +2471,11 @@ public class Scanner2 implements IScanner, IScannerData {
 					// grab the identifier
 					c = expansion[pos];
 					int idstart = pos;
-					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X') || c == '_') {
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X') || c == '_' || Character.isUnicodeIdentifierPart(c)) {
 						while (++pos < limit) {
 						    c = expansion[pos];
 							if( !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X')
-									|| (c >= '0' && c <= '9') || c == '_') )
+									|| (c >= '0' && c <= '9') || c == '_' || Character.isUnicodeIdentifierPart(c)) )
 								break;
 						}
 					} // else TODO something
@@ -3075,7 +3081,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		{
 			char c = prefix[i];
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9')) 
+					|| c == '_' || (c >= '0' && c <= '9') || Character.isUnicodeIdentifierPart(c) ) 
 				continue;
 			handleInvalidCompletion();
 		}

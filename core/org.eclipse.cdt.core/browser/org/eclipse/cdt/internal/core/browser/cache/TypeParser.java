@@ -376,7 +376,7 @@ public class TypeParser implements ISourceElementRequestor {
 			try {
 				contents = file.getContents();
 				if (contents != null)
-					reader = new CodeReader(resource.getLocation().toOSString(), contents);
+					reader = new CodeReader(resource.getLocation().toOSString(), file.getCharset(), contents);
 			} catch (CoreException ex) {
 				ex.printStackTrace();
 			} catch (IOException e) {

@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -101,12 +102,14 @@ public class SelectionParseAction extends Action {
 		CodeReader reader = null;
 		try {
 			if( workingCopy == null )
-				reader = new CodeReader(resourceFile.getLocation().toOSString());
+				reader = new CodeReader(resourceFile.getLocation().toOSString(), resourceFile.getCharset() );
 			else 
 				reader = new CodeReader(resourceFile.getLocation().toOSString(), workingCopy.getContents());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} catch ( CoreException e ) {
+            e.printStackTrace();
+        }
 		
 		try
 		{

@@ -15,15 +15,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
@@ -42,6 +40,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -103,11 +102,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
-		if ( stackFrame != null && stackFrame.getAdapter( IStackFrameInfo.class ) != null )
-		{
-			return getInput( (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class ) );
-		}
-		return null;
+		return getInput( stackFrame );
 	}
 	
 	/* (non-Javadoc)
@@ -115,43 +110,47 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public int getLineNumber( IStackFrame frame )
 	{
-		IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
-		return ( info != null ) ? info.getFrameLineNumber() : 0;
+		return ( frame instanceof ICStackFrame ) ? ((ICStackFrame)frame).getFrameLineNumber() : 0;
 	}
 
-	protected Object getInput( IStackFrameInfo info )
+	protected Object getInput( IStackFrame f )
 	{
-		LinkedList list = new LinkedList();
-		if ( info != null )
+		if ( f instanceof ICStackFrame )
 		{
-			Object result = null;
-			String fileName = info.getFile();
-			if ( fileName != null && fileName.length() > 0 )
+			ICStackFrame frame = (ICStackFrame)f;
+			LinkedList list = new LinkedList();
+			if ( frame != null )
 			{
-				ICSourceLocation[] locations = getSourceLocations();
-				for ( int i = 0; i < locations.length; ++i )
+				Object result = null;
+				String fileName = frame.getFile();
+				if ( fileName != null && fileName.length() > 0 )
 				{
-					try
+					ICSourceLocation[] locations = getSourceLocations();
+					for ( int i = 0; i < locations.length; ++i )
 					{
-						result = locations[i].findSourceElement( fileName );
-					}
-					catch( CoreException e )
-					{
-						// do nothing
-					}
-					if ( result != null )
-					{
-						if ( result instanceof List )
-							list.addAll( (List)result );
-						else
-							list.add( result );
-						if ( !searchForDuplicateFiles() )
-							break;
+						try
+						{
+							result = locations[i].findSourceElement( fileName );
+						}
+						catch( CoreException e )
+						{
+							// do nothing
+						}
+						if ( result != null )
+						{
+							if ( result instanceof List )
+								list.addAll( (List)result );
+							else
+								list.add( result );
+							if ( !searchForDuplicateFiles() )
+								break;
+						}
 					}
 				}
-			}
-		}		
-		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
+			}		
+			return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -415,7 +414,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	private void addAdditionalLocations( Element root, List sourceLocations ) throws CoreException
 	{
-		ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
+		Bundle bundle = CDebugCorePlugin.getDefault().getBundle();
 
 		MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), 
 											  CDebugCorePlugin.INTERNAL_ERROR, 
@@ -442,7 +441,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					Class clazz = null;
 					try
 					{
-						clazz = classLoader.loadClass( className );
+						clazz = bundle.loadClass( className );
 					}
 					catch( ClassNotFoundException e )
 					{
@@ -483,7 +482,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	private void addOldLocations( Element root, List sourceLocations ) throws CoreException
 	{
-		ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
+		Bundle bundle = CDebugCorePlugin.getDefault().getBundle();
 
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
@@ -506,7 +505,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					Class clazz = null;
 					try
 					{
-						clazz = classLoader.loadClass( className );
+						clazz = bundle.loadClass( className );
 					}
 					catch( ClassNotFoundException e )
 					{

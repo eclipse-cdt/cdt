@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.editors;
 
-import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
@@ -30,13 +30,16 @@ public class FileNotFoundElement
 
 	public IPath getFullPath()
 	{
-		IStackFrameInfo frameInfo = (IStackFrameInfo)fStackFrame.getAdapter( IStackFrameInfo.class );
-		if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
+		if ( fStackFrame instanceof ICStackFrame )
 		{
-			Path path = new Path( frameInfo.getFile() );
-			if ( path.isValidPath( frameInfo.getFile() ) )
+			String fn = ((ICStackFrame)fStackFrame).getFile();
+			if ( fn != null && fn.trim().length() > 0 )
 			{
-				return path;
+				Path path = new Path( fn );
+				if ( path.isValidPath( fn ) )
+				{
+					return path;
+				}
 			}
 		}
 		return null;

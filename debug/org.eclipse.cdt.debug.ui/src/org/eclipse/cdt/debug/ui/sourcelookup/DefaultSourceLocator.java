@@ -11,16 +11,14 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
@@ -294,8 +292,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 		}
 		if ( res == null )
 		{
-			IStackFrameInfo frameInfo = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
-			if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
+			if ( stackFrame instanceof ICStackFrame && !isEmpty( ((ICStackFrame)stackFrame).getFile() ) )
 			{
 				res = new FileNotFoundElement( stackFrame );
 			}
@@ -367,11 +364,10 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 
 	private String getFileName( IStackFrame frame )
 	{
-		IStackFrameInfo frameInfo = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
-		if ( frameInfo != null )
+		if ( frame instanceof ICStackFrame )
 		{
-			String name = frameInfo.getFile();
-			if ( name != null && name.trim().length() > 0 )
+			String name = ((ICStackFrame)frame).getFile();
+			if ( !isEmpty( name ) )
 				return name.trim();
 		}
 		return null;
@@ -404,7 +400,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 
 	private boolean isEmpty( String string )
 	{
-		return string == null || string.length() == 0;
+		return string == null || string.trim().length() == 0;
 	}
 
 	private IProject getProject( ILaunchConfiguration configuration ) throws CoreException

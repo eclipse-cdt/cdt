@@ -434,7 +434,7 @@ public class SourceLookupBlock implements Observer
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
-								public void dialogFieldChanged( DialogField field )
+								public void dialogFieldChanged( DialogField f )
 								{
 									doCheckStateChanged();
 								}
@@ -448,12 +448,12 @@ public class SourceLookupBlock implements Observer
 					new SourceListDialogField( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceLookupBlock.Additional_Source_Locations"), //$NON-NLS-1$
 												new IListAdapter()
 													{
-														public void customButtonPressed( DialogField field, int index )
+														public void customButtonPressed( DialogField f, int index )
 														{
 															doAddedSourceButtonPressed( index );
 														}
 
-														public void selectionChanged(DialogField field)
+														public void selectionChanged(DialogField f)
 														{
 														}
 													} );

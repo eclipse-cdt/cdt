@@ -22,10 +22,9 @@ public class SourceLookupLabelProvider extends LabelProvider implements ITableLa
 		{
 			if ( element instanceof IProjectSourceLocation )
 			{
-				if ( ((IProjectSourceLocation)element).getProject().isOpen() )
-					return CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT );
-				else
-					return CDebugImages.get( CDebugImages.IMG_OBJS_CLOSED_PROJECT );
+				return ( ((IProjectSourceLocation)element).getProject().isOpen() ) ?
+							CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT ) : 
+							CDebugImages.get( CDebugImages.IMG_OBJS_CLOSED_PROJECT );
 			}
 			if ( element instanceof IDirectorySourceLocation )
 			{

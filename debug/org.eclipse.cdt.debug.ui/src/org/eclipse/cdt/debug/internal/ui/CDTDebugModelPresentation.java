@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.internal.ui;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -26,12 +25,12 @@ import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
-import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.EditorInputDelegate;
@@ -60,7 +59,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -516,16 +514,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return getFormattedString( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Thread_threadName_suspended"), thread.getName() ); //$NON-NLS-1$
 	}
 
-	protected String getStackFrameText( IStackFrame stackFrame, boolean qualified ) throws DebugException 
+	protected String getStackFrameText( IStackFrame f, boolean qualified ) throws DebugException 
 	{
-		IStackFrameInfo info = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
-		if ( info != null )
+		if ( f instanceof ICStackFrame )
 		{
+			ICStackFrame frame = (ICStackFrame)f;
 			StringBuffer label = new StringBuffer();
-			label.append( info.getLevel() );
+			label.append( frame.getLevel() );
 			label.append( ' ' );
 
-			String function = info.getFunction();
+			String function = frame.getFunction();
 			if ( function != null )
 			{
 				function = function.trim();
@@ -533,16 +531,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 				{
 					label.append( function );
 					label.append( "() " ); //$NON-NLS-1$
-					if ( info.getFile() != null )
+					if ( frame.getFile() != null )
 					{
-						IPath path = new Path( info.getFile() );
+						IPath path = new Path( frame.getFile() );
 						if ( !path.isEmpty() )
 						{
 							label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.at")+" " ); //$NON-NLS-1$ //$NON-NLS-2$
 							label.append( ( qualified ? path.toOSString() : path.lastSegment() ) );
 							label.append( ":" ); //$NON-NLS-1$
-							if ( info.getFrameLineNumber() != 0 )
-								label.append( info.getFrameLineNumber() );
+							if ( frame.getFrameLineNumber() != 0 )
+								label.append( frame.getFrameLineNumber() );
 						}
 					}
 				}
@@ -551,8 +549,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 				label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Symbol_not_available") ); //$NON-NLS-1$
 			return label.toString();
 		}
-		return ( stackFrame.getAdapter( IDummyStackFrame.class ) != null ) ? 
-				getDummyStackFrameLabel( stackFrame ) : stackFrame.getName();
+		return ( f.getAdapter( IDummyStackFrame.class ) != null ) ? 
+				getDummyStackFrameLabel( f ) : f.getName();
 	}
 
 	private String getDummyStackFrameLabel( IStackFrame stackFrame )

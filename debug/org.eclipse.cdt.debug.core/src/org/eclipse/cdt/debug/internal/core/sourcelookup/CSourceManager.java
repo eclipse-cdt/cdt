@@ -10,7 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
-import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -54,9 +54,8 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		if ( getCSourceLocator() != null ) {
 			return getCSourceLocator().getLineNumber( frame );
 		}
-		IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
-		if ( info != null ) {
-			return info.getFrameLineNumber();
+		if ( frame instanceof ICStackFrame ) {
+			return ((ICStackFrame)frame).getFrameLineNumber();
 		}
 		return 0;
 	}

@@ -50,6 +50,9 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 		Expression expression = null;
 		try {
 			Session session = (Session)getSession();
+			ICDITarget currentTarget = session.getCurrentTarget();
+			ICDIThread currentThread = currentTarget.getCurrentThread();
+			StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarCreate var = factory.createMIVarCreate(name);
@@ -58,7 +61,7 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
-			VariableObject varObj = new VariableObject(name, null, 0, 0);
+			VariableObject varObj = new VariableObject(name, currentFrame, 0, 0);
 			expression = new Expression(varObj, info.getMIVar());
 			addExpression(expression);
 		} catch (MIException e) {

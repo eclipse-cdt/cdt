@@ -114,10 +114,10 @@ public class DOMScanner extends BaseScanner {
          int textEnd, int endingLine, IMacro macro) {
       if (macro instanceof FunctionStyleMacro)
          locationMap.defineFunctionStyleMacro((FunctionStyleMacro) macro,
-               startingOffset, idstart, idend, textEnd);
+               resolveOffset( startingOffset ), resolveOffset( idstart ), resolveOffset( idend ), resolveOffset( textEnd) );
       else if (macro instanceof ObjectStyleMacro)
          locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
-               startingOffset, idstart, idend, textEnd);
+               resolveOffset( startingOffset ), resolveOffset( idstart ), resolveOffset( idend ), resolveOffset( textEnd ) );
 
    }
 

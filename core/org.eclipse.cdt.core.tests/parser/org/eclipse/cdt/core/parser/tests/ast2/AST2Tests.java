@@ -972,7 +972,9 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], fdef.getDeclarator().getName() );
 		
-		decls = tu.getDeclarations( ((IASTElaboratedTypeSpecifier)((IASTCastExpression)((IASTFieldReference)expStatement.getExpression()).getFieldOwner()).getTypeId().getDeclSpecifier()).getName().resolveBinding() ); 
+		IASTCastExpression castExpression = (IASTCastExpression) ((IASTUnaryExpression)((IASTFieldReference)expStatement.getExpression()).getFieldOwner()).getOperand();
+        IASTElaboratedTypeSpecifier elaboratedTypeSpecifier = ((IASTElaboratedTypeSpecifier)castExpression.getTypeId().getDeclSpecifier());
+        decls = tu.getDeclarations( elaboratedTypeSpecifier.getName().resolveBinding() ); 
 		assertEquals( decls.length, 1 );
 		assertEquals( decls[0], compType.getName() );
 

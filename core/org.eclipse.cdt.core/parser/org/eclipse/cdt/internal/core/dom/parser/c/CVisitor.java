@@ -504,6 +504,11 @@ public class CVisitor {
 				return ((IVariable)binding).getType();
 			}
 	    }
+	    else if( expression instanceof IASTUnaryExpression )
+	    {
+	       if( ((IASTUnaryExpression)expression).getOperator() == IASTUnaryExpression.op_bracketedPrimary )
+	           return getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+	    }
 	    return null;
 	}
 	/**

@@ -1346,6 +1346,11 @@ public class CPPVisitor {
 	                return fType.getReturnType();
 	        }
 	    }
+	    else if( expression instanceof IASTUnaryExpression )
+	    {
+	       if( ((IASTUnaryExpression)expression).getOperator() == IASTUnaryExpression.op_bracketedPrimary )
+	           return getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+	    }
 	    return null;
 	}
 	

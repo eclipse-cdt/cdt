@@ -712,6 +712,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          _Context nextContext = (_Context) subContexts.get(i);
          if (nextContext.context_directive_end < offset)
             bestContext = nextContext;
+         else if( nextContext.context_directive_start < offset && nextContext.context_ends > offset )
+            bestContext = nextContext;
          else
             break;
       }

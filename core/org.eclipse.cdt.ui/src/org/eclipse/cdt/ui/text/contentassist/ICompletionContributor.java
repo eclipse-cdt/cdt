@@ -10,6 +10,7 @@ package org.eclipse.cdt.ui.text.contentassist;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.jface.text.ITextViewer;
 
 public interface ICompletionContributor {
@@ -25,6 +26,7 @@ public interface ICompletionContributor {
 	 */
 	void contributeCompletionProposals(ITextViewer viewer,
 									   int offset,
+									   IWorkingCopy workingCopy,
 									   ASTCompletionNode completionNode,
 									   List proposals);
 	

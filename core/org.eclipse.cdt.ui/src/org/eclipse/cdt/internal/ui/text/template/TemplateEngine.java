@@ -9,13 +9,17 @@ package org.eclipse.cdt.internal.ui.text.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -33,7 +37,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-public class TemplateEngine {
+public class TemplateEngine implements ICompletionContributor {
 
 	private TemplateContextType fContextType;	
 	private ArrayList fProposals= new ArrayList();
@@ -78,6 +82,17 @@ public class TemplateEngine {
 		fContextType= contextType;
 	}
 
+	/**
+	 * This is the default constructor used by the new content assist extension point
+	 */
+	public TemplateEngine() {
+		fContextType = CUIPlugin.getDefault().getTemplateContextRegistry().getContextType(CContextType.CCONTEXT_TYPE);			
+		if (fContextType == null) {
+			fContextType= new CContextType();
+			CUIPlugin.getDefault().getTemplateContextRegistry().addContextType(fContextType);
+		}
+	}
+	
 	/**
 	 * Empties the collector.
 	 * 
@@ -132,5 +147,16 @@ public class TemplateEngine {
 				fProposals.add(new CTemplateProposal(templates[i], context, region, CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE)));
 	}
 	
+	public void contributeCompletionProposals(ITextViewer viewer,
+											  int offset,
+											  IWorkingCopy workingCopy,
+											  ASTCompletionNode completionNode,
+											  List proposals)
+	{
+		// TODO We should use the completion node to determine the proper context for the templates
+		// For now we just keep the current behavior
+		complete(viewer, offset, workingCopy);
+		proposals.addAll(fProposals);
+	}
 }
 

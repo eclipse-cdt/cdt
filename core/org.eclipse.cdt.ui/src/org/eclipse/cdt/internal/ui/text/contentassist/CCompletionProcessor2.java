@@ -78,7 +78,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					if (!(contribObject instanceof ICompletionContributor))
 						continue;
 					ICompletionContributor contributor = (ICompletionContributor)contribObject;
-					contributor.contributeCompletionProposals(viewer, offset, completionNode, proposals);
+					contributor.contributeCompletionProposals(viewer, offset, workingCopy, completionNode, proposals);
 				}
 			}
 			

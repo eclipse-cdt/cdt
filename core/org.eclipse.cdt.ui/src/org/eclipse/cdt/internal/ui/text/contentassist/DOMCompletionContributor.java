@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -36,6 +37,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 
 	public void contributeCompletionProposals(ITextViewer viewer,
 											  int offset,
+											  IWorkingCopy workingCopy,
 											  ASTCompletionNode completionNode,
 											  List proposals) {
 		if (completionNode != null) {

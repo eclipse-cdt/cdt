@@ -1354,6 +1354,10 @@
             class="org.eclipse.cdt.internal.ui.text.contentassist.DOMCompletionContributor"
             id="DOM"
             priority="1"/>
+      <contributor
+            class="org.eclipse.cdt.internal.ui.text.template.TemplateEngine"
+            id="CodeTemplates"
+            priority="2"/>
    	</extension>
 
 </plugin>

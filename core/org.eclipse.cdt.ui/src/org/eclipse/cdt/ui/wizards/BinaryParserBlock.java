@@ -49,14 +49,16 @@ public class BinaryParserBlock implements IWizardTab {
 				radios[i] = new String[] { exts[i].getLabel(), exts[i].getUniqueIdentifier()};
 			}
 		}
-		try {
-			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(p);
-			ICExtensionReference[] ref = desc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-			if (ref.length > 0)
-				id = ref[0].getID();
+		if (project != null) {
+			try {
+				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(p);
+				ICExtensionReference[] ref = desc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				if (ref.length > 0)
+					id = ref[0].getID();
 
-		} catch (CoreException e) {
-			//e.printStackTrace();
+			} catch (CoreException e) {
+				//e.printStackTrace();
+			}
 		}
 		if (id == null) {
 			id = CCorePlugin.getDefault().getPluginPreferences().getDefaultString(CCorePlugin.PREF_BINARY_PARSER);

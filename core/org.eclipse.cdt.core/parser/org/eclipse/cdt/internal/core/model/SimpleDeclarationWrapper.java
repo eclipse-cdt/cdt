@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -228,16 +229,12 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		this.functionDefinition = functionDefinition;
 	}
 
-	public static final int v_public = 0; 
-	public static final int v_protected = 1; 
-	public static final int v_private = 2; 
-
-	private int currentVisibility; 
+	private AccessSpecifier currentVisibility = new AccessSpecifier(); 
 	/**
 	 * @return int
 	 */
 	public int getCurrentVisibility() {
-		return currentVisibility;
+		return currentVisibility.getAccess();
 	}
 
 	/**
@@ -245,7 +242,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * @param currentVisibility The currentVisibility to set
 	 */
 	public void setCurrentVisibility(int currentVisibility) {
-		this.currentVisibility = currentVisibility;
+		this.currentVisibility.setAccess( currentVisibility );
 	}
 	
 	/**

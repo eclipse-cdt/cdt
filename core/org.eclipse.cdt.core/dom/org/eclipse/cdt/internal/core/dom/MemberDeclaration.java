@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
+
 /**
  * @author dschaefe
  *
@@ -9,17 +11,14 @@ package org.eclipse.cdt.internal.core.dom;
  * Window>Preferences>Java>Code Generation.
  */
 public class MemberDeclaration {
-	public static final int t_private = 0;
-	public static final int t_protected = 1;
-	public static final int t_public = 2;
 	
 	public MemberDeclaration(int access, Declaration declaration) {
-		this.access = access;
+		this.access.setAccess( access );
 		this.declaration = declaration;
 	}
 	
-	private int access;
-	public int getAccess() { return access; }
+	private AccessSpecifier access = new AccessSpecifier();
+	public int getAccess() { return access.getAccess(); }
 	
 	private Declaration declaration;
 	public Declaration getDeclaration() { return declaration; }

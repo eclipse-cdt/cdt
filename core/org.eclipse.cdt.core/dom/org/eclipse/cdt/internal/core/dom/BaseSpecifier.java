@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
+import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
@@ -17,11 +19,12 @@ public class BaseSpecifier {
 		classSpecifier.addBaseSpecifier(this);
 		
 		switch (classSpecifier.getClassKey()) {
-			case ClassSpecifier.t_class:
-				access = t_private;
+			case ClassKey.t_class:
+				access.setAccess(AccessSpecifier.v_private);
 				break;
-			case ClassSpecifier.t_struct:
-				access = t_public;
+			case ClassKey.t_struct:
+			default:
+				access.setAccess(AccessSpecifier.v_public);
 				break;
 		}
 	}
@@ -33,12 +36,10 @@ public class BaseSpecifier {
 	public void setVirtual(boolean isVirtual) { this.isVirtual = isVirtual; }
 	public boolean isVirtual() { return isVirtual; }
 	
-	public static final int t_private = 0;
-	public static final int t_protected = 1;
-	public static final int t_public = 2;
-	private int access;
-	public void setAccess(int access) { this.access = access; }
-	public int getAccess() { return access; }
+
+	private AccessSpecifier access = new AccessSpecifier();
+	public void setAccess(int access) { this.access.setAccess(access); }
+	public int getAccess() { return access.getAccess(); }
 	
 	private Name name;
 	public void setName(Name name) { this.name = name; }

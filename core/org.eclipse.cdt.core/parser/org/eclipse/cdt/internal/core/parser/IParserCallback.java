@@ -103,4 +103,17 @@ public interface IParserCallback {
 	public void		enumDefinitionId( Object enumDefn );
 	public void		enumDefinitionEnd( Object enumDefn );
 	
+	public void		asmDefinition( Object container, String assemblyCode );
+	
+	public Object	constructorChainBegin( Object declarator );
+	public void		constructorChainAbort( Object ctor );
+	public void 	constructorChainEnd( Object ctor );
+	
+	public Object	constructorChainElementBegin( Object ctor );
+	public void		constructorChainElementId( Object element );
+	public void		constructorChainElementEnd( Object element );
+	
+	public Object	constructorChainElementExpressionListElementBegin( Object element ); 
+	public void		constructorChainElementExpressionListElementEnd( Object expression );
+	
 }

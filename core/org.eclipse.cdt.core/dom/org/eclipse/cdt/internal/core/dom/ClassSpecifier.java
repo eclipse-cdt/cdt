@@ -1,28 +1,23 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
+import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 public class ClassSpecifier extends TypeSpecifier implements IScope {
 
-	public static final int t_class = 0;
-	public static final int t_struct = 1;
-	public static final int t_union = 2;
+	AccessSpecifier access = new AccessSpecifier();
+	ClassKey key = new ClassKey();  
 
-	public static final int v_public = 0; 
-	public static final int v_protected = 1; 
-	public static final int v_private = 3; 
-
-	private int currentVisibility;
-
-	private final int classKey;
-	public int getClassKey() { return classKey; }
+	public int getClassKey() { return key.getClassKey(); }
 
 	public ClassSpecifier(int classKey, SimpleDeclaration declaration) {
 		super(declaration);
-		this.classKey = classKey;
+		this.key.setClassKey(classKey);
 	}
 	
 	private Name name;
@@ -33,7 +28,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope {
 	public void addBaseSpecifier(BaseSpecifier baseSpecifier) {
 		baseSpecifiers.add(baseSpecifier);
 	}
-	public List getBaseSpecifiers() { return baseSpecifiers; }
+	public List getBaseSpecifiers() { return Collections.unmodifiableList(baseSpecifiers); }
 	
 	private List declarations = new LinkedList();
 	
@@ -42,13 +37,13 @@ public class ClassSpecifier extends TypeSpecifier implements IScope {
 	}
 
 	public List getDeclarations() {
-		return declarations;
+		return Collections.unmodifiableList( declarations );
 	}
 	/**
 	 * @return int
 	 */
 	public int getCurrentVisibility() {
-		return currentVisibility;
+		return access.getAccess();
 	}
 
 	/**
@@ -56,7 +51,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope {
 	 * @param currentVisiblity The currentVisiblity to set
 	 */
 	public void setCurrentVisibility(int currentVisiblity) {
-		this.currentVisibility = currentVisiblity;
+		access.setAccess(currentVisiblity);
 	}
 
 }

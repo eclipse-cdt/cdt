@@ -762,7 +762,7 @@ public class ParserSymbolTable {
 				
 				//HashSet.add returns false if wrapper.parent is already in the set
 				//this means we have circular inheritance
-				if( data.inheritanceChain.add( wrapper.parent ) ){
+				if( ! data.inheritanceChain.contains( wrapper.parent ) ){
 				
 					//is this name define in this scope?
 					temp =  LookupInContained( data, wrapper.parent );
@@ -771,7 +771,7 @@ public class ParserSymbolTable {
 						temp = LookupInParents( data, wrapper.parent );
 					}
 					
-					data.inheritanceChain.remove( wrapper.parent );
+					//data.inheritanceChain.remove( wrapper.parent );
 					
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
@@ -799,7 +799,7 @@ public class ParserSymbolTable {
 				temp = null;	//reset temp for next iteration
 			}
 		}
-	
+		data.inheritanceChain.remove( lookIn);
 		return decl;	
 	}
 	

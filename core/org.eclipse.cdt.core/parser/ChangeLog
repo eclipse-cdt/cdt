@@ -1,3 +1,12 @@
+2003-03-28 John Camelon
+	Added AccessSpecifier and ClassKind to parser.util package and refactored callbacks. 
+	Better encapsulated ExceptionSpecification in the DOM. 
+	Updated DOM structures to return unmodifiable collections.
+	Added callback support for asmdefinitions.  
+	Added callback support for constructor initializer chains.
+	Fixed bug 35781 and updated parser to catch all exceptions from callbacks to ensure best-effort parsing. 
+	Removed Main.java from Parser package.
+
 2003-03-26 Andrew Niefer
 	Moved type information and ParameterInfo from Declaration into util.TypeInfo
 	Initial implementation of standard conversion sequences for function resolution

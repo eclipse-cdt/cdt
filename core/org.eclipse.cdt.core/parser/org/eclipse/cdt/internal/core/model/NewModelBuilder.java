@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -39,26 +40,30 @@ public class NewModelBuilder implements IParserCallback {
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, String)
 	 */
 	public Object classSpecifierBegin(Object container, Token classKey) {
-		
-		SimpleDeclarationWrapper c = (SimpleDeclarationWrapper)container; 
-		
-		int kind;
-		switch (classKey.getType()) {
-			case Token.t_class:
-				kind = ICElement.C_CLASS;
-				break;
-			case Token.t_struct:
-				kind = ICElement.C_STRUCT;
-				break;
-			default:
-				kind = ICElement.C_UNION;
+		if( container instanceof SimpleDeclarationWrapper )
+		{
+			SimpleDeclarationWrapper c = (SimpleDeclarationWrapper)container; 
+				
+			int kind;
+			switch (classKey.getType()) {
+				case Token.t_class:
+					kind = ICElement.C_CLASS;
+					break;
+				case Token.t_struct:
+					kind = ICElement.C_STRUCT;
+					break;
+				default:
+					kind = ICElement.C_UNION;
+			}
+			
+			SimpleDeclarationWrapper wrapper = new SimpleDeclarationWrapper();
+			wrapper.setKind( kind );
+			wrapper.setParent( c.getParent() );
+			
+			return wrapper;
 		}
-		
-		SimpleDeclarationWrapper wrapper = new SimpleDeclarationWrapper();
-		wrapper.setKind( kind );
-		wrapper.setParent( c.getParent() );
-		
-		return wrapper;
+		else
+			return null;
 	}
 
 	/**
@@ -66,8 +71,11 @@ public class NewModelBuilder implements IParserCallback {
 	 */
 	public void classSpecifierName(Object classSpecifier) 
 	{
-		SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
-		wrapper.setName( currName );
+		if( classSpecifier instanceof SimpleDeclarationWrapper )
+		{
+			SimpleDeclarationWrapper wrapper = (SimpleDeclarationWrapper)classSpecifier;
+			wrapper.setName( currName );
+		}
 	}
 
 	/**
@@ -376,13 +384,13 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		switch( visibility.getType() )
 		{
 			case Token.t_public:
-				spec.setCurrentVisibility( SimpleDeclarationWrapper.v_public );
+				spec.setCurrentVisibility( AccessSpecifier.v_public );
 				break;
 			case Token.t_protected:
-				spec.setCurrentVisibility( SimpleDeclarationWrapper.v_protected );
+				spec.setCurrentVisibility( AccessSpecifier.v_protected );
 				break;
 			case Token.t_private:
-				spec.setCurrentVisibility( SimpleDeclarationWrapper.v_private );
+				spec.setCurrentVisibility( AccessSpecifier.v_private );
 				break;
 		}
 	}
@@ -471,48 +479,42 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
 	public Object namespaceDefinitionBegin(Object container) {
-		// TODO Auto-generated method stub
-		return null;
+		// until Namespaces are made part of the code model, just return the container object
+		return container; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
 	 */
 	public void namespaceDefinitionId(Object namespace) {
-		// TODO Auto-generated method stub
-		
+		// until namespaceDefinitionBegin is updated to do more than return its container, do nothing
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationAbort(java.lang.Object)
 	 */
 	public void namespaceDefinitionAbort(Object namespace) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
 	public void namespaceDefinitionEnd(Object namespace) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationBegin(java.lang.Object, java.lang.String)
 	 */
 	public Object linkageSpecificationBegin(Object container, String literal) {
-		// TODO Auto-generated method stub
-		return null;
+		// until linkageSpecs are part of the code model (do they need to be?) just return the container object
+		return container; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationEnd(java.lang.Object)
 	 */
 	public void linkageSpecificationEnd(Object linkageSpec) {
-		// TODO Auto-generated method stub
-		
+		// do not implement anything unless linkageSpecificationBegin does more than just return its container
 	}
 
 	/* (non-Javadoc)
@@ -631,6 +633,78 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
 	public void enumDefinitionEnd(Object enumDefn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#asmDefinition(java.lang.String)
+	 */
+	public void asmDefinition(Object container, String assemblyCode) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainBegin(java.lang.Object)
+	 */
+	public Object constructorChainBegin(Object declarator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainAbort(java.lang.Object)
+	 */
+	public void constructorChainAbort(Object ctor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainEnd(java.lang.Object)
+	 */
+	public void constructorChainEnd(Object ctor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementBegin(java.lang.Object)
+	 */
+	public Object constructorChainElementBegin(Object ctor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementEnd(java.lang.Object)
+	 */
+	public void constructorChainElementEnd(Object element) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainId(java.lang.Object)
+	 */
+	public void constructorChainElementId(Object ctor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementExpressionListElementBegin(java.lang.Object)
+	 */
+	public Object constructorChainElementExpressionListElementBegin(Object element) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementExpressionListElementEnd(java.lang.Object)
+	 */
+	public void constructorChainElementExpressionListElementEnd(Object expression) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Created on Mar 25, 2003
+ * Created on Mar 26, 2003
  *
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -22,41 +22,36 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  * @author jcamelon
  *
  */
-public class EnumerationSpecifier extends TypeSpecifier {
-	
-	public EnumerationSpecifier(SimpleDeclaration declaration) {
-		super(declaration);
-	}
-	
-	private Name name = null;
-	private List enumeratorDefinitions = new LinkedList();
-	
-	public void addEnumeratorDefinition( EnumeratorDefinition def )
-	{
-		enumeratorDefinitions.add( def );
-	}
-	
+public class ExceptionSpecifier {
+
+	private List typeNames = new LinkedList();
+	private boolean throwsException = false;
 	
 	/**
 	 * @return List
 	 */
-	public List getEnumeratorDefinitions() {
-		return Collections.unmodifiableList( enumeratorDefinitions );
+	public List getTypeNames() {
+		return Collections.unmodifiableList( typeNames );
+	}
+
+	public void addTypeName( Name name )
+	{
+		typeNames.add( name );
 	}
 
 	/**
-	 * @return Name
+	 * Sets the throwsException.
+	 * @param throwsException The throwsException to set
 	 */
-	public Name getName() {
-		return name;
+	public void setThrowsException(boolean throwsException) {
+		this.throwsException = throwsException;
 	}
 
 	/**
-	 * Sets the name.
-	 * @param name The name to set
+	 * @return boolean
 	 */
-	public void setName(Name name) {
-		this.name = name;
+	public boolean throwsException() {
+		return throwsException;
 	}
 
 }

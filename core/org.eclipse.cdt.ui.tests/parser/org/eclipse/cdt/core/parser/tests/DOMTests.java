@@ -7,13 +7,18 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.internal.core.dom.ASMDefinition;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
+import org.eclipse.cdt.internal.core.dom.ConstructorChain;
+import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
+import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.EnumeratorDefinition;
+import org.eclipse.cdt.internal.core.dom.ExceptionSpecifier;
 import org.eclipse.cdt.internal.core.dom.Expression;
 import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
@@ -27,6 +32,7 @@ import org.eclipse.cdt.internal.core.dom.UsingDirective;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -402,17 +408,17 @@ public class DOMTests extends TestCase {
 		List baseClasses = classSpecifier.getBaseSpecifiers();
 		assertEquals( 3, baseClasses.size() );
 		BaseSpecifier bs = (BaseSpecifier)baseClasses.get( 0 ); 
-		assertEquals( bs.getAccess(), BaseSpecifier.t_public );
+		assertEquals( bs.getAccess(), AccessSpecifier.v_public );
 		assertEquals( bs.isVirtual(), false ); 
 		assertEquals( bs.getName().toString(), "B" ); 
 		
 		bs = (BaseSpecifier)baseClasses.get( 1 );
-		assertEquals( bs.getAccess(), BaseSpecifier.t_private );
+		assertEquals( bs.getAccess(), AccessSpecifier.v_private );
 		assertEquals( bs.isVirtual(), false ); 
 		assertEquals( bs.getName().toString(), "C" );
 		 
 		bs = (BaseSpecifier)baseClasses.get( 2 );
-		assertEquals( bs.getAccess(), BaseSpecifier.t_protected );
+		assertEquals( bs.getAccess(), AccessSpecifier.v_protected );
 		assertEquals( bs.isVirtual(), true ); 
 		assertEquals( bs.getName().toString(), "D" ); 
 		
@@ -585,13 +591,14 @@ public class DOMTests extends TestCase {
 		assertEquals( declarator.getName().toString(), "foo");
 		assertTrue( declarator.isConst() ); 
 		assertFalse( declarator.isVolatile() );
-		List exceptions = declarator.getExceptionSpecifier(); 
-		assertEquals( exceptions.size(), 3 );
-		Name n = (Name)exceptions.get(0); 
+		ExceptionSpecifier exceptions = declarator.getExceptionSpecifier(); 
+		List typenames = exceptions.getTypeNames();
+		assertEquals( typenames.size(), 3 );
+		Name n = (Name)typenames.get(0); 
 		assertEquals( n.toString(), "yay");
-		n = (Name)exceptions.get(1);
+		n = (Name)typenames.get(1);
 		assertEquals( n.toString(), "nay");
-		n = (Name)exceptions.get(2);
+		n = (Name)typenames.get(2);
 		assertEquals( n.toString(), "we::dont::care");
 	}
 
@@ -687,6 +694,56 @@ public class DOMTests extends TestCase {
 		assertEquals( po5.getType(), PointerOperator.t_pointer );
 	}
 	
+	public void testASMDefinition() throws Exception
+	{
+		TranslationUnit tu = parse( "asm( \"mov ep1 ds2\");" );
+		assertEquals( tu.getDeclarations().size(), 1 );
+		ASMDefinition asm = (ASMDefinition)tu.getDeclarations().get(0);
+		assertEquals( asm.getAssemblyCode(), "mov ep1 ds2" );
+	}
+	
+	public void testConstructorChain() throws Exception
+	{
+		TranslationUnit tu = parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}" );
+		List tuDeclarations = tu.getDeclarations(); 
+		assertEquals( tuDeclarations.size(), 1 );
+		SimpleDeclaration decl1 = (SimpleDeclaration)tuDeclarations.get(0);
+		List declarators1 = decl1.getDeclarators();
+		assertEquals( declarators1.size(), 1 );
+		Declarator declarator1 = (Declarator)declarators1.get(0);
+		assertEquals( declarator1.getName().toString(), "TrafficLight_Actor::TrafficLight_Actor");
+		ConstructorChain chain1 = declarator1.getCtorChain(); 
+		List chainElements1 = chain1.getChainElements();
+		assertEquals( chainElements1.size(), 2 );
+		ConstructorChainElement element1_1 = (ConstructorChainElement) chainElements1.get(0);
+		assertEquals( element1_1.getName().toString(), "RTActor");
+		List expressions1_1 = element1_1.getExpressionList();
+		assertEquals( expressions1_1.size(), 2 );
+		ConstructorChainElementExpression expression1_1_1 = (ConstructorChainElementExpression)expressions1_1.get(0);
+		assertEquals( expression1_1_1.getExpression().tokens().size(), 1 ); 
+		Token t1_1_1  = (Token)expression1_1_1.getExpression().tokens().get(0);
+		ConstructorChainElementExpression expression1_1_2 = (ConstructorChainElementExpression)expressions1_1.get(1);
+		assertEquals( expression1_1_2.getExpression().tokens().size(), 1 ); 
+		Token t1_1_2 = (Token)expression1_1_2.getExpression().tokens().get(0);
+		
+		assertEquals( t1_1_1.getType(), Token.tIDENTIFIER );
+		assertEquals( t1_1_1.getImage(), "rtg_rts");
+		assertEquals( t1_1_2.getType(), Token.tIDENTIFIER );
+		assertEquals( t1_1_2.getImage(), "rtg_ref");
+		
+		ConstructorChainElement element1_2 = (ConstructorChainElement) chainElements1.get(1);
+		assertEquals( element1_2.getName().toString(), "myId" );
+		List expressions1_2 = element1_2.getExpressionList();
+		assertEquals( expressions1_2.size(), 1 );
+		ConstructorChainElementExpression expression = (ConstructorChainElementExpression) expressions1_2.get(0);
+		assertEquals( expression.getExpression().tokens().size(), 1 );
+		Token t = (Token)expression.getExpression().tokens().get(0);
+		assertEquals( t.getImage(), "0");
+		assertEquals( t.getType(), Token.tINTEGER );
+		
+		
+		
+	}
 
 //	public void testErrors()
 //	{

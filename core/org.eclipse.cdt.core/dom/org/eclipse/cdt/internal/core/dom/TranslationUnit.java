@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,6 @@ public class TranslationUnit implements IScope {
 	}
 
 	public List getDeclarations() {
-		return declarations;
+		return Collections.unmodifiableList( declarations );
 	}
 }

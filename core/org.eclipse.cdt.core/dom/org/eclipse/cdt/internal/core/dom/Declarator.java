@@ -1,6 +1,7 @@
 package org.eclipse.cdt.internal.core.dom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
@@ -80,43 +81,26 @@ public class Declarator implements IExpressionOwner {
 		initialExpression = exp;
 	}
 	
-	List pointerOperators = null;
-	List arrayQualifiers = null; 
-	
-	
+	List pointerOperators = new ArrayList();
+	List arrayQualifiers = new ArrayList(); 
 	
 	/**
 	 * @return List
 	 */
 	public List getPointerOperators() {
-		return pointerOperators;
+		return Collections.unmodifiableList(pointerOperators);
 	}
 
 	public void addPointerOperator( PointerOperator po )
 	{
-		if( pointerOperators == null )
-		{
-			pointerOperators = new ArrayList(); 
-		}
 		pointerOperators.add(po);
 	}
 	
-	List exceptionSpecifier = null; 
+	ExceptionSpecifier exceptionSpecifier = new ExceptionSpecifier(); 
 	
-	public List getExceptionSpecifier()
+	public ExceptionSpecifier getExceptionSpecifier()
 	{
 		return exceptionSpecifier; 
-	}
-
-	public void throwsExceptions()
-	{
-		if( exceptionSpecifier == null )
-			exceptionSpecifier = new ArrayList(); 
-	}
-	
-	public void addExceptionSpecifierTypeName( Name name )
-	{
-		exceptionSpecifier.add( name ); 
 	}
 	
 	boolean isConst = false; 
@@ -155,16 +139,29 @@ public class Declarator implements IExpressionOwner {
 	 * @return List
 	 */
 	public List getArrayQualifiers() {
-		return arrayQualifiers;
+		return Collections.unmodifiableList( arrayQualifiers );
 	}
 
 	public void addArrayQualifier( ArrayQualifier q )
 	{
-		if( arrayQualifiers == null )
-		{
-			arrayQualifiers = new ArrayList(); 
-		}
 		arrayQualifiers.add(q);
 	}
 	
+	private ConstructorChain ctorChain = null;
+	
+	/**
+	 * @return ConstructorChain
+	 */
+	public ConstructorChain getCtorChain() {
+		return ctorChain;
+	}
+
+	/**
+	 * Sets the ctorChain.
+	 * @param ctorChain The ctorChain to set
+	 */
+	public void setCtorChain(ConstructorChain ctorChain) {
+		this.ctorChain = ctorChain;
+	}
+
 }

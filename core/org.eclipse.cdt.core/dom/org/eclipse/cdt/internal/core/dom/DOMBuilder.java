@@ -3,6 +3,8 @@ package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
+import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
@@ -38,19 +40,19 @@ public class DOMBuilder implements IParserCallback
 	public Object classSpecifierBegin(Object container, Token classKey) {
 		SimpleDeclaration decl = (SimpleDeclaration)container;
 		
-		int kind = ClassSpecifier.t_struct;
-		int visibility = ClassSpecifier.v_public; 
+		int kind = ClassKey.t_struct;
+		int visibility = AccessSpecifier.v_public; 
 		
 		switch (classKey.getType()) {
 			case Token.t_class:
-				kind = ClassSpecifier.t_class;
-				visibility = ClassSpecifier.v_private; 
+				kind = ClassKey.t_class;
+				visibility = AccessSpecifier.v_private; 
 				break;
 			case Token.t_struct:
-				kind = ClassSpecifier.t_struct;
+				kind = ClassKey.t_struct;
 				break;
 			case Token.t_union:
-				kind = ClassSpecifier.t_union;
+				kind = ClassKey.t_union;
 				break;			
 		}
 		
@@ -225,17 +227,17 @@ public class DOMBuilder implements IParserCallback
 
 	public void baseSpecifierVisibility( Object baseSpecifier, Token visibility )
 	{
-		int access = BaseSpecifier.t_public;  
+		int access = AccessSpecifier.v_public;  
 		switch( visibility.type )
 		{
 		case Token.t_public:
-			access = BaseSpecifier.t_public; 
+			access = AccessSpecifier.v_public; 
 			break; 
 		case Token.t_protected:
-			access = BaseSpecifier.t_protected;		 
+			access = AccessSpecifier.v_protected;		 
 			break;
 		case Token.t_private:
-			access = BaseSpecifier.t_private;
+			access = AccessSpecifier.v_private;
 			break; 		
 		default: 
 			break;
@@ -305,17 +307,17 @@ public class DOMBuilder implements IParserCallback
 	 */
 	public Object elaboratedTypeSpecifierBegin(Object container, Token classKey) {
 		SimpleDeclaration declaration = (SimpleDeclaration)container;
-		int kind = ClassSpecifier.t_struct;
+		int kind = ClassKey.t_struct;
 		
 		switch (classKey.getType()) {
 			case Token.t_class:
-				kind = ClassSpecifier.t_class;
+				kind = ClassKey.t_class;
 				break;
 			case Token.t_struct:
-				kind = ClassSpecifier.t_struct;
+				kind = ClassKey.t_struct;
 				break;
 			case Token.t_union:
-				kind = ClassSpecifier.t_union;
+				kind = ClassKey.t_union;
 				break;			
 		}
 
@@ -357,13 +359,13 @@ public class DOMBuilder implements IParserCallback
 		switch( visibility.getType() )
 		{
 			case Token.t_public:
-				spec.setCurrentVisibility( ClassSpecifier.v_public );
+				spec.setCurrentVisibility( AccessSpecifier.v_public );
 				break;
 			case Token.t_protected:
-				spec.setCurrentVisibility( ClassSpecifier.v_protected );
+				spec.setCurrentVisibility( AccessSpecifier.v_protected );
 				break;
 			case Token.t_private:
-				spec.setCurrentVisibility( ClassSpecifier.v_private );
+				spec.setCurrentVisibility( AccessSpecifier.v_private );
 				break;
 		}
 	}
@@ -472,7 +474,7 @@ public class DOMBuilder implements IParserCallback
 	 */
 	public void declaratorThrowExceptionName(Object declarator ) {
 		Declarator decl = (Declarator)declarator; 
-		decl.addExceptionSpecifierTypeName( currName ); 
+		decl.getExceptionSpecifier().addTypeName( currName ); 
 	}
 
 	/* (non-Javadoc)
@@ -480,7 +482,7 @@ public class DOMBuilder implements IParserCallback
 	 */
 	public void declaratorThrowsException(Object declarator) {
 		Declarator decl = (Declarator)declarator; 
-		decl.throwsExceptions(); 
+		decl.getExceptionSpecifier().setThrowsException(true); 
 	}
 
 	/* (non-Javadoc)
@@ -649,5 +651,76 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
 	public void enumDefinitionEnd(Object enumDefn) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#asmDefinition(java.lang.String)
+	 */
+	public void asmDefinition(Object container, String assemblyCode) {
+		IScope scope = (IScope)container;
+		ASMDefinition definition = new ASMDefinition( assemblyCode );
+		scope.addDeclaration( definition );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainBegin(java.lang.Object)
+	 */
+	public Object constructorChainBegin(Object declarator) {
+		Declarator d = (Declarator)declarator; 
+		ConstructorChain chain = new ConstructorChain(d); 
+		return chain;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainAbort(java.lang.Object)
+	 */
+	public void constructorChainAbort(Object ctor) {
+		ctor = null; 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainEnd(java.lang.Object)
+	 */
+	public void constructorChainEnd(Object ctor) {
+		ConstructorChain chain = (ConstructorChain)ctor; 
+		chain.getOwnerDeclarator().setCtorChain(chain);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementBegin(java.lang.Object)
+	 */
+	public Object constructorChainElementBegin(Object ctor) {
+		return new ConstructorChainElement( (ConstructorChain)ctor );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementEnd(java.lang.Object)
+	 */
+	public void constructorChainElementEnd(Object element) {
+		ConstructorChainElement ele = (ConstructorChainElement)element;
+		ele.getOwnerChain().addChainElement( ele );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainId(java.lang.Object)
+	 */
+	public void constructorChainElementId(Object element) {
+		ConstructorChainElement ele = (ConstructorChainElement)element;
+		ele.setName(currName);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementExpressionListElementBegin(java.lang.Object)
+	 */
+	public Object constructorChainElementExpressionListElementBegin(Object element) {
+		return new ConstructorChainElementExpression( (ConstructorChainElement)element );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementExpressionListElementEnd(java.lang.Object)
+	 */
+	public void constructorChainElementExpressionListElementEnd(Object expression) {
+		ConstructorChainElementExpression exp = (ConstructorChainElementExpression)expression;
+		exp.getOwnerElement().addExpression( exp );
 	}
 }

@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class ParameterDeclarationClause implements IScope {
 	 * @see org.eclipse.cdt.core.dom.IScope#getDeclarations()
 	 */
 	public List getDeclarations() {
-		return declarations;
+		return Collections.unmodifiableList( declarations );
 	}
 
 	private List declarations = new LinkedList();

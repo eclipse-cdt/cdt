@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.Cont
 	}
 
 	public List getDeclarators() {
-		return declarators;
+		return Collections.unmodifiableList( declarators );
 	}
 
 	/**

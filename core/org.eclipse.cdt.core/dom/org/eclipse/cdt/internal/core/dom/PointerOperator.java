@@ -21,7 +21,6 @@ public class PointerOperator {
 	public final static int t_undefined = 0;
 	public final static int t_pointer = 1; 
 	public final static int t_reference = 2; 
-	
 	private int type = t_undefined; 
 	
 	/**

@@ -1,38 +1,44 @@
 /**********************************************************************
+ * Created on Mar 26, 2003
+ *
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
- * Contributors:	John Camelon 
+ * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
-
-package org.eclipse.cdt.internal.core.dom;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.eclipse.cdt.internal.core.parser.Token;
+package org.eclipse.cdt.internal.core.parser.util;
 
 /**
  * @author jcamelon
  *
  */
-public class Expression {
+public class ClassKey {
 
-	private List tokens = new ArrayList(); 
+	public static final int t_class = 0;
+	public static final int t_struct = 1;
+	public static final int t_union = 2;
+	public static final int t_enum = 3;
 	
-	public void add( Token t )
-	{
-		tokens.add( t ); 
+	private int classKey = t_class;
+	
+	
+	/**
+	 * @return int
+	 */
+	public int getClassKey() {
+		return classKey;
 	}
 
-	public List tokens()
-	{
-		return Collections.unmodifiableList( tokens );	
+	/**
+	 * Sets the classKey.
+	 * @param classKey The classKey to set
+	 */
+	public void setClassKey(int classKey) {
+		this.classKey = classKey;
 	}
 
 }

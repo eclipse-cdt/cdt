@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
+import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
@@ -13,14 +14,13 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  */
 public class ElaboratedTypeSpecifier extends TypeSpecifier {
 
-	public static final int t_class = 0;
-	public static final int t_struct = 1;
-	public static final int t_union = 2;
-	public static final int t_enum = 3;
-
-	private final int classKey;
-	public int getClassKey() { return classKey; }
-
+	ClassKey classKey = new ClassKey(); 
+	public int getClassKey() { return classKey.getClassKey(); }
+	
+	public void setClassKey( int classKey ) 
+	{ 
+		this.classKey.setClassKey( classKey ); 
+	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.dom.TypeSpecifier#getDeclaration()
@@ -38,7 +38,7 @@ public class ElaboratedTypeSpecifier extends TypeSpecifier {
 	
 	public ElaboratedTypeSpecifier(int classKey, SimpleDeclaration declaration) {
 		super(declaration);
-		this.classKey = classKey;
+		this.classKey.setClassKey( classKey );
 	}
 
 	private Name name;

@@ -12,6 +12,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class LinkageSpecification extends Declaration implements IScope {
 	 * @see org.eclipse.cdt.internal.core.dom.IScope#getDeclarations()
 	 */
 	public List getDeclarations() {
-		return declarations;
+		return Collections.unmodifiableList( declarations );
 	}
 
 	/**

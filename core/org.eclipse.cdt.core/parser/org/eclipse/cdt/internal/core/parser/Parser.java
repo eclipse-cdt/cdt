@@ -75,7 +75,8 @@ c, quick);
 	 * 
 	 */
 	protected void translationUnit() throws Backtrack {
-		Object translationUnit = callback.translationUnitBegin();
+		Object translationUnit = null;
+		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}
 		Token lastBacktrack = null;
 		Token lastToken;
 		while (true) {
@@ -101,7 +102,7 @@ c, quick);
 				}
 			}
 		}
-		callback.translationUnitEnd(translationUnit);
+		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
 	}
 
 	protected void consumeToNextSemicolon() throws EndOfFile {
@@ -132,7 +133,8 @@ c, quick);
 		
 		if( LT(1) == Token.t_namespace )
 		{
-			Object directive = callback.usingDirectiveBegin( container );
+			Object directive = null; 
+			try{ directive = callback.usingDirectiveBegin( container );} catch( Exception e ) {}
 			// using-directive
 			consume( Token.t_namespace );
 			
@@ -140,29 +142,30 @@ c, quick);
 			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
 			{
 				name();
-				callback.usingDirectiveNamespaceId( directive );
+				try{ callback.usingDirectiveNamespaceId( directive );} catch( Exception e ) {}
 			}
 			else
 			{
-				callback.usingDirectiveAbort(directive);
+				try{ callback.usingDirectiveAbort(directive);} catch( Exception e ) {}
 				throw backtrack;
 			}
 			
 			if( LT(1) == Token.tSEMI )
 			{
 				consume( Token.tSEMI );
-				callback.usingDirectiveEnd( directive );
+				try{ callback.usingDirectiveEnd( directive );} catch( Exception e ) {}
 				return;
 			}
 			else
 			{
-				callback.usingDirectiveAbort(directive);
+				try{ callback.usingDirectiveAbort(directive);} catch( Exception e ) {}
 				throw backtrack;				
 			}
 		}
 		else
 		{
-			Object usingDeclaration = callback.usingDeclarationBegin( container );
+			Object usingDeclaration = null;
+			try{ usingDeclaration = callback.usingDeclarationBegin( container );} catch( Exception e ) {}
 			
 			boolean typeName = false;
 			if( LT(1) == Token.t_typename )
@@ -175,22 +178,22 @@ c, quick);
 			{
 				//	optional :: and nested classes handled in name
 				name();
-				callback.usingDeclarationMapping( usingDeclaration, typeName ); 
+				try{ callback.usingDeclarationMapping( usingDeclaration, typeName ); } catch( Exception e ) {}
 			}
 			else
 			{
-				callback.usingDeclarationAbort( usingDeclaration );
+				try{ callback.usingDeclarationAbort( usingDeclaration );} catch( Exception e ) {}
 				throw backtrack;
 			}
 		
 			if( LT(1) == Token.tSEMI )
 			{
 				consume( Token.tSEMI );
-				callback.usingDeclarationEnd( usingDeclaration );
+				try{ callback.usingDeclarationEnd( usingDeclaration );} catch( Exception e ) {}
 			}
 			else
 			{
-				callback.usingDeclarationAbort( usingDeclaration );
+				try{ callback.usingDeclarationAbort( usingDeclaration );} catch( Exception e ) {}
 				throw backtrack;
 			}
 
@@ -215,7 +218,8 @@ c, quick);
 		if( LT(1) != Token.tSTRING )
 			throw backtrack;
 
-		Object linkageSpec = callback.linkageSpecificationBegin( container, consume( Token.tSTRING ).getImage() );
+		Object linkageSpec = null; 
+		try{ linkageSpec = callback.linkageSpecificationBegin( container, consume( Token.tSTRING ).getImage() );} catch( Exception e ) {}
 
 		if( LT(1) == Token.tLBRACE )
 		{
@@ -235,12 +239,12 @@ c, quick);
 			}
 			// consume the }
 			consume();
-			callback.linkageSpecificationEnd( linkageSpec );
+			try{ callback.linkageSpecificationEnd( linkageSpec );} catch( Exception e ) {}
 		}
 		else // single declaration
 		{
 			declaration( linkageSpec );
-			callback.linkageSpecificationEnd( linkageSpec );
+			try{ callback.linkageSpecificationEnd( linkageSpec );} catch( Exception e ) {}
 		}
 	}
 	
@@ -265,8 +269,14 @@ c, quick);
 	protected void declaration( Object container ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_asm:
-				// asmDefinition( );
-				consume();
+				consume( Token.t_asm );
+				consume( Token.tLPAREN );
+				String assembly = consume( Token.tSTRING ).getImage();
+				consume( Token.tRPAREN ); 
+				consume( Token.tSEMI );
+				// if we made it this far, then we have all we need 
+				// do the callback
+				try{ callback.asmDefinition( container, assembly );} catch( Exception e ) {}
 				return; 
 			case Token.t_namespace:
 				namespaceDefinition( container );
@@ -280,8 +290,11 @@ c, quick);
 				consume();
 				return; 
 			case Token.t_extern:
-				linkageSpecification( container ); 
-				return;
+				if( LT(2) == Token.tSTRING )
+				{
+					linkageSpecification( container ); 
+					return;
+				}
 			default:
 				simpleDeclaration( container ); 
 		}
@@ -300,13 +313,14 @@ c, quick);
 	protected void namespaceDefinition( Object container ) throws Backtrack
 	{
 		consume( Token.t_namespace);
-		Object namespace = callback.namespaceDefinitionBegin( container );
+		Object namespace = null;
+		try{ namespace = callback.namespaceDefinitionBegin( container );} catch( Exception e ) {}
 
 		// optional name 		
 		if( LT(1) == Token.tIDENTIFIER )
 		{
 			name();
-			callback.namespaceDefinitionId( namespace );
+			try{ callback.namespaceDefinitionId( namespace );} catch( Exception e ) {}
 		}
 	
 		if( LT(1) == Token.tLBRACE )
@@ -327,11 +341,11 @@ c, quick);
 			}
 			// consume the }
 			consume();
-			callback.namespaceDefinitionEnd( namespace );
+			try{ callback.namespaceDefinitionEnd( namespace );} catch( Exception e ) {}
 		}
 		else
 		{
-			callback.namespaceDefinitionAbort( namespace );
+			try{ callback.namespaceDefinitionAbort( namespace );} catch( Exception e ) {}
 			throw backtrack;
 		}
 	}
@@ -349,12 +363,14 @@ c, quick);
 	 * - work in ctorInitializer and functionTryBlock
 	 */
 	protected void simpleDeclaration( Object container ) throws Backtrack {
-		Object simpleDecl = callback.simpleDeclarationBegin( container);
+		Object simpleDecl = null; 
+		try{ simpleDecl = callback.simpleDeclarationBegin( container);} catch( Exception e ) {}
 		declSpecifierSeq(simpleDecl, false);
+		Object declarator = null; 
 
 		if (LT(1) != Token.tSEMI)
 			try {
-				initDeclarator(simpleDecl);
+				declarator = initDeclarator(simpleDecl);
 				
 				while (LT(1) == Token.tCOMMA) {
 					consume();
@@ -374,19 +390,15 @@ c, quick);
 				consume();
 				break;
 			case Token.tCOLON:
-				// TODO - Initializer for constructor, for now consume
-				// and look for the left brace;
-				consume();
-				while (LT(1) != Token.tLBRACE) {
-					consume();
-				}
+				ctorInitializer(declarator);					
 				// Falling through on purpose
 			case Token.tLBRACE:
-				Object function = callback.functionBodyBegin(simpleDecl );
+				Object function = null; 
+				try{ function = callback.functionBodyBegin(simpleDecl ); } catch( Exception e ) {}
 				if (quickParse) {
 					// speed up the parser by skiping the body
 					// simply look for matching brace and return
-					consume();
+					consume(Token.tLBRACE);
 					int depth = 1;
 					while (depth > 0) {
 						switch (consume().getType()) {
@@ -401,30 +413,79 @@ c, quick);
 				} else {
 					functionBody();
 				}
-				callback.functionBodyEnd(function);
+				try{ callback.functionBodyEnd(function);} catch( Exception e ) {}
 				break;
 			default:
 				break;
 		}
 		
-		callback.simpleDeclarationEnd(simpleDecl);
+		try{ callback.simpleDeclarationEnd(simpleDecl);} catch( Exception e ) {}
+	}
+
+	protected void ctorInitializer(Object declarator) throws Backtrack  {
+		consume( Token.tCOLON );
+		
+		Object constructorChain = null; 
+		try { constructorChain = callback.constructorChainBegin(declarator);} catch( Exception e ) {}
+		
+		try	{
+			for( ; ; ) {
+				if( LT(1) == Token.tLBRACE ) break;
+				
+				Object constructorChainElement = null; 
+				try{ constructorChainElement = callback.constructorChainElementBegin( constructorChain );} catch( Exception e ) {}
+				name(); 
+				try{ callback.constructorChainElementId(constructorChainElement);} catch( Exception e) {} 
+			
+				consume( Token.tLPAREN );
+				
+				while( LT(1) != Token.tRPAREN )
+				{
+					//handle expression list here
+					Object item = null; 
+					try{ item = callback.constructorChainElementExpressionListElementBegin(constructorChainElement );} catch( Exception e ) {}
+					Object expression = null; 
+					try{ expression = callback.expressionBegin( item );} catch( Exception e) {}
+					assignmentExpression( expression );
+					try{ callback.expressionEnd( item );} catch( Exception e) {}
+					try{ callback.constructorChainElementExpressionListElementEnd( item );} catch( Exception e) {}
+					if( LT(1) == Token.tRPAREN ) break;
+					consume( Token.tCOMMA );
+				}
+
+				consume( Token.tRPAREN );					
+				try{ callback.constructorChainElementEnd(constructorChainElement );} catch( Exception e) {}
+				
+				if( LT(1) == Token.tLBRACE ) break;
+				if( LT(1) == Token.tCOMMA ) consume( Token.tCOMMA );
+			}
+		}
+		catch( Backtrack bt )
+		{
+			try { callback.constructorChainAbort( constructorChain );} catch( Exception e ) {} 
+			if( ! quickParse )
+				throw backtrack;  
+		}
+		
+		try { callback.constructorChainEnd( constructorChain ); }  catch( Exception e ) {}
 	}
 	
 	
 	protected void parameterDeclaration( Object containerObject ) throws Backtrack
 	{
-		Object parameterDecl = callback.parameterDeclarationBegin( containerObject );
+		Object parameterDecl = null;
+		try{ parameterDecl = callback.parameterDeclarationBegin( containerObject );} catch( Exception e ) {}
 		declSpecifierSeq( parameterDecl, true );
 		
 		if (LT(1) != Token.tSEMI)
 			try {
-				initDeclarator(parameterDecl);
+				Object declarator = initDeclarator(parameterDecl);
 				
 			} catch (Backtrack b) {
 				// allowed to be empty
 			}
  		 
-		callback.parameterDeclarationEnd( parameterDecl );
+		try{ callback.parameterDeclarationEnd( parameterDecl );} catch( Exception e ) {}
 		 
 	}
 	
@@ -466,7 +527,7 @@ c, quick);
 				case Token.t_signed:
 				case Token.t_unsigned:
 				case Token.t_short:
-					callback.simpleDeclSpecifier(decl, consume());
+					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
 				case Token.t_char:
 				case Token.t_wchar_t:
@@ -477,14 +538,14 @@ c, quick);
 				case Token.t_double:
 				case Token.t_void:
 					encounteredRawType = true;
-					callback.simpleDeclSpecifier(decl, consume());
+					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
 				case Token.t_typename:
-					consume();
+					consume( Token.t_typename );
 					name();
 					break;
 				case Token.tCOLONCOLON:
-					consume();
+					consume( Token.tCOLONCOLON );
 					// handle nested later:
 				case Token.tIDENTIFIER:
 					// TODO - Kludgy way to handle constructors/destructors
@@ -493,9 +554,9 @@ c, quick);
 					{
 						if( ! encounteredTypename )
 						{
-							callback.simpleDeclSpecifier(decl,LA(1));
+							try{ callback.simpleDeclSpecifier(decl,LA(1));} catch( Exception e ) {}
 							name(); 
-							callback.simpleDeclSpecifierName( decl );
+							try{ callback.simpleDeclSpecifierName( decl );} catch( Exception e ) {}
 							encounteredTypename = true; 
 							break;
 						}
@@ -512,10 +573,11 @@ c, quick);
 					catch( Backtrack bt )
 					{
 						// this is an elaborated class specifier
-						Object elab = callback.elaboratedTypeSpecifierBegin( decl, consume() ); 
+						Object elab = null; 
+						try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() );} catch( Exception e ) {} 
 						name(); 
-						callback.elaboratedTypeSpecifierName( elab ); 
-						callback.elaboratedTypeSpecifierEnd( elab );
+						try{ callback.elaboratedTypeSpecifierName( elab ); } catch( Exception e ) {}
+						try{ callback.elaboratedTypeSpecifierEnd( elab );} catch( Exception e ) {}
 						break;
 					}
 				case Token.t_enum:
@@ -527,10 +589,11 @@ c, quick);
 					catch( Backtrack bt )
 					{
 						// this is an elaborated class specifier
-						Object elab = callback.elaboratedTypeSpecifierBegin( decl, consume() ); 
+						Object elab = null; 
+						try{ elab = callback.elaboratedTypeSpecifierBegin( decl, consume() ); } catch( Exception e ) {} 
 						name(); 
-						callback.elaboratedTypeSpecifierName( elab ); 
-						callback.elaboratedTypeSpecifierEnd( elab );
+						try{ callback.elaboratedTypeSpecifierName( elab );} catch( Exception e ) {} 
+						try{ callback.elaboratedTypeSpecifierEnd( elab );} catch( Exception e ) {}
 					}
 					break;
 				default:
@@ -542,8 +605,11 @@ c, quick);
 
 	protected void identifier() throws Backtrack {
 		Token first = consume(Token.tIDENTIFIER); // throws backtrack if its not that
-		callback.nameBegin(first);
-		callback.nameEnd(first);
+		try
+		{ 
+			callback.nameBegin(first);
+			callback.nameEnd(first);
+		} catch( Exception e ) {}
 	}
 	
 	/**
@@ -561,7 +627,7 @@ c, quick);
 		Token first = LA(1);
 		Token last = null;
 		
-		callback.nameBegin(first);
+		try{ callback.nameBegin(first); } catch( Exception e ) {}
 		
 		if (LT(1) == Token.tCOLONCOLON)
 			last = consume();
@@ -590,7 +656,7 @@ c, quick);
 			}
 		}
 
-		callback.nameEnd(last);
+		try{ callback.nameEnd(last);} catch( Exception e ) {}
 
 	}
 
@@ -602,7 +668,7 @@ c, quick);
 		switch (LT(1)) {
 			case Token.t_const:
 			case Token.t_volatile:
-				callback.pointerOperatorCVModifier( ptrOp, consume() ); 
+				try{ callback.pointerOperatorCVModifier( ptrOp, consume() ); } catch( Exception e ) {}
 				return;
 			default:
 				throw backtrack;
@@ -616,7 +682,7 @@ c, quick);
 	 * To Do:
 	 * - handle initializers
 	 */
-	protected void initDeclarator( Object owner ) throws Backtrack {
+	protected Object initDeclarator( Object owner ) throws Backtrack {
 		Object declarator = declarator( owner );
 		
 		// handle = initializerClause
@@ -627,14 +693,14 @@ c, quick);
 			Object expression = null; 
 			try
 			{
-				expression = callback.expressionBegin( declarator ); 
+				try{ expression = callback.expressionBegin( declarator ); } catch( Exception e ) {}
 				assignmentExpression( expression );
-				callback.expressionEnd( expression );   
+				try{ callback.expressionEnd( expression );} catch( Exception e ) {}   
 			}
 			catch( Backtrack b )
 			{
 				if( expression != null )
-					callback.expressionAbort( expression ); 
+					try{ callback.expressionAbort( expression );} catch( Exception e ) {} 
 			}
 			
 			if (LT(1) == Token.tLBRACE) {
@@ -655,19 +721,19 @@ c, quick);
 		}
 		else if( LT(1) == Token.tLPAREN )
 		{
-			consume();  // EAT IT!
+			consume(Token.tLPAREN);  // EAT IT!
 			
 			Object expression = null; 
 			try
 			{
-				expression = callback.expressionBegin( declarator ); 
+				try{ expression = callback.expressionBegin( declarator ); } catch( Exception e ) {}
 				constantExpression( expression );
-				callback.expressionEnd( expression );   
+				try{ callback.expressionEnd( expression );   } catch( Exception e ) {}
 			}
 			catch( Backtrack b )
 			{
 				if( expression != null )
-					callback.expressionAbort( expression ); 
+					try{ callback.expressionAbort( expression );} catch( Exception e ) {} 
 			}
 			
 			if( LT(1) == Token.tRPAREN )
@@ -675,7 +741,8 @@ c, quick);
 		
 		}
 		
-		callback.declaratorEnd( declarator );
+		try{ callback.declaratorEnd( declarator );} catch( Exception e ) {}
+		return declarator;
 	}
 	
 	/**
@@ -696,7 +763,8 @@ c, quick);
 		
 		do
 		{
-			Object declarator = callback.declaratorBegin( container );
+			Object declarator = null;
+			try{ declarator = callback.declaratorBegin( container );} catch( Exception e ) {}
 			
 			for (;;) {
 				try {
@@ -714,7 +782,7 @@ c, quick);
 			}
 			
 			name();
-			callback.declaratorId(declarator);
+			try{ callback.declaratorId(declarator);} catch( Exception e ) {}
 			
 			for (;;) {
 				switch (LT(1)) {
@@ -723,7 +791,8 @@ c, quick);
 						if( LT(2) != Token.tINTEGER )
 						{
 							// parameterDeclarationClause
-							Object clause = callback.argumentsBegin(declarator);
+							Object clause = null; 
+							try { clause = callback.argumentsBegin(declarator);} catch( Exception e ) {}
 							consume();
 							boolean seenParameter = false;
 							parameterDeclarationLoop:
@@ -746,18 +815,24 @@ c, quick);
 										seenParameter = true;
 								}
 							}
-							callback.argumentsEnd(clause);
+							try{ callback.argumentsEnd(clause);} catch( Exception e ) {}
+							
+							if( LT(1) == Token.tCOLON ) 
+							{
+								// this is most likely the definition of the constructor 
+								return declarator; 
+							}
 							
 							// const-volatile marker on the method
 							if( LT(1) == Token.t_const || LT(1) == Token.t_volatile )
 							{
-								callback.declaratorCVModifier( declarator, consume() );
+								try{ callback.declaratorCVModifier( declarator, consume() );} catch( Exception e ) {}
 							}
 							
 							//check for throws clause here 
 							if( LT(1) == Token.t_throw )
 							{
-								callback.declaratorThrowsException( declarator );
+								try{ callback.declaratorThrowsException( declarator );} catch( Exception e ) {}
 								consume(); // throw
 								consume( Token.tLPAREN );// (
 								boolean done = false; 
@@ -772,7 +847,7 @@ c, quick);
 										case Token.tIDENTIFIER: 
 											//TODO this is not exactly right - should be type-id rather than just a name
 											name(); 
-											callback.declaratorThrowExceptionName( declarator );
+											try{ callback.declaratorThrowExceptionName( declarator );} catch( Exception e ) {}
 											break;
 										case Token.tCOMMA: 
 											consume(); 
@@ -790,15 +865,17 @@ c, quick);
 						while( LT(1) == Token.tLBRACKET )
 						{
 							consume(); // eat the '['
-							Object array = callback.arrayDeclaratorBegin( declarator ); 
+							Object array = null; 
+							try{ array = callback.arrayDeclaratorBegin( declarator ); } catch( Exception e ) {}
 							if( LT(1) != Token.tRBRACKET )
 							{
-								Object expression = callback.expressionBegin( array ); 
+								Object expression = null; 
+								try{ expression = callback.expressionBegin( array );} catch( Exception e ) {} 
 								constantExpression(expression);
-								callback.expressionEnd( expression ); 
+								try{ callback.expressionEnd( expression ); } catch( Exception e ) {}
 							}
 							consume(Token.tRBRACKET);
-							callback.arrayDeclaratorEnd( array );
+							try{ callback.arrayDeclaratorEnd( array );} catch( Exception e ) {}
 						}
 						continue;
 				}
@@ -807,11 +884,12 @@ c, quick);
 			
 			if( LA(1).getType() == Token.tIDENTIFIER )
 			{
-				callback.declaratorAbort( container, declarator );
+				try{ callback.declaratorAbort( container, declarator ); } catch( Exception e ) {}
 				declarator = null;
 			}
 			else
 				return declarator; 
+				
 		} while( true );
 	}
 	
@@ -823,23 +901,29 @@ c, quick);
 	 */
 	protected void ptrOperator(Object owner) throws Backtrack {
 		int t = LT(1);
-		Object ptrOp = callback.pointerOperatorBegin( owner ); 
+		Object ptrOp = null;
+		try{ ptrOp = callback.pointerOperatorBegin( owner );} catch( Exception e ) {} 
 		
 		if (t == Token.tAMPER) {
-			callback.pointerOperatorType( ptrOp, consume() ); 
-			callback.pointerOperatorEnd( ptrOp );
+			try{ callback.pointerOperatorType( ptrOp, consume() ); } catch( Exception e ) {}
+			try{ callback.pointerOperatorEnd( ptrOp );} catch( Exception e ) {}
 			return;
 		}
 		
 		Token mark = mark();
+		
+		boolean hasName = false; 
 		if (t == Token.tIDENTIFIER || t == Token.tCOLONCOLON)
 		{
 			name();
-			callback.pointerOperatorName( ptrOp );
+			hasName = true; 
 		}
 
 		if (t == Token.tSTAR) {
-			callback.pointerOperatorType( ptrOp, consume());
+			if( hasName )
+				try{ callback.pointerOperatorName( ptrOp );} catch( Exception e ) {}
+				
+			try{ callback.pointerOperatorType( ptrOp, consume());} catch( Exception e ) {}
 
 			for (;;) {
 				try {
@@ -850,7 +934,7 @@ c, quick);
 				}
 			}			
 			
-			callback.pointerOperatorEnd( ptrOp );
+			try{ callback.pointerOperatorEnd( ptrOp );} catch( Exception e ) {}
 			return;
 		}
 		
@@ -874,12 +958,13 @@ c, quick);
 	{
 		consume( Token.t_enum );
 
-		Object enumSpecifier = callback.enumSpecifierBegin( owner );
+		Object enumSpecifier = null;
+		try{ enumSpecifier = callback.enumSpecifierBegin( owner );} catch( Exception e ) {}
 
 		if( LT(1) == Token.tIDENTIFIER )
 		{ 
 			identifier();
-			callback.enumSpecifierId( enumSpecifier );
+			try{ callback.enumSpecifierId( enumSpecifier );} catch( Exception e ) {}
 		} 
 		
 		if( LT(1) == Token.tLBRACE )
@@ -891,39 +976,41 @@ c, quick);
 				Object defn;
 				if( LT(1) == Token.tIDENTIFIER )
 				{
-					defn = callback.enumDefinitionBegin( enumSpecifier );
+					defn = null; 
+					try{ defn = callback.enumDefinitionBegin( enumSpecifier );} catch( Exception e ) {}
 					identifier();
-					callback.enumDefinitionId( defn ); 
+					try{ callback.enumDefinitionId( defn ); } catch( Exception e ) {}
 				}
 				else
 				{
-					callback.enumSpecifierAbort( enumSpecifier );
+					try{ callback.enumSpecifierAbort( enumSpecifier );} catch( Exception e ) {}
 					throw backtrack; 
 				}
 				
 				if( LT(1) == Token.tASSIGN )
 				{
 					consume( Token.tASSIGN );
-					Object expression = callback.expressionBegin( defn );
+					Object expression = null; 
+					try{ expression = callback.expressionBegin( defn );} catch( Exception e ) {}
 					constantExpression( expression ); 
-					callback.expressionEnd( expression );
+					try{ callback.expressionEnd( expression );} catch( Exception e ) {}
 				}
 				
-				callback.enumDefinitionEnd( defn );
+				try{ callback.enumDefinitionEnd( defn );} catch( Exception e ) {}
 				
 				if( LT(1) == Token.tRBRACE )
 					break;
 				
 				if( LT(1) != Token.tCOMMA )
 				{
-					callback.enumSpecifierAbort( enumSpecifier );
+					try{ callback.enumSpecifierAbort( enumSpecifier );} catch( Exception e ) {}
 					throw backtrack; 					
 				}
 				consume(Token.tCOMMA); // if we made it this far 
 			}
 			consume( Token.tRBRACE );
 			
-			callback.enumSpecifierEnd( enumSpecifier );
+			try{ callback.enumSpecifierEnd( enumSpecifier );} catch( Exception e ) {}
 		}
 		else
 		{
@@ -952,24 +1039,25 @@ c, quick);
 				throw backtrack;
 		}
 
-		Object classSpec = callback.classSpecifierBegin( owner, classKey);
+		Object classSpec = null;
+		try{ classSpec = callback.classSpecifierBegin( owner, classKey);} catch( Exception e ){}
 		
 		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
 			name();
-			callback.classSpecifierName(classSpec);			
+			try{ callback.classSpecifierName(classSpec);} catch( Exception e ){}			
 		}
 		
 		if( LT(1) != Token.tCOLON && LT(1) != Token.tLBRACE )
 		{
 			// this is not a classSpecification
-			callback.classSpecifierAbort( classSpec );
+			try{ callback.classSpecifierAbort( classSpec );} catch( Exception e ){}
 			classSpec = null; 	
 			backup( mark ); 
 			throw backtrack; 
 		}
 		else
-			callback.classSpecifierSafe( classSpec );
+			try{ callback.classSpecifierSafe( classSpec ); } catch( Exception e ){}
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {
@@ -989,7 +1077,7 @@ c, quick);
 					case Token.t_public:
 					case Token.t_protected:
 					case Token.t_private:
-						callback.classMemberVisibility( classSpec, consume() );
+						try{ callback.classMemberVisibility( classSpec, consume() );} catch( Exception e ){}
 						consume(Token.tCOLON);
 						break;
 					case Token.tRBRACE:
@@ -1005,40 +1093,44 @@ c, quick);
 			consume();
 		}
 		
-		callback.classSpecifierEnd(classSpec);
+		try{ callback.classSpecifierEnd(classSpec); } catch( Exception e ) {}
 	}
 
 	protected void baseSpecifier( Object classSpecOwner ) throws Backtrack {
 
-		Object baseSpecifier = callback.baseSpecifierBegin( classSpecOwner ); 		
+		Object baseSpecifier = null; 
+		
+		try { baseSpecifier = callback.baseSpecifierBegin( classSpecOwner ); 	} catch( Exception e )	{}	
 		
 		baseSpecifierLoop:
 		for (;;) {
 			switch (LT(1)) {
 				case Token.t_virtual:
-					callback.baseSpecifierVirtual( baseSpecifier, true ); 
-					consume();
+					consume(Token.t_virtual);
+					try{ callback.baseSpecifierVirtual( baseSpecifier, true ); } catch( Exception e ){}
 					break;
 				case Token.t_public:
 				case Token.t_protected:
 				case Token.t_private:
-					callback.baseSpecifierVisibility( baseSpecifier, consume() );
+					try { callback.baseSpecifierVisibility( baseSpecifier, consume() );} catch( Exception e ){}
 					break;
 				case Token.tCOLONCOLON:
 				case Token.tIDENTIFIER:
 					name();
-					callback.baseSpecifierName( baseSpecifier ); 
+					try { callback.baseSpecifierName( baseSpecifier ); } catch( Exception e ){}
 					break;
 				case Token.tCOMMA:
-					callback.baseSpecifierEnd( baseSpecifier ); 
-					baseSpecifier = callback.baseSpecifierBegin( classSpecOwner );
+					try { 
+						callback.baseSpecifierEnd( baseSpecifier ); 
+						baseSpecifier = callback.baseSpecifierBegin( classSpecOwner );
+					} catch( Exception e ){}
 					consume(); 
 					continue baseSpecifierLoop;
 				default:
 					break baseSpecifierLoop;
 			}
 		}
-		callback.baseSpecifierEnd( baseSpecifier ); 
+		try { callback.baseSpecifierEnd( baseSpecifier ); } catch( Exception e ){}
 	}
 	
 	protected void functionBody() throws Backtrack {
@@ -1051,9 +1143,10 @@ c, quick);
 		switch (LT(1)) {
 			case Token.t_case:
 				consume();
-				expression = callback.expressionBegin( null ); //TODO regarding this null
+				// TODO regarding this null
+				try{ expression = callback.expressionBegin( null ); } catch( Exception e ) {}
 				constantExpression(expression);
-				callback.expressionEnd( expression );
+				try{ callback.expressionEnd( expression ); } catch( Exception e ) {}
 				consume(Token.tCOLON);
 				statement();
 				return;
@@ -1107,9 +1200,10 @@ c, quick);
 				consume(Token.tSEMI);
 				if (LT(1) != Token.tRPAREN)
 				{
-					expression = callback.expressionBegin( null ); //TODO get rid of NULL  
+					try{ expression = callback.expressionBegin( null ); } catch( Exception e ) {}
+					//TODO get rid of NULL  
 					expression(expression);
-					callback.expressionEnd( expression );
+					try{ callback.expressionEnd( expression );} catch( Exception e ) {}
 				}
 				consume(Token.tRPAREN);
 				statement();
@@ -1126,9 +1220,10 @@ c, quick);
 				consume();
 				if (LT(1) != Token.tSEMI)
 				{
-					expression = callback.expressionBegin( null ); //TODO get rid of NULL  
+					try{ expression = callback.expressionBegin( null );} catch( Exception e ) {} 
+					//TODO get rid of NULL  
 					expression(expression);
-					callback.expressionEnd( expression );
+					try{ callback.expressionEnd( expression );} catch( Exception e ) {}
 				}
 				consume(Token.tSEMI);
 				return;
@@ -1165,9 +1260,10 @@ c, quick);
 				// Note: the function style cast ambiguity is handled in expression
 				// Since it only happens when we are in a statement
 				try {
-					expression = callback.expressionBegin( null ); //TODO get rid of NULL  
+					try{ expression = callback.expressionBegin( null ); } catch( Exception e ) {} 
+					//TODO get rid of NULL  
 					expression(expression);
-					callback.expressionEnd( expression );
+					try{ callback.expressionEnd( expression );} catch( Exception e ) {}
 					consume(Token.tSEMI);
 					return;
 				} catch (Backtrack b) {
@@ -1204,7 +1300,7 @@ c, quick);
 		while (LT(1) == Token.tCOMMA) {
 			Token t = consume();
 			assignmentExpression( expression );
-			callback.expressionOperator(expression, t);
+			try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 		}
 	}
 	
@@ -1230,7 +1326,7 @@ c, quick);
 				case Token.tBITORASSIGN:
 					Token t = consume();
 					conditionalExpression(expression);
-					callback.expressionOperator(expression, t);
+					try	{ callback.expressionOperator(expression, t); } catch( Exception e )	{}
 					break;
 			}
 		}
@@ -1264,7 +1360,7 @@ c, quick);
 		while (LT(1) == Token.tOR) {
 			Token t = consume();
 			logicalAndExpression( expression );
-			callback.expressionOperator(expression, t);
+			try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 		}
 	}
 	
@@ -1274,7 +1370,7 @@ c, quick);
 		while (LT(1) == Token.tAND) {
 			Token t = consume();
 			inclusiveOrExpression(expression );
-			callback.expressionOperator(expression, t);
+			try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 		}
 	}
 	
@@ -1284,7 +1380,7 @@ c, quick);
 		while (LT(1) == Token.tBITOR) {
 			Token t = consume();
 			exclusiveOrExpression(expression);
-			callback.expressionOperator(expression, t);
+			try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 		}
 	}
 	
@@ -1294,7 +1390,8 @@ c, quick);
 		while (LT(1) == Token.tXOR) {
 			Token t = consume();
 			andExpression(expression);
-			callback.expressionOperator(expression, t);
+			try { callback.expressionOperator(expression, t);} catch( Exception e ) {}
+			
 		}
 	}
 	
@@ -1304,7 +1401,9 @@ c, quick);
 		while (LT(1) == Token.tAMPER) {
 			Token t = consume();
 			equalityExpression(expression);
-			callback.expressionOperator(expression, t);
+
+			try{ callback.expressionOperator(expression, t); }	catch( Exception e ) {}
+
 		}
 	}
 	
@@ -1317,7 +1416,7 @@ c, quick);
 				case Token.tNOTEQUAL:
 					Token t = consume();
 					relationalExpression(expression);
-					callback.expressionOperator(expression, t);
+					try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 					break;
 				default:
 					return;
@@ -1339,7 +1438,7 @@ c, quick);
 				case Token.tGTEQUAL:
 					Token t = consume();
 					shiftExpression(expression);
-					callback.expressionOperator(expression, t);
+					try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 					break;
 				default:
 					return;
@@ -1356,7 +1455,7 @@ c, quick);
 				case Token.tSHIFTR:
 					Token t = consume();
 					additiveExpression(expression);
-					callback.expressionOperator(expression, t);
+					try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 					break;
 				default:
 					return;
@@ -1373,7 +1472,7 @@ c, quick);
 				case Token.tMINUS:
 					Token t = consume();
 					multiplicativeExpression(expression);
-					callback.expressionOperator(expression, t);
+					try	{ callback.expressionOperator(expression, t); }	catch( Exception e ) {}
 					break;
 				default:
 					return;
@@ -1391,7 +1490,7 @@ c, quick);
 				case Token.tMOD:
 					Token t = consume();
 					pmExpression(expression );
-					callback.expressionOperator(expression , t);
+					try{ callback.expressionOperator(expression , t);} catch( Exception e ) {}
 					break;
 				default:
 					return;
@@ -1408,7 +1507,7 @@ c, quick);
 				case Token.tARROWSTAR:
 					Token t = consume();
 					castExpression( expression );
-					callback.expressionOperator(expression, t);
+					try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 					break;
 				default:
 					return;
@@ -1489,7 +1588,7 @@ c, quick);
 			case Token.tDECR:
 				Token t = consume();
 				castExpression(expression);
-				callback.expressionOperator(expression, t);
+				try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
 				return;
 			case Token.t_sizeof:
 				if (LT(1) == Token.tLPAREN) {
@@ -1595,13 +1694,13 @@ c, quick);
 		switch (type) {
 			// TO DO: we need more literals...
 			case Token.tINTEGER:
-				callback.expressionTerminal(expression, consume());
+				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
 				return;
 			case Token.tSTRING:
-				callback.expressionTerminal(expression, consume());
+				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
 				return;
 			case Token.tIDENTIFIER:
-				callback.expressionTerminal(expression, consume());
+				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
 				return;
 			case Token.t_this:
 				consume();
@@ -1732,24 +1831,4 @@ c, quick);
 		currToken = mark;
 	}
 
-	// Utility routines that require a knowledge of the grammar
-	protected static String generateName(Token startToken) throws ParserException {
-		Token currToken = startToken.getNext();
-		
-		if (currToken == null || currToken.getType() != Token.tCOLONCOLON)
-			return startToken.getImage();
-		
-		StringBuffer buff = new StringBuffer(startToken.getImage());
-		while (currToken != null && currToken.getType() == Token.tCOLONCOLON) {
-			currToken = currToken.getNext();
-			if (currToken == null || currToken.getType() != Token.tIDENTIFIER)
-				// Not good
-				throw new ParserException(startToken);
-			buff.append("::");
-			buff.append(currToken.getImage());
-			currToken = currToken.getNext();
-		}
-		
-		return buff.toString();
-	}
 }

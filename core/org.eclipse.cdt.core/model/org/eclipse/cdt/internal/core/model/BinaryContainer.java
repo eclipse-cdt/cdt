@@ -36,18 +36,18 @@ public class BinaryContainer extends Parent implements IBinaryContainer {
 	}
 
 	public IBinary[] getBinaries() {
-		ICElement[] e = getChildren(false);
+		ICElement[] e = getChildren(true);
 		IBinary[] b = new IBinary[e.length];
 		System.arraycopy(e, 0, b, 0, e.length);
 		return b;
 	}
 
 	public boolean hasChildren() {
-		return (getChildren().length > 0);
+		return (getChildren(true).length > 0);
 	}
 
 	public ICElement [] getChildren() {
-		return getChildren(true);
+		return getChildren(false);
 	}
 
 	public ICElement [] getChildren(boolean sync) {

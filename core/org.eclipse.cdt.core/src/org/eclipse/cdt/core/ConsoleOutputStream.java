@@ -31,11 +31,17 @@ public class ConsoleOutputStream extends OutputStream {
 		fBuffer.setLength (0);
 	}
 
-	/**
-	 * Implements buffered output at the lowest level
-	 * @see OutputStream#write
-	 */
 	public synchronized void write(int c) throws IOException {
-		fBuffer.append((char) c);
+		byte ascii[] = new byte[1];
+		ascii[0] = (byte) c;
+		fBuffer.append(new String(ascii));
 	}
+	
+    public synchronized void write(byte[] b) throws IOException {
+        fBuffer.append(new String(b));
+    }
+    
+    public synchronized void write(byte[] b, int off, int len) throws IOException {
+        fBuffer.append(new String(b, off, len));
+    }
 }

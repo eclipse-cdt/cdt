@@ -209,4 +209,10 @@ public class MemoryViewer extends ContentViewer
 	{
 		return ((MemoryControlArea)fTabFolder.getSelection().getControl()).getPresentation().canDisplayAscii();
 	}
+	
+	public int getCurrentWordSize()
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		return ( block != null ) ? block.getWordSize() : 0;
+	}
 }

@@ -59,4 +59,15 @@ public interface ICDebugUIConstants
 	 * Identifier for a memory group in a menu (value <code>"memoryGroup"</code>).
 	 */
 	public static final String MEMORY_GROUP = "memoryGroup"; //$NON-NLS-1$
+
+	/** 
+	 * Identifier for an empty group preceeding a
+	 * format group in a menu (value <code>"emptyFormatGroup"</code>).
+	 */
+	public static final String EMPTY_FORMAT_GROUP = "emptyFormatGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a format group in a menu (value <code>"formatGroup"</code>).
+	 */
+	public static final String FORMAT_GROUP = "formatGroup"; //$NON-NLS-1$
 }

@@ -1,3 +1,12 @@
+2002-10-24 Mikhail Khodjaiants
+	Implementing Memory view formatting actions.
+	* MemoryActionSelectionGroup.java: implementation of a toggle action group.
+	* MemorySizeAction.java: implementation of the "Memory Unit Size" menu item.
+	* MemoryView.java: add new actions to the view.
+	* MemoryViewer.java: support for new action.
+	* ICDebugHelpContextIds.java: help context id for the new action.
+	* ICDebugUIConstants.java: new menu group - "Format".
+
 2002-10-23 Mikhail Khodjaiants
 	* DebuggerConsoleActionDelegate.java: The debugger/inferrior console should become visible when checking "Show Debug Console".
 

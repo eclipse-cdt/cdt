@@ -49,12 +49,12 @@ public class CProjectHelper {
             project.open(null);
         }
         
-        
         if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
+			CCorePlugin.getDefault().mapCProjectOwner(project, "Hi", false);
             addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
         }
         
-        ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
+		ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
         
         return cproject;    
     }

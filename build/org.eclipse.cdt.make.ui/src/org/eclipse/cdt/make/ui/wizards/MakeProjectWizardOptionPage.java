@@ -8,6 +8,7 @@ package org.eclipse.cdt.make.ui.wizards;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -30,9 +31,11 @@ import org.eclipse.core.runtime.Preferences;
  * </p>
  */
 public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
-
+	MakeWizardOptionBlock makeWizardBlock; 
+	
 	public class MakeWizardOptionBlock extends MakeProjectOptionBlock {
-
+		IndexerBlock indexBlock;
+		
 		public MakeWizardOptionBlock(ICOptionContainer parent) {
 			super(parent);
 		}
@@ -40,6 +43,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
 			super.addTabs();
+			addTab(indexBlock = new IndexerBlock()); 
 		}
 	}
 
@@ -50,7 +54,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	}
 
 	protected TabFolderOptionBlock createOptionBlock() {
-		return new MakeWizardOptionBlock(this);
+		return (makeWizardBlock  = new MakeWizardOptionBlock(this));
 	}
 
 	public IProject getProject() {
@@ -62,6 +66,10 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	 */
 	public Preferences getPreferences() {
 		return MakeCorePlugin.getDefault().getPluginPreferences();
+	}
+	
+	public boolean isIndexerEnabled(){
+	  return	makeWizardBlock.indexBlock.isIndexEnabled();
 	}
 
 }

@@ -1,3 +1,9 @@
+2003-12-11 Alain Magloire
+
+	Call the super() constructor.
+
+	* model/org/eclipse/cdt/internal/core/model/SetCPathEntriesOperation.java
+
 2003-12-04 David Inglis
 	Fixed bug# 48063
 	

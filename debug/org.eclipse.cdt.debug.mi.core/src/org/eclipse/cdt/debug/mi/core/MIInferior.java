@@ -129,8 +129,8 @@ public class MIInferior extends Process {
 				} catch (MIException e) {
 					// no rethrown.
 				}
-				return 0;
 			}
+			return 0;
 		}
 		throw new IllegalThreadStateException();
 	}

@@ -1,3 +1,8 @@
+2003-01-22 Judy N. Green
+   * /home/tools/org.eclipse.cdt.debug.ui.tests/.project
+   * /home/tools/org.eclipse.cdt.debug.ui.tests/.classpath
+   updated classpath and .project to reflect classpath changes.
+
 2003-01-21 Peter Graves
 	* src/org/eclipse/cdt/debug/testplugin/CDebugHelper.java: Updated to use new parameters to 
 	ICDISession.createCSession

@@ -1,3 +1,10 @@
+2003-03-06 Alain Magloire
+
+	Overload isBinary()/isArchive()/isTranslationUnit()
+	* model/org/eclipse/cdt/internal/core/model/Archive.java:
+	* model/org/eclipse/cdt/internal/core/model/Binary.java:
+	* model/org/eclipse/cdt/internal/core/model/TanslationUnit.java:
+
 2002-12-23 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/core/CBuilder.java (invokeMake):

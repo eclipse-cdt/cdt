@@ -208,4 +208,11 @@ public class CSession implements ICDISession, ICDISessionObject {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
+	 */
+	public Process getSessionProcess() throws CDIException {
+		return session.getSessionProcess();
+	}
+
 }

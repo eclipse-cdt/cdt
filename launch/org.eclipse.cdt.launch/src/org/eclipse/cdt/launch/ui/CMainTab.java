@@ -324,6 +324,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 			setErrorMessage("Program does not exist");
 			return false;
 		}
+		if (!project.isOpen()) {
+			setErrorMessage("Project must be opened");
+			return false;
+		}
 		if (!project.getFile(name).exists()) {
 			setErrorMessage("Program does not exist");
 			return false;

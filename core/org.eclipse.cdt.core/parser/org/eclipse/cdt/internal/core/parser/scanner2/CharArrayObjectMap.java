@@ -52,4 +52,29 @@ public class CharArrayObjectMap extends CharArrayMap {
 		return get(key, 0, key.length);
 	}
 	
+	public Object remove(char[] key, int start, int length) {
+		int i = lookup(key, start, length);
+		if (i < 0)
+			return null;
+
+		Object value = valueTable[i];
+
+		removeEntry(i);
+		
+		return value;
+	}
+	
+	public Object remove(char[] key) {
+		return remove(key, 0, key.length);
+	}
+	
+	protected void removeEntry(int i) {
+		// Remove the entry from the valueTable, shifting everything over if necessary
+		if (i < currEntry)
+			System.arraycopy(valueTable, i + 1, valueTable, i, currEntry - i);
+		valueTable[currEntry] = null;
+
+		// Make sure you remove the value before calling super where currEntry will change
+		super.removeEntry(i);
+	}
 }

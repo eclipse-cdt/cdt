@@ -54,7 +54,7 @@ public class Scanner2SpeedTest extends SpeedTest2 {
 	}
 	
 	private void runTest(int n) throws Exception {
-		String code =
+		String code = 
 			"#include <windows.h>\n" +
 			"#include <stdio.h>\n" +
 			"#include <iostream>\n";

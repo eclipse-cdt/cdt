@@ -52,7 +52,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	protected IParserLogService log;
 	private IScannerExtension scannerExtension;
 	private List workingCopies;
-	private CharArrayObjectMap definitions;
+	private CharArrayObjectMap definitions = new CharArrayObjectMap(64);
 	private String[] includePaths;
 	int count;
 	
@@ -93,10 +93,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		pushContext(reader.buffer, reader);
 
+		setupBuiltInMacros();
+		
 		if (info.getDefinedSymbols() != null) {
 			Map symbols = info.getDefinedSymbols();
 			String[] keys = (String[])symbols.keySet().toArray(emptyStringArray);
-			definitions = new CharArrayObjectMap(symbols.size());
 			for (int i = 0; i < keys.length; ++i) {
 				String symbolName = (String)keys[i];
 				Object value = symbols.get(symbolName);
@@ -107,8 +108,6 @@ public class Scanner2 implements IScanner, IScannerData {
 				} else if( value instanceof IMacroDescriptor )
 					addDefinition( symbolName, (IMacroDescriptor)value);
 			}
-		} else {
-			definitions = new CharArrayObjectMap(4);
 		}
 		
 		includePaths = info.getIncludePaths();
@@ -952,6 +951,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					case ppDefine:
 						handlePPDefine();
 						return;
+					case ppUndef:
+						handlePPUndef();
+						return;
 					case ppIfdef:
 						handlePPIfdef(true);
 						return;
@@ -1159,6 +1161,41 @@ public class Scanner2 implements IScanner, IScannerData {
 				arglist == null
 				? new ObjectStyleMacro(name, text)
 				: new FunctionStyleMacro(name, text, arglist));
+	}
+	
+	private void handlePPUndef() {
+		char[] buffer = bufferStack[bufferStackPos];
+		int limit = bufferLimit[bufferStackPos];
+		
+		skipOverWhiteSpace();
+		
+		// get the Identifier
+		int idstart = ++bufferPos[bufferStackPos];
+		if (idstart >= limit)
+			return;
+		
+		char c = buffer[idstart];
+		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_')) {
+			skipToNewLine();
+			return;
+		}
+
+		int idlen = 1;
+		while (++bufferPos[bufferStackPos] < limit) {
+			c = buffer[bufferPos[bufferStackPos]];
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+					|| c == '_' || (c >= '0' && c <= '9')) {
+				++idlen;
+				continue;
+			} else {
+				break;
+			}
+		}
+		--bufferPos[bufferStackPos];
+
+		skipToNewLine();
+		
+		definitions.remove(buffer, idstart, idlen);
 	}
 	
 	private void handlePPIfdef(boolean positive) {
@@ -1436,11 +1473,27 @@ public class Scanner2 implements IScanner, IScannerData {
 			return;
 		
 		boolean escaped = false;
-		while (++bufferPos[bufferStackPos] < limit)
+		boolean inComment = false;
+		while (++bufferPos[bufferStackPos] < limit) {
 			switch (buffer[bufferPos[bufferStackPos]]) {
+				case '/':
+					pos = bufferPos[bufferStackPos];
+					if (pos + 1 < limit && buffer[pos + 1] == '*') {
+						++bufferPos[bufferStackPos];
+						while (++bufferPos[bufferStackPos] < limit) {
+							pos = bufferPos[bufferStackPos];
+							if (buffer[pos] == '*'
+									&& pos + 1 < limit
+									&& buffer[pos + 1] == '/') {
+								++bufferPos[bufferStackPos];
+								break;
+							}
+						}
+					}
+					break;
 				case '\\':
 					escaped = !escaped;
-					break;
+					continue;
 				case '\n':
 					if (escaped) {
 						escaped = false;
@@ -1448,9 +1501,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					} else { 
 						return;
 					}
-				default:
-					escaped = false;
 			}
+			escaped = false;
+		}
 	}
 	
 	private void handleFunctionStyleMacro(FunctionStyleMacro macro) {
@@ -1464,7 +1517,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		FunctionStyleMacro.Expansion exp = macro.new Expansion();
 		char[][] arglist = macro.arglist;
 		int currarg = -1;
-		int parens = 0;
 
 		while (bufferPos[bufferStackPos] < limit) {
 			if (++currarg >= arglist.length || arglist[currarg] == null)
@@ -1476,22 +1528,14 @@ public class Scanner2 implements IScanner, IScannerData {
 			int pos = ++bufferPos[bufferStackPos];
 			char c = buffer[pos];
 			if (c == ')') {
-				if (parens == 0)
-					// end of macro
-					break;
-				else {
-					--parens;
-					continue;
-				}
+				// end of macro
+				break;
 			} else if (c == ',') {
 				// empty arg
 				exp.definitions.put(arglist[currarg], emptyCharArray);
 				continue;
-			} else if (c == '(') {
-				++parens;
-				continue;
 			}
-
+			
 			// peel off the arg
 			--bufferPos[bufferStackPos];
 			int argend = bufferPos[bufferStackPos];
@@ -1534,6 +1578,164 @@ public class Scanner2 implements IScanner, IScannerData {
 			pushContext(expText, exp);
 	}
 
+	// gcc built-ins
+	private static final ObjectStyleMacro __cplusplus
+		= new ObjectStyleMacro("__cplusplus".toCharArray(), "1".toCharArray());
+	private static final ObjectStyleMacro __STDC_HOSTED__
+		= new ObjectStyleMacro("__STDC_HOSTED__".toCharArray(), "0".toCharArray());
+	private static final ObjectStyleMacro __STDC_VERSION__
+		= new ObjectStyleMacro("__STDC_VERSION__".toCharArray(), "199001L".toCharArray());
+	private static final FunctionStyleMacro __attribute__
+		= new FunctionStyleMacro(
+				"__attribute__".toCharArray(),
+				emptyCharArray,
+				new char[][] { "arg".toCharArray() });
+	
+	// standard built-ins
+	private static final ObjectStyleMacro __STDC__
+		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray());
+	
+	protected void setupBuiltInMacros() {
+		
+		// gcc extensions
+		if( language == ParserLanguage.CPP )
+			definitions.put(__cplusplus.name, __cplusplus);
+		definitions.put(__STDC_HOSTED__.name, __STDC_HOSTED__);
+		definitions.put(__STDC_VERSION__.name, __STDC_VERSION__);
+		definitions.put(__attribute__.name, __attribute__);
+		
+		/*
+		
+		// add these to private table
+		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
+			scannerData.getPrivateDefinitions().put( __ATTRIBUTE__, ATTRIBUTE_MACRO); 
+		
+		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
+			scannerData.getPrivateDefinitions().put( __DECLSPEC, DECLSPEC_MACRO );
+
+		if( scannerData.getScanner().getDefinition( __EXTENSION__ ) == null )
+			scannerData.getPrivateDefinitions().put( __EXTENSION__, EXTENSION_MACRO);
+		
+		if( scannerData.getScanner().getDefinition( __CONST__ ) == null )
+		scannerData.getPrivateDefinitions().put( __CONST__, __CONST__MACRO);
+		if( scannerData.getScanner().getDefinition( __CONST ) == null )
+		scannerData.getPrivateDefinitions().put( __CONST, __CONST_MACRO);
+		if( scannerData.getScanner().getDefinition( __INLINE__ ) == null )
+		scannerData.getPrivateDefinitions().put( __INLINE__, __INLINE__MACRO);
+		if( scannerData.getScanner().getDefinition( __SIGNED__ ) == null )
+		scannerData.getPrivateDefinitions().put( __SIGNED__, __SIGNED__MACRO);
+		if( scannerData.getScanner().getDefinition( __VOLATILE__ ) == null )
+		scannerData.getPrivateDefinitions().put( __VOLATILE__, __VOLATILE__MACRO);
+		ObjectMacroDescriptor __RESTRICT_MACRO = new ObjectMacroDescriptor( __RESTRICT, Keywords.RESTRICT );
+		if( scannerData.getScanner().getDefinition( __RESTRICT ) == null )
+		scannerData.getPrivateDefinitions().put( __RESTRICT, __RESTRICT_MACRO);
+		if( scannerData.getScanner().getDefinition( __RESTRICT__ ) == null )
+		scannerData.getPrivateDefinitions().put( __RESTRICT__, __RESTRICT__MACRO);
+		if( scannerData.getScanner().getDefinition( __TYPEOF__ ) == null )
+		scannerData.getPrivateDefinitions().put( __TYPEOF__, __TYPEOF__MACRO);
+		if( scannerData.getLanguage() == ParserLanguage.CPP )
+			if( scannerData.getScanner().getDefinition( __ASM__ ) == null )
+			scannerData.getPrivateDefinitions().put( __ASM__, __ASM__MACRO);
+		*/
+		
+		// standard extensions
+		definitions.put(__STDC__.name, __STDC__);
+
+		/*
+		if( getDefinition(__STDC__) == null )
+			addDefinition( __STDC__, STDC_MACRO ); 
+		
+		if( language == ParserLanguage.C )
+		{
+			if( getDefinition(__STDC_HOSTED__) == null )
+				addDefinition( __STDC_HOSTED__, STDC_HOSTED_MACRO); 
+			if( getDefinition( __STDC_VERSION__) == null )
+				addDefinition( __STDC_VERSION__, STDC_VERSION_MACRO); 
+		}
+		else
+			if( getDefinition( __CPLUSPLUS ) == null )
+					addDefinition( __CPLUSPLUS, CPLUSPLUS_MACRO); //$NON-NLS-1$
+		
+		if( getDefinition(__FILE__) == null )
+			addDefinition(  __FILE__, 
+					new DynamicMacroDescriptor( __FILE__, new DynamicMacroEvaluator() {
+						public String execute() {
+							return contextStack.getMostRelevantFileContext().getContextName();
+						}				
+					} ) );
+		
+		if( getDefinition( __LINE__) == null )
+			addDefinition(  __LINE__, 
+					new DynamicMacroDescriptor( __LINE__, new DynamicMacroEvaluator() {
+						public String execute() {
+							return new Integer( contextStack.getCurrentLineNumber() ).toString();
+						}				
+			} ) );
+		
+		
+		if( getDefinition(  __DATE__ ) == null )
+			addDefinition(  __DATE__, 
+					new DynamicMacroDescriptor( __DATE__, new DynamicMacroEvaluator() {
+						
+						public String getMonth()
+						{
+							if( Calendar.MONTH == Calendar.JANUARY ) return  "Jan" ; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.FEBRUARY) return "Feb"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.MARCH) return "Mar"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.APRIL) return "Apr"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.MAY) return "May"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.JUNE) return "Jun"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.JULY) return "Jul"; //$NON-NLS-1$
+							if( Calendar.MONTH == Calendar.AUGUST) return "Aug"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.SEPTEMBER) return "Sep"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.OCTOBER) return "Oct"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.NOVEMBER) return "Nov"; //$NON-NLS-1$
+							if( Calendar.MONTH ==  Calendar.DECEMBER) return "Dec"; //$NON-NLS-1$
+							return ""; //$NON-NLS-1$
+						}
+						
+						public String execute() {
+							StringBuffer result = new StringBuffer();
+							result.append( getMonth() );
+							result.append(" "); //$NON-NLS-1$
+							if( Calendar.DAY_OF_MONTH < 10 )
+								result.append(" "); //$NON-NLS-1$
+							result.append(Calendar.DAY_OF_MONTH);
+							result.append(" "); //$NON-NLS-1$
+							result.append( Calendar.YEAR );
+							return result.toString();
+						}				
+					} ) );
+		
+		if( getDefinition( __TIME__) == null )
+			addDefinition(  __TIME__, 
+					new DynamicMacroDescriptor( __TIME__, new DynamicMacroEvaluator() {
+						
+						
+						public String execute() {
+							StringBuffer result = new StringBuffer();
+							if( Calendar.AM_PM == Calendar.PM )
+								result.append( Calendar.HOUR + 12 );
+							else
+							{	
+								if( Calendar.HOUR < 10 )
+									result.append( '0');
+								result.append(Calendar.HOUR);
+							}
+							result.append(':');
+							if( Calendar.MINUTE < 10 )
+								result.append( '0');
+							result.append(Calendar.MINUTE);
+							result.append(':');
+							if( Calendar.SECOND < 10 )
+								result.append( '0');
+							result.append(Calendar.SECOND);
+							return result.toString();
+						}				
+					} ) );
+		
+		*/
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken(boolean)

@@ -38,6 +38,10 @@ public abstract class CharArrayMap {
 		return CharArrayUtils.hash(buffer, start, len) & (keyTable.length - 1); 
 	}
 	
+	private int hash(char[] buffer) {
+		return hash(buffer, 0, buffer.length);
+	}
+	
 	private void insert(int i) {
 		insert(i, hash(keyTable[i], 0, keyTable[i].length));
 	}
@@ -124,6 +128,40 @@ public abstract class CharArrayMap {
 		return -1;
 	}
 
+	protected void removeEntry(int i) {
+		// Remove the hash entry
+		int hash = hash(keyTable[i]);
+		if (hashTable[hash] == i + 1)
+			hashTable[hash] = nextTable[i];
+		else { 
+			// find entry pointing to me
+			int j = hashTable[hash] - 1;
+			while (nextTable[j] != 0 && nextTable[j] != i + 1)
+				j = nextTable[j] - 1;
+			nextTable[j] = nextTable[i];
+		}
+		
+		if (i < currEntry) {
+			// shift everything over
+			System.arraycopy(keyTable, i + 1, keyTable, i, currEntry - i);
+			System.arraycopy(nextTable, i + 1, nextTable, i, currEntry - i);
+			
+			// adjust hash and next entries for things that moved
+			for (int j = 0; j < hashTable.length; ++j)
+				if (hashTable[j] > i)
+					--hashTable[j];
+
+			for (int j = 0; j < nextTable.length; ++j)
+				if (nextTable[j] > i)
+					--nextTable[j];
+		}
+
+		// last entry is now free
+		keyTable[currEntry] = null;
+		nextTable[currEntry] = 0;
+		--currEntry;
+	}
+	
 	public void dumpNexts() {
 		for (int i = 0; i < nextTable.length; ++i) {
 			if (nextTable[i] == 0)

@@ -1640,4 +1640,23 @@ public class Scanner2Test extends BaseScanner2Test
 		validateToken( IToken.tRBRACE);
 		validateEOF();
 	}
+    
+    public void test__attribute__() throws Exception {
+    	initializeScanner(
+    			"#define __cdecl __attribute__((cdecl))\n" +
+				"__cdecl;");
+    	validateToken(IToken.tSEMI);
+    	validateEOF();
+	}
+    
+    public void testUndef() throws Exception {
+    	initializeScanner(
+    			"#define A 5\n" +
+				"#define B 10\n" +
+				"#undef A\n" +
+				"A B");
+    	validateIdentifier("A");
+    	validateInteger("10");
+    	validateEOF();
+    }
 }

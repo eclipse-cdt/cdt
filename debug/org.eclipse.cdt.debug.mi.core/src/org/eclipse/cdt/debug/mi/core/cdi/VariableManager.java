@@ -525,9 +525,11 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			ICDIThread currentThread = currentTarget.getCurrentThread();
 			if (currentThread != null) {
 				currentStack = currentThread.getCurrentStackFrame();
-				high = currentStack.getLevel();
+				if (currentStack != null) {
+					high = currentStack.getLevel();
+				}
 				if (high > 0) {
-					high--;
+						high--;
 				}
 				low = high - MAX_STACK_DEPTH;
 				if (low < 0) {

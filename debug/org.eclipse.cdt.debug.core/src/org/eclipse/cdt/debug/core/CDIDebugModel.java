@@ -10,10 +10,18 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
@@ -23,25 +31,33 @@ import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
+import org.eclipse.cdt.debug.internal.core.model.CCoreFileDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CGlobalVariable;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * Provides utility methods for creating debug sessions, targets and 
@@ -56,6 +72,135 @@ public class CDIDebugModel {
 	public static String getPluginIdentifier() {
 		return CDebugCorePlugin.getUniqueIdentifier();
 	}	
+
+	/**
+	 * Creates and returns a debug target for the given CDI target, 
+	 * with the specified name, and associates it with the given process for console
+	 * I/O. The allow terminate flag specifies whether the debug target will support 
+	 * termination (<code>ITerminate</code>). The allow disconnect flag
+	 * specifies whether the debug target will support disconnection 
+	 * (<code>IDisconnect</code>). The resume flag specifies if the target 
+	 * process should be resumed on startup. 
+	 * The debug target is added to the given launch.
+	 * 
+	 * @param launch the launch the new debug target will be contained in
+	 * @param cdiTarget the CDI target to create a debug target for
+	 * @param name the name to associate with this target, which will be returned from <code>IDebugTarget.getName</code>.
+	 * @param debuggeeProcess the process to associate with the debug target, which will be returned from <code>IDebugTarget.getProcess</code>
+	 * @param debuggerProcess the process to associate with the debugger.
+	 * @param file the executable to debug.
+	 * @param allowTerminate whether the target will support termianation
+	 * @param allowDisconnect whether the target will support disconnection
+	 * @param stopInMain whether to set a temporary breakpoint in main.
+	 * @return a debug target
+	 * @throws DebugException
+	 */
+	public static IDebugTarget newDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IProcess debuggerProcess, final IFile file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain ) throws DebugException {
+		final IDebugTarget[] target = new IDebugTarget[1];
+		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+
+			public void run( IProgressMonitor m ) throws CoreException {
+				target[0] = new CDebugTarget( launch, cdiTarget, name, debuggeeProcess, debuggerProcess, file, allowTerminate, allowDisconnect );
+				ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+				if ( config.supportsBreakpoints() && stopInMain ) {
+					stopInMain( (CDebugTarget)target[0] );
+				}
+				if ( config.supportsResume() ) {
+					target[0].resume();
+				}
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e ) {
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+		return target[0];
+	}
+
+	/**
+	 * Creates and returns an attached debug target for the given CDI target, 
+	 * with the specified name.
+	 * 
+	 * @param launch the launch the new debug target will be contained in
+	 * @param cdiTarget the CDI target to create a debug target for
+	 * @param name the name to associate with this target, which will be returned from <code>IDebugTarget.getName</code>.
+	 * @param debuggerProcess the process to associate with the debugger.
+	 * @param file the executable to debug.
+	 * @return a debug target
+	 * @throws DebugException
+	 */
+	public static IDebugTarget newAttachDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggerProcess, final IFile file ) throws DebugException {
+		final IDebugTarget[] target = new IDebugTarget[1];
+		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+
+			public void run( IProgressMonitor m ) throws CoreException {
+				target[0] = new CDebugTarget( launch, cdiTarget, name, null, debuggerProcess, file, false, true );
+				ICDIEvent[] events = new ICDIEvent[]{ new ICDISuspendedEvent() {
+
+					public ICDISessionObject getReason() {
+						return null;
+					}
+
+					public ICDIObject getSource() {
+						return cdiTarget;
+					}
+				} };
+				((CDebugTarget)target[0]).handleDebugEvents( events );
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e ) {
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+		return target[0];
+	}
+
+	/**
+	 * Creates and returns a post-mortem debug target for the given CDI target, 
+	 * with the specified name.
+	 * 
+	 * @param launch the launch the new debug target will be contained in
+	 * @param cdiTarget the CDI target to create a debug target for
+	 * @param name the name to associate with this target, which will be returned from <code>IDebugTarget.getName</code>.
+	 * @param debuggerProcess the process to associate with the debugger.
+	 * @param file the executable to debug.
+	 * @return a debug target
+	 * @throws DebugException
+	 */
+	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch, final ICDITarget cdiTarget, final String name, final IProcess debuggerProcess, final IFile file ) throws DebugException {
+		final IDebugTarget[] target = new IDebugTarget[1];
+		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+
+			public void run( IProgressMonitor m ) throws CoreException {
+				target[0] = new CCoreFileDebugTarget( launch, cdiTarget, name, debuggerProcess, file );
+				ICDIEvent[] events = new ICDIEvent[]{ new ICDISuspendedEvent() {
+
+					public ICDISessionObject getReason() {
+						return null;
+					}
+
+					public ICDIObject getSource() {
+						return cdiTarget;
+					}
+				} };
+				((CDebugTarget)target[0]).handleDebugEvents( events );
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e ) {
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+		return target[0];
+	}
 
 	/**
 	 * Creates and returns a line breakpoint for the source defined by 
@@ -406,5 +551,20 @@ public class CDIDebugModel {
 			}
 		}
 		return null;
+	}
+
+	protected static void stopInMain( CDebugTarget target ) throws DebugException {
+		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			target.setInternalTemporaryBreakpoint( location );
+		}
+		catch( DebugException e ) {
+			String message = MessageFormat.format( DebugCoreMessages.getString( "CDebugModel.0" ), new String[]{ e.getStatus().getMessage() } ); //$NON-NLS-1$
+			IStatus newStatus = new Status( IStatus.WARNING, e.getStatus().getPlugin(), ICDebugInternalConstants.STATUS_CODE_QUESTION, message, null );
+			if ( !CDebugUtils.question( newStatus, target ) ) {
+				target.terminate();
+				throw new DebugException( new Status( IStatus.OK, e.getStatus().getPlugin(), e.getStatus().getCode(), e.getStatus().getMessage(), null ) );
+			}
+		}
 	}
 }

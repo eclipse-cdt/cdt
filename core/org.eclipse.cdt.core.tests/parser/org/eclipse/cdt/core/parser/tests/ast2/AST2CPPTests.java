@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -1082,5 +1083,31 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstances( col, x2, 2 );
 	}
 
+	public void testBug84615() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append("class A { public : static int n; };  \n" ); //$NON-NLS-1$
+	    buffer.append("int main() {                         \n" ); //$NON-NLS-1$
+	    buffer.append("   int A;                            \n" ); //$NON-NLS-1$
+	    buffer.append("   A::n = 42;                        \n" ); //$NON-NLS-1$
+	    buffer.append("   A b;                              \n" ); //$NON-NLS-1$
+	    buffer.append("}                                    \n" ); //$NON-NLS-1$
+
+	    IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit(tu, col);
+		
+		assertEquals(col.size(), 9);
+		
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPField n = (ICPPField) col.getName(1).resolveBinding();
+		IBinding Aref = col.getName(5).resolveBinding();
+		IBinding nref = col.getName(6).resolveBinding();
+		IProblemBinding prob = (IProblemBinding) col.getName(7).resolveBinding();
+
+		assertSame( A, Aref );
+		assertSame( n, nref );
+		assertNotNull( prob );
+
+	}
 }
 

@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -100,7 +101,7 @@ public class CPPSemantics {
 	
 	static protected class LookupData
 	{
-		private IASTName astName;
+		protected IASTName astName;
 		public char[] name;
 		public ObjectMap usingDirectives = ObjectMap.EMPTY_MAP; 
 		public ObjectSet visited = ObjectSet.EMPTY_SET;	//used to ensure we don't visit things more than once
@@ -134,7 +135,13 @@ public class CPPSemantics {
 		public boolean typesOnly(){
 			if( astName == null ) return false;
 			IASTNode parent = astName.getParent();
-			return ( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier); 
+			if( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier )
+			    return true;
+			if( parent instanceof ICPPASTQualifiedName ){
+			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
+			    return ( astName != ns[ ns.length -1 ] );
+			}
+			return false;
 		}
 		public boolean forUsingDeclaration(){
 			if( astName == null ) return false;
@@ -342,27 +349,42 @@ public class CPPSemantics {
             binding = e2.getProblem();
         }
         //4: post processing
-		if( binding instanceof ICPPClassType && data.considerConstructors() ){
+		binding = postResolution( binding, data );
+		return binding;
+	}
+
+	/**
+     * @param binding
+     * @param data
+     * @param name
+     * @return
+     */
+    private static IBinding postResolution( IBinding binding, LookupData data ) {
+        if( binding instanceof ICPPClassType && data.considerConstructors() ){
 		    ICPPClassType cls = (ICPPClassType) binding;
 		    try {
                 //force resolution of constructor bindings
                 cls.getConstructors();
                 //then use the class scope to resolve which one.
-    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( name );
+    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( data.astName );
             } catch ( DOMException e ) {
                 binding = e.getProblem();
             }
 		    
-		}
+		}        
+        if( data.astName.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
+            binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
+        }
+        
 		if( binding != null && data.forDefinition() && !( binding instanceof IProblemBinding ) ){
-			addDefinition( binding, name );
+			addDefinition( binding, data.astName );
 		}
 		if( binding == null )
-			binding = new ProblemBinding(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray() );
-		return binding;
-	}
+			binding = new ProblemBinding(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name );
+        return binding;
+    }
 
-	static private CPPSemantics.LookupData createLookupData( IASTName name ){
+    static private CPPSemantics.LookupData createLookupData( IASTName name ){
 		CPPSemantics.LookupData data = new CPPSemantics.LookupData( name );
 		IASTNode parent = name.getParent();
 		if( parent instanceof ICPPASTQualifiedName ){
@@ -853,8 +875,16 @@ public class CPPSemantics {
 			if( CharArrayUtils.equals( name.toCharArray(), data.name ) ){
 				return name;
 			}
-			
+		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
+			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
+			if( CharArrayUtils.equals( namespaceName.toCharArray(), data.name ) )
+				return namespaceName;
+		} else if( declaration instanceof ICPPASTNamespaceAlias ){
+			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
+			if( CharArrayUtils.equals( alias.toCharArray(), data.name ) )
+				return alias;
 		}
+		
 		if( data.typesOnly() )
 		    return null;
 		
@@ -883,15 +913,7 @@ public class CPPSemantics {
 					}
 				}
 			}
-		} else if( declaration instanceof ICPPASTNamespaceDefinition ){
-			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
-			if( CharArrayUtils.equals( namespaceName.toCharArray(), data.name ) )
-				return namespaceName;
-		} else if( declaration instanceof ICPPASTNamespaceAlias ){
-			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
-			if( CharArrayUtils.equals( alias.toCharArray(), data.name ) )
-				return alias;
-		}
+		} 
 		
 		return null;
 	}

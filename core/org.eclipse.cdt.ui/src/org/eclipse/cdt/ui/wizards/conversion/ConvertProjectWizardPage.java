@@ -109,6 +109,11 @@ public abstract class ConvertProjectWizardPage
     public void createControl(Composite parent) {
 
         Composite  container = new Composite(parent, SWT.NONE);
+        /* Later ... [jng]
+         We need to add help, but cannot extend org.eclipse.ui.IHelpContextIds
+         and there is no constant defined that we can use.
+         see org.eclipse.cdt.ui.wizards.CProjectWizardPage::createControl
+        */
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;

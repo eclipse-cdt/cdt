@@ -1,50 +1,203 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html lang="en">
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
 
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Adding breakpoints</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./cdt_t_add_brkpnts_files/filelist.xml">
+<link rel=Edit-Time-Data href="./cdt_t_add_brkpnts_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Adding/Removing breakpoints</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Mikhail Khodjaiants</o:Author>
+  <o:LastAuthor>Mikhail Khodjaiants</o:LastAuthor>
+  <o:Revision>1</o:Revision>
+  <o:TotalTime>33</o:TotalTime>
+  <o:Created>2005-02-10T20:25:00Z</o:Created>
+  <o:LastSaved>2005-02-10T20:59:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Company>QNX Software Systems</o:Company>
+  <o:Lines>1</o:Lines>
+  <o:Paragraphs>1</o:Paragraphs>
+  <o:Version>9.3821</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:Compatibility>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+   <w:LayoutTableRowsApart/>
+  </w:Compatibility>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	color:windowtext;
+	mso-ansi-language:EN-GB;}
+h1
+	{margin-right:0in;
+	mso-margin-top-alt:auto;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:1;
+	font-size:18.0pt;
+	font-family:Arial;
+	color:black;
+	mso-font-kerning:18.0pt;
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{color:#006699;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{margin-right:0in;
+	mso-margin-top-alt:auto;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	color:black;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
 </head>
 
-<body>
+<body lang=EN-CA link="#006699" vlink=purple style='tab-interval:.5in'>
 
-<h1>Adding breakpoints</h1>
+<div class=Section1>
 
-<p>A breakpoint is set on an executable line of a program. If the breakpoint is 
-enabled when you debug, the execution suspends before that line of code 
-executes.</p>
+<h1><span lang=EN style='mso-ansi-language:EN'>Adding/Removing breakpoints<o:p></o:p></span></h1>
 
-<p>To add a breakpoint point, double click the marker bar located in the left margin of the 
-  <b>C/C++ Editor</b> beside the line of code where you want to add a breakpoint. A dot 
-  <img alt="Icon: Breakpoint object" src="../images/icon_breakpoint_obj.gif" width="16" height="16"> is 
-  displayed in the marker bar and in the <b>Breakpoints</b> view, along with the name of the associated file.</p>
-  
-<p><img src="../images/add_breakpoint.png" alt="Edit view with the cursor highlighting a breakpoint">  </p>
-  
-<p>For more information on marker bar icons, see <b>Workbench User Guide &gt; 
-Reference &gt; User interface information &gt; Icons and buttons &gt; Editor area 
-marker bar</b>.</p>
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
-<br>
-<a href="../concepts/cdt_c_over_cdt.htm">C/C++ Development perspective</a><br>
-</p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
-<br>
-<a href="cdt_o_brkpnts_watch.htm">Working with breakpoints and watchpoints</a></p>
-<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
-<br>
-<a href="../reference/cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
+<p><span lang=EN style='mso-ansi-language:EN'>A breakpoint is set on an
+executable line of a program. If the breakpoint is enabled when you debug, the
+execution suspends before that line of code executes.<o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'>To add a breakpoint, </span>directly
+to the left of the line where you want to add the breakpoint, open the marker
+bar (vertical ruler) pop-up menu and select <strong>Toggle Breakpoint.</strong>&nbsp;&nbsp;You
+can also use <span lang=EN style='mso-ansi-language:EN'>the global <b>Run &gt;
+Toggle Line Breakpoint</b> menu item or double click the marker bar </span>next
+to the source code line<span lang=EN style='mso-ansi-language:EN'>. A dot <!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" alt="Icon: Breakpoint object"
+ style='width:12pt;height:12pt'>
+ <v:imagedata src="./cdt_t_add_brkpnts_files/image001.gif" o:href="file:///E:/branch2.1-workspace/org.eclipse.cdt.doc.user/images/icon_breakpoint_obj.gif"/>
+</v:shape><![endif]--><![if !vml]><img width=16 height=16
+src="./cdt_t_add_brkpnts_files/image001.gif" alt="Icon: Breakpoint object"
+v:shapes="_x0000_i1025"><![endif]>is displayed in the marker bar and in the <b>Breakpoints</b>
+view, along with the name of the associated file.<o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'>To remove a breakpoint repeat the
+same steps on the existing breakpoint. <o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'><!--[if gte vml 1]><v:shape id="_x0000_i1026"
+ type="#_x0000_t75" alt="Edit view with the cursor highlighting a breakpoint"
+ style='width:339.75pt;height:251.25pt'>
+ <v:imagedata src="./cdt_t_add_brkpnts_files/image002.png" o:href="file:///E:/branch2.1-workspace/org.eclipse.cdt.doc.user/images/add_breakpoint.png"/>
+</v:shape><![endif]--><![if !vml]><img width=453 height=335
+src="./cdt_t_add_brkpnts_files/image003.jpg"
+alt="Edit view with the cursor highlighting a breakpoint" v:shapes="_x0000_i1026"><![endif]><o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'>For more information on marker
+bar icons, see <b>Workbench User Guide &gt; Reference &gt; User interface
+information &gt; Icons and buttons &gt; Editor area marker bar</b>.<o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'><!--[if gte vml 1]><v:shape id="_x0000_i1027"
+ type="#_x0000_t75" alt="Related concepts" style='width:107.25pt;height:15.75pt'>
+ <v:imagedata src="./cdt_t_add_brkpnts_files/image004.gif" o:href="file:///E:/branch2.1-workspace/org.eclipse.cdt.doc.user/images/ngconcepts.gif"/>
+</v:shape><![endif]--><![if !vml]><img width=143 height=21
+src="./cdt_t_add_brkpnts_files/image004.gif" alt="Related concepts" border=0
+v:shapes="_x0000_i1027"><![endif]><br>
+<a
+href="E:branch2.1-workspaceorg.eclipse.cdt.doc.userconceptscdt_c_over_cdt.htm">C/C++
+Development perspective</a><o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'><!--[if gte vml 1]><v:shape id="_x0000_i1028"
+ type="#_x0000_t75" alt="Related tasks" style='width:107.25pt;height:15.75pt'>
+ <v:imagedata src="./cdt_t_add_brkpnts_files/image005.gif" o:href="file:///E:/branch2.1-workspace/org.eclipse.cdt.doc.user/images/ngtasks.gif"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=143 height=21
+src="./cdt_t_add_brkpnts_files/image005.gif" alt="Related tasks" v:shapes="_x0000_i1028"><![endif]><br>
+<a
+href="E:branch2.1-workspaceorg.eclipse.cdt.doc.usertaskscdt_o_brkpnts_watch.htm">Working
+with breakpoints and watchpoints</a><o:p></o:p></span></p>
+
+<p><span lang=EN style='mso-ansi-language:EN'><!--[if gte vml 1]><v:shape id="_x0000_i1029"
+ type="#_x0000_t75" alt="Related reference" style='width:107.25pt;height:15.75pt'>
+ <v:imagedata src="./cdt_t_add_brkpnts_files/image006.gif" o:href="file:///E:/branch2.1-workspace/org.eclipse.cdt.doc.user/images/ngref.gif"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=143 height=21
+src="./cdt_t_add_brkpnts_files/image006.gif" alt="Related reference" v:shapes="_x0000_i1029"><![endif]><br>
+<a
+href="E:branch2.1-workspaceorg.eclipse.cdt.doc.userreferencecdt_o_run_dbg_pages.htm">Run
+and Debug dialog box</a><o:p></o:p></span></p>
+
+<p class=MsoNormal><span lang=EN style='font-family:Arial;color:black;
+mso-ansi-language:EN'><!--[if gte vml 1]><v:shape id="_x0000_i1030" type="#_x0000_t75"
+ alt="IBM Copyright Statement" style='width:243pt;height:10.5pt'>
+ <v:imagedata src="./cdt_t_add_brkpnts_files/image007.gif" o:href="file:///E:/branch2.1-workspace/org.eclipse.cdt.doc.user/images/ng00_04a.gif"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=324 height=14
+src="./cdt_t_add_brkpnts_files/image007.gif" alt="IBM Copyright Statement"
+v:shapes="_x0000_i1030"><![endif]></span></p>
+
+</div>
 
 </body>
 

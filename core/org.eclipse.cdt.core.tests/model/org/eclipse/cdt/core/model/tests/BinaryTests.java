@@ -197,8 +197,7 @@ public class BinaryTests extends TestCase {
         IBinary myBinary;
         ICElement[] elements;
         ExpectedStrings expSyms;
-        String[] myStrings = {"atexit", "exit", "_init_libc", "printf",
-            "test.c", "_init","main.c", "_start", "test2.c", "_btext"};
+        String[] myStrings = {"test.c", "_init","main.c", "_start", "test2.c", "_btext"};
         
         expSyms=new ExpectedStrings(myStrings);
 

@@ -2509,7 +2509,7 @@ abstract class BaseScanner implements IScanner {
                   if (!branchState(BRANCH_END))
                      handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION,
                            start, ppKeywords.findKey(buffer, start, len));
-                  processEndif(pos, bufferPos[bufferStackPos]);
+                  processEndif(pos, bufferPos[bufferStackPos] + 1);
                   break;
                case ppPragma:
                   skipToNewLine();

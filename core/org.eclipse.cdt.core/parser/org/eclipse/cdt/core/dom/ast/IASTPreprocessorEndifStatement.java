@@ -14,5 +14,5 @@ package org.eclipse.cdt.core.dom.ast;
  * @author jcamelon
  */
 public interface IASTPreprocessorEndifStatement extends IASTPreprocessorStatement{
-
+    
 }

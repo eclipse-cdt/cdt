@@ -15,4 +15,5 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTPreprocessorIfdefStatement extends IASTPreprocessorStatement {
 
+    public boolean taken();
 }

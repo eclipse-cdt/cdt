@@ -174,7 +174,9 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      */
     public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
         if( resolver == null ) return EMPTY_PREPROCESSOR_STATEMENT_ARRAY;
-        return resolver.getAllPreprocessorStatements();
+        IASTPreprocessorStatement [] result = resolver.getAllPreprocessorStatements();
+        setParentRelationship( result, IASTTranslationUnit.PREPROCESSOR_STATEMENT );
+        return result;
     }
 
 

@@ -13,7 +13,8 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author jcamelon
  */
-public interface IASTPreprocessorIfStatement extends IASTPreprocessorStatement {
+public interface IASTPreprocessorElifStatement extends IASTPreprocessorStatement {
 
     public boolean taken();
+    
 }

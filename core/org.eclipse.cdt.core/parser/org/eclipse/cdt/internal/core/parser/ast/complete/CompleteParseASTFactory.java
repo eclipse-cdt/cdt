@@ -1581,10 +1581,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements
             // pointer to a completely defined object type and the other shall
             // have integral or enumeration type.
             // For subtraction, one of the following shall hold:
-            // — both operands have arithmetic or enumeration type; or
-            // — both operands are pointers to cvqualified or cvunqualified
+            // - both operands have arithmetic or enumeration type; or
+            // - both operands are pointers to cvqualified or cvunqualified
             // versions of the same completely defined object type; or
-            // — the left operand is a pointer to a completely defined object
+            // - the left operand is a pointer to a completely defined object
             // type and the right operand has integral or
             // enumeration type.
          } else if (kind == IASTExpression.Kind.ADDITIVE_PLUS) {

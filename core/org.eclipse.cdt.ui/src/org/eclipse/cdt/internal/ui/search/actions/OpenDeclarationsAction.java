@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.ui.search.actions;
 
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -37,6 +40,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -87,7 +91,7 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 
  		return getSelection( (ITextSelection)selection );
 	}
-	
+	String projectName = "";  //$NON-NLS-1$
 	 private static class Storage
 	{
 		private IASTOffsetableNamedElement element;
@@ -147,6 +151,8 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 		{
 			public void run(IProgressMonitor monitor) {
 				IFile resourceFile = fEditor.getInputFile();
+				projectName = findProjectName(resourceFile);
+				
 				IParser parser = setupParser(resourceFile);
  		 		int selectionStart = selNode.selStart;
  		 		int selectionEnd = selNode.selEnd;
@@ -176,6 +182,16 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 				storage.setElement( node );
 				storage.setResource( ParserUtil.getResourceForFilename( result.getFilename() ) );
 				return;
+			}
+
+			private String findProjectName(IFile resourceFile) {
+				IProject [] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+				for( int i = 0; i < projects.length; ++i )
+				{
+					if( projects[i].contains(resourceFile) )
+						return projects[i].getName();
+				}
+				return ""; //$NON-NLS-1$
 			}
  		};
 
@@ -235,6 +251,15 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 			return true;
 		}
 
+		ICProject cproject = CoreModel.getDefault().getCModel().getCProject( projectName );
+		ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, path);
+		if (unit != null) {
+			setSelectionAtOffset( EditorUtility.openInEditor(unit), offset, length );
+			return true;
+		}
+
+		
+		
 		FileStorage storage = new FileStorage(null, path);
 		IEditorPart part = EditorUtility.openInEditor(storage);
 		setSelectionAtOffset(part, offset, length);

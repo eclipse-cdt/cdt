@@ -49,18 +49,19 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEn
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getRegisters()
 	 */
 	public IRegister[] getRegisters() throws DebugException {
-		if (fRegisters == null) {
+		if ( fRegisters == null ) {
 			try {
 				ICDIRegisterDescriptor[] regDescs = fCDIRegisterGroup.getRegisterDescriptors();
 				fRegisters = new IRegister[regDescs.length];
-				for ( int i = 0; i < fRegisters.length; ++i ) {
-					fRegisters[i] = new CRegister( this,  regDescs[i] );
+				for( int i = 0; i < fRegisters.length; ++i ) {
+					fRegisters[i] = new CRegister( this, regDescs[i] );
 					if ( ((CRegister)fRegisters[i]).isEnabled() ) {
 						((CRegister)fRegisters[i]).setEnabled( isEnabled() );
 					}
 				}
-			}  catch (CDIException e) {
-				requestFailed( e.getMessage(), null );				
+			}
+			catch( CDIException e ) {
+				requestFailed( e.getMessage(), null );
 			}
 		}
 		return fRegisters;

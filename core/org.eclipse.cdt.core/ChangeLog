@@ -1,3 +1,18 @@
+2003-04-09 Alain Magloire
+
+	Give a chance to the manager to initialize and shutdown gracefully.
+	The CCorePlugin will call the managers, indexer, coreModel, CDescriptorManager
+	startup() method and shutdown() method.
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java:
+	Call {IndexModel,CoreModel}.{startup,shutdown}().
+	* model/org/eclipse/cdt/core/model/CoreModel.java:
+	New methods startup/shutdown.
+	* model/org/eclipse/cdt/internal/core/mode/CModelManager.java:
+	implement startup/shutdown.
+	* index/org/eclipse/cdt/core/model/IndexModel.java:
+	New methods startup/shutdown.
+
 2003-04-08 Alain Magloire
 
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java:

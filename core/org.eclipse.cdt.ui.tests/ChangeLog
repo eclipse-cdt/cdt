@@ -1,3 +1,8 @@
+2003-06-11 Victor Mozgin
+	Old Java TestCase.txt and TestCase2.txt for partioning testing have been replaced with C/C++ files.
+	Modified AutomatedIntegrationSuite.java so it doesn't produce JUnit warning anymore.
+	All tests in org.eclipse.cdt.ui.tests should pass now.
+
 2003-06-10 Brent Nicolle
 	Added some Interface tests of (IInclude, IMacro, IStructure).
 	Made sure all the Test Suites have names in the JUnit hierarchy.

@@ -74,7 +74,7 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		suite.addTest(WorkingCopyTests.suite());
 		
 		// Last test to trigger report generation
-		suite.addTest(suite.new GenerateReport("testStartFailedTests"));
+		suite.addTest(suite.new GenerateReport("startFailedTests"));
 		
 		// Add all failed tests
 		suite.addTestSuite(DOMFailedTest.class);
@@ -83,7 +83,7 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		suite.addTestSuite(CModelElementsFailedTests.class);
 
 		// Last test to trigger report generation
-		suite.addTest(suite.new GenerateReport("testGenerateReport"));
+		suite.addTest(suite.new GenerateReport("generateReport"));
 
 		return suite;
 	}
@@ -209,7 +209,7 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		}
 		public GenerateReport(){}
 		
-		public void testGenerateReport() {
+		public void generateReport() {
 			// skip this one
 			AutomatedIntegrationSuite.this.skipTest = true;
 
@@ -217,7 +217,7 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 			AutomatedIntegrationSuite.this.generateReport();
 		}
 		
-		public void testStartFailedTests() {
+		public void startFailedTests() {
 			// skip this one
 			AutomatedIntegrationSuite.this.skipTest = true;
 			

@@ -227,6 +227,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
+			((SharedLibrary)libs[i]).getMIShared().setSymbolsRead(true);
 			mi.fireEvent(new MISharedLibChangedEvent(libs[i].getFileName()));
 		}
 	}

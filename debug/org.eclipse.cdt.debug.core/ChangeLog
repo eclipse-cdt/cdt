@@ -1,4 +1,9 @@
 2003-11-10 Mikhail Khodjaiants
+	Detail Pane values for casted variables.
+	* CVariable.java: the qualified name should be chached in the InternalVariable instance
+	* CArrayPartition.java: added new field to store the chached value of the qualified name
+
+2003-11-10 Mikhail Khodjaiants
 	Moving the shared library search paths block to mi UI.
 	* ICDTLaunchConfigurationConstants.java: moved the 'ATTR_DEBUGGER_SOLIB_PATH' attribute to mi.
 

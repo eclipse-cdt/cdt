@@ -1,3 +1,11 @@
+2002-11-20 Mikhail Khodjaiants
+	Fix for bug 26595.
+	The type of the address expression has been changed from String to ICDIExpression to handle 
+	changes of the start address.
+	* CDebugModel.java
+	* CFormattedMemoryBlock.java
+	* IFormattedMemoryBlock.java: added the 'isStartAddressChanged' method.
+
 2002-11-15 Mikhail Khodjaiants
 	Partial fix for bug 25956.
 	* DisassemblyManager.java: Filter out the instructions that do not belong to the function.

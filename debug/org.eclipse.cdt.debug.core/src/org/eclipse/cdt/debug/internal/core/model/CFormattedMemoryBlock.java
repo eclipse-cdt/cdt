@@ -14,10 +14,12 @@ import org.eclipse.cdt.debug.core.IExecFileInfo;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -175,7 +177,8 @@ public class CFormattedMemoryBlock extends CDebugElement
 		}
 	}
 
-	private String fAddressExpression;
+//	private String fAddressExpression;
+	private ICDIExpression fAddressExpression;
 	private ICDIMemoryBlock fCDIMemoryBlock;
 	private byte[] fBytes = null;
 	private int fFormat;
@@ -187,6 +190,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private List fRows = null;
 	private Long[] fChangedAddresses = new Long[0];
 	private DirtyBytes fDirtyBytes = null;
+	private boolean fStartAddressChanged = false;
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -194,7 +198,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public CFormattedMemoryBlock( CDebugTarget target,
 								  ICDIMemoryBlock cdiMemoryBlock,
-								  String addressExpression,
+								  ICDIExpression addressExpression,
 								  int format,
 						  		  int wordSize,
 						  		  int numberOfRows,
@@ -209,7 +213,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public CFormattedMemoryBlock( CDebugTarget target,
 								  ICDIMemoryBlock cdiMemoryBlock,
-								  String addressExpression,
+								  ICDIExpression addressExpression,
 								  int format,
 						  		  int wordSize,
 						  		  int numberOfRows,
@@ -224,7 +228,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 		fNumberOfRows = numberOfRows;
 		fNumberOfColumns = numberOfColumns;
 		fDisplayAscii = true;
-		fPaddingChar = paddingChar;		
+		fPaddingChar = paddingChar;	
 		getCDISession().getEventManager().addEventListener( this );
 	}
 
@@ -473,6 +477,18 @@ public class CFormattedMemoryBlock extends CDebugElement
 			}
 			fCDIMemoryBlock = null;
 		}
+		if ( fAddressExpression != null )
+		{
+			try
+			{
+				((CDebugTarget)getDebugTarget()).getCDISession().getExpressionManager().removeExpression( fAddressExpression );
+			}
+			catch( CDIException e )
+			{
+				CDebugCorePlugin.log( e );
+			}
+			fAddressExpression = null;
+		}
 		getCDISession().getEventManager().removeEventListener( this );
 	}
 
@@ -481,7 +497,15 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public String getAddressExpression()
 	{
-		return fAddressExpression;
+		try
+		{
+			return fAddressExpression.getName();
+		}
+		catch( CDIException e )
+		{
+			// ignore
+		}
+		return "";
 	}
 	
 	private String[] createData( byte[] bytes, int offset, int length )
@@ -539,6 +563,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 					handleChangedEvent( (ICDIMemoryChangedEvent)event );
 				}
 			}
+			else if ( event instanceof ICDIChangedEvent )
+			{
+				if ( source instanceof ICDIExpression && source.equals( fAddressExpression ) )
+				{
+					handleAddressChangedEvent( (ICDIChangedEvent)event );
+				}
+			}
 		}
 	}
 
@@ -555,6 +586,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private void handleResumedEvent( ICDIResumedEvent event )
 	{
 		resetChangedAddresses();
+		fStartAddressChanged = false;
 		fireChangeEvent( DebugEvent.CONTENT );
 	}
 	
@@ -563,6 +595,14 @@ public class CFormattedMemoryBlock extends CDebugElement
 		resetBytes();
 		resetRows();
 		setChangedAddresses( event.getAddresses() );
+		fireChangeEvent( DebugEvent.CONTENT );
+	}
+	
+	private void handleAddressChangedEvent( ICDIChangedEvent event )
+	{
+		resetBytes();
+		resetRows();
+		fStartAddressChanged = true;
 		fireChangeEvent( DebugEvent.CONTENT );
 	}
 	
@@ -730,4 +770,12 @@ public class CFormattedMemoryBlock extends CDebugElement
 		}
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#isStartAddressChanged()
+	 */
+	public boolean isStartAddressChanged()
+	{
+		return fStartAddressChanged;
+	}	
 }

@@ -134,4 +134,6 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	boolean canChangeFormat( int format );
 	
 	boolean isLittleEndian();
+	
+	boolean isStartAddressChanged();
 }

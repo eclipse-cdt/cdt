@@ -1,3 +1,9 @@
+2002-11-20 Mikhail Khodjaiants
+	Fix for bug 26595.
+	Highlight the addresses if the start address of a memory expression has changed.
+	*MemoryPresentation.java
+	*MemoryText.java
+
 2002-11-19 Mikhail Khodjaiants
 	Added enablement condition to some actions.
 	*plugin.xml

@@ -367,7 +367,7 @@ public class CDebugModel
 	}
 
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, 
-																	String startAddress,
+																	String addressExpression,
 																    int format,
 																    int wordSize,
 																    int numberOfRows,
@@ -378,12 +378,15 @@ public class CDebugModel
 		{
 			try
 			{
+				ICDIExpression expression = ((CDebugTarget)target).getCDISession()
+																  .getExpressionManager()
+																  .createExpression( addressExpression );
 				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession()
 																	   .getMemoryManager()
-																	   .createMemoryBlock( startAddress, wordSize * numberOfRows * numberOfColumns );
+																	   .createMemoryBlock( expression.getName(), wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, 
 												  cdiMemoryBlock,
-												  startAddress,
+												  expression,
 												  format,
 												  wordSize,
 												  numberOfRows,
@@ -403,7 +406,7 @@ public class CDebugModel
 	}
 
 	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, 
-																	String startAddress,
+																	String addressExpression,
 																    int format,
 																    int wordSize,
 																    int numberOfRows,
@@ -413,12 +416,15 @@ public class CDebugModel
 		{
 			try
 			{
+				ICDIExpression expression = ((CDebugTarget)target).getCDISession()
+																  .getExpressionManager()
+																  .createExpression( addressExpression );
 				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession()
 																	   .getMemoryManager()
-																	   .createMemoryBlock( startAddress, wordSize * numberOfRows * numberOfColumns );
+																	   .createMemoryBlock( expression.getName(), wordSize * numberOfRows * numberOfColumns );
 				return new CFormattedMemoryBlock( (CDebugTarget)target, 
 												  cdiMemoryBlock,
-												  startAddress,
+												  expression,
 												  format,
 												  wordSize,
 												  numberOfRows,

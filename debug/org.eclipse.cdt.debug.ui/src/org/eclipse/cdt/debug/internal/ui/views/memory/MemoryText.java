@@ -142,11 +142,12 @@ public class MemoryText
 
 		}
 		zones = fPresentation.getAddressZones();
+		boolean isStartAddressChanged = fPresentation.isStartAddressChanged();
 		for ( int i = 0; i < zones.length; ++i )
 		{
 			fText.setStyleRange( new StyleRange( zones[i].x,
 												 zones[i].y - zones[i].x + 1,
-												 getAddressColor(),
+												 ( isStartAddressChanged ) ? getChangedColor() : getAddressColor(),
 												 getBackgroundColor() ) );
 		}
 		fText.redraw();

@@ -1,3 +1,9 @@
+2002-11-20 Mikhail Khodjaiants
+	Fix for bug 26595.
+	* src/.../mi/core/cdi/MemoryManager.java (compareBlocks):
+	If the start address of a memory block has changed fir 'changed' event 
+	only for the corresponding bytes of the overlapping area of new and old blocks.
+	
 2002-11-19 Alain Magloire
 
 	* src/.../mi/core/cdi/MemoryManager.java (compareBlocks):

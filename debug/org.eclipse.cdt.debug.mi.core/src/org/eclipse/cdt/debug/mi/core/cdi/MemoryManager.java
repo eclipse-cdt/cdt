@@ -58,10 +58,11 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 */
 	public Long[] update(MemoryBlock block, List aList) throws CDIException {
 		MemoryBlock newBlock = cloneBlock(block);
+		boolean newAddress = ( newBlock.getStartAddress() != block.getStartAddress() );
 		Long[] array = compareBlocks(block, newBlock);
 		// Update the block MIDataReadMemoryInfo.
 		block.setMIDataReadMemoryInfo(newBlock.getMIDataReadMemoryInfo());
-		if (array.length > 0) {
+		if (array.length > 0 || newAddress) {
 			if (aList != null) {
 				aList.add(new MIMemoryChangedEvent(array));
 			} else {
@@ -90,13 +91,14 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 		byte[] oldBytes = oldBlock.getBytes();
 		byte[] newBytes = newBlock.getBytes();
 		List aList = new ArrayList(newBytes.length);
-		for (int i = 0; i < newBytes.length; i++) {
-			if (i < oldBytes.length) {
-				if (oldBytes[i] != newBytes[i]) {
-					aList.add(new Long(newBlock.getStartAddress() + i));
+		long diff = newBlock.getStartAddress() - oldBlock.getStartAddress();
+		if ( Math.abs( diff ) < newBytes.length ) {
+			for (int i = 0; i < newBytes.length; i++) {
+				if (i + (int)diff < oldBytes.length && i + (int)diff >= 0) {
+					if (oldBytes[i + (int)diff] != newBytes[i]) {
+						aList.add(new Long(newBlock.getStartAddress() + i));
+					}
 				}
-			} else {
-				aList.add(new Long(newBlock.getStartAddress() + i));
 			}
 		}
 		return (Long[])aList.toArray(new Long[0]);

@@ -562,4 +562,13 @@ public class MemoryPresentation
 		}
 		return CDebugUtils.prependString( result, getDataItemLength(), ' ' );
 	}
+	
+	protected boolean isStartAddressChanged()
+	{
+		if ( getMemoryBlock() != null )
+		{
+			return getMemoryBlock().isStartAddressChanged();
+		}
+		return false;
+	}
 }

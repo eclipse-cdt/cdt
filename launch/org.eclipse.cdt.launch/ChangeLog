@@ -1,5 +1,13 @@
 2002-11-22 Alain Magloire
 
+	* src/.../AbstractCLaunchDelegate.java (getProgranName): Now static.
+	* src/.../internal/ui/LaunchUIPlugin.java.java (errorDialog): New method.
+	* src/.../internal/ui/CApplicationLauchShortcut.java.java : New File
+	provides shortcut to start C applications.
+	* plugin.xml: Implement extenxion point shortcut.
+
+2002-11-22 Alain Magloire
+
 	* src/.../internal/ui/LaunchUIPlugin.java (startup):
 	On startup add a listener to DebugPlugin for debug events.
 	(shutdown): remove the listener.

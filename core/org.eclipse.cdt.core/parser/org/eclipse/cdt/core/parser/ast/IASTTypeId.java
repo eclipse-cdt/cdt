@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser.ast;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
 /**
  * @author jcamelon
@@ -38,7 +37,6 @@ public interface IASTTypeId extends ISourceElementCallbackDelegate
 	
 	public String  getFullSignature(); 
 	public char[]  getFullSignatureCharArray();
-	public ISymbol getTypeSymbol() throws ASTNotImplementedException;
 	/**
 	 * @param manager
 	 */

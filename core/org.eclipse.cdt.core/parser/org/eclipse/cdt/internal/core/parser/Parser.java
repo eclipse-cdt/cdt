@@ -4651,7 +4651,6 @@ public class Parser implements IParserData, IParser
 				case IToken.t_typename :
 					sdw.setTypenamed(true);
 					consume(IToken.t_typename);
-					IToken first = LA(1);
 					ITokenDuple duple = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE,
 										KeywordSetKey.EMPTY);
 					sdw.setTypeName(duple);

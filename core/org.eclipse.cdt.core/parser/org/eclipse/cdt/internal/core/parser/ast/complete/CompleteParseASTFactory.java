@@ -1133,14 +1133,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     
 	private void createConstructorReference( IASTNewExpressionDescriptor descriptor, IASTTypeId typeId, List references ){
 		ISymbol symbol = null;
-		try {
-			symbol = typeId.getTypeSymbol();
+		
+		symbol = ((ASTTypeId)typeId).getTypeSymbol();
 			
-			if( symbol.isType( ITypeInfo.t_type ) )
-				symbol = symbol.getTypeSymbol();
-		} catch (ASTNotImplementedException e) {
-			return;
-		}
+		if( symbol.isType( ITypeInfo.t_type ) )
+			symbol = symbol.getTypeSymbol();
+		
 		if( symbol == null || !( symbol instanceof IDerivableContainerSymbol ) )
 			return;
 		
@@ -1712,15 +1710,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( ( kind == IASTExpression.Kind.NEW_TYPEID )
 		|| ( kind == IASTExpression.Kind.NEW_NEWTYPEID ) )
 		{
-			try
-            {
-                info = typeId.getTypeSymbol().getTypeInfo();
-				info.addPtrOperator( new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));
-            }
-            catch (ASTNotImplementedException e)
-            {
-            	// will never happen
-            }
+            info = ((ASTTypeId)typeId).getTypeSymbol().getTypeInfo();
+            info.addPtrOperator( new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));
 			result = new ExpressionResult(info);
 			return result;
 		}
@@ -1789,12 +1780,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		|| ( kind == IASTExpression.Kind.POSTFIX_REINTERPRET_CAST )
 		|| ( kind == IASTExpression.Kind.POSTFIX_CONST_CAST )		
 		){
-			try{
-				info = TypeInfoProvider.newTypeInfo(typeId.getTypeSymbol().getTypeInfo()); 
-			}catch (ASTNotImplementedException e)
-			{
-				// will never happen
-			}
+			
+			info = TypeInfoProvider.newTypeInfo(((ASTTypeId)typeId).getTypeSymbol().getTypeInfo()); 
 			result = new ExpressionResult(info);
 			return result;
 		}				
@@ -1836,14 +1823,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// typeid
 		if( kind == IASTExpression.Kind.POSTFIX_TYPEID_TYPEID )
 		{
-			try
-            {
-                info = typeId.getTypeSymbol().getTypeInfo();
-            }
-            catch (ASTNotImplementedException e)
-            {
-            	// will not ever happen from within CompleteParseASTFactory
-            }
+            info = ((ASTTypeId)typeId).getTypeSymbol().getTypeInfo();
 			result = new ExpressionResult(info);
 			return result;
 		}
@@ -3062,10 +3042,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	provider.beginTypeConstruction();
     	
     	if( defaultValue != null ){
-    	    try {
-                provider.setDefaultObj( defaultValue.getTypeSymbol().getTypeInfo() );
-            } catch ( ASTNotImplementedException e1 ) {
-            }
+            provider.setDefaultObj( ((ASTTypeId)defaultValue).getTypeSymbol().getTypeInfo() );
     	}
     	if( kind == ParamKind.TEMPLATE_LIST ){
     		ITemplateSymbol template = pst.newTemplateSymbol( identifier );

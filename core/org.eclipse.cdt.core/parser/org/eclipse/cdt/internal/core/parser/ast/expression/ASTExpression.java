@@ -20,29 +20,15 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
  */
 public class ASTExpression implements IASTExpression {
 
-	private final Kind kind; 
-	private final IASTExpression lhs, rhs, third; 
-	private final IASTTypeId typeId;
-	private final String literal, idExpression; 
-	private final IASTNewExpressionDescriptor newDescriptor;
+	private final Kind kind;
+	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
 	/**
 	 * @param kind
-	 * @param lhs
-	 * @param rhs
 	 * @param id
-	 * @param typeId
-	 * @param literal
 	 */
-	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor ) {
+	public ASTExpression(Kind kind ) {
 		this.kind = kind; 
-		this.lhs =lhs; 
-		this.rhs = rhs; 
-		this.third = third;
-		this.typeId = typeId; 
-		this.literal = literal;
-		this.newDescriptor = newDescriptor;
-		this.idExpression = idExpression;
 	}
 
 	/* (non-Javadoc)
@@ -56,42 +42,42 @@ public class ASTExpression implements IASTExpression {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getLHSExpression()
 	 */
 	public IASTExpression getLHSExpression() {
-		return lhs;
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getRHSExpression()
 	 */
 	public IASTExpression getRHSExpression() {
-		return rhs;
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getLiteralString()
 	 */
 	public String getLiteralString() {
-		return literal;
+		return EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getTypeId()
 	 */
 	public IASTTypeId getTypeId() {
-		return typeId;
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getNewExpressionDescriptor()
 	 */
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor() {
-		return newDescriptor;
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getThirdExpression()
 	 */
 	public IASTExpression getThirdExpression() {
-		return third;
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -199,7 +185,7 @@ public class ASTExpression implements IASTExpression {
      */
     public String getIdExpression()
     {
-    	return idExpression;
+    	return null;
     }
 
     /* (non-Javadoc)

@@ -381,15 +381,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		throws ASTSemanticException {
 			if( extension.overrideCreateExpressionMethod() )
 				return extension.createExpression(scope, kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor );
-			return new ASTExpression(
-				kind,
-				lhs,
-				rhs,
-				thirdExpression,
-				typeId,
-				idExpression == null ? "" : idExpression.toString(), //$NON-NLS-1$
-				literal,
-				newDescriptor );
+			return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ); //$NON-NLS-1$
 		
 	}
 

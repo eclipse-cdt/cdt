@@ -60,7 +60,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
-import org.eclipse.cdt.internal.core.parser.ast.expression.ASTExpression;
+import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionFactory;
 
 /**
 
@@ -68,8 +68,6 @@ import org.eclipse.cdt.internal.core.parser.ast.expression.ASTExpression;
  *
  */
 public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory {
-
-	private static final boolean CREATE_EXCESS_CONSTRUCTS = true;
 
 	public QuickParseASTFactory( IASTFactoryExtension extension )
 	{
@@ -159,18 +157,14 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		if( CREATE_EXCESS_CONSTRUCTS )
-			return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ); //$NON-NLS-1$
-		return null;
+		return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor );  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
 	 */
 	public IASTNewExpressionDescriptor createNewDescriptor(List newPlacementEpressions, List newTypeIdExpressions, List newInitializerExpressions) {
-		if( CREATE_EXCESS_CONSTRUCTS )
-			return new ASTNewDescriptor();
-		return null;
+		return new ASTNewDescriptor();
 	}
 
 	/* (non-Javadoc)
@@ -341,9 +335,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 
     public IASTInitializerClause createInitializerClause(IASTScope scope, IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators)
     {
-    	if( CREATE_EXCESS_CONSTRUCTS )
-    		return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
-    	return null;
+    	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
     }
 
 	/* (non-Javadoc)

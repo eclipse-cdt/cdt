@@ -298,7 +298,7 @@ public class SourceManager extends Manager {
 			return new ShortType(target, typename, true);
 		} else if (typename.equals("int32_t")) { //$NON-NLS-1$
 			return new LongType(target, typename);
-		} else if (typename.equals("uint31_t")) { //$NON-NLS-1$
+		} else if (typename.equals("uint32_t")) { //$NON-NLS-1$
 			return new LongType(target, typename, true);
 		} else if (typename.equals("int64_t")) { //$NON-NLS-1$
 			return new LongLongType(target, typename);

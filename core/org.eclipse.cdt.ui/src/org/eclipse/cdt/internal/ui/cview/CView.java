@@ -818,9 +818,13 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	void addBookMarkMenu (IMenuManager menu, IStructuredSelection selection) {
-		//if (resource instanceof IFile) {
+		IAdaptable element = (IAdaptable)selection.getFirstElement();
+		IResource resource = (IResource)element.getAdapter(IResource.class);
+		if (resource == null)
+			return;
+		if (resource instanceof IFile) {
 			menu.add(addBookmarkAction);
-		//}
+		}
 	}
 
 	void addPropertyMenu (IMenuManager menu, IStructuredSelection selection) {

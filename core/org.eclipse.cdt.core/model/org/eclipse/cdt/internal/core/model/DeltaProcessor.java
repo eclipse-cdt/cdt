@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 
 /**
  * This class is used by <code>CModelManager</code> to convert
@@ -36,7 +37,9 @@ public class DeltaProcessor {
 	protected CElementDelta fCurrentDelta;
 	
 	protected IndexManager indexManager = new IndexManager();
-
+	
+	protected DependencyManager sourceDependencyManager = new DependencyManager();
+	
 	/* The C element that was last created (see createElement(IResource). 
 	 * This is used as a stack of C elements (using getParent() to pop it, and 
 	 * using the various get*(...) to push it. */

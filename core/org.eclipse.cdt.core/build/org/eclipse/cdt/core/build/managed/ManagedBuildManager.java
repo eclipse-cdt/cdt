@@ -420,7 +420,7 @@ public class ManagedBuildManager implements IScannerInfoProvider {
 	 * @param resource
 	 * @return
 	 */
-	private static IScannerInfo getScannerInfo(IResource resource) {
+	public static IScannerInfo getScannerInfo(IResource resource) {
 		return (IScannerInfo) getBuildInfo(resource, false);
 	}
 

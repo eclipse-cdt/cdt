@@ -1,3 +1,7 @@
+2003-07-23  Bogdan Gheorghe
+	Added checkbox to Indexer tab to turn on dependency tree
+	service
+	
 2003-07-21	Bogdan Gheorghe
 	Update to CSearchResultLabelProvider to ensure that search labels
 	show up on subsequent runs.

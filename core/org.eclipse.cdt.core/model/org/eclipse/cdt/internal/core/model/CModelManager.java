@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 
 public class CModelManager implements IResourceChangeListener {
 
@@ -777,4 +778,8 @@ public class CModelManager implements IResourceChangeListener {
 		this.getIndexManager().discardJobs(project.getName());
 	}
 	
+	
+	public DependencyManager getSourceDependencyManager() {
+		return this.fDeltaProcessor.sourceDependencyManager;
+	}
 }

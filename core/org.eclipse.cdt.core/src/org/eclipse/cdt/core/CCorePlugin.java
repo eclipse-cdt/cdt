@@ -189,6 +189,9 @@ public class CCorePlugin extends Plugin {
 		//Fired up the new indexer
 		fCoreModel.startIndexing();
 		
+		//Fire up dependency manager
+		fCoreModel.startDependencyService();
+		
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
 		

@@ -9,6 +9,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -226,4 +227,11 @@ public class CoreModel {
 		return manager.getIndexManager();
 	}
 	
+	public void startDependencyService() {
+		manager.getSourceDependencyManager().reset();
+	}
+	
+	public DependencyManager getDependencyManager(){
+		return manager.getSourceDependencyManager();
+	}
 }

@@ -11,18 +11,23 @@
 package org.eclipse.cdt.core.indexer.tests;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -80,7 +85,7 @@ public class IndexManagerTests extends TestCase {
 
 	public static Test suite() {
 		//TestSuite suite = new TestSuite();
-		//suite.addTest(new IndexManagerTests("testIndexContents"));
+		//suite.addTest(new IndexManagerTests("testDependencyTree"));
 		//return suite;
 		return new TestSuite(IndexManagerTests.class);
 	}
@@ -114,7 +119,7 @@ public class IndexManagerTests extends TestCase {
 	   return cproject; 
 	}
 	
-	private void importFile(String fileName, String resourceLocation)throws Exception{
+	private IFile importFile(String fileName, String resourceLocation)throws Exception{
 	   //Obtain file handle
        file = testProject.getProject().getFile(fileName); 
 	   String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
@@ -124,6 +129,7 @@ public class IndexManagerTests extends TestCase {
 		 file.create(new FileInputStream(pluginRoot + resourceLocation),false,monitor);
 	   }
 	   fileDoc = new IFileDocument(file);
+	   return file;
 	}
 	
 	private void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
@@ -342,4 +348,79 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(methodResultModel[i],methodresults[i].toString());
 		}
   }
+  
+  public void testDependencyTree() throws Exception{
+	//Add a file to the project
+	IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
+	importFile("DepTest.h","resources/dependency/DepTest.h");
+	importFile("a.h","resources/dependency/a.h");
+	importFile("c.h","resources/dependency/c.h");
+	importFile("d.h","resources/dependency/d.h");
+	importFile("Inc1.h","resources/dependency/Inc1.h");
+	importFile("DepTest2.h","resources/dependency/DepTest2.h");
+	IFile depTest2 = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
+	//Enable indexing on the created project
+	//By doing this, we force the Dependency Manager to do a g()
+	DependencyManager dependencyManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
+	dependencyManager.setEnabled(testProject,true);
+	Thread.sleep(10000);
+	String[] depTestModel = {"\\IndexerTestProject\\d.h", "\\IndexerTestProject\\Inc1.h", "\\IndexerTestProject\\c.h", "\\IndexerTestProject\\a.h", "\\IndexerTestProject\\DepTest.h"};
+	String[] depTest2Model = {"\\IndexerTestProject\\d.h", "\\IndexerTestProject\\DepTest2.h"};
+	
+	ArrayList includes = new ArrayList();
+	dependencyManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,dependencyManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+	//Thread.sleep(5000);
+	String[] depTestModelLocal = convertToLocalPath(depTestModel);
+	String[] depTestIncludes = new String[includes.size()];
+	Iterator includesIterator = includes.iterator();
+	int i=0;
+	while(includesIterator.hasNext()){
+		depTestIncludes[i] = (String) includesIterator.next();
+		i++;
+	}
+	
+	if (depTestModelLocal.length != depTestIncludes.length)
+			fail("Number of included files differsfrom model");
+	
+	for (i=0;i<depTestIncludes.length; i++)
+	{
+		assertEquals(depTestModelLocal[i],depTestIncludes[i]);
+	}
+	
+	ArrayList includes2 = new ArrayList();
+	dependencyManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest2,dependencyManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+	//Thread.sleep(5000);
+	String[] depTest2ModelLocal = convertToLocalPath(depTest2Model);
+	String[] depTest2Includes = new String[includes2.size()];
+	Iterator includes2Iterator = includes2.iterator();
+	i=0;
+	while(includes2Iterator.hasNext()){
+		depTest2Includes[i] = (String) includes2Iterator.next();
+		i++;
+	}
+	
+	if (depTest2ModelLocal.length != depTest2Includes.length)
+			fail("Number of included files differsfrom model");
+	
+	for (i=0;i<depTest2Includes.length; i++)
+	{
+		assertEquals(depTest2ModelLocal[i],depTest2Includes[i]);
+	}
+  }
+
+	/**
+	 * @param depTestModel
+	 * @return
+	 */
+	private String[] convertToLocalPath(String[] model) {
+		IPath defaultPath = Platform.getLocation();
+		String[] tempLocalArray = new String[model.length];
+		for (int i=0;i<model.length;i++){
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(defaultPath.toOSString());
+			buffer.append(model[i]);
+			tempLocalArray[i]=buffer.toString();
+		}
+		return tempLocalArray;
+	}
 }

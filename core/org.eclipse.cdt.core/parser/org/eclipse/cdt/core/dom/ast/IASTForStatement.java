@@ -22,6 +22,7 @@ public interface IASTForStatement extends IASTStatement {
     public static final ASTNodeProperty INITDECLARATION = new ASTNodeProperty("initDeclaration");  //$NON-NLS-1$
     public static final ASTNodeProperty CONDITION = new ASTNodeProperty("condition");  //$NON-NLS-1$
     public static final ASTNodeProperty ITERATION = new ASTNodeProperty("iteration");  //$NON-NLS-1$
+    public static final ASTNodeProperty BODY = new ASTNodeProperty("body"); //$NON-NLS-1$
 
 	/**
 	 * The initial expression for the loop. Returns null if there is
@@ -63,5 +64,8 @@ public interface IASTForStatement extends IASTStatement {
 	public IASTExpression getIterationExpression();
 
 	public void setIterationExpression(IASTExpression iterator);
+	
+	public IASTStatement getBody();
+	public void setBody( IASTStatement statement );
 	
 }

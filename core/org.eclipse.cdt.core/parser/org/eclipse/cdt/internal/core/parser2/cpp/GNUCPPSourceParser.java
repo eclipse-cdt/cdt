@@ -4254,7 +4254,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             condition();
             consume(IToken.tRPAREN);
             if (LT(1) != IToken.tLBRACE)
-                singleStatementScope();
+                statement();
             else
                 statement();
             if (LT(1) == IToken.t_else) {
@@ -4265,7 +4265,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     cleanupLastToken();
                     return null;
                 } else if (LT(1) != IToken.tLBRACE)
-                    singleStatementScope();
+                    statement();
                 else
                     statement();
             }
@@ -4285,7 +4285,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             condition();
             consume(IToken.tRPAREN);
             if (LT(1) != IToken.tLBRACE)
-                singleStatementScope();
+                statement();
             else
                 statement();
             cleanupLastToken();
@@ -4293,7 +4293,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_do:
             consume(IToken.t_do);
             if (LT(1) != IToken.tLBRACE)
-                singleStatementScope();
+                statement();
             else
                 statement();
             consume(IToken.t_while);

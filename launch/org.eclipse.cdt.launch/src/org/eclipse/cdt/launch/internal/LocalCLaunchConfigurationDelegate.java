@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
+import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
@@ -42,6 +43,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -164,11 +166,23 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						IPath path = new Path(info.getName());
 						return path.lastSegment() + " - " + info.getPid();
 					}
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+					 */
+					public Image getImage(Object element) {
+						return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
+					}
 				};
 				ILabelProvider qprovider = new LabelProvider() {
 					public String getText(Object element) {
 						IProcessInfo info = (IProcessInfo) element;
 						return info.getName();
+					}
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+					 */
+					public Image getImage(Object element) {
+						return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
 					}
 				};
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);

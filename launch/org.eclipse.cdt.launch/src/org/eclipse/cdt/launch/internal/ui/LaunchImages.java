@@ -30,6 +30,7 @@ public class LaunchImages {
 	}	
 
 	private static final String T_TABS = "tabs/";
+	private static final String T_OBJS = "obj16/";
 
 	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.gif";
 	public static String IMG_VIEW_ARGUMENTS_TAB = NAME_PREFIX + "arguments_tab.gif";
@@ -42,7 +43,10 @@ public class LaunchImages {
 	public static final ImageDescriptor DESC_TAB_ENVIRONMENT = createManaged(T_TABS, IMG_VIEW_ENVIRONMENT_TAB);
 	public static final ImageDescriptor DESC_TAB_DEBUGGER = createManaged(T_TABS, IMG_VIEW_DEBUGGER_TAB);
 	public static final ImageDescriptor DESC_TAB_SOURCE = createManaged(T_TABS, IMG_VIEW_SOURCE_TAB);
-	
+
+	public static String IMG_OBJS_EXEC= NAME_PREFIX + "exec_obj.gif";
+	public static final ImageDescriptor DESC_OBJS_EXEC = createManaged(T_OBJS, IMG_OBJS_EXEC);
+
 	public static void initialize() {
 	}
 	

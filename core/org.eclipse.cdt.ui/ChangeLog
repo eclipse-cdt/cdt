@@ -1,3 +1,11 @@
+2003-09-03 Andrew Niefer
+	C++ Search: Changed default sort order to be by path
+	changed search dialog to have checkboxes for Search For items.
+ 	* src/org/eclipse/cdt/ui/CSearchResultLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchOperation.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
+
 2003-09-03 David Inglis
 	Fixed parser block to save ids properly.
 	Use shared preference key for error parsers.

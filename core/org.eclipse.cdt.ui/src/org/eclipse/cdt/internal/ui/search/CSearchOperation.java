@@ -14,12 +14,15 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
@@ -41,7 +44,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		_elementPattern = element;
 	}
 
-	public CSearchOperation(IWorkspace workspace, String pattern, boolean caseSensitive, SearchFor searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
+	public CSearchOperation(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_stringPattern = pattern;
 		_caseSensitive = caseSensitive;
@@ -69,7 +72,21 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		if( _elementPattern != null ){
 			engine.search( _workspace, _elementPattern, _limitTo, _scope, _collector );
 		} else {
-			ICSearchPattern pattern = SearchEngine.createSearchPattern( _stringPattern, _searchFor, _limitTo, _caseSensitive );
+			ICSearchPattern pattern = null;
+			if( _searchFor.size() > 1 ){
+				OrPattern orPattern = new OrPattern();
+				for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
+					SearchFor element = (SearchFor)iter.next();
+					orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
+				}
+				
+				pattern = orPattern;
+				
+			} else {
+				Iterator iter = _searchFor.iterator();
+				pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
+			}
+			
 			engine.search( _workspace, pattern, _scope, _collector );
 		}
 
@@ -139,7 +156,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 	private String					_scopeDescription;
 	private boolean					_caseSensitive;
 	private LimitTo					_limitTo;
-	private SearchFor				_searchFor;
+	private List					_searchFor;
 
 		
 }

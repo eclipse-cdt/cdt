@@ -35,15 +35,15 @@ import org.eclipse.swt.graphics.Point;
  */
 public class CSearchResultLabelProvider extends LabelProvider {
 
-	public static final int SHOW_NAME_ONLY		   = 0; //default
+	public static final int SHOW_NAME_ONLY		   = 0; 
 	public static final int SHOW_ELEMENT_CONTAINER = 1;
 	public static final int SHOW_CONTAINER_ELEMENT = 2;
-	public static final int SHOW_PATH			   = 3;
+	public static final int SHOW_PATH			   = 3;//default
 	
 	public static final String POTENTIAL_MATCH = CSearchMessages.getString("CSearchResultLabelProvider.potentialMatch"); //$NON-NLS-1$
 
 	public CSearchResultLabelProvider(){
-		_sortOrder = SHOW_NAME_ONLY;
+		_sortOrder = SHOW_PATH;
 	}
 	
 	public Image getImage( Object element ) {

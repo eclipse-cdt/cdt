@@ -248,4 +248,12 @@ public abstract class CBreakpoint extends Breakpoint
 	{
 		super.setAttribute( attributeName, value );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#isConditional()
+	 */
+	public boolean isConditional() throws CoreException
+	{
+		return ( (getCondition() != null && getCondition().trim().length() > 0) || getIgnoreCount() > 0 );
+	}
 }

@@ -63,6 +63,15 @@ public interface ICBreakpoint extends IBreakpoint
 	public boolean isInstalled() throws CoreException;
 
 	/**
+	 * Returns whether this breakpoint is conditional.
+	 * 
+	 * @return whether this breakpoint is conditional
+	 * @exception CoreException if unable to access the property 
+	 * 	on this breakpoint's underlying marker
+	 */
+	public boolean isConditional() throws CoreException;
+
+	/**
 	 * Returns the conditional expression associated with this breakpoint.
 	 * 
 	 * @return this breakpoint's conditional expression

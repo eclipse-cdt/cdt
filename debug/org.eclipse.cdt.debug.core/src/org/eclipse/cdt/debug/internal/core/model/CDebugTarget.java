@@ -930,7 +930,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		final CDebugElementState oldState = getState();
 		setState( CDebugElementState.RESTARTING );
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
+		ICDILocation location = getCDITarget().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 		setInternalTemporaryBreakpoint( location );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
@@ -1324,7 +1324,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	public void setInternalTemporaryBreakpoint( ICDILocation location ) throws DebugException {
 		try {
-			getCDISession().getBreakpointManager().setLocationBreakpoint( ICDIBreakpoint.TEMPORARY, location, null, null );
+			getCDITarget().setLocationBreakpoint( ICDIBreakpoint.TEMPORARY, location, null, null, false );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );
@@ -1348,7 +1348,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( skipBreakpoints ) {
 			getBreakpointManager().skipBreakpoints( true );
 		}
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
+		ICDILocation location = getCDITarget().createLocation( fileName, null, lineNumber );
 		try {
 			getCDITarget().runUntil( location );
 		}
@@ -1535,7 +1535,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( skipBreakpoints ) {
 			getBreakpointManager().skipBreakpoints( true );
 		}
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
+		ICDILocation location = getCDITarget().createLocation( address );
 		try {
 			getCDITarget().runUntil( location );
 		}
@@ -1613,7 +1613,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void jumpToLine( String fileName, int lineNumber ) throws DebugException {
 		if ( !canJumpToLine( fileName, lineNumber ) )
 			return;
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
+		ICDILocation location = getCDITarget().createLocation( fileName, null, lineNumber );
 		try {
 			getCDITarget().jump( location );
 		}
@@ -1636,7 +1636,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	public void jumpToAddress( long address ) throws DebugException {
 		if ( !canJumpToAddress( address ) )
 			return;
-		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
+		ICDILocation location = getCDITarget().createLocation( address );
 		try {
 			getCDITarget().jump( location );
 		}

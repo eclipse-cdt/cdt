@@ -1,3 +1,9 @@
+2004-09-07 Alain Magloire
+	Remove ICDIBreakpointManager.java
+	* ICDISession.java
+	* CDIDebugModel.java
+	* CDebugTarget.java
+
 2004-09-07 Mikhail Khodjaiants
 	Moved to the new breakpoint management API.
 	* CBreakpointManager.java

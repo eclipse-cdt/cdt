@@ -61,13 +61,6 @@ public interface ICDISession {
 	String getAttribute(String key);
 
 	/**
-	 * Returns the breakpoint manager of this debug session.
-	 * 
-	 * @return the breakpoint manager
-	 */
-	ICDIBreakpointManager getBreakpointManager();
-
-	/**
 	 * Returns the signal manager of this debug session.
 	 * 
 	 * @return the signal manager

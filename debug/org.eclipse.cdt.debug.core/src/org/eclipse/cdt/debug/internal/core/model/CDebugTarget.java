@@ -1093,6 +1093,13 @@ public class CDebugTarget extends CDebugElement
 			try
 			{
 				bm.deleteBreakpoints( cdiBreakpoints );
+			}
+			catch( CDIException e )
+			{
+				logError( e );
+			}
+			try
+			{
 				Iterator it = getBreakpoints().keySet().iterator();
 				while( it.hasNext() )
 				{
@@ -1102,11 +1109,7 @@ public class CDebugTarget extends CDebugElement
 			}
 			catch( CoreException ce )
 			{
-				requestFailed( "Operation failed. Reason: ", ce );
-			}
-			catch( CDIException e )
-			{
-				requestFailed( "Operation failed. Reason: ", e );
+				logError( ce );
 			}
 		}
 	}

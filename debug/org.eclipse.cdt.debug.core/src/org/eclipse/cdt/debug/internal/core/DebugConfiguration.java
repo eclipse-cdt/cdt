@@ -31,7 +31,8 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	}
 
 	public String getName() {
-		return getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+		String name = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+		return name != null ? name : "";
 	}
 
 	public String getID() {

@@ -5,16 +5,15 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -73,18 +72,18 @@ public class CProjectHelper {
      */        
     public static ICContainer addSourceContainer(ICProject cproject, String containerName) throws CoreException {
         IProject project= cproject.getProject();
-        IContainer container= null;
+        ICContainer container= null;
         if (containerName == null || containerName.length() == 0) {
-            container= project;
+            container= CModelManager.getDefault().create(project);
         } else {
             IFolder folder= project.getFolder(containerName);
             if (!folder.exists()) {
                 folder.create(false, true, null);
             }
-            container= folder;
+            container= CModelManager.getDefault().create(folder);
         }
 
-        return (ICContainer)container;
+		return container;
     }
 
     /**

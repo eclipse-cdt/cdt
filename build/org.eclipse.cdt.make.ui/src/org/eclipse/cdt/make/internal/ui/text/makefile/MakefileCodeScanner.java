@@ -67,13 +67,19 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 		}));
 
 		// Add word rule for keywords, types, and constants.
-		WordRule wordRule = new WordRule(new MakefileWordDetector(), other);
-		for (int i = 0; i < keywords.length; i++)
-			wordRule.addWord(keywords[i], keyword);
-		for (int i = 0; i < functions.length; i++)
-			wordRule.addWord(functions[i], function);
+		// We restring the detection of the keywords to be the first column to be valid.
+		WordRule keyWordRule = new WordRule(new MakefileWordDetector(), other);
+		for (int i = 0; i < keywords.length; i++) {
+			keyWordRule.addWord(keywords[i], keyword);
+		}
+		keyWordRule.setColumnConstraint(0);
+		rules.add(keyWordRule);
 
-		rules.add(wordRule);
+		WordRule functionRule = new WordRule(new MakefileWordDetector(), other);
+		for (int i = 0; i < functions.length; i++)
+			functionRule.addWord(functions[i], function);
+
+		rules.add(functionRule);
 
 		//rules.add(new PatternRule("$(", ")", macro, '\\', true)); //$NON-NLS-1$ //$NON-NLS-2$
 		rules.add(new MakefileSimpleMacroRule(macro)); //$NON-NLS-1$ //$NON-NLS-2$

@@ -63,7 +63,6 @@ public class AddBuildTargetAction extends Action {
 					String[] ids = manager.getTargetBuilders(file.getProject());
 					if (ids.length > 0) {
 						target = manager.createTarget(file.getProject(), name, ids[0]);
-						target.setContainer(file.getParent());
 						target.setBuildTarget(name);
 						manager.addTarget(file.getParent(), target);
 					}

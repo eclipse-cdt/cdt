@@ -189,7 +189,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		} 
 		catch (CoreException e) {
 			// Probably not defined
-			ManagedBuilderCorePlugin.log(e);
 		}
 		return null;
 	}
@@ -340,7 +339,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		} 
 		catch (CoreException e) {
 			// Probably not defined
-			ManagedBuilderCorePlugin.log(e);
 		}
 		return null;
 	}
@@ -377,7 +375,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		} 
 		catch (CoreException e) {
 			// Probably not defined
-			ManagedBuilderCorePlugin.log(e);
 		}
 		return null;
 	}
@@ -682,7 +679,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			buildInfo = findBuildInfo(resource.getProject());
 			initBuildInfoContainer(buildInfo);
 		} catch (CoreException e) {
-			ManagedBuilderCorePlugin.log(e);
 			return new Status(IStatus.ERROR, 
 				ManagedBuilderCorePlugin.getUniqueIdentifier(), 
 				IStatus.ERROR, 
@@ -796,7 +792,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
 		} catch (Exception e) {
-			ManagedBuilderCorePlugin.log(e);
 			buildInfo = null;
 		}
 		return buildInfo;
@@ -901,7 +896,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			resource.setSessionProperty(buildInfoProperty, buildInfo);
 		} catch (CoreException e) {
 			// There is no point in keeping the info around if it isn't associated with the project
-			ManagedBuilderCorePlugin.log(e);
 			buildInfo = null;
 		}
 	}
@@ -977,7 +971,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				buildInfo.updateOwner(resource);
 			}
 		} catch (CoreException e) {
-			ManagedBuilderCorePlugin.log(e);
 			return null;
 		}
 		
@@ -991,7 +984,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				initBuildInfoContainer(buildInfo);
 			} catch (CoreException e) {
 				// We can live without a path entry container if the build information is valid
-				ManagedBuilderCorePlugin.log(e);
 			}
 		}
 		return buildInfo;

@@ -719,7 +719,32 @@ public class Target  implements ICDITarget {
 	}
 
 //	public ICDIExceptionBreakpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
-//		throws CDIException {
-//		throw new CDIException("Not Implemented"); //$NON-NLS-1$
-//	}
+//	throws CDIException {
+//	throw new CDIException("Not Implemented"); //$NON-NLS-1$
+//}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String)
+	 */
+	public ICDICondition createCondition(int ignoreCount, String expression) {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		return bMgr.createCondition(ignoreCount, expression);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(java.lang.String, java.lang.String, int)
+	 */
+	public ICDILocation createLocation(String file, String function, int line) {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		return bMgr.createLocation(file, function, line);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(long)
+	 */
+	public ICDILocation createLocation(long address) {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		return bMgr.createLocation(address);
+	}
+
 }

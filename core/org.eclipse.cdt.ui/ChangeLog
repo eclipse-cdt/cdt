@@ -1,3 +1,22 @@
+2003-02-20 Alain Magloire
+
+	This patch provides the UI controls and filters to use the working set 
+	concept and apply it to the CView.  The UI mimics the behaviour of what is
+	used by the Java packages view (rather than incorporating it as a part of
+	the Filters... dialog as was done in the Navigator).  I didn't create a
+	specific C/C++ Working Set type since I figured that for C and C++ 
+	projects which might include other projects it wasn't required.
+	This can be re-examined at a later date if required.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
+	Listener of the property change for Working sets.
+	* src/org/eclipse/cdt/internal/ui/cview/AdjustWorkingSetFilterAction.java:
+	New file.
+	* src/org/eclipse/cdt/internal/ui/cview/CWorkingSetFilter.java:
+	New file.
+	* src/org/eclipse/cdt/internal/ui/cview/NewWorkingSetFilterAction.java:
+	New file.
+
 2003-02 -20 David Inglis
 
 	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java

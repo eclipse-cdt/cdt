@@ -40,6 +40,9 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -85,6 +88,8 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.AddBookmarkAction;
@@ -147,6 +152,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	ForwardAction forwardAction;
 	GoIntoAction goIntoAction;
 	UpAction upAction;
+	NewWorkingSetFilterAction wsFilterAction;
+	AdjustWorkingSetFilterAction wsClearFilterAction;
+	
 	FrameList frameList;
 	CViewFrameSource frameSource;
 
@@ -156,6 +164,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	CLibFilter clibFilter = new CLibFilter ();
 	ShowLibrariesAction clibFilterAction;
 
+	CWorkingSetFilter workingSetFilter = new CWorkingSetFilter ();
+	ActionContributionItem adjustWorkingSetContributions [] = new ActionContributionItem[5];
 
 	// Persistance tags.
 	static final String TAG_SELECTION= "selection"; //$NON-NLS-1$
@@ -167,6 +177,11 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	static final String TAG_FILTERS = "filters"; //$NON-NLS-1$
 	static final String TAG_FILTER = "filter"; //$NON-NLS-1$
 	static final String TAG_SHOWLIBRARIES = "showLibraries"; //$NON-NLS-1$
+	static final String TAG_WORKINGSET = "workingSet"; //$NON-NLS-1$
+
+	//Menu tags
+	final String WORKING_GROUP_MARKER = "workingSetGroup";
+	final String WORKING_GROUP_MARKER_END = "end-workingSetGroup";
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -179,8 +194,46 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		public void partDeactivated(IWorkbenchPart part) {}
 		public void partOpened(IWorkbenchPart part) {}
 	};
+	
+	private IPropertyChangeListener workingSetListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent ev) {
+			String prop = ev.getProperty();
+			if(prop == null) {
+				return;
+			}
 
-
+			if(prop.equals(CWorkingSetFilter.WORKING_SET_ACTIVE_CHANGED)) {
+				updateWorkingSetMenu();
+				viewer.getControl().setRedraw(false);
+				viewer.refresh();
+				viewer.getControl().setRedraw(true);
+			} else if(prop.equals(IWorkingSetManager.CHANGE_WORKING_SET_ADD)) {
+				updateWorkingSetMenu();
+			} else if(prop.equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
+				updateWorkingSetMenu();
+			} else if(prop.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)){
+				if(ev.getOldValue() instanceof IWorkingSet) {
+					String name = ((IWorkingSet)(ev.getOldValue())).getName();
+					String wsName = workingSetFilter.getWorkingSetName();
+					if(wsName != null && name.equals(wsName)) {
+						viewer.getControl().setRedraw(false);
+						viewer.refresh();
+						viewer.getControl().setRedraw(true);
+					}
+				}
+			} else if(prop.equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
+				if(ev.getOldValue() instanceof IWorkingSet) {
+					String name = ((IWorkingSet)(ev.getOldValue())).getName();
+					String wsName = workingSetFilter.getWorkingSetName();
+					if(wsName != null && name.equals(wsName)) {
+						workingSetFilter.setWorkingSetName(null);
+					}
+				}
+				updateWorkingSetMenu();
+			}
+		}
+	};
+	
 	public CView() {
 		super();
 	}
@@ -375,12 +428,17 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 
+		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		workingSetFilter.setWorkingSetManager(wsmanager);
+
+
 		// FIXME: Add Drag and Drop support.
 		initFrameList();
 		initRefreshKey();
 		updateTitle();
 		initDragAndDrop();
 		viewer.addFilter(patternFilter);
+		viewer.addFilter(workingSetFilter);
 		//viewer.addFilter(clibFilter);
 		viewer.setSorter(new CViewSorter ());
 		// FIXME: Add different Sorting.
@@ -401,6 +459,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 		// Make the Actions for the Context Menu
 		makeActions();
+
+		//Add the property changes after all of the UI work has been done.
+		wsmanager.addPropertyChangeListener(workingSetListener);
+		workingSetFilter.addChangeListener(workingSetListener);
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -447,6 +509,10 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(closeProjectAction);
 		workspace.removeResourceChangeListener(openProjectAction);
+
+		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		wsmanager.removePropertyChangeListener(workingSetListener);
+
 		super.dispose();
 	}
 
@@ -478,14 +544,21 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		return clibFilter;
 	}
 
-        /**
-         * Returns the pattern filter for this view.
-         * @return the pattern filter
-         */
+    /**
+     * Returns the pattern filter for this view.
+     * @return the pattern filter
+     */
 	CPatternFilter getPatternFilter() {
 		return patternFilter;
 	}
-
+	
+	/**
+	 * Returns the working set filter for this view.
+	 * @return the working set filter
+	 */
+	CWorkingSetFilter getWorkingSetFilter() {
+		return workingSetFilter;
+	}
 
 	TreeViewer getViewer () {
 		return viewer;
@@ -521,6 +594,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		//sortByTypeAction = new SortViewAction(this, true);
 		patternFilterAction = new FilterSelectionAction(shell, this, "Filters...");
 		clibFilterAction = new ShowLibrariesAction(shell, this, "Show Referenced Libs");
+
+		wsFilterAction = new NewWorkingSetFilterAction(getViewSite().getShell(), this, "Select Working Set...");
+		wsClearFilterAction = new AdjustWorkingSetFilterAction("Deselect Working Set", null, workingSetFilter);
 
 		goIntoAction = new GoIntoAction(frameList);
 		backAction = new BackAction(frameList);
@@ -955,9 +1031,63 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		actionBars.updateActionBars();
 
 		IMenuManager menu = actionBars.getMenuManager();
+		menu.add(wsFilterAction);
+		menu.add(wsClearFilterAction);
+
+		menu.add(new Separator());
+		menu.add(new GroupMarker(WORKING_GROUP_MARKER));
+		menu.add(new GroupMarker(WORKING_GROUP_MARKER_END));
+		menu.add(new Separator());
+		
+		updateWorkingSetMenu();
+				
 		//menu.add (clibFilterAction);
 		menu.add (patternFilterAction);
 	}
+	
+	void updateWorkingSetMenu() {
+		IMenuManager menu = getViewSite().getActionBars().getMenuManager();
+
+		//Remove the previous entries
+		for(int i = 0; i < adjustWorkingSetContributions.length; i++) {
+			if(adjustWorkingSetContributions[i] != null) {
+				menu.remove(adjustWorkingSetContributions[i]);
+			}
+		}
+
+		//Find out what we are currently using
+		String currentWorkingSetName = workingSetFilter.getWorkingSetName();
+
+		//If we have no working set, then we can't disable it
+		if(wsClearFilterAction != null) {
+			wsClearFilterAction.setEnabled((currentWorkingSetName != null));
+		}
+		
+		IWorkingSetManager manager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		IWorkingSet recentsets [] = manager.getWorkingSets();
+		for(int i = 0; i < adjustWorkingSetContributions.length; i++) {
+			if(i < recentsets.length) {
+				Action action = new AdjustWorkingSetFilterAction(recentsets[i].getName(),
+															      recentsets[i].getName(),
+																  workingSetFilter);
+				adjustWorkingSetContributions[i] = new ActionContributionItem(action);
+				if(currentWorkingSetName != null && 
+				   currentWorkingSetName.equals(recentsets[i].getName())) {
+					adjustWorkingSetContributions[i].getAction().setChecked(true);
+				}
+			} else {
+				adjustWorkingSetContributions[i] = null;
+			}
+		}
+		
+		//Put the new entries in
+		for(int i = 0; i < adjustWorkingSetContributions.length; i++) {
+			if(adjustWorkingSetContributions[i] != null) {
+				menu.appendToGroup(WORKING_GROUP_MARKER, adjustWorkingSetContributions[i]);
+			}
+		}
+	}
+	
 
 	/**
 	 * Sets the decorator for the package explorer.
@@ -1058,6 +1188,15 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		}
 		else
 			initFilterFromPreferences();
+
+		//restore working set
+		String wsname = memento.getString(TAG_WORKINGSET);
+		if(wsname != null && workingSetFilter != null) {
+			IWorkingSet set = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager().getWorkingSet(wsname);
+			if(set != null) {
+				workingSetFilter.setWorkingSetName(wsname);
+			}
+		}
 	}
 
 	void restoreState(IMemento memento) {
@@ -1177,11 +1316,17 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				child.putString(TAG_ELEMENT,filters[i]);
 			}
 		}
+
 		//save library filter
 		boolean showLibraries= getLibraryFilter().getShowLibraries();
 		String show= "true"; //$NON-NLS-1$
 		if (!showLibraries)
 			show= "false"; //$NON-NLS-1$
 		memento.putString(TAG_SHOWLIBRARIES, show);
+
+		String wsname = workingSetFilter.getWorkingSetName();
+		if(wsname != null) {
+			memento.putString(TAG_WORKINGSET, wsname);
+		}
 	}
 }

@@ -31,6 +31,29 @@ import org.eclipse.cdt.utils.pty.PTY;
  * there a good change to confuse the parser.
  */
 public class MISession extends Observable {
+
+	/**
+	 * Normal program debuging.
+	 */
+	public final static int PROGRAM = 0;
+	/**
+	 * Attach to a running process debuging.
+	 */
+	public final static int ATTACH = 1;
+	/**
+	 * PostMortem analysis.
+	 */
+	public final static int CORE = 2;
+
+	/**
+	 * Default wait() period for an answer after a query, 10 seconds.
+	 */
+	public static long REQUEST_TIMEOUT = 10000; // 10 * 1000 (~ 10 secs);
+
+
+	// hold the type of the session(post-mortem, attach etc ..)
+	int sessionType;
+
 	Process miProcess;
 	InputStream inChannel;
 	OutputStream outChannel;
@@ -50,7 +73,7 @@ public class MISession extends Observable {
 
 	MIParser parser;
 
-	long cmdTimeout = 10000; // 10 * 1000 (~ 10 secs);
+	long cmdTimeout;
 
 	MIInferior inferior;
 
@@ -58,27 +81,24 @@ public class MISession extends Observable {
 	 * Create the gdb session.
 	 *
 	 * @param Process gdb Process.
-	 */
-	public MISession(Process process) throws MIException {
-		this(process, null);
-	}
-
-	/**
-	 * Create the gdb session.
-	 *
-	 * @param Process gdb Process.
 	 * @param pty Terminal to use for the inferior.
+	 * @param timeout time in milliseconds to wait for command response.
+	 * @param type the type of debugin session.
 	 */
-	public MISession(Process process, PTY pty) throws MIException {
+	public MISession(Process process, PTY pty, int timeout, int type) throws MIException {
+
 		miProcess = process;
 		inChannel = process.getInputStream();
 		outChannel = process.getOutputStream();
+
+		cmdTimeout = timeout;
+
+		sessionType = type;
 
 		factory = new CommandFactory();
 
 		parser = new MIParser();
 
-		// Do this first.
 		inferior = new MIInferior(this, pty);
 
 		txQueue = new CommandQueue();
@@ -112,6 +132,7 @@ public class MISession extends Observable {
 
 	/**
 	 * get MI Console Stream.
+	 * The parser will make available the MI console stream output.
 	 */
 	public InputStream getMIStream() {
 		if (miInPipe == null) {
@@ -155,6 +176,41 @@ public class MISession extends Observable {
 	}
 
 	/**
+	 * Set the type of session this is.
+	 * Certain action will base on that, for example
+	 * the inferior will not try to kill/destroy a
+	 * attach session disconnected.
+	 */
+	public int getSessionType() {
+		return sessionType;
+	}
+
+	public void setSessionType(int type) {
+		sessionType = type;
+	}
+
+	/**
+	 * The debug session is a program being debug.
+	 */
+	public boolean isProgramSession() {
+		return sessionType == PROGRAM;
+	}
+
+	/**
+	 * The debug session is a program being attach to.
+	 */
+	public boolean isAttachSession() {
+		return sessionType == ATTACH;
+	}
+
+	/**
+	 * The debug session is a core being analysed.
+	 */
+	public boolean isCoreSession() {
+		return sessionType == CORE;
+	}
+
+	/**
 	 * Reset the default Command Timeout.
 	 */
 	public void setCommandTimeout(long timeout) {
@@ -170,7 +226,7 @@ public class MISession extends Observable {
 
 	/**
 	 * equivalent to:
-	 * postCommand(cmd, 10 secs) 
+	 * postCommand(cmd, cmdTimeout) 
 	 */
 	public void postCommand(Command cmd) throws MIException {
 		postCommand(cmd, cmdTimeout);

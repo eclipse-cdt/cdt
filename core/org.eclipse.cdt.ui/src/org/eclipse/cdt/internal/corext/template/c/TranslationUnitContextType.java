@@ -1,19 +1,21 @@
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.templates.TemplateContext;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.TemplateVariableResolver;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
-import org.eclipse.cdt.internal.corext.template.ContextType;
-import org.eclipse.cdt.internal.corext.template.TemplateContext;
-import org.eclipse.cdt.internal.corext.template.TemplateVariable;
 
 
 /**
  * Compilation unit context type.
  */
-public abstract class CompilationUnitContextType extends ContextType {
+public abstract class TranslationUnitContextType extends TemplateContextType {
 	
 	/** the document string */
 	protected String fString;
@@ -22,14 +24,14 @@ public abstract class CompilationUnitContextType extends ContextType {
 	protected int fPosition;
 
 	/** the associated compilation unit, may be <code>null</code> */
-	protected ICompilationUnit fCompilationUnit;
+	protected ITranslationUnit fTranslationUnit;
 	
-	protected static class ReturnType extends TemplateVariable {
+	protected static class ReturnType extends TemplateVariableResolver {
 	 	public ReturnType() {
 	 	 	super("return_type", TemplateMessages.getString("JavaContextType.variable.description.return.type")); //$NON-NLS-1$ //$NON-NLS-2$
 	 	}
 	 	public String evaluate(TemplateContext context) {
-			/* IJavaElement element= ((CompilationUnitContext) context).findEnclosingElement(IJavaElement.METHOD);
+			/* IJavaElement element= ((TranslationUnitContext) context).findEnclosingElement(IJavaElement.METHOD);
 			if (element == null)
 				return null;
 
@@ -45,12 +47,12 @@ public abstract class CompilationUnitContextType extends ContextType {
 		}		
 	}
 
-	protected static class File extends TemplateVariable {
+	protected static class File extends TemplateVariableResolver {
 		public File() {
 			super("file", TemplateMessages.getString("JavaContextType.variable.description.file")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		public String evaluate(TemplateContext context) {
-			//ICompilationUnit unit= ((CompilationUnitContext) context).getCompilationUnit();
+			//ICompilationUnit unit= ((TranslationUnitContext) context).getCompilationUnit();
 			
 			//return (unit == null) ? null : unit.getElementName();
 			return null;
@@ -60,7 +62,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 		}		
 	}
 
-	protected static class EnclosingJavaElement extends TemplateVariable {
+	protected static class EnclosingJavaElement extends TemplateVariableResolver {
 		protected final int fElementType;
 		
 		public EnclosingJavaElement(String name, String description, int elementType) {
@@ -68,7 +70,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 			fElementType= elementType;
 		}
 		public String evaluate(TemplateContext context) {
-			/*IJavaElement element= ((CompilationUnitContext) context).findEnclosingElement(fElementType);
+			/*IJavaElement element= ((TranslationUnitContext) context).findEnclosingElement(fElementType);
 			return (element == null) ? null : element.getElementName(); */
 			return null;			
 		}
@@ -118,12 +120,12 @@ public abstract class CompilationUnitContextType extends ContextType {
 		}
 	}	
 */
-	protected static class Arguments extends TemplateVariable {
+	protected static class Arguments extends TemplateVariableResolver {
 		public Arguments() {
 			super("enclosing_method_arguments", TemplateMessages.getString("JavaContextType.variable.description.enclosing.method.arguments")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		public String evaluate(TemplateContext context) {
-			/*IJavaElement element= ((CompilationUnitContext) context).findEnclosingElement(IJavaElement.METHOD);
+			/*IJavaElement element= ((TranslationUnitContext) context).findEnclosingElement(IJavaElement.METHOD);
 			if (element == null)
 				return null;
 				
@@ -151,7 +153,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 /*	
 	protected static class Line extends TemplateVariable {
 		public Line() {
-			super("line", TemplateMessages.getString("CompilationUnitContextType.variable.description.line"));
+			super("line", TemplateMessages.getString("TranslationUnitContextType.variable.description.line"));
 		}
 		public String evaluate(TemplateContext context) {
 			return ((JavaTemplateContext) context).guessLineNumber();
@@ -162,18 +164,20 @@ public abstract class CompilationUnitContextType extends ContextType {
 	/*
 	 * @see ContextType#ContextType(String)
 	 */
-	public CompilationUnitContextType(String name) {
-		super(name);	
+	public TranslationUnitContextType() {
+		super();	
 	}
 
 	/**
 	 * Sets context parameters. Needs to be called before createContext().
 	 */
-	public void setContextParameters(String string, int position, ICompilationUnit compilationUnit) {
+	public void setContextParameters(String string, int position, ITranslationUnit translationUnit) {
 		fString= string;
 		fPosition= position;
-		fCompilationUnit= compilationUnit;
+		fTranslationUnit= translationUnit;
 	}
+
+	public abstract TranslationUnitContext createContext(IDocument document, int offset, int length, ITranslationUnit translationUnit);
 
 }
 

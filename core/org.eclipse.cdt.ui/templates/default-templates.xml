@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+(c) Copyright IBM Corp. 2000, 2001. 2004
+All Rights Reserved.
+-->
+
+<!-- NOTE TO TRANSLATOR:
+* Only these ENTITY strings listed in the DOCTYPE definition
+* are to be translated. The rest of this file should remain
+* English as it produces compilable code. 
+-->
+
+<!DOCTYPE document [
+	<!ENTITY withtempvar "with temporary variable">
+	<!ENTITY statement "statement">
+	<!-- block is a noun -->
+	<!ENTITY block "block">
+	<!ENTITY method "method">
+	<!ENTITY declaration "declaration">
+	<!ENTITY usinganamespace "using a namespace">
+	<!ENTITY statement "statement">
+	<!ENTITY createnewobject "create new object">
+	<!ENTITY defaultmultilinecomment "default multiline comment">
+	<!ENTITY printtostdout "print to standard output">
+	<!ENTITY printtostderr "print to standard error">
+	<!ENTITY authorname "author name">
+	<!ENTITY commentText "To change this generated comment edit the template variable &quot;comment&quot;:
+ * Window&gt;Preferences&gt;C&gt;Templates.">
+	
+]>
+
+<templates>
+<template name="for" description="for loop" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.for" enabled="true">for (${var} = 0; ${var} &lt; ${max}; ++${var}) {
+	${cursor}
+}</template>
+
+<template name="for" description="for loop &withtempvar;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.for" enabled="true">for (int ${var} = 0; ${var} &lt; ${max}; ++${var}) {
+	${cursor}
+}</template>
+<template name="do" description="do while &statement;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.do" enabled="true">do {
+	${cursor}
+} while (${condition});</template>
+<template name="switch" description="switch case &statement;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.switch" enabled="true">switch (${key}) {
+	case ${value}:
+		${cursor}
+		break;
+	default:
+		break;
+}</template>
+
+<template name="if" description="if &statement;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.if" enabled="true">if (${condition}) {
+	${cursor}
+}</template>
+<template name="ifelse" description="if else &statement;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.ifelse" enabled="true">if (${condition}) {
+	${cursor}
+} else {
+	
+}</template>
+<template name="elseif" description="else if &block;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.elseif" enabled="true">else if (${condition}) {
+	${cursor}
+}</template>
+<template name="else" description="else &block;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.else" enabled="true">else {
+	${cursor}
+}</template>
+<template name="try" description="try catch &block;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.try" enabled="true">try {
+	${cursor}
+} catch (${Exception} e) {
+}</template>
+<template name="catch" description="catch &block;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.catch" enabled="true">catch (${Exception} e) {
+	${cursor}
+}</template>
+<template name="main" description="main &method;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.main" enabled="true">int main(int argc, char **argv) {
+	${cursor}
+}</template>
+<template name="class" description="class &declaration;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.class" enabled="true">class ${name} {
+	${cursor}
+private:
+};</template>
+<template name="using" description="&usinganamespace;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.using" enabled="true">using namespace ${namespace};
+</template>
+<template name="namespace" description="namespace &declaration;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.namespace" enabled="true">namespace ${namespace} {
+	${cursor}
+}</template>
+<template name="new" description="&createnewobject;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.cpp.new" enabled="true">${type} ${name} = new ${type}(${arguments});</template>
+<template name="comment" description="&defaultmultilinecomment;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.comment" enabled="true">
+/*
+ * author ${user}
+ *
+ * &commentText;
+ */
+</template>
+<template name="stdout" description="&printtostdout;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.printf" enabled="true">printf(${cursor});</template>
+<template name="stderr" description="&printtostderr;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.fprintf" enabled="true">fprintf(stderr, ${cursor});</template>
+<template name="author" description="&authorname;" context="org.eclipse.cdt.ui.text.templates.c" id="org.eclipse.cdt.ui.text.templates.c.author" enabled="true">author ${user}</template>
+
+</templates>

@@ -12,6 +12,7 @@
 package org.eclipse.cdt.ui;
 
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.refactoring.base.Refactoring;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
@@ -62,6 +64,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -71,6 +75,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
+import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
@@ -185,8 +191,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String)
 	 */ 
 	public static final String ID_TYPE_HIERARCHY = "org.eclipse.cdt.ui.TypeHierarchyView"; //$NON-NLS-1$
-	
-	
+
+	/**
+	 * The key to store customized templates. 
+	 * @since 3.0
+	 */
+	private static final String CUSTOM_TEMPLATES_KEY= "org.eclipse.cdt.ui.text.templates.custom"; //$NON-NLS-1$
+
 	/**
 	 * The id of the C Element Creation action set
 	 * (value <code>"org.eclipse.cdt.ui.CElementCreationActionSet"</code>).
@@ -326,6 +337,19 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private BuildConsoleManager fBuildConsoleManager;
 	private ResourceAdapterFactory fResourceAdapterFactory;
 	private CElementAdapterFactory fCElementAdapterFactory;
+
+	/** 
+	 * The template context type registry for the java editor. 
+	 * @since 3.0
+	 */
+	private ContributionContextTypeRegistry fContextTypeRegistry;
+
+	/**
+	 * The template store for the java editor. 
+	 * @since 3.0
+	 */
+	private TemplateStore fTemplateStore;
+
 
 	public CUIPlugin() {
 		fgCPlugin = this;
@@ -618,12 +642,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 			int annotationHoverIndex= -1;
 			for (int i= 0; i < length; i++) {
 				if (!fCEditorTextHoverDescriptors[i].getId().startsWith(PLUGIN_ID)) {
-					if (problemHoverIndex == -1 || annotationHoverIndex == -1)
+					if (problemHoverIndex == -1 || annotationHoverIndex == -1) {
 						continue;
-					else {
-						last= i - 1;
-						break;
 					}
+					last= i - 1;
+					break;
 				}
 				if (first == -1)
 					first= i;
@@ -685,6 +708,38 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (fFoldingStructureProviderRegistry == null)
 			fFoldingStructureProviderRegistry= new CFoldingStructureProviderRegistry();
 		return fFoldingStructureProviderRegistry;
+	}
+
+	/**
+	 * Returns the template context type registry for the java plugin.
+	 * 
+	 * @return the template context type registry for the java plugin
+	 * @since 3.0
+	 */
+	public ContextTypeRegistry getTemplateContextRegistry() {
+		if (fContextTypeRegistry == null) {
+			fContextTypeRegistry= new ContributionContextTypeRegistry();
+			fContextTypeRegistry.addContextType(CContextType.CCONTEXT_TYPE);
+		}
+		return fContextTypeRegistry;
+	}
+
+	/**
+	 * Returns the template store for the java editor templates.
+	 * 
+	 * @return the template store for the java editor templates
+	 * @since 3.0
+	 */
+	public TemplateStore getTemplateStore() {
+		if (fTemplateStore == null) {
+			fTemplateStore = new ContributionTemplateStore(getTemplateContextRegistry(), getPreferenceStore(), CUSTOM_TEMPLATES_KEY);
+			try {
+				fTemplateStore.load();
+			} catch (IOException e) {
+				log(e);
+			}
+		}
+		return fTemplateStore;
 	}
 
 }

@@ -1,3 +1,26 @@
+2004-12-10 Alain Magloire
+	Fix for 77874.
+	In order to fix this we removed all of the Eclipse-1.0 classes
+	that we copied in the CDT.
+	The good news is that it is now part of Eclipse-3.x platform and we no
+	need to carry the duplicate.
+	The templates support was rewritten to use the JFace templates support
+	classes.
+
+	* src/org/eclipse/cdt/internal/corext/template/*: remove to use
+	JFace Templates support.
+	* src/org/eclipse/cdt/internal/corext/template/c/*: rewritten to use
+	JFace Templates classes.
+	* src/org/eclipse/cdt/intenal/corext/texmanipulation/*: remove to use
+	JFace TextEdit support
+	* src/org/eclipse/cdt/internal/ui/preferences/CTemplatePreferencePage.java:
+	Rewritten to take advantage of JFace support for Templates.
+	* src/org/eclipse/cdt/internal/ui/text/link/*: Remove use JFace
+	* src/org/eclipse/cdt/internal/ui/text/template/*: Remove use JFace templates
+	* plugin.xml
+	* plugin.properties
+	* template/default-templates.xml
+	
 2004-12-08 Bogdan Gheorghe
 	Fix for 76123
 	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java

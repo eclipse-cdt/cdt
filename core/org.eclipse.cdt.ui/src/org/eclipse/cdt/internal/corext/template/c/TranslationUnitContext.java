@@ -5,18 +5,20 @@ package org.eclipse.cdt.internal.corext.template.c;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.corext.template.ContextType;
-import org.eclipse.cdt.internal.corext.template.DocumentTemplateContext;
-
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.templates.DocumentTemplateContext;
+import org.eclipse.jface.text.templates.TemplateContextType;
 
 /**
  * A compilation unit context.
  */
-public abstract class CompilationUnitContext extends DocumentTemplateContext {
+public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 	/** The compilation unit, may be <code>null</code>. */
-	private final ICompilationUnit fCompilationUnit;
+	private final ITranslationUnit fTranslationUnit;
 
 	/**
 	 * Creates a compilation unit context.
@@ -26,18 +28,18 @@ public abstract class CompilationUnitContext extends DocumentTemplateContext {
 	 * @param completionPosition the completion position within the document.
 	 * @param compilationUnit the compilation unit (may be <code>null</code>).
 	 */
-	protected CompilationUnitContext(ContextType type, String string, int completionPosition,
-		ICompilationUnit compilationUnit)
+	protected TranslationUnitContext(TemplateContextType type, IDocument document, int completionOffset,
+			int completionLength, ITranslationUnit translationUnit)
 	{
-		super(type, string, completionPosition);
-		fCompilationUnit= compilationUnit;
+		super(type, document, completionOffset, completionLength);
+		fTranslationUnit= translationUnit;
 	}
 	
 	/**
 	 * Returns the compilation unit if one is associated with this context, <code>null</code> otherwise.
 	 */
-	public final ICompilationUnit getCompilationUnit() {
-		return fCompilationUnit;
+	public final ITranslationUnit getTranslationUnit() {
+		return fTranslationUnit;
 	}
 
 	/**
@@ -45,20 +47,19 @@ public abstract class CompilationUnitContext extends DocumentTemplateContext {
 	 * if no enclosing element of that type exists.
 	 */
 	public ICElement findEnclosingElement(int elementType) {
-		if (fCompilationUnit == null)
+		if (fTranslationUnit == null)
 			return null;
 
-		/* try {
-			ICElement element= fCompilationUnit.getElementAt(getStart());
+		try {
+			ICElement element= fTranslationUnit.getElementAtOffset(getStart());
 			while (element != null && element.getElementType() != elementType)
 				element= element.getParent();
 			
 			return element;
 
-		} catch (JavaModelException e) {
+		} catch (CModelException e) {
 			return null;
-		}	*/
-		return null;
+		}
 	}
 
 }

@@ -9,32 +9,54 @@ package org.eclipse.cdt.internal.ui.text.template;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.corext.template.ContextType;
-import org.eclipse.cdt.internal.corext.template.Template;
-import org.eclipse.cdt.internal.corext.template.Templates;
-import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContext;
-import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContextType;
-import org.eclipse.cdt.internal.corext.template.c.ICompilationUnit;
-import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContext;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 
 public class TemplateEngine {
 
-	private ContextType fContextType;
-	private ITableLabelProvider fLabelProvider= new TemplateLabelProvider();
-	
+	private TemplateContextType fContextType;	
 	private ArrayList fProposals= new ArrayList();
 
+	public class CTemplateProposal extends TemplateProposal implements ICCompletionProposal {
+		
+		/**
+		 * @param template
+		 * @param context
+		 * @param region
+		 * @param image
+		 */
+		public CTemplateProposal(Template template, TemplateContext context, IRegion region, Image image) {
+			super(template, context, region, image, 90);
+		}
+
+//		/* (non-Javadoc)
+//		 * @see org.eclipse.cdt.ui.text.ICCompletionProposal#getRelevance()
+//		 */
+//		public int getRelevance() {
+//			return 90;
+//		}
+	}
 	/**
 	 * Creates the template engine for a particular context type.
 	 * See <code>TemplateContext</code> for supported context types.
 	 */
-	public TemplateEngine(ContextType contextType) {
+	public TemplateEngine(TemplateContextType contextType) {
 		Assert.isNotNull(contextType);
 		fContextType= contextType;
 	}
@@ -53,8 +75,8 @@ public class TemplateEngine {
 	 * Returns the array of matching templates.
 	 */
 	public List getResults() {
-		// return (ICCompletionProposal[]) fProposals.toArray(new ICCompletionProposal[fProposals.size()]);
-		return fProposals;	
+		//return (TemplateProposal[]) fProposals.toArray(new TemplateProposal[fProposals.size()]);
+		return fProposals;
 	}
 
 	/**
@@ -64,28 +86,33 @@ public class TemplateEngine {
 	 * @param completionPosition the context position in the document of the text viewer
 	 * @param compilationUnit the compilation unit (may be <code>null</code>)
 	 */
-	public void complete(ITextViewer viewer, int completionPosition, ICompilationUnit compilationUnit)
-		//throws JavaModelException
+	public void complete(ITextViewer viewer, int completionPosition, ITranslationUnit translationUnit)
 	{
 	    IDocument document= viewer.getDocument();
 	    
-		// prohibit recursion
-		if (LinkedPositionManager.hasActiveManager(document))
+		if (!(fContextType instanceof TranslationUnitContextType))
 			return;
 
-		if (!(fContextType instanceof CompilationUnitContextType))
-			return;
-		
-		((CompilationUnitContextType) fContextType).setContextParameters(document.get(), completionPosition, compilationUnit);		
-		CompilationUnitContext context= (CompilationUnitContext) fContextType.createContext();
+		Point selection= viewer.getSelectedRange();
+
+		// remember selected text
+		String selectedText= null;
+		if (selection.y != 0) {
+			try {
+				selectedText= document.get(selection.x, selection.y);
+			} catch (BadLocationException e) {}
+		}
+
+		((TranslationUnitContextType) fContextType).setContextParameters(document.get(), completionPosition, translationUnit);		
+		TranslationUnitContext context= ((TranslationUnitContextType) fContextType).createContext(document, completionPosition, selection.y, translationUnit);
 		int start= context.getStart();
 		int end= context.getEnd();
 		IRegion region= new Region(start, end - start);
 
-		Template[] templates= Templates.getInstance().getTemplates();
+		Template[] templates= CUIPlugin.getDefault().getTemplateStore().getTemplates();
 		for (int i= 0; i != templates.length; i++)
 			if (context.canEvaluate(templates[i]))
-				fProposals.add(new TemplateProposal(templates[i], context, region, viewer, fLabelProvider.getColumnImage(templates[i], 0)));
+				fProposals.add(new CTemplateProposal(templates[i], context, region, CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE)));
 	}
 
 }

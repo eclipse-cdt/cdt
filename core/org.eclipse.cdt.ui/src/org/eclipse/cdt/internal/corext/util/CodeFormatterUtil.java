@@ -15,7 +15,9 @@ import java.util.Map;
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.internal.corext.Assert;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
@@ -28,7 +30,14 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
 public class CodeFormatterUtil {
-			
+
+//	/**
+//	 * Creates a string that represents the given number of indents (can be spaces or tabs..)
+//	 */
+//	public static String createIndentString(int indent) {
+//		String str= format(CodeFormatter.K_EXPRESSION, "x", indent, null, "", (Map) null); //$NON-NLS-1$ //$NON-NLS-2$
+//		return str.substring(0, str.indexOf('x'));
+//	} 
 		
 	/**
 	 * Evaluates the edit on the given string.
@@ -129,5 +138,9 @@ public class CodeFormatterUtil {
 		return doc;
 	}
 	
-	
+	public static int getTabWidth() {
+		Preferences preferences= CUIPlugin.getDefault().getPluginPreferences();
+		return preferences.getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH);
+	}
+
 }

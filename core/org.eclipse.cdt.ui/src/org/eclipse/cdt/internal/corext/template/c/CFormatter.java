@@ -5,193 +5,312 @@ package org.eclipse.cdt.internal.corext.template.c;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
-import org.eclipse.cdt.internal.corext.template.TemplateBuffer;
-import org.eclipse.cdt.internal.corext.template.TemplateContext;
-import org.eclipse.cdt.internal.corext.template.TemplatePosition;
-import org.eclipse.cdt.internal.corext.textmanipulation.MultiTextEdit;
-import org.eclipse.cdt.internal.corext.textmanipulation.NopTextEdit;
-import org.eclipse.cdt.internal.corext.textmanipulation.SimpleTextEdit;
-import org.eclipse.cdt.internal.corext.textmanipulation.TextBuffer;
-import org.eclipse.cdt.internal.corext.textmanipulation.TextBufferEditor;
-import org.eclipse.cdt.internal.corext.textmanipulation.TextEdit;
-import org.eclipse.cdt.internal.corext.textmanipulation.TextRegion;
-import org.eclipse.cdt.internal.corext.textmanipulation.TextUtil;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Vector;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.util.Strings;
 
-import org.eclipse.core.runtime.CoreException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.templates.TemplateBuffer;
+import org.eclipse.jface.text.templates.TemplateVariable;
+import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.RangeMarker;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
 
 
 /**
  * A template editor using the Java formatter to format a template buffer.
  */
-public class CFormatter implements ITemplateEditor {
+public class CFormatter {
 
-	private static final String CURSOR= "cursor"; //$NON-NLS-1$
-	private static final String MARKER= "/*${cursor}*/"; //$NON-NLS-1$
+//	private static final String CURSOR= "cursor"; //$NON-NLS-1$
+//	private static final String MARKER= "/*${cursor}*/"; //$NON-NLS-1$
 
-	/*
-	 * @see ITemplateEditor#edit(TemplateBuffer, TemplateContext)
-	 */
-	public void edit(TemplateBuffer buffer, TemplateContext context) throws CoreException {
-		int indentationLevel= ((CContext) context).getIndentationLevel();
-		
-		//if (TemplatePreferencePage.useCodeFormatter())
-		//	format(buffer, indentationLevel);
-		//else
-			indentate(buffer, indentationLevel);
-			
-		trimBegin(buffer);
+	/** The line delimiter to use if code formatter is not used. */
+	private final String fLineDelimiter;
+	/** The initial indent level */
+	private final int fInitialIndentLevel;
+	
+	/** The java partitioner */
+	private boolean fUseCodeFormatter;
+
+	public CFormatter(String lineDelimiter, int initialIndentLevel, boolean useCodeFormatter) {
+		fLineDelimiter= lineDelimiter;
+		fUseCodeFormatter= useCodeFormatter;
+		fInitialIndentLevel= initialIndentLevel;
 	}
 
-	private static int getCaretOffset(TemplatePosition[] variables) {
-	    for (int i= 0; i != variables.length; i++) {
-	        TemplatePosition variable= variables[i];
-	        
-	        if (variable.getName().equals(CURSOR))
-	        	return variable.getOffsets()[0];
-	    }
-	    
-	    return -1;
+	public void edit(TemplateBuffer buffer, CContext context, int indentationLevel) throws BadLocationException {		
+		try {
+			if (fUseCodeFormatter)
+				// try to format and fall back to indenting
+				try {
+					format(buffer, context);
+				} catch (BadLocationException e) {
+					indent(buffer);
+				} catch (MalformedTreeException e) {
+					indent(buffer);
+				}
+			else {
+				indent(buffer);
+			}
+
+			// don't trim the buffer if the replacement area is empty
+			// case: surrounding empty lines with block
+			if (context.getStart() == context.getCompletionOffset())
+				if (context.getDocument().get(context.getStart(), context.getEnd() - context.getEnd()).trim().length() == 0)
+					return;
+			
+			trimBegin(buffer);
+		} catch (MalformedTreeException e) {
+			throw new BadLocationException();
+		}
+	}
+
+//	private static int getCaretOffset(TemplateVariable[] variables) {
+//	    for (int i= 0; i != variables.length; i++) {
+//	        TemplateVariable variable= variables[i];
+//	        
+//	        if (variable.getName().equals(CURSOR)) {
+//	        	return variable.getOffsets()[0];
+//	        }
+//	    }
+//	    
+//	    return -1;
+//	}
+
+//	private boolean isInsideCommentOrString(String string, int offset) {
+//
+//		IDocument document= new Document(string);
+//		CUIPlugin.getDefault().getTextTools().setupCDocument(document);
+//
+//		try {		
+//			ITypedRegion partition= document.getPartition(offset);
+//			String partitionType= partition.getType();
+//		
+//			return partitionType != null && (
+//				partitionType.equals(ICPartitions.C_MULTILINE_COMMENT) ||
+//				partitionType.equals(ICPartitions.C_SINGLE_LINE_COMMENT) ||
+//				partitionType.equals(ICPartitions.C_STRING));
+//		} catch (BadLocationException e) {
+//			return false;	
+//		}
+//	}
+
+	private void format(TemplateBuffer templateBuffer, CContext context) throws BadLocationException {
+		// XXX 4360, 15247
+		// workaround for code formatter limitations
+		// handle a special case where cursor position is surrounded by whitespaces		
+
+//		String string= templateBuffer.getString();
+//		TemplateVariable[] variables= templateBuffer.getVariables();
+//
+//		int caretOffset= getCaretOffset(variables);
+//		if ((caretOffset > 0) && Character.isWhitespace(string.charAt(caretOffset - 1)) &&
+//			(caretOffset < string.length()) && Character.isWhitespace(string.charAt(caretOffset)) &&
+//			! isInsideCommentOrString(string, caretOffset))
+//		{
+//			List positions= variablesToPositions(variables);
+//
+//		    TextEdit insert= new InsertEdit(caretOffset, MARKER);
+//		    string= edit(string, positions, insert);
+//			positionsToVariables(positions, variables);
+//		    templateBuffer.setContent(string, variables);
+//
+//			plainFormat(templateBuffer, context);			
+//
+//			string= templateBuffer.getString();
+//			variables= templateBuffer.getVariables();
+//			caretOffset= getCaretOffset(variables);
+//
+//			positions= variablesToPositions(variables);
+//			TextEdit delete= new DeleteEdit(caretOffset, MARKER.length());
+//		    string= edit(string, positions, delete);
+//			positionsToVariables(positions, variables);		    
+//		    templateBuffer.setContent(string, variables);
+//	
+//		} else {
+//			plainFormat(templateBuffer, context);			
+//		}	    
+		plainFormat(templateBuffer, context);			
 	}
 	
-
-	private static void indentate(TemplateBuffer templateBuffer, int indentationLevel) throws CoreException {
-
-		String string= templateBuffer.getString();
-		TemplatePosition[] variables= templateBuffer.getVariables();
-   		String indentation= TextUtil.createIndentString(indentationLevel);   		
-
-		MultiTextEdit positions= variablesToPositions(variables);
-		MultiTextEdit multiEdit= new MultiTextEdit();
+	private void plainFormat(TemplateBuffer templateBuffer, CContext context) throws BadLocationException {
 		
-		TextBuffer textBuffer= TextBuffer.create(string);
-	    int lineCount= textBuffer.getNumberOfLines();
-	    for (int i= 0; i < lineCount; i++) {
-	    	TextRegion region= textBuffer.getLineInformation(i);
-			multiEdit.add(SimpleTextEdit.createInsert(region.getOffset(), indentation));
+		IDocument doc= new Document(templateBuffer.getString());
+		
+		TemplateVariable[] variables= templateBuffer.getVariables();
+		
+		List offsets= variablesToPositions(variables);
+		
+		Map options;
+		if (context.getTranslationUnit() != null)
+			options= context.getTranslationUnit().getCProject().getOptions(true); 
+		else
+			options= CCorePlugin.getOptions();
+		
+		TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_UNKNOWN, doc.get(), fInitialIndentLevel, fLineDelimiter, options);
+		if (edit == null)
+			throw new BadLocationException(); // fall back to indenting
+		
+		MultiTextEdit root;
+		if (edit instanceof MultiTextEdit)
+			root= (MultiTextEdit) edit;
+		else {
+			root= new MultiTextEdit(0, doc.getLength());
+			root.addChild(edit);
+		}
+		for (Iterator it= offsets.iterator(); it.hasNext();) {
+			TextEdit position= (TextEdit) it.next();
+			try {
+				root.addChild(position);
+			} catch (MalformedTreeException e) {
+				// position conflicts with formatter edit
+				// ignore this position
+			}
+		}
+		
+		root.apply(doc, TextEdit.UPDATE_REGIONS);
+		
+		positionsToVariables(offsets, variables);
+		
+		templateBuffer.setContent(doc.get(), variables);	    
+	}	
+
+	private void indent(TemplateBuffer templateBuffer) throws BadLocationException, MalformedTreeException {
+
+		TemplateVariable[] variables= templateBuffer.getVariables();
+		List positions= variablesToPositions(variables);
+		
+		IDocument document= new Document(templateBuffer.getString());
+		MultiTextEdit root= new MultiTextEdit(0, document.getLength());
+		root.addChildren((TextEdit[]) positions.toArray(new TextEdit[positions.size()]));
+		
+		String indent= Strings.createIndentString(fInitialIndentLevel);
+		// first line
+		int offset= document.getLineOffset(0);
+		TextEdit edit= new InsertEdit(offset, indent);
+		root.addChild(edit);
+		root.apply(document, TextEdit.UPDATE_REGIONS);
+		root.removeChild(edit);
+		formatDelimiter(document, root, 0);
+		
+		// following lines
+	    int lineCount= document.getNumberOfLines();
+	    
+	    for (int line= 1; line < lineCount; line++) {
+			IRegion region= document.getLineInformation(line);
+			offset= region.getOffset();
+			int nws = offset;
+			for (int i = offset; i < region.getLength(); ++i) {
+				if (! Character.isWhitespace(document.getChar(i))) {
+					nws = i;
+					break;
+				}
+			}
+	    	edit= new ReplaceEdit(offset, nws - offset, indent);
+			root.addChild(edit);
+			root.apply(document, TextEdit.UPDATE_REGIONS);
+			root.removeChild(edit);
+
+			formatDelimiter(document, root, line);
 	    }
-
-		string= edit(string, positions, multiEdit);
+	    
 		positionsToVariables(positions, variables);
-		
-		templateBuffer.setContent(string, variables);
+		templateBuffer.setContent(document.get(), variables);
 	}
 
-	private static void trimBegin(TemplateBuffer templateBuffer) throws CoreException {
-		String string= templateBuffer.getString();
-		TemplatePosition[] variables= templateBuffer.getVariables();
+	/**
+	 * Changes the delimiter to the configured line delimiter.
+	 * 
+	 * @param document the temporary document being edited
+	 * @param root the root edit containing all positions that will be updated along the way
+	 * @param line the line to format
+	 * @throws BadLocationException if applying the changes fails
+	 */
+	private void formatDelimiter(IDocument document, MultiTextEdit root, int line) throws BadLocationException {
+		IRegion region= document.getLineInformation(line);
+		String lineDelimiter= document.getLineDelimiter(line);
+		if (lineDelimiter != null) {
+			TextEdit edit= new ReplaceEdit(region.getOffset() + region.getLength(), lineDelimiter.length(), fLineDelimiter);
+			root.addChild(edit);
+			root.apply(document, TextEdit.UPDATE_REGIONS);
+			root.removeChild(edit);
+		}
+	}
 
-		MultiTextEdit positions= variablesToPositions(variables);
+	private static void trimBegin(TemplateBuffer templateBuffer) throws BadLocationException {
+		String string= templateBuffer.getString();
+		TemplateVariable[] variables= templateBuffer.getVariables();
+
+		List positions= variablesToPositions(variables);
 
 		int i= 0;
 		while ((i != string.length()) && Character.isWhitespace(string.charAt(i)))
 			i++;
 
-		string= edit(string, positions, SimpleTextEdit.createDelete(0, i));
+		string= edit(string, positions, new DeleteEdit(0, i));
 		positionsToVariables(positions, variables);
 
 		templateBuffer.setContent(string, variables);
 	}
 	
-	private static String edit(String string, MultiTextEdit positions, MultiTextEdit multiEdit) throws CoreException {
-	    TextBuffer textBuffer= TextBuffer.create(string);
-		TextBufferEditor editor= new TextBufferEditor(textBuffer);
-		editor.add(positions);
-		editor.add(multiEdit);
-		editor.performEdits(null);
+	private static String edit(String string, List positions, TextEdit edit) throws BadLocationException {
+		MultiTextEdit root= new MultiTextEdit(0, string.length());
+		root.addChildren((TextEdit[]) positions.toArray(new TextEdit[positions.size()]));
+		root.addChild(edit);
+		IDocument document= new Document(string);
+		root.apply(document);
 		
-		return textBuffer.getContent();
+		return document.get();		
 	}
 
-	private static String edit(String string, MultiTextEdit positions, TextEdit singleEdit) throws CoreException {
-	    TextBuffer textBuffer= TextBuffer.create(string);
-		TextBufferEditor editor= new TextBufferEditor(textBuffer);
-		editor.add(positions);
-		editor.add(singleEdit);
-		editor.performEdits(null);
-		
-		return textBuffer.getContent();
-	}
-		
-	private static int[] variablesToOffsets(TemplatePosition[] variables) {
-		Vector vector= new Vector();
+	private static List variablesToPositions(TemplateVariable[] variables) {
+   		List positions= new ArrayList(5);
 		for (int i= 0; i != variables.length; i++) {
 		    int[] offsets= variables[i].getOffsets();
-		    for (int j= 0; j != offsets.length; j++)
-				vector.add(new Integer(offsets[j]));
+		    
+		    // trim positions off whitespace
+		    String value= variables[i].getDefaultValue();
+		    int wsStart= 0;
+		    while (wsStart < value.length() && Character.isWhitespace(value.charAt(wsStart)) && !Strings.isLineDelimiterChar(value.charAt(wsStart)))
+		    	wsStart++;
+		    
+		    variables[i].getValues()[0]= value.substring(wsStart);
+		    
+		    for (int j= 0; j != offsets.length; j++) {
+		    	offsets[j] += wsStart;
+				positions.add(new RangeMarker(offsets[j], 0));
+		    }
 		}
-		
-		int[] offsets= new int[vector.size()];
-		for (int i= 0; i != offsets.length; i++)
-			offsets[i]= ((Integer) vector.get(i)).intValue();
-
-		Arrays.sort(offsets);
-
-		return offsets;	    
-	}
-	
-	private static void offsetsToVariables(int[] allOffsets, TemplatePosition[] variables) {
-		int[] currentIndices= new int[variables.length];
-		for (int i= 0; i != currentIndices.length; i++)
-			currentIndices[i]= 0;
-
-		int[][] offsets= new int[variables.length][];		
-		for (int i= 0; i != variables.length; i++)
-			offsets[i]= variables[i].getOffsets();
-		
-		for (int i= 0; i != allOffsets.length; i++) {
-
-			int min= Integer.MAX_VALUE;
-			int minVariableIndex= -1;
-			for (int j= 0; j != variables.length; j++) {
-			    int currentIndex= currentIndices[j];
-			    
-			    // determine minimum
-				if (currentIndex == offsets[j].length)
-					continue;
-					
-				int offset= offsets[j][currentIndex];
-
-				if (offset < min) {
-				    min= offset;
-					minVariableIndex= j;
-				}		
-			}
-
-			offsets[minVariableIndex][currentIndices[minVariableIndex]]= allOffsets[i];
-			currentIndices[minVariableIndex]++;
-		}
-
-		for (int i= 0; i != variables.length; i++)
-			variables[i].setOffsets(offsets[i]);	
-	}
-
-	private static MultiTextEdit variablesToPositions(TemplatePosition[] variables) {
-   		MultiTextEdit positions= new MultiTextEdit();
-		for (int i= 0; i != variables.length; i++) {
-		    int[] offsets= variables[i].getOffsets();
-		    for (int j= 0; j != offsets.length; j++)
-				positions.add(new NopTextEdit(offsets[j], 0));
-		}
-		
 		return positions;	    
 	}
 	
-	private static void positionsToVariables(MultiTextEdit positions, TemplatePosition[] variables) {
+	private static void positionsToVariables(List positions, TemplateVariable[] variables) {
 		Iterator iterator= positions.iterator();
 		
 		for (int i= 0; i != variables.length; i++) {
-		    TemplatePosition variable= variables[i];
+		    TemplateVariable variable= variables[i];
 		    
 			int[] offsets= new int[variable.getOffsets().length];
 			for (int j= 0; j != offsets.length; j++)
-				offsets[j]= ((TextEdit) iterator.next()).getTextRange().getOffset();
+				offsets[j]= ((TextEdit) iterator.next()).getOffset();
 			
 		 	variable.setOffsets(offsets);   
 		}
 	}	
+
 }
 

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.Comparator;
 
 import org.eclipse.cdt.ui.text.*;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public class CCompletionProposalComparator implements Comparator {
 

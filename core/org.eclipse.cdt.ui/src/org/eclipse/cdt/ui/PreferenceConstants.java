@@ -357,6 +357,16 @@ public class PreferenceConstants {
 	public static final String EDITOR_FOLDING_MACROS= "editor_folding_default_macros"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls if templates are formatted when applied.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 2.1
+	 */	
+	public static final String TEMPLATES_USE_CODEFORMATTER= "org.eclipse.cdt.ui.text.templates.format"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 * 
 	 * @return the CDT-UI preference store

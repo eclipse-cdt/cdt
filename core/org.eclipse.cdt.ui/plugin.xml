@@ -555,8 +555,8 @@
       </page>
       <page
             name="%CPluginTemplatePreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.internal.ui.preferences.TemplatePreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CTemplatePreferencePage"
             id="org.eclipse.cdt.ui.preferences.TemplatePreferencePage">
       </page>
       <page
@@ -1193,5 +1193,18 @@
 			preferencesClass="org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingPreferenceBlock">
 		</provider>
 	</extension>
+
+<!--- Template extension for the editor -->
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            name="%c.contextType.name"
+            class="org.eclipse.cdt.internal.corext.template.c.CContextType"
+            id="org.eclipse.cdt.ui.text.templates.c">
+      </contextType>
+      <include
+      		file="templates/default-templates.xml">
+      </include>
+   </extension>
 
 </plugin>

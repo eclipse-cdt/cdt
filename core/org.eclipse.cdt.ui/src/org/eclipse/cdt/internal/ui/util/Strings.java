@@ -206,8 +206,7 @@ public class Strings {
 		}
 		if (start == size)
 			return ""; //$NON-NLS-1$
-		else
-			return line.substring(start);
+		return line.substring(start);
 	}
 	
 	/**
@@ -371,5 +370,19 @@ public class Strings {
 				return false;
 		return true;
 	}
+
+	/**
+	 * Creates a string that consists of the given number of tab characters.
+	 * @param indentLevel
+	 * @return
+	 */
+	public static String createIndentString(int indentLevel) {
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < indentLevel; i++) {
+			result.append('\t');
+		}
+		return result.toString();
+	}
+
 }
 

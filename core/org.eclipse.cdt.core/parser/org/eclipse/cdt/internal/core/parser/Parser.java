@@ -1563,21 +1563,15 @@ public class Parser implements IParser
      */
     protected ITokenDuple className() throws Backtrack
     {
-        if (LT(1) == IToken.tIDENTIFIER)
-        {
-            if (LT(2) == IToken.tLT)
-            {
-                return new TokenDuple(LA(1), templateId());
-            }
-            else
-            {
-                IToken t = identifier();
-                return new TokenDuple(t, t);
-            }
+		ITokenDuple duple = name();
+		IToken last = duple.getLastToken(); 
+        if (LT(1) == IToken.tLT) {
+			last = consumeTemplateParameters(duple.getLastToken());
         }
-        else
-            throw backtrack;
+        
+		return new TokenDuple(duple.getFirstToken(), last);
     }
+    
     /**
      * Parse a template-id, according to the ANSI C++ spec.  
      * 
@@ -1590,8 +1584,8 @@ public class Parser implements IParser
      */
     protected IToken templateId() throws Backtrack
     {
-        IToken first = consume(IToken.tIDENTIFIER);
-        IToken last = consumeTemplateParameters(first);
+        ITokenDuple duple = name();
+        IToken last = consumeTemplateParameters(duple.getLastToken());
         return last;
     }
     /**

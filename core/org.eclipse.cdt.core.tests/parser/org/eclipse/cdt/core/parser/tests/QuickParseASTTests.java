@@ -1751,4 +1751,10 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( typedef.getName(), "life");
 		
 	}
+	
+	public void testBug39532() throws Exception
+	{
+		parse("class N1::N2::B : public A {};");
+		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
+	}
 }

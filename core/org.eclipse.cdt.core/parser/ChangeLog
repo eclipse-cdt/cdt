@@ -1,3 +1,6 @@
+2003-07-30 Victor Mozgin
+	Fixed PR 39532 : Parser fails on fully-qualified class names.
+
 2003-07-29 John Camelon
 	Updated AST to better represent pointers to functions/methods.
 	Implemented typedef declaration/x-ref infrastructure.  

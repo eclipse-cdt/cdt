@@ -90,10 +90,6 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("class AString { operator char const *() const; };");
     }
-    public void testBug39532() throws Exception
-    {
-        assertCodeFailsParse("class N1::N2::B : public A {};");
-    }
     public void testBug39535() throws Exception
     {
         assertCodeFailsParse("namespace bar = foo;");

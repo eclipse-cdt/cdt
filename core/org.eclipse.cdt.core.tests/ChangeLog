@@ -1,3 +1,6 @@
+2003-07-30 Victor Mozgin
+	Moved testBug39532() from ASTFailedTests.java to QuickParseASTTests.java.
+
 2003-07-29 John Camelon
 	Updated QuickParseASTTests for pointer to function updates.
 	Updated CompleteParseASTTests for typedef work.  

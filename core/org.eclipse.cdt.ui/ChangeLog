@@ -1,3 +1,6 @@
+2004-04-15 John Camelon
+	Partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=57928
+
 2004-04-14 Alain Magloire
 
 	Remove the contribution for header doing this will force

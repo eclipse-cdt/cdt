@@ -183,7 +183,8 @@ public class CompletionEngine implements RelevanceConstants {
 
 				// start timer
 				elementRequestor.startTimer();
-				long parserTime = System.currentTimeMillis();				
+				long parserTime = System.currentTimeMillis();
+				macroMap = null;
 				result = parser.parse(completionOffset);
 				log("Time spent in Parser = "+ ( System.currentTimeMillis() - parserTime ) + " ms");		 //$NON-NLS-1$ //$NON-NLS-2$
 				

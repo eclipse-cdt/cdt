@@ -447,18 +447,22 @@ public class CompletionEngine implements RelevanceConstants {
 	private List lookupMacros(String prefix){	
 		Set keySet = new TreeSet(macroMap.keySet());
 		Iterator i = keySet.iterator();
-		
-		List resultSet = new ArrayList(); 
+		final int length = prefix.length();
+		String newPrefix = prefix.toUpperCase();
+		List resultSet = new ArrayList();
+		String key = null;
+		String value = null; //$NON-NLS-1$
 		while( i.hasNext() )
 		{
-			String key = (String) i.next();
-			String value = ""; //$NON-NLS-1$
-			if(key.length() > prefix.length()) {
-				value = key.substring(0, prefix.length()).toUpperCase();
+			key = (String) i.next();	
+			if( key.length() < length )
+				continue;
+			
+			if(key.length() > length) {
+				value = key.substring(0, length).toUpperCase();
 			}else {
 				value = key;
 			}
-			String newPrefix = prefix.toUpperCase();
 			
 			if( value.equals( newPrefix ) ) {
 				IMacroDescriptor macroD = (IMacroDescriptor)macroMap.get(key);
@@ -467,7 +471,7 @@ public class CompletionEngine implements RelevanceConstants {
 				else 
 					resultSet.add( macroD.getName() );
 			}
-			else if( value.compareTo( newPrefix ) > 0 )					
+			else if( key.compareTo( prefix ) > 0 )					
 				break;
 		}
 		return resultSet;		

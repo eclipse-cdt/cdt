@@ -32,10 +32,12 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	private IndexerOptionDialogPage optionPage;
 	private boolean oldIndexerValue;
 	private int oldIndexerProblemsValue;
+	private boolean requestedIndexAll;
 	
 	public IndexerOptionPropertyPage(){
 		super();
 		optionPage = new IndexerOptionDialogPage();
+		requestedIndexAll = false;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
@@ -91,10 +93,12 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().removeIndexerProblems(tempProject);
 						
 			//if indexer is now on send a index all request 
-			if( indexChanged && newIndexerValue ) 
+			if( indexChanged && newIndexerValue && !requestedIndexAll  ) {
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexAll(tempProject);
-			else if( indexChanged && !newIndexerValue )
+				requestedIndexAll = true;	
+			} else if( indexChanged && !newIndexerValue ){
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().discardJobs( tempProject.getName() );
+			}
 		}
 		return true;
 	}

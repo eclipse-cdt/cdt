@@ -1,3 +1,8 @@
+2004-09-09 Bogdan Gheorghe
+	Fix for 73406: Double Indexing On Specific Project
+	* src/org/eclipse/cdt/ui/dialogs/IndexerOptionPropertyPage.java
+	
+	
 2004-09-08 Alain Magloire
 
 	Fix for PR 73459

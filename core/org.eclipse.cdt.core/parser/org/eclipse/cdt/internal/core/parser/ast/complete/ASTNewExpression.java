@@ -84,4 +84,31 @@ public class ASTNewExpression extends ASTExpression {
 	public String toString(){
 		return ASTUtil.getExpressionString( this );
 	}
+	
+	public ASTExpression findOwnerExpressionForIDExpression(ITokenDuple duple) {
+	    ASTTypeId typeId = (ASTTypeId) getTypeId();
+	    ITokenDuple typeDuple = typeId.getTokenDuple();
+	    
+	    if( typeDuple.equals( duple ) )
+			return this;
+		// check subduple
+		if( typeDuple.contains( duple ) )
+			return this;
+		
+		//else, check the parameters
+		ASTExpression ownerExpression = null;
+		ASTNewDescriptor newDescriptor = (ASTNewDescriptor)getNewExpressionDescriptor();
+		List newInitializerExpressions = newDescriptor.getNewInitializerExpressionsList();
+		int size = newInitializerExpressions.size();
+		for( int i = 0; i < size; i++ )
+		{
+			ASTExpression expressionList = (ASTExpression) newInitializerExpressions.get(i);
+			ownerExpression = expressionList.findOwnerExpressionForIDExpression( duple );
+			if( ownerExpression != null ){
+			    break;
+			}
+		}
+		
+		return ownerExpression;
+	}
 }

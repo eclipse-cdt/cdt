@@ -3596,42 +3596,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				else if( expression.getExpressionKind() == IASTExpression.Kind.NEW_NEWTYPEID || 
 						expression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID )
 				{
-					IContainerSymbol classSymbol = null;
-					try {
-						classSymbol = (IContainerSymbol) lookupQualifiedName(scopeToSymbol( scope ), duple, null, false );
-					} catch (ASTSemanticException e) {
-					}
-					if( classSymbol != null && classSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) ){
-						ITypeInfo info = classSymbol.getTypeInfo().getFinalType( pst.getTypeInfoProvider() );
-						classSymbol = (IContainerSymbol) info.getTypeSymbol();
-						pst.getTypeInfoProvider().returnTypeInfo( info );
-					}
-					if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
-						return null;
-					}
-					
-					List parameters = new ArrayList();
-					ASTNewDescriptor newDescriptor = (ASTNewDescriptor) expression.getNewExpressionDescriptor();
-					List newInitializerExpressions = newDescriptor.getNewInitializerExpressionsList();
-					int size = newInitializerExpressions.size();
-					for( int i = 0; i < size; i++ )
-					{
-						ASTExpression expressionList = (ASTExpression) newInitializerExpressions.get(i);
-						while( expressionList != null ){
-							parameters.add( expressionList.getResultType().getResult() );
-							if( expressionList.getExpressionKind() == IASTExpression.Kind.EXPRESSIONLIST )
-							    expressionList = (ASTExpression) expressionList.getRHSExpression();
-							else 
-							    expressionList = null;
-						}
-					}
-					
-					try {
-						s = ((IDerivableContainerSymbol)classSymbol).lookupConstructor( parameters );
-					} catch (ParserSymbolTableException e1) {
-						return null;
-					}
-
+					s = lookupSymbolInNewExpression( scope, duple, expression );
 				}
 				else if( expression.getExpressionKind() == Kind.POSTFIX_FUNCTIONCALL && 
 						 CharArrayUtils.equals( expression.getLHSExpression().getIdExpressionCharArray(), dupleAsCharArray ))
@@ -3658,11 +3623,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 							return null;
 						}
 					}
+					else if( ownerExpression.getExpressionKind() == IASTExpression.Kind.NEW_NEWTYPEID || 
+					         ownerExpression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID )
+					{
+						s = lookupSymbolInNewExpression( scope, duple, ownerExpression );
+					}
 					else
 					{
 						try {
 							s = lookupQualifiedName( scopeToSymbol( scope ), duple, null, false );
-						} catch (ASTSemanticException e1) {
+						} catch (ASTSemanticException e1) { //we'll return null
 						}						
 					}
 				}
@@ -3672,6 +3642,45 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return s.getASTExtension().getPrimaryDeclaration();
 	}
 
+	public ISymbol lookupSymbolInNewExpression( IASTScope scope, ITokenDuple duple, ASTExpression expression ){
+	    IContainerSymbol classSymbol = null;
+		try {
+			classSymbol = (IContainerSymbol) lookupQualifiedName(scopeToSymbol( scope ), duple, null, false );
+		} catch (ASTSemanticException e) {
+		    return null;
+		}
+		if( classSymbol != null && classSymbol.getTypeInfo().checkBit( ITypeInfo.isTypedef ) ){
+			ITypeInfo info = classSymbol.getTypeInfo().getFinalType( pst.getTypeInfoProvider() );
+			classSymbol = (IContainerSymbol) info.getTypeSymbol();
+			pst.getTypeInfoProvider().returnTypeInfo( info );
+		}
+		if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
+			return null;
+		}
+		
+		List parameters = new ArrayList();
+		ASTNewDescriptor newDescriptor = (ASTNewDescriptor) expression.getNewExpressionDescriptor();
+		List newInitializerExpressions = newDescriptor.getNewInitializerExpressionsList();
+		int size = newInitializerExpressions.size();
+		for( int i = 0; i < size; i++ )
+		{
+			ASTExpression expressionList = (ASTExpression) newInitializerExpressions.get(i);
+			while( expressionList != null ){
+				parameters.add( expressionList.getResultType().getResult() );
+				if( expressionList.getExpressionKind() == IASTExpression.Kind.EXPRESSIONLIST )
+				    expressionList = (ASTExpression) expressionList.getRHSExpression();
+				else 
+				    expressionList = null;
+			}
+		}
+		
+		try {
+			return ((IDerivableContainerSymbol)classSymbol).lookupConstructor( parameters );
+		} catch (ParserSymbolTableException e1) {
+			//fall out and return null
+		}
+		return null;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getNodeForThisExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
 	 */

@@ -452,5 +452,31 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 	    assertFalse( ((IASTMethod)node).previouslyDeclared() );
 	    assertEquals( ((IASTMethod) node).getNameOffset(), code.indexOf( " initialize();" ) + 1 ); //$NON-NLS-1$
 	}
+	
+	public void testBug72712() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write( "class B{ public: B(); }; void f(){ B* b; b = new B(); }" ); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( "new B" ) + 4; //$NON-NLS-1$
+	    
+	    IASTNode node = parse( code, startIndex, startIndex + 1 );
+	    assertTrue( node instanceof IASTMethod );
+	    assertTrue( ((IASTMethod) node).isConstructor() );
+	}
+	
+	public void testBug72712_2() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write( "class A {};                                        \n"); //$NON-NLS-1$
+	    writer.write( "class B{ public: B( A* ); };                       \n"); //$NON-NLS-1$
+	    writer.write( "void f(){ B* b; b = new B( (A*)0 ); }              \n"); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( "(A*)" ) + 1; //$NON-NLS-1$
+	    
+	    IASTNode node = parse( code, startIndex, startIndex + 1 );
+	    assertTrue( node instanceof IASTClassSpecifier );
+	    assertEquals( ((IASTClassSpecifier)node).getName(), "A" ); //$NON-NLS-1$
+	}
 }
 

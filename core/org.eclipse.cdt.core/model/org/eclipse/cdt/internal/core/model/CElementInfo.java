@@ -45,7 +45,9 @@ class CElementInfo {
 	}
 
 	protected void addChild(ICElement child) {
-		fChildren.add(child);
+		if (!fChildren.contains(child)) {
+			fChildren.add(child);
+		}
 	}
 
 	protected ICElement[] getChildren() {

@@ -1,3 +1,10 @@
+2004-04-13 David Inglis
+
+	Since the binary runner and the CModelManager adds binarys we need to make sure
+	the child was not already added in the info.
+	
+	* src/org/eclipse/cdt/internal/core/model/CElementInfo.java
+
 2004-04-13 Alain Magloire
 
 	When encoding the PathEntry, make the "path" attribute project relative if

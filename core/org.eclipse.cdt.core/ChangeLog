@@ -1,3 +1,9 @@
+2004-04-16 Hoda Amer
+	-CModelBuilder and scalability problems: Starting children list with initial size = 0
+	Now 25,000 element Translation unit takes 450 ms in CModelBuilder.
+	-Also removed class Parent implemention interface IParent as only elements that 
+	could really be parents should implement it.
+	
 2004-04-15 Alain Magloire
 
 	Archive/BinaryContainer was not cleaned up.

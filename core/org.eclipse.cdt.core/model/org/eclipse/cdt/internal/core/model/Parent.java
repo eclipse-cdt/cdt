@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
 
-public abstract class Parent extends CElement implements IParent {
+public abstract class Parent extends CElement {
 
 	public Parent (ICElement parent, String name, int type) {
 		super (parent, name, type);
@@ -23,7 +22,7 @@ public abstract class Parent extends CElement implements IParent {
 	 * Adds a child to the current element.
 	 * Implementations override this method to support children
 	 */
-	protected void addChild(ICElement member) {
+	public void addChild(ICElement member) {
 		getElementInfo().addChild(member);
 	}
 
@@ -31,11 +30,11 @@ public abstract class Parent extends CElement implements IParent {
 	 * Removes a child to the current element.
 	 * Implementations override this method to support children
 	 */
-	protected void removeChild(ICElement member) {
+	public void removeChild(ICElement member) {
 		getElementInfo().removeChild(member);
 	}
 
-	protected void removeChildren () {
+	public void removeChildren () {
 		getElementInfo().removeChildren();
 	}
 
@@ -47,7 +46,7 @@ public abstract class Parent extends CElement implements IParent {
 	public ICElement[] getChildren() {
 		CElementInfo info = getElementInfo();
 		if (info != null)
-			return getElementInfo().getChildren();
+			return info.getChildren();
 		else 
 			return new ICElement[]{};
 	}

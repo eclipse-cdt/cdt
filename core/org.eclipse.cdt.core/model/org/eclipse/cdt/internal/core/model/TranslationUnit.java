@@ -26,9 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @see ITranslationUnit
@@ -478,8 +475,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public Map parse(){
 		removeChildren(this);
-		final CModelBuilder modelBuilder = new CModelBuilder(this);
-		final boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
+		CModelBuilder modelBuilder = new CModelBuilder(this);
+		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 		try {
 			return modelBuilder.parse(quickParseMode);
 		} catch (Exception e) {

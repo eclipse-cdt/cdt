@@ -17,6 +17,11 @@ import org.eclipse.core.resources.IResource;
  * Subclassed to carry properties for specific kinds of elements.
  */
 class CElementInfo {
+	/**
+	 * Shared empty collection used for efficiency.
+	 */
+	static Object[] NO_NON_C_RESOURCES = new Object[] {};
+
 
 	protected CElement element;
 
@@ -25,7 +30,7 @@ class CElementInfo {
 	 * object. This is an empty array if this element has
 	 * no children.
 	 */
-	protected List fChildren;
+	private List fChildren;
 
 	/**
 	 * Is the structure of this element known
@@ -37,7 +42,8 @@ class CElementInfo {
 
 	protected CElementInfo(CElement element) {
 		this.element = element;
-		fChildren = new ArrayList();
+		// Array list starts with size = 0
+		fChildren = new ArrayList(0);
 	}
 
 	protected CElement getElement() {
@@ -45,9 +51,9 @@ class CElementInfo {
 	}
 
 	protected void addChild(ICElement child) {
-		if (!fChildren.contains(child)) {
-			fChildren.add(child);
-		}
+		// Do not add a check if the child is contained here
+		// because it causes a performance bottle neck for large files.
+		fChildren.add(child);
 	}
 
 	protected ICElement[] getChildren() {

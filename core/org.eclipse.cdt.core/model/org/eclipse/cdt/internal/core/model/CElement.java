@@ -398,6 +398,10 @@ public abstract class CElement extends PlatformObject implements ICElement {
 					CElement child = (CElement) children[i];
 					child.removeInfo();
 				}
+				// we have to remove children here 
+				// to clear the children list before 
+				// removing the entry from the cache.
+				((CElementInfo)info).removeChildren();
 			}
 			CModelManager.getDefault().removeInfo(this);
 		}

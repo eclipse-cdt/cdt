@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.ICElement;
+
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -24,4 +26,12 @@ public class ArchiveContainerInfo extends OpenableInfo {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElementInfo#addChild(org.eclipse.cdt.core.model.ICElement)
+	 */
+	protected void addChild(ICElement child) {
+		if (!includesChild(child)) {
+			super.addChild(child);
+		}
+	}
 }

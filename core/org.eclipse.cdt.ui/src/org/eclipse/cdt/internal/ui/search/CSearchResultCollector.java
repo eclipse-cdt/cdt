@@ -72,17 +72,32 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		_computer = new GroupByKeyComputer();
 		
 		if( _view != null ){
-			_view.searchStarted(
-				null,//new ActionGroupFactory(),
-				_operation.getSingularLabel(),
-				_operation.getPluralLabelPattern(),
-				_operation.getImageDescriptor(),
-				CSearchPage.EXTENSION_POINT_ID,
-				labelProvider,
-				new GotoMarkerAction(),
-				_computer,
-				_operation
-			);
+			if (_operation != null){
+				_view.searchStarted(
+					null,//new ActionGroupFactory(),
+					_operation.getSingularLabel(),
+					_operation.getPluralLabelPattern(),
+					_operation.getImageDescriptor(),
+					CSearchPage.EXTENSION_POINT_ID,
+					labelProvider,
+					new GotoMarkerAction(),
+					_computer,
+					_operation
+				);
+			}
+			else if (_query != null){
+				_view.searchStarted(
+					null,//new ActionGroupFactory(),
+					_query.getSingularLabel(),
+					_query.getPluralLabelPattern(),
+					_query.getImageDescriptor(),
+					CSearchPage.EXTENSION_POINT_ID,
+					labelProvider,
+					new GotoMarkerAction(),
+					_computer,
+					null
+				);
+			}
 		}
 		
 		if( getProgressMonitor() != null && !getProgressMonitor().isCanceled() ){
@@ -200,4 +215,12 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 	private ISearchResultView 	_view;
 	private IGroupByKeyComputer _computer;
 	private int					_matchCount;
+	private CSearchQuery 		_query;
+
+	/**
+	 * @param query
+	 */
+	public void setOperation(CSearchQuery query) {
+		_query = query;
+	}
 }

@@ -85,9 +85,8 @@ public class TimeOut implements Runnable {
 	
 
 	public void reset() {
-		System.out.println("TimeOut reset");
 		enabled=false;
-		thread = new Thread(this, "Time Out Thread");
+		thread = new Thread(this, "Time Out Thread"); //$NON-NLS-1$
 		thread.setDaemon(true);
 		thread.setPriority(threadPriority); 
 		thread.start();

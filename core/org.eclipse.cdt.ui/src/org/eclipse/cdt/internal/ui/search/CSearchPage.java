@@ -43,6 +43,7 @@ import org.eclipse.search.internal.ui.util.RowLayouter;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -126,7 +127,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		} else {
 			searching = data.searchFor;
 		}
-		
+//TODO: Remove
+/*	
 		CSearchOperation op = new CSearchOperation(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
 
 		
@@ -139,6 +141,13 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		} catch (InterruptedException ex) {
 			return false;
 		}
+*/
+		
+		CSearchQuery job = new CSearchQuery(workspace, data.pattern, data.isCaseSensitive, searching, data.limitTo, scope, scopeDescription, collector);
+		NewSearchUI.activateSearchResultView();
+	    CSearchResult result = new CSearchResult(job);
+		NewSearchUI.runSearchInBackground(job, result);
+		
 		return true;
 	}
 

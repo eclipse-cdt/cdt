@@ -1,3 +1,15 @@
+2004-03-28 Bogdan Gheorghe
+	Modified CSearchPage to use new CSearchQuery (which uses the new background 
+	jobs API)
+	
+	Modified CSearchResultCollector to use CSearchQuery if present (ie. if invoked 
+	from the CSearchPage)
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResult.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchQuery.java
+	
 2004-03-28 Alain Magloire
 
 	Provide a global hook for the action "Show Selected element"

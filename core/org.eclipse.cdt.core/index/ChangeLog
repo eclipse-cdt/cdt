@@ -1,3 +1,7 @@
+2004-05-16 Bogdan Gheorghe
+    Fix for bug 61332 - make sure that the timer is ready to go before starting
+    a new index
+       
 2004-05-07 Bogdan Gheorghe
 	Modified indexer friend encoding to encode IASTElaboratedTypeSpecifier
 	

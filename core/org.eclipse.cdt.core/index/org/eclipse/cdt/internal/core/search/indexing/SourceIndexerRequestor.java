@@ -614,6 +614,15 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void startTimer() {
 		createProgressMonitor();
+		while (!timeoutThread.isReadyToRun()){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		timeoutThread.startTimer();
 	}
 	/* (non-Javadoc)

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.utils;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -25,10 +26,10 @@ public class TimeOut implements Runnable {
 	protected boolean enabled;
 	protected IProgressMonitor pm = null;
 	private int timeout = 0; 
-//	long timerTime=0;
 	private int threadPriority = Thread.MIN_PRIORITY + 1;
 	boolean debug = false;
 	private String threadName = null;
+	boolean readyToRun = true;
 	
 	public TimeOut(){
 		reset();
@@ -41,34 +42,24 @@ public class TimeOut implements Runnable {
 	
 	public void run() {
 	 while (this.thread != null) {
-		try {
-//		 System.out.println("Main loop: TOP time: " + (System.currentTimeMillis() - timerTime));
-		 if (enabled){
-//		 	System.out.println("Main loop: ENABLED");
-		 	synchronized (this){
-//			 System.out.println("Main loop: TIMEOUT START : waiting " + timeout + " ms");	
-			 wait(timeout);
-//			 System.out.println("Main loop: TIMEOUT END");
-		 	}
-			 if (enabled){
-//			 	 System.out.println("Main loop: ABOUT TO CANCEL");
-			 	 if(pm != null)
-			 	 	pm.setCanceled(true);
-				 enabled = false;
+	  try {
+		synchronized(this){
+			if (enabled){
+			 	readyToRun = false;
+				wait(timeout);
+				 if (enabled){
+				 	if(pm != null)
+				 	 	pm.setCanceled(true);
+					 enabled = false;
+				 }
 			 }
-		 }
-		 else{
-//		 	System.out.println("Main loop: NOT ENABLED");
-		 	synchronized(this){
-			 	while(!enabled){
-//			 		System.out.println("SLEEP NOT ENABLED LOOP");
-			 		wait();
-//			 		timerTime = System.currentTimeMillis();
-//			 		System.out.println("WOKE UP: enabled = " + enabled);
-			 	}
-		 	}
-		 }
-	
+			 else{
+				 while(!enabled){
+				 	readyToRun = true;
+				 	wait();
+				 }
+			 }
+		   }
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,13 +68,11 @@ public class TimeOut implements Runnable {
 	}
 	
 	public synchronized void startTimer(){
-//	 	System.out.println("START TIMER");
-		enabled = true;
-		notify();
+ 	  enabled = true;
+ 	  notify();
 	}
 	
 	public synchronized void stopTimer(){
-//		System.out.println("STOP TIMER");
 		enabled= false;
 		notify();
 	}
@@ -137,5 +126,9 @@ public class TimeOut implements Runnable {
 	 */
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
+	}
+	
+	public boolean isReadyToRun(){
+		return readyToRun;
 	}
 }

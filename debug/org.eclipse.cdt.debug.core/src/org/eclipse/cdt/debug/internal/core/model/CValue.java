@@ -455,7 +455,7 @@ public class CValue extends CDebugElement implements ICValue
 		if ( getParentVariable() != null )
 		{
 			int size = getParentVariable().sizeof();
-			if ( size == 16 )
+			if ( size == 2 )
 			{
 				switch( getParentVariable().getFormat() )
 				{
@@ -471,7 +471,7 @@ public class CValue extends CDebugElement implements ICValue
 					}
 				}
 			}
-			if ( size == 32 )
+			if ( size == 4 )
 			{
 				switch( getParentVariable().getFormat() )
 				{

@@ -1,6 +1,15 @@
 2002-10-11 Alain Magloire
 
-	cdi/ExpressionManager.java:  Not needed, removed.
+	* cdi/SourceManager (getMixedInstruction):
+	Implement the 3 new methods to return Mixed source
+	and assemby instructions.
+	
+	* cdi/MixedInstruction: New class implements
+	ICDIMixedInstruction.
+
+2002-10-11 Alain Magloire
+
+	* cdi/ExpressionManager.java:  Not needed, removed.
 
 2002-10-10 Alain Magloire
 

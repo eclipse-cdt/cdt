@@ -31,6 +31,7 @@
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.core.boot"/>
@@ -129,5 +130,29 @@
          install-size="0"
          version="2.0.0"
          fragment="true"/>
+
+   <plugin
+         id="org.eclipse.cdt.make.core"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.make.ui"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.managedbuilder.core"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.managedbuilder.ui"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"/>
 
 </feature>

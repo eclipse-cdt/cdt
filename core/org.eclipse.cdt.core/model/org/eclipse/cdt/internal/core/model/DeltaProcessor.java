@@ -289,7 +289,6 @@ public class DeltaProcessor {
 			}
 			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
-
 		} else {
 			fCurrentDelta.opened(element);
 		}
@@ -568,7 +567,7 @@ public class DeltaProcessor {
 							if (element != null) {
 								// note its resources are still visible as roots to other projects
 								if (isCProject) {
-									elementAdded(element, delta);
+									elementOpened(element, delta);
 									updateIndexAddResource(element, delta);
 								} else {
 									elementRemoved(element, delta);

@@ -1,3 +1,6 @@
+2003-10-17 Mikhail Khodjaiants
+	* CDebugEditor.java: changed the message displayed when the source file not found.
+
 2003-10-14 Mikhail Khodjaiants
 	* DebugTextHover.java: check if the result of 'evaluateExpression' is not null before trim it.
  

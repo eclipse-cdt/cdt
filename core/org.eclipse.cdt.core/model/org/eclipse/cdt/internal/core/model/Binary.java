@@ -172,15 +172,13 @@ public class Binary extends Openable implements IBinary {
 				hash.put(path, module);
 				info.addChild(module);
 			}
-			function = new BinaryFunction(module, symbol.getName());
+			function = new BinaryFunction(module, symbol.getName(), symbol.getAddress());
 			function.setLines(symbol.getStartLine(), symbol.getEndLine());
-			function.setAddress(symbol.getAdress());
 			module.addChild(function);
 		} else {
 			//function = new Function(parent, symbol.getName());
-			function = new BinaryFunction(this, symbol.getName());
+			function = new BinaryFunction(this, symbol.getName(), symbol.getAddress());
 			function.setLines(symbol.getStartLine(), symbol.getEndLine());
-			function.setAddress(symbol.getAdress());
 			info.addChild(function);
 		}
 		//		if (function != null) {
@@ -204,14 +202,12 @@ public class Binary extends Openable implements IBinary {
 				hash.put(path, module);
 				info.addChild(module);
 			}
-			variable = new BinaryVariable(module, symbol.getName());
+			variable = new BinaryVariable(module, symbol.getName(), symbol.getAddress());
 			variable.setLines(symbol.getStartLine(), symbol.getEndLine());
-			variable.setAddress(symbol.getAdress());
 			module.addChild(variable);
 		} else {
-			variable = new BinaryVariable(this, symbol.getName());
+			variable = new BinaryVariable(this, symbol.getName(), symbol.getAddress());
 			variable.setLines(symbol.getStartLine(), symbol.getEndLine());
-			variable.setAddress(symbol.getAdress());
 			info.addChild(variable);
 		}
 		

@@ -12,8 +12,8 @@ import org.eclipse.cdt.core.model.IVariable;
  */
 public class BinaryVariable extends BinaryElement implements IVariable {
 
-	public BinaryVariable(ICElement parent, String name) {
-		super(parent, name, ICElement.C_VARIABLE);
+	public BinaryVariable(ICElement parent, String name, long a) {
+		super(parent, name, ICElement.C_VARIABLE, a);
 	}
 
 	/* (non-Javadoc)

@@ -12,8 +12,8 @@ import org.eclipse.cdt.core.model.IFunction;
  */
 public class BinaryFunction extends BinaryElement implements IFunction {
 
-	public BinaryFunction(ICElement parent, String name) {
-		super(parent, name, ICElement.C_FUNCTION);
+	public BinaryFunction(ICElement parent, String name, long a) {
+		super(parent, name, ICElement.C_FUNCTION, a);
 	}
 
 	/* (non-Javadoc)

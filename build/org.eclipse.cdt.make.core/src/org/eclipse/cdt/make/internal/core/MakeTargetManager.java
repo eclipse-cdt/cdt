@@ -74,8 +74,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
-		((MakeTarget)target).setContainer(container);
-		projectTargets.add((MakeTarget)target);
+		((MakeTarget) target).setContainer(container);
+		projectTargets.add((MakeTarget) target);
 		writeTargets(projectTargets);
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
 	}
@@ -86,9 +86,10 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(project);
 		}
-		projectTargets.remove(target);
-		writeTargets(projectTargets);
-		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_REMOVED, target));
+		if (projectTargets.remove(target)) {
+			writeTargets(projectTargets);
+			notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_REMOVED, target));
+		}
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
@@ -203,7 +204,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 				int flags = delta.getFlags();
 				int deltaKind = delta.getKind();
 				if (deltaKind == IResourceDelta.ADDED) {
-					if (hasTargetBuilder(project)) {
+					if (hasTargetBuilder(project) && !fProjects.contains(project)) {
 						fProjects.add(project);
 						notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 					}

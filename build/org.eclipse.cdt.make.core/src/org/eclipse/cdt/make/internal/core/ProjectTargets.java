@@ -131,19 +131,19 @@ public class ProjectTargets {
 	}
 
 	public IMakeTarget[] get(IContainer container) {
-		ArrayList list = (ArrayList)targetMap.get(container);
+		ArrayList list = (ArrayList) targetMap.get(container);
 		if (list != null) {
-			return (IMakeTarget[])list.toArray(new IMakeTarget[list.size()]);
+			return (IMakeTarget[]) list.toArray(new IMakeTarget[list.size()]);
 		}
 		return new IMakeTarget[0];
 	}
 
 	public IMakeTarget findTarget(IContainer container, String name) {
-		ArrayList list = (ArrayList)targetMap.get(container);
+		ArrayList list = (ArrayList) targetMap.get(container);
 		if (list != null) {
 			Iterator targets = list.iterator();
 			while (targets.hasNext()) {
-				IMakeTarget target = (IMakeTarget)targets.next();
+				IMakeTarget target = (IMakeTarget) targets.next();
 				if (target.getName().equals(name)) {
 					return target;
 				}
@@ -153,7 +153,7 @@ public class ProjectTargets {
 	}
 
 	public void add(MakeTarget target) throws CoreException {
-		ArrayList list = (ArrayList)targetMap.get(target.getContainer());
+		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
 		}
@@ -165,22 +165,23 @@ public class ProjectTargets {
 	}
 
 	public boolean contains(MakeTarget target) {
-		ArrayList list = (ArrayList)targetMap.get(target.getContainer());
+		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			return true;
 		}
 		return false;
 	}
 
-	public void remove(IMakeTarget target) {
-		ArrayList list = (ArrayList)targetMap.get(target.getContainer());
+	public boolean remove(IMakeTarget target) {
+		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
 		if (list == null || !list.contains(target)) {
-			return;
+			return false;
 		}
-		list.remove(target);
+		boolean found = list.remove(target);
 		if (list.size() == 0) {
 			targetMap.remove(list);
 		}
+		return found;
 	}
 
 	public IProject getProject() {
@@ -193,9 +194,9 @@ public class ProjectTargets {
 		doc.appendChild(targetsRootElement);
 		Iterator container = targetMap.entrySet().iterator();
 		while (container.hasNext()) {
-			List targets = (List) ((Map.Entry)container.next()).getValue();
+			List targets = (List) ((Map.Entry) container.next()).getValue();
 			for (int i = 0; i < targets.size(); i++) {
-				MakeTarget target = (MakeTarget)targets.get(i);
+				MakeTarget target = (MakeTarget) targets.get(i);
 				targetsRootElement.appendChild(createTargetElement(doc, target));
 			}
 		}

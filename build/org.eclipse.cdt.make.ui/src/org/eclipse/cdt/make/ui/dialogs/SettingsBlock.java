@@ -25,6 +25,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,6 +36,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -67,6 +70,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_BROWSE = PREFIX + ".makeDir.browse"; //$NON-NLS-1$
 
+	private static final String MAKE_BUILD_AUTO_TARGET = PREFIX + ".makeWorkbench.autoBuildTarget"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_INCREMENTAL_TARGET = PREFIX + ".makeWorkbench.incrementalBuildTarget"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_FULL_TARGET = PREFIX + ".makeWorkbench.fullBuildTarget"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_CLEAN_TARGET = PREFIX + ".makeWorkbench.cleanTarget"; //$NON-NLS-1$
+	
 	Button stopOnErrorButton;
 
 	Button defButton;
@@ -133,6 +141,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
 		buildCommand = ControlFactory.createTextField(group, SWT.SINGLE | SWT.BORDER);
+		
 		((GridData) (buildCommand.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (buildCommand.getLayoutData())).grabExcessHorizontalSpace = true;
 		buildCommand.addListener(SWT.Modify, new Listener() {
@@ -188,6 +197,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetAuto.setText(fBuildInfo.getAutoBuildTarget());
 		((GridData) (targetAuto.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetAuto.getLayoutData())).grabExcessHorizontalSpace = true;
+		addControlAccessibleListener(targetAuto, MakeUIPlugin.getResourceString(MAKE_BUILD_AUTO_TARGET));
 		String noteTitle= MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.note"); //$NON-NLS-1$
 		String noteMessage= MakeUIPlugin.getResourceString("SettingsBlock.makeWorkbench.autobuildMessage"); //$NON-NLS-1$
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), group, noteTitle, noteMessage);
@@ -201,6 +211,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetIncr.setText(fBuildInfo.getIncrementalBuildTarget());
 		((GridData) (targetIncr.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetIncr.getLayoutData())).grabExcessHorizontalSpace = true;
+		addControlAccessibleListener(targetIncr, MakeUIPlugin.getResourceString(MAKE_BUILD_INCREMENTAL_TARGET));
 		fullButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_FULL));
 		fullButton.addSelectionListener(selectionAdapter);
 		fullButton.setSelection(fBuildInfo.isFullBuildEnabled());
@@ -208,7 +219,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetFull.setText(fBuildInfo.getFullBuildTarget());
 		((GridData) (targetFull.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetFull.getLayoutData())).grabExcessHorizontalSpace = true;
-
+		addControlAccessibleListener(targetFull, MakeUIPlugin.getResourceString(MAKE_BUILD_FULL_TARGET));
 		cleanButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_WORKBENCH_BUILD_CLEAN));
 		cleanButton.addSelectionListener(selectionAdapter);
 		cleanButton.setSelection(fBuildInfo.isCleanBuildEnabled());
@@ -216,6 +227,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		targetClean.setText(fBuildInfo.getCleanBuildTarget());
 		((GridData) (targetClean.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetClean.getLayoutData())).grabExcessHorizontalSpace = true;
+		addControlAccessibleListener(targetClean, MakeUIPlugin.getResourceString(MAKE_BUILD_CLEAN_TARGET));
 		selectionAdapter.widgetSelected(null);
 
 	}
@@ -262,7 +274,18 @@ public class SettingsBlock extends AbstractCOptionPage {
 			messageLabel.setFont(font);
 			return messageComposite;
 		}
-
+	public void addControlAccessibleListener(Control control, String controlName) {
+		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(controlName));
+	}
+	private class ControlAccessibleListener extends AccessibleAdapter {
+		private String controlName;
+		ControlAccessibleListener(String name){
+			controlName = name;
+		}
+		public void getName(AccessibleEvent e) {
+			e.result = controlName;
+		}
+	}
 	protected void createBuilderWorkingDirControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_GROUP), 1);
 		GridLayout layout = new GridLayout();

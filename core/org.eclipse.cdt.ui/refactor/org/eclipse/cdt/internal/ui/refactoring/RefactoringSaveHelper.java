@@ -61,7 +61,7 @@ public class RefactoringSaveHelper {
 			description.setAutoBuilding(false);
 			workspace.setDescription(description);
 			try {
-				CUIPlugin.getDefault().getActiveWorkbenchWindow().getWorkbench().saveAllEditors(false);
+				CUIPlugin.getActiveWorkbenchWindow().getWorkbench().saveAllEditors(false);
 				fFilesSaved= true;
 			} finally {
 				description.setAutoBuilding(autoBuild);
@@ -77,7 +77,7 @@ public class RefactoringSaveHelper {
 
 	public void triggerBuild() {
 		if (fFilesSaved && ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
-			new GlobalBuildAction(CUIPlugin.getDefault().getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
+			new GlobalBuildAction(CUIPlugin.getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
 		}
 	}
 	

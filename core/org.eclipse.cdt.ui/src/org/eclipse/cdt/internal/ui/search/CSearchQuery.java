@@ -184,7 +184,7 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 		else
 			label = CSearchMessages.getString("CSearchQuery.search_label"); //$NON-NLS-1$;
 		
-		label += " \"";
+		label += " \""; //$NON-NLS-1$
 		label += _stringPattern;
 		label += '"';
 		return label;

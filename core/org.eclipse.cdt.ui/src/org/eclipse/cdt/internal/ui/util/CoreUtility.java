@@ -13,9 +13,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.osgi.framework.Bundle;
 
 public class CoreUtility {
 	
@@ -47,8 +48,10 @@ public class CoreUtility {
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
-		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-		if (plugin.isPluginActivated()) {
+		
+		String id = element.getDeclaringExtension().getNamespace();
+		Bundle bundle = Platform.getBundle(id);
+		if(bundle.getState() == org.osgi.framework.Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
 		} else {
 			final Object[] ret = new Object[1];

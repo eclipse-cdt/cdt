@@ -46,7 +46,7 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	protected void beep() {
-		Shell shell= CUIPlugin.getDefault().getActiveWorkbenchShell();
+		Shell shell= CUIPlugin.getActiveWorkbenchShell();
 		if (shell != null && shell.getDisplay() != null)
 			shell.getDisplay().beep();
 	}	

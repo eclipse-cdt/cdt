@@ -523,7 +523,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		StringTokenizer tokenizer= new StringTokenizer(lruFilterIds, SEPARATOR);
 		while (tokenizer.hasMoreTokens()) {
 			String id= tokenizer.nextToken();
-			if (fFilterDescriptorMap.containsKey(id) && !fLRUFilterIdsStack.contains(id));
+			if (fFilterDescriptorMap.containsKey(id) && !fLRUFilterIdsStack.contains(id))
 				fLRUFilterIdsStack.push(id);
 		}
 	}

@@ -155,7 +155,7 @@ public class Resources {
 	private static IStatus addOutOfSync(IStatus status, IResource resource) {
 		IStatus entry= new Status(
 			IStatus.ERROR,
-			ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier(),
+			ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
 			IResourceStatus.OUT_OF_SYNC_LOCAL,
 			CorextMessages.getFormattedString("Resources.outOfSync", resource.getFullPath().toString()), //$NON-NLS-1$ 
 			null);
@@ -166,7 +166,7 @@ public class Resources {
 			return status;
 		} else {
 			MultiStatus result= new MultiStatus(
-				ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier(),
+				ResourcesPlugin.getPlugin().getBundle().getSymbolicName(),
 				IResourceStatus.OUT_OF_SYNC_LOCAL,
 				CorextMessages.getString("Resources.outOfSyncResources"), null); //$NON-NLS-1$ 
 			result.add(status);

@@ -23,9 +23,9 @@
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
 
@@ -790,5 +790,9 @@
          markerType="org.eclipse.cdt.core.indexermarker"
          name="org.eclipse.cdt.ui.indexmarker">
       </type>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.ui.CUIPreferenceInitializer"/>
    </extension>
 </plugin>

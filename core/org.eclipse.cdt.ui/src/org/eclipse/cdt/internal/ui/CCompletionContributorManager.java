@@ -89,14 +89,14 @@ public class CCompletionContributorManager {
 		fCompletionContributors = new ArrayList(2);
 
 		// populate list
-		IExtensionPoint extensionPoint = Platform.getPluginRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "CCompletionContributor"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "CCompletionContributor"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				if (elements[i].getName().equals("provider")) { //$NON-NLS-1$
 					try {
 						final ICCompletionContributor c;
-						// Instantiate the classe
+						// Instantiate the class
 						c = (ICCompletionContributor) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
 						ISafeRunnable runnable = new ISafeRunnable() {
 							public void run() throws Exception {

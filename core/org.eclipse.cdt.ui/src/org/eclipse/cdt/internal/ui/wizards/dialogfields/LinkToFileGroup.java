@@ -214,7 +214,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	private IStatus createStatus(int severity, String message) {
 		return new Status(
 			severity,
-			WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+			WorkbenchPlugin.getDefault().getBundle().getSymbolicName(),
 			severity,
 			message,	
 			null);

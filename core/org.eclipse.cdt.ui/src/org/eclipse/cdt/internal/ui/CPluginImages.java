@@ -27,7 +27,7 @@ public class CPluginImages {
 
 	static {
 		try {
-			fgIconBaseURL= new URL(CUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" ); //$NON-NLS-1$
+			fgIconBaseURL= new URL(CUIPlugin.getDefault().getBundle().getEntry("/"), "icons/" ); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
 			CUIPlugin.getDefault().log(e);
 		}

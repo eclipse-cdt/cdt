@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -44,8 +45,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 
 /**
@@ -366,7 +367,7 @@ public abstract class ConvertProjectWizardPage
         public Image getColumnImage(Object obj, int index) {
 
             return PlatformUI.getWorkbench().getSharedImages().getImage(
-                           ISharedImages.IMG_OBJ_PROJECT);
+                           IDE.SharedImages.IMG_OBJ_PROJECT);
         }
     }
 
@@ -448,13 +449,14 @@ public abstract class ConvertProjectWizardPage
                           throws CoreException {
         monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
                           selected.length);
-
-        for (int i = 0; i < selected.length; i++) {
-
-            IProject project = (IProject)selected[i];
-            convertProject(project, monitor, projectID);
-            monitor.worked(1);
-        }
+		try {
+	        for (int i = 0; i < selected.length; i++) {
+	            IProject project = (IProject)selected[i];
+    	        convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
+        	}
+		} finally {
+	        monitor.done();
+		}
     }
 
     /**

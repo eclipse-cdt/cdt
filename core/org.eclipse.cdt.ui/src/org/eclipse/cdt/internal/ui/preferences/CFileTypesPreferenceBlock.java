@@ -74,7 +74,7 @@ public class CFileTypesPreferenceBlock {
 			}
 			return 30;
 		}
-	};
+	}
 	
 	private class AssocContentProvider implements IStructuredContentProvider {
 		ICFileTypeAssociation[] assocs;
@@ -92,7 +92,7 @@ public class CFileTypesPreferenceBlock {
 				assocs = (ICFileTypeAssociation[]) newInput;
 			}
 		}
-	};
+	}
 	
 	private class AssocLabelProvider implements ILabelProvider, ITableLabelProvider {
 		private ListenerList listeners = new ListenerList();
@@ -149,7 +149,7 @@ public class CFileTypesPreferenceBlock {
 			return getColumnText(element, 0);
 		}
 
-	};
+	}
 	
 	public CFileTypesPreferenceBlock(ICFileTypeResolver input) {
 		fResolver = input;
@@ -212,7 +212,6 @@ public class CFileTypesPreferenceBlock {
 
 		Composite	buttonPane			= new Composite(control, SWT.NONE);
 		GridLayout	buttonPaneLayout	= new GridLayout();
-		GridData	data 				= null;
 		
 		buttonPaneLayout.marginHeight = 0;
 		buttonPaneLayout.marginWidth  = 0;
@@ -318,7 +317,7 @@ public class CFileTypesPreferenceBlock {
 	private void handleAdd() {
 		ICFileTypeAssociation assoc = null;
 
-		CFileTypeDialog dlg = new CFileTypeDialog(((Composite) fBtnNew.getParent()).getShell());
+		CFileTypeDialog dlg = new CFileTypeDialog(fBtnNew.getParent().getShell());
 		
 		if (Window.OK == dlg.open()) {
 			assoc = getResolverModel().createAssocation(dlg.getPattern(), dlg.getType());

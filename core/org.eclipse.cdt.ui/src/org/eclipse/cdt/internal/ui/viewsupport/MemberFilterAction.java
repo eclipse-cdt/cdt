@@ -12,7 +12,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;;
+import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 
 /**
  * Action used to enable / disable method filter properties

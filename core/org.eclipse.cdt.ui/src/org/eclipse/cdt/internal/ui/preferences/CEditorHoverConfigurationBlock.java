@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.Text;
  * CEditorHoverConfigurationBlock
  */
 public class CEditorHoverConfigurationBlock {
-	private static final String DELIMITER= PreferencesMessages.getString("JavaEditorHoverConfigurationBlock.delimiter"); //$NON-NLS-1$
+	private static final String DELIMITER= PreferencesMessages.getString("CEditorHoverConfigurationBlock.delimiter"); //$NON-NLS-1$
 
 	private static final int ENABLED_PROP= 0;
 	private static final int MODIFIER_PROP= 1;
@@ -83,7 +83,7 @@ public class CEditorHoverConfigurationBlock {
 	}
 	
 	
-	private class JavaEditorTextHoverDescriptorLabelProvider implements ITableLabelProvider {
+	private class CEditorTextHoverDescriptorLabelProvider implements ITableLabelProvider {
 
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
@@ -121,7 +121,7 @@ public class CEditorHoverConfigurationBlock {
 	}
 	
 	
-	private class JavaEditorTextHoverDescriptorContentProvider implements IStructuredContentProvider {
+	private class CEditorTextHoverDescriptorContentProvider implements IStructuredContentProvider {
 		
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Do nothing since the viewer listens to resource deltas
@@ -261,8 +261,8 @@ public class CEditorHoverConfigurationBlock {
 
 		fHoverTableViewer= new CheckboxTableViewer(fHoverTable);
 		fHoverTableViewer.setUseHashlookup(true);
-		fHoverTableViewer.setContentProvider(new JavaEditorTextHoverDescriptorContentProvider());
-		fHoverTableViewer.setLabelProvider(new JavaEditorTextHoverDescriptorLabelProvider());
+		fHoverTableViewer.setContentProvider(new CEditorTextHoverDescriptorContentProvider());
+		fHoverTableViewer.setLabelProvider(new CEditorTextHoverDescriptorLabelProvider());
 		
 		((CheckboxTableViewer)fHoverTableViewer).addCheckStateListener(new ICheckStateListener() {
 			/*

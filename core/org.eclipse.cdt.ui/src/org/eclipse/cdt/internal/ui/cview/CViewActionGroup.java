@@ -56,9 +56,7 @@ public abstract class CViewActionGroup extends ActionGroup {
 	protected ImageDescriptor getImageDescriptor(String relativePath) {
 		String iconPath = "icons/full/"; //$NON-NLS-1$
 		try {
-			//AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			//URL installURL = plugin.getDescriptor().getInstallURL();
-			URL installURL = CUIPlugin.getDefault().getDescriptor().getInstallURL();
+			URL installURL = CUIPlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 			URL url = new URL(installURL, iconPath + relativePath);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException e) {

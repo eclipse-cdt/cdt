@@ -123,7 +123,7 @@ public class CSearchScopeFactory {
 	
 
 	public IWorkingSet[] queryWorkingSets() {
-		Shell shell= CUIPlugin.getDefault().getActiveWorkbenchShell();
+		Shell shell= CUIPlugin.getActiveWorkbenchShell();
 		if (shell == null)
 			return null;
 		IWorkingSetSelectionDialog dialog= PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(shell, true);

@@ -7,7 +7,6 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.util.Set;
 
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;

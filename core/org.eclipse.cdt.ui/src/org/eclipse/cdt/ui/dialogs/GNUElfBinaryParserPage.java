@@ -23,9 +23,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -70,8 +70,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 			if (cext.length > 0) {
-				IPluginDescriptor descriptor = CUIPlugin.getDefault().getDescriptor();
-				IExtensionPoint point = descriptor.getExtensionPoint("BinaryParserPage"); //$NON-NLS-1$
+				IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "BinaryParserPage"); //$NON-NLS-1$
 				IConfigurationElement[] infos = point.getConfigurationElements();
 				for (int i = 0; i < infos.length; i++) {
 					String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$

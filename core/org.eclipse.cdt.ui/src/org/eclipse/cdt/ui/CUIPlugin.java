@@ -33,16 +33,11 @@ import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
-import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
-import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
-import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
@@ -55,7 +50,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -77,7 +71,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
-import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.osgi.framework.BundleContext;
 
 public class CUIPlugin extends AbstractUIPlugin {
 
@@ -300,12 +294,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private ResourceAdapterFactory fResourceAdapterFactory;
 	private CElementAdapterFactory fCElementAdapterFactory;
 
-
-	public CUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public CUIPlugin() {
 		fgCPlugin = this;
 		fDocumentProvider = null;
-		fTextTools = null;
+		fTextTools = null;		
 	}
 		
 	/**
@@ -356,11 +348,27 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fBuildConsoleManager;
 	}
 
-	/**
-	 * @see Plugin#shutdown
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 
+		//Set debug tracing options
+		configurePluginDebugOptions();
+		
+		registerAdapters();
+		AllTypesCache.initialize(new IWorkingCopyProvider() {
+			public IWorkingCopy[] getWorkingCopies() {
+				return CUIPlugin.getSharedWorkingCopies();
+			}
+		});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
 		AllTypesCache.terminate();
 		
 		if (fTextTools != null) {
@@ -387,54 +395,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		Refactoring.getUndoManager().shutdown();		
 
 		// Do this last.
-		super.shutdown();
-	}
-
-	private void runUI(Runnable run) {
-		Display display;
-		display = Display.getCurrent();
-		if (display == null) {
-			display = Display.getDefault();
-			display.asyncExec(run);
-		}
-		else {
-			run.run();
-		}
-	}
-
-	/**
-	 * @see Plugin#startup
-	 */
-	public void startup() throws CoreException {
-		super.startup();
-		//Set debug tracing options
-		CUIPlugin.getDefault().configurePluginDebugOptions();
-		
-		registerAdapters();
-		AllTypesCache.initialize(new IWorkingCopyProvider() {
-			public IWorkingCopy[] getWorkingCopies() {
-				return CUIPlugin.getSharedWorkingCopies();
-			}
-		});
-	}
-
-	/**
-	 * @see AbstractUIPlugin#initializeDefaultPreferences
-	 */
-	protected void initializeDefaultPreferences(final IPreferenceStore store) {
-		super.initializeDefaultPreferences(store);
-		MarkerAnnotationPreferences.initializeDefaultValues(store);	
-        PreferenceConstants.initializeDefaultValues(store);
-        EditorsUI.useAnnotationsPreferencePage(store);
-		runUI(new Runnable() {
-			public void run() {
-				CPluginPreferencePage.initDefaults(store);
-				CEditorPreferencePage.initDefaults(store);
-				CView.initDefaults(store);
-				BuildConsolePreferencePage.initDefaults(store);
-				WorkInProgressPreferencePage.initDefaults(store);
-			}
-		});
+		super.stop(context);
 	}
 
 	public CoreModel getCoreModel() {
@@ -486,8 +447,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public void configurePluginDebugOptions(){
-		
-		if(CUIPlugin.getDefault().isDebugging()){
+		if(isDebugging()){
 			String option = Platform.getDebugOption(CONTENTASSIST);
 			if(option != null) Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		}

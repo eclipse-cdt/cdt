@@ -191,10 +191,6 @@ public class MIInferior extends Process {
 					}
 				}
 			}
-			// If we've failed throw an exception up.
-			if (state == RUNNING) {
-				throw new MIException("Failed to interrupt");
-			}
 		} else {
 			// Try the exec-interrupt; this will be for "gdb --async"
 			// CommandFactory factory = session.getCommandFactory();
@@ -204,7 +200,11 @@ public class MIInferior extends Process {
 			// 	MIInfo info = interrupt.getMIInfo();
 			// } catch (MIException e) {
 			// }
-			throw new MIException("Interruption no supported");
+			//throw new MIException("Interruption no supported");
+		}
+		// If we've failed throw an exception up.
+		if (state == RUNNING) {
+			throw new MIException("Failed to interrupt");
 		}
 	}
 

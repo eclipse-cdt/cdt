@@ -1,3 +1,8 @@
+2005-03-17 Mikhail Khodjaiants
+	If casting of variable to a type or array causes an error, the status 
+	of the variable is set to "error" and it can't be reset by subsequent castings.
+	* CVariable.java
+
 2005-02-24 Mikhail Khodjaiants
 	Applied patch from Tracy Miranda (bug 86540: NPE in CProjectSourceLocation).
 	The check for the project and synchronization are added to "initializeFolders".

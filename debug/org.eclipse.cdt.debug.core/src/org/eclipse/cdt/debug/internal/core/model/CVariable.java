@@ -522,7 +522,9 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			if ( getShadow() != null )
 				getShadow().dispose( true );
 			setShadow( newVar );
-			fireChangeEvent( DebugEvent.STATE );
+			// If casting of variable to a type or array causes an error, the status 
+			// of the variable is set to "error" and it can't be reset by subsequent castings.
+			resetValue();
 		}
 	}
 
@@ -611,7 +613,9 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 			if ( getShadow() != null )
 				getShadow().dispose( true );
 			setShadow( newVar );
-			fireChangeEvent( DebugEvent.STATE );
+			// If casting of variable to a type or array causes an error, the status 
+			// of the variable is set to "error" and it can't be reset by subsequent castings.
+			resetValue();
 		}
 	}
 
@@ -628,7 +632,9 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		InternalVariable iv = getOriginal();
 		if ( iv != null )
 			iv.invalidateValue();
-		fireChangeEvent( DebugEvent.STATE );
+		// If casting of variable to a type or array causes an error, the status 
+		// of the variable is set to "error" and it can't be reset by subsequent castings.
+		resetValue();
 	}
 
 	/*

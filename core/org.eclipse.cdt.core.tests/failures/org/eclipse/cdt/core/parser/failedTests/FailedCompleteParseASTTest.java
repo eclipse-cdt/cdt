@@ -183,32 +183,7 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertFalse(k.hasNext());
 	}
 	
-	public void testTemplateFunctionInsideTemplateType_bug71588() throws Exception {
-		StringWriter writer = new StringWriter();
-		writer.write("template <typename T, typename U> \r\n"); //$NON-NLS-1$
-		writer.write("class A { \n"); //$NON-NLS-1$
-		writer.write("template <typename V> \n"); //$NON-NLS-1$
-		writer.write("T* foo(V); \n"); //$NON-NLS-1$
-		writer.write("}; \n"); //$NON-NLS-1$
-		writer.write("template <typename T, typename U> \n"); //$NON-NLS-1$
-		writer.write("template <typename V> \n"); //$NON-NLS-1$
-		writer.write("T* A<T, U>::foo(V) { return (T*)0; } \n"); //$NON-NLS-1$
-		try {
-			parse(writer.toString());
-		} catch (Throwable e) {
-			assertTrue( e instanceof AssertionFailedError );
-		}
-//		Iterator i = parse(writer.toString()).getDeclarations();
-//		IASTTemplateDeclaration td = (IASTTemplateDeclaration) i.next();
-//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
-//		Iterator j = cs.getDeclarations();
-//		IASTTemplateDeclaration td2 = (IASTTemplateDeclaration) j.next();
-//		assertFalse(j.hasNext());
-//		IASTMethod mdec = (IASTMethod) td2.getOwnedDeclaration();
-//		IASTTemplateDeclaration td3 = (IASTTemplateDeclaration) i.next();
-//		assertFalse(i.hasNext());
-//		IASTMethod mdef = (IASTMethod) td3.getOwnedDeclaration();
-	}
+
 	
 	public void testGNUExternalTemplate_bug71603() throws Exception {
 		try {

@@ -148,6 +148,7 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		fStatusLine.setLayoutData(gd);
+
 		initializing = false;
 		return composite;
 	}
@@ -155,7 +156,9 @@ public class MakeTargetDialog extends Dialog {
 	protected void createNameControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 2);
 		((GridLayout)composite.getLayout()).makeColumnsEqualWidth = false;
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = convertWidthInCharsToPixels(50);
+		composite.setLayoutData(gd);
 		Label label = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(TARGET_NAME_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
@@ -222,7 +225,9 @@ public class MakeTargetDialog extends Dialog {
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = convertWidthInCharsToPixels(50);
+		group.setLayoutData(gd);
 		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_DEFAULT));
 		defButton.addSelectionListener(new SelectionAdapter() {
 
@@ -237,7 +242,7 @@ public class MakeTargetDialog extends Dialog {
 				updateButtons();
 			}
 		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		defButton.setLayoutData(gd);
 		Label label = ControlFactory.createLabel(group, MakeUIPlugin.getResourceString(MAKE_CMD_LABEL));
@@ -280,7 +285,9 @@ public class MakeTargetDialog extends Dialog {
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = convertWidthInCharsToPixels(50);
+		group.setLayoutData(gd);
 		Label label = ControlFactory.createLabel(group, MakeUIPlugin.getResourceString(BUILD_ARGUMENT_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;

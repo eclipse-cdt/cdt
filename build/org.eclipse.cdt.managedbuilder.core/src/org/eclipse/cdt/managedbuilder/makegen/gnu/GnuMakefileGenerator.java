@@ -290,7 +290,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 		@echo 'Building file: $<'
 	 * 		@echo <tool> <flags> <output_flag><output_prefix>$@ $<
 	 * 		@<tool> <flags> <output_flag><output_prefix>$@ $< && \
-	 * 		echo -n '<relative_path>/' $(@:%.o=%.d) ' <relative_path>/' >> $(@:%.o=%.d) && \
+	 * 		echo -n $(@:%.o=%.d) ' <relative_path>/' >> $(@:%.o=%.d) && \
 	 * 		<tool> -P -MM -MG <flags> $< >> $(@:%.o=%.d)
 	 * 		@echo 'Finished building: $<'
 	 * 		@echo ' '
@@ -302,7 +302,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 		@echo 'Building file: $<'
 	 * 		@echo g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $<
 	 * 		@ g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $< && \
-	 * 		echo -n 'source1/'$(@:%.o=%.d) ' source1/' >> $(@:%.o=%.d) && \
+	 * 		echo -n $(@:%.o=%.d) ' source1/' >> $(@:%.o=%.d) && \
 	 * 		g++ -P -MM -MG -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers $< >> $(@:%.o=%.d)
 	 * 		@echo 'Finished building: $<'
 	 * 		@echo ' '
@@ -350,7 +350,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK);
 			// TODO get the dep rule out of the tool
 			String depRule =  "$(@:%." + outputExtension + "=%." + DEP_EXT + ")";
-			buffer.append(TAB + ECHO + WHITESPACE + "-n" + WHITESPACE + SINGLE_QUOTE + relativePath + SINGLE_QUOTE + depRule + WHITESPACE + SINGLE_QUOTE + relativePath + SINGLE_QUOTE + WHITESPACE + ">" + WHITESPACE + depRule + WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(TAB + ECHO + WHITESPACE + "-n" + WHITESPACE + depRule + WHITESPACE + SINGLE_QUOTE + relativePath + SINGLE_QUOTE + WHITESPACE + ">" + WHITESPACE + depRule + WHITESPACE + LOGICAL_AND + WHITESPACE + LINEBREAK); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(TAB + cmd + WHITESPACE + "-MM -MG -P -w" + WHITESPACE + buildFlags + WHITESPACE + IN_MACRO + WHITESPACE + ">>" + WHITESPACE + depRule); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		}

@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -44,7 +45,6 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 import org.eclipse.cdt.internal.ui.util.Util;
-import org.eclipse.cdt.ui.browser.typeinfo.AllTypesCache;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -338,7 +338,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 			public void run() {
 				registerAdapters();
 				CPluginImages.initialize();
-				AllTypesCache.initialize();
+				
+				AllTypesCache.initialize(new AllTypesCache.IWorkingCopyProvider() {
+					public IWorkingCopy[] getWorkingCopies() {
+						return CUIPlugin.getSharedWorkingCopies();
+					}
+				});
 			}
 		});
 	}

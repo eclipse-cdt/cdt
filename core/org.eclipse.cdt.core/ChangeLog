@@ -1,5 +1,15 @@
 2004-04-06 Alain Magloire
 
+	Patch from Chris Wiebe.
+	This patch provides some improvements to the Open Type action, such as
+	per-file type caching (much faster now) and extra filtering options in
+	the dialog.  The non-ui code has also been isolated and moved to
+	org.eclipse.cdt.core.browser.
+	
+	* browser/*
+
+2004-04-06 Alain Magloire
+
 	Patch from Sam Robb covering part of PR #52864
 	This is the first effort in making a difference
 	between header and source files.

@@ -12,16 +12,16 @@ package org.eclipse.cdt.internal.ui.browser.opentype;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.ui.browser.typeinfo.AllTypesCache;
-import org.eclipse.cdt.ui.browser.typeinfo.ITypeInfo;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoFilter;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -58,26 +58,26 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {		
+
 		final ICSearchScope scope= SearchEngine.createWorkspaceScope();
-		Shell shell= CUIPlugin.getDefault().getActiveWorkbenchShell();
+		final int[] kinds= { ICElement.C_NAMESPACE, ICElement.C_CLASS, ICElement.C_STRUCT,
+				ICElement.C_UNION, ICElement.C_ENUMERATION, ICElement.C_TYPEDEF };
+		final Collection typeList= new ArrayList();
 
-		final ArrayList typeList= new ArrayList();
-		final TypeInfoFilter filter= new TypeInfoFilter();
-
-		if (AllTypesCache.isCacheUpToDate(filter)) {
+		if (AllTypesCache.isCacheUpToDate()) {
 			// run without progress monitor
-			AllTypesCache.getTypes(scope, filter, null, typeList);
+			AllTypesCache.getTypes(scope, kinds, null, typeList);
 		} else {
-			IRunnableContext runnableContext= new ProgressMonitorDialog(shell);
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					AllTypesCache.getTypes(scope, filter, monitor, typeList);
+					AllTypesCache.getTypes(scope, kinds, monitor, typeList);
 					if (monitor.isCanceled()) {
 						throw new InterruptedException();
 					}
 				}
 			};
 
+			IRunnableContext runnableContext= new ProgressMonitorDialog(getShell());
 			try {
 				runnableContext.run(true, true, runnable);
 			} catch (InvocationTargetException e) {
@@ -94,13 +94,14 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		if (typeList.isEmpty()) {
 			String title= OpenTypeMessages.getString("OpenTypeAction.notypes.title"); //$NON-NLS-1$
 			String message= OpenTypeMessages.getString("OpenTypeAction.notypes.message"); //$NON-NLS-1$
-			MessageDialog.openInformation(shell, title, message);
+			MessageDialog.openInformation(getShell(), title, message);
 			return;
 		}
-		ITypeInfo[] typeRefs= (ITypeInfo[])typeList.toArray(new ITypeInfo[typeList.size()]);
-			
-		OpenTypeDialog dialog= new OpenTypeDialog(shell);
-		dialog.setElements(typeRefs);
+
+		ITypeInfo[] elements= (ITypeInfo[])typeList.toArray(new ITypeInfo[typeList.size()]);
+
+		OpenTypeDialog dialog= new OpenTypeDialog(getShell());
+		dialog.setElements(elements);
 
 		int result= dialog.open();
 		if (result != IDialogConstants.OK_ID)
@@ -110,28 +111,34 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 		if (info == null)
 			return;
 
-		if (!openTypeInEditor(shell, info))
+		if (!openTypeInEditor(info))
 		{
 			// could not find definition
-			String path= info.getFilePath();
-			if (path == null || path.length() == 0)
-				path= OpenTypeMessages.getString("OpenTypeAction.errorNoPath"); //$NON-NLS-1$
+			String pathString= null;
+			IPath path= info.getLocation();
+			if (path != null)
+				pathString= path.toString();
+			else
+				pathString= OpenTypeMessages.getString("OpenTypeAction.errorNoPath"); //$NON-NLS-1$
 			String title= OpenTypeMessages.getString("OpenTypeAction.errorTitle"); //$NON-NLS-1$
-			String message= OpenTypeMessages.getFormattedString("OpenTypeAction.errorMessage", path); //$NON-NLS-1$
-			MessageDialog.openError(shell, title, message);
+			String message= OpenTypeMessages.getFormattedString("OpenTypeAction.errorMessage", pathString); //$NON-NLS-1$
+			MessageDialog.openError(getShell(), title, message);
 		}
 	}
 	
+	protected Shell getShell() {
+		return CUIPlugin.getDefault().getActiveWorkbenchShell();
+	}
+
 	/**
 	 * Opens an editor and displays the selected type.
-	 * @param shell Workbench shell.
 	 * @param info Type to display.
 	 * @return true if succesfully displayed.
 	 */
-	private boolean openTypeInEditor(Shell shell, ITypeInfo info) {
+	private boolean openTypeInEditor(ITypeInfo info) {
 		IResource res= null;
 		IEditorPart editorPart= null;
-		IPath path= info.getLocation();
+		IPath path= info.getPath();
 		ICElement celement= info.getCElement();
 
 		// attempt to locate the resource

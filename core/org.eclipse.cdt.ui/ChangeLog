@@ -1,5 +1,14 @@
 2004-04-06 Alain Magloire
 
+	This patch provides some improvements to the Open Type action, such as
+	per-file type caching (much faster now) and extra filtering options in
+	the dialog.  The non-ui code has also been isolated and moved to
+	org.eclipse.cdt.core.browser.
+
+	* browser/*
+
+2004-04-06 Alain Magloire
+
 	Reorder the sorter.
 
 	* src/org/eclipse/cdt/ui/CElementSorter.java

@@ -7,6 +7,7 @@
 	<classpathentry kind="src" path="search"/>
 	<classpathentry kind="src" path="dependency"/>
 	<classpathentry kind="src" path="parser"/>
+	<classpathentry kind="src" path="browser"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

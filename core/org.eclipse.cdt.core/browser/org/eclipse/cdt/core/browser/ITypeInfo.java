@@ -8,27 +8,28 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.browser.typeinfo;
+package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.IMatch;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Type information.
  */
-public interface ITypeInfo extends IMatch {
-	
-	/**
-	 * Returns true if type is enclosed in the given scope
-	 */
-	public boolean isEnclosed(ICSearchScope scope);
+public interface ITypeInfo {
 
 	/**
-	 * Returns true if the type is a low-level system type.
-	 * e.g. __FILE
+	 * Gets the CElement type.
 	 */
-	public boolean isSystemType();
+	public int getType();
+
+	/**
+	 * Gets the type name.
+	 */
+	public String getName();
 
 	/**
 	 * Gets the enclosing type names.
@@ -36,19 +37,45 @@ public interface ITypeInfo extends IMatch {
 	public String[] getEnclosingNames();
 
 	/**
+	 * Gets the resource where type is located.
+	 */
+	public IResource getResource();
+	
+	/**
+	 * Gets the relative path where type is located.
+	 */
+	public IPath getPath();
+
+	/**
+	 * Gets the absolute path where type is located.
+	 */
+	public IPath getLocation();
+
+	/**
+	 * Gets the start offset of type position.
+	 */
+	public int getStartOffset();
+	
+	/**
+	 * Gets the end offset of type position.
+	 */
+	public int getEndOffset();
+
+	/**
+	 * Returns true if type is enclosed in the given scope
+	 */
+	public boolean isEnclosed(ICSearchScope scope);
+
+	/**
 	 * Gets the filename where this type is located.
 	 */
 	public String getFileName();
 	
 	/**
-	 * Gets the file path where this type is located.
+	 * Gets the fully qualified type container name: Includes enclosing type names, but
+	 * not filename. Identifiers are separated by colons.
 	 */
-	public String getFilePath();
-	
-	/**
-	 * Gets the extension of the file where this type is located.
-	 */
-	public String getFileExtension();
+	public String getParentName();
 	
 	/**
 	 * Gets the type qualified name: Includes enclosing type names, but
@@ -73,4 +100,13 @@ public interface ITypeInfo extends IMatch {
 	 * Gets the CElement which corresponds to this type.
 	 */
 	public ICElement getCElement();
+
+	/** Gets the include path for this type.
+	 * 
+	 * @param cProject the C Project to use as a reference.
+	 * @return The path to this type, relative to the longest
+	 * matching include path in the given project, or
+	 * <code>null</code> if not found.
+	 */
+	public IPath resolveIncludePath(ICProject cProject);
 }

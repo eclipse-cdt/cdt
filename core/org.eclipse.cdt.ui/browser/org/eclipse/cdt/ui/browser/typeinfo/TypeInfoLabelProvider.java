@@ -11,9 +11,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
+import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -90,32 +92,57 @@ public class TypeInfoLabelProvider extends LabelProvider {
 		}
 
 		if (isSet(SHOW_ROOT_POSTFIX)) {
-			String path= typeRef.getFilePath();
-			if (path != null && path.length() > 0) {
+			IPath path= typeRef.getPath();
+			if (path != null) {
 				buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.dash"));//$NON-NLS-1$
-				buf.append(path);
+				buf.append(path.toString());
 			}
 		}
 		return buf.toString();				
 	}
 	
-	private Image getFileIcon(ITypeInfo typeRef)
+	/* non java-doc
+	 * @see ILabelProvider#getImage
+	 */	
+	public Image getImage(Object element) {
+		if (!(element instanceof ITypeInfo)) 
+			return super.getImage(element);	
+
+		ITypeInfo typeRef= (ITypeInfo) element;
+		if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
+			return getContainerIcon(typeRef);
+		} else if (isSet(SHOW_FILENAME_ONLY)) {
+			return getFileIcon(typeRef.getPath());
+		} else {
+			return getTypeIcon(typeRef.getType());
+		}
+	}
+
+	public static Image getContainerIcon(ITypeInfo typeRef)
 	{
-		String ext = typeRef.getFileExtension();
-		if (ext != null) {	
-			String[] exts = CoreModel.getDefault().getHeaderExtensions();
-			for (int i = 0; i < exts.length; i++) {
-				if (exts[i].equalsIgnoreCase(ext)) {
-					return HEADER_ICON;
+		//TODO get enclosing types and parent type icon
+		return getFileIcon(typeRef.getPath());
+	}
+
+	public static Image getFileIcon(IPath path)
+	{
+		if (path != null) {
+			String ext= path.getFileExtension();
+			if (ext != null) {
+				String[] exts = CoreModel.getDefault().getHeaderExtensions();
+				for (int i = 0; i < exts.length; i++) {
+					if (exts[i].equalsIgnoreCase(ext)) {
+						return HEADER_ICON;
+					}
 				}
 			}
 		}
 		return SOURCE_ICON;
 	}
 	
-	private Image getIcon(ITypeInfo typeRef)
+	public static Image getTypeIcon(int type)
 	{
-		switch (typeRef.getElementType())
+		switch (type)
 		{
 		case ICElement.C_NAMESPACE:
 			return NAMESPACE_ICON;
@@ -140,23 +167,6 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 		default:
 			return CLASS_ICON;
-		}
-	}
-
-	/* non java-doc
-	 * @see ILabelProvider#getImage
-	 */	
-	public Image getImage(Object element) {
-		if (!(element instanceof ITypeInfo)) 
-			return super.getImage(element);	
-
-		ITypeInfo typeRef= (ITypeInfo) element;
-		if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
-			return getFileIcon(typeRef);
-		} else if (isSet(SHOW_FILENAME_ONLY)) {
-			return getFileIcon(typeRef);
-		} else {
-			return getIcon(typeRef);
 		}
 	}
 }

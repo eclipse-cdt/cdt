@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.browser.util;
+package org.eclipse.cdt.internal.core.browser.util;
 
 /**
  * A helper class which allows you to perform some
@@ -20,6 +20,8 @@ public class ArrayUtil {
 
 	// returns true if set contains elem
 	public static boolean contains(int[] set, int elem) {
+		if (set == null)
+			return false;
 		for (int i= 0; i < set.length; ++i) {
 			if (set[i] == elem)
 				return true;
@@ -29,6 +31,8 @@ public class ArrayUtil {
 	
 	// returns true if set contains all of subset
 	public static boolean containsAll(int[] set, int[] subset) {
+		if (set == null || subset == null)
+			return false;
 		for (int i= 0; i < subset.length; ++i) {
 			if (!contains(set, subset[i]))
 				return false;
@@ -38,9 +42,11 @@ public class ArrayUtil {
 	
 	// return a copy of fromSet
 	public static int[] clone(int[] fromSet) {
+		if (fromSet == null)
+			return null;
 		int[] newSet= new int[fromSet.length];
 		for (int i= 0; i < fromSet.length; ++i) {
-			newSet[i]= newSet[i];
+			newSet[i]= fromSet[i];
 		}
 		return newSet;
 	}

@@ -135,42 +135,58 @@ public class CDebugUtils
 		return 0;
 	}
 	
-	public static short toShort( char[] bytes, boolean le )
+	public static byte toByte( char[] bytes, boolean le )
 	{
 		if ( bytes.length != 2 )
 			return 0;
-		return Short.parseShort( bytesToString( bytes, le, true ), 16 );
+		return (byte)Long.parseLong( bytesToString( bytes, le, true ), 16 );
+	}  
+	
+	public static short toUnsignedByte( char[] bytes, boolean le )
+	{
+		if ( bytes.length != 2 )
+			return 0;
+		return (short)Long.parseLong( bytesToString( bytes, le, false ), 16 );
+	}  
+	
+	public static short toShort( char[] bytes, boolean le )
+	{
+		if ( bytes.length != 4 )
+			return 0;
+		return (short)Long.parseLong( bytesToString( bytes, le, true ), 16 );
 	}  
 	
 	public static int toUnsignedShort( char[] bytes, boolean le )
 	{
-		if ( bytes.length != 2 )
+		if ( bytes.length != 4 )
 			return 0;
-		return Integer.parseInt( bytesToString( bytes, le, false ), 16 );
+		return (int)Long.parseLong( bytesToString( bytes, le, false ), 16 );
 	}  
 	
 	public static int toInt( char[] bytes, boolean le )
 	{
-		if ( bytes.length != 4 )
+		if ( bytes.length != 8 )
 			return 0;
-		return Integer.parseInt( bytesToString( bytes, le, true ), 16 );
+		return (int)Long.parseLong( bytesToString( bytes, le, true ), 16 );
 	}  
 	
 	public static long toUnsignedInt( char[] bytes, boolean le )
 	{
-		if ( bytes.length != 4 )
+		if ( bytes.length != 8 )
 			return 0;
-		return Long.parseLong( bytesToString( bytes, le, false ), 16 );
+		return (long)Long.parseLong( bytesToString( bytes, le, false ), 16 );
 	}  
 	
-	public static long toLong( char[] bytes, boolean le )
+	public static long toLongLong( char[] bytes, boolean le )
 	{
-		return toInt( bytes, le );
+		if ( bytes.length != 16 )
+			return 0;
+		return (long)Long.parseLong( bytesToString( bytes, le, false ), 16 );
 	}
 	
-	public static long toUnsignedLong( char[] bytes, boolean le )
+	public static long toUnsignedLongLong( char[] bytes, boolean le )
 	{
-		return toUnsignedInt( bytes, le );
+		return 0;
 	}
 	
 	private static String bytesToString( char[] bytes, boolean le, boolean signed )
@@ -188,41 +204,7 @@ public class CDebugUtils
 		{
 			System.arraycopy( bytes, 0, copy, 0, copy.length );
 		}
-		StringBuffer sb = new StringBuffer( copy.length );
-		if ( signed )
-		{
-			switch( copy[0] )
-			{
-				case '0':
-				case '1':
-				case '2':
-				case '3':
-				case '4':
-				case '5':
-				case '6':
-				case '7':
-					break;
-				case '8':
-				case '9':
-				case 'a':
-				case 'A':
-				case 'b':
-				case 'B':
-				case 'c':
-				case 'C':
-				case 'd':
-				case 'D':
-				case 'e':
-				case 'E':
-				case 'f':
-				case 'F':
-					sb.append( '-' );
-					copy[0] -= '8';
-					break;
-			}
-		}
-		sb.append( copy );
- 		return sb.toString();
+ 		return new String( copy );
 	}
 	
 	public static String prependString( String text, int length, char ch )

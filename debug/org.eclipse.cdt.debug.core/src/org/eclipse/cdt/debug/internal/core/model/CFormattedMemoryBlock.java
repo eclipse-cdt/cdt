@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.IExecFileInfo;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -264,7 +265,9 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public boolean displayASCII()
 	{
-		return ( getWordSize() == IFormattedMemoryBlock.MEMORY_SIZE_BYTE && fDisplayAscii );
+		return ( getWordSize() == IFormattedMemoryBlock.MEMORY_SIZE_BYTE && 
+				 /*getFormat() == IFormattedMemoryBlock.MEMORY_FORMAT_HEX &&*/ 
+				 fDisplayAscii );
 	}
 
 	/* (non-Javadoc)
@@ -351,6 +354,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 						  int numberOfColumns ) throws DebugException
 	{
 		resetRows();
+		fFormat = format; 
 		fWordSize = wordSize;
 		fNumberOfRows = numberOfRows;
 		fNumberOfColumns = numberOfColumns;
@@ -366,6 +370,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 						  char paddingChar ) throws DebugException
 	{
 		resetRows();
+		fFormat = format; 
 		fWordSize = wordSize;
 		fNumberOfRows = numberOfRows;
 		fNumberOfColumns = numberOfColumns;
@@ -692,5 +697,37 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private DirtyBytes createDirtyBytes( int size )
 	{
 		return new DirtyBytes( size );
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#canChangeFormat(int)
+	 */
+	public boolean canChangeFormat( int format )
+	{
+		switch( format )
+		{
+			case IFormattedMemoryBlock.MEMORY_FORMAT_HEX:
+				return true;
+			case IFormattedMemoryBlock.MEMORY_FORMAT_SIGNED_DECIMAL:
+				return ( /*getWordSize() != IFormattedMemoryBlock.MEMORY_SIZE_BYTE &&*/
+						 getWordSize() != IFormattedMemoryBlock.MEMORY_SIZE_DOUBLE_WORD );
+			case IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL:
+				return ( /*getWordSize() != IFormattedMemoryBlock.MEMORY_SIZE_BYTE &&*/
+						 getWordSize() != IFormattedMemoryBlock.MEMORY_SIZE_DOUBLE_WORD );
+		}
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#isLittleEndian()
+	 */
+	public boolean isLittleEndian()
+	{
+		IExecFileInfo info = (IExecFileInfo)getDebugTarget().getAdapter( IExecFileInfo.class );
+		if ( info != null )
+		{
+			return info.isLittleEndian();
+		}
+		return true;
 	}
 }

@@ -130,4 +130,8 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	void saveChanges() throws DebugException;
 	
 	void refresh() throws DebugException;
+	
+	boolean canChangeFormat( int format );
+	
+	boolean isLittleEndian();
 }

@@ -845,6 +845,8 @@ public class CDebugTarget extends CDebugElement
 			return getMemoryManager();
 		if ( adapter.equals( IDebuggerProcessSupport.class ) )
 			return this;
+		if ( adapter.equals( IExecFileInfo.class ) )
+			return this;
 		return super.getAdapter( adapter );
 	}
 	

@@ -86,22 +86,25 @@ public class IndexEncoderUtil {
         }
         
         if (fileName != null) {
-            //We are not in the file that has triggered the index. Thus, we need to find the
-            //file number for the current file (if it has one). If the current file does not
-            //have a file number, we need to add it to the index.
             IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));   
             String filePath = ""; //$NON-NLS-1$
             if (tempFile != null){
                 //File is local to workspace
                 filePath = tempFile.getFullPath().toString();
             }
-            else{
-                //File is external to workspace
+            else {
+				//File is external to workspace
+				IFile[] externalFiles = CCorePlugin.getWorkspace().getRoot().findFilesForLocation(new Path(fileName));
+				if (externalFiles.length > 0)
+					tempFile = externalFiles[0]; 
                 filePath = fileName;
             }
             
-            if (!tempFile.equals(indexer.getResourceFile())) {
-                IndexedFile indFile = indexer.getOutput().getIndexedFile(filePath);
+            if (tempFile != null && !tempFile.equals(indexer.getResourceFile())) {
+	            //We are not in the file that has triggered the index. Thus, we need to find the
+	            //file number for the current file (if it has one). If the current file does not
+	            //have a file number, we need to add it to the index.
+               IndexedFile indFile = indexer.getOutput().getIndexedFile(filePath);
                 if (indFile != null){
                     fileNum = indFile.getFileNumber();
                 }

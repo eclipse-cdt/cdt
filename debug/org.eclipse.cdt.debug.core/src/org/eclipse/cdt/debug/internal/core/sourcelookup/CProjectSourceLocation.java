@@ -78,6 +78,8 @@ public class CProjectSourceLocation implements ICSourceLocation
 			return this;
 		if ( adapter.equals( CProjectSourceLocation.class ) )
 			return this;
+		if ( adapter.equals( IProject.class ) )
+			return getProject();
 		return null;
 	}
 

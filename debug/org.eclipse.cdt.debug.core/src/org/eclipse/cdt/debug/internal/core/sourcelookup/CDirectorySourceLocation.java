@@ -77,6 +77,8 @@ public class CDirectorySourceLocation implements ICSourceLocation
 			return this;
 		if ( adapter.equals( CDirectorySourceLocation.class ) )
 			return this;
+		if ( adapter.equals( IPath.class ) )
+			return getDirectory();
 		return null;
 	}
 

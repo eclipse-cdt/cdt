@@ -1,4 +1,9 @@
 2002-12-18 Mikhail Khodjaiants
+	Implementing the 'Source Lookup' property page.
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+
+2002-12-18 Mikhail Khodjaiants
 	Check if CValue has variables before calling 'getCDIVariables'.
 	* CValue.java
 

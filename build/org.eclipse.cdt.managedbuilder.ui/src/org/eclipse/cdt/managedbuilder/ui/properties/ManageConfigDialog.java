@@ -501,12 +501,13 @@ public class ManageConfigDialog extends Dialog {
 			
 			// If this is a newly added config, remove it from that map
 			if (getNewConfigs().containsKey(selectedConfigName)) {
-				selectedConfigId = (String) getNewConfigs().get(selectedConfigName);
+				IConfiguration selectedConfig = (IConfiguration) getNewConfigs().get(selectedConfigName); 
+				selectedConfigId = selectedConfig.getId();
 				getNewConfigs().remove(selectedConfigName);
+			} else {
+				// If it is not a new item, the ID is in the existing list
+				selectedConfigId = (String) getExistingConfigs().get(selectedConfigName);
 			}
-			
-			// If it is not a new item, the ID is in the existing list
-			selectedConfigId = (String) getExistingConfigs().get(selectedConfigName);
 			getDeletedConfigs().put(selectedConfigName, selectedConfigId);
 
 			// Clean up the UI lists
@@ -532,7 +533,8 @@ public class ManageConfigDialog extends Dialog {
 			
 			// If this was a new config (it won't be in the existing list) then add it back there
 			if (!getExistingConfigs().containsKey(selectedConfigName)) {
-				getNewConfigs().put(selectedConfigName, selectedConfigId);
+				IConfiguration restoredConfig = managedTarget.getConfiguration(selectedConfigId);
+				getNewConfigs().put(selectedConfigName, restoredConfig);
 			}
 			
 			// Remove it from the deleted map

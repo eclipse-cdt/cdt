@@ -2475,13 +2475,14 @@ public abstract class Parser extends ExpressionParser implements IParser
 								}
 						}
 						// check for optional pure virtual
-						char[] image = LA(2).getCharImage();
-						if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER
-								&& ( image.length == 1 && image[0] == '0' ) ) //$NON-NLS-1$
+						if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER  )
 						{
-							consume(IToken.tASSIGN);
-							consume(IToken.tINTEGER);
-							d.setPureVirtual(true);
+						    char[] image = LA(2).getCharImage();
+						    if( image.length == 1 && image[0] == '0' ){
+								consume(IToken.tASSIGN);
+								consume(IToken.tINTEGER);
+								d.setPureVirtual(true);
+						    }
 						}
 						if (afterCVModifier != LA(1) || LT(1) == IToken.tSEMI) {
 							// There were C++-specific clauses after

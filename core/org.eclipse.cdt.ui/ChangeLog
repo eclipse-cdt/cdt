@@ -1,5 +1,6 @@
 2004-06-16 Hoda Amer 
 	Fix for PR 66730: [Refactoring] Renaming a class does not change .cpp file.
+	Fix for PR 61045: [Accessibility] Code Templates Preview box has no MSAA name
 	
 2004-06-15 Bogdan Gheorghe
 	Fix for Bug 60490:  "Selected resource" option should only be enabled/disabled 

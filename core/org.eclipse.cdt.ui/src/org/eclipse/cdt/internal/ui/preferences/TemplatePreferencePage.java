@@ -47,6 +47,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -308,6 +310,11 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		data= new GridData(GridData.FILL_BOTH);
 		data.heightHint= convertHeightInCharsToPixels(5);
 		control.setLayoutData(data);
+	
+		control.getAccessible().addAccessibleListener(new AccessibleAdapter() {			
+			public void getName(AccessibleEvent e) {
+				e.result = TemplateMessages.getString("TemplatePreferencePage.preview");
+		}});
 		
 		return viewer;
 	}

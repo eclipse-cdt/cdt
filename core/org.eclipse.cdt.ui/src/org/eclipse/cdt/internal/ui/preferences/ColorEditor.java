@@ -50,7 +50,7 @@ public class ColorEditor {
 		fButton.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {			
 					public void getName(AccessibleEvent e) {
-						e.result = "Color selector"; //$NON-NLS-1$
+						e.result = JFaceResources.getString("ColorSelector.Name"); //$NON-NLS-1$
 				}});
 		
 		fButton.setImage(fImage);

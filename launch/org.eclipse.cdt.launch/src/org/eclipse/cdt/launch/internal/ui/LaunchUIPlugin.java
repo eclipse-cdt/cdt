@@ -1,8 +1,16 @@
 package org.eclipse.cdt.launch.internal.ui;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -12,7 +20,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
-public class LaunchUIPlugin extends AbstractUIPlugin {
+public class LaunchUIPlugin extends AbstractUIPlugin
+	implements IDebugEventSetListener {
 
 	/**
 	 * Launch UI plug-in instance
@@ -133,4 +142,49 @@ public class LaunchUIPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}	
+	/**
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		DebugPlugin.getDefault().removeDebugEventListener(this);		
+		super.shutdown();
+	}
+
+	/**
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
+	
+	/**
+	 * Notifies this listener of the given debug events.
+	 * All of the events in the given event collection occurred
+	 * at the same location the program be run or debugged.
+	 *
+	 * @param events the debug events
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			if (events[i].getKind() == DebugEvent.TERMINATE) {
+				Object o = events[i].getSource();
+				if (o instanceof IProcess) {
+					IProcess proc = (IProcess)o;
+					ICProject cproject = null;
+					try {
+						cproject = AbstractCLaunchDelegate.getCProject(proc.getLaunch().getLaunchConfiguration());
+					} catch (CoreException e) {
+					}
+					if (cproject != null) {
+						try {
+							cproject.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
+						} catch (CoreException e) {
+						}
+					}
+				}
+			}
+		}
+	}	
+
 }

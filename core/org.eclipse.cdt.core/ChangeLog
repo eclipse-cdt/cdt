@@ -1,3 +1,8 @@
+2004-08-23 Chris Wiebe
+
+	fix for 68210 - add missing cpp header names
+	* org/eclipse/cdt/core/template/cpp_headers
+
 2004-08-23 Alain Magloire
 
 	Fix for 72382

@@ -52,7 +52,7 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 			source = variable;
 		} else {
 			ExpressionManager expMgr = session.getExpressionManager();
-			variable = expMgr.getVariable(miSession, varName);
+			variable = expMgr.removeVariableFromList(miSession, varName);
 			if (variable != null) {
 				source = variable;
 			} else {

@@ -75,7 +75,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 
 	MIVar fMiVar;
 	Value value;
-	ICDIVariable[] children = new ICDIVariable[0];
+	public ICDIVariable[] children = new ICDIVariable[0];
 	String editable = null;
 	String language;
 	boolean isFake = false;

@@ -1,3 +1,10 @@
+2002-10-28 David Inglis
+	
+	* src/.../core/resources/ACBuilder.java
+	Added check for duplicate markers.
+	* src/.../internal/core/CBuilder.java
+	Added check for canceled build and throws OperationCanceledException exception
+	
 2002-10-25 Alain Magloire
 
 	The debugger needs to know the endian of a binary.  For example

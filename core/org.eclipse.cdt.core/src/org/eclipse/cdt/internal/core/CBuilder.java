@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -57,6 +58,7 @@ public class CBuilder extends ACBuilder {
 		if ( isClean ) {
 			forgetLastBuiltState();
 		}
+		checkCancel(monitor);
 		return getProject().getReferencedProjects();
 	}
 	
@@ -64,6 +66,7 @@ public class CBuilder extends ACBuilder {
 	private boolean invokeMake(boolean fullBuild, IProgressMonitor monitor) {
 		boolean isClean = false;
 		boolean fatalBuild = false;
+		boolean isCanceled = false;
 		IProject currProject= getProject();
 		SubProgressMonitor subMonitor = null;
 
@@ -117,6 +120,8 @@ public class CBuilder extends ACBuilder {
 				launcher.execute(makepath, userArgs, env, workingDirectory);
 				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), subMonitor) != CommandLauncher.OK)
 					errMsg = launcher.getErrorMessage();
+		
+				isCanceled = monitor.isCanceled();
 				monitor.setCanceled(false);
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Refresh From Local");
@@ -141,6 +146,7 @@ public class CBuilder extends ACBuilder {
 					fatalBuild = epm.reportProblems();
 				}
 				subMonitor.done();
+				monitor.setCanceled(isCanceled);
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);
@@ -148,7 +154,15 @@ public class CBuilder extends ACBuilder {
 		monitor.done();
 		return (isClean || fatalBuild);
 	}
-	
+
+	/**
+	 * Check whether the build has been canceled.
+	 */
+	public void checkCancel(IProgressMonitor monitor) {
+		if (monitor != null && monitor.isCanceled())
+			throw new OperationCanceledException();
+	}
+
 	private String[] parseArguments(boolean fullBuild, String override_args) {
 		ArrayList list= new ArrayList();
 		IProject currProject = getProject();

@@ -110,6 +110,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		CSearchPattern pattern = null;
 		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || 
+			searchFor == FWD_CLASS || searchFor == FWD_STRUCT || searchFor == FWD_UNION ||
 			searchFor == ENUM || searchFor == UNION || searchFor == CLASS_STRUCT  ||
 			searchFor == TYPEDEF )
 		{
@@ -344,6 +345,11 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
+		boolean isForward = false;
+		if (searchFor == FWD_CLASS || searchFor == FWD_STRUCT || searchFor == FWD_UNION){
+			isForward = true;
+		}
+		
 		char [] patternArray = patternString.toCharArray();
 		
 		IScanner scanner =null;
@@ -393,7 +399,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char[] name = (char [])list.removeLast();
 		char [][] qualifications = new char[0][];
 		
-		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive );
+		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive, isForward );
 	}
 
 

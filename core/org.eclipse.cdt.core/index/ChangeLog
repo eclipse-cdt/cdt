@@ -1,3 +1,11 @@
+2004-08-11 Bogdan Gheorghe
+	Fix for Bug 59493: need to refine index query for open-type 
+
+	* index/org/eclipse/cdt/internal/core/search/indexing/AbstractIndexer.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IIndexConstants.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java	
+	
+	
 2004-07-12 Bogdan Gheorghe
 	Fix for Bug 69166: NPE in IndexerModelListener.processDelta
 	

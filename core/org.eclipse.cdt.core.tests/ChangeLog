@@ -1,3 +1,6 @@
+2004-08-11 Bogdan Gheorghe
+	Modified indexer test to work with new forward declartion encoding.
+	
 2004-08-06 Vladimir Hirsl
 
 	Parser correctness tests in FailedCompleteParseASTTest.java

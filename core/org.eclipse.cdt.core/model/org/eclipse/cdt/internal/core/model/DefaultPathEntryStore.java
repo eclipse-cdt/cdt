@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -225,7 +226,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				return CoreModel.newContainerEntry(id, isExported);
 			}
 			default : {
-				ICModelStatus status = new CModelStatus(ICModelStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+				ICModelStatus status = new CModelStatus(IStatus.ERROR, "PathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				throw new CModelException(status);
 			}
 		}

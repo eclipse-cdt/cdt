@@ -179,29 +179,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			resolvedEntries.trimToSize();
 			
 			if (generateMarkers) {
-				final ICProject finalCProject = cproject;
-				final IPathEntry[] finalEntries = (IPathEntry[])resolvedEntries.toArray(NO_PATHENTRIES); 
-				Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
-					/* (non-Javadoc)
-					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-					 */
-					protected IStatus run(IProgressMonitor monitor) {
-						IProject project = finalCProject.getProject();
-						flushPathEntryProblemMarkers(project);
-						ICModelStatus status = validatePathEntry(finalCProject, finalEntries);
-						if (!status.isOK()) {
-							createPathEntryProblemMarker(project, status);
-						}
-						for (int j = 0; j < finalEntries.length; j++) {
-							status = validatePathEntry(finalCProject, finalEntries[j], true, false);
-							if (!status.isOK()) {
-								createPathEntryProblemMarker(project, status);
-							}
-						}
-						return Status.OK_STATUS;
-					}
-				};
-				markerTask.schedule();
+				IPathEntry[] finalEntries = (IPathEntry[])resolvedEntries.toArray(NO_PATHENTRIES); 
+				generateMarkers(cproject, finalEntries);
 			}
 
 			// Check for duplication in the sources
@@ -820,6 +799,30 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 
+	public void generateMarkers(final ICProject finalCProject, final IPathEntry[] finalEntries) {
+		Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				IProject project = finalCProject.getProject();
+				flushPathEntryProblemMarkers(project);
+				ICModelStatus status = validatePathEntry(finalCProject, finalEntries);
+				if (!status.isOK()) {
+					createPathEntryProblemMarker(project, status);
+				}
+				for (int j = 0; j < finalEntries.length; j++) {
+					status = validatePathEntry(finalCProject, finalEntries[j], true, false);
+					if (!status.isOK()) {
+						createPathEntryProblemMarker(project, status);
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		markerTask.schedule();
+	}
+
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
 		ArrayList list = new ArrayList();
 
@@ -1100,6 +1103,18 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						containerRemove(cproject);
 					}
 				}
+				return;
+			}
+		} else if (kind == ICElementDelta.CHANGED) {
+			// We should update the pathentry markers if the project change.
+			if (element.getElementType() == ICElement.C_PROJECT) {
+				ICProject cproject = (ICProject)element;
+				ArrayList resolvedList = (ArrayList)resolvedMap.get(cproject);
+				if (resolvedList != null) {
+					IPathEntry[] entries = (IPathEntry[]) resolvedList.toArray(new IPathEntry[resolvedList.size()]);
+					generateMarkers(cproject, entries);
+				}
+				return;
 			}
 		}
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
@@ -1306,7 +1321,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				IPath path = projEntry.getPath();
 				if (path != null && path.isAbsolute() && !path.isEmpty()) {
 					IProject reqProject = project.getWorkspace().getRoot().getProject(path.segment(0));
-					if (!reqProject.exists() || !(CoreModel.hasCCNature(reqProject) || CoreModel.hasCCNature(reqProject))) {
+					if (!reqProject.exists() || !(CoreModel.hasCNature(reqProject) || CoreModel.hasCCNature(reqProject))) {
 						return new CModelStatus(ICModelStatusConstants.INVALID_PATHENTRY, entryMesg); //$NON-NLS-1$
 					}
 					if (!reqProject.isOpen()){
@@ -1394,7 +1409,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	/**
-	 * Record a new marker denoting a classpath problem
+	 * Record a new marker denoting a pathentry problem
 	 */
 	void createPathEntryProblemMarker(IProject project, ICModelStatus status) {
 			
@@ -1437,7 +1452,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	/**
-	 * Remove all markers denoting classpath problems
+	 * Remove all markers denoting pathentry problems
 	 */
 	protected void flushPathEntryProblemMarkers(IProject project) {
 		IWorkspace workspace = project.getWorkspace();

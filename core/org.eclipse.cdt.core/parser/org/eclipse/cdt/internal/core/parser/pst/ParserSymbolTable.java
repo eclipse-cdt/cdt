@@ -651,7 +651,9 @@ public class ParserSymbolTable {
 		{
 			wrapper = (IDerivableContainerSymbol.IParentSymbol) scopes.get(i);
 			ISymbol parent = wrapper.getParent();
-			if( parent == null )
+			
+			//skip if parent is template parameter
+			if( parent == null || parent.isType( ITypeInfo.t_templateParameter ) )
 				continue;
 
 			if( !wrapper.isVirtual() || !data.visited.containsKey( parent ) ){

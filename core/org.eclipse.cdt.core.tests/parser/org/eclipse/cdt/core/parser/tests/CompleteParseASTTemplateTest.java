@@ -1044,4 +1044,17 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		assertEquals( clause.getParentClassSpecifier(), B1cls );
 		
 	}
+	
+	public void testInheritsFromTemplateParameter_bug71410() throws Exception {
+		// An inner type definition inherits from a template parameter
+		Iterator i = parse("template <typename T, class U> \n class A { \n struct B : U { T* mT; }; \n B mB; \n T* getVal() { return mB.mT; } \n }; \n").getDeclarations();//$NON-NLS-1$
+		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+		assertFalse(i.hasNext());
+		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+		Iterator j = cs.getDeclarations();
+		IASTClassSpecifier cs2 = (IASTClassSpecifier) j.next();
+		IASTField f = (IASTField) j.next();
+		IASTMethod m = (IASTMethod) j.next();
+		assertFalse(j.hasNext());
+	}
 }

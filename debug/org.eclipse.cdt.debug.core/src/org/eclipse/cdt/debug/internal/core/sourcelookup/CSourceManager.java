@@ -109,6 +109,7 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	public void setMode( int mode )
 	{
 		fMode = mode;
+		setRealMode( mode );
 	}
 
 	public int getRealMode()

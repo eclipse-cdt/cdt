@@ -790,6 +790,13 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( ICDebugTargetType.class ) )
 			return this;
+		if ( adapter.equals( ISourceMode.class ) )
+		{
+			if ( getSourceLocator() instanceof ISourceMode )
+			{
+				return getSourceLocator();
+			}
+		}
 		return super.getAdapter( adapter );
 	}
 	

@@ -1,4 +1,8 @@
 2002-10-11 Mikhail Khodjaiants
+	* CDebugTarget.java: Added return for ISourceMode to 'getAdapter'.
+	* CSourceManager.java: Set the real mode when setting the source mode.
+
+2002-10-11 Mikhail Khodjaiants
 	* DisassemblyStorage.java: Changed the format of the disassembly view's output.
 
 2002-10-10 Mikhail Khodjaiants

@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -49,8 +48,7 @@ public class CPPTypedef implements ITypedef, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
 	public IType getType() {
-		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) declarator.getParent();
-		return CPPVisitor.createType( decl.getDeclSpecifier() );
+		return CPPVisitor.createType( declarator );
 	}
 
 	/* (non-Javadoc)

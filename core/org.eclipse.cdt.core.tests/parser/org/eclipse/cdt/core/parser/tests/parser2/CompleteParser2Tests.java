@@ -17,7 +17,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -29,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -443,33 +447,108 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testUsingDeclarationWithFunctionsAndMethods() throws Exception
 	{
-		parse( "namespace N { int foo(void); } class A { static int bar(void); }; using N::foo; using ::A::bar;" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "namespace N { int foo(void); } class A { static int bar(void); }; using N::foo; using ::A::bar;" ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 13 );
+ 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		IFunction foo = (IFunction) col.getName(1).resolveBinding();
+ 		ICPPClassType A = (ICPPClassType) col.getName(3).resolveBinding();
+ 		ICPPMethod bar = (ICPPMethod) col.getName(4).resolveBinding();
+ 		
+ 		assertInstances( col, N, 2 );
+ 		assertInstances( col, foo, 3 );
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, bar, 3 );	
 	}
 	
 	public void testLinkageSpec() throws Exception
 	{
-		parse( "extern \"C\" { int foo(); }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "extern \"C\" { int foo(); }"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 1 );
+ 		IFunction foo = (IFunction) col.getName(0).resolveBinding();
+ 		assertNotNull( foo );
 	}
 	
 
 	public void testBogdansExample() throws Exception
 	{
-		parse( "namespace A { namespace B {	enum e1{e_1,e_2};	int x;	class C	{	static int y = 5;	}; }} "); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "namespace A { namespace B {	enum e1{e_1,e_2};	int x;	class C	{	static int y = 5;	}; }} "); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 8 );
+ 		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		ICPPNamespace B = (ICPPNamespace) col.getName(1).resolveBinding();
+ 		IEnumeration e1 = (IEnumeration) col.getName(2).resolveBinding();
+ 		IEnumerator e_1 = (IEnumerator) col.getName(3).resolveBinding();
+ 		IEnumerator e_2 = (IEnumerator) col.getName(4).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(5).resolveBinding();
+ 		ICPPClassType C = (ICPPClassType) col.getName(6).resolveBinding();
+ 		ICPPField y = (ICPPField) col.getName(7).resolveBinding();
+ 		
+ 		assertSame( B.getScope(), A.getNamespaceScope() );
+ 		assertSame( e1.getScope(), B.getNamespaceScope() );
+ 		assertSame( e_1.getScope(), B.getNamespaceScope() );
+ 		assertSame( e_2.getType(), e1 );
+ 		assertNotNull( x );
+ 		assertNotNull( C );
+ 		assertNotNull( y );
 	}
 	
 	public void testAndrewsExample() throws Exception
 	{
-		parse( "namespace N{ class A {}; }	using namespace N;	class B: public A{};"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "namespace N{ class A {}; }	using namespace N;	class B: public A{};"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
+ 		ICPPClassType B = (ICPPClassType) col.getName(3).resolveBinding();
+ 		
+ 		assertInstances( col, N, 2 );
+ 		assertInstances( col, A, 2 );
+ 		
+ 		ICPPBase base = B.getBases()[0];
+ 		assertSame( base.getBaseClass(), A );
 	}
 	
 	public void testSimpleTypedef() throws Exception
 	{
-		parse( "typedef int myInt;\n myInt var;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "typedef int myInt;\n myInt var;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		ITypedef myInt = (ITypedef) col.getName(0).resolveBinding();
+ 		IVariable var = (IVariable) col.getName(2).resolveBinding();
+ 		
+ 		assertInstances( col, myInt, 2 );
+ 		assertTrue( myInt.getType() instanceof IBasicType );
+ 		assertSame( var.getType(), myInt );
 	}
 	
 	public void testComplexTypedef() throws Exception
 	{
-		parse( "class A{ }; typedef A ** A_DOUBLEPTR;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A{ }; typedef A ** A_DOUBLEPTR;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ITypedef APTR = (ITypedef) col.getName(2).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertTrue( APTR.getType() instanceof IPointerType );
+ 		IPointerType pt = (IPointerType) APTR.getType();
+ 		assertTrue( pt.getType() instanceof IPointerType );
+ 		pt = (IPointerType) pt.getType();
+ 		assertSame( pt.getType(), A );
 	}
 	
 	
@@ -487,27 +566,64 @@ public class CompleteParser2Tests extends TestCase {
 	public void testBug40842() throws Exception{
 		Writer code = new StringWriter();		
 		code.write("class A {} a;\n"); //$NON-NLS-1$
-		parse(code.toString());
+		IASTTranslationUnit tu = parse(code.toString());
+
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		ICPPClassType A = (ICPPClassType) comp.getName().resolveBinding();
+		IVariable a = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+		assertSame( a.getType(), A );
 	}
 	
 	public void testNestedClassname() throws Exception
 	{
-		parse( "namespace A { } \n class A::B { };"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "namespace A { } \n class A::B { };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit( tu, col );
+        
+        ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
+        assertInstances( col, A, 2 );
+        assertEquals( B.getScope(), A.getNamespaceScope() );
 	}
 	
 	public void testForwardDeclaration() throws Exception
 	{
-		parse( "class forward;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class forward;"); //$NON-NLS-1$
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		assertEquals( decl.getDeclarators().length, 0 );
+		
+		IASTElaboratedTypeSpecifier spec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
+		ICPPClassType forward = (ICPPClassType) spec.getName().resolveBinding();
+		assertNotNull( forward );
 	}
 	
 	public void testElaboratedType() throws Exception
 	{
-		parse( "class A; class A * a;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A; class A * a;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		IVariable a = (IVariable) col.getName(2).resolveBinding();
+ 		IPointerType ptr = (IPointerType) a.getType();
+ 		assertInstances( col, A, 2 );
+ 		assertSame( ptr.getType(), A );
 	}
 	
 	public void testForewardDeclarationWithUsage() throws Exception
 	{
-		parse( "class A; A * anA;class A { };"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A; A * anA;class A { };"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 4 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		IVariable anA = (IVariable) col.getName(2).resolveBinding();
+ 		assertInstances( col, A, 3 );
+ 		IPointerType ptr = (IPointerType) anA.getType();
+ 		assertSame( ptr.getType(), A );
 	}
 		
 	
@@ -518,12 +634,28 @@ public class CompleteParser2Tests extends TestCase {
 
 	public void testOverride() throws Exception
 	{
-		parse( "void foo();\n void foo( int );\n"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "void foo();\n void foo( int );\n"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		IFunction foo1 = (IFunction) col.getName(0).resolveBinding();
+ 		IFunction foo2 = (IFunction) col.getName(1).resolveBinding();
+ 		
+ 		assertNotSame( foo1, foo2 );
 	}	 
 	
 	public void testSimpleExpression() throws Exception
 	{
-		parse( "int x; int y = x;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "int x; int y = x;"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable y = (IVariable) col.getName(1).resolveBinding();
+ 		assertInstances( col, x, 2 );
+ 		assertNotNull( y );
 	}
 	
 	public void testParameterExpressions() throws Exception

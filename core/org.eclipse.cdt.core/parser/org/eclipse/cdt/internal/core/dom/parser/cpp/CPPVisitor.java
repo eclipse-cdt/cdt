@@ -124,7 +124,11 @@ public class CPPVisitor {
 		    parent instanceof ICPPASTQualifiedName    ||
 			parent instanceof ICPPASTBaseSpecifier ) 
 		{
-			return CPPSemantics.resolveBinding( name );
+			IBinding binding = CPPSemantics.resolveBinding( name ); 
+			if( binding == null && parent instanceof ICPPASTQualifiedName ){
+				binding = createBinding( (IASTName) parent );
+			}
+			return binding;
 		} else if( parent instanceof IASTIdExpression ){
 			return resolveBinding( parent );
 		} else if( parent instanceof ICPPASTFieldReference ){
@@ -191,7 +195,12 @@ public class CPPVisitor {
 		return binding;
 	}
 	private static IBinding createBinding( ICPPASTCompositeTypeSpecifier compType ){
-		ICPPScope scope = (ICPPScope) getContainingScope( compType );
+		IASTName name = compType.getName();
+		if( name instanceof ICPPASTQualifiedName ){
+			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+			name = ns[ ns.length - 1 ];
+		}
+		ICPPScope scope = (ICPPScope) getContainingScope( name );
 		IBinding binding = scope.getBinding( compType.getName() );
 		if( binding == null || !(binding instanceof ICPPClassType) ){
 			binding = new CPPClassType( compType );
@@ -378,8 +387,22 @@ public class CPPVisitor {
 		return scope;
 	}
 	
-	public static IScope getContainingScope( IASTDeclSpecifier compTypeSpec ){
-	    IASTNode parent = compTypeSpec.getParent();
+	public static IScope getContainingScope( IASTDeclSpecifier typeSpec ){
+//		if( typeSpec instanceof ICPPASTCompositeTypeSpecifier ){
+//			ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) typeSpec;
+//			IASTName name = compTypeSpec.getName();
+//			if( name instanceof ICPPASTQualifiedName ){
+//				IASTName [] names = ((ICPPASTQualifiedName)name).getNames();
+//				if( names.length > 1 ){
+//					IBinding binding = names[ names.length - 2 ].resolveBinding();
+//					if( binding instanceof ICPPClassType )
+//						return ((ICPPClassType)binding).getCompositeScope();
+//					else if( binding instanceof ICPPNamespace )
+//						return ((ICPPNamespace)binding).getNamespaceScope();
+//				}
+//			}
+//		}
+	    IASTNode parent = typeSpec.getParent();
 	    if( parent instanceof IASTSimpleDeclaration )
 	        return getContainingScope( (IASTSimpleDeclaration) parent );
 	    else if( parent instanceof IASTTypeId )

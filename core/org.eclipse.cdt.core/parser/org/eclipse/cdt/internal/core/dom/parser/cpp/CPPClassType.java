@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -27,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -108,7 +110,12 @@ public class CPPClassType implements ICPPClassType {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return (definition != null ) ? CPPVisitor.getContainingScope( definition ) : CPPVisitor.getContainingScope( declarations[0] );
+		IASTName name = definition != null ? definition.getName() : declarations[0].getName();
+		if( name instanceof ICPPASTQualifiedName ){
+			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+			name = ns[ ns.length - 1 ];
+		}
+		return CPPVisitor.getContainingScope( name );
 	}
 
 	/* (non-Javadoc)

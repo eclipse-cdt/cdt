@@ -18,5 +18,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IEnumerator extends IBinding {
-
+	/**
+	 * @return the type of the variable
+	 */
+	public IType getType();
 }

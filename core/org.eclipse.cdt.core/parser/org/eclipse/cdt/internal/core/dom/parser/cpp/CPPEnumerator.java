@@ -14,9 +14,12 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 
 /**
@@ -58,4 +61,13 @@ public class CPPEnumerator implements IEnumerator {
     public IASTNode getPhysicalNode() {
         return enumerator;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IEnumerator#getType()
+	 */
+	public IType getType() {
+		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) enumerator.getParent();
+		IEnumeration enum = (IEnumeration) enumSpec.getName().resolveBinding();
+		return enum;
+	}
 }

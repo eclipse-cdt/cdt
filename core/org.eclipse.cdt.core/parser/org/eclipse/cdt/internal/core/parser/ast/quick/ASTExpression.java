@@ -195,7 +195,13 @@ public class ASTExpression implements IASTExpression {
     {
     	throw new ASTNotImplementedException();
     }
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#purgeReferences()
+	 */
+	public void purgeReferences() throws ASTNotImplementedException
+	{
+		throw new ASTNotImplementedException();
+	}
 
 
 }

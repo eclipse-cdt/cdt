@@ -141,5 +141,6 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 	
 	public int evaluateExpression() throws ExpressionEvaluationException;
 	public void reconcileReferences() throws ASTNotImplementedException;
+	public void purgeReferences() throws ASTNotImplementedException;
 	
 }

@@ -1,3 +1,7 @@
+2003-09-30 Hoda Amer
+	-Solution to [Bug 43053] require reference cleanup for expressions
+	Added purgeReferences() at the end of ASTExpression::acceptElement()
+		
 2003-09-30 Andrew Niefer
 	PST changes for bug 43503 - parser needs to know the different between ambiguous functions
 	and no functions when no parameter information is provided

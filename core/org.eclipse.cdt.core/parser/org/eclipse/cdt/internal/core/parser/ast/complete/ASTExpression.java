@@ -155,6 +155,15 @@ public class ASTExpression implements IASTExpression
 	
 		if( newDescriptor != null )
 			newDescriptor.acceptElement(requestor);
+			
+		try
+		{
+			purgeReferences();
+		}
+		catch (ASTNotImplementedException e)
+		{
+			// will not get thrown
+		}
     }
     
     /* (non-Javadoc)
@@ -226,5 +235,28 @@ public class ASTExpression implements IASTExpression
         	}   		
         }
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#purgeReferences()
+	 */
+	public void purgeReferences() throws ASTNotImplementedException
+	{
+		if( lhs != null )
+			lhs.purgeReferences();
+		if( rhs != null )
+			rhs.purgeReferences();
+		if( thirdExpression != null )
+			thirdExpression.purgeReferences();
+    		
+		purgeSubExpression((ASTExpression)lhs);
+		purgeSubExpression((ASTExpression)rhs);
+		purgeSubExpression((ASTExpression)thirdExpression);
+	}
+	protected void purgeSubExpression(ASTExpression subExpression)
+	{
+		if( subExpression != null && subExpression.getReferences() != null )
+		{
+			subExpression.getReferences().clear();
+		}
+	}
 
 }

@@ -1,3 +1,16 @@
+2002-11-06 Alain Magloire
+
+	Deal with some issues of PR 25756.
+	
+	* src/.../internal.errorparsers.java (processLine):
+	When the file is not found append not prepend the name
+	of the file in the description.
+	The check for "(Each undeclared ...)" was done at the
+	wrong place.
+	
+	* src/.../ErrorParserManager.java (findFileName):
+	Check if the file is absolute or relative.
+
 2002-11-05 Alain Magloire
 
 	* utils/.../utils/coff: New folder.

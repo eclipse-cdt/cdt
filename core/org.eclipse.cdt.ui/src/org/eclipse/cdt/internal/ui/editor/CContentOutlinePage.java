@@ -185,24 +185,23 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		
 		registerToolbarActions();
 		
-		//IFileEditorInput editorInput= (IFileEditorInput)fEditor.getEditorInput();
 		IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		try {
 			if (editorInput instanceof IFileEditorInput){				
-				//fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
 				IWorkingCopyManager wcManager = CUIPlugin.getDefault().getWorkingCopyManager();
 				fInput = (WorkingCopy)wcManager.getWorkingCopy(editorInput);
 				if (fInput == null) {
+					// XXX This should never happen.  Put an assert.
 					fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
 				}
 			} else if (editorInput instanceof IStorageEditorInput){
 				// CHECKPOINT: do we create a CFileElementWorkingCopy or just a working copy for the IStorageEditorInput?
-				//fInput = ((CUIPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IStorageEditorInput)editorInput, provider);
+				// If it is an IStorage it means that there is no underlying IFile.
 				fInput = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
-			} else
+			} else {
 				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
-
+			}
 			treeViewer.setInput(fInput);
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e.getStatus());

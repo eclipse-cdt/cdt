@@ -85,8 +85,14 @@ public class MICommand extends Command
 			}
 		}
 		if (parameters != null && parameters.length > 0) {
+			// Add a "--" separator if a parameter starts with "-"
 			if (options != null && options.length > 0) {
-				command += " --";
+				for (int i = 0; i < parameters.length; i++) {
+					if (parameters[i].startsWith("-")) {
+						command += " --";
+						break;
+					}
+				}
 			}
 			for (int i = 0; i < parameters.length; i++) {
 				// According to the MI documentation '-' is not permitted

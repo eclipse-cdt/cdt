@@ -774,6 +774,11 @@ public class CompletionEngine implements RelevanceConstants {
 			return null;
 		}
 		
+		if(completionNode.getCompletionKind() == CompletionKind.NO_SUCH_KIND){
+			log("Invalid Completion Kind Error"); //$NON-NLS-1$
+			return null;
+		}
+		
 		// set the completionStart and the completionLength
 		completionOrigin = completionOffset;
 		completionStart = completionOffset - completionNode.getCompletionPrefix().length();

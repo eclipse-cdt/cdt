@@ -1,3 +1,12 @@
+2004-04-14 Alain Magloire
+
+	Fix PR 58375
+	New icons.
+	
+	* icons/full/clc16/cllapseall.gif
+	* icons/full/dlc16/cllapseall.gif
+	* icons/full/elc16/cllapseall.gif
+
 2004-04-14 Hoda Amer
 	Partial fix for bug#58178 : [Content Assist] No completion on GL_TRUE
 	

@@ -199,16 +199,16 @@ public class ExpressionEvaluator {
 		switch (LA()) {
 			case tPLUS:
 				consume();
-				return expression();
+				return unaryExpression();
 			case tMINUS:
 				consume();
-				return - expression();
+				return - unaryExpression();
 			case tNOT:
 				consume();
-				return expression() == 0 ? 1 : 0;
+				return unaryExpression() == 0 ? 1 : 0;
 			case tCOMPL:
 				consume();
-				return ~ expression();
+				return ~ unaryExpression();
 			case tNUMBER:
 				return consume();
 			case t_defined:
@@ -228,20 +228,26 @@ public class ExpressionEvaluator {
 	}
 	
 	private long handleDefined() throws EvalException {
-		consume(); // the defined keyword
-		
-		if (LA() != tLPAREN)
-			throw new EvalException("missing ( after defined");
-
-		// Now we need to do some special handline to get the identifier without it being
+		// We need to do some special handline to get the identifier without it being
 		// expanded by macro expansion
 		skipWhiteSpace();
 		
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
+		if (++bufferPos[bufferStackPos] >= limit)
+			return 0;
 
 		// check first character
-		char c = buffer[++bufferPos[bufferStackPos]];
+		char c = buffer[bufferPos[bufferStackPos]];
+		boolean inParens = false;
+		if (c == '(') {
+			inParens = true;
+			skipWhiteSpace();
+			if (++bufferPos[bufferStackPos] >= limit)
+				return 0;
+			c = buffer[bufferPos[bufferStackPos]];
+		}
+
 		if (!((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z'))) {
 			throw new EvalException("illegal identifier in defined()");
 		}
@@ -260,14 +266,16 @@ public class ExpressionEvaluator {
 		--bufferPos[bufferStackPos];
 		
 		// consume to the closing paren;
-		while (true) {
+		if (inParens) {
 			skipWhiteSpace();
-			if (++bufferPos[bufferStackPos] >= limit)
+			if (++bufferPos[bufferStackPos] < limit
+					&& buffer[bufferPos[bufferStackPos]] != ')')
 				throw new EvalException("missing ) on defined");
-			if (buffer[bufferPos[bufferStackPos]] == ')')
-				break;
 		}
 
+		// Set up the lookahead to whatever comes next
+		nextToken();
+		
 		return definitions.get(buffer, idstart, idlen) != null ? 1 : 0;
 	}
 	
@@ -380,8 +388,7 @@ public class ExpressionEvaluator {
 						
 						// Check for defined(
 						pos = bufferPos[bufferStackPos];
-						if (pos + 1 < limit && buffer[pos + 1] == '('
-								&& CharArrayUtils.equals(buffer, start, len, _defined)) {
+						if (CharArrayUtils.equals(buffer, start, len, _defined)) {
 							tokenType = t_defined;
 							return;
 						}
@@ -443,23 +450,34 @@ public class ExpressionEvaluator {
 						}
 						
 						while (++bufferPos[bufferStackPos] < limit) {
-							int c = buffer[bufferPos[bufferStackPos]];
+							char c = buffer[bufferPos[bufferStackPos]];
 							if (c >= '0' && c <= '9') {
 								tokenValue *= (isHex ? 16 : 10);
 								tokenValue += c - '0';
+								continue;
 							} else if (isHex) {
 								if (c >= 'a' && c <= 'f') {
 									tokenValue *= 16;
 									tokenValue += c - 'a';
+									continue;
 								} else if (c >= 'A' && c <= 'F') {
 									tokenValue *= 16;
 									tokenValue += c - 'A';
+									continue;
 								}
 							}
+							
+							// end of number
+							if (c == 'L') {
+								// eat the long
+								++bufferPos[bufferStackPos];
+							}
+							
+							// done
+							break;
 						}
 						--bufferPos[bufferStackPos];
 						return;
-
 					case '(':
 						tokenType = tLPAREN;
 						return;
@@ -501,10 +519,20 @@ public class ExpressionEvaluator {
 						return;
 					
 					case '&':
+						if (pos + 1 < limit && buffer[pos + 1] == '&') {
+							++bufferPos[bufferStackPos];
+							tokenType = tAND;
+							return;
+						}
 						tokenType = tBITAND;
 						return;
 					
 					case '|':
+						if (pos + 1 < limit && buffer[pos + 1] == '|') {
+							++bufferPos[bufferStackPos];
+							tokenType = tOR;
+							return;
+						}
 						tokenType = tBITOR;
 						return;
 					
@@ -517,11 +545,11 @@ public class ExpressionEvaluator {
 						return;
 					
 					case '=':
-						if (pos + 1 < limit)
-							if (buffer[pos + 1] == '=') {
-								tokenType = tEQUAL;
-								return;
-							}
+						if (pos + 1 < limit && buffer[pos + 1] == '=') {
+							++bufferPos[bufferStackPos];
+							tokenType = tEQUAL;
+							return;
+						}
 						throw new EvalException("assignment not allowed");
 					
 					case '<':
@@ -712,9 +740,10 @@ public class ExpressionEvaluator {
 									break;
 								}
 							}
+							continue;
 						}
 					}
-					continue;
+					break;
 				case '\\':
 					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
 						// \n is a whitespace

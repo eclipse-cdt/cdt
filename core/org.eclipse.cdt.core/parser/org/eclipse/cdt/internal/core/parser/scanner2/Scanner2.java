@@ -628,11 +628,16 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		
 		// Check for macro expansion
+		
+		// First look up the stack at the function style macro expansion args
 		Object expObject = null;
-		if (bufferData[bufferStackPos] instanceof FunctionStyleMacro.Expansion) {
-			// first check if name is a macro arg
-			expObject = ((FunctionStyleMacro.Expansion)bufferData[bufferStackPos])
+		int tmpPos = bufferStackPos + 1;
+		while (--tmpPos >= 0
+				&& bufferData[tmpPos] instanceof FunctionStyleMacro.Expansion) {
+			expObject = ((FunctionStyleMacro.Expansion)bufferData[tmpPos])
 				.definitions.get(buffer, start, len);
+			if (expObject != null)
+				break;
 		}
 
 		if (expObject == null) {
@@ -964,8 +969,11 @@ public class Scanner2 implements IScanner, IScannerData {
 						start = bufferPos[bufferStackPos];
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
-						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0)
+						if (expressionEvaluator.evaluate(buffer, start, len, definitions) == 0) {
+							//System.out.println("#if <FALSE> " + new String(buffer,start+1,len-1));
 							skipOverConditionalCode(true);
+						} //else
+							//System.out.println("#if <TRUE> " + new String(buffer,start+1,len-1));
 						return;
 					case ppElse:
 					case ppElif:
@@ -1101,6 +1109,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
+		//System.out.println("#define " + new String(buffer, idstart, idlen));
 		
 		// Now check for function style macro to store the arguments
 		char[][] arglist = null;
@@ -1229,11 +1238,16 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 
 		skipToNewLine();
-		
-		if ((definitions.get(buffer, idstart, idlen) != null) == positive)
+
+		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
+			//System.out.println((positive ? "#ifdef" : "#ifndef")
+			//		+ " <TRUE> " + new String(buffer, idstart, idlen));
 			// continue on
 			return;
-
+		}
+		
+		//System.out.println((positive ? "#ifdef" : "#ifndef")
+		//		+ " <FALSE> " + new String(buffer, idstart, idlen));
 		// skip over this group
 		skipOverConditionalCode(true);
 	}
@@ -1273,6 +1287,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						switch (type) {
 							case ppIfdef:
 							case ppIfndef:
+							case ppIf:
 								++nesting;
 								break;
 							case ppElse:
@@ -1510,6 +1525,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
+		skipOverWhiteSpace();
+		
 		if (++bufferPos[bufferStackPos] >= limit
 				|| buffer[bufferPos[bufferStackPos]] != '(')
 			return;
@@ -1578,31 +1595,43 @@ public class Scanner2 implements IScanner, IScannerData {
 			pushContext(expText, exp);
 	}
 
-	// gcc built-ins
+	// standard built-ins
 	private static final ObjectStyleMacro __cplusplus
 		= new ObjectStyleMacro("__cplusplus".toCharArray(), "1".toCharArray());
-	private static final ObjectStyleMacro __STDC_HOSTED__
-		= new ObjectStyleMacro("__STDC_HOSTED__".toCharArray(), "0".toCharArray());
-	private static final ObjectStyleMacro __STDC_VERSION__
-		= new ObjectStyleMacro("__STDC_VERSION__".toCharArray(), "199001L".toCharArray());
+	private static final ObjectStyleMacro __STDC__
+		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray());
+	
+	// gcc built-ins
+	private static final ObjectStyleMacro __inline__
+		= new ObjectStyleMacro("__inline__".toCharArray(), "inline".toCharArray());
+	private static final ObjectStyleMacro __extension__
+		= new ObjectStyleMacro("__extension__".toCharArray(), emptyCharArray);
+	private static final ObjectStyleMacro __asm__
+		= new ObjectStyleMacro("__asm__".toCharArray(), "asm".toCharArray());
+	private static final ObjectStyleMacro __restrict__
+		= new ObjectStyleMacro("__restrict__".toCharArray(), "restrict".toCharArray());
+	private static final ObjectStyleMacro __restrict
+		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray());
 	private static final FunctionStyleMacro __attribute__
 		= new FunctionStyleMacro(
 				"__attribute__".toCharArray(),
 				emptyCharArray,
 				new char[][] { "arg".toCharArray() });
 	
-	// standard built-ins
-	private static final ObjectStyleMacro __STDC__
-		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray());
-	
 	protected void setupBuiltInMacros() {
-		
-		// gcc extensions
+
+		definitions.put(__STDC__.name, __STDC__);
 		if( language == ParserLanguage.CPP )
 			definitions.put(__cplusplus.name, __cplusplus);
-		definitions.put(__STDC_HOSTED__.name, __STDC_HOSTED__);
-		definitions.put(__STDC_VERSION__.name, __STDC_VERSION__);
+
+		// gcc extensions
+		definitions.put(__inline__.name, __inline__);
+		definitions.put(__extension__.name, __extension__);
 		definitions.put(__attribute__.name, __attribute__);
+		definitions.put(__restrict__.name, __restrict__);
+		definitions.put(__restrict.name, __restrict);
+		if( language == ParserLanguage.CPP )
+			definitions.put(__asm__.name, __asm__);
 		
 		/*
 		
@@ -1639,7 +1668,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		*/
 		
 		// standard extensions
-		definitions.put(__STDC__.name, __STDC__);
 
 		/*
 		if( getDefinition(__STDC__) == null )

@@ -1659,4 +1659,13 @@ public class Scanner2Test extends BaseScanner2Test
     	validateInteger("10");
     	validateEOF();
     }
+    
+    public void testWackyFunctionMacros() throws Exception {
+    	initializeScanner(
+    			"#define A(X) hi##X\n" +
+				"#define B(Y) A(Y)\n" +
+				"B(there)");
+    	validateIdentifier("hithere");
+    	validateEOF();
+    }
 }

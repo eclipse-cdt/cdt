@@ -39,8 +39,10 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		sourceEntry = entry;
 		IPath path = getPath();
 		IPath cpath = getParent().getPath();
-		IPath p = path.removeFirstSegments(cpath.segmentCount());
-		setElementName(p.toString());
+		if (path.segmentCount() > cpath.segmentCount()) {
+			IPath p = path.removeFirstSegments(cpath.segmentCount());
+			setElementName(p.toString());
+		}
 	}
 
 	/* (non-Javadoc)

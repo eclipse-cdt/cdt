@@ -68,12 +68,14 @@ public class SelectionParseAction extends Action {
 	}
 
 	protected IParser setupParser(IFile resourceFile) {
+		
+
 		//Get the scanner info
 		IProject currentProject = resourceFile.getProject();
 		IScannerInfo scanInfo = new ScannerInfo();
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
 		if (provider != null){
-		  IScannerInfo buildScanInfo = provider.getScannerInformation(currentProject);
+		  IScannerInfo buildScanInfo = provider.getScannerInformation(resourceFile);
 		  if (buildScanInfo != null){
 			scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 		  }

@@ -1,3 +1,12 @@
+2004-06-24 Bogdan Gheorghe
+	Fix for 66695: [Indexer] Manually add an include path to a file/folder is ignored
+	Changed CompletionEngine getScannerInfo to get the info from a resource instead of 
+	a project in order to get a complete list of include paths
+	
+	* src/org/eclipse/cdt/internal/ui/search/actions/SelectionParseAction.java
+	* src/org/eclipse/cdt/internal/ui/text/contentassist/CompletionEngine.java
+	
+	
 2004-06-24 Tanya Wolff
 	Fix for PR 60299: Accessibility: Lost children in Binary Parser properties dialog
 	Switched the binary parsers Options group with its child composite so the

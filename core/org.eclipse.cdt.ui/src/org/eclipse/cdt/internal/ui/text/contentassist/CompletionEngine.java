@@ -156,7 +156,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IScannerInfo scanInfo = new ScannerInfo();
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		if (provider != null){
-			IScannerInfo buildScanInfo = provider.getScannerInformation(project);
+			IScannerInfo buildScanInfo = provider.getScannerInformation(currentResource);
 			if( buildScanInfo != null )
 				scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 		} 			

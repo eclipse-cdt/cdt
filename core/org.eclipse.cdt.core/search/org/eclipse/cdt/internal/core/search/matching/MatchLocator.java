@@ -449,7 +449,7 @@ public class MatchLocator implements IMatchLocator{
 			IScannerInfo scanInfo = new ScannerInfo();
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 			if (provider != null){
-				IScannerInfo buildScanInfo = provider.getScannerInformation(project);
+				IScannerInfo buildScanInfo = provider.getScannerInformation(currentResource != null ? currentResource : project);
 				if( buildScanInfo != null )
 					scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 			}

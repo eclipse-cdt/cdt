@@ -1,3 +1,9 @@
+2004-06-24 Bogdan Gheorghe
+	Fix for 66695: [Indexer] Manually add an include path to a file/folder 
+	is ignored by indexer
+	
+	* search/org/eclipse/cdt/internal/core/search/matching/MatchLocator.java
+	
 2004-06-22 Alain Magloire
 	Part of PR 68246.
 	Close the inputstream to release resource handle

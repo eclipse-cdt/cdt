@@ -1,6 +1,8 @@
 2004-03-03 Alain Magloire
 
 	Note from Brent Nicolle PR 53520.
+	The filname for the extension should be
+	"cdtproject" not ".cdtproject"
 
 	* plugin.xml
 

@@ -10,9 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core.makefile.gnu;
 
+import org.eclipse.cdt.make.core.makefile.IDirective;
+
 /**
  */
-public interface IUnExport {
+public interface IUnExport extends IDirective {
 	
 	String getVariable();
 }
+

@@ -43,6 +43,10 @@ public class DOMFailedTest extends DOMTests {
 		suite.addTest(new DOMFailedTest("testBug36704"));
 		suite.addTest(new DOMFailedTest("testBug36707"));
 		suite.addTest(new DOMFailedTest("testBug36708"));
+		suite.addTest(new DOMFailedTest("testBug36713"));
+		suite.addTest(new DOMFailedTest("testBug36714"));
+		suite.addTest(new DOMFailedTest("testBug36717"));
+		suite.addTest(new DOMFailedTest("testBug36730"));
 		return suite;
 	}
 
@@ -250,5 +254,67 @@ public class DOMFailedTest extends DOMTests {
 				fail("The expected error did not occur.");
 		}
 	}
+	
+	public void testBug36713(){
+		boolean testPassed = false;
+		try{
+			Writer code = new StringWriter();
+			code.write("A (const * fPtr) (void *); \n");
+			code.write("A (const * fPtr2) ( A * ); \n");
+			code.write("A (const * fPtr3) ( A * ) = function\n");
+			TranslationUnit tu = parse(code.toString());
+			testPassed = true;
+		} catch (Throwable e ) {
+			if( ! (e instanceof ParserException))
+				fail( "Unexpected Error: " + e.getMessage() );
+		}
+		if( testPassed )
+			fail( "The expected error did not occur.");
+	}
 
+	public void testBug36714(){
+		boolean testPassed = false;
+		try{
+			Writer code = new StringWriter();
+			code.write("unsigned long a = 0UL;\n");
+			code.write("unsigned long a2 = 0L; \n");
+
+			TranslationUnit tu = parse(code.toString());
+			testPassed = true;
+		} catch (Throwable e ) {
+			if( ! (e instanceof ParserException))
+				fail( "Unexpected Error: " + e.getMessage() );
+		}
+		if( testPassed )
+			fail( "The expected error did not occur.");
+	}
+	
+	public void testBug36717(){
+		boolean testPassed = false;
+		try{
+			TranslationUnit tu =
+				parse("enum { eA = A::b };");
+			
+			testPassed = true;
+		} catch (Throwable e ) {
+			if( ! (e instanceof ParserException))
+				fail( "Unexpected Error: " + e.getMessage() );
+		}
+		if( testPassed )
+			fail( "The expected error did not occur.");
+	}
+	
+	public void testBug36730(){
+		boolean testPassed = false;
+		try{
+			TranslationUnit tu = parse("FUNCTION_MACRO( 1, a );\n	int i;");
+		
+			testPassed = true;
+		} catch (Throwable e ) {
+			if( ! (e instanceof ParserException))
+				fail( "Unexpected Error: " + e.getMessage() );
+		}
+		if( testPassed )
+			fail( "The expected error did not occur.");
+	}
 }

@@ -1,4 +1,8 @@
 2005-02-14 Alain Magloire
+	Fix from Javier Kohen PR 69157
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+
+2005-02-14 Alain Magloire
 	Fix for PR 84640, do the folding at the start of the ID
 	so code like this
 	 static int

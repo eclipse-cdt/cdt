@@ -33,12 +33,12 @@
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
       <tool
             natureFilter="both"
-            sources="rc"
             name="Target Independent Tool"
+            sources="rc"
             headerExtensions="h"
             outputFlag="/fo"
-            outputs="free"
             command="RC.EXE"
+            outputs="free"
             id="target.independent.tool">
          <optionCategory
                owner="target.independent.tool"
@@ -49,8 +49,8 @@
                defaultValue="Live free or die"
                name="String in Free"
                category="indy.cat.free"
-               id="org.eclipse.cdt.core.tests.option1"
-               valueType="string">
+               valueType="string"
+               id="org.eclipse.cdt.core.tests.option1">
          </option>
          <optionCategory
                owner="indy.cat.free"
@@ -61,8 +61,8 @@
                defaultValue="false"
                name="Boolean in Chained"
                category="indy.cat.chained"
-               id="org.eclipse.cdt.core.tests.option2"
-               valueType="boolean">
+               valueType="boolean"
+               id="org.eclipse.cdt.core.tests.option2">
          </option>
       </tool>
       <target
@@ -73,17 +73,17 @@
             defaultExtension="toor"
             isAbstract="false"
             makeCommand="make"
-            makeFlags="-k"
             binaryParser="org.eclipse.cdt.core.PE"
+            makeFlags="-k"
             osList="win32">
          <tool
                natureFilter="cnature"
-               name="Root Tool"
                sources="foo,bar"
+               name="Root Tool"
                headerExtensions="baz"
                outputFlag="-r"
-               command="doIt"
                outputs="toor"
+               command="doIt"
                id="root.tool">
             <optionCategory
                   owner="root.tool"
@@ -93,39 +93,39 @@
             <option
                   name="List Option in Top"
                   command="-L"
-                  id="list.option"
-                  valueType="stringList">
+                  valueType="stringList"
+                  id="list.option">
                <listOptionValue
                      value="a">
                </listOptionValue>
                <listOptionValue
-                     builtIn="false"
-                     value="b">
+                     value="b"
+                     builtIn="false">
                </listOptionValue>
                <listOptionValue
-                     builtIn="true"
-                     value="c">
+                     value="c"
+                     builtIn="true">
                </listOptionValue>
             </option>
             <option
                   defaultValue="false"
                   name="Boolean Option in Top"
                   command="-b"
-                  id="boolean.option"
-                  valueType="boolean">
+                  valueType="boolean"
+                  id="boolean.option">
             </option>
             <option
                   defaultValue="x"
                   name="String Option in Category"
                   category="category"
-                  id="string.option"
-                  valueType="string">
+                  valueType="string"
+                  id="string.option">
             </option>
             <option
                   name="Enumerated Option in Category"
                   category="category"
-                  id="enumerated.option"
-                  valueType="enumerated">
+                  valueType="enumerated"
+                  id="enumerated.option">
                <enumeratedOptionValue
                      name="Default Enum"
                      isDefault="true"
@@ -198,17 +198,17 @@
          </configuration>
          <tool
                natureFilter="both"
-               name="Sub Tool"
                sources="yarf"
+               name="Sub Tool"
                headerExtensions="arf,barf"
-               outputPrefix="lib"
                outputs="bus"
+               outputPrefix="lib"
                id="tool.sub">
             <option
                   name="Include Paths"
                   command="-I"
-                  id="sub.tool.opt.inc.paths"
-                  valueType="includePath">
+                  valueType="includePath"
+                  id="sub.tool.opt.inc.paths">
                <listOptionValue
                      value="/usr/include">
                </listOptionValue>
@@ -216,45 +216,45 @@
                      value="/opt/gnome/include">
                </listOptionValue>
                <listOptionValue
-                     builtIn="true"
-                     value="/usr/gnu/include">
+                     value="/usr/gnu/include"
+                     builtIn="true">
                </listOptionValue>
             </option>
             <option
                   name="Defined Symbols"
                   command="-D"
-                  id="sub.tool.opt.def.symbols"
-                  valueType="definedSymbols">
+                  valueType="definedSymbols"
+                  id="sub.tool.opt.def.symbols">
                <listOptionValue
-                     builtIn="true"
-                     value="BUILTIN">
+                     value="BUILTIN"
+                     builtIn="true">
                </listOptionValue>
             </option>
             <option
                   name="More Includes"
                   command="-I"
-                  id="sub.tool.opts.inc.paths.more"
-                  valueType="includePath">
+                  valueType="includePath"
+                  id="sub.tool.opts.inc.paths.more">
                <listOptionValue
-                     builtIn="false"
-                     value="C:\home\tester/include">
+                     value="C:\home\tester/include"
+                     builtIn="false">
                </listOptionValue>
                <listOptionValue
-                     builtIn="false"
-                     value="&quot;../includes&quot;">
+                     value="&quot;../includes&quot;"
+                     builtIn="false">
                </listOptionValue>
             </option>
             <option
                   name="User Objects"
-                  id="sub.tool.opt.objs"
-                  valueType="userObjs">
+                  valueType="userObjs"
+                  id="sub.tool.opt.objs">
                <listOptionValue
-                     builtIn="false"
-                     value="obj1.o">
+                     value="obj1.o"
+                     builtIn="false">
                </listOptionValue>
                <listOptionValue
-                     builtIn="false"
-                     value="obj2.o">
+                     value="obj2.o"
+                     builtIn="false">
                </listOptionValue>
             </option>
          </tool>
@@ -262,8 +262,8 @@
       <target
             isTest="true"
             name="Test Sub Sub"
-            binaryParser="org.eclipse.cdt.core.ELF"
             parent="test.sub"
+            binaryParser="org.eclipse.cdt.core.ELF"
             defaultExtension="tss"
             makeCommand="nmake"
             id="test.sub.sub">
@@ -271,11 +271,17 @@
                id="target.independent.tool">
          </toolReference>
       </target>
+      <dynamicElementProvider
+            class="org.eclipse.cdt.core.build.managed.tests.TestManagedConfigProvider">
+      </dynamicElementProvider>
+      <dynamicElementProvider
+            class="org.eclipse.cdt.core.build.managed.tests.BadManagedConfigProvider">
+      </dynamicElementProvider>
       <target
             isTest="true"
             name="Forward Grandchild"
-            binaryParser="org.eclipse.cdt.core.tests.target1"
             parent="test.forward.child.target"
+            binaryParser="org.eclipse.cdt.core.tests.target1"
             id="test.forward.grandchild.target">
          <toolReference
                command="newcommand"
@@ -286,8 +292,8 @@
             isTest="true"
             osList="win32,solaris,linux"
             name="Forward Child"
-            parent="test.forward.parent.target"
             binaryParser="org.eclipse.cdt.core.tests.target2"
+            parent="test.forward.parent.target"
             id="test.forward.child.target">
          <toolReference
                id="test.forward.tool">

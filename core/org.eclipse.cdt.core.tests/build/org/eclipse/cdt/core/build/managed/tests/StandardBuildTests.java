@@ -1,4 +1,14 @@
 package org.eclipse.cdt.core.build.managed.tests;
+/**********************************************************************
+ * Copyright (c) 2002,2004 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
 
 import java.util.Arrays;
 import java.util.Map;
@@ -10,7 +20,6 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -20,7 +29,6 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
-import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -28,17 +36,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-/**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
- * 
- * Contributors: 
- * IBM Rational Software - Initial API and implementation
-***********************************************************************/
 
 public class StandardBuildTests extends TestCase {
 	private static final String DEFAULT_BUILD_COMMAND = "make";

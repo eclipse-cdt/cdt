@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
@@ -104,6 +106,7 @@ public class ManagedBuildTests extends TestCase {
 		ITarget testForwardChild = null;
 		ITarget testForwardParent = null;
 		ITarget testForwardGrandchild = null;
+		int numProviderTargets = 0;
 		
 		// Note secret null parameter which means just extensions
 		ITarget[] targets = ManagedBuildManager.getDefinedTargets(null);
@@ -126,6 +129,9 @@ public class ManagedBuildTests extends TestCase {
 				testForwardParent = target;
 			} else if (target.getName().equals("Forward Grandchild")) {
 				testForwardGrandchild = target;
+			} else if (target.getId().startsWith("test.provider.Test_")) {
+				numProviderTargets++;
+				checkProviderTarget(target);
 			}
 		}
 		// check that the forward references are properly resolved.
@@ -133,6 +139,9 @@ public class ManagedBuildTests extends TestCase {
 		assertNotNull(testForwardParent);
 		assertNotNull(testForwardGrandchild);
 		checkForwardTargets(testForwardParent, testForwardChild, testForwardGrandchild);
+		
+		// check that the proper number of target were dynamically provided
+		assertEquals(3, numProviderTargets);
 		
 		// All these targets are defines in the plugin files, so none
 		// of them should be null at this point
@@ -1131,6 +1140,26 @@ public class ManagedBuildTests extends TestCase {
 		ToolReference grandToolRef = (ToolReference)grandTools[2];
 		assertEquals(parentTool, grandToolRef.getTool());
 		
+	}
+	
+	public void checkProviderTarget(ITarget target) throws Exception {
+		Properties props = new Properties();
+		props.load(getClass().getResourceAsStream("test_commands"));
+
+		// check that this target is in the file
+		String command = props.getProperty(target.getId());
+		assertNotNull(command);
+		
+		ITarget parent = target.getParent();
+		assertNotNull(parent);
+		assertEquals("test.forward.parent.target", parent.getId());
+		
+		ITool[] tools = target.getTools();
+		assertEquals(2, tools.length);
+		ITool toolRef = tools[1];
+		assertTrue(toolRef instanceof IToolReference);
+		assertEquals(toolRef.getId(), "test.forward.tool");
+		assertEquals(command, toolRef.getToolCommand());
 	}
 	
 	/**

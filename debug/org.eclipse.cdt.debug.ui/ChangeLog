@@ -2,6 +2,14 @@
 	Fix for PR 45957: Memory view: last column does not show updates.
 	* MemoryPresentation.java
 
+2003-10-06 Mikhail Khodjaiants
+	Mark the function arguments in the Variables View.
+	* icons\full\ovr16\argument_ovr.gif: new
+	* icons\full\ovr16\castarray_ovr.gif: new
+	* icons\full\ovr16\casttype_ovr.gif: new
+	* CDebugImages.java
+	* CDTDebugModelPresentation.java
+
 2003-09-30 Mikhail Khodjaiants
 	Fix for PR 39737: Tooltip in debug mode over long strings is not handled properly.
 	Added an internal constant to limit the hover text size.

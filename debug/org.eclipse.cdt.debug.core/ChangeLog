@@ -7,6 +7,12 @@
 	All methods of 'IRuntimeOptions' should throw CDI exceptions in case of failure.
 	* ICDIRuntimeOptions.java
 
+2003-10-06 Mikhail Khodjaiants
+	Added the "isArgument" method to ICVariable. This method is used to distinguish 
+	the arguments in the Variables View.
+	* ICVariable.java
+	* CVariable.java
+
 2003-09-30 Mikhail Khodjaiants
 	Use the new 'equals' method of ICDIVaraiableObject to compare variables.
 	* CVariable.java

@@ -31,4 +31,6 @@ public interface ICVariable extends IVariable
 	void setEnabled( boolean enabled ) throws DebugException;
 
 	boolean canEnableDisable();
+
+	boolean isArgument();
 }

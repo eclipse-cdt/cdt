@@ -981,7 +981,7 @@ public abstract class CVariable extends CDebugElement
 		}
 	}
 
-	protected boolean isArgument()
+	public boolean isArgument()
 	{
 		return ( fOriginal != null ) ? ( fOriginal.getCDIVariableObject() instanceof ICDIArgumentObject ) : false;
 	}

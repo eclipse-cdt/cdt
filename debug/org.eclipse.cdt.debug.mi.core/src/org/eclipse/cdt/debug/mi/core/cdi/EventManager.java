@@ -52,6 +52,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibUnloadedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
@@ -115,12 +116,25 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something change we do not know what
 					// Let the breakpoint manager handle it with an update().
 					try {
-						((BreakpointManager)(session.getBreakpointManager())).update();
+						session.getBreakpointManager().update();
 					} catch (CDIException e) {
 					}
 				}
 			} else if (miEvent instanceof MISharedLibChangedEvent) {
 				cdiList.add(new ChangedEvent(session, (MISharedLibChangedEvent)miEvent));
+			} else if (miEvent instanceof MISignalChangedEvent) {
+				MISignalChangedEvent sig = (MISignalChangedEvent)miEvent;
+				String name = sig.getName();
+				if (name == null || name.length() == 0) {
+					// Something change we do not know what
+					// Let the signal manager handle it with an update().
+					try {
+						session.getSignalManager().update();
+					} catch (CDIException e) {
+					}
+				} else {
+					cdiList.add(new ChangedEvent(session, sig));
+				}
 			}
 		} else if (miEvent instanceof MIDestroyedEvent) {
 			if (miEvent instanceof MIThreadExitEvent) {
@@ -139,7 +153,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something was deleted we do not know what
 					// Let the breakpoint manager handle it with an update().
 					try {
-						((BreakpointManager)(session.getBreakpointManager())).update();
+						session.getBreakpointManager().update();
 					} catch (CDIException e) {
 					}
 				}
@@ -155,7 +169,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something created we do not know what
 					// Let the breakpoint manager handle it with an update().
 					try {
-						((BreakpointManager)(session.getBreakpointManager())).update();
+						session.getBreakpointManager().update();
 					} catch (CDIException e) {
 					}
 				}

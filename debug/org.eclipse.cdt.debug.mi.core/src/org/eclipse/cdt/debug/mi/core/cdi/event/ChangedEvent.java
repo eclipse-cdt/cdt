@@ -9,11 +9,13 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 
 /**
@@ -84,6 +87,18 @@ public class ChangedEvent implements ICDIChangedEvent {
 		ICDISharedLibrary lib = mgr.getSharedLibrary(name);
 		if (lib != null) {
 			source = lib;
+		} else {
+			source = new CObject(session.getCurrentTarget());
+		}
+	}
+
+	public ChangedEvent(Session s, MISignalChangedEvent sig) {
+		session = s;
+		SignalManager mgr = (SignalManager)session.getSignalManager();
+		String name = sig.getName();
+		ICDISignal signal = mgr.getSignal(name);
+		if (signal != null) {
+			source = signal;
 		} else {
 			source = new CObject(session.getCurrentTarget());
 		}

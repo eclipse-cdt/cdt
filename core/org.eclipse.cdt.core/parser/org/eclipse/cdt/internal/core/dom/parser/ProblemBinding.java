@@ -17,8 +17,10 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -83,7 +85,9 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
 
-        Object[] args = new Object[] { msg, new String("") /*file*/, new Integer(0) /*line*/}; //$NON-NLS-1$        
+        IASTNodeLocation [] locs = node.getNodeLocations();
+        IASTFileLocation fileLoc = node.getTranslationUnit().flattenLocationsToFile( locs );
+        Object[] args = new Object[] { msg, fileLoc.getFileName(), new Integer(-1) }; //$NON-NLS-1$        
         message = ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
         return message;
     }

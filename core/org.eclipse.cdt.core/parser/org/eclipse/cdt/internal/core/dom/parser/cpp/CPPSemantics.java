@@ -461,9 +461,11 @@ public class CPPSemantics {
                 binding = e.getProblem();
             }
 		    
-		}        
-        if( data.astName.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
-            binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
+		}    
+        if( binding != null ) {
+	        if( data.astName.getPropertyInParent() == IASTNamedTypeSpecifier.NAME && !( binding instanceof IType || binding instanceof ICPPConstructor) ){
+	            binding = new ProblemBinding( data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
+	        }
         }
         
 		if( binding != null && !( binding instanceof IProblemBinding ) ){

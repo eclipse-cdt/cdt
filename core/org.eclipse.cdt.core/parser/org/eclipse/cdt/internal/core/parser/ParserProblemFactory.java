@@ -39,7 +39,8 @@ public class ParserProblemFactory extends BaseProblemFactory
 		if( checkBitmask( id, IProblem.INTERNAL_RELATED ) )  
 			return createInternalProblem( id, start, end, line, file, arg, warn, error );		
 		
-		if ( 	checkBitmask( id, IProblem.SYNTAX_RELATED ) )
+		if ( 	checkBitmask( id, IProblem.SYNTAX_RELATED ) ||
+		        checkBitmask( id, IProblem.SEMANTICS_RELATED) )
 			return super.createProblem(
 				id,
 				start,

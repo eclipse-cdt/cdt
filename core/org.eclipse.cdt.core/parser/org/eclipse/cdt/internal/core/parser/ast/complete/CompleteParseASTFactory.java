@@ -1383,7 +1383,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
 		}
 		
-		if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) && 
+		if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) || 
 			!rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) ) 
 		{
 			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null ); 

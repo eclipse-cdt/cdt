@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -129,10 +128,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return  getCProjects((ICModel)element);
 		} else if  (element instanceof ICProject ) {
 			return getSourceRoots((ICProject)element);
-		} else if (element instanceof IBinaryContainer) {
-			return ((IBinaryContainer)element).getBinaries();
-		} else if (element instanceof IArchiveContainer) {
-			return ((IArchiveContainer)element).getArchives();
 		} else if (element instanceof ICContainer) {
 			return getCResources((ICContainer)element);
 		} else if (element instanceof ITranslationUnit) {
@@ -292,21 +287,6 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			//
 		}
 
-		IArchiveContainer archives = cproject.getArchiveContainer(); 
-		if (archives.hasChildren()) {
-			objects = concatenate(objects, new Object[] {archives});
-		}
-		IBinaryContainer bins = cproject.getBinaryContainer(); 
-		if (bins.hasChildren()) {
-			objects = concatenate(objects, new Object[] {bins});
-		}
-		try {
-			ILibraryReference[] refs = cproject.getLibraryReferences();
-			if (refs != null && refs.length > 0) {
-				objects = concatenate(objects, refs);
-			}
-		} catch (CModelException e) {
-		}
 		return objects;
 	}
 

@@ -112,7 +112,7 @@ public class CPListElement {
 				return CoreModel.newSourceEntry(fPath, exclusionPattern);
 			case IPathEntry.CDT_LIBRARY:
 				IPath attach = (IPath) getAttribute(SOURCEATTACHMENT);
-				return CoreModel.newLibraryEntry(fPath, attach, null, null, isExported());
+				return CoreModel.newLibraryEntry(fPath, null, attach, null, null, isExported());
 			case IPathEntry.CDT_PROJECT:
 				return CoreModel.newProjectEntry(fPath, isExported());
 			case IPathEntry.CDT_CONTAINER:

@@ -16,8 +16,7 @@ public class CPListElementSorter extends ViewerSorter {
 	private static final int SOURCE = 0;
 	private static final int PROJECT = 1;
 	private static final int LIBRARY = 2;
-	private static final int VARIABLE = 3;
-	private static final int CONTAINER = 4;
+	private static final int CONTAINER = 3;
 	private static final int OTHER = 5;
 
 	/*
@@ -32,8 +31,6 @@ public class CPListElementSorter extends ViewerSorter {
 					return PROJECT;
 				case IPathEntry.CDT_SOURCE:
 					return SOURCE;
-				case IPathEntry.CDT_VARIABLE:
-					return VARIABLE;
 				case IPathEntry.CDT_CONTAINER:
 					return CONTAINER;
 			}

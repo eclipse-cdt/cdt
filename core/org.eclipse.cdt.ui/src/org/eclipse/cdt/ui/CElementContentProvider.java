@@ -110,7 +110,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				(flags & ICElementDelta.F_ADDED_PATHENTRY_SOURCE) != 0 ||
 				(flags & ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY) != 0 ||
 				(flags & ICElementDelta.F_PATHENTRY_REORDER) != 0 ||
-				(flags & ICElementDelta.F_REMOVED_PATHENTRY_SOURCE) != 0));
+				(flags & ICElementDelta.F_REMOVED_PATHENTRY_SOURCE) != 0 ||
+				(flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0));
 	}
 
 	/**

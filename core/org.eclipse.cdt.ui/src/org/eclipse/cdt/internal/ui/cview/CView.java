@@ -550,7 +550,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	protected CElementContentProvider createContentProvider() {
 		boolean showCUChildren = CPluginPreferencePage.showCompilationUnitChildren();
-		return new CElementContentProvider(showCUChildren, true);
+		return new CViewContentProvider(showCUChildren, true);
 	}
 
 	protected StandardCElementLabelProvider createLabelProvider() {

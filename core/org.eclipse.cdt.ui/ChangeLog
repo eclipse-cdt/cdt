@@ -1,3 +1,20 @@
+2004-04-03 Alain Magloire
+
+	Draft support for LibraryReference and IncludeReference
+	CView has its own ContentProvider.
+	WORK IN PROGRESS
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java
+	* src/org/eclipse/cdt/internal/ui/cview/LibraryRefContainer.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/CPListElement.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/CPListElementSorter.java
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java
+
 2004-04-04 John Camelon
 	Fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=43215
 

@@ -16,14 +16,12 @@ import java.util.Map;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
-import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCDesignator;
@@ -33,8 +31,8 @@ import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeId;
 import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.ASTGCCSimpleTypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.ast.expression.ASTIdExpression;
-import org.eclipse.cdt.internal.core.parser.ast.expression.ExpressionFactory;
+import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.GCCASTCompleteExtension;
+import org.eclipse.cdt.internal.core.parser.ast.expression.GCCASTExpressionExtension;
 import org.eclipse.cdt.internal.core.parser.ast.gcc.ASTGCCDesignator;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
@@ -44,62 +42,16 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
  * @author jcamelon
  *
  */
-public class GCCASTExtension implements IASTFactoryExtension {
-	private final ParserMode mode;
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+public abstract class GCCASTExtension implements IASTFactoryExtension {
+	protected final ParserMode mode;
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * @param mode
 	 */
 	public GCCASTExtension(ParserMode mode) {
 		this.mode = mode;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#overrideExpressionFactory()
-	 */
-	public boolean overrideCreateExpressionMethod() {
-		if( mode == ParserMode.EXPRESSION_PARSE )
-			return true;
-		return false;
-	}
 	
-	
-	/**
-	 * @param kind
-	 * @param lhs
-	 * @param rhs
-	 * @param thirdExpression
-	 * @param typeId
-	 * @param string
-	 * @param literal
-	 * @param newDescriptor
-	 * @return
-	 */
-	protected static IASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {			
-		if( !idExpression.equals( EMPTY_STRING ) && literal.equals( EMPTY_STRING ))
-			return new ASTIdExpression( kind, idExpression )
-			{
-				public long evaluateExpression() throws ASTExpressionEvaluationException {
-					if( getExpressionKind() == Kind.ID_EXPRESSION )
-						return 0;
-					return super.evaluateExpression();
-				}
-			};
-		
-		return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor );
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#createExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTTypeId, org.eclipse.cdt.core.parser.ITokenDuple, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor)
-	 */
-	public IASTExpression createExpression(IASTScope scope, Kind kind,
-			IASTExpression lhs, IASTExpression rhs,
-			IASTExpression thirdExpression, IASTTypeId typeId,
-			ITokenDuple idExpression, String literal,
-			IASTNewExpressionDescriptor newDescriptor)
-	{
-		return createExpression( kind, lhs, rhs, thirdExpression, typeId, (idExpression == null ) ? EMPTY_STRING : idExpression.toString(), literal, newDescriptor );
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#canHandleExpressionKind(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind)
 	 */
@@ -182,5 +134,16 @@ public class GCCASTExtension implements IASTFactoryExtension {
 	public IASTDesignator createDesignator(DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms) {
 		IASTExpression secondExpression = (IASTExpression) extensionParms.get( IASTGCCDesignator.SECOND_EXRESSION );
 		return new ASTGCCDesignator( kind, constantExpression, EMPTY_STRING, -1, secondExpression );
+	}
+
+	/**
+	 * @param mode2
+	 * @return
+	 */
+	public static IASTFactoryExtension createExtension(ParserMode parseMode) {
+		if( parseMode == ParserMode.EXPRESSION_PARSE ||	parseMode == ParserMode.QUICK_PARSE )
+			return new GCCASTExpressionExtension( parseMode );
+		
+		return new GCCASTCompleteExtension( parseMode );
 	}
 }

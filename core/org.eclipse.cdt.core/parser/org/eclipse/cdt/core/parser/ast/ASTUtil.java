@@ -264,7 +264,17 @@ public class ASTUtil {
 	}
 	
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	/**
+	 * Return a string for the given expression.  Expressions having an extension kind should
+	 * provide their own toString method which will be called by this.
+	 * @param expression
+	 * @return
+	 */
 	public static String getExpressionString( IASTExpression expression ){
+		
+		if( expression.getExpressionKind().isExtensionKind() )
+			return expression.toString();
+		
 		String literal = expression.getLiteralString();
 		String idExpression = expression.getIdExpression();
 		

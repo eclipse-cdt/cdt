@@ -1130,8 +1130,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// expression results could be empty, but should not be null
 //		assert expressionResult != null  : expressionResult; //throw new ASTSemanticException();
 			
-		// create the ASTExpression	
-		ASTExpression expression =  ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor, references );
+		// create the ASTExpression
+		ASTExpression expression = null;
+		if( extension.overrideCreateExpressionMethod() )
+			expression = (ASTExpression) extension.createExpression( scope, kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor, references );
+		else 
+			expression =  ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor, references );
 		// Assign the result to the created expression										
 		expression.setResultType (expressionResult);
 

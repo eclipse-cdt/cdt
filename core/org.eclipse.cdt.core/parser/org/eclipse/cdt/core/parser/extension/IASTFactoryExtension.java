@@ -10,6 +10,7 @@
 
 package org.eclipse.cdt.core.parser.extension;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -39,7 +40,10 @@ public interface IASTFactoryExtension {
             IASTExpression rhs,
             IASTExpression thirdExpression,
             IASTTypeId typeId,
-            ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor);
+            ITokenDuple idExpression, 
+			String literal, 
+			IASTNewExpressionDescriptor newDescriptor, 
+			List references);
     
     public boolean canHandleExpressionKind( IASTExpression.Kind kind );
 	/**
@@ -65,4 +69,5 @@ public interface IASTFactoryExtension {
     
     public boolean overrideCreateDesignatorMethod( IASTDesignator.DesignatorKind kind );
     public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms );
+
 }

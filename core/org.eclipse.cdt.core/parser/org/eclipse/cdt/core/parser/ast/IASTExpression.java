@@ -122,6 +122,10 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
             super(enumValue);
         }
 
+        public boolean isExtensionKind(){
+        	return getEnumValue() > LAST_KIND;
+        }
+        
         private static final Hashtable names;
         static
 		{

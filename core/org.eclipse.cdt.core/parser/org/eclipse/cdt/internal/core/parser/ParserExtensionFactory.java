@@ -58,7 +58,7 @@ public class ParserExtensionFactory implements IParserExtensionFactory {
 	 */
 	public IASTFactoryExtension createASTExtension(ParserMode mode) {
 		if( dialect == ExtensionDialect.GCC )
-			return new GCCASTExtension( mode );
+			return GCCASTExtension.createExtension( mode );
 		throw new ParserFactoryError( ParserFactoryError.Kind.BAD_DIALECT );
 	}
 

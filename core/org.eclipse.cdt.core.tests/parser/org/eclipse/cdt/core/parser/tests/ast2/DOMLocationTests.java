@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -173,6 +175,16 @@ public class DOMLocationTests extends AST2BaseTest {
        assertSoleLocation( expression, code.indexOf( "return ") + "return ".length(), 1 ); //$NON-NLS-1$ //$NON-NLS-2$
    }
    
+   public void testBug84343() throws Exception {
+      String code = "class A {}; int f() {\nA * b = 0;\nreturn b;}"; //$NON-NLS-1$
+      IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+      IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[1];
+      IASTDeclarationStatement ds = (IASTDeclarationStatement) ((IASTCompoundStatement)f.getBody()).getStatements()[0];
+      IASTSimpleDeclaration b = (IASTSimpleDeclaration) ds.getDeclaration();
+      ICPPASTNamedTypeSpecifier namedTypeSpec = (ICPPASTNamedTypeSpecifier) b.getDeclSpecifier();
+      assertSoleLocation( namedTypeSpec, code.indexOf( "\nA") + 1, 1 ); //$NON-NLS-1$
+   }
+
 
    public void testElaboratedTypeSpecifier() throws ParserException {
       String code = "/* blah */ struct A anA; /* blah */"; //$NON-NLS-1$

@@ -2932,6 +2932,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       ICPPASTElaboratedTypeSpecifier elabSpec = null;
       IASTEnumerationSpecifier enumSpec = null;
       IASTExpression typeofExpression = null;
+      int startOffset = firstToken.getOffset();
+      
       declSpecifiers: for (;;) {
          switch (LT(1)) {
             case IToken.t_inline:
@@ -3140,6 +3142,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          elabSpec.setStorageClass(storageClass);
          elabSpec.setVirtual(isVirtual);
          elabSpec.setExplicit(isExplicit);
+         ((CPPASTNode)elabSpec).setOffsetAndLength( startOffset, calculateEndOffset(elabSpec)- startOffset );
          return elabSpec;
       }
       if (enumSpec != null) {
@@ -3152,6 +3155,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          ((ICPPASTDeclSpecifier) enumSpec).setExplicit(isExplicit);
          enumSpec.setInline(isInline);
          enumSpec.setStorageClass(storageClass);
+         ((CPPASTNode)enumSpec).setOffsetAndLength( startOffset, calculateEndOffset(enumSpec) - startOffset );
          return (ICPPASTDeclSpecifier) enumSpec;
       }
       if (classSpec != null) {
@@ -3164,6 +3168,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          classSpec.setStorageClass(storageClass);
          classSpec.setVirtual(isVirtual);
          classSpec.setExplicit(isExplicit);
+         ((CPPASTNode)classSpec).setOffsetAndLength( startOffset, calculateEndOffset(classSpec) - startOffset );
          return classSpec;
       }
       if (duple != null) {
@@ -3183,6 +3188,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          nameSpec.setStorageClass(storageClass);
          nameSpec.setVirtual(isVirtual);
          nameSpec.setExplicit(isExplicit);
+         ((CPPASTNode)nameSpec).setOffsetAndLength( startOffset, last.getEndOffset() - startOffset );
          return nameSpec;
       }
       ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;

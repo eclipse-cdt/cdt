@@ -1,3 +1,7 @@
+2004-12-20 Alain Magloire
+	Fix PR 50578
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java
+
 2004-12-14 Alain Magloire
 	PR 80631 Patch form Przemek Tomaszewski
 	* src/org/eclipse/cdt/internal/ui/editor/CContentOutilinePage.java

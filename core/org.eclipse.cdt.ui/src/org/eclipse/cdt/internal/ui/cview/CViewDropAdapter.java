@@ -176,9 +176,8 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	protected IStatus error(IResource source, String message) {
 		if (getCurrentOperation() == DND.DROP_COPY) {
 			return error("Can Not Copy", null); //$NON-NLS-1$
-		} else {
-			return error("Can Not Move", null); //$NON-NLS-1$
 		}
+		return error("Can Not Move", null); //$NON-NLS-1$
 	}
 
 	/**
@@ -247,16 +246,15 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		problems.toArray(children);
 		if (children.length == 1) {
 			return children[0];
-		} else {
-			return new MultiStatus(PlatformUI.PLUGIN_ID, 0, children, message, null);
 		}
+		return new MultiStatus(PlatformUI.PLUGIN_ID, 0, children, message, null);
 	}
 
 	/**
 	 * Returns an status indicating success.
 	 */
 	protected IStatus ok() {
-		return new Status(Status.OK, PlatformUI.PLUGIN_ID, 0, "Ok", null); //$NON-NLS-1$
+		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "Ok", null); //$NON-NLS-1$
 	}
 
 	/**
@@ -462,11 +460,6 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	public boolean validateDrop(Object target, int dragOperation, TransferData transferType) {
 		if (dragOperation != DND.DROP_NONE) {
 			lastValidOperation = dragOperation;
-		}
-		if (FileTransfer.getInstance().isSupportedType(transferType) &&
-			lastValidOperation != DND.DROP_COPY) {
-			// only allow copying when dragging from outside Eclipse
-			return false;
 		}
 
 		if (super.validateDrop(target, dragOperation, transferType)) {

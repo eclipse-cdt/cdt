@@ -314,7 +314,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				buffer.append('+').append(start);
 			}
 			buffer.append(')');
-			buffer.append('@').append(end - start + 1);
+			buffer.append('@').append(end - start);
 			return new VariableObject(obj, buffer.toString());
 		}
 		throw new CDIException("Unknown variable object");

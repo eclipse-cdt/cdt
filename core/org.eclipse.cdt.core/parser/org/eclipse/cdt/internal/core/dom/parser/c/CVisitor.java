@@ -1345,6 +1345,14 @@ public class CVisitor {
 				if( !visitDeclaration( parmDeclarations[i], action ) ) return false;
 			}
 		}
+		else if( declarator instanceof IASTArrayDeclarator )
+		{
+		   IASTArrayDeclarator arrayDecl = (IASTArrayDeclarator) declarator;
+		   IASTArrayModifier [] mods = arrayDecl.getArrayModifiers();
+		   for( int i = 0; i < mods.length; ++i )
+		      if( mods[i].getConstantExpression() != null && 
+		            !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
+		}
 		return true;
 	}
 	
@@ -1690,6 +1698,9 @@ public class CVisitor {
 				return new CQualifierType(declSpec);
 			
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
+			
+			if (!(nameSpec.getName().resolveBinding() instanceof IType)) return null;
+			
 			lastType = (IType) nameSpec.getName().resolveBinding();			
 			
 			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);

@@ -57,6 +57,11 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	}
 	
 	private void addRoot(IASTNode node) {
+		if (!(node.getNodeLocations().length > 0 && 
+				node.getNodeLocations()[0].getNodeOffset() > 0 &&
+				node.getNodeLocations()[0].getNodeLength() > 0))
+			return;
+		
 		TreeParent parent = root.findParentOfNode(node);
 		
 		if ( parent != null ) {

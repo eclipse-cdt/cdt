@@ -14,8 +14,10 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -24,21 +26,39 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
-import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author dsteffle
  */
 public class TreeObject implements IAdaptable {
-	private static final String DASH = "-";
+	private static final String OP_BRACKETEDPRIMARY = "( )"; //$NON-NLS-1$
+	private static final String OP_TILDE = "~"; //$NON-NLS-1$
+	private static final String OP_SIZEOF = "sizeof"; //$NON-NLS-1$
+	private static final String OP_INCR = "++"; //$NON-NLS-1$
+	private static final String OP_DECR = "--"; //$NON-NLS-1$
+	private static final String OP_NOT = "!"; //$NON-NLS-1$
+	private static final String OP_AMPER = "&"; //$NON-NLS-1$
+	private static final String OP_TYPEOF = "typeof"; //$NON-NLS-1$
+	private static final String OP_ALIGNOF = "alignof"; //$NON-NLS-1$
+	private static final String OP_TYPEID = "typeid"; //$NON-NLS-1$
+	private static final String OP_THROW = "throw"; //$NON-NLS-1$
+	private static final String VARIABLE_SIZED_ = "* "; //$NON-NLS-1$
+	private static final String VOLATILE_ = "volatile "; //$NON-NLS-1$
+	private static final String STATIC_ = "static "; //$NON-NLS-1$
+	private static final String RESTRICT_ = "restrict "; //$NON-NLS-1$
+	private static final String CONST_ = "const "; //$NON-NLS-1$
+	private static final String DASH = "-"; //$NON-NLS-1$
 	private static final String OP_NOTEQUALS = "!="; //$NON-NLS-1$
 	private static final String OP_EQUALS = "=="; //$NON-NLS-1$
 	private static final String OP_BINARYXORASSIGN = "^="; //$NON-NLS-1$
@@ -67,7 +87,7 @@ public class TreeObject implements IAdaptable {
 	private static final String OP_PLUS = "+"; //$NON-NLS-1$
 	private static final String OP_MODULO = "%"; //$NON-NLS-1$
 	private static final String OP_DIVIDE = "/"; //$NON-NLS-1$
-	private static final String OP_MULTIPLY = "*"; //$NON-NLS-1$
+	private static final String OP_STAR = "*"; //$NON-NLS-1$
 	private static final String OP_MIN = "<?"; //$NON-NLS-1$
 	private static final String OP_MAX = ">?"; //$NON-NLS-1$
 	private static final String OP_PMDOT = "."; //$NON-NLS-1$
@@ -180,28 +200,113 @@ public class TreeObject implements IAdaptable {
 		} else if ( node instanceof IASTLiteralExpression ) {
 			buffer.append(START_OF_LIST);
 			buffer.append(node.toString());
+		} else if ( node instanceof IASTUnaryExpression ) {
+			buffer.append(START_OF_LIST);
+			buffer.append( getUnaryOperatorString( (IASTUnaryExpression)node ) );
 		} else if ( node instanceof IASTBinaryExpression ) {
 			buffer.append(START_OF_LIST);
-			buffer.append( getBinaryOperatorString( (IASTBinaryExpression)node) );
+			buffer.append( getBinaryOperatorString( (IASTBinaryExpression)node ) );
 		} else if ( node instanceof ICASTDesignator ) {
-			if (node instanceof ICASTArrayDesignator) {
+			if ( node instanceof ICASTArrayDesignator && ((ICASTArrayDesignator)node).getSubscriptExpression() != null ) {
 				buffer.append(START_OF_LIST);
-				buffer.append(((ICASTArrayDesignator)node).getSubscriptExpression()); // TODO Devin need to test this!
-			} else if (node instanceof ICASTFieldDesignator) {
+				buffer.append(((ICASTArrayDesignator)node).getSubscriptExpression());
+			} else if ( node instanceof ICASTFieldDesignator && ((ICASTFieldDesignator)node).getName() != null ) {
 				buffer.append(START_OF_LIST);
 				buffer.append(((ICASTFieldDesignator)node).getName());
-			} else if (node instanceof IGCCASTArrayRangeDesignator) {
+			} else if ( node instanceof IGCCASTArrayRangeDesignator && ((IGCCASTArrayRangeDesignator)node).getRangeCeiling() != null && ((IGCCASTArrayRangeDesignator)node).getRangeFloor() != null ) {
 				buffer.append(START_OF_LIST);
 				buffer.append(((IGCCASTArrayRangeDesignator)node).getRangeCeiling());
 				buffer.append(DASH);
 				buffer.append(((IGCCASTArrayRangeDesignator)node).getRangeFloor());
 			}
 		} else if ( node instanceof IASTArrayModifier ) {
-			buffer.append(START_OF_LIST);
-			buffer.append(((IASTArrayModifier)node).getConstantExpression());
+			boolean started = false;
+			if ( node instanceof ICASTArrayModifier ) {
+				started = true;
+				buffer.append(START_OF_LIST);
+				if (((ICASTArrayModifier)node).isConst()) buffer.append(CONST_);
+				if (((ICASTArrayModifier)node).isRestrict()) buffer.append(RESTRICT_);
+				if (((ICASTArrayModifier)node).isStatic()) buffer.append(STATIC_);
+				if (((ICASTArrayModifier)node).isVolatile()) buffer.append(VOLATILE_);
+				if (((ICASTArrayModifier)node).isVariableSized()) buffer.append(VARIABLE_SIZED_);
+			}			
+
+			IASTExpression constantExpression = ((IASTArrayModifier)node).getConstantExpression();
+			if ( constantExpression != null && constantExpression instanceof IASTIdExpression ) { 
+				if (!started) buffer.append(START_OF_LIST);
+				buffer.append(((IASTIdExpression)constantExpression).getName().toString());
+			}
 		}
 		
 		return buffer.toString();
+	}
+	
+	private String getUnaryOperatorString(IASTUnaryExpression be) {
+		int op = be.getOperator();
+		String opString = BLANK_STRING;
+		
+		if (be instanceof ICPPASTUnaryExpression) {
+			switch(op) {
+				case ICPPASTUnaryExpression.op_throw:
+					opString = OP_THROW;
+					break;
+				case ICPPASTUnaryExpression.op_typeid:
+					opString = OP_TYPEID;
+					break;
+			}
+		} else if (be instanceof IGNUASTUnaryExpression) {
+			switch(op) {
+				case IGNUASTUnaryExpression.op_alignOf:
+					opString = OP_ALIGNOF;
+					break;
+				case IGNUASTUnaryExpression.op_typeof:
+					opString = OP_TYPEOF;
+					break;
+			}
+		}
+		
+		if (!opString.equals(BLANK_STRING)) return opString;
+		
+		switch(op) {
+			case IASTUnaryExpression.op_amper:
+				opString = OP_AMPER;
+				break;
+			case IASTUnaryExpression.op_bracketedPrimary:
+				opString = OP_BRACKETEDPRIMARY;
+				break;
+			case IASTUnaryExpression.op_minus:
+				opString = OP_MINUS;
+				break;
+			case IASTUnaryExpression.op_not:
+				opString = OP_NOT;
+				break;
+			case IASTUnaryExpression.op_plus:
+				opString = OP_PLUS;
+				break;
+			case IASTUnaryExpression.op_postFixDecr:
+				opString = OP_DECR;
+				break;
+			case IASTUnaryExpression.op_postFixIncr:
+				opString = OP_INCR;
+				break;
+			case IASTUnaryExpression.op_prefixDecr:
+				opString = OP_DECR;
+				break;
+			case IASTUnaryExpression.op_prefixIncr:
+				opString = OP_INCR;
+				break;
+			case IASTUnaryExpression.op_sizeof:
+				opString = OP_SIZEOF;
+				break;
+			case IASTUnaryExpression.op_star:
+				opString = OP_STAR;
+				break;
+			case IASTUnaryExpression.op_tilde:
+				opString = OP_TILDE; 
+				break;
+		}
+		
+		return opString;
 	}
 	
 	private String getBinaryOperatorString(IASTBinaryExpression be) {
@@ -232,7 +337,7 @@ public class TreeObject implements IAdaptable {
 		
 		switch(op) {
 			case IASTBinaryExpression.op_multiply:
-				opString = OP_MULTIPLY;
+				opString = OP_STAR;
 				break;
 			case IASTBinaryExpression.op_divide:
 				opString = OP_DIVIDE;

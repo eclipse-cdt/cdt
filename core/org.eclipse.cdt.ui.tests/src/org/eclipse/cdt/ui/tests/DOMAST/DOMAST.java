@@ -235,7 +235,10 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
          if (node instanceof IASTArrayModifier) {
             imageKey = DOMASTPluginImages.IMG_IASTArrayModifier;
          } else if (node instanceof IASTDeclaration) {
-            imageKey = DOMASTPluginImages.IMG_IASTDeclaration;
+            if (node instanceof IASTProblemDeclaration)
+         		imageKey = DOMASTPluginImages.IMG_IASTProblem;
+         	else
+         		imageKey = DOMASTPluginImages.IMG_IASTDeclaration;
          } else if (node instanceof IASTDeclarator) {
             imageKey = DOMASTPluginImages.IMG_IASTDeclarator;
          } else if (node instanceof IASTDeclSpecifier) {
@@ -257,10 +260,7 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
          } else if (node instanceof IASTProblem) {
             imageKey = DOMASTPluginImages.IMG_IASTProblem;
          } else if (node instanceof IASTSimpleDeclaration) {
-         	if (node instanceof IASTProblemDeclaration)
-         		imageKey = DOMASTPluginImages.IMG_IASTProblem;
-         	else
-         		imageKey = DOMASTPluginImages.IMG_IASTSimpleDeclaration;
+       		imageKey = DOMASTPluginImages.IMG_IASTSimpleDeclaration;
          } else if (node instanceof IASTStatement) {
             imageKey = DOMASTPluginImages.IMG_IASTStatement;
          } else if (node instanceof IASTTranslationUnit) {

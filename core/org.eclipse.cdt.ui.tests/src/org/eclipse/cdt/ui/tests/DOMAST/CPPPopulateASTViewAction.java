@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
-import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTObjectMacro;
 
 /**
  * @author dsteffle
@@ -182,8 +181,8 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	private void mergeNode(ASTNode node) {
 		addRoot(node);
 		
-		if (node instanceof ASTObjectMacro)
-			addRoot(((ASTObjectMacro)node).getName());
+		if (node instanceof IASTPreprocessorMacroDefinition)
+			addRoot(((IASTPreprocessorMacroDefinition)node).getName());
 	}
 	
 	private void mergeMacros(IASTPreprocessorMacroDefinition[] macros) {

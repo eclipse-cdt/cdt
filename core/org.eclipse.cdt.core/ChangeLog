@@ -1,3 +1,8 @@
+2002-11-01 David Inglis
+
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+	change getCPU to return cpu only and not append endian ("le" or "be").
+
 2002-10-31 Alain Magloire
 
 	* src/.../ErrorParserManager.java (findFilePath):

@@ -611,7 +611,6 @@ public class Elf {
 
 
     public Attribute getAttributes() throws IOException {
-        boolean bSkipElfData = false;
         Attribute attrib = new Attribute();
 
         switch( ehdr.e_type ) {
@@ -630,7 +629,6 @@ public class Elf {
 			case Elf.ELFhdr.EM_386 :
 			case Elf.ELFhdr.EM_486 :
 				attrib.cpu = new String("x86");
-				bSkipElfData = true;
 				break;
 			case Elf.ELFhdr.EM_PPC :
 				attrib.cpu = new String("ppc");
@@ -654,17 +652,13 @@ public class Elf {
 			default:
 				attrib.cpu = "none";
 		}
-		if (!bSkipElfData) {
-			switch (ehdr.e_ident[Elf.ELFhdr.EI_DATA]) {
-				case Elf.ELFhdr.ELFDATA2LSB :
-					attrib.cpu+= "le";
-					attrib.isle = true;
-					break;
-				case Elf.ELFhdr.ELFDATA2MSB :
-					attrib.cpu += "be";
-					attrib.isle = false;
-					break;
-			}
+		switch (ehdr.e_ident[Elf.ELFhdr.EI_DATA]) {
+			case Elf.ELFhdr.ELFDATA2LSB :
+				attrib.isle = true;
+				break;
+			case Elf.ELFhdr.ELFDATA2MSB :
+				attrib.isle = false;
+				break;
 		}
 		// getSections
 		// find .debug using toString

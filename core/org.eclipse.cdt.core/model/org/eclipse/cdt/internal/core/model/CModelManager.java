@@ -505,7 +505,7 @@ public class CModelManager implements IResourceChangeListener {
 			return false;
 		}
 		String ext = name.substring(index + 1);
-		String[] cexts = getHeaderExtensions();
+		String[] cexts = getTranslationUnitExtensions();
 		for (int i = 0; i < cexts.length; i++) {
 			if (ext.equals(cexts[i]))
 				return true;

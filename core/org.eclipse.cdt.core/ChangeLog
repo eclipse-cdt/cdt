@@ -1,3 +1,6 @@
+2004-02-22 John Camelon
+	Fixed CModelManager.isValidTranslationUnitName() regression.  
+
 2004-02-21 Alain Magloire
 
 	Refactor the ICPathEntry to IPathEntry for consistency.

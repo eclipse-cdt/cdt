@@ -107,11 +107,11 @@ public class CStackFrame extends CDebugElement
 				fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
 			}
 		}
-		else if ( fRefreshVariables )
+		else if ( refreshVariables() )
 		{
 			updateVariables();
 		}
-		fRefreshVariables = false;
+		setRefreshVariables( false );
 		return fVariables;
 	}
 
@@ -468,7 +468,7 @@ public class CStackFrame extends CDebugElement
 			fLastCDIStackFrame = fCDIStackFrame;
 		}
 		fCDIStackFrame = frame;
-		fRefreshVariables = true;
+		setRefreshVariables( true );
 	}
 
 	/**
@@ -741,5 +741,15 @@ public class CStackFrame extends CDebugElement
 		{
 			((IRestart)getDebugTarget()).restart();
 		}
+	}
+	
+	private void setRefreshVariables( boolean refresh )
+	{
+		fRefreshVariables = refresh;
+	}
+	
+	private boolean refreshVariables()
+	{
+		return fRefreshVariables;
 	}
 }

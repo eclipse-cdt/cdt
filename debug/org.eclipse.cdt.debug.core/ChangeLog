@@ -1,4 +1,7 @@
 2002-10-10 Mikhail Khodjaiants
+	* CStackFrame.java: Added Getter and Setter for 'fRefreshVariables'.
+ 
+2002-10-10 Mikhail Khodjaiants
 	* DisassemblyManager.java: Replaced 'getInstructions( String fileName, int lineNumber )' 
 	by 'getInstructions( String fileName, int lineNumber, int maxLineCount )'.
 

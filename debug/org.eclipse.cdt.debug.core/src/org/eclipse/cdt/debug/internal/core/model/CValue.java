@@ -92,7 +92,6 @@ public class CValue extends CDebugElement implements ICValue
 			}
 			catch( CDIException e )
 			{
-				logError( e );
 				fValueString = e.getMessage();
 			}
 		}
@@ -277,7 +276,6 @@ public class CValue extends CDebugElement implements ICValue
 			}
 			catch( CDIException e )
 			{
-				logError( e );
 				fValueString = e.getMessage();
 			}
 		}

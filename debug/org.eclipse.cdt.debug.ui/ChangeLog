@@ -1,4 +1,10 @@
 2005-01-21 Mikhail Khodjaiants
+	Partial fix for bug 83465: Add "Run to line" and "Resume at line" actions to the context menu of Disassembly view.
+	* ResumeAtLineActionDelegate.java
+	* DisassemblyView.java
+	* plugin.xml
+
+2005-01-21 Mikhail Khodjaiants
 	Fix for bug 83437: Loading symbols should be run in the background.
 	* ActionMessages.properties
 	* LoadSymbolsActionDelegate.java

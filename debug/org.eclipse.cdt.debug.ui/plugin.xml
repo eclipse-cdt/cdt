@@ -694,6 +694,26 @@
             </selection>
          </action>
       </viewerContribution>
+      <viewerContribution
+            targetID="#DisassemblyViewContext"
+            id="org.eclipse.cdt.debug.ui.disassemblyView.popupMenu">
+         <visibility>
+            <and>
+               <systemProperty
+                     value="true"
+                     name="org.eclipse.cdt.debug.ui.debuggerActive"/>
+               <objectClass name="org.eclipse.jface.text.ITextSelection"/>
+            </and>
+         </visibility>
+         <action
+               helpContextId="jump_to_line_action_context"
+               enablesFor="1"
+               label="%JumpToLineAction.label"
+               icon="icons/full/clcl16/jump_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"/>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

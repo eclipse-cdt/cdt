@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -27,6 +26,8 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
  
@@ -35,9 +36,9 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * will perform the "resume at line" operation for editors that provide
  * an appropriate <code>IResumeAtLineTarget</code> adapter.
  */
-public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActionDelegate2 {
+public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewActionDelegate, IActionDelegate2 {
 
-	private IEditorPart fActivePart = null;
+	private IWorkbenchPart fActivePart = null;
 
 	private IResumeAtLineTarget fPartTarget = null;
 
@@ -83,7 +84,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 			if ( fPartTarget == null ) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
-				if ( adapterManager.hasAdapter( targetEditor, IRunToLineTarget.class.getName() ) ) {
+				if ( adapterManager.hasAdapter( targetEditor, IResumeAtLineTarget.class.getName() ) ) {
 					fPartTarget = (IResumeAtLineTarget)adapterManager.loadAdapter( targetEditor, IResumeAtLineTarget.class.getName() );
 				}
 			}
@@ -157,5 +158,24 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 			}
 		}
 		fAction.setEnabled( enabled );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
+	public void init( IViewPart view ) {
+		fActivePart = view;
+		if ( view != null ) {
+			view.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
+			fPartTarget = (IResumeAtLineTarget)view.getAdapter( IResumeAtLineTarget.class );
+			if ( fPartTarget == null ) {
+				IAdapterManager adapterManager = Platform.getAdapterManager();
+				// TODO: we could restrict loading to cases when the debugging context is on
+				if ( adapterManager.hasAdapter( view, IResumeAtLineTarget.class.getName() ) ) {
+					fPartTarget = (IResumeAtLineTarget)adapterManager.loadAdapter( view, IResumeAtLineTarget.class.getName() );
+				}
+			}
+		}
+		update();		
 	}
 }

@@ -860,6 +860,11 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		StyledText styledText = getSourceViewer().getTextWidget();
 		setTextContextMenu( manager.createContextMenu( styledText ) );
 		styledText.setMenu( getTextContextMenu() );
+
+		// register the context menu such that other plugins may contribute to it
+		if ( getSite() != null ) {
+			getSite().registerContextMenu( getViewContextMenuId(), manager, getSourceViewer() );
+		}
 	}
 
 	private void createRulerContextMenu() {

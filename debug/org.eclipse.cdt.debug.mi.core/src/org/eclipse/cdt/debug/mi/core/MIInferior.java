@@ -169,7 +169,7 @@ public class MIInferior extends Process {
 				interrupt();
 				session.postCommand(abort);
 				abort.getMIInfo();
-				setTerminated(true);
+				setTerminated(abort.getToken(), true);
 			} catch (MIException e) {
 			}
 		}
@@ -226,10 +226,10 @@ public class MIInferior extends Process {
 	}
 
 	public synchronized void setTerminated() {
-		setTerminated(false);
+		setTerminated(0, false);
 	}
 
-	synchronized void setTerminated(boolean fireEvent) {
+	synchronized void setTerminated(int token, boolean fireEvent) {
 		state = TERMINATED;
 		// Close the streams.
 		try {
@@ -270,7 +270,7 @@ public class MIInferior extends Process {
 			}
 		}
 		if (fireEvent) {
-			session.fireEvent(new MIInferiorExitEvent());
+			session.fireEvent(new MIInferiorExitEvent(token));
 		}
 		notifyAll();
 	}

@@ -35,7 +35,22 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.uncomment"</code>).
 	 */
 	public static final String UNCOMMENT = "org.eclipse.cdt.ui.edit.text.c.uncomment"; //$NON-NLS-1$
-	
+
+	/**
+	 * Action definition ID of the source -> add block comment action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.add.block.comment"</code>).
+	 * @since 3.0
+	 */
+	public static final String ADD_BLOCK_COMMENT= "org.eclipse.cdt.ui.edit.text.c.add.block.comment"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the source -> remove block comment action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.remove.block.comment"</code>).
+	 * @since 3.0
+	 */
+	public static final String REMOVE_BLOCK_COMMENT= "org.eclipse.cdt.ui.edit.text.c.remove.block.comment"; //$NON-NLS-1$
+
+
 	/**
 	 * Action definition ID of the source -> format action
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.format"</code>).
@@ -102,4 +117,5 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.open.editor"</code>).
 	 */
 	public static final String OPEN_EDITOR= "org.eclipse.cdt.ui.edit.text.c.open.editor"; //$NON-NLS-1$
+
 }

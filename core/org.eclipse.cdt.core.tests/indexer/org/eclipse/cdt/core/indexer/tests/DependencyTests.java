@@ -221,7 +221,7 @@ import org.eclipse.core.runtime.Platform;
    PathCollector pathCollector = new PathCollector();
    getTableRefs(dH, pathCollector);
 				
-   String[] dHModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
+   String[] dHModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.h"};
    String[] iPath = pathCollector.getPaths();
 	
    if (dHModel.length != iPath.length)
@@ -238,7 +238,7 @@ import org.eclipse.core.runtime.Platform;
    pathCollector = new PathCollector();
    getTableRefs(Inc1H, pathCollector);
 				
-   String[] Inc1HModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp"};
+   String[] Inc1HModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp",IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.h"};
    iPath = pathCollector.getPaths();
 	
    if (Inc1HModel.length != iPath.length)
@@ -283,22 +283,23 @@ import org.eclipse.core.runtime.Platform;
    getTableRefs(Inc1H, pathCollector);
 				
    iPath = pathCollector.getPaths();
-		
-   compareArrays(iPath,beforeModel);
+   String[] inc1Model = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp",Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.h"};
+   compareArrays(iPath,inc1Model);
 	
    pathCollector = new PathCollector();
    getTableRefs(aH, pathCollector);
 			
    iPath = pathCollector.getPaths();
 	
-   compareArrays(iPath,beforeModel);
+   compareArrays(iPath,inc1Model);
 	
    pathCollector = new PathCollector();
    getTableRefs(cH, pathCollector);
 			
    iPath = pathCollector.getPaths();
-	
-   compareArrays(iPath,beforeModel);
+
+   String[] cHModel = {Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "Inc1.h", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest.cpp", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "a.h", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR +  "DepTest.h"};
+   compareArrays(iPath,cHModel);
 	
    editCode(depTestC,"#include \"DepTest.h\"","//#include \"DepTest.h\"");
 	
@@ -324,7 +325,7 @@ import org.eclipse.core.runtime.Platform;
 				
    iPath = pathCollector.getPaths();
 		
-   if (iPath.length != 0)
+   if (iPath.length != 1)
 	   fail("Number of included files differs from model");
 	
    pathCollector = new PathCollector();
@@ -332,7 +333,7 @@ import org.eclipse.core.runtime.Platform;
 			
    iPath = pathCollector.getPaths();
 	
-   if (iPath.length != 0)
+   if (iPath.length != 1)
 	   fail("Number of included files differs from model");
 	
 	
@@ -341,7 +342,7 @@ import org.eclipse.core.runtime.Platform;
 			
    iPath = pathCollector.getPaths();
 	
-   if (iPath.length != 0)
+   if (iPath.length != 3)
 	   fail("Number of included files differs from model");
 
  }
@@ -491,8 +492,9 @@ import org.eclipse.core.runtime.Platform;
 	IFile depTest3H = importFile("DepTest3.h","resources/dependency/DepTest3.h");
 	IFile depTest3C = importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
 	 
-	String[] beforeModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp"};
-	
+	String[] beforeModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp"}; 
+	String[] cHModel = {Path.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "a.h", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest3.h"};
+	String[] aHModel = {Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest3.cpp", Path.SEPARATOR + "DepTestProject" + Path.SEPARATOR + "DepTest3.h"};
 	PathCollector pathCollector = new PathCollector();
 	getTableRefs(depTest3H, pathCollector);
 				
@@ -505,14 +507,14 @@ import org.eclipse.core.runtime.Platform;
 				
 	iPath = pathCollector.getPaths();
 	
-	compareArrays(iPath,beforeModel);
+	compareArrays(iPath,cHModel);
 	
 	pathCollector = new PathCollector();
 	getTableRefs(aH, pathCollector);
 				
 	iPath = pathCollector.getPaths();
 	
-	compareArrays(iPath,beforeModel);
+	compareArrays(iPath,aHModel);
 	
 
    editCode(aH,"#include \"c.h\"","//#include \"c.h\"");
@@ -537,7 +539,7 @@ import org.eclipse.core.runtime.Platform;
 			
    iPath = pathCollector.getPaths();
 
-   compareArrays(iPath,beforeModel);
+   compareArrays(iPath,aHModel);
    
  }
  
@@ -579,7 +581,7 @@ import org.eclipse.core.runtime.Platform;
  	
    resultSet = resultCollector.getSearchResults();
 	
-   if (resultSet.size() != 0)
+   if (resultSet.size() != 1)
 		   fail("Expected no matches");
  }
 

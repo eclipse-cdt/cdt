@@ -206,7 +206,7 @@ public class IndexManagerTests extends TestCase {
 		ind = indexManager.getIndex(testProjectPath,true,true);
 		
 		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray();
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }"};
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1, 2 }"};
 		IEntryResult[] eresults =ind.queryEntries(prefix);
 		
 		assertTrue("Entry Result exists", eresults != null);
@@ -271,7 +271,7 @@ public class IndexManagerTests extends TestCase {
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry result found for typdeDecl/", eresults != null);
 	 
-	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 2 }", "EntryResult: word=typeDecl/C/container, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard, refs={ 2 }",  "EntryResult: word=typeDecl/D/Mail, refs={ 2 }", "EntryResult: word=typeDecl/D/first_class, refs={ 2 }", "EntryResult: word=typeDecl/D/postcard, refs={ 2 }", "EntryResult: word=typeDecl/V/, refs={ 1 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 2 }", "EntryResult: word=typeDecl/V/index, refs={ 2 }", "EntryResult: word=typeDecl/V/mail, refs={ 2 }", "EntryResult: word=typeDecl/V/size, refs={ 2 }", "EntryResult: word=typeDecl/V/temp, refs={ 2 }", "EntryResult: word=typeDecl/V/x, refs={ 2 }"};
+	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1, 2 }", "EntryResult: word=typeDecl/C/Mail, refs={ 3 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 3 }", "EntryResult: word=typeDecl/C/container, refs={ 3 }", "EntryResult: word=typeDecl/C/first_class, refs={ 3 }", "EntryResult: word=typeDecl/C/postcard, refs={ 3 }",  "EntryResult: word=typeDecl/D/Mail, refs={ 3 }", "EntryResult: word=typeDecl/D/first_class, refs={ 3 }", "EntryResult: word=typeDecl/D/postcard, refs={ 3 }", "EntryResult: word=typeDecl/V/, refs={ 1, 2 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 3 }", "EntryResult: word=typeDecl/V/index, refs={ 3 }", "EntryResult: word=typeDecl/V/mail, refs={ 3 }", "EntryResult: word=typeDecl/V/size, refs={ 3 }", "EntryResult: word=typeDecl/V/temp, refs={ 3 }", "EntryResult: word=typeDecl/V/x, refs={ 3 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
 
@@ -291,7 +291,7 @@ public class IndexManagerTests extends TestCase {
 	 eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry exists", eresults != null);
 		
-	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1 }", "EntryResult: word=typeDecl/V/, refs={ 1 }"};
+	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1, 2 }", "EntryResult: word=typeDecl/V/, refs={ 1, 2 }"};
 	 if (eresults.length != entryResultAfterModel.length)
 		fail("Entry Result length different from model");
 		

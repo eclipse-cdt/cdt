@@ -1,3 +1,6 @@
+2004-08-03 Bogdan Gheorghe
+	Updated indexer and dependency tests to work for indexing standalone headers
+
 2004-06-09 Alain Magloire
 
 	Patch from Sam Rob to resolve 64022

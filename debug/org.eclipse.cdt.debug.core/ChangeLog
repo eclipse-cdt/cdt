@@ -1,3 +1,7 @@
+2003-02-20 Mikhail Khodjaiants
+	Changed to 'public' the access modifier of the 'setAssocition' method.
+	* CDirectorySourceLocation.java
+
 2003-02-18 Mikhail Khodjaiants
 	Added persistency to the source locator.
 	* plugin.xml: added dependency on the 'org.apache.xerces' plugin

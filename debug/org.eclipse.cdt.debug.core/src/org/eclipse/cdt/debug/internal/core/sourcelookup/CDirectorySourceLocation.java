@@ -135,7 +135,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		fDirectory = path;
 	}
 
-	private void setAssociation( IPath association )
+	public void setAssociation( IPath association )
 	{
 		fAssociation = association;
 	}

@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -2240,6 +2241,27 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertTrue( typeIds.hasNext() );
     	IASTTypeId typeId = (IASTTypeId) typeIds.next();
     	assertEquals( typeId.getTypeOrClassName(), "Thrown" );
+	}
+    
+    public void testBug75532() throws Exception
+	{
+    	try {
+        	Writer writer = new StringWriter();
+        	writer.write( "#if 2147483647 == 0x7fffffff\n");
+        	writer.write( "#error This was equal, but not for the eclipse.\n");
+        	writer.write( "#endif\n");
+        	parse( writer.toString() );
+
+        	assertTrue(false);
+    	} catch (ParserException pe) {
+    		// expected IProblem
+    	} finally {
+        	assertTrue( callback.getProblems().hasNext() );
+        	Object ipo = callback.getProblems().next();
+        	assertTrue( ipo instanceof IProblem );
+        	IProblem ip = (IProblem)callback.getProblems().next();
+        	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") > 0);
+    	}
 	}
 }
 

@@ -459,11 +459,11 @@ public class ExpressionEvaluator {
 								continue;
 							} else if (isHex) {
 								if (c >= 'a' && c <= 'f') {
-									tokenValue *= 16;
+									tokenValue = (tokenValue == 0 ? 10 : (tokenValue * 16) + 10);
 									tokenValue += c - 'a';
 									continue;
 								} else if (c >= 'A' && c <= 'F') {
-									tokenValue *= 16;
+									tokenValue = (tokenValue == 0 ? 10 : (tokenValue * 16) + 10);
 									tokenValue += c - 'A';
 									continue;
 								}

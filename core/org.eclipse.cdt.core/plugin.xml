@@ -204,21 +204,6 @@
    </extension>
 
 <!-- =================================================================================== -->
-<!-- Extension Point: ????????????????                                                   -->
-<!-- =================================================================================== -->
-
-   <extension
-         id="newcbuilder"
-         name="C Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder>
-         <run
-               class="org.eclipse.cdt.core.builder.CIncrementalBuilder">
-         </run>
-      </builder>
-   </extension>
-
-<!-- =================================================================================== -->
 <!-- CDT customized problem markers: C Problem markers                                   -->
 <!-- =================================================================================== -->
 

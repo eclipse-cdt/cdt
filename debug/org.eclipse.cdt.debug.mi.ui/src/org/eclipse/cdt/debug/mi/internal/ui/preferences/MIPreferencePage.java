@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.internal.ui.IMIHelpContextIds;
 import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -22,7 +23,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -86,18 +86,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 */
 	private Composite createGroupComposite( Composite parent, int numColumns, String labelText )
 	{
-		Group comp = new Group( parent, SWT.NONE );
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		comp.setLayout( layout );
-		//GridData
-		GridData gd = new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
-		comp.setLayoutData( gd );
-		comp.setText( labelText );
-		return comp;
+		return ControlFactory.createGroup( parent, labelText, numColumns );
 	}		
 
 	/**
@@ -157,11 +146,14 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		Composite spacingComposite = new Composite( comp, SWT.NONE );
 		GridLayout layout = new GridLayout();
 		spacingComposite.setLayout( layout );
-		GridData data = new GridData( GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL );
+		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		spacingComposite.setLayoutData( data );
 
 		fTimeoutText = new IntegerFieldEditor( IMIConstants.PREF_REQUEST_TIMEOUT, "Debugger &timeout (ms):", spacingComposite );
+		data = new GridData();
+		data.widthHint = convertWidthInCharsToPixels( 10 );
+		fTimeoutText.getTextControl( spacingComposite ).setLayoutData( data );
 		fTimeoutText.setPreferenceStore( MIUIPlugin.getDefault().getPreferenceStore() );
 		fTimeoutText.setPreferencePage( this );
 		fTimeoutText.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );

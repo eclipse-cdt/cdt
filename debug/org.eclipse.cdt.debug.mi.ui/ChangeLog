@@ -1,3 +1,7 @@
+2003-03-26 Mikhail Khodjaiants
+	Cosmetic changes in the 'MIPreferencePage' class.
+	* MIPreferencePage.java
+
 2003-02-12 Mikhail Khodjaiants
 	Changes in the 'Automatically Load Symbols' action because of the removal of the 
 	'setAutoSolib' method from ICDISharedLibraryManager.

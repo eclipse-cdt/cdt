@@ -1946,7 +1946,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       ICPPASTLinkageSpecification linkage = createLinkageSpecification();
       ((ASTNode) linkage).setOffset(firstToken.getOffset());
       linkage.setLiteral(spec.getImage());
-      ((ASTNode) linkage).setLength(spec.getEndOffset() - firstToken.getOffset());
 
       if (LT(1) == IToken.tLBRACE) {
          consume(IToken.tLBRACE);
@@ -1984,7 +1983,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          }
          // consume the }
          int endOffset = consume(IToken.tRBRACE).getEndOffset();
-         ((CPPASTNode) linkage).setOffset(endOffset - firstToken.getOffset());
+         ((CPPASTNode) linkage).setLength(endOffset - firstToken.getOffset());
          return linkage;
       }
       // single declaration
@@ -1993,6 +1992,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       linkage.addDeclaration(d);
       d.setParent(linkage);
       d.setPropertyInParent(ICPPASTLinkageSpecification.OWNED_DECLARATION);
+      ((CPPASTNode)linkage).setLength( calculateEndOffset(d) - firstToken.getOffset() );
       return linkage;
    }
 

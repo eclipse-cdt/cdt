@@ -93,6 +93,11 @@ public class CModelManager implements IResourceChangeListener {
 	 * The list of started BinaryRunners on projects.
 	 */
 	private HashMap binaryRunners = new HashMap();
+	
+	/**
+	 * The lis of the SourceMappers on projects.
+	 */
+	private HashMap sourceMappers = new HashMap();
 
 	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"};
 
@@ -498,6 +503,17 @@ public class CModelManager implements IResourceChangeListener {
 		return runner;
 	}
 
+	public SourceMapper getSourceMapper(ICProject cProject) {
+		SourceMapper mapper = null;
+		synchronized(sourceMappers) {
+			mapper = (SourceMapper) sourceMappers.get(cProject);
+			if (mapper == null) {
+				mapper = new SourceMapper(cProject);
+				sourceMappers.put(cProject, mapper);
+			}
+		}
+		return mapper;
+	}
 	/**
 	 * addElementChangedListener method comment.
 	 */

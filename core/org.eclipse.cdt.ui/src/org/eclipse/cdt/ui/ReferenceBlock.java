@@ -26,10 +26,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -41,6 +43,8 @@ public class ReferenceBlock extends AbstractCOptionPage {
 	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$
 
 	private CheckboxTableViewer referenceProjectsViewer;
+
+	private static final int PROJECT_LIST_MULTIPLIER = 30;
 	
 	public ReferenceBlock() {
 		super(CUIPlugin.getResourceString(LABEL));
@@ -111,8 +115,18 @@ public class ReferenceBlock extends AbstractCOptionPage {
 		lbldata.horizontalSpan = 1;
 		label.setLayoutData(lbldata);
 
-		referenceProjectsViewer = ControlFactory.createListViewer
-			(composite, null, SWT.DEFAULT, SWT.DEFAULT, GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+
+		referenceProjectsViewer =
+			CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.grabExcessHorizontalSpace = true;
+		data.heightHint =
+			getDefaultFontHeight(
+				referenceProjectsViewer.getTable(),
+				PROJECT_LIST_MULTIPLIER);
+
+		//Only set a height hint if it will not result in a cut off dialog
+		referenceProjectsViewer.getTable().setLayoutData(data);
 
 		referenceProjectsViewer.setLabelProvider(new WorkbenchLabelProvider());
 		referenceProjectsViewer.setContentProvider(getContentProvider());
@@ -120,6 +134,23 @@ public class ReferenceBlock extends AbstractCOptionPage {
 
 		initializeValues();
 		setControl(composite);
+	}
+
+	/**
+	 * Get the defualt widget height for the supplied control.
+	 * @return int
+	 * @param control - the control being queried about fonts
+	 * @param lines - the number of lines to be shown on the table.
+	 */
+	private static int getDefaultFontHeight(Control control, int lines) {
+		FontData[] viewerFontData = control.getFont().getFontData();
+		int fontHeight = 10;
+
+		//If we have no font data use our guess
+		if (viewerFontData.length > 0)
+			fontHeight = viewerFontData[0].getHeight();
+		return lines * fontHeight;
+
 	}
 
 	public void performApply(IProgressMonitor monitor) throws CoreException {

@@ -6,7 +6,6 @@ package org.eclipse.cdt.internal.ui.text.link;
  */
 
 import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.text.eclipse2.IDocumentExtension;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.Position;

@@ -6,7 +6,6 @@ package org.eclipse.cdt.internal.ui.text;
  */
 
 
-import org.eclipse.cdt.internal.ui.text.eclipse2.Token;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.PropertyChangeEvent;
 

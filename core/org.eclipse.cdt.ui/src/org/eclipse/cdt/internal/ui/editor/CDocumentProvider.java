@@ -10,9 +10,11 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 
 
+import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.GapTextStore;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -23,8 +25,6 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 
 import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.text.eclipse2.CAbstractDocument;
-import org.eclipse.cdt.internal.ui.text.eclipse2.IDocumentExtension;
 
 public class CDocumentProvider extends FileDocumentProvider {
 
@@ -40,7 +40,7 @@ public class CDocumentProvider extends FileDocumentProvider {
 	/**
 	 * Bundle of all required informations to allow working copy management. 
 	 */
-	protected class CDocument extends CAbstractDocument {
+	protected class CDocument extends AbstractDocument {
 		
 		/**
 		 * Creates a new empty document.

@@ -72,4 +72,11 @@ public class RestartActionDelegate extends AbstractListenerActionDelegate {
 	protected String getErrorDialogTitle() {
 		return ActionMessages.getString( "RestartActionDelegate.2" ); //$NON-NLS-1$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 }

@@ -215,12 +215,7 @@
                menubarPath="stepGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
+            <selection class="org.eclipse.cdt.debug.core.model.IRestart"/>
          </action>
          <action
                state="false"
@@ -239,6 +234,17 @@
                      id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
+         </action>
+         <action
+               helpContextId="signal_zero_action_context"
+               enablesFor="1"
+               label="%SignalZeroAction.label"
+               tooltip="%SignalZeroAction.tooltip"
+               icon="icons/full/clcl16/signal0_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
+               menubarPath="threadGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate">
+            <selection class="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal"/>
          </action>
       </viewerContribution>
       <viewerContribution
@@ -514,21 +520,6 @@
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal"
             id="org.eclipse.cdt.debug.ui.DebugTargetActions">
-         <action
-               label="%SignalZeroAction.label"
-               icon="icons/full/clcl16/signal0_co.gif"
-               helpContextId="signal_zero_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroObjectActionDelegate"
-               menubarPath="threadGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroObjectActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICastToType"
@@ -749,12 +740,7 @@
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                tooltip="%RestartAction.tooltip">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
+            <selection class="org.eclipse.cdt.debug.core.model.IRestart"/>
          </action>
          <action
                state="false"

@@ -910,23 +910,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		changeState( CDebugElementState.RESTARTING );
 		ICDILocation location = getCDITarget().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 		setInternalTemporaryBreakpoint( location );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().restart();
-				}
-				catch( CDIException e ) {
-					restoreOldState();
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						failed( CoreModelMessages.getString( "CDebugTarget.6" ), e1 ); //$NON-NLS-1$
-					}
-				}
-			}
-		} );
+		try {
+			getCDITarget().restart();
+		}
+		catch( CDIException e ) {
+			restoreOldState();
+			targetRequestFailed( e.getMessage(), e );
+		}
 	}
 
 	/**
@@ -1498,23 +1488,13 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		if ( !canResume() )
 			return;
 		changeState( CDebugElementState.RESUMING );
-		DebugPlugin.getDefault().asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					getCDITarget().resume( false );
-				}
-				catch( CDIException e ) {
-					restoreOldState();
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						failed( CoreModelMessages.getString( "CDebugTarget.7" ), e1 ); //$NON-NLS-1$
-					}
-				}
-			}
-		} );
+		try {
+			getCDITarget().resume( false );
+		}
+		catch( CDIException e ) {
+			restoreOldState();
+			targetRequestFailed( e.getMessage(), e );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1802,12 +1782,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void setMemoryBlockRetrieval( CMemoryBlockExtensionRetrieval memoryBlockRetrieval ) {
 		fMemoryBlockRetrieval = memoryBlockRetrieval;
-	}
-
-	protected void failed( String message, Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
-		ms.add( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
-		CDebugUtils.error( ms, this );
 	}
 
 	private void changeState( CDebugElementState state ) {

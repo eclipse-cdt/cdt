@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+
 import java.util.Iterator;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
@@ -31,7 +38,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener, INullSelectionListener {
+public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, IActionDelegate2, ISelectionListener, INullSelectionListener {
 	
 	/**
 	 * The underlying action for this delegate
@@ -46,7 +53,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Cache of the most recent seletion
 	 */
-	private IStructuredSelection fSelection;
+	private IStructuredSelection fSelection = StructuredSelection.EMPTY;
 	
 	/**
 	 * Whether this delegate has been initialized
@@ -60,6 +67,54 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	protected IWorkbenchWindow fWindow;
 	
 	/**
+	 * Background job for this action, or <code>null</code> if none.
+	 */
+	private DebugRequestJob fBackgroundJob = null;
+	
+	class DebugRequestJob extends Job {
+	    
+	    private Object[] fElements = null;
+
+	    /** 
+	     * Constructs a new job to perform a debug request (for example, step)
+	     * in the background.
+	     * 
+	     * @param name job name
+	     */
+	    public DebugRequestJob(String name) {
+	        super(name);
+	        setPriority(Job.INTERACTIVE);
+	    }
+	    
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        protected IStatus run(IProgressMonitor monitor) {
+		    MultiStatus status= 
+				new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
+		    for (int i = 0; i < fElements.length; i++) {
+				Object element= fElements[i];
+				try {
+					doAction(element);
+				} catch (DebugException e) {
+					status.merge(e.getStatus());
+				}
+			}
+			return status;
+        }
+        
+        /**
+         * Sets the selection to operate on.
+         * 
+         * @param elements
+         */
+        public void setTargets(Object[] elements) {
+            fElements = elements;
+        }
+	    
+	}
+	
+	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
@@ -67,17 +122,19 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public AbstractDebugActionDelegate() {
 	}
 	
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
 		if (getWindow() != null) {
 			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		}
+		fBackgroundJob = null;
+        fSelection= null;
 	}
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window){
 		// listen to selection changes in the debug view
@@ -85,36 +142,74 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action){
-		IStructuredSelection selection= getSelection();
-		
-		final Iterator enum= selection.iterator();
-		String pluginId= DebugUIPlugin.getUniqueIdentifier();
-		final MultiStatus ms= 
-			new MultiStatus(pluginId, DebugException.REQUEST_FAILED, getStatusMessage(), null); 
+	    if (action.isEnabled()) {
+			IStructuredSelection selection = getSelection();
+			// disable the action so it cannot be run again until an event or selection change
+			// updates the enablement
+			action.setEnabled(false);
+			if (isRunInBackground()) {
+				runInBackground(action, selection);
+			} else {
+				runInForeground(selection);
+			}
+	    }
+	}
+	
+	/**
+	 * Runs this action in a background job.
+	 */
+	private void runInBackground(IAction action, IStructuredSelection selection) {
+	    if (fBackgroundJob == null) {
+			fBackgroundJob = new DebugRequestJob(action.getText());
+	    }
+	    fBackgroundJob.setTargets(selection.toArray());
+		fBackgroundJob.schedule();
+	}
+	
+	/**
+	 * Runs this action in the UI thread.
+	 */
+	private void runInForeground(final IStructuredSelection selection) {
+	    final MultiStatus status= 
+			new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null); 	    
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
-				while (enum.hasNext()) {
-					Object element= enum.next();
+			    Iterator selectionIter = selection.iterator();
+				while (selectionIter.hasNext()) {
+					Object element= selectionIter.next();
 					try {
 						doAction(element);
 					} catch (DebugException e) {
-						ms.merge(e.getStatus());
+						status.merge(e.getStatus());
 					}
 				}
 			}
 		});
+		reportErrors(status);
+	}
+
+	private void reportErrors(final MultiStatus ms) {
 		if (!ms.isOK()) {
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
+				ErrorDialog.openError(window.getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
 			} else {
-				DebugUIPlugin.log(ms);
+				CDebugUIPlugin.log(ms);
 			}
-		}		
+		}
+	}
+
+	/**
+	 * Returns whether or not this action should be run in the background.
+	 * Subclasses may override.
+	 * @return whether or not this action should be run in the background
+	 */
+	protected boolean isRunInBackground() {
+		return false;
 	}
 
 	/**
@@ -133,7 +228,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * in the debug view only.
 	 * </p>
 	 * 
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
@@ -186,8 +281,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init(IViewPart view) {
 		fViewPart = view;
@@ -238,13 +333,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @return structured selection
 	 */	
 	protected IStructuredSelection getSelection() {
-		if (getView() != null) {
-			//cannot used the cached selection in a view
-			//as the selection can be out of date for context menu
-			//actions. See bug 14556
-			ISelection s= getView().getViewSite().getSelectionProvider().getSelection();
-			return (s instanceof IStructuredSelection)? (IStructuredSelection)s : StructuredSelection.EMPTY;
-		}
 		return fSelection;
 	}
 	
@@ -256,9 +344,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
 	}	
-	
-	/**
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		update(getAction(), selection);
@@ -299,9 +387,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		if (selection.size() == 0) {
 			return false;
 		}
-		Iterator enum= selection.iterator();
-		while (enum.hasNext()) {
-			Object element= enum.next();
+		Iterator itr= selection.iterator();
+		while (itr.hasNext()) {
+			Object element= itr.next();
 			if (!isEnabledFor(element)) {
 				return false;
 			}
@@ -311,5 +399,18 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	protected boolean isEnabledFor(Object element) {
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
 	}
 }

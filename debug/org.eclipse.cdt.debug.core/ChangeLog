@@ -1,3 +1,9 @@
+2005-01-11 Mikhail Khodjaiants
+	Use the asynchronous implementation for resume, suspend, step etc provided by eclipse 3.1.
+	* CDebugTarget.java
+	* CThread.java
+	* CoreModelMessages.properties
+
 2005-01-10 Mikhail Khodjaiants
 	Use the asynchronous implementation for resume, suspend, step etc provided by eclipse 3.1.
 	* CDebugTarget.java

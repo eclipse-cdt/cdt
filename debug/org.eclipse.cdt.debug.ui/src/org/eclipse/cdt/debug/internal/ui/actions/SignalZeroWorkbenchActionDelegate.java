@@ -61,4 +61,11 @@ public class SignalZeroWorkbenchActionDelegate extends AbstractListenerActionDel
 	protected String getErrorDialogTitle() {
 		return ActionMessages.getString( "SignalZeroWorkbenchActionDelegate.2" ); //$NON-NLS-1$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractDebugActionDelegate#isRunInBackground()
+	 */
+	protected boolean isRunInBackground() {
+		return true;
+	}
 }

@@ -1,3 +1,11 @@
+2005-01-11 Mikhail Khodjaiants
+	Use the asynchronous implementation for resume, suspend, step etc provided by eclipse 3.1.
+	* plugin.xml
+	* AbstractDebugActionDelegate.java
+	* RestartActionDelegate.java
+	* SignalZeroWorkbenchActionDelegate.java
+	* SignalZeroObjectActionDelegate.java: removed
+
 2005-01-04 Mikhail Khodjaiants
 	Removed the disassembly editor extension.
 	* plugin.xml

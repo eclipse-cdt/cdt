@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -43,11 +41,7 @@ import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
-import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -858,12 +852,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 
 	protected boolean isInstructionsteppingEnabled() {
 		return ((CDebugTarget)getDebugTarget()).isInstructionSteppingEnabled();
-	}
-
-	protected void failed( String message, Throwable e ) {
-		MultiStatus ms = new MultiStatus( CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
-		ms.add( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
-		CDebugUtils.error( ms, this );
 	}
 
 	protected void suspendByTarget( ICDISessionObject reason, ICDIThread suspensionThread ) {

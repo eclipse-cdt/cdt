@@ -1,3 +1,7 @@
+2003-04-04 Alain Magloire
+	* src/org/eclipse/cdt/testplugin/util/VerifyDialog.java:
+	Remove some warnings.
+
 2003-04-03 John Camelon
 	Updated ScannerTest::testSimpleIfdef() for bug36019.  
 	Updated ScannerTest::testNumerics() for bug36020.  

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
  */
 public class ASTInclusion implements IASTInclusion {
 
-	public ASTInclusion( char[] name, char[] fileName, boolean local, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, char [] fn  )
+	public ASTInclusion( char[] name, char[] fileName, boolean local, int startingOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endLine, char [] fn, boolean i  )
 	{
 		this.name = name; 
 		this.fileName = fileName;
@@ -29,6 +29,7 @@ public class ASTInclusion implements IASTInclusion {
 		setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
 		setEndingOffsetAndLineNumber(endOffset, endLine);
 		this.filename = fn;
+		this.isImplicit = i;
 	}
 
 	private int nameEndOffset;
@@ -183,6 +184,7 @@ public class ASTInclusion implements IASTInclusion {
 
 	private int fileIndex;
 	private final char[] filename;
+	private final boolean isImplicit;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFileIndex()
 	 */
@@ -202,5 +204,11 @@ public class ASTInclusion implements IASTInclusion {
 	 */
 	public char[] getFilename() {
 		return filename;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTInclusion#isImplicit()
+	 */
+	public boolean isImplicit() {
+		return isImplicit;
 	}
 }

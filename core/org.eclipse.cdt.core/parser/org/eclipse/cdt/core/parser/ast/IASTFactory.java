@@ -27,7 +27,7 @@ public interface IASTFactory
         char[] name,
         int startingOffset,
         int startingLine,
-        int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn);
+        int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn, boolean isImplicit);
         
     public IASTInclusion createInclusion(
         char[] name,
@@ -35,7 +35,7 @@ public interface IASTFactory
         boolean local,
         int startingOffset,
         int startingLine,
-        int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn) ;
+        int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn, boolean isImplicit) ;
         
     public IASTUsingDirective createUsingDirective(
         IASTScope scope,

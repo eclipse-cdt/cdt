@@ -43,16 +43,16 @@ public class BaseASTFactory  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createMacro(java.lang.String, int, int, int)
 	 */
-	public IASTMacro createMacro(char[] name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn) {
-		IASTMacro m = new ASTMacro( name, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn );
+	public IASTMacro createMacro(char[] name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn, boolean isImplicit) {
+		IASTMacro m = new ASTMacro( name, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn, isImplicit );
 		return m;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createInclusion(java.lang.String, java.lang.String, boolean)
 	 */
-	public IASTInclusion createInclusion(char[] name, char[] fileName, boolean local, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn) {
-		IASTInclusion inclusion = new ASTInclusion( name, fileName, local, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn );
+	public IASTInclusion createInclusion(char[] name, char[] fileName, boolean local, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn, boolean isImplicit) {
+		IASTInclusion inclusion = new ASTInclusion( name, fileName, local, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn, isImplicit );
 		return inclusion;
 	}
 

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -136,6 +137,9 @@ public class Scanner2 implements IScanner, IScannerData {
 	private ParserMode parserMode;
 
 	private List workingCopies;
+
+	private Iterator preIncludeFiles = EmptyIterator.EMPTY_ITERATOR;
+	private boolean isInitialized = false;  
 	
 	{
 //		try {
@@ -169,8 +173,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		    
 		if (reader.filename != null)
 			fileCache.put(reader.filename, reader);
-		
-		pushContext(reader.buffer, reader);
 
 		setupBuiltInMacros();
 		
@@ -187,9 +189,45 @@ public class Scanner2 implements IScanner, IScannerData {
 				} 
 			}
 		}
-		
 		includePaths = info.getIncludePaths();
-
+		
+		if( info instanceof IExtendedScannerInfo )
+		{
+			IExtendedScannerInfo einfo = (IExtendedScannerInfo) info;
+			if( einfo.getMacroFiles() != null )
+				for( int i = 0; i < einfo.getMacroFiles().length; ++i )
+				{
+					CodeReader r = ScannerUtility.createReaderDuple( einfo.getMacroFiles()[i], requestor, getWorkingCopies() );
+					if( r == null )
+						continue;
+					pushContext( r.buffer, r );
+					while( true )
+					{
+						try {
+							nextToken();
+						} catch (EndOfFileException e) {
+							finished = false;
+							break;
+						}
+					}
+				}
+			
+			if( einfo.getIncludeFiles() != null && einfo.getIncludeFiles().length > 0 )
+				preIncludeFiles = Arrays.asList( einfo.getIncludeFiles() ).iterator();
+			
+			pushContext(reader.buffer, reader);
+			
+			if( preIncludeFiles.hasNext() )
+				pushForcedInclusion();
+			
+			isInitialized = true;	
+		}
+		else
+		{
+			pushContext(reader.buffer, reader);
+			isInitialized = true;
+		}
+		
 	}
 
 	private void pushContext(char[] buffer) {
@@ -280,15 +318,32 @@ public class Scanner2 implements IScanner, IScannerData {
 				buffer.append( ((InclusionData)bufferData[bufferStackPos]).reader.filename ); 
 				log.traceLog( buffer.toString() );
 			}
-			
 			callbackManager.pushCallback( ((InclusionData) bufferData[bufferStackPos]).inclusion );
 		}
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
+		
+		if( preIncludeFiles.hasNext() )
+			pushForcedInclusion();
 	}
 	
-	
-	
+	/**
+	 * 
+	 */
+	private void pushForcedInclusion() {
+		CodeReader r = null;
+		while( r == null )
+		{
+			if( preIncludeFiles.hasNext() )
+				r = ScannerUtility.createReaderDuple( (String)preIncludeFiles.next(), requestor, getWorkingCopies() );
+			else
+				break;
+		}
+		if( r == null ) return;
+		IASTInclusion i = getASTFactory().createInclusion( r.filename, r.filename, false, -1, -1, -1, -1, -1, -1, -1, EMPTY_STRING_CHAR_ARRAY, true );
+		InclusionData d = new InclusionData( r, i );
+		pushContext( r.buffer, d );
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String, java.lang.String)
 	 */
@@ -361,6 +416,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static final char[] EMPTY_STRING_CHAR_ARRAY = new char[0];
 
 	private boolean isCancelled = false;
+
 	
 	public synchronized void cancel() {
 		isCancelled = true;
@@ -1624,7 +1680,7 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		if( parserMode == ParserMode.QUICK_PARSE )
 		{
-			IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+			IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename(), false );
 			callbackManager.pushCallback( new InclusionData( null, inclusion ) );
 			callbackManager.pushCallback( inclusion );
 		}
@@ -1648,7 +1704,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					}
 					if (reader != null) {
 						if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-						IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+						IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename(), false );
 						pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 						return;
 					}
@@ -1676,7 +1732,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						}
 						if (reader != null) {
 							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-							IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+							IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename(), false );
 							pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 							return;
 						}
@@ -1817,7 +1873,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if (usesVarArgInDefinition && definitions.get(name) instanceof FunctionStyleMacro && !((FunctionStyleMacro)definitions.get(name)).hasVarArgs())
 			handleProblem(IProblem.PREPROCESSOR_INVALID_VA_ARGS, varArgDefinitionInd, null);
 		
-		callbackManager.pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename() ) );
+		callbackManager.pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename(), !isInitialized ) );
 	}
 	
 	private char[][] extractMacroParameters( int idstart, char[] name, boolean reportProblems ){

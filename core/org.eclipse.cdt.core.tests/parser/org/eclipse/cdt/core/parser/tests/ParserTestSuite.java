@@ -48,6 +48,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( StructuralParseTest.class );
 		suite.addTestSuite( ObjectMapTest.class );
 		suite.addTest( CompleteParsePluginTest.suite() );
+		suite.addTest( IScannerInfoPluginTest.suite() );
 		suite.addTest( ScannerParserLoopTest.suite() );
 		suite.addTest( GCCParserExtensionTestSuite.suite() );
 		return suite;

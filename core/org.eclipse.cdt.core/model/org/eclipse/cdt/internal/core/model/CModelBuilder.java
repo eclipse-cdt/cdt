@@ -237,10 +237,15 @@ public class CModelBuilder {
 		while (i.hasNext()){
 			IASTOffsetableElement offsetable = (IASTOffsetableElement)i.next();
 			if(offsetable instanceof IASTInclusion){
-				createInclusion(translationUnit, (IASTInclusion) offsetable); 		
+				IASTInclusion inc = (IASTInclusion) offsetable;
+				if( ! inc.isImplicit() )
+					createInclusion(translationUnit, inc ); 		
 			}
 			else if(offsetable instanceof IASTMacro){
-				createMacro(translationUnit, (IASTMacro) offsetable);				
+				
+				IASTMacro macro = (IASTMacro) offsetable;
+				if( ! macro.isImplicit() )
+					createMacro(translationUnit, macro);				
 			}else if(offsetable instanceof IASTDeclaration){
 				try{
 					generateModelElements (translationUnit, (IASTDeclaration) offsetable);

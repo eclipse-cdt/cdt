@@ -17,6 +17,11 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  *
  */
 public interface IASTMacro extends IASTOffsetableNamedElement, ISourceElementCallbackDelegate{
+
+	/**
+	 * @return
+	 */
+	boolean isImplicit();
 	
 
 }

@@ -24,7 +24,7 @@ public class ASTMacro implements IASTMacro {
     private final char[] name;
 	private final char[] fn;
     
-	public ASTMacro( char[] name, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn )
+	public ASTMacro( char[] name, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn, boolean implicit )
 	{
 		this.name =name; 
 		setStartingOffsetAndLineNumber(start, startLine);
@@ -32,6 +32,7 @@ public class ASTMacro implements IASTMacro {
 		setNameEndOffsetAndLineNumber(nameEnd, nameLine);
 		setEndingOffsetAndLineNumber(end, endLine);
 		this.fn = fn;
+		this.isImplicit = implicit;
 	}
 	
 	private int startingOffset = 0, endingOffset = 0, nameOffset = 0;
@@ -149,6 +150,7 @@ public class ASTMacro implements IASTMacro {
 
 	
 	private int fileIndex;
+	private final boolean isImplicit;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFileIndex()
 	 */
@@ -167,6 +169,12 @@ public class ASTMacro implements IASTMacro {
 	 */
 	public char[] getFilename() {
 		return fn;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTMacro#isImplicit()
+	 */
+	public boolean isImplicit() {
+		return isImplicit;
 	}
 
 }

@@ -95,7 +95,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 														   CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
 					}
 					catch( CDIException e ) {
-						targetRequestFailed( "Unable to get disassembly instructions.", e );
+						targetRequestFailed( CoreModelMessages.getString( "Disassembly.Unable_to_get_disassembly_instructions_1" ), e ); //$NON-NLS-1$
 					}
 				}
 				if ( instructions.length == 0 ||
@@ -106,7 +106,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 							instructions = getFunctionInstructions( sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE ) );
 						}
 						catch( CDIException e ) {
-							targetRequestFailed( "Unable to get disassembly instructions.", e );
+							targetRequestFailed( CoreModelMessages.getString( "Disassembly.Unable_to_get_disassembly_instructions_2" ), e ); //$NON-NLS-1$
 						}
 					}
 				}

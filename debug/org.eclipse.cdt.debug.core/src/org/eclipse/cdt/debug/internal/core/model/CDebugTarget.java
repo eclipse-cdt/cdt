@@ -2011,7 +2011,7 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IExecFileInfo#getGlobals()
 	 */
-	public IGlobalVariable[] getGlobals()
+	public IGlobalVariable[] getGlobals() throws DebugException
 	{
 		ArrayList list = new ArrayList();
 		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
@@ -2025,10 +2025,11 @@ public class CDebugTarget extends CDebugElement
 		return (IGlobalVariable[])list.toArray( new IGlobalVariable[list.size()] );
 	}
 
-	private List getCFileGlobals( IParent file )
+	private List getCFileGlobals( IParent file ) throws DebugException
 	{
 		ArrayList list = new ArrayList();
-		try {
+		try 
+		{
 			ICElement[] elements = file.getChildren();
 			for ( int i = 0; i < elements.length; ++i )
 			{
@@ -2041,7 +2042,10 @@ public class CDebugTarget extends CDebugElement
 					list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.IParent)elements[i] ) );
 				}
 			}
-		} catch (CModelException e) {
+		} 
+		catch( CModelException e ) 
+		{
+			requestFailed( CoreModelMessages.getString( "CDebugTarget.Unable_to_get_globals_1" ) + e.getMessage(), e ); //$NON-NLS-1$
 		}
 		return list;
 	}
@@ -2057,7 +2061,7 @@ public class CDebugTarget extends CDebugElement
 				  	  
 				  	  public IPath getPath()
 				  	  {
-						  IPath path = new Path(""); //$NON-NLS-1$
+						  IPath path = new Path( "" ); //$NON-NLS-1$
 						  ICElement parent = var.getParent();
 						  if ( parent instanceof IBinaryModule )
 						  {

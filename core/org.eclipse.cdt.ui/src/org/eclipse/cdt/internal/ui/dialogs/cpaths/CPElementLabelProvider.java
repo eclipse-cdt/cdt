@@ -30,10 +30,14 @@ class CPElementLabelProvider extends LabelProvider {
 	private String fNewLabel, fCreateLabel;
 	private ImageDescriptor fIncludeIcon, fMacroIcon, fLibWSrcIcon, fLibIcon;
 	private ImageDescriptor fFolderImage, fOutputImage, fProjectImage, fContainerImage;
-
+	private boolean bShowExported;
 	private ImageDescriptorRegistry fRegistry;
 
 	public CPElementLabelProvider() {
+		this(true);
+	}
+	
+	public CPElementLabelProvider(boolean showExported) {
 		fNewLabel = CPathEntryMessages.getString("CPElementLabelProvider.new"); //$NON-NLS-1$
 		fCreateLabel = CPathEntryMessages.getString("CPElementLabelProvider.willbecreated"); //$NON-NLS-1$
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
@@ -49,6 +53,7 @@ class CPElementLabelProvider extends LabelProvider {
 		IWorkbench workbench = CUIPlugin.getDefault().getWorkbench();
 
 		fProjectImage = workbench.getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
+		bShowExported = showExported;
 	}
 
 	public String getText(Object element) {
@@ -177,7 +182,7 @@ class CPElementLabelProvider extends LabelProvider {
 		return CPathEntryMessages.getString("CPElementLabelProvider.unknown_element.label"); //$NON-NLS-1$
 	}
 	private void addExport(CPElement cpentry, StringBuffer str) {
-		if (cpentry.isExported()) {
+		if (bShowExported && cpentry.isExported()) {
 			str.append(' ');
 			str.append(CPathEntryMessages.getString("CPElementLabelProvider.export.label")); //$NON-NLS-1$
 		}

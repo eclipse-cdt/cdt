@@ -90,6 +90,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 
 		fFoldersList.setViewerSorter(new CPElementSorter());
 		fFoldersList.enableButton(IDX_EDIT, false);
+		fFoldersList.enableButton(IDX_REMOVE, false);
 	}
 
 	

@@ -8,6 +8,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -39,7 +41,10 @@ public class CPathFilterPage extends WizardPage {
 	private CheckboxTableViewer viewer;
 	private IPathEntry fParentEntry;
 	private List fPaths;
-	private ICElement fCElement;
+	private List fExclusions;
+	private ViewerFilter filter;
+	
+	protected ICElement fCElement;
 
 	protected CPathFilterPage(ICElement cElement, int filterType) {
 		super("CPathFilterPage"); //$NON-NLS-1$
@@ -63,14 +68,13 @@ public class CPathFilterPage extends WizardPage {
 		label.setLayoutData(gd);
 		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		viewer.setContentProvider(new ListContentProvider());
-		viewer.setLabelProvider(new CPElementLabelProvider());
+		viewer.setLabelProvider(new CPElementLabelProvider(false));
 		viewer.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				validatePage();
 			}
 		});
-		viewer.addFilter(new CPElementFilter(fFilterType, true));
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 400;
 		gd.heightHint = 300;
@@ -106,6 +110,17 @@ public class CPathFilterPage extends WizardPage {
 			} catch (CModelException e) {
 			}
 		}
+		createExlusions();
+	}
+
+	
+	private void createExlusions() {
+		fExclusions = new ArrayList();
+		if (filter != null) {
+			viewer.removeFilter(filter);
+		}
+		filter = new CPElementFilter(fExclusions.toArray(), fFilterType, true);
+		viewer.addFilter(filter);
 	}
 
 	/**

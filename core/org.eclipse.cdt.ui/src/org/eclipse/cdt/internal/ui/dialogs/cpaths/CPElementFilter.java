@@ -11,10 +11,7 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -24,9 +21,9 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 public class CPElementFilter extends ViewerFilter {
 
-	private List fExcludes;
-	private int fKind;
-	private boolean fExportedOnly;
+	protected List fExcludes;
+	protected int fKind;
+	protected boolean fExportedOnly;
 
 	/**
 	 * @param excludedFiles
@@ -34,7 +31,7 @@ public class CPElementFilter extends ViewerFilter {
 	 * @param recusive
 	 *            Folders are only shown if, searched recursivly, contain an archive
 	 */
-	public CPElementFilter(CPElement[] excludedElements, int kind, boolean exportedOnly) {
+	public CPElementFilter(Object[] excludedElements, int kind, boolean exportedOnly) {
 		if (excludedElements != null) {
 			fExcludes = Arrays.asList(excludedElements);
 		}
@@ -51,31 +48,22 @@ public class CPElementFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof CPElement) {
-			if ( ((CPElement) element).getEntryKind() == fKind) {
-				if (fExcludes != null && !fExcludes.contains(element)) {
-					if (fExportedOnly == true && ! ((CPElement) element).isExported()) {
-						return false;
+			if ( ((CPElement)element).getEntryKind() == fKind) {
+				if (fExcludes == null || !fExcludes.contains(element)) {
+					if (fExportedOnly == true) {
+						return ((CPElement)element).isExported();
 					}
 					return true;
 				}
 			}
-		} else if (element instanceof ICProject) {
-			try {
-				IPathEntry[] entries = ((ICProject) element).getRawPathEntries();
-				for (int i = 0; i < entries.length; i++) {
-					if (select(viewer, parent, CPElement.createFromExisting(entries[i], (ICProject) element))) {
-						return true;
+		} else if (element instanceof IPathEntry) {
+			if ( ((IPathEntry)element).getEntryKind() == fKind) {
+				if (fExcludes == null || !fExcludes.contains(element)) {
+					if (fExportedOnly == true) {
+						return ((IPathEntry)element).isExported();
 					}
 				}
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e.getStatus());
 			}
-		} else if (element instanceof IPathEntry) {
-			boolean bShow = ((IPathEntry) element).getEntryKind() == fKind;
-			if (bShow && fExportedOnly == true) {
-				return ((IPathEntry) element).isExported();
-			}
-			return bShow;
 		}
 		return false;
 	}

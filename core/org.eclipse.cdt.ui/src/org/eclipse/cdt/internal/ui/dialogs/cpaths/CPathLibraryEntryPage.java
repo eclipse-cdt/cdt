@@ -98,6 +98,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 
 		fLibrariesList.setViewerSorter(new CPElementSorter());
 		fLibrariesList.enableButton(IDX_EDIT, false);
+		fLibrariesList.enableButton(IDX_REMOVE, false);
 		fLibrariesList.enableButton(IDX_EXPORT, false);
 	}
 

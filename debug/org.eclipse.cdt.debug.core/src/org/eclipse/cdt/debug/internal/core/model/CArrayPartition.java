@@ -34,6 +34,7 @@ public class CArrayPartition extends CVariable
 	private ICDIVariableObject fCDIVariableObject;
 	private ICDIVariable fCDIVariable;
 	private ICType fType = null;
+	private String fQualifiedName = null;
 
 	/**
 	 * Cache of value.

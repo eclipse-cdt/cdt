@@ -55,6 +55,7 @@ import org.eclipse.cdt.ui.CodeGeneration;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -126,6 +127,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	protected IStatus fClassNameStatus;
 	protected IStatus fBaseClassStatus;
 
+	private boolean hasCppNature = false;
+	
 	BasicSearchResultCollector  resultCollector;
 	SearchEngine searchEngine;
 
@@ -133,7 +136,13 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	public NewClassWizardPage(IStructuredSelection selection) {
 		super(PAGE_NAME);	
 		currentSelection = selection;
-
+		hasCppNature = isSelectionCPP(currentSelection);
+		if(hasCppNature){
+			initializePageControls();
+		}
+	}
+	
+	protected void initializePageControls(){
 		TypeFieldsAdapter adapter= new TypeFieldsAdapter();
 
 		fClassNameDialogField= new StringDialogField();
@@ -174,14 +183,19 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		fBaseClassStatus=  new StatusInfo();
 
 		resultCollector = new BasicSearchResultCollector ();
-		searchEngine = new SearchEngine();
-
+		searchEngine = new SearchEngine();		
 	}
 	
 	public void init() {
-		fAccessButtons.setEnabled(false);
-		setPageComplete(false);
-		eSelection = getSelectionCElement(currentSelection);						
+		if(hasCppNature){
+			fAccessButtons.setEnabled(false);
+			setPageComplete(false);
+			eSelection = getSelectionCElement(currentSelection);						
+		}else {
+			StatusInfo status = new StatusInfo();
+			status.setError(NewWizardMessages.getString("NewClassWizardPage.error.NotAvailableForNonCppProjects")); //$NON-NLS-1$
+			updateStatus(status);
+		}
 	}	
 	
 	// ----------------- Creating Controls -------------------- 			
@@ -189,6 +203,12 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		if(!hasCppNature)
+		{
+			setControl(new Composite(parent, SWT.NULL));
+			return;
+		}
+			
 		int nColumns= 5;
 				
 		initializeDialogUnits(parent);
@@ -358,6 +378,25 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}		
 	
 	// --------------- Helper methods for creating controls -----
+	public boolean selectionIsCpp(){
+		return hasCppNature;
+	}
+	
+	private boolean isSelectionCPP(IStructuredSelection sel){
+		IProject project = null;
+		ICElement element = getSelectionCElement(sel);
+		if (element == null){
+			IResource resource = getSelectionResourceElement(sel);
+			project = resource.getProject();
+		}else {
+			project = element.getCProject().getProject();
+		}
+		if (project != null)
+			return CoreModel.getDefault().hasCCNature(project);
+		else
+			return false;
+	}
+	
 	private ICElement getSelectionCElement(IStructuredSelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List list= ((IStructuredSelection)sel).toList();
@@ -521,7 +560,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	// -------------- Create a new Class  ----------------------	
 	
-	public void createClass(IProgressMonitor monitor){
+	public boolean createClass(IProgressMonitor monitor){		
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
@@ -555,13 +594,15 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 					bodyWC.commit(true, monitor);
 				}
 			}
-			
+		
+			return true;	
 		}catch(CModelException e){
 			MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), WorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
+			return false;			
 		}finally{
 			monitor.done();
 		}
-				
+					
 	}
 	
 	protected ITranslationUnit createTranslationUnit(LinkToFileGroup linkedGroup){
@@ -766,7 +807,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			BasicSearchMatch baseClass = (BasicSearchMatch)findInList(baseClassName, null, classElements);
 
 //			if(baseClass != null){
-//				baseClassFileName = baseClass.getLocation().toString();
+//				IPath baseClassFileLocation = baseClass.getLocation();
+//				IPath newFilePath = getContainerFullPath(linkedResourceGroupForHeader);
+//				baseClassFileName = baseClassName + HEADER_EXT;
 //			} else {
 				baseClassFileName = baseClassName + HEADER_EXT;
 //			}

@@ -32,7 +32,7 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 	private static final String WZ_TITLE = "NewClassWizard.title";
 	private static final String WZ_DESC = "NewClassWizard.description";
 	private static final String PAGE_TITLE = "NewClassWizard.page.title";
-	
+
 	/**
 	 * "NewClassWizard" constructor.
 	 */
@@ -50,25 +50,27 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 	}
 	
 	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
-		fPage.createClass(monitor);
-		ITranslationUnit headerTU= fPage.getCreatedClassHeaderFile();
-		ITranslationUnit bodyTU= fPage.getCreatedClassBodyFile();
-		if (headerTU != null) {
-			IResource resource= headerTU.getResource();
-			selectAndReveal(resource);
-			openResource((IFile) resource);
-		}	
-		if (bodyTU != null) {
-			IResource resource= bodyTU.getResource();
-			selectAndReveal(resource);
-			openResource((IFile) resource);
-		}	
-		
+		if(fPage.createClass(monitor)){
+			ITranslationUnit headerTU= fPage.getCreatedClassHeaderFile();
+			ITranslationUnit bodyTU= fPage.getCreatedClassBodyFile();
+			if (headerTU != null) {
+				IResource resource= headerTU.getResource();
+				selectAndReveal(resource);
+				openResource((IFile) resource);
+			}	
+			if (bodyTU != null) {
+				IResource resource= bodyTU.getResource();
+				selectAndReveal(resource);
+				openResource((IFile) resource);
+			}	
+		}
 	}
 	/**
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish()  {			
+		if(!fPage.selectionIsCpp())
+			return true;
 		IWorkspaceRunnable op= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 				try {

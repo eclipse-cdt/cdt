@@ -1,3 +1,6 @@
+2003-09-18 Hoda Amer
+	Solution to bug#42611 : New Class Wizard should be hidden for C projects
+		
 2003-09-18 David Inglis
 	Add workbench build/rebuild in context menu.
 	

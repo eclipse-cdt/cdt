@@ -24,4 +24,8 @@ public class MIExecNext extends MICommand
 	public MIExecNext() {
 		super("-exec-next"); //$NON-NLS-1$
 	}
+
+	public MIExecNext(int count) {
+		super("-exec-next", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	}
 }

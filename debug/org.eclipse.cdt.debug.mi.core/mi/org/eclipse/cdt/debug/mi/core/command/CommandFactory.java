@@ -36,11 +36,6 @@ public class CommandFactory {
 		return new MIBreakEnable(brknum);
 	}
 
-//	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware,
-//						 String condition, int ignoreCount, String line) {
-//		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, 0);
-//	}
-
 	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware,
 			 String condition, int ignoreCount, String line, int tid) {
 		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, tid);
@@ -147,28 +142,32 @@ public class CommandFactory {
 		return null;
 	}
 
-	public MIExecNext createMIExecNext() {
-		return new MIExecNext();
+	public MIExecNext createMIExecNext(int count) {
+		return new MIExecNext(count);
 	}
 
-	public MIExecNextInstruction createMIExecNextInstruction() {
-		return new MIExecNextInstruction();
+	public MIExecNextInstruction createMIExecNextInstruction(int count) {
+		return new MIExecNextInstruction(count);
 	}
 
 	public MIExecReturn createMIExecReturn() {
 		return new MIExecReturn();
 	}
 
+	public MIExecReturn createMIExecReturn(String arg) {
+		return new MIExecReturn(arg);
+	}
+
 	public MIExecRun createMIExecRun(String[] args) {
 		return new MIExecRun(args);
 	}
 
-	public MIExecStep createMIExecStep() {
-		return new MIExecStep();
+	public MIExecStep createMIExecStep(int count) {
+		return new MIExecStep(count);
 	}
 
-	public MIExecStepInstruction createMIExecStepInstruction() {
-		return new MIExecStepInstruction();
+	public MIExecStepInstruction createMIExecStepInstruction(int count) {
+		return new MIExecStepInstruction(count);
 	}
 
 	public MIExecUntil createMIExecUntil(String location) {

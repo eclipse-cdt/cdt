@@ -16,12 +16,21 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.Location;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
+import org.eclipse.cdt.debug.mi.core.command.MIExecReturn;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
  */
@@ -146,6 +155,67 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 				getLocation().equals(stack.getLocation());
 		}
 		return super.equals(stackframe);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStepReturn#stepReturn()
+	 */
+	public void stepReturn() throws CDIException {
+		finish();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStepReturn#stepReturn(org.eclipse.cdt.debug.core.cdi.model.ICDIValue)
+	 */
+	public void stepReturn(ICDIValue value) throws CDIException {
+		execReturn(value.toString());
+	}
+
+	/**
+	 */
+	protected void finish() throws CDIException {
+		
+		((Thread)getThread()).setCurrentStackFrame(this, false);
+
+		Target target = (Target)getTarget();
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIExecFinish finish = factory.createMIExecFinish();
+		try {
+			miSession.postCommand(finish);
+			MIInfo info = finish.getMIInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	/**
+	 */
+	protected void execReturn(String value) throws CDIException {
+
+		((Thread)getThread()).setCurrentStackFrame(this, false);
+
+		Target target = (Target)getTarget();
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIExecReturn ret;
+		if (value == null) {
+			ret = factory.createMIExecReturn();
+		} else {
+			ret = factory.createMIExecReturn(value);
+		}
+		try {
+			miSession.postCommand(ret);
+			MIInfo info = ret.getMIInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 }

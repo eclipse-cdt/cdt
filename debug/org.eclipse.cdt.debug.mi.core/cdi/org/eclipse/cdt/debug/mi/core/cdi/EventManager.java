@@ -386,16 +386,16 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				if (lastUserCommand == null) {
 					switch (type) {
 						case MIRunningEvent.NEXT:
-							lastUserCommand = factory.createMIExecNext();
+							lastUserCommand = factory.createMIExecNext(1);
 							break;
 						case MIRunningEvent.NEXTI:
-							lastUserCommand = factory.createMIExecNextInstruction();
+							lastUserCommand = factory.createMIExecNextInstruction(1);
 							break;
 						case MIRunningEvent.STEP:
-							lastUserCommand = factory.createMIExecStep();
+							lastUserCommand = factory.createMIExecStep(1);
 							break;
 						case MIRunningEvent.STEPI:
-							lastUserCommand = factory.createMIExecStepInstruction();
+							lastUserCommand = factory.createMIExecStepInstruction(1);
 							break;
 						case MIRunningEvent.FINISH:
 							lastUserCommand = factory.createMIExecFinish();

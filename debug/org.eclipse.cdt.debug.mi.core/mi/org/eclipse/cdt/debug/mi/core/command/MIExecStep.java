@@ -26,4 +26,8 @@ public class MIExecStep extends MICommand
 	public MIExecStep() {
 		super("-exec-step"); //$NON-NLS-1$
 	}
+
+	public MIExecStep(int count) {
+		super("-exec-step", new String[] { Integer.toString(count) }); //$NON-NLS-1$
+	}
 }

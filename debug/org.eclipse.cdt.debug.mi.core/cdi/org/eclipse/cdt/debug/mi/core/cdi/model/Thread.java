@@ -306,6 +306,89 @@ public class Thread extends CObject implements ICDIThread {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepInto()
+	 */
+	public void stepInto() throws CDIException {
+		stepInto(1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepInto(int)
+	 */
+	public void stepInto(int count) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().stepInto(count);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepIntoInstruction()
+	 */
+	public void stepIntoInstruction() throws CDIException {
+		stepIntoInstruction(1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepIntoInstruction(int)
+	 */
+	public void stepIntoInstruction(int count) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().stepIntoInstruction(count);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepOver()
+	 */
+	public void stepOver() throws CDIException {
+		stepOver(1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepOver(int)
+	 */
+	public void stepOver(int count) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().stepOver(count);
+		
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepOverInstruction()
+	 */
+	public void stepOverInstruction() throws CDIException {
+		stepOverInstruction(1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepOverInstruction(int)
+	 */
+	public void stepOverInstruction(int count) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().stepOverInstruction(count);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepReturn()
+	 */
+	public void stepReturn() throws CDIException {
+		getCurrentStackFrame().stepReturn();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#runUntil(ICDILocation)
+	 */
+	public void runUntil(ICDILocation location) throws CDIException {
+		stepUntil(location);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepUntil(org.eclipse.cdt.debug.core.cdi.ICDILocation)
+	 */
+	public void stepUntil(ICDILocation location) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().stepUntil(location);
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#isSuspended()
 	 */
 	public boolean isSuspended() {
@@ -313,100 +396,67 @@ public class Thread extends CObject implements ICDIThread {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#resume()
-	 */
-	public void resume() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().resume();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepInto()
-	 */
-	public void stepInto() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().stepInto();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepIntoInstruction()
-	 */
-	public void stepIntoInstruction() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().stepIntoInstruction();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepOver()
-	 */
-	public void stepOver() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().stepOver();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepOverInstruction()
-	 */
-	public void stepOverInstruction() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().stepOverInstruction();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepReturn()
-	 */
-	public void stepReturn() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().stepReturn();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepReturn(boolean)
-	 */
-	public void stepReturn(boolean execute) throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().stepReturn(execute);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#runUntil(ICDILocation)
-	 */
-	public void runUntil(ICDILocation location) throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().runUntil(location);
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#suspend()
 	 */
 	public void suspend() throws CDIException {
 		getTarget().suspend();
-		getTarget().setCurrentThread(this);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#resume()
+	 */
+	public void resume() throws CDIException {
+		resume(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(boolean)
+	 */
+
+	public void resume(boolean passSignal) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().resume(passSignal);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.ICDILocation)
+	 */
+	public void resume(ICDILocation location) throws CDIException {
+		// TODO Auto-generated method stub
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().resume(location);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
+	 */
+	public void resume(ICDISignal signal) throws CDIException {
+		((Target)getTarget()).setCurrentThread(this);
+		getTarget().resume(signal);
+		
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#jump(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
 	public void jump(ICDILocation location) throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().jump(location);
+		resume(location);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#signal()
 	 */
 	public void signal() throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().signal();
+		resume(false);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#signal(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
 	 */
 	public void signal(ICDISignal signal) throws CDIException {
-		getTarget().setCurrentThread(this);
-		getTarget().signal(signal);
+		resume(signal);
 	}
+
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#equals(ICDIThread)

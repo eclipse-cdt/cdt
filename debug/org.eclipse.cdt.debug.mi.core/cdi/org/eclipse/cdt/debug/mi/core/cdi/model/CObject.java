@@ -17,7 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
  */
 public class CObject implements ICDIObject {
 
-	private Target fTarget;
+	protected Target fTarget;
 	
 	public CObject(Target t) {
 		fTarget = t;

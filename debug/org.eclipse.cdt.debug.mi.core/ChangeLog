@@ -1,3 +1,12 @@
+2004-09-09 Alain Magloire
+	Introduction of new classes in the CDI interface
+		ICDIExecuteStep
+		ICDIExecuteStepReturn
+		ICDIExecuteResume
+		ICDISuspend
+		ICDIThreadGroup
+	The code is adjust to the new demands.
+
 2004-09-07 Alain Magloire
 
 	Remove ICDIBreakpointManager class

@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
-
-
 /**
  * 
  *     -exec-return
@@ -26,4 +24,9 @@ public class MIExecReturn extends MICommand
 	public MIExecReturn() {
 		super("-exec-return"); //$NON-NLS-1$
 	}
+
+	public MIExecReturn(String arg) {
+		super("-exec-run", new String[] { arg }); //$NON-NLS-1$
+	}
+
 }

@@ -41,12 +41,14 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	private BigInteger cStartAddress; //cached start address
 	private byte[] cBytes; //cached bytes
 	private int[] badOffsets;
+	private boolean fIsLittleEndian;
 
-	public MemoryBlock(Target target, String exp, int wordSize, MIDataReadMemoryInfo info) {
+	public MemoryBlock(Target target, String exp, int wordSize, boolean isLittle, MIDataReadMemoryInfo info) {
 		super(target);
 		expression = exp;
 		fWordSize = wordSize;
 		frozen = true;
+		fIsLittleEndian = isLittle;
 		setMIDataReadMemoryInfo(info);
 	}
 
@@ -136,14 +138,23 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		MIMemory[] miMem = m.getMemories();
 		for (int i = 0; i < miMem.length; ++i) {
 			long[] data = miMem[i].getData();
-			if (data.length > 0) {
-				int blen = bytes.length;
-				byte[] newBytes = new byte[blen + data.length];
-				System.arraycopy(bytes, 0, newBytes, 0, blen);
-				for (int j = 0; j < data.length; ++j, ++blen) {
-					newBytes[blen] = (byte)data[j];
+			if (data != null && data.length > 0) {
+//				int blen = bytes.length;
+//				byte[] newBytes = new byte[blen + data.length];
+//				System.arraycopy(bytes, 0, newBytes, 0, blen);
+//				for (int j = 0; j < data.length; ++j, ++blen) {
+//					newBytes[blen] = (byte)data[j];
+//				}
+//				bytes = newBytes;
+				for (int j = 0; j < data.length; ++j) {
+					byte[] bs = longToBytes(data[j]);
+					// grow the array
+					int blen = bytes.length;
+					byte[] newBytes = new byte[blen + bs.length];
+					System.arraycopy(bytes, 0, newBytes, 0, blen);
+					System.arraycopy(bs, 0, newBytes, blen, bs.length);
+					bytes = newBytes;
 				}
-				bytes = newBytes;
 			}
 		}
 		return bytes;
@@ -201,6 +212,14 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getLength()
 	 */
 	public long getLength() {
+		try {
+			// use this instead.  If the wordSize
+			// given does not match the hardware,
+			// counting the bytes will be correct.
+			return getBytes().length;
+		} catch (CDIException e) {
+			// ignore.
+		}
 		return mem.getTotalBytes();
 	}
 
@@ -273,4 +292,54 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		return VALID;
 	}
 
+
+	/**
+	 * We should use the wordSize ... but ...
+	 * The problem: the user may not have the right wordsize
+	 * For example on some DSP the user set the wordSize to be 1 byte
+	 * but in fact GDB is reading 2 bytes.
+	 * So let do some guessing since the data(long) may have a bigger value then one byte.
+	 */
+	private byte[] longToBytes(long v) {		
+		// Calculate the number of bytes needed
+		int count = 1;
+		long value = v;
+		for (count = 1; (value /= 0x100) > 0; ++count)
+			;
+
+		// Reset the wordSize if incorrect.
+		if (fWordSize != count) {
+			fWordSize = count;
+		}
+
+		byte[] bytes = new byte[count];
+		if (fIsLittleEndian) {
+			for (int i = count - 1; i >= 0; --i) {
+				int shift = i * count;
+				bytes[i] = (byte)((v >>> shift) & 0xFF);
+			}
+//			bytes[7] = (byte)((v >>> 56) & 0xFF);
+//			bytes[6] = (byte)((v >>> 48) & 0xFF);
+//			bytes[5] = (byte)((v >>> 40) & 0xFF);
+//			bytes[4] = (byte)((v >>> 32) & 0xFF);
+//			bytes[3] = (byte)((v >>> 24) & 0xFF);
+//			bytes[2] = (byte)((v >>> 16) & 0xFF);
+//			bytes[1] = (byte)((v >>>  8) & 0xFF);
+//			bytes[0] = (byte)((v >>>  0) & 0xFF);			
+		} else {
+			for (int i = 0; i < count; ++i) {
+				int shift = (count - i - 1) * count;
+				bytes[i] = (byte)((v >>> shift) & 0xFF);
+			}
+//			bytes[0] = (byte)((v >>> 56) & 0xFF);
+//			bytes[1] = (byte)((v >>> 48) & 0xFF);
+//			bytes[2] = (byte)((v >>> 40) & 0xFF);
+//			bytes[3] = (byte)((v >>> 32) & 0xFF);
+//			bytes[4] = (byte)((v >>> 24) & 0xFF);
+//			bytes[5] = (byte)((v >>> 16) & 0xFF);
+//			bytes[6] = (byte)((v >>>  8) & 0xFF);
+//			bytes[7] = (byte)((v >>>  0) & 0xFF);			
+		}
+		return bytes;
+	}
 }

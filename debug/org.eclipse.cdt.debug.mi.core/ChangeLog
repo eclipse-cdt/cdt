@@ -1,3 +1,10 @@
+2005-03-24 Alain Magloire
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/MemoryManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Memoryblock.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Target.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/MIShowEndian.java
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIShowEndianInfo.java
+
 2005-03-23 Alain Magloire
 	Changes in the CDI ICDIMemoryBlock && ICDIMemoryBlockManagement API.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/MemoryManager.java

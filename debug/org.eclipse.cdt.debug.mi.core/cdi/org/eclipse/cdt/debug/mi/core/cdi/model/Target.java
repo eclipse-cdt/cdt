@@ -60,6 +60,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MIJump;
+import org.eclipse.cdt.debug.mi.core.command.MIShowEndian;
 import org.eclipse.cdt.debug.mi.core.command.MISignal;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
@@ -70,6 +71,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoThreadsInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIShowEndianInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
@@ -81,6 +83,7 @@ public class Target extends SessionObject implements ICDITarget {
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
+	String fEndian = null;
 	
 	public Target(Session s, MISession mi) {
 		super(s);
@@ -333,6 +336,24 @@ public class Target extends SessionObject implements ICDITarget {
 			}
 		}
 		return th;
+	}
+
+	public boolean isLittleEndian() throws CDIException {
+		if (fEndian == null) {
+			CommandFactory factory = miSession.getCommandFactory();
+			MIShowEndian endian = new MIShowEndian();
+			try {
+				miSession.postCommand(endian);
+				MIShowEndianInfo info = endian.getMIShowEndianInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+				}
+				fEndian = info.isLittleEndian() ? "le" : "be"; //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+		}
+		return fEndian.equals("le"); //$NON-NLS-1$
 	}
 
 	/**

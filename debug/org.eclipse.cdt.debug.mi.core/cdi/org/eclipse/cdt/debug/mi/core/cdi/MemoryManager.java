@@ -135,8 +135,9 @@ public class MemoryManager extends Manager {
 		Target target = (Target)block.getTarget();
 		String exp = block.getExpression();
 		int wordSize = block.getWordSize();
+		boolean little = target.isLittleEndian();
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), exp, (int)block.getLength(), wordSize);
-		return new MemoryBlock(target, exp, wordSize, info);
+		return new MemoryBlock(target, exp, wordSize, little, info);
 	}
 
 	/**
@@ -158,8 +159,9 @@ public class MemoryManager extends Manager {
 	}
 
 	public ICDIMemoryBlock createMemoryBlock(Target target, String address, int units, int wordSize) throws CDIException {
+		boolean little = target.isLittleEndian();
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), address, units, wordSize);
-		ICDIMemoryBlock block = new MemoryBlock(target, address, wordSize, info);
+		ICDIMemoryBlock block = new MemoryBlock(target, address, wordSize, little, info);
 		List blockList = getMemoryBlockList(target);
 		blockList.add(block);
 		MISession miSession = target.getMISession();

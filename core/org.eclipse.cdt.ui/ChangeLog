@@ -1,5 +1,13 @@
 2004-08-04 Alain Magloire
 
+	Fix ShowInCView class
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/ui/CElementGrouping.java
+	* src/org/eclipse/cdt/ui/Includes/Grouping.java
+	* src/org/eclipse/cdt/ui/actions/ShowInCViewAction.java
+
+2004-08-04 Alain Magloire
+
 	Implementation of Grouping for includes.
 	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
 	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java

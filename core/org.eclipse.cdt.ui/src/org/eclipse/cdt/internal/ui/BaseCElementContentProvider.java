@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -32,6 +33,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.model.IWorkbenchAdapter;
  
 /**
  * A base content provider for C elements. It provides access to the
@@ -244,7 +246,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		Object parent = null;
 		if (element instanceof ICElement) {
 			parent = ((ICElement)element).getParent();			
+		} else if (element instanceof IWorkbenchAdapter) {
+			parent = ((IWorkbenchAdapter)element).getParent(element);
 		}
+
 		// if the parent is the default ISourceRoot == ICProject  return the project
 		if (parent instanceof ISourceRoot) {
 			if (isProjectSourceRoot((ISourceRoot)parent)) {
@@ -258,6 +263,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					parent = internalGetParent(res);
 				}
 			}
+		}
+
+		// if we are doing grouping for the includes return the grouping container.
+		if (element instanceof IInclude && fIncludesGrouping) {
+			parent = new IncludesGrouping(((IInclude)element).getTranslationUnit());
 		}
 		return parent;
 	}

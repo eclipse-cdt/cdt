@@ -45,4 +45,13 @@ public class IncludesGrouping extends CElementGrouping {
 		return tu;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof IncludesGrouping) {
+			return tu.equals(((IncludesGrouping)obj).getParent(obj)) ;
+		}
+		return super.equals(obj);
+	}
 }

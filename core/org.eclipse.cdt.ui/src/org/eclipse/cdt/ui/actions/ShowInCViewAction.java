@@ -63,9 +63,6 @@ public class ShowInCViewAction extends SelectionProviderAction {
 	 * @see IAction#actionPerformed
 	 */
 	public void run() {
-		if(page == null) {
-			return;
-		}
 		ISelection selection = getSelection();
 		if (selection instanceof ITextSelection) {
 			run(fEditor);
@@ -76,6 +73,13 @@ public class ShowInCViewAction extends SelectionProviderAction {
 	}
 
 	public void run(IStructuredSelection selection) {
+		if (page == null) {
+			page = CUIPlugin.getActivePage();
+			if (page == null) {
+				return;
+			}
+		}
+
 		//Locate a source and a target for us to use
 		try {
 			IWorkbenchPart part = page.showView(CUIPlugin.CVIEW_ID);

@@ -18,7 +18,7 @@ import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  */
-public class CElementGrouping extends WorkbenchAdapter implements IAdaptable {
+public abstract class CElementGrouping extends WorkbenchAdapter implements IAdaptable {
 
 	public final static int INCLUDES_GROUPING = 0x00001;
 	public final static int NAMESPACE_GROUPING = 0x00010;

@@ -1,6 +1,6 @@
 2003-04-01 Alain Magloire
 
-	Phasing the classes ICResource and ICFile.
+	Phasing out the classes ICResource and ICFile.
 	They were no longer part of the C Model.
 
 	* model/org/eclipse/cdt/core/model/ICFile.java:

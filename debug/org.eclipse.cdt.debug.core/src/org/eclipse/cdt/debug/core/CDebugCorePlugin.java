@@ -14,7 +14,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ListenerList;
@@ -26,20 +25,25 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The plugin class for C/C++ debug core.
  */
 public class CDebugCorePlugin extends Plugin {
+
+	/**
+	 * The plug-in identifier (value <code>"org.eclipse.cdt.debug.core"</code>).
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.core" ; //$NON-NLS-1$
 
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -73,8 +77,8 @@ public class CDebugCorePlugin extends Plugin {
 	/**
 	 * The constructor.
 	 */
-	public CDebugCorePlugin( IPluginDescriptor descriptor ) {
-		super( descriptor );
+	public CDebugCorePlugin() {
+		super();
 		plugin = this;
 	}
 
@@ -106,9 +110,9 @@ public class CDebugCorePlugin extends Plugin {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return "org.eclipse.cdt.debug.core"; //$NON-NLS-1$
+			return PLUGIN_ID;
 		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	public static String getResourceString( String key ) {
@@ -173,8 +177,7 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void initializeDebugConfiguration() {
-		IPluginDescriptor descriptor = getDefault().getDescriptor();
-		IExtensionPoint extensionPoint = descriptor.getExtensionPoint( "CDebugger" ); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), "CDebugger" ); //$NON-NLS-1$
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		fDebugConfigurations = new HashMap( infos.length );
 		for( int i = 0; i < infos.length; i++ ) {
@@ -201,26 +204,6 @@ public class CDebugCorePlugin extends Plugin {
 			throw new CoreException( status );
 		}
 		return dbgCfg;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
-	 */
-	public void shutdown() throws CoreException {
-		setSessionManager( null );
-		disposeBreakpointListenersList();
-		resetBreakpointsInstallCount();
-		super.shutdown();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		super.startup();
-		createBreakpointListenersList();
-		resetBreakpointsInstallCount();
-		setSessionManager( new SessionManager() );
 	}
 
 	protected void resetBreakpointsInstallCount() {
@@ -290,5 +273,25 @@ public class CDebugCorePlugin extends Plugin {
 	private void disposeBreakpointListenersList() {
 		fBreakpointListeners.removeAll();
 		fBreakpointListeners = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start( BundleContext context ) throws Exception {
+		super.start( context );
+		createBreakpointListenersList();
+		resetBreakpointsInstallCount();
+		setSessionManager( new SessionManager() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop( BundleContext context ) throws Exception {
+		setSessionManager( null );
+		disposeBreakpointListenersList();
+		resetBreakpointsInstallCount();
+		super.stop( context );
 	}
 }

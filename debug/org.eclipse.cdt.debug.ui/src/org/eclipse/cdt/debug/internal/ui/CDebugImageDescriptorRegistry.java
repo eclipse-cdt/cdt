@@ -87,12 +87,16 @@ public class CDebugImageDescriptorRegistry
 	{
 		fDisplay.asyncExec(new Runnable() {
 			public void run() {
-				fDisplay.disposeExec( new Runnable() {
+				getDisplay().disposeExec( new Runnable() {
 					public void run()	{
 						dispose();
 					}
 				} );
 			}
 		} );
+	}
+
+	protected Display getDisplay() {
+		return fDisplay;
 	}
 }

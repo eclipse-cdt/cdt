@@ -108,7 +108,7 @@ public class TCPSettingsBlock extends Observable
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
-								public void dialogFieldChanged( DialogField field )
+								public void dialogFieldChanged( DialogField f )
 								{
 									hostNameFieldChanged();
 								}
@@ -123,7 +123,7 @@ public class TCPSettingsBlock extends Observable
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
-								public void dialogFieldChanged( DialogField field )
+								public void dialogFieldChanged( DialogField f )
 								{
 									portNumberFieldChanged();
 								}

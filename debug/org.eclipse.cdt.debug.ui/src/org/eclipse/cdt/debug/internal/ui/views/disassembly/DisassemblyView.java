@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
@@ -52,7 +51,6 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.VerticalRuler;
@@ -302,15 +300,12 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	protected void createActions() {
 		IAction action;
 		IVerticalRuler ruler = getVerticalRuler();
-		if ( ruler instanceof IVerticalRulerInfo ) {
-			IVerticalRulerInfo info = (IVerticalRulerInfo)ruler;
-			action= new ToggleBreakpointRulerAction( this, info );
-			setAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT, action );
-			action= new EnableDisableBreakpointRulerAction( this, info );
-			setAction( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT, action );
-			action= new CBreakpointPropertiesRulerAction( this, info );
-			setAction( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES, action );
-		}
+		action= new ToggleBreakpointRulerAction( this, ruler );
+		setAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT, action );
+		action= new EnableDisableBreakpointRulerAction( this, ruler );
+		setAction( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT, action );
+		action= new CBreakpointPropertiesRulerAction( this, ruler );
+		setAction( IInternalCDebugUIConstants.ACTION_BREAKPOINT_PROPERTIES, action );
 	}
 
 	/* (non-Javadoc)

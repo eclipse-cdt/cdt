@@ -243,11 +243,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			//as the selection can be out of date for context menu
 			//actions. See bug 14556
 			ISelection s= getView().getViewSite().getSelectionProvider().getSelection();
-			if (s instanceof IStructuredSelection) {
-				return (IStructuredSelection)s;
-			} else {
-				return StructuredSelection.EMPTY;
-			}
+			return (s instanceof IStructuredSelection)? (IStructuredSelection)s : StructuredSelection.EMPTY;
 		}
 		return fSelection;
 	}

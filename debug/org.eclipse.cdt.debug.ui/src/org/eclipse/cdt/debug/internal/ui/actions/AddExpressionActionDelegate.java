@@ -67,14 +67,8 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 
 	protected Shell getShell()
 	{
-		if ( getTargetPart() != null )
-		{
-			return getTargetPart().getSite().getShell();
-		}
-		else
-		{
-			return CDebugUIPlugin.getActiveWorkbenchShell();
-		}
+		return ( getTargetPart() != null ) ? 
+				getTargetPart().getSite().getShell() : CDebugUIPlugin.getActiveWorkbenchShell();
 	}
 	
 	private void createExpression( final String text )

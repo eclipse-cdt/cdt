@@ -24,7 +24,7 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
 
@@ -1073,44 +1073,6 @@
             class="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler"
             id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
       </statusHandler>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.debugActionGroups">
-      <debugActionGroup
-            name="%CDebugActionGroup.name"
-            visible="true"
-            id="org.eclipse.cdt.debug.ui.cDebugActionGroup">
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddGlobalsActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddAddressBreakpointActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.ui.internal.actions.ManageBreakpointActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
-         </action>
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate">
-         </action>
-      </debugActionGroup>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">

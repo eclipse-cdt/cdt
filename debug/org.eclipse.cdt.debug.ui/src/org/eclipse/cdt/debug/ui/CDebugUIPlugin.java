@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.model.ISwitchToThread;
@@ -31,8 +30,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -54,12 +53,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
  */
 public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener
 {
+	/**
+	 * The plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.ui" ; //$NON-NLS-1$
+
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
 	//Resource bundle.
@@ -72,9 +77,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	/**
 	 * The constructor.
 	 */
-	public CDebugUIPlugin( IPluginDescriptor descriptor )
+	public CDebugUIPlugin()
 	{
-		super( descriptor );
+		super();
 		plugin = this;
 		try
 		{
@@ -147,9 +152,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return "org.eclipse.cdt.debug.ui"; //$NON-NLS-1$
+			return PLUGIN_ID;
 		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	/**
@@ -226,8 +231,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	protected void initializeDebuggerPageMap() {
 		fDebuggerPageMap = new HashMap(10);
 
-		IPluginDescriptor descriptor= getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebuggerPage"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint("CDebuggerPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < infos.length; i++) {
 			String id = infos[i].getAttribute("debuggerID"); //$NON-NLS-1$
@@ -318,46 +322,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
-	 */
-	public void shutdown() throws CoreException
-	{
-		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-		// TODO: PR 52155, this is big hammer approach, but it is ok for
-		// Since the code will be remove when we align ourselves
-		// with Eclipse-3.0
-		try 
-		{
-			IWorkbenchWindow ww = getActiveWorkbenchWindow();
-			if ( ww != null )
-			{
-				ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-			}
-		} catch (Exception e) {
-			// Big hammer.
-		}
-		if ( fImageDescriptorRegistry != null )
-		{
-				fImageDescriptorRegistry.dispose();
-		}
-		super.shutdown();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#startup()
-	 */
-	public void startup() throws CoreException
-	{
-		super.startup();
-		IWorkbenchWindow ww = getActiveWorkbenchWindow();
-		if ( ww != null )
-		{
-			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
-		}
-		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged( IWorkbenchPart part, ISelection selection )
@@ -438,5 +402,32 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	public static String getDefaultSourceLocatorOldID()
 	{
 		return DefaultSourceLocator.ID_OLD_DEFAULT_SOURCE_LOCATOR;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start( BundleContext context ) throws Exception {
+		super.start( context );
+		IWorkbenchWindow ww = getActiveWorkbenchWindow();
+		if ( ww != null ) {
+			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		}
+		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop( BundleContext context ) throws Exception {
+		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
+		IWorkbenchWindow ww = getActiveWorkbenchWindow();
+		if ( ww != null ) {
+			ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		}
+		if ( fImageDescriptorRegistry != null ) {
+			fImageDescriptorRegistry.dispose();
+		}
+		super.stop( context );
 	}
 }

@@ -16,7 +16,7 @@ public interface ICDebugConstants
 	/**
 	 * C/C++ debug plug-in identifier (value <code>"org.eclipse.cdt.debug.core"</code>).
 	 */
-	public static final String PLUGIN_ID = CDebugCorePlugin.getDefault().getDescriptor().getUniqueIdentifier();
+	public static final String PLUGIN_ID = CDebugCorePlugin.getUniqueIdentifier();
 
 	/**
 	 * The identifier of the default variable format to use in the variables view

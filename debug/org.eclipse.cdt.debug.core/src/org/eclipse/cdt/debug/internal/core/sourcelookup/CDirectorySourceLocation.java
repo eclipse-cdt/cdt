@@ -214,10 +214,11 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		LinkedList list = new LinkedList();
 		for ( int j = 0; j < wsFiles.length; ++j )
 			if ( wsFiles[j].exists() )
+			{
 				if ( !searchForDuplicateFiles() )
 					return wsFiles[j];
-				else
-					list.add( wsFiles[j] );
+				list.add( wsFiles[j] );
+			}
 		if ( list.size() > 0 ) 
 			return ( list.size() == 1 ) ? list.getFirst() : list;
 
@@ -271,14 +272,14 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			LinkedList list = new LinkedList();
 			for ( int j = 0; j < wsFiles.length; ++j )
 				if ( wsFiles[j].exists() )
+				{
 					if ( !searchForDuplicateFiles() )
 						return wsFiles[j];
-					else
-						list.add( wsFiles[j] );
+					list.add( wsFiles[j] );
+				}
 			if ( list.size() > 0 ) 
 				return ( list.size() == 1 ) ? list.getFirst() : list;
-			else
-				return createExternalFileStorage( path );
+			return createExternalFileStorage( path );
 		}
 		return null;
 	}

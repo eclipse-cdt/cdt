@@ -199,7 +199,7 @@ public abstract class CVariable extends CDebugElement
 				{
 					if ( getCDIVariableObject() instanceof ICDIArgumentObject )
 						fCDIVariable = getCDISession().getVariableManager().createArgument( (ICDIArgumentObject)getCDIVariableObject() );
-					else if ( getCDIVariableObject() instanceof ICDIVariableObject )
+					else
 						fCDIVariable = getCDISession().getVariableManager().createVariable( getCDIVariableObject() );
 				}
 				catch( CDIException e )

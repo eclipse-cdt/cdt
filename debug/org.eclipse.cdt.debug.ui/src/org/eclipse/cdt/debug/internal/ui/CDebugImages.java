@@ -34,7 +34,7 @@ public class CDebugImages
 		String pathSuffix = "icons/full/"; //$NON-NLS-1$
 		try
 		{
-			fgIconBaseURL = new URL( CDebugUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix );
+			fgIconBaseURL = new URL( CDebugUIPlugin.getDefault().getBundle().getEntry( "/" ), pathSuffix ); //$NON-NLS-1$
 		}
 		catch( MalformedURLException e )
 		{

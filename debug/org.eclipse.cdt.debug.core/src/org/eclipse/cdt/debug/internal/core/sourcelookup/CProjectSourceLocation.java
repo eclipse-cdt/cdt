@@ -163,10 +163,11 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
 			for ( int i = 0; i < wsFiles.length; ++i )
 				if ( wsFiles[i].getProject().equals( getProject() ) && wsFiles[i].exists() )
+				{
 					if ( !searchForDuplicateFiles() )
 						return wsFiles[i];
-					else
-						list.add( wsFiles[i] );
+					list.add( wsFiles[i] );
+				}
 		}
 		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
 	}
@@ -186,10 +187,11 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 				IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
 				for ( int j = 0; j < wsFiles.length; ++j )
 					if ( wsFiles[j].exists() )
+					{
 						if ( !searchForDuplicateFiles() )
 							return wsFiles[j];
-						else
-							list.add( wsFiles[j] );
+						list.add( wsFiles[j] );
+					}
 			}
 		}
 		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;

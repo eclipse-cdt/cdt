@@ -124,9 +124,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						}
 						return;
 					}
-					else {
-						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
-					}
+					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
 				}
 			}
 		}

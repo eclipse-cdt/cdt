@@ -193,7 +193,7 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
-								public void dialogFieldChanged( DialogField field )
+								public void dialogFieldChanged( DialogField f )
 								{
 									connectionTypeChanged();
 								}

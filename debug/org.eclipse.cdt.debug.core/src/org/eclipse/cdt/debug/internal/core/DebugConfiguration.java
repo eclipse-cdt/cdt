@@ -7,12 +7,11 @@ package org.eclipse.cdt.debug.internal.core;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugger;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 
 public class DebugConfiguration implements ICDebugConfiguration {
 	/**
@@ -64,7 +63,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	}
 
 	public boolean supportsCPU(String cpu) {
-		String nativeCPU = BootLoader.getOSArch();
+		String nativeCPU = Platform.getOSArch();
 		boolean ret = false;
 		if ( nativeCPU.startsWith(cpu) ) {
 			ret = getCPUs().contains(PLATFORM_NATIVE);
@@ -99,7 +98,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 				fCPUs.add(PLATFORM_NATIVE);
 			}
 			else {
-				String nativeCPU = BootLoader.getOSArch();
+				String nativeCPU = Platform.getOSArch();
 				StringTokenizer tokenizer = new StringTokenizer(cpus, ","); //$NON-NLS-1$
 				fCPUs = new HashSet(tokenizer.countTokens());
 				while (tokenizer.hasMoreTokens()) {

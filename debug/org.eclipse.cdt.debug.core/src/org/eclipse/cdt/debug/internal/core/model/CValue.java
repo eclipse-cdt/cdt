@@ -345,8 +345,7 @@ public class CValue extends CDebugElement implements ICValue
 					BigInteger bigValue = new BigInteger( value.getValueString() );
 					return bigValue.toString();
 				}
-				else
-					return Long.toString( value.longValue() );
+				return Long.toString( value.longValue() );
 			}
 			case ICDIFormat.HEXADECIMAL:
 			{

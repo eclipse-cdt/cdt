@@ -1,3 +1,14 @@
+2004-05-21 Mikhail Khodjaiants
+	Removed dependencies on the compatibility plugin and replaced deprecated classes and methods.
+	Warning cleanup.
+	* GDBServerDebuggerPage.java
+	* IMIUIConstants.java
+	* MIUIPlugin.java
+	* SerialPortSettingsBlock.java
+	* TCPSettingsBlock.java
+	* SelectionButtonDialogFieldGroup.java
+	* plugin.xml
+
 2004-04-29 Mikhail Khodjaiants
 	Fix for bug 59083: Two short cut keys in one sentence.
 	* MIUIPluginResources.properties

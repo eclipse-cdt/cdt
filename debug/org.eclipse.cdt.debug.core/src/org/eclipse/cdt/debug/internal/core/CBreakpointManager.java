@@ -210,11 +210,9 @@ public class CBreakpointManager implements ICDIEventListener, IAdaptable {
 				ICSourceLocator sl = getSourceLocator();
 				if ( sl != null )
 					return sl.contains( project );
-				else {
-					if ( project.equals( getExecFile().getProject() ) )
-						return true;
-					return CDebugUtils.isReferencedProject( getExecFile().getProject(), project );
-				}
+				if ( project.equals( getExecFile().getProject() ) )
+					return true;
+				return CDebugUtils.isReferencedProject( getExecFile().getProject(), project );
 			}
 		}
 		return true;

@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 public interface IMIUIConstants
 {
 	/**
-	 * C/C++ Debug UI plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
+	 * Plug-in identifier (value <code>"org.eclipse.cdt.debug.mi.ui"</code>).
 	 */
-	public static final String PLUGIN_ID = MIUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+	public static final String PLUGIN_ID = MIUIPlugin.getUniqueIdentifier();
 }

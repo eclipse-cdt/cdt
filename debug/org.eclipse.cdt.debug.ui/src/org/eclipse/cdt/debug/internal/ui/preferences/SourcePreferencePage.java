@@ -111,12 +111,12 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 					new SourceListDialogField( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Source_locations"), //$NON-NLS-1$
 												new IListAdapter()
 													{
-														public void customButtonPressed( DialogField field, int index )
+														public void customButtonPressed( DialogField f, int index )
 														{
 															sourceButtonPressed( index );
 														}
 
-														public void selectionChanged(DialogField field)
+														public void selectionChanged(DialogField f)
 														{
 														}
 													} );

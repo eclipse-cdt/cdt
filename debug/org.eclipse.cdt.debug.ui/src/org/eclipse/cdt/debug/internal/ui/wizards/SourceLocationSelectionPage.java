@@ -211,7 +211,7 @@ public class SourceLocationSelectionPage extends WizardSelectionPage
 		ArrayList result = new ArrayList( allProjects.length );
 		for ( int i = 0; i < allProjects.length; ++i )
 		{
-			if ( ( CoreModel.getDefault().hasCNature( allProjects[i] ) || CoreModel.getDefault().hasCNature( allProjects[i] ) ) && 
+			if ( ( CoreModel.hasCNature( allProjects[i] ) || CoreModel.hasCCNature( allProjects[i] ) ) && 
 				 allProjects[i].isOpen() && 
 				 !projects.contains( allProjects[i] ) )
 			{

@@ -28,11 +28,7 @@ public abstract class SingleCharReader extends Reader {
 		for (int i= off; i < end; i++) {
 			int ch= read();
 			if (ch == -1) {
-				if (i == off) {
-					return -1;
-				} else {
-					return i - off;
-				}
+				return (i == off) ? -1 : i - off;
 			}
 			cbuf[i]= (char)ch;
 		}

@@ -123,8 +123,6 @@ public class SourceUtils
 	public static ICSourceLocation[] initializeSourceLocations( Element root )
 	{
 		List sourceLocations = new LinkedList();
-		ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
-
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for ( int i = 0; i < length; ++i )
@@ -146,7 +144,7 @@ public class SourceUtils
 					Class clazz = null;
 					try
 					{
-						clazz = classLoader.loadClass( className );
+						clazz = CDebugCorePlugin.getDefault().getBundle().loadClass( className );
 					}
 					catch( ClassNotFoundException e )
 					{

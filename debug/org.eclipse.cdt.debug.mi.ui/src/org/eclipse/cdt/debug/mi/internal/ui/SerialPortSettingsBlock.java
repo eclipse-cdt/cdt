@@ -114,7 +114,7 @@ public class SerialPortSettingsBlock extends Observable
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
-								public void dialogFieldChanged( DialogField field )
+								public void dialogFieldChanged( DialogField f )
 								{
 									deviceFieldChanged();
 								}
@@ -130,7 +130,7 @@ public class SerialPortSettingsBlock extends Observable
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
-								public void dialogFieldChanged( DialogField field )
+								public void dialogFieldChanged( DialogField f )
 								{
 									speedFieldChanged();
 								}

@@ -1,3 +1,12 @@
+2003-04-02 Alain Magloire
+
+	Bug fix and cleanup in CView
+	
+	* src/org/eclipse/internal/ui/cview/CView.java:
+	Cleanup the linkToEditor().
+	* src/org/eclipse/internal/util/UtilEditor.java:
+	Bug fix.
+
 2003-04-01 Alain Magloire
 
 	Support to open a child in an IBinary if we know the TranslationUnit.

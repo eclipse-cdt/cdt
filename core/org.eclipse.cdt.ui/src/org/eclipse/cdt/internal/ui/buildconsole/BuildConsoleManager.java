@@ -11,15 +11,18 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsole;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
@@ -45,8 +48,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	BuildConsole fConsole;
 	private Map fConsoleMap = new HashMap();
 	private Color infoColor, outputColor, errorColor;
-	public BuildConsoleStream infoStream, outputStream, errorStream;
+	private BuildConsoleStream infoStream, outputStream, errorStream;
 
+	static public final int BUILD_STREAM_TYPE_INFO = 0;
+	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
+	static public final int BUILD_STREAM_TYPE_ERROR = 2;
+	
 	public BuildConsoleManager() {
 	}
 
@@ -161,11 +168,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	public void startup() {
-		fConsole = new BuildConsole(this);
-		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
-		infoStream = new BuildConsoleStream(fConsole);
-		outputStream = new BuildConsoleStream(fConsole);
-		errorStream = new BuildConsoleStream(fConsole);
+		infoStream = new BuildConsoleStream();
+		outputStream = new BuildConsoleStream();
+		errorStream = new BuildConsoleStream();
 
 		runUI(new Runnable() {
 
@@ -176,10 +181,15 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			 */
 			public void run() {
 				// install colors
+				fConsole = new BuildConsole(BuildConsoleManager.this);
+				ConsolePlugin.getDefault().getConsoleManager().addConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
+				infoStream.setConsole(fConsole);
 				infoColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_INFO_COLOR);
 				infoStream.setColor(infoColor);
+				outputStream.setConsole(fConsole);
 				outputColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_OUTPUT_COLOR);
 				outputStream.setColor(outputColor);
+				errorStream.setConsole(fConsole);
 				errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
 				errorStream.setColor(errorColor);
 			}
@@ -213,6 +223,18 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			errorColor = newColor;
 		}
 	}
+	
+	public BuildConsoleStream getStream(int type) throws CoreException {
+		switch(type) {
+			case BUILD_STREAM_TYPE_ERROR:
+				return errorStream;
+			case BUILD_STREAM_TYPE_INFO:
+				return infoStream;
+			case BUILD_STREAM_TYPE_OUTPUT:
+				return outputStream;
+		}
+		throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, "No Such Console", null)); //$NON-NLS-1$
+	}
 
 	/**
 	 * Returns a color instance based on data from a preference field.
@@ -225,7 +247,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	 * Returns the console for the project, or <code>null</code> if none.
 	 */
 
-	public IBuildConsole getConsole(IProject project) {
+	public IConsole getConsole(IProject project) {
 		Assert.isNotNull(project);
 		return getConsolePartioner(project).getConsole();
 	}

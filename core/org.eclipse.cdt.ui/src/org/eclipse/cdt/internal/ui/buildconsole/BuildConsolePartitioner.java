@@ -14,10 +14,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsole;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -34,7 +35,7 @@ public class BuildConsolePartitioner
 		implements
 			IDocumentPartitioner,
 			IDocumentPartitionerExtension,
-			IBuildConsole,
+			IConsole,
 			IPropertyChangeListener {
 
 	/**
@@ -271,7 +272,7 @@ public class BuildConsolePartitioner
 		return partition;
 	}
 
-	public IBuildConsole getConsole() {
+	public IConsole getConsole() {
 		return this;
 	}
 
@@ -311,16 +312,16 @@ public class BuildConsolePartitioner
 		}
 	}
 
-	public ConsoleOutputStream getOutputStream() {
-		return new BuildOutputStream(fManager.outputStream);
+	public ConsoleOutputStream getOutputStream() throws CoreException {
+		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
 	}
 
-	public ConsoleOutputStream getInfoStream() {
-		return new BuildOutputStream(fManager.infoStream);
+	public ConsoleOutputStream getInfoStream() throws CoreException {
+		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
 	}
 
-	public ConsoleOutputStream getErrorStream() {
-		return new BuildOutputStream(fManager.errorStream);
+	public ConsoleOutputStream getErrorStream() throws CoreException {
+		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
 	}
 
 }

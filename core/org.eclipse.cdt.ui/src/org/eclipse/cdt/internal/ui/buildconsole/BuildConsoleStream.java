@@ -21,12 +21,14 @@ public class BuildConsoleStream {
 	/**
 	 * Constructs a new stream connected to the given console.
 	 * 
-	 * @param console the console to write messages to
 	 */
-	public BuildConsoleStream(BuildConsole console) {
+	public BuildConsoleStream() {
+	}
+
+	public void setConsole(BuildConsole console) {
 		fConsole = console;
 	}
-		
+
 	/**
 	 * Sets the color of this message stream
 	 * 
@@ -35,7 +37,9 @@ public class BuildConsoleStream {
 	public void setColor(Color color) {
 		Color old = fColor;
 		fColor = color;
-		fConsole.firePropertyChange(this, BuildConsole.P_STREAM_COLOR, old, color);
+		if (fConsole != null) {
+			fConsole.firePropertyChange(this, BuildConsole.P_STREAM_COLOR, old, color);
+		}
 	}
 	
 	/**

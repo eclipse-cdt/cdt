@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 public class CBuildConsole implements IConsole {
 	IProject project;
@@ -33,17 +34,18 @@ public class CBuildConsole implements IConsole {
 	}
 	
 	/**
+	 * @throws CoreException
 	 * @see org.eclipse.cdt.core.resources.IConsole#getOutputStream()
 	 */
-	public ConsoleOutputStream getOutputStream() {
+	public ConsoleOutputStream getOutputStream() throws CoreException {
 		return fConsoleManager.getConsole(project).getOutputStream();
 	}
 
-	public ConsoleOutputStream getInfoStream() {
+	public ConsoleOutputStream getInfoStream() throws CoreException {
 		return fConsoleManager.getConsole(project).getInfoStream();
 	}
 
-	public ConsoleOutputStream getErrorStream() {
+	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return fConsoleManager.getConsole(project).getErrorStream();
 	}
 }

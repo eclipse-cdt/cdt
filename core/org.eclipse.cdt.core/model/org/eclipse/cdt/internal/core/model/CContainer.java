@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -165,10 +164,12 @@ public class CContainer extends Openable implements ICContainer {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
-			if (res != null && (res instanceof IWorkspaceRoot || res.getProject().isOpen())) {
+			if (res != null && res.isAccessible()) {
 				// put the info now, because computing the roots requires it
 				CModelManager.getDefault().putInfo(this, info);
 				validInfo = computeChildren(info, res);
+			} else {
+				throw newNotPresentException();
 			}
 		} finally {
 			if (!validInfo) {

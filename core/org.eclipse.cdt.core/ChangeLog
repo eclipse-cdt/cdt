@@ -1,3 +1,13 @@
+2004-04-27 Alain Magloire
+
+	Fix for PR 60182
+	* model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java
+	* model/org/eclipse/cdt/internal/core/model/BinarContainer.java
+	* model/org/eclipse/cdt/internal/core/model/CContainer.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/IncludeReference.java
+	* model/org/eclipse/cdt/internal/core/model/Openable.java
+
 2004-04-26 Alain Magloire
 
 	Changes in the PathEntryStore API

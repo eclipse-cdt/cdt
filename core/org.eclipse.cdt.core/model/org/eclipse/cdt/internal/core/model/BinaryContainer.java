@@ -49,6 +49,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		throws CModelException {
 		// this will bootstrap/start the runner for the project.
 		CModelManager.getDefault().getBinaryRunner(getCProject());
+		CModelManager.getDefault().putInfo(this, info);
 		return true;
 	}
 

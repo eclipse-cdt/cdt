@@ -39,6 +39,7 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 		throws CModelException {
 		// this will bootstrap/start the runner for the project.
 		CModelManager.getDefault().getBinaryRunner(getCProject());
+		CModelManager.getDefault().putInfo(this, info);
 		return true;
 	}
 

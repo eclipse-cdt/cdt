@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -514,10 +513,12 @@ public class CProject extends Openable implements ICProject {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
-			if (res != null && (res instanceof IWorkspaceRoot || res.getProject().isOpen())) {
+			if (res != null && res.isAccessible()) {
 				// put the info now, because computing the roots requires it
 				CModelManager.getDefault().putInfo(this, info);
 				validInfo = computeSourceRoots(info, res);
+			} else {
+				throw newNotPresentException();
 			}
 		} finally {
 			if (!validInfo) {

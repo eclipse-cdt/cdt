@@ -6,6 +6,8 @@
  */
 package org.eclipse.cdt.internal.core.model;
 
+import java.io.File;
+
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILibraryEntry;
@@ -29,7 +31,11 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	 * @see org.eclipse.cdt.internal.core.model.Binary#getModificationStamp()
 	 */
 	protected long getModificationStamp() {
-		return getPath().toFile().lastModified();
+		File f = getPath().toFile();
+		if (f != null) {
+			return f.lastModified();
+		}
+		return 0;
 	}
 
 	/* (non-Javadoc)
@@ -37,6 +43,17 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	 */
 	public IResource getResource() {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ICElement#exists()
+	 */
+	public boolean exists() {
+		File f = getPath().toFile();
+		if (f != null) {
+			return f.exists();
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

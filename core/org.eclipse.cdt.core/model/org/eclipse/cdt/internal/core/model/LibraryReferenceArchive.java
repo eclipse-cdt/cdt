@@ -6,6 +6,8 @@
  */
 package org.eclipse.cdt.internal.core.model;
 
+import java.io.File;
+
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILibraryEntry;
@@ -45,7 +47,11 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
 	public boolean exists() {
-		return getPath().toFile().exists();
+		File f = getPath().toFile();
+		if (f != null) {
+			return f.exists();
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

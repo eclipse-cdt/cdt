@@ -100,7 +100,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	char buffer[1000];
 #endif
 
-
+	if((HIBYTE(LOWORD(GetVersion()))) & 0x80)
+		{
+		ThrowByName(env, "java/lang/IOException", "Does not support Windows 3.1/95/98/Me");
+		return 0;
+		}
 
     if (cmdarray == 0) 
 		{
@@ -511,8 +515,12 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 	char buffer[100];
 #endif
 	
-	if(NULL == pCurProcInfo)
+	if(NULL == pCurProcInfo) {
+		if(SIG_INT == signal) { // Try another way
+			return interruptProcess(uid) ;
+		}
 		return -1;
+	}
 
 #ifdef DEBUG_MONITOR
 	sprintf(buffer, "Spawner received signal %i for process %i\n", signal, pCurProcInfo -> pid);

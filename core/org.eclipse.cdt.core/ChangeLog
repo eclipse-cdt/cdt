@@ -5,6 +5,8 @@
 
 	* model/org/eclipse/cdt/internal/core/model/Binary.java (isReadOnly):
 	Always return true for binaries.
+	* model/org/eclipse/cdt/internal/core/model/Archive.java (isReadOnly):
+	Always return true for binaries.
 	* model/org/eclipse/cdt/internal/core/model/parser/ElfParser.java (getBinary):
 	Catch path being null.
 	* model/org/eclipse/cdt/internal/core/model/parser/PEParser.java (getBinary):

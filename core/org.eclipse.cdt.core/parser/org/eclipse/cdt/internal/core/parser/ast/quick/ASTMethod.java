@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -20,12 +21,14 @@ import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 /**
  * @author jcamelon
  *
  */
 public class ASTMethod extends ASTFunction implements IASTMethod
 {
+    private final List constructorChainElements;
     private final boolean isConst;
     private final boolean isDestructor;
     private final boolean isConstructor;
@@ -66,7 +69,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         boolean isDestructor,
         boolean isVirtual,
         boolean isExplicit,
-        boolean isPureVirtual, ASTAccessVisibility visibility)
+        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChainElements )
     {
         super(
             scope,
@@ -88,6 +91,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         this.isConst = isConst;
         this.isVolatile = isVolatile;
         this.visibility = visibility;
+        this.constructorChainElements = constructorChainElements;
         qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     /* (non-Javadoc)
@@ -173,4 +177,13 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 	{
 		requestor.exitMethodBody(this);
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getConstructorChainInitializers()
+     */
+    public Iterator getConstructorChainInitializers()
+    {
+    	if( constructorChainElements == null )
+    		return new EmptyIterator(); 
+        return constructorChainElements.iterator();
+    }
 }

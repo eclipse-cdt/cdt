@@ -1,4 +1,8 @@
 2003-08-13 John Camelon
+	Added constructor expression support for variables.  
+	Added constructor chain x-reference support for methods. 
+
+2003-08-13 John Camelon
 	Added Expression x-reference support into Parser.
 
 2003-08-12 John Camelon

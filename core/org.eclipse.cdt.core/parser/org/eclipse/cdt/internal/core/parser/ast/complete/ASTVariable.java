@@ -29,7 +29,8 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
  */
 public class ASTVariable extends ASTSymbol implements IASTVariable
 {
-	protected final ASTReferenceStore referenceDelegate;
+	private final IASTExpression constructorExpression;
+    protected final ASTReferenceStore referenceDelegate;
 	private final ASTQualifiedNamedElement qualifiedName;
 	private NamedOffsets offsets = new NamedOffsets();
     private final IASTExpression bitfieldExpression;
@@ -44,12 +45,13 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      * @param nameOffset
      * @param references
      */
-    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, List references)
+    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, List references, IASTExpression constructorExpression )
     {
     	super( newSymbol );
         this.abstractDeclaration = abstractDeclaration;
 		this.initializerClause = initializerClause;
 		this.bitfieldExpression = bitfieldExpression;
+		this.constructorExpression = constructorExpression;
 		setStartingOffset( startingOffset );
 		setNameOffset( nameOffset );
 		referenceDelegate = new ASTReferenceStore( references );
@@ -162,6 +164,8 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
         referenceDelegate.processReferences(requestor);
         if( initializerClause != null )
         	initializerClause.acceptElement(requestor);
+        if( constructorExpression != null )
+        	constructorExpression.acceptElement(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -202,5 +206,12 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     public int getEndingOffset()
     {
         return offsets.getEndingOffset();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTVariable#getConstructorExpression()
+     */
+    public IASTExpression getConstructorExpression()
+    {
+        return constructorExpression;
     }
 }

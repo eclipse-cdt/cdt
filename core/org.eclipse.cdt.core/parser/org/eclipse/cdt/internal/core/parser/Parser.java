@@ -972,10 +972,18 @@ public class Parser implements IParser
 
                 consume(IToken.tRPAREN);
 
-                d.addConstructorMemberInitializer(
-                    astFactory.createConstructorMemberInitializer(
-                        duple,
-                        expressionList));
+                try
+                {
+                    d.addConstructorMemberInitializer(
+                        astFactory.createConstructorMemberInitializer(
+                            d.getDeclarationWrapper().getScope(),
+                            duple, expressionList));
+                }
+                catch (ASTSemanticException e)
+                {
+                    failParse();
+                    throw backtrack;
+                }
                 if (LT(1) == IToken.tLBRACE)
                     break;
                 consume(IToken.tCOMMA);

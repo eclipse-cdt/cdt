@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  */
 public class ASTVariable extends ASTDeclaration implements IASTVariable
 {
+    private IASTExpression constructorExpression;
     private final boolean isAuto;
     private final IASTInitializerClause initializerClause;
     private final IASTExpression bitfieldExpression;
@@ -40,7 +41,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
      * @param scope
      */
     public ASTVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset )
+    	IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression )
     {
         super(scope);
 		this.isAuto = isAuto;
@@ -52,6 +53,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		this.isRegister = isRegister;
 		this.isStatic = isStatic;
 		this.name = name;
+		this.constructorExpression = constructorExpression;
 		qualifiedName = new ASTQualifiedNamedElement( scope, name );
 		setStartingOffset(startingOffset);
 		setNameOffset(nameOffset);
@@ -193,6 +195,13 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTVariable#getConstructorExpression()
+     */
+    public IASTExpression getConstructorExpression()
+    {
+        return constructorExpression;
     }
    
  

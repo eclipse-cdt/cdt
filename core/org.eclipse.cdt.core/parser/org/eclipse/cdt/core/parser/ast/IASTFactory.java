@@ -113,8 +113,8 @@ public interface IASTFactory
      * @return
      */
     public IASTConstructorMemberInitializer createConstructorMemberInitializer(
-        ITokenDuple duple,
-        IASTExpression expressionList);
+        IASTScope scope,
+        ITokenDuple duple, IASTExpression expressionList) throws ASTSemanticException;
     public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(
         IASTScope scope,
         IASTSimpleTypeSpecifier.Type kind,
@@ -159,12 +159,12 @@ public interface IASTFactory
         boolean isVirtual,
         boolean isExplicit,
         boolean isPureVirtual,
-        ASTAccessVisibility visibility) throws ASTSemanticException;
+        ASTAccessVisibility visibility, List constructorChain) throws ASTSemanticException;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset ) throws ASTSemanticException;
+		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression ) throws ASTSemanticException;
 		   
-	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, ASTAccessVisibility visibility) throws ASTSemanticException;
+	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException;
 	
 	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause );
 	

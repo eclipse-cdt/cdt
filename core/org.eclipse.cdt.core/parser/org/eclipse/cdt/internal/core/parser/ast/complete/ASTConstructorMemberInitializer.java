@@ -8,7 +8,9 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast.quick;
+package org.eclipse.cdt.internal.core.parser.ast.complete;
+
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
@@ -21,24 +23,24 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 public class ASTConstructorMemberInitializer
     implements IASTConstructorMemberInitializer
 {
-	/**
-     * @param string
-     * @param expressionList
+    private final String name;
+    private final IASTExpression expression;
+    private final ASTReferenceStore store;
+    /**
+     * 
      */
-    public ASTConstructorMemberInitializer(String name, IASTExpression expressionList)
+    public ASTConstructorMemberInitializer( IASTExpression expression, String name, List references )
     {
-        this.name = name; 
-        this.expressionList = expressionList;
+    	this.expression = expression;
+    	this.name = name; 
+    	store = new ASTReferenceStore( references );
     }
-    
-    private final IASTExpression expressionList; 
-	private final String name; 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer#getExpressionList()
      */
     public IASTExpression getExpressionList()
     {
-        return expressionList;
+        return expression;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer#getName()
@@ -52,6 +54,7 @@ public class ASTConstructorMemberInitializer
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
+        store.processReferences( requestor );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

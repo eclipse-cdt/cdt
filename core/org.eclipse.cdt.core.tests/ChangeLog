@@ -1,4 +1,8 @@
 2003-08-13 John Camelon
+	Added testBug41520() to FullParseFailedTests.java.  
+	Added testConstructorChain() to CompleteParseASTTest.java
+
+2003-08-13 John Camelon
 	Added testSimpleExpression(), testParameterExpressions() && 
 	testNestedNamespaceExpression() to CompleteParseASTTest.java.
 	

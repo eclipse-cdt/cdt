@@ -10,14 +10,17 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
@@ -27,6 +30,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
  */
 public class ASTMethod extends ASTFunction implements IASTMethod
 {
+    private final List constructorChain;
     private final boolean isConstructor;
     private final boolean isPureVirtual;
     private final ASTAccessVisibility visibility;
@@ -42,7 +46,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      * @param references
      */
     public ASTMethod(IParameterizedSymbol symbol, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, 
-	boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility )
+	boolean isConstructor, boolean isDestructor, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain )
     {
         super(
             symbol,
@@ -57,7 +61,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         this.isConstructor = isConstructor;
         this.isDestructor = isDestructor;
         this.isPureVirtual = isPureVirtual; 
-        
+        this.constructorChain = constructorChain;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVirtual()
@@ -124,6 +128,20 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         requestor.acceptMethodDeclaration(this);
         references.processReferences(requestor);
         processParameterInitializers(requestor);
+        processConstructorChain(requestor);
+    }
+    
+    protected void processConstructorChain(ISourceElementRequestor requestor)
+    {
+        if( constructorChain != null )
+        {
+        	Iterator i = getConstructorChainInitializers(); 
+        	while( i.hasNext() )
+        	{
+        		IASTConstructorMemberInitializer c = (IASTConstructorMemberInitializer)i.next();
+        		c.acceptElement(requestor);
+        	}
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -132,6 +150,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     {
 		requestor.enterMethodBody(this);
 		references.processReferences(requestor);
+		processConstructorChain(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -139,5 +158,14 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public void exitScope(ISourceElementRequestor requestor)
     {
         requestor.exitMethodBody( this );
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTMethod#getConstructorChainInitializers()
+     */
+    public Iterator getConstructorChainInitializers()
+    {
+		if( constructorChain == null )
+			return new EmptyIterator(); 
+        return constructorChain.iterator();
     }
 }

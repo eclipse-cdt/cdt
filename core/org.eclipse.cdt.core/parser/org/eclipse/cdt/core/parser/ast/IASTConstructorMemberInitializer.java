@@ -10,11 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTConstructorMemberInitializer
+public interface IASTConstructorMemberInitializer extends ISourceElementCallbackDelegate
 {
 	public IASTExpression getExpressionList(); 
 	public String getName();

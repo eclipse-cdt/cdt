@@ -120,8 +120,11 @@ public class ASTExpression implements IASTExpression
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	ASTReferenceStore store = new ASTReferenceStore( references );
-    	store.processReferences(requestor);
+    	if( ! references.isEmpty() )
+    	{
+	    	ASTReferenceStore store = new ASTReferenceStore( references );
+	    	store.processReferences(requestor);
+    	}
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

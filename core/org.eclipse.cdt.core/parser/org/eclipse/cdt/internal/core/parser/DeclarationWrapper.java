@@ -381,7 +381,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 					name,
 					abs, getStartingOffset(), d.getNameStartOffset() ); 
         	else
-        		return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), d.getNameStartOffset() );
+        		return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), d.getNameStartOffset(), d.getConstructorExpression() );
         	
         }
         else
@@ -437,7 +437,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         virtual,
             explicit,
             declarator.isPureVirtual(),
-            ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
+            ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers());
     }
     /**
      * @param declarator
@@ -485,7 +485,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             staticc,
             startingOffset,
             declarator.getNameStartOffset(),
-            ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
+            declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
     }
     private List createParameterList(List currentParameters)
     {
@@ -534,7 +534,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             register,
             staticc,
             getStartingOffset(),
-            declarator.getNameStartOffset());
+            declarator.getNameStartOffset(), declarator.getConstructorExpression());
     }        
     
     /* (non-Javadoc)

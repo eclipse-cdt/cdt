@@ -29,4 +29,5 @@ public interface IASTVariable extends  IASTDeclaration, IASTOffsetableNamedEleme
 	
 	public boolean isBitfield(); 
 	public IASTExpression getBitfieldExpression(); 
+	public IASTExpression getConstructorExpression();
 }

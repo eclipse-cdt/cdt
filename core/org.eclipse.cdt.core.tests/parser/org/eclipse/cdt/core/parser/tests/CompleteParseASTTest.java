@@ -929,4 +929,22 @@ public class CompleteParseASTTest extends TestCase
 		assertFalse( i.hasNext() );
 		assertEquals( callback.getReferences().size(), 2 );		
 	}
+	
+	public void testConstructorChain() throws Exception
+	{
+		Iterator i = parse( "int x = 5;\n class A \n{ public : \n int a; \n A() : a( x ) { } };").getDeclarations(); 
+		IASTVariable variableX = (IASTVariable)i.next(); 
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertFalse( i.hasNext() );
+		Iterator s = getDeclarations( classA ); 
+		IASTField fieldA = (IASTField)s.next(); 
+		IASTMethod methodA = (IASTMethod)s.next(); 
+		assertFalse( s.hasNext() );
+		assertEquals( callback.getReferences().size(), 2 );
+		IASTFieldReference reference1 = (IASTFieldReference)callback.getReferences().get(0);
+		IASTVariableReference reference2 = (IASTVariableReference)callback.getReferences().get(1);
+		assertEquals( reference1.getReferencedElement(), fieldA );
+		assertEquals( reference2.getReferencedElement(), variableX ); 
+	}
+	
 }

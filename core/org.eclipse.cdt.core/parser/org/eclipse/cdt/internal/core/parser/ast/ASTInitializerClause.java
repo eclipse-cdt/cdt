@@ -44,35 +44,6 @@ public class ASTInitializerClause implements IASTInitializerClause {
 		return kind;
 	}
 
-	public static class EmptyIterator implements Iterator 
-	{
-
-        /* (non-Javadoc)
-         * @see java.util.Iterator#hasNext()
-         */
-        public boolean hasNext()
-        {
-            return false;
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.Iterator#next()
-         */
-        public Object next()
-        {
-            throw new NoSuchElementException();
-        }
-
-        /* (non-Javadoc)
-         * @see java.util.Iterator#remove()
-         */
-        public void remove()
-        {
-			throw new UnsupportedOperationException();          
-        }
-		
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getInitializerList()
 	 */

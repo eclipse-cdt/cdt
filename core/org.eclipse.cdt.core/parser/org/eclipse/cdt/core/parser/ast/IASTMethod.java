@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Iterator;
+
 
 /**
  * @author jcamelon
@@ -27,5 +29,5 @@ public interface IASTMethod extends  IASTFunction, IASTMember {
 	public boolean isVolatile(); 
 	public boolean isPureVirtual(); 
 	
-
+	public Iterator getConstructorChainInitializers();
 }

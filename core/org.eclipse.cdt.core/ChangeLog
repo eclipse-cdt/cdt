@@ -1,5 +1,17 @@
 2003-09-24 Alain Magloire
 
+	With the removal of the old CDT parser, there was no
+	need to keep this method around
+		parser(InputStream in)
+	in the TranslationUnit.	The parser content is retrieve via
+	the IBuffer now.  The method
+		parser()
+	calss the CModelBuilder directly.
+	
+	* src/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+
+2003-09-24 Alain Magloire
+
 	* src/org/eclipse/cdt/core/ErrorParserManager.java
 	Possible NPE fix, when hitting cancel.
 

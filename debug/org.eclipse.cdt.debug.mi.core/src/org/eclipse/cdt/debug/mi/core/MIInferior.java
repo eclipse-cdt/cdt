@@ -126,17 +126,17 @@ public class MIInferior extends Process {
 			}
 		}
 */
-		if (!isSuspended())
-		{
-			// interrupt execution
-		}
-		CommandFactory factory = session.getCommandFactory();
-		MIGDBExit exit = factory.createMIGDBExit();
-		try {
-			session.postCommand(exit);
-			setTerminated();
-			session.getRxThread().fireEvent(new MIExitEvent());
-		} catch (MIException e) {
+		if (!isTerminated()) {			
+			if (!isSuspended())
+			{
+				// interrupt execution
+			}
+			CommandFactory factory = session.getCommandFactory();
+			MIGDBExit exit = factory.createMIGDBExit();
+			try {
+				session.postCommand(exit);
+			} catch (MIException e) {
+			}
 		}
 	}
 

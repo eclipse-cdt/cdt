@@ -121,6 +121,7 @@ MIPlugin.getDefault().debugLog(line);
 					fireEvent(event);
 				} else if ("exit".equals(state)) {
 					session.getMIInferior().setTerminated();
+					fireEvent(new MIExitEvent());
 				}
 
 				// Notify the waiting command.
@@ -309,13 +310,13 @@ MIPlugin.getDefault().debugLog(line);
 				event = new MIFunctionFinishedEvent(rr);
 			}
 		} else if ("exited-normally".equals(reason)) {
-			session.getMIInferior().setTerminated();
+//			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		} else if ("exited-signalled".equals(reason)) {
-			session.getMIInferior().setTerminated();
+//			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		} else if ("exited".equals(reason)) {
-			session.getMIInferior().setTerminated();
+//			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		}
 		return event;

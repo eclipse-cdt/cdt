@@ -124,7 +124,7 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 		}
 		if ( regObjects != null )
 		{
-			fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), "Main", regObjects ) );
+			fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), "Main", regObjects ) ); //$NON-NLS-1$
 		}
 	}
 

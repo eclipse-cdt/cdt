@@ -93,7 +93,7 @@ public class CDebugUtils
 	{
 		String addressString = Long.toHexString( address );
 		StringBuffer sb = new StringBuffer( 10 );
-		sb.append( "0x" );
+		sb.append( "0x" ); //$NON-NLS-1$
 		for ( int i = 0; i < 8 - addressString.length(); ++i )
 		{
 			sb.append( '0' );
@@ -276,7 +276,7 @@ public class CDebugUtils
 		OutputFormat format = new OutputFormat();
 		format.setIndenting( true );
 		format.setLineSeparator( lineSeparator ); //$NON-NLS-1$
-		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format );
+		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format ); //$NON-NLS-1$
 		serializer.asDOMSerializer().serialize( doc );
 		return s.toString( "UTF8" ); //$NON-NLS-1$		
 	}
@@ -294,7 +294,7 @@ public class CDebugUtils
 		OutputFormat format = new OutputFormat();
 		format.setIndenting( true );
 		format.setLineSeparator( System.getProperty( "line.separator" ) ); //$NON-NLS-1$
-		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format );
+		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format ); //$NON-NLS-1$
 		serializer.asDOMSerializer().serialize( doc );
 		return s.toString( "UTF8" ); //$NON-NLS-1$		
 	}
@@ -316,13 +316,13 @@ public class CDebugUtils
 	{
 		String functionName = function.getElementName();
 		StringBuffer name = new StringBuffer( functionName );
-		if ( functionName.indexOf( "::" ) != -1 )
+		if ( functionName.indexOf( "::" ) != -1 ) //$NON-NLS-1$
 		{
 			String[] params = function.getParameterTypes();
 			name.append( '(' );
 			if ( params.length == 0 )
 			{
-				name.append( "void" ); 
+				name.append( "void" );  //$NON-NLS-1$
 			}
 			else
 			{

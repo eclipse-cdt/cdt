@@ -58,14 +58,14 @@ import org.xml.sax.SAXException;
 
 public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocator, IResourceChangeListener
 {
-	private static final String SOURCE_LOCATOR_NAME = "cSourceLocator";
-	private static final String DISABLED_GENERIC_PROJECT_NAME = "disabledGenericProject";
-	private static final String ADDITIONAL_SOURCE_LOCATION_NAME = "additionalSourceLocation";
-	private static final String SOURCE_LOCATION_NAME = "cSourceLocation";
-	private static final String ATTR_CLASS = "class";
-	private static final String ATTR_MEMENTO = "memento";
-	private static final String ATTR_PROJECT_NAME = "projectName";
-	private static final String ATTR_DUPLICATE_FILES = "duplicateFiles";
+	private static final String SOURCE_LOCATOR_NAME = "cSourceLocator"; //$NON-NLS-1$
+	private static final String DISABLED_GENERIC_PROJECT_NAME = "disabledGenericProject"; //$NON-NLS-1$
+	private static final String ADDITIONAL_SOURCE_LOCATION_NAME = "additionalSourceLocation"; //$NON-NLS-1$
+	private static final String SOURCE_LOCATION_NAME = "cSourceLocation"; //$NON-NLS-1$
+	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
+	private static final String ATTR_MEMENTO = "memento"; //$NON-NLS-1$
+	private static final String ATTR_PROJECT_NAME = "projectName"; //$NON-NLS-1$
+	private static final String ATTR_DUPLICATE_FILES = "duplicateFiles"; //$NON-NLS-1$
 
 	/**
 	 * The project associated with this locator.
@@ -301,11 +301,11 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		node.setAttribute( ATTR_DUPLICATE_FILES, new Boolean( searchForDuplicateFiles() ).toString() );
 		try
 		{
-			return CDebugUtils.serializeDocument( doc, " " );
+			return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
 		}
 		catch( IOException e )
 		{
-			abort( "Unable to create memento for C/C++ source locator.", e );
+			abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CSourceLocator.Unable_to_create_memento"), e ); //$NON-NLS-1$
 		}
 		// execution will not reach here
 		return null;
@@ -335,7 +335,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 			if ( !root.getNodeName().equalsIgnoreCase( SOURCE_LOCATOR_NAME ) )
 			{
-				abort( "Unable to restore C/C++ source locator - invalid format.", null );
+				abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CSourceLocator.Unable_to_restore_src_locator"), null ); //$NON-NLS-1$
 			}
 
 			List sourceLocations = new ArrayList();
@@ -367,7 +367,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		{
 			ex = e;
 		}
-		abort( "Exception occurred initializing source locator.", ex );
+		abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CSourceLocator.Exception_initializing_src_locator"), ex ); //$NON-NLS-1$
 	}
 
 	private void removeDisabledLocations( Element root, List sourceLocations ) throws CoreException
@@ -387,7 +387,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					String projectName = entry.getAttribute( ATTR_PROJECT_NAME );
 					if ( isEmpty( projectName ) )
 					{
-						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." );
+						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." ); //$NON-NLS-1$
 					}
 					disabledProjects.add( projectName.trim() );
 				}
@@ -409,7 +409,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 		MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), 
 											  CDebugCorePlugin.INTERNAL_ERROR, 
-											  "Error initializing directory source location.", 
+											  CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CSourceLocator.Error_initializing_src_location"),  //$NON-NLS-1$
 											  null );
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
@@ -426,7 +426,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					String data = entry.getAttribute( ATTR_MEMENTO );
 					if ( isEmpty( className ) )
 					{
-						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." );
+						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." ); //$NON-NLS-1$
 						continue;
 					}
 					Class clazz = null;
@@ -436,7 +436,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					}
 					catch( ClassNotFoundException e )
 					{
-						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) );
+						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) ); //$NON-NLS-1$
 						continue;
 					}
 
@@ -447,12 +447,12 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					}
 					catch( IllegalAccessException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location." );
+						CDebugCorePlugin.log( "Unable to restore source location." ); //$NON-NLS-1$
 						continue;
 					}
 					catch( InstantiationException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location." );
+						CDebugCorePlugin.log( "Unable to restore source location." ); //$NON-NLS-1$
 						continue;
 					}
 					try
@@ -490,7 +490,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					String data = entry.getAttribute( ATTR_MEMENTO );
 					if ( isEmpty( className ) )
 					{
-						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." );
+						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." ); //$NON-NLS-1$
 						continue;
 					}
 					Class clazz = null;
@@ -500,7 +500,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					}
 					catch( ClassNotFoundException e )
 					{
-						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) );
+						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) ); //$NON-NLS-1$
 						continue;
 					}
 
@@ -511,12 +511,12 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 					}
 					catch( IllegalAccessException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location." );
+						CDebugCorePlugin.log( "Unable to restore source location." ); //$NON-NLS-1$
 						continue;
 					}
 					catch( InstantiationException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location." );
+						CDebugCorePlugin.log( "Unable to restore source location." ); //$NON-NLS-1$
 						continue;
 					}
 					location.initializeFrom( data );

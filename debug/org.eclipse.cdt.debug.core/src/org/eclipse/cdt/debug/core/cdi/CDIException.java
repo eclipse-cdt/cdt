@@ -14,7 +14,7 @@ package org.eclipse.cdt.debug.core.cdi;
  */
 public class CDIException extends Exception {
 
-	String details = "";
+	String details = ""; //$NON-NLS-1$
 
 	public CDIException() {
 		super();

@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -186,7 +187,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		catch( CDIException e )
 		{
-			requestFailed( "not available: ", e );
+			requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CValue.Not_available"), e ); //$NON-NLS-1$
 		}
 		return Arrays.asList( vars );
 	}
@@ -260,7 +261,7 @@ public class CValue extends CDebugElement implements ICValue
 						   byteValue != '\t' && 
 						   byteValue != '\n' && 
 						   byteValue != '\f' && 
-						   byteValue != '\r' ) || byteValue < 0 ) ? "" : new String( new byte[] { '\'', byteValue, '\'' } );
+						   byteValue != '\r' ) || byteValue < 0 ) ? "" : new String( new byte[] { '\'', byteValue, '\'' } ); //$NON-NLS-1$
 			}
 			case ICDIFormat.DECIMAL:
 			{
@@ -269,7 +270,7 @@ public class CValue extends CDebugElement implements ICValue
 			}
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = ( isUnsigned() ) ? Integer.toHexString( value.shortValue() ) : Integer.toHexString( (byte)value.byteValue() );
 				sb.append( ( stringValue.length() > 2 ) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
 				return sb.toString();
@@ -287,7 +288,7 @@ public class CValue extends CDebugElement implements ICValue
 				return ( isUnsigned() ) ? Integer.toString( value.intValue() ) : Short.toString( value.shortValue() );
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = Integer.toHexString( ( isUnsigned() ) ? value.intValue() : value.shortValue() );
 				sb.append( ( stringValue.length() > 4 ) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
 				return sb.toString();
@@ -305,7 +306,7 @@ public class CValue extends CDebugElement implements ICValue
 				return ( isUnsigned() ) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = ( isUnsigned() ) ? Long.toHexString( value.longValue() ) : Integer.toHexString( value.intValue() );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
@@ -323,7 +324,7 @@ public class CValue extends CDebugElement implements ICValue
 				return ( isUnsigned() ) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = Long.toHexString( ( isUnsigned() ) ? value.longValue() : value.intValue() );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
@@ -349,7 +350,7 @@ public class CValue extends CDebugElement implements ICValue
 			}
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" );
+				StringBuffer sb = new StringBuffer( "0x" ); //$NON-NLS-1$
 				 
 				if ( isUnsigned() )
 				{
@@ -369,7 +370,7 @@ public class CValue extends CDebugElement implements ICValue
 		float floatValue = value.floatValue();
 		Float flt = new Float( floatValue );
 		if ( flt.isNaN() || flt.isInfinite() )
-			return "";
+			return ""; //$NON-NLS-1$
 		long longValue = flt.longValue();
 		switch( getParentVariable().getFormat() )
 		{
@@ -379,7 +380,7 @@ public class CValue extends CDebugElement implements ICValue
 				return Long.toString( longValue );
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = Long.toHexString( longValue );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
@@ -393,7 +394,7 @@ public class CValue extends CDebugElement implements ICValue
 		double doubleValue = value.doubleValue();
 		Double dbl = new Double( doubleValue );
 		if ( dbl.isNaN() || dbl.isInfinite() )
-			return "";
+			return ""; //$NON-NLS-1$
 		long longValue = dbl.longValue();
 		switch( getParentVariable().getFormat() )
 		{
@@ -403,7 +404,7 @@ public class CValue extends CDebugElement implements ICValue
 				return Long.toString( longValue );
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = Long.toHexString( longValue );
 				sb.append( ( stringValue.length() > 16 ) ? stringValue.substring( stringValue.length() - 16 ) : stringValue );
 				return sb.toString();
@@ -422,7 +423,7 @@ public class CValue extends CDebugElement implements ICValue
 			case ICDIFormat.NATURAL:
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = Long.toHexString( longValue );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
@@ -441,7 +442,7 @@ public class CValue extends CDebugElement implements ICValue
 			case ICDIFormat.NATURAL:
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
+				StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 				String stringValue = Long.toHexString( longValue );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
@@ -464,7 +465,7 @@ public class CValue extends CDebugElement implements ICValue
 						return ( isUnsigned() ) ? Integer.toString( value.intValue() ) : Short.toString( value.shortValue() );
 					case ICDIFormat.HEXADECIMAL:
 					{
-						StringBuffer sb = new StringBuffer( "0x" ); 
+						StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 						String stringValue = Integer.toHexString( ( isUnsigned() ) ? value.intValue() : value.shortValue() );
 						sb.append( ( stringValue.length() > 4 ) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
 						return sb.toString();
@@ -480,7 +481,7 @@ public class CValue extends CDebugElement implements ICValue
 						return ( isUnsigned() ) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 					case ICDIFormat.HEXADECIMAL:
 					{
-						StringBuffer sb = new StringBuffer( "0x" ); 
+						StringBuffer sb = new StringBuffer( "0x" );  //$NON-NLS-1$
 						String stringValue = ( isUnsigned() ) ? Long.toHexString( value.longValue() ) : Integer.toHexString( value.intValue() );
 						sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 						return sb.toString();

@@ -333,15 +333,15 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		}
 		catch( CoreException e )
 		{
-			requestFailed( "Set breakpoint failed. Reason: " + e.getMessage(), e );
+			requestFailed( CDebugCorePlugin.getResourceString("internal.core.CBreakpointManager.Set_breakpoint_failed") + e.getMessage(), e ); //$NON-NLS-1$
 		}
 		catch( NumberFormatException e )
 		{
-			requestFailed( "Set breakpoint failed. Reason: " + e.getMessage(), e );
+			requestFailed( CDebugCorePlugin.getResourceString("internal.core.CBreakpointManager.Set_breakpoint_failed") + e.getMessage(), e ); //$NON-NLS-1$
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( "Set breakpoint failed. Reason: " + e.getMessage(), e );
+			targetRequestFailed( CDebugCorePlugin.getResourceString("internal.core.CBreakpointManager.Set_breakpoint_failed") + e.getMessage(), e ); //$NON-NLS-1$
 		}
 	}
 
@@ -375,7 +375,7 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 			}
 			catch( CDIException e )
 			{
-				targetRequestFailed( "Delete breakpoint failed. Reason: " + e.getMessage(), e );
+				targetRequestFailed( CDebugCorePlugin.getResourceString("internal.core.CBreakpointManager.Delete_breakpoint_failed") + e.getMessage(), e ); //$NON-NLS-1$
 			}
 		}
 	}
@@ -411,7 +411,7 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 			int ignoreCount = breakpoint.getIgnoreCount();
 			int oldIgnoreCount = delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 );
 			String condition = breakpoint.getCondition();
-			String oldCondition = delta.getAttribute( ICBreakpoint.CONDITION, "" );
+			String oldCondition = delta.getAttribute( ICBreakpoint.CONDITION, "" ); //$NON-NLS-1$
 			if ( enabled != oldEnabled )
 			{
 				cdiBreakpoint.setEnabled( enabled );
@@ -424,11 +424,11 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		}
 		catch( CoreException e )
 		{
-			requestFailed( "Change breakpoint properties failed. Reason: " + e.getMessage(), e );
+			requestFailed( CDebugCorePlugin.getResourceString("internal.core.CBreakpointManager.Change_brkpt_properties_failed") + e.getMessage(), e ); //$NON-NLS-1$
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( "Change breakpoint properties failed. Reason: " + e.getMessage(), e );
+			targetRequestFailed( CDebugCorePlugin.getResourceString("internal.core.CBreakpointManager.Change_brkpt_properties_failed") + e.getMessage(), e ); //$NON-NLS-1$
 		}
 	}
 
@@ -631,7 +631,7 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 	{
 		ICDIBreakpointManager bm = getCDIBreakpointManager();
 		String function = breakpoint.getFunction();
-		String fileName = ( function != null && function.indexOf( "::" ) == -1  ) ? breakpoint.getFileName() : null;
+		String fileName = ( function != null && function.indexOf( "::" ) == -1  ) ? breakpoint.getFileName() : null; //$NON-NLS-1$
 		ICDILocation location = bm.createLocation( fileName, function, -1 );
 		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, null, null, true );
 		getBreakpointMap().put( breakpoint, cdiBreakpoint );

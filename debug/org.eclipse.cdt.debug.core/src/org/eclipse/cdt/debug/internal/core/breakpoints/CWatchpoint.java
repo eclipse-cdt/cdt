@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -58,7 +59,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint
 	 */
 	public String getExpression() throws CoreException
 	{
-		return ensureMarker().getAttribute( EXPRESSION, "" );
+		return ensureMarker().getAttribute( EXPRESSION, "" ); //$NON-NLS-1$
 	}
 
 	/**
@@ -76,12 +77,14 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint
 	{
 		StringBuffer sb = new StringBuffer();
 		if ( isWriteType() && !isReadType() )
-			sb.append( "Write " );
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Write_watchpoint") ); //$NON-NLS-1$
 		else if ( !isWriteType() && isReadType() )
-			sb.append( "Read " );
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Read_watchpoint") ); //$NON-NLS-1$
 		else if ( isWriteType() && isReadType() )
-			sb.append( "Access " );
-		sb.append( "watchpoint: " );
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Access_watchpoint") ); //$NON-NLS-1$
+		else
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.Watchpoint") ); //$NON-NLS-1$
+		sb.append( ' ' );
 		String fileName = ensureMarker().getResource().getName();
 		if ( fileName != null && fileName.length() > 0 )
 		{
@@ -91,7 +94,9 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint
 		String expression = getExpression();
 		if ( expression != null && expression.length() > 0 )
 		{
-			sb.append( " at \'" ); 
+			sb.append( " " );  //$NON-NLS-1$
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CWatchpoint.at") );  //$NON-NLS-1$
+			sb.append( " \'" );  //$NON-NLS-1$
 			sb.append( expression );
 			sb.append( '\'' );
 		}

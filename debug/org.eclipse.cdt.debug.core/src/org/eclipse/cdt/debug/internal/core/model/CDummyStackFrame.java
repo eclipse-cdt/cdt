@@ -87,7 +87,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 */
 	public String getName() throws DebugException
 	{
-		return "...";
+		return "..."; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

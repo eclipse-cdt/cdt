@@ -21,6 +21,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -107,7 +108,7 @@ public abstract class CBreakpoint extends Breakpoint
 	 */
 	public String getCondition() throws CoreException
 	{
-		return ensureMarker().getAttribute( CONDITION, "" );
+		return ensureMarker().getAttribute( CONDITION, "" ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -265,8 +266,8 @@ public abstract class CBreakpoint extends Breakpoint
 		int ignoreCount = getIgnoreCount();
 		if ( ignoreCount > 0 )
 		{
-			sb.append( " [" );
-			sb.append( "ignore count:" );
+			sb.append( " [" ); //$NON-NLS-1$
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CBreakpoint.ignore_count") ); //$NON-NLS-1$
 			sb.append( ' ' );
 			sb.append( ignoreCount );
 			sb.append( ']' );
@@ -274,7 +275,7 @@ public abstract class CBreakpoint extends Breakpoint
 		String condition = getCondition();
 		if ( condition != null && condition.length() > 0 )
 		{
-			sb.append( " if " ); 
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CBreakpoint.if") );  //$NON-NLS-1$
 			sb.append( condition );
 		}
 		return sb.toString();

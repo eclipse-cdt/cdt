@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -75,7 +76,7 @@ public class CLineBreakpoint extends CBreakpoint implements ICLineBreakpoint
 	 */
 	protected String getMarkerMessage() throws CoreException
 	{
-		StringBuffer sb = new StringBuffer( "Line breakpoint:" );
+		StringBuffer sb = new StringBuffer( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CLineBreakpoint.Line_breakpoint") ); //$NON-NLS-1$
 		String fileName = ensureMarker().getResource().getName();
 		if ( fileName != null && fileName.length() > 0 )
 		{
@@ -85,8 +86,8 @@ public class CLineBreakpoint extends CBreakpoint implements ICLineBreakpoint
 		int lineNumber = getLineNumber();
 		if ( lineNumber > 0 )
 		{
-			sb.append( " [" );
-			sb.append( "line:" );
+			sb.append( " [" ); //$NON-NLS-1$
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CLineBreakpoint.line") ); //$NON-NLS-1$
 			sb.append( ' ' );
 			sb.append( lineNumber );
 			sb.append( ']' );

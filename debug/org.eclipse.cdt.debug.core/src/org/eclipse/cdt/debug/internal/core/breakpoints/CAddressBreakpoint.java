@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -92,7 +93,7 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 	 */
 	protected String getMarkerMessage() throws CoreException
 	{
-		StringBuffer sb = new StringBuffer( "Address breakpoint:" );
+		StringBuffer sb = new StringBuffer( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CAddressBreakpoint.Address_breakpoint") ); //$NON-NLS-1$
 		String name = ensureMarker().getResource().getName();
 		if ( name != null && name.length() > 0 )
 		{
@@ -102,7 +103,7 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 		try
 		{
 			long address = Long.parseLong( getAddress() );
-			sb.append( " [address: " );
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CAddressBreakpoint.address") ); //$NON-NLS-1$
 			sb.append( CDebugUtils.toHexAddressString( address ) );
 			sb.append( ']' );
 		}

@@ -856,7 +856,7 @@ public class CDebugTarget extends CDebugElement
 
 		if ( !canDisconnect() )
 		{
-			notSupported( "Session does not support \'disconnect\'" );
+			notSupported( CDebugCorePlugin.getResourceString("internal.core.model.CDebugTarget.Disconnect_session_unsupported") ); //$NON-NLS-1$
 		}
 
 		try
@@ -1108,7 +1108,7 @@ public class CDebugTarget extends CDebugElement
 
 		try
 		{
-			ICDILocation location = getCDISession().getBreakpointManager().createLocation( "", "main", 0 );
+			ICDILocation location = getCDISession().getBreakpointManager().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 			setInternalTemporaryBreakpoint( location );
 			getCDITarget().restart();
 			restarted();
@@ -1529,9 +1529,8 @@ public class CDebugTarget extends CDebugElement
 		{
 			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),
 												  ICDebugInternalConstants.STATUS_CODE_ERROR,
-												  "The execution of program is suspended because of error.",
-												  null );
-			StringTokenizer st = new StringTokenizer( info.getDetailMessage(), "\n\r" );
+												  CDebugCorePlugin.getResourceString("internal.core.model.CDebugTarget.Execution_suspended_because_of_error"), null ); //$NON-NLS-1$
+			StringTokenizer st = new StringTokenizer( info.getDetailMessage(), "\n\r" ); //$NON-NLS-1$
 			while( st.hasMoreTokens() )
 			{
 				String token = st.nextToken();
@@ -2061,7 +2060,7 @@ public class CDebugTarget extends CDebugElement
 				  	  
 				  	  public IPath getPath()
 				  	  {
-						  IPath path = new Path("");
+						  IPath path = new Path(""); //$NON-NLS-1$
 						  ICElement parent = var.getParent();
 						  if ( parent instanceof IBinaryModule )
 						  {
@@ -2372,7 +2371,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public String toString()
 	{
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		try
 		{
 			result = getName();

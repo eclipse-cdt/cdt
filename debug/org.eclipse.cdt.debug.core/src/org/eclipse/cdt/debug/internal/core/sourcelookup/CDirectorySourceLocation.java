@@ -47,10 +47,10 @@ import org.xml.sax.SAXException;
  */
 public class CDirectorySourceLocation implements IDirectorySourceLocation
 {
-	private static final String ELEMENT_NAME = "cDirectorySourceLocation";
-	private static final String ATTR_DIRECTORY = "directory";
-	private static final String ATTR_ASSOCIATION = "association";
-	private static final String ATTR_SEARCH_SUBFOLDERS = "searchSubfolders";
+	private static final String ELEMENT_NAME = "cDirectorySourceLocation"; //$NON-NLS-1$
+	private static final String ATTR_DIRECTORY = "directory"; //$NON-NLS-1$
+	private static final String ATTR_ASSOCIATION = "association"; //$NON-NLS-1$
+	private static final String ATTR_SEARCH_SUBFOLDERS = "searchSubfolders"; //$NON-NLS-1$
 
 	/**
 	 * The root directory of this source location
@@ -302,11 +302,11 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		node.setAttribute( ATTR_SEARCH_SUBFOLDERS, new Boolean( searchSubfolders() ).toString() );
 		try
 		{
-			return CDebugUtils.serializeDocument( doc, " " );
+			return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
 		}
 		catch( IOException e )
 		{
-			abort( MessageFormat.format( "Unable to create memento for C/C++ directory source location {0}", new String[] { getDirectory().toOSString() } ), e );
+			abort( MessageFormat.format( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_create_memento"), new String[] { getDirectory().toOSString() } ), e ); //$NON-NLS-1$
 		}
 		// execution will not reach here
 		return null;
@@ -329,7 +329,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			String dir = root.getAttribute( ATTR_DIRECTORY );
 			if ( isEmpty( dir ) )
 			{
-				abort( "Unable to initialize source location - missing directory path", null );
+				abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_initialize_src_location_no_dir"), null ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -340,7 +340,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 				}
 				else
 				{
-					abort( MessageFormat.format( "Unable to initialize source location - invalid directory path {0}", new String[] { dir } ), null );
+					abort( MessageFormat.format( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_initialize_src_location_invalid_dir"), new String[] { dir } ), null ); //$NON-NLS-1$
 				}
 			}
 			dir = root.getAttribute( ATTR_ASSOCIATION );
@@ -375,7 +375,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		{
 			ex = e;
 		}
-		abort( "Exception occurred initializing source location.", ex );
+		abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Exception_initializing_src_location"), ex ); //$NON-NLS-1$
 	}
 
 	/**
@@ -506,7 +506,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	 */
 	public String toString()
 	{
-		return ( getDirectory() != null ) ? getDirectory().toOSString() : "";
+		return ( getDirectory() != null ) ? getDirectory().toOSString() : ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

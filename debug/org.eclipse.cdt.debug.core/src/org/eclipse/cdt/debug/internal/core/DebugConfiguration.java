@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 public class DebugConfiguration implements ICDebugConfiguration {
 	/**
@@ -21,7 +22,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	private IConfigurationElement fElement;
 	private HashSet fModes;
 	private HashSet fCPUs;
-	public static final String NATIVE = "native";
+	public static final String NATIVE = "native"; //$NON-NLS-1$
 
 	public DebugConfiguration(IConfigurationElement element) {
 		fElement = element;
@@ -32,12 +33,12 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	}
 
 	public ICDebugger getDebugger() throws CoreException {
-		return (ICDebugger) getConfigurationElement().createExecutableExtension("class");
+		return (ICDebugger) getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
 	public String getName() {
 		String name = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
-		return name != null ? name : "";
+		return name != null ? name : ""; //$NON-NLS-1$
 	}
 
 	public String getID() {
@@ -45,7 +46,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	}
 
 	public String getPlatform() {
-		String platform = getConfigurationElement().getAttribute("platform");
+		String platform = getConfigurationElement().getAttribute("platform"); //$NON-NLS-1$
 		if (platform == null) {
 			return NATIVE;
 		}

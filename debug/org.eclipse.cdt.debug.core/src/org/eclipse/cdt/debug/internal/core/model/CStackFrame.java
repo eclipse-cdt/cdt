@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -205,16 +206,26 @@ public class CStackFrame extends CDebugElement
 	public String getName() throws DebugException
 	{
 		ICDILocation location = getCDIStackFrame().getLocation();
-		String name = new String();
+		
+		String func = "";	//$NON-NLS-1$
+		String file = "";	//$NON-NLS-1$
+		String line = "";	//$NON-NLS-1$
+		
 		if ( location.getFunction() != null && location.getFunction().trim().length() > 0 )
-			name += location.getFunction() + "() ";
-		if ( location.getFile() != null && location.getFile().trim().length() > 0 )
+			func += location.getFunction() + "() "; //$NON-NLS-1$
+		
+	    if ( location.getFile() != null && location.getFile().trim().length() > 0 )
 		{
-			name += "at " + location.getFile() + ":" ;
-			if ( location.getLineNumber() != 0 )
-				name += location.getLineNumber();
-		}			
-		return name.toString();
+			file = location.getFile();
+			
+			if ( location.getLineNumber() != 0 ) {
+				line = NumberFormat.getInstance().format(new Integer(location.getLineNumber()));
+			}
+		} else {
+			return func;
+		}
+	    return CDebugCorePlugin.getFormattedString("internal.core.model.CStackFrame.function_at_file", new String[] {func, file}) + line; //$NON-NLS-1$
+	    
 	}
 
 	/* (non-Javadoc)

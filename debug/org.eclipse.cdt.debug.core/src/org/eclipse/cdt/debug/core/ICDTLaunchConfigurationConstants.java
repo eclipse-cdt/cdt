@@ -1,4 +1,5 @@
 package org.eclipse.cdt.debug.core;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /*
  * (c) Copyright QNX Software System 2002.
@@ -8,12 +9,12 @@ package org.eclipse.cdt.debug.core;
 
 public interface ICDTLaunchConfigurationConstants {
 
-	public static final String CDT_LAUNCH_ID = "org.eclipse.cdt.launch";
+	public static final String CDT_LAUNCH_ID = "org.eclipse.cdt.launch"; //$NON-NLS-1$
 	
 	/**
 	 * This is the launch type id.
 	 */
-	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.localCLaunch";
+	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.localCLaunch"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute key. The value is a name of
@@ -105,19 +106,21 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
 	 * Startup debugger running the program.
 	 */
-	public static String DEBUGGER_MODE_RUN = "run";
+	public static String DEBUGGER_MODE_RUN = "run"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
 	 * Startup debugger and attach to running process.
 	 */
-	public static String DEBUGGER_MODE_ATTACH = "attach";
+	public static String DEBUGGER_MODE_ATTACH = "attach"; //$NON-NLS-1$
+
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
 	 * Startup debugger to view a core file.
 	 */
-	public static String DEBUGGER_MODE_CORE = "core";
+	public static String DEBUGGER_MODE_CORE = "core"; //$NON-NLS-1$
+
 
 	/**
 	 * Status code indicating that the Eclipse runtime does not support

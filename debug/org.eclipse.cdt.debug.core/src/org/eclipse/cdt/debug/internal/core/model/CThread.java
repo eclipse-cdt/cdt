@@ -45,6 +45,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -274,7 +275,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			setStatus( ICDebugElementErrorStatus.WARNING, "Stack is not available: " + e.getMessage() );
+			setStatus( ICDebugElementErrorStatus.WARNING, CDebugCorePlugin.getResourceString("internal.core.model.CThread.Stack_not_available") + e.getMessage() ); //$NON-NLS-1$
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return new ICDIStackFrame[0];
@@ -1103,7 +1104,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			setStatus( ICDebugElementErrorStatus.WARNING, "Stack is not available: " + e.getMessage() );
+			setStatus( ICDebugElementErrorStatus.WARNING, CDebugCorePlugin.getResourceString("internal.core.model.CThread.Stack_not_available") + e.getMessage() ); //$NON-NLS-1$
 		}
 		return depth;
 	}
@@ -1184,7 +1185,7 @@ public class CThread extends CDebugElement
 	 */
 	public String toString()
 	{
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		try
 		{
 			result = getName();

@@ -249,7 +249,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	public void targetRequestFailed( String message, CDIException e ) throws DebugException
 	{
-		requestFailed( "Target request failed: " + message, e, DebugException.TARGET_REQUEST_FAILED );
+		requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CDebugElement.Target_request_failed") + message, e, DebugException.TARGET_REQUEST_FAILED ); //$NON-NLS-1$
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	public void targetRequestFailed( String message, Throwable e ) throws DebugException
 	{
-		throwDebugException( "Target request failed: " + message, DebugException.TARGET_REQUEST_FAILED, e );
+		throwDebugException( CDebugCorePlugin.getResourceString("internal.core.model.CDebugElement.Target_request_failed") + message, DebugException.TARGET_REQUEST_FAILED, e ); //$NON-NLS-1$
 	}
 	
 	/**

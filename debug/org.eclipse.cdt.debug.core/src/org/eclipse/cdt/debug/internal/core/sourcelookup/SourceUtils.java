@@ -37,10 +37,10 @@ import org.xml.sax.SAXException;
  */
 public class SourceUtils
 {
-	private static final String NAME_COMMON_SOURCE_LOCATIONS = "commonSourceLocations";
-	private static final String NAME_SOURCE_LOCATION = "sourceLocation";
-	private static final String ATTR_CLASS = "class";
-	private static final String ATTR_MEMENTO = "memento";
+	private static final String NAME_COMMON_SOURCE_LOCATIONS = "commonSourceLocations"; //$NON-NLS-1$
+	private static final String NAME_SOURCE_LOCATION = "sourceLocation"; //$NON-NLS-1$
+	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
+	private static final String ATTR_MEMENTO = "memento"; //$NON-NLS-1$
 
 	public static String getCommonSourceLocationsMemento( ICSourceLocation[] locations )
 	{
@@ -51,11 +51,11 @@ public class SourceUtils
 		saveSourceLocations( doc, node, locations );
 		try
 		{
-			return CDebugUtils.serializeDocument( doc, " " );
+			return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
 		}
 		catch( IOException e )
 		{
-			CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error saving common source settings.", e ) );
+			CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error saving common source settings.", e ) ); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -96,15 +96,15 @@ public class SourceUtils
 			}
 			catch( ParserConfigurationException e )
 			{
-				CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error initializing common source settings.", e ) );
+				CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error initializing common source settings.", e ) ); //$NON-NLS-1$
 			}
 			catch( SAXException e )
 			{
-				CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error initializing common source settings.", e ) );
+				CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error initializing common source settings.", e ) ); //$NON-NLS-1$
 			}
 			catch( IOException e )
 			{
-				CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error initializing common source settings.", e ) );
+				CDebugCorePlugin.log( new Status( IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), 0, "Error initializing common source settings.", e ) ); //$NON-NLS-1$
 			}
 		}
 		return result;
@@ -130,7 +130,7 @@ public class SourceUtils
 					String data = entry.getAttribute( ATTR_MEMENTO );
 					if ( className == null || className.trim().length() == 0 )
 					{
-						CDebugCorePlugin.log( "Unable to restore common source locations - invalid format." );
+						CDebugCorePlugin.log( "Unable to restore common source locations - invalid format." ); //$NON-NLS-1$
 						continue;
 					}
 					Class clazz = null;
@@ -140,7 +140,7 @@ public class SourceUtils
 					}
 					catch( ClassNotFoundException e )
 					{
-						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) );
+						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) ); //$NON-NLS-1$
 						continue;
 					}
 
@@ -151,12 +151,12 @@ public class SourceUtils
 					}
 					catch( IllegalAccessException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location: " + e.getMessage() );
+						CDebugCorePlugin.log( "Unable to restore source location: " + e.getMessage() ); //$NON-NLS-1$
 						continue;
 					}
 					catch( InstantiationException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location: " + e.getMessage() );
+						CDebugCorePlugin.log( "Unable to restore source location: " + e.getMessage() ); //$NON-NLS-1$
 						continue;
 					}
 					try
@@ -166,7 +166,7 @@ public class SourceUtils
 					}
 					catch( CoreException e )
 					{
-						CDebugCorePlugin.log( "Unable to restore source location: " + e.getMessage() );
+						CDebugCorePlugin.log( "Unable to restore source location: " + e.getMessage() ); //$NON-NLS-1$
 					}
 				}
 			}

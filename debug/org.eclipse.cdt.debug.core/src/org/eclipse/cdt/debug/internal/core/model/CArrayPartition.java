@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  *
@@ -69,7 +70,7 @@ public class CArrayPartition extends CVariable
 		StringBuffer name = new StringBuffer();
 		name.append( '[' );
 		name.append( fStart );
-		name.append( ".." );
+		name.append( ".." ); //$NON-NLS-1$
 		name.append( fEnd );
 		name.append( ']' );
 		return name.toString();
@@ -177,7 +178,7 @@ public class CArrayPartition extends CVariable
 			}
 			catch (CDIException e)
 			{
-				requestFailed( "Type is not available.", e );
+				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CArrayPartition.Type_not_available"), e ); //$NON-NLS-1$
 			}
 		}
 		return fType;
@@ -207,7 +208,7 @@ public class CArrayPartition extends CVariable
 			}
 			catch( CDIException e )
 			{
-				requestFailed( "Qualified name is not available.", e );
+				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CArrayPartition.Qualified_name_not_available"), e ); //$NON-NLS-1$
 			}
 		}
 		return fQualifiedName;

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * Enter type comment.
@@ -110,7 +111,8 @@ public class DisassemblyStorage implements IDisassemblyStorage
 		{
 			// ignore
 		}
-		return "disassembly";
+		return CDebugCorePlugin.getResourceString("internal.core.DisassemblyStorage.disassembly"); //$NON-NLS-1$
+
 	}
 
 	/* (non-Javadoc)
@@ -206,7 +208,7 @@ public class DisassemblyStorage implements IDisassemblyStorage
 					sb.append( '+' );
 					sb.append( instruction.getOffset() );
 				}
-				sb.append( ">:" );
+				sb.append( ">:" ); //$NON-NLS-1$
 				sb.append( spaces, 0, instrPosition - sb.length() );
 			}
 			sb.append( instruction.getOpcode() );

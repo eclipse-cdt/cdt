@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,9 +45,9 @@ import org.xml.sax.SAXException;
  */
 public class CProjectSourceLocation implements IProjectSourceLocation
 {
-	private static final String ELEMENT_NAME = "cProjectSourceLocation";
-	private static final String ATTR_PROJECT = "project";
-	private static final String ATTR_GENERIC = "generic";
+	private static final String ELEMENT_NAME = "cProjectSourceLocation"; //$NON-NLS-1$
+	private static final String ATTR_PROJECT = "project"; //$NON-NLS-1$
+	private static final String ATTR_GENERIC = "generic"; //$NON-NLS-1$
 
 	/**
 	 * The project associated with this source location
@@ -234,11 +233,11 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		node.setAttribute( ATTR_GENERIC, new Boolean( isGeneric() ).toString() );
 		try
 		{
-			return CDebugUtils.serializeDocument( doc, " " );
+			return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
 		}
 		catch( IOException e )
 		{
-			abort( MessageFormat.format( "Unable to create memento for C/C++ project source location {0}.", new String[] { getProject().getName() } ), e );
+			abort( CDebugCorePlugin.getFormattedString("internal.core.sourcelookup.CProjectSourceLocation.Unable_to_create_memento_for_src_location", new String[] { getProject().getName() } ), e ); //$NON-NLS-1$
 		}
 		// execution will not reach here
 		return null;
@@ -261,7 +260,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			String name = root.getAttribute( ATTR_PROJECT );
 			if ( isEmpty( name ) )
 			{
-				abort( "Unable to initialize source location - missing project name", null );
+				abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CProjectSourceLocation.Unable_to_initialize_src_location_no_project_name"), null ); //$NON-NLS-1$
 			}
 			else
 			{
@@ -286,7 +285,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		{
 			ex = e;
 		}
-		abort( "Exception occurred initializing source location.", ex );
+		abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CProjectSourceLocation.Exception_intializing_src_location"), ex ); //$NON-NLS-1$
 	}
 
 	/**
@@ -391,6 +390,6 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 
 	public String toString()
 	{
-		return ( getProject() != null ) ? fProject.toString() : "";
+		return ( getProject() != null ) ? fProject.toString() : ""; //$NON-NLS-1$
 	}
 }

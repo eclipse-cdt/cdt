@@ -6,7 +6,10 @@
 
 package org.eclipse.cdt.debug.core;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
@@ -26,6 +29,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -39,13 +43,21 @@ public class CDebugCorePlugin extends Plugin
 
 	//The shared instance.
 	private static CDebugCorePlugin plugin;
+	private static ResourceBundle fgResourceBundle;
 
 	private HashMap fDebugConfigurations;
 
 	private IAsyncExecutor fAsyncExecutor = null;
 
 	private SessionManager fSessionManager = null;
-
+	
+	static {
+		try {
+			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.debug.core.CDebugCorePluginResources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			fgResourceBundle = null;
+		}
+	}
 	/**
 	 * The constructor.
 	 */
@@ -90,6 +102,27 @@ public class CDebugCorePlugin extends Plugin
 			return "org.eclipse.cdt.debug.core"; //$NON-NLS-1$
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+
+	public static String getResourceString(String key) {
+		try {
+			return fgResourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (NullPointerException e) {
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	public static String getFormattedString(String key, String arg) {
+		return MessageFormat.format(getResourceString(key), new String[] { arg });
+	}
+
+	public static String getFormattedString(String key, String[] args) {
+		return MessageFormat.format(getResourceString(key), args);
+	}
+	
+	public static ResourceBundle getResourceBundle() {
+		return fgResourceBundle;
 	}
 
 	/**
@@ -140,7 +173,7 @@ public class CDebugCorePlugin extends Plugin
 	
 	private void initializeDebugConfiguration() {
 		IPluginDescriptor descriptor= getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebugger");
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebugger"); //$NON-NLS-1$
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		fDebugConfigurations = new HashMap(infos.length);
 		for (int i= 0; i < infos.length; i++) {
@@ -163,7 +196,7 @@ public class CDebugCorePlugin extends Plugin
 		}
 		ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDebugConfigurations.get(id);
 		if ( dbgCfg == null ) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 100, "No such debugger", null);
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 100, CDebugCorePlugin.getResourceString("core.CDebugCorePlugin.No_such_debugger"), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return dbgCfg;

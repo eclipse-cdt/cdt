@@ -49,7 +49,7 @@ public class CGlobalVariable extends CModificationVariable
 				}
 				catch( CDIException e )
 				{
-					requestFailed( "", e );
+					requestFailed( "", e ); //$NON-NLS-1$
 				}
 				int[] dims = getType().getArrayDimensions();
 				if ( dims.length > 0 && dims[0] > 0 )

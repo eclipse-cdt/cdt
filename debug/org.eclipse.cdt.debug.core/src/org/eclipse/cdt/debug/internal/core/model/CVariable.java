@@ -80,7 +80,7 @@ public abstract class CVariable extends CDebugElement
 		 */
 		public String getName()
 		{
-			return ( fVariableObject != null ) ? fVariableObject.getName() : "";
+			return ( fVariableObject != null ) ? fVariableObject.getName() : ""; //$NON-NLS-1$
 		}
 
 		/* (non-Javadoc)
@@ -88,7 +88,7 @@ public abstract class CVariable extends CDebugElement
 		 */
 		public String getTypeName() throws CDIException
 		{
-			return ( fVariableObject != null ) ? fVariableObject.getTypeName() : "";
+			return ( fVariableObject != null ) ? fVariableObject.getTypeName() : ""; //$NON-NLS-1$
 		}
 
 		/* (non-Javadoc)
@@ -207,7 +207,7 @@ public abstract class CVariable extends CDebugElement
 				{
 					fCDIVariable = new ErrorVariable( getCDIVariableObject(), e );
 					setStatus( ICDebugElementErrorStatus.ERROR, 
-							   MessageFormat.format( "not available: {0}", new String[] { e.getMessage() } ) );
+							CDebugCorePlugin.getFormattedString( "internal.core.model.CVariable.not_available", new String[] { e.getMessage() } ) ); //$NON-NLS-1$
 				}
 			}
 			return fCDIVariable;
@@ -412,7 +412,7 @@ public abstract class CVariable extends CDebugElement
 		fShadow = null;
 		if ( cdiVariableObject instanceof ErrorVariable )
 			setStatus( ICDebugElementErrorStatus.ERROR, 
-					   MessageFormat.format( "not available: {0}", new String[] { ((ErrorVariable)cdiVariableObject).getException().getMessage() } ) );
+					CDebugCorePlugin.getFormattedString( "internal.core.model.CVariable.not_available", new String[] { ((ErrorVariable)cdiVariableObject).getException().getMessage() } ) ); //$NON-NLS-1$
 		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
 		getCDISession().getEventManager().addEventListener( this );
 	}
@@ -453,7 +453,7 @@ public abstract class CVariable extends CDebugElement
 				}
 				catch( CDIException e )
 				{
-					requestFailed( "", e );
+					requestFailed( "", e ); //$NON-NLS-1$
 				}
 				int[] dims = type.getArrayDimensions();
 				if ( dims.length > 0 && dims[0] > 0 )
@@ -482,7 +482,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void setValue( String expression ) throws DebugException
 	{
-		notSupported( "Variable does not support value modification." );
+		notSupported( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Value_modification_unsupported") ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -490,7 +490,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void setValue( IValue value ) throws DebugException
 	{
-		notSupported( "Variable does not support value modification." );
+		notSupported( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Value_modification_unsupported") ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -774,7 +774,7 @@ public abstract class CVariable extends CDebugElement
 		{
 			logError( e );
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -931,7 +931,7 @@ public abstract class CVariable extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			requestFailed( "Qualified name is not available.", e );
+			requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Qualified_name_unavailable"), e ); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -952,7 +952,7 @@ public abstract class CVariable extends CDebugElement
 			}
 			catch( CDIException e )
 			{
-				requestFailed( "Type is not available.", e );
+				requestFailed( CDebugCorePlugin.getResourceString("internal.core.model.CVariable.Type_unavailable"), e ); //$NON-NLS-1$
 			}
 		}
 		return type;

@@ -659,14 +659,15 @@ public class CDebugModel
 
 	private static void stopInMain( CDebugTarget target ) throws DebugException
 	{
-		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "main", 0 );
+		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "main", 0 ); //$NON-NLS-1$ //$NON-NLS-2$
 		try
 		{
 			target.setInternalTemporaryBreakpoint( location );
 		}
 		catch( DebugException e )
 		{
-			String message = MessageFormat.format( "Unable to set temporary breakpoint in main.\nReason: {0}\nContinue?", new String[] { e.getStatus().getMessage() } );
+			//String message = MessageFormat.format( "Unable to set temporary breakpoint in main.\nReason: {0}\nContinue?", new String[] { e.getStatus().getMessage() } );
+			String message = CDebugCorePlugin.getFormattedString("core.CDebugCorePlugin.Unable_to_set_temp_brkpt", new String[] { e.getStatus().getMessage() } ); //$NON-NLS-1$
 			IStatus newStatus = new Status( IStatus.WARNING, 
 											e.getStatus().getPlugin(), 
 											ICDebugInternalConstants.STATUS_CODE_QUESTION, 

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -112,7 +113,7 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 	 */
 	protected String getMarkerMessage() throws CoreException
 	{
-		StringBuffer sb = new StringBuffer( "Function breakpoint:" );
+		StringBuffer sb = new StringBuffer( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CFunctionBreakpoint.Function_breakpoint") ); //$NON-NLS-1$
 		String name = ensureMarker().getResource().getName();
 		if ( name != null && name.length() > 0 )
 		{
@@ -122,8 +123,8 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 		String function = getFunction();
 		if ( function != null && function.trim().length() > 0 )
 		{
-			sb.append( " [" );
-			sb.append( "function:" );
+			sb.append( " [" ); //$NON-NLS-1$
+			sb.append( CDebugCorePlugin.getResourceString("internal.core.breakpoints.CFunctionBreakpoint.function") ); //$NON-NLS-1$
 			sb.append( ' ' );
 			sb.append( function.trim() );
 			sb.append( ']' );

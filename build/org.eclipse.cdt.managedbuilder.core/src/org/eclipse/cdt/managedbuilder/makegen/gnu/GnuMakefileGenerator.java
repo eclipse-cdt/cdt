@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.makegen.gnu;
-
 /**********************************************************************
- * Copyright (c) 2003,2004 Rational Software Corporation and others.
+ * Copyright (c) 2003,2004 IBM Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,6 +8,7 @@ package org.eclipse.cdt.managedbuilder.makegen.gnu;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
+package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -115,7 +114,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 						if (!generator.isGeneratedResource(resource)) {
 							// This is a source file so just add its container
 							if (info.buildsFileType(ext)) {
-								generator.appendModifiedSubdirectory(resource);
+								generator.appendDeletedSubdirectory(resource);
 								generator.appendDeletedFile(resource);
 							}
 						}
@@ -210,6 +209,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private String buildTargetName;
 	private Vector buildTools;
 	private Vector deletedFileList;
+	private Vector deletedDirList;
 	private Vector dependencyMakefiles;
 	private String extension;
 	private IManagedBuildInfo info;
@@ -409,7 +409,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
   		HashMap extensionToRuleStringMap = new HashMap();
  		
  		// get the set of output extensions for all tools
- 		Set outputExtensionsSet = getOutputExtentions();
+ 		Set outputExtensionsSet = getOutputExtensions();
  		
  		// put in rules if the file type is not a generated file
  		Iterator iter = buildTools.iterator();
@@ -421,7 +421,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
   				// create a macro of the form "EXTENSION_SRCS := "
   				String extensionName = exListIterator.next().toString();
   				if(!extensionToRuleStringMap.containsKey(extensionName) && // do we already have a map entry?
-  						!getOutputExtentions().contains(extensionName)) { // is the file generated?
+  						!getOutputExtensions().contains(extensionName)) { // is the file generated?
 
   					// Get the name in the proper macro format
   					StringBuffer macroName = getMacroName(extensionName);
@@ -452,7 +452,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  					StringBuffer bufferForExtension = new StringBuffer();
  					bufferForExtension.append(extensionToRuleStringMap.get(ext).toString());
  					if(bufferForExtension != null &&
- 							!getOutputExtentions().contains(bufferForExtension.toString())) {
+ 							!getOutputExtensions().contains(bufferForExtension.toString())) {
  						
  						bufferForExtension.append(resource.getName() + WHITESPACE + LINEBREAK);
  						
@@ -665,6 +665,28 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	/**
+	 * Adds the container of the argument to a list of subdirectories that are part 
+	 * of an incremental rebuild of the project. The makefile fragments for these 
+	 * directories will be regenerated as a result of the build.
+	 * 
+	 * @param resource
+	 */
+	protected void appendDeletedSubdirectory(IResource resource) {
+		IContainer container = resource.getParent();
+		// If the path contains a space relative to the project, reject it from the build
+		if (resource.getProjectRelativePath().toString().indexOf(" ") != -1) {	//$NON-NLS-1$
+			// Only add the container once
+			if (!getInvalidDirList().contains(container)) {
+				getInvalidDirList().add(container);
+			}
+		} else {
+			if (!getDeletedDirList().contains(container)) {
+				getDeletedDirList().add(container);
+			}
+		}
+	}
+
+	/**
 	 * If a file is removed from a source folder (either because of a delete 
 	 * or move action on the part of the user), the makefilegenerator has to
 	 * remove the dependency makefile along with the old build goal 
@@ -816,7 +838,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				depFile.delete(true, new SubProgressMonitor(monitor, 1));
 			} catch (CoreException e) {
 				// This had better be allowed during a build
-				
 			}
 		}		
 	}
@@ -836,7 +857,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 				depFile.delete(true, new SubProgressMonitor(monitor, 1));
 			} catch (CoreException e) {
 				// This had better be allowed during a build
-				
 			}
 		}
 	}
@@ -992,6 +1012,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			populateFragmentMakefile(subDir);
 			checkCancel();
 		}
+		
+		// Remove deleted folders from generated build directory
+		iter = getDeletedDirList().listIterator();
+		while (iter.hasNext()) {
+			IContainer subDir = (IContainer) iter.next();
+			removeGeneratedDirectory(subDir);
+			checkCancel();
+		}
 
 		// How did we do
 		if (!getInvalidDirList().isEmpty()) {
@@ -1032,6 +1060,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 
+	/**
+	 * @return Returns the deletedDirList.
+	 */
+	private Vector getDeletedDirList() {
+		if (deletedDirList == null) {
+			deletedDirList = new Vector();
+		}
+		return deletedDirList;
+	}
+	
 	/* (non-Javadoc)
 	 * @return
 	 */
@@ -1127,7 +1165,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * 
 	 * @return a <code>Set</code> containing all of the output extensions 
 	 */
-	protected Set getOutputExtentions() {
+	protected Set getOutputExtensions() {
 		if (outputExtensionsSet == null) {
 			// The set of output extensions which will be produced by this tool.
 			// It is presumed that this set is not very large (likely < 10) so
@@ -1468,7 +1506,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  				// checked however.
  				
  				// Generated files should not appear in the list.
- 				if(!getOutputExtentions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
+ 				if(!getOutputExtensions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
  					handledInputExtensions.add(extensionName);
  					StringBuffer macroName = getMacroName(extensionName);
  					
@@ -1512,7 +1550,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
  			while(exListIterator.hasNext()) {
  				// create a macro of the form "EXTENSION_SRCS :="
  				String extensionName = exListIterator.next().toString();
- 				if(!getOutputExtentions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
+ 				if(!getOutputExtensions().contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
  					handledInputExtensions.add(extensionName);
  					StringBuffer macroName = getMacroName(extensionName);
  					buffer.append(macroName + WHITESPACE + ":=" + WHITESPACE + NEWLINE);	//$NON-NLS-1$
@@ -1666,6 +1704,26 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 					null);
 		}
 		return status;
+	}
+
+	/* (non-Javadoc)
+	 * @param subDir
+	 */
+	private void removeGeneratedDirectory(IContainer subDir) {
+		IPath moduleRelativePath = subDir.getProjectRelativePath();
+		IPath buildRoot = getBuildWorkingDir();
+		if (buildRoot == null) {
+			return;
+		}
+		IPath moduleOutputPath = buildRoot.append(moduleRelativePath);
+		IFolder folder = project.getFolder(moduleOutputPath);
+		if (folder.exists()) {
+			try {
+				folder.delete(true, new SubProgressMonitor(monitor, 1));
+			} catch (CoreException e) {
+				// TODO Log this
+			}
+		}		
 	}
 
 	/* (non-Javadoc)

@@ -46,13 +46,6 @@ public interface ICDIMemoryBlock extends ICDIObject
 	byte[] getBytes() throws CDIException;
 	
 	/**
-	 * Returns whether this memory block supports value modification
-	 * 
-	 * @return whether this memory block supports value modification
-	 */
-	boolean supportsValueModification();
-	
-	/**
 	 * Sets the value of the bytes in this memory block at the specified
 	 * offset within this memory block to the spcified bytes.
 	 * The offset is zero based.
@@ -69,9 +62,9 @@ public interface ICDIMemoryBlock extends ICDIObject
 	 *   beyond the end of this memory block (index of out of range)</li>
 	 * </ul>
 	 */
-	void setValue( long offset, byte[] bytes ) throws CDIException;
+	void setValue(long offset, byte[] bytes) throws CDIException;
 
 	boolean isFrozen();
 	
-	void setFrozen( boolean frozen );
+	void setFrozen(boolean frozen);
 }

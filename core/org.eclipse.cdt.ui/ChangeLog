@@ -1,3 +1,8 @@
+2002-11-21 David Inglis
+	* plugin.xml
+	* plugin.properties
+	fixed bug #25886 - duplicate menu entries for compare and replace
+	
 2002-11-20 Alain Magloire
 
 	Move the Index property page in the C/C++ project category.

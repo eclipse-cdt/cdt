@@ -29,9 +29,9 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -139,8 +139,8 @@
             id="org.eclipse.cdt.ui.MakeView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -189,7 +189,7 @@
             %StdCCWizard.description
          </description>
       </wizard>
-<!-- For C++ Conversion Wizard -->      
+<!-- For C++ Conversion Wizard -->
       <wizard
             name="%StdMakeConversionWizard.name"
             icon="icons/full/ctool16/newcc_app.gif"
@@ -254,8 +254,8 @@
          point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.core.resources.IProject"
-            name="%CProjectPropertyPage.name"
             adaptable="true"
+            name="%CProjectPropertyPage.name"
             class="org.eclipse.cdt.internal.ui.preferences.CProjectPropertyPage"
             id="org.eclipse.cdt.ui.preferences.CProjectPropertyPage">
          <filter
@@ -280,54 +280,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.cdt.core.model.ICElement"
-            id="org.eclipse.cdt.ui.compare.CElementContributions">
-         <menu
-               label="%CompareWithMenu.label"
-               path="additions"
-               id="compareWithMenu">
-            <separator
-                  name="compareWithGroup">
-            </separator>
-         </menu>
-         <action
-               label="%CompareWithEachOtherAction.label"
-               tooltip="%CompareWithEachOtherAction.tooltip"
-               class="org.eclipse.compare.internal.CompareAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               enablesFor="2+"
-               id="org.eclipse.cdt.ui.actions.CompareWithEachOther">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.core.model.ICElement"
-            id="org.eclipse.cdt.ui.compare.CompilationUnitContributions">
-         <menu
-               label="%ReplaceWithMenu.label"
-               path="additions"
-               id="replaceWithMenu">
-            <separator
-                  name="replaceWithGroup">
-            </separator>
-         </menu>
-         <action
-               label="%ReplaceFromHistoryAction.label"
-               tooltip="%ReplaceFromHistoryAction.tooltip"
-               class="org.eclipse.compare.internal.ReplaceWithEditionAction"
-               menubarPath="replaceWithMenu/replaceWithGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.ui.actions.ReplaceFromHistory">
-         </action>
-         <action
-               label="%CompareWithHistoryAction.label"
-               tooltip="%CompareWithHistoryAction.tooltip"
-               class="org.eclipse.compare.internal.CompareWithEditionAction"
-               menubarPath="compareWithMenu/compareWithGroup"
-               enablesFor="1"
-               id="compareWithHistory">
-         </action>
-      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IMarker"
             id="org.eclipse.cdt.ui.action.DeleteTaskAction">

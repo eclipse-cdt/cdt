@@ -1,12 +1,18 @@
 # makefile for libspawner.so
 
+#set JDK_INCLUDES
+JDK_INCLUDES=/usr/local/jdk/include
+JDK_OS_INCLUDES=/usr/local/jdk/include/linux
+
+CC=gcc
 LIB_NAME = libspawner.so
-LIB_NAME_FULL = libspawner.so.1
+LIB_NAME_FULL = ../os/linux/x86/libspawner.so
 OBJS=spawner.o io.o exec_unix.o
-CCFLAGS+=-fpic  -D_REENTRANT -I$(JDK_INCLUDES)
+CPPFLAGS = -I. -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
+CFLAGS +=-fpic  -D_REENTRANT
 
 spawner : $(OBJS)
-	gcc -g -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(OBJS) -lc
+	$(CC) -g -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(OBJS) -lc
 
 clean :
 	rm $(OBJS)

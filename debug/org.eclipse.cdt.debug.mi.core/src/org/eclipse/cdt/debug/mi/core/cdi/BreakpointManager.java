@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICBreakpointManager;
-import org.eclipse.cdt.debug.core.cdi.ICCatchEvent;
-import org.eclipse.cdt.debug.core.cdi.ICCatchpoint;
-import org.eclipse.cdt.debug.core.cdi.ICCondition;
-import org.eclipse.cdt.debug.core.cdi.ICLocation;
-import org.eclipse.cdt.debug.core.cdi.ICLocationBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICWatchpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
+import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
+import org.eclipse.cdt.debug.core.cdi.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakDelete;
@@ -32,7 +32,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 /**
  *
  */
-public class BreakpointManager extends SessionObject implements ICBreakpointManager {
+public class BreakpointManager extends SessionObject implements ICDIBreakpointManager {
 
 	List breakList;
 	
@@ -42,23 +42,23 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#deleteAllBreakpoints()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteAllBreakpoints()
 	 */
 	public void deleteAllBreakpoints() throws CDIException {
 		deleteBreakpoints(getBreakpoints());
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#deleteBreakpoint(ICBreakpoint)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteBreakpoint(ICDIBreakpoint)
 	 */
-	public void deleteBreakpoint(ICBreakpoint breakpoint) throws CDIException {
-		deleteBreakpoints(new ICBreakpoint[]{breakpoint});
+	public void deleteBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
+		deleteBreakpoints(new ICDIBreakpoint[]{breakpoint});
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#deleteBreakpoints(ICBreakpoint[])
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteBreakpoints(ICDIBreakpoint[])
 	 */
-	public void deleteBreakpoints(ICBreakpoint[] breakpoints) throws CDIException {
+	public void deleteBreakpoints(ICDIBreakpoint[] breakpoints) throws CDIException {
 		int[] numbers = new int[breakpoints.length];
 		for (int i = 0; i < numbers.length; i++) {
 			if (breakpoints[i] instanceof Breakpoint
@@ -85,7 +85,7 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 		}
 	}
 
-	public void enableBreakpoint(ICBreakpoint breakpoint) throws CDIException {
+	public void enableBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
 		int number = 0;
 		if (breakpoint instanceof Breakpoint && breakList.contains(breakpoint)) {
 			number = ((Breakpoint)breakpoint).getMIBreakPoint().getNumber();
@@ -107,7 +107,7 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 		((Breakpoint)breakpoint).getMIBreakPoint().setEnabled(true);
 	}
 
-	public void disableBreakpoint(ICBreakpoint breakpoint) throws CDIException {
+	public void disableBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
 		int number = 0;
 		if (breakpoint instanceof Breakpoint && breakList.contains(breakpoint)) {
 			number = ((Breakpoint)breakpoint).getMIBreakPoint().getNumber();
@@ -130,29 +130,29 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#getBreakpoints()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints()
 	 */
-	public ICBreakpoint[] getBreakpoints() throws CDIException {
-		return (ICBreakpoint[])breakList.toArray(new ICBreakpoint[breakList.size()]);
+	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
+		return (ICDIBreakpoint[])breakList.toArray(new ICDIBreakpoint[breakList.size()]);
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#setCatchpoint(int, ICCatchEvent, String, ICCondition, boolean)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setCatchpoint(int, ICDICatchEvent, String, ICDICondition, boolean)
 	 */
-	public ICCatchpoint setCatchpoint(int type, ICCatchEvent event, String expression,
-		ICCondition condition) throws CDIException {
+	public ICDICatchpoint setCatchpoint(int type, ICDICatchEvent event, String expression,
+		ICDICondition condition) throws CDIException {
 		// throw new CDIException();
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#setLocationBreakpoint(int, ICLocation, ICCondition, boolean, String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setLocationBreakpoint(int, ICDILocation, ICDICondition, boolean, String)
 	 */
-	public ICLocationBreakpoint setLocationBreakpoint(int type, ICLocation location,
-		ICCondition condition, String threadId) throws CDIException {
+	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
+		ICDICondition condition, String threadId) throws CDIException {
 
-		boolean hardware = (type == ICBreakpoint.HARDWARE);
-		boolean temporary = (type == ICBreakpoint.TEMPORARY);
+		boolean hardware = (type == ICDIBreakpoint.HARDWARE);
+		boolean temporary = (type == ICDIBreakpoint.TEMPORARY);
 		String exprCond = null;
 		int ignoreCount = 0;
 		String line = "";
@@ -200,12 +200,12 @@ public class BreakpointManager extends SessionObject implements ICBreakpointMana
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpointManager#setWatchpoint(int, int, String, ICCondition, boolean)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setWatchpoint(int, int, String, ICDICondition, boolean)
 	 */
-	public ICWatchpoint setWatchpoint(int type, int watchType, String expression,
-		ICCondition condition) throws CDIException {
-		boolean access = (type == ICWatchpoint.WRITE);
-		boolean read = (type == ICWatchpoint.READ);
+	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
+		ICDICondition condition) throws CDIException {
+		boolean access = (type == ICDIWatchpoint.WRITE);
+		boolean read = (type == ICDIWatchpoint.READ);
 
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();

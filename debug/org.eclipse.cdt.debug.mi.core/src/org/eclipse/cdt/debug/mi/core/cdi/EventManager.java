@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.cdt.debug.core.cdi.ICEventManager;
-import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
+import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 
@@ -24,13 +24,13 @@ import org.eclipse.cdt.debug.mi.core.event.MIEvent;
  * To enable and disable the creation oEventManagerts go to
  * Window>Preferences>Java>Code Generation.
  */
-public class EventManager extends SessionObject implements ICEventManager {
+public class EventManager extends SessionObject implements ICDIEventManager {
 
 	Map map = Collections.synchronizedMap(new HashMap());
 
 	class CDIObserver implements Observer {
-		ICEventListener listener;
-		public CDIObserver(ICEventListener l) {
+		ICDIEventListener listener;
+		public CDIObserver(ICDIEventListener l) {
 			listener = l;
 		}
 		public void update(Observable o, Object args) {
@@ -46,9 +46,9 @@ public class EventManager extends SessionObject implements ICEventManager {
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICEventManager#addEventListener(ICEventListener)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIEventManager#addEventListener(ICDIEventListener)
 	 */
-	public void addEventListener(ICEventListener listener) {
+	public void addEventListener(ICDIEventListener listener) {
 		CDIObserver cdiObserver = new CDIObserver(listener);
 		map.put(listener, cdiObserver);
 		MISession session = getCSession().getMISession();
@@ -56,9 +56,9 @@ public class EventManager extends SessionObject implements ICEventManager {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICEventManager#removeEventListener(ICEventListener)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIEventManager#removeEventListener(ICDIEventListener)
 	 */
-	public void removeEventListener(ICEventListener listener) {
+	public void removeEventListener(ICDIEventListener listener) {
 		CDIObserver cdiObserver = (CDIObserver)map.remove(listener);
 		if (cdiObserver != null) {
 			MISession session = getCSession().getMISession();

@@ -6,9 +6,9 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICExpressionManager;
-import org.eclipse.cdt.debug.core.cdi.ICSession;
-import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 
 /**
  * @author alain
@@ -18,43 +18,43 @@ import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ExpressionManager extends SessionObject implements ICExpressionManager {
+public class ExpressionManager extends SessionObject implements ICDIExpressionManager {
 
 	public ExpressionManager(CSession session) {
 		super(session);
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICExpressionManager#addExpression(ICExpression)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#addExpression(ICDIExpression)
 	 */
-	public void addExpression(ICExpression expression) throws CDIException {
+	public void addExpression(ICDIExpression expression) throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICExpressionManager#getExpression(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpression(String)
 	 */
-	public ICExpression getExpression(String expressionId)
+	public ICDIExpression getExpression(String expressionId)
 		throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICExpressionManager#getExpressions()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
 	 */
-	public ICExpression[] getExpressions() throws CDIException {
+	public ICDIExpression[] getExpressions() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICExpressionManager#removeExpression(ICExpression)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
 	 */
-	public void removeExpression(ICExpression expression) throws CDIException {
+	public void removeExpression(ICDIExpression expression) throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICExpressionManager#removeExpressions(ICExpression[])
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpressions(ICDIExpression[])
 	 */
-	public void removeExpressions(ICExpression[] expressions)
+	public void removeExpressions(ICDIExpression[] expressions)
 		throws CDIException {
 	}
 

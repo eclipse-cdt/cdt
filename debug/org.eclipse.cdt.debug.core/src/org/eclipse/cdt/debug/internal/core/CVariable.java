@@ -8,8 +8,8 @@ package org.eclipse.cdt.debug.internal.core;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public abstract class CVariable extends CDebugElement 
 								implements IVariable,
-										   ICEventListener
+										   ICDIEventListener
 {
 	/**
 	 * Cache of current value - see #getValue().
@@ -57,14 +57,14 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public IValue getValue() throws DebugException
 	{
-		ICValue currentValue = getCurrentValue();
+		ICDIValue currentValue = getCurrentValue();
 		if ( fValue == null )
 		{
 			fValue = CValue.createValue( (CDebugTarget)getDebugTarget(), currentValue );
 		}
 		else
 		{
-			ICValue previousValue = fValue.getUnderlyingValue();
+			ICDIValue previousValue = fValue.getUnderlyingValue();
 			if ( currentValue == previousValue )
 			{
 				return fValue;
@@ -134,7 +134,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Returns this variable's underlying CDI value.
 	 */
-	protected abstract ICValue retrieveValue() throws DebugException, CDIException;
+	protected abstract ICDIValue retrieveValue() throws DebugException, CDIException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
@@ -154,7 +154,7 @@ public abstract class CVariable extends CDebugElement
 	 *
 	 * @exception DebugException if unable to access the value
 	 */
-	protected final ICValue getCurrentValue() throws DebugException
+	protected final ICDIValue getCurrentValue() throws DebugException
 	{
 		try
 		{
@@ -193,7 +193,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Returns the last known value for this variable
 	 */
-	protected ICValue getLastKnownValue()
+	protected ICDIValue getLastKnownValue()
 	{
 		if ( fValue == null )
 		{

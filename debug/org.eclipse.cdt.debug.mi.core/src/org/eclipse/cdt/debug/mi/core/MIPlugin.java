@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.cdt.debug.core.cdi.ICSession;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
@@ -46,21 +46,21 @@ public class MIPlugin extends Plugin {
 		return new MISession(in, out);
 	}
 
-	public ICSession createCSession(String program) throws IOException {
+	public ICDISession createCSession(String program) throws IOException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
 		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
 		return new CSession(session);
 	}
 
-	public ICSession createCSession(String program, String core) throws IOException {
+	public ICDISession createCSession(String program, String core) throws IOException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program, core};
 		Process gdb = Runtime.getRuntime().exec(args);
 		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
 		return new CSession(session);
 	}
 
-	public ICSession createCSession(String program, int pid) throws IOException {
+	public ICDISession createCSession(String program, int pid) throws IOException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
 		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());

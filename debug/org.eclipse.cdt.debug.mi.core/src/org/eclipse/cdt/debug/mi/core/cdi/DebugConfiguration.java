@@ -1,6 +1,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
 
 /**
  * @author alain
@@ -10,87 +10,87 @@ import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class DebugConfiguration implements ICDebugConfiguration {
+public class DebugConfiguration implements ICDIDebugConfiguration {
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsBreakpoints()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsBreakpoints()
 	 */
 	public boolean supportsBreakpoints() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsDisconnect()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsDisconnect()
 	 */
 	public boolean supportsDisconnect() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsExpressionEvaluation()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsExpressionEvaluation()
 	 */
 	public boolean supportsExpressionEvaluation() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsInstructionStepping()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsInstructionStepping()
 	 */
 	public boolean supportsInstructionStepping() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsMemoryModification()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsMemoryModification()
 	 */
 	public boolean supportsMemoryModification() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsMemoryRetrieval()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsMemoryRetrieval()
 	 */
 	public boolean supportsMemoryRetrieval() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsRegisterModification()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsRegisterModification()
 	 */
 	public boolean supportsRegisterModification() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsRegisters()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsRegisters()
 	 */
 	public boolean supportsRegisters() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsRestart()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsRestart()
 	 */
 	public boolean supportsRestart() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsStepping()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsStepping()
 	 */
 	public boolean supportsStepping() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsSuspendResume()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsSuspendResume()
 	 */
 	public boolean supportsSuspendResume() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration#supportsTerminate()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration#supportsTerminate()
 	 */
 	public boolean supportsTerminate() {
 		return false;

@@ -1,6 +1,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.event.ICEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
@@ -21,7 +21,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
  */
 public class EventAdapter {
 
-	public static ICEvent getCEvent(final CSession session, final MIEvent miEvent) {
+	public static ICDIEvent getCEvent(final CSession session, final MIEvent miEvent) {
 		if (miEvent instanceof MIBreakpointEvent) {
 			return new SuspendedEvent(session, (MIBreakpointEvent)miEvent);
 		} else if (miEvent instanceof MIInferiorExitEvent) {

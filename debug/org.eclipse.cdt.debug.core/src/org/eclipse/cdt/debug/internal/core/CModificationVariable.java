@@ -9,11 +9,11 @@ package org.eclipse.cdt.debug.internal.core;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICArrayValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICStringValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICStructureValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArrayValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStringValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStructureValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -44,12 +44,12 @@ public abstract class CModificationVariable extends CVariable
 	{
 		try
 		{
-			ICValue currentValue = getCurrentValue();
+			ICDIValue currentValue = getCurrentValue();
 			if ( currentValue != null )
 			{
-				return !( currentValue instanceof ICArrayValue || 
-					 	  currentValue instanceof ICStructureValue ||
-					 	  currentValue instanceof ICStringValue );
+				return !( currentValue instanceof ICDIArrayValue || 
+					 	  currentValue instanceof ICDIStructureValue ||
+					 	  currentValue instanceof ICDIStringValue );
 			}
 		}
 		catch( DebugException e )
@@ -66,7 +66,7 @@ public abstract class CModificationVariable extends CVariable
 	{
 		try
 		{
-			ICValue vmValue = generateValue( expression );
+			ICDIValue vmValue = generateValue( expression );
 			return vmValue != null;
 		}
 		catch( DebugException e )
@@ -76,9 +76,9 @@ public abstract class CModificationVariable extends CVariable
 		}
 	}
 
-	protected ICValue generateValue( String expression ) throws DebugException
+	protected ICDIValue generateValue( String expression ) throws DebugException
 	{
-		ICValue value = null;
+		ICDIValue value = null;
 		try
 		{
 			value = getCDITarget().evaluateExpressionToValue( expression );
@@ -103,7 +103,7 @@ public abstract class CModificationVariable extends CVariable
 	 */
 	public final void setValue( String expression ) throws DebugException
 	{
-		ICValue value = generateValue( expression );
+		ICDIValue value = generateValue( expression );
 
 		if ( value == null )
 		{
@@ -117,5 +117,5 @@ public abstract class CModificationVariable extends CVariable
 	/**
 	 * Set this variable's value to the given value
 	 */
-	protected abstract void setValue( ICValue value ) throws DebugException;
+	protected abstract void setValue( ICDIValue value ) throws DebugException;
 }

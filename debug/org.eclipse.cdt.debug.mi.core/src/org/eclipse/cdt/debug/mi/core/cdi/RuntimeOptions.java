@@ -2,7 +2,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.Properties;
 
-import org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions;
+import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 
 /**
  * @author alain
@@ -12,22 +12,22 @@ import org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class RuntimeOptions implements ICRuntimeOptions {
+public class RuntimeOptions implements ICDIRuntimeOptions {
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions#setArguments(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setArguments(String)
 	 */
 	public void setArguments(String args) {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions#setEnvironment(Properties)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setEnvironment(Properties)
 	 */
 	public void setEnvironment(Properties props) {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions#setWorkingDirectory(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setWorkingDirectory(String)
 	 */
 	public void setWorkingDirectory(String wd) {
 	}

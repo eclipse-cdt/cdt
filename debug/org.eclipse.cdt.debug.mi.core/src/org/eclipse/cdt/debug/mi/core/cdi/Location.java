@@ -1,8 +1,8 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICLocation;
-import org.eclipse.cdt.debug.core.cdi.model.ICInstruction;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 
 /**
  * @author alain
@@ -12,7 +12,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICInstruction;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Location implements ICLocation {
+public class Location implements ICDILocation {
 
 	long addr;
 	String file = "";
@@ -27,42 +27,42 @@ public class Location implements ICLocation {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getAddress()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getAddress()
 	 */
 	public long getAddress() {
 		return addr;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getFile()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getFile()
 	 */
 	public String getFile() {
 		return file;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getFunction()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getFunction()
 	 */
 	public String getFunction() {
 		return function;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getInstructions()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getInstructions()
 	 */
-	public ICInstruction[] getInstructions() throws CDIException {
-		return new ICInstruction[0];
+	public ICDIInstruction[] getInstructions() throws CDIException {
+		return new ICDIInstruction[0];
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getInstructions(int)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getInstructions(int)
 	 */
-	public ICInstruction[] getInstructions(int maxCount) throws CDIException {
-		return new ICInstruction[0];
+	public ICDIInstruction[] getInstructions(int maxCount) throws CDIException {
+		return new ICDIInstruction[0];
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getLineNumber()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getLineNumber()
 	 */
 	public int getLineNumber() {
 		return line;

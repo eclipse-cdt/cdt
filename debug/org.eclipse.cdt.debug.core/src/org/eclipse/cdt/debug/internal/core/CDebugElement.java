@@ -9,8 +9,8 @@ package org.eclipse.cdt.debug.internal.core;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICSession;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -155,7 +155,7 @@ public class CDebugElement extends PlatformObject
 	 * 
 	 * @return the CDI session
 	 */
-	public ICSession getCDISession() 
+	public ICDISession getCDISession() 
 	{
 		return getCDITarget().getSession();
 	}
@@ -165,9 +165,9 @@ public class CDebugElement extends PlatformObject
 	 * 
 	 * @return the underlying CDI target
 	 */
-	public ICTarget getCDITarget() 
+	public ICDITarget getCDITarget() 
 	{
-		return (ICTarget)getDebugTarget().getAdapter( ICTarget.class );
+		return (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
 	}
 
 	/**

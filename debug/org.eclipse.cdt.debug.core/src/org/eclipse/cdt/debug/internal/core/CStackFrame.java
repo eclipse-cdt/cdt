@@ -13,13 +13,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICLocation;
-import org.eclipse.cdt.debug.core.cdi.event.ICEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICVariable;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -34,17 +34,17 @@ import org.eclipse.debug.core.model.IVariable;
  */
 public class CStackFrame extends CDebugElement
 						 implements IStackFrame, 
-						 			ICEventListener
+						 			ICDIEventListener
 {
 	/**
 	 * Underlying CDI stack frame.
 	 */
-	private ICStackFrame fCDIStackFrame;
+	private ICDIStackFrame fCDIStackFrame;
 
 	/**
 	 * The last (previous) CDI stack frame.
 	 */
-	private ICStackFrame fLastCDIStackFrame;
+	private ICDIStackFrame fLastCDIStackFrame;
 
 	/**
 	 * Containing thread.
@@ -65,7 +65,7 @@ public class CStackFrame extends CDebugElement
 	 * Constructor for CStackFrame.
 	 * @param target
 	 */
-	public CStackFrame( CThread thread, ICStackFrame cdiFrame )
+	public CStackFrame( CThread thread, ICDIStackFrame cdiFrame )
 	{
 		super( (CDebugTarget)thread.getDebugTarget() );
 		fCDIStackFrame = cdiFrame;
@@ -99,7 +99,7 @@ public class CStackFrame extends CDebugElement
 			Iterator it = vars.iterator();
 			while( it.hasNext() )
 			{
-				fVariables.add( new CLocalVariable( this, (ICVariable)it.next() ) );
+				fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
 			}
 		}
 		else if ( fRefreshVariables )
@@ -141,7 +141,7 @@ public class CStackFrame extends CDebugElement
 		Iterator newOnes = locals.iterator();
 		while( newOnes.hasNext() )
 		{
-			fVariables.add( new CLocalVariable( this, (ICVariable)newOnes.next() ) );
+			fVariables.add( new CLocalVariable( this, (ICDIVariable)newOnes.next() ) );
 		}
 	}
 
@@ -170,7 +170,7 @@ public class CStackFrame extends CDebugElement
 	{
 		if ( isSuspended() )
 		{
-			ICLocation location = getCDIStackFrame().getLocation();
+			ICDILocation location = getCDIStackFrame().getLocation();
 			if ( location != null )
 			{
 				return location.getLineNumber();
@@ -220,9 +220,9 @@ public class CStackFrame extends CDebugElement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICEventListener#handleDebugEvent(ICEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICEvent event )
+	public void handleDebugEvent( ICDIEvent event )
 	{
 	}
 
@@ -433,7 +433,7 @@ public class CStackFrame extends CDebugElement
 	 * 
 	 * @return the underlying CDI stack frame
 	 */
-	protected ICStackFrame getCDIStackFrame()
+	protected ICDIStackFrame getCDIStackFrame()
 	{
 		return fCDIStackFrame;
 	}
@@ -444,7 +444,7 @@ public class CStackFrame extends CDebugElement
 	 * 
 	 * @param frame the underlying stack frame
 	 */
-	protected void setCDIStackFrame( ICStackFrame frame ) 
+	protected void setCDIStackFrame( ICDIStackFrame frame ) 
 	{
 		if ( frame != null )
 		{
@@ -463,7 +463,7 @@ public class CStackFrame extends CDebugElement
 	 * stack frame.  Used only so that equality can be checked on stack frame
 	 * after the new one has been set.
 	 */
-	protected ICStackFrame getLastCDIStackFrame()
+	protected ICDIStackFrame getLastCDIStackFrame()
 	{
 		return fLastCDIStackFrame;
 	}
@@ -473,7 +473,7 @@ public class CStackFrame extends CDebugElement
 	 * an underlying stack frame needs to be disposed, stack frames are equal if
 	 * the frames are equal and the locations are equal.
 	 */
-	protected static boolean equalFrame( ICStackFrame frameOne, ICStackFrame frameTwo )
+	protected static boolean equalFrame( ICDIStackFrame frameOne, ICDIStackFrame frameTwo )
 	{
 		return ( frameOne.getParent().equals( frameTwo.getParent() ) && 
 				 frameOne.getLocation().equals( frameTwo.getLocation() ) );
@@ -493,7 +493,7 @@ public class CStackFrame extends CDebugElement
 		{
 			return this;
 		}
-		if ( adapter == ICStackFrame.class )
+		if ( adapter == ICDIStackFrame.class )
 		{
 			return getCDIStackFrame();
 		}

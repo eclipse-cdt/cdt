@@ -9,22 +9,22 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICBreakpointManager;
-import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.cdi.ICEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICExpressionManager;
-import org.eclipse.cdt.debug.core.cdi.ICMemoryManager;
-import org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions;
-import org.eclipse.cdt.debug.core.cdi.ICSession;
-import org.eclipse.cdt.debug.core.cdi.ICSignalManager;
-import org.eclipse.cdt.debug.core.cdi.ICSourceManager;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
- * @see org.eclipse.cdt.debug.core.cdi.ICSession
+ * @see org.eclipse.cdt.debug.core.cdi.ICDISession
  */
-public class CSession implements ICSession {
+public class CSession implements ICDISession {
 
 	Properties props;
 	MISession session;
@@ -53,81 +53,81 @@ public class CSession implements ICSession {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getAttribute(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getAttribute(String)
 	 */
 	public String getAttribute(String key) {
 		return props.getProperty(key);
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getBreakpointManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getBreakpointManager()
 	 */
-	public ICBreakpointManager getBreakpointManager() {
+	public ICDIBreakpointManager getBreakpointManager() {
 		return breakpointManager;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getEventManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getEventManager()
 	 */
-	public ICEventManager getEventManager() {
+	public ICDIEventManager getEventManager() {
 		return eventManager;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getExpressionManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getExpressionManager()
 	 */
-	public ICExpressionManager getExpressionManager() {
+	public ICDIExpressionManager getExpressionManager() {
 		return expressionManager;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getMemoryManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getMemoryManager()
 	 */
-	public ICMemoryManager getMemoryManager() {
+	public ICDIMemoryManager getMemoryManager() {
 		return memoryManager;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getSignalManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSignalManager()
 	 */
-	public ICSignalManager getSignalManager() {
+	public ICDISignalManager getSignalManager() {
 		return signalManager;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getSourceManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSourceManager()
 	 */
-	public ICSourceManager getSourceManager() {
+	public ICDISourceManager getSourceManager() {
 		return sourceManager;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getTargets()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getTargets()
 	 */
-	public ICTarget[] getTargets() {
-		return new ICTarget[]{ctarget};
+	public ICDITarget[] getTargets() {
+		return new ICDITarget[]{ctarget};
 	}
 
-	public ICTarget getCTarget() {
+	public ICDITarget getCTarget() {
 		return ctarget;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#isTerminated()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return session.isTerminated();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#setAttribute(String, String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setAttribute(String, String)
 	 */
 	public void setAttribute(String key, String value) {
 		props.setProperty(key, value);
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#terminate()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate()
 	 */
 	public void terminate() throws CDIException {
 		session.terminate();
@@ -136,14 +136,14 @@ public class CSession implements ICSession {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICSuration()
 	 */
-	public ICDebugConfiguration getConfiguration() {
+	public ICDIDebugConfiguration getConfiguration() {
 		return new DebugConfiguration();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getRuntimeOptions()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getRuntimeOptions()
 	 */
-	public ICRuntimeOptions getRuntimeOptions() {
+	public ICDIRuntimeOptions getRuntimeOptions() {
 		return new RuntimeOptions();
 	}
 }

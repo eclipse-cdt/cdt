@@ -1,10 +1,10 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 
 /**
  * @author alain
@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICVariable;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Value implements ICValue {
+public class Value implements ICDIValue {
 
 	String val = "";
 
@@ -23,44 +23,44 @@ public class Value implements ICValue {
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICValue#getTypeName()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
 		return "";
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICValue#getValueString()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getValueString()
 	 */
 	public String getValueString() throws CDIException {
 		return val;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICValue#getVariables()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
-	public ICVariable[] getVariables() throws CDIException {
-		return new ICVariable[0];
+	public ICDIVariable[] getVariables() throws CDIException {
+		return new ICDIVariable[0];
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getCDITarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
 	 */
-	public ICTarget getCDITarget() {
+	public ICDITarget getCDITarget() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getId()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
 	 */
 	public String getId() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getParent()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
 	 */
-	public ICObject getParent() {
+	public ICDIObject getParent() {
 		return null;
 	}
 }

@@ -6,7 +6,7 @@
 
 package org.eclipse.cdt.debug.core;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugTarget;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -69,7 +69,7 @@ public class CDebugModel
 	 * @since 2.0
 	 */
 	public static IDebugTarget newDebugTarget( final ILaunch launch,
-											   final ICTarget cdiTarget,
+											   final ICDITarget cdiTarget,
 											   final String name,
 											   final IProcess process,
 											   final boolean allowTerminate,

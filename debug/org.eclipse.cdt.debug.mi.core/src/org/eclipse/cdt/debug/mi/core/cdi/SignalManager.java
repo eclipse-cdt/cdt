@@ -6,9 +6,9 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICSession;
-import org.eclipse.cdt.debug.core.cdi.ICSignal;
-import org.eclipse.cdt.debug.core.cdi.ICSignalManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 
 /**
  * @author alain
@@ -18,16 +18,16 @@ import org.eclipse.cdt.debug.core.cdi.ICSignalManager;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SignalManager extends SessionObject implements ICSignalManager {
+public class SignalManager extends SessionObject implements ICDISignalManager {
 
 	public SignalManager(CSession session) {
 		super(session);
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSignalManager#getSignals()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#getSignals()
 	 */
-	public ICSignal[] getSignals() throws CDIException {
+	public ICDISignal[] getSignals() throws CDIException {
 		return null;
 	}
 

@@ -1,10 +1,10 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 
 /**
  * @author alain
@@ -14,40 +14,40 @@ import org.eclipse.cdt.debug.core.cdi.model.ICValue;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Expression implements ICExpression {
+public class Expression implements ICDIExpression {
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICExpression#getExpressionText()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#getExpressionText()
 	 */
 	public String getExpressionText() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICExpression#getValue()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#getValue()
 	 */
-	public ICValue getValue() throws CDIException {
+	public ICDIValue getValue() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getCDITarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
 	 */
-	public ICTarget getCDITarget() {
+	public ICDITarget getCDITarget() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getId()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
 	 */
 	public String getId() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getParent()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
 	 */
-	public ICObject getParent() {
+	public ICDIObject getParent() {
 		return null;
 	}
 

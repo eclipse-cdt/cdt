@@ -9,15 +9,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICGlobalVariable;
-import org.eclipse.cdt.debug.core.cdi.model.ICMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICRegisterGroup;
-import org.eclipse.cdt.debug.core.cdi.model.ICSharedLibrary;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICThread;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
+import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -40,14 +40,14 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class CTarget extends SessionObject implements ICTarget {
+public class CTarget extends SessionObject implements ICDITarget {
 
 	public CTarget(CSession session) {
 		super(session);
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#disconnect()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#disconnect()
 	 */
 	public void disconnect() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -65,22 +65,22 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#evaluateExpression(ICExpression)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpression(ICDIExpression)
 	 */
-	public void evaluateExpression(ICExpression expression)
+	public void evaluateExpression(ICDIExpression expression)
 		throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#evaluateExpression(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpression(String)
 	 */
-	public ICExpression evaluateExpression(String expressionText)
+	public ICDIExpression evaluateExpression(String expressionText)
 		throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#finish()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#finish()
 	 */
 	public void finish() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -98,99 +98,99 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getCMemoryBlock(long, long)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCMemoryBlock(long, long)
 	 */
-	public ICMemoryBlock getCMemoryBlock(long startAddress, long length)
+	public ICDIMemoryBlock getCMemoryBlock(long startAddress, long length)
 		throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getErrorStream()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getErrorStream()
 	 */
 	public InputStream getErrorStream() {
 		return getCSession().getMISession().getMIProcess().getErrorStream();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getInputStream()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getInputStream()
 	 */
 	public InputStream getInputStream() {
 		return getCSession().getMISession().getMIProcess().getInputStream();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getOutputStream()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getOutputStream()
 	 */
 	public OutputStream getOutputStream() {
 		return getCSession().getMISession().getMIProcess().getOutputStream();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getGlobalVariables()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariables()
 	 */
-	public ICGlobalVariable[] getGlobalVariables() throws CDIException {
+	public ICDIGlobalVariable[] getGlobalVariables() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getRegisterGroups()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterGroups()
 	 */
-	public ICRegisterGroup[] getRegisterGroups() throws CDIException {
+	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getSharedLibraries()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSharedLibraries()
 	 */
-	public ICSharedLibrary[] getSharedLibraries() throws CDIException {
-		return new ICSharedLibrary[0];
+	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
+		return new ICDISharedLibrary[0];
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getThread(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThread(String)
 	 */
-	public ICThread getThread(String id) throws CDIException {
+	public ICDIThread getThread(String id) throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getThreads()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThreads()
 	 */
-	public ICThread[] getThreads() throws CDIException {
+	public ICDIThread[] getThreads() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#isDisconnected()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isDisconnected()
 	 */
 	public boolean isDisconnected() {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#isStepping()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isStepping()
 	 */
 	public boolean isStepping() {
 		return getCSession().getMISession().getMIProcess().isRunning();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#isSuspended()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return getCSession().getMISession().getMIProcess().isSuspended();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#isTerminated()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return getCSession().getMISession().getMIProcess().isTerminated();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#restart()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#restart()
 	 */
 	public void restart() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -208,7 +208,7 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#resume()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#resume()
 	 */
 	public void resume() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -230,7 +230,7 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#stepInto()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepInto()
 	 */
 	public void stepInto() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -248,7 +248,7 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#stepIntoInstruction()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepIntoInstruction()
 	 */
 	public void stepIntoInstruction() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -266,7 +266,7 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#stepOver()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepOver()
 	 */
 	public void stepOver() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -284,7 +284,7 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#stepOverInstruction()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepOverInstruction()
 	 */
 	public void stepOverInstruction() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -302,7 +302,7 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#suspend()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#suspend()
 	 */
 	public void suspend() throws CDIException {
 		MISession mi = getCSession().getMISession();
@@ -320,35 +320,35 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#terminate()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#terminate()
 	 */
 	public void terminate() throws CDIException {
 		getCSession().getMISession().getMIProcess().destroy();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getCDITarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
 	 */
-	public ICTarget getCDITarget() {
+	public ICDITarget getCDITarget() {
 		return this;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getId()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
 	 */
 	public String getId() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getParent()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
 	 */
-	public ICObject getParent() {
+	public ICDIObject getParent() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#evaluateExpressionToString(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToString(String)
 	 */
 	public String evaluateExpressionToString(String expressionText)
 		throws CDIException {
@@ -356,9 +356,9 @@ public class CTarget extends SessionObject implements ICTarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#evaluateExpressionToValue(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToValue(String)
 	 */
-	public ICValue evaluateExpressionToValue(String expressionText)
+	public ICDIValue evaluateExpressionToValue(String expressionText)
 		throws CDIException {
 		return null;
 	}

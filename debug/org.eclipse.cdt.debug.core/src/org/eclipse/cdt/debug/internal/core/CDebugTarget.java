@@ -16,26 +16,26 @@ import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.cdi.ICEndSteppingRange;
-import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICSignal;
-import org.eclipse.cdt.debug.core.cdi.event.ICChangedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICCreatedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDisconnectedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
-import org.eclipse.cdt.debug.core.cdi.event.ICExitedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICLoadedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICRestartedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICResumedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICSteppingEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICSuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICTerminatedEvent;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICThread;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDILoadedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDITerminatedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -57,7 +57,7 @@ import org.eclipse.debug.core.model.IThread;
  */
 public class CDebugTarget extends CDebugElement
 						  implements IDebugTarget,
-						  			 ICEventListener,
+						  			 ICDIEventListener,
 						  			 IRestart,
 						  			 IFormattedMemoryRetrieval,
 						  			 IState,
@@ -78,7 +78,7 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * The underlying CDI target.
 	 */
-	private ICTarget fCDITarget;
+	private ICDITarget fCDITarget;
 
 	/**
 	 * The name of this target.
@@ -118,7 +118,7 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * The debug configuration of this session
 	 */
-	private ICDebugConfiguration fConfig;	
+	private ICDIDebugConfiguration fConfig;	
 
 	/**
 	 * Whether terminate is supported.
@@ -150,7 +150,7 @@ public class CDebugTarget extends CDebugElement
 	 * @param target
 	 */
 	public CDebugTarget( ILaunch launch, 
-						 ICTarget cdiTarget, 
+						 ICDITarget cdiTarget, 
 						 String name,
 						 IProcess process,
 						 boolean allowsTerminate,
@@ -189,7 +189,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected void initializeState()
 	{
-		ICThread[] threads = new ICThread[0];
+		ICDIThread[] threads = new ICDIThread[0];
 		try
 		{
 			threads = getCDITarget().getThreads();
@@ -603,7 +603,7 @@ public class CDebugTarget extends CDebugElement
 		fThreads = threads;
 	}
 
-	private void setCDITarget( ICTarget cdiTarget )
+	private void setCDITarget( ICDITarget cdiTarget )
 	{
 		fCDITarget = cdiTarget;
 	}
@@ -615,7 +615,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( adapter.equals( IDebugTarget.class ) )
 			return this;
-		if ( adapter.equals( ICTarget.class ) )
+		if ( adapter.equals( ICDITarget.class ) )
 			return fCDITarget;
 		if ( adapter.equals( IState.class ) )
 			return this;
@@ -623,85 +623,85 @@ public class CDebugTarget extends CDebugElement
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICEventListener#handleDebugEvent(ICEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICEvent event )
+	public void handleDebugEvent( ICDIEvent event )
 	{
-		ICObject source = event.getSource();
+		ICDIObject source = event.getSource();
 		if ( source.getCDITarget().equals( this ) )
 		{
-			if ( event instanceof ICCreatedEvent )
+			if ( event instanceof ICDICreatedEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleThreadCreatedEvent( (ICCreatedEvent)event );
+					handleThreadCreatedEvent( (ICDICreatedEvent)event );
 				}
 			}
-			else if ( event instanceof ICSuspendedEvent )
+			else if ( event instanceof ICDISuspendedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleSuspendedEvent( (ICSuspendedEvent)event );
+					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 			}
-			else if ( event instanceof ICResumedEvent )
+			else if ( event instanceof ICDIResumedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleResumedEvent( (ICResumedEvent)event );
+					handleResumedEvent( (ICDIResumedEvent)event );
 				}
 			}
-			else if ( event instanceof ICExitedEvent )
+			else if ( event instanceof ICDIExitedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleExitedEvent( (ICExitedEvent)event );
+					handleExitedEvent( (ICDIExitedEvent)event );
 				}
 			}
-			else if ( event instanceof ICTerminatedEvent )
+			else if ( event instanceof ICDITerminatedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleTerminatedEvent( (ICTerminatedEvent)event );
+					handleTerminatedEvent( (ICDITerminatedEvent)event );
 				}
-				else if ( source instanceof ICThread )
+				else if ( source instanceof ICDIThread )
 				{
-					handleThreadTerminatedEvent( (ICTerminatedEvent)event );
-				}
-			}
-			else if ( event instanceof ICDisconnectedEvent )
-			{
-				if ( source instanceof ICTarget )
-				{
-					handleDisconnectedEvent( (ICDisconnectedEvent)event );
+					handleThreadTerminatedEvent( (ICDITerminatedEvent)event );
 				}
 			}
-			else if ( event instanceof ICChangedEvent )
+			else if ( event instanceof ICDIDisconnectedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleChangedEvent( (ICChangedEvent)event );
+					handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
 				}
 			}
-			else if ( event instanceof ICLoadedEvent )
+			else if ( event instanceof ICDIChangedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleLoadedEvent( (ICLoadedEvent)event );
+					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
-			else if ( event instanceof ICRestartedEvent )
+			else if ( event instanceof ICDILoadedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleRestartedEvent( (ICRestartedEvent)event );
+					handleLoadedEvent( (ICDILoadedEvent)event );
 				}
 			}
-			else if ( event instanceof ICSteppingEvent )
+			else if ( event instanceof ICDIRestartedEvent )
 			{
-				if ( source instanceof ICTarget )
+				if ( source instanceof ICDITarget )
 				{
-					handleSteppingEvent( (ICSteppingEvent)event );
+					handleRestartedEvent( (ICDIRestartedEvent)event );
+				}
+			}
+			else if ( event instanceof ICDISteppingEvent )
+			{
+				if ( source instanceof ICDITarget )
+				{
+					handleSteppingEvent( (ICDISteppingEvent)event );
 				}
 			}
 		}
@@ -895,7 +895,7 @@ public class CDebugTarget extends CDebugElement
 	 * @param thread the underlying CDI thread
 	 * @return model thread
 	 */
-	protected CThread createThread( ICThread cdiThread )
+	protected CThread createThread( ICDIThread cdiThread )
 	{
 		CThread thread = null;
 		thread = new CThread( this, cdiThread );
@@ -912,9 +912,9 @@ public class CDebugTarget extends CDebugElement
 	 * Creates a new thread from the given CDI thread and initializes
 	 * its state to "Running".
 	 * 
-	 * @see CDebugTarget#createThread(ICThread)
+	 * @see CDebugTarget#createThread(ICDIThread)
 	 */
-	protected CThread createRunningThread( ICThread cdiThread )
+	protected CThread createRunningThread( ICDIThread cdiThread )
 	{
 		CThread thread = null;
 		thread = new CThread( this, cdiThread );
@@ -948,27 +948,27 @@ public class CDebugTarget extends CDebugElement
 		return fResumeOnStartup;
 	}
 
-	private void handleSuspendedEvent( ICSuspendedEvent event )
+	private void handleSuspendedEvent( ICDISuspendedEvent event )
 	{
 		setSuspended( true );
 		setCurrentStateId( IState.SUSPENDED );
-		ICSessionObject reason = event.getReason();
+		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
-		if ( reason instanceof ICEndSteppingRange )
+		if ( reason instanceof ICDIEndSteppingRange )
 		{
-			handleEndSteppingRange( (ICEndSteppingRange)reason );
+			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
 		}
-		else if ( reason instanceof ICBreakpoint )
+		else if ( reason instanceof ICDIBreakpoint )
 		{
-			handleBreakpointHit( (ICBreakpoint)reason );
+			handleBreakpointHit( (ICDIBreakpoint)reason );
 		}
-		else if ( reason instanceof ICSignal )
+		else if ( reason instanceof ICDISignal )
 		{
-			handleSuspendedBySignal( (ICSignal)reason );
+			handleSuspendedBySignal( (ICDISignal)reason );
 		}
 	}
 
-	private void handleResumedEvent( ICResumedEvent event )
+	private void handleResumedEvent( ICDIResumedEvent event )
 	{
 		setSuspended( false );
 		setCurrentStateId( IState.RUNNING );
@@ -976,63 +976,63 @@ public class CDebugTarget extends CDebugElement
 		fireResumeEvent( DebugEvent.UNSPECIFIED );
 	}
 	
-	private void handleEndSteppingRange( ICEndSteppingRange endSteppingRange )
+	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange )
 	{
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
-	private void handleBreakpointHit( ICBreakpoint breakpoint )
+	private void handleBreakpointHit( ICDIBreakpoint breakpoint )
 	{
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 	
-	private void handleSuspendedBySignal( ICSignal signal )
+	private void handleSuspendedBySignal( ICDISignal signal )
 	{
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
-	private void handleExitedEvent( ICExitedEvent event )
+	private void handleExitedEvent( ICDIExitedEvent event )
 	{
 		setCurrentStateId( IState.EXITED );
 		setCurrentStateInfo( event.getExitInfo() );
 		fireChangeEvent( DebugEvent.STATE );
 	}
 
-	private void handleTerminatedEvent( ICTerminatedEvent event )
+	private void handleTerminatedEvent( ICDITerminatedEvent event )
 	{
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );
 		terminated();
 	}
 
-	private void handleDisconnectedEvent( ICDisconnectedEvent event )
+	private void handleDisconnectedEvent( ICDIDisconnectedEvent event )
 	{
 		setCurrentStateId( IState.DISCONNECTED );
 		setCurrentStateInfo( null );
 		disconnected();
 	}
 
-	private void handleChangedEvent( ICChangedEvent event )
+	private void handleChangedEvent( ICDIChangedEvent event )
 	{
 	}
 
-	private void handleLoadedEvent( ICLoadedEvent event )
+	private void handleLoadedEvent( ICDILoadedEvent event )
 	{
 	}
 
-	private void handleRestartedEvent( ICRestartedEvent event )
+	private void handleRestartedEvent( ICDIRestartedEvent event )
 	{
 	}
 
-	private void handleSteppingEvent( ICSteppingEvent event )
+	private void handleSteppingEvent( ICDISteppingEvent event )
 	{
 		setCurrentStateId( IState.STEPPING );
 		setCurrentStateInfo( null );
 	}
 
-	private void handleThreadCreatedEvent( ICCreatedEvent event )
+	private void handleThreadCreatedEvent( ICDICreatedEvent event )
 	{
-		ICThread cdiThread = (ICThread)event.getSource();
+		ICDIThread cdiThread = (ICDIThread)event.getSource();
 		CThread thread= findThread( cdiThread );
 		if ( thread == null ) 
 		{
@@ -1045,9 +1045,9 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
-	private void handleThreadTerminatedEvent( ICTerminatedEvent event )
+	private void handleThreadTerminatedEvent( ICDITerminatedEvent event )
 	{
-		ICThread cdiThread = (ICThread)event.getSource();
+		ICDIThread cdiThread = (ICDIThread)event.getSource();
 		CThread thread = findThread( cdiThread );
 		if ( thread != null) 
 		{
@@ -1063,7 +1063,7 @@ public class CDebugTarget extends CDebugElement
 	 * @param the underlying CDI thread
 	 * @return the associated model thread
 	 */
-	public CThread findThread( ICThread cdiThread )
+	public CThread findThread( ICDIThread cdiThread )
 	{
 		List threads = getThreadList();
 		for ( int i = 0; i < threads.size(); i++ )

@@ -1,7 +1,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.ICSession;
-import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 
 /**
  * @author alain
@@ -11,7 +11,7 @@ import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SessionObject implements ICSessionObject {
+public class SessionObject implements ICDISessionObject {
 
 	private CSession session;
 
@@ -20,9 +20,9 @@ public class SessionObject implements ICSessionObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSessionObject#getSession()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionObject#getSession()
 	 */
-	public ICSession getSession() {
+	public ICDISession getSession() {
 		return session;
 	}
 	

@@ -15,22 +15,22 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
-import org.eclipse.cdt.debug.core.cdi.ICEndSteppingRange;
-import org.eclipse.cdt.debug.core.cdi.ICSessionObject;
-import org.eclipse.cdt.debug.core.cdi.ICSignal;
-import org.eclipse.cdt.debug.core.cdi.event.ICChangedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDisconnectedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
-import org.eclipse.cdt.debug.core.cdi.event.ICResumedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICSteppingEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICSuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICTerminatedEvent;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICThread;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
+import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDITerminatedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -47,12 +47,12 @@ public class CThread extends CDebugElement
 					 implements IThread,
 					 			IState,
 					 			IInstructionStep,
-					 			ICEventListener
+					 			ICDIEventListener
 {
 	/**
 	 * Underlying CDI thread.
 	 */
-	private ICThread fCDIThread;
+	private ICDIThread fCDIThread;
 
 	/**
 	 * Collection of stack frames
@@ -84,13 +84,13 @@ public class CThread extends CDebugElement
 	/**
 	 * The debug configuration of this session.
 	 */
-	private ICDebugConfiguration fConfig;	
+	private ICDIDebugConfiguration fConfig;	
 
 	/**
 	 * Constructor for CThread.
 	 * @param target
 	 */
-	public CThread( CDebugTarget target, ICThread cdiThread )
+	public CThread( CDebugTarget target, ICDIThread cdiThread )
 	{
 		super( target );
 		setCDIThread( cdiThread );
@@ -165,7 +165,7 @@ public class CThread extends CDebugElement
 						return fStackFrames;
 					}
 				}
-				ICStackFrame[] frames = getCDIStackFrames();
+				ICDIStackFrame[] frames = getCDIStackFrames();
 				// compute new or removed stack frames
 				int offset = 0, length = frames.length;
 				if ( length > fStackFrames.size() )
@@ -198,8 +198,8 @@ public class CThread extends CDebugElement
 					{
 						// same number of frames - if top frames are in different
 						// method, replace all frames
-						ICStackFrame newTop = frames[0];
-						ICStackFrame oldTop = ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame();
+						ICDIStackFrame newTop = frames[0];
+						ICDIStackFrame oldTop = ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame();
 						if (!CStackFrame.equalFrame( newTop, oldTop ) )
 						{
 							fStackFrames = createAllStackFrames();
@@ -230,7 +230,7 @@ public class CThread extends CDebugElement
 	 * <ul>
 	 * </ul>
 	 */
-	protected ICStackFrame[] getCDIStackFrames() throws DebugException
+	protected ICDIStackFrame[] getCDIStackFrames() throws DebugException
 	{
 		try
 		{
@@ -249,7 +249,7 @@ public class CThread extends CDebugElement
 	 * Replaces the underlying stack frame objects in the preserved frames
 	 * list with the current underlying stack frames.
 	 * 
-	 * @param newFrames list of current underlying <code>ICStackFrame</code>s.
+	 * @param newFrames list of current underlying <code>ICDIStackFrame</code>s.
 	 * 	Frames from this list are assigned to the underlying frames in
 	 *  the <code>oldFrames</code> list.
 	 * @param offset the offset in the lists at which to start replacing
@@ -257,7 +257,7 @@ public class CThread extends CDebugElement
 	 * @param oldFrames list of preserved frames, of type <code>CStackFrame</code>
 	 * @param length the number of frames to replace
 	 */
-	protected void updateStackFrames( ICStackFrame[] newFrames,
+	protected void updateStackFrames( ICDIStackFrame[] newFrames,
 									  int offset,
 									  List oldFrames,
 									  int length ) throws DebugException
@@ -327,7 +327,7 @@ public class CThread extends CDebugElement
 	 */
 	protected List createAllStackFrames() throws DebugException
 	{
-		ICStackFrame[] frames = getCDIStackFrames();
+		ICDIStackFrame[] frames = getCDIStackFrames();
 		List list= new ArrayList( frames.length );
 		for ( int i = 0; i < frames.length; ++i )
 		{
@@ -371,53 +371,53 @@ public class CThread extends CDebugElement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICEventListener#handleDebugEvent(ICEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICEvent event )
+	public void handleDebugEvent( ICDIEvent event )
 	{
-		ICObject source = event.getSource();
+		ICDIObject source = event.getSource();
 		if ( source.getCDITarget().equals( getCDITarget() ) )
 		{
-			if ( event instanceof ICSuspendedEvent )
+			if ( event instanceof ICDISuspendedEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleSuspendedEvent( (ICSuspendedEvent)event );
+					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 			}
-			else if ( event instanceof ICResumedEvent )
+			else if ( event instanceof ICDIResumedEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleResumedEvent( (ICResumedEvent)event );
+					handleResumedEvent( (ICDIResumedEvent)event );
 				}
 			}
-			else if ( event instanceof ICTerminatedEvent )
+			else if ( event instanceof ICDITerminatedEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleTerminatedEvent( (ICTerminatedEvent)event );
+					handleTerminatedEvent( (ICDITerminatedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDisconnectedEvent )
+			else if ( event instanceof ICDIDisconnectedEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleDisconnectedEvent( (ICDisconnectedEvent)event );
+					handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
 				}
 			}
-			else if ( event instanceof ICChangedEvent )
+			else if ( event instanceof ICDIChangedEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleChangedEvent( (ICChangedEvent)event );
+					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
-			else if ( event instanceof ICSteppingEvent )
+			else if ( event instanceof ICDISteppingEvent )
 			{
-				if ( source instanceof ICThread )
+				if ( source instanceof ICDIThread )
 				{
-					handleSteppingEvent( (ICSteppingEvent)event );
+					handleSteppingEvent( (ICDISteppingEvent)event );
 				}
 			}
 		}
@@ -647,7 +647,7 @@ public class CThread extends CDebugElement
 	 * 
 	 * @param thread the underlying CDI thread
 	 */
-	protected void setCDIThread( ICThread cdiThread )
+	protected void setCDIThread( ICDIThread cdiThread )
 	{
 		fCDIThread = cdiThread;
 	}
@@ -658,7 +658,7 @@ public class CThread extends CDebugElement
 	 * 
 	 * @return the underlying CDI thread
 	 */
-	protected ICThread getCDIThread()
+	protected ICDIThread getCDIThread()
 	{
 		return fCDIThread;
 	}
@@ -821,27 +821,27 @@ public class CThread extends CDebugElement
 		}
 	}
 
-	private void handleSuspendedEvent( ICSuspendedEvent event )
+	private void handleSuspendedEvent( ICDISuspendedEvent event )
 	{
 		setRunning( false );
 		setCurrentStateId( IState.SUSPENDED );
-		ICSessionObject reason = event.getReason();
+		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
-		if ( reason instanceof ICEndSteppingRange )
+		if ( reason instanceof ICDIEndSteppingRange )
 		{
-			handleEndSteppingRange( (ICEndSteppingRange)reason );
+			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
 		}
-		else if ( reason instanceof ICBreakpoint )
+		else if ( reason instanceof ICDIBreakpoint )
 		{
-			handleBreakpointHit( (ICBreakpoint)reason );
+			handleBreakpointHit( (ICDIBreakpoint)reason );
 		}
-		else if ( reason instanceof ICSignal )
+		else if ( reason instanceof ICDISignal )
 		{
-			handleSuspendedBySignal( (ICSignal)reason );
+			handleSuspendedBySignal( (ICDISignal)reason );
 		}
 	}
 
-	private void handleResumedEvent( ICResumedEvent event )
+	private void handleResumedEvent( ICDIResumedEvent event )
 	{
 		setRunning( true );
 		setCurrentStateId( IState.RUNNING );
@@ -849,40 +849,40 @@ public class CThread extends CDebugElement
 		fireResumeEvent( DebugEvent.UNSPECIFIED );
 	}
 	
-	private void handleEndSteppingRange( ICEndSteppingRange endSteppingRange )
+	private void handleEndSteppingRange( ICDIEndSteppingRange endSteppingRange )
 	{
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
-	private void handleBreakpointHit( ICBreakpoint breakpoint )
+	private void handleBreakpointHit( ICDIBreakpoint breakpoint )
 	{
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 	
-	private void handleSuspendedBySignal( ICSignal signal )
+	private void handleSuspendedBySignal( ICDISignal signal )
 	{
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
-	private void handleTerminatedEvent( ICTerminatedEvent event )
+	private void handleTerminatedEvent( ICDITerminatedEvent event )
 	{
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );
 		terminated();
 	}
 
-	private void handleDisconnectedEvent( ICDisconnectedEvent event )
+	private void handleDisconnectedEvent( ICDIDisconnectedEvent event )
 	{
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );
 		terminated();
 	}
 
-	private void handleChangedEvent( ICChangedEvent event )
+	private void handleChangedEvent( ICDIChangedEvent event )
 	{
 	}
 
-	private void handleSteppingEvent( ICSteppingEvent event )
+	private void handleSteppingEvent( ICDISteppingEvent event )
 	{
 		setCurrentStateId( IState.STEPPING );
 		setCurrentStateInfo( null );

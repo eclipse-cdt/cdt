@@ -1,12 +1,12 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICLocation;
-import org.eclipse.cdt.debug.core.cdi.model.ICArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICVariable;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -23,7 +23,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class StackFrame implements ICStackFrame {
+public class StackFrame implements ICDIStackFrame {
 
 	CSession session;
 	MIFrame frame;
@@ -34,11 +34,11 @@ public class StackFrame implements ICStackFrame {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICStackFrame#getArguments()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
-	public ICArgument[] getArguments() throws CDIException {
+	public ICDIArgument[] getArguments() throws CDIException {
 		MIArg[] args = frame.getArgs();
-		ICArgument[] cargs = new ICArgument[args.length];
+		ICDIArgument[] cargs = new ICDIArgument[args.length];
 		for (int i = 0; i < cargs.length; i++) {
 			cargs[i] = new Argument(args[i]);
 		}
@@ -46,11 +46,11 @@ public class StackFrame implements ICStackFrame {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICStackFrame#getLocalVariables()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
 	 */
-	public ICVariable[] getLocalVariables() throws CDIException {
+	public ICDIVariable[] getLocalVariables() throws CDIException {
 		MIArg[] args = null;
-		ICVariable[] variables = null;
+		ICDIVariable[] variables = null;
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackListLocals locals = factory.createMIStackListLocals(true);
@@ -66,42 +66,42 @@ public class StackFrame implements ICStackFrame {
 			//throw new CDIException(e);
 		}
 		if (args != null) {
-			variables = new ICVariable[args.length];
+			variables = new ICDIVariable[args.length];
 			for (int i = 0; i < variables.length; i++) {
 				variables[i] = new Variable(args[i]);
 			}
 		} else {
-			variables = new ICVariable[0];
+			variables = new ICDIVariable[0];
 		}
 		return variables;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICStackFrame#getLocation()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocation()
 	 */
-	public ICLocation getLocation() {
+	public ICDILocation getLocation() {
 		return new Location(frame.getFile(), frame.getFunction(),
 				frame.getLine(), frame.getAddress());
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getCDITarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
 	 */
-	public ICTarget getCDITarget() {
+	public ICDITarget getCDITarget() {
 		return session.getCTarget();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getId()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
 	 */
 	public String getId() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getParent()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
 	 */
-	public ICObject getParent() {
+	public ICDIObject getParent() {
 		return null;
 	}
 }

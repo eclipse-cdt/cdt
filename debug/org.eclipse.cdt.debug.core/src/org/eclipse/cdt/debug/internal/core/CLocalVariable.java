@@ -8,12 +8,12 @@ package org.eclipse.cdt.debug.internal.core;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.event.ICChangedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICVariable;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -25,12 +25,12 @@ import org.eclipse.debug.core.model.IValue;
  * @since Aug 9, 2002
  */
 public class CLocalVariable extends CModificationVariable
-							implements ICEventListener
+							implements ICDIEventListener
 {
 	/**
 	 * The underlying CDI variable.
 	 */
-	private ICVariable fCDIVariable;
+	private ICDIVariable fCDIVariable;
 	
 	/**
 	 * The stack frame this variable is contained in.
@@ -41,7 +41,7 @@ public class CLocalVariable extends CModificationVariable
 	 * Constructor for CLocalVariable.
 	 * @param target
 	 */
-	public CLocalVariable( CStackFrame stackFrame, ICVariable cdiVariable )
+	public CLocalVariable( CStackFrame stackFrame, ICDIVariable cdiVariable )
 	{
 		super( (CDebugTarget)stackFrame.getDebugTarget() );
 		fStackFrame = stackFrame;
@@ -49,9 +49,9 @@ public class CLocalVariable extends CModificationVariable
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.core.CModificationVariable#setValue(ICValue)
+	 * @see org.eclipse.cdt.debug.internal.core.CModificationVariable#setValue(ICDIValue)
 	 */
-	protected void setValue( ICValue value ) throws DebugException
+	protected void setValue( ICDIValue value ) throws DebugException
 	{
 		try
 		{
@@ -66,7 +66,7 @@ public class CLocalVariable extends CModificationVariable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.CVariable#retrieveValue()
 	 */
-	protected ICValue retrieveValue() throws DebugException, CDIException
+	protected ICDIValue retrieveValue() throws DebugException, CDIException
 	{
 		return ( getStackFrame().isSuspended() ) ? 
 					getCDIVariable().getValue() : getLastKnownValue();
@@ -111,7 +111,7 @@ public class CLocalVariable extends CModificationVariable
 	 * 
 	 * @return the underlying CDI variable
 	 */
-	protected ICVariable getCDIVariable()
+	protected ICDIVariable getCDIVariable()
 	{
 		return fCDIVariable;
 	}
@@ -127,24 +127,24 @@ public class CLocalVariable extends CModificationVariable
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICEventListener#handleDebugEvent(ICEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICEvent event )
+	public void handleDebugEvent( ICDIEvent event )
 	{
-		ICObject source = event.getSource();
+		ICDIObject source = event.getSource();
 		if ( source.getCDITarget().equals( getCDITarget() ) )
 		{
-			if ( event instanceof ICChangedEvent )
+			if ( event instanceof ICDIChangedEvent )
 			{
-				if ( source instanceof ICVariable && source.equals( getCDIVariable() ) )
+				if ( source instanceof ICDIVariable && source.equals( getCDIVariable() ) )
 				{
-					handleChangedEvent( (ICChangedEvent)event );
+					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
 		}
 	}
 
-	private void handleChangedEvent( ICChangedEvent event )
+	private void handleChangedEvent( ICDIChangedEvent event )
 	{
 		try
 		{

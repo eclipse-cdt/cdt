@@ -6,9 +6,9 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICMemoryManager;
-import org.eclipse.cdt.debug.core.cdi.ICSession;
-import org.eclipse.cdt.debug.core.cdi.model.ICMemoryBlock;
+import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 
 /**
  * @author alain
@@ -18,48 +18,48 @@ import org.eclipse.cdt.debug.core.cdi.model.ICMemoryBlock;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class MemoryManager extends SessionObject implements ICMemoryManager {
+public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 
 	public MemoryManager(CSession session) {
 		super(session);
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICMemoryManager#addBlock(ICMemoryBlock)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#addBlock(ICDIMemoryBlock)
 	 */
-	public void addBlock(ICMemoryBlock memoryBlock) throws CDIException {
+	public void addBlock(ICDIMemoryBlock memoryBlock) throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICMemoryManager#getBlock(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlock(String)
 	 */
-	public ICMemoryBlock getBlock(String id) throws CDIException {
+	public ICDIMemoryBlock getBlock(String id) throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICMemoryManager#getBlocks()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#getBlocks()
 	 */
-	public ICMemoryBlock[] getBlocks() throws CDIException {
+	public ICDIMemoryBlock[] getBlocks() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICMemoryManager#removeAllBlocks()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeAllBlocks()
 	 */
 	public void removeAllBlocks() throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICMemoryManager#removeBlock(ICMemoryBlock)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeBlock(ICDIMemoryBlock)
 	 */
-	public void removeBlock(ICMemoryBlock memoryBlock) {
+	public void removeBlock(ICDIMemoryBlock memoryBlock) {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICMemoryManager#removeBlocks(ICMemoryBlock[])
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#removeBlocks(ICDIMemoryBlock[])
 	 */
-	public void removeBlocks(ICMemoryBlock[] memoryBlocks)
+	public void removeBlocks(ICDIMemoryBlock[] memoryBlocks)
 		throws CDIException {
 	}
 

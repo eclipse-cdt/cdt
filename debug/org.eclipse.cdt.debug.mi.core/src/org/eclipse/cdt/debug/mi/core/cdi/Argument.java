@@ -1,10 +1,10 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
 
 /**
@@ -15,7 +15,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIArg;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Argument implements ICArgument {
+public class Argument implements ICDIArgument {
 
 	MIArg arg;
 
@@ -24,61 +24,61 @@ public class Argument implements ICArgument {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICVariable#getName()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getName()
 	 */
 	public String getName() throws CDIException {
 		return arg.getName();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICVariable#getValue()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getValue()
 	 */
-	public ICValue getValue() throws CDIException {
+	public ICDIValue getValue() throws CDIException {
 		return new Value(arg.getValue());
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICVariable#hasValueChanged()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#hasValueChanged()
 	 */
 	public boolean hasValueChanged() throws CDIException {
 		return false;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICVariable#setValue(ICValue)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(ICDIValue)
 	 */
-	public void setValue(ICValue value) throws CDIException {
+	public void setValue(ICDIValue value) throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICVariable#setValue(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getCDITarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
 	 */
-	public ICTarget getCDITarget() {
+	public ICDITarget getCDITarget() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getId()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
 	 */
 	public String getId() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICObject#getParent()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
 	 */
-	public ICObject getParent() {
+	public ICDIObject getParent() {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICVariable#getTypeName()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
 		return "";

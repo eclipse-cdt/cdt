@@ -6,7 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -22,13 +22,13 @@ public class CValue extends CDebugElement implements IValue
 	/**
 	 * Underlying CDI value.
 	 */
-	private ICValue fValue;
+	private ICDIValue fValue;
 
 	/**
 	 * Constructor for CValue.
 	 * @param target
 	 */
-	public CValue( CDebugTarget target, ICValue cdiValue )
+	public CValue( CDebugTarget target, ICDIValue cdiValue )
 	{
 		super( target );
 		fValue = cdiValue;
@@ -78,7 +78,7 @@ public class CValue extends CDebugElement implements IValue
 	 * Creates the appropriate kind of value, or <code>null</code>.
 	 * 
 	 */
-	public static CValue createValue( CDebugTarget target, ICValue value ) 
+	public static CValue createValue( CDebugTarget target, ICDIValue value ) 
 	{
 		return new CValue( target, value );
 	}
@@ -86,7 +86,7 @@ public class CValue extends CDebugElement implements IValue
 	/**
 	 * Returns this value's underlying CDI value
 	 */
-	protected ICValue getUnderlyingValue()
+	protected ICDIValue getUnderlyingValue()
 	{
 		return fValue;
 	}

@@ -1,13 +1,13 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICCatchEvent;
-import org.eclipse.cdt.debug.core.cdi.ICCatchpoint;
-import org.eclipse.cdt.debug.core.cdi.ICCondition;
-import org.eclipse.cdt.debug.core.cdi.ICLocation;
-import org.eclipse.cdt.debug.core.cdi.ICLocationBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICWatchpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICInstruction;
+import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
+import org.eclipse.cdt.debug.core.cdi.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
 /**
@@ -18,11 +18,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Breakpoint extends SessionObject implements ICLocationBreakpoint,
-	ICCatchpoint, ICWatchpoint {
+public class Breakpoint extends SessionObject implements ICDILocationBreakpoint,
+	ICDICatchpoint, ICDIWatchpoint {
 
-	ICLocation location;
-	ICCondition condition;
+	ICDILocation location;
+	ICDICondition condition;
 	MIBreakPoint miBreakPoint;
 	BreakpointManager mgr;
 
@@ -37,19 +37,19 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint,
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#getCondition()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getCondition()
 	 */
-	public ICCondition getCondition() throws CDIException {
+	public ICDICondition getCondition() throws CDIException {
 		if (condition == null) {
-			condition = new ICCondition () {
+			condition = new ICDICondition () {
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICCondition#getIgnoreCount()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDICondition#getIgnoreCount()
 				 */
 				public int getIgnoreCount() {
 					return miBreakPoint.getIgnoreCount();
 				}
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICCondition#getExpression()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDICondition#getExpression()
 				 */
 				public String getExpression() {
 					return miBreakPoint.getWhat();
@@ -60,42 +60,42 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint,
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#getThreadId()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getThreadId()
 	 */
 	public String getThreadId() throws CDIException {
 		return miBreakPoint.getThreadId();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#isEnabled()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isEnabled()
 	 */
 	public boolean isEnabled() throws CDIException {
 		return miBreakPoint.isEnabled();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#isHardware()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
 		return miBreakPoint.isHardware();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#isTemporary()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
 		return miBreakPoint.isTemporary();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#setCondition(ICCondition)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setCondition(ICDICondition)
 	 */
-	public void setCondition(ICCondition condition) throws CDIException {
+	public void setCondition(ICDICondition condition) throws CDIException {
 		this.condition = condition;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICBreakpoint#setEnabled(boolean)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enable) throws CDIException {
 		if (enable == false && isEnabled() == true) { 
@@ -106,48 +106,48 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint,
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICLocationBreakpoint#getLocation()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint#getLocation()
 	 */
-	public ICLocation getLocation() throws CDIException {
+	public ICDILocation getLocation() throws CDIException {
 		if (location == null) {
-			location = new ICLocation () {
+			location = new ICDILocation () {
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getAddress()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getAddress()
 				 */
 				public long getAddress() {
 					return miBreakPoint.getAddress();
 				}
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getFile()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getFile()
 				 */
 				public String getFile() {
 					return miBreakPoint.getFile();
 				}
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getFunction()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getFunction()
 				 */
 				public String getFunction() {
 					return miBreakPoint.getFunction();
 				}
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getLineNumber()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getLineNumber()
 				 */
 				public int getLineNumber() {
 					return miBreakPoint.getLine();
 				}
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getInstructions(int)
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getInstructions(int)
 				 */
-				public ICInstruction[] getInstructions(int maxCount)
+				public ICDIInstruction[] getInstructions(int maxCount)
 					throws CDIException {
-					return new ICInstruction[0];
+					return new ICDIInstruction[0];
 				}
 				
 				/**
-				 * @see org.eclipse.cdt.debug.core.cdi.ICLocation#getInstructions()
+				 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#getInstructions()
 				 */
-				public ICInstruction[] getInstructions() throws CDIException {
-					return new ICInstruction[0];
+				public ICDIInstruction[] getInstructions() throws CDIException {
+					return new ICDIInstruction[0];
 				}
 				
 			};
@@ -156,28 +156,28 @@ public class Breakpoint extends SessionObject implements ICLocationBreakpoint,
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICCatchpoint#getEvent()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDICatchpoint#getEvent()
 	 */
-	public ICCatchEvent getEvent() throws CDIException {
+	public ICDICatchEvent getEvent() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICWatchpoint#getWatchExpression()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#getWatchExpression()
 	 */
 	public String getWatchExpression() throws CDIException {
 		return miBreakPoint.getWhat();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICWatchpoint#isReadType()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isReadType()
 	 */
 	public boolean isReadType() {
 		return miBreakPoint.isReadWatchpoint();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICWatchpoint#isWriteType()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isWriteType()
 	 */
 	public boolean isWriteType() {
 		return miBreakPoint.isAccessWatchpoint();

@@ -151,7 +151,10 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
 				ICExtensionReference[] ref = desc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 				if (ref.length > 0) {
-					initial = point.getExtension(ref[0].getID()).getLabel();
+					IExtension ext = point.getExtension(ref[0].getID());
+					if (ext != null) {
+						initial = ext.getLabel();
+					}
 				}
 
 			} catch (CoreException e) {
@@ -162,7 +165,11 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			if (id == null || id.length() == 0) {
 				initial = point.getExtension(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID).getLabel();
 			} else {
-				initial = point.getExtension(id).getLabel();
+				IExtension ext = point.getExtension(id);
+				if (ext != null) {
+					initial = ext.getLabel();
+				}
+
 			}
 		}
 

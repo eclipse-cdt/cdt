@@ -1,3 +1,6 @@
+2003-11-14 David Inglis
+	Fixed bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=46685
+
 2003-11-11 Sean Evoy
 	There is a duplicate set of these string resources in the standard make
 	UI plugin, so there is little need to keep these resources in the common UI 

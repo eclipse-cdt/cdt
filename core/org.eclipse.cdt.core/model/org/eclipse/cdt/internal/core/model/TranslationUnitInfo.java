@@ -11,6 +11,7 @@ import java.io.InputStream;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.internal.core.newparser.Parser;
+import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -53,11 +54,16 @@ class TranslationUnitInfo extends CFileInfo {
 	protected void parse(InputStream in) {
 		try {
 			removeChildren();
-			//ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
-			//CStructurizer.getCStructurizer().parse(modelBuilder, in);
-			NewModelBuilder modelBuilder = new NewModelBuilder((TranslationUnit)getElement());
-			Parser parser = new Parser(in, modelBuilder, true);
-			parser.parse();
+			if (false) {
+				// cdt 1.0 parser
+				ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
+				CStructurizer.getCStructurizer().parse(modelBuilder, in);
+			} else {
+				// new parser
+				NewModelBuilder modelBuilder = new NewModelBuilder((TranslationUnit)getElement());
+				Parser parser = new Parser(in, modelBuilder, true);
+				parser.parse();
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}

@@ -308,7 +308,7 @@ public class Parser {
 	// constDeclaration
 	// : cvQualify ("*")? identifier "=" expression ("," declarators) ";"
 	public void rDeclaration() throws Exception {
-		callback.beginSimpleDeclaration();
+		callback.beginSimpleDeclaration(LA(1));
 		boolean memberSpec = optMemberSpec();
 		optStorageSpec();
 		if (!memberSpec)
@@ -323,7 +323,7 @@ public class Parser {
 			else
 				rOtherDeclaration();
 		}
-		callback.endSimpleDeclaration();
+		callback.endSimpleDeclaration(LA(0));
 	}
 	
 	public void rIntegralDeclaration() throws Exception {
@@ -353,7 +353,9 @@ public class Parser {
 	
 	public void rOtherDeclaration() throws Exception {
 		callback.beginDeclarator();
-		callback.declaratorId(rName());
+		Token id = LA(1);
+		rName();
+		callback.declaratorId(id);
 
 		if (isConstructorDecl()) {
 			rConstructorDecl();
@@ -425,7 +427,7 @@ public class Parser {
 				t = LT(i++);
 			}
 			
-			if (t == Token.tCOLONCOLON)
+			if (t != Token.tCOLONCOLON)
 				return false;
 			
 			t0 = LT(i++);
@@ -503,7 +505,7 @@ public class Parser {
 				case Token.t_bool:
 				case Token.t_wchar_t:
 					Token t = consume();
-					callback.declSpecifier(t.image);
+					callback.declSpecifier(t);
 					rc = true;
 					break;
 				default:
@@ -608,8 +610,10 @@ public class Parser {
 					if (LT(1) != Token.tLBRACKET && LT(1) != Token.tLPAREN)
 						throw backtrack;
 		} else if (kind != kCastDeclarator
-			&& (kind == kDeclarator || LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON)) {
-			callback.declaratorId(rName());
+				&& (kind == kDeclarator || LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON)) {
+			Token id = LA(1);
+			rName();
+			callback.declaratorId(id);
 		}
 		
 		for (;;) {
@@ -674,20 +678,16 @@ public class Parser {
 	// | "~" identifier
 	// | "operator" operatorName (templateArgs)?
 	// returns list of names
-	public List rName() throws Exception {
-		List names = new ArrayList();
-		
+	public void rName() throws Exception {
 		if (LT(1) == Token.tCOLONCOLON) {
 			consume();
-			names.add(null);
 		}
-			
+
 		for (;;) {
 			int t = LT(1);
 			
 			if (t == Token.tIDENTIFIER) {
 				Token tk = consume();
-				names.add(tk.image);
 				t = LT(1);
 				if (LT(1) == Token.tLT) {
 					rTemplateArgs();
@@ -696,13 +696,12 @@ public class Parser {
 				if (t == Token.tCOLONCOLON)
 					consume();
 				else
-					return names;
+					return;
 			} else if (t == Token.tCOMPL) {
 				consume();
 				if (LT(1) == Token.tIDENTIFIER) {
 					Token tk = consume();
-					names.add("~" + tk.image);
-					return names;
+					return;
 				} else
 					throw backtrack;
 			} else if (t == Token.t_operator) {
@@ -711,7 +710,7 @@ public class Parser {
 				rOperatorName();
 				if (LT(1) == Token.tLT)
 					rTemplateArgs();
-				return names;
+				return;
 			} else
 				throw backtrack;
 		}
@@ -988,9 +987,10 @@ public class Parser {
 		consume();
 	
 		if (LT(1) != Token.tLBRACE) {
-			List className = rName();
-			callback.beginClass(classKey, className);
-			callback.declSpecifier(className);
+			Token nameToken = LA(1);
+			rName();
+			callback.beginClass(classKey, nameToken);
+			callback.declSpecifier(nameToken);
 			
 			if (LT(1) == Token.tCOLON)
 				rBaseSpecifiers();
@@ -1000,9 +1000,8 @@ public class Parser {
 			}
 		} else {
 			// anonymous class
-			String className = "<anonymous_" + anonymousName++ + ">";
-			callback.beginClass(classKey, className);
-			callback.declSpecifier(className);
+			callback.beginClass(classKey, null);
+			callback.declSpecifier(null);
 		}
 		
 		rClassBody();
@@ -1630,7 +1629,9 @@ public class Parser {
 	}
 	
 	public void rFunctionBody() throws Exception {
+		callback.beginFunctionBody();
 		rCompoundStatement();
+		callback.endFunctionBody();
 	}
 	
 	public void rCompoundStatement() throws Exception {
@@ -1883,14 +1884,13 @@ public class Parser {
 	}
 
 	protected Token LA(int i) throws Exception {
-		int la = currToken;
-		for (; i > 1; --i) {
+		for (int la = currToken; i > 1; --i) {
 			if (++la > maxToken)
 				la = 0;
 			if (la > lastToken)
 				fetchToken();
 		}
-		return tokenBuffer[la];	
+		return tokenBuffer[currToken + i - 1];
 	}
 
 	protected int LT(int i) throws Exception {
@@ -1920,4 +1920,26 @@ public class Parser {
 	protected void backup(int mark) {
 		currToken = mark;
 	}
+	
+	// Utility routines that require a knowledge of the grammar
+	public static String generateName(Token startToken) throws Exception {
+		Token currToken = startToken.getNext();
+		
+		if (currToken == null || currToken.getType() != Token.tCOLONCOLON)
+			return startToken.getImage();
+		
+		StringBuffer buff = new StringBuffer(startToken.getImage());
+		while (currToken != null && currToken.getType() == Token.tCOLONCOLON) {
+			currToken = currToken.getNext();
+			if (currToken == null || currToken.getType() != Token.tIDENTIFIER)
+				// Not good
+				throw new ParserException(startToken);
+			buff.append("::");
+			buff.append(currToken.getImage());
+			currToken = currToken.getNext();
+		}
+		
+		return buff.toString();
+	}
+	
 }

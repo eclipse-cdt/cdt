@@ -17,23 +17,26 @@ public interface IParserCallback {
 	public void beginTranslationUnit();
 	public void endTranslationUnit();
 	
-	public void inclusion(String includeFile);
+	public void beginInclusion(String includeFile);
+	public void endInclusion();
+	
 	public void macro(String macroName);
 	
-	public void beginSimpleDeclaration();
-	public void endSimpleDeclaration();
+	public void beginSimpleDeclaration(Token firstToken);
+	public void endSimpleDeclaration(Token lastToken);
 	
-	public void declSpecifier(String specifier);
-	public void declSpecifier(List specifier);
+	public void declSpecifier(Token specifier);
 	
 	public void beginDeclarator();
-	public void declaratorId(List name);
+	public void declaratorId(Token id);
 	public void beginArguments();
 	public void endArguments();
 	public void endDeclarator();
 	
-	public void beginClass(String classKey, String className);
-	public void beginClass(String classKey, List className);
+	public void beginFunctionBody();
+	public void endFunctionBody();
+	
+	public void beginClass(String classKey, Token name);
 	public void endClass();
 	
 	public void expressionOperator(Token operator) throws Exception;

@@ -56,12 +56,18 @@ public class Scanner {
 
 	protected void updateContext(Reader reader, String filename)
 	{
+		if (callback != null)
+			callback.beginInclusion(filename);
+			
 		contextStack.push(currentContext);
 		currentContext= new ScannerContext(reader, filename, NOCHAR);
 	}
 
 	protected boolean rollbackContext()
 	{
+		if (callback != null)
+			callback.endInclusion();
+			
 		try
 		{
 			currentContext.getReader().close();
@@ -193,6 +199,22 @@ public class Scanner {
 		}
 	}
 
+	private void setCurrentToken(Token t) {
+		if (currentToken != null)
+			currentToken.setNext(t);
+		currentToken = t;
+	}
+
+	protected Token newToken(int t, String i, ScannerContext c) {
+		setCurrentToken(new Token(t, i, c));
+		return currentToken;
+	}
+	
+	protected Token newToken(int t, String i) {
+		setCurrentToken(new Token(t, i));
+		return currentToken;
+	}
+	
 	protected String getNextIdentifier()
 	{
 		StringBuffer buffer= new StringBuffer();
@@ -221,9 +243,6 @@ public class Scanner {
 
 	protected void handleInclusion(String fileName) throws ScannerException
 	{
-		if (callback != null)
-			callback.inclusion(fileName);
-			
 		// Skip over inclusions in quickScan mode
 		if (quickScan)
 			return;
@@ -424,7 +443,7 @@ public class Scanner {
 				{
 					if (ident.equals(DEFINED))
 					{
-						return new Token(Token.tINTEGER, handleDefinedMacro());
+						return newToken(Token.tINTEGER, handleDefinedMacro());
 					}
 				}
 
@@ -442,11 +461,7 @@ public class Scanner {
 				if (tokenTypeObject != null)
 					tokenType= ((Integer) tokenTypeObject).intValue();
 
-				Token newToken= new Token(tokenType, ident, currentContext);
-				if (currentToken != null)
-					currentToken.next= newToken;
-				currentToken= newToken;
-				return newToken;
+				return newToken(tokenType, ident, currentContext);
 			}
 			else if (c == '"')
 			{
@@ -462,7 +477,7 @@ public class Scanner {
 
 				if (c != '\n')
 				{
-					return new Token(Token.tSTRING, buff.toString(), currentContext);
+					return newToken(Token.tSTRING, buff.toString(), currentContext);
 				}
 				else
 				{
@@ -494,7 +509,7 @@ public class Scanner {
 				}
 
 				ungetChar(c);
-				return new Token(Token.tINTEGER, buff.toString(), currentContext);
+				return newToken(Token.tINTEGER, buff.toString(), currentContext);
 			}
 			else if (c == '#')
 			{
@@ -759,168 +774,168 @@ public class Scanner {
 						switch (c)
 						{
 							case ':' :
-								return new Token(
+								return newToken(
 									Token.tCOLONCOLON,
 									"::",
 									currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tCOLON, ":", currentContext);
+								return newToken(Token.tCOLON, ":", currentContext);
 						}
 					case ';' :
-						return new Token(Token.tSEMI, ";", currentContext);
+						return newToken(Token.tSEMI, ";", currentContext);
 					case ',' :
-						return new Token(Token.tCOMMA, ",", currentContext);
+						return newToken(Token.tCOMMA, ",", currentContext);
 					case '?' :
-						return new Token(Token.tQUESTION, "?", currentContext);
+						return newToken(Token.tQUESTION, "?", currentContext);
 					case '(' :
-						return new Token(Token.tLPAREN, "(", currentContext);
+						return newToken(Token.tLPAREN, "(", currentContext);
 					case ')' :
-						return new Token(Token.tRPAREN, ")", currentContext);
+						return newToken(Token.tRPAREN, ")", currentContext);
 					case '[' :
-						return new Token(Token.tLBRACKET, "[", currentContext);
+						return newToken(Token.tLBRACKET, "[", currentContext);
 					case ']' :
-						return new Token(Token.tRBRACKET, "]", currentContext);
+						return newToken(Token.tRBRACKET, "]", currentContext);
 					case '{' :
-						return new Token(Token.tLBRACE, "{", currentContext);
+						return newToken(Token.tLBRACE, "{", currentContext);
 					case '}' :
-						return new Token(Token.tRBRACE, "}", currentContext);
+						return newToken(Token.tRBRACE, "}", currentContext);
 					case '+' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tPLUSASSIGN,
 									"+=",
 									currentContext);
 							case '+' :
-								return new Token(Token.tINCR, "++", currentContext);
+								return newToken(Token.tINCR, "++", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tPLUS, "+", currentContext);
+								return newToken(Token.tPLUS, "+", currentContext);
 						}
 					case '-' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tMINUSASSIGN,
 									"-=",
 									currentContext);
 							case '-' :
-								return new Token(Token.tDECR, "--", currentContext);
+								return newToken(Token.tDECR, "--", currentContext);
 							case '>' :
 								c= getChar();
 								switch (c)
 								{
 									case '*' :
-										return new Token(
+										return newToken(
 											Token.tARROWSTAR,
 											"->*",
 											currentContext);
 									default :
 										ungetChar(c);
-										return new Token(
+										return newToken(
 											Token.tARROW,
 											"->",
 											currentContext);
 								}
 							default :
 								ungetChar(c);
-								return new Token(Token.tMINUS, "-", currentContext);
+								return newToken(Token.tMINUS, "-", currentContext);
 						}
 					case '*' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tSTARASSIGN,
 									"*=",
 									currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tSTAR, "*", currentContext);
+								return newToken(Token.tSTAR, "*", currentContext);
 						}
 					case '%' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tMODASSIGN,
 									"%=",
 									currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tMOD, "%", currentContext);
+								return newToken(Token.tMOD, "%", currentContext);
 						}
 					case '^' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tXORASSIGN,
 									"^=",
 									currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tXOR, "^", currentContext);
+								return newToken(Token.tXOR, "^", currentContext);
 						}
 					case '&' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tAMPERASSIGN,
 									"&=",
 									currentContext);
 							case '&' :
-								return new Token(Token.tAND, "&&", currentContext);
+								return newToken(Token.tAND, "&&", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tAMPER, "&", currentContext);
+								return newToken(Token.tAMPER, "&", currentContext);
 						}
 					case '|' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tBITORASSIGN,
 									"|=",
 									currentContext);
 							case '|' :
-								return new Token(Token.tOR, "||", currentContext);
+								return newToken(Token.tOR, "||", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tBITOR, "|", currentContext);
+								return newToken(Token.tBITOR, "|", currentContext);
 						}
 					case '~' :
-						return new Token(Token.tCOMPL, "~", currentContext);
+						return newToken(Token.tCOMPL, "~", currentContext);
 					case '!' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(Token.tNOTEQUAL, "!=", currentContext);
+								return newToken(Token.tNOTEQUAL, "!=", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tNOT, "!", currentContext);
+								return newToken(Token.tNOT, "!", currentContext);
 						}
 					case '=' :
 						c= getChar();
 						switch (c)
 						{
 							case '=' :
-								return new Token(Token.tEQUAL, "==", currentContext);
+								return newToken(Token.tEQUAL, "==", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tASSIGN, "=", currentContext);
+								return newToken(Token.tASSIGN, "=", currentContext);
 						}
 					case '<' :
 						c= getChar();
@@ -931,22 +946,22 @@ public class Scanner {
 								switch (c)
 								{
 									case '=' :
-										return new Token(
+										return newToken(
 											Token.tSHIFTLASSIGN,
 											"<<=",
 											currentContext);
 									default :
 										ungetChar(c);
-										return new Token(
+										return newToken(
 											Token.tSHIFTL,
 											"<<",
 											currentContext);
 								}
 							case '=' :
-								return new Token(Token.tLTEQUAL, "<=", currentContext);
+								return newToken(Token.tLTEQUAL, "<=", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tLT, "<", currentContext);
+								return newToken(Token.tLT, "<", currentContext);
 						}
 					case '>' :
 						c= getChar();
@@ -957,22 +972,22 @@ public class Scanner {
 								switch (c)
 								{
 									case '=' :
-										return new Token(
+										return newToken(
 											Token.tSHIFTRASSIGN,
 											">>=",
 											currentContext);
 									default :
 										ungetChar(c);
-										return new Token(
+										return newToken(
 											Token.tSHIFTR,
 											">>",
 											currentContext);
 								}
 							case '=' :
-								return new Token(Token.tGTEQUAL, ">=", currentContext);
+								return newToken(Token.tGTEQUAL, ">=", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tGT, ">", currentContext);
+								return newToken(Token.tGT, ">", currentContext);
 						}
 					case '.' :
 						c= getChar();
@@ -983,7 +998,7 @@ public class Scanner {
 								switch (c)
 								{
 									case '.' :
-										return new Token(
+										return newToken(
 											Token.tELIPSE,
 											"...",
 											currentContext);
@@ -992,10 +1007,10 @@ public class Scanner {
 								}
 								break;
 							case '*' :
-								return new Token(Token.tDOTSTAR, ".*", currentContext);
+								return newToken(Token.tDOTSTAR, ".*", currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tDOT, ".", currentContext);
+								return newToken(Token.tDOT, ".", currentContext);
 						}
 						break;
 					case '/' :
@@ -1012,19 +1027,19 @@ public class Scanner {
 								c= getChar();
 								continue;
 							case '=' :
-								return new Token(
+								return newToken(
 									Token.tDIVASSIGN,
 									"/=",
 									currentContext);
 							default :
 								ungetChar(c);
-								return new Token(Token.tDIV, "/", currentContext);
+								return newToken(Token.tDIV, "/", currentContext);
 						}
 					default :
 						break;
 				}
 
-				return new Token(
+				return newToken(
 					Token.tEOF,
 					"Bad Char: " + (char) c,
 					currentContext);

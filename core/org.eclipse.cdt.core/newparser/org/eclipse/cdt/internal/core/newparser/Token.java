@@ -43,7 +43,12 @@ public class Token {
 
 	public  String filename;
 	public int offset;
-	public Token next;
+	public int getOffset() { return offset; }
+	public int getLength() { return image.length(); }
+	
+	private Token next;
+	public Token getNext() { return next; }
+	public void setNext(Token t) { next = t; }
 
 	// Token types
 	static public final int tEOF = 0;

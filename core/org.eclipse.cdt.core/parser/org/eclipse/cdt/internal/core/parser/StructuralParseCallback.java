@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTScope;
 
 /**
@@ -46,8 +47,12 @@ public class StructuralParseCallback extends QuickParseCallback{
 
 	
 	private void addElement (IASTDeclaration element){
-		if(inclusionLevel == 0)
-			((ASTScope)currentScope).addDeclaration(element);
+		if(inclusionLevel == 0){
+			if( currentScope instanceof ASTScope )
+				((ASTScope)currentScope).addDeclaration(element);
+			else if( currentScope instanceof ASTLinkageSpecification )
+				((ASTLinkageSpecification)currentScope).addDeclaration( element );
+		}
 	}
 	
 	private void enterScope(IASTNode node){
@@ -158,6 +163,7 @@ public class StructuralParseCallback extends QuickParseCallback{
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterLinkageSpecification(org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification)
 	 */
 	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {
+		addElement(linkageSpec);
 		enterScope(linkageSpec);
 	}
 	

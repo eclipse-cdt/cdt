@@ -10,10 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -24,6 +27,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  */
 public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements IASTLinkageSpecification
 {
+	private List declarations = new ArrayList();
     private final String linkageString;
     private Offsets offsets = new Offsets();
     /**
@@ -47,7 +51,7 @@ public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements 
      */
     public Iterator getDeclarations() throws ASTNotImplementedException
     {
-    	throw new ASTNotImplementedException();
+    	return declarations.iterator();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
@@ -126,5 +130,10 @@ public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements 
     public int getEndingLine() {
     	return offsets.getEndingLine();
     }
+    
+	public void addDeclaration(IASTDeclaration declaration)
+	{
+		declarations.add(declaration);
+	}
 }
 

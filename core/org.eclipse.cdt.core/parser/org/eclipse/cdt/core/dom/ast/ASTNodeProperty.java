@@ -23,7 +23,7 @@ public class ASTNodeProperty {
 	private String name;
 
     /**
-     * @param n
+     * @param n name
      */
     public ASTNodeProperty(String n) {
         this.name = n;

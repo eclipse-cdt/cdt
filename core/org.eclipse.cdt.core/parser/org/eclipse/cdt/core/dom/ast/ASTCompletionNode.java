@@ -30,10 +30,20 @@ public class ASTCompletionNode {
 	private IToken completionToken;
 	private List names = new ArrayList();
 
+	/**
+	 * Only constructor.
+	 * 
+	 * @param completionToken - the completion token
+	 */
 	public ASTCompletionNode(IToken completionToken) {
 		this.completionToken = completionToken;
 	}
 
+	/**
+	 * Add a name to node.
+	 * 
+	 * @param name
+	 */
 	public void addName(IASTName name) {
 		names.add(name);
 	}
@@ -48,10 +58,21 @@ public class ASTCompletionNode {
 		return completionToken.getImage();
 	}
 
+	/**
+	 * Get the length of the completion point.
+	 * 
+	 * @return length of completion token
+	 */
 	public int getLength() {
 		return completionToken.getLength();
 	}
 	
+	
+	/**
+	 * Get a list of names that fit in this context.
+	 * 
+	 * @return array of IASTName's
+	 */
 	public IASTName[] getNames() {
 		return (IASTName[])names.toArray(new IASTName[names.size()]);
 	}

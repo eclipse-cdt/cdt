@@ -11,10 +11,20 @@ package org.eclipse.cdt.core.dom.ast;
 
 
 /**
+ * ASM Statement as a Declaration.
+ * 
  * @author jcamelon
  */
 public interface IASTASMDeclaration extends IASTDeclaration {
 
+    /**
+     * Get the assembly value.  
+     * @return
+     */
     public String getAssembly();
+    /**
+     * Set the assembly value.  
+     * @param assembly
+     */
     public void setAssembly( String assembly );
 }

@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
-
 /**
  * This is the declarator for an array.
  * 
@@ -19,9 +17,22 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTArrayDeclarator extends IASTDeclarator {
 
+    /**
+     * Node property that describes the relationship between an <code>IASTArrayDeclarator</code> and an <code>IASTArrayModifier</code>.
+     */
     public static final ASTNodeProperty ARRAY_MODIFIER = new ASTNodeProperty( "Array Modifier"); //$NON-NLS-1$
     
+	/**
+	 * Get all <code>IASTArrayModifier</code>'s for this declarator.
+	 * 
+	 * @return array of <code>IASTArrayModifier</code>
+	 */
 	public IASTArrayModifier[] getArrayModifiers();
+	
+	/**
+	 * Add an <code>IASTArrayModifier</code> to this declarator
+	 * @param arrayModifier <code>IASTArrayModifier</code> to be added
+	 */
 	public void addArrayModifier( IASTArrayModifier arrayModifier );
 	
 }

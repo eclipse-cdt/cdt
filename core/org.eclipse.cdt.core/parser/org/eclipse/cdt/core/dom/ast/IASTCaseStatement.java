@@ -20,6 +20,9 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTCaseStatement extends IASTStatement {
 
+    /**
+     * <code>ASTNodeProperty</code> that represents the relationship between a case statement and the expression it contains.
+     */
     public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty("expression");  //$NON-NLS-1$
 	
 	/**
@@ -29,6 +32,10 @@ public interface IASTCaseStatement extends IASTStatement {
 	 */
 	public IASTExpression getExpression();
 
+	/**
+	 * Set the expression.
+	 * @param expression
+	 */
 	public void setExpression(IASTExpression expression);
 	
 }

@@ -18,6 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 
 
 public abstract class ASTVisitor {
+	
+	/**
+	 * These values should be overriden in the implementation subclass.
+	 */
 	public boolean shouldVisitNames          = false;
 	public boolean shouldVisitDeclarations   = false;
 	public boolean shouldVisitInitializers   = false;
@@ -37,7 +41,11 @@ public abstract class ASTVisitor {
 	public final static int PROCESS_ABORT    = 2;
 	public final static int PROCESS_CONTINUE = 3;
     
-    
+    /**
+     * 
+     * visit methods
+     * 
+     */
 	public int visit( IASTTranslationUnit tu ) 		{ return PROCESS_CONTINUE; }
 	public int visit( IASTName name ) 				{ return PROCESS_CONTINUE; }
 	public int visit( IASTDeclaration declaration )	{ return PROCESS_CONTINUE; }

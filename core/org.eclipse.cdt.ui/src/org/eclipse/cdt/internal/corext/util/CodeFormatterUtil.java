@@ -20,7 +20,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
@@ -58,19 +57,19 @@ public class CodeFormatterUtil {
 	 * @throws IllegalArgumentException If the offset and length are not inside the string, a
 	 *  IllegalArgumentException is thrown.
 	 */
-	public static TextEdit format(int kind, IDocument document, int offset, int length, int indentationLevel, String lineSeparator, Map options) {
-		if (offset < 0 || length < 0 || offset + length > document.getLength()) {
-			throw new IllegalArgumentException("offset or length outside of string. offset: " + offset + ", length: " + length + ", string size: " + document.getLength());   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	public static TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator, Map options) {
+		if (offset < 0 || length < 0 || offset + length > source.length()) {
+			throw new IllegalArgumentException("offset or length outside of string. offset: " + offset + ", length: " + length + ", string size: " + source.length());   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		}
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 		if (formatter != null) {
-			return formatter.format(kind, document, offset, length, indentationLevel, lineSeparator);
+			return formatter.format(kind, source, offset, length, indentationLevel, lineSeparator);
 		}
 		return null;
 	}
 	
-	public static TextEdit format(int kind, IDocument document, int indentationLevel, String lineSeparator, Map options) {
-		return format(kind, document, 0, document.getLength(), indentationLevel, lineSeparator, options);
+	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator, Map options) {
+		return format(kind, source, 0, source.length(), indentationLevel, lineSeparator, options);
 	}
 	
 			

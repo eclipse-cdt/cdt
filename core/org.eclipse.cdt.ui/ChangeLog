@@ -1,3 +1,10 @@
+2004-02-20 Alain Magloire
+
+	Fix for PR 52618
+	Added the global action handlers for the Property Dialog.
+
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+
 2003-02-20 Andrew Niefer
 	bug 52567
 	change the extension IDs for the C Search sorters to avoid conflict with the JDT

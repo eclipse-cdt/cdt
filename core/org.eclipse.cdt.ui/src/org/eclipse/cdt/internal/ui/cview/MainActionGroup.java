@@ -28,9 +28,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.events.KeyEvent;
@@ -39,6 +36,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.AddTaskAction;
 import org.eclipse.ui.actions.ExportResourcesAction;
@@ -144,24 +142,7 @@ public class MainActionGroup extends CViewActionGroup {
 
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);
-		propertyDialogAction = new PropertyDialogAction(shell, new ISelectionProvider() {
-
-			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				viewer.addSelectionChangedListener(listener);
-			}
-
-			public ISelection getSelection() {
-				return SelectionConverter.convertSelectionToResources(viewer.getSelection());
-			}
-
-			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-				viewer.removeSelectionChangedListener(listener);
-			}
-
-			public void setSelection(ISelection selection) {
-				viewer.setSelection(selection);
-			}
-		});
+		propertyDialogAction = new PropertyDialogAction(shell, viewer);
 
 		// Importing/exporting.
 		importAction = new ImportResourcesAction(getCView().getSite().getWorkbenchWindow());
@@ -310,7 +291,8 @@ public class MainActionGroup extends CViewActionGroup {
 
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(IDEActionFactory.BOOKMARK.getId(), addBookmarkAction);
-                actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), addTaskAction);
+		actionBars.setGlobalActionHandler(IDEActionFactory.ADD_TASK.getId(), addTaskAction);
+        actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), propertyDialogAction);
 
 		workingSetGroup.fillActionBars(actionBars);
 		gotoGroup.fillActionBars(actionBars);

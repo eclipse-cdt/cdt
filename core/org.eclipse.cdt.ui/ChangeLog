@@ -1,3 +1,10 @@
+2004-03-02 Alain Magloire
+
+	From Dave Daoust:
+	A patch that reduces the number of times that files are parsed (by 1).
+
+	* src/org/eclipse/cdt/internal/ui/ErrorTickAdornmentProvider.java                                                                                                                 
+
 2004-03-01 Hoda Amer
 	Removing WorkingCopyManager.getWorkingCop(ITranslationUnit)
 	Users should call ITranslationUnit.getSharedWorkingCopy instead.

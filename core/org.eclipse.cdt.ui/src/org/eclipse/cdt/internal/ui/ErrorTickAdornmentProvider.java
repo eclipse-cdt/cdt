@@ -32,10 +32,6 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 		try {
 			if (obj instanceof ICElement) {
 				ICElement element= (ICElement) obj;
-				if (!element.exists()) {
-					// @@@ Not relevant right now...
-					//return 0;
-				}
 				
 				int type= element.getElementType();
 				switch (type) {

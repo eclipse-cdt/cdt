@@ -1,3 +1,6 @@
+2003-06-05 John Camelon
+	Fix Bug 38380  "Include" class public methods fails JUnit tests 
+
 2003-05-29 Andrew Niefer
 	new Class eType for stronger type safety in TypeInfo
 	new class PtrOp for better handling of pointer operators and cv qualifiers

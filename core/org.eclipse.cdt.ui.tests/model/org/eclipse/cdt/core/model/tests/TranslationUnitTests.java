@@ -232,6 +232,51 @@ public class TranslationUnitTests extends TestCase {
         }
 
     }
+    
+	/***
+	 * Simple sanity tests for the getInclude call
+	 */
+	public void testBug23478A() {
+		IInclude myInclude;
+		int x;
+		String includes[]={"stdio.h", "unistd.h"};
+		ITranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
+                
+		for (x=0; x < includes.length; x++) {
+			myInclude=myTranslationUnit.getInclude(includes[x]);
+			if (myInclude==null)
+				fail("Unable to get include: " + includes[x]);
+			else {
+				// Failed test: Include.getIncludeName() always returns "";
+				// assertTrue
+				assertTrue("PR:23478 Expected:"+ new String("") +" Got:"+ myInclude.getIncludeName(), includes[x].equals(myInclude.getIncludeName()));
+			}
+		}
+        
+
+	}
+	/***
+	 * Simple sanity tests for the getIncludes call
+	 */
+	public void testBug23478B() throws CModelException {
+		IInclude myIncludes[];
+		String includes[]={"stdio.h", "unistd.h"};
+		ExpectedStrings myExp= new ExpectedStrings(includes);
+		int x;
+		ITranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
+                
+		myIncludes=myTranslationUnit.getIncludes();
+		for (x=0; x < myIncludes.length; x++) {
+			myExp.foundString(myIncludes[x].getIncludeName());
+		}
+		// Failed test: Include.getIncludeName() always returns "";
+		// assertTrue
+		assertTrue(myExp.getMissingString(), myExp.gotAll());
+		assertTrue(myExp.getExtraString(), !myExp.gotExtra());
+	}
+    
+    
+    
     /***
      * Simple sanity tests for the getElementAtLine() call
      */

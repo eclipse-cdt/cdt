@@ -28,7 +28,7 @@ public class ModelBuilder implements IStructurizerCallback {
 	}	
 	
 	public void includeDecl(String name, int startPos, int endPos, int startLine, int endLine) {
-		Include elem= new Include(fCurrFile, name);
+		Include elem= new Include(fCurrFile, name, true ); // assume standard inclusion
 		elem.setPos(startPos, fixLength(startPos, endPos));
 		elem.setIdPos(startPos, fixLength(startPos, endPos));
 		elem.setLines(startLine, endLine);

@@ -1,3 +1,7 @@
+2003-06-05 John Camelon
+	Moved testBug23478A() & testBug23478B() from failed tests to TranslationUnitTests.java.
+	Removed TranslationUnitFailedTests.java as it was empty. 
+
 2003-05-29 Andrew Niefer
 	Modified tests to support eType & PtrOp changes in core
 	Added ParserSymbolTableTest::testTemplateParameterAsParent

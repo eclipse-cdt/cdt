@@ -91,8 +91,8 @@ public class LineNumberedDOMBuilder extends DOMBuilder {
 	public Object inclusionBegin(
 		String includeFile,
 		int offset,
-		int inclusionBeginOffset) {
-		Object inclusion = super.inclusionBegin(includeFile, offset, inclusionBeginOffset);
+		int inclusionBeginOffset, boolean local) {
+		Object inclusion = super.inclusionBegin(includeFile, offset, inclusionBeginOffset, local);
 		setLineNumber( (IOffsetable)inclusion, inclusionBeginOffset, true );
 		setLineNumber( (IOffsetable)inclusion, offset + includeFile.length() + 1, false );
 		return inclusion;

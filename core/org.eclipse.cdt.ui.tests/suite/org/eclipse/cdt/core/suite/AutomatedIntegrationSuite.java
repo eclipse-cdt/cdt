@@ -83,7 +83,6 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		suite.addTestSuite(ScannerFailedTest.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);
-		suite.addTestSuite(TranslationUnitFailedTests.class);
 
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("testGenerateReport"));

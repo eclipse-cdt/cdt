@@ -162,8 +162,13 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionBegin(java.lang.String)
 	 */
-	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
-		Inclusion inclusion = new Inclusion( includeFile, offset, inclusionBeginOffset, offset - inclusionBeginOffset + includeFile.length() + 1 );
+	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset, boolean local) {
+		Inclusion inclusion = new Inclusion( 
+			includeFile, 
+			offset, 
+			inclusionBeginOffset, 
+			offset - inclusionBeginOffset + includeFile.length() + 1, 
+			local );
 		translationUnit.addInclusion( inclusion );
 		return inclusion;
 	}

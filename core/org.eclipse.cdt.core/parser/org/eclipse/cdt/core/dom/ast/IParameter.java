@@ -10,21 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
-
 /**
- * This represents a function in the program. A function is also a scope
- * for other bindings.
+ * Represents a parameter to a function. The scope of the parameter is
+ * the function that declared this parameter.
  * 
  * @author Doug Schaefer
  */
-public interface IFunction extends IBinding, IScope {
-
-	/**
-	 * This gets the parameters to the function which are IVariables.
-	 * 
-	 * @return List of IParameter
-	 */
-	public List getParameters();
+public interface IParameter extends IVariable {
 	
 }

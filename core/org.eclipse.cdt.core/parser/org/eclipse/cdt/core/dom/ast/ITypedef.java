@@ -10,21 +10,16 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
-
 /**
- * This represents a function in the program. A function is also a scope
- * for other bindings.
- * 
  * @author Doug Schaefer
  */
-public interface IFunction extends IBinding, IScope {
+public interface ITypedef extends IType {
 
 	/**
-	 * This gets the parameters to the function which are IVariables.
+	 * Returns the type that this thing is a typedef of
 	 * 
-	 * @return List of IParameter
+	 * @return
 	 */
-	public List getParameters();
+	public IType getType();
 	
 }

@@ -115,10 +115,15 @@ public class AST2Tests extends TestCase {
 
 	public void testSimpleStruct() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("typedef struct {");
-		buff.append("    int x;");
-		buff.append("} S;");
-		
+		buff.append("typedef struct {\n");
+		buff.append("    int x;\n");
+		buff.append("} S;\n");
+
+		buff.append("void f() {\n");
+		buff.append("    S myS;\n");
+		buff.append("    myS.x = 5;");
+		buff.append("}");
+
 		IASTTranslationUnit tu = ASTFactory.parseString(buff);
 		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations().get(0);
 		IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)decl.getDeclSpecifier();

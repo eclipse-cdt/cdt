@@ -56,11 +56,12 @@ public class GDBServerDebugger implements ICDebugger {
 	}
 
 	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException {
+		Session session = null;
+		boolean failed = false;
 		try {
 			String gdb = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
-			Session session = null;
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid");
 				remote += ":";
@@ -82,25 +83,36 @@ public class GDBServerDebugger implements ICDebugger {
 				miSession.postCommand(setRemoteBaud, launchTimeout);
 				MIInfo info = setRemoteBaud.getMIInfo();
 				if (info == null) {
-					session.terminate();
 					throw new MIException ("Can not set Baud");
 				}
 				MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote});
 				miSession.postCommand(select, launchTimeout);
 				select.getMIInfo();
 				if (info == null) {
-					session.terminate();
 					throw new MIException ("No answer");
 				}
 			}
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
+			failed = true;
 			throw new CDIException("Error initializing: " + e.getMessage());
 		} catch (MIException e) {
+			failed = true;
 			throw new CDIException("Error initializing: " + e.getMessage());
 		} catch (CoreException e) {
+			failed = true;
 			throw new CDIException("Error initializing: " + e.getMessage());
+		} finally {
+			if (failed) {
+				if (session != null) {
+					try {
+						session.terminate();
+					} catch (Exception ex) {
+						// ignore the exception here.
+					}
+				}
+			}
 		}
 	}
 

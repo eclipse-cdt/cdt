@@ -28,15 +28,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class CygwinGDBDebugger extends GDBDebugger {
 
-	static final CygwinCommandFactory commandFactory =
-		new CygwinCommandFactory();
+	static final CygwinCommandFactory commandFactory = new CygwinCommandFactory();
 
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		try {
 			ICDISharedLibraryManager manager = session.getSharedLibraryManager();
 			if (manager instanceof SharedLibraryManager) {
-				SharedLibraryManager mgr = (SharedLibraryManager)manager;
-				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
+				SharedLibraryManager mgr = (SharedLibraryManager) manager;
+				boolean stopOnSolibEvents =
+					config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
 				try {
 					mgr.setStopOnSolibEvents(stopOnSolibEvents);
 					// By default, we provide with the capability of deferred breakpoints
@@ -57,7 +57,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			if (p.size() > 0) {
 				String[] oldPaths = manager.getSharedLibraryPaths();
 				String[] paths = new String[oldPaths.length + p.size()];
-				System.arraycopy((String[])p.toArray(new String[p.size()]), 0, paths, 0, p.size());
+				System.arraycopy((String[]) p.toArray(new String[p.size()]), 0, paths, 0, p.size());
 				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
 				manager.setSharedLibraryPaths(paths);
 			}
@@ -66,52 +66,90 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		}
 	}
 
-	public ICDISession createLaunchSession(
-		ILaunchConfiguration config,
-		IFile exe)
-		throws CDIException {
-		Session session = (Session) super.createLaunchSession(config, exe);
-		session.getMISession().setCommandFactory(commandFactory);
-		// For windows we need to start the inferior in a new console window
-		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
-		MISession mi = session.getMISession();
+	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException {
+		Session session = null;
+		boolean failed = false;
 		try {
-			CommandFactory factory = mi.getCommandFactory();
-			MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
-			mi.postCommand(set);
-			MIInfo info = set.getMIInfo();
-			if (info == null) {
-				throw new MIException("No answer");
+			session = (Session) super.createLaunchSession(config, exe);
+			session.getMISession().setCommandFactory(commandFactory);
+			// For windows we need to start the inferior in a new console window
+			// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
+			MISession mi = session.getMISession();
+			try {
+				CommandFactory factory = mi.getCommandFactory();
+				MIGDBSet set = factory.createMIGDBSet(new String[] { "new-console" });
+				mi.postCommand(set);
+				MIInfo info = set.getMIInfo();
+				if (info == null) {
+					throw new MIException("No answer");
+				}
+			} catch (MIException e) {
+				// We ignore this exception, for example
+				// on GNU/Linux the new-console is an error.
 			}
-		} catch (MIException e) {
-			// We ignore this exception, for example
-			// on GNU/Linux the new-console is an error.
+			initializeLibraries(config, session);
+			return session;
+		} catch (CDIException e) {
+			failed = true;
+			throw e;
+		} finally {
+			if (failed) {
+				if (session != null) {
+					try {
+						session.terminate();
+					} catch (Exception ex) {
+						// ignore the exception here.
+					}
+				}
+			}
 		}
-		initializeLibraries(config, session);
-		return session;
 	}
 
-	public ICDISession createAttachSession(
-		ILaunchConfiguration config,
-		IFile exe,
-		int pid)
-		throws CDIException {
-		Session session =
-			(Session) super.createAttachSession(config, exe, pid);
-		session.getMISession().setCommandFactory(commandFactory);
-		initializeLibraries(config, session);
-		return session;
+	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException {
+		Session session = null;
+		boolean failed = false;
+		try {
+			session = (Session) super.createAttachSession(config, exe, pid);
+			session.getMISession().setCommandFactory(commandFactory);
+			initializeLibraries(config, session);
+			return session;
+		} catch (CDIException e) {
+			failed = true;
+			throw e;
+		} finally {
+			if (failed) {
+				if (session != null) {
+					try {
+						session.terminate();
+					} catch (Exception ex) {
+						// ignore the exception here.
+					}
+				}
+			}
+		}
 	}
 
-	public ICDISession createCoreSession(
-		ILaunchConfiguration config,
-		IFile exe,
-		IPath corefile)
-		throws CDIException {
-		Session session =
-			(Session) super.createCoreSession(config, exe, corefile);
-		session.getMISession().setCommandFactory(commandFactory);
-		initializeLibraries(config, session);
-		return session;
+	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
+		Session session = null;
+		boolean failed = false;
+		try {
+			session = (Session) super.createCoreSession(config, exe, corefile);
+			session.getMISession().setCommandFactory(commandFactory);
+			initializeLibraries(config, session);
+			return session;
+		} catch (CDIException e) {
+			failed = true;
+			throw e;
+		} finally {
+			if (failed) {
+				if (session != null) {
+					try {
+						session.terminate();
+					} catch (Exception ex) {
+						// ignore the exception here.
+					}
+				}
+			}
+		}
 	}
 }

@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
 import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
 import org.eclipse.cdt.debug.mi.core.command.MIVarShowAttributes;
+import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
@@ -90,6 +91,11 @@ public class Variable extends CObject implements ICDIVariable {
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}
+		
+		// If the assign was succesfull fire a MIVarChangedEvent()
+		// FIXME: Is this necessary?
+		MIVarChangedEvent change = new MIVarChangedEvent(miVar.getVarName(), true);
+		mi.fireEvent(change);
 	}
 
 	/**

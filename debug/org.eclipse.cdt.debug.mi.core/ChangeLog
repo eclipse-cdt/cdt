@@ -1,3 +1,14 @@
+2003-08-07 Alain Magloire
+
+	PR 38964.
+	
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java:
+	The method interrupted was synchronized and so was the
+	setSuspended().  Now do a notify when the status change.
+	Throw an exception if the interrupt() failed.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java:
+	Do not check for running.
+
 2003-08-06 Alain Magloire
 
 	Dealing with casting: Casting a field of a structure did not

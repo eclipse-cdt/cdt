@@ -4,10 +4,10 @@
       label="%featureName"
       version="1.0.0"
       provider-name="%providerName"
-      os="solaris"
-      ws="motif"
+      os="qnx"
+      ws="photon"
       nl="en_US"
-      arch="sparc"
+      arch="x86"
       image="eclipse_update_120.jpg">
 
    <description>

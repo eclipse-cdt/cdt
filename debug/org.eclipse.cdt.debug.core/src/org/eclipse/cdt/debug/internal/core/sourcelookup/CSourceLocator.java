@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.resources.FileStorage;
@@ -187,8 +188,11 @@ public class CSourceLocator implements ICSourceLocator
 				IProject[] projects = project.getReferencedProjects();
 				for ( int i = 0; i < projects.length; i++ )
 				{
-					list.add( new CProjectSourceLocation( projects[i] ) );
-					addReferencedSourceLocations( list, projects[i] );
+					if (  projects[i].exists() && !containsProject( list, projects[i] ) )
+					{
+						list.add( new CProjectSourceLocation( projects[i] ) );
+						addReferencedSourceLocations( list, projects[i] );
+					}
 				}
 			}
 			catch( CoreException e )
@@ -197,6 +201,18 @@ public class CSourceLocator implements ICSourceLocator
 			}
 		}
 	}
+	
+	private static boolean containsProject( List list, IProject project )
+ 	{
+		Iterator it = list.iterator();
+		while( it.hasNext() )
+		{
+			CProjectSourceLocation location = (CProjectSourceLocation)it.next();
+			if ( project.equals( location.getProject() ) )
+				return true;
+		}
+		return false;
+ 	}	
  	
 	private Object findFileByAbsolutePath( String fileName )
 	{
@@ -212,5 +228,5 @@ public class CSourceLocator implements ICSourceLocator
 			return new FileStorage( path );
 		}
 		return null;
-	}
+	} 	
 }

@@ -106,10 +106,12 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
 	        }
 		}
         
-        ICPPASTTemplateParameter [] params = getTemplateParameters();
-        for ( int i = 0; i < params.length; i++ ) {
-            if( !params[i].accept( action ) ) return false;
-        }
+        //TODO bindings for template parameters aren't done yet, trying to resolve one would result in trouble,
+        //so don't visit them for now.
+//        ICPPASTTemplateParameter [] params = getTemplateParameters();
+//        for ( int i = 0; i < params.length; i++ ) {
+//            if( !params[i].accept( action ) ) return false;
+//        }
         
         if( declaration != null ) if( !declaration.accept( action ) ) return false;
         return true;

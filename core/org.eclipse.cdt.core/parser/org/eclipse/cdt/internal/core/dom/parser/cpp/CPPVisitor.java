@@ -520,12 +520,15 @@ public class CPPVisitor {
 			} else if( node instanceof IASTTypeId ){
 				node = node.getParent();
 			} else if( node instanceof IASTParameterDeclaration ){
-				ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node.getParent();
-				ASTNodeProperty prop = dtor.getPropertyInParent();
-				if( prop == IASTSimpleDeclaration.DECLARATOR )
-				    return dtor.getFunctionScope();
-				else if( prop == IASTFunctionDefinition.DECLARATOR )
-				    return ((IASTCompoundStatement)((IASTFunctionDefinition)dtor.getParent()).getBody()).getScope();
+			    IASTNode parent = node.getParent();
+			    if( parent instanceof ICPPASTFunctionDeclarator ){
+					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
+					ASTNodeProperty prop = dtor.getPropertyInParent();
+					if( prop == IASTSimpleDeclaration.DECLARATOR )
+					    return dtor.getFunctionScope();
+					else if( prop == IASTFunctionDefinition.DECLARATOR )
+					    return ((IASTCompoundStatement)((IASTFunctionDefinition)dtor.getParent()).getBody()).getScope();
+			    } //else if( node instanceof ICPPASTTemplateDeclaration )
 			} else if( node instanceof IASTInitializerExpression ){
 			    IASTNode parent = node.getParent();
 			    while( !(parent instanceof IASTDeclarator) )

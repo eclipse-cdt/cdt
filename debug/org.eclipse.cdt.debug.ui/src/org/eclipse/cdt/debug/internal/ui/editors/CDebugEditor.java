@@ -390,8 +390,18 @@ public class CDebugEditor extends CEditor
 		{
 			newInput = ((EditorInputDelegate)input).getDelegate();
 		}
+		IEditorInput oldInput = getEditorInput();
+		if ( oldInput instanceof EditorInputDelegate )
+		{
+			oldInput = ((EditorInputDelegate)oldInput).getDelegate();
+		}
+		if (oldInput != null)
+		{
+			CUIPlugin.getDefault().getWorkingCopyManager().disconnect(oldInput);
+		}
 		super.doSetInput( newInput );
-		CUIPlugin.getDefault().getWorkingCopyManager().connect(input);
+		// This hack should be after the super.doSetInput();
+		CUIPlugin.getDefault().getWorkingCopyManager().connect(newInput);
 	}
 
 	protected void attachSourceLocation()

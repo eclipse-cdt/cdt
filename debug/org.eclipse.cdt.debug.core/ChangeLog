@@ -1,4 +1,8 @@
 2003-06-30 Mikhail Khodjaiants
+	Fix for PR 39100: CDT/Debug core is asking value 16 times.
+	* CValue.java
+
+2003-06-30 Mikhail Khodjaiants
 	Fix for PR 39087: Cache the MI answer once we know if the variable is writable.
 	* CVariable.java
 

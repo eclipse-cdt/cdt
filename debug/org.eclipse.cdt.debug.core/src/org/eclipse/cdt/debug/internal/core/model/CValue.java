@@ -305,12 +305,11 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getCharValueString( ICDICharValue value ) throws CDIException
 	{
-		byte byteValue = (byte)value.byteValue();
-		short shortValue = value.shortValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
 			{
+				byte byteValue = (byte)value.byteValue();
 				return ( ( Character.isISOControl( (char)byteValue ) &&
 						   byteValue != '\b' &&
 						   byteValue != '\t' && 
@@ -320,12 +319,13 @@ public class CValue extends CDebugElement implements ICValue
 			}
 			case ICDIFormat.DECIMAL:
 			{
-				return ( isUnsigned() ) ? Integer.toString( shortValue ) : Integer.toString( byteValue );
+				return ( isUnsigned() ) ? Integer.toString( value.shortValue() ) : 
+										  Integer.toString( (byte)value.byteValue() );
 			}
 			case ICDIFormat.HEXADECIMAL:
 			{
 				StringBuffer sb = new StringBuffer( "0x" ); 
-				String stringValue = Integer.toHexString( ( isUnsigned() ) ? shortValue : byteValue );
+				String stringValue = ( isUnsigned() ) ? Integer.toHexString( value.shortValue() ) : Integer.toHexString( (byte)value.byteValue() );
 				sb.append( ( stringValue.length() > 2 ) ? stringValue.substring( stringValue.length() - 2 ) : stringValue );
 				return sb.toString();
 			}
@@ -335,17 +335,15 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getShortValueString( ICDIShortValue value ) throws CDIException
 	{
-		short shortValue = value.shortValue();
-		int intValue = value.intValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
 			case ICDIFormat.DECIMAL:
-				return ( isUnsigned() ) ? Integer.toString( intValue ) : Short.toString( shortValue );
+				return ( isUnsigned() ) ? Integer.toString( value.intValue() ) : Short.toString( value.shortValue() );
 			case ICDIFormat.HEXADECIMAL:
 			{
 				StringBuffer sb = new StringBuffer( "0x" ); 
-				String stringValue = Integer.toHexString( ( isUnsigned() ) ? intValue : shortValue );
+				String stringValue = Integer.toHexString( ( isUnsigned() ) ? value.intValue() : value.shortValue() );
 				sb.append( ( stringValue.length() > 4 ) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
 				return sb.toString();
 			}
@@ -355,17 +353,15 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getIntValueString( ICDIIntValue value ) throws CDIException
 	{
-		int intValue = value.intValue();
-		long longValue = value.longValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
 			case ICDIFormat.DECIMAL:
-				return ( isUnsigned() ) ? Long.toString( longValue ) : Integer.toString( intValue );
+				return ( isUnsigned() ) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 			case ICDIFormat.HEXADECIMAL:
 			{
 				StringBuffer sb = new StringBuffer( "0x" ); 
-				String stringValue = ( isUnsigned() ) ? Long.toHexString( longValue ) : Integer.toHexString( intValue );
+				String stringValue = ( isUnsigned() ) ? Long.toHexString( value.longValue() ) : Integer.toHexString( value.intValue() );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
 			}
@@ -375,17 +371,15 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getLongValueString( ICDILongValue value ) throws CDIException
 	{
-		int intValue = value.intValue();
-		long longValue = value.longValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
 			case ICDIFormat.DECIMAL:
-				return ( isUnsigned() ) ? Long.toString( longValue ) : Integer.toString( intValue );
+				return ( isUnsigned() ) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 			case ICDIFormat.HEXADECIMAL:
 			{
 				StringBuffer sb = new StringBuffer( "0x" ); 
-				String stringValue = Long.toHexString( ( isUnsigned() ) ? longValue : intValue );
+				String stringValue = Long.toHexString( ( isUnsigned() ) ? value.longValue() : value.intValue() );
 				sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
 				return sb.toString();
 			}
@@ -395,17 +389,30 @@ public class CValue extends CDebugElement implements ICValue
 
 	private String getLongLongValueString( ICDILongLongValue value ) throws CDIException
 	{
-		BigInteger bigValue = new BigInteger( value.getValueString() );
-		long longValue = value.longValue();
 		switch( getParentVariable().getFormat() )
 		{
 			case ICDIFormat.NATURAL:
 			case ICDIFormat.DECIMAL:
-				return ( isUnsigned() ) ? bigValue.toString() : Long.toString( longValue );
+			{
+				if ( isUnsigned() )
+				{
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					return bigValue.toString();
+				}
+				else
+					return Long.toString( value.longValue() );
+			}
 			case ICDIFormat.HEXADECIMAL:
 			{
-				StringBuffer sb = new StringBuffer( "0x" ); 
-				sb.append( ( isUnsigned() ) ? bigValue.toString( 16 ) : Long.toHexString( longValue ) );
+				StringBuffer sb = new StringBuffer( "0x" );
+				 
+				if ( isUnsigned() )
+				{
+					BigInteger bigValue = new BigInteger( value.getValueString() );
+					sb.append( bigValue.toString( 16 ) );
+				}
+				else
+					sb.append( Long.toHexString( value.longValue() ) );
 				return sb.toString();
 			}
 		}

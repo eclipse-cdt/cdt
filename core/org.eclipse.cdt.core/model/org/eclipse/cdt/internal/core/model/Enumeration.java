@@ -16,6 +16,11 @@ import org.eclipse.cdt.core.model.IEnumeration;
 
 public class Enumeration extends SourceManipulation implements IEnumeration{
 
+	String typeName = "";
+	boolean isStatic = false;
+	boolean isConst = false;
+	boolean isVolatile = false;
+	
 	public Enumeration(ICElement parent, String name) {
 		super(parent, name, CElement.C_ENUMERATION);
 	}
@@ -35,13 +40,14 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getTypeName()
 	 */
 	public String getTypeName() {
-		return null;
+		return typeName;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#setTypeName(java.lang.String)
 	 */
 	public void setTypeName(String type) {
+		typeName = type;
 	}
 
 	/**
@@ -55,21 +61,45 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
 	public boolean isConst() {
-		return false;
+		return isConst;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
 	 */
 	public boolean isStatic() {
-		return false;
+		return isStatic;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
 	 */
 	public boolean isVolatile() {
-		return false;
+		return isVolatile;
+	}
+
+	/**
+	 * Sets the isConst.
+	 * @param isConst The isConst to set
+	 */
+	public void setConst(boolean isConst) {
+		this.isConst = isConst;
+	}
+
+	/**
+	 * Sets the isStatic.
+	 * @param isStatic The isStatic to set
+	 */
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
+	}
+
+	/**
+	 * Sets the isVolatile.
+	 * @param isVolatile The isVolatile to set
+	 */
+	public void setVolatile(boolean isVolatile) {
+		this.isVolatile = isVolatile;
 	}
 
 }

@@ -140,6 +140,11 @@ public interface ICElement extends IAdaptable {
 	static final int C_TYPEDEF = 78;
 	
 	/**
+	 * Enumerator.
+	 */
+	static final int C_ENUMERATOR = 79;
+
+	/**
 	 * Modifier indicating a class constructor
 	 */
 	static final int C_CLASS_CTOR = 0x100;

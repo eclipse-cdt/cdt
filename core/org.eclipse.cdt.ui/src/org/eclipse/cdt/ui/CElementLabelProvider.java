@@ -8,7 +8,6 @@ package org.eclipse.cdt.ui;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
-import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
@@ -67,6 +66,15 @@ public class CElementLabelProvider extends LabelProvider {
 				case ICElement.C_METHOD_DECLARATION:
 					IFunctionDeclaration fdecl = (IFunctionDeclaration) celem;
 					name = fdecl.getSignature();		
+				break;
+				case ICElement.C_STRUCT:
+				case ICElement.C_ENUMERATION:
+					if(celem.getElementName() != null){
+						name = celem.getElementName();
+					} else {
+						IVariableDeclaration varDecl = (IVariableDeclaration) celem;
+						name = varDecl.getTypeName();				
+					}
 				break;
 				default:
 					name= celem.getElementName();

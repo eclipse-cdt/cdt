@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.model;
 
+import java.util.ArrayList;
+
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
@@ -17,8 +19,12 @@ public interface IParent {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource
 	 */
-	ICElement[] getChildren(); //throws CModelException;
-
+	ICElement[] getChildren();
+	
+	/**
+	 * returns the children of a certain type
+	 */
+	public ArrayList getChildrenOfType(int type);
 	/**
 	 * Returns whether this element has one or more immediate children.
 	 * This is a convenience method, and may be more efficient than
@@ -27,5 +33,7 @@ public interface IParent {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource
 	 */
-	boolean hasChildren(); //throws CModelException;
+	boolean hasChildren();
+	
+	
 }

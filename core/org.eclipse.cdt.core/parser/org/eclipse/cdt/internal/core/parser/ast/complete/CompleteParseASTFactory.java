@@ -764,9 +764,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
     {
     	List references = new ArrayList(); 
-    	
-
-    	
+    	    	
         //look up id & add to references
         IContainerSymbol startingScope = scopeToSymbol( scope );
                 
@@ -1030,8 +1028,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			result.add(info);
 			return result;
 		}
-		
-		// types that resolve to t_type, symbol already looked up in type id
+		// Id expressions resolve to t_type, symbol already looked up
 		if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION )
 		{
 			info.setType(TypeInfo.t_type);
@@ -1125,21 +1122,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 		}		
 		// new 
-		if( expression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID )
+		if( ( expression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID )
+		|| ( expression.getExpressionKind() == IASTExpression.Kind.NEW_NEWTYPEID ) )
 		{
-			if(symbol != null){
-				try
-                {
-                    info = expression.getTypeId().getTypeSymbol().getTypeInfo();
-                }
-                catch (ASTNotImplementedException e)
-                {
-                	// will never happen
-                }		
-				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection);
-				result.add(info);
-				return result;
-			}
+			try
+            {
+                info = expression.getTypeId().getTypeSymbol().getTypeInfo();
+				info.addPtrOperator( new TypeInfo.PtrOp(TypeInfo.PtrOp.t_pointer));
+            }
+            catch (ASTNotImplementedException e)
+            {
+            	// will never happen
+            }
+			result.add(info);
+			return result;
 		}
 		// types that use the usual arithmetic conversions
 		if((expression.getExpressionKind() == IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY) 
@@ -1194,19 +1190,19 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 		}		
 		// the cast changes the types to the type looked up in typeId = symbol
-		if((expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DYNAMIC_CAST)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_REINTERPRET_CAST)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_STATIC_CAST)
-		|| (expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_CONST_CAST)
+		if(( expression.getExpressionKind() == IASTExpression.Kind.CASTEXPRESSION )
+		|| ( expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_DYNAMIC_CAST )
+		|| ( expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_STATIC_CAST )
+		|| ( expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_REINTERPRET_CAST )
+		|| ( expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_CONST_CAST )		
 		){
-			if(symbol != null){
-				info = new TypeInfo(symbol.getTypeInfo());		
-				info.setTypeSymbol(symbol);	
-				result.add(info);
-				return result;			
+			try{
+				info = new TypeInfo(expression.getTypeId().getTypeSymbol().getTypeInfo()); 
+			}catch (Exception e){
 			}
-		}
-		
+			result.add(info);
+			return result;
+		}				
 		// a list collects all types of left and right hand sides
 		if(expression.getExpressionKind() == IASTExpression.Kind.EXPRESSIONLIST){
 			if(expression.getLHSExpression() != null){
@@ -1248,7 +1244,23 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			result.add(info);
 			return result;
 		}
-		
+
+//		if ( ( expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPENAME_IDENTIFIER )
+//		|| ( expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPENAME_TEMPLATEID ) )
+//		{
+//			IASTTypeId typeId = expression.getTypeId();
+//			try
+//			{
+//				info = typeId.getTypeSymbol().getTypeInfo();
+//			}
+//			catch (ASTNotImplementedException e)
+//			{
+//				// will not ever happen from within CompleteParseASTFactory
+//			}
+//			result.add(info);
+//			return result;
+//		}
+			
 		return result;
 	}
 

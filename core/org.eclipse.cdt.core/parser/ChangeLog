@@ -1,3 +1,8 @@
+2003-09-24 Hoda Amer
+	Partial solution to bug#42453: Expression result types not computed 
+	Added the handling of the NEW_TYPEID, CASTEXPRESSION, POSTFIX_DYNAMIC_CAST,
+	POSTFIX_REINTERPRET_CAST, POSTFIX_STATIC_CAST, and POSTFIX_CONST_CAST
+	
 2003-09-25 John Camelon
 	Partial fix for Bug 43221 : POSTFIX_TYPENAME_IDENTIFIER not implemented 
 

@@ -1,3 +1,8 @@
+2003-09-24 Hoda Amer
+    Added testNewTypeId(), testCastExpression(), testPostfixDynamicCast(), 
+    testPostfixReinterpretCast(), testPostfixStaticCast(), and testPostfixConstCast() 
+    to CompleteParseASTExpressionTest. 
+
 2003-09-24 Sean Evoy
 	Changed the implementor of IScannerInfo to answer only absolute paths when asked for 
 	includes paths. As a result, the managed builder test had to be updated to expect paths 

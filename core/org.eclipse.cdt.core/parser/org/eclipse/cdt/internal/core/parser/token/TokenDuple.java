@@ -111,9 +111,9 @@ public class TokenDuple implements ITokenDuple {
 			List newArgs = new ArrayList( 1 );
 			newArgs.add( args[ args.length - 1 ] );
 			return new TokenDuple( first, last, newArgs );
-		} else {
-			return new TokenDuple( first, last );
-		}
+		} 
+		return new TokenDuple( first, last );
+		
 	}
 	
 	public ITokenDuple getLeadingSegments(){
@@ -158,9 +158,8 @@ public class TokenDuple implements ITokenDuple {
 					foundArgs = true;
 			}
 			return new TokenDuple( first, last, ( foundArgs ? newArgs : null ) );
-		} else {
-			return new TokenDuple( first, last );
-		}
+		} 
+		return new TokenDuple( first, last );
 	}
 	
 	public int getSegmentCount()

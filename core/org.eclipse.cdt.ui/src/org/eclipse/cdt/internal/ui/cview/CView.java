@@ -37,8 +37,8 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.CLocalSelectionTransfer;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
@@ -121,8 +121,10 @@ import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.framelist.BackAction;
 import org.eclipse.ui.views.framelist.ForwardAction;
@@ -135,7 +137,7 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 
 public class CView extends ViewPart implements IMenuListener, ISetSelectionTarget,
-	IPropertyChangeListener {
+	IPropertyChangeListener, IShowInTarget {
 
 	ProblemTreeViewer viewer;
 	IMemento memento;
@@ -1348,4 +1350,24 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		menu.add(search);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
+	 */
+	public boolean show(ShowInContext context) {
+		//@@@ Do something with the selection later?
+		//ISelection selection = context.getSelection();
+		try {
+			IEditorInput input = (IEditorInput)context.getInput();
+			if(input != null) {
+				IResource res = (IResource)input.getAdapter(IResource.class);
+				if(res != null) {
+					selectReveal(new StructuredSelection(res));
+				}
+			}
+		} catch(Exception ex) {
+			/* Ignore */
+		}
+		return false;
+	}
+
 }

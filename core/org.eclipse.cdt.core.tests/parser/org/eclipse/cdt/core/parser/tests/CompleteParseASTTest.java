@@ -1889,6 +1889,25 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write( "blah3\n"); //$NON-NLS-1$
 		writer.write( "};\n"); //$NON-NLS-1$
 		writer.write( "e mye = blah;\n"); //$NON-NLS-1$
-		parse( writer.toString().toString() );
+		parse( writer.toString() );
+	}
+    
+    public void testBug47752() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "class BBC\n"); //$NON-NLS-1$
+    	writer.write( "{\n"); //$NON-NLS-1$
+    	writer.write( "int x;\n"); //$NON-NLS-1$
+    	writer.write( "};\n"); //$NON-NLS-1$
+    	writer.write( "void func( BBC bar )\n"); //$NON-NLS-1$
+    	writer.write( "try\n"); //$NON-NLS-1$
+    	writer.write( "{\n"); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	writer.write( "catch ( BBC error )\n"); //$NON-NLS-1$
+    	writer.write( "{\n"); //$NON-NLS-1$
+    	writer.write( "		  //... error handling code ...\n"); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	parse( writer.toString() );
+    	assertEquals( callback.getReferences().size(), 2 );
 	}
 }

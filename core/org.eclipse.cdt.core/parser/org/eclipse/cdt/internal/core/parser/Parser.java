@@ -1093,10 +1093,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			        declarator.setHasFunctionBody(true);
 			        hasFunctionBody = true;
 			    }
-			    
-			    if( fromCatchHandler )
-			    	return null;
-			    
+			    			    
 			    if( hasFunctionTryBlock && ! hasFunctionBody )
 			    	throw backtrack;
 			}
@@ -1122,7 +1119,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			}
 			if (i.hasNext()) // no need to do this unless we have a declarator
 			{
-			    if (!hasFunctionBody)
+			    if (!hasFunctionBody || fromCatchHandler)
 			    {
 			    	IASTDeclaration declaration = null;
 			        while (i.hasNext())

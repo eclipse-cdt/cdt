@@ -15,7 +15,7 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIEnvironmentDirectory extends MICommand 
 {
-	public MIEnvironmentDirectory(String path) {
-		super("-environment-directory", new String[]{path});
+	public MIEnvironmentDirectory(String[] paths) {
+		super("-environment-directory", paths);
 	}
 }

@@ -20,7 +20,12 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import sun.security.krb5.internal.crypto.e;
 
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICDISession
@@ -180,6 +185,20 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 */
 	public ICDISession getSession() {
 		return this;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
+	 */
+	public void addSearchPaths(String[] dirs) throws CDIException {
+		CommandFactory factory = session.getCommandFactory();
+		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
+		try {
+			session.postCommand(dir);
+			MIInfo info = dir.getMIInfo();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
 	}
 
 }

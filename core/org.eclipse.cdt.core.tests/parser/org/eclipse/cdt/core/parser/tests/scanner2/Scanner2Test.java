@@ -2252,5 +2252,18 @@ public class Scanner2Test extends BaseScanner2Test
         validateIdentifier( "ooga" ); //$NON-NLS-1$
         validateEOF();
     }
-    
+    public void testUnExpandedFunctionMacros() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "#define ETH(x) x  \n" ); //$NON-NLS-1$
+        writer.write( "#define E ETH     \n" ); //$NON-NLS-1$
+        writer.write( "ETH( c ), ETH, E; \n" ); //$NON-NLS-1$
+        initializeScanner( writer.toString() );
+        validateIdentifier( "c" ); //$NON-NLS-1$
+        validateToken( IToken.tCOMMA );
+        validateIdentifier("ETH"); //$NON-NLS-1$
+        validateToken( IToken.tCOMMA );
+        validateIdentifier("ETH"); //$NON-NLS-1$
+        validateToken( IToken.tSEMI );
+        validateEOF();
+    }
 }

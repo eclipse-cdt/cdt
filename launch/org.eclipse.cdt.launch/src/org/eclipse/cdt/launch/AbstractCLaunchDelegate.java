@@ -79,6 +79,10 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 * @param code error code
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
+		String newMessage = message;
+		if ( exception != null ) {
+			newMessage = message + " : " + exception.getLocalizedMessage();
+		}
 		throw new CoreException(new Status(IStatus.ERROR, getPluginID(), code, message, exception));
 	}
 

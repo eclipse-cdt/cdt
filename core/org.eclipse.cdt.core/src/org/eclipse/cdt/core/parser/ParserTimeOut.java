@@ -8,33 +8,31 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.utils;
+package org.eclipse.cdt.core.parser;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.cdt.core.parser.IParser;
 
 /**
  * @author bgheorgh
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class TimeOut implements Runnable {
+public class ParserTimeOut implements Runnable {
 	
 	
 	protected Thread thread;
 	protected boolean enabled;
-	protected IProgressMonitor pm = null;
+	protected IParser cancellable;
 	private int timeout = 0; 
 	private int threadPriority = Thread.MIN_PRIORITY + 1;
 	boolean debug = false;
 	private String threadName = null;
 	boolean readyToRun = true;
 	
-	public TimeOut(){
+	public ParserTimeOut(){
 		reset();
 	}
 	
-	public TimeOut(String threadName){
+	public ParserTimeOut(String threadName){
 		this.threadName = threadName;
 		reset();
 	}
@@ -47,8 +45,8 @@ public class TimeOut implements Runnable {
 			 	readyToRun = false;
 				wait(timeout);
 				 if (enabled){
-				 	if(pm != null)
-				 	 	pm.setCanceled(true);
+				 	if(cancellable != null)
+				 	 	cancellable.cancel();
 					 enabled = false;
 				 }
 			 }
@@ -102,17 +100,12 @@ public class TimeOut implements Runnable {
 	public void setThreadPriority(int threadPriority) {
 		this.threadPriority = threadPriority;
 	}
-	/**
-	 * @return Returns the pm.
-	 */
-	public IProgressMonitor getProgressMonitor() {
-		return pm;
-	}
+
 	/**
 	 * @param pm The pm to set.
 	 */
-	public void setProgressMonitor(IProgressMonitor pm) {
-		this.pm = pm;
+	public void setParser(IParser c) {
+		this.cancellable = c;
 	}
 	/**
 	 * @return Returns the timeout.

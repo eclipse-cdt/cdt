@@ -13,9 +13,10 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserTimeOut;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -25,8 +26,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class ContentAssistElementRequestor extends NullSourceElementRequestor implements ITimeoutThreadOwner{
 	// a static timer thread
-	private static TimeOut timeoutThread = new TimeOut(); 
+	private static ParserTimeOut timeoutThread = new ParserTimeOut(); 
 	private IProgressMonitor pm = new NullProgressMonitor();
+	private IParser parser;
 
 	
 	/* (non-Javadoc)
@@ -45,6 +47,11 @@ public class ContentAssistElementRequestor extends NullSourceElementRequestor im
 		timeoutThread.setThreadPriority(Thread.MAX_PRIORITY);	
 	}	
 	
+	
+	public void setParser( IParser parser )
+	{
+		this.parser = parser;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#setTimeout(int)
 	 */
@@ -55,7 +62,7 @@ public class ContentAssistElementRequestor extends NullSourceElementRequestor im
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#startTimer()
 	 */
 	public void startTimer() {
-		createProgressMonitor();
+		createProgressMonitor(parser);
 		timeoutThread.startTimer();
 	}
 	/* (non-Javadoc)
@@ -76,9 +83,9 @@ public class ContentAssistElementRequestor extends NullSourceElementRequestor im
 	/*
 	 * Creates a new progress monitor with each start timer
 	 */
-	private void createProgressMonitor() {
+	private void createProgressMonitor(IParser parser) {
 		pm.setCanceled(false);
-		timeoutThread.setProgressMonitor(pm);
+		timeoutThread.setParser(parser);
 	}
 
 }

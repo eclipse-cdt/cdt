@@ -671,14 +671,6 @@ public class MatchLocator implements IMatchLocator{
 	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath,workingCopies);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
-	 */
-	public boolean parserTimeout() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.IMatchLocator#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.parser.ParserTimeOut;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -40,7 +41,6 @@ import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.processing.IJob;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.cdt.internal.core.sourcedependency.UpdateDependency;
-import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -87,7 +87,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 
 	public static boolean VERBOSE = false;
 	
-	private  TimeOut timeoutThread = null; 
+	private  ParserTimeOut timeoutThread = null; 
 	
 	private IndexerModelListener indexModelListener = null;
 	
@@ -564,7 +564,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		}
 		
 		if (this.timeoutThread == null){
-			this.timeoutThread = new TimeOut("Indexer TimeOut Thread");  //$NON-NLS-1$
+			this.timeoutThread = new ParserTimeOut("Indexer TimeOut Thread");  //$NON-NLS-1$
 			this.timeoutThread.setThreadPriority(Thread.MAX_PRIORITY);
 			
 			Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
@@ -744,7 +744,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/**
 	 * @return
 	 */
-	public TimeOut getTimeout() {
+	public ParserTimeOut getTimeout() {
 		// TODO Auto-generated method stub
 		return this.timeoutThread ;
 	}

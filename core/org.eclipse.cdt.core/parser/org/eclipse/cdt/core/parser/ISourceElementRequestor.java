@@ -114,10 +114,5 @@ public interface ISourceElementRequestor {
 	 * @return
 	 */
 	public CodeReader createReader(String finalPath, Iterator workingCopies );
-	/**
-	 * The parser asks the client if it wishes to time out 
-	 * in case it is taking more than the expected time.
-	 * @return
-	 */
-	public boolean parserTimeout();
+
 }

@@ -31,11 +31,11 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserTimeOut;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
-import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -62,13 +62,13 @@ public class SourceIndexer extends AbstractIndexer {
 	public static final String CDT_INDEXER_TIMEOUT= "CDT_INDEXER_TIMEOUT"; //$NON-NLS-1$
 	
 	IFile resourceFile;
-	TimeOut timeOut = null;
+	ParserTimeOut timeOut = null;
 	
 	/**
 	 * @param resource
 	 * @param out
 	 */
-	public SourceIndexer(IFile resource, TimeOut timeOut) {
+	public SourceIndexer(IFile resource, ParserTimeOut timeOut) {
 		this.resourceFile = resource;
 		this.timeOut = timeOut;
 	}
@@ -107,6 +107,7 @@ public class SourceIndexer extends AbstractIndexer {
 			parser = ParserFactory.createParser( 
 							ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
+			requestor.setParser(parser);
 		} catch( ParserFactoryError pfe ){
 		} catch (CoreException e) {
 		} finally {

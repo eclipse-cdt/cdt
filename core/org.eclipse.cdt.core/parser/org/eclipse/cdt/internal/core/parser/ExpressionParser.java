@@ -105,8 +105,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	public IToken LA(int i) throws EndOfFileException {
 
-		if (parserTimeout()) {
-			throw new ParseError(ParseError.ParseErrorKind.TIMEOUT);
+		if (isCancelled) {
+			throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
 		}
 
 		if (i < 1) // can't go backwards
@@ -2764,10 +2764,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	public char[] getCurrentFilename() {
 		return scanner.getCurrentFilename();
 	}
+	
+	protected boolean isCancelled = false;
 
-	protected boolean parserTimeout() {
-		return false;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserData#getLastToken()
 	 */

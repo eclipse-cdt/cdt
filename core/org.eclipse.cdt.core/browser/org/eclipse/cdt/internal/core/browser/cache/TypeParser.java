@@ -902,6 +902,8 @@ public class TypeParser implements ISourceElementRequestor {
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
 	 */
 	public boolean parserTimeout() {
+		//TODO - Chris Wiebe - Need to resturcture how you cancel the parser now that
+		//IParser.cancel() is available, this method is no longer being called.
 		if (fFoundType || fProgressMonitor.isCanceled())
 			return true;
 

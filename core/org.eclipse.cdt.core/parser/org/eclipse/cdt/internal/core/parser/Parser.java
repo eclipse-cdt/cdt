@@ -3341,14 +3341,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 		// do nothing as of yet
 		// subclasses will need to implement this method
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#parserTimeout()
-	 */
-	protected final boolean parserTimeout() {
-		return requestor.parserTimeout();
-	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -3398,6 +3391,13 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 * @param expression
 	 */
 	protected void handleOffsetableNamedElement(IASTOffsetableNamedElement node) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParser#cancel()
+	 */
+	public synchronized void cancel() {
+		isCancelled = true;
 	}
 
 }

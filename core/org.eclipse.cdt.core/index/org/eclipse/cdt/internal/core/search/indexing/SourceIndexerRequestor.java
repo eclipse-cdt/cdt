@@ -26,9 +26,11 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserTimeOut;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
@@ -67,7 +69,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -104,15 +105,16 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	private Map problemsMap = null;
 	
 	private IProgressMonitor pm = new NullProgressMonitor();
-	private  TimeOut timeoutThread = null;
+	private  ParserTimeOut timeoutThread = null;
 	
 	private static final String INDEXER_MARKER_ORIGINATOR =  ICModelMarker.INDEXER_MARKER + ".originator";  //$NON-NLS-1$
 	private static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
 	
 	private ArrayList filesTraversed = null;
+	private IParser parser;
 	
-	public SourceIndexerRequestor(SourceIndexer indexer, IFile resourceFile, TimeOut timeOut) {
+	public SourceIndexerRequestor(SourceIndexer indexer, IFile resourceFile, ParserTimeOut timeOut) {
 		super();
 		this.indexer = indexer;
 		this.resourceFile = resourceFile;
@@ -660,6 +662,10 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	      }
 	}
 	
+	public void setParser( IParser parser )
+	{
+		this.parser = parser;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#setTimeout(int)
 	 */
@@ -670,7 +676,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 * @see org.eclipse.cdt.internal.ui.text.contentassist.ITimeoutThreadOwner#startTimer()
 	 */
 	public void startTimer() {
-		createProgressMonitor();
+		createProgressMonitor(parser);
 		while (!timeoutThread.isReadyToRun()){
 			try {
 				Thread.sleep(20);
@@ -700,9 +706,9 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	/*
 	 * Creates a new progress monitor with each start timer
 	 */
-	private void createProgressMonitor() {
+	private void createProgressMonitor( IParser parser ) {
 		pm.setCanceled(false);
-		timeoutThread.setProgressMonitor(pm);
+		timeoutThread.setParser(parser);
 	}
 	
 	

@@ -50,6 +50,9 @@ public interface IParser  {
 	 */
 	public ISelectionParseResult parse( int startingOffset, int endingOffset ) throws ParseError;
 	
+	public void cancel();
+	
+	
 	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  
 	 * 

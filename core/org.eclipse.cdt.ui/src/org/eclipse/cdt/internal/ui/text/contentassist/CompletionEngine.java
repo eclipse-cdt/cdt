@@ -170,6 +170,7 @@ public class CompletionEngine implements RelevanceConstants {
 		{
 			scanner = ParserFactory.createScanner( reader, scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService(), Arrays.asList(CUIPlugin.getSharedWorkingCopies()) );
 			parser  = ParserFactory.createParser( scanner, elementRequestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
+			elementRequestor.setParser(parser);
 		}
 		catch( ParserFactoryError pfe )
 		{
@@ -193,7 +194,7 @@ public class CompletionEngine implements RelevanceConstants {
 				
 				macroMap = scanner.getDefinitions();
 			} catch (ParseError e ) {
-				if(e.getErrorKind() == ParseError.ParseErrorKind.TIMEOUT){
+				if(e.getErrorKind() == ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED){
 					log("Timeout received !!!!!! "); //$NON-NLS-1$;
 					requestor.acceptError(new Problem(CUIMessages.getString("CEditor.contentassist.timeout"))); //$NON-NLS-1$;
 				}

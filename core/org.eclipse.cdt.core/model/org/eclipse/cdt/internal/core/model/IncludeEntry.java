@@ -87,11 +87,12 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		if (p.isAbsolute()) {
 			return p;
 		}
-		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(p);
+		IPath resPath = getPath();
+		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);
 		if (res != null) {
 			IPath location = res.getLocation();
 			if (location != null) {
-				return location;
+				p = location.append(p);
 			}
 		}
 		return p;

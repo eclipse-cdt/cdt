@@ -1,3 +1,11 @@
+2004-06-07 Alain Magloire
+
+	Fix for PR 65633
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/IncludeEntry.java
+	* model/org/eclipse/cdt/internal/core/model/LibraryEntry.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+
 2004-06-07 Hoda Amer
 	Fix for PR 65369 : [CModel] Duplicate namespace declarations in views when namespace defined twice in a file
 	

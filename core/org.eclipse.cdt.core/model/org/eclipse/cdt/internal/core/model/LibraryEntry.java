@@ -139,11 +139,12 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		if (p.isAbsolute()) {
 			return p;
 		}
-		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(p);
+		IPath resPath = getPath();
+		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);
 		if (res != null) {
 			IPath location = res.getLocation();
 			if (location != null) {
-				return location;
+				p = location.append(p);
 			}
 		}
 		return p;
@@ -156,6 +157,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	public IPath getLibraryPath() {
 		return libraryPath;
 	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

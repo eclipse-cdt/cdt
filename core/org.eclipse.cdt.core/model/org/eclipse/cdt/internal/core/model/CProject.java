@@ -134,37 +134,60 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	public IIncludeReference[] getIncludeReferences() throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries();
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
-				IIncludeEntry entry = (IIncludeEntry) entries[i];
-				IIncludeReference inc = new IncludeReference(this, entry);
-				if (inc != null) {
-					list.add(inc);
+		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		IIncludeReference[] incRefs = null;
+		if (pinfo != null) {
+			incRefs = pinfo.incReferences;
+		}
+		if (incRefs == null) {
+			IPathEntry[] entries = getResolvedPathEntries();
+			ArrayList list = new ArrayList(entries.length);
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+					IIncludeEntry entry = (IIncludeEntry) entries[i];
+					IIncludeReference inc = new IncludeReference(this, entry);
+					if (inc != null) {
+						list.add(inc);
+					}
 				}
 			}
+			incRefs = (IIncludeReference[]) list.toArray(new IIncludeReference[0]);
+			if (pinfo != null) {
+				pinfo.incReferences = incRefs;
+			}
 		}
-		return (IIncludeReference[]) list.toArray(new IIncludeReference[0]);
+		return incRefs;
 	}
 
 	public ILibraryReference[] getLibraryReferences() throws CModelException {
-		BinaryParserConfig[] binConfigs = CModelManager.getDefault().getBinaryParser(getProject());
-		IPathEntry[] entries = getResolvedPathEntries();
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
-				ILibraryEntry entry = (ILibraryEntry) entries[i];
-				ILibraryReference lib = getLibraryReference(this, binConfigs, entry);
-				if (lib != null) {
-					list.add(lib);
+		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		ILibraryReference[] libRefs = null;
+		if (pinfo != null) {
+			libRefs = pinfo.libReferences;
+		}
+
+		if (libRefs == null) {
+			BinaryParserConfig[] binConfigs = CModelManager.getDefault().getBinaryParser(getProject());
+			IPathEntry[] entries = getResolvedPathEntries();
+			ArrayList list = new ArrayList(entries.length);
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
+					ILibraryEntry entry = (ILibraryEntry) entries[i];
+					ILibraryReference lib = getLibraryReference(this, binConfigs, entry);
+					if (lib != null) {
+						list.add(lib);
+					}
 				}
 			}
+			libRefs = (ILibraryReference[]) list.toArray(new ILibraryReference[0]);
+			if (pinfo != null) {
+				pinfo.libReferences = libRefs;
+			}
 		}
-		return (ILibraryReference[]) list.toArray(new ILibraryReference[0]);
+		return libRefs;
 	}
 
-	public static ILibraryReference getLibraryReference(ICProject cproject, BinaryParserConfig[] binConfigs, ILibraryEntry entry) {
+	private static ILibraryReference getLibraryReference(ICProject cproject, BinaryParserConfig[] binConfigs, ILibraryEntry entry) {
 		if (binConfigs == null) {
 			binConfigs = CModelManager.getDefault().getBinaryParser(cproject.getProject());
 		}

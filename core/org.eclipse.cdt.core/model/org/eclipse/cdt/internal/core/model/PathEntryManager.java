@@ -201,6 +201,14 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 											IIncludeEntry refEntry = (IIncludeEntry)entries[i];
 											if (refEntry.getIncludePath().equals(includePath)) {
 												IPath newBasePath = refEntry.getBasePath();
+												// If the includePath is relative give a new basepath if none
+												if (newBasePath.isEmpty() && !includePath.isAbsolute()) {
+													IPath refResPath = refEntry.getPath();
+													IResource refRes = cproject.getCModel().getWorkspace().getRoot().findMember(refResPath);
+													if (refRes != null) {
+														newBasePath = refRes.getLocation();
+													}
+												}
 												return CoreModel.newIncludeEntry(includeEntry.getPath(),
 														newBasePath, includePath);
 											}
@@ -288,8 +296,18 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 									for (int i = 0; i < entries.length; i++) {
 										if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 											ILibraryEntry refEntry = (ILibraryEntry)entries[i];
-											if (refEntry.getPath().equals(libraryPath)) {
-												return CoreModel.newLibraryEntry(entry.getPath(), refEntry.getBasePath(),
+											if (refEntry.getLibraryPath().equals(libraryPath)) {
+												IPath newBasePath = refEntry.getBasePath();
+												// If the libraryPath is relative give a new basepath if none
+												if (newBasePath.isEmpty() && !libraryPath.isAbsolute()) {
+													IPath refResPath = refEntry.getPath();
+													IResource refRes = cproject.getCModel().getWorkspace().getRoot().findMember(refResPath);
+													if (refRes != null) {
+														newBasePath = refRes.getLocation();
+													}
+												}
+
+												return CoreModel.newLibraryEntry(entry.getPath(), newBasePath,
 														refEntry.getLibraryPath(), refEntry.getSourceAttachmentPath(),
 														refEntry.getSourceAttachmentRootPath(),
 														refEntry.getSourceAttachmentPrefixMapping(), false);											
@@ -449,6 +467,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
 							ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
 							if (deltas.length > 0) {
+								affectedProject.close();
 								shouldFire = true;
 								for (int j = 0; j < deltas.length; j++) {
 									mgr.registerCModelDelta(deltas[j]);

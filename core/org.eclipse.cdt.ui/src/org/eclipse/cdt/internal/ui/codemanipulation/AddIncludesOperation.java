@@ -45,7 +45,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	private String[] fUsings;
 	private boolean fDoSave;
 
-	private String newLine = System.getProperty("line.separator", "\n");
+	private String newLine = System.getProperty("line.separator", "\n"); //$NON-NLS-2$
 
 	/**
 	 * Generate include statements for the passed java elements
@@ -107,7 +107,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 				int pos;
 				if (elements.size() > 0) {
 					IInclude lastInclude = (IInclude)elements.get(elements.size() - 1);
-					ISourceRange range = ((IInclude)lastInclude).getSourceRange();
+					ISourceRange range = lastInclude.getSourceRange();
 					pos = range.getStartPos() + range.getLength();
 				} else {
 					pos = 0;

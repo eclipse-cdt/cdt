@@ -32,23 +32,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 
 /**
@@ -62,15 +56,11 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 
 	private TableViewer fHighlightingColorListViewer;
 	private final java.util.List fHighlightingColorList= new ArrayList(5);
-	List fAppearanceColorList;
 
 	ColorEditor fAppearanceColorEditor;
 	Button fAppearanceColorDefault;
 	ColorEditor fSyntaxForegroundColorEditor;
 	ColorEditor fBackgroundColorEditor;
-	private Button fBackgroundDefaultRadioButton;
-	Button fBackgroundCustomRadioButton;
-	Button fBackgroundColorButton;
 	Button fBoldCheckBox;
 	Button fItalicCheckBox;
 	
@@ -79,15 +69,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	
 	protected Map fWorkingValues;
 	protected ArrayList fComboBoxes;
-	
-
-	final String[][] fAppearanceColorListModel= new String[][] {
-		{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
-		{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.currentLineHighlighColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
-		{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
-		{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.foreground"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-		{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.background"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-	};
 	
 
 	/**
@@ -234,35 +215,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 				{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.makefile_editor_keyword"),  ColorManager.MAKE_KEYWORD_COLOR, null},  //$NON-NLS-1$
 			};
 		ArrayList overlayKeys= new ArrayList();
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT));
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR));
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR));
-
-
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
-		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
-	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, MakefileEditorPreferenceConstants.EDITOR_FOLDING_CONDITIONAL));
@@ -289,7 +241,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		initializeDefaultColors();
 		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.MAKE_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
 		getOverlayStore().start();
@@ -299,10 +250,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		TabItem item= new TabItem(folder, SWT.NONE);
-		item.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.appearance")); //$NON-NLS-1$
-		item.setControl(createAppearancePage(folder));
-		
-		item= new TabItem(folder, SWT.NONE);
 		item.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.syntax")); //$NON-NLS-1$
 		item.setControl(createSyntaxPage(folder));
 		
@@ -316,29 +263,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		return folder;
 	}
 
-	private void initializeDefaultColors() {	
-		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, rgb);
-		}
-		if (!getPreferenceStore().contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR)) {
-			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT).getRGB();
-			PreferenceConverter.setDefault(getOverlayStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
-			PreferenceConverter.setDefault(getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, rgb);
-		}
-	}
-	
 	private void initialize() {
 		
 		initializeFields();
@@ -351,21 +275,8 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		}
 		fHighlightingColorListViewer.setInput(fHighlightingColorList);
 		fHighlightingColorListViewer.setSelection(new StructuredSelection(fHighlightingColorListViewer.getElementAt(0)));
-		
-		for (int i= 0; i < fAppearanceColorListModel.length; i++) {
-			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
-		}
-		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
-					fAppearanceColorList.select(0);
-					handleAppearanceColorListSelection();
-				}
-			}
-		});
 
 		initializeFolding();
-		initializeBackgroundColorFields();
 	}
 
 	void initializeFolding() {
@@ -378,26 +289,11 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		fFoldingCheckbox.setSelection(enabled);		
 	}
 
-	/**
-	 * 
-	 */
-	private void initializeBackgroundColorFields() {
-		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
-		fBackgroundColorEditor.setColorValue(rgb);		
-		
-		boolean dflt= getOverlayStore().getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-		fBackgroundDefaultRadioButton.setSelection(dflt);
-		fBackgroundCustomRadioButton.setSelection(!dflt);
-		fBackgroundColorButton.setEnabled(!dflt);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.AbstractMakefileEditorPreferencePage#handleDefaults()
 	 */
 	protected void handleDefaults() {
-		handleAppearanceColorListSelection();
 		handleSyntaxColorListSelection();
-		initializeBackgroundColorFields();
 		initializeDefaultFolding();
 	}
 	
@@ -406,38 +302,12 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		Composite colorComposite= new Composite(parent, SWT.NONE);
 		colorComposite.setLayout(new GridLayout());
 
-		Group backgroundComposite= new Group(colorComposite, SWT.SHADOW_ETCHED_IN);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		backgroundComposite.setLayout(layout);
-		backgroundComposite.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.backcolor")); //$NON-NLS-1$
-	
-		SelectionListener backgroundSelectionListener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {				
-				boolean custom= fBackgroundCustomRadioButton.getSelection();
-				fBackgroundColorButton.setEnabled(custom);
-				getOverlayStore().setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, !custom);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-
-		fBackgroundDefaultRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundDefaultRadioButton.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.systemdefault")); //$NON-NLS-1$
-		fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
-
-		fBackgroundCustomRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
-		fBackgroundCustomRadioButton.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.custom")); //$NON-NLS-1$
-		fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
-		
-		fBackgroundColorEditor= new ColorEditor(backgroundComposite);
-		fBackgroundColorButton= fBackgroundColorEditor.getButton();
-		
 		Label label= new Label(colorComposite, SWT.LEFT);
 		label.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.Foreground")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Composite editorComposite= new Composite(colorComposite, SWT.NONE);
-		layout= new GridLayout();
+		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
@@ -492,25 +362,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 				handleSyntaxColorListSelection();
 			}
 		});
-		
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				HighlightingColorListItem item= getHighlightingColorListItem();
-				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
-			}
-		});
-
-		fBackgroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				PreferenceConverter.setValue(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, fBackgroundColorEditor.getColorValue());					
-			}
-		});
 
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -535,158 +386,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		return colorComposite;
 	}
 	
-	void handleAppearanceColorListSelection() {	
-		int i= fAppearanceColorList.getSelectionIndex();
-		String key= fAppearanceColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), key);
-		fAppearanceColorEditor.setColorValue(rgb);	
-		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
-	}
-
-	private void updateAppearanceColorWidgets(String systemDefaultKey) {
-		if (systemDefaultKey == null) {
-			fAppearanceColorDefault.setSelection(false);
-			fAppearanceColorDefault.setVisible(false);
-			fAppearanceColorEditor.getButton().setEnabled(true);
-		} else {
-			boolean systemDefault= getOverlayStore().getBoolean(systemDefaultKey);
-			fAppearanceColorDefault.setSelection(systemDefault);
-			fAppearanceColorDefault.setVisible(true);
-			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-		}
-	}
-
-	private Control createAppearancePage(Composite parent) {
-		Font font= parent.getFont();
-
-		Composite appearanceComposite= new Composite(parent, SWT.NONE);
-		appearanceComposite.setFont(font);
-		GridLayout layout= new GridLayout(); 
-		layout.numColumns= 2;
-		appearanceComposite.setLayout(layout);
-
-		String labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
-		String[] errorMessages= new String[]{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.empty_input_print_margin"), MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
-		
-		labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.tabwidth"); //$NON-NLS-1$
-		errorMessages= new String[]{MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.notabwidth"), MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.39")}; //$NON-NLS-1$ //$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, errorMessages);
-		
-//		labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.spacetabs"); //$NON-NLS-1$
-//		addCheckBox(appearanceComposite, labelText, MakefileEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 1);
-		
-		labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
-				
-		labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
-
-		labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
-				
-		labelText= MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
-
-
-		Label label= new Label(appearanceComposite, SWT.LEFT );
-		label.setFont(font);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		label.setLayoutData(gd);
-		
-		label= new Label(appearanceComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.appearanceOptions")); //$NON-NLS-1$
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		label.setLayoutData(gd);
-
-		Composite editorComposite= new Composite(appearanceComposite, SWT.NONE);
-		editorComposite.setFont(font);
-		layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		editorComposite.setLayout(layout);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
-
-		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		fAppearanceColorList.setFont(font);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(6);
-		fAppearanceColorList.setLayoutData(gd);
-						
-		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
-		stylesComposite.setFont(font);
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
-		stylesComposite.setLayout(layout);
-		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		label= new Label(stylesComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.color")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		label.setLayoutData(gd);
-
-		fAppearanceColorEditor= new ColorEditor(stylesComposite);
-		Button foregroundColorButton= fAppearanceColorEditor.getButton();
-		foregroundColorButton.setFont(font);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		foregroundColorButton.setLayoutData(gd);
-
-		fAppearanceColorList.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				handleAppearanceColorListSelection();
-			}
-		});
-		
-		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean systemDefault= fAppearanceColorDefault.getSelection();
-				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-				
-				int i= fAppearanceColorList.getSelectionIndex();
-				String key= fAppearanceColorListModel[i][2];
-				if (key != null)
-					getOverlayStore().setValue(key, systemDefault);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-		
-		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-		fAppearanceColorDefault.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.systemdefault")); //$NON-NLS-1$
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		fAppearanceColorDefault.setLayoutData(gd);
-		fAppearanceColorDefault.setVisible(false);
-		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
-		
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				int i= fAppearanceColorList.getSelectionIndex();
-				String key= fAppearanceColorListModel[i][1];
-				
-				PreferenceConverter.setValue(getOverlayStore(), key, fAppearanceColorEditor.getColorValue());
-			}
-		});
-		return appearanceComposite;
-	}
 
 	private Composite createFoldingTabContent(TabFolder folder) {
 		Composite composite= new Composite(folder, SWT.NULL);
@@ -747,10 +446,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	/**
 	 * @param preferenceStore
 	 */
-	public static void initDefaults(IPreferenceStore prefs) {
-		EditorsUI.useAnnotationsPreferencePage(prefs);
-		EditorsUI.useQuickDiffPreferencePage(prefs);
-		
+	public static void initDefaults(IPreferenceStore prefs) {		
 		// Makefile Editor color preferences
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_COMMENT_COLOR, ColorManager.MAKE_COMMENT_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_DEFAULT_COLOR, ColorManager.MAKE_DEFAULT_RGB);

@@ -12,8 +12,6 @@
 package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * MakefileEditorPreferenceConstants
@@ -57,8 +55,6 @@ public class MakefileEditorPreferenceConstants {
 	public static final String EDITOR_FOLDING_ENABLED = "editor_folding_enabled"; //$NON-NLS-1$
 	
 	public static void initializeDefaultValues(IPreferenceStore store) {
-		TextEditorPreferenceConstants.initializeDefaultValues(store);
-		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 
 		store.setDefault(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		store.setDefault(MakefileEditorPreferenceConstants.EDITOR_FOLDING_MACRODEF, false);

@@ -34,7 +34,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -45,7 +44,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -67,18 +68,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * @since 3.0
 	 */
 	private ListenerList fReconcilingListeners= new ListenerList();
-
-	/**
-	 * Property changes update the scanner
-	 */
-	final IPropertyChangeListener fPropertyChangeListener= new IPropertyChangeListener() {
-		/*
-		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-		 */
-		public void propertyChange(PropertyChangeEvent event) {
-			handlePreferenceStoreChanged(event);
-		}
-	};
 
 	/**
 	 * Adapted source viewer for CEditor
@@ -137,7 +126,11 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		setEditorContextMenuId("#MakefileEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#MakefileRulerContext"); //$NON-NLS-1$
 		setDocumentProvider(MakeUIPlugin.getDefault().getMakefileDocumentProvider());
-		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
+		IPreferenceStore[] stores = new IPreferenceStore[2];
+		stores[0] = MakeUIPlugin.getDefault().getPreferenceStore();
+		stores[1] = EditorsUI.getPreferenceStore();
+		ChainedPreferenceStore chainedStore = new ChainedPreferenceStore(stores);
+		setPreferenceStore(chainedStore);
 	}
 
 	/* (non-Javadoc)
@@ -147,10 +140,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		if (fProjectionMakefileUpdater != null) {
 			fProjectionMakefileUpdater.uninstall();
 			fProjectionMakefileUpdater= null;
-		}
-        if (fPropertyChangeListener != null) {
-			IPreferenceStore preferenceStore = getPreferenceStore();
-			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 		}
 		super.dispose();
 	}
@@ -181,10 +170,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			fProjectionMakefileUpdater.install(this, projectionViewer);
 			fProjectionMakefileUpdater.initialize();
 		}
-
-		IPreferenceStore preferenceStore = getPreferenceStore();
-		preferenceStore.addPropertyChangeListener(fPropertyChangeListener);
-
 	}
 
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
@@ -377,25 +362,12 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	
 	/*
 	 */
-	public void reconciled() {
-
-		
+	public void reconciled() {		
 		// Notify listeners
 		Object[] listeners = fReconcilingListeners.getListeners();
-		for (int i = 0, length= listeners.length; i < length; ++i)
+		for (int i = 0, length= listeners.length; i < length; ++i) {
 			((IReconcilingParticipant)listeners[i]).reconciled();
-
-//		// Update Java Outline page selection
-//		if (!forced && !progressMonitor.isCanceled()) {
-//			Shell shell= getSite().getShell();
-//			if (shell != null && !shell.isDisposed()) {
-//				shell.getDisplay().asyncExec(new Runnable() {
-//					public void run() {
-//						selectionChanged();
-//					}
-//				});
-//			}
-//		}
+		}
 	}
 
 	/*

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -282,4 +284,49 @@ public class AST2Tests extends TestCase {
 		IField field_x = (IField)name_x.resolveBinding();
 		assertEquals(field_x, fieldref.getFieldName().resolveBinding());
 	}
+    
+    public void testCExpressions() throws ParserException
+    {
+        validateExpressionC("x-y", IASTBinaryExpression.op_minus ); //$NON-NLS-1$
+        validateExpressionC("x+y", IASTBinaryExpression.op_plus ); //$NON-NLS-1$
+        validateExpressionC("x/y", IASTBinaryExpression.op_divide ); //$NON-NLS-1$
+        validateExpressionC("x*y", IASTBinaryExpression.op_multiply); //$NON-NLS-1$
+        validateExpressionC("x<<y", IASTBinaryExpression.op_shiftLeft ); //$NON-NLS-1$
+        validateExpressionC("x>>y", IASTBinaryExpression.op_shiftRight ); //$NON-NLS-1$
+        validateExpressionC("x<y", IASTBinaryExpression.op_lessThan ); //$NON-NLS-1$
+        validateExpressionC("x>y", IASTBinaryExpression.op_greaterThan); //$NON-NLS-1$
+        validateExpressionC("x<=y", IASTBinaryExpression.op_lessEqual ); //$NON-NLS-1$
+        validateExpressionC("x>=y", IASTBinaryExpression.op_greaterEqual ); //$NON-NLS-1$
+        validateExpressionC("x==y", IASTBinaryExpression.op_equals ); //$NON-NLS-1$
+        validateExpressionC("x!=y", IASTBinaryExpression.op_notequals ); //$NON-NLS-1$
+        validateExpressionC("x&y", IASTBinaryExpression.op_binaryAnd ); //$NON-NLS-1$
+        validateExpressionC("x^y", IASTBinaryExpression.op_binaryXor ); //$NON-NLS-1$
+        validateExpressionC("x|y", IASTBinaryExpression.op_binaryOr ); //$NON-NLS-1$
+        validateExpressionC("x&&y", IASTBinaryExpression.op_logicalAnd ); //$NON-NLS-1$
+        validateExpressionC("x||y", IASTBinaryExpression.op_logicalOr ); //$NON-NLS-1$
+    }
+    /**
+     * @param operand
+     * @throws ParserException
+     */
+    protected void validateExpressionC( String code, int operand) throws ParserException {
+        IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C ); //$NON-NLS-1$
+        assertNotNull( e );
+        assertEquals( e.getOperator(), operand );
+    }
+
+
+    protected IASTExpression getExpressionFromStatementInCode( String code, ParserLanguage language  ) throws ParserException
+    {
+        StringBuffer buffer = new StringBuffer( "void f() { "); //$NON-NLS-1$
+        buffer.append( "int x, y;\n"); //$NON-NLS-1$
+        buffer.append( code );
+        buffer.append( ";\n}"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), language );
+        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations().get(0);
+        IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
+        IASTDeclarationStatement ds = (IASTDeclarationStatement) cs.getStatements().get( 0 );
+        IASTExpressionStatement s = (IASTExpressionStatement) cs.getStatements().get( 1 );
+        return s.getExpression();
+    }
 }

@@ -538,8 +538,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTExpression assignmentExpression = assignmentExpression();
         while (LT(1) == IToken.tCOMMA) {
             consume(IToken.tCOMMA);
-
-            Object secondExpression = assignmentExpression();
+            IASTExpression secondExpression = assignmentExpression();
 
             int endOffset = lastToken != null ? lastToken.getEndOffset() : 0;
             try {
@@ -616,28 +615,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression logicalOrExpression()
             throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         IASTExpression firstExpression = logicalAndExpression();
         while (LT(1) == IToken.tOR) {
             consume(IToken.tOR);
             IASTExpression secondExpression = logicalAndExpression();
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            try {
-                firstExpression = null; /*
-                                         * astFactory.createExpression(scope,
-                                         * IASTExpression.Kind.LOGICALOREXPRESSION,
-                                         * firstExpression, secondExpression,
-                                         * null, null, null, EMPTY_STRING,
-                                         * null); } catch (ASTSemanticException
-                                         * e) { throwBacktrack(e.getProblem());
-                                         */
-            } catch (Exception e) {
-                logException("logicalOrExpression::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, line, fn);
-            }
+            firstExpression = binaryExpression( IASTBinaryExpression.op_logicalOr, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -648,28 +630,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression logicalAndExpression()
             throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         IASTExpression firstExpression = inclusiveOrExpression();
         while (LT(1) == IToken.tAND) {
             consume(IToken.tAND);
-            Object secondExpression = inclusiveOrExpression();
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            try {
-                firstExpression = null; /*
-                                         * astFactory.createExpression(scope,
-                                         * IASTExpression.Kind.LOGICALANDEXPRESSION,
-                                         * firstExpression, secondExpression,
-                                         * null, null, null, EMPTY_STRING,
-                                         * null); } catch (ASTSemanticException
-                                         * e) { throwBacktrack(e.getProblem());
-                                         */
-            } catch (Exception e) {
-                logException("logicalAndExpression::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, line, fn);
-            }
+            IASTExpression secondExpression = inclusiveOrExpression();
+            firstExpression = binaryExpression( IASTBinaryExpression.op_logicalAnd, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -680,29 +645,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression inclusiveOrExpression()
             throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
-
         IASTExpression firstExpression = exclusiveOrExpression();
         while (LT(1) == IToken.tBITOR) {
-            consume();
+            consume(IToken.tBITOR);
             IASTExpression secondExpression = exclusiveOrExpression();
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            try {
-                firstExpression = null; /*
-                                         * astFactory.createExpression(scope,
-                                         * IASTExpression.Kind.INCLUSIVEOREXPRESSION,
-                                         * firstExpression, secondExpression,
-                                         * null, null, null, EMPTY_STRING,
-                                         * null); } catch (ASTSemanticException
-                                         * e) { throwBacktrack(e.getProblem());
-                                         */
-            } catch (Exception e) {
-                logException("inclusiveOrExpression::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, line, fn);
-            }
+            firstExpression = binaryExpression( IASTBinaryExpression.op_binaryOr, firstExpression, secondExpression  );
         }
         return firstExpression;
     }
@@ -713,30 +660,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression exclusiveOrExpression()
             throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
-
         IASTExpression firstExpression = andExpression();
         while (LT(1) == IToken.tXOR) {
-            consume();
-
+            consume(IToken.tXOR );
             IASTExpression secondExpression = andExpression();
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            try {
-                firstExpression = null; /*
-                                         * astFactory.createExpression(scope,
-                                         * IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
-                                         * firstExpression, secondExpression,
-                                         * null, null, null, EMPTY_STRING,
-                                         * null); } catch (ASTSemanticException
-                                         * e) { throwBacktrack(e.getProblem());
-                                         */
-            } catch (Exception e) {
-                logException("exclusiveORExpression::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, line, fn);
-            }
+            firstExpression = binaryExpression( IASTBinaryExpression.op_binaryXor, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -747,29 +675,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression andExpression() throws EndOfFileException,
             BacktrackException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
 
         IASTExpression firstExpression = equalityExpression();
         while (LT(1) == IToken.tAMPER) {
             consume();
             IASTExpression secondExpression = equalityExpression();
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            try {
-                firstExpression = null; /*
-                                         * astFactory.createExpression(scope,
-                                         * IASTExpression.Kind.ANDEXPRESSION,
-                                         * firstExpression, secondExpression,
-                                         * null, null, null, EMPTY_STRING,
-                                         * null); } catch (ASTSemanticException
-                                         * e) { throwBacktrack(e.getProblem());
-                                         */
-            } catch (Exception e) {
-                logException("andExpression::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, line, fn);
-            }
+            firstExpression = binaryExpression( IASTBinaryExpression.op_binaryAnd, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -780,36 +691,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression equalityExpression()
             throws EndOfFileException, BacktrackException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
-
         IASTExpression firstExpression = relationalExpression();
         for (;;) {
             switch (LT(1)) {
             case IToken.tEQUAL:
             case IToken.tNOTEQUAL:
                 IToken t = consume();
+            	int operator = (( t.getType() == IToken.tEQUAL) ? IASTBinaryExpression.op_equals : IASTBinaryExpression.op_notequals);   
             	IASTExpression secondExpression = relationalExpression();
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * (t .getType() == IToken.tEQUAL) ?
-                                             * IASTExpression.Kind.EQUALITY_EQUALS :
-                                             * IASTExpression.Kind.EQUALITY_NOTEQUALS,
-                                             * firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e) {
-                                             * throwBacktrack(e.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("equalityExpression::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                firstExpression = binaryExpression( operator, firstExpression, secondExpression );
                 break;
             default:
                 return firstExpression;
@@ -817,41 +707,34 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
+    protected IASTExpression binaryExpression( int operator, IASTExpression firstExpression, IASTExpression secondExpression )
+    {
+        IASTBinaryExpression result = createBinaryExpression();
+        result.setOperator( operator );
+        result.setOffset( firstExpression.getOffset() );
+        result.setOperand1( firstExpression );
+        firstExpression.setParent( result );
+        firstExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_ONE );
+        result.setOperand2( secondExpression );
+        secondExpression.setParent( result );
+        secondExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_TWO );
+        return result;
+    }
     /**
      * @param expression
      * @throws BacktrackException
      */
     protected IASTExpression shiftExpression() throws BacktrackException,
             EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         IASTExpression firstExpression = additiveExpression();
         for (;;) {
             switch (LT(1)) {
             case IToken.tSHIFTL:
             case IToken.tSHIFTR:
                 IToken t = consume();
-                Object secondExpression = additiveExpression();
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * ((t.getType() == IToken.tSHIFTL) ?
-                                             * IASTExpression.Kind.SHIFT_LEFT :
-                                             * IASTExpression.Kind.SHIFT_RIGHT),
-                                             * firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e) {
-                                             * throwBacktrack(e.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("shiftExpression::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+            	int operator = t.getType() == IToken.tSHIFTL ? IASTBinaryExpression.op_shiftLeft: IASTBinaryExpression.op_shiftRight;
+                IASTExpression secondExpression = additiveExpression();
+                firstExpression = binaryExpression( operator, firstExpression, secondExpression );
                 break;
             default:
                 return firstExpression;
@@ -865,51 +748,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression additiveExpression()
             throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
         IASTExpression firstExpression = multiplicativeExpression();
         for (;;) {
             switch (LT(1)) {
             case IToken.tPLUS:
             case IToken.tMINUS:
                 IToken t = consume();
+            	int operator = ( t.getType() == IToken.tPLUS ) ? IASTBinaryExpression.op_plus : IASTBinaryExpression.op_minus; 
                 IASTExpression secondExpression = multiplicativeExpression();
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                try {
-                    IASTBinaryExpression result = createBinaryExpression();
-                    result.setOffset( startingOffset );
-                    if( t.getType() == IToken.tPLUS )
-                        result.setOperator( IASTBinaryExpression.op_plus );
-                    else
-                        result.setOperator( IASTBinaryExpression.op_minus );
-                    
-                    result.setOperand1( firstExpression );
-                    firstExpression.setParent( result );
-                    firstExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_ONE );
-                    
-                    result.setOperand2( secondExpression );
-                    secondExpression.setParent( result );
-                    secondExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_TWO );
-                    return result;    
-//                        null;
-                    /*
-                                             * astFactory.createExpression(scope,
-                                             * ((t.getType() == IToken.tPLUS) ?
-                                             * IASTExpression.Kind.ADDITIVE_PLUS :
-                                             * IASTExpression.Kind.ADDITIVE_MINUS),
-                                             * firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e) {
-                                             * throwBacktrack(e.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("additiveExpression::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                firstExpression = binaryExpression( operator, firstExpression, secondExpression );
                 break;
             default:
                 return firstExpression;

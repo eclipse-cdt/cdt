@@ -47,8 +47,10 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_binaryAndAssign = 25;
 	public static final int op_binaryXorAssign = 26;
 	public static final int op_binaryOrAssign = 27;
-	public static final int op_last = op_binaryOrAssign;
-	
+	public static final int op_equals = 28;
+	public static final int op_notequals = 29;
+	public static final int op_last = op_notequals;
+    
 	public IASTExpression getOperand1();
 	public void setOperand1( IASTExpression expression );
 	public IASTExpression getOperand2();

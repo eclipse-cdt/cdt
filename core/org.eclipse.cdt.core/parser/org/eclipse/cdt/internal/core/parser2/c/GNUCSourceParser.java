@@ -559,8 +559,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             EndOfFileException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
 
         IASTExpression firstExpression = shiftExpression();
         for (;;) {
@@ -569,45 +567,34 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tLT:
             case IToken.tLTEQUAL:
             case IToken.tGTEQUAL:
-                IToken mark = mark();
                 int t = consume().getType();
-                Object secondExpression = shiftExpression();
-                if (LA(1) == mark.getNext()) {
-                    // we did not consume anything
-                    // this is most likely an error
-                    backup(mark);
-                    return firstExpression;
-                }
-                Object expressionKind = null;
+                IASTExpression secondExpression = shiftExpression();
+                int operator = 0;
                 switch (t) {
                 case IToken.tGT:
-                    expressionKind = null; //IASTExpression.Kind.RELATIONAL_GREATERTHAN;
+                    operator = IASTBinaryExpression.op_greaterThan; 
                     break;
                 case IToken.tLT:
-                    expressionKind = null; //IASTExpression.Kind.RELATIONAL_LESSTHAN;
+                    operator = IASTBinaryExpression.op_lessThan; 
                     break;
                 case IToken.tLTEQUAL:
-                    expressionKind = null; //IASTExpression.Kind.RELATIONAL_LESSTHANEQUALTO;
+                    operator = IASTBinaryExpression.op_lessEqual;
                     break;
                 case IToken.tGTEQUAL:
-                    expressionKind = null; //IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO;
+                    operator = IASTBinaryExpression.op_greaterEqual; 
                     break;
                 }
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * expressionKind, firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e) {
-                                             * throwBacktrack(e.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException("relationalExpression::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                IASTBinaryExpression result = createBinaryExpression();
+                result.setOperator( operator );
+                result.setOffset( firstExpression.getOffset() );
+                
+                result.setOperand1( firstExpression );
+                firstExpression.setParent( result );
+                firstExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_ONE);
+                result.setOperand2( secondExpression );
+                secondExpression.setParent( result );
+                secondExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_TWO);
+                firstExpression = result;
                 break;
             default:
                 return firstExpression;
@@ -633,35 +620,28 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tMOD:
                 IToken t = consume();
                 IASTExpression secondExpression = castExpression();
-                Object expressionKind = null;
+                int operator = 0;
                 switch (t.getType()) {
                 case IToken.tSTAR:
-                    expressionKind = null; //IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY;
+                    operator = IASTBinaryExpression.op_multiply;
                     break;
                 case IToken.tDIV:
-                    expressionKind = null; //IASTExpression.Kind.MULTIPLICATIVE_DIVIDE;
+                    operator = IASTBinaryExpression.op_divide; 
                     break;
                 case IToken.tMOD:
-                    expressionKind = null; //IASTExpression.Kind.MULTIPLICATIVE_MODULUS;
+                    operator = IASTBinaryExpression.op_modulo; 
                     break;
                 }
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                try {
-                    firstExpression = null; /*
-                                             * astFactory.createExpression(scope,
-                                             * expressionKind, firstExpression,
-                                             * secondExpression, null, null,
-                                             * null, EMPTY_STRING, null); }
-                                             * catch (ASTSemanticException e) {
-                                             * firstExpression.freeReferences();
-                                             * throwBacktrack(e.getProblem());
-                                             */
-                } catch (Exception e) {
-                    logException(
-                            "multiplicativeExpression::createExpression()", e); //$NON-NLS-1$
-                    throwBacktrack(startingOffset, endOffset, line, fn);
-                }
+                IASTBinaryExpression result = createBinaryExpression();
+                result.setOffset( firstExpression.getOffset() );
+                result.setOperator( operator );
+                result.setOperand1( firstExpression );
+                firstExpression.setParent( result );
+                firstExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_ONE );
+                result.setOperand2( secondExpression );
+                secondExpression.setParent( result );
+                secondExpression.setPropertyInParent( IASTBinaryExpression.OPERAND_TWO );
+                firstExpression = result;
                 break;
             default:
                 return firstExpression;

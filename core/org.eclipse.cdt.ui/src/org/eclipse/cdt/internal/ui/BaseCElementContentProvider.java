@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -170,7 +171,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					}
 					return getTranslationUnitChildren(tu);
 				}
-			} else if (element instanceof IParent) {
+			} else if (element instanceof ISourceReference  && element instanceof IParent) {
 				return ((IParent)element).getChildren();
 			} else if (element instanceof IProject) {
 				return getResources((IProject)element);

@@ -1,3 +1,9 @@
+2004-08-11 Alain Magloire
+
+	Duplication in the CView.
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+
 2004-08-10 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java

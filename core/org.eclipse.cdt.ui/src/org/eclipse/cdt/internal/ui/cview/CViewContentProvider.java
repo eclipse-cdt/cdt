@@ -54,10 +54,6 @@ public class CViewContentProvider extends CElementContentProvider {
 				extras = getBinaries((IBinaryContainer)element);
 			} else if (element instanceof IArchiveContainer) {
 				extras = getArchives((IArchiveContainer)element);
-			} else if (element instanceof LibraryRefContainer) {
-				extras = ((LibraryRefContainer)element).getChildren(element);
-			} else if (element instanceof IncludeRefContainer) {
-				extras = ((IncludeRefContainer)element).getChildren(element);
 			}
 		} catch (CModelException e) {
 			extras = null;

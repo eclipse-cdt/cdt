@@ -1,6 +1,6 @@
 <project default="zips">
 
-	<target name="build" depends="zips,test,updateSite"/>
+	<target name="build" depends="zips,test"/>
 	<target name="nightly" depends="build,upload,mail"/>
 	<target name="integration" depends="nightly,wswbmap"/>
 	<target name="milestone" depends="nightly,milestoneSite"/>
@@ -26,8 +26,28 @@
 		<property name="buildingOSGi" value="true"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
+		<property name="mapVersionTag" value="HEAD"/>
 	</target>
 
+	<target name="fetch" depends="init">
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
+			<property name="builder" value="${basedir}/platform"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="preBuild">
+			<property name="builder" value="${basedir}/sdk"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
+			<property name="builder" value="${basedir}/platform"/>
+		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
+			<property name="builder" value="${basedir}/sdk"/>
+		</ant>
+	</target>
+	
+	<target name="unzip" depends="init" unless="dontUnzip">
+		<unzip src="${eclipseZip}" dest="${buildDirectory}"/>
+	</target>
+	
 	<target name="zips" depends="init,unzip">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
@@ -44,10 +64,6 @@
 		</condition>
 	</target>
 
-	<target name="unzip" depends="init" unless="dontUnzip">
-		<unzip src="${eclipseZip}" dest="${buildDirectory}"/>
-	</target>
-	
 	<target name="test" depends="init" unless="hasErrors">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />
@@ -68,95 +84,6 @@
 		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test/JUNIT.XSL"
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 			out="${sitedir}/logs/${siteversion}.${timestamp}.html"/>
-	</target>
-	
-	<target name="updateSite" depends="init" unless="hasErrors">
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-aix.motif.ppc.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-hpux.motif.PA_RISC.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.gtk.x86.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.motif.x86.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-qnx.photon.x86.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-solaris.motif.sparc.zip" dest="${sitedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-win32.win32.x86.zip" dest="${sitedir}"/>
-		<antcall target="allPlugins">
-			<param name="target" value="updateSrcPlugin"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source"/>
-		</antcall>
-		<antcall target="updateSrcPlugin">
-			<param name="id" value="org.eclipse.cdt.core.aix"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source.aix.motif.ppc"/>
-		</antcall>
-		<antcall target="updateSrcPlugin">
-			<param name="id" value="org.eclipse.cdt.core.linux"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source.linux.motif.x86"/>
-		</antcall>
-		<antcall target="updateSrcPlugin">
-			<param name="id" value="org.eclipse.cdt.core.linux"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source.linux.gtk.x86"/>
-		</antcall>
-		<antcall target="updateSrcPlugin">
-			<param name="id" value="org.eclipse.cdt.core.qnx"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source.qnx.photon.x86"/>
-		</antcall>
-		<antcall target="updateSrcPlugin">
-			<param name="id" value="org.eclipse.cdt.core.solaris"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source.solaris.motif.sparc"/>
-		</antcall>
-		<antcall target="updateSrcPlugin">
-			<param name="id" value="org.eclipse.cdt.core.win32"/>
-			<param name="srcPlugin" value="org.eclipse.cdt.source.win32.win32.x86"/>
-		</antcall>
-		<antcall target="allElements">
-			<param name="target" value="updateJars"/>
-		</antcall>
-		<delete dir="${sitedir}/eclipse"/>
-		<get src="${siteurl}/site.xml" dest="${sitedir}/site.xml"/>
-		<xslt style="site.xsl" in="${sitedir}/site.xml" out="x">
-			<param name="version" expression="${siteversion}.${timestamp}"/>
-		</xslt>
-		<move file="x" tofile="${sitedir}/site.xml"/>
-		<xslt style="index.xsl" in="${sitedir}/site.xml" out="${sitedir}/index.html"/>
-		<copy todir="${sitedir}/zips/${buildId}">
-			<fileset dir="${zipsdir}"/>
-		</copy>
-	</target>
-
-	<target name="updateSrcPlugin">
-		<move todir="${sitedir}/eclipse/plugins/${srcPlugin}_${siteversion}/src/${id}_${siteversion}.${timestamp}">
-			<fileset dir="${sitedir}/eclipse/plugins/${srcPlugin}_${siteversion}/src/${id}_${siteversion}"/>
-		</move>
-	</target>
-
-	<target name="updateJars">
-		<xslt style="plugin.xsl" in="${sitedir}/eclipse/${dir}/${id}_${siteversion}/${type}.xml" out="x">
-			<param name="version" expression="${siteversion}.${timestamp}"/>
-		</xslt>
-		<move file="x" tofile="${sitedir}/eclipse/${dir}/${id}_${siteversion}/${type}.xml"/>
-		<mkdir dir="${sitedir}/${dir}"/>
-		<zip basedir="${sitedir}/eclipse/${dir}/${id}_${siteversion}"
-		     zipfile="${sitedir}/${dir}/${id}_${siteversion}.${timestamp}.jar"/>
-	</target>
-
-	<target name="milestoneSite" depends="init" unless="hasErrors">
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-hpux.motif.PA_RISC.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip" dest="${milestonedir}"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip" dest="${milestonedir}"/>
-		<antcall target="allElements">
-			<param name="target" value="milestoneJars"/>
-		</antcall>
-		<copy file="site.in" tofile="${milestonedir}/site.xml"/>
-		<replace file="${milestonedir}/site.xml" token="@milestone@" value="${milestone}"/>
-		<delete dir="${milestonedir}/eclipse"/>
-	</target>
-
-	<target name="milestoneJars">
-		<mkdir dir="${milestonedir}/${dir}"/>
-		<jar basedir="${milestonedir}/eclipse/${dir}/${id}_${siteversion}"
-			 destfile="${milestonedir}/${dir}/${id}_${siteversion}.jar"/>
 	</target>
 	
 	<target name="upload" depends="init" unless="hasErrors">
@@ -197,7 +124,58 @@
 		</mail>
 	</target>
 
-	<target name="allPlugins">
+	<target name="milestoneSite" depends="init" unless="hasErrors">
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-aix.motif.ppc.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-hpux.motif.PA_RISC.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.gtk.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.motif.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-qnx.photon.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-solaris.motif.sparc.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-win32.win32.x86.zip" dest="${milestonedir}"/>
+		<antcall target="allElements">
+			<param name="target" value="milestoneJars"/>
+		</antcall>
+		<copy file="site.in" tofile="${milestonedir}/site.xml"/>
+		<replace file="${milestonedir}/site.xml" token="@milestone@" value="${milestone}"/>
+		<delete dir="${milestonedir}/eclipse"/>
+		<mkdir dir="${milestonedir}/zips"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-aix.motif.ppc.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-aix.motif.ppc.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-hpux.motif.PA_RISC.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-hpux.motif.PA_RISC.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.gtk.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-linux.gtk.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-linux.motif.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-linux.motif.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-qnx.photon.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-qnx.photon.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-solaris.motif.sparc.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-solaris.motif.sparc.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt.sdk-${buildId}-win32.win32.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt.sdk-${milestone}-win32.win32.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-aix.motif.ppc.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-hpux.motif.PA_RISC.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-hpux.motif.PA_RISC.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-linux.gtk.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-linux.motif.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-qnx.photon.x86.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-solaris.motif.sparc.zip"/>
+		<copy file="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip"
+			tofile="${milestonedir}/zips/org.eclipse.cdt-${milestone}-win32.win32.x86.zip"/>
+	</target>
+
+	<target name="milestoneJars">
+		<mkdir dir="${milestonedir}/${dir}"/>
+		<zip basedir="${milestonedir}/eclipse/${dir}/${id}_${siteversion}"
+		     zipfile="${milestonedir}/${dir}/${id}_${siteversion}.jar"/>
+	</target>
+	
+	<target name="allElements">
  		<antcall target="${target}">
  			<param name="type" value="plugin"/>
  			<param name="dir" value="plugins"/>
@@ -253,11 +231,7 @@
  			<param name="dir" value="plugins"/>
  			<param name="id" value="org.eclipse.cdt.ui"/>
  		</antcall>
-	</target>
-
- 	<target name="allElements">
-		<antcall target="allPlugins"/>
- 		<antcall target="${target}">
+		<antcall target="${target}">
  			<param name="type" value="feature"/>
  			<param name="dir" value="features"/>
  			<param name="id" value="org.eclipse.cdt"/>

@@ -362,6 +362,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 */
 	protected IBinary[] getBinaryFiles(final ICProject cproject) {
 		final Display display;
+		if (cproject == null || !cproject.exists()) {
+			return null;
+		}
 		if (getShell() == null) {
 			display = LaunchUIPlugin.getShell().getDisplay();
 		} else {
@@ -533,7 +536,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		IBinary binary = null;
 		if (cElement instanceof ICProject) {
 			IBinary[] bins = getBinaryFiles((ICProject)cElement);
-			if (bins.length == 1) {
+			if (bins != null && bins.length == 1) {
 				binary = bins[0];
 			}
 		}

@@ -794,4 +794,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	protected void setOutlinerContextMenuId(String menuId) {
 		fOutlinerContextMenuId = menuId;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
+	 */
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } );
+	}
+
 }

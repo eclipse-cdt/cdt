@@ -261,17 +261,9 @@ public class CSourceLocator implements ICSourceLocator
 			}
 			return false;
 		}
-		if ( fProject.exists( resource.getFullPath() ) )
+		if ( resource instanceof IFile )
 		{
-			return true;
-		}
-		IProject[] projects = getReferencedProjects();
-		for ( int i = 0; i < projects.length; ++i )
-		{
-			if ( projects[i].exists( resource.getFullPath() ) )
-			{
-				return true;
-			}
+			return containsFile( resource.getLocation() );
 		}
 		return false;
 	}
@@ -288,5 +280,24 @@ public class CSourceLocator implements ICSourceLocator
 			CDebugCorePlugin.log( e );
 		}
 		return projects;
+	}
+	
+	protected boolean containsFile( IPath path )
+	{
+		try 
+		{
+			if ( findFile( (IContainer)fProject, path ) != null )
+				return true;
+			IProject[] p = fProject.getReferencedProjects();
+			for ( int j= 0; j < p.length; j++ ) 
+			{
+				if ( findFile( (IContainer)p[j], path ) != null ) 
+					return true;
+			}
+		} 
+		catch( CoreException e ) 
+		{
+		}
+		return false;
 	}
 }

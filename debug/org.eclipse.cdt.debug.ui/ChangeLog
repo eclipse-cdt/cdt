@@ -1,3 +1,13 @@
+2004-04-16 Mikhail Khodjaiants
+	Implementing retargettable actions for Disassembly view.
+	* plugin.xml
+	* DisassemblyView.java: new
+	* DisassemblyEditorInput.java
+	* BreakpointLocationVerifier.java
+	* ActionMessages.properties
+	* RunToLineAdapter.java
+	* ToggleBreakpointAdapter.java
+
 2004-04-15 Mikhail Khodjaiants
 	Implementing the Disassembly view.
 	New pacckage: org.eclipse.cdt.debug.internal.ui.views.disassembly

@@ -11,7 +11,10 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
+import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -43,29 +46,51 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 *      org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public void runToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
-		IEditorPart editorPart = (IEditorPart)part;
-		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
-		if ( input == null ) {
-			errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
-		}
-		else {
-			final ITextEditor textEditor = (ITextEditor)editorPart;
-			final IDocument document = textEditor.getDocumentProvider().getDocument( input );
-			if ( document == null ) {
-				errorMessage = ActionMessages.getString( "RunToLineAdapter.Missing_document_1" ); //$NON-NLS-1$
+		if ( part instanceof IEditorPart ) {
+			IEditorPart editorPart = (IEditorPart)part;
+			IEditorInput input = editorPart.getEditorInput();
+			if ( input == null ) {
+				errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
 			}
 			else {
-				String fileName = getFileName( input );
+				ITextEditor textEditor = (ITextEditor)editorPart;
+				IDocument document = textEditor.getDocumentProvider().getDocument( input );
+				if ( document == null ) {
+					errorMessage = ActionMessages.getString( "RunToLineAdapter.Missing_document_1" ); //$NON-NLS-1$
+				}
+				else {
+					String fileName = getFileName( input );
+					ITextSelection textSelection = (ITextSelection)selection;
+					int lineNumber = textSelection.getStartLine() + 1;
+					if ( target instanceof IAdaptable ) {
+						IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
+						if ( runToLine != null && runToLine.canRunToLine( fileName, lineNumber ) )
+							runToLine.runToLine( fileName, lineNumber );
+					}
+					return;
+				}
+			}
+		}
+		else if ( part instanceof DisassemblyView ) {
+			IEditorInput input = ((DisassemblyView)part).getInput();
+			if ( !(input instanceof DisassemblyEditorInput) ) {
+				errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
+			}
+			else {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
+				long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
 				if ( target instanceof IAdaptable ) {
-					IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
-					if ( runToLine != null && runToLine.canRunToLine( fileName, lineNumber ) )
-						runToLine.runToLine( fileName, lineNumber );
+					IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
+					if ( runToAddress != null && runToAddress.canRunToAddress( address ) )
+						runToAddress.runToAddress( address );
 				}
 				return;
 			}
+		}
+		else {
+			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
 		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}

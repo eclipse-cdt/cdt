@@ -129,6 +129,12 @@ public class DisassemblyEditorInput implements IEditorInput {
 			}
 			return 0;
 		}
+
+		public long getAddress( int lineNumber ) throws IllegalArgumentException {
+			if ( lineNumber > 0 && lineNumber <= fInstructions.length )
+				return fInstructions[--lineNumber].getAdress();
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public static final IEditorInput EMPTY_EDITOR_INPUT = new DisassemblyEditorInput();
@@ -216,5 +222,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public int getLineNumber( long address ) {
 		return ( fStorage != null ) ? fStorage.getLineNumber( address ) : 0;
+	}
+
+	public long getAddress( int lineNumber ) throws IllegalArgumentException {
+		return ( fStorage != null ) ? fStorage.getAddress( lineNumber ) : 0;
 	}
 }

@@ -29,6 +29,6 @@ public class BreakpointLocationVerifier
 	public int getValidAddressBreakpointLocation( IDocument doc, int lineNumber ) 
 	{
 		// for now
-		return lineNumber;
+		return lineNumber + 1;
 	}
 }

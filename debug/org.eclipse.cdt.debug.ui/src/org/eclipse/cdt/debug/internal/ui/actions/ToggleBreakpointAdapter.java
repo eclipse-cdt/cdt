@@ -11,8 +11,11 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.resources.IResource;
@@ -36,7 +39,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 /**
  * Toggles a line breakpoint in a C/C++ editor.
  */
@@ -46,48 +48,85 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		IEditorPart editorPart = (IEditorPart)part;
-		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
-		if ( input == null ) {
-			errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_1" ); //$NON-NLS-1$
-		}
-		else {
-			ITextEditor textEditor = (ITextEditor)editorPart;
-			IDocument document = textEditor.getDocumentProvider().getDocument( input );
-			if ( document == null ) {
-				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_1" ); //$NON-NLS-1$
+		if ( part instanceof IEditorPart ) {
+			IEditorPart editorPart = (IEditorPart)part;
+			IEditorInput input = editorPart.getEditorInput();
+			if ( input == null ) {
+				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_1" ); //$NON-NLS-1$
 			}
 			else {
-				IResource resource = getResource( textEditor );
-				if ( resource == null ) {
-					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_1" ); //$NON-NLS-1$
+				ITextEditor textEditor = (ITextEditor)editorPart;
+				IDocument document = textEditor.getDocumentProvider().getDocument( input );
+				if ( document == null ) {
+					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_1" ); //$NON-NLS-1$
 				}
 				else {
-					BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-					int lineNumber = bv.getValidLineBreakpointLocation( document, ((ITextSelection)selection).getStartLine() );
-					if ( lineNumber == -1 ) {
-						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
+					IResource resource = getResource( textEditor );
+					if ( resource == null ) {
+						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_1" ); //$NON-NLS-1$
 					}
 					else {
-						String sourceHandle = getSourceHandle( input );
-						ICLineBreakpoint breakpoint = CDIDebugModel.lineBreakpointExists( sourceHandle, resource, lineNumber );
-						if ( breakpoint != null ) {
-							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+						BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
+						int lineNumber = bv.getValidLineBreakpointLocation( document, ((ITextSelection)selection).getStartLine() );
+						if ( lineNumber == -1 ) {
+							errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
 						}
 						else {
-							CDIDebugModel.createLineBreakpoint( sourceHandle, 
-																resource, 
-																lineNumber, 
-																true, 
-																0, 
-																"", //$NON-NLS-1$
-																true );
+							String sourceHandle = getSourceHandle( input );
+							ICLineBreakpoint breakpoint = CDIDebugModel.lineBreakpointExists( sourceHandle, resource, lineNumber );
+							if ( breakpoint != null ) {
+								DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+							}
+							else {
+								CDIDebugModel.createLineBreakpoint( sourceHandle, 
+																	resource, 
+																	lineNumber, 
+																	true, 
+																	0, 
+																	"", //$NON-NLS-1$
+																	true );
+							}
+							return;
 						}
-						return;
 					}
 				}
 			}
+		}
+		else if ( part instanceof DisassemblyView ) {
+			IEditorInput input = ((DisassemblyView)part).getInput();
+			if ( !(input instanceof DisassemblyEditorInput) ) {
+				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_1" ); //$NON-NLS-1$
+			}
+			else {
+				BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
+				int lineNumber = bv.getValidAddressBreakpointLocation( null, ((ITextSelection)selection).getStartLine() );
+				if ( lineNumber == -1 ) {
+					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
+				}
+				else {
+					IResource resource = ResourcesPlugin.getWorkspace().getRoot();
+					String sourceHandle = getSourceHandle( input );
+					long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+					ICAddressBreakpoint breakpoint = CDIDebugModel.addressBreakpointExists( sourceHandle, resource, address );
+					if ( breakpoint != null ) {
+						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+					}
+					else {
+						CDIDebugModel.createAddressBreakpoint( sourceHandle, 
+															   resource, 
+															   address, 
+															   true, 
+															   0, 
+															   "", //$NON-NLS-1$
+															   true );
+					}
+					return;
+				}
+			}
+		}
+		else {
+			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
 		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}

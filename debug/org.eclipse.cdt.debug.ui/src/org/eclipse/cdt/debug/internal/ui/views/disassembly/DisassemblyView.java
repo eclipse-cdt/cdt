@@ -146,6 +146,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 
 		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+		getSite().setSelectionProvider( viewer.getSelectionProvider() );
 		setEventHandler( createEventHandler() );
 		
 		viewer.setDocument( getDocumentProvider().getDocument( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ), getDocumentProvider().getAnnotationModel( null ) );
@@ -415,7 +416,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		return null;
 	}
 
-	protected IEditorInput getInput() {
+	public IEditorInput getInput() {
 		if ( getSourceViewer() != null ) {
 			Object input = getSourceViewer().getInput();
 			if ( input instanceof IEditorInput )
@@ -568,6 +569,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		selectionChanged( null, new StructuredSelection() );
 		super.becomesHidden();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
 	 */

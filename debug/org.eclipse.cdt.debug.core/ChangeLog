@@ -1,3 +1,7 @@
+2004-10-19 Mikhail Khodjaiants
+	Set the initial state of a thread according to the state of the underlying CDI thread.
+	* CThread.java
+
 2004-10-19 Alain Magloire
 	Fix NPE.
 	* src/org/eclipse/cdt/debug/internal/core/DebugConfiguration.java

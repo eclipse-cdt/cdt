@@ -102,7 +102,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	public CThread( CDebugTarget target, ICDIThread cdiThread ) {
 		super( target );
-		setState( CDebugElementState.RESUMED );
+		setState( cdiThread.isSuspended() ? CDebugElementState.SUSPENDED : CDebugElementState.RESUMED );
 		setCDIThread( cdiThread );
 		fConfig = getCDISession().getConfiguration();
 		initialize();

@@ -13,11 +13,11 @@ package org.eclipse.cdt.make.core.scannerconfig;
 import org.eclipse.core.resources.IResource;
 
 /**
- * TODO Provide description
+ * Utility functions some collectors may need
  * 
  * @author vhirsl
  */
-public interface IScannerInfoCollectorUtil {
+public interface IScannerInfoCollectorCleaner {
     /**
      * Delete all discovered paths for a resource
      * 

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 /**
  * Class that represents a compiler command and related scanner configuration 
  * 
@@ -22,11 +26,9 @@ import java.util.List;
 public class CCommandDSC {
     private final static String SINGLE_SPACE = " "; //$NON-NLS-1$
     
-	private static int ids = 0;
 	private int commandId;
 	private List compilerCommand;	// members are KVPair objects
 	private boolean discovered;
-//	private List files;				// list of files this command applies to
 	private boolean cppFileType;	// C or C++ file type
 
     private List symbols;
@@ -40,11 +42,13 @@ public class CCommandDSC {
 		discovered = false;
 //		files = null;
 		this.cppFileType = cppFileType;
-		commandId = ++ids;
+        
+        symbols = new ArrayList();
+        includes = new ArrayList();
 	}
 
-    public boolean appliesToCFileType() {
-        return !cppFileType;
+    public boolean appliesToCPPFileType() {
+        return cppFileType;
     }
     
 	public void addSCOption(KVPair option) {
@@ -109,11 +113,16 @@ public class CCommandDSC {
 		String commandAsString = new String();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVPair optionPair = (KVPair)i.next();
-			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE) ||
-					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE))
-				continue;
-			commandAsString += optionPair.getKey().toString() + SINGLE_SPACE + 
-                               optionPair.getValue() + SINGLE_SPACE;
+            if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND)) {
+                commandAsString += optionPair.getValue() + SINGLE_SPACE;
+            }
+            else {
+//    			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE) ||
+//    					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE))
+//    				continue;
+    			commandAsString += optionPair.getKey().toString() + SINGLE_SPACE + 
+                                   optionPair.getValue() + SINGLE_SPACE;
+            }
 		}
 		return commandAsString.trim();
 	}
@@ -197,5 +206,75 @@ public class CCommandDSC {
      */
     public void setDiscovered(boolean discovered) {
         this.discovered = discovered;
+    }
+
+    /**
+     * @param cmdElem
+     */
+    public void serialize(Element cmdElem) {
+        Document doc = cmdElem.getOwnerDocument();
+        // serialize the command
+        Element cmdDescElem = doc.createElement("commandDescription"); //$NON-NLS-1$
+        for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
+            Element optionElem = doc.createElement("option"); //$NON-NLS-1$
+            KVPair option = (KVPair) i.next();
+            optionElem.setAttribute("key", option.getKey().toString()); //$NON-NLS-1$
+            optionElem.setAttribute("value", option.getValue()); //$NON-NLS-1$
+            cmdDescElem.appendChild(optionElem);
+        }
+        cmdElem.appendChild(cmdDescElem);
+        // serialize includes and symbols
+        Element siElem = doc.createElement("commandScannerInfo"); //$NON-NLS-1$
+        for (Iterator j = includes.iterator(); j.hasNext(); ) {
+            Element siItem = doc.createElement("siItem"); //$NON-NLS-1$
+            siItem.setAttribute("kind", "INCLUDE_PATH"); //$NON-NLS-1$ //$NON-NLS-2$
+            siItem.setAttribute("value", (String) j.next()); //$NON-NLS-1$
+            siElem.appendChild(siItem);
+        }
+        for (Iterator j = symbols.iterator(); j.hasNext(); ) {
+            Element siItem = doc.createElement("siItem"); //$NON-NLS-1$
+            siItem.setAttribute("kind", "SYMBOL_DEFINITION"); //$NON-NLS-1$ //$NON-NLS-2$
+            siItem.setAttribute("value", (String) j.next()); //$NON-NLS-1$
+            siElem.appendChild(siItem);
+        }
+        cmdElem.appendChild(siElem);
+    }
+
+    /**
+     * @param cmdElem
+     */
+    public void deserialize(Element cmdElem) {
+        // read command options
+        NodeList descList = cmdElem.getElementsByTagName("commandDescription");
+        if (descList.getLength() > 0) {
+            Element descElem = (Element) descList.item(0);
+            NodeList optionList = descElem.getElementsByTagName("option");
+            for (int i = 0; i < optionList.getLength(); ++i) {
+                Element optionElem = (Element) optionList.item(i);
+                String key = optionElem.getAttribute("key");
+                SCDOptionsEnum eKey = SCDOptionsEnum.getSCDOptionsEnum(key);
+                String value = optionElem.getAttribute("value");
+                KVPair option = new KVPair(eKey, value);
+                addSCOption(option);
+            }
+        }
+        // read associated scanner info
+        NodeList siList = cmdElem.getElementsByTagName("commandScannerInfo");
+        if (siList.getLength() > 0) {
+            Element siElem = (Element) siList.item(0);
+            NodeList siItemList = siElem.getElementsByTagName("siItem");
+            for (int i = 0; i < siItemList.getLength(); ++i) {
+                Element siItemElem = (Element) siItemList.item(i);
+                String kind = siItemElem.getAttribute("kind");
+                String value = siItemElem.getAttribute("value");
+                if (kind.equals("INCLUDE_PATH")) {
+                    includes.add(value);
+                }
+                else if (kind.equals("SYMBOL_DEFINITION")) {
+                    symbols.add(value);
+                }
+            }
+            setDiscovered(true);
+        }
     }
 }

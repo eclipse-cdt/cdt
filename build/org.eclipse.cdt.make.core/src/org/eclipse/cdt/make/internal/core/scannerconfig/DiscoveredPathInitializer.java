@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
 public class DiscoveredPathInitializer extends PathEntryContainerInitializer {
 
 	public void initialize(IPath containerPath, ICProject project) throws CoreException {
-		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{project}, new DiscoveredPathContainer(project.getProject()), null);
+		CoreModel.setPathEntryContainer(new ICProject[]{project}, new DiscoveredPathContainer(project.getProject()), null);
 	}
 
 }

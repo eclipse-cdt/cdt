@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -36,10 +35,10 @@ import org.eclipse.core.runtime.QualifiedName;
  * @author vhirsl
  */
 public final class ScannerConfigUtil {
-	private static Random sRandom = new Random();
-	private static final QualifiedName discoveredScannerConfigFileNameProperty = new 
+	private static final QualifiedName dscFileNameProperty = new 
 			QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "discoveredScannerConfigFileName"); //$NON-NLS-1$
-	/**
+
+    /**
 	 * Adds all new discovered symbols/values to the existing ones.
 	 *  
 	 * @param sumSymbols - a map of [String, Map] where Map is a SymbolEntry
@@ -303,7 +302,7 @@ public final class ScannerConfigUtil {
         String fileName = project.getName() + ".sc"; //$NON-NLS-1$
 		String storedFileName = null;
 		try {
-            storedFileName = project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
+            storedFileName = project.getPersistentProperty(dscFileNameProperty);
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e.getStatus());
 		}
@@ -312,7 +311,7 @@ public final class ScannerConfigUtil {
             movePluginStateFile(storedFileName, fileName);
         }
         try {
-            project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);
+            project.setPersistentProperty(dscFileNameProperty, fileName);
         } catch (CoreException e) {
             MakeCorePlugin.log(e.getStatus());
         }
@@ -382,7 +381,7 @@ public final class ScannerConfigUtil {
         String scNewFileName = newProject.getName() + ".sc"; //$NON-NLS-1$
         movePluginStateFile(scOldFileName, scNewFileName);
         try {
-            newProject.setPersistentProperty(discoveredScannerConfigFileNameProperty, scNewFileName);
+            newProject.setPersistentProperty(dscFileNameProperty, scNewFileName);
         }
         catch (CoreException e) {
             MakeCorePlugin.log(e);

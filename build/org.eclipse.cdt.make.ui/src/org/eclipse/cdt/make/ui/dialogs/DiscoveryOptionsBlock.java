@@ -312,7 +312,13 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         if (buildInfo != null) {
             buildInfo.setAutoDiscoveryEnabled(scEnabledButton.getSelection());
             String profileName = profileComboBox.getItem(profileComboBox.getSelectionIndex());
+            String oldProfileId = buildInfo.getSelectedProfileId();
             buildInfo.setSelectedProfileId(getDiscoveryProfileId(profileName));
+            String newProfileId = buildInfo.getSelectedProfileId();
+            if (!oldProfileId.equals(newProfileId) && getProject() != null) {
+                // invalidate scanner config store and reload
+//                MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(getProject());
+            }
             buildInfo.setProblemReportingEnabled(scProblemReportingEnabledButton.getSelection());
         }
     }

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.w3c.dom.Element;
 
 /**
  * New per project scanner info collector
@@ -44,7 +45,9 @@ import org.eclipse.core.runtime.Platform;
  * @since 3.0
  * @author vhirsl
  */
-public class PerProjectSICollector implements IScannerInfoCollector2, IScannerInfoCollectorUtil {
+public class PerProjectSICollector implements IScannerInfoCollector2, IScannerInfoCollectorCleaner {
+	public static final String COLLECTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".PerProjectSICollector"; //$NON-NLS-1$
+
 	private IProject project;
 	
 	private Map discoveredSI;
@@ -380,6 +383,20 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
      */
     public List getIncludePaths() {
         return sumDiscoveredIncludes;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#serialize(org.w3c.dom.Element)
+     */
+    public void serialize(Element root) {
+        // not supported in PerProject collector
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deserialize(org.w3c.dom.Element)
+     */
+    public void deserialize(Element root) {
+        // not supported in PerProject collector
     }
 
     /* (non-Javadoc)

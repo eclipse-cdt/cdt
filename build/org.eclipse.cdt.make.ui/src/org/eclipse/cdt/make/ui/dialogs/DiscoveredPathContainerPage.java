@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
@@ -563,8 +563,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
         SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
                 getSCProfileInstance(project, ScannerConfigProfileManager.NULL_PROFILE_ID); // use selected profile for the project
         IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
-        if (collector instanceof IScannerInfoCollectorUtil) {
-            IScannerInfoCollectorUtil collectorUtil = (IScannerInfoCollectorUtil) collector;
+        if (collector instanceof IScannerInfoCollectorCleaner) {
+            IScannerInfoCollectorCleaner collectorUtil = (IScannerInfoCollectorCleaner) collector;
     		List newSelection = new ArrayList();
     		List selElements = fDiscoveredContainerList.getSelectedElements();
     		for (int i = 0; i < selElements.size(); ++i) {

@@ -133,8 +133,11 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             cmdList.add(cmd);
             Map sc = new HashMap(1);
             sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
-            IFile file = getProject().getFile(pFilePath);
-            getCollector().contributeToScannerConfig(file, sc);
+            if (getProject().getLocation().isPrefixOf(pFilePath)) {
+            	IPath relPath = pFilePath.removeFirstSegments(getProject().getLocation().segmentCount());
+                IFile file = getProject().getFile(relPath);
+                getCollector().contributeToScannerConfig(file, sc);
+            }
             // fUtil.addGenericCommandForFile2(longFileName, genericLine);
         }
         return rc;

@@ -84,9 +84,9 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     buffer.append(':');
                     buffer.append(ENDL);
                     buffer.append("\t@echo begin generating scanner info for $@"+ENDL+"\t"); //$NON-NLS-1$ //$NON-NLS-2$
-                    buffer.append(cmd);
+                    buffer.append(cmd.getSCDRunnableCommand());
                     buffer.append(" -E -P -v -dD "); //$NON-NLS-1$
-                    buffer.append(cmd.appliesToCFileType() ? "specs.c" : "specs.cpp"); //$NON-NLS-1$ //$NON-NLS-2$
+                    buffer.append(cmd.appliesToCPPFileType() ? "specs.cpp" : "specs.c"); //$NON-NLS-1$ //$NON-NLS-2$
                     buffer.append(ENDL);
                     buffer.append("\t@echo end generating scanner info for $@"); //$NON-NLS-1$
                     buffer.append(DENDL);

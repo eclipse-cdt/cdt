@@ -35,7 +35,7 @@ public final class SCDOptionsEnum {
 	public static final int MAX = 13;
 	
 	private static final String[] SCDOPTION_STRING_VALS = {
-		"", "-D", "-U", "-I", "-I-", "-nostdinc", "-nostdinc++", "-include", "-imacros",
+		"cc", "-D", "-U", "-I", "-I-", "-nostdinc", "-nostdinc++", "-include", "-imacros",
 		"-idirafter", "-isystem", "-iprefix", "-iwithprefix", "-iwithprefixbefore"  
 	};
 	private static final SCDOptionsEnum SCDOPTIONS[] = {
@@ -46,7 +46,7 @@ public final class SCDOptionsEnum {
 	/**
 	 * 
 	 */
-	public SCDOptionsEnum(int val) {
+	private SCDOptionsEnum(int val) {
 		this._enum = val;
 	}
 
@@ -61,6 +61,15 @@ public final class SCDOptionsEnum {
 		return null;
 	}
 	
+    public static SCDOptionsEnum getSCDOptionsEnum(String desc) {
+        for (int i = 0; i <= MAX; ++i) {
+            if (desc.equals(SCDOPTION_STRING_VALS[i])) {
+                return SCDOPTIONS[i];
+            }
+        }
+        return null;
+    }
+    
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

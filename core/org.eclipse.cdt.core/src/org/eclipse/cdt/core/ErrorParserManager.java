@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -208,6 +209,28 @@ public class ErrorParserManager extends OutputStream {
 		return (IFile) fFilesInProject.get(path.lastSegment());
 	}
 
+	protected IFile findFileInWorkspace(IPath path) {
+		IFile file = null;
+		if (path.isAbsolute()) {
+			IWorkspaceRoot root = fProject.getWorkspace().getRoot();
+			file =  root.getFileForLocation(path);
+			// It may be a link resource so we must check it also.
+			if (file == null) {
+				IFile[] files = root.findFilesForLocation(path);
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].getProject().equals(fProject)) {
+						file = files[i];
+						break;
+					}
+				}
+			}
+
+		} else {
+			file = fProject.getFile(path);
+		}
+		return file;
+	}
+
 	/**
 	 * Called by the error parsers.
 	 */
@@ -235,9 +258,9 @@ public class ErrorParserManager extends OutputStream {
 
 		IFile file = null;
 		// The workspace may throw an IllegalArgumentException
-		// Catch it and the parser will fallback to scan the entire project.
+		// Catch it and the parser should fallback to scan the entire project.
 		try {
-			file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+			file = findFileInWorkspace(path);
 		} catch (Exception e) {
 		}
 
@@ -248,11 +271,9 @@ public class ErrorParserManager extends OutputStream {
 			try {
 				String canon = f.getCanonicalPath();
 				path = new Path(canon);
-				file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+				file = findFileInWorkspace(path);
 			} catch (IOException e1) {
 			}
-		} else {
-			return file;
 		}
 		return (file != null && file.exists()) ? file : null;
 	}

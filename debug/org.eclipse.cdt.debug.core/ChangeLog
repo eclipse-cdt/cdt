@@ -1,3 +1,8 @@
+2004-04-30 Mikhail Khodjaiants
+	New copyright.
+	* IJumpToAddress.java
+	* IJumpToLine.java
+
 2004-04-27 Mikhail Khodjaiants
 	Moved the "FUNCTION" and "ADDRESS" breakpoint attributes to ICLineBreakpoint.
 	Added support for the Disassembly view.

@@ -34,6 +34,7 @@ RSC=rc.exe
 OUTDIR=..\os\win32\x86
 INTDIR=.\
 # Begin Custom Macros
+
 OutDir=..\os\win32\x86
 # End Custom Macros
 
@@ -56,9 +57,6 @@ CLEAN :
 
 CPP_PROJ=/nologo /Gz /MT /W3 /GX /O2 /I "$(JAVA_HOME)\include" /I "$(JAVA_HOME)\include\Win32" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SPAWNER_EXPORTS" /Fp"$(INTDIR)\spawner.pch" /Yu"stdafx.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /win32 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\spawner.bsc" 
-BSC32_SBRS= \
 	
 LINK32=link.exe
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\spawner.pdb" /machine:I386 /out:"$(OUTDIR)\spawner.dll" /implib:"$(OUTDIR)\spawner.lib" 
@@ -81,7 +79,7 @@ INTDIR=.\
 OutDir=..\os\win32\x86
 # End Custom Macros
 
-ALL : "$(OUTDIR)\spawner.dll" "$(OUTDIR)\spawner.bsc"
+ALL : "$(OUTDIR)\spawner.dll" 
 
 
 CLEAN :
@@ -96,7 +94,6 @@ CLEAN :
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(INTDIR)\Win32ProcessEx.obj"
 	-@erase "$(INTDIR)\Win32ProcessEx.sbr"
-	-@erase "$(OUTDIR)\spawner.bsc"
 	-@erase "$(OUTDIR)\spawner.dll"
 	-@erase "$(OUTDIR)\spawner.exp"
 	-@erase "$(OUTDIR)\spawner.ilk"
@@ -109,18 +106,6 @@ CLEAN :
 
 CPP_PROJ=/nologo /Gz /MD /W3 /Gm /GX /ZI /Od /I "$(JAVA_HOME)\include" /I "$(JAVA_HOME)\include\Win32" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SPAWNER_EXPORTS" /FR"$(INTDIR)\\" /Fp"$(INTDIR)\spawner.pch" /Yu"stdafx.h" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /win32 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\spawner.bsc" 
-BSC32_SBRS= \
-	"$(INTDIR)\iostream.sbr" \
-	"$(INTDIR)\spawner.sbr" \
-	"$(INTDIR)\StdAfx.sbr" \
-	"$(INTDIR)\Win32ProcessEx.sbr"
-
-"$(OUTDIR)\spawner.bsc" : "$(OUTDIR)" $(BSC32_SBRS)
-    $(BSC32) @<<
-  $(BSC32_FLAGS) $(BSC32_SBRS)
-<<
 
 LINK32=link.exe
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\spawner.pdb" /map:"$(INTDIR)\spawner.map" /debug /machine:I386 /out:"$(OUTDIR)\spawner.dll" /implib:"$(OUTDIR)\spawner.lib" /pdbtype:sept 

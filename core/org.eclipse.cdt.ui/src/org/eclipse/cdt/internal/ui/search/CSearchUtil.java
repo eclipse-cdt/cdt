@@ -56,7 +56,17 @@ public class CSearchUtil {
 	 * @return
 	 */
 	public static Object toString(IWorkingSet[] workingSets) {
-		// TODO Auto-generated method stub
+		if( workingSets != null & workingSets.length > 0 ){
+			String string = new String();
+			for( int i = 0; i < workingSets.length; i++ ){
+				if( i > 0 )
+					string += ", ";  //$NON-NLS-1$
+				string += workingSets[i].getName();
+			}
+			
+			return string;
+		}
+		
 		return null;
 	}
 

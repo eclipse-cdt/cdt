@@ -1,3 +1,8 @@
+2003-09-30 Andrew Niefer
+	Bug 43923 - Search: Results pane title missing Working Set's name
+	- implement CSearchUtil.toString( IWorkingSet [] )
+	* src/org/eclipse/cdt/internal/ui/search/CSearchUtil.java
+
 2003-09-30 Alain Magloire
 
 	PR 39339, a definition is missing the CPluginResource.properties file.

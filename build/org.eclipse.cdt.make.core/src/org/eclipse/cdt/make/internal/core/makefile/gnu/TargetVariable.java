@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
 /**
  *   Here is the syntax of a static pattern rule:
@@ -22,8 +22,8 @@ public class TargetVariable extends VariableDefinition {
 
 	boolean override;
 
-	public TargetVariable(String target, String name, StringBuffer value, boolean override, int type) {
-		super(target, name, value, type);
+	public TargetVariable(Directive parent, String target, String name, StringBuffer value, boolean override, int type) {
+		super(parent, target, name, value, type);
 		this.override = override;
 	}
 

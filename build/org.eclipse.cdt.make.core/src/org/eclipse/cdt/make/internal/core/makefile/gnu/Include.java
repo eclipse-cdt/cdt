@@ -13,14 +13,17 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 import java.io.IOException;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.Parent;
 
-public class Include extends Parent {
+public class Include extends Parent implements IInclude {
 
 	String[] filenames;
 	String[] dirs;
 
-	public Include(String[] files, String[] directories) {
+	public Include(Directive parent, String[] files, String[] directories) {
+		super(parent);
 		filenames = files;
 		dirs = directories;
 	}
@@ -37,14 +40,14 @@ public class Include extends Parent {
 		return filenames;
 	}
 
-	public IDirective[] getStatements() {
+	public IDirective[] getDirectives() {
 		GNUMakefile gnu = new GNUMakefile();
-		clearStatements();
+		clearDirectives();
 		for (int i = 0; i < filenames.length; i++) {
 			// Try the current directory.
 			try {
 				gnu.parse(filenames[i]);
-				addStatements(gnu.getStatements());
+				addDirectives(gnu.getStatements());
 				continue;
 			} catch (IOException e) {
 			}
@@ -53,13 +56,13 @@ public class Include extends Parent {
 					try {
 						String filename =  dirs[j] + GNUMakefile.FILE_SEPARATOR + filenames[i];
 						gnu.parse(filename);
-						addStatements(gnu.getStatements());
+						addDirectives(gnu.getStatements());
 						break;
 					} catch (IOException e) {
 					}
 				}
 			}
 		}
-		return super.getStatements();
+		return super.getDirectives();
 	}
 }

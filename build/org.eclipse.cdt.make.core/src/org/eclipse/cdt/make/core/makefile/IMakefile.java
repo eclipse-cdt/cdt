@@ -15,17 +15,65 @@ import java.io.Reader;
 
 
 /**
- * IMakefile
+ * IMakefile:
+ *
+ * Makefile : ( directive ) *
+ * directive :   rule | macro_definition | comments | empty
+ * rule :  inference_rule | target_rule | special_rule
+ * inference_rule : target ':' [ ';' command ] <nl>
+ *		 [ ( command ) * ]
+ * target_rule : [ ( target ) + ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ *               [ ( command ) *  ]
+ * macro_definition : string '=' ( string )* 
+ * comments : ('#' ( string ) <nl>) *
+ * empty : <nl>
+ * command : <tab> prefix_command string <nl>
+ * target : string
+ * prefix_command : '-' | '@' | '+'
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
  */
 public interface IMakefile extends IParent {
+
+	/**
+	 * ITargetRule | IInferenceRule | ISpecialRule
+	 * @return
+	 */
 	IRule[] getRules();
-	IRule[] getRule(String target);
+
+	/**
+	 * Returns IInferenceRule
+	 * @return
+	 */
 	IInferenceRule[] getInferenceRules();
-	IInferenceRule[] getInferenceRule(String target);
+
+	/**
+	 * Returns ITargetRule
+	 * @return
+	 */
 	ITargetRule[] getTargetRules();
-	ITargetRule[] getTargetRule(String target);
+
+	/**
+	 * Return IMacroDefintion
+	 * @return
+	 */
 	IMacroDefinition[] getMacroDefinitions();
-	IMacroDefinition[] getMacroDefinition(String name);
+
+	/**
+	 * Return all the builtin directives.
+	 * @return
+	 */
 	IDirective[] getBuiltins();
+
+	/**
+	 * Return all the buil-in MacroDefintions
+	 * @return
+	 */
+	IMacroDefinition[] getBuiltinMacroDefinitions();
+
+	/**
+	 * Clear the all statements and (re)parse the Makefile
+	 * @param makefile
+	 * @throws IOException
+	 */
 	void parse(Reader makefile) throws IOException;
 }

@@ -12,15 +12,17 @@ package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
 
-public abstract class Statement implements IDirective {
+public abstract class Directive implements IDirective {
 
 	int endLine;
 	int startLine;
+	Directive parent;
 
-	public Statement() {
+	public Directive(Directive owner) {
+		parent = owner;
 	}
 
-	public Statement(int start, int end) {
+	public Directive(int start, int end) {
 		setLines(start, end);
 	}
 
@@ -33,10 +35,6 @@ public abstract class Statement implements IDirective {
 		return endLine;
 	}
 
-	public void setEndLine(int lineno) {
-		endLine = lineno;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getStartLine()
 	 */
@@ -44,8 +42,23 @@ public abstract class Statement implements IDirective {
 		return startLine;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getParent()
+	 */
+	public IDirective getParent() {
+		return parent;
+	}
+
+	public void setParent(Directive owner) {
+		parent = owner;
+	}
+
 	public void setStartLine(int lineno) {
 		startLine = lineno;
+	}
+
+	public void setEndLine(int lineno) {
+		endLine = lineno;
 	}
 
 	public void setLines(int start, int end) {

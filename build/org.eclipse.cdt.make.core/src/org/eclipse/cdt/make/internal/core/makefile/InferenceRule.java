@@ -11,20 +11,19 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.ICommand;
-import org.eclipse.cdt.make.core.makefile.ITarget;
 
 public class InferenceRule extends Rule {
 
-	public InferenceRule(ITarget target) {
-		this(target, new Command[0]);
+	public InferenceRule(Directive parent, Target target) {
+		this(parent, target, new Command[0]);
 	}
 
-	public InferenceRule(String tgt, ICommand[] cmds) {
-		this(new Target(tgt), cmds);
+	public InferenceRule(Directive parent, String tgt, Command[] cmds) {
+		this(parent, new Target(tgt), cmds);
 	}
 
-	public InferenceRule(ITarget target, ICommand[] cmds) {
-		super(target, cmds);
+	public InferenceRule(Directive parent, Target target, Command[] cmds) {
+		super(parent, target, cmds);
 	}
 
 	/**

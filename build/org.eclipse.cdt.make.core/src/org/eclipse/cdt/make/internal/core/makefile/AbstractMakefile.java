@@ -38,13 +38,14 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
 
 public abstract class AbstractMakefile extends Parent implements IMakefile {
 
-	public AbstractMakefile() {
+	public AbstractMakefile(Directive parent) {
+		super(parent);
 	}
 
 	public abstract IDirective[] getBuiltins();
 
 	public IRule[] getRules() {
-		IDirective[] stmts = getStatements();
+		IDirective[] stmts = getDirectives();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IRule) {
@@ -110,7 +111,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	}
 
 	public IMacroDefinition[] getMacroDefinitions() {
-		IDirective[] stmts = getStatements();
+		IDirective[] stmts = getDirectives();
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IMacroDefinition) {

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IIgnoreRule;
-import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * .IGNORE
@@ -21,8 +20,8 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
  */
 public class IgnoreRule extends SpecialRule implements IIgnoreRule {
 
-	public IgnoreRule(String[] reqs) {
-		super(new Target(".IGNORE"), reqs, new ICommand[0]);
+	public IgnoreRule(Directive parent, String[] reqs) {
+		super(parent, new Target(".IGNORE"), reqs, new Command[0]);
 	}
 
 }

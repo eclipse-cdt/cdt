@@ -10,13 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
 
 public class OverrideDefine extends DefineVariable {
 
-
-	public OverrideDefine(String name, StringBuffer value) {
-		super(name, value);
+	public OverrideDefine(Directive parent, String name, StringBuffer value) {
+		super(parent, name, value);
 	}
 
 	public String toString() {

@@ -1,3 +1,4 @@
+
 /**********************************************************************
  * Copyright (c) 2002,2003 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
@@ -12,13 +13,13 @@ package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IEmptyLine;
 
-public class EmptyLine extends Statement implements IEmptyLine {
+public class EmptyLine extends Directive implements IEmptyLine {
 
 	final public static char NL = '\n';
 	final public static String NL_STRING = "\n";
 
-	public EmptyLine() {
-		super();
+	public EmptyLine(Directive parent) {
+		super(parent);
 	}
 
 	public String toString() {

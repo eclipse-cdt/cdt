@@ -12,8 +12,10 @@ package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.core.makefile.ICommand;
 import org.eclipse.cdt.make.core.makefile.IInferenceRule;
-import org.eclipse.cdt.make.core.makefile.ITarget;
+import org.eclipse.cdt.make.internal.core.makefile.Command;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
+import org.eclipse.cdt.make.internal.core.makefile.Target;
 
 
 /**
@@ -28,8 +30,8 @@ public class StaticTargetRule extends InferenceRule implements IInferenceRule {
 	String targetPattern;
 	String[] prereqPatterns;
 
-	public StaticTargetRule(ITarget target, String target_pattern, String[] prereq_patterns, ICommand[] commands) {
-		super(target, commands);
+	public StaticTargetRule(Directive parent, Target target, String target_pattern, String[] prereq_patterns, Command[] commands) {
+		super(parent, target, commands);
 		targetPattern = target_pattern;
 		prereqPatterns = prereq_patterns;
 	}

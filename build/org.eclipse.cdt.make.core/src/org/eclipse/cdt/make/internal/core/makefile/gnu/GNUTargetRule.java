@@ -11,19 +11,20 @@
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
 import org.eclipse.cdt.make.core.makefile.ICommand;
-import org.eclipse.cdt.make.core.makefile.ITarget;
+import org.eclipse.cdt.make.internal.core.makefile.Command;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
+import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 
 /**
  */
-
 public class GNUTargetRule extends TargetRule {
 
 	String[] orderOnlyPrerequisites;
 	boolean doubleColon;
 
-	public GNUTargetRule(ITarget target, boolean double_colon, String[] normal_prereqs, String[] order_prereqs, ICommand[] commands) {
-		super(target, normal_prereqs, commands);
+	public GNUTargetRule(Directive parent, Target target, boolean double_colon, String[] normal_prereqs, String[] order_prereqs, Command[] commands) {
+		super(parent, target, normal_prereqs, commands);
 		orderOnlyPrerequisites = order_prereqs;
 		doubleColon = double_colon;
 	}

@@ -10,15 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
 
 public class DefineVariable extends VariableDefinition {
 
-	public DefineVariable(String name, StringBuffer value) {
-		super(name, value);
+	public DefineVariable(Directive parent, String name, StringBuffer value) {
+		super(parent, name, value);
 	}
 
-	public boolean isMultiline() {
+	public boolean isMultiLine() {
 		return true;
 	}
 

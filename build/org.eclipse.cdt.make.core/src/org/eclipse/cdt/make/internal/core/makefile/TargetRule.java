@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.ICommand;
-import org.eclipse.cdt.make.core.makefile.ITarget;
 import org.eclipse.cdt.make.core.makefile.ITargetRule;
 
 /**
@@ -34,16 +33,16 @@ public class TargetRule extends Rule implements ITargetRule {
 
 	String[] prerequisites;
 
-	public TargetRule(ITarget target) {
-		this(target, new String[0], new ICommand[0]);
+	public TargetRule(Directive parent, Target target) {
+		this(parent, target, new String[0], new Command[0]);
 	}
 
-	public TargetRule(ITarget target, String[] deps) {
-		this(target, deps, new ICommand[0]);
+	public TargetRule(Directive parent, Target target, String[] deps) {
+		this(parent, target, deps, new Command[0]);
 	}
 
-	public TargetRule(ITarget target, String[] reqs, ICommand[] commands) {
-		super(target, commands);
+	public TargetRule(Directive parent, Target target, String[] reqs, Command[] commands) {
+		super(parent, target, commands);
 		prerequisites = reqs;
 	}
 

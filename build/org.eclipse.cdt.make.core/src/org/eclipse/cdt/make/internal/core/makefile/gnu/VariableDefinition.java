@@ -10,11 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.core.makefile.gnu.IVariableDefinition;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
 
 /**
  */
-public class VariableDefinition extends MacroDefinition  {
+public class VariableDefinition extends MacroDefinition implements IVariableDefinition  {
 
 	/**
 	 * ? is Conditional
@@ -29,16 +31,16 @@ public class VariableDefinition extends MacroDefinition  {
 	int type;
 	String varTarget;
 
-	public VariableDefinition(String name, StringBuffer value) {
-		this(name, value, TYPE_RECURSIVE_EXPAND);
+	public VariableDefinition(Directive parent, String name, StringBuffer value) {
+		this(parent, name, value, TYPE_RECURSIVE_EXPAND);
 	}
 
-	public VariableDefinition(String name, StringBuffer value, int type) {
-		this("", name, value, type);
+	public VariableDefinition(Directive parent, String name, StringBuffer value, int type) {
+		this(parent,  "", name, value, type);
 	}
 
-	public VariableDefinition(String target, String name, StringBuffer value, int type) {
-		super(name, value);
+	public VariableDefinition(Directive parent, String target, String name, StringBuffer value, int type) {
+		super(parent, name, value);
 		varTarget = target;
 		this.type = type;
 	}
@@ -78,10 +80,6 @@ public class VariableDefinition extends MacroDefinition  {
 		return sb.toString();
 	}
 
-	public boolean equals(VariableDefinition v) {
-		return v.getName().equals(getName());
-	}
-
 	public boolean isRecursivelyExpanded() {
 		return type == TYPE_RECURSIVE_EXPAND;
 	}
@@ -100,7 +98,7 @@ public class VariableDefinition extends MacroDefinition  {
 
 	public boolean isTargetSpecific() {
 		String t = getTarget();
-		return t == null || t.length() == 0;
+		return t != null && t.length() > 0;
 	}
 
 	public boolean isExport() {

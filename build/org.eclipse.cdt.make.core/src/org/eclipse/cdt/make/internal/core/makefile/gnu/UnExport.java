@@ -10,13 +10,15 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.core.makefile.gnu.IUnExport;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-public class UnExport extends Statement {
+public class UnExport extends Directive implements IUnExport {
 
 	String variable;
 
-	public UnExport(String var) {
+	public UnExport(Directive parent, String var) {
+		super(parent);
 		variable = var;
 	}
 

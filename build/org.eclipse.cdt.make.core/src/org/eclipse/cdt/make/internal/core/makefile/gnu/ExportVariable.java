@@ -10,11 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
+
 
 public class ExportVariable extends VariableDefinition {
 
-	public ExportVariable(String name, StringBuffer value, int type) {
-		super(name, value, type);
+	public ExportVariable(Directive parent, String name, StringBuffer value, int type) {
+		super(parent, name, value, type);
 	}
 
 	public boolean isExport() {

@@ -10,14 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.core.makefile.gnu.IVPath;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-public class VPath extends Statement {
+public class VPath extends Directive implements IVPath {
 
 	String pattern;
 	String[] directories;
 
-	public VPath(String pat, String[] dirs) {
+	public VPath(Directive parent, String pat, String[] dirs) {
+		super(parent);
 		pattern = pat;
 		directories = dirs;
 	}

@@ -10,16 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
+
+public class Endef extends Terminal {
 
 
-public class Endef extends Statement {
-
-
-	public Endef() {
+	public Endef(Directive parent) {
+		super(parent);
 	}
 
-	public String toString() {
-		return "endef";
+	public boolean isEndef() {
+		return true;
 	}
 }

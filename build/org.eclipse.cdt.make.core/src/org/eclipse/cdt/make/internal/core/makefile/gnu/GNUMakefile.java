@@ -10,39 +10,42 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.gnu.IGNUMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
-import org.eclipse.cdt.make.internal.core.makefile.BadStatement;
+import org.eclipse.cdt.make.internal.core.makefile.BadDirective;
 import org.eclipse.cdt.make.internal.core.makefile.Command;
 import org.eclipse.cdt.make.internal.core.makefile.Comment;
 import org.eclipse.cdt.make.internal.core.makefile.DefaultRule;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.IgnoreRule;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
+import org.eclipse.cdt.make.internal.core.makefile.MacroDefinition;
 import org.eclipse.cdt.make.internal.core.makefile.MakefileReader;
-import org.eclipse.cdt.make.internal.core.makefile.Parent;
 import org.eclipse.cdt.make.internal.core.makefile.PosixRule;
 import org.eclipse.cdt.make.internal.core.makefile.PreciousRule;
 import org.eclipse.cdt.make.internal.core.makefile.Rule;
 import org.eclipse.cdt.make.internal.core.makefile.SccsGetRule;
 import org.eclipse.cdt.make.internal.core.makefile.SilentRule;
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.internal.core.makefile.SpecialRule;
 import org.eclipse.cdt.make.internal.core.makefile.SuffixesRule;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
-import org.eclipse.cdt.make.internal.core.makefile.posix.PosixBuiltinMacroDefinitions;
-import org.eclipse.cdt.make.internal.core.makefile.posix.PosixBuiltinRules;
-import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Makefile : ( statement ) *
@@ -60,19 +63,27 @@ import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
  * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
  */
 
-public class GNUMakefile extends AbstractMakefile {
+public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 	public static String PATH_SEPARATOR = System.getProperty("path.separator", ":");
 	public static String FILE_SEPARATOR = System.getProperty("file.separator", "/");
 
 	String[] includeDirectories = new String[0];
+	IDirective[] builtins = null;
 
 	public GNUMakefile() {
-		super();
+		super(null);
 	}
 
 	public void parse(String name) throws IOException {
-		parse(new FileReader(name));
+		FileReader stream = new FileReader(name);
+		parse(stream);
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
 	public void parse(Reader reader) throws IOException {
@@ -87,8 +98,8 @@ public class GNUMakefile extends AbstractMakefile {
 		int startLine = 0;
 		int endLine = 0;
 
-		// Clear any old statements.
-		clearStatements();
+		// Clear any old directives.
+		clearDirectives();
 
 		while ((line = reader.readLine()) != null) {
 			startLine = endLine + 1;
@@ -101,20 +112,20 @@ public class GNUMakefile extends AbstractMakefile {
 					VariableDefinition def = (VariableDefinition) defines.pop();
 					def.setEndLine(endLine);
 				}
-				Endef endef = createEndef();
+				Endef endef = new Endef(this);
 				endef.setLines(startLine, endLine);
-				addStatement(conditions, endef);
+				addDirective(conditions, endef);
 				continue;
 			} else if (GNUMakefileUtil.isDefine(line)) {
-				VariableDefinition def = createVariableDefinition(line);
+				VariableDefinition def = parseVariableDefinition(line);
 				def.setLines(startLine, endLine);
-				addStatement(conditions, def);
+				addDirective(conditions, def);
 				defines.push(def);
 				continue;
 			} else if (GNUMakefileUtil.isOverrideDefine(line)) {
-				VariableDefinition oDef = createVariableDefinition(line);
+				VariableDefinition oDef = parseVariableDefinition(line);
 				oDef.setLines(startLine, endLine);
-				addStatement(conditions, oDef);
+				addDirective(conditions, oDef);
 				defines.push(oDef);
 				continue;
 			}
@@ -132,43 +143,59 @@ public class GNUMakefile extends AbstractMakefile {
 
 			// 1- Try command first, since we can not strip '#' in command line
 			if (GNUMakefileUtil.isCommand(line)) {
-				Command cmd = createCommand(line);
+				Command cmd = new Command(this, line);
 				cmd.setLines(startLine, endLine);
 				if (!conditions.empty()) {
-					addStatement(conditions, cmd);
+					addDirective(conditions, cmd);
 					continue;
 				} else if (rules != null) {
 					// The command is added to the rules
 					for (int i = 0; i < rules.length; i++) {
-						rules[i].addStatement(cmd);
+						rules[i].addDirective(cmd);
 						rules[i].setEndLine(endLine);
 					}
 					continue;
 				}
 				// If we have no rules/condition for the command,
-				// give the other statements a chance by falling through
+				// give the other directives a chance by falling through
 			}
 
 			// 2- Strip away any comments.
 			int pound = Util.indexOfComment(line);
 			if (pound != -1) {
-				Comment cmt = createComment(line.substring(pound + 1));
+				Comment cmt = new Comment(this, line.substring(pound + 1));
 				cmt.setLines(startLine, endLine);
-				addStatement(conditions, cmt);
+				if (rules != null) {
+					// The comment is added to the rules.
+					for (int i = 0; i < rules.length; i++) {
+						rules[i].addDirective(cmt);
+						rules[i].setEndLine(endLine);
+					}
+				} else {
+					addDirective(conditions, cmt);
+				}
 				line = line.substring(0, pound);
 				// If all we have left are spaces continue
 				if (Util.isEmptyLine(line)) {
 					continue;
 				}
-				// The rest of the line maybe a valid statement.
+				// The rest of the line maybe a valid directives.
 				// keep on trying by falling through.
 			}
 
 			// 3- Empty lines ?
 			if (Util.isEmptyLine(line)) {
-				Statement empty = createEmptyLine();
+				Directive empty = new EmptyLine(this);
 				empty.setLines(startLine, endLine);
-				addStatement(conditions, empty);
+				if (rules != null) {
+					// The EmptyLine is added to the rules.
+					for (int i = 0; i < rules.length; i++) {
+						rules[i].addDirective(empty);
+						rules[i].setEndLine(endLine);
+					}
+				} else {
+					addDirective(conditions, empty);
+				}
 				continue;
 			}
 
@@ -178,76 +205,77 @@ public class GNUMakefile extends AbstractMakefile {
 			rules = null;
 
 			if (GNUMakefileUtil.isElse(line)) {
-				Statement elseDirective = createConditional(line);
+				Conditional elseDirective = parseConditional(line);
 				elseDirective.setLines(startLine, endLine);
 				// Are we missing a if condition ?
 				if (!conditions.empty()) {
-					Statement cond = (Statement) conditions.pop();
+					Conditional cond = (Conditional) conditions.pop();
 					cond.setEndLine(endLine - 1);
 				}
-				addStatement(conditions, elseDirective);
+				addDirective(conditions, elseDirective);
 				conditions.push(elseDirective);
 				continue;
 			} else if (GNUMakefileUtil.isEndif(line)) {
-				Conditional endif = createConditional(line);
+				Endif endif = new Endif(this);
 				endif.setLines(startLine, endLine);
 				// Are we missing a if/else condition ?
 				if (!conditions.empty()) {
-					Statement cond = (Statement) conditions.pop();
-					cond.setEndLine(endLine - 1);
+					Conditional cond = (Conditional) conditions.pop();
+					cond.setEndLine(endLine);
 				}
-				addStatement(conditions, endif);
+				addDirective(conditions, endif);
 				continue;
 			}
 
 			// 5- Check for the conditionnals.
-			Statement statement = processConditions(line);
-			if (statement != null) {
-				statement.setLines(startLine, endLine);
-				addStatement(conditions, statement);
-				conditions.push(statement);
+			Directive directive = processConditions(line);
+			if (directive != null) {
+				directive.setLines(startLine, endLine);
+				addDirective(conditions, directive);
+				conditions.push(directive);
 				continue;
 			}
 
 			// 6- Check for other special gnu directives.
-			statement = processGNUDirectives(line);
-			if (statement != null) {
-				statement.setLines(startLine, endLine);
-				addStatement(conditions, statement);
+			directive = processGNUDirectives(line);
+			if (directive != null) {
+				directive.setLines(startLine, endLine);
+				addDirective(conditions, directive);
 				continue;
 			}
 
 			// 7- Check for GNU special rules.
-			Rule rule = processSpecialRules(line);
-			if (rule != null) {
-				rules = new Rule[] { rule };
-				rule.setLines(startLine, endLine);
-				addStatement(conditions, rule);
+			SpecialRule special = processSpecialRules(line);
+			if (special != null) {
+				rules = new Rule[] { special };
+				special.setLines(startLine, endLine);
+				addDirective(conditions, special);
 				continue;
 			}
 
 			// - Check for inference rule.
 			if (GNUMakefileUtil.isInferenceRule(line)) {
-				InferenceRule irule = createInferenceRule(line);
+				InferenceRule irule = parseInferenceRule(line);
 				irule.setLines(startLine, endLine);
-				addStatement(conditions, irule);
+				addDirective(conditions, irule);
 				rules = new Rule[] { irule };
 				continue;
 			}
 
 			// - Variable Definiton ?
 			if (GNUMakefileUtil.isVariableDefinition(line)) {
-				Statement stmt = createVariableDefinition(line);
+				Directive stmt = parseVariableDefinition(line);
 				stmt.setLines(startLine, endLine);
-				addStatement(conditions, stmt);
+				addDirective(conditions, stmt);
 				continue;
 			}
 
+			// - GNU Static Target rule ?
 			if (GNUMakefileUtil.isStaticTargetRule(line)) {
-				StaticTargetRule[] srules = createStaticTargetRule(line);
+				StaticTargetRule[] srules = parseStaticTargetRule(line);
 				for (int i = 0; i < srules.length; i++) {
 					srules[i].setLines(startLine, endLine);
-					addStatement(conditions, srules[i]);
+					addDirective(conditions, srules[i]);
 				}
 				rules = srules;
 				continue;
@@ -255,76 +283,93 @@ public class GNUMakefile extends AbstractMakefile {
 
 			// - Target Rule ?
 			if (GNUMakefileUtil.isGNUTargetRule(line)) {
-				TargetRule[] trules = createGNUTargetRules(line);
+				TargetRule[] trules = parseGNUTargetRules(line);
 				for (int i = 0; i < trules.length; i++) {
 					trules[i].setLines(startLine, endLine);
-					addStatement(conditions, trules[i]);
+					addDirective(conditions, trules[i]);
 				}
 				rules = trules;
 				continue;
 			}
 
 			// XXX ?? Should not be here.
-			BadStatement stmt = new BadStatement(line);
+			BadDirective stmt = new BadDirective(this, line);
 			stmt.setLines(startLine, endLine);
-			addStatement(conditions, stmt);
+			addDirective(conditions, stmt);
 
 		}
 		setLines(1, endLine);
+		// TEST please remove.
+		//GNUMakefileValidator validator = new GNUMakefileValidator();
+		//validator.validateDirectives(null, getDirectives());
 	}
 
-	protected void addStatement(Stack conditions, IDirective statement) {
+	private void addDirective(Stack conditions, Directive directive) {
 		if (conditions.empty()) {
-			addStatement(statement);
+			addDirective(directive);
 		} else {
-			Parent p = (Parent) conditions.peek();
-			p.addStatement(statement);
-			p.setEndLine(statement.getEndLine());
+			Conditional cond = (Conditional) conditions.peek();
+			cond.addDirective(directive);
+			cond.setEndLine(directive.getEndLine());
 		}
 	}
 
-	protected Statement processConditions(String line) {
-		Statement stmt = null;
+	protected Conditional processConditions(String line) {
+		Conditional stmt = null;
 		if (GNUMakefileUtil.isIfdef(line)) {
-			stmt = createConditional(line);
+			stmt = parseConditional(line);
 		} else if (GNUMakefileUtil.isIfndef(line)) {
-			stmt = createConditional(line);
+			stmt = parseConditional(line);
 		} else if (GNUMakefileUtil.isIfeq(line)) {
-			stmt = createConditional(line);
+			stmt = parseConditional(line);
 		} else if (GNUMakefileUtil.isIfneq(line)) {
-			stmt = createConditional(line);
+			stmt = parseConditional(line);
 		}
 		return stmt;
 	}
 
-	protected Statement processGNUDirectives(String line) {
-		Statement stmt = null;
+	protected Directive processGNUDirectives(String line) {
+		Directive stmt = null;
 		if (GNUMakefileUtil.isUnExport(line)) {
-			stmt = createUnExport(line);
+			stmt = parseUnExport(line);
 		} else if (GNUMakefileUtil.isVPath(line)) {
-			stmt = createVPath(line);
+			stmt = parseVPath(line);
 		} else if (GNUMakefileUtil.isInclude(line)) {
-			stmt = createInclude(line);
+			stmt = parseInclude(line);
 		}
 		return stmt;
 	}
 
-	protected Rule processSpecialRules(String line) {
-		Rule stmt = null;
+	protected SpecialRule processSpecialRules(String line) {
+		SpecialRule stmt = null;
 		if (GNUMakefileUtil.isIgnoreRule(line)) {
-			stmt = createIgnoreRule(line);
+			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isPosixRule(line)) {
-			stmt = createPosixRule();
+			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isPreciousRule(line)) {
-			stmt = createPreciousRule(line);
+			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isSilentRule(line)) {
-			stmt = createSilentRule(line);
+			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isSuffixesRule(line)) {
-			stmt = createSuffixesRule(line);
+			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isDefaultRule(line)) {
-			stmt = createDefaultRule(line);
+			stmt = parseSpecialRule(line);
 		} else if (GNUMakefileUtil.isSccsGetRule(line)) {
-			stmt = createSccsGetRule(line);
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isPhonyRule(line)) {
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isIntermediateRule(line)) {
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isSecondaryRule(line)) {
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isDeleteOnErrorRule(line)) {
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isLowResolutionTimeRule(line)) {
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isExportAllVariablesRule(line)) {
+			stmt = parseSpecialRule(line);
+		} else if (GNUMakefileUtil.isNotParallelRule(line)) {
+			stmt = parseSpecialRule(line);
 		}
 		return stmt;
 	}
@@ -333,56 +378,50 @@ public class GNUMakefile extends AbstractMakefile {
 	 * @param line
 	 * @return
 	 */
-	protected Rule createSuffixesRule(String line) {
+	protected SpecialRule parseSpecialRule(String line) {
+		line = line.trim();
+		String keyword =  null;
+		String[] reqs = null;
+		SpecialRule special = null;
 		int index = Util.indexOf(line, ':');
 		if (index != -1) {
+			keyword = line.substring(0, index).trim();
 			String req = line.substring(index + 1);
-			String[] reqs = PosixMakefileUtil.findPrerequisites(req);
-			return new SuffixesRule(reqs);
+			reqs = GNUMakefileUtil.findPrerequisites(req);
+		} else {
+			keyword = line;
+			reqs = new String[0];
 		}
-		return new SuffixesRule(new String[0]);
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	protected Rule createSilentRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = GNUMakefileUtil.findPrerequisites(req);
-			return new SilentRule(reqs);
+		if (".IGNORE".equals(keyword)) {
+			special = new IgnoreRule(this, reqs);
+		} else if (".POSIX".equals(keyword)) {
+			special = new PosixRule(this);
+		} else if (".PRECIOUS".equals(keyword)) {
+			special = new PreciousRule(this, reqs);
+		} else if (".SILENT".equals(keyword)) {
+			special = new SilentRule(this, reqs);
+		} else if (".SUFFIXES".equals(keyword)) {
+			special = new SuffixesRule(this, reqs);
+		} else if (".DEFAULT".equals(keyword)) {
+			special = new DefaultRule(this, new Command[0]);
+		} else if (".SCCS_GET".equals(keyword)) {
+			special = new SccsGetRule(this, new Command[0]);
+		} else if (".PHONY".equals(keyword)) {
+			special = new PhonyRule(this, reqs);
+		} else if (".INTERMEDIATE".equals(keyword)) {
+			special = new IntermediateRule(this, reqs);
+		} else if (".SECONDARY".equals(keyword)) {
+			special = new SecondaryRule(this, reqs);
+		} else if (".DELETE_ON_ERROR".equals(keyword)) {
+			special = new DeleteOnErrorRule(this, reqs);
+		} else if (".LOW_RESOLUTION_TIME".equals(keyword)) {
+			special = new LowResolutionTimeRule(this, reqs);
+		} else if (".EXPORT_ALL_VARIABLES".equals(keyword)) {
+			special = new ExportAllVariablesRule(this, reqs);
+		} else if (".NOTPARALLEL".equals(keyword)) {
+			special = new NotParallelRule(this, reqs);
 		}
-		return new SilentRule(new String[0]);
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	protected Rule createPreciousRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = GNUMakefileUtil.findPrerequisites(req);
-			return new PreciousRule(reqs);
-		}
-		return new PreciousRule(new String[0]);
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	protected Rule createIgnoreRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = GNUMakefileUtil.findPrerequisites(req);
-			return new IgnoreRule(reqs);
-		}
-		return new IgnoreRule(new String[0]);
+		return special;
 	}
 
 	/**
@@ -391,12 +430,11 @@ public class GNUMakefile extends AbstractMakefile {
 	 * ifeq CONDITIONAL
 	 * ifneq CONDITIONAL
 	 * else
-	 * endif
 	 *
 	 * @param line
 	 * @return
 	 */
-	public Conditional createConditional(String line) {
+	protected Conditional parseConditional(String line) {
 		Conditional condition = null;
 		line = line.trim();
 		String keyword = null;
@@ -412,17 +450,15 @@ public class GNUMakefile extends AbstractMakefile {
 			keyword = line;
 		}
 		if (keyword.equals("ifdef")) {
-			condition = new Ifdef(line);
+			condition = new Ifdef(this, line);
 		} else if (keyword.equals("ifndef")) {
-			condition = new Ifndef(line);
+			condition = new Ifndef(this, line);
 		} else if (keyword.equals("ifeq")) {
-			condition = new Ifeq(line);
+			condition = new Ifeq(this, line);
 		} else if (keyword.equals("ifneq")) {
-			condition = new Ifneq(line);
+			condition = new Ifneq(this, line);
 		} else if (keyword.equals("else")) {
-			condition = new Else();
-		} else if (keyword.equals("endif")) {
-			condition = new Endif();
+			condition = new Else(this);
 		}
 		return condition;
 	}
@@ -431,7 +467,7 @@ public class GNUMakefile extends AbstractMakefile {
 	 *  Format of the include directive:
 	 *      include filename1 filename2 ...
 	 */
-	protected Include createInclude(String line) {
+	protected Include parseInclude(String line) {
 		String[] filenames;
 		StringTokenizer st = new StringTokenizer(line);
 		int count = st.countTokens();
@@ -448,7 +484,7 @@ public class GNUMakefile extends AbstractMakefile {
 		} else {
 			filenames = new String[0];
 		}
-		return new Include(filenames, getIncludeDirectories());
+		return new Include(this, filenames, getIncludeDirectories());
 	}
 
 	/**
@@ -466,7 +502,7 @@ public class GNUMakefile extends AbstractMakefile {
 	   *      "vpath"
 	   * Clear all search paths previously specified with `vpath' directives.
 	   */
-	public VPath createVPath(String line) {
+	protected VPath parseVPath(String line) {
 		String pattern = null;
 		String[] directories;
 		StringTokenizer st = new StringTokenizer(line);
@@ -491,18 +527,14 @@ public class GNUMakefile extends AbstractMakefile {
 		if (pattern == null) {
 			pattern = new String();
 		}
-		return new VPath(pattern, directories);
-	}
-
-	public Endef createEndef() {
-		return new Endef();
+		return new VPath(this, pattern, directories);
 	}
 
 	/**
 	 * @param line
 	 * @return
 	 */
-	protected UnExport createUnExport(String line) {
+	protected UnExport parseUnExport(String line) {
 		// Pass over "unexport"
 		for (int i = 0; i < line.length(); i++) {
 			if (Util.isSpace(line.charAt(i))) {
@@ -510,34 +542,10 @@ public class GNUMakefile extends AbstractMakefile {
 				break;
 			}
 		}
-		return new UnExport(line);
+		return new UnExport(this, line);
 	}
 
-	protected Command createCommand(String line) {
-		return new Command(line);
-	}
-
-	protected Comment createComment(String line) {
-		return new Comment(line);
-	}
-
-	protected EmptyLine createEmptyLine() {
-		return new EmptyLine();
-	}
-
-	protected InferenceRule[] createInferenceRules(String line) {
-		// Inference Rule
-		String tgt;
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			tgt = line.substring(0, index);
-		} else {
-			tgt = line;
-		}
-		return new InferenceRule[] { new InferenceRule(new Target(tgt))};
-	}
-
-	protected GNUTargetRule[] createGNUTargetRules(String line) {
+	protected GNUTargetRule[] parseGNUTargetRules(String line) {
 		String[] targetNames;
 		String[] normalReqs;
 		String[] orderReqs;
@@ -586,15 +594,15 @@ public class GNUMakefile extends AbstractMakefile {
 
 		GNUTargetRule[] rules = new GNUTargetRule[targetNames.length];
 		for (int i = 0; i < targetNames.length; i++) {
-			rules[i] = new GNUTargetRule(createTarget(targetNames[i]), doubleColon, normalReqs, orderReqs, new ICommand[0]);
+			rules[i] = new GNUTargetRule(this, new Target(targetNames[i]), doubleColon, normalReqs, orderReqs, new Command[0]);
 			if (cmd != null) {
-				rules[i].addStatement(createCommand(cmd));
+				rules[i].addDirective(new Command(this, cmd));
 			}
 		}
 		return rules;
 	}
 
-	protected VariableDefinition createVariableDefinition(String line) {
+	protected VariableDefinition parseVariableDefinition(String line) {
 		line = line.trim();
 		VariableDefinition vd;
 
@@ -634,7 +642,7 @@ public class GNUMakefile extends AbstractMakefile {
 		}
 
 		// Check for "define"
-		if (GNUMakefileUtil.isOverrideDefine(line)) {
+		if (GNUMakefileUtil.isDefine(line)) {
 			isDefine = true;
 			// Move pass the keyword define.
 			for (int i = 0; i < line.length(); i++) {
@@ -680,27 +688,23 @@ public class GNUMakefile extends AbstractMakefile {
 		}
 
 		if (isTargetVariable) {
-			vd = new TargetVariable(targetName, name, value, isOverride, type);
+			vd = new TargetVariable(this, targetName, name, value, isOverride, type);
 		}
 		if (isOverride && isDefine) {
-			vd = new OverrideDefine(name, value);
+			vd = new OverrideDefine(this, name, value);
 		} else if (isDefine) {
-			vd = new DefineVariable(name, value);
+			vd = new DefineVariable(this, name, value);
 		} else if (isOverride) {
-			vd = new OverrideVariable(name, value, type);
+			vd = new OverrideVariable(this, name, value, type);
 		} else if (isExport) {
-			vd = new ExportVariable(name, value, type);
+			vd = new ExportVariable(this, name, value, type);
 		} else {
-			vd = new VariableDefinition(name, value, type);
+			vd = new VariableDefinition(this, name, value, type);
 		}
 		return vd;
 	}
 
-	protected Target createTarget(String line) {
-		return new Target(line);
-	}
-
-	protected StaticTargetRule[] createStaticTargetRule(String line) {
+	protected StaticTargetRule[] parseStaticTargetRule(String line) {
 		// first colon: the Targets
 		String targetPattern;
 		String[] prereqPatterns;
@@ -733,7 +737,7 @@ public class GNUMakefile extends AbstractMakefile {
 
 		StaticTargetRule[] staticRules = new StaticTargetRule[targets.length];
 		for (int i = 0; i < targets.length; i++) {
-			staticRules[i] = new StaticTargetRule(createTarget(targets[i]), targetPattern, prereqPatterns, new ICommand[0]);
+			staticRules[i] = new StaticTargetRule(this, new Target(targets[i]), targetPattern, prereqPatterns, new Command[0]);
 		}
 		return staticRules;
 	}
@@ -742,47 +746,7 @@ public class GNUMakefile extends AbstractMakefile {
 	 * @param line
 	 * @return
 	 */
-	private TargetRule[] createTargetRule(String line) {
-		String[] targets;
-		String[] reqs;
-		String cmd = null;
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String target = line.substring(0, index);
-			// Tokenize the targets
-			targets = GNUMakefileUtil.findTargets(target);
-
-			String req = line.substring(index + 1);
-			int semicolon = Util.indexOf(req, ';');
-			if (semicolon != -1) {
-				String c = req.substring(semicolon + 1).trim();
-				if (c.length() > 0) {
-					cmd = c;
-				}
-				req = req.substring(0, semicolon);
-			}
-			reqs = GNUMakefileUtil.findPrerequisites(req);
-		} else {
-			targets = GNUMakefileUtil.findTargets(line);
-			reqs = new String[0];
-		}
-
-		TargetRule[] targetRules = new TargetRule[targets.length];
-		for (int i = 0; i < targets.length; i++) {
-			targetRules[i] = new TargetRule(new Target(targets[i]), reqs);
-			if (cmd != null) {
-				Command command = createCommand(cmd);
-				targetRules[i].addStatement(command);
-			}
-		}
-		return targetRules;
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	private InferenceRule createInferenceRule(String line) {
+	protected InferenceRule parseInferenceRule(String line) {
 		String tgt;
 		int index = Util.indexOf(line, ':');
 		if (index != -1) {
@@ -790,59 +754,33 @@ public class GNUMakefile extends AbstractMakefile {
 		} else {
 			tgt = line;
 		}
-		return new InferenceRule(new Target(tgt));
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	private SccsGetRule createSccsGetRule(String line) {
-		int semicolon = Util.indexOf(line, ';');
-		if (semicolon != -1) {
-			String cmd = line.substring(semicolon + 1).trim();
-			if (cmd.length() > 0) {
-				ICommand[] cmds = new ICommand[] { new Command(cmd)};
-				return new SccsGetRule(cmds);
-			}
-		}
-		return new SccsGetRule(new ICommand[0]);
-	}
-
-	/**
-	 * @param line
-	 * @return
-	 */
-	private DefaultRule createDefaultRule(String line) {
-		int semicolon = Util.indexOf(line, ';');
-		if (semicolon > 0) {
-			String cmd = line.substring(semicolon + 1).trim();
-			if (cmd.length() > 0) {
-				ICommand[] cmds = new ICommand[] { new Command(cmd)};
-				return new DefaultRule(cmds);
-			}
-		}
-		return new DefaultRule(new ICommand[0]);
-
-	}
-
-	/**
-	 * @return
-	 */
-	private PosixRule createPosixRule() {
-		return new PosixRule();
+		return new InferenceRule(this, new Target(tgt));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
 	 */
 	public IDirective[] getBuiltins() {
-		IDirective[] macros = new PosixBuiltinMacroDefinitions().getMacroDefinitions();
-		IDirective[] rules = new PosixBuiltinRules().getInferenceRules();
-		IDirective[] stmts = new IDirective[macros.length + rules.length];
-		System.arraycopy(macros, 0, stmts, 0, macros.length);
-		System.arraycopy(rules, 0, stmts, macros.length, rules.length);
-		return stmts;
+		if (builtins == null) {
+			String location =  "builtin" + File.separator + "gnu.mk";
+			try {
+				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
+				GNUMakefile gnu = new GNUMakefile();
+				gnu.parse(new InputStreamReader(stream));
+				builtins = gnu.getDirectives();
+				for (int i = 0; i < builtins.length; i++) {
+					if (builtins[i] instanceof MacroDefinition) {
+						((MacroDefinition)builtins[i]).setFromDefault(true);
+					}
+				}
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
+			if (builtins == null) {
+				builtins = new IDirective[0];
+			}
+		}
+		return builtins;
 	}
 
 	public void setIncludeDirectories(String[] dirs) {
@@ -861,10 +799,10 @@ public class GNUMakefile extends AbstractMakefile {
 			}
 			GNUMakefile makefile = new GNUMakefile();
 			makefile.parse(filename);
-			IDirective[] statements = makefile.getStatements();
-			for (int i = 0; i < statements.length; i++) {
+			IDirective[] directive = makefile.getDirectives();
+			for (int i = 0; i < directive.length; i++) {
 				//System.out.println("Rule[" + i +"]");
-				System.out.print(statements[i]);
+				System.out.print(directive[i]);
 			}
 		} catch (IOException e) {
 			System.out.println(e);

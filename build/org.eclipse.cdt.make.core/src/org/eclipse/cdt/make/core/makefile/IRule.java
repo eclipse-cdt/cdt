@@ -11,7 +11,9 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * There are two kinds of rules: Inference rules and target rules
+ * There are several kinds of rules: Inference rules, target rules
+ * Some make provides special rules for example:
+ * .DEFAULT, .IGNORE etc ...
  */
 public interface IRule extends IParent {
 	/**

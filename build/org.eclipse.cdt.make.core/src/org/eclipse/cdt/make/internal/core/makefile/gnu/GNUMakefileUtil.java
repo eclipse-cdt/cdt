@@ -152,4 +152,74 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		return false;
 	}
 
+	public static boolean isPhonyRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".PHONY");
+		}
+		return false;
+	}
+
+	public static boolean isIntermediateRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".INTERMEDIATE");
+		}
+		return false;
+	}
+
+	public static boolean isSecondaryRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".SECONDARY");
+		}
+		return false;
+	}
+
+	public static boolean isDeleteOnErrorRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".DELETE_ON_ERROR");
+		}
+		return false;
+	}
+
+	public static boolean isLowResolutionTimeRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".LOW_RESOLUTION_TIME");
+		}
+		return false;
+	}
+
+	public static boolean isExportAllVariablesRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".EXPORT_ALL_VARIABLES");
+		}
+		return false;
+	}
+
+	public static boolean isNotParallelRule(String line) {
+		line = line.trim();
+		int colon = Util.indexOf(line, ':');
+		if (colon > 0) {
+			line = line.substring(0, colon).trim();
+			return line.equals(".NOTPARALLEL");
+		}
+		return false;
+	}
+
 }

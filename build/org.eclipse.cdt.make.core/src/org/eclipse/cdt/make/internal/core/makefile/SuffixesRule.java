@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.ISuffixesRule;
-import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * .SUFFIXES
@@ -21,8 +20,8 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
  */
 public class SuffixesRule extends SpecialRule implements ISuffixesRule {
 
-	public SuffixesRule(String[] suffixes) {
-		super(new Target(".SUFFIXES:"), suffixes, new ICommand[0]);
+	public SuffixesRule(Directive parent, String[] suffixes) {
+		super(parent, new Target(".SUFFIXES"), suffixes, new Command[0]);
 	}
 
 }

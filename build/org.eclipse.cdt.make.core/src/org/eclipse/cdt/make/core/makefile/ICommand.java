@@ -16,6 +16,8 @@ import java.io.IOException;
 
 /**
  * ICommand
+ * Commands are associated with a rule and executed by
+ * the make program when building a target.
  */
 public interface ICommand extends IDirective {
 	

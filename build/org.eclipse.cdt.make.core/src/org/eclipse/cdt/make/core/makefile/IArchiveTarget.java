@@ -12,8 +12,18 @@ package org.eclipse.cdt.make.core.makefile;
 
 /**
  * IArchiveTarget
+ * Archive files, are files maintained by the program "ar".
+ * They contain objects, the members of the Archive.
+ * For example:
+ *      foolib(hack.o) : hack.o
+ *            ar cr foolib hack.o
+ *  ArchiveTarget(member)  -- foolib(hack.o);
  */
 public interface IArchiveTarget extends ITarget {
 
-	String getMember();
+	/**
+	 * Returns the members the point by archive target.
+	 * @return String
+	 */
+	String[] getMembers();
 }

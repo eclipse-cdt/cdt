@@ -21,14 +21,15 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
  * command : <tab> prefix_command string <nl>
  * prefix_command : '-' | '@' | '+'
  */
-public class Command extends Statement implements ICommand {
+public class Command extends Directive implements ICommand {
 
 	final public static char NL = '\n';
 
 	String command = "";
 	char prefix = '\0';
 
-	public Command(String cmd) {
+	public Command(Directive parent, String cmd) {
+		super(parent);
 		parse(cmd);
 	}
 

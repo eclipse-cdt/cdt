@@ -11,7 +11,7 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * IComment
+ * Comments start with '#' and until the end of the line.
  */
 public interface IComment  extends IDirective {
 

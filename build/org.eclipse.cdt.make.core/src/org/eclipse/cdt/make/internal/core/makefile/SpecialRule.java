@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.ISpecialRule;
-import org.eclipse.cdt.make.core.makefile.ITarget;
 import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
@@ -21,8 +20,8 @@ public abstract class SpecialRule extends Rule implements ISpecialRule {
 
 	String[] prerequisites;
 
-	public SpecialRule(ITarget target, String[] reqs, ICommand[] cmds) {
-		super(target, cmds);
+	public SpecialRule(Directive parent, Target target, String[] reqs, Command[] cmds) {
+		super(parent, target, cmds);
 		prerequisites = reqs;
 	}
 

@@ -20,25 +20,40 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
  * IParent
  */
 
-public abstract class Parent extends Statement implements IParent {
+public abstract class Parent extends Directive implements IParent {
 
 	ArrayList children = new ArrayList();
 
-	public IDirective[] getStatements() {
+	public Parent(Directive parent) {
+		super(parent);
+	}
+
+	public IDirective[] getDirectives() {
 		children.trimToSize();
 		return (IDirective[]) children.toArray(new IDirective[0]);
 	}
 
-	public void addStatement(IDirective statement) {
-		children.add(statement);
+	public void addDirective(Directive directive) {
+		children.add(directive);
+		// reparent
+		directive.setParent(this);
 	}
 
-	public void addStatements(IDirective[] statements) {
-		children.addAll(Arrays.asList(statements));
+	public void addDirectives(Directive[] directives) {
+		children.addAll(Arrays.asList(directives));
+		// reparent
+		for (int i = 0; i < directives.length; i++) {
+			directives[i].setParent(this);
+		}
 	}
 
-	public void clearStatements() {
+	public void clearDirectives() {
 		children.clear();
+	}
+
+	public Directive[] getStatements() {
+		children.trimToSize();
+		return (Directive[]) children.toArray(new Directive[0]);		
 	}
 
 	/* (non-Javadoc)
@@ -46,9 +61,9 @@ public abstract class Parent extends Statement implements IParent {
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		IDirective[] stmts = getStatements();
-		for (int i = 0; i < stmts.length; i++) {
-			sb.append(stmts[i]);
+		IDirective[] directives = getDirectives();
+		for (int i = 0; i < directives.length; i++) {
+			sb.append(directives[i]);
 		}
 		return sb.toString();
 	}

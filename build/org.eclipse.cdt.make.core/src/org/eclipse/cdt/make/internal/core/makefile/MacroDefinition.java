@@ -14,7 +14,7 @@ import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 
 /**
  */
-public class MacroDefinition extends Statement implements IMacroDefinition {
+public class MacroDefinition extends Directive implements IMacroDefinition {
 	String name;
 	StringBuffer value;
 	boolean fromCommand;
@@ -23,11 +23,8 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 	boolean fromEnvironment;
 	boolean fromEnvironmentOverride;
 
-	public MacroDefinition(String n, String v) {
-		this(n, new StringBuffer(v));
-	}
-
-	public MacroDefinition(String n, StringBuffer v) {
+	public MacroDefinition(Directive parent, String n, StringBuffer v) {
+		super(parent);
 		name = n;
 		value = v;
 	}

@@ -36,9 +36,10 @@ public class NullMakefile extends AbstractMakefile {
 	public static IDirective[] empty = new IDirective[0];
 
 	public NullMakefile() {
+		super(null);
 	}
 
-	public IDirective[] getStatements() {
+	public IDirective[] getDirectives() {
 		return empty;
 	}
 
@@ -46,7 +47,7 @@ public class NullMakefile extends AbstractMakefile {
 		return empty;
 	}
 
-	public void addStatement(IDirective statement) {
+	public void addDirective(IDirective directive) {
 	}
 
 	public String toString() {

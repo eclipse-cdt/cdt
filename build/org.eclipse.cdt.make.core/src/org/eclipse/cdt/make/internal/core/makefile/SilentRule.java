@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.ISilentRule;
-import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * .SILENT
@@ -21,8 +20,8 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
  */
 public class SilentRule extends SpecialRule implements ISilentRule {
 
-	public SilentRule(String[] reqs) {
-		super(new Target(".SILENT"), reqs, new ICommand[0]);
+	public SilentRule(Directive parent, String[] reqs) {
+		super(parent, new Target(".SILENT"), reqs, new Command[0]);
 	}
 
 }

@@ -12,11 +12,12 @@ package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IComment;
 
-public class Comment extends Statement implements IComment {
+public class Comment extends Directive implements IComment {
 
 	String comment;
 
-	public Comment(String cmt) {
+	public Comment(Directive parent, String cmt) {
+		super(parent);
 		if (cmt.startsWith(POUND_STRING)) {
 			comment = cmt.substring(1);
 		} else {

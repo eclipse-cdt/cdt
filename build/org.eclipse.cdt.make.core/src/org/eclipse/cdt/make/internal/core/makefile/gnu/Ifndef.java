@@ -10,10 +10,17 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
+
+
 public class Ifndef extends Conditional {
 
-	public Ifndef(String var) {
-		super(var, "", "");
+	public Ifndef(Directive parent, String var) {
+		super(parent, var, "", "");
+	}
+
+	public boolean isIfndef() {
+		return true;
 	}
 
 	public String toString() {

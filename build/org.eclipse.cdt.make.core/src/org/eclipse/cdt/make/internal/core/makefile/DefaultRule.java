@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import org.eclipse.cdt.make.core.makefile.ICommand;
 import org.eclipse.cdt.make.core.makefile.IDefaultRule;
 
 /**
@@ -20,8 +19,8 @@ import org.eclipse.cdt.make.core.makefile.IDefaultRule;
  */
 public class DefaultRule extends SpecialRule implements IDefaultRule {
 
-	public DefaultRule(ICommand[] cmds) {
-		super(new Target(".DEFAULT"), new String[0], cmds);
+	public DefaultRule(Directive parent, Command[] cmds) {
+		super(parent, new Target(".DEFAULT"), new String[0], cmds);
 	}
 
 }

@@ -10,10 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.core.makefile;
 
-
 /**
  * IParent
  */
 public interface IParent extends IDirective {
-	IDirective[] getStatements();
+	IDirective[] getDirectives();
 }

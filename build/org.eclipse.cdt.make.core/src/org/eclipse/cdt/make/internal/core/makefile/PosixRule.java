@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IPosixRule;
-import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * .POSIX
@@ -20,7 +19,7 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
  */
 public class PosixRule extends SpecialRule implements IPosixRule {
 
-	public PosixRule() {
-		super(new Target(".POSIX:"), new String[0], new ICommand[0]);
+	public PosixRule(Directive parent) {
+		super(parent, new Target(".POSIX"), new String[0], new Command[0]);
 	}
 }

@@ -10,11 +10,17 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
+
+
 public class Else extends Conditional {
 
+	public Else(Directive parent) {
+		super(parent);
+	}
 
-	public Else() {
-		super();
+	public boolean isElse() {
+		return true;
 	}
 
 	public String toString() {

@@ -11,7 +11,13 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
- * IInferenceRule
+ * IInferenceRules are formated as follows:
+ * target:
+ * <tab>command
+ * [<tab>command]
+ * 
+ * The target is of the form .s2 or .s1.s2
+ * There are no prerequisites.
  */
 public interface IInferenceRule extends IRule {
 }

@@ -8,18 +8,14 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.make.internal.core.makefile;
+package org.eclipse.cdt.make.core.makefile.gnu;
 
-public class BadStatement extends Statement {
+import org.eclipse.cdt.make.core.makefile.ISpecialRule;
 
-	String line;
-
-	public BadStatement(String s) {
-		line = s;
-	}
-
-	public String toString() {
-		return line;
-	}
-
+/**
+ * .EXPORT_ALL_VARIABLES
+ * Simply by being mentioned as a target, this tells `make' to export
+ * all variables to child processes by default.
+ */
+public interface IExportAllVariablesRule extends ISpecialRule {
 }

@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import org.eclipse.cdt.make.core.makefile.ICommand;
 import org.eclipse.cdt.make.core.makefile.ISccsGetRule;
 
 /**
@@ -22,8 +21,8 @@ import org.eclipse.cdt.make.core.makefile.ISccsGetRule;
  */
 public class SccsGetRule extends SpecialRule implements ISccsGetRule {
 
-	public SccsGetRule(ICommand[] cmds) {
-		super(new Target(".SCCS_GET"), new String[0], cmds);
+	public SccsGetRule(Directive parent, Command[] cmds) {
+		super(parent, new Target(".SCCS_GET"), new String[0], cmds);
 	}
 
 }

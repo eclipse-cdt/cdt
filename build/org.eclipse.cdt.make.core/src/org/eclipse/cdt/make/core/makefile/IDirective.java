@@ -11,11 +11,29 @@
 package org.eclipse.cdt.make.core.makefile;
 
 /**
+ * A Makefile can contain rules, macro definitons and comments.
+ * They are call directives.
  */
 public interface IDirective {
 
+	/**
+	 * Returns the parent of this directive, null if none.
+	 * @return
+	 */
+	IDirective getParent();
+
+	/**
+	 * The starting line number of this directive.
+	 * The numbering starts at 1 .i.e the first line is not 0
+	 * @return
+	 */
 	int getStartLine();
 
+	/**
+	 * The ending line number of this directive.
+	 * The numbering starts at 1 .i.e the first line is not 0
+	 * @return
+	 */
 	int getEndLine();
 
 	String toString();

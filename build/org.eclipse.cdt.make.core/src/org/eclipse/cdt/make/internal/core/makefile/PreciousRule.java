@@ -11,7 +11,6 @@
 package org.eclipse.cdt.make.internal.core.makefile;
 
 import org.eclipse.cdt.make.core.makefile.IPreciousRule;
-import org.eclipse.cdt.make.core.makefile.ICommand;
 
 /**
  * .PRECIOUS
@@ -20,8 +19,8 @@ import org.eclipse.cdt.make.core.makefile.ICommand;
  */
 public class PreciousRule extends SpecialRule implements IPreciousRule {
 
-	public PreciousRule(String[] targets) {
-		super(new Target(".PRECIOUS:"), targets, new ICommand[0]);
+	public PreciousRule(Directive parent, String[] reqs) {
+		super(parent, new Target(".PRECIOUS"), reqs, new Command[0]);
 	}
 
 }

@@ -10,24 +10,28 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.core.makefile.gnu.IConditional;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.Parent;
 
-public abstract class Conditional extends Parent {
+public abstract class Conditional extends Parent implements IConditional {
 
 	String cond;
 	String arg1;
 	String arg2;
 
-	public Conditional(String conditional) {
+	public Conditional(Directive parent, String conditional) {
+		super(parent);
 		cond = conditional;
 		parse();
 	}
 
-	public Conditional() {
-		this("", "", "");
+	public Conditional(Directive parent) {
+		this(parent, "", "", "");
 	}
 
-	public Conditional(String conditional, String argument1, String argument2) {
+	public Conditional(Directive parent, String conditional, String argument1, String argument2) {
+		super(parent);
 		arg1 = argument1;
 		arg2 = argument2;
 		cond = conditional;
@@ -46,15 +50,39 @@ public abstract class Conditional extends Parent {
 		return arg2;
 	}
 
+	public boolean isIfdef() {
+		return false;
+	}
+
+	public boolean isIfndef() {
+		return false;
+	}
+
+	public boolean isIfeq() {
+		return false;
+	}
+
+	public boolean isIfneq() {
+		return false;
+	}
+
+	public boolean isElse() {
+		return false;
+	}
+
+	public boolean isEndif() {
+		return false;
+	}
+
 	/**
-	 * Formats of the contional.
+	 * Formats of the conditional string.
 	 * ifeq (ARG1, ARG2)
 	 * ifeq 'ARG1' 'ARG2'
 	 * ifeq "ARG1" "ARG2"
 	 * ifeq "ARG1" 'ARG2'
 	 * ifeq 'ARG1' "ARG2"
 	 */
-	void parse() {
+	protected void parse() {
 		String line = getConditional().trim();
 
 		char terminal = line.charAt(0) == '(' ? ',' : line.charAt(0);

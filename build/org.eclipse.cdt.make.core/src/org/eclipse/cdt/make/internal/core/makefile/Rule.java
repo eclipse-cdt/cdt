@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.make.core.makefile.ICommand;
 import org.eclipse.cdt.make.core.makefile.IRule;
 import org.eclipse.cdt.make.core.makefile.IDirective;
@@ -17,29 +19,34 @@ import org.eclipse.cdt.make.core.makefile.ITarget;
 
 public abstract class Rule extends Parent implements IRule {
 
-	ITarget target;
+	Target target;
 
-	public Rule(ITarget tgt) {
-		this(tgt, new Command[0]);
+	public Rule(Directive parent, Target tgt) {
+		this(parent, tgt, new Command[0]);
 	}
 
-	public Rule(ITarget tgt, ICommand[] cmds) {
+	public Rule(Directive parent, Target tgt, Command[] cmds) {
+		super(parent);
 		target = tgt;
-		addStatements(cmds);
+		addDirectives(cmds);
 	}
 
 	public ICommand[] getCommands() {
-		IDirective[] stmts = getStatements();
-		ICommand[] cmds = new ICommand[stmts.length];
-		System.arraycopy(stmts, 0, cmds, 0, stmts.length);
-		return cmds;
+		IDirective[] directives = getDirectives();
+		ArrayList cmds = new ArrayList(directives.length);
+		for (int i = 0; i < directives.length; i++) {
+			if (directives[i] instanceof ICommand) {
+				cmds.add(directives[i]);
+			}
+		}
+		return (ICommand[])cmds.toArray(new ICommand[0]);
 	}
 
 	public ITarget getTarget() {
 		return target;
 	}
 
-	public void setTarget(ITarget tgt) {
+	public void setTarget(Target tgt) {
 		target = tgt;
 	}
 

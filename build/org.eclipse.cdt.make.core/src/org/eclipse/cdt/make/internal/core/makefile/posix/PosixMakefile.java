@@ -10,19 +10,21 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.posix;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
-import org.eclipse.cdt.make.internal.core.makefile.BadStatement;
+import org.eclipse.cdt.make.internal.core.makefile.BadDirective;
 import org.eclipse.cdt.make.internal.core.makefile.Command;
 import org.eclipse.cdt.make.internal.core.makefile.Comment;
 import org.eclipse.cdt.make.internal.core.makefile.DefaultRule;
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.EmptyLine;
 import org.eclipse.cdt.make.internal.core.makefile.IgnoreRule;
 import org.eclipse.cdt.make.internal.core.makefile.InferenceRule;
@@ -33,11 +35,12 @@ import org.eclipse.cdt.make.internal.core.makefile.PreciousRule;
 import org.eclipse.cdt.make.internal.core.makefile.Rule;
 import org.eclipse.cdt.make.internal.core.makefile.SccsGetRule;
 import org.eclipse.cdt.make.internal.core.makefile.SilentRule;
-import org.eclipse.cdt.make.internal.core.makefile.Statement;
+import org.eclipse.cdt.make.internal.core.makefile.SpecialRule;
 import org.eclipse.cdt.make.internal.core.makefile.SuffixesRule;
 import org.eclipse.cdt.make.internal.core.makefile.Target;
 import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Makefile : ( statement ) *
@@ -58,14 +61,21 @@ import org.eclipse.cdt.make.internal.core.makefile.Util;
 
 public class PosixMakefile extends AbstractMakefile {
 
-	List statements;
+	IDirective[] builtins = null;
 
 	public PosixMakefile() {
-		statements = new ArrayList();
+		super(null);
 	}
 
 	public void parse(String name) throws IOException {
-		parse(new FileReader(name));
+		FileReader stream = new FileReader(name);
+		parse(stream);
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
 	public void parse(Reader reader) throws IOException {
@@ -83,40 +93,54 @@ public class PosixMakefile extends AbstractMakefile {
 
 			// 1- Try command first, since we can not strip '#' in command line
 			if (PosixMakefileUtil.isCommand(line)) {
-				Command cmd = createCommand(line);
+				Command cmd = new Command(this, line);
 				cmd.setLines(startLine, endLine);
 				// The command is added to the rules
 				if (rules != null) {
 					for (int i = 0; i < rules.length; i++) {
-						rules[i].addStatement(cmd);
+						rules[i].addDirective(cmd);
 						rules[i].setEndLine(endLine);
 					}
 					continue;
 				}
 				// If we have no rules for the command,
-				// give the other statements a chance by falling through
+				// give the other directives a chance by falling through
 			}
 
 			// 2- Strip away any comments.
 			int pound = Util.indexOfComment(line);
 			if (pound != -1) {
-				Comment cmt = createComment(line.substring(pound + 1));
+				Comment cmt = new Comment(this, line.substring(pound + 1));
 				cmt.setLines(startLine, endLine);
-				addStatement(cmt);
+				if (rules != null) {
+					for (int i = 0; i < rules.length; i++) {
+						rules[i].addDirective(cmt);
+						rules[i].setEndLine(endLine);
+					}
+				} else {
+					addDirective(cmt);
+				}
 				line = line.substring(0, pound);
 				// If all we have left are spaces continue
 				if (Util.isEmptyLine(line)) {
 					continue;
 				}
-				// The rest of the line maybe a valid statement.
+				// The rest of the line maybe a valid directive.
 				// keep on trying by falling through.
 			}
 
 			// 3- Empty lines ?
 			if (Util.isEmptyLine(line)) {
-				Statement empty = createEmptyLine();
+				Directive empty =  new EmptyLine(this);
 				empty.setLines(startLine, endLine);
-				addStatement(empty);
+				if (rules != null) {
+					for (int i = 0; i < rules.length; i++) {
+						rules[i].addDirective(empty);
+						rules[i].setEndLine(endLine);
+					}
+				} else {
+					addDirective(empty);
+				}
 				continue;
 			}
 
@@ -125,120 +149,117 @@ public class PosixMakefile extends AbstractMakefile {
 			// shall begin a new entry.
 			rules = null;
 
-			// 5- Check for the special targets.
-			if (PosixMakefileUtil.isDefaultRule(line)) {
-				DefaultRule dRule = createDefaultRule(line);
-				rules = new Rule[] { dRule };
-				dRule.setLines(startLine, endLine);
-				addStatement(dRule);
-				continue;
-			} else if (PosixMakefileUtil.isIgnoreRule(line)) {
-				IgnoreRule ignore = createIgnoreRule(line);
-				ignore.setLines(startLine, endLine);
-				addStatement(ignore);
-				continue;
-			} else if (PosixMakefileUtil.isPosixRule(line)) {
-				PosixRule pRule = createPosixRule();
-				pRule.setLines(startLine, endLine);
-				addStatement(pRule);
-				continue;
-			} else if (PosixMakefileUtil.isPreciousRule(line)) {
-				PreciousRule precious = createPreciousRule(line);
-				precious.setLines(startLine, endLine);
-				addStatement(precious);
-				continue;
-			} else if (PosixMakefileUtil.isSccsGetRule(line)) {
-				SccsGetRule sccs = createSccsGetRule(line);
-				rules = new Rule[] { sccs };
-				sccs.setLines(startLine, endLine);
-				addStatement(sccs);
-				continue;
-			} else if (PosixMakefileUtil.isSilentRule(line)) {
-				SilentRule silent = createSilentRule(line);
-				silent.setLines(startLine, endLine);
-				addStatement(silent);
-				continue;
-			} else if (PosixMakefileUtil.isSuffixesRule(line)) {
-				SuffixesRule suffixes = createSuffixesRule(line);
-				suffixes.setLines(startLine, endLine);
-				addStatement(suffixes);
+			// 5- Check for the special rules.
+			SpecialRule special = processSpecialRule(line);
+			if (special != null) {
+				rules = new Rule[] { special };
+				special.setLines(startLine, endLine);
+				addDirective(special);
 				continue;
 			}
 
 			// 6- Check for inference rule.
 			if (PosixMakefileUtil.isInferenceRule(line)) {
-				InferenceRule irule = createInferenceRule(line);
+				InferenceRule irule = parseInferenceRule(line);
 				irule.setLines(startLine, endLine);
-				addStatement(irule);
+				addDirective(irule);
 				rules = new Rule[]{irule};
 				continue;
 			}
 
 			// 7- Macro Definiton ?
 			if (PosixMakefileUtil.isMacroDefinition(line)) {
-				Statement stmt = createMacroDefinition(line);
+				Directive stmt = parseMacroDefinition(line);
 				stmt.setLines(startLine, endLine);
-				addStatement(stmt);
+				addDirective(stmt);
 				continue;
 			}
 
 			// 8- Target Rule ?
 			if (PosixMakefileUtil.isTargetRule(line)) {
-				TargetRule[] trules = createTargetRule(line);
+				TargetRule[] trules = parseTargetRule(line);
 				for (int i = 0; i < trules.length; i++) {
 					trules[i].setLines(startLine, endLine);
-					addStatement(trules[i]);
+					addDirective(trules[i]);
 				}
 				rules = trules;
 				continue;
 			}
 
 			// XXX ?? Should not be here.
-			BadStatement stmt = new BadStatement(line);
+			BadDirective stmt = new BadDirective(this, line);
 			stmt.setLines(startLine, endLine);
-			addStatement(stmt);
+			addDirective(stmt);
 		}
 		setLines(1, endLine);
 	}
 
-	public IDirective[] getStatements() {
-		return (IDirective[]) statements.toArray(new IDirective[0]);
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
+	 */
 	public IDirective[] getBuiltins() {
-		IDirective[] macros = new PosixBuiltinMacroDefinitions().getMacroDefinitions();
-		IDirective[] rules = new PosixBuiltinRules().getInferenceRules();
-		IDirective[] stmts = new IDirective[macros.length + rules.length];
-		System.arraycopy(macros, 0, stmts, 0, macros.length);
-		System.arraycopy(rules, 0, stmts, macros.length, rules.length);
-		return stmts;
+		if (builtins == null) {
+			String location =  "builtin" + File.separator + "posix.mk";
+			try {
+				InputStream stream = MakeCorePlugin.getDefault().openStream(new Path(location));
+				PosixMakefile gnu = new PosixMakefile();
+				gnu.parse(new InputStreamReader(stream));
+				builtins = gnu.getDirectives();
+				for (int i = 0; i < builtins.length; i++) {
+					if (builtins[i] instanceof MacroDefinition) {
+						((MacroDefinition)builtins[i]).setFromDefault(true);
+					}
+				}
+			} catch (Exception e) {
+				//e.printStackTrace();
+			}
+			if (builtins == null) {
+				builtins = new IDirective[0];
+			}
+		}
+		return builtins;
 	}
 
 	/**
-	 * Comment
+	 * @param line
+	 * @return
 	 */
-	public Comment createComment(String line) {
-		return new Comment(line);
-	}
-
-	/**
-	 * EmptyLine
-	 */
-	public EmptyLine createEmptyLine() {
-		return new EmptyLine();
-	}
-
-	/**
-	 * Command
-	 */
-	public Command createCommand(String line) {
-		return new Command(line);
+	protected SpecialRule processSpecialRule(String line) {
+		line = line.trim();
+		String keyword =  null;
+		String[] reqs = null;
+		SpecialRule special = null;
+		int index = Util.indexOf(line, ':');
+		if (index != -1) {
+			keyword = line.substring(0, index).trim();
+			String req = line.substring(index + 1);
+			reqs = PosixMakefileUtil.findPrerequisites(req);
+		} else {
+			keyword = line;
+			reqs = new String[0];
+		}
+		if (".IGNORE".equals(keyword)) {
+			special = new IgnoreRule(this, reqs);
+		} else if (".POSIX".equals(keyword)) {
+			special = new PosixRule(this);
+		} else if (".PRECIOUS".equals(keyword)) {
+			special = new PreciousRule(this, reqs);
+		} else if (".SILENT".equals(keyword)) {
+			special = new SilentRule(this, reqs);
+		} else if (".SUFFIXES".equals(keyword)) {
+			special = new SuffixesRule(this, reqs);
+		} else if (".DEFAULT".equals(keyword)) {
+			special = new DefaultRule(this, new Command[0]);
+		} else if (".SCCS_GET".equals(keyword)) {
+			special = new SccsGetRule(this, new Command[0]);
+		}
+		return special;
 	}
 
 	/**
 	 * Inference Rule
 	 */
-	public InferenceRule createInferenceRule(String line) {
+	protected InferenceRule parseInferenceRule(String line) {
 		String tgt;
 		int index = Util.indexOf(line, ':');
 		if (index != -1) {
@@ -246,13 +267,13 @@ public class PosixMakefile extends AbstractMakefile {
 		} else {
 			tgt = line;
 		}
-		return new InferenceRule(new Target(tgt));
+		return new InferenceRule(this, new Target(tgt));
 	}
 
 	/**
 	 * MacroDefinition
 	 */
-	public MacroDefinition createMacroDefinition(String line) {
+	protected MacroDefinition parseMacroDefinition(String line) {
 		String name;
 		String value;
 		int index = Util.indexOf(line, '=');
@@ -263,13 +284,13 @@ public class PosixMakefile extends AbstractMakefile {
 			name = line;
 			value = "";
 		}
-		return new MacroDefinition(name, value);
+		return new MacroDefinition(this, name, new StringBuffer(value));
 	}
 
 	/**
 	 * TargetRule
 	 */
-	public TargetRule[] createTargetRule(String line) {
+	protected TargetRule[] parseTargetRule(String line) {
 		String[] targets;
 		String[] reqs;
 		String cmd = null;
@@ -296,109 +317,13 @@ public class PosixMakefile extends AbstractMakefile {
 
 		TargetRule[] targetRules = new TargetRule[targets.length];
 		for (int i = 0; i < targets.length; i++) {
-			targetRules[i] = new TargetRule(new Target(targets[i]), reqs);
+			targetRules[i] = new TargetRule(this, new Target(targets[i]), reqs);
 			if (cmd != null) {
-				Command command = createCommand(cmd);
-				targetRules[i].addStatement(command);
+				Command command = new Command(this, cmd);
+				targetRules[i].addDirective(command);
 			}
 		}
 		return targetRules;
-	}
-
-	/**
-	 * .DEFAULT
-	 */
-	public DefaultRule createDefaultRule(String line) {
-		int semicolon = Util.indexOf(line, ';');
-		if (semicolon > 0) {
-			String cmd = line.substring(semicolon + 1).trim();
-			if (cmd.length() > 0) {
-				ICommand[] cmds = new ICommand[] { new Command(cmd)};
-				return new DefaultRule(cmds);
-			}
-		}
-		return new DefaultRule(new ICommand[0]);
-	}
-
-	/**
-	 * .IGNORE
-	 */
-	public IgnoreRule createIgnoreRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = PosixMakefileUtil.findPrerequisites(req);
-			return new IgnoreRule(reqs);
-		}
-		return new IgnoreRule(new String[0]);
-	}
-
-	/**
-	 * .POSIX
-	 */
-	public PosixRule createPosixRule() {
-		return new PosixRule();
-	}
-
-	/**
-	 * .PRECIOUS
-	 */
-	public PreciousRule createPreciousRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = PosixMakefileUtil.findPrerequisites(req);
-			return new PreciousRule(reqs);
-		}
-		return new PreciousRule(new String[0]);
-	}
-
-	/**
-	 * .SCCS_GET
-	 */
-	public SccsGetRule createSccsGetRule(String line) {
-		int semicolon = Util.indexOf(line, ';');
-		if (semicolon != -1) {
-			String cmd = line.substring(semicolon + 1).trim();
-			if (cmd.length() > 0) {
-				ICommand[] cmds = new ICommand[] { new Command(cmd)};
-				return new SccsGetRule(cmds);
-			}
-		}
-		return new SccsGetRule(new ICommand[0]);
-	}
-
-	/**
-	 * .SILENT
-	 */
-	public SilentRule createSilentRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = PosixMakefileUtil.findPrerequisites(req);
-			return new SilentRule(reqs);
-		}
-		return new SilentRule(new String[0]);
-	}
-
-	/**
-	 * .SUFFIXES
-	 */
-	public SuffixesRule createSuffixesRule(String line) {
-		int index = Util.indexOf(line, ':');
-		if (index != -1) {
-			String req = line.substring(index + 1);
-			String[] reqs = PosixMakefileUtil.findPrerequisites(req);
-			return new SuffixesRule(reqs);
-		}
-		return new SuffixesRule(new String[0]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#addStatement(org.eclipse.cdt.make.core.makefile.IDirective)
-	 */
-	public void addStatement(IDirective statement) {
-		statements.add(statement);
 	}
 
 	public static void main(String[] args) {
@@ -409,10 +334,11 @@ public class PosixMakefile extends AbstractMakefile {
 			}
 			PosixMakefile makefile = new PosixMakefile();
 			makefile.parse(filename);
-			IDirective[] statements = makefile.getStatements();
-			for (int i = 0; i < statements.length; i++) {
+			IDirective[] directives = makefile.getDirectives();
+			//IDirective[] directives = makefile.getBuiltins();
+			for (int i = 0; i < directives.length; i++) {
 				//System.out.println("Rule[" + i +"]");
-				System.out.print(statements[i]);
+				System.out.print(directives[i]);
 			}
 		} catch (IOException e) {
 			System.out.println(e);

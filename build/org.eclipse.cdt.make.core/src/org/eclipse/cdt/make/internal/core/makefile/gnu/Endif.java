@@ -10,13 +10,16 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
-public class Endif extends Conditional {
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
 
-	public Endif() {
-		super();
+public class Endif extends Terminal {
+
+	public Endif(Directive parent) {
+		super(parent);
 	}
 
-	public String toString() {
-		return "endif";
+	public boolean isEndif() {
+		return true;
 	}
+
 }

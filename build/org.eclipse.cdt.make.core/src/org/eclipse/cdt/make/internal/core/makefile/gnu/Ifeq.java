@@ -10,10 +10,17 @@
 ***********************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile.gnu;
 
+import org.eclipse.cdt.make.internal.core.makefile.Directive;
+
+
 public class Ifeq extends Conditional {
 
-	public Ifeq(String cond) {
-		super(cond);
+	public Ifeq(Directive parent, String cond) {
+		super(parent, cond);
+	}
+
+	public boolean isIfeq() {
+		return true;
 	}
 
 	public String toString() {

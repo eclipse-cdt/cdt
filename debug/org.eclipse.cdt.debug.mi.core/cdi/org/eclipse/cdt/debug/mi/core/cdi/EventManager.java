@@ -522,7 +522,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				
 			//}
 		}
-		return true;
+		return false;
 	}
 
 	/**

@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -856,5 +857,60 @@ public class AST2Tests extends TestCase {
         assertNotNull( function );
         assertNotNull( label_1 );
         assertEquals( label_1, label_2 );
+    }
+    
+    private void assertInstances( NameCollector collector, IBinding binding, int num ) throws Exception {
+        int count = 0;
+        for( int i = 0; i < collector.size(); i++ )
+            if( collector.getName( i ).resolveBinding() == binding )
+                count++;
+        
+        assertEquals( count, num );
+    }
+    
+    public void testGCC20000113() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct x {                           \n" ); //$NON-NLS-1$
+        buffer.append( "   unsigned x1:1;                    \n" ); //$NON-NLS-1$
+        buffer.append( "   unsigned x2:2;                    \n" ); //$NON-NLS-1$
+        buffer.append( "   unsigned x3:3;                    \n" ); //$NON-NLS-1$
+        buffer.append( "};                                   \n" ); //$NON-NLS-1$
+        buffer.append( "foobar( int x, int y, int z ){       \n" ); //$NON-NLS-1$
+        buffer.append( "   struct x a = {x, y, z};           \n" ); //$NON-NLS-1$
+        buffer.append( "   struct x b = {x, y, z};           \n" ); //$NON-NLS-1$
+        buffer.append( "   struct x *c = &b;                 \n" ); //$NON-NLS-1$
+        buffer.append( "   c->x3 += ( a.x2 - a.x1) * c->x2;  \n" ); //$NON-NLS-1$
+        buffer.append( "   if( a.x1 != 1 || c->x3 != 5 )     \n" ); //$NON-NLS-1$
+        buffer.append( "      return -1;                     \n" ); //$NON-NLS-1$
+        buffer.append( "   return 0;                         \n" ); //$NON-NLS-1$
+        buffer.append( "}                                    \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 33 );
+        ICompositeType x = (ICompositeType) collector.getName( 0 ).resolveBinding();
+        IField    x1 = (IField)     collector.getName( 1 ).resolveBinding();
+        IField    x2 = (IField)     collector.getName( 2 ).resolveBinding();
+        IField    x3 = (IField)     collector.getName( 3 ).resolveBinding();
+        IVariable vx = (IVariable)  collector.getName( 5 ).resolveBinding();
+        IVariable vy = (IVariable)  collector.getName( 6 ).resolveBinding();
+        IVariable vz = (IVariable)  collector.getName( 7 ).resolveBinding();
+        IVariable a  = (IVariable)  collector.getName( 9 ).resolveBinding();
+        IVariable b  = (IVariable)  collector.getName( 14 ).resolveBinding();
+        IVariable c  = (IVariable)  collector.getName( 19 ).resolveBinding();
+        
+        assertInstances( collector, x, 4 );
+        assertInstances( collector, x1, 3);
+        assertInstances( collector, x2, 3);
+        assertInstances( collector, x3, 3);
+        assertInstances( collector, vx, 3);
+        assertInstances( collector, vy, 3);
+        assertInstances( collector, vz, 3);
+        assertInstances( collector, a, 4);
+        assertInstances( collector, b, 2);
+        assertInstances( collector, c, 3);
     }
 }

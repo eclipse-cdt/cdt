@@ -1,4 +1,8 @@
 2003-01-21 Alain Magloire
+	* src/org/eclipse/cdt/debug/core/cdi/event/ICDIConfiguration.java
+	(supportsSharedLibary): New method.
+
+2003-01-21 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/event/ICDISuspendedEvent.java:
 	Use ICDISignalReceived instead.

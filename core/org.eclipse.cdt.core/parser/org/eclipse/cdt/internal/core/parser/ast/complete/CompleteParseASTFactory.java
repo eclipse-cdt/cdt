@@ -793,7 +793,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IProblem p = problemFactory.createProblem( id, 
 				startOffset, endOffset, lineNumber, fileProvider.getCurrentFilename(), attribute, false, true );
 		
-		TraceUtil.outputTrace(logService, "CompleteParseASTFactory - IProblem : ", p, null, null, null );
+		TraceUtil.outputTrace(logService, "CompleteParseASTFactory - IProblem : ", p, null, null, null ); //$NON-NLS-1$
 		
 		if( shouldThrowException( scope, id ) ) 
 			throw new ASTSemanticException(p);
@@ -1004,10 +1004,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	{
     		TraceUtil.outputTrace(
     				logService,
-    				"Entering createExpression with Kind=",
+    				"Entering createExpression with Kind=", //$NON-NLS-1$
 					null,
 					kind.getKindName(),
-					" idexpression=",
+					" idexpression=", //$NON-NLS-1$
 					idExpression.toString()
     				);
     	}
@@ -1015,10 +1015,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	{
        		TraceUtil.outputTrace(
        				logService,
-    				"Entering createExpression with Kind=",
+    				"Entering createExpression with Kind=", //$NON-NLS-1$
 					null,
 					kind.getKindName(),
-					" literal=",
+					" literal=", //$NON-NLS-1$
 					literal
     				);
     	}

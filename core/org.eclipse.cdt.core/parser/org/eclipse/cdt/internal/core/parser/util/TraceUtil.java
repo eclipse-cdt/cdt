@@ -19,42 +19,34 @@ import org.eclipse.cdt.core.parser.IProblem;
  */
 public class TraceUtil {
 	public static void outputTrace(IParserLogService log, String preface, IProblem problem, String first, String second, String third ) {
-		if( log.isTracing() ){
+		if( log.isTracing() ) {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append( preface != null ? preface : "" );
-			buffer.append( problem != null ? problem.getMessage() : "" );
-			buffer.append( first   != null ? first   : "" );
-			buffer.append( second  != null ? second  : "" );
-			buffer.append( third   != null ? third   : "" );
+			if( preface != null ) buffer.append( preface );
+			if( problem != null ) buffer.append( problem.getMessage());
+			if( first   != null ) buffer.append( first );
+			if( second  != null ) buffer.append( second );
+			if( third   != null ) buffer.append( third );
 			log.traceLog( buffer.toString() );
 		}
 	}
 	public static void outputTrace(IParserLogService log, String preface, IProblem problem, int first, String second, int third ) {
-		if( log.isTracing() ){
-			StringBuffer buffer = new StringBuffer();
-			buffer.append( preface != null ? preface : "" );
-			buffer.append( problem != null ? problem.getMessage() : "" );
-			buffer.append( Integer.toString( first ) );
-			buffer.append( second  != null ? second  : "" );
-			buffer.append( Integer.toString( third ) );
-			log.traceLog( buffer.toString() );
-		}	
+		if( log.isTracing() ) {
+			outputTrace(
+					log, 
+					preface, 
+					problem, 
+					Integer.toString( first ), 
+					second, 
+					Integer.toString( third ) );
+		}
 	}
 	public static void outputTrace(IParserLogService log, String preface, String first, String second, String third ) {
-		if( log.isTracing() ){
-			StringBuffer buffer = new StringBuffer();
-			buffer.append( preface != null ? preface : "" );
-			buffer.append( first   != null ? first   : "" );
-			buffer.append( second  != null ? second  : "" );
-			buffer.append( third   != null ? third   : "" );
-			log.traceLog( buffer.toString() );
-		}
+			outputTrace(log, preface, null, first, second, third);
 	}
 	public static void outputTrace(IParserLogService log, String preface) {
 		if( log.isTracing() ){
-			StringBuffer buffer = new StringBuffer();
-			buffer.append( preface != null ? preface : "" );
-			log.traceLog( buffer.toString() );
+			if ( preface != null )
+				log.traceLog( preface );
 		}				
 	}
 }

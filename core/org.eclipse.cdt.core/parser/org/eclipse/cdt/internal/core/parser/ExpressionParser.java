@@ -2470,7 +2470,7 @@ public class ExpressionParser implements IExpressionParser {
 	    }
 	    catch (ScannerException e)
 	    {
-	    	TraceUtil.outputTrace(log, "ScannerException thrown : ", e.getProblem(), null, null, null);
+	    	TraceUtil.outputTrace(log, "ScannerException thrown : ", e.getProblem(), null, null, null); //$NON-NLS-1$
 			log.errorLog( "Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$h
 	        failParse(); 
 	        return fetchToken();

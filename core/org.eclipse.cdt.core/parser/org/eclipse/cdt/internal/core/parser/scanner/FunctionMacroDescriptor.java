@@ -27,19 +27,17 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	 * RHS expansion in the macro definition.
 	 * @param sig			The complete signature of the macro, as a string.
 	 */
-	public FunctionMacroDescriptor( String name, List identifiers, List tokens, String fullSignature, String expansionSignature )
+	public FunctionMacroDescriptor( String name, List identifiers, List tokens, String expansionSignature )
 	{
 		this.name = name; 
 		identifierParameters = identifiers; 
 		tokenizedExpansion = tokens;
-		signature = fullSignature;
 		this.expansionSignature = expansionSignature;
 	}
 
 	private String name; 
 	private List identifierParameters; 
 	private List tokenizedExpansion; 
-	private String signature;
 	private String expansionSignature; 
 	/**
 	 * Returns the identifiers.
@@ -102,7 +100,20 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	 */
 	public final String getCompleteSignature()
 	{
-		return signature;
+		StringBuffer fullSignature = new StringBuffer( "#define " ); //$NON-NLS-1$
+		fullSignature.append( name );
+		fullSignature.append( '(');
+		Iterator iter = getParameters().iterator(); 
+		int current = 0; 
+		while( iter.hasNext() )
+		{
+			if (current > 0) fullSignature.append(',');
+			fullSignature.append((String)iter.next() );  
+			current++;
+		}
+		fullSignature.append( ") "); //$NON-NLS-1$
+		fullSignature.append( expansionSignature );
+		return fullSignature.toString();
 	}
 
 	/* (non-Javadoc)

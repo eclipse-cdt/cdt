@@ -98,7 +98,7 @@ public class Scanner implements IScanner {
 				error );
 		
 		// trace log
-		TraceUtil.outputTrace(scannerData.getLogService(), "Scanner problem encountered: ", problem, null, null, null );
+		TraceUtil.outputTrace(scannerData.getLogService(), "Scanner problem encountered: ", problem, null, null, null ); //$NON-NLS-1$
 		
 		if( (! scannerData.getClientRequestor().acceptProblem( problem )) && extra )
 			throw new ScannerException( problem );
@@ -151,6 +151,7 @@ public class Scanner implements IScanner {
 			//won't happen since we aren't adding an include or a macro
 			// assert false
 		} 
+		
 		
 		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
 		TraceUtil.outputTrace(log, "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
@@ -349,14 +350,9 @@ public class Scanner implements IScanner {
 	}
 
 	public void addDefinition(String key, String value) {
-		StringBuffer signatureBuffer  = new StringBuffer();
-		signatureBuffer.append( key );
-		signatureBuffer.append( ' ' );
-		signatureBuffer.append( value );
-		
 		addDefinition(key,
-				new ObjectMacroDescriptor( key, signatureBuffer.toString(), 
-						tokenizeReplacementString( NO_OFFSET_LIMIT, key, value, null ), value ));
+				new ObjectMacroDescriptor( key, 
+						value ));
 	}
 
 	public final IMacroDescriptor getDefinition(String key) {
@@ -382,9 +378,12 @@ public class Scanner implements IScanner {
 	}
 
 	protected String getRestOfPreprocessorLine() throws ScannerException, EndOfFileException {
-		StringBuffer buffer = new StringBuffer();
+
 		skipOverWhitespace();
 		int c = getChar();
+		if (c == '\n') 
+			return ""; //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer();
 		boolean inString = false;
 		boolean inChar = false;
 		while (true) {
@@ -586,7 +585,12 @@ public class Scanner implements IScanner {
 			
 			try
 			{
-				scannerData.getContextStack().updateContext(duple.getUnderlyingReader(), duple.getFilename(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
+				scannerData.getContextStack().updateContext(
+					duple.getUnderlyingReader(), 
+					duple.getFilename(), 
+					ScannerContext.ContextKind.INCLUSION, 
+					inclusion, 
+					scannerData.getClientRequestor() );
 			}
 			catch (ContextException e1)
 			{
@@ -929,7 +933,12 @@ public class Scanner implements IScanner {
 			storageBuffer.append( buff.toString() );
 			try
 			{
-				scannerData.getContextStack().updateContext( new StringReader( storageBuffer.toString()), PASTING, IScannerContext.ContextKind.MACROEXPANSION, null, scannerData.getClientRequestor() );
+				scannerData.getContextStack().updateContext( 
+					new StringReader( storageBuffer.toString()), 
+					PASTING, 
+					IScannerContext.ContextKind.MACROEXPANSION, 
+					null, 
+					scannerData.getClientRequestor() );
 			}
 			catch (ContextException e)
 			{
@@ -1015,15 +1024,15 @@ public class Scanner implements IScanner {
 			if ( next != null && 
 					(next.getType() == IToken.tSTRING || 
 				     next.getType() == IToken.tLSTRING ))  {
-				StringBuffer buffer = new StringBuffer( returnToken.getImage() );
-				buffer.append( next.getImage() );
-				returnToken.setImage( buffer.toString() ); 
+				buff.append( next.getImage() );
 			}	
 			else
 				cachedToken = next;
 		} catch( EndOfFileException e ){ 
 			next = null;
 		}
+		
+		returnToken.setImage(buff.toString());
 		
 		currentToken = returnToken;
 		returnToken.setNext( null );									
@@ -1175,9 +1184,6 @@ public class Scanner implements IScanner {
 		int c;
 		int beginningOffset = scannerData.getContextStack().getCurrentContext().getOffset() - 1;
 		int beginningLine = scannerData.getContextStack().getCurrentLineNumber();
-		// lets prepare for a preprocessor statement
-		StringBuffer buff = new StringBuffer();
-		buff.append('#');
 
 		// we are allowed arbitrary whitespace after the '#' and before the rest of the text
 		boolean skipped = skipOverWhitespace();
@@ -1195,6 +1201,8 @@ public class Scanner implements IScanner {
 			return newConstantToken( tPOUND ); //$NON-NLS-1$
 		}
 		
+		StringBuffer buff = new StringBuffer();
+		buff.append('#');		
 		while (((c >= 'a') && (c <= 'z'))
 			|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
 			buff.append((char) c);
@@ -1250,7 +1258,6 @@ public class Scanner implements IScanner {
 						handleInvalidCompletion();
 					return null;
 				}
-				skipOverWhitespace();
 				removeSymbol(getNextIdentifier());
 				skipOverTextUntilNewline();
 				return null;
@@ -1278,7 +1285,6 @@ public class Scanner implements IScanner {
 
 			case PreprocessorDirectives.IFDEF :
 				//TODO add in content assist stuff here
-				skipOverWhitespace();
 				
 				String definition = getNextIdentifier();
 				if( isLimitReached() )
@@ -1318,8 +1324,7 @@ public class Scanner implements IScanner {
 				
 			case PreprocessorDirectives.IFNDEF :
 				//TODO add in content assist stuff here
-				skipOverWhitespace();
-				
+
 				String definition2 = getNextIdentifier();
 				if( isLimitReached() )
 					handleCompletionOnDefinition( definition2 );
@@ -1549,18 +1554,14 @@ public class Scanner implements IScanner {
 			
 		IMacroDescriptor mapping = getDefinition(ident);
 
-		if (mapping != null) {
-			StringBuffer buffer = new StringBuffer(POUND_DEFINE); 
-			buffer.append( ident );
-			if( scannerData.getContextStack().shouldExpandDefinition( buffer.toString()  ) ) {					
+		if (mapping != null)
+			if( scannerData.getContextStack().shouldExpandDefinition( ident ) ) {					
 				expandDefinition(ident, mapping, baseOffset);
 				return null;
 			}
-		}
 
-		if( pasting && pasteIntoInputStream(buff)){
+		if( pasting && pasteIntoInputStream(buff))
 			return null;
-		}
 		
 		Object tokenTypeObject;
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
@@ -2033,7 +2034,16 @@ public class Scanner implements IScanner {
 		
 		if( ! expression.trim().equals("")) //$NON-NLS-1$
 		{	
-			IScanner subScanner = new Scanner( new StringReader(expression), SCRATCH, EMPTY_MAP, EMPTY_LIST, NULL_REQUESTOR, ParserMode.QUICK_PARSE, scannerData.getLanguage(), NULL_LOG_SERVICE, scannerExtension );
+			IScanner subScanner = new Scanner( 
+					new StringReader(expression), 
+					SCRATCH, 
+					EMPTY_MAP, 
+					EMPTY_LIST, 
+					NULL_REQUESTOR, 
+					ParserMode.QUICK_PARSE, 
+					scannerData.getLanguage(), 
+					NULL_LOG_SERVICE, 
+					scannerExtension );
 			IToken lastToken = null;
 			while( true )
 			{	
@@ -2461,14 +2471,11 @@ public class Scanner implements IScanner {
 
 	
 	protected void skipOverSinglelineComment() throws ScannerException, EndOfFileException {
-		
-		StringBuffer comment = new StringBuffer("//"); //$NON-NLS-1$
 		int c;
 		
 		loop:
 		for (;;) {
 			c = getChar();
-			comment.append((char)c);
 			switch (c) {
 				case NOCHAR :
 				case '\n' :
@@ -2485,14 +2492,12 @@ public class Scanner implements IScanner {
 	protected boolean skipOverMultilineComment() throws ScannerException, EndOfFileException {
 		int state = 0;
 		boolean encounteredNewline = false;
-		StringBuffer comment = new StringBuffer("/*"); //$NON-NLS-1$
 		// simple state machine to handle multi-line comments
 		// state 0 == no end of comment in site
 		// state 1 == encountered *, expecting /
 		// state 2 == we are no longer in a comment
 
 		int c = getChar();
-		comment.append((char)c);
 		while (state != 2 && c != NOCHAR) {
 			if (c == '\n')
 				encounteredNewline = true;
@@ -2510,7 +2515,6 @@ public class Scanner implements IScanner {
 					break;
 			}
 			c = getChar();
-			comment.append((char)c);
 		}
 
 		if (c == NOCHAR && !isLimitReached() )
@@ -2524,14 +2528,12 @@ public class Scanner implements IScanner {
 	}
 
 	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException, EndOfFileException {
-		StringBuffer potentialErrorLine = new StringBuffer( "#include "); //$NON-NLS-1$
 		skipOverWhitespace();				
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
 		String includeLine = getRestOfPreprocessorLine();
 		int endLine = scannerData.getContextStack().getCurrentLineNumber();
-		potentialErrorLine.append( includeLine );
-		
+
 		ScannerUtility.InclusionDirective directive = null;
 		try
 		{
@@ -2539,6 +2541,8 @@ public class Scanner implements IScanner {
 		}
 		catch( ScannerUtility.InclusionParseException ipe )
 		{
+			StringBuffer potentialErrorLine = new StringBuffer( "#include "); //$NON-NLS-1$
+			potentialErrorLine.append( includeLine );
 			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
 			return;
 		}
@@ -2673,39 +2677,23 @@ public class Scanner implements IScanner {
 	}
 	
 	protected IMacroDescriptor createObjectMacroDescriptor(String key, String value ) {
-		StringBuffer signatureBuffer  = new StringBuffer();
-		signatureBuffer.append( key );
-		signatureBuffer.append( ' ' );
-		signatureBuffer.append( value );
-
-//		List macroReplacementTokens;
-//		if (value.trim().equals( "" ))
-//			macroReplacementTokens = new ArrayList();
-//		else
-//			macroReplacementTokens = tokenizeReplacementString( NO_OFFSET_LIMIT, key, value, null ); 
-		
-		List macroReplacementTokens = new ArrayList();
+		Token t = null;
 		if( !value.trim().equals( "" ) )  //$NON-NLS-1$
 		{	
-
-			Token t = new Token(
+			t = new Token(
 					IToken.tIDENTIFIER, 
 					value, 
 					scannerData.getContextStack().getCurrentContext(),
 					scannerData.getContextStack().getCurrentLineNumber()
 					);
-			macroReplacementTokens.add( t );
 		}
 	
-		return new ObjectMacroDescriptor( key, 
-				signatureBuffer.toString(), 
-				macroReplacementTokens, 
+		return new ObjectMacroDescriptor( key,  
+				t, 
 				value);
 	}
 
 	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException, EndOfFileException {
-		StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
-		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
 		int offset = scannerData.getContextStack().getCurrentContext().getOffset() - key.length() - scannerData.getContextStack().getCurrentContext().undoStackSize();
@@ -2732,6 +2720,7 @@ public class Scanner implements IScanner {
 						c = getChar();
 						continue;
 					} else {
+						StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 						ungetChar( c );
 						potentialErrorMessage.append( buffer );
 						potentialErrorMessage.append( '\\');
@@ -2740,6 +2729,7 @@ public class Scanner implements IScanner {
 						return;
 					}
 				} else if( c == '\r' || c == '\n' ){
+					StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 					potentialErrorMessage.append( buffer );
 					potentialErrorMessage.append( '\\');
 					potentialErrorMessage.append( (char)c );
@@ -2768,23 +2758,16 @@ public class Scanner implements IScanner {
 
 			List macroReplacementTokens = null;
 			String replacementString = getRestOfPreprocessorLine();
-			
+			// TODO:  This tokenization could be done live, instead of using a sub-scanner.
 			
 			macroReplacementTokens = ( ! replacementString.equals( "" ) ) ?  //$NON-NLS-1$
 										tokenizeReplacementString( beginning, key, replacementString, parameterIdentifiers ) :
 										EMPTY_LIST;
 			
-			StringBuffer fullSignature = new StringBuffer( POUND_DEFINE);
-			fullSignature.append( key );
-			fullSignature.append( '(');
-			fullSignature.append( parameters );
-			fullSignature.append( ") "); //$NON-NLS-1$
-			fullSignature.append( replacementString );
 			descriptor = new FunctionMacroDescriptor(
 				key,
 				parameterIdentifiers,
 				macroReplacementTokens,
-				fullSignature.toString(), 
 				replacementString);
 				
 			checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
@@ -2835,6 +2818,7 @@ public class Scanner implements IScanner {
 			} else {
 				// this is not a comment 
 				// it is a bad statement
+				StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 				potentialErrorMessage.append( key );
 				potentialErrorMessage.append( " /"); //$NON-NLS-1$
 				potentialErrorMessage.append( getRestOfPreprocessorLine() );
@@ -2842,8 +2826,7 @@ public class Scanner implements IScanner {
 				return;
 			}
 		} else {
-			potentialErrorMessage = new StringBuffer(); 
-			potentialErrorMessage.append( "#define"); //$NON-NLS-1$
+			StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 			potentialErrorMessage.append( key );
 			potentialErrorMessage.append( (char)c );
 			potentialErrorMessage.append( getRestOfPreprocessorLine() );
@@ -2886,7 +2869,17 @@ public class Scanner implements IScanner {
 
 	protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, scannerData.getDefinitions(), scannerData.getIncludePathNames(), NULL_REQUESTOR, scannerData.getParserMode(), scannerData.getLanguage(), NULL_LOG_SERVICE, (IScannerExtension)scannerExtension.clone() );
+        Scanner tokenizer  = new Scanner(
+        		new StringReader(params), 
+				TEXT, 
+				scannerData.getDefinitions(), 
+				scannerData.getIncludePathNames(), 
+				NULL_REQUESTOR, 
+				scannerData.getParserMode(), 
+				scannerData.getLanguage(), 
+				NULL_LOG_SERVICE, 
+				(IScannerExtension)scannerExtension.clone() );
+        
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
@@ -2951,15 +2944,8 @@ public class Scanner implements IScanner {
     
 	protected void expandDefinition(String symbol, String expansion, int symbolOffset ) throws ScannerException
 	{
-		StringBuffer fullSignatureBuffer = new StringBuffer();
-		fullSignatureBuffer.append( symbol );
-		fullSignatureBuffer.append( ' ');
-		fullSignatureBuffer.append( expansion );
-		List tokens = tokenizeReplacementString(NO_OFFSET_LIMIT, symbol, expansion, null );
 		expandDefinition( symbol, 
-				new ObjectMacroDescriptor( 	symbol, 
-											fullSignatureBuffer.toString(), 
-											tokens, 
+				new ObjectMacroDescriptor( 	symbol,
 											expansion ), 
 							symbolOffset);
 	}
@@ -2973,9 +2959,13 @@ public class Scanner implements IScanner {
 			String replacementValue = expansion.getExpansionSignature();
 			try
 			{
-				StringBuffer buffer = new StringBuffer( POUND_DEFINE );
-				buffer.append( symbol );
-				scannerData.getContextStack().updateContext( new StringReader(replacementValue), buffer.toString(), ScannerContext.ContextKind.MACROEXPANSION, null, scannerData.getClientRequestor(), symbolOffset, symbol.length());
+				scannerData.getContextStack().updateContext( 
+					new StringReader(replacementValue), 
+					symbol, ScannerContext.ContextKind.MACROEXPANSION, 
+					null, 
+					scannerData.getClientRequestor(), 
+					symbolOffset, 
+					symbol.length());
 			}
 			catch (ContextException e)
 			{
@@ -3118,11 +3108,14 @@ public class Scanner implements IScanner {
 				String finalString = buffer.toString();
 				try
 				{
-					StringBuffer completeSignature = new StringBuffer( POUND_DEFINE );
-					completeSignature.append( expansion.getCompleteSignature() );
 					scannerData.getContextStack().updateContext(
 						new StringReader(finalString),
-						completeSignature.toString(), ScannerContext.ContextKind.MACROEXPANSION, null, scannerData.getClientRequestor(), symbolOffset, endMacroOffset - symbolOffset + 1 );
+						expansion.getName(), 
+						ScannerContext.ContextKind.MACROEXPANSION, 
+						null, 
+						scannerData.getClientRequestor(), 
+						symbolOffset, 
+						endMacroOffset - symbolOffset + 1 );
 				}
 				catch (ContextException e)
 				{
@@ -3139,7 +3132,7 @@ public class Scanner implements IScanner {
 
 		} 
 		else {
-			TraceUtil.outputTrace(scannerData.getLogService(), "Unexpected type of MacroDescriptor stored in definitions table: ", null, expansion.getMacroType().toString(), null, null);
+			TraceUtil.outputTrace(scannerData.getLogService(), "Unexpected type of MacroDescriptor stored in definitions table: ", null, expansion.getMacroType().toString(), null, null); //$NON-NLS-1$
 		}
 
 	}

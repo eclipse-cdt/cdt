@@ -73,7 +73,7 @@ public class ContextStack {
 			if( !inclusions.add( context.getFilename() ) )
 				throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );
 			
-			TraceUtil.outputTrace(log, "Scanner::ContextStack: entering inclusion ", null, context.getFilename(), null, null );
+			TraceUtil.outputTrace(log, "Scanner::ContextStack: entering inclusion ", null, context.getFilename(), null, null ); //$NON-NLS-1$
 			context.getExtension().enterScope( requestor );				
 
 		} else if( context.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
@@ -98,7 +98,7 @@ public class ContextStack {
 
 		if( currentContext.getKind() == IScannerContext.ContextKind.INCLUSION )
 		{
-			TraceUtil.outputTrace(log, "Scanner::ContextStack: ending inclusion ", null, currentContext.getFilename(), null, null);
+			TraceUtil.outputTrace(log, "Scanner::ContextStack: ending inclusion ", null, currentContext.getFilename(), null, null); //$NON-NLS-1$
 			inclusions.remove( currentContext.getFilename() );
 			currentContext.getExtension().exitScope( requestor );
 		} else if( currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION )

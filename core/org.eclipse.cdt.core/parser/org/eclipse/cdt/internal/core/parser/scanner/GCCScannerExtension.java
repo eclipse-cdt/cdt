@@ -18,12 +18,10 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
-import org.eclipse.cdt.internal.core.parser.token.Token;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
@@ -41,7 +39,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	static
 	{
 		simpleIdentifiers = new ArrayList();
-		simpleIdentifiers.add( new Token( IToken.tIDENTIFIER, "x")); //$NON-NLS-1
+		simpleIdentifiers.add( "x" ); //$NON-NLS-1
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
@@ -59,12 +57,12 @@ public class GCCScannerExtension implements IScannerExtension {
 
 		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
 		{
-			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "#define __attribute__( x )", "" )); //$NON-NLS-1$ $NON-NLS-2$
+			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 		}
 		
 		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
 		{
-			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "#define __attribute__( x )", "" )); //$NON-NLS-1$ $NON-NLS-2$
+			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 		}
 
 		
@@ -111,7 +109,7 @@ public class GCCScannerExtension implements IScannerExtension {
 	public void handlePreprocessorDirective(String directive, String restOfLine) {
 		if( directive.equals("#include_next") ) //$NON-NLS-1$
 		{
-			TraceUtil.outputTrace(scannerData.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null);
+			TraceUtil.outputTrace(scannerData.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null); //$NON-NLS-1$
 			// figure out the name of the current file and its path
 			IScannerContext context = scannerData.getContextStack().getCurrentContext();
 			if( context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
@@ -158,7 +156,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			}
 			
 		}
-		else if( directive.equals( "#warning") || directive.equals("#ident"))
+		else if( directive.equals( "#warning") || directive.equals("#ident")) //$NON-NLS-1$ //$NON-NLS-2$
 			return; // good enough -- the rest of the line has been consumed
 	}
 

@@ -42,15 +42,15 @@ public class SelectionParser extends ContextualParser {
 	protected void handleNewToken(IToken value) {
 		if( value != null && scanner.isOnTopContext() )
 		{
-			TraceUtil.outputTrace(log, "IToken provided w/offsets ", null, value.getOffset(), " & ", value.getEndOffset() );
+			TraceUtil.outputTrace(log, "IToken provided w/offsets ", null, value.getOffset(), " & ", value.getEndOffset() ); //$NON-NLS-1$ //$NON-NLS-2$
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 			{
-				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getImage(), "\"", null );
+				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				firstTokenOfDuple = value;
 			}
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
 			{
-				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null );
+				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				lastTokenOfDuple = value;
 			}
 			if( scanner.isOnTopContext() && lastTokenOfDuple != null && lastTokenOfDuple.getEndOffset() >= offsetRange.getCeilingOffset() )

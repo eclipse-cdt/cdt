@@ -14,30 +14,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.internal.core.parser.token.Token;
 
 /**
  * @author jcamelon
  */
 public class ObjectMacroDescriptor implements IMacroDescriptor {
 
-	private static final List EMPTY_LIST = new ArrayList();
-	private final String fullSignature, expansionSignature;
+	private static final ArrayList EMPTY_LIST = new ArrayList();
+	private final String expansionSignature;
 	private final String name;
-	private final List tokenizedExpansion;
+	private final Token token;
 
 	public ObjectMacroDescriptor( String name, String expansionSignature )
 	{
 		this.name = name;
 		this.expansionSignature = expansionSignature;
-		fullSignature = "#define " + name + " " + expansionSignature; //$NON-NLS-1$ //$NON-NLS-2$
-		tokenizedExpansion = EMPTY_LIST;
+		token = null;
 	}
 	
-	public ObjectMacroDescriptor( String name, String signature, List tokenizedExpansion, String expansionSignature )
+	public ObjectMacroDescriptor( String name, Token t, String expansionSignature )
 	{
 		this.name = name;
-		this.tokenizedExpansion = tokenizedExpansion;
-		this.fullSignature = signature;
+		this.token = t;
 		this.expansionSignature = expansionSignature;
 	}
 	
@@ -59,7 +58,9 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
 	 */
 	public List getTokenizedExpansion() {
-		return tokenizedExpansion;
+		ArrayList x = new ArrayList();
+		x.add(token);
+		return x;
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +74,12 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getSignature()
 	 */
 	public String getCompleteSignature() {
-		return fullSignature;
+		StringBuffer signatureBuffer  = new StringBuffer();
+		signatureBuffer.append( "#define " ); //$NON-NLS-1$
+		signatureBuffer.append( name );
+		signatureBuffer.append( ' ' );
+		signatureBuffer.append( expansionSignature );
+		return signatureBuffer.toString();
 	}
 
 	/* (non-Javadoc)
@@ -82,12 +88,14 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	public boolean compatible(IMacroDescriptor descriptor) {
 		if( descriptor.getName() == null ) return false;
 		if( descriptor.getMacroType() != getMacroType() ) return false;
-		if( descriptor.getTokenizedExpansion() == null ) return false;
-		if( ! name.equals( descriptor.getName() )) return false; 
-		if( descriptor.getTokenizedExpansion().size() != tokenizedExpansion.size() ) return false;
 		
-		if( ! (descriptor.getTokenizedExpansion().containsAll( tokenizedExpansion ))) return false;
-		return true;
+		// Both macros are ObjectMacroDescriptors!
+
+		if( ! name.equals( descriptor.getName() )) return false; 
+		String result = descriptor.getExpansionSignature();	
+		if( result == null ) return expansionSignature == null;
+	
+		return result.equals(expansionSignature);
 	}
 
 	/* (non-Javadoc)

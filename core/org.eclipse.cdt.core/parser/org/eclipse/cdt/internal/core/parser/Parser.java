@@ -2149,7 +2149,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                         catch (BacktrackException e)
                                         {
                                             failParse();
-                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null );
+                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null ); //$NON-NLS-1$
                                             consume();
                                             // eat this token anyway
                                             continue;

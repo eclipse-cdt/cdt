@@ -1,3 +1,7 @@
+2004-04-06 David Daoust
+	Removed some temporary objects that the scanner was producing.
+	Fixed small bug in GCCScannerExtension.
+
 2004-04-06 Andrew Niefer
 	Small changes to help with template parsing
 	 - report line numbers with some problems

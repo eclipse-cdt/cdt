@@ -698,6 +698,14 @@ public class BreakpointManager extends Manager {
 		boolean read = ( !((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE) && 
 						  (watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ );
 
+		try {
+			// Check if this an address watchpoint, and add a '*'
+			Integer.decode(expression);
+			expression = '*' + expression;
+		} catch (NumberFormatException e) {
+			//
+		}
+
 		MISession miSession = target.getMISession();
 		boolean state = suspendInferior(target);
 		CommandFactory factory = miSession.getCommandFactory();

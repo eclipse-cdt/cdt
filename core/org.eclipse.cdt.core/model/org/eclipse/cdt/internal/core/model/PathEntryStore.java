@@ -126,8 +126,12 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 		}
 
 		// get path and ensure it is absolute
-		//String pathAttr = element.getAttribute(ATTRIBUTE_PATH);
-		IPath path = new Path(element.getAttribute(ATTRIBUTE_PATH));
+		IPath path;
+		if (element.hasAttribute(ATTRIBUTE_PATH)) {
+			path = new Path(element.getAttribute(ATTRIBUTE_PATH));
+		} else {
+			path = new Path(""); //$NON-NLS-1$
+		}
 		if (!path.isAbsolute()) {
 			path = projectPath.append(path);
 		}
@@ -165,7 +169,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 			case IPathEntry.CDT_PROJECT :
 				return CoreModel.newProjectEntry(path, isExported);
 			case IPathEntry.CDT_LIBRARY :
-				if (!baseRef.isEmpty()) {
+				if (baseRef != null && !baseRef.isEmpty()) {
 					return CoreModel.newLibraryRefEntry(baseRef, path);
 				}
 				return CoreModel.newLibraryEntry(basePath, path, sourceAttachmentPath, sourceAttachmentRootPath,
@@ -195,7 +199,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 					if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
 						isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 					}
-					if (!baseRef.isEmpty()) {
+					if (baseRef != null && !baseRef.isEmpty()) {
 						return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
 					}
 					return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
@@ -204,7 +208,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 				{
 					String macroName = element.getAttribute(ATTRIBUTE_NAME);
 					String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
-					if (!baseRef.isEmpty()) {
+					if (baseRef != null && !baseRef.isEmpty()) {
 						return CoreModel.newMacroRefEntry(path, baseRef, macroName);
 					}
 					return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);

@@ -72,10 +72,13 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -2815,5 +2818,49 @@ public class AST2Tests extends AST2BaseTest {
 	   ICASTArrayModifier star = (ICASTArrayModifier) a.getArrayModifiers()[1];
 	   assertTrue( star.isVariableSized() );
 	   
+	}
+	
+	public void testBug84696() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "struct A {\n int a; \n};\n" ); //$NON-NLS-1$
+		buffer.append( "struct B: virtual A { };\n" ); //$NON-NLS-1$
+		buffer.append( "struct C: B { };\n" ); //$NON-NLS-1$
+		buffer.append( "struct D: B { };\n" ); //$NON-NLS-1$
+		buffer.append( "struct E: public C, public D { };\n" ); //$NON-NLS-1$
+		buffer.append( "struct F: public A { };\n" ); //$NON-NLS-1$
+		buffer.append( "void f() {\n" ); //$NON-NLS-1$
+		buffer.append( "E e;\n" ); //$NON-NLS-1$
+		buffer.append( "e.B::a = 0;\n" ); //$NON-NLS-1$
+		buffer.append( "F f;\n" ); //$NON-NLS-1$
+		buffer.append( "f.A::a = 1;\n}\n" ); //$NON-NLS-1$
+		   
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit(tu, col);
+		
+		assertEquals(col.size(), 26);
+		
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+		
+		assertNotNull(A);
+		assertNotNull(B);
+		
+		assertInstances( col, A, 4 );
+		assertInstances( col, B, 4 );
+	}
+	
+	public void testBug84466() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "struct B {};\n" ); //$NON-NLS-1$
+		buffer.append( "struct D : B {};\n" ); //$NON-NLS-1$
+		buffer.append( "void foo(D* dp)\n{\n" ); //$NON-NLS-1$
+		buffer.append( "B* bp = dynamic_cast<B*>(dp);\n}\n" ); //$NON-NLS-1$
+		   
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+		ICPPASTCastExpression dynamic_cast = (ICPPASTCastExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)((IASTDeclarationStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[2]).getBody()).getStatements()[0]).getDeclaration()).getDeclarators()[0].getInitializer()).getExpression();
+		
+		assertEquals(dynamic_cast.getOperator(), ICPPASTCastExpression.op_dynamic_cast);
+		
 	}
 }

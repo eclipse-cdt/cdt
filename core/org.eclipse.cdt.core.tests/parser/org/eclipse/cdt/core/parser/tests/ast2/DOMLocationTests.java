@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -37,9 +39,12 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -327,6 +332,27 @@ public class DOMLocationTests extends AST2BaseTest {
          assertSoleLocation( second_if, second_if_start, total_if_end - second_if_start );
          assertSoleLocation( third_if, third_if_start, total_if_end - third_if_start );
       }      
+   }
+   
+   public void testBug84467() throws Exception
+   {
+   		String code = "class D { };\n D d1;\n const D d2;\n void foo() {\n typeid(d1) == typeid(d2);\n }"; //$NON-NLS-1$
+   	  	IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+   	  	IASTBinaryExpression bexp = (IASTBinaryExpression)((IASTExpressionStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[3]).getBody()).getStatements()[0]).getExpression();
+   	  	IASTTypeIdExpression exp = (IASTTypeIdExpression)((IASTBinaryExpression)((IASTExpressionStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[3]).getBody()).getStatements()[0]).getExpression()).getOperand1();
+   	  	
+   	  	assertSoleLocation( bexp, code.indexOf( "typeid(d1) == typeid(d2)"), "typeid(d1) == typeid(d2)".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+   	  	assertSoleLocation( exp, code.indexOf( "typeid(d1)"), "typeid(d1)".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+   	  	exp = (IASTTypeIdExpression)((IASTBinaryExpression)((IASTExpressionStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[3]).getBody()).getStatements()[0]).getExpression()).getOperand2();
+   	  	assertSoleLocation( exp, code.indexOf( "typeid(d2)"), "typeid(d2)".length() ); //$NON-NLS-1$ //$NON-NLS-2$
+   }
+   
+   public void testBug84576() throws Exception
+   {
+   		String code = "namespace A {\n extern \"C\" int g();\n }"; //$NON-NLS-1$
+   	  	IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+   	  	ICPPASTLinkageSpecification spec = (ICPPASTLinkageSpecification)((ICPPASTNamespaceDefinition)tu.getDeclarations()[0]).getDeclarations()[0];
+   	  	assertSoleLocation( spec, code.indexOf( "extern \"C\""), "extern \"C\"".length() ); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
 }

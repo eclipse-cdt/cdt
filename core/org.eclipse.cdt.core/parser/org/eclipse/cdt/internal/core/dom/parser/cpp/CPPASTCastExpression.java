@@ -10,14 +10,14 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 
 /**
  * @author jcamelon
  */
 public class CPPASTCastExpression extends CPPASTUnaryExpression implements
-        IASTCastExpression {
+        ICPPASTCastExpression {
     private IASTTypeId typeId;
 
     /* (non-Javadoc)

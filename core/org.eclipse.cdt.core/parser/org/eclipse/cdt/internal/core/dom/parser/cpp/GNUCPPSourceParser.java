@@ -147,6 +147,10 @@ import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
  */
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
+   private static final String CONST_CAST = "const_cast"; //$NON-NLS-1$
+   private static final String REINTERPRET_CAST = "reinterpret_cast"; //$NON-NLS-1$
+   private static final String STATIC_CAST = "static_cast"; //$NON-NLS-1$
+   private static final String DYNAMIC_CAST = "dynamic_cast"; //$NON-NLS-1$
    private static final int        DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
    private ScopeStack              templateIdScopes                = new ScopeStack();
    protected CPPASTTranslationUnit translationUnit;
@@ -1422,7 +1426,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                isTypeId = false;
                lhs = expression();
             }
-            lastOffset = consume(IToken.tRPAREN).getOffset();
+            lastOffset = consume(IToken.tRPAREN).getEndOffset();
             if (templateIdScopes.size() > 0) {
                templateIdScopes.pop();
             }
@@ -1784,7 +1788,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
    protected IASTExpression specialCastExpression(int kind)
          throws EndOfFileException, BacktrackException {
       int startingOffset = LA(1).getOffset();
-      consume();
+      IToken op = consume();
       consume(IToken.tLT);
       IASTTypeId typeID = typeId(false, false);
       consume(IToken.tGT);
@@ -1797,6 +1801,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       typeID.setParent(result);
       typeID.setPropertyInParent(IASTCastExpression.TYPE_ID);
       result.setOperand(lhs);
+      
+      if (op.toString().equals(DYNAMIC_CAST)) {
+      	result.setOperator(ICPPASTCastExpression.op_dynamic_cast);
+      } else if (op.toString().equals(STATIC_CAST)) {
+      	result.setOperator(ICPPASTCastExpression.op_static_cast);
+      } else if (op.toString().equals(REINTERPRET_CAST)) {
+      	result.setOperator(ICPPASTCastExpression.op_reinterpret_cast);
+      } else if (op.toString().equals(CONST_CAST)) {
+      	result.setOperator(ICPPASTCastExpression.op_const_cast);
+      } else {
+      	result.setOperator(IASTCastExpression.op_cast);	
+      }
+      
       lhs.setParent(result);
       lhs.setPropertyInParent(IASTCastExpression.OPERAND);
       return result;
@@ -1929,6 +1946,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       ICPPASTLinkageSpecification linkage = createLinkageSpecification();
       ((ASTNode) linkage).setOffset(firstToken.getOffset());
       linkage.setLiteral(spec.getImage());
+      ((ASTNode) linkage).setLength(spec.getEndOffset() - firstToken.getOffset());
 
       if (LT(1) == IToken.tLBRACE) {
          consume(IToken.tLBRACE);

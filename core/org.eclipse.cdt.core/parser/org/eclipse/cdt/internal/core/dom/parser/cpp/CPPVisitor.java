@@ -808,7 +808,8 @@ public class CPPVisitor {
 							prop == ICPPASTPointerToMember.NAME ||
 							prop == ICPPASTTypenameExpression.TYPENAME ||
 							prop == ICPPASTUsingDeclaration.NAME ||
-							prop == ICPPASTQualifiedName.SEGMENT_NAME)
+							prop == ICPPASTQualifiedName.SEGMENT_NAME ||
+							prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME)
 						break;
 					else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
 						IASTNode p = name.getParent().getParent();
@@ -827,7 +828,8 @@ public class CPPVisitor {
 						prop == ICPPASTUsingDeclaration.NAME ||
 						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
-						prop == ICPPASTQualifiedName.SEGMENT_NAME)
+						prop == ICPPASTQualifiedName.SEGMENT_NAME ||
+						prop == IASTNamedTypeSpecifier.NAME)
 					{
 						break;
 					}
@@ -842,7 +844,8 @@ public class CPPVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) &&
+			if( binding != null &&
+					CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) &&
 					name.resolveBinding() == binding ){
 				if( refs.length == idx ){
 					IASTName [] temp = new IASTName[ refs.length * 2 ];

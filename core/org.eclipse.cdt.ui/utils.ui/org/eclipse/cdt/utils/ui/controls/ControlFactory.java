@@ -5,31 +5,38 @@ package org.eclipse.cdt.utils.ui.controls;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.layout.*;
+import java.util.StringTokenizer;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.swt.SWT;
-import java.util.StringTokenizer;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 public class ControlFactory {
-
-	private static HyperlinkHandler defaultHyperlinkHandler = new HyperlinkHandler();
-	
-	public static void dispose() {
-		defaultHyperlinkHandler.dispose();
-	}
 
 	public static Control setParentColors(Control control) {
 		Composite parent = control.getParent();
@@ -164,28 +171,7 @@ public class ControlFactory {
 		return createLabel(parent, text, widthHint, heightHint, SWT.LEFT | SWT.WRAP);
 	}
 
-	/**
-	 * Utility method that creates a HyperLinkLabel instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new label
-	 * @param text  the text for the new label
-	 * @param TypedListener  click event listener
-	 * @return the new label
-	 */
-	public static Label createHyperlinkLabel(Composite parent, String text, IHyperlinkListener listener, 
-		HyperlinkHandler hyperlinkHandler) {
-		Label label = createLabel(parent, text);
-		turnIntoHyperlink(label, listener, 
-			(null == hyperlinkHandler) ? defaultHyperlinkHandler : hyperlinkHandler);
-		return label;
-	}
 
-	public static void turnIntoHyperlink(Control control, IHyperlinkListener listener,
-		HyperlinkHandler hyperlinkHandler) {
-		hyperlinkHandler.registerHyperlink(control, listener);
-	} 
-	
 	/**
 	 * Creates an new checkbox instance and sets the default
 	 * layout data.

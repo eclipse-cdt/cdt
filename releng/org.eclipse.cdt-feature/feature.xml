@@ -167,4 +167,40 @@
          version="3.0.0"
          fragment="true"/>
 
+   <plugin
+         id="org.eclipse.cdt.core.linux.ia64"
+         os="linux"
+         arch="ia64"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux.ppc"
+         os="linux"
+         arch="ppc"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux.x86_64"
+         os="linux"
+         arch="x86_64"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux.x86"
+         os="linux"
+         arch="x86"
+         download-size="0"
+         install-size="0"
+         version="3.0.0"
+         fragment="true"/>
+
 </feature>

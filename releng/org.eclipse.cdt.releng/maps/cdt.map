@@ -27,6 +27,10 @@ feature@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org
 
 fragment@org.eclipse.cdt.core.aix=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.aix
 fragment@org.eclipse.cdt.core.linux=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux
+fragment@org.eclipse.cdt.core.linux.ia64=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ia64
+fragment@org.eclipse.cdt.core.linux.ppc=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.ppc
+fragment@org.eclipse.cdt.core.linux.x86=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86
+fragment@org.eclipse.cdt.core.linux.x86_64=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux.x86_64
 fragment@org.eclipse.cdt.core.macosx=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.macosx
 fragment@org.eclipse.cdt.core.qnx=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.qnx
 fragment@org.eclipse.cdt.core.solaris=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.solaris

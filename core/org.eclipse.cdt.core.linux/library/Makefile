@@ -15,7 +15,7 @@ CC=gcc
 CPPFLAGS = -I. -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
 CFLAGS +=-fpic -D_REENTRANT -D_GNU_SOURCE
 
-INSTALL_DIR = ../os/$(OS)/$(ARCH)
+INSTALL_DIR = ../../org.eclipse.cdt.core.linux.$(ARCH)/os/$(OS)/$(ARCH)
 
 LIB_NAME_SPAWNER = libspawner.so
 LIB_NAME_FULL_SPAWNER = $(INSTALL_DIR)/libspawner.so

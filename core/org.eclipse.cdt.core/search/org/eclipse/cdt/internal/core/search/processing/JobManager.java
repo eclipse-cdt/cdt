@@ -472,7 +472,11 @@ public abstract class JobManager implements Runnable {
 						//if (status == FAILED) request(job);
 					} finally {
 						executing = false;
-						jobFinishedNotification(currentJob());
+						
+						//Answer the job directly from the array; using currentJob()
+						//results in no notification if indexing is disabled (Bug 78678)
+						jobFinishedNotification(awaitingJobs[jobStart]);
+						
 						if (VERBOSE) {
 							JobManager.verbose("FINISHED background job - " + job); //$NON-NLS-1$
 						}

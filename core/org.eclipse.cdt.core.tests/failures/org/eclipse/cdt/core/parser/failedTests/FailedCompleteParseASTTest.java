@@ -204,25 +204,6 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertFalse(j.hasNext());
 	}
 	
-	public void testInheritsFromTemplateParameter_bug71410() throws Exception {
-		try {
-			// An inner type definition inherits from a template parameter
-			parse("template <typename T, class U> \n class A { \n struct B : U { T* mpT; }; \n B mB; \n T* foo() { return mB.mpT; } \n }; \n");//$NON-NLS-1$
-			fail();
-		} catch (ParserException e) {
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("template <typename T, class U> \n class A { \n struct B : U { T* mT; }; \n B mB; \n T* getVal() { return mB.mT; } \n }; \n").getDeclarations();//$NON-NLS-1$
-//		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
-//		assertFalse(i.hasNext());
-//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
-//		Iterator j = cs.getDeclarations();
-//		IASTClassSpecifier cs2 = (IASTClassSpecifier) j.next();
-//		IASTField f = (IASTField) j.next();
-//		IASTMethod m = (IASTMethod) j.next();
-//		assertFalse(j.hasNext());
-	}
-	
 	public void testParametrizedTypeDefinition_bug69751() throws Exception {
 		try {
 			// a typedef refers to an unknown type in a template parameter

@@ -168,6 +168,7 @@ public class Parser2 {
 				consume();
 				break;
 			case Token.tLBRACE:
+				callback.functionBodyBegin();
 				if (quickParse) {
 					// speed up the parser by skiping the body
 					// simply look for matching brace and return
@@ -189,9 +190,10 @@ public class Parser2 {
 				} else {
 					functionBody();
 				}
+				callback.functionBodyEnd();
 				break;
 			default:
-				//throw backtrack;
+				throw backtrack;
 		}
 		
 		return simpleDeclaration;
@@ -412,6 +414,8 @@ public class Parser2 {
 	 */
 	public Declarator declarator() throws Exception {
 		
+		callback.declaratorBegin();
+		
 		for (;;) {
 			try {
 				ptrOperator();
@@ -427,12 +431,14 @@ public class Parser2 {
 			return null;
 		}
 		
+		callback.declaratorId(LA(1));
 		name();
 		
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tLPAREN:
 					// parameterDeclarationClause
+					callback.argumentsBegin();
 					consume();
 					parameterDeclarationLoop:
 					for (;;) {
@@ -447,9 +453,11 @@ public class Parser2 {
 								consume();
 								break;
 							default:
-								declaration();
+								declSpecifierSeq();
+								declarator();
 						}
 					}
+					callback.argumentsEnd();
 					break;
 				case Token.tLBRACKET:
 					consume();
@@ -460,6 +468,7 @@ public class Parser2 {
 			break;
 		}
 		
+		callback.declaratorEnd();
 		return null;
 	}
 	
@@ -506,29 +515,37 @@ public class Parser2 {
 	public ClassSpecifier classSpecifier() throws Exception {
 		ClassSpecifier classSpecifier;
 		
+		String classKey = null;
+		
 		// class key
 		switch (LT(1)) {
 			case Token.t_class:
-				consume();
+				classKey = consume().getImage();
 				classSpecifier = new ClassSpecifier(ClassSpecifier.t_class);
 				break;
 			case Token.t_struct:
-				consume();
+				classKey = consume().getImage();
 				classSpecifier = new ClassSpecifier(ClassSpecifier.t_struct);
 				break;
 			case Token.t_union:
-				consume();
+				classKey = consume().getImage();
 				classSpecifier = new ClassSpecifier(ClassSpecifier.t_union);
 				break;
 			default:
 				throw backtrack;
 		}
 
+		Token name = null;
+		
 		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
+			name = consume();
 			// TO DO: handles nested names and template ids
-			classSpecifier.setName(consume().getImage());
+			classSpecifier.setName(name.getImage());
 		}
+
+		callback.classBegin(classKey, name);
+		currRegion.addDeclaration(name.getImage(), classSpecifier);
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {
@@ -608,6 +625,8 @@ public class Parser2 {
 			// consume the }
 			consume();
 		}
+		
+		callback.classEnd();
 		
 		return classSpecifier;
 	}

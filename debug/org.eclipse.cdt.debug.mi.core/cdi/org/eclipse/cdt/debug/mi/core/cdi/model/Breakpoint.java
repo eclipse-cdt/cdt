@@ -127,7 +127,6 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 		} else if (on == true && isEnabled() == false) {
 			mgr.enableBreakpoint(this);
 		}
-		setEnabled0(on);
 	}
 
 	public void setEnabled0(boolean on) {

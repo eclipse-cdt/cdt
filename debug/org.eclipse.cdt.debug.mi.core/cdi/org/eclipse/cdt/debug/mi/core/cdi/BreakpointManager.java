@@ -219,6 +219,7 @@ public class BreakpointManager extends Manager {
 		for (int i = 0; i < miBreakpoints.length; i++) {
 			miBreakpoints[i].setEnabled(true);
 		}
+		breakpoint.setEnabled0(true);
 		// Fire a changed Event.
 		miSession.fireEvent(new MIBreakpointChangedEvent(miSession, numbers[0]));
 	}
@@ -266,6 +267,7 @@ public class BreakpointManager extends Manager {
 		for (int i = 0; i < miBreakpoints.length; i++) {
 			miBreakpoints[i].setEnabled(false);
 		}
+		breakpoint.setEnabled0(false);
 		// Fire a changed Event.
 		miSession.fireEvent(new MIBreakpointChangedEvent(miSession, numbers[0]));
 	}

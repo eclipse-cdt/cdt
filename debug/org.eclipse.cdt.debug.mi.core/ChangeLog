@@ -1,3 +1,8 @@
+2005-01-20 Mikhail Khodjaiants
+	Fix for bug 83355: The disable/enable breakpoints durning debugging acts weird.
+	* cdi\org\eclipse\cdt\debug\mi\core\cdi\model\Breakpoint.java
+	* cdi\org\eclipse\cdt\debug\mi\core\cdi\BreakpointManager.java
+
 2005-01-17 Alain Magloire
 	Optimize the gathering of the data.
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/MemoryBlock.java

@@ -132,11 +132,6 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	private static final String ATTR_MEMENTO = "memento";
 
 	/**
-	 * The project being debugged.
-	 */
-	private IProject fProject = null; 
-	
-	/**
 	 * Underlying source locator.
 	 */
 	private ICSourceLocator fSourceLocator;
@@ -154,12 +149,12 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	 */
 	public String getMemento() throws CoreException
 	{
-		if ( fSourceLocator != null )
+		if ( getCSourceLocator() != null )
 		{
 			Document doc = new DocumentImpl();
 			Element node = doc.createElement( ELEMENT_NAME );
 			doc.appendChild( node );
-			node.setAttribute( ATTR_PROJECT, fSourceLocator.getProject().getName() );
+			node.setAttribute( ATTR_PROJECT, getCSourceLocator().getProject().getName() );
 
 			IPersistableSourceLocator psl = getPersistableSourceLocator();
 			if ( psl != null )
@@ -204,28 +199,18 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 				abort( "Unable to restore prompting source locator - invalid format.", null );
 			}
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
-			if ( project == null || !project.exists() || !project.isOpen() )
-			{
-				abort( MessageFormat.format( "Unable to restore prompting source locator - project {0} not found.", new String[] { projectName } ), null );
-			}
-			ICSourceLocator locator = getCSourceLocator();
-			if ( locator == null )
-			{
-				fSourceLocator = SourceLookupFactory.createSourceLocator( project );
-			}
-			else if ( locator.getProject() != null && !project.equals( locator.getProject() ) )
-			{
+			if ( getCSourceLocator() == null )
+				setCSourceLocator( SourceLookupFactory.createSourceLocator( project ) );
+			if ( getCSourceLocator().getProject() != null && !getCSourceLocator().getProject().equals( project ) )
 				return;
-			}
+			if ( project == null || !project.exists() || !project.isOpen() )
+				abort( MessageFormat.format( "Unable to restore prompting source locator - project {0} not found.", new String[] { projectName } ), null );
+
 			IPersistableSourceLocator psl = getPersistableSourceLocator();
 			if ( psl != null )
-			{
 				psl.initializeFromMemento( data );
-			}
 			else
-			{
 				abort( "Unable to restore C/C++ source locator - invalid format.", null );
-			}
 			return;
 		}
 		catch( ParserConfigurationException e )
@@ -248,7 +233,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	 */
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
 	{
-		fSourceLocator = SourceLookupFactory.createSourceLocator( getProject( configuration ) );
+		setCSourceLocator( SourceLookupFactory.createSourceLocator( getProject( configuration ) ) );
 		String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
 		if ( !isEmpty( memento ) )
 			initializeFromMemento( memento );
@@ -259,19 +244,19 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	 */
 	public Object getAdapter( Class adapter )
 	{
-		if ( fSourceLocator instanceof IAdaptable )
+		if ( getCSourceLocator() instanceof IAdaptable )
 		{
 			if ( adapter.equals( ICSourceLocator.class ) )
 			{
-				return ((IAdaptable)fSourceLocator).getAdapter( adapter );
+				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
 			}
 			if ( adapter.equals( IResourceChangeListener.class ) )
 			{
-				return ((IAdaptable)fSourceLocator).getAdapter( adapter );
+				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
 			}
 			if ( adapter.equals( ISourceMode.class ) )
 			{
-				return ((IAdaptable)fSourceLocator).getAdapter( adapter );
+				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
 			}
 		}
 		return null;
@@ -285,7 +270,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 		Object res = cacheLookup( stackFrame );
 		if ( res == null )
 		{
-			res = fSourceLocator.getSourceElement( stackFrame );
+			res = getCSourceLocator().getSourceElement( stackFrame );
 			if ( res instanceof List )
 			{
 				List list = (List)res;
@@ -315,11 +300,6 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 			}
 		}
 		return res;
-	}
-
-	public IProject getProject()
-	{
-		return fProject;
 	}
 
 	protected void saveChanges( ILaunchConfiguration configuration, IPersistableSourceLocator locator )
@@ -395,6 +375,11 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	private ICSourceLocator getCSourceLocator()
 	{
 		return fSourceLocator;
+	}
+
+	private void setCSourceLocator( ICSourceLocator locator )
+	{
+		fSourceLocator = locator;
 	}
 	
 	private IPersistableSourceLocator getPersistableSourceLocator()

@@ -1,3 +1,7 @@
+2004-02-11 Mikhail Khodjaiants
+	Fix for bug 51062: Source locator oddness.
+	* DefualtSourceLocator.java
+ 
 2004-02-10 Mikhail Khodjaiants
 	Fix for bug 40108: The memory view does not handle big/little endian.
 	* MemoryPresentation.java

@@ -3322,7 +3322,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public boolean validateIndirectMemberOperation(IASTNode node) {
 		List pointerOps = null;
 		if( ( node instanceof ISymbolOwner ) )
-			pointerOps = ((ISymbolOwner) node).getSymbol().getTypeInfo().getFinalType().getPtrOperators();
+		{
+			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
+			pointerOps = symbol.getTypeInfo().getFinalType().getPtrOperators();
+		}
 		else if( node instanceof ASTExpression )
 		{
 			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
@@ -3345,7 +3348,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	public boolean validateDirectMemberOperation(IASTNode node) {
 		List pointerOps = null;
 		if( ( node instanceof ISymbolOwner ) )
-			pointerOps = ((ISymbolOwner) node).getSymbol().getPtrOperators();
+		{
+			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
+			pointerOps = symbol.getTypeInfo().getFinalType().getPtrOperators();
+		}
 		else if( node instanceof ASTExpression )
 		{
 			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();

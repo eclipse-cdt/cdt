@@ -11,10 +11,8 @@
 package org.eclipse.cdt.core.parser.failedTests;
 
 import java.io.StringWriter;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.tests.CompletionParseBaseTest;

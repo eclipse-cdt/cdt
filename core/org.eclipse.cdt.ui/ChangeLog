@@ -1,3 +1,8 @@
+2004-07-16 Tanya Wolff
+
+	Fix for 70543: TVT: Source code displaying in C++ Font and Editor
+	* plugin.properties
+
 2004-07-19 Alain Magloire
 
 	Fix for PR 70319: Clearing the console on build.

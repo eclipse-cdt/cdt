@@ -8,6 +8,7 @@ package org.eclipse.cdt.utils.coff;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.coff.Coff.FileHeader;
 import org.eclipse.cdt.utils.coff.Coff.OptionalHeader;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
@@ -313,7 +314,7 @@ public class PE {
 				rfile.readFully(sig);
 				if (!((sig[0] == 'P') && (sig[1] == 'E')
 				   && (sig[2] == '\0') && (sig[3] == '\0'))) {
-					throw new IOException("Not a PE format");
+					throw new IOException(CCorePlugin.getResourceString("Util.exception.notPE")); //$NON-NLS-1$
 				}
 			} catch (IOException e) {
 				rfile.seek(pos);
@@ -323,7 +324,7 @@ public class PE {
 
 			// Check if this a valid machine.
 			if (!isValidMachine(fileHeader.f_magic)) {
-				throw new IOException("Unknow machine/format");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.unknownFormat")); //$NON-NLS-1$
 			}
 
 			if (fileHeader.f_opthdr > 0) {
@@ -479,7 +480,7 @@ public class PE {
 			if (idx + 4 < data.length) {
 				if (!((data[idx + 0] == 'P') && (data[idx + 1] == 'E')
 						&& (data[idx + 2] == '\0') && (data[idx + 3] == '\0'))) {
-					throw new IOException("Not a PE format");
+					throw new IOException(CCorePlugin.getResourceString("Util.exception.notPE")); //$NON-NLS-1$
 				}
 				idx += 4;
 			}
@@ -491,7 +492,7 @@ public class PE {
 		if (isValidMachine(filehdr.f_magic)) {	
 			return getAttributes(filehdr);
 		}
-		throw new IOException("not a PE format");
+		throw new IOException(CCorePlugin.getResourceString("Util.exception.notPE")); //$NON-NLS-1$
 	}
 
 	public static Attribute getAttribute(String file) throws IOException {

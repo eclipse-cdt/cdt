@@ -28,7 +28,7 @@ public class CommandLauncher {
 	protected boolean fShowCommand;
 	protected String[] fCommandArgs;
 	
-	protected String fErrorMessage = "";
+	protected String fErrorMessage = ""; //$NON-NLS-1$
 	
 	private String lineSeparator;
 	
@@ -46,7 +46,7 @@ public class CommandLauncher {
 	public CommandLauncher() {
 		fProcess= null;
 		fShowCommand= false;
-		lineSeparator = System.getProperty("line.separator", "\n");
+		lineSeparator = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class CommandLauncher {
 			// add platform specific arguments (shell invocation) 
 			fCommandArgs= constructCommandArray(commandPath.toOSString(), args);
 			fProcess= ProcessFactory.getFactory().exec(fCommandArgs, env, changeToDirectory.toFile());
-			fErrorMessage= "";
+			fErrorMessage= ""; //$NON-NLS-1$
 		} catch (IOException e) {
 			setErrorMessage(e.getMessage());
 			fProcess= null;
@@ -146,7 +146,7 @@ public class CommandLauncher {
 			errInPipe = new PipedInputStream(errOutPipe);
 			inputPipe = new PipedInputStream(outputPipe);
 		} catch( IOException e ) {
-			setErrorMessage("Command canceled");
+			setErrorMessage(CCorePlugin.getResourceString("CommandLauncher.error.commandCanceled")); //$NON-NLS-1$
 			return COMMAND_CANCELED;
 		}
 						
@@ -184,7 +184,7 @@ public class CommandLauncher {
 		if (monitor.isCanceled()) {
 			closure.terminate();
 			state = COMMAND_CANCELED;
-			setErrorMessage("Command canceled");
+			setErrorMessage(CCorePlugin.getResourceString("CommandLauncher.error.commandCanceled")); //$NON-NLS-1$
 		}
 
 		try {

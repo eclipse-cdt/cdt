@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 public class Spawner extends Process {
 
 	public int NOOP = 0;
@@ -257,7 +259,7 @@ public class Spawner extends Process {
 			cmdarray = array;
 			envp = env;
 			dirpath = dir;
-			errMesg = new String("Cannot run " + cmdarray[0]);
+			errMesg = new String(CCorePlugin.getResourceString("Util.error.cannotRun") + cmdarray[0]); //$NON-NLS-1$
 		}
 
 		public void run() {

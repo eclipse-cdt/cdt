@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.utils.debug.stabs;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 
 /**
  * Format: string_field = name ':' symbol-descriptor type-information
@@ -78,7 +80,7 @@ public class StringField {
 				/* SunPRO (3.0 at least) static variable encoding. */
 				break;
 			default :
-				name = "unknown C++ encoded name";
+				name = CCorePlugin.getResourceString("StringField.unknownName"); //$NON-NLS-1$
 				break;
 			}
 		}

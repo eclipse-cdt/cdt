@@ -29,8 +29,8 @@ public class ErrorParserManager extends OutputStream {
 
 	private int nOpens;
 
-	private final static String OLD_PREF_ERROR_PARSER = "errorOutputParser"; // $NON-NLS-1$
-	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; // $NON-NLS-1$
+	private final static String OLD_PREF_ERROR_PARSER = "errorOutputParser"; //$NON-NLS-1$
+	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; //$NON-NLS-1$
 
 	private IProject fProject;
 	private IMarkerGenerator fMarkerGenerator;
@@ -124,7 +124,7 @@ public class ErrorParserManager extends OutputStream {
 			fDirectoryStack.removeElementAt(i - 1);
 			return dir;
 		}
-		return new Path("");
+		return new Path(""); //$NON-NLS-1$
 	}
 
 	public int getDirectoryLevel() {
@@ -140,7 +140,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 		if (fErrorParsers.size() == 0) {
 			initErrorParsersMap();
-			CCorePlugin.getDefault().getPluginPreferences().setValue(OLD_PREF_ERROR_PARSER, ""); // remove old prefs
+			CCorePlugin.getDefault().getPluginPreferences().setValue(OLD_PREF_ERROR_PARSER, ""); // remove old prefs //$NON-NLS-1$
 		}
 	}
 
@@ -306,7 +306,7 @@ public class ErrorParserManager extends OutputStream {
 	 * Called by the error parsers.  Return the previous line, save in the working buffer.
 	 */
 	public String getPreviousLine() {
-		return new String((previousLine) == null ? "" : previousLine);
+		return new String((previousLine) == null ? "" : previousLine); //$NON-NLS-1$
 	}
 
 	/**

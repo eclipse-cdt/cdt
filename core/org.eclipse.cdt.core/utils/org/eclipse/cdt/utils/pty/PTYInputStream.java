@@ -5,9 +5,10 @@ package org.eclipse.cdt.utils.pty;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.pty.PTY.MasterFD;
 
 class PTYInputStream extends InputStream {
@@ -66,7 +67,7 @@ class PTYInputStream extends InputStream {
 			return;
 		int status = close0(master.getFD());
 		if (status == -1)
-			throw new IOException("close error");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.closeError")); //$NON-NLS-1$
 		master.setFD(-1);
 	}
 

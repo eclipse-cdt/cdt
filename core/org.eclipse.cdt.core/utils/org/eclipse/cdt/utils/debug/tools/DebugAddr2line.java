@@ -13,6 +13,7 @@ package org.eclipse.cdt.utils.debug.tools;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.debug.dwarf.Dwarf;
 import org.eclipse.cdt.utils.debug.stabs.Stabs;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -47,7 +48,7 @@ public class DebugAddr2line {
 			Dwarf dwarf = new Dwarf(elf);
 			dwarf.parse(symreq);
 		} else {
-			throw new IOException("Unknown debug format");
+			throw new IOException(CCorePlugin.getResourceString("Util.unknownFormat")); //$NON-NLS-1$
 		}
 	}
 

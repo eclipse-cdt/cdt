@@ -39,8 +39,8 @@ public class GCCErrorParser implements IErrorParser {
 		/* Guard against drive in Windows platform.  */
 		if (firstColon == 1) {
 			try {
-				String os = System.getProperty("os.name");
-				if (os != null && os.startsWith("Win")) {
+				String os = System.getProperty("os.name"); //$NON-NLS-1$
+				if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
 					try {
 						if (Character.isLetter(line.charAt(0))) {
 							firstColon = line.indexOf(':', 2);
@@ -92,13 +92,13 @@ public class GCCErrorParser implements IErrorParser {
 
 					// gnu c: filename:no: (Each undeclared identifier is reported
 					// only once. filename:no: for each function it appears in.)
-					if (desc.startsWith ("(Each undeclared")) {
+					if (desc.startsWith ("(Each undeclared")) { //$NON-NLS-1$
 						// Do nothing.
 						return false;
 					} else  {
 						String previous = eoParser.getPreviousLine();
-						if (desc.endsWith(")")
-							&& previous.indexOf("(Each undeclared") >= 0 ) {
+						if (desc.endsWith(")") //$NON-NLS-1$
+							&& previous.indexOf("(Each undeclared") >= 0 ) { //$NON-NLS-1$
 							// Do nothing.
 							return false;
 						}
@@ -114,34 +114,34 @@ public class GCCErrorParser implements IErrorParser {
 					 *
 					 */ 
 					 int s;
-					 if((s = desc.indexOf("\' undeclared")) != -1) {
-					 	int p = desc.indexOf("`");
+					 if((s = desc.indexOf("\' undeclared")) != -1) { //$NON-NLS-1$
+					 	int p = desc.indexOf("`"); //$NON-NLS-1$
 					 	if (p != -1) {
 					 		varName = desc.substring(p+1, s);
 					 		//System.out.println("undex varName "+ varName);
 					 	}
-					 } else if((s = desc.indexOf("\' defined but not used")) != -1) {
-					 	int p = desc.indexOf("`");
+					 } else if((s = desc.indexOf("\' defined but not used")) != -1) { //$NON-NLS-1$
+					 	int p = desc.indexOf("`"); //$NON-NLS-1$
 					 	if (p != -1) {
 					 		varName = desc.substring(p+1, s);
 					 		//System.out.println("unused varName "+ varName);
 					 	}
-					 } else if((s = desc.indexOf("conflicting types for `")) != -1) {
-					 	int p = desc.indexOf("\'", s);
+					 } else if((s = desc.indexOf("conflicting types for `")) != -1) { //$NON-NLS-1$
+					 	int p = desc.indexOf("\'", s); //$NON-NLS-1$
 					 	if (p != -1) {
-					 		varName = desc.substring(desc.indexOf("`") + 1, p);
+					 		varName = desc.substring(desc.indexOf("`") + 1, p); //$NON-NLS-1$
 					 		//System.out.println("confl varName "+ varName);
 					 	}
-					 } else if((s = desc.indexOf("previous declaration of `")) != -1) {
-					 	int p = desc.indexOf("\'", s);
+					 } else if((s = desc.indexOf("previous declaration of `")) != -1) { //$NON-NLS-1$
+					 	int p = desc.indexOf("\'", s); //$NON-NLS-1$
 					 	if (p != -1) {
-					 		varName = desc.substring(desc.indexOf("`") + 1, p);
+					 		varName = desc.substring(desc.indexOf("`") + 1, p); //$NON-NLS-1$
 					 		//System.out.println("prev varName "+ varName);
 					 	}
-					 } else if ((s = desc.indexOf("parse error before ")) != -1) {
-						int p = desc.indexOf("\'", s);
+					 } else if ((s = desc.indexOf("parse error before ")) != -1) { //$NON-NLS-1$
+						int p = desc.indexOf("\'", s); //$NON-NLS-1$
 						if (p != -1) {
-							varName = desc.substring(desc.indexOf("`") + 1, p);
+							varName = desc.substring(desc.indexOf("`") + 1, p); //$NON-NLS-1$
 							//System.out.println("prev varName "+ varName);
 						}
 					 }
@@ -159,8 +159,8 @@ public class GCCErrorParser implements IErrorParser {
 					 *    hello.c:3:  in inclusion a.h:3
 					 *     
 					 */
-					if (eoParser.getScratchBuffer().startsWith("In file included from ")) {
-						if (line.startsWith("from ")) {
+					if (eoParser.getScratchBuffer().startsWith("In file included from ")) { //$NON-NLS-1$
+						if (line.startsWith("from ")) { //$NON-NLS-1$
 							// We want the last error in the chain, so continue.
 							eoParser.appendToScratchBuffer(line);
 							return false;
@@ -168,8 +168,8 @@ public class GCCErrorParser implements IErrorParser {
 						String buffer = eoParser.getScratchBuffer();
 						eoParser.clearScratchBuffer();
 						int from = -1;
-						String inclusionError = fileName + ":" + num;
-						while ((from = buffer.indexOf("from ")) != -1) {
+						String inclusionError = fileName + ":" + num; //$NON-NLS-1$
+						while ((from = buffer.indexOf("from ")) != -1) { //$NON-NLS-1$
 							int coma = buffer.indexOf(',', from);
 							String buf;
 							if (coma != -1) {
@@ -177,10 +177,10 @@ public class GCCErrorParser implements IErrorParser {
 								buffer = buffer.substring(coma);
 							} else {
 								buf = buffer.substring(from + 5);
-								buffer = "";
+								buffer = ""; //$NON-NLS-1$
 							}
 							String t = buf;
-							buf += " in inclusion " + inclusionError;
+							buf += " in inclusion " + inclusionError; //$NON-NLS-1$
 							inclusionError = t;
 							// Call the parsing process again.
 							processLine(buf, eoParser);
@@ -195,17 +195,17 @@ public class GCCErrorParser implements IErrorParser {
 						if (file != null) {
 							// If there is a conflict set the error on the project.
 							if (eoParser.isConflictingName(fileName)) {
-								desc = "*" + desc;
+								desc = "*" + desc; //$NON-NLS-1$
 								file = null;
 							}
 						}
 					}
 					
-					if (desc.startsWith("warning") || desc.startsWith("Warning")) {
+					if (desc.startsWith("warning") || desc.startsWith("Warning")) { //$NON-NLS-1$ //$NON-NLS-2$
 						severity = IMarkerGenerator.SEVERITY_WARNING;
 						// Remove the warning.
-						String d = desc.substring("warning".length()).trim();
-						if (d.startsWith(":")) {
+						String d = desc.substring("warning".length()).trim(); //$NON-NLS-1$
+						if (d.startsWith(":")) { //$NON-NLS-1$
 							d = d.substring(1).trim();
 						}
 
@@ -216,14 +216,14 @@ public class GCCErrorParser implements IErrorParser {
 					
 					// Display the fileName.
 					if (file == null) {
-						desc = desc +"[" + fileName + "]";
+						desc = desc +"[" + fileName + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 
 					eoParser.generateMarker(file, num, desc, severity, varName);
 				} else {
-					if (line.startsWith("In file included from ")) {
+					if (line.startsWith("In file included from ")) { //$NON-NLS-1$
 						eoParser.appendToScratchBuffer(line);
-					} else if (line.startsWith("from ")) {
+					} else if (line.startsWith("from ")) { //$NON-NLS-1$
 						eoParser.appendToScratchBuffer(line);
 					}
 				}

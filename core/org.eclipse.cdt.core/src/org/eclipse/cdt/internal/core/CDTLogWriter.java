@@ -53,7 +53,7 @@ public class CDTLogWriter {
 		this.logFile = log;
 		if(log.length() > MAXLOG_SIZE){
 		  log.delete();
-		  this.logFile = CCorePlugin.getDefault().getStateLocation().append(".log").toFile();
+		  this.logFile = CCorePlugin.getDefault().getStateLocation().append(".log").toFile(); //$NON-NLS-1$
 		}
 		openLogFile();
 	}

@@ -57,21 +57,21 @@ public class CCorePlugin extends Plugin {
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
 
-	public static final String PLUGIN_ID = "org.eclipse.cdt.core";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 
-	public static final String BUILDER_MODEL_ID = PLUGIN_ID + ".CBuildModel";
-	public static final String BINARY_PARSER_SIMPLE_ID = "BinaryParser";
-	public final static String BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + BINARY_PARSER_SIMPLE_ID;
-	public final static String PREF_BINARY_PARSER = "binaryparser";
-	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
-	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
-	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode";
+	public static final String BUILDER_MODEL_ID = PLUGIN_ID + ".CBuildModel"; //$NON-NLS-1$
+	public static final String BINARY_PARSER_SIMPLE_ID = "BinaryParser"; //$NON-NLS-1$
+	public final static String BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
+	public final static String PREF_BINARY_PARSER = "binaryparser"; //$NON-NLS-1$
+	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF"; //$NON-NLS-1$
+	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID; //$NON-NLS-1$
+	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode"; //$NON-NLS-1$
 	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 	
 	// Build Model Interface Discovery
-	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider";
-	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID;
+	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider"; //$NON-NLS-1$
+	public final static String BUILD_SCANNER_INFO_UNIQ_ID = PLUGIN_ID + "." + BUILD_SCANNER_INFO_SIMPLE_ID; //$NON-NLS-1$
 	
 	    
     /**
@@ -125,7 +125,7 @@ public class CCorePlugin extends Plugin {
 
 	static {
 		try {
-			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.internal.core.CCorePluginResources");
+			fgResourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.internal.core.CCorePluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			fgResourceBundle = null;
 		}
@@ -158,9 +158,9 @@ public class CCorePlugin extends Plugin {
 		try {
 			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (NullPointerException e) {
-			return "#" + key + "#";
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -185,7 +185,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e));
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 
 	public static void log(IStatus status) {
@@ -223,7 +223,7 @@ public class CCorePlugin extends Plugin {
 	public void startup() throws CoreException {
 		super.startup();
 		
-		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile());
+		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 		
 		//Set debug tracing options
 		CCorePlugin.getDefault().configurePluginDebugOptions();
@@ -441,15 +441,15 @@ public class CCorePlugin extends Plugin {
 
 	public IConsole getConsole(String id) {
 		try {
-			IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole");
+			IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole"); //$NON-NLS-1$
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
-						String builderID = configElements[j].getAttribute("builderID");
+						String builderID = configElements[j].getAttribute("builderID"); //$NON-NLS-1$
 						if ((id == null && builderID == null) || (id != null && id.equals(builderID))) {
-							return (IConsole) configElements[j].createExecutableExtension("class");
+							return (IConsole) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 						}
 					}
 				}
@@ -499,13 +499,13 @@ public class CCorePlugin extends Plugin {
 		if (extension != null) {
 			IConfigurationElement element[] = extension.getConfigurationElements();
 			for (int i = 0; i < element.length; i++) {
-				if (element[i].getName().equalsIgnoreCase("cextension")) {
-					parser = (IBinaryParser) element[i].createExecutableExtension("run");
+				if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+					parser = (IBinaryParser) element[i].createExecutableExtension("run"); //$NON-NLS-1$
 					break;
 				}
 			}
 		} else {
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "No Binary Format", null);
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CCorePlugin.exception.noBinaryFormat"), null); //$NON-NLS-1$
 			throw new CoreException(s);
 		}
 		return parser;
@@ -642,13 +642,13 @@ public class CCorePlugin extends Plugin {
 	//	}
 
 	public IProcessList getProcessList() {
-		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");
+		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList"); //$NON-NLS-1$
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
 			if (configElements.length != 0) {
 				try {
-					return (IProcessList) configElements[0].createExecutableExtension("class");
+					return (IProcessList) configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
 				}
 			}
@@ -686,7 +686,7 @@ public class CCorePlugin extends Plugin {
 					if ((id == null && parserID == null) || (id != null && parserID.equals(id))) {
 						IConfigurationElement[] configElements = extensions[i]. getConfigurationElements();
 						for (int j = 0; j < configElements.length; j++) {
-							IErrorParser parser = (IErrorParser)configElements[j].createExecutableExtension("class");
+							IErrorParser parser = (IErrorParser)configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							list.add(parser);
 						}
 					}
@@ -713,13 +713,13 @@ public class CCorePlugin extends Plugin {
 	}
 
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
-	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer";
-	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager";
+	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer"; //$NON-NLS-1$
+	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager"; //$NON-NLS-1$
 	private static final String SEARCH  = CCorePlugin.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
 	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
-	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ;
+	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ; //$NON-NLS-1$
 	private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 	/**
 	 * Configure the plugin with respect to option settings defined in ".options" file
@@ -731,7 +731,7 @@ public class CCorePlugin extends Plugin {
 			if(option != null) Util.VERBOSE_PARSER = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		
 			option = Platform.getDebugOption(SCANNER);
-			if( option != null ) Util.VERBOSE_SCANNER = option.equalsIgnoreCase("true");
+			if( option != null ) Util.VERBOSE_SCANNER = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			
 			option = Platform.getDebugOption(MODEL);
 			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
@@ -739,7 +739,7 @@ public class CCorePlugin extends Plugin {
 			boolean indexFlag = false;
 			option = Platform.getDebugOption(INDEX_MANAGER);
 			if(option != null) {
-				indexFlag = option.equalsIgnoreCase("true");
+				indexFlag = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 				IndexManager.VERBOSE = indexFlag;
 			} //$NON-NLS-1$
 			

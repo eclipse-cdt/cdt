@@ -5,8 +5,10 @@ package org.eclipse.cdt.utils.spawner;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import org.eclipse.cdt.core.CCorePlugin;
 
 class SpawnerInputStream extends InputStream {
 	private int fd;
@@ -66,7 +68,7 @@ class SpawnerInputStream extends InputStream {
 			return;
 		int status = close0(fd);
 		if (status == -1)
-			throw new IOException("close error");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.closeError")); //$NON-NLS-1$
 		fd = -1;
 	}
 

@@ -7,6 +7,8 @@ package org.eclipse.cdt.utils.coff;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 public class Exe {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -62,7 +64,7 @@ public class Exe {
 			}
 			memory.getBytes(e_signature);
 			if (e_signature[0] != 'M' || e_signature[1] != 'Z') {
-				throw new IOException("Not DOS EXE format"); //$NON-NLS-1$
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.notDOSFormat")); //$NON-NLS-1$
 			}
 			e_lastsize = memory.getShort();
 			e_nblocks = memory.getShort();

@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.Status;
 
 public class CCProjectNature extends CProjectNature {
 
-	public static final String CC_NATURE_ID= CCorePlugin.PLUGIN_ID + ".ccnature";
+	public static final String CC_NATURE_ID= CCorePlugin.PLUGIN_ID + ".ccnature"; //$NON-NLS-1$
 
 	public static void addCCNature(IProject project, IProgressMonitor mon) throws CoreException {
 		addNature(project, CC_NATURE_ID, mon);
@@ -33,7 +33,7 @@ public class CCProjectNature extends CProjectNature {
     		IStatus status = new Status(IStatus.ERROR, 
     									CCorePlugin.PLUGIN_ID, 
     									CCorePlugin.CDT_PROJECT_NATURE_ID_MISMATCH, 
-    									"project must have a cnature", null); // $NON_NLS
+    									CCorePlugin.getResourceString("CCProjectNature.exception.noNature"), null); // $NON_NLS //$NON-NLS-1$
     		throw new CoreException(status);
     	}
     }

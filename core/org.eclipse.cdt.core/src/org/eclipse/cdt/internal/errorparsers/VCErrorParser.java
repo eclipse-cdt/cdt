@@ -16,8 +16,8 @@ public class VCErrorParser implements IErrorParser {
 			/* Guard against drive in Windows platform.  */
 			if (firstColon == 1) {
 				try {
-					String os = System.getProperty("os.name");
-					if (os != null && os.startsWith("Win")) {
+					String os = System.getProperty("os.name"); //$NON-NLS-1$
+					if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
 						try {
 							if (Character.isLetter(line.charAt(0))) {
 								firstColon = line.indexOf(':', 2);
@@ -29,7 +29,7 @@ public class VCErrorParser implements IErrorParser {
 				}
 			}
 			String firstPart = line.substring(0, firstColon);
-			StringTokenizer tok = new StringTokenizer(firstPart, "()");
+			StringTokenizer tok = new StringTokenizer(firstPart, "()"); //$NON-NLS-1$
 			if (tok.hasMoreTokens()) {
 				String fileName = tok.nextToken();
 				if (tok.hasMoreTokens()) {
@@ -44,10 +44,10 @@ public class VCErrorParser implements IErrorParser {
 						if (file != null || eoParser.isConflictingName(fileName)) {
 							String desc = line.substring(firstColon + 1).trim();
 							if (file == null) {
-								desc = "*" + desc;
+								desc = "*" + desc; //$NON-NLS-1$
 							}
 							int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
-							if (desc.startsWith("warning")) {
+							if (desc.startsWith("warning")) { //$NON-NLS-1$
 								severity = IMarkerGenerator.SEVERITY_WARNING;
 							}
 							eoParser.generateMarker(file, num, desc, severity, null);

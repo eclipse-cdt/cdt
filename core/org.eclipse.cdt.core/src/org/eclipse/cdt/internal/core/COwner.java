@@ -29,11 +29,11 @@ public class COwner implements ICOwnerInfo {
 	
 	public COwner(String id) throws CoreException {
 		ownerID = id;
-		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProject");
+		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProject"); //$NON-NLS-1$
 		extension =  extpoint.getExtension(ownerID);
 		
 		if (extension == null) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner ID", (Throwable)null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("COwner.exception.invalidOwnerID"), (Throwable)null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}
@@ -50,38 +50,38 @@ public class COwner implements ICOwnerInfo {
 		if ( fPlatform == null ) {
 			IConfigurationElement element[] = extension.getConfigurationElements();
 			for( int i = 0; i < element.length; i++ ) {
-				if ( element[i].getName().equalsIgnoreCase("cproject") ) {
-					fPlatform = element[i].getAttribute("platform");
+				if ( element[i].getName().equalsIgnoreCase("cproject") ) { //$NON-NLS-1$
+					fPlatform = element[i].getAttribute("platform"); //$NON-NLS-1$
 					break;
 				}
 			}
 		}
-		return fPlatform == null ? "*" : fPlatform;
+		return fPlatform == null ? "*" : fPlatform; //$NON-NLS-1$
 	}
 	
 	void configure(IProject project, ICDescriptor cproject) throws CoreException {
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for( int i = 0; i < element.length; i++ ) {
-			if ( element[i].getName().equalsIgnoreCase("cproject") ) {
-				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class");
+			if ( element[i].getName().equalsIgnoreCase("cproject") ) { //$NON-NLS-1$
+				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class"); //$NON-NLS-1$
 				owner.configure(cproject);
 				return;
 			}
 		}
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("COwner.exception.invalidOwnerExtension"), (Throwable)null); //$NON-NLS-1$
 		throw new CoreException(status);
 	}
 
 	void update(IProject project, ICDescriptor cproject, String extensionID) throws CoreException {
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for( int i = 0; i < element.length; i++ ) {
-			if ( element[i].getName().equalsIgnoreCase("cproject") ) {
-				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class");
+			if ( element[i].getName().equalsIgnoreCase("cproject") ) { //$NON-NLS-1$
+				ICOwner owner = (ICOwner) element[i].createExecutableExtension("class"); //$NON-NLS-1$
 				owner.update(cproject, extensionID);
 				return;
 			}
 		}
-		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Invalid CDTProject owner extension", (Throwable)null);
+		IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("COwner.exception.invalidOwnerExtension"), (Throwable)null); //$NON-NLS-1$
 		throw new CoreException(status);
 	}
 

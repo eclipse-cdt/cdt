@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 /**
  *  The <code>AR</code> class is used for parsing standard ELF archive (ar) files.
  *
@@ -233,7 +235,7 @@ public class AR {
 		String hdr = efile.readLine();
 		if (hdr == null || hdr.compareTo("!<arch>") != 0) { //$NON-NLS-1$
 			efile.close();
-			throw new IOException("Not a valid archive file.");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.invalidArchive")); //$NON-NLS-1$
 		}
 	}
 

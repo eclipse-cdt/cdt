@@ -42,12 +42,12 @@ public class DebugSym implements Comparable {
 
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("Type:").append(type).append("\n");
-		buf.append("Name: ").append(name).append("\n");
-		buf.append("\taddress:").append("0x").append(Long.toHexString(addr)).append("\n");
-		buf.append("\tstartLine:").append(startLine).append("\n");
-		buf.append("\tendLine:").append(endLine).append("\n");
-		buf.append("\tSize:").append(size).append("\n");
+		buf.append("Type:").append(type).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buf.append("Name: ").append(name).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buf.append("\taddress:").append("0x").append(Long.toHexString(addr)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		buf.append("\tstartLine:").append(startLine).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buf.append("\tendLine:").append(endLine).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buf.append("\tSize:").append(size).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		return buf.toString();
 	}
 }

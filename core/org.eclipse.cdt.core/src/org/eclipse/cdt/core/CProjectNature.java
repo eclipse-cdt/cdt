@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CProjectNature implements IProjectNature {
 
-	public static final String C_NATURE_ID = CCorePlugin.PLUGIN_ID + ".cnature";
+	public static final String C_NATURE_ID = CCorePlugin.PLUGIN_ID + ".cnature"; //$NON-NLS-1$
 
 	private IProject fProject;
 

@@ -19,13 +19,13 @@ public class GASErrorParser implements IErrorParser {
 		// /tmp/cc8EXnKk.s:46: Error: no such 386 instruction: `b'
 		try {
 			String previous = eoParser.getPreviousLine();
-			String fileName = "";
+			String fileName = ""; //$NON-NLS-1$
 			IFile file = null;
 			int num = 0;
 			int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 			String desc = line;
-			if (previous != null && previous.startsWith("Assembler")) {
-				if (! line.startsWith("FATAL")) {
+			if (previous != null && previous.startsWith("Assembler")) { //$NON-NLS-1$
+				if (! line.startsWith("FATAL")) { //$NON-NLS-1$
 					int firstColon= line.indexOf(':');
 					if (firstColon != -1) {
 						fileName = line.substring(0, firstColon);
@@ -45,7 +45,7 @@ public class GASErrorParser implements IErrorParser {
 					}
 				}
 				if (file == null) {
-					desc = fileName + " " + desc;
+					desc = fileName + " " + desc; //$NON-NLS-1$
 				}
 				eoParser.generateMarker(file, num, desc, severity, null);
 			}

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;
@@ -192,11 +193,11 @@ public class Dwarf {
 			byte[] bytes = new byte[4];
 			int n = in.read(bytes, 0, bytes.length);
 			if (n != 4) {
-				throw new IOException("missing bytes");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 			}
 			return read_4_bytes(bytes, 0);
 		} catch (IndexOutOfBoundsException e) {
-			throw new IOException("missing bytes");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 		}
 	}
 
@@ -221,11 +222,11 @@ public class Dwarf {
 			byte[] bytes = new byte[8];
 			int n = in.read(bytes, 0, bytes.length);
 			if (n != 8) {
-				throw new IOException("missing bytes");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 			}
 			return read_8_bytes(bytes, 0);
 		} catch (IndexOutOfBoundsException e) {
-			throw new IOException("missing bytes");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 		}
 	}
 
@@ -258,11 +259,11 @@ public class Dwarf {
 			byte[] bytes = new byte[2];
 			int n = in.read(bytes, 0, bytes.length);
 			if (n != 2) {
-				throw new IOException("missing bytes");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 			}
 			return read_2_bytes(bytes, 0);
 		} catch (IndexOutOfBoundsException e) {
-			throw new IOException("missing bytes");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.missingBytes")); //$NON-NLS-1$
 		}
 	}
 
@@ -309,7 +310,7 @@ public class Dwarf {
 		while (true) {
 			b = (short) in.read();
 			if (b == -1)
-				throw new IOException("no more data");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.noData")); //$NON-NLS-1$
 			num_leb128_read++;
 			result |= ((long) (b & 0x7f) << shift);
 			shift += 7;

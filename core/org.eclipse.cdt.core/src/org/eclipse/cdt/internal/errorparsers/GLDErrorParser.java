@@ -32,33 +32,33 @@ public class GLDErrorParser implements IErrorParser {
 				String fileName = buf.substring(0, firstPara);
 				String previous = eoParser.getPreviousLine();
 				if (previous == null) 
-					previous = "";
+					previous = ""; //$NON-NLS-1$
 				int colon = previous.indexOf(':');
 				if (colon != -1) {
 					previous = previous.substring(colon + 1);
 				}
 				 
-				desc = "*" + previous + " " + desc;
+				desc = "*" + previous + " " + desc; //$NON-NLS-1$ //$NON-NLS-2$
 				// Since we do not have any way to know the name of the C file
 				// where the undefined reference is refering we set the error
 				// on the project.
 				IFile file = eoParser.findFilePath(fileName);
 				if (file == null) {
-					desc = fileName + " " + desc;
+					desc = fileName + " " + desc; //$NON-NLS-1$
 				} 
 				eoParser.generateMarker(file, 0, desc, IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
-			} else if (buf.endsWith("ld")){
+			} else if (buf.endsWith("ld")){ //$NON-NLS-1$
 				// By default treat the condition as fatal/error, unless marked as a warning
 				int errorType = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 				desc = desc.trim();
-				if(desc.startsWith("warning") || desc.startsWith("Warning")) {
+				if(desc.startsWith("warning") || desc.startsWith("Warning")) { //$NON-NLS-1$ //$NON-NLS-2$
 					errorType = IMarkerGenerator.SEVERITY_WARNING;
 				}
 
 				String fileName = line.substring(0, firstColon);
 				IFile file = eoParser.findFilePath(fileName);
 				if (file == null) {
-					desc = fileName + " " + desc;
+					desc = fileName + " " + desc; //$NON-NLS-1$
 				} 
 				
 				eoParser.generateMarker(file, 0, desc, errorType, null);

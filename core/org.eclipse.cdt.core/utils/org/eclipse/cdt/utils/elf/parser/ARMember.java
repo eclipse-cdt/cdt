@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.IToolsProvider;
@@ -64,7 +65,7 @@ public class ARMember extends BinaryObject {
 		if (header != null) {
 			return new ElfHelper(header.getElf());
 		}
-		throw new IOException("No file assiocated with Binary");
+		throw new IOException(CCorePlugin.getResourceString("Util.exception.noFileAssociation")); //$NON-NLS-1$
 	}
 
 	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {

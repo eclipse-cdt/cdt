@@ -14,6 +14,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.AbstractCExtension;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -34,7 +35,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
-			throw new IOException("path is null");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.nullPath")); //$NON-NLS-1$
 		}
 
 		BinaryFile binary = null;

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 /**
  * @author alain
  *
@@ -42,7 +44,7 @@ public class PTY {
 		}
 
 		if (slave == null) {
-			throw new IOException("Can not create pty");
+			throw new IOException(CCorePlugin.getResourceString("Util.exception.cannotCreatePty")); //$NON-NLS-1$
 		}
 
 		in = new PTYInputStream(new MasterFD());

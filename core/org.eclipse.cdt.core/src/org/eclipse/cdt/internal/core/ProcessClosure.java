@@ -38,7 +38,7 @@ public class ProcessClosure {
 			fOutputStream= out;
 			fInputStream= in;
 			setDaemon(true);
-			lineSeparator =	(String) System.getProperty("line.separator");
+			lineSeparator =	(String) System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		
 		public void run() {
@@ -117,13 +117,13 @@ public class ProcessClosure {
 	 * reader threads.
 	 */
 	public void runNonBlocking() {
-		ThreadGroup group= new ThreadGroup("CBuilder" + fCounter++);
+		ThreadGroup group= new ThreadGroup("CBuilder" + fCounter++); //$NON-NLS-1$
 		
 		InputStream stdin= fProcess.getInputStream();
 		InputStream stderr= fProcess.getErrorStream();
 		
-		fOutputReader= new ReaderThread(group, "OutputReader", stdin, fOutput);
-		fErrorReader= new ReaderThread(group, "ErrorReader", stderr, fError);
+		fOutputReader= new ReaderThread(group, "OutputReader", stdin, fOutput); //$NON-NLS-1$
+		fErrorReader= new ReaderThread(group, "ErrorReader", stderr, fError); //$NON-NLS-1$
 				
 		fOutputReader.start();
 		fErrorReader.start();

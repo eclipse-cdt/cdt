@@ -60,15 +60,15 @@ public class CDescriptor implements ICDescriptor {
 	private HashMap extInfoMap = new HashMap(4);
 	private Document dataDoc;
 
-	static final String DESCRIPTION_FILE_NAME = ".cdtproject";
+	static final String DESCRIPTION_FILE_NAME = ".cdtproject"; //$NON-NLS-1$
 	private static final char[][] NO_CHAR_CHAR = new char[0][];
-	private static final String PROJECT_DESCRIPTION = "cdtproject";
-	private static final String PROJECT_EXTENSION = "extension";
-	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
-	private static final String PATH_ENTRY = "cpathentry";
-	private static final String PROJECT_DATA = "data";
-	private static final String PROJECT_DATA_ITEM = "item";
-	private static final String PROJECT_DATA_ID = "id";
+	private static final String PROJECT_DESCRIPTION = "cdtproject"; //$NON-NLS-1$
+	private static final String PROJECT_EXTENSION = "extension"; //$NON-NLS-1$
+	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute"; //$NON-NLS-1$
+	private static final String PATH_ENTRY = "cpathentry"; //$NON-NLS-1$
+	private static final String PROJECT_DATA = "data"; //$NON-NLS-1$
+	private static final String PROJECT_DATA_ITEM = "item"; //$NON-NLS-1$
+	private static final String PROJECT_DATA_ID = "id"; //$NON-NLS-1$
 
 	private boolean fDirty;
 	private boolean autoSave;
@@ -92,7 +92,7 @@ public class CDescriptor implements ICDescriptor {
 						IStatus.WARNING,
 						CCorePlugin.PLUGIN_ID,
 						CCorePlugin.STATUS_CDTPROJECT_EXISTS,
-						"CDTProject already exisits",
+						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), //$NON-NLS-1$
 						(Throwable) null);
 			} else {
 				status =
@@ -100,7 +100,7 @@ public class CDescriptor implements ICDescriptor {
 						IStatus.ERROR,
 						CCorePlugin.PLUGIN_ID,
 						CCorePlugin.STATUS_CDTPROJECT_MISMATCH,
-						"CDTProject already exisits but does not match owner ID of creator",
+						CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId"), //$NON-NLS-1$
 						(Throwable) null);
 			}
 			throw new CoreException(status);
@@ -118,7 +118,7 @@ public class CDescriptor implements ICDescriptor {
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
 		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "CDTProject file not found", (Throwable) null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		fOwner = new COwner(readCDTProject(descriptionPath));
@@ -134,7 +134,7 @@ public class CDescriptor implements ICDescriptor {
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
 		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "CDTProject file not found", (Throwable) null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		readCDTProject(descriptionPath);
@@ -154,15 +154,15 @@ public class CDescriptor implements ICDescriptor {
 			Document document = parser.parse(file);
 			Node node = document.getFirstChild();
 			if (node.getNodeName().equals(PROJECT_DESCRIPTION)) {
-				String ownerID = node.getAttributes().getNamedItem("id").getNodeValue();
+				String ownerID = node.getAttributes().getNamedItem("id").getNodeValue(); //$NON-NLS-1$
 				if ( ownerID != null) {
 					readProjectDescription(node);
 					return ownerID;
 				}
-				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Missing owner id", null);
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.missingOwnerId"), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Missing cdtproject element", null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.missingElement"), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getLocalizedMessage(), e);
@@ -311,7 +311,7 @@ public class CDescriptor implements ICDescriptor {
 		format.setIndenting(true);
 		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
 		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format); //$NON-NLS-1$
 		serializer.asDOMSerializer().serialize(doc);
 		return s.toString("UTF8"); //$NON-NLS-1$		
 	}
@@ -341,12 +341,12 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	private void decodeProjectExtension(Element element) throws CoreException {
-		ICExtensionReference ext = create(element.getAttribute("point"), element.getAttribute("id"));
+		ICExtensionReference ext = create(element.getAttribute("point"), element.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
 		NodeList extAttrib = element.getChildNodes();
 		for (int j = 0; j < extAttrib.getLength(); j++) {
 			if (extAttrib.item(j).getNodeName().equals(PROJECT_EXTENSION_ATTRIBUTE)) {
 				NamedNodeMap attrib = extAttrib.item(j).getAttributes();
-				ext.setExtensionData(attrib.getNamedItem("key").getNodeValue(), attrib.getNamedItem("value").getNodeValue());
+				ext.setExtensionData(attrib.getNamedItem("key").getNodeValue(), attrib.getNamedItem("value").getNodeValue()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -369,16 +369,16 @@ public class CDescriptor implements ICDescriptor {
 			CExtensionReference extension[] = (CExtensionReference[]) extIterator.next();
 			for (int i = 0; i < extension.length; i++) {
 				configRootElement.appendChild(element = doc.createElement(PROJECT_EXTENSION));
-				element.setAttribute("point", extension[i].getExtension());
-				element.setAttribute("id", extension[i].getID());
+				element.setAttribute("point", extension[i].getExtension()); //$NON-NLS-1$
+				element.setAttribute("id", extension[i].getID()); //$NON-NLS-1$
 				CExtensionInfo info = (CExtensionInfo) extInfoMap.get(extension[i]);
 				if (info != null) {
 					Iterator attribIterator = info.getAttributes().entrySet().iterator();
 					while (attribIterator.hasNext()) {
 						Entry entry = (Entry) attribIterator.next();
 						Element extAttributes = doc.createElement(PROJECT_EXTENSION_ATTRIBUTE);
-						extAttributes.setAttribute("key", (String) entry.getKey());
-						extAttributes.setAttribute("value", (String) entry.getValue());
+						extAttributes.setAttribute("key", (String) entry.getKey()); //$NON-NLS-1$
+						extAttributes.setAttribute("value", (String) entry.getValue()); //$NON-NLS-1$
 						element.appendChild(extAttributes);
 					}
 				}
@@ -393,12 +393,12 @@ public class CDescriptor implements ICDescriptor {
 		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
 		IExtension extension = extensionPoint.getExtension(ext.getID());
 		if ( extension == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Extension provider not found.", null));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound"), null)); //$NON-NLS-1$
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
-			if (element[i].getName().equalsIgnoreCase("cextension")) {
-				cExtension = (InternalCExtension) element[i].createExecutableExtension("run");
+			if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
+				cExtension = (InternalCExtension) element[i].createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtenionReference(ext);
 				cExtension.setProject(fProject);
 				break;
@@ -419,7 +419,7 @@ public class CDescriptor implements ICDescriptor {
 						IStatus.ERROR,
 						CCorePlugin.PLUGIN_ID,
 						IStatus.ERROR,
-						"getProjectDataDoc",
+						"getProjectDataDoc", //$NON-NLS-1$
 						e));
 			}
 			Element rootElem = dataDoc.createElement(PROJECT_DATA);

@@ -106,7 +106,7 @@ public class CDescriptorManager implements IResourceChangeListener {
 			fDescriptorMap = new HashMap();
 		}
 		if ( fDescriptorMap.get(project) != null ) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS, "CDTProject already configured", (Throwable)null);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS, CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), (Throwable)null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		try {

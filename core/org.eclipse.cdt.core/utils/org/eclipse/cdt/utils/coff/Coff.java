@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 public class Coff {
 
 	public static final String NL = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -64,7 +66,7 @@ public class Coff {
 
 		public void commonSetup(byte[] hdr, boolean little) throws EOFException {
 			if (hdr == null || hdr.length < FILHSZ) {
-				throw new EOFException("array to small"); //$NON-NLS-1
+				throw new EOFException(CCorePlugin.getResourceString("Util.exception.arrayToSmall")); //$NON-NLS-1$
 			}
 			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, little);
 			f_magic = memory.getUnsignedShort();

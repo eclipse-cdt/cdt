@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Status;
  */
 
 public class CConventions {
-	private final static String scopeResolutionOperator= "::";
+	private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$
 	private final static char fgDot= '.';
 	private final static char fgColon= ':';
 	
@@ -37,7 +37,7 @@ public class CConventions {
 			return false;
 		}
 		String trimmed = name.trim();
-		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
 			return false;
 		}
 
@@ -80,7 +80,7 @@ public class CConventions {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.nullName"), null); //$NON-NLS-1$
 		}
 		String trimmed = name.trim();
-		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.nameWithBlanks"), null); //$NON-NLS-1$
 		}
 		int index = name.lastIndexOf(scopeResolutionOperator);

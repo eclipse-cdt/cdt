@@ -9,8 +9,9 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Comparator;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 
@@ -125,7 +126,7 @@ public class Elf {
 			efile.readFully(e_ident);
 			if ( e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 
 				e_ident[ELFhdr.EI_MAG2] != 'L' || e_ident[ELFhdr.EI_MAG3] != 'F' )
-				throw new IOException("Not ELF format");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.notELF")); //$NON-NLS-1$
 			efile.setEndian(e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB);
 			e_type = efile.readShortE();
 			e_machine = efile.readShortE();
@@ -144,12 +145,12 @@ public class Elf {
 		
 		protected ELFhdr(byte [] bytes) throws IOException {
 			if(bytes.length <= e_ident.length) {
-				throw new EOFException("Not ELF format");
+				throw new EOFException(CCorePlugin.getResourceString("Util.exception.notELF")); //$NON-NLS-1$
 			}
 			System.arraycopy(bytes, 0, e_ident, 0, e_ident.length);
 			if ( e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 
 				e_ident[ELFhdr.EI_MAG2] != 'L' || e_ident[ELFhdr.EI_MAG3] != 'F' )
-				throw new IOException("Not ELF format");
+				throw new IOException(CCorePlugin.getResourceString("Util.exception.notELF")); //$NON-NLS-1$
 			boolean isle = (e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB);
 			int offset = e_ident.length;
 			e_type = makeShort(bytes, offset, isle); offset += 2;

@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.debug.DebugBaseType;
 import org.eclipse.cdt.utils.debug.DebugParameterKind;
 import org.eclipse.cdt.utils.debug.DebugType;
@@ -61,7 +62,7 @@ public class DebugDump implements IDebugEntryRequestor {
 			Dwarf dwarf = new Dwarf(elf);
 			dwarf.parse(this);
 		} else {
-			throw new IOException("Unknown debug format");
+			throw new IOException(CCorePlugin.getResourceString("Util.unknownFormat")); //$NON-NLS-1$
 		}
 		bwriter.flush();
 	}
@@ -96,7 +97,7 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterCompilationUnit(java.lang.String, long)
 	 */
 	public void enterCompilationUnit(String name, long address) {
-		write("/* Enter Compilation Unit " + name + " address " + Long.toHexString(address) + " */");
+		write("/* Enter Compilation Unit " + name + " address " + Long.toHexString(address) + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 		currentCU = name;
 	}
@@ -107,11 +108,11 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitCompilationUnit(long)
 	 */
 	public void exitCompilationUnit(long address) {
-		write("/* Exit Compilation Unit ");
+		write("/* Exit Compilation Unit "); //$NON-NLS-1$
 		if (currentCU != null) {
-			write(currentCU + " address " + Long.toHexString(address));
+			write(currentCU + " address " + Long.toHexString(address)); //$NON-NLS-1$
 		}
-		write(" */");
+		write(" */"); //$NON-NLS-1$
 		newLine();newLine();
 		currentCU = null;
 	}
@@ -122,8 +123,8 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterInclude(java.lang.String)
 	 */
 	public void enterInclude(String name) {
-		write("#include \"" + name + "\" ");
-		write("/* Enter Include */");
+		write("#include \"" + name + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		write("/* Enter Include */"); //$NON-NLS-1$
 		newLine();
 	}
 
@@ -143,12 +144,12 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterFunction(java.lang.String, int, boolean, long)
 	 */
 	public void enterFunction(String name, DebugType type, boolean isGlobal, long address) {
-		write("/* Func:" + name + " address " + Long.toHexString(address) + " */");
+		write("/* Func:" + name + " address " + Long.toHexString(address) + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 		if (!isGlobal) {
-			write("static ");
+			write("static "); //$NON-NLS-1$
 		}
-		write(type.toString() + " " + name + "(");
+		write(type.toString() + " " + name + "("); //$NON-NLS-1$ //$NON-NLS-2$
 		paramCount = 0;
 	}
 
@@ -160,16 +161,16 @@ public class DebugDump implements IDebugEntryRequestor {
 	public void exitFunction(long address) {
 		if (paramCount > -1) {
 			paramCount = -1;
-			write(")");
+			write(")"); //$NON-NLS-1$
 			newLine();
-			write("{");
+			write("{"); //$NON-NLS-1$
 			newLine();
 			bracket++;
 		}
 		for (; bracket > 0; bracket--) {
-			write("}");
+			write("}"); //$NON-NLS-1$
 		}
-		write(" /* Exit Func address " + Long.toHexString(address) + " */");
+		write(" /* Exit Func address " + Long.toHexString(address) + " */"); //$NON-NLS-1$ //$NON-NLS-2$
 		newLine();newLine();
 	}
 
@@ -181,10 +182,10 @@ public class DebugDump implements IDebugEntryRequestor {
 	public void enterCodeBlock(long offset) {
 		if (paramCount > -1) {
 			paramCount = -1;
-			write(")");
+			write(")"); //$NON-NLS-1$
 			newLine();
 		}
-		write(printTabs() + "{ " + "/* " + offset + " */");
+		write(printTabs() + "{ " + "/* " + offset + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 		bracket++;
 	}
@@ -196,7 +197,7 @@ public class DebugDump implements IDebugEntryRequestor {
 	 */
 	public void exitCodeBlock(long offset) {
 		bracket--;
-		write(printTabs() + "} " + "/* " + offset + " */");
+		write(printTabs() + "} " + "/* " + offset + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 	}
 
@@ -207,14 +208,14 @@ public class DebugDump implements IDebugEntryRequestor {
 	 */
 	public void acceptStatement(int line, long address) {
 		if (paramCount > -1) {
-			write(")");
+			write(")"); //$NON-NLS-1$
 			newLine();
-			write("{");
+			write("{"); //$NON-NLS-1$
 			newLine();
 			bracket++;
 			paramCount = -1;
 		}
-		write(printTabs() + "/* line " + line + " address " + address + " */");
+		write(printTabs() + "/* line " + line + " address " + address + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 	}
 
@@ -224,7 +225,7 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptIntegerConst(java.lang.String, long)
 	 */
 	public void acceptIntegerConst(String name, int value) {
-		write("const int " + name + " = " + value + ";");
+		write("const int " + name + " = " + value + ";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 	}
 
@@ -234,7 +235,7 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptFloatConst(java.lang.String, double)
 	 */
 	public void acceptFloatConst(String name, double value) {
-		write("const float " + name + " = " + value + ";");
+		write("const float " + name + " = " + value + ";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		newLine();
 	}
 
@@ -245,7 +246,7 @@ public class DebugDump implements IDebugEntryRequestor {
 	 *      org.eclipse.cdt.utils.debug.DebugType, int)
 	 */
 	public void acceptTypeConst(String name, DebugType type, int value) {
-		write("const " + type.toString() + " " + name + " = " + value + ";");
+		write("const " + type.toString() + " " + name + " = " + value + ";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		newLine();
 	}
 
@@ -256,10 +257,10 @@ public class DebugDump implements IDebugEntryRequestor {
 	 */
 	public void acceptParameter(String name, DebugType type, DebugParameterKind kind, long offset) {
 		if (paramCount > 0) {
-			write(", ");
+			write(", "); //$NON-NLS-1$
 		}
 		paramCount++;
-		write(type.toString() + " " + name + "/* " + offset + " */");
+		write(type.toString() + " " + name + "/* " + offset + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/*
@@ -268,7 +269,7 @@ public class DebugDump implements IDebugEntryRequestor {
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptVariable(java.lang.String, int, int, long)
 	 */
 	public void acceptVariable(String name, DebugType type, DebugVariableKind kind, long address) {
-		write(printTabs() + type.toString() + " " + name + ";" + "/* " + Long.toHexString(address) + " */");
+		write(printTabs() + type.toString() + " " + name + ";" + "/* " + Long.toHexString(address) + " */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		newLine();
 	}
 
@@ -288,11 +289,11 @@ public class DebugDump implements IDebugEntryRequestor {
 	 */
 	public void acceptTypeDef(String name, DebugType type) {
 		if (!name.equals(type.toString())) {
-			write("typedef " + type.toString() + " " + name + ";");
+			write("typedef " + type.toString() + " " + name + ";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			newLine();
 		} else if (type instanceof DebugBaseType){
 			DebugBaseType baseType =(DebugBaseType)type;
-			write("/* " + name + ": " + baseType.sizeof() + " bytes */");
+			write("/* " + name + ": " + baseType.sizeof() + " bytes */"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			newLine();
 		} else {
 			//int x = 9;

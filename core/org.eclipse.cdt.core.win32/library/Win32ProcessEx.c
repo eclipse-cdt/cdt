@@ -96,6 +96,13 @@ static int nCounter = 0; // We use it to build unique synchronisation object nam
 //			[in]  dir - working directory
 //          [out] channels - streams handlers
 /////////////////////////////////////////////////////////////////////////////////////
+
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
+  (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels, jstring slaveName, jint fdm) 
+{
+	return -1;
+}
+
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
   (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels) 
 {

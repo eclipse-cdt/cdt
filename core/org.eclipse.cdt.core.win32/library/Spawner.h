@@ -37,6 +37,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
   (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring);
 
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
+  (JNIEnv * env, jobject process, jobjectArray cmdarray, jobjectArray envp, jstring dir, jintArray channels, jstring slaveName, jint fdm);
+
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    raise

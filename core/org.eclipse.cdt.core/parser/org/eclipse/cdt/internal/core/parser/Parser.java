@@ -106,13 +106,17 @@ c, quick);
 				// Mark as failure and try to reach a recovery point
 				failParse(); 
 				
-				if (lastBacktrack != null && lastBacktrack == LA(1)) {
-					// we haven't progressed from the last backtrack
-					// try and find tne next definition
-					consumeToNextSemicolon();
-				} else {
-					// start again from here
-					lastBacktrack = LA(1);
+				try {
+					if (lastBacktrack != null && lastBacktrack == LA(1)) {
+						// we haven't progressed from the last backtrack
+						// try and find tne next definition
+						consumeToNextSemicolon();
+					} else {
+						// start again from here
+						lastBacktrack = LA(1);
+					}
+				} catch (EndOfFile e){
+					break;
 				}
 			}
 			catch( Exception e )
@@ -2279,5 +2283,12 @@ c, quick);
 	public int getLineNumberForOffset(int offset)
 	{
 		return scanner.getLineNumberForOffset(offset);
+	}
+	
+	public int getLastLineNumber(){
+		if( lastToken != null ){
+			return scanner.getLineNumberForOffset( lastToken.offset );
+		}
+		return -1;
 	}
 }

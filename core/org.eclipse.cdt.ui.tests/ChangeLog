@@ -1,3 +1,8 @@
+2003-04-17 Andrew Niefer
+	Added AutomatedTest
+	Added resources.cFiles
+	Added resources.cppFiles
+
 2003-04-16 John Camelon
 	Added DOMTests::testBug36532().
 	Added DOMTests::testBug36432(). 

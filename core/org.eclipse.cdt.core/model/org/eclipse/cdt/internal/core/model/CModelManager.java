@@ -387,38 +387,59 @@ public class CModelManager implements IResourceChangeListener {
 		removeInfo(celement);
 	}
 
-	public IBinaryParser getBinaryParser(IProject project) {
+	public IBinaryParser[] getBinaryParser(IProject project) {
 		try {
-			IBinaryParser parser =  (IBinaryParser)binaryParsersMap.get(project);
-			if (parser == null) {
-				parser = CCorePlugin.getDefault().getBinaryParser(project);
+			IBinaryParser[] parsers =  (IBinaryParser[])binaryParsersMap.get(project);
+			if (parsers == null) {
+				parsers = CCorePlugin.getDefault().getBinaryParser(project);
 			}
-			if (parser != null) {
-				binaryParsersMap.put(project, parser);
-				return parser;
+			if (parsers != null) {
+				binaryParsersMap.put(project, parsers);
+				return parsers;
 			}
 		} catch (CoreException e) {
 		}
-		return new NullBinaryParser();
+		return new IBinaryParser[] {new NullBinaryParser()};
 	}
 
 	public IBinaryFile createBinaryFile(IFile file) {
-		try {
-			IBinaryParser parser = getBinaryParser(file.getProject());
-			InputStream is = file.getContents();
-			byte[] bytes = new byte[parser.getHintBufferSize()];
-			int count = is.read(bytes);
-			is.close();
-			if (count > 0 && count < bytes.length) {
-				byte[] array = new byte[count];
-				System.arraycopy(bytes, 0, array, 0, count);
-				bytes = array;
+		IBinaryParser[] parsers = getBinaryParser(file.getProject());
+		int hints = 0;
+		for (int i = 0; i < parsers.length; i++) {
+			IBinaryParser parser = parsers[i];
+			if (parser.getHintBufferSize() > hints) {
+				hints = parser.getHintBufferSize();
 			}
-			IPath location = file.getLocation();
-			return parser.getBinary(bytes, location);
-		} catch (IOException e) {
-		} catch (CoreException e) {
-			//e.printStackTrace();
+		}
+		byte[] bytes = new byte[hints];
+		if (hints > 0) {
+			try {
+				InputStream is = file.getContents();
+				int count = is.read(bytes);
+				is.close();
+				if (count > 0 && count < bytes.length) {
+					byte[] array = new byte[count];
+					System.arraycopy(bytes, 0, array, 0, count);
+					bytes = array;
+				}
+			} catch (CoreException e) {
+				return null;
+			} catch (IOException e) {
+				return null;
+			}
+		}
+
+		IPath location = file.getLocation();
+		
+		for (int i = 0; i < parsers.length; i++) {
+			try {
+				IBinaryFile bin = parsers[i].getBinary(bytes, location);
+				if (bin != null) {
+					return bin;
+				}
+			} catch (IOException e) {
+				//
+			}
 		}
 		return null;
 	}

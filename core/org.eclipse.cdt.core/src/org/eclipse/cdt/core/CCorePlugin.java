@@ -471,21 +471,38 @@ public class CCorePlugin extends Plugin {
 		return getConsole(null);
 	}
 
-	public IBinaryParser getBinaryParser(IProject project) throws CoreException {
-		IBinaryParser parser = null;
+	public IBinaryParser[] getBinaryParser(IProject project) throws CoreException {
+		IBinaryParser parsers[] = null;
 		if (project != null) {
 			try {
 				ICDescriptor cdesc = (ICDescriptor) getCProjectDescription(project);
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
-				if (cextensions.length > 0)
-					parser = (IBinaryParser) cextensions[0].createExtension();
+				if (cextensions.length > 0) {
+					ArrayList list = new ArrayList(cextensions.length);
+					for (int i = 0; i < cextensions.length; i++) {
+						IBinaryParser parser = null;
+						try {
+							parser = (IBinaryParser) cextensions[i].createExtension();
+						} catch (ClassCastException e) {
+							//
+						}
+						if (parser != null) {
+							list.add(parser);
+						}
+					}
+					parsers = new IBinaryParser[list.size()];
+					list.toArray(parsers);
+				}
 			} catch (CoreException e) {
 			}
 		}
-		if (parser == null) {
-			parser = getDefaultBinaryParser();
+		if (parsers == null) {
+			IBinaryParser parser = getDefaultBinaryParser();
+			if (parser != null) {
+				parsers = new IBinaryParser[] {parser};
+			}
 		}
-		return parser;
+		return parsers;
 	}
 
 	public IBinaryParser getDefaultBinaryParser() throws CoreException {

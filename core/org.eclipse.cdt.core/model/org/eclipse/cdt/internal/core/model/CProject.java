@@ -92,16 +92,16 @@ public class CProject extends CContainer implements ICProject {
 
 	public ILibraryReference[] getLibraryReferences() throws CModelException {
 		ArrayList list = new ArrayList(5);
-		IBinaryParser binParser = null;
+		IBinaryParser[] binParsers = null;
 		try {
-			binParser = CCorePlugin.getDefault().getBinaryParser(getProject());
+			binParsers = CCorePlugin.getDefault().getBinaryParser(getProject());
 		} catch (CoreException e) {
 		}
 		IPathEntry[] entries = getResolvedPathEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
 				ILibraryEntry entry = (ILibraryEntry) entries[i];
-				ILibraryReference lib = getLibraryReference(this, binParser, entry);
+				ILibraryReference lib = getLibraryReference(this, binParsers, entry);
 				if (lib != null) {
 					list.add(lib);
 				}
@@ -110,24 +110,29 @@ public class CProject extends CContainer implements ICProject {
 		return (ILibraryReference[]) list.toArray(new ILibraryReference[0]);
 	}
 
-	public static ILibraryReference getLibraryReference(ICProject cproject, IBinaryParser binParser, ILibraryEntry entry) {
-		if (binParser == null) {
+	public static ILibraryReference getLibraryReference(ICProject cproject, IBinaryParser[] binParsers, ILibraryEntry entry) {
+		if (binParsers == null) {
 			try {
-				binParser = CCorePlugin.getDefault().getBinaryParser(cproject.getProject());
+				binParsers = CCorePlugin.getDefault().getBinaryParser(cproject.getProject());
 			} catch (CoreException e) {
 			}
 		}
 		ILibraryReference lib = null;
-		if (binParser != null) {
-			IBinaryFile bin;
-			try {
-				bin = binParser.getBinary(entry.getPath());
-				if (bin.getType() == IBinaryFile.ARCHIVE) {
-					lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);
-				} else {
-					lib = new LibraryReferenceShared(cproject, entry, bin);
+		if (binParsers != null) {
+			for (int i = 0; i < binParsers.length; i++) {
+				IBinaryFile bin;
+				try {
+					bin = binParsers[i].getBinary(entry.getPath());
+					if (bin != null) {
+						if (bin.getType() == IBinaryFile.ARCHIVE) {
+							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);
+						} else {
+							lib = new LibraryReferenceShared(cproject, entry, bin);
+						}
+						break;
+					}
+				} catch (IOException e1) {
 				}
-			} catch (IOException e1) {
 			}
 		}
 		if (lib == null) {

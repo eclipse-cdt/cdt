@@ -1,3 +1,12 @@
+2004-03-02 Alain Magloire
+
+	Work to make it possible to set more the one binaryParser
+	per project. Note that the UI is not yet enabled.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+
 2004-03-01 Andrew Niefer
 	externalize strings : Bug 53123 
 

@@ -1,6 +1,49 @@
 2003-02-26 Alain Magloire
 
-	A new proposal was make, see cdt-core-home/docs/binarparser.html
+	The second part to finish the cdt-core-home/docs/binaryparser.html
+	proposal.  The plugin.xml changed to reflect this, new format.
+
+	<extension id="ELF" name="Elf Parser" point="org.eclipse.cdt.core.BinaryParser">
+	 <cextension>
+	   <run class="org.eclipse.cdt.internal.core.model.parser.ElfParser"/>
+	 </cextension>
+	</extension>
+
+	<extension id="PE" name="PE Windows Parser" point="org.eclipse.cdt.core.BinaryParser">
+	 <cextension>
+	  <run class="org.eclipse.cdt.internal.core.model.parser.PEParser"> </run>
+	 </cextension>
+	</extension>
+
+	The binary parser type is now save in the ".cdtproject".
+
+	* src/org/eclipse/cdt/core/IBinaryParserConfiguration.java:
+	* src/org/eclipse/cdt/internal/core/BinaryParserConfiguration.java:
+	Removed.
+
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	(getDescriptor): Call autosave().
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	(create): Bug fix
+	(get): Bug fix
+	(remove): Bug fix
+
+	* model/org/eclipse/cdt/internal/core/model/parser/ElParser.java:
+	* model/org/eclipse/cdt/internal/core/model/parser/PEParser.java:
+	Extends AbstractCDescriptor.
+	* model/org/eclipse/cdt/core/internal/core/model/NullBinaryParser.java:
+	New file.
+	* model/org/eclipse/cdt/core/internal/core/model/CModelManager.java:
+	* model/org/eclipse/cdt/core/model/CoreModel.java
+	(resetBinaryParser): New method.
+	(getBinaryParserFormat): removed.
+	(setBinaryParserFormat): removed.
+	(setDefaultBinaryParserFormat): removed.
+	(getDefaultBinaryParserFormat): removed.
+
+2003-02-26 Alain Magloire
+
+	A new proposal was make, see cdt-core-home/docs/binaryparser.html
 	it changed the the signature:
 	public interface IBinaryParser {
 		IBinary getBinary(IPath path);

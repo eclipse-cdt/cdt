@@ -1,3 +1,6 @@
+2004-02-10 Vladimir Hirsl
+	Fix for PR# 51373: NPE when trying to instantiate a CBuildConsole with non null id
+
 2004-02-06 Hoda Amer
 	Fix for Bug#51208: NullPointerException in CModelBuilder
 	

@@ -448,7 +448,7 @@ public class CCorePlugin extends Plugin {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
 						String builderID = configElements[j].getAttribute("builderID");
-						if ((id == null && builderID == null) || (id != null && builderID.equals(id))) {
+						if ((id == null && builderID == null) || (id != null && id.equals(builderID))) {
 							return (IConsole) configElements[j].createExecutableExtension("class");
 						}
 					}

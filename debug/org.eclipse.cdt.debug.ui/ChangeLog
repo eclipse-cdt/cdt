@@ -1,3 +1,15 @@
+2004-08-24 Mikhail Khodjaiants
+	Replaced the "Breakpoint Properties" dialog by standard property pages.
+	* CBreakpointPreferenceStore.java
+	* CBreakpointPropertiesAction.java
+	* CBreakpointPropertiesRulerAction.java
+	* CBreakpointPropertiesRulerActionDelegate.java
+	* CBreakpointPreferencePage.java renamed to CBreakpointPropertyPage.java
+	* CBreakpointPropertiesDialog.java: removed
+	* plugin.xml
+	* plugin.properties
+	* ActionMessages.properties
+
 2004-08-12 Mikhail Khodjaiants
 	Fix for bug 70453. Linux: error exiting Eclipse on Linux RedHat or SuSe Enterprise Server 9.
 	Applied modified patch from Sean Evoy.

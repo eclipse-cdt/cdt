@@ -286,7 +286,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 					long address = ((IDisassemblyStorage)editorInput.getStorage()).getAddress( lineNumber );
 					if ( address != 0 && CDebugModel.addressBreakpointExists( resource, address ) == null )
 					{
-						CDebugModel.createAddressBreakpoint( resource, lineNumber, address, true, 0, "", true );
+						CDebugModel.createAddressBreakpoint( resource, address, true, 0, "", true );
 					}
 				}
 			}

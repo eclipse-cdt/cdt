@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -33,6 +34,12 @@ public abstract class CBreakpoint extends Breakpoint
 								  			 IDebugEventSetListener
 {
 	/**
+	 * This field is used to pass a CDI breakpoint to the target if the breakpoint 
+	 * is created in gdb console.
+	 */
+	private ICDIBreakpoint fExternalBreakpoint = null;
+
+	/**
 	 * Constructor for CBreakpoint.
 	 */
 	public CBreakpoint()
@@ -44,6 +51,32 @@ public abstract class CBreakpoint extends Breakpoint
 	 */
 	public CBreakpoint( final IResource resource, final String markerType, final Map attributes, final boolean add ) throws DebugException
 	{
+		IWorkspaceRunnable wr= new IWorkspaceRunnable() 
+									{
+										public void run( IProgressMonitor monitor ) throws CoreException 
+										{
+											// create the marker
+											setMarker( resource.createMarker( markerType ) );
+											
+											// set attributes
+											ensureMarker().setAttributes( attributes );
+											
+											//set the marker message
+											setAttribute( IMarker.MESSAGE, getMarkerMessage() );
+											
+											// add to breakpoint manager if requested
+											register( add );
+										}
+									};
+		run( wr );
+	}
+
+	/**
+	 * Constructor for CBreakpoint.
+	 */
+	public CBreakpoint( final IResource resource, final String markerType, final Map attributes, final ICDIBreakpoint cdiBreakpoint, final boolean add ) throws DebugException
+	{
+		setExternalBreakpoint( cdiBreakpoint );
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() 
 									{
 										public void run( IProgressMonitor monitor ) throws CoreException 
@@ -223,5 +256,15 @@ public abstract class CBreakpoint extends Breakpoint
 	protected void setAttribute( String attributeName, Object value ) throws CoreException
 	{
 		super.setAttribute( attributeName, value );
+	}
+	
+	public ICDIBreakpoint getExternalBreakpoint()
+	{
+		return fExternalBreakpoint;
+	}
+	
+	public void setExternalBreakpoint( ICDIBreakpoint cdiBreakpoint )
+	{
+		fExternalBreakpoint = cdiBreakpoint;
 	}
 }

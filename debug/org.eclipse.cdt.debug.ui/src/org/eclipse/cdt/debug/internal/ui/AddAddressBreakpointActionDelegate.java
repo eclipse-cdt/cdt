@@ -71,7 +71,6 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 		if ( dialog.open() == dialog.OK )
 		{
 			CDebugModel.createAddressBreakpoint( ((IExecFileInfo)getDebugTarget( element ).getAdapter( IExecFileInfo.class )).getExecFile(),
-												 -1,
 												 parseValue( dialog.getValue().trim() ),
 												 true, 
 												 0, 

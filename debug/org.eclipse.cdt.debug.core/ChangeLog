@@ -1,4 +1,19 @@
 2003-01-27 Mikhail Khodjaiants
+	Managing breakpoints from the gdb console.
+	* CDebugCorePlugin.java
+	* CDebugModel.java
+	* IAsyncExecutor.java
+	* ICSourceLocator.java
+	* CAddressBreakpoint.java
+	* CBreakpoint.java
+	* CFunctionBreakpoint.java
+	* CLineBreakpoint.java
+	* CWatchpoint.java
+	* CDebugTarget.java
+	* CSourceLocator.java
+	* CSourceManager.java
+
+2003-01-27 Mikhail Khodjaiants
 	Use 'equals' to compare CDI variables instead of names.
 	* CStackFrame.java
 

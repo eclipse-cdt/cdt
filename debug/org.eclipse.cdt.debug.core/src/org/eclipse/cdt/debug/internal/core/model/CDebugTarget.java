@@ -74,6 +74,7 @@ import org.eclipse.cdt.debug.internal.core.CMemoryManager;
 import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
@@ -901,6 +902,14 @@ public class CDebugTarget extends CDebugElement
 					if ( ((ICDISharedLibrary)source).areSymbolsLoaded() )
 						setRetryBreakpoints( true );
 				}
+				if ( source instanceof ICDILocationBreakpoint )
+				{
+					handleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)source );
+				}
+				if ( source instanceof ICDIWatchpoint )
+				{
+					handleWatchpointCreatedEvent( (ICDIWatchpoint)source );
+				}
 			}
 			else if ( event instanceof ICDISuspendedEvent )
 			{
@@ -932,6 +941,10 @@ public class CDebugTarget extends CDebugElement
 				if ( source instanceof ICDISharedLibrary )
 				{
 					getSharedLibraryManager().sharedLibraryUnloaded( (ICDISharedLibrary)source );
+				}
+				if ( source instanceof ICDIBreakpoint )
+				{
+					handleBreakpointDestroyedEvent( (ICDIBreakpoint)source );
 				}
 			}
 			else if ( event instanceof ICDIDisconnectedEvent )
@@ -1463,6 +1476,126 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	private void handleLocationBreakpointCreatedEvent( final ICDILocationBreakpoint breakpoint )
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										doHandleLocationBreakpointCreatedEvent( breakpoint );
+									}
+ 
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doHandleLocationBreakpointCreatedEvent( ICDILocationBreakpoint breakpoint )
+	{
+		if ( breakpoint.isTemporary() || getBreakpoints().containsValue( breakpoint ) )
+			return;
+		try
+		{
+			if ( breakpoint.getLocation().getFile() != null && breakpoint.getLocation().getFile().length() > 0 )
+			{
+				if ( getSourceLocator() instanceof IAdaptable && ((IAdaptable)getSourceLocator()).getAdapter( ICSourceLocator.class ) != null )
+				{
+					Object sourceElement = ((ICSourceLocator)((IAdaptable)getSourceLocator()).getAdapter( ICSourceLocator.class )).findSourceElement( breakpoint.getLocation().getFile() );
+					if ( sourceElement != null && sourceElement instanceof IFile )
+					{
+						CDebugModel.createLineBreakpoint( (IFile)sourceElement,
+														  breakpoint.getLocation().getLineNumber(),
+														  breakpoint.isEnabled(),
+														  breakpoint.getCondition().getIgnoreCount(),
+														  breakpoint.getCondition().getExpression(),
+														  breakpoint,
+														  true );
+					}
+				}
+			}
+			else if ( breakpoint.getLocation().getAddress() > 0 )
+			{
+				CDebugModel.createAddressBreakpoint( getExecFile(),
+												  	 breakpoint.getLocation().getAddress(),
+												  	 breakpoint.isEnabled(),
+												  	 breakpoint.getCondition().getIgnoreCount(),
+												  	 breakpoint.getCondition().getExpression(),
+												  	 breakpoint,
+												  	 true );
+			}
+		}
+		catch( CDIException e )
+		{
+		}
+		catch( DebugException e )
+		{
+		}
+	}
+
+	private void handleWatchpointCreatedEvent( final ICDIWatchpoint watchpoint )
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										doHandleWatchpointCreatedEvent( watchpoint );
+									}
+ 
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doHandleWatchpointCreatedEvent( ICDIWatchpoint watchpoint )
+	{
+		if ( getBreakpoints().containsValue( watchpoint ) )
+			return;
+		try
+		{
+			CDebugModel.createWatchpoint( getExecFile().getProject(),
+										  watchpoint.isWriteType(),
+										  watchpoint.isReadType(),
+										  watchpoint.getWatchExpression(),
+										  watchpoint.isEnabled(),
+									  	  watchpoint.getCondition().getIgnoreCount(),
+									  	  watchpoint.getCondition().getExpression(),
+									  	  watchpoint,
+									  	  true );
+		}
+		catch( CDIException e )
+		{
+		}
+		catch( DebugException e )
+		{
+		}
+	}
+
+	private void handleBreakpointDestroyedEvent( final ICDIBreakpoint breakpoint )
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										doHandleBreakpointDestroyedEvent( breakpoint );
+									}
+ 
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doHandleBreakpointDestroyedEvent( ICDIBreakpoint cdiBreakpoint )
+	{
+		IBreakpoint breakpoint = findBreakpoint( cdiBreakpoint );
+		if ( breakpoint != null )
+		{
+			try
+			{
+				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+			}
+			catch( CoreException e )
+			{
+			}
+		}
+	}
+
 	/**
 	 * Finds and returns the model thread for the associated CDI thread, 
 	 * or <code>null</code> if not found.
@@ -1615,20 +1748,21 @@ public class CDebugTarget extends CDebugElement
 
 	private void setLineBreakpoint( ICLineBreakpoint breakpoint ) throws DebugException
 	{
-		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		try
 		{
-			ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
-			ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
-			ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
-			if ( !getBreakpoints().containsKey( breakpoint ) )
+			ICDIBreakpoint cdiBreakpoint = ((CBreakpoint)breakpoint).getExternalBreakpoint();
+			if ( cdiBreakpoint == null )
+			{
+				setLineBreakpoint0( breakpoint );
+			}
+			else
 			{
 				getBreakpoints().put( breakpoint, cdiBreakpoint );
-				((CBreakpoint)breakpoint).incrementInstallCount();
-				if ( !breakpoint.isEnabled() )
-				{
-					cdiBreakpoint.setEnabled( false );
-				}
+			}
+			((CBreakpoint)breakpoint).incrementInstallCount();
+			if ( !breakpoint.isEnabled() )
+			{
+				cdiBreakpoint.setEnabled( false );
 			}
 		}
 		catch( CoreException ce )
@@ -1640,23 +1774,33 @@ public class CDebugTarget extends CDebugElement
 			requestFailed( "Operation failed. Reason: ", e );
 		}
 	}
+
+	private synchronized void setLineBreakpoint0( ICLineBreakpoint breakpoint ) throws CDIException, CoreException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		ICDILocation location = bm.createLocation( breakpoint.getMarker().getResource().getLocation().lastSegment(), null, breakpoint.getLineNumber() );
+		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+		getBreakpoints().put( breakpoint, cdiBreakpoint );
+	}
 	
 	private void setAddressBreakpoint( ICAddressBreakpoint breakpoint ) throws DebugException
 	{
-		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		try
 		{
-			ICDILocation location = bm.createLocation( Long.parseLong( breakpoint.getAddress() ) );
-			ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
-			ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
-			if ( !getBreakpoints().containsKey( breakpoint ) )
+			ICDIBreakpoint cdiBreakpoint = ((CBreakpoint)breakpoint).getExternalBreakpoint();
+			if ( cdiBreakpoint == null )
+			{
+				setAddressBreakpoint0( breakpoint );
+			}
+			else
 			{
 				getBreakpoints().put( breakpoint, cdiBreakpoint );
-				((CBreakpoint)breakpoint).incrementInstallCount();
-				if ( !breakpoint.isEnabled() )
-				{
-					cdiBreakpoint.setEnabled( false );
-				}
+			}
+			((CBreakpoint)breakpoint).incrementInstallCount();
+			if ( !breakpoint.isEnabled() )
+			{
+				cdiBreakpoint.setEnabled( false );
 			}
 		}
 		catch( CoreException ce )
@@ -1672,26 +1816,33 @@ public class CDebugTarget extends CDebugElement
 			requestFailed( "Operation failed. Reason: ", e );
 		}
 	}
+ 	
+	private synchronized void setAddressBreakpoint0( ICAddressBreakpoint breakpoint ) throws CDIException, CoreException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		ICDILocation location = bm.createLocation( Long.parseLong( breakpoint.getAddress() ) );
+		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+		getBreakpoints().put( breakpoint, cdiBreakpoint );
+	}
 	
 	private void setWatchpoint( ICWatchpoint watchpoint ) throws DebugException
 	{
-		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		try
 		{
-			ICDICondition condition = bm.createCondition( watchpoint.getIgnoreCount(), watchpoint.getCondition() );
-			int accessType = 0;
-			accessType |= ( watchpoint.isWriteType() ) ? ICDIWatchpoint.WRITE : 0;
-			accessType |= ( watchpoint.isReadType() ) ? ICDIWatchpoint.READ : 0;
-			String expression = watchpoint.getExpression();
-			ICDIWatchpoint cdiWatchpoint = bm.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
-			if ( !getBreakpoints().containsKey( watchpoint ) )
+			ICDIWatchpoint cdiWatchpoint = (ICDIWatchpoint)((CWatchpoint)watchpoint).getExternalBreakpoint();
+			if ( cdiWatchpoint == null )
+			{
+				setWatchpoint0( watchpoint );
+			}
+			else
 			{
 				getBreakpoints().put( watchpoint, cdiWatchpoint );
-				((CBreakpoint)watchpoint).incrementInstallCount();
-				if ( !watchpoint.isEnabled() )
-				{
-					cdiWatchpoint.setEnabled( false );
-				}
+			}
+			((CBreakpoint)watchpoint).incrementInstallCount();
+			if ( !watchpoint.isEnabled() )
+			{
+				cdiWatchpoint.setEnabled( false );
 			}
 		}
 		catch( CoreException ce )
@@ -1702,6 +1853,18 @@ public class CDebugTarget extends CDebugElement
 		{
 			requestFailed( "Operation failed. Reason: ", e );
 		}
+	}
+	
+	private synchronized void setWatchpoint0( ICWatchpoint watchpoint ) throws CDIException, CoreException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		ICDICondition condition = bm.createCondition( watchpoint.getIgnoreCount(), watchpoint.getCondition() );
+		int accessType = 0;
+		accessType |= ( watchpoint.isWriteType() ) ? ICDIWatchpoint.WRITE : 0;
+		accessType |= ( watchpoint.isReadType() ) ? ICDIWatchpoint.READ : 0;
+		String expression = watchpoint.getExpression();
+		ICDIWatchpoint cdiWatchpoint = bm.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+		getBreakpoints().put( watchpoint, cdiWatchpoint );
 	}
 	
 	private ICDIBreakpoint findCDIBreakpoint( IBreakpoint breakpoint )

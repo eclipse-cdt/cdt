@@ -50,4 +50,6 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @return whether this locator is able to locate the given resource
 	 */
 	boolean contains( IResource resource );
+	
+	Object findSourceElement( String fileName );
 }

@@ -190,4 +190,16 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 		list.add( location );
 		setSourceLocations( (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] ) );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
+	 */
+	public Object findSourceElement( String fileName )
+	{
+		if ( getCSourceLocator() != null )
+		{
+			return getCSourceLocator().findSourceElement( fileName );
+		}
+		return null;
+	}
 }

@@ -1,3 +1,9 @@
+2003-01-27 Mikhail Khodjaiants
+	Managing breakpoints from the gdb console.
+	* AddAddressBreakpointActionDelegate.java
+	* ManageBreakpointRulerAction.java
+	* CDebugUIPlugin.java
+
 2003-01-23 Mikhail Khodjaiants
 	Ignore the text selection when hovering.
 	* DebugTextHovering.java

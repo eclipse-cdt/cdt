@@ -14,10 +14,12 @@ import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
@@ -307,6 +309,23 @@ public class CDebugModel
 		return new CLineBreakpoint( resource, attributes, add );
 	}
 
+	public static ICLineBreakpoint createLineBreakpoint( IResource resource, 
+														 int lineNumber, 
+														 boolean enabled,
+														 int ignoreCount, 
+														 String condition,
+														 ICDIBreakpoint cdiBreakpoint, 
+														 boolean add ) throws DebugException
+	{
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
+		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		return new CLineBreakpoint( resource, attributes, cdiBreakpoint, add );
+	}
+
 	public static ICAddressBreakpoint addressBreakpointExists( IResource resource, long address ) throws CoreException
 	{
 		String modelId = getPluginIdentifier();
@@ -341,7 +360,6 @@ public class CDebugModel
 	}
 
 	public static ICAddressBreakpoint createAddressBreakpoint( IResource resource,
-															   int lineNumber, 
 															   long address, 
 															   boolean enabled,
 															   int ignoreCount, 
@@ -350,7 +368,6 @@ public class CDebugModel
 	{
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
-//		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
 		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
@@ -359,6 +376,26 @@ public class CDebugModel
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CAddressBreakpoint( resource, attributes, add );
+	}
+
+	public static ICAddressBreakpoint createAddressBreakpoint( IResource resource,
+															   long address, 
+															   boolean enabled,
+															   int ignoreCount, 
+															   String condition, 
+															   ICDIBreakpoint breakpoint,
+															   boolean add ) throws DebugException
+	{
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
+		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
+		attributes.put( ICAddressBreakpoint.ADDRESS, Long.toString( address ) );
+		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		return new CAddressBreakpoint( resource, attributes, breakpoint, add );
 	}
 
 	public static ICWatchpoint watchpointExists( IResource resource, boolean write, boolean read, String expression ) throws CoreException
@@ -404,6 +441,27 @@ public class CDebugModel
 		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
 		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
 		return new CWatchpoint( resource, attributes, add );
+	}
+	
+	public static ICWatchpoint createWatchpoint( IResource resource, 
+												 boolean writeAccess,
+												 boolean readAccess,
+												 String expression, 
+												 boolean enabled,
+												 int ignoreCount, 
+												 String condition,
+												 ICDIWatchpoint watchpoint,
+												 boolean add ) throws DebugException
+	{
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		attributes.put( ICWatchpoint.EXPRESSION, expression );
+		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
+		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
+		return new CWatchpoint( resource, attributes, watchpoint, add );
 	}
 	
 	public static IExpression createExpression( IDebugTarget target, String text ) throws DebugException

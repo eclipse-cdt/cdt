@@ -216,4 +216,34 @@ public class CSourceLocator implements ICSourceLocator
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
+	 */
+	public Object findSourceElement( String fileName )
+	{
+		Object result = null;
+		if ( fileName != null && fileName.length() > 0 )
+		{
+			result = findFileByAbsolutePath( fileName );
+			if ( result == null )
+			{
+				ICSourceLocation[] locations = getSourceLocations();
+				for ( int i = 0; i < locations.length; ++i )
+				{
+					try
+					{
+						result = locations[i].findSourceElement( fileName );
+					}
+					catch( CoreException e )
+					{
+						// do nothing
+					}
+					if ( result != null )
+						break;
+				}
+			}
+		}
+		return result;
+	}
 }

@@ -18,22 +18,11 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 		super(adapter, "SymbolEntryPage"); //$NON-NLS-1$
 	}
 
-	public boolean isEntryKind(int kind) {
-		return kind == IPathEntry.CDT_MACRO;
+	protected int getEntryKind() {
+		return IPathEntry.CDT_MACRO;
 	}
-
-	protected void addContributed() {
-		// dinglis-TODO Auto-generated method stub
-
-	}
-
-	protected void addFromWorkspace() {
-		// dinglis-TODO Auto-generated method stub
-
-	}
-
+	
 	protected void addPath() {
-		// dinglis-TODO Auto-generated method stub
 
 	}
 }

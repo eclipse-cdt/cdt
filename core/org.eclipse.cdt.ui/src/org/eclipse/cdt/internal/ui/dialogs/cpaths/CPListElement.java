@@ -354,12 +354,12 @@ public class CPListElement {
 			case IPathEntry.CDT_LIBRARY:
 				res = root.findMember(path);
 				if (res == null) {
-					if (!ArchiveFileFilter.isArchivePath(path)) {
-						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()
-								&& root.getProject(path.segment(0)).exists()) {
-							res = root.getFolder(path);
-						}
-					}
+//					if (!ArchiveFileFilter.isArchivePath(path)) {
+//						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()
+//								&& root.getProject(path.segment(0)).exists()) {
+//							res = root.getFolder(path);
+//						}
+//					}
 					isMissing = !path.toFile().isFile(); // look for external
 				}
 				sourceAttachment = ((ILibraryEntry) curr).getSourceAttachmentPath();

@@ -1,3 +1,19 @@
+2004-04-16 David Inglis
+
+	Work in Progress - CPath ui stuff
+	
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/AbstractPathOptionBlock.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPListElement.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPListLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathContainerDescriptor.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathContainerSelectionPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathSymbolEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/ExtendedCPathBasePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPListElementFilter.java
+
 2004-04-16 Andrew Niefer
 	modify CompletionEngine.completionOnFunctionReference for bug 50807
 

@@ -120,8 +120,6 @@ class CPListLabelProvider extends LabelProvider {
 							}
 						}
 						return buf.toString();
-					} else if (ArchiveFileFilter.isArchivePath(path)) {
-						return getPathString(path, resource == null);
 					}
 					// should not come here
 					return path.makeRelative().toString();
@@ -183,14 +181,14 @@ class CPListLabelProvider extends LabelProvider {
 	}
 
 	private String getPathString(IPath path, boolean isExternal) {
-		if (ArchiveFileFilter.isArchivePath(path)) {
-			IPath appendedPath = path.removeLastSegments(1);
-			String appended = isExternal ? appendedPath.toOSString() : appendedPath.makeRelative().toString();
-			return CPathEntryMessages.getFormattedString("CPListLabelProvider.twopart", //$NON-NLS-1$
-					new String[] { path.lastSegment(), appended});
-		} else {
+//		if (ArchiveFileFilter.isArchivePath(path)) {
+//			IPath appendedPath = path.removeLastSegments(1);
+//			String appended = isExternal ? appendedPath.toOSString() : appendedPath.makeRelative().toString();
+//			return CPathEntryMessages.getFormattedString("CPListLabelProvider.twopart", //$NON-NLS-1$
+//					new String[] { path.lastSegment(), appended});
+//		} else {
 			return isExternal ? path.toOSString() : path.makeRelative().toString();
-		}
+//		}
 	}
 
 	private ImageDescriptor getCPListElementBaseImage(CPListElement cpentry) {

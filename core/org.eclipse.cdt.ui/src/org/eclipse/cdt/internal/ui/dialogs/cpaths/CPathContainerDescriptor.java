@@ -97,7 +97,7 @@ public class CPathContainerDescriptor {
 				}
 			}
 			if (defaultPageName != null && containers.isEmpty()) {
-				// default page only added of no other extensions found
+				// default page only added if no other extensions found
 				containers.add(defaultPage);
 			}
 		}

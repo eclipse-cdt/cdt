@@ -285,7 +285,8 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 		monitor.worked(1);
 
-		getCProject().setRawPathEntries((IPathEntry[]) cpath.toArray(new IPathEntry[cpath.size()]), new SubProgressMonitor(monitor, 7));
+		getCProject().setRawPathEntries((IPathEntry[]) cpath.toArray(new IPathEntry[cpath.size()]),
+				new SubProgressMonitor(monitor, 7));
 	}
 
 	// -------- creation -------------------------------

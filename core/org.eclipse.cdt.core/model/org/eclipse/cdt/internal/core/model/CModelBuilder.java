@@ -62,7 +62,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifierOwner;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -76,7 +75,26 @@ public class CModelBuilder {
 	private IASTCompilationUnit compilationUnit;
 	// indicator if the unit has parse errors
 	private boolean hasNoErrors = false;
-	
+
+	class ProblemCallback extends StructuralParseCallback {
+		IProblemRequestor problemRequestor;
+
+		public ProblemCallback(IProblemRequestor requestor) {
+			problemRequestor = requestor;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.QuickParseCallback#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+		 */
+		public boolean acceptProblem(IProblem problem) {
+			// Do not worry for now about problems in other files.
+			if (inclusionLevel == 0) {
+				problemRequestor.acceptProblem(problem);
+			}
+			return true;
+		}
+	}
+
 	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
 		this.translationUnit = tu ;
 		this.newElements = new HashMap();
@@ -111,27 +129,7 @@ public class CModelBuilder {
 			quickParseCallback = (quickParseMode) ? ParserFactory.createQuickParseCallback() :
 				ParserFactory.createStructuralParseCallback();
 		} else {
-			if (quickParseMode) {
-				quickParseCallback = new  QuickParseCallback() {
-					/* (non-Javadoc)
-					 * @see org.eclipse.cdt.internal.core.parser.QuickParseCallback#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
-					 */
-					public boolean acceptProblem(IProblem problem) {
-						problemRequestor.acceptProblem(problem);
-						return true;
-					}
-				};
-			} else {
-				quickParseCallback = new StructuralParseCallback() {
-					/* (non-Javadoc)
-					 * @see org.eclipse.cdt.internal.core.parser.QuickParseCallback#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
-					 */
-					public boolean acceptProblem(IProblem problem) {
-						problemRequestor.acceptProblem(problem);
-						return true;
-					}
-				};
-			}
+			quickParseCallback = new ProblemCallback(problemRequestor);
 		}
 
 		// pick the language

@@ -54,6 +54,9 @@ class SourceManipulationInfo extends CElementInfo {
 				}
 			} catch (IOException e) {
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
+			} catch (StringIndexOutOfBoundsException bound) {
+				// This is not good we screwed up the offset some how
+				throw new CModelException(bound, ICModelStatusConstants.INDEX_OUT_OF_BOUNDS);
 			}
 		}
 		return ""; //$NON-NLS-1$

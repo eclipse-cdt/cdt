@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.ui.editors;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.eclipse.cdt.ui.IEditorInputDelegate;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -22,7 +23,7 @@ import org.eclipse.ui.IStorageEditorInput;
  * 
  * @since Mar 4, 2003
  */
-public class EditorInputDelegate implements IEditorInput
+public class EditorInputDelegate implements IEditorInputDelegate
 {
 	public static final int TYPE_ATTACH_SOURCE = 0;
 	public static final int TYPE_WORKSPACE_FILE = 1;

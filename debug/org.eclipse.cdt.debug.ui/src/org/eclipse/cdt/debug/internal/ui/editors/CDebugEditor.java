@@ -369,7 +369,7 @@ public class CDebugEditor extends CEditor
 	public CDebugEditor()
 	{
 		super();
-		setDocumentProvider( CDebugUIPlugin.getDefault().getDocumentProvider() );
+		setDocumentProvider( CUIPlugin.getDefault().getDocumentProvider() );
 	}
 
 	/* (non-Javadoc)

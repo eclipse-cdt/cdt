@@ -67,9 +67,6 @@ public class IndexManagerTest extends TestCase {
 			fail("Unable to create project");
 		//Add a file to the project
 		importFile("mail.cpp","resources/indexer/mail.cpp");	
-		//Start up the index manager
-		//indexManager = new IndexManager();
-		//indexManager.reset();
 	}
 	/*
 	 * @see TestCase#tearDown()
@@ -77,7 +74,9 @@ public class IndexManagerTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		//Delete project
-		//testProject.delete(true,monitor);
+		if (testProject.exists()){
+			testProject.delete(true,monitor);
+		}
 	}
 
 	public static Test suite() { 
@@ -144,7 +143,6 @@ public class IndexManagerTest extends TestCase {
 		//By doing this, we force the Index Manager to indexAll()
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.setEnabled(testProject,true);
-		
 		Thread.sleep(15000);
 		IIndex ind = indexManager.getIndex(testProject.getFullPath(),true,true);
 		char[] prefix = "typeDecl/".toCharArray();
@@ -171,5 +169,90 @@ public class IndexManagerTest extends TestCase {
 		}
 	}
 	
+	public void testAddNewFileToIndex() throws Exception{
+		//Enable indexing on the created project
+		//By doing this, we force the Index Manager to indexAll()
+		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		indexManager.setEnabled(testProject,true);
+		Thread.sleep(15000);
+		//Make sure project got added to index
+		IPath testProjectPath = testProject.getFullPath();
+		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+		assertTrue("Index exists for project",ind != null);
+		//Add a new file to the project, give it some time to index
+		importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
+		Thread.sleep(10000);
+		ind = indexManager.getIndex(testProjectPath,true,true);
+		char[] prefix = "typeDecl/C/CDocumentManager/".toCharArray();
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager/, refs={ 1 }"};
+		IEntryResult[] eresults =ind.queryEntries(prefix);
+		
+		if (eresults.length != entryResultModel.length)
+			fail("Entry Result length different from model");
+			
+		for (int i=0;i<eresults.length; i++)
+		{
+			assertEquals(entryResultModel[i],eresults[i].toString());
+		}
+	}
+
+	public void testRemoveProjectFromIndex() throws Exception{
+	  //Enable indexing on the created project
+	  //By doing this, we force the Index Manager to indexAll()
+	  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+	  indexManager.setEnabled(testProject,true);
+	  Thread.sleep(15000);
+	  //Make sure project got added to index
+	  IPath testProjectPath = testProject.getFullPath();
+	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	  assertTrue("Index exists for project",ind != null);
+	  //Delete the project
+	  testProject.delete(true,monitor);
+	  //See if the index is still there
+	  ind = indexManager.getIndex(testProjectPath,true,true);
+	  assertTrue("Index deleted",ind == null);
+	}
+	
+	public void testRemoveFileFromIndex() throws Exception{
+	 //Enable indexing on the created project
+	 //By doing this, we force the Index Manager to indexAll()
+	 indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+	 indexManager.setEnabled(testProject,true);
+	 Thread.sleep(15000);
+	 //Make sure project got added to index
+	 IPath testProjectPath = testProject.getFullPath();
+	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	 assertTrue("Index exists for project",ind != null);
+	 //Add a new file to the project
+	 importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
+	 Thread.sleep(10000);
+	 //Do a "before" deletion comparison
+	 ind = indexManager.getIndex(testProjectPath,true,true);
+	 char[] prefix = "typeDecl/".toCharArray();
+	 IEntryResult[] eresults = ind.queryEntries(prefix);
+	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager/, refs={ 1 }", "EntryResult: word=typeDecl/C/Mail/, refs={ 2 }", "EntryResult: word=typeDecl/C/Unknown/, refs={ 2 }", "EntryResult: word=typeDecl/C/container/, refs={ 2 }", "EntryResult: word=typeDecl/C/first_class/, refs={ 2 }", "EntryResult: word=typeDecl/C/postcard/, refs={ 2 }"};
+	 if (eresults.length != entryResultBeforeModel.length)
+			fail("Entry Result length different from model");	
+	 
+	 for (int i=0;i<eresults.length; i++)
+	 {
+		assertEquals(entryResultBeforeModel[i],eresults[i].toString());
+	 }
+	 //Delete mail.cpp from the project, give some time to remove index
+	 IResource resourceHdl = testProject.findMember("mail.cpp") ;
+	 resourceHdl.delete(true,monitor);
+	 Thread.sleep(10000);
+	 //See if the index is still there
+	 ind = indexManager.getIndex(testProjectPath,true,true);
+	 eresults = ind.queryEntries(prefix);
+	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager/, refs={ 1 }"};
+	 if (eresults.length != entryResultAfterModel.length)
+		fail("Entry Result length different from model");
+		
+	 for (int i=0;i<eresults.length; i++)
+     {
+		assertEquals(entryResultAfterModel[i],eresults[i].toString());
+	 }
+	}
 	
 }

@@ -1,3 +1,8 @@
+2003-07-03 Bogdan Gheorghe
+	Added IndexManagerTest::testAddNewFileToIndex()
+	Added IndexManagerTest::testRemoveProjectFromIndex()
+	Added IndexManagerTest::testRemoveFileFromIndex()
+	
 2003-07-02 Victor Mozgin
 	Added DOMTests::testBug39501().
 	Improved filtering of expected failures/inconclusives in TortureTest.

@@ -1,3 +1,8 @@
+2004-07-22 Alain Magloire
+
+	Fix for 70688
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2004-07-12 Alain Magloire
 
 	Patch from Stefan Bylund, to permit backend

@@ -1,3 +1,15 @@
+2004-10-06 Vladimir Hirsl
+
+	Fix for PR 75728 [ParserSymbolTable] NPE in TypeInfoProvider.newTypeInfo
+	Corrected mappings added to to TemplateSymbol._defnParameterMap
+	
+	* parser/org/eclipse/cdt/internal/core/parser/ast/TemplateFactory.java
+	
+	Another NPE fix (caused by the fact that UndefinedTemplateSymbols do not have
+	any associated extension objects).
+	
+	* parser/org/eclipse/cdt/internal/core/parser/ast/complete/CompleteParseASTFactory.java
+
 2004-09-30 Vladimir Hirsl
 
 	Fix for PR 60307 [Templates] Template parameter qualified types not supported

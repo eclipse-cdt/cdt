@@ -345,7 +345,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                 }
 				else
 				{	
-					if( startingScope.getASTExtension().getPrimaryDeclaration() instanceof IASTCodeScope )
+					if( startingScope.getASTExtension() != null &&
+						startingScope.getASTExtension().getPrimaryDeclaration() instanceof IASTCodeScope )
 					{
 						if( ((IASTCodeScope) startingScope.getASTExtension().getPrimaryDeclaration()).getContainingFunction() instanceof IASTMethod )
 						{

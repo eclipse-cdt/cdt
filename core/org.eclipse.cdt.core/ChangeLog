@@ -1,5 +1,11 @@
 2002-12-13 Alain Magloire
 
+	* src/org/eclipse/cdt/core/CommandLauncher.java (waitAndRead):
+	Remove hack for J9 VM, filled a PR to IBM about their VM.
+	Only delay when there is nothing to read.
+
+2002-12-13 Alain Magloire
+
 	Building will never write to the process.  having things like
 	all:
 		b='a'; read b; echo $$b

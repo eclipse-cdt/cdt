@@ -15,12 +15,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
+import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
@@ -31,7 +34,6 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
@@ -41,7 +43,11 @@ import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -93,10 +99,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	public CThread( CDebugTarget target, ICDIThread cdiThread ) {
 		super( target );
-		CDebugElementState state = target.getState();
-		if ( state.equals( CDebugElementState.RESUMED ) && cdiThread.isSuspended() )
-			state = CDebugElementState.SUSPENDED;
-		setState( state );
+		setState( CDebugElementState.RESUMED );
 		setCDIThread( cdiThread );
 		fConfig = getCDISession().getConfiguration();
 		initialize();
@@ -107,9 +110,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		fStackFrames = new ArrayList();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
@@ -124,9 +125,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return (IStackFrame[])list.toArray( new IStackFrame[list.size()] );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
 	 */
 	public boolean hasStackFrames() throws DebugException {
@@ -137,8 +136,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/**
 	 * @see computeStackFrames()
 	 * 
-	 * @param refreshChildren
-	 *            whether or not this method should request new stack frames from the target
+	 * @param refreshChildren whether or not this method should request new stack frames from the target
 	 */
 	protected synchronized List computeStackFrames( boolean refreshChildren ) throws DebugException {
 		if ( isSuspended() ) {
@@ -200,10 +198,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * Retrieves and returns all underlying stack frames
 	 * 
 	 * @return list of <code>StackFrame</code>
-	 * @exception DebugException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                </ul>
+	 * @exception DebugException if this method fails. Reasons include:
+	 * <ul>
+	 * </ul>
 	 */
 	protected ICDIStackFrame[] getCDIStackFrames() throws DebugException {
 		return new ICDIStackFrame[0];
@@ -233,15 +230,11 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/**
 	 * Replaces the underlying stack frame objects in the preserved frames list with the current underlying stack frames.
 	 * 
-	 * @param newFrames
-	 *            list of current underlying <code>ICDIStackFrame</code>s. Frames from this list are assigned to the underlying frames in the
+	 * @param newFrames list of current underlying <code>ICDIStackFrame</code>s. Frames from this list are assigned to the underlying frames in the
 	 *            <code>oldFrames</code> list.
-	 * @param offset
-	 *            the offset in the lists at which to start replacing the old underlying frames
-	 * @param oldFrames
-	 *            list of preserved frames, of type <code>CStackFrame</code>
-	 * @param length
-	 *            the number of frames to replace
+	 * @param offset the offset in the lists at which to start replacing the old underlying frames
+	 * @param oldFrames list of preserved frames, of type <code>CStackFrame</code>
+	 * @param length the number of frames to replace
 	 */
 	protected void updateStackFrames( ICDIStackFrame[] newFrames, int offset, List oldFrames, int length ) throws DebugException {
 		for( int i = 0; i < length; i++ ) {
@@ -276,10 +269,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * </p>
 	 * 
 	 * @return list of <code>IStackFrame</code>
-	 * @exception DebugException
-	 *                if this method fails. Reasons include:
-	 *                <ul>
-	 *                </ul>
+	 * @exception DebugException if this method fails. Reasons include:
+	 * <ul>
+	 * </ul>
 	 */
 	public List computeStackFrames() throws DebugException {
 		return computeStackFrames( refreshChildren() );
@@ -298,8 +290,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/**
 	 * Helper method for <code>#computeStackFrames()</code> to create all underlying stack frames.
 	 * 
-	 * @exception DebugException
-	 *                if this method fails. Reasons include:
+	 * @exception DebugException if this method fails. Reasons include:
+	 * <ul>
+	 * </ul>
 	 */
 	protected List createAllStackFrames( int depth, ICDIStackFrame[] frames ) throws DebugException {
 		List list = new ArrayList( frames.length );
@@ -312,18 +305,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return list;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getPriority()
 	 */
 	public int getPriority() throws DebugException {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
 	public IStackFrame getTopStackFrame() throws DebugException {
@@ -331,28 +320,32 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return (c.isEmpty()) ? null : (IStackFrame)c.get( 0 );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
 	public String getName() throws DebugException {
 		return getCDIThread().toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
 	 */
 	public IBreakpoint[] getBreakpoints() {
-		return ((CDebugTarget)getDebugTarget()).getThreadBreakpoints( this );
+		List list = new ArrayList( 1 );
+		if ( isSuspended() ) {
+			IBreakpoint bkpt = null;
+			if ( getCurrentStateInfo() instanceof ICDIBreakpointHit )
+				bkpt = ((CDebugTarget)getDebugTarget()).getBreakpointManager().getBreakpoint( ((ICDIBreakpointHit)getCurrentStateInfo()).getBreakpoint() );
+			else if ( getCurrentStateInfo() instanceof ICDIWatchpointTrigger )
+				bkpt = ((CDebugTarget)getDebugTarget()).getBreakpointManager().getBreakpoint( ((ICDIWatchpointTrigger)getCurrentStateInfo()).getWatchpoint() );
+			if ( bkpt != null )
+				list.add( bkpt );
+		}
+		return (IBreakpoint[])list.toArray( new IBreakpoint[list.size()] );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		if ( isDisposed() )
@@ -364,8 +357,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				continue;
 			if ( source.getTarget().equals( getCDITarget() ) ) {
 				if ( event instanceof ICDISuspendedEvent ) {
-					if ( (source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source )) || source instanceof ICDITarget ) {
-						//						if ( !(((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent && applyDeferredBreakpoints()) )
+					if ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) {
 						handleSuspendedEvent( (ICDISuspendedEvent)event );
 					}
 				}
@@ -393,36 +385,28 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
 		return ( fConfig.supportsResume() && isSuspended() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
 		return ( fConfig.supportsSuspend() && getState().equals( CDebugElementState.RESUMED ) );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return getState().equals( CDebugElementState.SUSPENDED );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
@@ -438,20 +422,13 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				}
 				catch( CDIException e ) {
 					setState( oldState );
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CThread.this );
-					}
+					failed( CoreModelMessages.getString( "CThread.2" ), e ); //$NON-NLS-1$
 				}
 			}
 		} );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
@@ -467,12 +444,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				}
 				catch( CDIException e ) {
 					setState( oldState );
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CThread.this );
-					}
+					failed( CoreModelMessages.getString( "CThread.3" ), e ); //$NON-NLS-1$
 				}
 			}
 		} );
@@ -486,27 +458,21 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return fSuspending;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
 		return canStep();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
 		return canStep();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
@@ -529,25 +495,21 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	protected boolean canStep() {
 		try {
-			return fConfig.supportsStepping() && canResume() && getTopStackFrame() != null;
+			return fConfig.supportsStepping() && isSuspended() && getTopStackFrame() != null;
 		}
 		catch( DebugException e ) {
 			return false;
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
 	public boolean isStepping() {
-		return ( getState().equals( CDebugElementState.STEPPING ) );
+		return ( getState().equals( CDebugElementState.STEPPING ) ) || ( getState().equals( CDebugElementState.STEPPED ) );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
@@ -568,20 +530,13 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				}
 				catch( CDIException e ) {
 					setState( oldState );
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CThread.this );
-					}
+					failed( CoreModelMessages.getString( "CThread.4" ), e ); //$NON-NLS-1$
 				}
 			}
 		} );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
@@ -602,20 +557,13 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				}
 				catch( CDIException e ) {
 					setState( oldState );
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CThread.this );
-					}
+					failed( CoreModelMessages.getString( "CThread.5" ), e ); //$NON-NLS-1$
 				}
 			}
 		} );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
 	public void stepReturn() throws DebugException {
@@ -631,38 +579,27 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 				}
 				catch( CDIException e ) {
 					setState( oldState );
-					try {
-						targetRequestFailed( e.getMessage(), e );
-					}
-					catch( DebugException e1 ) {
-						CDebugUtils.error( e1.getStatus(), CThread.this );
-					}
+					failed( CoreModelMessages.getString( "CThread.6" ), e ); //$NON-NLS-1$
 				}
 			}
 		} );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
 		return getDebugTarget().canTerminate();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
@@ -672,8 +609,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/**
 	 * Sets the underlying CDI thread that this model object is a proxy to.
 	 * 
-	 * @param thread
-	 *            the underlying CDI thread
+	 * @param thread the underlying CDI thread
 	 */
 	protected void setCDIThread( ICDIThread cdiThread ) {
 		fCDIThread = cdiThread;
@@ -708,7 +644,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/**
 	 * Disposes stack frames, to be completely re-computed on the next suspend event. This method should be called before this thread is resumed when stack
 	 * frames are not to be re-used on the next suspend.
-	 *  
 	 */
 	protected synchronized void disposeStackFrames() {
 		Iterator it = fStackFrames.iterator();
@@ -749,28 +684,26 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	private void handleSuspendedEvent( ICDISuspendedEvent event ) {
+		if ( !(getState().equals( CDebugElementState.RESUMED ) || 
+			   getState().equals( CDebugElementState.STEPPED ) ||
+			   getState().equals( CDebugElementState.SUSPENDING )) )
+			return;
 		setState( CDebugElementState.SUSPENDED );
-		setCurrentStateInfo( null );
-		if ( event.getSource() instanceof ICDITarget ) {
-			if ( isCurrent() /*&& !getState().equals( CDebugElementState.SUSPENDED )*/ ) {
-				setState( CDebugElementState.SUSPENDED );
-				ICDISessionObject reason = event.getReason();
-				setCurrentStateInfo( reason );
-				if ( reason instanceof ICDIEndSteppingRange ) {
-					handleEndSteppingRange( (ICDIEndSteppingRange)reason );
-				}
-				else if ( reason instanceof ICDIBreakpoint ) {
-					handleBreakpointHit( (ICDIBreakpoint)reason );
-				}
-				else if ( reason instanceof ICDISignalReceived ) {
-					handleSuspendedBySignal( (ICDISignalReceived)reason );
-				}
-				else {
-					// fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
-					// Temporary fix for bug 56520
-					fireSuspendEvent( DebugEvent.BREAKPOINT );
-				}
-			}
+		ICDISessionObject reason = event.getReason();
+		setCurrentStateInfo( reason );
+		if ( reason instanceof ICDIEndSteppingRange ) {
+			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
+		}
+		else if ( reason instanceof ICDIBreakpoint ) {
+			handleBreakpointHit( (ICDIBreakpoint)reason );
+		}
+		else if ( reason instanceof ICDISignalReceived ) {
+			handleSuspendedBySignal( (ICDISignalReceived)reason );
+		}
+		else {
+			// fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+			// Temporary fix for bug 56520
+			fireSuspendEvent( DebugEvent.BREAKPOINT );
 		}
 	}
 
@@ -796,10 +729,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			state = CDebugElementState.STEPPING;
 		}
 		else {
-			setCurrent( false );
 			disposeStackFrames();
 			fireChangeEvent( DebugEvent.CONTENT );
 		}
+		setCurrent( false );
 		setState( state );
 		setCurrentStateInfo( null );
 		fireResumeEvent( detail );
@@ -848,19 +781,15 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return fRefreshChildren;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IRestart#canRestart()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRestart#canRestart()
 	 */
 	public boolean canRestart() {
 		return getDebugTarget() instanceof IRestart && ((IRestart)getDebugTarget()).canRestart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IRestart#restart()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRestart#restart()
 	 */
 	public void restart() throws DebugException {
 		if ( canRestart() ) {
@@ -876,10 +805,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		fIsCurrent = current;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.ISwitchToFrame#switchToFrame(IStackFrame)
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ISwitchToFrame#switchToFrame(org.eclipse.debug.core.model.IStackFrame)
 	 */
 	public void switchToFrame( IStackFrame frame ) throws DebugException {
 		if ( frame == null || !(frame instanceof CStackFrame) /* || frame.equals( getLastStackFrame() ) */) {
@@ -929,10 +856,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return fLastStackDepth;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( IRunToLine.class ) )
@@ -950,18 +875,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return fDisposed;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
 	 */
 	public boolean canResumeWithoutSignal() {
 		return (getDebugTarget() instanceof IResumeWithoutSignal && ((IResumeWithoutSignal)getDebugTarget()).canResumeWithoutSignal());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
 	 */
 	public void resumeWithoutSignal() throws DebugException {
@@ -970,9 +891,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
@@ -985,23 +904,56 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return result;
 	}
 
-	protected void resumed( int detail, List events ) {
+	protected void resumedByTarget( int detail, List events ) {
 		setLastStackFrame( null );
 		if ( isCurrent() && detail != DebugEvent.CLIENT_REQUEST && detail != DebugEvent.UNSPECIFIED ) {
-			setState( CDebugElementState.STEPPING );
+			setState( CDebugElementState.STEPPED );
 			preserveStackFrames();
 			events.add( createResumeEvent( detail ) );
 		}
 		else {
 			setState( CDebugElementState.RESUMED );
-			setCurrent( false );
 			disposeStackFrames();
 			events.add( createChangeEvent( DebugEvent.CONTENT ) );
 		}
+		setCurrent( false );
 		setCurrentStateInfo( null );
 	}
 
 	protected boolean isInstructionsteppingEnabled() {
 		return ((CDebugTarget)getDebugTarget()).isInstructionSteppingEnabled();
+	}
+
+	protected void failed( String message, CDIException e ) {
+		MultiStatus ms = new MultiStatus( CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
+		ms.add( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
+	}
+
+	protected void suspendByTarget( ICDISessionObject reason, ICDIThread suspensionThread ) {
+		if ( !(getState().equals( CDebugElementState.RESUMED ) || 
+				   getState().equals( CDebugElementState.STEPPED ) ||
+				   getState().equals( CDebugElementState.SUSPENDING )) )
+				return;
+		setState( CDebugElementState.SUSPENDED );
+		setCurrentStateInfo( null );
+		if ( getCDIThread().equals( suspensionThread ) ) {
+			setCurrent( true );
+			setCurrentStateInfo( reason );
+			if ( reason instanceof ICDIEndSteppingRange ) {
+				handleEndSteppingRange( (ICDIEndSteppingRange)reason );
+			}
+			else if ( reason instanceof ICDIBreakpoint ) {
+				handleBreakpointHit( (ICDIBreakpoint)reason );
+			}
+			else if ( reason instanceof ICDISignalReceived ) {
+				handleSuspendedBySignal( (ICDISignalReceived)reason );
+			}
+			else {
+				// fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
+				// Temporary fix for bug 56520
+				fireSuspendEvent( DebugEvent.BREAKPOINT );
+			}			
+		}
 	}
 }

@@ -1,4 +1,10 @@
 2004-07-21 Mikhail Khodjaiants
+	CDebugTarget and CThread cleanup.
+	* CoreModelMessages.properties
+	* CDebugTarget.java
+	* CThread.java
+
+2004-07-21 Mikhail Khodjaiants
 	Removed state validation from CDebugElement.
 	* CDebugTarget.java
 	* CDebugElement.java

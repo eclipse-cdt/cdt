@@ -205,6 +205,15 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 	public void setActiveEditor( IAction action, IEditorPart targetEditor )
 	{
 		setAction( action );
+		if ( getWorkbenchWindow() == null )
+		{
+			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
+			setWorkbenchWindow( window );
+			if ( window != null )
+			{
+				window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
+			}
+		}
 		setTargetPart( targetEditor );
 		initializeDebugTarget();
 		update();

@@ -508,8 +508,6 @@ public class PathEntryManager implements ICDescriptorListener {
 
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
 		ArrayList list = new ArrayList();
-		CModelManager manager = CModelManager.getDefault();
-		boolean hasDelta = false;
 
 		// Sanity checks
 		if (oldEntries == null) {
@@ -591,7 +589,6 @@ public class PathEntryManager implements ICDescriptorListener {
 					break;
 				}
 				case IPathEntry.CDT_LIBRARY: {
-					ILibraryEntry lib = (ILibraryEntry) entry;
 					celement = cproject;
 					flag = (removed) ? ICElementDelta.F_REMOVED_PATHENTRY_LIBRARY : ICElementDelta.F_ADDED_PATHENTRY_LIBRARY;
 					break;
@@ -669,7 +666,7 @@ public class PathEntryManager implements ICDescriptorListener {
 		}
 
 		// ensure path is absolute
-		boolean hasPath = element.hasAttribute(ATTRIBUTE_PATH);
+		//boolean hasPath = element.hasAttribute(ATTRIBUTE_PATH);
 		String pathAttr = element.getAttribute(ATTRIBUTE_PATH);
 		IPath path = new Path(pathAttr);
 		if (!path.isAbsolute()) {
@@ -849,7 +846,6 @@ public class PathEntryManager implements ICDescriptorListener {
 	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
 	 */
 	public void descriptorChanged(CDescriptorEvent event) {
-		int flags = event.getFlags();
 		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED) {
 			ICDescriptor cdesc = event.getDescriptor();
 			if (cdesc != null) {

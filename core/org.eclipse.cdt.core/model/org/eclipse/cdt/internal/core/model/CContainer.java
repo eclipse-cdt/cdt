@@ -249,7 +249,7 @@ public class CContainer extends Openable implements ICContainer {
 					break;
 				}
 			case IResource.FOLDER :
-				celement = new CContainer(this, (IFolder) resource);
+				celement = new CContainer(this, resource);
 				break;
 		}
 		return celement;

@@ -25,7 +25,11 @@ public abstract class APathEntry extends PathEntry {
 	public APathEntry (int kind, IPath path, IPath basePath, IPath[] exclusionPatterns, boolean isExported) {
 		super(kind, path, isExported);
 		this.basePath = basePath;
-		this.exclusionPatterns = exclusionPatterns;
+		if (exclusionPatterns == null) {
+			this.exclusionPatterns = NO_EXCLUSION_PATTERNS;
+		} else {
+			this.exclusionPatterns = exclusionPatterns;
+		}
 	}
 
 	/**

@@ -53,7 +53,6 @@ public class CContainerInfo extends OpenableInfo {
 
 			IPathEntry[] entries = cproject.getResolvedPathEntries();
 			if (resources != null) {
-				CModelManager factory = CModelManager.getDefault();
 				ICElement[] children = getChildren();
 				for (int i = 0; i < resources.length; i++) {
 					boolean found = false;

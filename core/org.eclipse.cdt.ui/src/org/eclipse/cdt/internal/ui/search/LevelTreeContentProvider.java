@@ -15,8 +15,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.core.resources.IResource;
@@ -29,20 +32,28 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 	private Map fChildrenMap;
 	private CElementContentProvider fContentProvider;
 
-	private static int[][] C_ELEMENT_TYPES= {{ICElement.C_ENUMERATION},
-			{ICElement.C_STRUCT, ICElement.C_CLASS},{ICElement.C_UNIT},{ICElement.C_PROJECT}};
+	private static int[][] C_ELEMENT_TYPES= {
+			{ICElement.C_CLASS},
+			{ICElement.C_UNIT, ICElement.C_NAMESPACE},
+			{ICElement.C_CCONTAINER},
+			{ICElement.C_PROJECT},
+			{ICElement.C_MODEL}};
+	
 	private static int[][] RESOURCE_TYPES= {
-			{}, 
+			{},
 			{IResource.FILE},
 			{IResource.FOLDER}, 
 			{IResource.PROJECT}, 
 			{IResource.ROOT}};
+	
 	private static final int MAX_LEVEL= C_ELEMENT_TYPES.length - 1;
 	private int fCurrentLevel;
 	
-	public static final int LEVEL_FILE= 1;
-	public static final int LEVEL_NAMESPACE= 2;
-	public static final int LEVEL_PROJECT= 3;
+	public static final int LEVEL_CLASS= 1;
+	public static final int LEVEL_FILE= 2;
+	public static final int LEVEL_FOLDER= 3;
+	public static final int LEVEL_PROJECT= 4;
+
 
 	public LevelTreeContentProvider(AbstractTreeViewer viewer, int level) {
 		fTreeViewer= viewer;
@@ -51,15 +62,26 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 	}
 
 	public Object getParent(Object child) {
+	
+		if (child instanceof BasicSearchMatch){ 
+			BasicSearchMatch tempMatch = (BasicSearchMatch)child;
+			ICElement cTransUnit = CCorePlugin.getDefault().getCoreModel().create(tempMatch.getResource());
+			
+			if (cTransUnit instanceof ITranslationUnit){
+				try {
+					child = ((ITranslationUnit) cTransUnit).getElementAtOffset(tempMatch.startOffset);
+				} catch (CModelException e) {}
+			}
+			
+		}
 		
-		BasicSearchMatch tempMatch = (BasicSearchMatch)child;
-		child = CCorePlugin.getDefault().getCoreModel().create(tempMatch.getResource());
 		Object possibleParent= internalGetParent(child);
+		
 		if (possibleParent instanceof ICElement) {
-			ICElement javaElement= (ICElement) possibleParent;
+			ICElement cElement= (ICElement) possibleParent;
 			for (int j= fCurrentLevel; j < MAX_LEVEL + 1; j++) {
 				for (int i= 0; i < C_ELEMENT_TYPES[j].length; i++) {
-					if (javaElement.getElementType() == C_ELEMENT_TYPES[j][i]) {
+					if (cElement.getElementType() == C_ELEMENT_TYPES[j][i]) {
 						return null;
 					}
 				}
@@ -74,6 +96,7 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 				}
 			}
 		}
+		
 		return possibleParent;
 	}
 
@@ -110,6 +133,7 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 			child= parent;
 			parent= getParent(child);
 		}
+	
 		if (insertChild(_result, child)) {
 			if (refreshViewer)
 				fTreeViewer.add(_result, child);

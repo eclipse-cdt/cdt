@@ -57,25 +57,35 @@ public class CSearchResultLabelProvider extends LabelProvider {
 
 	public Image getImage( Object element ) {
 		IMatch match = null;
-		
+		int elementType = -1;
 		if( element instanceof ISearchResultViewEntry ){
 			ISearchResultViewEntry viewEntry = (ISearchResultViewEntry)element;
 			IMarker marker = viewEntry.getSelectedMarker();
 			try {
 				match = (IMatch) marker.getAttribute( CSearchResultCollector.IMATCH );
+				if( match == null )
+					return null;
+				elementType = match.getElementType();
 			} catch (CoreException e) {
 				return null;
 			}
 		} else if ( element instanceof IMatch ){
 			match = (IMatch) element;
-		}
+			if( match == null )
+				return null;
+			elementType = match.getElementType();
+			
+		} else if (element instanceof ICElement){
+			elementType = ((ICElement) element).getElementType();
+		} 
 		
-		if( match == null )
-			return null;
+		
 			
 		ImageDescriptor imageDescriptor = null;
 		
-		switch( match.getElementType() ){
+		switch( elementType ){
+			case ICElement.C_PROJECT:		imageDescriptor = CPluginImages.DESC_OBJS_SEARCHHIERPROJECT;  break;
+			case ICElement.C_CCONTAINER:    imageDescriptor = CPluginImages.DESC_OBJS_SEARCHHIERFODLER; 	break;
 			case ICElement.C_CLASS:			imageDescriptor = CPluginImages.DESC_OBJS_CLASS;		break;
 			case ICElement.C_STRUCT:		imageDescriptor = CPluginImages.DESC_OBJS_STRUCT;		break;
 			case ICElement.C_UNION:			imageDescriptor = CPluginImages.DESC_OBJS_UNION;		break;
@@ -86,6 +96,7 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			case ICElement.C_VARIABLE:		imageDescriptor = CPluginImages.DESC_OBJS_VARIABLE;		break;
 			case ICElement.C_ENUMERATOR:	imageDescriptor = CPluginImages.DESC_OBJS_ENUMERATOR;	break;
 			case ICElement.C_TYPEDEF:		imageDescriptor = CPluginImages.DESC_OBJS_TYPEDEF;		break;
+			case ICElement.C_UNIT:			imageDescriptor = CPluginImages.DESC_OBJS_TUNIT;		break;
 			case ICElement.C_FIELD:		
 			{
 				switch( match.getVisibility() ){
@@ -107,10 +118,13 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		}
 		
 		int flags = 0;
-		if( match.isStatic()   ) flags |= CElementImageDescriptor.STATIC;
-		if( match.isConst()    ) flags |= CElementImageDescriptor.CONSTANT;
-		if( match.isVolatile() ) flags |= CElementImageDescriptor.VOLATILE;
-
+		
+		if (match != null){
+			if( match.isStatic()   ) flags |= CElementImageDescriptor.STATIC;
+			if( match.isConst()    ) flags |= CElementImageDescriptor.CONSTANT;
+			if( match.isVolatile() ) flags |= CElementImageDescriptor.VOLATILE;
+		}
+		
 		imageDescriptor = new CElementImageDescriptor( imageDescriptor, flags, SMALL_SIZE );
 
 		Image image = CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor );
@@ -133,6 +147,9 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			}
 		} else if( element instanceof IMatch ){
 			match = (IMatch) element;
+		}
+		else if ( element instanceof ICElement){
+			return  getElementText((ICElement) element);
 		}
 		
 		if( match == null )
@@ -164,6 +181,20 @@ public class CSearchResultLabelProvider extends LabelProvider {
 		return result;
 	}
 	
+	private String getElementText(ICElement element){
+		
+		String result=""; //$NON-NLS-1$
+		String path=""; //$NON-NLS-1$
+		ICElement parent=element.getParent();
+		
+	
+		result = element.getElementName() + " ( " + element.getPath() + " )"; //$NON-NLS-1$ //$NON-NLS-2$
+		
+		
+				
+		return result;
+	}
+	
 	public int getOrder(){
 		return _sortOrder;
 	}
@@ -174,6 +205,8 @@ public class CSearchResultLabelProvider extends LabelProvider {
 	private int _sortOrder;
 	private int _textFlags;
 	private int _imageFlags;
-	
+
 	private static final Point SMALL_SIZE= new Point(16, 16);
+
+	
 }

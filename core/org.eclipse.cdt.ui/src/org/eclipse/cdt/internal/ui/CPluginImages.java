@@ -204,9 +204,15 @@ public class CPluginImages {
 	public static final String IMG_OBJS_SEARCH_DECL = NAME_PREFIX + "search_decl_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CSEARCH     = NAME_PREFIX + "csearch_obj.gif"; //$NON-NLS-1$
 	
+	public static final String IMG_OBJS_SEARCHFOLDER = NAME_PREFIX + "fldr_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCHPROJECT = NAME_PREFIX + "cprojects.gif";  //$NON-NLS-1$
+	
 	public static final ImageDescriptor DESC_OBJS_SEARCH_DECL = createManaged(T_OBJ, IMG_OBJS_SEARCH_DECL);
 	public static final ImageDescriptor DESC_OBJS_SEARCH_REF  = createManaged(T_OBJ, IMG_OBJS_SEARCH_REF);
 	public static final ImageDescriptor DESC_OBJS_CSEARCH     = createManaged(T_OBJ, IMG_OBJS_CSEARCH);
+	
+	public static final ImageDescriptor DESC_OBJS_SEARCHHIERPROJECT = createManaged(T_OBJ,IMG_OBJS_SEARCHPROJECT);
+	public static final ImageDescriptor DESC_OBJS_SEARCHHIERFODLER = createManaged(T_OBJ,IMG_OBJS_SEARCHFOLDER);
 	
 	// refactoring
 	public static final String IMG_OBJS_REFACTORING_FATAL= NAME_PREFIX + "fatalerror_obj.gif"; //$NON-NLS-1$
@@ -229,6 +235,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE= create(T_OBJ, "file_change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT= create(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
 	
+
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
 	}

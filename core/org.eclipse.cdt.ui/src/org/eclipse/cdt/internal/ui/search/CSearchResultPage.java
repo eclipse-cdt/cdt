@@ -50,8 +50,9 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	private SortAction _elementNameSortAction;
 	
 	private GroupAction _groupFileAction;
-	private GroupAction _groupNamespaceAction;
+	private GroupAction _groupFoldersAction;
 	private GroupAction _groupProjectAction;
+	private GroupAction _groupClassAction;
 	
 	private static final String KEY_GROUPING= "org.eclipse.cdt.search.resultpage.grouping"; //$NON-NLS-1$
 	
@@ -71,13 +72,16 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	 */
 	private void initGroupingActions() {
 		_groupProjectAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_project"),CSearchMessages.getString("CSearchResultPage.groupby_project.tooltip"), this, LevelTreeContentProvider.LEVEL_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
-		CPluginImages.setImageDescriptors(_groupProjectAction,CPluginImages.T_TOOL, CPluginImages.IMG_OBJS_PROJECT); //$NON-NLS-1$)//.setLocalImageDescriptors(f
-	
-		_groupNamespaceAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_namespace"), CSearchMessages.getString("CSearchResultPage.groupby_namespace.tooltip"), this, LevelTreeContentProvider.LEVEL_NAMESPACE); //$NON-NLS-1$ //$NON-NLS-2$
-		CPluginImages.setImageDescriptors(_groupNamespaceAction,CPluginImages.T_TOOL, CPluginImages.IMG_OBJS_PROJECT);  //$NON-NLS-1$
+		_groupProjectAction.setImageDescriptor(CPluginImages.DESC_OBJS_SEARCHHIERPROJECT);
+		
+		_groupFoldersAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_folder"), CSearchMessages.getString("CSearchResultPage.groupby_folder.tooltip"), this, LevelTreeContentProvider.LEVEL_FOLDER); //$NON-NLS-1$ //$NON-NLS-2$
+		_groupFoldersAction.setImageDescriptor(CPluginImages.DESC_OBJS_SEARCHHIERFODLER);
 		
 		_groupFileAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_file"), CSearchMessages.getString("CSearchResultPage.groupby_file.tooltip"), this, LevelTreeContentProvider.LEVEL_FILE); //$NON-NLS-1$ //$NON-NLS-2$
-		CPluginImages.setImageDescriptors(_groupFileAction,CPluginImages.T_TOOL,CPluginImages.IMG_OBJS_PROJECT);  //$NON-NLS-1$
+		_groupFileAction.setImageDescriptor(CPluginImages.DESC_OBJS_TUNIT);
+		
+		_groupClassAction = new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_class"), CSearchMessages.getString("CSearchResultPage.groupby_class.tooltip"),this, LevelTreeContentProvider.LEVEL_CLASS);  //$NON-NLS-1$//$NON-NLS-2$
+		_groupClassAction.setImageDescriptor(CPluginImages.DESC_OBJS_CLASS);
 		
 		try {
 			_currentGrouping= getSettings().getInt(KEY_GROUPING);
@@ -211,9 +215,9 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	
 	private void addGroupActions(IToolBarManager mgr) {
 		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupProjectAction);
-		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupNamespaceAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupFoldersAction);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupFileAction);
-		//mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fGroupTypeAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupClassAction);
 		
 		updateGroupingActions();
 	}
@@ -234,8 +238,9 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 
 	private void updateGroupingActions() {
 		_groupProjectAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_PROJECT);
-		_groupNamespaceAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_NAMESPACE);
+		_groupFoldersAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_FOLDER);
 		_groupFileAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_FILE);
+		_groupClassAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_CLASS);
 	}
 	
 	protected void fillToolbar(IToolBarManager tbm) {

@@ -214,31 +214,28 @@ public class Dwarf {
 		}
 	}
 
-	// FIXME:This is wrong, it's signed.
+	// FIXME:This is wrong, for unsigned.
 	long read_8_bytes(byte[] bytes, int offset) throws IndexOutOfBoundsException {
 
 		if (isLE) {
-			return (
-				((bytes[offset + 7] & 0xff) << 56)
-					| ((bytes[offset + 6] & 0xff) << 48)
-					| ((bytes[offset + 5] & 0xff) << 40)
-					| ((bytes[offset + 4] & 0xff) << 32)
-					| ((bytes[offset + 3] & 0xff) << 24)
-					| ((bytes[offset + 2] & 0xff) << 16)
-					| ((bytes[offset + 1] & 0xff) << 8)
-					| (bytes[offset] & 0xff));
+			return (((bytes[offset + 7] & 0xff) << 56)
+				| ((bytes[offset + 6] & 0xff) << 48)
+				| ((bytes[offset + 5] & 0xff) << 40)
+				| ((bytes[offset + 4] & 0xff) << 32)
+				| ((bytes[offset + 3] & 0xff) << 24)
+				| ((bytes[offset + 2] & 0xff) << 16)
+				| ((bytes[offset + 1] & 0xff) << 8)
+				| (bytes[offset] & 0xff));
 		}
 
-		return (
-			((bytes[offset] & 0xff) << 56)
-				+ ((bytes[offset + 1] & 0xff) << 48)
-				+ ((bytes[offset + 2] & 0xff) << 40)
-				+ ((bytes[offset + 3] & 0xff) << 32)
-				+ ((bytes[offset + 4] & 0xff) << 24)
-				+ ((bytes[offset + 5] & 0xff) << 16)
-				+ ((bytes[offset + 6] & 0xff) << 8)
-				+ (bytes[offset] & 0xff));
-
+		return (((bytes[offset] & 0xff) << 56)
+			| ((bytes[offset + 1] & 0xff) << 48)
+			| ((bytes[offset + 2] & 0xff) << 40)
+			| ((bytes[offset + 3] & 0xff) << 32)
+			| ((bytes[offset + 4] & 0xff) << 24)
+			| ((bytes[offset + 5] & 0xff) << 16)
+			| ((bytes[offset + 6] & 0xff) << 8)
+			| (bytes[offset] & 0xff));
 	}
 
 	short read_2_bytes(InputStream in) throws IOException {

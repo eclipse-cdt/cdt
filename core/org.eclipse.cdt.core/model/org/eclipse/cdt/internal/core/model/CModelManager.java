@@ -479,7 +479,8 @@ public class CModelManager implements IResourceChangeListener {
 	public BinaryRunner getBinaryRunner(ICProject cProject) {
 		BinaryRunner runner = null;
 		synchronized(binaryRunners) {
-			if (binaryRunners.get(cProject) == null) {
+			runner = (BinaryRunner)binaryRunners.get(cProject);
+			if (runner == null) {
 				runner = new BinaryRunner(cProject);
 				binaryRunners.put(cProject, runner);
 			}

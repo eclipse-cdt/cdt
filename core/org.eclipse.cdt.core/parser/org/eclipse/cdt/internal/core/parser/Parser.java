@@ -4422,13 +4422,6 @@ public class Parser implements IParser
             IToken t = scanner.nextToken();
             if( t.getEndOffset() > highWaterOffset )
             	highWaterOffset = t.getEndOffset();
-            if( t.getOffset() == 872556 )
-            {
-            	Util.debugLog( "This is the point of failure."); 
-            	Util.debugLog( "Token is of image =" + t.getImage() );
-            	Util.debugLog( "Token is on line " + scanner.getLineNumberForOffset( t.getOffset() ) );
-            }
-            Util.debugLog( "FetchToken retrieved token w/offset=" + t.getOffset() );
             return t;
         }
         catch (EndOfFile e)

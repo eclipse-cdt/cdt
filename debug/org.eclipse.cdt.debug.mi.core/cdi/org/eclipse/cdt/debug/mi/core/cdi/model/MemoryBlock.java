@@ -254,9 +254,10 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		if (badOffsets != null) {
 			for (int i = 0; i < badOffsets.length; ++i) {
 				if (badOffsets[i] == offset) {
-					return VALID;
+					return 0;
 				}
 			}
+			return VALID;
 		}
 		return 0;
 	}

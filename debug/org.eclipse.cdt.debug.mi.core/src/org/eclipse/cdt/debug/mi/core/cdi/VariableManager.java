@@ -293,7 +293,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
 	 */
-	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int end) throws CDIException {
+	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int length) throws CDIException {
 		VariableObject obj = null;
 		if (object instanceof VariableObject) {
 			obj = (VariableObject)object;
@@ -326,7 +326,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				buffer.append('+').append(start);
 			}
 			buffer.append(')');
-			buffer.append('@').append(end - start);
+			buffer.append('@').append(length - start);
 			return new VariableObject(obj, buffer.toString());
 		}
 		throw new CDIException("Unknown variable object");

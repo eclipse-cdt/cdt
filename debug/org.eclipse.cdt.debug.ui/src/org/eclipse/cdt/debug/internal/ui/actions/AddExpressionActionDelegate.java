@@ -10,7 +10,10 @@ import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
@@ -39,19 +42,20 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelegate, 
 													IEditorActionDelegate,
-													IPartListener
+													IPartListener,
+													IDebugEventSetListener
 {
 	private IAction fAction;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IWorkbenchPart fTargetPart;
 	private IEditorPart fTargetEditor;
-	private IDebugTarget fDebugTarget;
 
 	/**
 	 * Constructor for AddExpressionActionDelegate.
 	 */
 	public AddExpressionActionDelegate()
 	{
+		DebugPlugin.getDefault().addDebugEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -59,6 +63,7 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 	 */
 	public void dispose()
 	{
+		DebugPlugin.getDefault().removeDebugEventListener( this );
 		IWorkbenchWindow win = getWorkbenchWindow();
 		if ( win != null )
 		{
@@ -78,19 +83,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 			setTargetPart( page.getActivePart() );
 		}
 		window.getPartService().addPartListener( this );
-		IAdaptable context = DebugUITools.getDebugContext();
-		if ( context != null )
-		{
-			IDebugTarget target = ((IDebugElement)context.getAdapter( IDebugElement.class )).getDebugTarget();
-			if ( target != null )
-			{
-				ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
-				if ( ee != null && ee.canEvaluate() )
-				{
-					setDebugTarget( target );
-				}
-			}
-		}
 		update();
 	}
 
@@ -250,12 +242,20 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 
 	protected IDebugTarget getDebugTarget()
 	{
-		return fDebugTarget;
-	}
-	
-	protected void setDebugTarget( IDebugTarget target )
-	{
-		fDebugTarget = target;
+		IAdaptable context = DebugUITools.getDebugContext();
+		if ( context != null )
+		{
+			IDebugTarget target = ((IDebugTarget)context.getAdapter( IDebugTarget.class )).getDebugTarget();
+			if ( target != null )
+			{
+				ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
+				if ( ee != null && ee.canEvaluate() )
+				{
+					return target;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void createExpression( final String text )
@@ -271,7 +271,8 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 									{
 										try
 										{
-											CDebugModel.createExpression( getDebugTarget(), text );
+											IExpression expression = CDebugModel.createExpression( getDebugTarget(), text );
+											DebugPlugin.getDefault().getExpressionManager().addExpression( expression );
 										}
 										catch( DebugException e )
 										{
@@ -279,5 +280,20 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 										}
 									}
 								} );
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 */
+	public void handleDebugEvents( DebugEvent[] events )
+	{
+		for ( int i = 0; i < events.length; ++i )
+		{
+			if ( ( events[i].getKind() == DebugEvent.CREATE || events[i].getKind() == DebugEvent.TERMINATE ) && 
+				   events[i].getSource() instanceof ICExpressionEvaluator )
+			{
+				update();
+			}
+		}
 	}
 }

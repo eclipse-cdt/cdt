@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
+import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -287,6 +288,7 @@ public class CDebugModel
 			try
 			{
 				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( text );
+				return new CExpression( (CDebugTarget)target, cdiExpression );
 			}
 			catch( CDIException e )
 			{

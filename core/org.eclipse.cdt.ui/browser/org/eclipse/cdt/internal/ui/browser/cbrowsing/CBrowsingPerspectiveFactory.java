@@ -75,22 +75,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowInPart(CUIPlugin.CVIEW_ID);
 		layout.addShowInPart(IPageLayout.ID_RES_NAV);
 
-		// new actions - C project creation wizard
-		String[] wizIDs = CWizardRegistry.getProjectWizardIDs();
-		for (int i = 0; i < wizIDs.length; ++i) {
-			layout.addNewWizardShortcut(wizIDs[i]);
-		}
-		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
-		// new actions - C type creation wizard
-		wizIDs = CWizardRegistry.getTypeWizardIDs();
-		for (int i = 0; i < wizIDs.length; ++i) {
-			layout.addNewWizardShortcut(wizIDs[i]);
-		}
-		// new actions - C file creation wizard
-		wizIDs = CWizardRegistry.getFileWizardIDs();
-		for (int i = 0; i < wizIDs.length; ++i) {
-			layout.addNewWizardShortcut(wizIDs[i]);
-		}
+		addCWizardShortcuts(layout);
 	}
 
 	public void createInitialLayout(IPageLayout layout) {
@@ -127,19 +112,27 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		
+		addCWizardShortcuts(layout);
+	}
+	
+	private void addCWizardShortcuts(IPageLayout layout) {
 		// new actions - C project creation wizard
 		String[] wizIDs = CWizardRegistry.getProjectWizardIDs();
 		for (int i = 0; i < wizIDs.length; ++i) {
 			layout.addNewWizardShortcut(wizIDs[i]);
 		}
-		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
-		// new actions - C type creation wizard
-		wizIDs = CWizardRegistry.getTypeWizardIDs();
+		// new actions - C folder creation wizard
+		wizIDs = CWizardRegistry.getFolderWizardIDs();
 		for (int i = 0; i < wizIDs.length; ++i) {
 			layout.addNewWizardShortcut(wizIDs[i]);
 		}
 		// new actions - C file creation wizard
 		wizIDs = CWizardRegistry.getFileWizardIDs();
+		for (int i = 0; i < wizIDs.length; ++i) {
+			layout.addNewWizardShortcut(wizIDs[i]);
+		}
+		// new actions - C type creation wizard
+		wizIDs = CWizardRegistry.getTypeWizardIDs();
 		for (int i = 0; i < wizIDs.length; ++i) {
 			layout.addNewWizardShortcut(wizIDs[i]);
 		}

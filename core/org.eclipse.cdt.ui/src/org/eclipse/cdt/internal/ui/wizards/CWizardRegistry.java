@@ -32,6 +32,7 @@ public class CWizardRegistry {
 	private final static String TAG_VALUE = "value";//$NON-NLS-1$
 	private final static String ATT_CTYPE = "ctype";//$NON-NLS-1$
 	private final static String ATT_CFILE = "cfile";//$NON-NLS-1$
+	private final static String ATT_CFOLDER = "cfolder";//$NON-NLS-1$
 	private final static String ATT_CPROJECT = "cproject";//$NON-NLS-1$
 	private final static String ATT_CCPROJECT = "ccproject";//$NON-NLS-1$
 	
@@ -246,10 +247,71 @@ public class CWizardRegistry {
 		return false;
     }
     
+    public static IAction[] getFolderWizardActions() {
+	    return createActions(getFolderWizardElements());
+    }
+
+	/**
+	 * Returns IDs of all C/C++ folder wizards contributed to the workbench.
+	 * 
+	 * @return an array of wizard ids
+	 */
+	public static String[] getFolderWizardIDs() {
+		return getWizardIDs(getFolderWizardElements());
+	}
+
+	/**
+	 * Returns extension data for all the C/C++ folder wizards contributed to the workbench.
+	 *     <wizard
+	 *         name="My C Folder Wizard"
+	 *         icon="icons/cwiz.gif"
+	 *         category="org.eclipse.cdt.ui.newCWizards"
+	 *         id="xx.MyCWizard">
+	 *         <class class="org.xx.MyCFolderWizard">
+	 *             <parameter name="cfolder" value="true" />
+	 *         </class> 
+	 *         <description>
+	 *             My C Folder Wizard
+	 *         </description>
+	 *      </wizard>
+	 * 
+	 * @return an array of IConfigurationElement
+	 */
+	public static IConfigurationElement[] getFolderWizardElements() {
+		List elemList = new ArrayList();
+	    IConfigurationElement[] elements = getAllWizardElements();
+	    for (int i = 0; i < elements.length; ++i) {
+			IConfigurationElement element = elements[i];
+			if (isFolderWizard(element)) {
+			    elemList.add(element);
+            }
+	    }
+		return (IConfigurationElement[]) elemList.toArray(new IConfigurationElement[elemList.size()]);
+	}
+	
+    private static boolean isFolderWizard(IConfigurationElement element) {
+		IConfigurationElement[] classElements = element.getChildren(IWorkbenchConstants.TAG_CLASS);
+		if (classElements.length > 0) {
+			for (int i = 0; i < classElements.length; i++) {
+				IConfigurationElement[] paramElements = classElements[i].getChildren(TAG_PARAMETER);
+				for (int k = 0; k < paramElements.length; k++) {
+					IConfigurationElement curr = paramElements[k];
+					String name = curr.getAttribute(TAG_NAME);
+					if (name != null && name.equals(ATT_CFOLDER)) {
+					    String value = curr.getAttribute(TAG_VALUE);
+					    if (value != null)
+					        return Boolean.valueOf(value).booleanValue();
+					}
+				}
+			}
+		}
+		return false;
+    }
+    
     public static IAction[] getFileWizardActions() {
 	    return createActions(getFileWizardElements());
     }
-
+    
 	private static String[] getWizardIDs(IConfigurationElement[] elements) {
 	    List idList = new ArrayList();
 

@@ -348,6 +348,32 @@
             %NewWizards.file.description
          </description>
       </wizard>
+      <wizard
+            name="%NewWizards.sourceFolder"
+            icon="icons/full/ctool16/newsrcfldr_wiz.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
+            <parameter name="cfolder" value="true"/>
+         </class>
+         <description>
+            %NewWizards.sourceFolder.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.folder"
+            icon="icons/full/ctool16/newfolder_wiz.gif"
+            category="org.eclipse.cdt.ui.newCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
+            <parameter name="cfolder" value="true"/>
+         </class>
+         <description>
+            %NewWizards.folder.description
+         </description>
+      </wizard>
 <!-- For C++ Wizards -->
       <category
             name="%newCCWizardsCategory.name"
@@ -404,6 +430,32 @@
          </class>
          <description>
             %NewWizards.file.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.sourceFolder"
+            icon="icons/full/ctool16/newsrcfldr_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewSourceFolderCreationWizard">
+            <parameter name="cfolder" value="true"/>
+         </class>
+         <description>
+            %NewWizards.sourceFolder.description
+         </description>
+      </wizard>
+      <wizard
+            name="%NewWizards.folder"
+            icon="icons/full/ctool16/newfolder_wiz.gif"
+            category="org.eclipse.cdt.ui.newCCWizards"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
+         <class class="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
+            <parameter name="cfolder" value="true"/>
+         </class>
+         <description>
+            %NewWizards.folder.description
          </description>
       </wizard>
    </extension>
@@ -668,12 +720,14 @@
                tooltip="%NewFileDropDownAction.tooltip">
          </action>
          <action
-               label="%OpenNewFolderWizardAction.label"
-               icon="icons/full/ctool16/newfolder_wiz.gif"
-               class="org.eclipse.cdt.internal.ui.wizards.OpenNewFolderWizardAction"
-               tooltip="%OpenNewFolderWizardAction.tooltip"
+               id="org.eclipse.cdt.ui.actions.NewFolderDropDown"
                toolbarPath="Normal/CCWizards"
-               id="org.eclipse.cdt.ui.actions.OpenNewFolderWizardAction">
+               class="org.eclipse.cdt.internal.ui.wizards.NewFolderDropDownAction"
+               disabledIcon="icons/full/dtool16/newsrcfldr_wiz.gif"
+               icon="icons/full/etool16/newsrcfldr_wiz.gif"
+               label="%NewFolderDropDownAction.label"
+               pulldown="true"
+               tooltip="%NewFolderDropDownAction.tooltip">
          </action>
          <action
                id="org.eclipse.cdt.ui.actions.NewProjectDropDown"

@@ -91,7 +91,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public final static String CWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCWizards"; //$NON-NLS-1$
 	public final static String CCWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCCWizards"; //$NON-NLS-1$
 	
-	public static final String FOLDER_WIZARD_ID = "org.eclipse.cdt.ui.wizards.NewFolderCreationWizard"; //$NON-NLS-1$
 	public static final String SEARCH_ACTION_SET_ID = PLUGIN_ID + ".SearchActionSet"; //$NON-NLS-1$
 	public static final String BUILDER_ID = PLUGIN_CORE_ID + ".cbuilder"; //$NON-NLS-1$
 

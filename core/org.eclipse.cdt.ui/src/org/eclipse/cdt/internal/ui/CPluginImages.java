@@ -203,6 +203,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_WIZBAN_NEW_FILE= create(T_WIZBAN, "newfile_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_NEW_HEADERFILE= create(T_WIZBAN, "newhfile_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_NEW_SOURCEFILE= create(T_WIZBAN, "newcfile_wiz.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_NEWSRCFOLDR= create(T_WIZBAN, "newsrcfldr_wiz.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_TOOL_NEWCLASS= create(T_TOOL, "newclass_wiz.gif"); 				//$NON-NLS-1$
 

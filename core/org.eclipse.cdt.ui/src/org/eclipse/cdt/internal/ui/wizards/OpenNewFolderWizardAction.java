@@ -17,6 +17,10 @@ import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+/**
+ * @deprecated use NewFolderCreationWizard instead
+ */
+
 public class OpenNewFolderWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 
 	public void run() {

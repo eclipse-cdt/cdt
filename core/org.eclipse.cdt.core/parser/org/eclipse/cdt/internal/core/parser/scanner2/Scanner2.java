@@ -93,6 +93,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private Object[] bufferData = new Object[bufferInitialSize];
 	private int[] bufferPos = new int[bufferInitialSize];
 	private int[] bufferLimit = new int[bufferInitialSize];
+	private int[] bufferLineNums = new int[bufferInitialSize];
 	
 	// Utility
 	private static String[] emptyStringArray = new String[0];
@@ -173,10 +174,16 @@ public class Scanner2 implements IScanner, IScannerData {
 			int[] oldBufferLimit = bufferLimit;
 			bufferLimit = new int[size];
 			System.arraycopy(oldBufferLimit, 0, bufferLimit, 0, oldBufferLimit.length);
+			
+			int [] oldBufferLineNums = bufferLineNums;
+			bufferLineNums = new int[size];
+			System.arraycopy( oldBufferLineNums, 0, bufferLineNums, 0, oldBufferLineNums.length);
+			
 		}
 		
 		bufferStack[bufferStackPos] = buffer;
 		bufferPos[bufferStackPos] = -1;
+		bufferLineNums[ bufferStackPos ] = 0;
 		bufferLimit[bufferStackPos] = buffer.length;
 	}
 	
@@ -192,6 +199,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( bufferData[bufferStackPos] instanceof InclusionData )
 			requestor.enterInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
 		bufferData[bufferStackPos] = null;
+		bufferLineNums[bufferStackPos] = 0;
 		--bufferStackPos;
 	}
 	
@@ -358,6 +366,10 @@ public class Scanner2 implements IScanner, IScannerData {
 			int pos = bufferPos[bufferStackPos];
 	
 			switch (buffer[pos]) {
+				case '\n':
+					++bufferLineNums[bufferStackPos];
+					continue;
+					
 				case 'L':
 					if (pos + 1 < limit && buffer[pos + 1] == '"')
 						return scanString();

@@ -17,7 +17,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  *  *stopped,reason="watchpoint-trigger",wpt={number="2",exp="i"},value={old="0",new="1"},thread-id="0",frame={addr="0x08048534",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="10"}
  *
  */
-public class MIWatchpointEvent extends MIEvent {
+public class MIWatchpointEvent extends MIStoppedEvent {
 
 	int number;
 	String exp = "";

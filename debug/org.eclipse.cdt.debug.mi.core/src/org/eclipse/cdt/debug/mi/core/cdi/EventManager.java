@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
@@ -42,12 +43,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		CSession session = getCSession();
 		ICDIEvent cdiEvent = null;
 
-		if ((miEvent instanceof MIBreakpointEvent) ||
-			(miEvent instanceof MIFunctionFinishedEvent) ||
-			(miEvent instanceof MILocationReachedEvent) ||
-			(miEvent instanceof MISignalEvent) ||
-			(miEvent instanceof MISteppingRangeEvent) ||
-			(miEvent instanceof MIWatchpointEvent)) {
+		if (miEvent instanceof MIStoppedEvent) {
 			processSuspendedEvent(miEvent);
 			cdiEvent = new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIRunningEvent) {

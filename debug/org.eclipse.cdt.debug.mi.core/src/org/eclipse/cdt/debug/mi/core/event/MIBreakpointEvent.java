@@ -14,10 +14,10 @@ import org.eclipse.cdt.debug.mi.core.output.MITuple;
 import org.eclipse.cdt.debug.mi.core.output.MIValue;
 
 /**
- * ^done,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
+ * ^stopped,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
  *
  */
-public class MIBreakpointEvent extends MIEvent {
+public class MIBreakpointEvent extends MIStoppedEvent {
 
 	int bkptno;
 	int threadId;

@@ -17,7 +17,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  *
  *  *stopped,reason="end-stepping-range",thread-id="0",frame={addr="0x08048538",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="13"}
  */
-public class MISteppingRangeEvent extends MIEvent {
+public class MISteppingRangeEvent extends MIStoppedEvent {
 
 	int threadId;
 	MIFrame frame;

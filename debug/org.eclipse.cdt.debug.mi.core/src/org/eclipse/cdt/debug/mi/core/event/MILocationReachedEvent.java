@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 /**
  * *stopped,reason="location-reached",thread-id="0",frame={addr="0x0804858e",func="main2",args=[],file="hello.c",line="27"}
  */
-public class MILocationReachedEvent extends MIEvent {
+public class MILocationReachedEvent extends MIStoppedEvent {
 
 	int threadId;
 	MIFrame frame;

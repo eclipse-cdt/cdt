@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 /**
  * *stopped,reason="function-finished",thread-id="0",frame={addr="0x0804855a",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="17"},gdb-result-var="$1",return-value="10"
  */
-public class MIFunctionFinishedEvent extends MIEvent {
+public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
 	String gdbResult = "";
 	String returnValue = "";

@@ -17,7 +17,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  *  *stopped,reason="signal-received",signal-name="SIGINT",signal-meaning="Interrupt",thread-id="0",frame={addr="0x400e18e1",func="__libc_nanosleep",args=[],file="__libc_nanosleep",line="-1"}
  *
  */
-public class MISignalEvent extends MIEvent {
+public class MISignalEvent extends MIStoppedEvent {
 
 	String sigName = "";
 	String sigMeaning = "";

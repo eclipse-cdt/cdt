@@ -20,13 +20,13 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIAsyncRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIConsoleStreamOutput;
@@ -212,7 +212,8 @@ MIPlugin.getDefault().debugLog(line);
 				// HACK: GDB for temporary breakpoints will not send the
 				// "reason" ???  Fake this as breakpoint-hit 
 				if (e == null) {
-					e = createEvent("breakpoint-hit", exec);
+					//e = createEvent("breakpoint-hit", exec);
+					e = new MIStoppedEvent();
 					if (e != null) {
 						list.add(e);
 					}

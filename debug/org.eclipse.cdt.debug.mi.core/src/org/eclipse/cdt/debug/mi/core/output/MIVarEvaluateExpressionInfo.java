@@ -31,7 +31,7 @@ public class MIVarEvaluateExpressionInfo extends MIInfo {
 					if (var.equals("value")) {
 						MIValue val = results[i].getMIValue();
 						if (val instanceof MIConst) {
-							value = ((MIConst)val).getString();
+							value = ((MIConst)val).getCString();
 						}
 					}
 				}

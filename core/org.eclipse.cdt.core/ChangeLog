@@ -1,3 +1,8 @@
+2003-06-19 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java:
+	(shutdown):  Deregister the listener from the Workspace.
+
 2003-06-16 Victor Mozgin
 	Implemented support for old K&R-style C function declarations.
 	Added oldKRParametersBegin() and oldKRParametersEnd() to DOMBuilder.

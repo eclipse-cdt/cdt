@@ -1,3 +1,9 @@
+2004-01-22 Alain Magloire
+
+	Set the sharedLibManager autorefresh to be off by defaul
+	
+	* SharedLibrariesViewPreferencePage.java
+
 2004-01-06 Mikhail Khodjaiants
 	Fix for bug 49587: Unable to set breakpoints in the editors that extend CEditor.
 	* ManageBreakpointRulerActionDelegate.java

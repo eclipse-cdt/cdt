@@ -13,4 +13,6 @@ public interface IUsing extends ICElement, ISourceManipulation, ISourceReference
 	 * This is a handle-only method.
 	 */
 	String getElementName();
+
+	boolean isDirective();
 }

@@ -330,6 +330,10 @@ public abstract class CElement extends PlatformObject implements ICElement {
 				return "C_FIELD";  //$NON-NLS-1$
 			case C_METHOD:
 				return "C_METHOD"; 						 //$NON-NLS-1$
+			case C_NAMESPACE:
+				return "C_NAMESPACE"; 						 //$NON-NLS-1$
+			case C_USING:
+				return "C_USING"; 						 //$NON-NLS-1$
 			default:
 				return "UNKNOWN"; //$NON-NLS-1$
 		}

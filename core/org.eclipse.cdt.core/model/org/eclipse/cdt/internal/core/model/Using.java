@@ -14,14 +14,24 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IUsing;
 
-public class Using extends SourceManipulation implements IUsing{
+public class Using extends SourceManipulation implements IUsing {
 
-	public Using(ICElement parent, String name) {
+	boolean directive;
+
+	public Using(ICElement parent, String name, boolean isDirective) {
 		super(parent, name, CElement.C_USING);
+		directive = isDirective;
 	}
 
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IUsing#isDirective()
+	 */
+	public boolean isDirective() {
+		return directive;
 	}
 
 }

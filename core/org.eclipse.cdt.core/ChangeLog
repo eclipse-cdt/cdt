@@ -1,3 +1,12 @@
+2004-07-30 Alain Magloire
+
+	Add the Using-{directive,declaration} part of the Core Model.
+
+	* model/org/eclipse/cdt/core/model/IUsing.java
+	* model/org/eclipse/cdt/internal/core/model/CElement.java
+	* model/org/eclipse/cdt/internal/core/model/CModelBuilder.java
+	* model/org/eclipse/cdt/internal/core/model/Using.java
+	
 2004-07-28 Tanya Wolff
 
 	Fix for PR 70161: Assembly untranslated in C++ File Types

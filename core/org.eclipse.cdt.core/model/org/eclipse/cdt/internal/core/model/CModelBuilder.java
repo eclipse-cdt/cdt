@@ -58,6 +58,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifierOwner;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
@@ -269,6 +271,14 @@ public class CModelBuilder {
 		
 		if(declaration instanceof IASTLinkageSpecification) {
 			generateModelElements(parent, (IASTLinkageSpecification)declaration);
+		}
+
+		if (declaration instanceof IASTUsingDirective) {
+			createUsingDirective(parent, (IASTUsingDirective)declaration);
+		}
+
+		if (declaration instanceof IASTUsingDeclaration) {
+			createUsingDeclaration(parent, (IASTUsingDeclaration)declaration);
 		}
 		createSimpleElement(parent, declaration, false);
 	}
@@ -732,6 +742,40 @@ public class CModelBuilder {
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;
+	}
+
+	private Using createUsingDirective(Parent parent, IASTUsingDirective usingDirDeclaration) throws CModelException{
+		// create the element
+		String name = usingDirDeclaration.getNamespaceName();
+        
+        Using element = new Using( parent, name, true );
+		
+		// add to parent
+		parent.addChild(element);
+
+		// set positions
+		//element.setIdPos(usingDirDeclaration.getNameOffset(), (usingDirective.getNameEndOffset() - usingDirDeclaration.getNameOffset()));	
+		element.setPos(usingDirDeclaration.getStartingOffset(), usingDirDeclaration.getEndingOffset() - usingDirDeclaration.getStartingOffset());
+		element.setLines(usingDirDeclaration.getStartingLine(), usingDirDeclaration.getEndingLine() );
+		this.newElements.put(element, element.getElementInfo());
+		return element;	
+	}
+
+	private Using createUsingDeclaration(Parent parent, IASTUsingDeclaration usingDeclaration) throws CModelException{
+		// create the element
+		String name = usingDeclaration.usingTypeName();
+        
+        Using element = new Using(parent, name, false);
+		
+		// add to parent
+		parent.addChild(element);
+
+		// set positions
+		//element.setIdPos(usingDeclaration.getNameOffset(), (usingDeclaration.getNameEndOffset() - usingDeclaration.getNameOffset()));	
+		element.setPos(usingDeclaration.getStartingOffset(), usingDeclaration.getEndingOffset() - usingDeclaration.getStartingOffset());
+		element.setLines(usingDeclaration.getStartingLine(), usingDeclaration.getEndingLine() );
+		this.newElements.put(element, element.getElementInfo());
+		return element;	
 	}
 
 	/**

@@ -211,7 +211,7 @@ public class ScannerConfigInfoFactory {
 
 		protected String getESIProviderParameter(String name) {
 			IExtension extension =
-				Platform.getPluginRegistry().getExtension(
+				Platform.getExtensionRegistry().getExtension(
 						MakeCorePlugin.getUniqueIdentifier(),
 						MakeCorePlugin.EXTERNAL_SI_PROVIDER_SIMPLE_ID,
 						// TODO VMIR make this configurable

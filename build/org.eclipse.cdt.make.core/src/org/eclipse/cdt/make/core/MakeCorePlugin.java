@@ -35,18 +35,19 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
  */
 public class MakeCorePlugin extends Plugin {
+	public static final String PLUGIN_ID = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
 	public static final String MAKE_PROJECT_ID = MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
 	private MakeTargetManager fTargetManager;
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
@@ -63,8 +64,8 @@ public class MakeCorePlugin extends Plugin {
 	/**
 	 * The constructor.
 	 */
-	public MakeCorePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public MakeCorePlugin() {
+		super();
 		plugin = this;
 	}
 
@@ -95,9 +96,9 @@ public class MakeCorePlugin extends Plugin {
 			// If the default instance is not yet initialized,
 			// return a static identifier. This identifier must
 			// match the plugin id defined in plugin.xml
-			return "org.eclipse.cdt.make.core"; //$NON-NLS-1$
+			return PLUGIN_ID;
 		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	protected void initializeDefaultPluginPreferences() {
@@ -173,12 +174,15 @@ public class MakeCorePlugin extends Plugin {
 		//return PosixMakefile(file.getLocation);
 	}
 
-	public void shutdown() throws CoreException {
-		if ( fTargetManager != null) {
-			fTargetManager.shutdown();
-			fTargetManager = null;
+	public void stop(BundleContext context) throws Exception {
+		try {
+			if ( fTargetManager != null) {
+				fTargetManager.shutdown();
+				fTargetManager = null;
+			}
+		} finally {
+			super.stop(context);
 		}
-		super.shutdown();
 	}
 
 	/*
@@ -210,7 +214,7 @@ public class MakeCorePlugin extends Plugin {
 	 */
 	public IExternalScannerInfoProvider getExternalScannerInfoProvider(String id) {
 		try {
-			IExtensionPoint extension = getDescriptor().getExtensionPoint(EXTERNAL_SI_PROVIDER_SIMPLE_ID);
+	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, EXTERNAL_SI_PROVIDER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
@@ -243,7 +247,7 @@ public class MakeCorePlugin extends Plugin {
 		if (commandId == null || commandId.length() == 0) {
 			commandId = "all";	//$NON-NLS-1$
 		}
-		IExtensionPoint extension = getDescriptor().getExtensionPoint(SI_CONSOLE_PARSER_SIMPLE_ID);
+        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, SI_CONSOLE_PARSER_SIMPLE_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			List parserIds = new ArrayList(extensions.length);
@@ -268,7 +272,7 @@ public class MakeCorePlugin extends Plugin {
 	 */
 	public IScannerInfoConsoleParser getScannerInfoConsoleParser(String parserId) {
 		try {
-			IExtensionPoint extension = getDescriptor().getExtensionPoint(SI_CONSOLE_PARSER_SIMPLE_ID);
+	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, SI_CONSOLE_PARSER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
@@ -290,8 +294,8 @@ public class MakeCorePlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		
 		//Set debug tracing options
 		configurePluginDebugOptions();

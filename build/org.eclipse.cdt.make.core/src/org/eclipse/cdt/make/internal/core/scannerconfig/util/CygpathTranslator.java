@@ -81,7 +81,7 @@ public class CygpathTranslator {
 			catch (IOException e) {
 			}
 			if (launcher.waitAndRead(output, output) != CommandLauncher.OK) {
-				String errMsg = launcher.getErrorMessage();
+				//String errMsg = launcher.getErrorMessage();
 			}
 			else
 				return output.toString().trim();

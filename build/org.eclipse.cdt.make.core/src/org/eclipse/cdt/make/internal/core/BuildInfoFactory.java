@@ -84,7 +84,7 @@ public class BuildInfoFactory {
 
 		protected String getBuildParameter(String name) {
 			IExtension extension =
-				Platform.getPluginRegistry().getExtension(
+				Platform.getExtensionRegistry().getExtension(
 					ResourcesPlugin.PI_RESOURCES,
 					ResourcesPlugin.PT_BUILDERS,
 					getBuilderID());

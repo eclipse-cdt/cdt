@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class MakeTargetManager implements IMakeTargetManager, IResourceChangeListener {
@@ -278,7 +279,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 
 	protected void initializeBuilders() {
 		builderMap = new HashMap();
-		IExtensionPoint point = MakeCorePlugin.getDefault().getDescriptor().getExtensionPoint(MakeTargetManager.TARGET_BUILD_EXT);
+        IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.PLUGIN_ID, MakeTargetManager.TARGET_BUILD_EXT);
 		IExtension[] ext = point.getExtensions();
 		for (int i = 0; i < ext.length; i++) {
 			IConfigurationElement[] element = ext[i].getConfigurationElements();

@@ -47,8 +47,6 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	 */
 	private String[] fPropertyNamesItalic;
 	
-	private boolean fNeedsLazyColorLoading;
-
 
 	/** 
 	 * Returns the list of preference keys which define the tokens

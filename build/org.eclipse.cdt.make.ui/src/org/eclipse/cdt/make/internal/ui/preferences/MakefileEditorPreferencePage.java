@@ -77,7 +77,6 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	// folding
 	protected Button fFoldingCheckbox;
 	
-	private SelectionListener fSelectionListener;
 	protected Map fWorkingValues;
 	protected ArrayList fComboBoxes;
 	

@@ -78,9 +78,8 @@ public abstract class StatusWizardPage extends WizardPage {
 	public static IStatus getMoreSevere(IStatus s1, IStatus s2) {
 		if (s1.getSeverity() >= s2.getSeverity()) {
 			return s1;
-		} else {
-			return s2;
-		}
+		} 
+		return s2;
 	}	
 	
 	

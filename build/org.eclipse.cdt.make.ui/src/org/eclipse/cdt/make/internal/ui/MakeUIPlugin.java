@@ -230,10 +230,9 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	public Shell getShell() {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
-		} else {
-			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
-			return windows[0].getShell();
 		}
+		IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+		return windows[0].getShell();
 	}
 
 	public synchronized IMakefileDocumentProvider getMakefileDocumentProvider() {

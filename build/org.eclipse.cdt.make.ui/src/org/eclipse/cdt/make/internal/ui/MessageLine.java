@@ -51,9 +51,8 @@ public class MessageLine extends CLabel {
 			setImage(MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ERROR));
 			setBackground(JFaceColors.getErrorBackground(getDisplay()));
 			return;
-		} else {
-			hasErrorMessage = false;
 		}
+		hasErrorMessage = false;
 		setText(fMessage);	
 		setImage(null);
 		setBackground(fNormalMsgAreaBackground);	

@@ -11,7 +11,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  *
  *  ^running
  */
-public class MIDetachedEvent extends MIEvent {
+public class MIDetachedEvent extends MIDestroyedEvent {
 
 	public MIDetachedEvent(int token) {
 		super(token);

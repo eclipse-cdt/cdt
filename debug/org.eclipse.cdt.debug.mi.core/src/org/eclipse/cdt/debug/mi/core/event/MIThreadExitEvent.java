@@ -10,7 +10,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  * This can not be detected yet by gdb/mi.
  *
  */
-public class MIThreadExitEvent extends MIEvent {
+public class MIThreadExitEvent extends MIDestroyedEvent {
 
 	int tid;
 

@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  * ^done,reason="exited",exit-code="04"
  *
  */
-public class MIInferiorExitEvent extends MIEvent {
+public class MIInferiorExitEvent extends MIDestroyedEvent {
 
 	int code = 0;
 

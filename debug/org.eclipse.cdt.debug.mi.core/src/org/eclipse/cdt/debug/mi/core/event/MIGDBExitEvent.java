@@ -10,7 +10,7 @@ package org.eclipse.cdt.debug.mi.core.event;
 /**
  * Gdb Session terminated.
  */
-public class MIGDBExitEvent extends MIEvent {
+public class MIGDBExitEvent extends MIDestroyedEvent {
 
 	public MIGDBExitEvent(int token) {
 		super(token);

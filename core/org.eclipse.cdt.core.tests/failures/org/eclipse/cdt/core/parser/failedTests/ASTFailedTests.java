@@ -47,23 +47,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("Foo blat() return f(4) {}");
     }
-    public void testBug39681() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write("double\n");
-            code.write("foo (double a, double b)\n");
-            code.write("{\n");
-            code.write("  double square (double z) { return z * z; }\n");
-            code.write("  return square (a) + square (b);\n");
-            code.write("}\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-        parse(code.toString());
-    }
+
     
     public void testBug39682() throws Exception
     {

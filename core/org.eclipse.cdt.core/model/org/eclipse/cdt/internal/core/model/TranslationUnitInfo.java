@@ -55,11 +55,11 @@ class TranslationUnitInfo extends CFileInfo {
 	protected void parse(InputStream in) {
 		try {
 			removeChildren();
-			if (false) {
+			if (true) {
 				// cdt 1.0 parser
 				ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
 				CStructurizer.getCStructurizer().parse(modelBuilder, in);
-			} else if (true) {
+			} else if (false) {
 				// new parser
 				NewModelBuilder modelBuilder = new NewModelBuilder((TranslationUnit)getElement());
 				Parser2 parser = new Parser2(in, modelBuilder, true);

@@ -31,11 +31,10 @@ public class MemoryFormatAction extends Action implements IUpdate
 							   MemoryViewer viewer, 
 							   int format )
 	{
-		super( getLabel( format ) );
+		super( getLabel( format ), Action.AS_CHECK_BOX );
 		fGroup = group;
 		fMemoryViewer = viewer;
 		fFormat = format;
-		setChecked( false );
 	}
 
 	/**

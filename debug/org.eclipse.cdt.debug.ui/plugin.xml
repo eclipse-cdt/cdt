@@ -291,6 +291,7 @@
          </action>
          <action
                label="%ShowFullPathsAction.label"
+               style="toggle"
                icon="icons/full/clcl16/show_paths.gif"
                helpContextId="show_full_paths_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
@@ -305,6 +306,7 @@
          </action>
          <action
                label="%SwitchToDisassemblyAction.label"
+               style="toggle"
                icon="icons/full/clcl16/disassembly.gif"
                helpContextId="switch_to_disassembly_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
@@ -320,6 +322,7 @@
          </action>
          <action
                label="%ShowDebuggerConsoleAction.label"
+               style="toggle"
                icon="icons/full/clcl16/debugger_console.gif"
                helpContextId="show_debugger_console_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
@@ -458,6 +461,7 @@
             id="org.eclipse.cdt.debug.ui.breakpointview.popupMenu">
          <action
                label="%ShowFullPathsAction.label"
+               style="toggle"
                icon="icons/full/clcl16/show_paths.gif"
                helpContextId="show_full_paths_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
@@ -733,6 +737,7 @@
             id="org.eclipse.cdt.debug.ui.SharedLibrariesViewPopupActions">
          <action
                label="%ShowFullPathsAction.label"
+               style="toggle"
                icon="icons/full/clcl16/show_paths.gif"
                helpContextId="show_full_paths_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
@@ -898,6 +903,7 @@
             </enablement>
          </action>
          <action
+               style="toggle"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"
@@ -915,6 +921,7 @@
             </enablement>
          </action>
          <action
+               style="toggle"
                toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
                hoverIcon="icons/full/clcl16/disassembly.gif"
@@ -933,6 +940,7 @@
             </enablement>
          </action>
          <action
+               style="toggle"
                toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
                hoverIcon="icons/full/clcl16/debugger_console.gif"
@@ -955,6 +963,7 @@
             targetID="org.eclipse.debug.ui.BreakpointView"
             id="org.eclipse.cdt.debug.ui.breakpointview.toolbar">
          <action
+               style="toggle"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"
@@ -998,6 +1007,7 @@
             targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
             id="org.eclipse.debug.ui.sharedLibrariesView.toolbar">
          <action
+               style="toggle"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"

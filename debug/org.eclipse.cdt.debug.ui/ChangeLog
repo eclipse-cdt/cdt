@@ -1,3 +1,10 @@
+2003-04-14 Mikhail Khodjaiants
+	Fixes for toggle actions.
+	* plugin.xml
+	* MemoryFormatAction.java
+	* MemoryNumberOfColumnAction.java
+	* MemorySizeAction.java
+
 2003-04-11 Mikhail Khodjaiants
 	Method and function breakpoints.
 	* plugin.properties

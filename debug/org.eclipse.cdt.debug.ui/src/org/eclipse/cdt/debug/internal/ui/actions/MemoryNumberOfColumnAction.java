@@ -29,11 +29,10 @@ public class MemoryNumberOfColumnAction extends Action implements IUpdate
 							 		   MemoryViewer viewer, 
 							 		   int numberOfColumns )
 	{
-		super( getLabel( numberOfColumns ) );
+		super( getLabel( numberOfColumns ), Action.AS_CHECK_BOX );
 		fGroup = group;
 		fMemoryViewer = viewer;
 		fNumberOfColumns = numberOfColumns;
-		setChecked( false );
 	}
 
 	private static String getLabel( int numberOfColumns )

@@ -30,11 +30,10 @@ public class MemorySizeAction extends Action implements IUpdate
 							 MemoryViewer viewer, 
 							 int id )
 	{
-		super( getLabel( id ) );
+		super( getLabel( id ), Action.AS_CHECK_BOX );
 		fGroup = group;
 		fMemoryViewer = viewer;
 		fId = id;
-		setChecked( false );
 	}
 
 	/* (non-Javadoc)

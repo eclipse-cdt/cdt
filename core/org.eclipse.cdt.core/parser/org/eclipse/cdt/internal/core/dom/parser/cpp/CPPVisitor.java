@@ -1763,6 +1763,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 	    			return new CPPBasicType( IBasicType.t_int, 0 );
 	    		case IASTLiteralExpression.lk_string_literal:
 	    			IType type = new CPPBasicType( IBasicType.t_char, 0 );
+	    			type = new CPPQualifierType( type, true, false );
 	    			return new CPPPointerType( type );
 	    	}
 	    	

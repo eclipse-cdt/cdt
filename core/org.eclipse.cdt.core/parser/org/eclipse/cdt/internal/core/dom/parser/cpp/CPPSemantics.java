@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -871,6 +872,10 @@ public class CPPSemantics {
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 	
 		while( item != null ) {
+		    if( item instanceof ICPPASTLinkageSpecification ){
+			    nodes = (IASTNode[]) ArrayUtil.replace( IASTDeclaration.class, nodes, idx, ((ICPPASTLinkageSpecification)item).getDeclarations() );
+			    item = nodes[idx];
+			}
 			if( !checkWholeClassScope && blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() )
 				break;
 			
@@ -1896,7 +1901,10 @@ public class CPPSemantics {
 		}
 		
 		if( s instanceof IQualifierType ^ t instanceof IQualifierType ){
-			canConvert = false;
+		    if( t instanceof IQualifierType )
+		        canConvert = true;
+		    else 
+		        canConvert = false;
 		} else if( s instanceof IQualifierType && t instanceof IQualifierType ){
 			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
 			if( qs.isConst() && !qt.isConst() || qs.isVolatile() && !qt.isVolatile() )

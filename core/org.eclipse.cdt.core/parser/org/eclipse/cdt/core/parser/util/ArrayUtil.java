@@ -134,4 +134,30 @@ public class ArrayUtil {
         System.arraycopy( source, 0, temp, firstFree, numToAdd );
         return temp;
     }
+
+    /**
+     * Replaces the item at index idx with the given object.  If the obj is an Object[],
+     * then the contents of that array are inserted with the first element overwriting 
+     * whatever was at idx.
+     * @param class1
+     * @param nodes
+     * @param declarations
+     * @return
+     */
+    public static Object[] replace( Class c, Object[] array, int idx, Object obj ) {
+        if( array == null || idx >= array.length )
+            return array;
+        
+        if( obj instanceof Object [] ){
+            Object [] objs = (Object[]) obj;
+            Object [] temp = (Object[]) Array.newInstance( c, array.length + objs.length - 1 );
+            System.arraycopy( array, 0, temp, 0, idx );
+            System.arraycopy( objs, 0, temp, idx, objs.length );
+            System.arraycopy( array, idx + 1, temp, idx + objs.length, array.length - idx - 1);
+            array = temp;
+        } else {
+            array[idx] = obj;
+        }
+        return array;
+    }
 }

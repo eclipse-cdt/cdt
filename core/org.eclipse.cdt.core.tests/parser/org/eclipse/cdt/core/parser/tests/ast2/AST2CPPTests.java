@@ -2014,5 +2014,29 @@ public class AST2CPPTests extends AST2BaseTest {
         
         assertEquals( other.getName(), "other" ); //$NON-NLS-1$
     }
+    
+    public void testBug86279() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("extern \"C\" {                               \n"); //$NON-NLS-1$
+        buffer.append("   void printf( const char * );              \n"); //$NON-NLS-1$
+        buffer.append("   void sprintf( const char * );             \n"); //$NON-NLS-1$
+        buffer.append("}                                            \n"); //$NON-NLS-1$
+        buffer.append("void foo(){                                  \n"); //$NON-NLS-1$
+        buffer.append("   char *p;                                  \n"); //$NON-NLS-1$
+        buffer.append("   printf( p );                              \n"); //$NON-NLS-1$
+        buffer.append("   printf( \"abc\" );                        \n"); //$NON-NLS-1$
+        buffer.append("}                                            \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit( col);
+        
+        IFunction r1 = (IFunction) col.getName(6).resolveBinding();
+        IFunction r2 = (IFunction) col.getName(8).resolveBinding();
+        IFunction printf = (IFunction) col.getName(0).resolveBinding();
+        
+        assertSame( printf, r1 );
+        assertSame( printf, r2 );
+    }
 }
 

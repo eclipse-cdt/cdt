@@ -2850,75 +2850,90 @@ public class Scanner implements IScanner {
 
 	protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(
-        		new StringReader(params), 
-				TEXT, 
-				scannerData.getPublicDefinitions(), 
-				scannerData.getIncludePathNames(), 
-				NULL_REQUESTOR, 
-				scannerData.getParserMode(), 
-				scannerData.getLanguage(), 
-				NULL_LOG_SERVICE, 
-				scannerExtension );
-        
-        tokenizer.setThrowExceptionOnBadCharacterRead(false);
-        Vector parameterValues = new Vector();
-        SimpleToken t = null;
-        StringBuffer buffer = new StringBuffer();
-        boolean space = false;
+		// split params up into single arguments
         int nParen = 0;
-        
-        try {
-            while (true) {
-				int c = tokenizer.getCharacter();
-				if ((c != ' ') && (c != '\t') && (c != '\r') && (c != '\n')) {
-					space = false;
-				}
-				if (c != NOCHAR) tokenizer.ungetChar(c);
-				
-                t = (SimpleToken)(forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
-                if (t.getType() == IToken.tLPAREN) {
-                    nParen++;
-                } else if (t.getType() == IToken.tRPAREN) {
-                    nParen--;
-                } else if (t.getType() == IToken.tCOMMA && nParen == 0) {
-                    parameterValues.add(buffer.toString());
-                    buffer = new StringBuffer();
-                    space = false;
-                    continue;
-                }
-
-                if (space)
-                    buffer.append( ' ' );
-
-                switch (t.getType()) {
-                    case IToken.tSTRING :
-                    	buffer.append('\"');
-                    	buffer.append(t.getImage());
-                    	buffer.append('\"'); 
-                    	break;
-                    case IToken.tLSTRING :
-                    	buffer.append( "L\""); //$NON-NLS-1$
-                    	buffer.append(t.getImage());
-                    	buffer.append('\"');	
-                    	break;
-                    case IToken.tCHAR :    
-                    	buffer.append('\'');
-                    	buffer.append(t.getImage());
-                    	buffer.append('\''); 
-                    	break;
-                    default :             
-                    	buffer.append( t.getImage()); 
-                    	break;
-                }
-                space = true;
-            }
-        }
-        catch (EndOfFileException e) {
-            // Good
-            parameterValues.add(buffer.toString());
-        }
-
+        Vector parameters = new Vector();
+        StringBuffer parBuffer = new StringBuffer();         //$NON-NLS-1$
+		for (int i = 0; i < params.length(); i++) {
+			char c = params.charAt(i);
+			switch (c) {
+				case '(' :
+					nParen++;
+					break;
+				case ')' :
+					nParen--;
+					break;
+				case ',' :
+					if (nParen == 0) {
+						parameters.add(parBuffer.toString());
+						parBuffer = new StringBuffer(); //$NON-NLS-1$
+						continue;
+					}
+					break;					
+				default :
+					break;
+			}
+			parBuffer.append( c );
+		}
+		parameters.add(parBuffer.toString());
+		
+        Vector parameterValues = new Vector();
+		for (int i = 0; i < parameters.size(); i++) {
+	        Scanner tokenizer  = new Scanner(
+	        		new StringReader((String)parameters.elementAt(i)), 
+					TEXT, 
+					scannerData.getPublicDefinitions(), 
+					EMPTY_LIST, 
+					NULL_REQUESTOR, 
+					scannerData.getParserMode(), 
+					scannerData.getLanguage(), 
+					NULL_LOG_SERVICE, 
+					scannerExtension );
+	        tokenizer.setThrowExceptionOnBadCharacterRead(false);
+	        IToken t = null;
+	        StringBuffer buffer = new StringBuffer();
+	        boolean space = false;
+	       
+	        try {
+	            while (true) {
+					int c = tokenizer.getCharacter();
+					if ((c != ' ') && (c != '\t') && (c != '\r') && (c != '\n')) {
+						space = false;
+					}
+					if (c != NOCHAR) tokenizer.ungetChar(c);
+					t = (forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
+	
+	                if (space)
+	                    buffer.append( ' ' );
+	
+	                switch (t.getType()) {
+	                    case IToken.tSTRING :
+	                    	buffer.append('\"');
+	                    	buffer.append(t.getImage());
+	                    	buffer.append('\"'); 
+	                    	break;
+	                    case IToken.tLSTRING :
+	                    	buffer.append( "L\""); //$NON-NLS-1$
+	                    	buffer.append(t.getImage());
+	                    	buffer.append('\"');	
+	                    	break;
+	                    case IToken.tCHAR :    
+	                    	buffer.append('\'');
+	                    	buffer.append(t.getImage());
+	                    	buffer.append('\''); 
+	                    	break;
+	                    default :             
+	                    	buffer.append( t.getImage()); 
+	                    	break;
+	                }
+	                space = true;
+	            }
+	        }
+	        catch (EndOfFileException e) {
+	            // Good
+	            parameterValues.add(buffer.toString());
+	        }
+		}
         
         return parameterValues;
     }

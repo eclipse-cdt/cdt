@@ -1552,15 +1552,15 @@ public class ScannerTestCase extends BaseScannerTest
     	assertTrue( d.isCircular() );
 	}
     
-//    public void testBug60764() throws Exception
-//	{
-//    	Writer writer = new StringWriter();
-//    	writer.write( "#define P   a,b\n"); //$NON-NLS-1$
-//    	writer.write( "#define M(x) M1(x)\n"); //$NON-NLS-1$
-//    	writer.write( "#define M1(x,y) #x  #y\n"); //$NON-NLS-1$
-//    	writer.write( "M(P)\n"); //$NON-NLS-1$
-//    	initializeScanner( writer.toString() );
-//    	validateString( "ab"); //$NON-NLS-1$
-//    	validateEOF();
-//	}
+    public void testBug60764() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( "#define P   a,b\n"); //$NON-NLS-1$
+    	writer.write( "#define M(x) M1(x)\n"); //$NON-NLS-1$
+    	writer.write( "#define M1(x,y) #x  #y\n"); //$NON-NLS-1$
+    	writer.write( "M(P)\n"); //$NON-NLS-1$
+    	initializeScanner( writer.toString() );
+    	validateString( "ab"); //$NON-NLS-1$
+    	validateEOF();
+	}
 }

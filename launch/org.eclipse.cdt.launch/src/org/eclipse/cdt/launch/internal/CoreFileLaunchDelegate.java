@@ -68,6 +68,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, corefile.toString());
 				wc.launch(mode, new SubProgressMonitor(monitor, 9));
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null);
 				cancel("", -1); //$NON-NLS-1$
 			} else {
 				dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile, new SubProgressMonitor(monitor, 8));

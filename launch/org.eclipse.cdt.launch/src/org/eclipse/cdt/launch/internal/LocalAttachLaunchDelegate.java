@@ -84,6 +84,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 						ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
 						wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, pid);
 						wc.launch(mode, new SubProgressMonitor(monitor, 9));
+						wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, (String)null);
 						cancel("", -1); //$NON-NLS-1$\
 					} else {
 						dsession = debugConfig.createDebugger().createDebuggerSession(launch, exeFile,

@@ -1,3 +1,8 @@
+2004-06-02 Bogdan Gheorghe
+	
+	Fix for Bug 61241 - [Search] Closing the Search view mid search causes an error
+	* src/org/eclipse/cdt/internal/ui/search/CSearchTableContentProvider.java
+	
 2004-06-01 Alain Magloire
 
 	Format the source Hovering better.

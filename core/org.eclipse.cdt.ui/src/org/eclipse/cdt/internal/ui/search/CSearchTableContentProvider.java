@@ -27,6 +27,9 @@ public class CSearchTableContentProvider extends CSearchContentProvider implemen
 	}
 
 	public void elementsChanged(Object[] updatedElements) {
+		if (_result == null)
+			return;
+		
 		int addCount= 0;
 		int removeCount= 0;
 		for (int i= 0; i < updatedElements.length; i++) {

@@ -195,7 +195,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    if( CharArrayUtils.equals( n, compType.getName().toCharArray() ) ){
 	        return (IBinding[]) ArrayUtil.addAll( IBinding.class, null, getConstructors() );
 	    }
-	    if( bindings.containsKey( n ) ){
+	    if( bindings != null && bindings.containsKey( n ) ){
 	        Object o = bindings.get( n );
 	        if( o instanceof IBinding[] )
 	            return (IBinding[]) ArrayUtil.trim( IBinding.class, (Object[]) o );

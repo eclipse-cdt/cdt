@@ -97,7 +97,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	 */
 	public IBinding[] find(String name) {
 	    char [] n = name.toCharArray();
-	    if( bindings.isFullyResolved( n ) ){
+	    if( bindings != null && bindings.isFullyResolved( n ) ){
 	        Object o = bindings.get( n );
 	        if( o instanceof IBinding[] )
 	            return (IBinding[]) ArrayUtil.trim( IBinding.class, (Object[]) o );

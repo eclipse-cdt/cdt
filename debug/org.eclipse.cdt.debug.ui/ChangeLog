@@ -1,3 +1,7 @@
+2004-08-05 Mikhail Khodjaiants
+	Cosmetic fix.
+	* CDebugUIMessages.properties
+
 2004-08-04 Mikhail Khodjaiants
 	New implementation of the variable types.
 	* CDTDebugModelPresentation.java

@@ -4,7 +4,11 @@
       label="%featureName"
       version="1.0.0"
       provider-name="%providerName"
-      image="eclipse_update_120.jpg">
+      os="linux,qnx,solaris,win32"
+      ws="motif,photon,win32"
+      nl="en_US"
+      image="eclipse_update_120.jpg"
+      primary="true">
 
    <description>
       %description
@@ -20,6 +24,7 @@
 
    <requires>
       <import plugin="org.eclipse.platform" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.jdt.doc.user"/>
    </requires>
 
    <plugin

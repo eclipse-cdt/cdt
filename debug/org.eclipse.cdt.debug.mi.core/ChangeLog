@@ -1,3 +1,21 @@
+2003-11-06 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java:
+	Small fix for the defferred breakpoint support.
+
+2003-11-06 Alain Magloire
+	
+	Patch from Ashish Karkare:
+	A CDT 1.2 patch that enables setting of
+	serial line speed in the launch configuration when debugging remote targets.
+ 
+	* src/org/eclipse/cdt/debug/mi/core/IGDBServerMILaunchConfigurationConstants.java
+    New attribute definition DEV_SPEED.
+ 
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java
+    Extracts  serial speed value and passes it to createCSession().
+  
+
 2003-10-29 Alain Magloire
 
 	Deal with PR 45533

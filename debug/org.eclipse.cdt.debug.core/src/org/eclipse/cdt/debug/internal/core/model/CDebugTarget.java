@@ -42,7 +42,6 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDILoadedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
@@ -932,13 +931,6 @@ public class CDebugTarget extends CDebugElement
 					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDILoadedEvent )
-			{
-				if ( source instanceof ICDITarget )
-				{
-					handleLoadedEvent( (ICDILoadedEvent)event );
-				}
-			}
 			else if ( event instanceof ICDIRestartedEvent )
 			{
 				if ( source instanceof ICDITarget )
@@ -1421,10 +1413,6 @@ public class CDebugTarget extends CDebugElement
 	}
 
 	private void handleChangedEvent( ICDIChangedEvent event )
-	{
-	}
-
-	private void handleLoadedEvent( ICDILoadedEvent event )
 	{
 	}
 

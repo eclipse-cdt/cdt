@@ -31,25 +31,12 @@ public abstract class ObjectTable extends HashTable implements Cloneable{
 	}
 
 	public Object clone(){
-	    ObjectTable newTable = null;
-        try {
-            newTable = (ObjectTable) super.clone();
-        } catch ( CloneNotSupportedException e ) {
-            //shouldn't happen because object supports clone.
-            return null;
-        }
+	    ObjectTable newTable = (ObjectTable) super.clone();
         
         int size = capacity();
         newTable.keyTable = new Object[ size ];
         System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
         
-        if( hashTable != null ){
-	        newTable.hashTable = new int[ size*2 ];
-	        newTable.nextTable = new int[ size ];
-		    System.arraycopy(hashTable, 0, newTable.hashTable, 0, hashTable.length);
-		    System.arraycopy(nextTable, 0, newTable.nextTable, 0, nextTable.length);
-        }
-        newTable.currEntry = currEntry;
 	    return newTable;
 	}
 	

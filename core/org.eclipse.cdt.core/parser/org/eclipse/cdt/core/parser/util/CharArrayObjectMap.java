@@ -78,18 +78,10 @@ public class CharArrayObjectMap extends CharTable {
 	}
 	
 	public Object clone(){
-        int size = capacity();
-
-	    CharArrayObjectMap newTable = new CharArrayObjectMap( size );
-	    
+        CharArrayObjectMap newTable = (CharArrayObjectMap) super.clone();
+        newTable.valueTable = new Object[ capacity() ];
 	    System.arraycopy(valueTable, 0, newTable.valueTable, 0, valueTable.length);
-        System.arraycopy(keyTable, 0, newTable.keyTable, 0, keyTable.length);
-        if( hashTable != null )
-            System.arraycopy(hashTable, 0, newTable.hashTable, 0, hashTable.length);
-        if( nextTable != null )
-            System.arraycopy(nextTable, 0, newTable.nextTable, 0, nextTable.length);
-	    
-	    newTable.currEntry = currEntry;
+
 	    return newTable;
 	}
 	

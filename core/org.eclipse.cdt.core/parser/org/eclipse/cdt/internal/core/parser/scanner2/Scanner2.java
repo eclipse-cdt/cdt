@@ -146,6 +146,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		this.log = log;
 		this.workingCopies = workingCopies;
 
+		if( language == ParserLanguage.C )
+		    keywords = ckeywords;
+		else 
+		    keywords = cppkeywords;
+		    
 		if (reader.filename != null)
 			fileCache.put(reader.filename, reader);
 		
@@ -2896,7 +2901,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		return 0;
 	}
 	
-	private static CharArrayIntMap keywords;
+	private final CharArrayIntMap keywords;
+	private static CharArrayIntMap ckeywords;
+	private static CharArrayIntMap cppkeywords;
 	private static CharArrayIntMap ppKeywords;
 	private static final int ppIf		= 0;
 	private static final int ppIfdef	= 1;
@@ -2914,93 +2921,95 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static final char[] SPACE = { ' ' };
 	
 	static {
-		keywords = new CharArrayIntMap(IToken.tLAST, -1);
+	    CharArrayIntMap words = new CharArrayIntMap(IToken.tLAST, -1);
 		
 		// Common keywords
-		keywords.put("auto".toCharArray(), IToken.t_auto); //$NON-NLS-1$
-		keywords.put("break".toCharArray(), IToken.t_break); //$NON-NLS-1$
-		keywords.put("case".toCharArray(), IToken.t_case); //$NON-NLS-1$
-		keywords.put("char".toCharArray(), IToken.t_char); //$NON-NLS-1$
-		keywords.put("const".toCharArray(), IToken.t_const); //$NON-NLS-1$
-		keywords.put("continue".toCharArray(), IToken.t_continue); //$NON-NLS-1$
-		keywords.put("default".toCharArray(), IToken.t_default); //$NON-NLS-1$
-		keywords.put("do".toCharArray(), IToken.t_do); //$NON-NLS-1$
-		keywords.put("double".toCharArray(), IToken.t_double); //$NON-NLS-1$
-		keywords.put("else".toCharArray(), IToken.t_else); //$NON-NLS-1$
-		keywords.put("enum".toCharArray(), IToken.t_enum); //$NON-NLS-1$
-		keywords.put("extern".toCharArray(), IToken.t_extern); //$NON-NLS-1$
-		keywords.put("float".toCharArray(), IToken.t_float); //$NON-NLS-1$
-		keywords.put("for".toCharArray(), IToken.t_for); //$NON-NLS-1$
-		keywords.put("goto".toCharArray(), IToken.t_goto); //$NON-NLS-1$
-		keywords.put("if".toCharArray(), IToken.t_if); //$NON-NLS-1$
-		keywords.put("inline".toCharArray(), IToken.t_inline); //$NON-NLS-1$
-		keywords.put("int".toCharArray(), IToken.t_int); //$NON-NLS-1$
-		keywords.put("long".toCharArray(), IToken.t_long); //$NON-NLS-1$
-		keywords.put("register".toCharArray(), IToken.t_register); //$NON-NLS-1$
-		keywords.put("return".toCharArray(), IToken.t_return); //$NON-NLS-1$
-		keywords.put("short".toCharArray(), IToken.t_short); //$NON-NLS-1$
-		keywords.put("signed".toCharArray(), IToken.t_signed); //$NON-NLS-1$
-		keywords.put("sizeof".toCharArray(), IToken.t_sizeof); //$NON-NLS-1$
-		keywords.put("static".toCharArray(), IToken.t_static); //$NON-NLS-1$
-		keywords.put("struct".toCharArray(), IToken.t_struct); //$NON-NLS-1$
-		keywords.put("switch".toCharArray(), IToken.t_switch); //$NON-NLS-1$
-		keywords.put("typedef".toCharArray(), IToken.t_typedef); //$NON-NLS-1$
-		keywords.put("union".toCharArray(), IToken.t_union); //$NON-NLS-1$
-		keywords.put("unsigned".toCharArray(), IToken.t_unsigned); //$NON-NLS-1$
-		keywords.put("void".toCharArray(), IToken.t_void); //$NON-NLS-1$
-		keywords.put("volatile".toCharArray(), IToken.t_volatile); //$NON-NLS-1$
-		keywords.put("while".toCharArray(), IToken.t_while); //$NON-NLS-1$
+		words.put("auto".toCharArray(), IToken.t_auto); //$NON-NLS-1$
+		words.put("break".toCharArray(), IToken.t_break); //$NON-NLS-1$
+		words.put("case".toCharArray(), IToken.t_case); //$NON-NLS-1$
+		words.put("char".toCharArray(), IToken.t_char); //$NON-NLS-1$
+		words.put("const".toCharArray(), IToken.t_const); //$NON-NLS-1$
+		words.put("continue".toCharArray(), IToken.t_continue); //$NON-NLS-1$
+		words.put("default".toCharArray(), IToken.t_default); //$NON-NLS-1$
+		words.put("do".toCharArray(), IToken.t_do); //$NON-NLS-1$
+		words.put("double".toCharArray(), IToken.t_double); //$NON-NLS-1$
+		words.put("else".toCharArray(), IToken.t_else); //$NON-NLS-1$
+		words.put("enum".toCharArray(), IToken.t_enum); //$NON-NLS-1$
+		words.put("extern".toCharArray(), IToken.t_extern); //$NON-NLS-1$
+		words.put("float".toCharArray(), IToken.t_float); //$NON-NLS-1$
+		words.put("for".toCharArray(), IToken.t_for); //$NON-NLS-1$
+		words.put("goto".toCharArray(), IToken.t_goto); //$NON-NLS-1$
+		words.put("if".toCharArray(), IToken.t_if); //$NON-NLS-1$
+		words.put("inline".toCharArray(), IToken.t_inline); //$NON-NLS-1$
+		words.put("int".toCharArray(), IToken.t_int); //$NON-NLS-1$
+		words.put("long".toCharArray(), IToken.t_long); //$NON-NLS-1$
+		words.put("register".toCharArray(), IToken.t_register); //$NON-NLS-1$
+		words.put("return".toCharArray(), IToken.t_return); //$NON-NLS-1$
+		words.put("short".toCharArray(), IToken.t_short); //$NON-NLS-1$
+		words.put("signed".toCharArray(), IToken.t_signed); //$NON-NLS-1$
+		words.put("sizeof".toCharArray(), IToken.t_sizeof); //$NON-NLS-1$
+		words.put("static".toCharArray(), IToken.t_static); //$NON-NLS-1$
+		words.put("struct".toCharArray(), IToken.t_struct); //$NON-NLS-1$
+		words.put("switch".toCharArray(), IToken.t_switch); //$NON-NLS-1$
+		words.put("typedef".toCharArray(), IToken.t_typedef); //$NON-NLS-1$
+		words.put("union".toCharArray(), IToken.t_union); //$NON-NLS-1$
+		words.put("unsigned".toCharArray(), IToken.t_unsigned); //$NON-NLS-1$
+		words.put("void".toCharArray(), IToken.t_void); //$NON-NLS-1$
+		words.put("volatile".toCharArray(), IToken.t_volatile); //$NON-NLS-1$
+		words.put("while".toCharArray(), IToken.t_while); //$NON-NLS-1$
 
 		// ANSI C keywords
-		keywords.put("restrict".toCharArray(), IToken.t_restrict); //$NON-NLS-1$
-		keywords.put("_Bool".toCharArray(), IToken.t__Bool); //$NON-NLS-1$
-		keywords.put("_Complex".toCharArray(), IToken.t__Complex); //$NON-NLS-1$
-		keywords.put("_Imaginary".toCharArray(), IToken.t__Imaginary); //$NON-NLS-1$
+		ckeywords = (CharArrayIntMap) words.clone();
+		ckeywords.put("restrict".toCharArray(), IToken.t_restrict); //$NON-NLS-1$
+		ckeywords.put("_Bool".toCharArray(), IToken.t__Bool); //$NON-NLS-1$
+		ckeywords.put("_Complex".toCharArray(), IToken.t__Complex); //$NON-NLS-1$
+		ckeywords.put("_Imaginary".toCharArray(), IToken.t__Imaginary); //$NON-NLS-1$
 
 		// C++ Keywords
-		keywords.put("asm".toCharArray(), IToken.t_asm); //$NON-NLS-1$
-		keywords.put("bool".toCharArray(), IToken.t_bool); //$NON-NLS-1$
-		keywords.put("catch".toCharArray(), IToken.t_catch); //$NON-NLS-1$
-		keywords.put("class".toCharArray(), IToken.t_class); //$NON-NLS-1$
-		keywords.put("const_cast".toCharArray(), IToken.t_const_cast); //$NON-NLS-1$
-		keywords.put("delete".toCharArray(), IToken.t_delete); //$NON-NLS-1$
-		keywords.put("dynamic_cast".toCharArray(), IToken.t_dynamic_cast); //$NON-NLS-1$
-		keywords.put("explicit".toCharArray(), IToken.t_explicit); //$NON-NLS-1$
-		keywords.put("export".toCharArray(), IToken.t_export); //$NON-NLS-1$
-		keywords.put("false".toCharArray(), IToken.t_false); //$NON-NLS-1$
-		keywords.put("friend".toCharArray(), IToken.t_friend); //$NON-NLS-1$
-		keywords.put("mutable".toCharArray(), IToken.t_mutable); //$NON-NLS-1$
-		keywords.put("namespace".toCharArray(), IToken.t_namespace); //$NON-NLS-1$
-		keywords.put("new".toCharArray(), IToken.t_new); //$NON-NLS-1$
-		keywords.put("operator".toCharArray(), IToken.t_operator); //$NON-NLS-1$
-		keywords.put("private".toCharArray(), IToken.t_private); //$NON-NLS-1$
-		keywords.put("protected".toCharArray(), IToken.t_protected); //$NON-NLS-1$
-		keywords.put("public".toCharArray(), IToken.t_public); //$NON-NLS-1$
-		keywords.put("reinterpret_cast".toCharArray(), IToken.t_reinterpret_cast); //$NON-NLS-1$
-		keywords.put("static_cast".toCharArray(), IToken.t_static_cast); //$NON-NLS-1$
-		keywords.put("template".toCharArray(), IToken.t_template); //$NON-NLS-1$
-		keywords.put("this".toCharArray(), IToken.t_this); //$NON-NLS-1$
-		keywords.put("throw".toCharArray(), IToken.t_throw); //$NON-NLS-1$
-		keywords.put("true".toCharArray(), IToken.t_true); //$NON-NLS-1$
-		keywords.put("try".toCharArray(), IToken.t_try); //$NON-NLS-1$
-		keywords.put("typeid".toCharArray(), IToken.t_typeid); //$NON-NLS-1$
-		keywords.put("typename".toCharArray(), IToken.t_typename); //$NON-NLS-1$
-		keywords.put("using".toCharArray(), IToken.t_using); //$NON-NLS-1$
-		keywords.put("virtual".toCharArray(), IToken.t_virtual); //$NON-NLS-1$
-		keywords.put("wchar_t".toCharArray(), IToken.t_wchar_t); //$NON-NLS-1$
+		cppkeywords = words;
+		cppkeywords.put("asm".toCharArray(), IToken.t_asm); //$NON-NLS-1$
+		cppkeywords.put("bool".toCharArray(), IToken.t_bool); //$NON-NLS-1$
+		cppkeywords.put("catch".toCharArray(), IToken.t_catch); //$NON-NLS-1$
+		cppkeywords.put("class".toCharArray(), IToken.t_class); //$NON-NLS-1$
+		cppkeywords.put("const_cast".toCharArray(), IToken.t_const_cast); //$NON-NLS-1$
+		cppkeywords.put("delete".toCharArray(), IToken.t_delete); //$NON-NLS-1$
+		cppkeywords.put("dynamic_cast".toCharArray(), IToken.t_dynamic_cast); //$NON-NLS-1$
+		cppkeywords.put("explicit".toCharArray(), IToken.t_explicit); //$NON-NLS-1$
+		cppkeywords.put("export".toCharArray(), IToken.t_export); //$NON-NLS-1$
+		cppkeywords.put("false".toCharArray(), IToken.t_false); //$NON-NLS-1$
+		cppkeywords.put("friend".toCharArray(), IToken.t_friend); //$NON-NLS-1$
+		cppkeywords.put("mutable".toCharArray(), IToken.t_mutable); //$NON-NLS-1$
+		cppkeywords.put("namespace".toCharArray(), IToken.t_namespace); //$NON-NLS-1$
+		cppkeywords.put("new".toCharArray(), IToken.t_new); //$NON-NLS-1$
+		cppkeywords.put("operator".toCharArray(), IToken.t_operator); //$NON-NLS-1$
+		cppkeywords.put("private".toCharArray(), IToken.t_private); //$NON-NLS-1$
+		cppkeywords.put("protected".toCharArray(), IToken.t_protected); //$NON-NLS-1$
+		cppkeywords.put("public".toCharArray(), IToken.t_public); //$NON-NLS-1$
+		cppkeywords.put("reinterpret_cast".toCharArray(), IToken.t_reinterpret_cast); //$NON-NLS-1$
+		cppkeywords.put("static_cast".toCharArray(), IToken.t_static_cast); //$NON-NLS-1$
+		cppkeywords.put("template".toCharArray(), IToken.t_template); //$NON-NLS-1$
+		cppkeywords.put("this".toCharArray(), IToken.t_this); //$NON-NLS-1$
+		cppkeywords.put("throw".toCharArray(), IToken.t_throw); //$NON-NLS-1$
+		cppkeywords.put("true".toCharArray(), IToken.t_true); //$NON-NLS-1$
+		cppkeywords.put("try".toCharArray(), IToken.t_try); //$NON-NLS-1$
+		cppkeywords.put("typeid".toCharArray(), IToken.t_typeid); //$NON-NLS-1$
+		cppkeywords.put("typename".toCharArray(), IToken.t_typename); //$NON-NLS-1$
+		cppkeywords.put("using".toCharArray(), IToken.t_using); //$NON-NLS-1$
+		cppkeywords.put("virtual".toCharArray(), IToken.t_virtual); //$NON-NLS-1$
+		cppkeywords.put("wchar_t".toCharArray(), IToken.t_wchar_t); //$NON-NLS-1$
 
 		// C++ operator alternative
-		keywords.put("and".toCharArray(), IToken.t_and); //$NON-NLS-1$
-		keywords.put("and_eq".toCharArray(), IToken.t_and_eq); //$NON-NLS-1$
-		keywords.put("bitand".toCharArray(), IToken.t_bitand); //$NON-NLS-1$
-		keywords.put("bitor".toCharArray(), IToken.t_bitor); //$NON-NLS-1$
-		keywords.put("compl".toCharArray(), IToken.t_compl); //$NON-NLS-1$
-		keywords.put("not".toCharArray(), IToken.t_not); //$NON-NLS-1$
-		keywords.put("not_eq".toCharArray(), IToken.t_not_eq); //$NON-NLS-1$
-		keywords.put("or".toCharArray(), IToken.t_or); //$NON-NLS-1$
-		keywords.put("or_eq".toCharArray(), IToken.t_or_eq); //$NON-NLS-1$
-		keywords.put("xor".toCharArray(), IToken.t_xor); //$NON-NLS-1$
-		keywords.put("xor_eq".toCharArray(), IToken.t_xor_eq); //$NON-NLS-1$
+		cppkeywords.put("and".toCharArray(), IToken.t_and); //$NON-NLS-1$
+		cppkeywords.put("and_eq".toCharArray(), IToken.t_and_eq); //$NON-NLS-1$
+		cppkeywords.put("bitand".toCharArray(), IToken.t_bitand); //$NON-NLS-1$
+		cppkeywords.put("bitor".toCharArray(), IToken.t_bitor); //$NON-NLS-1$
+		cppkeywords.put("compl".toCharArray(), IToken.t_compl); //$NON-NLS-1$
+		cppkeywords.put("not".toCharArray(), IToken.t_not); //$NON-NLS-1$
+		cppkeywords.put("not_eq".toCharArray(), IToken.t_not_eq); //$NON-NLS-1$
+		cppkeywords.put("or".toCharArray(), IToken.t_or); //$NON-NLS-1$
+		cppkeywords.put("or_eq".toCharArray(), IToken.t_or_eq); //$NON-NLS-1$
+		cppkeywords.put("xor".toCharArray(), IToken.t_xor); //$NON-NLS-1$
+		cppkeywords.put("xor_eq".toCharArray(), IToken.t_xor_eq); //$NON-NLS-1$
 		
 		// Preprocessor keywords
 		ppKeywords = new CharArrayIntMap(16, -1);

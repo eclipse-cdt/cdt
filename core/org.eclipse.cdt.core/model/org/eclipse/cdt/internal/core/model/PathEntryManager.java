@@ -735,7 +735,7 @@ public class PathEntryManager implements ICDescriptorListener {
 					if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
 						isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 					}
-					return CoreModel.newIncludeEntry(path, includePath, basePath, isSystemInclude, exclusionPatterns);
+					return CoreModel.newIncludeEntry(path, includePath, basePath, isSystemInclude, exclusionPatterns, isExported);
 				}
 			case IPathEntry.CDT_MACRO :
 				{

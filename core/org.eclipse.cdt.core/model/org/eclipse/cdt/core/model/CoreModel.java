@@ -439,8 +439,7 @@ public class CoreModel {
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
-	 *            wheter this include path should be consider the system
-	 *            include path
+	 *            whether this include path should be consider a system include path
 	 * @return IIncludeEntry
 	 */
 	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude) {
@@ -457,9 +456,6 @@ public class CoreModel {
 	 * @param isSystemInclude
 	 *            wheter this include path should be consider the system
 	 *            include path
-	 * @param isRecursive
-	 *            if the resource is a folder the include applied to all
-	 *            recursively
 	 * @param exclusionPatterns
 	 *            exclusion patterns in the resource if a container
 	 * @return IIincludeEntry
@@ -489,14 +485,35 @@ public class CoreModel {
 	 */
 	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, IPath basePath, boolean isSystemInclude,
 			 IPath[] exclusionPatterns) {
-		return new IncludeEntry(resourcePath, includePath, basePath, isSystemInclude, exclusionPatterns);
+		return newIncludeEntry(resourcePath, includePath, basePath, isSystemInclude, exclusionPatterns, resourcePath == null || resourcePath.isEmpty());
+	}
+
+	/**
+	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
+	 * 
+	 * @param path
+	 *            the affected project-relative resource path
+	 * @param includePath
+	 *            the path of the include
+	 * @param basePath
+	 *            the base path of the include
+	 * @param isSystemInclude
+	 *            wheter this include path should be consider the system
+	 *            include path
+	 * @param exclusionPatterns
+	 *            exclusion patterns in the resource if a container
+	 * @param isExported
+	 *            if the entry ix exported to reference projects
+	 * @return IIincludeEntry
+	 */
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, IPath basePath, boolean isSystemInclude,
+			 IPath[] exclusionPatterns, boolean isExported) {
+		return new IncludeEntry(resourcePath, includePath, basePath, isSystemInclude, exclusionPatterns, isExported);
 	}
 
 	/**
 	 * Creates and returns an entry kind <code>CDT_MACRO</code>
 	 * 
-	 * @param path
-	 *            the affected workspace-relative resource path
 	 * @param macroName
 	 *            the name of the macro
 	 * @param macroValue

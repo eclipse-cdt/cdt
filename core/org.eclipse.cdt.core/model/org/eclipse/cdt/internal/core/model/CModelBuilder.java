@@ -67,7 +67,9 @@ public class CModelBuilder {
 	private org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
 	private Map newElements;
 	private IQuickParseCallback quickParseCallback; 
-	private IASTCompilationUnit compilationUnit; 
+	private IASTCompilationUnit compilationUnit;
+	// indicator if the unit has parse errors
+	private boolean hasNoErrors = false;
 		
 	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
 		this.translationUnit = tu ;
@@ -140,7 +142,8 @@ public class CModelBuilder {
 			throw new ParserException( CCorePlugin.getResourceString("CModelBuilder.Parser_Construction_Failure")); //$NON-NLS-1$
 		}
 		// call parse
-		if( ! parser.parse() && throwExceptionOnError )
+		hasNoErrors = parser.parse(); 
+		if( (!hasNoErrors)  && throwExceptionOnError )
 			throw new ParserException(CCorePlugin.getResourceString("CModelBuilder.Parse_Failure")); //$NON-NLS-1$
 		return quickParseCallback.getCompilationUnit(); 
 	}
@@ -161,6 +164,8 @@ public class CModelBuilder {
 		try
 		{ 
 			generateModelElements();
+			// important to know if the unit has parse errors or not
+			translationUnit.getElementInfo().setIsStructureKnown(hasNoErrors);
 		}
 		catch( NullPointerException npe )
 		{

@@ -1,3 +1,7 @@
+2004-03-04 Hoda Amer
+	The CModelBuilder is reporting to the TranslationUnit 
+	whether parsing was successful or not.
+	
 2004-03-03 Alain Magloire
 
 	When changing the BinaryParser the BinaryRunners

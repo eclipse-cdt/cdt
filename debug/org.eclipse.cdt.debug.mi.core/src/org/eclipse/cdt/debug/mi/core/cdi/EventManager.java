@@ -39,17 +39,21 @@ import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 public class EventManager extends SessionObject implements ICDIEventManager, Observer {
 
 	List list = Collections.synchronizedList(new ArrayList(1));
-	boolean isEnable = true;
+	List tokenList = new ArrayList(1); 
 
 	/**
-	 * Process the event from MI and do any state work on the CDI.
+	 * Process the event from MI, do any state work on the CDI,
+	 * and fire the corresponding CDI event.
 	 */
 	public void update(Observable o, Object arg) {
 		MIEvent miEvent = (MIEvent)arg;
 		CSession session = getCSession();
 		List cdiList = new ArrayList(1);
 
-		if (miEvent instanceof MIStoppedEvent) {
+		if (ignoreEventToken(miEvent.getToken())) {
+				miEvent = miEvent;
+			// Ignore the event if it is on the ignore list.
+		} else if (miEvent instanceof MIStoppedEvent) {
 			processSuspendedEvent(miEvent);
 			cdiList.add(new SuspendedEvent(session, miEvent));
 		} else if (miEvent instanceof MIRunningEvent) {
@@ -90,10 +94,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 
 		// Fire the event;
-		if (isEnable) {
-			ICDIEvent[] cdiEvents = (ICDIEvent[])cdiList.toArray(new ICDIEvent[0]);
-			fireEvent(cdiEvents);
-		}
+		ICDIEvent[] cdiEvents = (ICDIEvent[])cdiList.toArray(new ICDIEvent[0]);
+		fireEvents(cdiEvents);
 	}
 
 	public EventManager(CSession session) {
@@ -114,7 +116,11 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		list.remove(listener);
 	}
 
-	private void fireEvent(ICDIEvent[] cdiEvents) {
+
+	/**
+	 * Send ICDIEvent to the listeners.
+	 */
+	private void fireEvents(ICDIEvent[] cdiEvents) {
 		if (cdiEvents != null) {
 			for (int i = 0; i < cdiEvents.length; i++) {
 				fireEvent(cdiEvents[i]);
@@ -122,6 +128,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 	}
 
+	/**
+	 * Send ICDIEvent to the listeners.
+	 */
 	private void fireEvent(ICDIEvent cdiEvent) {
 		if (cdiEvent != null) {
 			ICDIEventListener[] listeners =
@@ -178,18 +187,51 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 	}
 
+	/**
+	 * Do any processing of before a running event.
+	 */
 	void processRunningEvent() {
 		//CTarget target = getCSession().getCTarget();
 		//target.clearState();
 	}
 
 
-	void disableEvents() {
-		isEnable = false;
+	/**
+	 * Ignore Event with token id.
+	 */
+	void disableEventToken(int token) {
+		tokenList.add(new Integer(token));
 	}
 
-	void enableEvents() {
-		isEnable = true;
+	/**
+	 * Ignore events with token ids.
+	 */
+	void disableEventTokens(int [] tokens) {
+		for (int i = 0; i < tokens.length; i++) {
+			disableEventToken(tokens[i]);
+		}
 	}
 
+	/**
+	 * Reenable sending events with this token.
+	 */
+	void enableEventToken(int token) {
+		Integer t = new Integer(token);
+		if (tokenList.contains(t)) {
+			tokenList.remove(t);
+		}
+	}
+
+	/**
+	 * Reenable sending events with this token.
+	 */
+	void enableEventTokens(int [] tokens) {
+		for (int i = 0; i < tokens.length; i++) {
+			enableEventToken(tokens[i]);
+		}
+	}
+
+	private boolean ignoreEventToken(int token) {
+		return tokenList.contains(new Integer(token));
+	}
 }

@@ -5,19 +5,25 @@ package org.eclipse.cdt.internal.ui.cview;
  * All Rights Reserved.
  */
  
-import org.eclipse.jface.viewers.ViewerSorter;
-
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.cdt.core.model.ICRoot;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICFolder;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.IArchiveContainer;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.ICFolder;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.IMacro;
+import org.eclipse.cdt.core.model.INamespace;
+import org.eclipse.cdt.core.model.IUsing;
+import org.eclipse.cdt.core.model.IVariable;
+import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  *	A sorter to sort the file and the folders in the C viewer in the following order:
@@ -51,27 +57,57 @@ public class CViewSorter extends ViewerSorter {
 				String ext = res.getFileExtension();
 				if (ext != null) {
 					if (ext.equals("h") || ext.equals("hh")) {
-						return 50;
+						return 42;
 					}
 					if (ext.equals("c") || ext.equals("C") || ext.equals("cc") || ext.equals("cpp")) {
-						return 51;
+						return 44;
 					}
-					return 52;
+					return 48;
 				}
-				return 53;
+				return 49;
 			}
-			return 54;
+			return 50;
+		} else if (element instanceof IInclude) {
+			return 60;
+		} else if (element instanceof IMacro) {
+			return 70;
+		} else if (element instanceof INamespace) {
+			return 80;
+		} else if (element instanceof IUsing) {
+			return 90;
+		} else if (element instanceof IFunctionDeclaration) {
+			return 100;
+		} else if (element instanceof IVariableDeclaration) {
+			return 110;
+		} else if (element instanceof IVariable) {
+			String name = ((ICElement)element).getElementName();
+			if (name.startsWith("__")) {
+				return 112;
+			}
+			if (name.charAt(0) == '_') {
+				return 114;
+			}
+			return 120;
+		} else if (element instanceof IFunction) {
+			String name = ((ICElement)element).getElementName();
+			if (name.startsWith("__")) {
+				return 122;
+			}
+			if (name.charAt(0) == '_') {
+				return 124;
+			}
+			return 130;
 		} else if (element instanceof ICElement) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) {
-				return 68;
+				return 132;
 			}
 			if (name.charAt(0) == '_') {
-				return 67;
+				return 134;
 			}
-			return 60;
+			return 140;
 		} else if (element instanceof IArchive) {
-			return 70;
+			return 150;
 		}
 		return 80;
 	}

@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -790,6 +791,87 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstances( collector, f, 3 );
 		assertInstances( collector, g, 2 );
 		assertInstances( collector, h, 2 );
+    }
+    
+    public void testProblem_AmbiguousInParent() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class P1 { public: int x; };        \n" ); //$NON-NLS-1$
+        buffer.append( "class P2 { public: int x; };        \n" ); //$NON-NLS-1$
+        buffer.append( "class B : public P1, public P2 {};  \n" ); //$NON-NLS-1$
+        buffer.append( "void main() {                       \n" ); //$NON-NLS-1$
+        buffer.append( "   B * b = new B();                 \n" ); //$NON-NLS-1$
+        buffer.append( "   b->x;                            \n" ); //$NON-NLS-1$
+        buffer.append( "}                                   \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		IProblemBinding x = (IProblemBinding) collector.getName( 12 ).resolveBinding();
+		assertEquals( x.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
+    }
+    
+    public void testVirtualParentLookup() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class D { public: int x; };       \n" ); //$NON-NLS-1$
+        buffer.append( "class C : public virtual D {};    \n" ); //$NON-NLS-1$
+        buffer.append( "class B : public virtual D {};    \n" ); //$NON-NLS-1$
+        buffer.append( "class A : public B, public C {};  \n" ); //$NON-NLS-1$
+        buffer.append( "void main() {                     \n" ); //$NON-NLS-1$
+        buffer.append( "   A * a = new A();               \n" ); //$NON-NLS-1$
+        buffer.append( "   a->x;                          \n" ); //$NON-NLS-1$
+        buffer.append( "}                                 \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		assertEquals( collector.size(), 15 );
+		
+		ICPPClassType D = (ICPPClassType) collector.getName( 0 ).resolveBinding();
+		ICPPField x = (ICPPField) collector.getName( 1 ).resolveBinding();
+		ICPPClassType C = (ICPPClassType) collector.getName( 2 ).resolveBinding();
+		ICPPClassType B = (ICPPClassType) collector.getName( 4 ).resolveBinding();
+		ICPPClassType A = (ICPPClassType) collector.getName( 6 ).resolveBinding();
+		
+		assertInstances( collector, D, 3 );
+		assertInstances( collector, C, 2 );
+		assertInstances( collector, B, 2 );
+		assertInstances( collector, A, 3 );
+		assertInstances( collector, x, 2 );
+    }
+    
+    public void testAmbiguousVirtualParentLookup() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "class D { public: int x; };        \n" ); //$NON-NLS-1$
+        buffer.append( "class C : public D {};             \n" ); //$NON-NLS-1$
+        buffer.append( "class B : public D {};             \n" ); //$NON-NLS-1$
+        buffer.append( "class A : public B, public C {};   \n" ); //$NON-NLS-1$
+        buffer.append( "void main() {                      \n" ); //$NON-NLS-1$
+        buffer.append( "   A * a = new A();                \n" ); //$NON-NLS-1$
+        buffer.append( "   a->x;                           \n" ); //$NON-NLS-1$
+        buffer.append( "}                                  \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		assertEquals( collector.size(), 15 );
+		
+		ICPPClassType D = (ICPPClassType) collector.getName( 0 ).resolveBinding();
+		ICPPField x1 = (ICPPField) collector.getName( 1 ).resolveBinding();
+		ICPPClassType C = (ICPPClassType) collector.getName( 2 ).resolveBinding();
+		ICPPClassType B = (ICPPClassType) collector.getName( 4 ).resolveBinding();
+		ICPPClassType A = (ICPPClassType) collector.getName( 6 ).resolveBinding();
+		
+		IProblemBinding x2 = (IProblemBinding) collector.getName( 14 ).resolveBinding();
+		assertEquals( x2.getID(), IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP );
+		
+		assertInstances( collector, D, 3 );
+		assertInstances( collector, C, 2 );
+		assertInstances( collector, B, 2 );
+		assertInstances( collector, A, 3 );
+		assertInstances( collector, x1, 1 );
     }
 }
 

@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -72,6 +73,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
@@ -99,6 +101,7 @@ public class CPPSemantics {
 		public Object [] functionParameters;
 		public boolean forUserDefinedConversion;
 		public boolean forUsingDeclaration;
+        public ProblemBinding problem;
 		
 		public LookupData( char[] n ){
 			name = n;
@@ -249,9 +252,12 @@ public class CPPSemantics {
 		//2: lookup
 		lookup( data, name );
 		
+		if( data.problem != null )
+		    return data.problem;
+		
 		//3: resolve ambiguities
 		IBinding binding = resolveAmbiguities( data, name );
-		if( binding != null && data.forDefinition ){
+		if( binding != null && data.forDefinition && !( binding instanceof IProblemBinding ) ){
 			addDefinition( binding, name );
 		}
 		return binding;
@@ -371,14 +377,14 @@ public class CPPSemantics {
 				}
 			}
 			
-			if( data.foundItems != null && !data.foundItems.isEmpty() )
+			if( data.problem != null || data.foundItems != null && !data.foundItems.isEmpty() )
 				return;
 			
 			if( !data.usingDirectivesOnly && scope instanceof ICPPClassScope ){
 				data.foundItems = lookupInParents( data, (ICPPClassScope) scope );
 			}
 			
-			if( data.foundItems != null && !data.foundItems.isEmpty() )
+			if( data.problem != null || data.foundItems != null && !data.foundItems.isEmpty() )
 				return;
 			
 			//if still not found, loop and check our containing scope
@@ -433,7 +439,8 @@ public class CPPSemantics {
 						inherited = lookupInParents( data, parent );
 					}
 				} else {
-					//throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
+				    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_CIRCULAR_INHERITANCE, bases[i].getName().toCharArray() );
+				    return null;
 				}
 			}	
 			
@@ -444,8 +451,8 @@ public class CPPSemantics {
 					for( int j = 0; j < result.size(); j++ ) {
 						IASTName n = (IASTName) result.get(j);
 						if( !checkAmbiguity( n, inherited ) ){
-							//throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-							return null;
+						    data.problem = new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, n.toCharArray() ); 
+						    return null;
 						}
 					}
 				}
@@ -781,7 +788,7 @@ public class CPPSemantics {
 	        	if( type == null ){
 	                type = temp;
 	            } else {
-	                //TODO
+	                return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	            }
 	        } else if( temp instanceof IFunction ){
 	        	if( fns == null )
@@ -791,7 +798,7 @@ public class CPPSemantics {
 	        	if( obj == null )
 	        		obj = temp;
 	        	else {
-	        		//TODO
+	        	    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	        	}
 	        }
 	    }
@@ -801,17 +808,17 @@ public class CPPSemantics {
 	    		return type;
 	    	IScope typeScope = type.getScope();
 	    	if( obj != null && obj.getScope() != typeScope ){
-	    		return null;//ambiguous
+	    	    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	    	} else if( fns != null ){
 	    		for( int i = 0; i < fns.size(); i++ ){
 	    			if( ((IBinding)fns.get(i)).getScope() != typeScope )
-	    				return null; //ambiguous
+	    			    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	    		}
 	    	}
 	    }
 	    if( fns != null){
 	    	if( obj != null )
-	    		return null; //ambiguous
+	    		return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	    	return resolveFunction( data, fns );
 	    }
 	    
@@ -1048,7 +1055,7 @@ public class CPPSemantics {
 
 		
 		if( ambiguous || bestHasAmbiguousParam ){
-			return null; //TODO throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+			return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 		}
 						
 		return bestFn;

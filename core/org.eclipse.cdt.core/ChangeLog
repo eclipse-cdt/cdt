@@ -1,4 +1,8 @@
 2005-03-30 Alain Magloire
+	Patch from Alex Chapiro, tentative fix for PR 89662
+	* utils/org/eclipse/cdt/utils/spawner/EnvironmentReader.java
+
+2005-03-30 Alain Magloire
 	Delay the processing/parsing of the WorkingCopy when creating the workingcopy
 	This should speed the opening  of the CEditor.
 	PR 74182

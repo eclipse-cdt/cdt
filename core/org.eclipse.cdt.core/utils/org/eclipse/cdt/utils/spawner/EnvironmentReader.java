@@ -13,8 +13,9 @@ package org.eclipse.cdt.utils.spawner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.ByteOrder;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -35,6 +36,7 @@ public class EnvironmentReader {
 		InputStream in = null;
 		boolean check_ready = false;
 		boolean isWin32 = false;
+		String charSet = null;
 		if (OS.startsWith("windows 9") || OS.startsWith("windows me")) { // 95, 98, me //$NON-NLS-1$ //$NON-NLS-2$
 			command = "command.com /c set"; //$NON-NLS-1$
 			//The buffered stream doesn't always like windows 98
@@ -42,13 +44,18 @@ public class EnvironmentReader {
 			isWin32 = true;
 		} else 
 		if (OS.startsWith("windows ")) { //$NON-NLS-1$
-			command = "cmd.exe /c set"; //$NON-NLS-1$
+			command = "cmd.exe /u /c  set"; //$NON-NLS-1$
 			isWin32 = true;
+			charSet = "UTF-16" + (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder()) ? "BE" : "LE");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		try {
 			p = ProcessFactory.getFactory().exec(command);
 			in = p.getInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			BufferedReader br;
+			if(null == charSet) 
+				br = new BufferedReader(new InputStreamReader(in));
+			else
+				br = new BufferedReader(new InputStreamReader(in, charSet));
 			String line;
 			while ((line = br.readLine()) != null) {
 				rawVars.add(line);

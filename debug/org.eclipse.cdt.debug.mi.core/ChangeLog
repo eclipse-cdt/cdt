@@ -1,3 +1,9 @@
+2005-03-23 Alain Magloire
+	Changes in the CDI ICDIMemoryBlock && ICDIMemoryBlockManagement API.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/MemoryManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/MemoryBlock.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	
 2005-03-09 Mikhail Khodjaiants
 	Fix for bug 87546: Obsolete debug MI settings in Preference need to be removed.
 	* RegisterManager.java

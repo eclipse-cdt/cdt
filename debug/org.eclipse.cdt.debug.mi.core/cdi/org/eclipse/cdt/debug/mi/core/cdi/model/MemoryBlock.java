@@ -37,13 +37,15 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	boolean dirty;
 
 	private MIDataReadMemoryInfo mem;
+	private int fWordSize;
 	private BigInteger cStartAddress; //cached start address
 	private byte[] cBytes; //cached bytes
 	private int[] badOffsets;
 
-	public MemoryBlock(Target target, String exp, MIDataReadMemoryInfo info) {
+	public MemoryBlock(Target target, String exp, int wordSize, MIDataReadMemoryInfo info) {
 		super(target);
 		expression = exp;
+		fWordSize = wordSize;
 		frozen = true;
 		setMIDataReadMemoryInfo(info);
 	}
@@ -53,6 +55,13 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 */
 	public String getExpression() {
 		return expression;
+	}
+
+	/**
+	 * @return the size of each memory word in bytes. 
+	 */
+	public int getWordSize() {
+		return fWordSize;
 	}
 
 	/**

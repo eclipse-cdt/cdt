@@ -888,17 +888,9 @@ public class Target extends SessionObject implements ICDITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#createMemoryBlock(java.lang.String, int)
 	 */
-	public ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException {
+	public ICDIMemoryBlock createMemoryBlock(String address, int units, int wordSize) throws CDIException {
 		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
-		return memMgr.createMemoryBlock(this, address, length);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlockManagement#createMemoryBlock(java.math.BigInteger, int)
-	 */
-	public ICDIMemoryBlock createMemoryBlock(BigInteger address, int length) throws CDIException {
-		MemoryManager memMgr = ((Session)getSession()).getMemoryManager();
-		return memMgr.createMemoryBlock(this, address, length);
+		return memMgr.createMemoryBlock(this, address, units, wordSize);
 	}
 
 	/* (non-Javadoc)

@@ -134,16 +134,17 @@ public class MemoryManager extends Manager {
 	MemoryBlock cloneBlock(MemoryBlock block) throws CDIException {
 		Target target = (Target)block.getTarget();
 		String exp = block.getExpression();
-		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), exp, (int)block.getLength());
-		return new MemoryBlock(target, exp, info);
+		int wordSize = block.getWordSize();
+		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), exp, (int)block.getLength(), wordSize);
+		return new MemoryBlock(target, exp, wordSize, info);
 	}
 
 	/**
 	 * Post a -data-read-memory to gdb/mi.
 	 */
-	MIDataReadMemoryInfo createMIDataReadMemoryInfo(MISession miSession, String exp, int length) throws CDIException {
+	MIDataReadMemoryInfo createMIDataReadMemoryInfo(MISession miSession, String exp, int units, int wordSize) throws CDIException {
 		CommandFactory factory = miSession.getCommandFactory();
-		MIDataReadMemory mem = factory.createMIDataReadMemory(0, exp, MIFormat.HEXADECIMAL, 1, 1, length, null);
+		MIDataReadMemory mem = factory.createMIDataReadMemory(0, exp, MIFormat.HEXADECIMAL, wordSize, 1, units, null);
 		try {
 			miSession.postCommand(mem);
 			MIDataReadMemoryInfo info = mem.getMIDataReadMemoryInfo();
@@ -156,14 +157,9 @@ public class MemoryManager extends Manager {
 		}
 	}
 
-	public ICDIMemoryBlock createMemoryBlock(Target target, BigInteger address, int length)
-		throws CDIException {
-		return createMemoryBlock(target, address.toString(16), length);
-	}
-		
-	public ICDIMemoryBlock createMemoryBlock(Target target, String address, int length) throws CDIException {
-		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), address, length);
-		ICDIMemoryBlock block = new MemoryBlock(target, address, info);
+	public ICDIMemoryBlock createMemoryBlock(Target target, String address, int units, int wordSize) throws CDIException {
+		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(target.getMISession(), address, units, wordSize);
+		ICDIMemoryBlock block = new MemoryBlock(target, address, wordSize, info);
 		List blockList = getMemoryBlockList(target);
 		blockList.add(block);
 		MISession miSession = target.getMISession();

@@ -115,16 +115,12 @@ public class MIPlugin extends Plugin {
 		MISession session = createMISession(pgdb, pty, MISession.PROGRAM);
 		// For windows we need to start the inferior in a new console window
 		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
-		try {
-			CommandFactory factory = session.getCommandFactory();
-			MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
-			session.postCommand(set);
-			MIInfo info = set.getMIInfo();
-			if (info == null) {
-				throw new IOException("No answer");
-			}
-		} catch (MIException e) {
-			//throw new IOException("Failed to attach");
+		CommandFactory factory = session.getCommandFactory();
+		MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
+		session.postCommand(set);
+		MIInfo info = set.getMIInfo();
+		if (info == null) {
+			throw new MIException("No answer");
 		}
 		return new CSession(session, false);
 	}
@@ -161,27 +157,23 @@ public class MIPlugin extends Plugin {
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.ATTACH);
 		MIInfo info = null;
-		try {
-			CommandFactory factory = session.getCommandFactory();
-			if (targetParams != null && targetParams.length > 0) {
-				MITargetSelect target = factory.createMITargetSelect(targetParams);
-				session.postCommand(target);
-				info = target.getMIInfo();
-				if (info == null) {
-					throw new IOException("No answer");
-				}
-			}
-			MITargetAttach attach = factory.createMITargetAttach(pid);
-			session.postCommand(attach);
-			info = attach.getMIInfo();
+		CommandFactory factory = session.getCommandFactory();
+		if (targetParams != null && targetParams.length > 0) {
+			MITargetSelect target = factory.createMITargetSelect(targetParams);
+			session.postCommand(target);
+			info = target.getMIInfo();
 			if (info == null) {
-				throw new IOException("No answer");
+				throw new MIException("No answer");
 			}
-			//@@@ We have to manually set the suspended state when we attach
-			session.getMIInferior().setSuspended();
-		} catch (MIException e) {
-			throw new IOException("Failed to attach");
 		}
+		MITargetAttach attach = factory.createMITargetAttach(pid);
+		session.postCommand(attach);
+		info = attach.getMIInfo();
+		if (info == null) {
+			throw new MIException("No answer");
+		}
+		//@@@ We have to manually set the suspended state when we attach
+		session.getMIInferior().setSuspended();
 		return new CSession(session, true);
 	}
 

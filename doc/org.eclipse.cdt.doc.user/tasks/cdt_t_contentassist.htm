@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Using Content Assist</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -22,12 +28,12 @@ commonly-used snippets of code.</p>
 
 <ol>
   <li>In the C/C++ editor, type at least the first letter of a code template or 
-  element.</li>
-  <li>Click <b>Edit &gt; Content Assist</b>.<br>
+  element then <b>Ctrl+Space</b>.<br>
   A list displays the code templates 
-    <img border="0" src="../images/template_obj.gif" width="16" height="16"> followed by the elements, in 
-  alphabetical order, that start with the letter combination 
-  you typed.</li>
+    <img border="0" src="../images/template_obj.gif" width="16" height="16"> followed by the elements that start with the letter combination you typed.</li>
+	<img src="../images/contentAssist_example.png" width="299" height="272" onClick="changeSize(this,299,272);" 
+         alt="Screen Capture of Content Assist Example" title="click to toggle image size">
+	
   <li>Do one of the following: 
   <ul>
     <li>Continue typing. The list shortens. When there is only one item in the 
@@ -39,27 +45,26 @@ commonly-used snippets of code.</p>
 </ol>
 
 <p>To set Content Assist preferences:</p>
-
 <ol>
   <li>Click <b>Window &gt; Preferences</b>.</li>
   <li>Expand <b>C/C++</b>, and click<b>C/C++ Editor</b>.</li>
-  <li>Click the <b>Content Assist</b> tab.</li>
+  <li>Click the <b>Content Assist</b> tab.<br>
+  <img src="../images/contentAssist_preferences.png" width="334" height="263" onClick="changeSize(this,334,263);" 
+       alt="Screen Capture of Content Assist Preferences" title="click to toggle image size"></li>
   <li>Do  the following: 
   <ul>
-    <li>To insert an element when you open Content Assist and it is the only 
-    item 
-    in the list, select the <b>Insert single proposals automatically</b> check 
-    box.</li>
-    <li>To automatically open Content Assist when you type the first letter of an 
-    element for which there is a match, select the <b>Enable auto activation</b>. 
-    </li>
-    <li>To turn on Content Assist after a given number of seconds, type a value 
-    in the <b>Auto activation delay</b> box.</li>
-    <li>To specify a character that, if typed in the C/C++ editor, causes code 
-    assist to be invoked immediately&nbsp; before the delay times out, type a 
-    trigger in the <b>Auto activation triggers for C:</b> box.</li>
-    <li>To change the background color of the Content Assist dialog box, click 
-    the color palette button.</li>
+    <li>To change the scope from which Content Assist retrieves its proposals, select 
+	either <b>Search current file and included files</b> or <b>Search current project</b> 
+	by selecting the appropriate the radio button.</li>
+	<li>To insert an element when you open Content Assist and it is the only 
+    item in the list, select the <b>Insert single proposals automatically</b> check box.</li>
+    <li>To automatically insert a proposal, if it is the only one found when Content Assist is invoked, select the <b>Enable auto activation</b> checkbox.</li>
+    <li>To display proposals in alphabetical order, rather than by relevance, select the <b>Present proposals in alphabetical order</b> checkbox. </li>
+    <li>To change the timeout deley for Content Assist enter the value for <b>Content Assist parsing timeout</b> in the text box area.</li>
+    <li>Enable Auto activation of content assist for ".", "->" or "::" triggers by selecting the appropriate checkboxes.
+	<li>To change the delay	before invoking Content Assist using the triggers (shown above), enter the new delay in the <b>Auto activation delay</b> text box area.
+    <li>To change the background color of the Content Assist dialog box, click the color palette button.</li>
+    <li>To change the foreground color of the Content Assist dialog box, click the color palette button.</li>
   </ul>
   </li>
   <li>Click <b>OK</b>.</li>

@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Creating a makefile</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -16,16 +22,21 @@
 
 <p>If you have  created a Standard Make C/C++ Project, you need to provide a makefile.</p>
 
-<p>When you build a project, output from make is displayed in the C-Build view. Makefile actions are displayed in the Make Targets 
+<p>When you build a project, output from make is displayed in the Console view. Makefile actions are displayed in the Make Targets 
 view.</p>
 <p>To create a makefile:</p>
 <ol>
-  <li>In the <b>C++ Projects</b> view, right-click a project, and select <b>New &gt; File</b>.</li>
+  <li>In the <b>C++ Projects</b> view, right-click a project, and select <b>New &gt; File</b>.<br>
+  <img src="../images/project_new_file.png" width="210" height="140" onClick="changeSize(this,210,140);" 
+       alt="Screen Capture of a task menu highlighting New > File in Projects View" title="click to toggle image size"></li>
   <li>In the <b>File name</b> box, type <b>makefile</b>.</li>
   <li>In the list of projects, verify that the correct project is selected.</li>
-  <li>Click <b>Finish</b>.</li>
-   <p>The C/C++ editor opens.</p>
-   <li>Type makefile instructions  in the C/C++ editor.</li>
+  <li>Click <b>Finish</b>.<br>
+  <img src="../images/project_new_file_name.png" width="219" height="287" onClick="changeSize(this,219,287);" 
+       alt="Screen Capture of a task menu highlighting New > File in Projects View" title="click to toggle image size"></li>
+   <li>The C/C++ editor opens. Type makefile instructions  in the C/C++ editor.<br>
+  <img src="../images/project_new_makefile.png" width="303" height="160" onClick="changeSize(this,303,160);" 
+       alt="Screen Capture of the Editor view with a sample makefile" title="click to toggle image size"></li>
   <li>Click <b>File &gt; 
   Save</b>.</li></ol>
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">

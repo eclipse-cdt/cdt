@@ -5,7 +5,6 @@
 <toc label="Concepts">
           <topic label="What's new" href="concepts/cdt_c_whatsnew.htm"/>
           <topic label="CDT overview" href="concepts/cdt_c_over_cdt.htm"/>
-          <topic label="How to bring C/C++ source files into Eclipse" href="concepts/cdt_w_existing_code.htm"/>
           <topic label="CDT Projects" href="concepts/cdt_o_projects.htm">
                <topic label="CDT projects" href="concepts/cdt_c_projects.htm"/>
                <topic label="Project file views" href="concepts/cdt_c_proj_file_views.htm"/>

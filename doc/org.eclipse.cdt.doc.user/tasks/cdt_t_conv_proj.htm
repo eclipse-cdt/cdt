@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Assigning a C or C++ nature to a project</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -19,9 +25,11 @@
 <p>To assign a C or C++ nature to a project</p>
 
 <ol>
-  <li>Click <b>File &gt; New &gt; Other</b>.</li>
+  <li>Click <b>File &gt; New &gt; Other</b>.<br>
+  <img src="../images/new_project.png" width="267" height="236" onClick="changeSize(this,267,236);" 
+         alt="Screen Capture of the New Project window" title="click to toggle image size"></li>
   <li>Click <b>C</b> or <b>C++</b>.</li>
-  <li>Click <b>Convert to Make Project</b>.</li>
+  <li>Click <b>Convert to C/C++ Make Project</b>.</li>
   <li>Click <b>Next</b>.</li>
   <li>In the Candidates for conversion list, select the projects to convert.</li>
   <li>In the Convert to C or C++ box, click <b>C Project</b> or <b>C++ Project</b>.</li>

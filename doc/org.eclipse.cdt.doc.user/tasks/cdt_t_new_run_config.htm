@@ -3,18 +3,23 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Creating a run or debug configuration</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
-
 <body>
 
 <h1>Creating a run or debug configuration</h1>
 
-<p>You can create customized run configuration that is saved for reuse.</p>
+<p>You can create customized run configuration which you can save for reuse.</p>
 
 <p>To create a run configuration:</p>
 
@@ -23,7 +28,9 @@
   <li>Click <b>Run &gt; Run</b> or <b>Run &gt; Debug</b>.</li>
   <li>In the <b>Configurations</b> box, expand <b>C/C++ Local</b>.</li>
   <li>Click <b>New</b>. The name of the new project is displayed in the 
-  Configurations box. The default name is the name of the project.</li>
+  Configurations box. The default name is the name of the project.<br>
+  <img src="../images/run_config.png" width="326" height="272" onClick="changeSize(this,326,272);" 
+	   alt="screen capture showing Run Configuration dialog box" title="click to toggle image size"> </li>
   <li>To change the default name of the new run/debug configuration, see
   <a href="cdt_t_run_main.htm">Selecting an application to run or debug</a>.</li>
 </ol>

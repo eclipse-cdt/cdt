@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Setting build order</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -28,7 +34,9 @@ propagated.</p>
 
 <ol>
   <li>Click <b>Window &gt; Preferences</b>.</li>
-  <li>Select <b>Build Order</b> from the list.</li>
+  <li>Select <b>Build Order</b> from the list.<br>
+  <img src="../images/build_order.png" width="318" height="270" onClick="changeSize(this,318,270);" alt="Screen capture of Build Order dialog box." title="click to toggle image size">
+  </li>
   <li>Clear the <b>Use default build order</b> checkbox. </li>
   <li>Select a project in the list.</li>
   <li>Do one of the following:</li>

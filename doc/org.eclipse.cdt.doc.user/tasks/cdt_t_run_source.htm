@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Specifying the location of source files</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -27,28 +33,35 @@ project.</p>
   <li>Select a run or debug configuration.</li>
   <li>Click the <b>Source</b> tab.<p>The Generic Source Locations list shows 
   the location of the project selected in the C/C++ Projects view and any 
-  referenced projects.</p></li></ol>
-<p> To add an existing source locations:</p>  
-<ol><li>To add an existing project to the <b>Additional Source Locations</b> 
-    list, click <b>Add</b> to be prompted to select a process from a list at 
-    run-time.</li>
-    <li>In the <b>Add Source Location</b> dialog box, select a location type.</li>
-    <li>Click <b>Next</b>.</li>
-    <li>Do one of the following:</li>
-    <ul><li>Select an existing project in your workspace. Click <b>Finish</b>.</li>
-    <li>Specify a location in your file system. Click <b>Finish</b>.</li></ul>
-    <li>Click <b>Run</b> or do the following, as required:<ul><li>To specify the 
-    execution arguments that an application uses and the working directory for a run 
-    configuration, see <a href="cdt_t_run_arg.htm">Specifying execution arguments</a>.</li><li>To set the environment variables 
-    and values to use when an application runs, see <a href="cdt_t_run_env.htm">
-    Setting environment variables</a>.</li>
-  <li>To select a debugger to use when debugging an application, see
-  <a href="cdt_t_run_dbg.htm">Selecting a debugger</a>.</li>
-  <li>To specify where the run configuration is stored, how you access it, and 
-  the perspective to open when running an application, see
-  <a href="cdt_t_run_com.htm">Specifying the location of the run configuration</a>.</li></ul>
-    
-  </ol>
+  referenced projects.<br>
+  	  <img src="../images/run_source.png" width="326" height="296" onClick="changeSize(this,326,296);" 
+           alt="Screen Capture of Run Source dialog box" title="click to toggle image size">
+  </li>
+	<li>To add an existing source locations:  
+	<ul>
+		<li>Click <b>Add</b> to be prompted to select a process from a list at run-time.</li>
+	    <li>In the <b>Add Source Location</b> dialog box, select a location type.</li>
+    	<li>Click <b>Next</b>.</li>
+	    <li>Do one of the following:</li>
+		    <ul><li>Select an existing project in your workspace. Click <b>Finish</b>.</li>
+			    <li>Specify a location in your file system. Click <b>Finish</b>.</li></ul>
+			</ul>
+		<li>You can change the order of source locations are used by selecting a location and clicking 
+			the <b>Up</b> or <b>Down</b> buttons.</li>
+		<li>You can remove a source location by selecting the location and clicking the <b>Remove</b> button.</li>
+		<li>To search for duplications in your source locations select the <b>Search for duplicate source files</b> checkbox.</li>
+	    <li>Click <b>Run</b> or do the following, as required:<ul><li>To specify the 
+		    execution arguments that an application uses and the working directory for a run 
+		    configuration, see <a href="cdt_t_run_arg.htm">Specifying execution arguments</a>.</li>
+		<li>To set the environment variables and values to use when an application runs, 
+			see <a href="cdt_t_run_env.htm"> Setting environment variables</a>.</li>
+		<li>To select a debugger to use when debugging an application, see
+			<a href="cdt_t_run_dbg.htm">Selecting a debugger</a>.</li>
+		<li>To specify where the run configuration is stored, how you access it, and 
+			the perspective to open when running an application, see
+			<a href="cdt_t_run_com.htm">Specifying the location of the run configuration</a>.</li>
+  </ul>
+</li>
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>

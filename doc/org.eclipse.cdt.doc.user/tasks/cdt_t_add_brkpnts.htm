@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Adding breakpoints</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -18,17 +24,13 @@
 enabled when you debug, the execution suspends before that line of code 
 executes.</p>
 
-<p>To add a breakpoint:</p>
-
-<ol>
-  <li>Point to the marker bar located in the left margin of the <b>C/C++ Editor</b> beside the line of code 
-  where you want to add a breakpoint.</li>
-  <li>Right-click the marker bar, and select <b>
-  Add Breakpoint</b>.</li>
-  <p>A dot <img alt="Icon: Breakpoint object" src="../images/icon_breakpoint_obj.gif" width="16" height="16"> is 
-  displayed in the marker bar and 
-  in the <b>Breakpoints</b> view, along with the name of the associated file.</p>
-</ol>
+<p>To add a breakpoint point, double click the marker bar located in the left margin of the 
+  <b>C/C++ Editor</b> beside the line of code where you want to add a breakpoint. A dot 
+  <img alt="Icon: Breakpoint object" src="../images/icon_breakpoint_obj.gif" width="16" height="16"> is 
+  displayed in the marker bar and in the <b>Breakpoints</b> view, along with the name of the associated file.<br>
+  <img src="../images/add_breakpoint.png" width="227" height="168" onClick="changeSize(this,227,168);" 
+       alt="Screen Capture of the edit view with the cursor highlighting a breakpoint" title="click to toggle image size">
+  </p>
 <p>For more information on marker bar icons, see <b>Workbench User Guide &gt; 
 Reference &gt; User interface information &gt; Icons and buttons &gt; Editor area 
 marker bar</b>.</p>

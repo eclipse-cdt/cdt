@@ -3,11 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Navigating to C/C++ declarations</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script>
+function changeSize(theImage,wd,ht) {
+	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
+	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
+	else {wdth=wd;hght=ht;}
+	theImage.style.width=wdth; theImage.style.height=hght;
+}
+</script>
 </head>
 
 <body>
@@ -22,7 +28,10 @@ element declarations on successfully compiled programs.</p>
 
 <ol>
   <li>In the C/C++ editor, select a declaration.</li>
-  <li>Right-click the selected declaration, select <b>Open Declarations</b>.</li>
+  <li>Right-click the selected declaration, select <b>Open Declarations</b>.<br>
+  <img src="../images/openDeclarations.png" width="208" height="140" onClick="changeSize(this,208,140);" 
+  alt="screen capture showing Open Declarations option" title="click to toggle image size">
+  </li>
 </ol>
 
 <p>For more information, see:<ul>

@@ -3,7 +3,7 @@
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
      <toc label="Reference">
-          <topic label="Views" href="cdt_o_views.htm">
+          <topic label="Views" href="reference/cdt_o_views.htm">
                <topic label="Outline view" href="reference/cdt_u_outlineview.htm"/>
                <topic label="Debug views" href="reference/cdt_o_dbg_view.htm">
                     <topic label="Registers view" href="reference/cdt_u_registersview.htm"/>

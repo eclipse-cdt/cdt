@@ -304,18 +304,16 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 			// OWNER_CHANGED
 			// EXT_CHANGED
 			// other
-			if (event.getType() != CDescriptorEvent.CDTPROJECT_ADDED) {
+			if (event.getType() == CDescriptorEvent.CDTPROJECT_ADDED) {
 				fOperationMap.put(event.getDescriptor(), event);
 			} else if (event.getType() == CDescriptorEvent.CDTPROJECT_REMOVED) {
 				fOperationMap.put(event.getDescriptor(), event);
 			} else {
 				CDescriptorEvent ev = (CDescriptorEvent) fOperationMap.get(event.getDescriptor());
-				if (ev.getType() == CDescriptorEvent.CDTPROJECT_CHANGED) {
-					if (ev.getFlags() == 0) {
-						fOperationMap.put(event.getDescriptor(), event);
-					} else if (ev.getFlags() != CDescriptorEvent.OWNER_CHANGED) {
-						fOperationMap.put(event.getDescriptor(), event);
-					}
+				if ( ev == null) {
+					fOperationMap.put(event.getDescriptor(), event);
+				} else if ((ev.getFlags() & event.getFlags()) != event.getFlags()) {
+					fOperationMap.put(event.getDescriptor(), new CDescriptorEvent(event.getDescriptor(), event.getType(), ev.getFlags() | event.getFlags()));
 				}
 			}
 			return;

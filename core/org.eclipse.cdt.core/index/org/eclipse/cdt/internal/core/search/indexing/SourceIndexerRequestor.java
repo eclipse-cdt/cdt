@@ -749,7 +749,10 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	}
 	
 	public boolean shouldRecordProblem( IProblem problem ){
-		 return problem.checkCategory( IProblem.PREPROCESSOR_RELATED );
+		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) ){
+			return problem.getID() != IProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
+		}
+		return false;
 	}
 
 	public void requestRemoveMarkers(IFile resource, IFile originator ){

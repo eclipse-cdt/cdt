@@ -4,6 +4,8 @@
  */
 package org.eclipse.cdt.debug.internal.core;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
@@ -12,11 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class DebugConfiguration implements ICDebugConfiguration {
-
 	/**
 	 * The configuration element of the extension.
 	 */
 	private IConfigurationElement fElement;
+	private HashSet fModes;
 
 	public DebugConfiguration(IConfigurationElement element) {
 		fElement = element;
@@ -50,8 +52,30 @@ public class DebugConfiguration implements ICDebugConfiguration {
 			platforms[i] = stoken.nextToken();
 		}
 		return platforms;
+	}
+	
+	public boolean supportsMode(String mode) {
+		return getModes().contains(mode);
+	}
 
-		
+	/**
+	 * Returns the set of modes specified in the configuration data.
+	 * 
+	 * @return the set of modes specified in the configuration data
+	 */
+	protected Set getModes() {
+		if (fModes == null) {
+			String modes= getConfigurationElement().getAttribute("modes"); //$NON-NLS-1$
+			if (modes == null) {
+				return new HashSet(0);
+			}
+			StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
+			fModes = new HashSet(tokenizer.countTokens());
+			while (tokenizer.hasMoreTokens()) {
+				fModes.add(tokenizer.nextToken().trim());
+			}
+		}
+		return fModes;
 	}
 
 }

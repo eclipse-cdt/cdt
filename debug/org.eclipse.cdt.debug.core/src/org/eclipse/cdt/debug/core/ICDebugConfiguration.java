@@ -11,4 +11,5 @@ public interface ICDebugConfiguration {
 	public String getName();
 	public String getID();
 	public String[] getPlatforms();
+	public boolean supportsMode(String mode);
 }

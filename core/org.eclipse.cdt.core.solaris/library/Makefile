@@ -5,14 +5,25 @@ JDK_INCLUDES=/usr/java/include
 JDK_OS_INCLUDES=/usr/java/include/solaris
 
 CC=gcc
-LIB_NAME = libspawner.so
-LIB_NAME_FULL = ../os/solaris/sparc/libspawner.so
-OBJS=spawner.o io.o exec_unix.o pfind.o
 CPPFLAGS = -I. -I$(JDK_INCLUDES) -I$(JDK_OS_INCLUDES)
 CFLAGS +=-fpic  -D_REENTRANT
 
-spawner : $(OBJS)
-	$(CC) -g -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(OBJS) -lc
+LIB_NAME_SPAWNER = libspawner.so
+LIB_NAME_FULL_SPAWNER = ../os/solaris/sparc/libspawner.so
+OBJS_SPAWNER=spawner.o io.o exec_unix.o pfind.o
+
+LIB_NAME_PTY = libpty.so
+LIB_NAME_FULL_PTY = ../os/solaris/sparc/libpty.so
+OBJS_PTY=openpty.o pty.o ptyio.o
+
+all: $(LIB_NAME_FULL_SPAWNER) $(LIB_NAME_FULL_PTY)
+
+$(LIB_NAME_FULL_SPAWNER): $(OBJS_SPAWNER)
+	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_SPAWNER) -o $(LIB_NAME_FULL_SPAWNER) $(OBJS_SPAWNER) -lc
+
+$(LIB_NAME_FULL_PTY): $(OBJS_PTY)
+	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_PTY) -o $(LIB_NAME_FULL_PTY) $(OBJS_PTY)
 
 clean :
-	rm $(OBJS)
+	$(RM) $(OBJS_SPAWNER) $(LIB_NAME_FULL_SPAWNER)
+	$(RM) $(OBJS_PTY) $(LIB_NAME_FULL_PTY)

@@ -29,7 +29,7 @@ exec0(const char *path, char *const argv[], char *const envp[],
             return -1;
         }
     } else {
-        full_path = path;
+        full_path = strdup(path);
     }
 
     //

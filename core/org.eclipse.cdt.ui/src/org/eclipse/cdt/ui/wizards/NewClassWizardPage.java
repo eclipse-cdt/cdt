@@ -84,7 +84,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -684,7 +683,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				//createdClass= (IStructure)headerWC.getElement(getNewClassName());				
 				createdClass= headerWC.getElement(getNewClassName());
 			} catch (CModelException cme) {
-				MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), cme.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
+				MessageDialog.openError(getContainer().getShell(), NewWizardMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), cme.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
 			} finally {
 				if (headerWC != null) {
 					headerWC.destroy();
@@ -700,7 +699,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				bodyWC.reconcile();
 				bodyWC.commit(true, monitor);
 			} catch (CModelException cme) {
-				MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), cme.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
+				MessageDialog.openError(getContainer().getShell(), NewWizardMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), cme.getMessage()); //$NON-NLS-2$ //$NON-NLS-1$
 			} finally {
 				if (bodyWC != null) {
 					bodyWC.destroy();
@@ -743,7 +742,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				InterruptedException
 			{
 				try {
-					monitor.beginTask(WorkbenchMessages.getString("WizardNewFileCreationPage.progress"), 2000); //$NON-NLS-1$
+					monitor.beginTask(NewWizardMessages.getString("WizardNewFileCreationPage.progress"), 2000); //$NON-NLS-1$
 					if(!(containerExists(containerPath))){
 						ContainerGenerator generator = new ContainerGenerator(containerPath);
 						generator.generateContainer(new SubProgressMonitor(monitor, 1000));
@@ -763,14 +762,14 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			if (e.getTargetException() instanceof CoreException) {
 				ErrorDialog.openError(
 					getContainer().getShell(), // Was Utilities.getFocusShell()
-					WorkbenchMessages.getString("WizardNewFileCreationPage.errorTitle"),  //$NON-NLS-1$
+					NewWizardMessages.getString("WizardNewFileCreationPage.errorTitle"),  //$NON-NLS-1$
 					null,	// no special message
 					((CoreException) e.getTargetException()).getStatus());
 			}
 			else {
 				// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-				WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.getNewFile(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
-				MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), WorkbenchMessages.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
+				CUIPlugin.getDefault().logErrorMessage(MessageFormat.format("Exception in {0}.getNewFile(): {1}", new Object[] {getClass().getName(), e.getTargetException()}));//$NON-NLS-1$
+				MessageDialog.openError(getContainer().getShell(), NewWizardMessages.getString("WizardNewFileCreationPage.internalErrorTitle"), MessageFormat.format("WizardNewFileCreationPage.internalErrorMessage", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 			return null;
 		}

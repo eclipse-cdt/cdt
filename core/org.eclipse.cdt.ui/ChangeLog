@@ -1,3 +1,6 @@
+2004-07-07 Hoda Amer
+	Fix for PR 69411: Bad label: WizardNewFileCreationPage.progress
+	
 2004-07-06 Bogdan Gheorghe
 	
 	Added support for search name grouping.

@@ -764,7 +764,7 @@ public class ResolverModel implements IResolverModel {
 	
 	private ICDescriptor getProjectDescriptor(IProject project, boolean create) throws CoreException {
 		ICDescriptor descriptor = null;
-		descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
+		descriptor = CCorePlugin.getDefault().getCProjectDescription(project, create);
 		return descriptor;
 	}
 

@@ -558,8 +558,9 @@ public class CDescriptor implements ICDescriptor {
 		return new IConfigurationElement[0];
 	}
 
-	public Element getProjectData(String id) throws CoreException {
-		NodeList nodes = getProjectDataDoc().getDocumentElement().getElementsByTagName(PROJECT_DATA_ITEM);
+	public synchronized Element getProjectData(String id) throws CoreException {
+		Document doc = getProjectDataDoc();
+		NodeList nodes = doc.getDocumentElement().getElementsByTagName(PROJECT_DATA_ITEM);
 		for (int i = 0; i < nodes.getLength(); ++i) {
 			Element element = (Element)nodes.item(i);
 			if (element.getAttribute(PROJECT_DATA_ID).equals(id))
@@ -567,9 +568,9 @@ public class CDescriptor implements ICDescriptor {
 		}
 
 		// Not found, make a new one
-		Element element = dataDoc.createElement(PROJECT_DATA_ITEM);
+		Element element = doc.createElement(PROJECT_DATA_ITEM);
 		element.setAttribute(PROJECT_DATA_ID, id);
-		dataDoc.getDocumentElement().appendChild(element);
+		doc.getDocumentElement().appendChild(element);
 		return element;
 	}
 

@@ -31,10 +31,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICCompletionContributor;
 
 /**
- * @author alain
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * CCompletionContributorDescriptor
  */
 public class CCompletionContributorDescriptor {
 	private IConfigurationElement fConfigurationElement;
@@ -62,7 +59,7 @@ public class CCompletionContributorDescriptor {
 			String id= fConfigurationElement.getAttribute(ID);
 			return new StatusInfo(IStatus.ERROR, "Only one <enablement> element allowed. Disabling " + id); //$NON-NLS-1$
 		}
-		return new StatusInfo(IStatus.OK, "Syntactically correct quick assist/fix processor"); //$NON-NLS-1$
+		return new StatusInfo(IStatus.OK, "Syntactically correct completion contributor"); //$NON-NLS-1$
 	}
 	
 	private boolean matches(ITranslationUnit unit) {

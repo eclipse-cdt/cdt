@@ -76,6 +76,7 @@ public class CElementLabelProvider extends LabelProvider {
 					name = fDecl.getSignature();		
 				break;
 				case ICElement.C_STRUCT:
+				case ICElement.C_UNION:
 				case ICElement.C_ENUMERATION:
 					if((celem.getElementName() != null) && (celem.getElementName().length() > 0)){
 						name = celem.getElementName();

@@ -3,7 +3,9 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -17,7 +19,7 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  */
 public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpecifier.Container, ICElementWrapper {
 
-	private IParent element = null; 
+	private ICElement element = null; 
 	private IParent parent = null; 
 
 	private Name name = null;
@@ -36,7 +38,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * Returns the item.
 	 * @return CElement
 	 */
-	public IParent getElement() {
+	public ICElement getElement() {
 		return element;
 	}
 
@@ -44,8 +46,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * Sets the item.
 	 * @param item The item to set
 	 */
-	public void setElement (IParent item) {
-		this.element = (IParent)item;
+	public void setElement (ICElement item) {
+		this.element = item;
 	}
 
 	/**
@@ -90,7 +92,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 				{
 					declaration = createField( parentElement, declaratorName ); 
 				}
-				else if( parentElement instanceof ITranslationUnit )
+				else if(( parentElement instanceof ITranslationUnit ) 
+					  || ( parentElement instanceof INamespace ))
 				{
 					if(isExtern())
 					{
@@ -112,10 +115,18 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 				// this is a function or a method
 				if( parentElement instanceof IStructure )
 				{
-					declaration = createMethodDeclaration( parentElement, declaratorName, parameters ); 
+					if (isFunctionDefinition())
+					{
+						declaration = createMethod( parentElement, declaratorName, parameters ); 
+					}
+					else
+					{
+						declaration = createMethodDeclaration( parentElement, declaratorName, parameters ); 
+					}
 		
 				}
-				else if( parentElement instanceof ITranslationUnit )
+				else if(( parentElement instanceof ITranslationUnit ) 
+						|| ( parentElement instanceof INamespace ))
 				{
 					if (isFunctionDefinition())
 					{

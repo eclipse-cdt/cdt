@@ -251,6 +251,9 @@ public class CElementImageProvider {
 			case ICElement.C_FUNCTION:
 				return CPluginImages.DESC_OBJS_FUNCTION;
 		
+			case ICElement.C_VARIABLE_DECLARATION:
+				return CPluginImages.DESC_OBJS_VAR_DECLARARION;
+			
 			case ICElement.C_FUNCTION_DECLARATION:
 				return CPluginImages.DESC_OBJS_DECLARARION;
 
@@ -259,59 +262,13 @@ public class CElementImageProvider {
 
 			case ICElement.C_MACRO:
 				return CPluginImages.DESC_OBJS_MACRO;
+				
+			case ICElement.C_NAMESPACE:
+				return CPluginImages.DESC_OBJS_CONTAINER;
+			
 		}
 		return null;
-	}
-	
-	public ImageDescriptor getCElementImageDescriptor(int type) {
-		switch (type) {
-			case ICElement.C_VCONTAINER:
-				return CPluginImages.DESC_OBJS_CONTAINER;
-
-			case ICElement.C_UNIT:
-				return CPluginImages.DESC_OBJS_TUNIT;
-
-			case ICElement.C_STRUCT:
-				return CPluginImages.DESC_OBJS_STRUCT;
-				
-			case ICElement.C_CLASS:
-				return CPluginImages.DESC_OBJS_CLASS;
-				
-			case ICElement.C_UNION:
-				return CPluginImages.DESC_OBJS_UNION;
-
-			case ICElement.C_TYPEDEF:
-				return CPluginImages.DESC_OBJS_TYPEDEF;
-
-			case ICElement.C_ENUMERATION:
-				return CPluginImages.DESC_OBJS_ENUMERATION;
-
-			case ICElement.C_ENUMERATOR:
-				return CPluginImages.DESC_OBJS_ENUMERATOR;
-
-			case ICElement.C_FIELD:
-				return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
-
-			case ICElement.C_VARIABLE:
-				return CPluginImages.DESC_OBJS_FIELD;
-
-			case ICElement.C_METHOD: // assumed public
-				return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
-				
-			case ICElement.C_FUNCTION:
-			case ICElement.C_FUNCTION_DECLARATION:
-				return CPluginImages.DESC_OBJS_FUNCTION;
-
-			case ICElement.C_INCLUDE:
-				return CPluginImages.DESC_OBJS_INCLUDE;
-
-			case ICElement.C_MACRO:
-				return CPluginImages.DESC_OBJS_MACRO;
-		}
-		System.out.println("Unknown base object ype " + type);
-		return CPluginImages.DESC_OBJS_MACRO;
-		//return null;
-	}
+	}	
 
 
 	// ---- Methods to compute the adornments flags ---------------------------------

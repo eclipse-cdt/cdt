@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
@@ -135,14 +136,15 @@ public class NewModelBuilder implements IParserCallback {
 org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
 	public Object simpleDeclarationBegin(Object container) {
-		ICElementWrapper wrapper = (ICElementWrapper)container; 
-		Object parent = wrapper.getElement();
+		ICElementWrapper wrapper = (ICElementWrapper)container;
+		// Assuming that the parent is the container's element 
+		IParent parent = (IParent)wrapper.getElement();
 		SimpleDeclarationWrapper result = new SimpleDeclarationWrapper();
+		result.setParent( parent );
+		// A special case to transfere the visibility
 		if( wrapper instanceof SimpleDeclarationWrapper ){
-			result.setParent( wrapper.getElement() );
 			result.setCurrentVisibility(((SimpleDeclarationWrapper)wrapper).getCurrentVisibility());
-		} else if ( wrapper instanceof TranslationUnitWrapper )
-			result.setParent( (TranslationUnit)wrapper.getElement());
+		}
 		return result;  	
 	}
 	
@@ -354,8 +356,9 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		elem.setElementName( elementName );
 		if( wrapper.getName() != null )
 		{ 	
-			elem.setIdPos(wrapper.getName().getStartOffset(), wrapper.getName().length());
-			elem.setPos(wrapper.getName().getStartOffset(), wrapper.getName().length());
+			elem.setTypeName( wrapper.getClassKind().getImage() );
+			elem.setIdPos(wrapper.getName().getStartOffset(), elementName.length());
+			elem.setPos(wrapper.getName().getStartOffset(), elementName.length());
 		}
 		else
 		{
@@ -549,21 +552,37 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
 	public Object namespaceDefinitionBegin(Object container) {
-		// until Namespaces are made part of the code model, just return the container object
-		return container; 
+
+		ICElementWrapper c = (ICElementWrapper)container; 
+		NamespaceWrapper wrapper = new NamespaceWrapper((IParent)c.getElement());		
+		return wrapper;  	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
 	 */
 	public void namespaceDefinitionId(Object namespace) {
-		// until namespaceDefinitionBegin is updated to do more than return its container, do nothing
+		// set wrapper name to current name
+		NamespaceWrapper wrapper = (NamespaceWrapper)namespace;
+		wrapper.setName( currName );
+		
+		// create the new element
+		String namespaceName = wrapper.getName().toString(); 
+		Parent realParent = (Parent)wrapper.getParent();
+		Namespace newNameSpace = new Namespace( (ICElement)realParent, namespaceName );
+		wrapper.setElement(newNameSpace);
+		realParent.addChild( newNameSpace );
+
+		// set the positions
+		newNameSpace.setIdPos(wrapper.getName().getStartOffset(), namespaceName.length());
+		newNameSpace.setPos(wrapper.getName().getStartOffset(), namespaceName.length());		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationAbort(java.lang.Object)
 	 */
 	public void namespaceDefinitionAbort(Object namespace) {
+		namespace = null;
 	}
 
 	/* (non-Javadoc)

@@ -1,3 +1,8 @@
+2003-01-15 Mikhail Khodjaiants
+	The 'getDefaultEditor' method returns 'null' for file names that don't have an extension and 
+	are not registered with some editor. Use the default text editor in this case.
+	* CDTDebugModelPresentation.java
+
 2003-01-14 Mikhail Khodjaiants
 	Added the 'Add Address Breakpoint' action to the workbench 'Run' menu.
 	* AddAddressBreakpointActionDelegate.java

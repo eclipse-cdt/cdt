@@ -169,6 +169,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
 			if ( descriptor != null )
 				return descriptor.getId();
+			return registry.getDefaultEditor().getId();
 		}
 		return null;
 	}

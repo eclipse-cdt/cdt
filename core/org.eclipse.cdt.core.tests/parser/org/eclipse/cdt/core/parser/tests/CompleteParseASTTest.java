@@ -1176,7 +1176,9 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier A = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		assertEquals( A.getName(), "A"); //$NON-NLS-1$
 		IASTVariable anotherA = (IASTVariable)i.next();
-		assertEquals( anotherA.getName(), "b"); //$NON-NLS-1$
+		assertEquals( anotherA.getName(), "anotherA"); //$NON-NLS-1$
+		IASTVariable b = (IASTVariable)i.next();
+		assertEquals( b.getName(), "b"); //$NON-NLS-1$
 		assertFalse(i.hasNext()); // should be true
 	}
 	
@@ -1968,6 +1970,25 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	IASTVariable v = (IASTVariable) parse( "int * v = (int*)0;").getDeclarations().next();
     	IASTTypeId typeId = v.getInitializerClause().getAssigmentExpression().getTypeId();
     	assertEquals( typeId.getFullSignature(), "int *"); //$NON-NLS-1$
+    }
+    
+    public void testUnaryAmperCast() throws Exception{
+    	Writer writer = new StringWriter();
+    	writer.write( "void f( char * );              \n ");
+    	writer.write( "void f( char   );              \n ");
+    	writer.write( "void main() {                  \n ");
+    	writer.write( "   char * t = new char [ 5 ];  \n ");
+    	writer.write( "   f( &t[1] );                 \n ");
+    	writer.write( "}                              \n ");
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	IASTFunction f1 = (IASTFunction) i.next();
+    	IASTFunction f2 = (IASTFunction) i.next();
+    	
+    	IASTFunction main  = (IASTFunction) i.next();
+    	IASTVariable t = (IASTVariable) getDeclarations( main ).next();
+    	
+    	assertAllReferences( 2, createTaskList( new Task( f1, 1, false, false), new Task( t ) ) );
     }
 	
 }

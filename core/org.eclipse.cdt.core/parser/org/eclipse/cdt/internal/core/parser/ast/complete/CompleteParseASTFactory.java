@@ -1613,8 +1613,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
 			info = left.getResultType().getResult();
-			if ((info != null) && (info.getTypeSymbol() != null)){
+			if (info != null){
 				info.addOperatorExpression( TypeInfo.OperatorExpression.addressof );
+				info = info.getFinalType( null );
 			} else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			
@@ -1628,8 +1629,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if(left == null)
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
 			info = left.getResultType().getResult();
-			if ((info != null)&& (info.getTypeSymbol() != null)){
+			if (info != null){
 				info.addOperatorExpression( TypeInfo.OperatorExpression.indirection );
+				info = info.getFinalType( null );
 			}else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			

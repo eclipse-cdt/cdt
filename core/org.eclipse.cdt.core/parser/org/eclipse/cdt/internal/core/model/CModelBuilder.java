@@ -58,9 +58,12 @@ public class CModelBuilder {
 		DOMBuilder domBuilder = new DOMBuilder();
 		String code = translationUnit.getBuffer().getContents();
 		Parser parser = new Parser(code, domBuilder, true);
-		IProject currentProject = translationUnit.getCProject().getProject();
-		boolean hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
-		parser.setCppNature(hasCppNature);
+		if( translationUnit.getCProject() != null )
+		{
+			IProject currentProject = translationUnit.getCProject().getProject();
+			boolean hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
+			parser.setCppNature(hasCppNature);
+		}
 		parser.parse();
 		long startTime = System.currentTimeMillis(); 
 		generateModelElements(domBuilder.getTranslationUnit());

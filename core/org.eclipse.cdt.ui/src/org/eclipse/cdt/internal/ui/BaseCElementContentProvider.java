@@ -226,7 +226,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			if (element instanceof ICElement) {
 				IResource res = ((ICElement)element).getResource();
 				if (res != null) {
-					parent = internalGetParent(res.getParent());
+					parent = internalGetParent(res);
 				}
 			}
 		}
@@ -264,12 +264,13 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		try {
 			Object[] nonC = cproject.getNonCResources();
 			if (nonC != null && nonC.length > 0) {
-				objects = concatenate(objects, cproject.getNonCResources());
+				nonC = filterNonCResources(nonC, cproject);
+				objects = concatenate(objects, nonC);
 			}
 		} catch (CModelException e) {
 			//
 		}
-		//Object[] objects = getCResources((ICContainer)cproject);
+
 		IArchiveContainer archives = cproject.getArchiveContainer(); 
 		if (archives.hasChildren()) {
 			objects = concatenate(objects, new Object[] {archives});
@@ -293,6 +294,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		Object[] children = container.getChildren();
 		try {
 			objects = container.getNonCResources();
+			if (objects.length > 0) {
+				objects = filterNonCResources(objects, container.getCProject());
+			}
 		} catch (CModelException e) {
 		}
 		if (objects == null || objects.length == 0) {
@@ -302,52 +306,68 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 
 	private Object[] getResources(IFolder folder) {
+		ICProject cproject = CoreModel.getDefault().create(folder.getProject());
+		Object[] members = null;
 		try {
-			ICProject cproject = CoreModel.getDefault().create(folder.getProject());
-			ICElement[] binaries = cproject.getBinaryContainer().getChildren();
-			ICElement[] archives = cproject.getArchiveContainer().getChildren();
-			Object[] members = folder.members();
-			List nonCResources= new ArrayList();
-			for (int i= 0; i < members.length; i++) {
-				Object o= members[i];
-				// A folder can also be a source root in the following case
-				// Project
-				//  + src <- source folder
-				//    + excluded <- excluded from class path
-				//      + included  <- a new source folder.
-				// Included is a member of excluded, but since it is rendered as a source
-				// folder we have to exclude it as a normal child.
-				if (o instanceof IFolder) {
-					ICElement element= CoreModel.getDefault().create((IFolder)o);
-					if (element instanceof ISourceRoot && element.exists()) {
+			members = folder.members();
+		} catch (CoreException e) {
+			//
+		}
+		if (members == null || members.length == 0) {
+			return NO_CHILDREN;
+		}
+		return filterNonCResources(members, cproject);
+	}
+	
+	private Object[] filterNonCResources(Object[] objects, ICProject cproject) {
+		ICElement[] binaries = cproject.getBinaryContainer().getChildren();
+		ICElement[] archives = cproject.getArchiveContainer().getChildren();
+		ISourceRoot[] roots = null;
+		try {
+			roots = cproject.getSourceRoots();
+		} catch (CModelException e) {
+			roots = new ISourceRoot[0];
+		}
+		List nonCResources = new ArrayList(objects.length);
+		for (int i= 0; i < objects.length; i++) {
+			Object o= objects[i];
+			// A folder can also be a source root in the following case
+			// Project
+			//  + src <- source folder
+			//    + excluded <- excluded from class path
+			//      + included  <- a new source folder.
+			// Included is a member of excluded, but since it is rendered as a source
+			// folder we have to exclude it as a normal child.
+			if (o instanceof IFolder) {
+				IFolder folder = (IFolder)o;
+				for (int j = 0; j < roots.length; j++) {
+					if (roots[j].getPath().equals(folder.getFullPath())) {
 						continue;
 					}
-				} else if (o instanceof IFile){
-					boolean found = false;
-					for (int j = 0; j < binaries.length; j++) {
-						IResource res = binaries[j].getResource();
+				}
+			} else if (o instanceof IFile){
+				boolean found = false;
+				for (int j = 0; j < binaries.length; j++) {
+					IResource res = binaries[j].getResource();
+					if (o.equals(res)) {
+						o = binaries[j];
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					for (int j = 0; j < archives.length; j++) {
+						IResource res = archives[j].getResource();
 						if (o.equals(res)) {
-							o = binaries[j];
-							found = true;
+							o = archives[j];
 							break;
 						}
 					}
-					if (!found) {
-						for (int j = 0; j < archives.length; j++) {
-							IResource res = archives[j].getResource();
-							if (o.equals(res)) {
-								o = archives[j];
-								break;
-							}
-						}
-					}
 				}
-				nonCResources.add(o);
 			}
-			return nonCResources.toArray();
-		} catch(CoreException e) {
+			nonCResources.add(o);
 		}
-		return NO_CHILDREN;
+		return nonCResources.toArray();
 	}
 
 	/**

@@ -2,8 +2,8 @@
 
 	<target name="build" depends="zips,test,updateSite"/>
 	<target name="nightly" depends="build,upload,mail"/>
-	<target name="integration" depends="nightly,wswbmap"/>
-	<target name="milestone" depends="integration,milestoneSite"/>
+	<target name="integration" depends="zips,test,wswbmap,mail"/>
+	<target name="milestone" depends="nightly,milestoneSite"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -11,8 +11,10 @@
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${basedir}/../org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.0.0/scripts" />
+		<property name="pde.build.scripts" value="${basedir}/../org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.0.0/scripts"/>
 		<property name="eclipseZip" value="eclipse-SDK.zip"/>
+		<property name="collectingFolder" value="eclipse"/>
+		<property name="archivePrefix" value="eclipse"/>
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="siteurl" value="http://update.eclipse.org/tools/cdt/updates/builds/2.0"/>
@@ -22,6 +24,8 @@
 		<property name="siteversion" value="2.0.0"/>
 		<property name="milestonedir" value="${buildDirectory}/${milestone}"/>
 		<property name="buildingOSGi" value="true"/>
+		<property name="messagefile" value="message.in"/>
+		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
 	</target>
 
 	<target name="zips" depends="init">
@@ -65,11 +69,40 @@
 	
 	<target name="updateSite" depends="init" unless="hasErrors">
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${sitedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-hpux.motif.PA_RISC.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip" dest="${sitedir}"/>
+		<antcall target="allPlugins">
+			<param name="target" value="updateSrcPlugin"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source"/>
+		</antcall>
+		<antcall target="updateSrcPlugin">
+			<param name="id" value="org.eclipse.cdt.core.aix"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.aix.motif.ppc"/>
+		</antcall>
+		<antcall target="updateSrcPlugin">
+			<param name="id" value="org.eclipse.cdt.core.linux"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.linux.motif.x86"/>
+		</antcall>
+		<antcall target="updateSrcPlugin">
+			<param name="id" value="org.eclipse.cdt.core.linux"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.linux.gtk.x86"/>
+		</antcall>
+		<antcall target="updateSrcPlugin">
+			<param name="id" value="org.eclipse.cdt.core.qnx"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.qnx.photon.x86"/>
+		</antcall>
+		<antcall target="updateSrcPlugin">
+			<param name="id" value="org.eclipse.cdt.core.solaris"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.solaris.motif.sparc"/>
+		</antcall>
+		<antcall target="updateSrcPlugin">
+			<param name="id" value="org.eclipse.cdt.core.win32"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.win32.win32.x86"/>
+		</antcall>
 		<antcall target="allElements">
 			<param name="target" value="updateJars"/>
 		</antcall>
@@ -83,6 +116,12 @@
 		<copy todir="${sitedir}/zips/${buildId}">
 			<fileset dir="${zipsdir}"/>
 		</copy>
+	</target>
+
+	<target name="updateSrcPlugin">
+		<move todir="${sitedir}/eclipse/plugins/${srcPlugin}_${siteversion}/src/${id}_${siteversion}.${timestamp}">
+			<fileset dir="${sitedir}/eclipse/plugins/${srcPlugin}_${siteversion}/src/${id}_${siteversion}"/>
+		</move>
 	</target>
 
 	<target name="updateJars">
@@ -123,44 +162,50 @@
 			<fileset dir="${sitedir}"/>
 		</ftp>
 	</target>
-
+	
 	<target name="wswbmap" depends="init" unless="hasErrors">
+		<xslt style="${buildDirectory}/eclipse/plugins/org.eclipse.test/JUNIT.XSL"
+			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
+			out="${zipsdir}/index.html"/>
 		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
 		<replace file="cdt-map.txt" token="@buildId@" value="${buildId}"/>
 		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
 			remotedir="/home/www/tools/cdt/wswb" action="put" verbose="yes">
 			<fileset file="cdt-map.txt"/>
 		</ftp>
+		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
+			remotedir="/home/www/tools/cdt/wswb/${buildId}" action="mkdir" verbose="yes"/>
+		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
+			remotedir="/home/www/tools/cdt/wswb/${buildId}" action="put" verbose="yes">
+			<fileset dir="${zipsdir}"/>
+		</ftp>
 	</target>
-	
+
 	<target name="mail" depends="init">
 		<antcall target="mailPass"/>
 		<antcall target="mailFail"/>
 	</target>
 	
 	<target name="mailPass" unless="hasErrors">
+		<copy file="${messagefile}" tofile="message.txt" overwrite="true"/>
+		<replace file="message.txt" token="@buildId@" value="${buildId}"/>
 		<concat destfile="mail.txt">
 			<filelist dir="${basedir}" files="message.txt,compile.log"/>
 		</concat>
 		<mail subject="CDT Build ${siteversion}.${timestamp} completed"
-			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
+			tolist="${mailto}" from="dschaefe@ca.ibm.com">
 			<message src="mail.txt"/>
 		</mail>
 	</target>
 
 	<target name="mailFail" if="hasErrors">
 		<mail subject="CDT Build ${siteversion}.${timestamp} failed"
-			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
+			tolist="${mailto}" from="dschaefe@ca.ibm.com">
 			<message src="compile.log"/>
 		</mail>
 	</target>
 
- 	<target name="allElements">
- 		<antcall target="${target}">
- 			<param name="type" value="feature"/>
- 			<param name="dir" value="features"/>
- 			<param name="id" value="org.eclipse.cdt"/>
- 		</antcall>
+	<target name="allPlugins">
  		<antcall target="${target}">
  			<param name="type" value="plugin"/>
  			<param name="dir" value="plugins"/>
@@ -170,31 +215,6 @@
  			<param name="type" value="plugin"/>
  			<param name="dir" value="plugins"/>
  			<param name="id" value="org.eclipse.cdt.core"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="fragment"/>
- 			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.core.aix"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="fragment"/>
- 			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.core.linux"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="fragment"/>
- 			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.core.qnx"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="fragment"/>
- 			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.core.solaris"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="fragment"/>
- 			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.core.win32"/>
  		</antcall>
  		<antcall target="${target}">
  			<param name="type" value="plugin"/>
@@ -215,11 +235,6 @@
  			<param name="type" value="plugin"/>
  			<param name="dir" value="plugins"/>
  			<param name="id" value="org.eclipse.cdt.debug.ui"/>
- 		</antcall>
- 		<antcall target="${target}">
- 			<param name="type" value="plugin"/>
- 			<param name="dir" value="plugins"/>
- 			<param name="id" value="org.eclipse.cdt.doc.user"/>
  		</antcall>
  		<antcall target="${target}">
  			<param name="type" value="plugin"/>
@@ -251,6 +266,95 @@
  			<param name="dir" value="plugins"/>
  			<param name="id" value="org.eclipse.cdt.ui"/>
  		</antcall>
- 	</target>
+	</target>
+
+ 	<target name="allElements">
+		<antcall target="allPlugins"/>
+ 		<antcall target="${target}">
+ 			<param name="type" value="feature"/>
+ 			<param name="dir" value="features"/>
+ 			<param name="id" value="org.eclipse.cdt"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.aix"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source.aix.motif.ppc"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.linux"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.qnx"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.solaris"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.core.win32"/>
+			<param name="srcPlugin" value="org.eclipse.cdt.source"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.doc.user"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="feature"/>
+ 			<param name="dir" value="features"/>
+ 			<param name="id" value="org.eclipse.cdt.source"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="plugin"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source"/>
+ 		</antcall>
+  		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.aix.motif.ppc"/>
+ 		</antcall>
+ 		<!--antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.hpux.motif.PA_RISC"/>
+ 		</antcall-->
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.linux.gtk.x86"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.linux.motif.x86"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.qnx.photon.x86"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.solaris.motif.sparc"/>
+ 		</antcall>
+ 		<antcall target="${target}">
+ 			<param name="type" value="fragment"/>
+ 			<param name="dir" value="plugins"/>
+ 			<param name="id" value="org.eclipse.cdt.source.win32.win32.x86"/>
+ 		</antcall>
+  	</target>
 
 </project>

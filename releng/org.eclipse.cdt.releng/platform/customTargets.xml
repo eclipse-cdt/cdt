@@ -83,6 +83,14 @@
 <!-- Steps to do after fetching the build elements -->
 <!-- ===================================================================== -->
 <target name="postFetch">
+	<condition property="patchesAvailable">
+		<available file="${builder}/patch.xml"/>
+	</condition>
+	<antcall target="applyPatches"/>
+</target>
+
+<target name="applyPatches" if="patchesAvailable">
+	<ant antfile="${builder}/patch.xml"/>
 </target>
 
 <!-- ===================================================================== -->

@@ -708,6 +708,9 @@ public class Parser2 {
 					compoundStatement();
 				}
 				return;
+			case Token.tSEMI:
+				consume();
+				return;
 			default:
 				// can be many things:
 				// label
@@ -719,7 +722,17 @@ public class Parser2 {
 				}
 				
 				// expressionStatement
+				// Note: the function style cast ambiguity is handled in expression
+				// Since it only happens when we are in a statement
+				try {
+					expression();
+					consume(Token.tSEMI);
+					return;
+				} catch (Backtrack b) {
+				}
+				
 				// declarationStatement
+				declaration();
 		}
 	}
 	

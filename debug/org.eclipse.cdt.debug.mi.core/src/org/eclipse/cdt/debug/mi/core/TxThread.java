@@ -28,17 +28,14 @@ public class TxThread extends Thread {
 
 	public void run () {
 		try {
-			while (true) {
+			// signal by the session of time to die.
+			while (session.getChannelOutputStream() != null) {
 				Command cmd = null;
 				CommandQueue txQueue = session.getTxQueue();
 				// removeCommand() will block until a command is available.
 				try {
 					cmd = txQueue.removeCommand();
 				} catch (InterruptedException e) {
-					// signal by the session of time to die.
-					if (session.getChannelOutputStream() == null) {
-						throw new IOException();
-					}
 					//e.printStackTrace();
 				}
 
@@ -55,8 +52,10 @@ public class TxThread extends Thread {
 					// shove in the pipe
 					String str = cmd.toString();
 					OutputStream out = session.getChannelOutputStream();
-					out.write(str.getBytes());
-					out.flush();
+					if (out != null) {
+						out.write(str.getBytes());
+						out.flush();
+					}
 				}
 			}
 		} catch (IOException e) {

@@ -44,15 +44,17 @@ import org.eclipse.cdt.debug.mi.core.output.MITargetStreamOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIValue;
 
 /**
- * Receiving thread of gdb, read the input channel.
+ * Receiving thread of gdb response output.
  */
 public class RxThread extends Thread {
 
 	final MISession session;
+	List oobList;
 
 	public RxThread(MISession s) {
 		super("MI RX Thread");
 		session = s;
+		oobList = new ArrayList();
 	}
 
 	/*
@@ -62,7 +64,6 @@ public class RxThread extends Thread {
 	public void run () {
 		BufferedReader reader =
 			new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
-		StringBuffer buffer = new StringBuffer();
 		try {
 			while (true) {
 				String line;
@@ -121,20 +122,33 @@ MIPlugin.getDefault().debugLog(line);
 					fireEvent(event);
 				} else if ("exit".equals(state)) {
 					session.getMIInferior().setTerminated();
-					fireEvent(new MIExitEvent());
+					MIEvent event = new MIExitEvent();
+					fireEvent(event);
+				} else if ("connected".equals(state)) {
+					session.getMIInferior().setConnected();
 				}
 
+				// Clear the accumulate oobList on each new Result Command
+				// response.
+				MIOOBRecord [] oobRecords =
+					(MIOOBRecord[])oobList.toArray(new MIOOBRecord[0]); 
+				oobList.clear();
+				
 				// Notify the waiting command.
 				if (cmd != null) {
 					synchronized (cmd) {
+						// Set the accumulate console Stream
+						response.setMIOOBRecords(oobRecords);
 						cmd.setMIOutput(response);
 						cmd.notifyAll();
 					}
 				}
+
 				// Some result record contains informaton specific to oob.
 				// This will happen when CLI-Command is use, for example
 				// doing "run" will block and return a breakpointhit
 				processMIOOBRecord(rr, list);
+
 			}
 
 			// Process OOBs
@@ -162,35 +176,33 @@ MIPlugin.getDefault().debugLog(line);
 	void processMIOOBRecord(MIAsyncRecord async, List list) {
 		if (async instanceof MIExecAsyncOutput) {
 			MIExecAsyncOutput exec = (MIExecAsyncOutput)async;
-			MIEvent e = null;
-
 			// Change of state.
 			String state = exec.getAsyncClass();
 			if ("stopped".equals(state)) {
+				MIEvent e = null;
 				session.getMIInferior().setSuspended();
-			}
-
-			MIResult[] results = exec.getMIResults();
-			for (int i = 0; i < results.length; i++) {
-				String var = results[i].getVariable();
-				MIValue val = results[i].getMIValue();
-				if (var.equals("reason")) {
-					if (val instanceof MIConst) {
-						String reason = ((MIConst)val).getString();
-						e = createEvent(reason, exec);
-						if (e != null) {
-							list.add(e);
+				MIResult[] results = exec.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					MIValue val = results[i].getMIValue();
+					if (var.equals("reason")) {
+						if (val instanceof MIConst) {
+							String reason =((MIConst)val).getString();
+							e = createEvent(reason, exec);
+							if (e != null) {
+								list.add(e);
+							}
 						}
 					}
 				}
-			}
 			
-			// HACK: GDB for temporary breakpoints will not send the
-			// "reason" ???  Fake this as breakpoint-hit 
-			if (e == null) {
-				e = createEvent("breakpoint-hit", exec);
-				if (e != null) {
-					list.add(e);
+				// HACK: GDB for temporary breakpoints will not send the
+				// "reason" ???  Fake this as breakpoint-hit 
+				if (e == null) {
+					e = createEvent("breakpoint-hit", exec);
+					if (e != null) {
+						list.add(e);
+					}
 				}
 			}
 		} else if (async instanceof MIStatusAsyncOutput) {
@@ -214,8 +226,11 @@ MIPlugin.getDefault().debugLog(line);
 					}
 				}
 			}
+			// Accumulate the Console Stream Output response for parsing.
+			// Some commands will put valuable info  in the Console Stream.
+			oobList.add(stream);
 		} else if (stream instanceof MITargetStreamOutput) {
-			OutputStream target = session.getTargetPipe();
+			OutputStream target = session.getMIInferior().getPipedOutputStream();
 			if (target != null) {
 				MITargetStreamOutput out = (MITargetStreamOutput)stream;
 				String str = out.getString();
@@ -228,7 +243,7 @@ MIPlugin.getDefault().debugLog(line);
 				}
 			}
 		} else if (stream instanceof MILogStreamOutput) {
-			OutputStream log = session.getLogPipe();
+			OutputStream log = session.getMIInferior().getPipedErrorStream();
 			if (log != null) {
 				MILogStreamOutput out = (MILogStreamOutput)stream;
 				String str = out.getString();
@@ -310,13 +325,13 @@ MIPlugin.getDefault().debugLog(line);
 				event = new MIFunctionFinishedEvent(rr);
 			}
 		} else if ("exited-normally".equals(reason)) {
-//			session.getMIInferior().setTerminated();
+			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		} else if ("exited-signalled".equals(reason)) {
-//			session.getMIInferior().setTerminated();
+			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		} else if ("exited".equals(reason)) {
-//			session.getMIInferior().setTerminated();
+			session.getMIInferior().setTerminated();
 			event = new MIInferiorExitEvent();
 		}
 		return event;

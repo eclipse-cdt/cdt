@@ -51,10 +51,10 @@ public class MIPlugin extends Plugin {
 		String[]args = new String[]{"gdb", "-q", "-i", "mi", program};
 		Process gdb = Runtime.getRuntime().exec(args);
 		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
-		/*
+		///*
 		try {
 			CommandFactory factory = session.getCommandFactory();
-			MIBreakInsert bkpt= factory.createMIBreakInsert(true, false, null, 0, "main");
+			MIBreakInsert bkpt= factory.createMIBreakInsert(true, false, null, 0, "routine");
 			session.postCommand(bkpt);
 			MIInfo info = bkpt.getMIInfo();
 			if (info == null) {
@@ -63,7 +63,7 @@ public class MIPlugin extends Plugin {
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
 		}
-		*/
+		//*/
 		return new CSession(session);
 	}
 

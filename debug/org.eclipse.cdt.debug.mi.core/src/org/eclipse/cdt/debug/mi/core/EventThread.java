@@ -4,14 +4,14 @@
  */
 
 package org.eclipse.cdt.debug.mi.core;
- 
+
 import java.io.IOException;
 
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 
 /**
- * Transmission command thread blocks on the command Queue
- * and wake cmd are available and push them to gdb out channel.
+ * Event Thread blocks on the event Queue, wakes up
+ * when events are available and notify all the observers.
  */
 public class EventThread extends Thread {
 
@@ -22,29 +22,24 @@ public class EventThread extends Thread {
 		session = s;
 	}
 
-	public void run () {
-		try {
-			while (true) {
-				MIEvent event = null;
-				Queue eventQueue = session.getEventQueue();
-				// removeItem() will block until an item is available.
-				try {
-					event = (MIEvent)eventQueue.removeItem();
-				} catch (InterruptedException e) {
-					// signal by the session of time to die.
-					if (session.getChannelOutputStream() == null) {
-						throw new IOException();
-					}
-					//e.printStackTrace();
-				}
-				try {
-					session.notifyObservers(event);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	public void run() {
+		// signal by the session of time to die.
+		while (session.getChannelOutputStream() != null) {
+			MIEvent event = null;
+			Queue eventQueue = session.getEventQueue();
+			// removeItem() will block until an item is available.
+			try {
+				event = (MIEvent) eventQueue.removeItem();
+			} catch (InterruptedException e) {
+				//e.printStackTrace();
 			}
-		} catch (IOException e) {
-			//e.printStackTrace();
+			try {
+				if (event != null) {
+					session.notifyObservers(event);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

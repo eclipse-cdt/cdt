@@ -11,9 +11,6 @@
          <export name="*"/>
       </library>
    </runtime>
-<!-- ======================================================================= -->
-<!-- The C Plugin                                                            -->
-<!-- ======================================================================= -->
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -30,12 +27,12 @@
    <extension-point id="CBuildModel" name="%CBuilder.name"/>
    <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
    <extension-point id="BinaryParser" name="BinaryParser"/>
-
    <extension-point id="CToolchain" name="C/C++ Toolchain Provider" schema="schema/CToolchain.exsd"/>
    <extension-point id="CBuildConfiguration" name="C/C++ Build Configuration" schema="schema/CBuildConfiguration.exsd"/>
    <extension-point id="CTool" name="C/C++ Tool" schema="schema/CTool.exsd"/>
    <extension-point id="CBuildVariable" name="C/C++ Build Variable" schema="schema/CBuildVariable.exsd"/>
    <extension-point id="CToolType" name="C/C++ Tool Type" schema="schema/CToolType.exsd"/>
+   <extension-point id="ManagedBuildInfo" name="Managed Build Tools" schema="schema/ManagedBuildTools.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.CToolType">
@@ -76,20 +73,27 @@
             id="org.eclipse.cdt.core.tool.strip">
       </type>
    </extension>
-
-   <!-- Define the list of the Binary Parser provided by the CDT -->
-   <extension id="ELF" name="Elf Parser" point="org.eclipse.cdt.core.BinaryParser">
-     <cextension>
-       <run class="org.eclipse.cdt.internal.core.model.parser.ElfParser"/>
-     </cextension>
-  </extension>
-
-  <extension id="PE" name="PE Windows Parser" point="org.eclipse.cdt.core.BinaryParser">
-    <cextension>
-      <run class="org.eclipse.cdt.internal.core.model.parser.PEParser"> </run>
-    </cextension>
-  </extension>
-
+<!-- Define the list of the Binary Parser provided by the CDT -->
+   <extension
+         id="ELF"
+         name="Elf Parser"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.internal.core.model.parser.ElfParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="PE"
+         name="PE Windows Parser"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.internal.core.model.parser.PEParser">
+         </run>
+      </cextension>
+   </extension>
    <extension
          id="cbuilder"
          name="C Builder"

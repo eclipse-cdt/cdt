@@ -24,4 +24,65 @@
    </requires>
 
 
+   <extension
+         id="buildTest"
+         name="Tools for Build Test"
+         point="org.eclipse.cdt.core.ManagedBuildInfo">
+      <target
+            name="Linux"
+            isAbstract="true"
+            id="linux">
+         <tool
+               name="Compiler"
+               id="linux.compiler">
+            <optionCategory
+                  name="Optimization Options"
+                  id="linux.compiler.optimization">
+            </optionCategory>
+            <option
+                  name="Compiler Flags"
+                  type="string"
+                  id="linux.compiler.flags">
+            </option>
+            <option
+                  default="-O"
+                  name="Optimization Flags"
+                  type="string"
+                  category="linux.compiler.optimization"
+                  id="linux.compiler.optimizationFlags">
+            </option>
+         </tool>
+      </target>
+      <target
+            name="Linux Executable"
+            parent="linux"
+            isAbstract="false"
+            id="linux.exec">
+         <tool
+               name="Linker"
+               id="org.eclipse.cdt.ui.tests.tool.linux.link">
+         </tool>
+      </target>
+      <target
+            name="Linux Shared Library"
+            parent="linux"
+            isAbstract="false"
+            id="linux.so">
+         <tool
+               name="Linker"
+               id="org.eclipse.cdt.ui.tests.tool.linux.solink">
+         </tool>
+      </target>
+      <target
+            name="Linux Static Library"
+            parent="linux"
+            isAbstract="false"
+            id="linux.lib">
+         <tool
+               name="Archiver"
+               id="org.eclipse.cdt.ui.tests.tool.linux.ar">
+         </tool>
+      </target>
+   </extension>
+
 </plugin>

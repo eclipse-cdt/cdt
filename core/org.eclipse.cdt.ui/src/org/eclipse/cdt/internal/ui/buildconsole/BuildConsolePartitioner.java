@@ -72,8 +72,10 @@ public class BuildConsolePartitioner
 	 */
 
 	public void appendToDocument(final String text, final BuildConsoleStream stream) {
-		if( text.length() == 0 )
-			return;
+
+		// Do not do this, this is the way we clear the console.
+		//		if( text.length() == 0 )
+		//			return;
 		
 		Runnable r = new Runnable() {
 

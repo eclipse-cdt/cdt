@@ -2514,5 +2514,23 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		}
 	}
     	
+    public void testBug79810A() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("void foo() {\n"); //$NON-NLS-1$
+    	writer.write("int test;\n"); //$NON-NLS-1$
+    	writer.write("if ((__extension__ ({ union { int __in; int __i; } __u; __u.__in = (test); __u.__i; })) & 0x7f) {}\n}\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    	
+    	writer = new StringWriter();
+    	writer.write("#define __WTERMSIG(status) ((status) & 0x7f)\n"); //$NON-NLS-1$
+    	writer.write("#define __WIFEXITED(status) (__WTERMSIG(status) == 0)\n"); //$NON-NLS-1$
+    	writer.write("#define __WAIT_INT(status) (__extension__ ({ union { int __in; int __i; } __u; \\\n"); //$NON-NLS-1$
+    	writer.write("           __u.__in = (test); __u.__i; }))\n"); //$NON-NLS-1$
+    	writer.write("#define WIFEXITED(status)	__WIFEXITED(__WAIT_INT(status))\n"); //$NON-NLS-1$
+    	writer.write("void foo() {\n"); //$NON-NLS-1$
+    	writer.write("int test;\n"); //$NON-NLS-1$
+    	writer.write("if (WIFEXITED(test)) {}\n}\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
 }
 

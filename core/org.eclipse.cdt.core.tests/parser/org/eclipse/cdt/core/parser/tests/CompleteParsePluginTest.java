@@ -222,4 +222,53 @@ public class CompleteParsePluginTest extends FileBasePluginTest {
 	    assertEquals(foo.getName(), "foo"); //$NON-NLS-1$
 	    assertTrue(new String(foo.getFilename()).indexOf("header.h") > 0); //$NON-NLS-1$
 	}
+	
+	public void testBug79810B() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#define __WTERMSIG(status) ((status) & 0x7f)\n"); //$NON-NLS-1$
+    	writer.write("#define __WIFEXITED(status) (__WTERMSIG(status) == 0)\n"); //$NON-NLS-1$
+    	writer.write("#define __WAIT_INT(status) (__extension__ ({ union { int __in; int __i; } __u; \\\n"); //$NON-NLS-1$
+    	writer.write("           __u.__in = (test); __u.__i; }))\n"); //$NON-NLS-1$
+    	writer.write("#define WIFEXITED(status)	__WIFEXITED(__WAIT_INT(status))\n"); //$NON-NLS-1$
+    	importFile( "header.h", writer.toString() ); //$NON-NLS-1$
+    	
+    	writer = new StringWriter();
+    	writer.write( "#include \"header.h\"  \n"); //$NON-NLS-1$
+    	writer.write("void foo() {\n"); //$NON-NLS-1$
+    	writer.write("int test;\n"); //$NON-NLS-1$
+    	writer.write("if (WIFEXITED(test)) {}\n}\n"); //$NON-NLS-1$
+    	IFile cpp = importFile( "test.cpp", writer.toString() ); //$NON-NLS-1$
+    	
+    	List calls = new ArrayList();
+        parse( cpp, calls );
+        
+        Iterator i = calls.iterator();
+        
+        assertEquals( i.next(), CallbackTracker.ENTER_COMPILATION_UNIT );
+        assertEquals( i.next(), CallbackTracker.ENTER_INCLUSION );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_MACRO );
+        assertEquals( i.next(), CallbackTracker.EXIT_INCLUSION );
+        assertEquals( i.next(), CallbackTracker.ENTER_FUNCTION );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_VARIABLE );
+        assertEquals( i.next(), CallbackTracker.ENTER_CODE_BLOCK );
+        assertEquals( i.next(), CallbackTracker.ENTER_CLASS_SPEC );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_FIELD );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_FIELD );
+        assertEquals( i.next(), CallbackTracker.EXIT_CLASS );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_VARIABLE );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_REFERENCE );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_REFERENCE );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_REFERENCE );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_REFERENCE );
+        assertEquals( i.next(), CallbackTracker.ACCEPT_REFERENCE );
+        assertEquals( i.next(), CallbackTracker.EXIT_CODE_BLOCK );
+        assertEquals( i.next(), CallbackTracker.ENTER_CODE_BLOCK );
+        assertEquals( i.next(), CallbackTracker.EXIT_CODE_BLOCK );
+        assertEquals( i.next(), CallbackTracker.EXIT_FUNCTION );
+        assertEquals( i.next(), CallbackTracker.EXIT_COMPILATION_UNIT );
+        assertFalse( i.hasNext() );
+    }
 }

@@ -1391,6 +1391,21 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
 		}
 
+		boolean checkInvalidConversion = true;
+		IASTExpression expLeftTest = lhsExp.getLHSExpression();
+		IASTExpression expRightTest = rhsExp.getLHSExpression();
+		while (expLeftTest != null && !(expLeftTest instanceof ASTEmptyExpression)) {
+			expLeftTest = expLeftTest.getLHSExpression();
+		} 
+		
+		while (expRightTest != null && !(expRightTest instanceof ASTEmptyExpression)) {
+			expRightTest = expRightTest.getLHSExpression();
+		} 
+		
+		if ((expLeftTest != null && expLeftTest instanceof ASTEmptyExpression) || (expRightTest != null && expRightTest instanceof ASTEmptyExpression))
+			checkInvalidConversion = false;
+		
+		if (checkInvalidConversion) {
 		// invalid arithmetic detection TODO add support for 4.5 Integral Promotions/4.7 Integral Conversions if necessary 
 		// 5.6 Multiplicative Operators: The operands of * and / shall have arithmetic or enumeration type; the operands of % shall have integral or enumeration type.
 		if (kind == IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY || kind == IASTExpression.Kind.MULTIPLICATIVE_DIVIDE) {
@@ -1435,7 +1450,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( !(isIntegralType(rhs, isRhsPointer) || rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator )) )
 				handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true );			
 		}
-
+		} 
+		
 		ITypeInfo info = TypeInfoProvider.newTypeInfo( );
 		if( 
 		   ( lhs.checkBit(ITypeInfo.isLong)  && lhs.getType() == ITypeInfo.t_double)

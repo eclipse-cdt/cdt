@@ -1,3 +1,10 @@
+2004-04-14 Alain Magloire
+
+	This is temporary 'till we get the fancy ICType scheme
+	added a way to get the extension for assembly files.
+
+	* mode/org/eclipse/cdt/core/model/CoreModel.java
+
 2004-04-14 Andrew Niefer
 	updated clients of Parse to have a default implementation for ISourceElementRequestor.acceptFriendDeclaration
 

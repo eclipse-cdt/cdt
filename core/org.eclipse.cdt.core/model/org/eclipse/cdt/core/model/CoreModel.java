@@ -157,6 +157,13 @@ public class CoreModel {
 	}
 
 	/**
+	 * Returns the list of assembly file extensions.
+	 */
+	public String[] getAssemblyExtensions() {
+		return manager.getAssemblyExtensions();
+	}
+
+	/**
 	 * Returns the list of headers and sources extensions
 	 */
 	public String[] getTranslationUnitExtensions() {

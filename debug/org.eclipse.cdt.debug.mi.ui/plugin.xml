@@ -46,6 +46,7 @@
             id="org.eclipse.cdt.debug.mi.ui.MIPreferencePage">
       </page>
    </extension>
+<!--
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
@@ -72,5 +73,6 @@
          </action>
       </viewContribution>
    </extension>
+-->
 
 </plugin>

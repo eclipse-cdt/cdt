@@ -65,7 +65,7 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 					ParserMode.COMPLETION_PARSE,
 					ParserLanguage.CPP,
 					callback,
-					new NullLogService()),
+					new NullLogService(), null),
 				callback,
 				ParserMode.COMPLETION_PARSE,
 				ParserLanguage.CPP,

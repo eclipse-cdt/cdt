@@ -12,9 +12,12 @@ package org.eclipse.cdt.core.parser;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.CharArrayReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
@@ -48,7 +51,7 @@ public class ParserUtil
 		return scannerLogService;
 	}
 	
-	public static Reader createReader( String finalPath )
+	public static Reader createReader( String finalPath, Iterator workingCopies )
 	{
 		// check to see if the file which this path points to points to an 
 		// IResource in the workspace
@@ -60,11 +63,18 @@ public class ParserUtil
 			if( workspace.getRoot().getLocation().isPrefixOf( path ) )
 				path = path.removeFirstSegments(workspace.getRoot().getLocation().segmentCount() );
 
-			IResource result = workspace.getRoot().findMember(path);
+			IResource resultingResource = workspace.getRoot().findMember(path);
 			
-			if( result != null && result.getType() == IResource.FILE )
+			if( resultingResource != null && resultingResource.getType() == IResource.FILE )
 			{
-				BufferedInputStream bufferedStream = new BufferedInputStream( ((IFile) result).getContents() );
+				// this is the file for sure
+				// check the working copy
+				if( workingCopies.hasNext() )
+				{
+					Reader r = findWorkingCopy( resultingResource, workingCopies );
+					if( r != null ) return r;
+				}
+				BufferedInputStream bufferedStream = new BufferedInputStream( ((IFile) resultingResource).getContents() );
 				InputStreamReader inputReader  = new InputStreamReader( bufferedStream );
 				return new BufferedReader( inputReader );
 			}
@@ -73,5 +83,32 @@ public class ParserUtil
 		{
 		}
 		return InternalParserUtil.createFileReader(finalPath);
+	}
+
+	/**
+	 * @param resultingResource
+	 * @param workingCopies
+	 * @return
+	 */
+	protected static Reader findWorkingCopy(IResource resultingResource, Iterator workingCopies) {
+		if( parserLogService.isTracing() )
+			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() );
+		while( workingCopies.hasNext() )
+		{
+			Object next = workingCopies.next();
+			if( !( next instanceof IWorkingCopy)) continue;
+			IWorkingCopy copy = (IWorkingCopy) next;
+			if( copy.getResource().equals(resultingResource ))
+			{
+				CharArrayReader arrayReader = new CharArrayReader( copy.getContents() );
+				if( parserLogService.isTracing() )
+					parserLogService.traceLog( "Working copy found!!" );
+				return new BufferedReader( arrayReader );
+			}
+		}
+		if( parserLogService.isTracing() )
+			parserLogService.traceLog( "Working copy not found." );
+
+		return null;
 	}
 }

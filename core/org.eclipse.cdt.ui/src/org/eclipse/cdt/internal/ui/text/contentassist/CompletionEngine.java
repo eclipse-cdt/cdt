@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.io.CharArrayReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -179,7 +180,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IScanner scanner = null;
 		try
 		{
-			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService() );
+			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, elementRequestor, ParserUtil.getScannerLogService(), Arrays.asList(CUIPlugin.getSharedWorkingCopies()) );
 			parser  = ParserFactory.createParser( scanner, elementRequestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )

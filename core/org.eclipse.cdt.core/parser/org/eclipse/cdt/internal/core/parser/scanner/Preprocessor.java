@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.Reader;
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -34,8 +35,8 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 	 * @param filename
 	 * @param defns
 	 */
-	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService logService, IScannerExtension scannerExtension  ) {
-        super(reader, filename, info, requestor, mode, language, logService, scannerExtension  );
+	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService logService, IScannerExtension scannerExtension, List workingCopies  ) {
+        super(reader, filename, info, requestor, mode, language, logService, scannerExtension, workingCopies  );
     }
 
 	public void process()

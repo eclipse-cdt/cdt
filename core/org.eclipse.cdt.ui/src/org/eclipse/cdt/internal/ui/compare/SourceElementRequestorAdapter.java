@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.compare;
 
 import java.io.Reader;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -338,8 +339,8 @@ public class SourceElementRequestorAdapter implements ISourceElementRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath) {
-		return ParserUtil.createReader(finalPath);
+	public Reader createReader(String finalPath, Iterator workingCopies) {
+		return ParserUtil.createReader(finalPath, workingCopies	);
 	}
 
 	/* (non-Javadoc)

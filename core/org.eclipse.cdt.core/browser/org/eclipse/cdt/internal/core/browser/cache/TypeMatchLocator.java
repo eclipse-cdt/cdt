@@ -377,8 +377,8 @@ public class TypeMatchLocator implements ISourceElementRequestor, ICSearchConsta
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath) {
-		return ParserUtil.createReader(finalPath);
+	public Reader createReader(String finalPath, Iterator workingCopies) {
+		return ParserUtil.createReader(finalPath, workingCopies);
 	}
 	
 	/* (non-Javadoc)
@@ -499,7 +499,7 @@ public class TypeMatchLocator implements ISourceElementRequestor, ICSearchConsta
 		IParser parser = null;
 		try
 		{
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService() );
+			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService(), null );
 			parser  = ParserFactory.createParser( scanner, this, ParserMode.STRUCTURAL_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )

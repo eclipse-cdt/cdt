@@ -43,7 +43,7 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 							ParserMode.SELECTION_PARSE,
 							ParserLanguage.CPP,
 							callback,
-							new NullLogService()),
+							new NullLogService(), null),
 							callback,
 							ParserMode.SELECTION_PARSE,
 							ParserLanguage.CPP,

@@ -51,7 +51,7 @@ public class BaseASTTest extends TestCase
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService()), quickParseCallback, mode, lang, null );
+		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback, new NullLogService(), null), quickParseCallback, mode, lang, null );
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
 		return quickParseCallback.getCompilationUnit(); 		

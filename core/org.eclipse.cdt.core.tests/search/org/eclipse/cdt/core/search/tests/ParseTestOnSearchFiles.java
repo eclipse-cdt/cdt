@@ -62,7 +62,7 @@ public class ParseTestOnSearchFiles extends TestCase
 	public void testParseOfAndrewsFile() throws Exception
 	{
 		ISourceElementRequestor requestor = new NullSourceElementRequestor();
-		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), fullPathName, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor, new NullLogService() );
+		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), fullPathName, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor, new NullLogService(), null );
 		IParser parser = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );
 	}

@@ -10,10 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.io.Reader;
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.cdt.utils.TimeOut;
 
 /**
  *
@@ -24,6 +28,14 @@ public class ContentAssistElementRequestor extends NullSourceElementRequestor im
 	private static TimeOut timeoutThread = new TimeOut(); 
 	private IProgressMonitor pm = new NullProgressMonitor();
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
+	 */
+	public Reader createReader(String finalPath, Iterator workingCopies) {
+		return ParserUtil.createReader(finalPath, workingCopies	);
+	}
+	
 	/**
 	 * 
 	 */

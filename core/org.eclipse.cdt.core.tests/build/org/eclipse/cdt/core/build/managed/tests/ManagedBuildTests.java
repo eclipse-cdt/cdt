@@ -1346,7 +1346,7 @@ public class ManagedBuildTests extends TestCase {
 		ISourceElementRequestor callback = new NullSourceElementRequestor();
 		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( "#include <header.h>\n int A::i = 1;" ), 
-														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, new NullLogService());
+														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, new NullLogService(), null);
 		
 		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );

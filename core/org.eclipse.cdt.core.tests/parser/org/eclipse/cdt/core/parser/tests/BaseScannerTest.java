@@ -47,7 +47,7 @@ public class BaseScannerTest extends TestCase {
 
 	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor ) throws ParserFactoryError
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null, null );
 	}
 
 	protected void initializeScanner(String input) throws ParserFactoryError

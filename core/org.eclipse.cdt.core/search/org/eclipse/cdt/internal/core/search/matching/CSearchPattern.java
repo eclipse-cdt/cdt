@@ -186,7 +186,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
 					callback, 
-					nullLog);
+					nullLog, null);
 		} catch (ParserFactoryError e) {
 
 		}
@@ -256,7 +256,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
-					callback, nullLog);
+					callback, nullLog, null);
 		} catch (ParserFactoryError e) {
 
 		}
@@ -298,7 +298,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
-					callback, nullLog);
+					callback, nullLog, null);
 		} catch (ParserFactoryError e) {
 		}
 		
@@ -357,7 +357,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
-					callback, nullLog );
+					callback, nullLog, null );
 		} catch (ParserFactoryError e1) {
 		}
 		
@@ -420,7 +420,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					new ScannerInfo(),
 					ParserMode.QUICK_PARSE,
 					ParserLanguage.CPP,
-					callback,new NullLogService());
+					callback,new NullLogService(), null);
 		} catch (ParserFactoryError e1) {
 		}
 		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();			   

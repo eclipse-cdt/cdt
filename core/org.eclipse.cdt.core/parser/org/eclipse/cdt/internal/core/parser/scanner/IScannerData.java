@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,4 +81,6 @@ public interface IScannerData {
 	 * @param empty_map
 	 */
 	public abstract void setDefinitions(Map map);
+	
+	public Iterator getWorkingCopies();
 }

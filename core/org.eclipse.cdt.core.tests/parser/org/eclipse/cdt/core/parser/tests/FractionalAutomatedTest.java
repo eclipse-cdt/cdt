@@ -242,7 +242,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 				result = null;
 				ParserLanguage language = cppNature ? ParserLanguage.CPP : ParserLanguage.C;
 				IParser parser = ParserFactory.createParser( 
-					ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback,  new NullLogService() ), nullCallback, ParserMode.QUICK_PARSE, language, null );
+					ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE, language, nullCallback,  new NullLogService(), null ), nullCallback, ParserMode.QUICK_PARSE, language, null );
 				
 				parser.parse();
 			} catch ( Exception e ){

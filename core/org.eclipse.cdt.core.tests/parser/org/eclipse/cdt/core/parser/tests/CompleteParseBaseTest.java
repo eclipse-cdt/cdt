@@ -677,8 +677,8 @@ public class CompleteParseBaseTest extends TestCase
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 		 */
-		public Reader createReader(String finalPath) {
-			return ParserUtil.createReader(finalPath);
+		public Reader createReader(String finalPath, Iterator workingCopies) {
+			return ParserUtil.createReader(finalPath,workingCopies);
 		}
 
 		/* (non-Javadoc)
@@ -730,7 +730,7 @@ public class CompleteParseBaseTest extends TestCase
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService() ), callback, ParserMode.COMPLETE_PARSE, language, null 	
+    			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();

@@ -63,10 +63,10 @@ public class ScannerUtility {
 	}
 
 	
-	static CodeReader createReaderDuple( String path, String fileName, ISourceElementRequestor requestor )
+	static CodeReader createReaderDuple( String path, String fileName, ISourceElementRequestor requestor, Iterator workingCopies )
 	{
 		String finalPath = createReconciledPath(path, fileName);
-		Reader r = requestor.createReader( finalPath );
+		Reader r = requestor.createReader( finalPath, workingCopies	);
 		if( r != null )
 			return new CodeReader( finalPath, r );
 		return null;		

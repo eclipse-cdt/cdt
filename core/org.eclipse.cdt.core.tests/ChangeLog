@@ -1,3 +1,6 @@
+2004-04-11 John Camelon
+	Updated clients for ISourceElementRequestor.createReader() updates.
+
 2004-04-10 John Camelon
 	Updated ScannerTestCase to correspond with changes to IToken and its implementations. 
 

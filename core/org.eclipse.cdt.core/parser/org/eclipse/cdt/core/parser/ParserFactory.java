@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.Reader;
+import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
@@ -68,7 +69,7 @@ public class ParserFactory {
 			return new QuickParser( scanner, ourCallback, language, logService );
     }
  	 	
-    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log ) throws ParserFactoryError
+    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
     {
     	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
     	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
@@ -77,11 +78,11 @@ public class ParserFactory {
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension() );
+		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies );
 		return s; 
     }
     
-    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService logService )
+    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService logService, List workingCopies )
     {
     	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
     	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
@@ -90,7 +91,7 @@ public class ParserFactory {
     	IParserLogService log = ( logService == null ) ? createDefaultLogService() : logService;
     	ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
     	ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-    	IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, log, extensionFactory.createScannerExtension() );
+    	IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, log, extensionFactory.createScannerExtension(), workingCopies );
 		return s;
     }
 	

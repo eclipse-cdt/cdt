@@ -67,7 +67,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     	callback = new CompilationUnitCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService() ), callback, ParserMode.COMPLETE_PARSE, language, null 	
+    			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
     	

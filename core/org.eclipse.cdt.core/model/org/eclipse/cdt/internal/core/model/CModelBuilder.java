@@ -131,7 +131,7 @@ public class CModelBuilder {
 					mode, 
 					language, 
 					quickParseCallback, 
-					quickParseMode ? new NullLogService() : ParserUtil.getScannerLogService())
+					quickParseMode ? new NullLogService() : ParserUtil.getScannerLogService(), null)
 				,quickParseCallback, 
 				mode, 
 				language, 

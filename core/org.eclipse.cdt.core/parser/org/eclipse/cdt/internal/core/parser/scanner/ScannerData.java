@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +24,13 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 
 
 public class ScannerData implements IScannerData
 {
+	private final List workingCopies;
 	private final ContextStack contextStack;
 	private IASTFactory astFactory = null;
 	private final ISourceElementRequestor requestor;
@@ -42,7 +45,7 @@ public class ScannerData implements IScannerData
 	private final IScanner scanner;
 	private final IScannerInfo originalConfig;
 	private List includePathNames = new ArrayList();
-	
+	private static final Iterator EMPTY_ITERATOR = new EmptyIterator();
 	/**
 	 * @return Returns the contextStack.
 	 */
@@ -145,7 +148,7 @@ public class ScannerData implements IScannerData
 			ParserMode parserMode, 
 			String filename, 
 			Reader reader, 
-			ParserLanguage language, IScannerInfo info, ContextStack stack )
+			ParserLanguage language, IScannerInfo info, ContextStack stack, List workingCopies )
 	{
 		this.scanner = scanner;
 		this.log = log;
@@ -156,6 +159,7 @@ public class ScannerData implements IScannerData
 		this.language = language;
 		this.originalConfig = info;
 		this.contextStack = stack;
+		this.workingCopies = workingCopies;
 	}
 
 	
@@ -169,5 +173,14 @@ public class ScannerData implements IScannerData
 	 */
 	public void setDefinitions(Map map) {
 		definitions = map;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getWorkingCopies()
+	 */
+	public Iterator getWorkingCopies() {
+		if( workingCopies != null )
+			return workingCopies.iterator();
+		return EMPTY_ITERATOR;
 	}
 }

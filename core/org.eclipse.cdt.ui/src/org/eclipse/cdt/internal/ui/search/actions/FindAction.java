@@ -103,7 +103,7 @@ public abstract class FindAction extends Action {
 		try
 		{
 			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( reader, resourceFile.getLocation().toOSString(), scanInfo, ParserMode.SELECTION_PARSE, language, new NullSourceElementRequestor(), ParserUtil.getScannerLogService() ), 
+							ParserFactory.createScanner( reader, resourceFile.getLocation().toOSString(), scanInfo, ParserMode.SELECTION_PARSE, language, new NullSourceElementRequestor(), ParserUtil.getScannerLogService(), null ), 
 							new NullSourceElementRequestor(), ParserMode.SELECTION_PARSE, language, ParserUtil.getParserLogService() );
 			
 		} catch( ParserFactoryError pfe ){}

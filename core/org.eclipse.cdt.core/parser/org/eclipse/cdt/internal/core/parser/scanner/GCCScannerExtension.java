@@ -137,7 +137,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			// search through include paths
 			while (iter.hasNext()) {	
 				String path = (String)iter.next();
-				duple = ScannerUtility.createReaderDuple( path, parsedDirective.getFilename(), scannerData.getClientRequestor() );
+				duple = ScannerUtility.createReaderDuple( path, parsedDirective.getFilename(), scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
 				if( duple != null )
 					break;
 			}

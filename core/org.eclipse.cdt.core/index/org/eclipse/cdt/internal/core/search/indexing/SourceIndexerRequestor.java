@@ -15,7 +15,9 @@ package org.eclipse.cdt.internal.core.search.indexing;
 * @author bgheorgh
 */
 
+
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -525,8 +527,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath) {
-		return ParserUtil.createReader(finalPath);
+	public Reader createReader(String finalPath, Iterator workingCopies) {
+		return ParserUtil.createReader(finalPath,workingCopies);
 	}
 
 	/**

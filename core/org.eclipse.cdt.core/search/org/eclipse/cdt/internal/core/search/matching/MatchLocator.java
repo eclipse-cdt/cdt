@@ -446,7 +446,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			IParser parser = null;
 			try
 			{
-				IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService() );
+				IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService(), null );
 				parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
 			}
 			catch( ParserFactoryError pfe )
@@ -605,8 +605,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#createReader(java.lang.String)
 	 */
-	public Reader createReader(String finalPath) {
-		return ParserUtil.createReader(finalPath);
+	public Reader createReader(String finalPath, Iterator workingCopies) {
+		return ParserUtil.createReader(finalPath,workingCopies);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()

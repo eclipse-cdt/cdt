@@ -108,7 +108,7 @@ public class Scanner implements IScanner {
 	Scanner( Reader reader, String filename, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
 	{
 		String [] incs = (String [])includePaths.toArray(STRING_ARRAY);
-    	scannerData = new ScannerData( this, log, requestor, mode, filename, reader, language, new ScannerInfo( definitions, incs ), new ContextStack( this, log ) );
+    	scannerData = new ScannerData( this, log, requestor, mode, filename, reader, language, new ScannerInfo( definitions, incs ), new ContextStack( this, log ), null );
     	
 		scannerExtension = extension;
 		if( scannerExtension instanceof GCCScannerExtension )
@@ -131,9 +131,9 @@ public class Scanner implements IScanner {
 		
 	}
 	
-    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension ) {
+    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies ) {
     	
-    	scannerData = new ScannerData( this, log, requestor, parserMode, filename, reader, language, info, new ContextStack( this, log ) );
+    	scannerData = new ScannerData( this, log, requestor, parserMode, filename, reader, language, info, new ContextStack( this, log ), workingCopies );
 
 		scannerExtension = extension;
 		if( scannerExtension instanceof GCCScannerExtension )
@@ -535,7 +535,7 @@ public class Scanner implements IScanner {
 				while (iter.hasNext()) {
 		
 					String path = (String)iter.next();
-					duple = ScannerUtility.createReaderDuple( path, fileName, scannerData.getClientRequestor() );
+					duple = ScannerUtility.createReaderDuple( path, fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
 					if( duple != null )
 						break totalLoop;
 				}
@@ -546,7 +546,7 @@ public class Scanner implements IScanner {
 			}
 			else // local inclusion
 			{
-				duple = ScannerUtility.createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor() );
+				duple = ScannerUtility.createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
 				if( duple != null )
 					break totalLoop;
 				useIncludePaths = true;

@@ -138,10 +138,6 @@
          name="%MachOParser.name"
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
-         <filter
-            name = "visibility"
-            value = "private">
-         </filter>
          <run
                class="org.eclipse.cdt.utils.macho.parser.MachOParser">
          </run>

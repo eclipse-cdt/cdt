@@ -1,3 +1,8 @@
+2004-08-27 Alain Magloire
+
+	Fix for 72550.
+	* plugin.xml
+
 2004-08-25 Chris Wiebe
 
 	support for matching enclosed type names

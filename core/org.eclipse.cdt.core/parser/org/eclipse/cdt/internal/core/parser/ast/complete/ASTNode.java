@@ -49,6 +49,10 @@ public class ASTNode implements IASTNode {
 		IContainerSymbol thisContainer = (IContainerSymbol) symbol; 
 		IContainerSymbol qualification = ( context != null ) ? ((ASTNode)context).getLookupQualificationSymbol() : null;
 		
+		// trying to dereference a context of unknown type
+		if (context != null && qualification == null)
+			return null;
+		
 		List parameters = createLookupParameterList( functionParameters );
 		
 		int paramIndex = ( parameters != null ) ? parameters.size() : 0;

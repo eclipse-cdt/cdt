@@ -102,7 +102,7 @@ public interface IContainerSymbol extends ISymbol {
 	public ISymbol lookup( char[] name ) throws ParserSymbolTableException;
 	public ISymbol lookupMemberForDefinition( char[] name ) throws ParserSymbolTableException;
 	public IParameterizedSymbol lookupMethodForDefinition( char[] name, List parameters ) throws ParserSymbolTableException;
-	public IContainerSymbol lookupNestedNameSpecifier( char[] name ) throws ParserSymbolTableException;
+	public ISymbol lookupNestedNameSpecifier( char[] name ) throws ParserSymbolTableException;
 	public ISymbol qualifiedLookup( char[] name ) throws ParserSymbolTableException;
 	public ISymbol qualifiedLookup( char[] name, ITypeInfo.eType t ) throws ParserSymbolTableException;
 	public IParameterizedSymbol unqualifiedFunctionLookup( char[] name, List parameters ) throws ParserSymbolTableException;

@@ -97,7 +97,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 * @param symbol2
 	 * @param map
 	 */
-	public void discardDeferredReturnType(ISymbol oldReturnType, TemplateSymbol template, ObjectMap map) {
+	public void discardDeferredReturnType(ISymbol oldReturnType, ITemplateSymbol template, ObjectMap map) {
 		ISymbol returnType = getReturnType();
 		setReturnType( null );
 		template.removeInstantiation( (IContainerSymbol) returnType );

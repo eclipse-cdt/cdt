@@ -578,16 +578,19 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * the ::, object, function and enumerator names are ignored.  If the name
 	 * is not a class-name or namespace-name, the program is ill-formed
 	 */
-	public IContainerSymbol lookupNestedNameSpecifier( char[] name ) throws ParserSymbolTableException {
+	public ISymbol lookupNestedNameSpecifier( char[] name ) throws ParserSymbolTableException {
 		return lookupNestedNameSpecifier( name, this );
 	}
-	private IContainerSymbol lookupNestedNameSpecifier(char[] name, IContainerSymbol inSymbol ) throws ParserSymbolTableException{		
+
+	private ISymbol lookupNestedNameSpecifier(char[] name, IContainerSymbol inSymbol ) throws ParserSymbolTableException{		
 		ISymbol foundSymbol = null;
 	
 		final TypeFilter filter = new TypeFilter( ITypeInfo.t_namespace );
 		filter.addAcceptedType( ITypeInfo.t_class );
 		filter.addAcceptedType( ITypeInfo.t_struct );
 		filter.addAcceptedType( ITypeInfo.t_union );
+		filter.addAcceptedType( ITypeInfo.t_templateParameter );
+		filter.addAcceptedType( IASTNode.LookupKind.TYPEDEFS );
 		
 		LookupData data = new LookupData( name ){
 			public TypeFilter getFilter() { return typeFilter; }
@@ -600,10 +603,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			foundSymbol = getSymbolTable().resolveAmbiguities( data );
 		}
 		
-		if( foundSymbol instanceof IContainerSymbol )
-			return (IContainerSymbol) foundSymbol;
- 
-		return null;
+		return foundSymbol;
 	}
 
 	/* (non-Javadoc)

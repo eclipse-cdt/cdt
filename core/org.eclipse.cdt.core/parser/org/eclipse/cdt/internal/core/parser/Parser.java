@@ -503,12 +503,11 @@ public class Parser implements IParserData, IParser
 						setCompletionValues(scope, kind, getCompliationUnit());
 					else if (prev != null)
 						setCompletionValues(scope, kind, first, prev,
-								KeywordSetKey.EMPTY);
+								argumentList.getTemplateArgumentsList(), KeywordSetKey.EMPTY);
 					else
 						setCompletionValuesNoContext(scope, kind, key);
 
-					last = consumeTemplateArguments(scope, last, argumentList,
-							kind);
+					last = consumeTemplateArguments(scope, last, argumentList, kind);
 					if (last.getType() == IToken.tGT)
 						hasTemplateId = true;
 					break;
@@ -522,8 +521,8 @@ public class Parser implements IParserData, IParser
 			while (LT(1) == IToken.tCOLONCOLON) {
 				IToken prev = last;
 				last = consume(IToken.tCOLONCOLON);
-				setCompletionValues(scope, kind, first, prev,
-						KeywordSetKey.EMPTY);
+				setCompletionValues(scope, kind, first, prev, 
+						argumentList.getTemplateArgumentsList(), KeywordSetKey.EMPTY);
 
 				if (queryLookaheadCapability() && LT(1) == IToken.t_template)
 					consume();
@@ -539,8 +538,8 @@ public class Parser implements IParserData, IParser
 					case IToken.tIDENTIFIER :
 						prev = last;
 						last = consume();
-						setCompletionValues(scope, kind, first, prev,
-								KeywordSetKey.EMPTY);
+						setCompletionValues(scope, kind, first, prev, 
+								argumentList.getTemplateArgumentsList(), KeywordSetKey.EMPTY);
 						last = consumeTemplateArguments(scope, last,
 								argumentList, kind);
 						if (last.getType() == IToken.tGT)
@@ -3997,8 +3996,7 @@ public class Parser implements IParserData, IParser
 			Declarator declarator = null;
 			if (LT(1) != IToken.tSEMI)
 			{
-			    declarator = initDeclarator(sdw, strategy, completionKindForDeclaration, constructInitializersInDeclarations
-			    		);
+			    declarator = initDeclarator(sdw, strategy, completionKindForDeclaration, constructInitializersInDeclarations);
 			        
 			    while (LT(1) == IToken.tCOMMA)
 			    {
@@ -4654,19 +4652,10 @@ public class Parser implements IParserData, IParser
 					sdw.setTypenamed(true);
 					consume(IToken.t_typename);
 					IToken first = LA(1);
-					IToken last = null;
-					last = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE,
-							KeywordSetKey.EMPTY).getLastToken();
-					if (LT(1) == IToken.t_template) {
-						consume(IToken.t_template);
-						last = templateId(sdw.getScope(),
-								CompletionKind.SINGLE_NAME_REFERENCE);
-					}
-					if (sdw.getName() != null)
-						first = sdw.getName().getFirstToken();
-					ITokenDuple duple = TokenFactory.createTokenDuple(first,
-							last);
+					ITokenDuple duple = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE,
+										KeywordSetKey.EMPTY);
 					sdw.setTypeName(duple);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME);
 					flags.setEncounteredTypename(true);
 					break;
 				case IToken.tCOLONCOLON :
@@ -4694,8 +4683,7 @@ public class Parser implements IParserData, IParser
 					setCompletionValues(sdw.getScope(), kind, key);
 					ITokenDuple d = name(sdw.getScope(), kind, key);
 					sdw.setTypeName(d);
-					sdw
-							.setSimpleType(IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME);
 					flags.setEncounteredTypename(true);
 					break;
 				case IToken.t_class :
@@ -6413,14 +6401,13 @@ public class Parser implements IParserData, IParser
 	}
 
 	
-	
-	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, KeywordSetKey key ) throws EndOfFileException{
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, List arguments, KeywordSetKey key ) throws EndOfFileException{
 		if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
 		{
 			setCompletionScope( scope );
 			setCompletionKind( kind );
 			setCompletionKeywords(key);
-			ITokenDuple duple = TokenFactory.createTokenDuple( first, last );
+			ITokenDuple duple = TokenFactory.createTokenDuple( first, last, arguments );
 			try {
 				setCompletionContext( astFactory.lookupSymbolInContext( scope, duple, null ) );
 			} catch (ASTNotImplementedException e) {

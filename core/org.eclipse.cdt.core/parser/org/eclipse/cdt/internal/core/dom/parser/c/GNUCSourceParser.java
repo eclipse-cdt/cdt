@@ -2082,7 +2082,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
          int lastOffset = consume(IToken.tRBRACKET).getEndOffset();
 
          IASTArrayModifier arrayMod = null;
-         if (!(isStatic || isRestrict || isConst || isVolatile))
+         if (!(isStatic || isRestrict || isConst || isVolatile || isVarSized ))
             arrayMod = createArrayModifier();
          else {
             ICASTArrayModifier temp = createCArrayModifier();

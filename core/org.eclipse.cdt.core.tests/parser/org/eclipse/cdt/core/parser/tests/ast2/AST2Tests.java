@@ -2804,4 +2804,16 @@ public class AST2Tests extends AST2BaseTest {
 		assertEquals( ds.length, 1 );
 		assertSame( ds[0], col.getName(11) );
 	}
+	
+	public void testBug84236() throws Exception
+	{
+	   String code = "double maximum(double a[ ][*]);"; //$NON-NLS-1$
+	   IASTSimpleDeclaration d = (IASTSimpleDeclaration) parse( code, ParserLanguage.C ).getDeclarations()[0];
+	   IASTStandardFunctionDeclarator fd = (IASTStandardFunctionDeclarator) d.getDeclarators()[0];
+	   IASTParameterDeclaration p = fd.getParameters()[0];
+	   IASTArrayDeclarator a = (IASTArrayDeclarator) p.getDeclarator();
+	   ICASTArrayModifier star = (ICASTArrayModifier) a.getArrayModifiers()[1];
+	   assertTrue( star.isVariableSized() );
+	   
+	}
 }

@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 
-class SourceLookupLabelProvider extends LabelProvider implements ITableLabelProvider
+public class SourceLookupLabelProvider extends LabelProvider implements ITableLabelProvider
 {
 	public Image getColumnImage( Object element, int columnIndex )
 	{

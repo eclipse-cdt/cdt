@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 
-class SourceListDialogField extends ListDialogField
+public class SourceListDialogField extends ListDialogField
 {
 	public class ObservableSourceList extends Observable
 	{

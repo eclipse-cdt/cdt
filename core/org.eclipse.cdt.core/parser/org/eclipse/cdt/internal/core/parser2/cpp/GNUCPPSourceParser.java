@@ -865,7 +865,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         try
         {
-	        declSpecifier = declSpecifierSeq(false, true);
+	        declSpecifier = declSpecifierSeq(false, false);
 	        declarator = declarator( SimpleDeclarationStrategy.TRY_CONSTRUCTOR );
         }
         catch( BacktrackException bt )
@@ -989,10 +989,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 backtrackMarker = mark();
                 newPlacementExpressions = expression();
                 consume(IToken.tRPAREN);
-                if (templateIdScopes.size() > 0) {
-                    templateIdScopes.pop();
-                } //pop 1st Parent
-                placementParseFailure = false;
+                if( LT(1) == IToken.tLBRACKET )
+                {
+                    backup( backtrackMarker );
+	                if (templateIdScopes.size() > 0) {
+	                    templateIdScopes.pop();
+	                } //pop 1st Parent
+	                placementParseFailure = true;
+	                throwBacktrack( backtrackMarker.getOffset(), backtrackMarker.getEndOffset(), backtrackMarker.getLineNumber(), backtrackMarker.getFilename() );
+                }
+                else
+                    placementParseFailure = false;
                 if (LT(1) == IToken.tLPAREN) {
                     beforeSecondParen = mark();
                     consume(IToken.tLPAREN);
@@ -3237,7 +3244,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         List arrayMods = Collections.EMPTY_LIST;
         List exceptionSpecIds = Collections.EMPTY_LIST;
         boolean encounteredVarArgs = false;
-        boolean tryEncountered = true;
+        boolean tryEncountered = false;
         IASTExpression bitField = null;
         boolean isFunction = false;
         boolean isPureVirtual = false, isConst = false, isVolatile = false;
@@ -3247,15 +3254,26 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consumePointerOperators(pointerOps);
 
             if (LT(1) == IToken.tLPAREN) {
-                consume();
-                innerDecl = declarator(strategy);
-                consume(IToken.tRPAREN);
+                IToken mark = mark();
+                try
+                {
+	                consume();
+	                innerDecl = declarator(strategy);
+	                consume(IToken.tRPAREN);
+                }
+                catch( BacktrackException bte )
+                {
+                    backup( mark );
+                }
                 declaratorName = createName();
             } else
             {
                 try
                 {
-                    declaratorName = createName( consumeTemplatedOperatorName() );
+                    ITokenDuple d = consumeTemplatedOperatorName();
+                    declaratorName = createName( d );
+                    if( d.isConversion() )
+                        isFunction = true;
                 }
                 catch( BacktrackException bt )
                 {

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,8 +55,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 
 public class CModelManager implements IResourceChangeListener, ICDescriptorListener {
+
+	public static boolean VERBOSE = false;
 
 	/**
 	 * Unique handle onto the CModel
@@ -63,7 +68,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	final CModel cModel = new CModel();
     
 	public static HashSet OptionNames = new HashSet(20);
-        
+
+	public static final int DEFAULT_CHANGE_EVENT = 0; // must not collide with ElementChangedEvent event masks
+	
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
 	 */
@@ -75,6 +82,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	private ArrayList fCModelDeltas = new ArrayList();
 
+	/**
+	 * Queue of reconcile deltas on working copies that have yet to be fired.
+	 * This is a table form IWorkingCopy to IJavaElementDelta
+	 */
+	HashMap reconcileDeltas = new HashMap();
+ 
 	/**
 	 * Turns delta firing on/off. By default it is on.
 	 */
@@ -118,11 +131,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * The lis of the SourceMappers on projects.
 	 */
 	private HashMap sourceMappers = new HashMap();
-
-	// TODO: This should be in a preference/property page
-	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	public static final String [] headerExtensions = {"h", "hh", "hpp", "H"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	public static final String [] assemblyExtensions = {"s", "S"}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
@@ -570,32 +578,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 	
-/*
-
-	public String[] getHeaderExtensions() {
-		return headerExtensions;
-	}
-	
-	public String[] getSourceExtensions() {
-		return sourceExtensions;
-	}
-
-	public String[] getAssemblyExtensions() {
-		return assemblyExtensions;
-	}
-
-	public String[] getTranslationUnitExtensions() {
-		String[] sources = getSourceExtensions();
-		String[] headers = getHeaderExtensions();
-		String[] asm = getAssemblyExtensions();
-		String[] cexts = new String[headers.length + sources.length + asm.length];
-		System.arraycopy(sources, 0, cexts, 0, sources.length);
-		System.arraycopy(headers, 0, cexts, sources.length, headers.length);
-		System.arraycopy(asm, 0, cexts, sources.length + headers.length, asm.length);
-		return cexts;
-	}
-*/
-	
 	public BinaryRunner getBinaryRunner(ICProject project) {
 		BinaryRunner runner = null;
 		synchronized(binaryRunners) {
@@ -741,35 +723,114 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
+	public void fire(int eventType) {
+		fire(null, eventType);
+	}
+
 	/**
 	 * Fire C Model deltas, flushing them after the fact. 
 	 * If the firing mode has been turned off, this has no effect. 
 	 */
-	public synchronized void fire(int eventType) {
+	public synchronized void fire(ICElementDelta customDeltas, int eventType) {
 		if (fFire) {
-			mergeDeltas();
-			try {
-				Iterator iterator = fCModelDeltas.iterator();
-				while (iterator.hasNext()) {
-					ICElementDelta delta= (ICElementDelta) iterator.next();
-					// Refresh internal scopes
-					fire(delta, eventType);
-				}
-			} finally {
-				// empty the queue
-				this.flush();
+			ICElementDelta deltaToNotify;
+			if (customDeltas == null) {
+				deltaToNotify = this.mergeDeltas(this.fCModelDeltas);
+			} else {
+				deltaToNotify = customDeltas;
+			}
+                         
+			// Notification
+			IElementChangedListener[] listeners =  new IElementChangedListener[fElementChangedListeners.size()];
+			fElementChangedListeners.toArray(listeners);
+        	int listenerCount = listeners.length; 
+			int [] listenerMask = null;
+
+			switch (eventType) {
+				case DEFAULT_CHANGE_EVENT:
+					firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+					firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+					fireReconcileDelta(listeners, listenerMask, listenerCount);
+					break;
+				case ElementChangedEvent.PRE_AUTO_BUILD:
+					firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+					break;
+				case ElementChangedEvent.POST_CHANGE:
+					firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
+					fireReconcileDelta(listeners, listenerMask, listenerCount);
+					break;
+				case ElementChangedEvent.POST_RECONCILE:
+					fireReconcileDelta(listeners, listenerMask, listenerCount);
+					break;
 			}
 		}
 	}
 
-	public synchronized void fire(ICElementDelta delta, int eventType) {
-		ElementChangedEvent event= new ElementChangedEvent(delta, eventType);
-		// Clone the listeners since they could remove themselves when told about the event 
-		// (eg. a type hierarchy becomes invalid (and thus it removes itself) when the type is removed
-		ArrayList listeners= (ArrayList) fElementChangedListeners.clone();
-		for (int i= 0; i < listeners.size(); i++) {
-			IElementChangedListener listener= (IElementChangedListener) listeners.get(i);
-			listener.elementChanged(event);
+	private void firePreAutoBuildDelta(ICElementDelta deltaToNotify,
+		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
+                                                                                                                             
+		if (VERBOSE) {
+			System.out.println("FIRING PRE_AUTO_BUILD Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
+		}
+		if (deltaToNotify != null) {
+			notifyListeners(deltaToNotify, ElementChangedEvent.PRE_AUTO_BUILD, listeners, listenerMask, listenerCount);
+		}
+	}
+
+	private void firePostChangeDelta(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
+                         
+		// post change deltas
+		if (VERBOSE){
+			System.out.println("FIRING POST_CHANGE Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
+		}
+		if (deltaToNotify != null) {
+				// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
+				this.flush();
+				notifyListeners(deltaToNotify, ElementChangedEvent.POST_CHANGE, listeners, listenerMask, listenerCount);
+		}
+	}
+
+	private void fireReconcileDelta(IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
+		ICElementDelta deltaToNotify = mergeDeltas(this.reconcileDeltas.values());
+		if (VERBOSE){
+			System.out.println("FIRING POST_RECONCILE Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
+		}
+		if (deltaToNotify != null) {
+			// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
+			this.reconcileDeltas = new HashMap();
+			notifyListeners(deltaToNotify, ElementChangedEvent.POST_RECONCILE, listeners, listenerMask, listenerCount);
+		}
+	}
+
+	public void notifyListeners(ICElementDelta deltaToNotify, int eventType,
+		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
+
+		final ElementChangedEvent extraEvent = new ElementChangedEvent(deltaToNotify, eventType);
+		for (int i= 0; i < listenerCount; i++) {
+			if (listenerMask == null || (listenerMask[i] & eventType) != 0) {
+				final IElementChangedListener listener = listeners[i];
+				long start = -1;
+				if (VERBOSE) {
+					System.out.print("Listener #" + (i+1) + "=" + listener.toString());//$NON-NLS-1$//$NON-NLS-2$
+					start = System.currentTimeMillis();
+				}
+				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
+				Platform.run(new ISafeRunnable() {
+					public void handleException(Throwable exception) {
+						//CCorePlugin.log(exception, "Exception occurred in listener of C element change notification"); //$NON-NLS-1$
+						CCorePlugin.log(exception);
+					}
+					public void run() throws Exception {
+						listener.elementChanged(extraEvent);
+					}
+				});
+				if (VERBOSE) {
+					System.out.println(" -> " + (System.currentTimeMillis()-start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
 		}
 	}
 
@@ -780,19 +841,21 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		fCModelDeltas= new ArrayList();
 	}
 
-	/**
-	 * Merged all awaiting deltas.
-	 */
-	private void mergeDeltas() {
-		if (fCModelDeltas.size() <= 1)
-			return;
+	private ICElementDelta mergeDeltas(Collection deltas) {
 
-		Iterator deltas = fCModelDeltas.iterator();
+		if (deltas.size() == 0)
+			return null;
+		if (deltas.size() == 1)
+			return (ICElementDelta)deltas.iterator().next();
+		if (deltas.size() <= 1)
+			return null;
+
+		Iterator iterator = deltas.iterator();
 		ICElement cRoot = getCModel();
 		CElementDelta rootDelta = new CElementDelta(cRoot);
 		boolean insertedTree = false;
-		while (deltas.hasNext()) {
-			CElementDelta delta = (CElementDelta)deltas.next();
+		while (iterator.hasNext()) {
+			CElementDelta delta = (CElementDelta)iterator.next();
 			ICElement element = delta.getElement();
 			if (cRoot.equals(element)) {
 				ICElementDelta[] children = delta.getAffectedChildren();
@@ -807,10 +870,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 		}
 		if (insertedTree) {
-			fCModelDeltas = new ArrayList(1);
-			fCModelDeltas.add(rootDelta);
+			//fCModelDeltas = new ArrayList(1);
+			//fCModelDeltas.add(rootDelta);
+			return rootDelta;
 		} else {
-			fCModelDeltas = new ArrayList(0);
+			//fCModelDeltas = new ArrayList(0);
+			return null;
 		}
 	}
 

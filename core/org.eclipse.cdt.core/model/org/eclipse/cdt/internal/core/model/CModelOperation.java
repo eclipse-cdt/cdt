@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 import java.io.InputStream;
+import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -14,6 +15,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -155,6 +157,30 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			copy[fDeltas.length]= delta;
 			fDeltas= copy;
 		}
+	}
+
+	/*
+	 * Registers the given reconcile delta with the Java Model Manager.
+	 */
+	protected void addReconcileDelta(IWorkingCopy workingCopy, ICElementDelta delta) {
+		HashMap reconcileDeltas = CModelManager.getDefault().reconcileDeltas;
+		CElementDelta previousDelta = (CElementDelta)reconcileDeltas.get(workingCopy);
+		if (previousDelta != null) {
+			ICElementDelta[] children = delta.getAffectedChildren();
+			for (int i = 0, length = children.length; i < length; i++) {
+				CElementDelta child = (CElementDelta)children[i];
+				previousDelta.insertDeltaTree(child.getElement(), child);
+			}
+		} else {
+			reconcileDeltas.put(workingCopy, delta);
+		}
+	}
+
+	/*
+	 * Deregister the reconcile delta for the given working copy
+	 */
+	protected void removeReconcileDelta(IWorkingCopy workingCopy) {
+		CModelManager.getDefault().reconcileDeltas.remove(workingCopy);
 	}
 
 	/**
@@ -498,14 +524,14 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * @exception CoreException if the operation fails
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
+		CModelManager manager= CModelManager.getDefault();
 		try {
 			fMonitor = monitor;
 			execute();
 		} finally {
 			registerDeltas();
 			// Fire if we change somethings
-			if (!hasModifiedResource()) {
-				CModelManager manager= CModelManager.getDefault();
+			if (!hasModifiedResource() || manager.reconcileDeltas.isEmpty()) {
 				manager.fire(ElementChangedEvent.POST_CHANGE);
 			}
 		}

@@ -1,3 +1,10 @@
+2004-04-29 Alain Magloire
+
+	Changes to working copy, to be wrap in runnable Plaform
+	operation when commiting or destroying the working copy.
+	Also changes to the ICElementDelta to be fired in a
+	Workspace runnable.
+
 2004-04-28 Alain Magloire
 
 	NPE in the PathEntry.

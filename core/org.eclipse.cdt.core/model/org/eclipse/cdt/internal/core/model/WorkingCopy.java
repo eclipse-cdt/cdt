@@ -12,13 +12,13 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 
 import java.io.ByteArrayInputStream;
-import java.util.Map;
 
-import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -113,34 +113,11 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			return;
 		}
 		try {
-			close();
-		
-			// if original element is not on classpath flush it from the cache 
-			ICElement originalElement = this.getOriginalElement();
-			if (!this.getParent().exists()) {
-				((TranslationUnit)originalElement).close();
-			}
-		
-			// remove working copy from the cache
-			CModelManager manager = CModelManager.getDefault();
-		
-			// In order to be shared, working copies have to denote the same compilation unit 
-			// AND use the same buffer factory.
-			// Assuming there is a little set of buffer factories, then use a 2 level Map cache.
-			Map sharedWorkingCopies = manager.sharedWorkingCopies;
-		
-			Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(this.bufferFactory);
-			if (perFactoryWorkingCopies != null){
-				if (perFactoryWorkingCopies.remove(originalElement) != null) {
-					// report C deltas
-					CElementDelta delta = new CElementDelta(this.getCModel());
-					delta.removed(this);
-					CModelManager.getDefault().fire(delta, ElementChangedEvent.POST_RECONCILE);
-				}
-			}		
+			DestroyWorkingCopyOperation op = new DestroyWorkingCopyOperation(this);
+			runOperation(op, null);
 		} catch (CModelException e) {
 			// do nothing
-		}		
+		}
 	}
 
 	/**
@@ -150,7 +127,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		// working copy always exists in the model until it is detroyed
 		return this.useCount != 0;
 	}
-
 
 	/**
 	 * Answers custom buffer factory
@@ -196,7 +172,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public IWorkingCopy getWorkingCopy(IProgressMonitor monitor, IBufferFactory factory){
 		return this;
 	}
-
 
 	/**
 	 * @see IWorkingCopy
@@ -294,56 +269,14 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean reconcile(boolean forceProblemDetection, IProgressMonitor monitor)
-		throws CModelException {
+	public void reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException {
 		
 		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
 
-		if (monitor != null){
-			if (monitor.isCanceled()) return false;
-			monitor.beginTask("element.reconciling", 10); //$NON-NLS-1$
-		}
-
-		boolean wasConsistent = isConsistent();
-		CElementDeltaBuilder deltaBuilder = null;
-
-		try {
-			// create the delta builder (this remembers the current content of the cu)
-			if (!wasConsistent){
-				deltaBuilder = new CElementDeltaBuilder(this);
-		
-				// update the element infos with the content of the working copy
-				this.makeConsistent(monitor);
-				deltaBuilder.buildDeltas();
-			}
-
-			if (monitor != null) monitor.worked(2);
-	
-			// force problem detection? - if structure was consistent
-			if (forceProblemDetection && wasConsistent){
-				if (monitor != null && monitor.isCanceled()) return (!wasConsistent);
-
-				//IProblemRequestor problemRequestor = this.getProblemRequestor();
-				//if (problemRequestor != null && problemRequestor.isActive()){
-				//	problemRequestor.beginReporting();
-				//	CompilationUnitProblemFinder.process(this, problemRequestor, monitor);
-				//	problemRequestor.endReporting();
-				//}
-			}
-	
-			// fire the deltas
-			if (deltaBuilder != null){
-				if ((deltaBuilder.delta != null) && (deltaBuilder.delta.getAffectedChildren().length > 0)) {
-					CModelManager.getDefault().fire(deltaBuilder.delta, ElementChangedEvent.POST_RECONCILE);
-				}
-			}
-		} finally {
-			if (monitor != null) monitor.done();
-		}
-		
-		// An indication if something has changed
-		return (!wasConsistent);	
+        ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, forceProblemDetection);
+        runOperation(op, monitor);
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#restore()
 	 */
@@ -357,6 +290,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		updateTimeStamp(original);
 		makeConsistent(null);		
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.ICFile#save(IProgressMonitor, boolean)
 	 */
@@ -367,6 +301,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		// computes fine-grain deltas in case the working copy is being reconciled already (if not it would miss one iteration of deltas).
 		this.reconcile();   
 	}
+
 	/**
 	 * @param original
 	 * @throws CModelException

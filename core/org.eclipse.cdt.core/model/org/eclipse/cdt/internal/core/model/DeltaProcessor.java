@@ -590,25 +590,16 @@ public class DeltaProcessor {
 	}
 	
 	private void updateDependencies(ICElement element){
-	
+		
 		IResource resource = element.getResource();
 		if (resource == null)
-		 return;
-		 
-		String fileExtension = resource.getFileExtension();
+			return;
 		
-		if ((fileExtension != null) &&
-			(isValidHeader(fileExtension))){
+		String filename = resource.getName();
+		
+		if (CoreModel.isValidHeaderUnitName(filename)) {
 			indexManager.updateDependencies(resource);
 		}
 	}	
-	
-	private boolean isValidHeader(String fileExtension) {
-		String[] supportedTypes = CModelManager.headerExtensions;
-		for (int i = 0; i < supportedTypes.length; ++i) {
-			if (supportedTypes[i].equals(fileExtension))
-				return true;
-		}
-		return false;
-	}
+
 }

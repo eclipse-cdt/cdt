@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IDocument;
-import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.utils.TimeOut;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -76,7 +75,7 @@ public class SourceIndexer extends AbstractIndexer {
 	 * Returns the file types the <code>IIndexer</code> handles.
 	 */
 	public String[] getFileTypes(){
-		return CModelManager.sourceExtensions;
+		return CoreModel.getDefault().getSourceExtensions();
 	}
 	
 	protected void indexFile(IDocument document) throws IOException {
@@ -98,7 +97,7 @@ public class SourceIndexer extends AbstractIndexer {
 		}
 		
 		//C or CPP?
-		ParserLanguage language = CoreModel.getDefault().hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
+		ParserLanguage language = CoreModel.hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
 		
 		IParser parser = null;
 		

@@ -79,9 +79,9 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			renderTargetLabel(debugConfig),
 			iprocess,
 			exe.getProject(),
-			true,
 			false,
-			true);
+			true,
+			false);
 	}
 
 	private IPath getCoreFilePath(final IProject project) {

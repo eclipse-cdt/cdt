@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * ISourceRoot
@@ -23,6 +24,12 @@ public interface ISourceRoot extends ICContainer {
 	 * @return
 	 */
 	boolean isOnSourceEntry(IResource resource);
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	boolean isOnSourceEntry(IPath path);
 
 	/**
 	 * @param element

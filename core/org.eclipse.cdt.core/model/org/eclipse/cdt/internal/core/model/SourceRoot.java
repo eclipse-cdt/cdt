@@ -61,7 +61,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		return isOnSourceEntry(path);
 	}
 
-	private boolean isOnSourceEntry(IPath path) {
+	public boolean isOnSourceEntry(IPath path) {
 		if (sourceEntry.getPath().isPrefixOf(path) 
 				&& !CoreModelUtil.isExcluded(path, sourceEntry.fullExclusionPatternChars())) {
 			return true;

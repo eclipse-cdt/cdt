@@ -1,3 +1,9 @@
+2004-08-15 Chris Wiebe
+
+	make isOnSourceEntry(IPath) public method
+	* model/org/eclipse/cdt/core/model/ISourceRoot.java
+	* model/org/eclipse/cdt/internal/core/model/SourceRoot.java
+
 2004-08-15 Alain Magloire
 
 	First draft, work in progress.

@@ -89,6 +89,8 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 			//if indexer is now on send a index all request 
 			if( (indexChanged && newIndexerValue) || (problemsChanged && newIndexerProblemsValue && newIndexerValue) )
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexAll(tempProject);
+			else if( indexChanged && !newIndexerValue )
+				CCorePlugin.getDefault().getCoreModel().getIndexManager().discardJobs( tempProject.getName() );
 			else if( problemsChanged && !newIndexerProblemsValue ){
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().removeAllIndexerProblems(tempProject);
 			}
@@ -161,7 +163,7 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	 * @throws CoreException
 	 */
 	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
 		
 		Node child = descriptor.getProjectData(IndexManager.CDT_INDEXER).getFirstChild();
 		Boolean strBool = null;
@@ -179,7 +181,7 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 	
 	private Boolean loadIndexerProblemsEnabledFromCDescriptor( IProject project ) throws CoreException
 	{
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
 		
 		Node child = descriptor.getProjectData(IndexManager.CDT_INDEXER).getFirstChild();
 		Boolean strBool = null;

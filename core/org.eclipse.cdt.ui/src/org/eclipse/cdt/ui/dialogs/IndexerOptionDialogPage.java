@@ -102,7 +102,7 @@ public class IndexerOptionDialogPage extends DialogPage {
 		
 		try {
 			newProject = project;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject);
+			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
 			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
 		
 		

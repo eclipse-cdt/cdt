@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.core.search.indexing;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.internal.core.search.processing.IJob;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 public abstract class IndexRequest implements IJob {
 	protected boolean isCancelled = false;
@@ -37,6 +39,10 @@ public abstract class IndexRequest implements IJob {
 	}
 	
 	public boolean isReadyToRun() {
+		IProject project = CCorePlugin.getWorkspace().getRoot().getProject(indexPath.segment(0));
+		if ( !this.manager.isIndexEnabled( project ) )
+			return false;
+		
 		// tag the index as inconsistent
 		this.manager.aboutToUpdateIndex(indexPath, updatedIndexState());
 		return true;

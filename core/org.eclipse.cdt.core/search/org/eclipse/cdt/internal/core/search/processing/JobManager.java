@@ -112,7 +112,7 @@ public abstract class JobManager implements Runnable {
 		if (VERBOSE)
 			JobManager.verbose("DISCARD   background job family - " + jobFamily); //$NON-NLS-1$
 
-		boolean wasEnabled = ( enabledState() == ENABLED );
+		int oldEnabledState = enabledState();
 		try {
 			IJob currentJob;
 			// cancel current job if it belongs to the given family
@@ -161,8 +161,10 @@ public abstract class JobManager implements Runnable {
 				jobEnd = loc;
 			}
 		} finally {
-			if ( wasEnabled )
+			if ( oldEnabledState == ENABLED )
 				enable();
+			else if( oldEnabledState == WAITING )
+				pause();
 		}
 		if (VERBOSE)
 			JobManager.verbose("DISCARD   DONE with background job family - " + jobFamily); //$NON-NLS-1$
@@ -452,9 +454,9 @@ public abstract class JobManager implements Runnable {
 						notifyIdle(System.currentTimeMillis() - idlingStart);
 						Thread.sleep(500);
 						continue;
-					} else {
-						idlingStart = -1;
-					}
+					} 
+					
+					idlingStart = -1;
 					if (VERBOSE) {
 						JobManager.verbose(awaitingJobsCount() + " awaiting jobs"); //$NON-NLS-1$
 						JobManager.verbose("STARTING background job - " + job); //$NON-NLS-1$

@@ -175,10 +175,11 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	}
 	
 	public void updateDependencies(IResource resource){
-		if (CCorePlugin.getDefault() == null) return;	
-			UpdateDependency job = new UpdateDependency(resource);
-		
-			request(job);
+		if (CCorePlugin.getDefault() == null || !isIndexEnabled( resource.getProject() ) )
+			return;	
+	
+		UpdateDependency job = new UpdateDependency(resource);
+		request(job);
 	}
 	
 	String computeIndexName(IPath path) {
@@ -233,9 +234,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 								JobManager.verbose("-> cannot reuse existing index: "+indexName+" path: "+path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 							rebuildIndex(indexName, path);
 							return null;
-						} else {
-							index = null; // will fall thru to createIfMissing & create a empty index for the rebuild all job to populate
-						}
+						} 
+						index = null; // will fall thru to createIfMissing & create a empty index for the rebuild all job to populate
 					}
 				}
 				if (currentIndexState == SAVED_STATE) { // rebuild index if existing file is missing
@@ -388,7 +388,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Index the content of the given source folder.
 	 */
 	public void indexSourceFolder(IProject project, IPath sourceFolder, final char[][] exclusionPattern) {
-	
+		if( !isIndexEnabled( project ) )
+			return;
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
@@ -445,7 +446,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		IndexRequest request = null;
 		if (target instanceof IProject) {
 			IProject p = (IProject) target;
-			request = new IndexAllProject(p, this);
+			if( p.exists() && isIndexEnabled( p ) )
+				request = new IndexAllProject(p, this);
 		}
 	
 		if (request != null)
@@ -484,7 +486,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Note: the actual operation is performed in background
 	 */
 	public void remove(String resourceName, IPath indexedContainer){
-		request(new RemoveFromIndex(resourceName, indexedContainer, this));
+		IProject project = CCorePlugin.getWorkspace().getRoot().getProject(indexedContainer.toString());
+      	if( isIndexEnabled( project ) )
+      		request(new RemoveFromIndex(resourceName, indexedContainer, this));
 	}
 	/**
 	 * Removes the index for a given path. 
@@ -525,9 +529,12 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/**
 	 * Remove the content of the given source folder from the index.
 	 */
-	public void removeSourceFolderFromIndex(CProject javaProject, IPath sourceFolder, char[][] exclusionPatterns) {
-		IProject project = javaProject.getProject();
+	public void removeSourceFolderFromIndex(CProject cProject, IPath sourceFolder, char[][] exclusionPatterns) {
+		IProject project = cProject.getProject();
 	
+		if( !isIndexEnabled( project ) )
+			return;
+		
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
@@ -745,7 +752,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	}
 	
 	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true );
 		
 		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
 		Boolean strBool = null;
@@ -761,7 +768,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		return strBool;
 	}
 	private Boolean loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
-		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true);
 		
 		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
 		Boolean strBool = null;
@@ -790,7 +797,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			return Status.OK_STATUS;		
 		}
 		
-	};
+	}
 	
 	public void removeAllIndexerProblems( IProject project){
 		String jobName = "remove markers"; //$NON-NLS-1$

@@ -1,3 +1,7 @@
+2004-06-14 Andrew Niefer
+	- Bugs 66799, 66981 : don't process indexer jobs if the indexer for that project is disabled.
+	- also fix warnings about deprecated calls and unnecessary else statements
+
 2004-06-13 Bogdan Gheorghe
 	Fix for Bug 63275 - Ensured that only declarations and references are found for enumerations/enumerators
 	

@@ -74,7 +74,7 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 
 	private List getRegisters0() throws DebugException
 	{
-		if ( fRegisters == null )
+		if ( fRegisters == null || fRegisters.size() == 0 )
 		{
 			ICDIRegister[] regs = getCDIRegisters();
 			fRegisters = new ArrayList( regs.length );

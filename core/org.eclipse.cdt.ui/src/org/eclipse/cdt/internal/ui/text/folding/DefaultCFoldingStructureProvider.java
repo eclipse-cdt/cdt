@@ -219,7 +219,8 @@ public class DefaultCFoldingStructureProvider implements IProjectionListener, IC
 					model.replaceAnnotations(null, additions);
 				}
 			}
-			
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			fCachedDocument= null;
 			fAllowCollapsing= false;
@@ -302,7 +303,7 @@ public class DefaultCFoldingStructureProvider implements IProjectionListener, IC
 				
 				int start= fCachedDocument.getLineOfOffset(range.getStartPos());
 				int end= fCachedDocument.getLineOfOffset(range.getStartPos() + range.getLength());
-				if (start != end) {
+				if (start < end) {
 					int offset= fCachedDocument.getLineOffset(start);
 					int endOffset= fCachedDocument.getLineOffset(end + 1);
 					return new Position(offset, endOffset - offset);

@@ -1,3 +1,8 @@
+2004-08-06 Vladimir Hirsl
+
+	A small parser Problem fix after String to char[] optimization.
+	* parser/org/eclipse/cdt/internal/core/parser/problem/Problem.java
+
 2004-08-06 Chris Wiebe
 
 	Add scheduling rule to CoreModel.run

@@ -1,3 +1,14 @@
+2004-08-06 Vladimir Hirsl
+
+	Parser correctness tests in FailedCompleteParseASTTest.java
+		testParametrizedTypeDefinition_bug69751(),
+		testPredefinedSymbol_bug70928(),
+		testUsingOverloadedName_bug71317(),
+		testThisInTemplatedMemberFunction_bug71331(),
+		testInheritsFromTemplateParameter_bug71410(),
+		testTemplateFunctionInsideTemplateType_bug71588(),
+		testGNUExternalTemplate_bug71603().
+
 2004-06-09 Alain Magloire
 
 	Patch from Sam Rob to resolve 64022

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.failedTests;
 
+import java.io.StringWriter;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -164,6 +165,124 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		Iterator i = parse("typedef int size_t; \n int __cdecl foo(); \n").getDeclarations();//$NON-NLS-1$
 //		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
 //		IASTFunction fd = (IASTFunction) i.next();
+//		assertFalse(i.hasNext());
+	}
+	
+	public void testUsingOverloadedName_bug71317() throws Exception {
+		// using a globaly defined function overloaded in a namespace
+		try {
+			parse("int foo(int); \n namespace NS { \n int foo(int); \n using ::foo; \n } \n");//$NON-NLS-1$
+			fail();
+		} catch ( ParserException e ){
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("int foo(); \n namespace NS { int bar(); \n using ::foo; \n } \n").getDeclarations();//$NON-NLS-1$
+//		IASTFunction fd1 = (IASTFunction) i.next();
+//		IASTNamespaceDefinition nd = (IASTNamespaceDefinition) i.next();
+//		assertFalse(i.hasNext());
+//		Iterator j = nd.getDeclarations();
+//		IASTFunction fd2 = (IASTFunction) j.next();
+//		IASTUsingDeclaration ud = (IASTUsingDeclaration) j.next();
+//		assertFalse(j.hasNext());
+	}
+	
+	public void testThisInTemplatedMemberFunction_bug71331() throws Exception {
+		// dereferencing 'this' in a templated member function
+		try {
+			parse("class A { \n int f() {return 0;} \n template<typename T> int g(T*) { return this->f(); } \n }; \n");//$NON-NLS-1$
+			fail();
+		} catch (ParserException e) {
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("class A { \n int f() {return 0;} \n template<typename T> int g(T*) { return this->f(); } \n }; \n").getDeclarations();//$NON-NLS-1$
+//		IASTAbstractTypeSpecifierDeclaration cd = (IASTAbstractTypeSpecifierDeclaration) i.next();
+//		assertFalse(i.hasNext());
+//		IASTClassSpecifier cs = (IASTClassSpecifier) cd.getTypeSpecifier();
+//		Iterator j = cs.getDeclarations();
+//		IASTMethod md = (IASTMethod) j.next();
+//		IASTTemplateDeclaration tmd = (IASTTemplateDeclaration) j.next();
+//		assertFalse(j.hasNext());
+	}
+	
+	public void testInheritsFromTemplateParameter_bug71410() throws Exception {
+		try {
+			// An inner type definition inherits from a template parameter
+			parse("template <typename T, class U> \n class A { \n struct B : U { T* mpT; }; \n B mB; \n T* foo() { return mB.mpT; } \n }; \n");//$NON-NLS-1$
+			fail();
+		} catch (ParserException e) {
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("template <typename T, class U> \n class A { \n struct B : U { T* mT; }; \n B mB; \n T* getVal() { return mB.mT; } \n }; \n").getDeclarations();//$NON-NLS-1$
+//		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+//		assertFalse(i.hasNext());
+//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+//		Iterator j = cs.getDeclarations();
+//		IASTClassSpecifier cs2 = (IASTClassSpecifier) j.next();
+//		IASTField f = (IASTField) j.next();
+//		IASTMethod m = (IASTMethod) j.next();
+//		assertFalse(j.hasNext());
+	}
+	
+	public void testParametrizedTypeDefinition_bug69751() throws Exception {
+		try {
+			// a typedef refers to an unknown type in a template parameter
+			parse("template <typename T> \n class A { \n typedef typename T::size_type size_type; \n void foo() { size_type i; } \n }; \n");//$NON-NLS-1$
+			fail();
+		} catch (ParserException e) {
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("template <typename T> \n class A { \n typedef typename T::size_type size_type; \n void foo() { size_type i; } \n }; \n").getDeclarations();//$NON-NLS-1$
+//		IASTTemplateDeclaration td = (IASTTemplateDeclaration)i.next();
+//		assertFalse(i.hasNext());
+//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+//		Iterator j = cs.getDeclarations();
+//		IASTTypedefDeclaration tdd = (IASTTypedefDeclaration) j.next();
+//		IASTMethod m = (IASTMethod) j.next();
+//		assertFalse(j.hasNext());
+//		Iterator k = m.getDeclarations();
+//		IASTVariable v = (IASTVariable) k.next();
+//		assertFalse(k.hasNext());
+	}
+	
+	public void testTemplateFunctionInsideTemplateType_bug71588() throws Exception {
+		StringWriter writer = new StringWriter();
+		writer.write("template <typename T, typename U> \r\n"); //$NON-NLS-1$
+		writer.write("class A { \n"); //$NON-NLS-1$
+		writer.write("template <typename V> \n"); //$NON-NLS-1$
+		writer.write("T* foo(V); \n"); //$NON-NLS-1$
+		writer.write("}; \n"); //$NON-NLS-1$
+		writer.write("template <typename T, typename U> \n"); //$NON-NLS-1$
+		writer.write("template <typename V> \n"); //$NON-NLS-1$
+		writer.write("T* A<T, U>::foo(V) { return (T*)0; } \n"); //$NON-NLS-1$
+		try {
+			parse(writer.toString());
+			fail();
+		} catch (ParserException e) {
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse(writer.toString()).getDeclarations();
+//		IASTTemplateDeclaration td = (IASTTemplateDeclaration) i.next();
+//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+//		Iterator j = cs.getDeclarations();
+//		IASTTemplateDeclaration td2 = (IASTTemplateDeclaration) j.next();
+//		assertFalse(j.hasNext());
+//		IASTMethod mdec = (IASTMethod) td2.getOwnedDeclaration();
+//		IASTTemplateDeclaration td3 = (IASTTemplateDeclaration) i.next();
+//		assertFalse(i.hasNext());
+//		IASTMethod mdef = (IASTMethod) td3.getOwnedDeclaration();
+	}
+	
+	public void testGNUExternalTemplate_bug71603() throws Exception {
+		try {
+			parse("template <typename T> \n class A {}; \n extern template class A<int>; \n"); //$NON-NLS-1$
+			fail();
+		} catch (ParserException e) {
+			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		}
+//		Iterator i = parse("template <typename T> \n class A {}; \n extern template class A<int>; \n").getDeclarations();
+//		IASTTemplateDeclaration td = (IASTTemplateDeclaration) i.next();
+//		IASTClassSpecifier cs = (IASTClassSpecifier) td.getOwnedDeclaration();
+//		IASTTemplateInstantiation ti = (IASTTemplateInstantiation) i.next();
 //		assertFalse(i.hasNext());
 	}
 }

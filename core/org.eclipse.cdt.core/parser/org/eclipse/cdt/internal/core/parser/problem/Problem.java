@@ -215,12 +215,13 @@ public class Problem implements IProblem {
 			msg = "";  //$NON-NLS-1$
 		
 		if( arg != null ){
-			msg = MessageFormat.format( msg, new Object [] { arg } );
+			msg = MessageFormat.format( msg, new Object [] { new String(arg) } );
 		}
 		
 		Object [] args = { msg, new String( originatingFileName ), new Integer( lineNumber ) };
 		
 		message = ParserMessages.getFormattedString( PROBLEM_PATTERN, args ); 
+		
 		return message; 
 	}
 

@@ -39,6 +39,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -317,7 +318,11 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-		listenSelection( false, this );
+		try {
+			listenSelection( false, this );
+		} 
+		catch (SWTException e) {
+		}
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();
 		}
@@ -325,6 +330,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	}
 
 	void listenSelection( final boolean enable, final ISelectionListener listener ) {
+		Display display = getWorkbench().getDisplay();
+		if ( display == null || display.isDisposed() )
+			return;
 		Runnable r = new Runnable() {
 			
 			public void run() {
@@ -337,6 +345,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 				}
 			}
 		};
-		getWorkbench().getDisplay().asyncExec( r );
+		display.asyncExec( r );
 	}
 }

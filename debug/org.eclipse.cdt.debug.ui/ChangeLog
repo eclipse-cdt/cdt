@@ -1,3 +1,8 @@
+2004-08-12 Mikhail Khodjaiants
+	Fix for bug 70453. Linux: error exiting Eclipse on Linux RedHat or SuSe Enterprise Server 9.
+	Applied modified patch from Sean Evoy.
+	* CDebugUIPlugin.java
+
 2004-08-10 Tanya Wolff
 	Fix for 70943 - externalized strings
 	* plugin.xml

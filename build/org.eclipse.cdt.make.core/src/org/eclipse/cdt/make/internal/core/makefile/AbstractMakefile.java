@@ -221,6 +221,8 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 									result = expandString(result, recursive);
 								}
 								buffer.append(result);
+							} else { // Do not expand
+								buffer.append('$').append('(').append(name).append(')');
 							}
 						}
 						macroName.setLength(0);
@@ -244,6 +246,9 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 								result = expandString(result, recursive);
 							}
 							buffer.append(result);
+						} else {
+							// nothing found
+							buffer.append('$').append(c);
 						}
 						inMacro = false;
 					} else {

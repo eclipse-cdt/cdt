@@ -215,6 +215,12 @@
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
       </viewerContribution>
       <objectContribution

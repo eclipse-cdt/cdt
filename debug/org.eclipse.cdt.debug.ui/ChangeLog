@@ -1,3 +1,7 @@
+2005-02-02 Mikhail Khodjaiants
+	Fix for bug 84187: "Toggle Watchpoint" and "Toggle Method Breakpoint" don't work with C editor.
+	* ToggleBreakpointAdapter.java
+
 2005-01-21 Mikhail Khodjaiants
 	Partial fix for bug 83465: Add "Run to line" and "Resume at line" actions to the context menu of Disassembly view.
 	* ResumeAtLineActionDelegate.java

@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IFunction;
@@ -24,10 +25,11 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -141,7 +143,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		else {
 			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
-		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
+		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), IInternalCDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}
 
 	/* (non-Javadoc)
@@ -162,47 +164,29 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		if ( selection instanceof IStructuredSelection ) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if ( ss.size() == 1 && (ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod) ) {
-				IDeclaration declaration = (IDeclaration)ss.getFirstElement();
-				String sourceHandle = getSourceHandle( declaration );
-				IResource resource = getElementResource( declaration );
-				String functionName = ( declaration instanceof IFunction ) ? getFunctionName( (IFunction)declaration ) : getMethodName( (IMethod)declaration );
-				ICFunctionBreakpoint breakpoint = CDIDebugModel.functionBreakpointExists( sourceHandle, resource, functionName );
-				if ( breakpoint != null ) {
-					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
-				}
-				else {
-					int lineNumber = -1;
-					int charStart = -1;
-					int charEnd = -1;
-					try {
-						ISourceRange sourceRange = declaration.getSourceRange();
-						if ( sourceRange != null ) {
-							charStart = sourceRange.getStartPos();
-							charEnd = charStart + sourceRange.getLength();
-							if ( charEnd <= 0 ) {
-								charStart = -1;
-								charEnd = -1;
+		if ( selection instanceof ITextSelection ) {
+			String text = ((ITextSelection)selection).getText();
+			if ( text != null ) {
+				IResource resource = getResource( part );
+				if ( resource instanceof IFile ) {
+					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
+					if ( tu != null ) {
+						try {
+							ICElement element = tu.getElement( text.trim() );
+							if ( element instanceof IFunction || element instanceof IMethod ) {
+								toggleMethodBreakpoints0( (IDeclaration)element );
 							}
-							lineNumber = sourceRange.getStartLine();
+						}
+						catch( CModelException e ) {
 						}
 					}
-					catch( CModelException e ) {
-						DebugPlugin.log( e );
-					}
-					CDIDebugModel.createFunctionBreakpoint( sourceHandle, 
-															resource, 
-															functionName,
-															charStart,
-															charEnd,
-															lineNumber,
-															true, 
-															0, 
-															"", //$NON-NLS-1$
-															true );
 				}
+			}
+		}
+		else if ( selection instanceof IStructuredSelection ) {
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if ( ss.size() == 1 && (ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod) ) {
+				toggleMethodBreakpoints0( (IDeclaration)ss.getFirstElement() );
 			}
 		}		
 	}
@@ -211,7 +195,24 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
+		if ( selection instanceof ITextSelection ) {
+			String text = ((ITextSelection)selection).getText();
+			if ( text != null ) {
+				IResource resource = getResource( part );
+				if ( resource instanceof IFile ) {
+					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
+					if ( tu != null ) {
+						try {
+							ICElement element = tu.getElement( text.trim() );
+							return ( element instanceof IFunction || element instanceof IMethod );
+						}
+						catch( CModelException e ) {
+						}
+					}
+				}
+			}
+		}
+		else if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.size() == 1 ) {
 				return ( ss.getFirstElement() instanceof IFunction || ss.getFirstElement() instanceof IMethod );
@@ -224,81 +225,59 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleWatchpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
-		if ( selection instanceof IStructuredSelection ) {
+		if ( selection instanceof ITextSelection ) {
+			String text = ((ITextSelection)selection).getText();
+			if ( text != null ) {
+				IResource resource = getResource( part );
+				if ( resource instanceof IFile ) {
+					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
+					if ( tu != null ) {
+						try {
+							ICElement element = tu.getElement( text.trim() );
+							if ( element instanceof IVariable ) {
+								toggleVariableWatchpoint( part, (IVariable)element );
+							}
+						}
+						catch( CModelException e ) {
+						}
+					}
+				}
+			}
+		}
+		else if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.size() == 1 && ss.getFirstElement() instanceof IVariable ) {
 				toggleVariableWatchpoint( part, (IVariable)ss.getFirstElement() );
 			}
 		}
-//		String errorMessage = null;
-//		if ( part instanceof IEditorPart ) {
-//			IEditorPart editorPart = (IEditorPart)part;
-//			IEditorInput input = editorPart.getEditorInput();
-//			if ( input == null ) {
-//				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_2" ); //$NON-NLS-1$
-//			}
-//			else {
-//				ITextEditor textEditor = (ITextEditor)editorPart;
-//				IDocument document = textEditor.getDocumentProvider().getDocument( input );
-//				if ( document == null ) {
-//					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_2" ); //$NON-NLS-1$
-//				}
-//				else {
-//					IResource resource = getResource( textEditor );
-//					if ( resource == null ) {
-//						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_resource_2" ); //$NON-NLS-1$
-//					}
-//					else {
-//						if ( !(resource instanceof IWorkspaceRoot) )
-//							resource = resource.getProject();
-//						String expression = ( selection instanceof TextSelection ) ? ((TextSelection)selection).getText().trim() : ""; //$NON-NLS-1$
-//						String sourceHandle = getSourceHandle( input );
-//						ICWatchpoint watchpoint = CDIDebugModel.watchpointExists( sourceHandle, resource, expression );
-//						if ( watchpoint != null ) {
-//							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( watchpoint, true );
-//						}
-//						else {
-//							AddWatchpointDialog dlg = new AddWatchpointDialog( textEditor.getSite().getShell(), true, false, expression );
-//							if ( dlg.open() != Window.OK )
-//								return;
-//							expression = dlg.getExpression();
-//							WatchpointExpressionVerifier wev = new WatchpointExpressionVerifier();
-//							if ( !wev.isValidExpression( document, expression ) ) {
-//								errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_expression_1" ) + expression; //$NON-NLS-1$
-//							}
-//							else {
-//								CDIDebugModel.createWatchpoint( sourceHandle, 
-//																resource,
-//																dlg.getWriteAccess(), 
-//																dlg.getReadAccess(),
-//																expression, 
-//																true, 
-//																0, 
-//																"", //$NON-NLS-1$
-//																true );
-//							}
-//						}
-//						return;
-//					}
-//				}
-//			}
-//		}
-//		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
+		if ( selection instanceof ITextSelection ) {
+			String text = ((ITextSelection)selection).getText();
+			if ( text != null ) {
+				IResource resource = getResource( part );
+				if ( resource instanceof IFile ) {
+					ITranslationUnit tu = getTranslationUnit( (IFile)resource );
+					if ( tu != null ) {
+						try {
+							return ( tu.getElement( text.trim() ) instanceof IVariable );
+						}
+						catch( CModelException e ) {
+						}
+					}
+				}
+			}
+		}
+		else if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.size() == 1 ) {
 				return ( ss.getFirstElement() instanceof IVariable );
 			}
 		}
-//		if ( selection instanceof ITextSelection ) {
-//			return true;
-//		}
 		return false;
 	}
 
@@ -353,8 +332,29 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			if ( dlg.open() != Window.OK )
 				return;
 			expression = dlg.getExpression();
+			int lineNumber = -1;
+			int charStart = -1;
+			int charEnd = -1;
+			try {
+				ISourceRange sourceRange = variable.getSourceRange();
+				if ( sourceRange != null ) {
+					charStart = sourceRange.getStartPos();
+					charEnd = charStart + sourceRange.getLength();
+					if ( charEnd <= 0 ) {
+						charStart = -1;
+						charEnd = -1;
+					}
+					lineNumber = sourceRange.getStartLine();
+				}
+			}
+			catch( CModelException e ) {
+				DebugPlugin.log( e );
+			}
 			CDIDebugModel.createWatchpoint( sourceHandle, 
 											resource,
+											charStart,
+											charEnd,
+											lineNumber,
 											dlg.getWriteAccess(), 
 											dlg.getReadAccess(),
 											expression, 
@@ -416,5 +416,53 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 
 	private String getVariableName( IVariable variable ) {
 		return variable.getElementName();
+	}
+
+	private ITranslationUnit getTranslationUnit( IFile file ) {
+		Object element = CoreModel.getDefault().create( file );
+		if ( element instanceof ITranslationUnit ) {
+			return (ITranslationUnit)element;
+		}
+		return null;
+	}
+
+	private void toggleMethodBreakpoints0( IDeclaration declaration ) throws CoreException {
+		String sourceHandle = getSourceHandle( declaration );
+		IResource resource = getElementResource( declaration );
+		String functionName = ( declaration instanceof IFunction ) ? getFunctionName( (IFunction)declaration ) : getMethodName( (IMethod)declaration );
+		ICFunctionBreakpoint breakpoint = CDIDebugModel.functionBreakpointExists( sourceHandle, resource, functionName );
+		if ( breakpoint != null ) {
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
+		}
+		else {
+			int lineNumber = -1;
+			int charStart = -1;
+			int charEnd = -1;
+			try {
+				ISourceRange sourceRange = declaration.getSourceRange();
+				if ( sourceRange != null ) {
+					charStart = sourceRange.getStartPos();
+					charEnd = charStart + sourceRange.getLength();
+					if ( charEnd <= 0 ) {
+						charStart = -1;
+						charEnd = -1;
+					}
+					lineNumber = sourceRange.getStartLine();
+				}
+			}
+			catch( CModelException e ) {
+				DebugPlugin.log( e );
+			}
+			CDIDebugModel.createFunctionBreakpoint( sourceHandle, 
+													resource, 
+													functionName,
+													charStart,
+													charEnd,
+													lineNumber,
+													true, 
+													0, 
+													"", //$NON-NLS-1$
+													true );
+		}
 	}
 }

@@ -2,6 +2,8 @@
 
 	* model/org/eclipse/cdt/internal/core/model/parser/PEParser.java (getBinary):
 	Catch if path == null.
+	* model/org/eclipse/cdt/internal/core/model/Archive.java (isReadOnly):
+	Always return true for binary.
 
 2003-04-29 Alain Magloire
 

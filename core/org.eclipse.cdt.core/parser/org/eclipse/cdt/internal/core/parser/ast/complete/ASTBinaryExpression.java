@@ -67,10 +67,10 @@ public class ASTBinaryExpression extends ASTUnaryExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
 	 */
-	public void reconcileReferences() throws ASTNotImplementedException {
-		super.reconcileReferences();
-		rhs.reconcileReferences();
-		reconcileSubExpression((ASTExpression) rhs);
+	public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException {
+		super.reconcileReferences(manager);
+		rhs.reconcileReferences(manager);
+		reconcileSubExpression((ASTExpression) rhs, manager);
 	}
 
 	/* (non-Javadoc)

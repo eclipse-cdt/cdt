@@ -10,7 +10,6 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
@@ -57,12 +56,32 @@ public class ReferenceCache implements IReferenceManager {
 		ASTReference [] createReferenceArray( int size );
 	}
 	
-	private static final int DEFAULT_CACHE_SIZE = 16;
+	private static final int DEFAULT_CACHE_SIZE = 64;
 
 	private boolean[] classReferencesAvailable;
 	private ASTReference[] classReferences;
 	private boolean[] variableReferencesAvailable;
 	private ASTReference[] variableReferences;
+	private boolean[] fieldReferencesAvailable;
+	private ASTReference[] fieldReferences;
+	private boolean[] functionReferencesAvailable;
+	private ASTReference[] functionReferences;
+	private boolean[] methodReferencesAvailable;
+	private ASTReference[] methodReferences;
+	private boolean[] enumerationReferencesAvailable;
+	private ASTReference[] enumerationReferences;
+	private boolean[] enumeratorReferencesAvailable;
+	private ASTReference[] enumeratorReferences;
+	private boolean[] namespaceReferencesAvailable;
+	private ASTReference[] namespaceReferences;
+	private boolean[] typedefReferencesAvailable;
+	private ASTReference[] typedefReferences;
+	private boolean[] parameterReferencesAvailable;
+	private ASTReference[] parameterReferences;
+	private boolean[] templateParameterReferencesAvailable;
+	private ASTReference[] templateParameterReferences;
+	
+	
 	
 	private abstract static class BaseReferenceFactory implements IReferenceFactory
 	{
@@ -71,6 +90,28 @@ public class ReferenceCache implements IReferenceManager {
 		}
 	}
 
+	private static final IReferenceFactory TYPEDEFREF_FACTORY = 
+		new BaseReferenceFactory() {
+		public ASTReference createReference() { return new ASTTypedefReference(); }
+	};
+
+	private static final IReferenceFactory NAMESPACEREF_FACTORY = 
+		new BaseReferenceFactory() {
+		public ASTReference createReference() { return new ASTNamespaceReference(); }
+	};
+	
+	private static final IReferenceFactory PARMREF_FACTORY = 
+		new BaseReferenceFactory() {
+		public ASTReference createReference() { return new ASTParameterReference(); }
+	};
+	
+	private static final IReferenceFactory TEMPPARMREF_FACTORY = 
+		new BaseReferenceFactory() {
+		public ASTReference createReference() { return new ASTTemplateParameterReference(); }
+	};
+
+
+	
 	private static final IReferenceFactory CLASSREF_FACTORY = 
 		new BaseReferenceFactory() {
 		public ASTReference createReference() { return new ASTClassReference(); }
@@ -78,6 +119,24 @@ public class ReferenceCache implements IReferenceManager {
 
 	};
 	
+	private static final IReferenceFactory FUNCTIONREF_FACTORY = 
+		new BaseReferenceFactory() {
+
+			public ASTReference createReference() {
+				return new ASTFunctionReference();
+			} 
+		
+	};
+
+	private static final IReferenceFactory METHODREF_FACTORY = 
+		new BaseReferenceFactory() {
+
+			public ASTReference createReference() {
+				return new ASTMethodReference();
+			} 
+		
+	};
+
 	private static final IReferenceFactory VARIABLEREF_FACTORY = 
 		new BaseReferenceFactory()	{
 
@@ -87,17 +146,77 @@ public class ReferenceCache implements IReferenceManager {
 		
 	};
 	
+	private static final IReferenceFactory FIELDREF_FACTORY = new BaseReferenceFactory()
+	{
+		public ASTReference createReference()
+		{
+			return new ASTFieldReference();
+		}
+	};
+
+	private static final IReferenceFactory ENUMSPECREF_FACTORY = new BaseReferenceFactory()
+	{
+		public ASTReference createReference()
+		{
+			return new ASTEnumerationReference();
+		}
+	};
+
+	private static final IReferenceFactory ENUMERATORREF_FACTORY = new BaseReferenceFactory()
+	{
+		public ASTReference createReference()
+		{
+			return new ASTEnumeratorReference();
+		}
+	};
+
 	
 	{
 		classReferences = CLASSREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
 		variableReferences = VARIABLEREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		fieldReferences = FIELDREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		functionReferences = FUNCTIONREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		methodReferences = METHODREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		enumerationReferences = ENUMSPECREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		enumeratorReferences = ENUMERATORREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		namespaceReferences = NAMESPACEREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		typedefReferences = TYPEDEFREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		parameterReferences = PARMREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
+		templateParameterReferences = TEMPPARMREF_FACTORY.createReferenceArray(DEFAULT_CACHE_SIZE);
 		classReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
 		variableReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
+		fieldReferencesAvailable = new boolean[ DEFAULT_CACHE_SIZE ];
+		functionReferencesAvailable = new boolean[ DEFAULT_CACHE_SIZE ];
+		methodReferencesAvailable = new boolean[ DEFAULT_CACHE_SIZE ];
+		enumerationReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
+		enumeratorReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
+		templateParameterReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
+		namespaceReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
+		typedefReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
+		parameterReferencesAvailable = new boolean[DEFAULT_CACHE_SIZE];
 		for (int i = 0; i < DEFAULT_CACHE_SIZE; ++i) {
 			classReferencesAvailable[i] = true;
 			variableReferencesAvailable[i] = true;
+			fieldReferencesAvailable[i] = true;
+			functionReferencesAvailable[i] = true;
+			methodReferencesAvailable[i] = true;
+			enumerationReferencesAvailable[i] = true;
+			enumeratorReferencesAvailable[i] = true;
+			namespaceReferencesAvailable[i] = true;
+			typedefReferencesAvailable[i] = true;
+			parameterReferencesAvailable[i] = true;
+			templateParameterReferencesAvailable[i] = true;
+			methodReferences[i] = METHODREF_FACTORY.createReference();
 			classReferences[i] =  CLASSREF_FACTORY.createReference();
 			variableReferences[i] = VARIABLEREF_FACTORY.createReference();
+			fieldReferences[i] = FIELDREF_FACTORY.createReference();
+			functionReferences[i] = FUNCTIONREF_FACTORY.createReference();
+			enumerationReferences[i] = ENUMSPECREF_FACTORY.createReference();
+			enumeratorReferences[i] = ENUMERATORREF_FACTORY.createReference();
+			typedefReferences[i] = TYPEDEFREF_FACTORY.createReference();
+			namespaceReferences[i] = NAMESPACEREF_FACTORY.createReference();
+			parameterReferences[i] = PARMREF_FACTORY.createReference();
+			templateParameterReferences[i] = TEMPPARMREF_FACTORY.createReference();
 		}
 	}
 
@@ -113,7 +232,50 @@ public class ReferenceCache implements IReferenceManager {
 			returnReference( variableReferencesAvailable, variableReferences, reference );
 			return;
 		}
-		
+		if( reference instanceof IASTFieldReference )
+		{
+			returnReference( fieldReferencesAvailable, fieldReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTFunctionReference )
+		{
+			returnReference( functionReferencesAvailable, functionReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTMethodReference )
+		{
+			returnReference( methodReferencesAvailable, methodReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTEnumerationReference )
+		{
+			returnReference( enumerationReferencesAvailable, enumerationReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTEnumeratorReference )
+		{
+			returnReference( enumeratorReferencesAvailable, enumeratorReferences, reference );
+			return;
+		}			
+		if( reference instanceof IASTNamespaceReference )
+		{
+			returnReference( namespaceReferencesAvailable, namespaceReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTTypedefReference )
+		{
+			returnReference( typedefReferencesAvailable, typedefReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTParameterReference )
+		{
+			returnReference( parameterReferencesAvailable, parameterReferences, reference );
+			return;
+		}
+		if( reference instanceof IASTTemplateParameterReference)
+		{
+			returnReference( templateParameterReferencesAvailable, templateParameterReferences, reference );
+		}
 	}
 
 	/**
@@ -235,8 +397,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	private IASTReference getTypedefReference(int offset,
-			IASTTypedefDeclaration declaration) {
-		return new ASTTypedefReference(offset, declaration);
+			IASTTypedefDeclaration referencedElement) {
+		for (int i = 0; i < typedefReferencesAvailable.length; ++i) {
+			if (typedefReferencesAvailable[i]) {
+				typedefReferencesAvailable[i] = false;
+				typedefReferences[i].initialize(offset, referencedElement);
+				return typedefReferences[i];
+			}
+		}
+		int currentSize = typedefReferences.length;
+		GrowResult g = growArrays( typedefReferences, typedefReferencesAvailable, TYPEDEFREF_FACTORY);
+		typedefReferencesAvailable = g.getAvailables();
+		typedefReferences = g.getReferences();
+		typedefReferencesAvailable[currentSize] = false;
+		typedefReferences[currentSize].initialize(offset, referencedElement);
+		return typedefReferences[currentSize];
 	}
 
 	/**
@@ -259,7 +434,6 @@ public class ReferenceCache implements IReferenceManager {
 		variableReferencesAvailable[currentSize] = false;
 		variableReferences[currentSize].initialize(offset, referencedElement);
 		return variableReferences[currentSize];
-
 	}
 
 	/**
@@ -268,8 +442,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	private IASTReference getParameterReference(int offset,
-			IASTParameterDeclaration declaration) {
-		return new ASTParameterReference(offset, declaration);
+			IASTParameterDeclaration referencedElement) {
+		for (int i = 0; i < parameterReferencesAvailable.length; ++i) {
+			if (parameterReferencesAvailable[i]) {
+				parameterReferencesAvailable[i] = false;
+				parameterReferences[i].initialize(offset, referencedElement);
+				return parameterReferences[i];
+			}
+		}
+		int currentSize = parameterReferences.length;
+		GrowResult g = growArrays( parameterReferences, parameterReferencesAvailable, PARMREF_FACTORY);
+		parameterReferencesAvailable = g.getAvailables();
+		parameterReferences = g.getReferences();
+		parameterReferencesAvailable[currentSize] = false;
+		parameterReferences[currentSize].initialize(offset, referencedElement);
+		return parameterReferences[currentSize];
 	}
 
 	/**
@@ -278,8 +465,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	private IASTReference getTemplateParameterReference(int offset,
-			IASTTemplateParameter parameter) {
-		return new ASTTemplateParameterReference(offset, parameter);
+			IASTTemplateParameter referencedElement) {
+		for (int i = 0; i < templateParameterReferencesAvailable.length; ++i) {
+			if (templateParameterReferencesAvailable[i]) {
+				templateParameterReferencesAvailable[i] = false;
+				templateParameterReferences[i].initialize(offset, referencedElement);
+				return templateParameterReferences[i];
+			}
+		}
+		int currentSize = templateParameterReferences.length;
+		GrowResult g = growArrays( templateParameterReferences, templateParameterReferencesAvailable, TEMPPARMREF_FACTORY);
+		templateParameterReferencesAvailable = g.getAvailables();
+		templateParameterReferences = g.getReferences();
+		templateParameterReferencesAvailable[currentSize] = false;
+		templateParameterReferences[currentSize].initialize(offset, referencedElement);
+		return templateParameterReferences[currentSize];
 	}
 
 	/**
@@ -288,8 +488,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	private IASTReference getNamespaceReference(int offset,
-			IASTNamespaceDefinition definition) {
-		return new ASTNamespaceReference(offset, definition);
+			IASTNamespaceDefinition referencedElement) {
+		for (int i = 0; i < namespaceReferencesAvailable.length; ++i) {
+			if (namespaceReferencesAvailable[i]) {
+				namespaceReferencesAvailable[i] = false;
+				namespaceReferences[i].initialize(offset, referencedElement);
+				return namespaceReferences[i];
+			}
+		}
+		int currentSize = namespaceReferences.length;
+		GrowResult g = growArrays( namespaceReferences, namespaceReferencesAvailable, NAMESPACEREF_FACTORY);
+		namespaceReferencesAvailable = g.getAvailables();
+		namespaceReferences = g.getReferences();
+		namespaceReferencesAvailable[currentSize] = false;
+		namespaceReferences[currentSize].initialize(offset, referencedElement);
+		return namespaceReferences[currentSize];
 	}
 
 	/**
@@ -298,8 +511,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	private IASTReference getEnumerationReference(int offset,
-			IASTEnumerationSpecifier specifier) {
-		return new ASTEnumerationReference(offset, specifier);
+			IASTEnumerationSpecifier referencedElement) {
+		for (int i = 0; i < enumerationReferencesAvailable.length; ++i) {
+			if (enumerationReferencesAvailable[i]) {
+				enumerationReferencesAvailable[i] = false;
+				enumerationReferences[i].initialize(offset, referencedElement);
+				return enumerationReferences[i];
+			}
+		}
+		int currentSize = enumerationReferences.length;
+		GrowResult g = growArrays( enumerationReferences, enumerationReferencesAvailable, ENUMSPECREF_FACTORY );
+		enumerationReferencesAvailable = g.getAvailables();
+		enumerationReferences = g.getReferences();
+		enumerationReferencesAvailable[currentSize] = false;
+		enumerationReferences[currentSize].initialize(offset, referencedElement);
+		return enumerationReferences[currentSize];
 	}
 
 	/**
@@ -308,8 +534,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	private IASTReference getEnumeratorReference(int offset,
-			IASTEnumerator enumerator) {
-		return new ASTEnumeratorReference(offset, enumerator);
+			IASTEnumerator referencedElement ) {
+		for (int i = 0; i < enumeratorReferencesAvailable.length; ++i) {
+			if (enumeratorReferencesAvailable[i]) {
+				enumeratorReferencesAvailable[i] = false;
+				enumeratorReferences[i].initialize(offset, referencedElement);
+				return enumeratorReferences[i];
+			}
+		}
+		int currentSize = enumeratorReferences.length;
+		GrowResult g = growArrays( enumeratorReferences, enumeratorReferencesAvailable, ENUMERATORREF_FACTORY );
+		enumeratorReferencesAvailable = g.getAvailables();
+		enumeratorReferences = g.getReferences();
+		enumeratorReferencesAvailable[currentSize] = false;
+		enumeratorReferences[currentSize].initialize(offset, referencedElement);
+		return enumeratorReferences[currentSize];
 	}
 
 	/**
@@ -317,8 +556,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @param method
 	 * @return
 	 */
-	private IASTReference getMethodReference(int offset, IASTMethod method) {
-		return new ASTMethodReference(offset, method);
+	private IASTReference getMethodReference(int offset, IASTMethod referencedElement ) {
+		for (int i = 0; i < methodReferencesAvailable.length; ++i) {
+			if (methodReferencesAvailable[i]) {
+				methodReferencesAvailable[i] = false;
+				methodReferences[i].initialize(offset, referencedElement);
+				return methodReferences[i];
+			}
+		}
+		int currentSize = methodReferences.length;
+		GrowResult g = growArrays( methodReferences, methodReferencesAvailable, METHODREF_FACTORY );
+		methodReferencesAvailable = g.getAvailables();
+		methodReferences = g.getReferences();
+		methodReferencesAvailable[currentSize] = false;
+		methodReferences[currentSize].initialize(offset, referencedElement);
+		return methodReferences[currentSize];
 	}
 
 	/**
@@ -326,8 +578,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @param function
 	 * @return
 	 */
-	private IASTReference getFunctionReference(int offset, IASTFunction function) {
-		return new ASTFunctionReference(offset, function);
+	private IASTReference getFunctionReference(int offset, IASTFunction referencedElement ) {
+		for (int i = 0; i < functionReferencesAvailable.length; ++i) {
+			if (functionReferencesAvailable[i]) {
+				functionReferencesAvailable[i] = false;
+				functionReferences[i].initialize(offset, referencedElement);
+				return functionReferences[i];
+			}
+		}
+		int currentSize = functionReferences.length;
+		GrowResult g = growArrays( functionReferences, functionReferencesAvailable, FUNCTIONREF_FACTORY );
+		functionReferencesAvailable = g.getAvailables();
+		functionReferences = g.getReferences();
+		functionReferencesAvailable[currentSize] = false;
+		functionReferences[currentSize].initialize(offset, referencedElement);
+		return functionReferences[currentSize];
 	}
 
 	/**
@@ -335,8 +600,21 @@ public class ReferenceCache implements IReferenceManager {
 	 * @param field
 	 * @return
 	 */
-	private IASTReference getFieldReference(int offset, IASTField field) {
-		return new ASTFieldReference(offset, field);
+	private IASTReference getFieldReference(int offset, IASTField referencedElement) {
+		for (int i = 0; i < fieldReferencesAvailable.length; ++i) {
+			if (fieldReferencesAvailable[i]) {
+				fieldReferencesAvailable[i] = false;
+				fieldReferences[i].initialize(offset, referencedElement);
+				return fieldReferences[i];
+			}
+		}
+		int currentSize = fieldReferences.length;
+		GrowResult g = growArrays( fieldReferences, fieldReferencesAvailable, FIELDREF_FACTORY );
+		fieldReferencesAvailable = g.getAvailables();
+		fieldReferences = g.getReferences();
+		fieldReferencesAvailable[currentSize] = false;
+		fieldReferences[currentSize].initialize(offset, referencedElement);
+		return fieldReferences[currentSize];
 	}
 
 	/* (non-Javadoc)
@@ -344,7 +622,7 @@ public class ReferenceCache implements IReferenceManager {
 	 */
 	public void processReferences(List references, ISourceElementRequestor requestor)
 	{
-		if( references == null || references == Collections.EMPTY_LIST || references.isEmpty() )
+		if( references == null || references.isEmpty() )
 			return;
 	    
 	    for( int i = 0; i < references.size(); ++i )
@@ -361,18 +639,20 @@ public class ReferenceCache implements IReferenceManager {
 		protected int offset;
 		private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-		public void reset() {
+		public abstract void reset();
+		
+		protected void resetOffset() {
 			offset = 0;
 		}
 
 		/**
 		 * @param offset2
-		 * @param referencedElement
+		 * @param re 
 		 */
-		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
-		}
+		public abstract void initialize(int o, ISourceElementCallbackDelegate re );
 
-		public void initialize(int o) {
+
+		protected void initialize(int o) {
 			this.offset = o;
 		}
 
@@ -448,7 +728,7 @@ public class ReferenceCache implements IReferenceManager {
 		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ASTReference#reset()
 		 */
 		public void reset() {
-			super.reset();
+			super.resetOffset();
 			reference = null;
 		}
 		/**
@@ -491,7 +771,7 @@ public class ReferenceCache implements IReferenceManager {
 	public static class ASTEnumerationReference extends ASTReference
 			implements
 				IASTEnumerationReference {
-		private final IASTEnumerationSpecifier referencedElement;
+		private IASTEnumerationSpecifier referencedElement;
 		/**
 		 * @param offset
 		 * @param specifier
@@ -500,6 +780,14 @@ public class ReferenceCache implements IReferenceManager {
 				IASTEnumerationSpecifier specifier) {
 			super(offset);
 			referencedElement = specifier;
+		}
+
+		/**
+		 * 
+		 */
+		public ASTEnumerationReference() {
+			super( 0 );
+			referencedElement = null;
 		}
 
 		/*
@@ -522,13 +810,29 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate re) {
+			initialize(o);
+			this.referencedElement = (IASTEnumerationSpecifier) re; 
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			super.resetOffset();
+			this.referencedElement = null;
+		}
 	}
 
 	public static class ASTEnumeratorReference extends ASTReference
 			implements
 				IASTEnumeratorReference {
 
-		private final IASTEnumerator enumerator;
+		private IASTEnumerator enumerator;
 		/**
 		 * @param offset
 		 * @param enumerator
@@ -536,6 +840,14 @@ public class ReferenceCache implements IReferenceManager {
 		public ASTEnumeratorReference(int offset, IASTEnumerator enumerator) {
 			super(offset);
 			this.enumerator = enumerator;
+		}
+
+		/**
+		 * 
+		 */
+		public ASTEnumeratorReference() {
+			super( 0 );
+			enumerator = null;
 		}
 
 		/*
@@ -558,12 +870,28 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			super.initialize(o);
+			this.enumerator = (IASTEnumerator) referencedElement;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			super.resetOffset();
+			this.enumerator = null;
+		}
 	}
 	public static class ASTFieldReference extends ASTReference
 			implements
 				IASTReference,
 				IASTFieldReference {
-		private final IASTField referencedElement;
+		private IASTField referencedElement;
 		/**
 		 * @param offset
 		 * @param field
@@ -571,6 +899,13 @@ public class ReferenceCache implements IReferenceManager {
 		public ASTFieldReference(int offset, IASTField field) {
 			super(offset);
 			referencedElement = field;
+		}
+		/**
+		 * 
+		 */
+		public ASTFieldReference() {
+			super(0);
+			referencedElement = null;
 		}
 		/*
 		 * (non-Javadoc)
@@ -592,13 +927,27 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate re) {
+			initialize(o);
+			this.referencedElement = (IASTField) re;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			resetOffset();
+			this.referencedElement = null;
+		}
 	}
 	
 	public static class ASTFunctionReference extends ASTReference
 			implements
 				IASTReference,
 				IASTFunctionReference {
-		private final IASTFunction declaration;
+		private IASTFunction declaration;
 		/**
 		 * @param offset
 		 */
@@ -606,6 +955,13 @@ public class ReferenceCache implements IReferenceManager {
 				IASTFunction referencedDeclaration) {
 			super(offset);
 			this.declaration = referencedDeclaration;
+		}
+		/**
+		 * 
+		 */
+		public ASTFunctionReference() {
+			super(0);
+			declaration = null;
 		}
 		/*
 		 * (non-Javadoc)
@@ -627,17 +983,38 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			super.initialize(o);
+			this.declaration = (IASTFunction) referencedElement;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			resetOffset();
+			this.declaration = null;			
+		}
 	}
 	public static class ASTMethodReference extends ASTReference
 			implements
 				IASTMethodReference {
-		private final IASTMethod method;
+		private IASTMethod method;
 		/**
 		 * @param offset
 		 */
 		public ASTMethodReference(int offset, IASTMethod method) {
 			super(offset);
 			this.method = method;
+		}
+		/**
+		 * 
+		 */
+		public ASTMethodReference() {
+			super(0);
+			this.method = null;
 		}
 		/*
 		 * (non-Javadoc)
@@ -659,11 +1036,25 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			super.initialize(o);
+			this.method = (IASTMethod) referencedElement;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			resetOffset();
+			this.method= null;
+		}
 	}
 	public static class ASTNamespaceReference extends ASTReference
 			implements
 				IASTNamespaceReference {
-		private final IASTNamespaceDefinition reference;
+		private IASTNamespaceDefinition reference;
 
 		/**
 		 * @param offset
@@ -673,6 +1064,14 @@ public class ReferenceCache implements IReferenceManager {
 				IASTNamespaceDefinition definition) {
 			super(offset);
 			reference = definition;
+		}
+
+		/**
+		 * 
+		 */
+		public ASTNamespaceReference() {
+			super(0);
+			reference = null;
 		}
 
 		/*
@@ -695,12 +1094,28 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			super.initialize(o);
+			this.reference = (IASTNamespaceDefinition) referencedElement;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			resetOffset();
+			this.reference = null;
+		}
 	}
 
 	public static class ASTParameterReference extends ASTReference
 			implements
 				IASTParameterReference {
-		private final IASTParameterDeclaration parm;
+		private IASTParameterDeclaration parm;
 
 		/**
 		 * @param offset
@@ -710,6 +1125,14 @@ public class ReferenceCache implements IReferenceManager {
 				IASTParameterDeclaration declaration) {
 			super(offset);
 			parm = declaration;
+		}
+
+		/**
+		 * 
+		 */
+		public ASTParameterReference() {
+			super(0);
+			parm = null;
 		}
 
 		/*
@@ -732,11 +1155,27 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			initialize(o);
+			this.parm = (IASTParameterDeclaration) referencedElement; 
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			resetOffset();
+			this.parm = null;
+		}
 	}
 	public static class ASTTemplateParameterReference extends ASTReference
 			implements
 				IASTTemplateParameterReference {
-		private final IASTTemplateParameter parameter;
+		private IASTTemplateParameter parameter;
 		/**
 		 * @param offset
 		 */
@@ -744,6 +1183,14 @@ public class ReferenceCache implements IReferenceManager {
 				IASTTemplateParameter param) {
 			super(offset);
 			parameter = param;
+		}
+
+		/**
+		 * 
+		 */
+		public ASTTemplateParameterReference() {
+			super(0);
+			parameter = null;
 		}
 
 		/*
@@ -766,11 +1213,27 @@ public class ReferenceCache implements IReferenceManager {
 				/* do nothing */
 			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			super.initialize(o);
+			parameter = (IASTTemplateParameter) referencedElement;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			resetOffset();
+			this.parameter = null;
+		}
 	}
 	public static class ASTTypedefReference extends ASTReference
 			implements
 				IASTTypedefReference {
-		private final IASTTypedefDeclaration referencedItem;
+		private IASTTypedefDeclaration referencedItem;
 		/**
 		 * @param offset
 		 */
@@ -778,6 +1241,13 @@ public class ReferenceCache implements IReferenceManager {
 				IASTTypedefDeclaration referencedItem) {
 			super(offset);
 			this.referencedItem = referencedItem;
+		}
+		/**
+		 * 
+		 */
+		public ASTTypedefReference() {
+			super( 0 );
+			this.referencedItem = null;
 		}
 		/*
 		 * (non-Javadoc)
@@ -798,6 +1268,20 @@ public class ReferenceCache implements IReferenceManager {
 			} catch (Exception e) {
 				/* do nothing */
 			}
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#initialize(int, org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate)
+		 */
+		public void initialize(int o, ISourceElementCallbackDelegate referencedElement) {
+			super.initialize(o);
+			referencedItem = (IASTTypedefDeclaration) referencedElement;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
+		 */
+		public void reset() {
+			super.resetOffset();
+			referencedItem = null;
 		}
 	}
 	public static class ASTVariableReference extends ASTReference
@@ -825,7 +1309,7 @@ public class ReferenceCache implements IReferenceManager {
 		 * @see org.eclipse.cdt.internal.core.parser.ast.complete.ReferenceCache.ASTReference#reset()
 		 */
 		public void reset() {
-			super.reset();
+			super.resetOffset();
 			referencedElement = null;
 		}
 		/**
@@ -860,7 +1344,16 @@ public class ReferenceCache implements IReferenceManager {
 	 * @return
 	 */
 	public boolean isBalanced() {
-		return isBalanced( classReferencesAvailable ) && isBalanced( variableReferencesAvailable );
+		return isBalanced( classReferencesAvailable ) && 
+			isBalanced( variableReferencesAvailable ) && 
+			isBalanced( fieldReferencesAvailable ) &&
+			isBalanced( functionReferencesAvailable ) &&
+			isBalanced( methodReferencesAvailable ) &&
+			isBalanced( enumerationReferencesAvailable ) && 
+			isBalanced( enumeratorReferencesAvailable ) &&
+			isBalanced( parameterReferencesAvailable ) &&
+			isBalanced( templateParameterReferencesAvailable ) &&
+			isBalanced( typedefReferencesAvailable);
 	}
 
 	/**

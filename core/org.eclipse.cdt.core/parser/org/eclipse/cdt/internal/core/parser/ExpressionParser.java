@@ -753,6 +753,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				}
 				continue;	            
 	        }
+	        if( nameDuple != null )
+	        	nameDuple.freeReferences( astFactory.getReferenceManager() );
 	        backup(mark);
 	        return result;
 		}

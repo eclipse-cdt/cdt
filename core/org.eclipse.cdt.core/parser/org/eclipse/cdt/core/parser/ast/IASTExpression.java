@@ -276,7 +276,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor(); 
 	
 	public long evaluateExpression() throws ASTExpressionEvaluationException;
-	public void reconcileReferences() throws ASTNotImplementedException;
+	public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException;
 	public void purgeReferences() throws ASTNotImplementedException;
 	/**
 	 * @param manager TODO

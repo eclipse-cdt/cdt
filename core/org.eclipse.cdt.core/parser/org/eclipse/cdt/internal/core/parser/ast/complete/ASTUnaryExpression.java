@@ -54,9 +54,9 @@ public class ASTUnaryExpression extends ASTExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
 	 */
-	public void reconcileReferences() throws ASTNotImplementedException {
-		lhs.reconcileReferences();
-		reconcileSubExpression((ASTExpression) lhs);
+	public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException {
+		lhs.reconcileReferences(manager);
+		reconcileSubExpression((ASTExpression) lhs, manager);
 	}
 	
 	/* (non-Javadoc)

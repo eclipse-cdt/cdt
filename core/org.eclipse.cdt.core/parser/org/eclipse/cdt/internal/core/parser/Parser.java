@@ -2218,12 +2218,13 @@ public abstract class Parser extends ExpressionParser implements IParser
                         	{
 								IToken newMark = mark();
 								consume( IToken.tLPAREN );
-
+								ITokenDuple queryName = null;
 	                        	try
 	                        	{
 	                        		try
                                     {
-                                        if( ! astFactory.queryIsTypeName( parameterScope, name(parameterScope, CompletionKind.TYPE_REFERENCE, Key.EMPTY ) ) )
+                                        queryName = name(parameterScope, CompletionKind.TYPE_REFERENCE, Key.EMPTY );
+										if( ! astFactory.queryIsTypeName( parameterScope, queryName ) )
                                         	failed = true;
                                     }
                                     catch (Exception e)
@@ -2236,6 +2237,8 @@ public abstract class Parser extends ExpressionParser implements IParser
 	                        		failed = true; 
 	                        	}
 	                        	
+	                        	if( queryName != null )
+	                        		queryName.freeReferences(astFactory.getReferenceManager());
 								backup( newMark );
                         	}
                         }

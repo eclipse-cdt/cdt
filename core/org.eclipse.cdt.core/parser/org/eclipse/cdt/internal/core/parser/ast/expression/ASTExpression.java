@@ -197,7 +197,7 @@ public class ASTExpression implements IASTExpression {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
      */
-    public void reconcileReferences() throws ASTNotImplementedException
+    public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException
     {
     	throw new ASTNotImplementedException();
     }

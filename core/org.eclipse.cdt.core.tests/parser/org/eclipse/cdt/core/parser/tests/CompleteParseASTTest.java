@@ -798,11 +798,9 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 			IASTField field1 = (IASTField) j.next();			
 			// Note : this used to be considered a variable, not a field
 			IASTField field2 = (IASTField)i.next(); 
-			
-			assertEquals( callback.getReferences().size(), 1 );
-			Iterator references = callback.getReferences().iterator();
-			assertEquals( ((IASTReference)references.next()).getReferencedElement(), classA );
 			assertTrue (field1.getVisiblity() == field2.getVisiblity());
+			assertAllReferences( 1, createTaskList( new Task( classA )));
+			
 		}catch (Exception e){
 			fail();
 		}

@@ -70,10 +70,10 @@ public class ASTConditionalExpression extends ASTBinaryExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
 	 */
-	public void reconcileReferences() throws ASTNotImplementedException {
-		super.reconcileReferences();
-		thirdExpression.reconcileReferences();
-		reconcileSubExpression((ASTExpression) thirdExpression);
+	public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException {
+		super.reconcileReferences(manager);
+		thirdExpression.reconcileReferences(manager);
+		reconcileSubExpression((ASTExpression) thirdExpression, manager);
 	}
 
 	/* (non-Javadoc)

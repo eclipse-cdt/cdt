@@ -71,7 +71,7 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     {
 		try
         {
-            reconcileReferences();
+            reconcileReferences(manager);
         }
         catch (ASTNotImplementedException e)
         {
@@ -129,11 +129,11 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#reconcileReferences()
      */
-    public void reconcileReferences() throws ASTNotImplementedException
+    public void reconcileReferences(IReferenceManager manager) throws ASTNotImplementedException
     {
     }
     
-    protected void reconcileSubExpression(ASTExpression subExpression)
+    protected void reconcileSubExpression(ASTExpression subExpression, IReferenceManager manager)
     {
         if( subExpression != null && subExpression.getReferences() != null )
         {
@@ -142,7 +142,10 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
         	{
         		IASTReference aReference = (IASTReference)subExp.next();
         		if( aReference != null && references.contains( aReference ) )
+        		{
         			subExp.remove();
+        			manager.returnReference( aReference );
+        		}
         	}   		
         }
     }

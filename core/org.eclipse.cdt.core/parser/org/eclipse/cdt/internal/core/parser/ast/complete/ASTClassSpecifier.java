@@ -198,11 +198,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public void exitScope(ISourceElementRequestor requestor, IReferenceManager manager)
     {
-    	Iterator i = resolvedCrossReferences.iterator();
-    	while( i.hasNext() )
-    	{
-    		((IASTReference)i.next()).acceptElement( requestor, manager );
-    	}
+    	manager.processReferences( this.resolvedCrossReferences, requestor );
         try
         {
             requestor.exitClassSpecifier(this);
@@ -335,7 +331,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 			for( int i = 0; i < references.size(); ++i )
 			{
 				IASTReference r = (IASTReference)references.get(i);
-				resolvedCrossReferences.add( cache.getReference(r.getOffset(), r.getReferencedElement()));	
+				resolvedCrossReferences.add( r );	
 			}
 		}
 		

@@ -1215,7 +1215,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				{
 					IASTReference r = (IASTReference) refs.next();
 					if( r.getName().equals( idExpression ) )
+					{
 						refs.remove();
+						cache.returnReference(r);
+					}
 				}
 			}
 		}
@@ -2471,11 +2474,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				functionParameters.add(param.getSymbol().getTypeInfo());
 			}
 			
-			List functionReferences = new ArrayList();
-			
 			functionDeclaration = (IParameterizedSymbol) lookupQualifiedName( ownerScope, nameDuple, 
 																			  isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, 
-																			  functionParameters, functionReferences, false, 
+																			  functionParameters, null, false, 
 																			  isFriend ? LookupType.FORFRIENDSHIP : LookupType.FORDEFINITION );
 			
 			previouslyDeclared = ( functionDeclaration != null ) && functionDeclaration.isType( isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function );
@@ -2884,8 +2885,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		newSymbol.setIsForwardDeclaration(isStatic);
 		boolean previouslyDeclared = false;
 		if( !isStatic && !image.equals( EMPTY_STRING ) ){
-			List fieldReferences = new ArrayList();		
-			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, image, fieldReferences, false, LookupType.FORDEFINITION);                
+			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, image, null, false, LookupType.FORDEFINITION);                
 			
 			if( fieldDeclaration != null && newSymbol.getType() == fieldDeclaration.getType() )
 			{
@@ -3456,26 +3456,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         while( i.hasNext() )
         {	
         	UnresolvedReferenceDuple duple = (UnresolvedReferenceDuple) i.next();
-        	ISymbol s = null;
         	
-        	List subReferences = new ArrayList();
         	try
 			{
-        		s = lookupQualifiedName( duple.getScope(), duple.getName(), subReferences, false );
+        		lookupQualifiedName( duple.getScope(), duple.getName(), references, false );
         	}
         	catch( ASTSemanticException ase )
 			{
         	}
-        	
-        	if( s != null && subReferences != null && !subReferences.isEmpty())
-        		for( int j = 0; j < subReferences.size(); ++j )
-        		{
-        			IASTReference r = (IASTReference) subReferences.get(j);
-        			references.add( cache.getReference( r.getOffset(), r.getReferencedElement()));
-        		}
-
-        	
-        	
         }
         
         astImplementation.setProcessingUnresolvedReferences( false );

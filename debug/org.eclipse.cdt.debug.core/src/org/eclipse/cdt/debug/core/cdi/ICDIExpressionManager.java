@@ -50,8 +50,4 @@ public interface ICDIExpressionManager extends ICDISessionObject {
 	 */
 	ICDIExpression[] getExpressions() throws CDIException;
 
-	/**
-	 * Return a ICDICondition
-	 */
-	ICDICondition createCondition(int ignoreCount, String expression);
 }

@@ -1,3 +1,7 @@
+2003-10-20 David Inglis
+	fixed junit breakage - testGetSoname()    
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryShared.java
+
 2003-10-18 Alain Magloire
 
 	Implement a Cygwin PE parser where addr2line, c++filt

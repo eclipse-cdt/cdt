@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IPath;
 /**
  */
 public class BinaryShared extends BinaryExecutable implements IBinaryShared {
-	String soname;
 
 	public BinaryShared(IPath path) throws IOException {
 		super(path);

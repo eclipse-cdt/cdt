@@ -155,6 +155,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
 		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
+		
+		//TF NOTE: This should be handled by the parent class
 		setRangeIndicator(new DefaultRangeIndicator());
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 
@@ -401,18 +403,34 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.setAnnotationModel(null);
+			fCEditorErrorTickUpdater.dispose();
 			fCEditorErrorTickUpdater = null;
 		}
+		
 		if (fBracketMatcher != null) {
 			fBracketMatcher.dispose();
 			fBracketMatcher = null;
 		}
+		
 		if (fPropertyChangeListener != null) {
 			Preferences preferences = CCorePlugin.getDefault().getPluginPreferences();
 			preferences.removePropertyChangeListener(fPropertyChangeListener);			
 			IPreferenceStore preferenceStore = getPreferenceStore();
 			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 		}
+		
+		if (fBracketMatcher != null) {
+			fBracketMatcher.dispose();
+			fBracketMatcher = null;
+		}
+		
+		if (fOutlinePage != null) {
+			fOutlinePage.dispose();
+			fOutlinePage = null;
+		}
+		
+		fAnnotationPreferences = null;
+		
 		super.dispose();
 	}
 

@@ -216,6 +216,11 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	public void dispose() {
 		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(treeViewer);
+		
+		if (fTogglePresentation != null) {
+			fTogglePresentation.setEditor(null);	
+		}
+		
 		if (fMemberFilterActionGroup != null) {
 			fMemberFilterActionGroup.dispose();
 			fMemberFilterActionGroup= null;

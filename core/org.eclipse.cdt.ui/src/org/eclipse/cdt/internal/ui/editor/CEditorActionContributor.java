@@ -190,6 +190,14 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
 		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
+	 */
+	public void dispose() {
+		setActiveEditor(null);
+		super.dispose();
+	}
 	
 	/*
 	 * @see EditorActionBarContributor#contributeToStatusLine(IStatusLineManager)

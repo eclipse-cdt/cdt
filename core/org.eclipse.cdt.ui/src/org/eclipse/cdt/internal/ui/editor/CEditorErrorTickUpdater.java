@@ -91,6 +91,14 @@ public class CEditorErrorTickUpdater implements IAnnotationModelListener {
 		}
 	}	
 	
+	public void dispose() {
+		if(fLabelProvider != null) {
+			fLabelProvider.dispose();
+			fLabelProvider = null;		
+		}
+		fAnnotationModel = null;
+	}
+	
 }
 
 

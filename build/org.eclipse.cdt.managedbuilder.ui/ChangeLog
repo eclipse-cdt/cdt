@@ -1,3 +1,7 @@
+2004-07-21 Tanya Wolff
+	Fix for 70217: C++ Build Properties view: Platform overlaps field
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java
+
 2004-06-15 Tanya Wolff
 	Removed intermediate composites to allow groupings to be readable by screenreader in the Manage Configuration dialog.
 	

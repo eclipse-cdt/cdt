@@ -1,3 +1,9 @@
+2003-03-20 Alain Magloire
+
+	Patch from Amer Hoda, tests for the CElement deltas for Translation Units.
+	* model/org/eclipse/cdt/core/model/tests/ElementDeltaTest.java
+	* model/org/eclipse/cdt/core/model/tests/resource/WorkingCopyTestStart.h
+	
 2003-03-19 Alain Magloire
 	Patch from Amer Hoda, introducing a simple test for the core model.
 	* model/org/eclipse/cdt/core/model/tests/WorkingCopyTests.java

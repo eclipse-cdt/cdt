@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -318,6 +319,34 @@ public class CompletionEngine implements RelevanceConstants {
 			
 			requestor.acceptTypedef(typedef.getName(), completionStart, completionLength, relevance);
 		}
+		else if(node instanceof IASTElaboratedTypeSpecifier){
+			IASTElaboratedTypeSpecifier elaboratedTypeSpecifier = (IASTElaboratedTypeSpecifier)node;
+			ASTClassKind classkind = elaboratedTypeSpecifier.getClassKind();
+			if(classkind == ASTClassKind.CLASS){
+				int relevance = computeRelevance(ICElement.C_CLASS, prefix, elaboratedTypeSpecifier.getName());
+				
+				requestor.acceptClass(elaboratedTypeSpecifier.getName(), 
+					completionStart, completionLength, relevance);
+			}
+			else if(classkind == ASTClassKind.STRUCT){
+				int relevance = computeRelevance(ICElement.C_STRUCT, prefix, elaboratedTypeSpecifier.getName());
+				
+				requestor.acceptStruct(elaboratedTypeSpecifier.getName(), 
+					completionStart, completionLength, relevance);
+			}
+			else if(classkind == ASTClassKind.UNION){
+				int relevance = computeRelevance(ICElement.C_UNION, prefix, elaboratedTypeSpecifier.getName());
+				
+				requestor.acceptUnion(elaboratedTypeSpecifier.getName(), 
+					completionStart, completionLength, relevance);
+			}				
+			else if(classkind == ASTClassKind.ENUM){
+				int relevance = computeRelevance(ICElement.C_ENUMERATION, prefix, elaboratedTypeSpecifier.getName());
+				
+				requestor.acceptEnumeration(elaboratedTypeSpecifier.getName(), 
+					completionStart, completionLength, relevance);
+			}				
+		}		
 	}
 	
 	private void addKeywordToCompletions (String keyword){
@@ -514,8 +543,6 @@ public class CompletionEngine implements RelevanceConstants {
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
 			String prefix = completionNode.getCompletionPrefix();
-//			if(prefix.equals("(")) //$NON-NLS-1$
-//				prefix = ""; //$NON-NLS-1$
 			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		
@@ -582,13 +609,6 @@ public class CompletionEngine implements RelevanceConstants {
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// look for the specific type being newed and the scope
 		IASTNode context = completionNode.getCompletionContext();
-//		if ((context != null) && (context instanceof IASTClassSpecifier)){
-//			IASTClassSpecifier classContext = (IASTClassSpecifier) context;
-//			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-//			kinds[0] = IASTNode.LookupKind.STRUCTURES; 
-//			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-//			addToCompletions(result);			
-//		}
 		// basic completion on all types
 		completionOnTypeReference(completionNode);
 	}
@@ -655,10 +675,6 @@ public class CompletionEngine implements RelevanceConstants {
 			// completionOnMemberReference
 			completionOnMemberReference(completionNode);
 		}
-//		else if(kind == CompletionKind.SCOPED_REFERENCE){
-//			// completionOnMemberReference
-//			completionOnScopedReference(completionNode);
-//		}
 		else if(kind == CompletionKind.FIELD_TYPE){
 			// CompletionOnFieldType
 			completionOnFieldType(completionNode);
@@ -713,9 +729,7 @@ public class CompletionEngine implements RelevanceConstants {
 		}
 	
 		// add keywords in all cases except for member and scoped reference cases. 
-		if((kind != CompletionKind.MEMBER_REFERENCE) 
-//				&&(kind != CompletionKind.SCOPED_REFERENCE)
-				){
+		if(kind != CompletionKind.MEMBER_REFERENCE){
 			addKeywordsToCompletions( completionNode.getKeywords());
 		}
 		
@@ -730,8 +744,6 @@ public class CompletionEngine implements RelevanceConstants {
 		String kindStr = ""; //$NON-NLS-1$
 		if(kind == IASTCompletionNode.CompletionKind.MEMBER_REFERENCE)
 			kindStr = "MEMBER_REFERENCE"; //$NON-NLS-1$
-//		else if(kind == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE)
-//			kindStr = "SCOPED_REFERENCE";
 		else if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE)
 			kindStr = "FIELD_TYPE Class Scope"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)

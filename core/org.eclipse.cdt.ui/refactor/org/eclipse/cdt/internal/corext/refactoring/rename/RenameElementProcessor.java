@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
@@ -60,6 +61,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	private SearchResultGroup[] fReferences;
 	private TextChangeManager fChangeManager;
 	private final String QUALIFIER = "::"; //$NON-NLS-1$
+	private final String TELTA = "~"; //$NON-NLS-1$
 	
 	private boolean fUpdateReferences;
 	
@@ -148,7 +150,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	}
 	
 	public String getElementQualifiedName(ICElement element){
-		if(element instanceof ITranslationUnit){
+		if(!eligibleForRefactoring(element)){
 			return "";
 		} else {
 			StringBuffer name = new StringBuffer();
@@ -169,7 +171,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		}
 	}
 	public RefactoringStatus checkNewElementName(String newName){
-		if ((fCElement == null) || (!(fCElement instanceof ISourceReference)) || (fCElement instanceof ITranslationUnit)) { 
+		if (!eligibleForRefactoring(fCElement)) { 
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
 		}
 
@@ -247,7 +249,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	 */
 	public RefactoringStatus checkActivation() throws CoreException {
 		RefactoringStatus result= null;
-		if ((fCElement == null) || (!(fCElement instanceof ISourceReference)) || (fCElement instanceof ITranslationUnit)) { 
+		if (!eligibleForRefactoring(fCElement)) { 
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
 		}		
 		return Checks.checkIfTuBroken(fCElement);
@@ -406,9 +408,9 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				ICSearchConstants.TYPE,	ICSearchConstants.REFERENCES, false ));
 			IStructure structure = (IStructure) fCElement;
 			if(structure.getElementType() == ICElement.C_CLASS){
-				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + "::" + structure.getElementName(),	//$NON-NLS-1$
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + structure.getElementName(),
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + "::~" + structure.getElementName(),	 //$NON-NLS-1$
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix + QUALIFIER + TELTA + structure.getElementName(),
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
 			}
 		}
@@ -532,6 +534,17 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		
 		result.merge(Checks.checkCompileErrorsInAffectedFiles(fReferences));	
 		return result;
+	}
+	
+	private boolean eligibleForRefactoring(ICElement element){
+		if((element == null) 
+			|| (!(element instanceof ISourceReference)) 
+			|| (element instanceof ITranslationUnit) 
+			|| (element instanceof IMacro)){
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 }

@@ -1,4 +1,8 @@
 2004-07-20 Mikhail Khodjaiants
+	Added new state - "STEPPED".
+	* CDebugElementState.java
+
+2004-07-20 Mikhail Khodjaiants
 	Cleanup.
 	* ICDebugInternalConstants.java
 

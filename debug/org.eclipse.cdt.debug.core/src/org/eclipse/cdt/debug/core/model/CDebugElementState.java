@@ -33,6 +33,7 @@ public class CDebugElementState {
 	public static final CDebugElementState RESUMING = new CDebugElementState( "resuming" ); //$NON-NLS-1$
 	public static final CDebugElementState RESUMED = new CDebugElementState( "resumed" ); //$NON-NLS-1$
 	public static final CDebugElementState STEPPING = new CDebugElementState( "stepping" ); //$NON-NLS-1$
+	public static final CDebugElementState STEPPED = new CDebugElementState( "stepped" ); //$NON-NLS-1$
 	public static final CDebugElementState SUSPENDING = new CDebugElementState( "suspending" ); //$NON-NLS-1$
 	public static final CDebugElementState SUSPENDED = new CDebugElementState( "suspended" ); //$NON-NLS-1$
 	public static final CDebugElementState RESTARTING = new CDebugElementState( "restarting" ); //$NON-NLS-1$

@@ -417,27 +417,37 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
 			scanner.setThrowExceptionOnBadCharacterRead( true );
 			
-			boolean lastTokenWasWild = false;
+			boolean encounteredWild = false;
+			boolean lastTokenWasOperator = false;
 			
 			while( true ){
 				switch( token.getType() ){
 					case IToken.tCOLONCOLON :
 						list.addLast( name.toCharArray() );
 						name = new String("");
+						lastTokenWasOperator = false;
 						break;
+					
+					case IToken.t_operator :
+						name += token.getImage() + " ";
+						lastTokenWasOperator = true;
+						break;
+					
 					default:
 						if( token.getType() == IToken.tSTAR || 
 						    token.getType() == IToken.tQUESTION ||
 						    token.getType() == IToken.tCOMPL //Need this for destructors
 						    ){
-							lastTokenWasWild = true;
-						} else if( !lastTokenWasWild && name.length() > 0 ) {
+							encounteredWild = true;
+						} else if( !encounteredWild && !lastTokenWasOperator && name.length() > 0 )	{
 							name += " ";
 						} else {
-							lastTokenWasWild = false;
+							encounteredWild = false;
 						}
 						
 						name += token.getImage();
+
+						lastTokenWasOperator = false;
 						break;
 				}
 				token = null;
@@ -446,9 +456,10 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 						token = scanner.nextToken();
 					} catch ( ScannerException e ){
 						if( e.getErrorCode() == ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE ){
-							if( !lastTokenWasWild ) name += " ";
+							if( !encounteredWild && !lastTokenWasOperator ) name += " ";
 							name += "\\";
-							lastTokenWasWild = true;
+							encounteredWild = true;
+							lastTokenWasOperator = false;
 						}
 					}
 				}

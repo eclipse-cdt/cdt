@@ -1,3 +1,8 @@
+2003-09-23 Andrew Niefer
+	fix bug 43498 Search with ? fails on first letter of second word
+		-modifications to CSearchPattern.scanForNames()
+		-add getSimpleName to MethodDeclarationPattern
+
 2003-09-19 Andrew Niefer
 	fix bug 43327 Code Complete finds local variables  
 	- modified MatchLocator to not report local declarations when boolean is set

@@ -140,4 +140,27 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 3 ); //3 in classDecl.cpp
 	}
+	
+	public void testBug43498(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "operator ?elete", METHOD, DECLARATIONS, true );
+
+		assertTrue( pattern instanceof MethodDeclarationPattern );		
+		MethodDeclarationPattern methodPattern = (MethodDeclarationPattern) pattern;
+		
+		char [] string = new char[] {'o','p','e','r','a','t','o','r',' ','?','e','l','e','t','e'};
+		assertTrue( CharOperation.equals( string, methodPattern.getSimpleName() ) );
+		
+		pattern = SearchEngine.createSearchPattern( "operator delete", METHOD, DECLARATIONS, true );
+		assertTrue( pattern instanceof MethodDeclarationPattern );		
+		methodPattern = (MethodDeclarationPattern) pattern;
+		string = new char[] {'o','p','e','r','a','t','o','r',' ','d','e','l','e','t','e'};
+		assertTrue( CharOperation.equals( string, methodPattern.getSimpleName() ) );
+		
+		pattern = SearchEngine.createSearchPattern( "word?word", METHOD, DECLARATIONS, true );
+		assertTrue( pattern instanceof MethodDeclarationPattern );		
+		methodPattern = (MethodDeclarationPattern) pattern;
+
+		string = new char[] {'w','o','r','d','?','w','o','r','d'};
+		assertTrue( CharOperation.equals( string, methodPattern.getSimpleName() ) );
+	}
 }

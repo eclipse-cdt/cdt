@@ -3,6 +3,9 @@
 	Moved testPostfixTypeIdExpression2() && testPostfixTypeIdTypeId2() to CompleteParseASTExpressionTest. 
 	Restructured expression reference tests so that the order of arrival will not cause JUnit failures.
 
+2003-09-23 Andrew Niefer
+	Added FunctionMethodPatternTests.testBug43498()
+
 2003-09-23 Hoda Amer
 	Added CompleteParseASTTest.testBug43373()
 	Added QuickParseASTTests.testBug43371()

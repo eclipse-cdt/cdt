@@ -57,7 +57,10 @@ public class MethodDeclarationPattern extends CSearchPattern {
 		searchFor = search;
 	}
 
-
+	public char [] getSimpleName(){
+		return simpleName;
+	}
+	
 	public int matchLevel(ISourceElementCallbackDelegate node, LimitTo limit ) {
 		if( node instanceof IASTMethod ){
 			if( searchFor != METHOD || !canAccept( limit ) ){

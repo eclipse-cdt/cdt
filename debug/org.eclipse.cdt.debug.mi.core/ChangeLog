@@ -1,4 +1,8 @@
 2004-11-26 Alain Magloire
+	Final fix for PR 79452
+	* cdi/org/eclipose/cdt/debug/mi/core/cdi/BreapointManager.java
+
+2004-11-26 Alain Magloire
 	Fix for PR 79582
 	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBCDIDebugger.java
 	* src/org/eclipse/cdt/debug/mi/core/GDBServerCDIDebugger.java

@@ -95,7 +95,27 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a boolean specifying whether to enable variable bookkeeping.
 	 */
 	public static final String ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_VARIABLE_BOOKKEEPING"; //$NON-NLS-1$
-	
+		
+	/**
+	 * Launch configuration attribute key. Boolean value to set the 'deferred breakpoints' property of debugger.
+	 */
+	public static final String ATTR_DEBUGGER_DEFERRED_BREAKPOINTS = CDT_LAUNCH_ID + ".DEFERRED_BREAKPOINTS"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a List (array of String) directories for the search path of shared libraries.
+	 */
+	public static final String ATTR_DEBUGGER_SOLIB_PATH = CDT_LAUNCH_ID + ".SOLIB_PATH"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. Boolean value to set the 'automatically load shared library symbols' flag of the debugger.
+	 */
+	public static final String ATTR_DEBUGGER_AUTO_SOLIB = CDT_LAUNCH_ID + ".AUTO_SOLIB"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. Boolean value to set the 'stop on shared library events' flag of the debugger.
+	 */
+	public static final String ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS = CDT_LAUNCH_ID + ".STOP_ON_SOLIB_EVENTS"; //$NON-NLS-1$
+
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
 	 * Startup debugger running the program.

@@ -1,5 +1,9 @@
 2003-08-29 Mikhail Khodjaiants
 	Moving shared library features from mi to CDI.
+	Added new launch configuration constants to ICDTLaunchConfigurationConstants.
+
+2003-08-29 Mikhail Khodjaiants
+	Moving shared library features from mi to CDI.
 	Added new methods to ICDISharedLibraryManager:
 	- isAutoLoadSymbols
 	- isStopOnSolibEvents

@@ -518,8 +518,17 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * ie, We need a seperate lookup function for looking up the member names
 	 * for a definition.
 	 */
-	public ISymbol lookupMemberForDefinition( char[] name ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name );
+	public ISymbol lookupMemberForDefinition( char[] name, final ITypeInfo.eType type ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name ){
+			public TypeFilter getFilter() {
+				if( t == ITypeInfo.t_any ) return ANY_FILTER;
+				if( filter == null ) filter = new TypeFilter( t );
+				return filter;
+			}
+			private TypeFilter filter = null;
+			private final ITypeInfo.eType t = type;
+		};
+		
 		data.qualified = true;
 		
 		IContainerSymbol container = this;
@@ -538,6 +547,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 
+	public ISymbol lookupMemberForDefinition( char[] name ) throws ParserSymbolTableException {
+		return lookupMemberForDefinition(name, ITypeInfo.t_any);
+	}
+	
 	public IParameterizedSymbol lookupMethodForDefinition( char[] name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
 			public List getParameters() { return params; }

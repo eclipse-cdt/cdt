@@ -359,10 +359,10 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#lookupMemberForDefinition(java.lang.String)
 	 */
-	public ISymbol lookupMemberForDefinition(char[] name) throws ParserSymbolTableException {
+	public ISymbol lookupMemberForDefinition(char[] name, ITypeInfo.eType type ) throws ParserSymbolTableException {
 		ISymbol look = null;
 		IContainerSymbol last = getLastSymbol();
-		if( last != null ){
+		if( last != null && last.isType(type)){
 			look = last.lookupMemberForDefinition( name );
 		} else {
 			look = getContainingSymbol().lookupMemberForDefinition( name );
@@ -371,6 +371,10 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			return ((ITemplateSymbol)look).getTemplatedSymbol();
 		} 
 		return look;
+	}
+	
+	public ISymbol lookupMemberForDefinition(char[] name) throws ParserSymbolTableException {
+		return lookupMemberForDefinition(name, ITypeInfo.t_any);
 	}
 
 	/* (non-Javadoc)

@@ -229,6 +229,13 @@ public class UndefinedTemplateSymbol extends BasicSymbol implements ITemplateSym
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupMemberForDefinition(char[])
 	 */
+	public ISymbol lookupMemberForDefinition(char[] name, ITypeInfo.eType type) throws ParserSymbolTableException {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupMemberForDefinition(char[])
+	 */
 	public ISymbol lookupMemberForDefinition(char[] name) throws ParserSymbolTableException {
 		// TODO Auto-generated method stub
 		return null;

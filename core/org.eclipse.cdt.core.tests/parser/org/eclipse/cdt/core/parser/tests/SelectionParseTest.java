@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTNamespaceDefinition;
@@ -705,5 +706,37 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		assertEquals( n.getStartingLine(), 2 );
 	}
 
+	public void testBug78231A() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("struct Base {\n"); //$NON-NLS-1$
+		writer.write("int Data; // 1\n"); //$NON-NLS-1$
+		writer.write("struct Data; // 2\n};\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int index = code.indexOf("struct Data;") + 7; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 4 );
+		assertTrue(node instanceof IASTOffsetableNamedElement);
+		IASTOffsetableNamedElement n = (IASTOffsetableNamedElement)node;
+		assertEquals(n.getName(), "Data"); //$NON-NLS-1$
+		assertEquals(n.getNameOffset(), 36);
+		assertEquals(n.getStartingLine(), 3);
+	}
+	
+	public void testBug78231B() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("int Data;\n"); //$NON-NLS-1$
+		writer.write("struct Base {\n"); //$NON-NLS-1$
+		writer.write("int Data; // 1\n"); //$NON-NLS-1$
+		writer.write("struct Data; // 2\n};\n"); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int index = code.indexOf("struct Data;") + 7; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 4 );
+		assertTrue(node instanceof IASTOffsetableNamedElement);
+		IASTOffsetableNamedElement n = (IASTOffsetableNamedElement)node;
+		assertEquals(n.getName(), "Data"); //$NON-NLS-1$
+		assertEquals(n.getNameOffset(), 46);
+		assertEquals(n.getStartingLine(), 4);
+	}
 }
 

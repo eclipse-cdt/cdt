@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.parser.ast;
  *
  */
 public interface IASTAbstractTypeSpecifierDeclaration
-    extends IASTDeclaration, IASTTypeSpecifierOwner, IASTTemplatedDeclaration, IASTOffsetableElement
+    extends IASTDeclaration, IASTTypeSpecifierOwner, IASTTemplatedDeclaration, IASTOffsetableNamedElement
 {
 	public boolean isFriendDeclaration();
 }

@@ -749,7 +749,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( !CharArrayUtils.equals(newSymbolName, EMPTY_STRING) && !isTemplateId ){ 
 			try
 			{
-				classSymbol = currentScopeSymbol.lookupMemberForDefinition(newSymbolName);
+				classSymbol = currentScopeSymbol.lookupMemberForDefinition(newSymbolName, pstType);
 			}
 			catch (ParserSymbolTableException e)
 			{
@@ -791,7 +791,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         catch (ParserSymbolTableException e2)
         {
-        	handleProblem( e2.createProblemID(), newSymbolName );
+        	if (e2.reason == ParserSymbolTableException.r_InvalidOverload)
+        		handleProblem( e2.createProblemID(), newSymbolName, nameOffset, nameEndOffset, nameLine, false ); // to fix 65569 for this patch
+        	else 
+        		handleProblem( e2.createProblemID(), newSymbolName, nameOffset, nameEndOffset, nameLine, true );
         }
 		
         if( name != null && name.getTemplateIdArgLists() != null  )
@@ -3287,8 +3290,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					checkSymbol = ((IDerivableContainerSymbol) currentScopeSymbol)
 							.lookupForFriendship(newSymbolName);
 				} else {
-					checkSymbol = currentScopeSymbol.elaboratedLookup(pstType,
-							newSymbolName);
+					if (!isForewardDecl)
+						checkSymbol = currentScopeSymbol.elaboratedLookup(pstType, newSymbolName); // for using - goes outside scope with filter
+					else 
+						checkSymbol = currentScopeSymbol.lookupMemberForDefinition(newSymbolName, pstType); // for declaring - stays inside scope with filter  
 				}
 			} catch (ParserSymbolTableException e) {
 				handleProblem(e.createProblemID(), nameToken.getCharImage(),

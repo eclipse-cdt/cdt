@@ -854,7 +854,12 @@ public class ParserSymbolTable {
 			( newType == ITypeInfo.t_type || (newType.compareTo( ITypeInfo.t_function ) >= 0 /*&& newType <= TypeInfo.typeMask*/) ) ){
 				
 			return true;
-		}
+		// 3.3.7-2 (in any order) same as above but with origType and newType reversed
+		} else if( (newType.compareTo(ITypeInfo.t_class) >= 0 && newType.compareTo(ITypeInfo.t_enumeration) <= 0) && //class name or enumeration ...
+			( origType == ITypeInfo.t_type || (origType.compareTo( ITypeInfo.t_function ) >= 0 /*&& newType <= TypeInfo.typeMask*/) ) ){
+			
+			return true;
+		}		
 		//if the origtype is not a class-name or enumeration name, then the only other
 		//allowable thing is if they are both functions.
 		if( origSymbol instanceof IParameterizedSymbol && newSymbol instanceof IParameterizedSymbol )

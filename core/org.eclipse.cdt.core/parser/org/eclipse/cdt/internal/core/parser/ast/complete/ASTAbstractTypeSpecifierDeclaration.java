@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -151,5 +152,67 @@ public class ASTAbstractTypeSpecifierDeclaration
 	 */
 	public char[] getFilename() {
 		return fn;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
+	 */
+	public String getName() {
+		if (typeSpec instanceof IASTOffsetableNamedElement)
+			return ((IASTOffsetableNamedElement)typeSpec).getName();
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+	 */
+	public char[] getNameCharArray() {
+		if (typeSpec instanceof IASTOffsetableNamedElement)
+			return ((IASTOffsetableNamedElement)typeSpec).getNameCharArray();
+		
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
+	 */
+	public int getNameOffset() {
+		if (typeSpec instanceof IASTOffsetableNamedElement)
+			return ((IASTOffsetableNamedElement)typeSpec).getNameOffset();
+		
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+	 */
+	public void setNameOffset(int o) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameEndOffset()
+	 */
+	public int getNameEndOffset() {
+		if (typeSpec instanceof IASTOffsetableNamedElement)
+			return ((IASTOffsetableNamedElement)typeSpec).getNameEndOffset();
+		
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameEndOffsetAndLineNumber(int, int)
+	 */
+	public void setNameEndOffsetAndLineNumber(int offset, int lineNumber) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameLineNumber()
+	 */
+	public int getNameLineNumber() {
+		if (typeSpec instanceof IASTOffsetableNamedElement)
+			return ((IASTOffsetableNamedElement)typeSpec).getNameLineNumber();
+		
+		return 0;
 	}
 }

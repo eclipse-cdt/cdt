@@ -189,7 +189,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (getDebugConfig() == null) {
-			setErrorMessage("No debugger avalible");
+			setErrorMessage("No debugger available");
 			return false;
 		}
 

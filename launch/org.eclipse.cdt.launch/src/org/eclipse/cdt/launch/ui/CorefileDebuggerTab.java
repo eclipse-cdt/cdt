@@ -119,7 +119,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 
 	public boolean isValid(ILaunchConfiguration config) {
 		if ( !validateDebuggerConfig(config) ) {
-			setErrorMessage("No debugger avalible");
+			setErrorMessage("No debugger available");
 			return false;
 		}
 		return super.isValid(config);

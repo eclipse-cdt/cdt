@@ -50,7 +50,7 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp, 2);
 
 		fAutoSoLibButton = new Button(comp, SWT.CHECK ) ;
-		fAutoSoLibButton.setText("Load shared library symbols automaticly");
+		fAutoSoLibButton.setText("Load shared library symbols automatically");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fAutoSoLibButton.setLayoutData(gd);

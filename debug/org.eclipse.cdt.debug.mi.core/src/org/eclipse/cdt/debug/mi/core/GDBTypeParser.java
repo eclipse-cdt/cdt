@@ -251,7 +251,9 @@ public class GDBTypeParser {
 			while (isCIdentifierPart((c = getch())) && c != EOF) {
 				token += (char) c;
 			}
-			ungetch();
+			if (c != EOF) {
+				ungetch();
+			}
 			tokenType = NAME;
 		} else if (c == '{') {
 			// Swallow gdb sends things like "struct foobar {..} *"

@@ -19,6 +19,13 @@
 	Removed DOMTests, BaseDOMTest, DOMFailedTests after methods were migrated to QuickParseASTTests & ASTFailedTests.  
 	Made sure every parser failed test had a defect number associated with it. 
 	
+2003-07-17 Victor Mozgin
+	Added PerformanceTests.java (not included into AutomatedIntegrationSuite).
+	Moved testBug39523() from DOMFailedTest.java to PerformanceTests.java.
+	Moved testBug39550() from DOMFailedTest.java to DOMTests.java.
+	Moved testBug39552A() and testBug39552B()from DOMFailedTest.java to DOMTests.java.
+	TortureTest overrides timeout value for a very time-consuming test ('concat1.C').
+
 2003-07-15 Victor Mozgin
 	Moved testBug39349() from DOMFailedTest.java to DOMTests.java.
 	Moved testBug39544() from DOMFailedTest.java to DOMTests.java.

@@ -370,6 +370,9 @@ public class Scanner implements IScanner {
 	// these are scanner configuration aspects that we perhaps want to tweak
 	// eventually, these should be configurable by the client, but for now
 	// we can just leave it internal
+	private boolean enableDigraphReplacement = true;
+	private boolean enableTrigraphReplacement = true;
+	private boolean enableTrigraphReplacementInStrings = true;
 	private boolean throwExceptionOnBadPreprocessorSyntax = true;
 	private boolean throwExceptionOnInclusionNotFound = true;
 	private boolean throwExceptionOnBadMacroExpansion = true;
@@ -427,8 +430,69 @@ public class Scanner implements IScanner {
 				}
 			}
 		} while (!done);
-
-		if( ! insideString )
+		
+		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
+		
+		if (enableTrigraphReplacement && (!insideString || enableTrigraphReplacementInStrings)) {
+			// Trigraph processing
+			enableTrigraphReplacement = false;
+			if (c == '?') {
+				c = getChar(insideString);
+				if (c == '?') {
+					c = getChar(insideString);
+					switch (c) {
+						case '(':
+							expandDefinition("??(", "[", baseOffset);
+							c = getChar(insideString);
+							break;
+						case ')':
+							expandDefinition("??)", "]", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '<':
+							expandDefinition("??<", "{", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '>':
+							expandDefinition("??>", "}", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '=':
+							expandDefinition("??=", "#", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '/':
+							expandDefinition("??/", "\\", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '\'':
+							expandDefinition("??\'", "^", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '!':
+							expandDefinition("??!", "|", baseOffset);
+							c = getChar(insideString);
+							break;
+						case '-':
+							expandDefinition("??-", "~", baseOffset);
+							c = getChar(insideString);
+							break;
+						default:
+							// Not a trigraph
+							ungetChar(c);
+							ungetChar('?');
+							c = '?';	
+					}
+				} else {
+					// Not a trigraph
+					ungetChar(c);
+					c = '?';
+				}
+			}
+			enableTrigraphReplacement = true;
+		} 
+		
+		if (!insideString)
 		{
 			if (c == '\\') {
 				c = getChar(false);
@@ -447,8 +511,48 @@ public class Scanner implements IScanner {
 					ungetChar(c);
 					c = '\\';
 				}
+			} else if (enableDigraphReplacement) {
+				enableDigraphReplacement = false;
+				// Digraph processing
+				if (c == '<') {
+					c = getChar(false);
+					if (c == '%') {
+						expandDefinition("<%", "{", baseOffset);
+						c = getChar(false);
+					} else if (c == ':') {
+						expandDefinition("<:", "[", baseOffset);
+						c = getChar(false);
+					} else {
+						// Not a digraph
+						ungetChar(c);
+						c = '<';
+					}
+				} else if (c == ':') {
+					c = getChar(false);
+					if (c == '>') {
+						expandDefinition(":>", "]", baseOffset);
+						c = getChar(false);
+					} else {
+						// Not a digraph
+						ungetChar(c);
+						c = ':';
+					}
+				} else if (c == '%') {
+					c = getChar(false);
+					if (c == '>') {
+						expandDefinition("%>", "}", baseOffset);
+						c = getChar(false);
+					} else if (c == ':') {
+						expandDefinition("%:", "#", baseOffset);
+						c = getChar(false);
+					} else {
+						// Not a digraph
+						ungetChar(c);
+						c = '%';
+					}
+				}
+				enableDigraphReplacement = true;
 			}
-
 		}
 			
 		return c;
@@ -483,10 +587,14 @@ public class Scanner implements IScanner {
 	
 
 	public IToken nextToken() throws ScannerException, EndOfFile {
-		return nextToken( true ); 
+		return nextToken( true, false ); 
 	}
 
-	public IToken nextToken( boolean pasting ) throws ScannerException, EndOfFile
+	public IToken nextToken(boolean pasting) throws ScannerException, EndOfFile {
+		return nextToken( pasting, false ); 
+	}
+
+	public IToken nextToken( boolean pasting, boolean lookingForNextAlready ) throws ScannerException, EndOfFile
 	{
 		if( cachedToken != null ){
 			setCurrentToken( cachedToken );
@@ -564,29 +672,34 @@ public class Scanner implements IScanner {
 				if (c != NOCHAR ) 
 				{
 					int type = wideLiteral ? IToken.tLSTRING : IToken.tSTRING;
-					
+										
 					//If the next token is going to be a string as well, we need to concatenate
 					//it with this token.
 					IToken returnToken = newToken( type, buff.toString(), contextStack.getCurrentContext());
-					IToken next = null;
-					try{
-						next = nextToken( true );
-					} catch( EndOfFile e ){ 
-						next = null;
-					}
 					
-					while( next != null && next.getType()  == returnToken.getType() ){
-						returnToken.setImage( returnToken.getImage() + next.getImage() ); 
-						returnToken.setNext( null );
-						currentToken = returnToken; 
-						try{ 
-							next = nextToken( true ); 
+					if (!lookingForNextAlready) {
+						IToken next = null;
+						try{
+							next = nextToken( true, true );
 						} catch( EndOfFile e ){ 
 							next = null;
 						}
+						
+						while( next != null && next.getType()  == returnToken.getType() ){
+							returnToken.setImage( returnToken.getImage() + next.getImage() ); 
+							returnToken.setNext( null );
+							currentToken = returnToken; 
+							try{
+								next = nextToken( true, true );
+							} catch( EndOfFile e ){ 
+								next = null;
+							}
+						}
+						
+						cachedToken = next;
+					
 					}
 					
-					cachedToken = next;
 					currentToken = returnToken;
 					returnToken.setNext( null );
 									
@@ -730,7 +843,9 @@ public class Scanner implements IScanner {
 					
 					floatingPoint = true;
 					c= getChar(); 
-					while ((c >= '0' && c <= '9') )
+					while ((c >= '0' && c <= '9')
+					|| (hex
+						&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))))
 					{
 						buff.append((char) c);
 						c = getChar();
@@ -738,10 +853,10 @@ public class Scanner implements IScanner {
 				}
 				
 
-				if( c == 'e' || c == 'E' )
+				if (c == 'e' || c == 'E' || (hex && (c == 'p' || c == 'P')))
 				{
 					if( ! floatingPoint ) floatingPoint = true; 
-					// exponent type for flaoting point 
+					// exponent type for floating point 
 					buff.append((char)c);
 					c = getChar(); 
 					
@@ -2138,8 +2253,10 @@ public class Scanner implements IScanner {
 					if( i != numberOfTokens - 1)
 					{
 						IToken t2 = (IToken) tokens.get(i+1);
-						if( t2.getType() == tPOUNDPOUND )
-							pastingNext = true;  
+						if( t2.getType() == tPOUNDPOUND ) {
+							pastingNext = true;
+							i++;
+						}  
 					}
 					
 					if( t.getType() != tPOUNDPOUND && ! pastingNext )

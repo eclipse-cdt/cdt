@@ -52,6 +52,7 @@ public class PreprocessorRule extends WordRule implements IRule {
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c;
 		int nCharsToRollback = 0;
+		boolean hashSignDetected = false;
 
 		if (scanner.getColumn() > 0)
 			return Token.UNDEFINED;
@@ -60,8 +61,30 @@ public class PreprocessorRule extends WordRule implements IRule {
 			c = scanner.read();
 			nCharsToRollback++;
 		} while (Character.isWhitespace((char) c));
-
+		
+		
+		// Di- and trigraph support
 		if (c == '#') {
+			hashSignDetected = true;
+		} else if (c == '%') {
+			c = scanner.read();
+			nCharsToRollback++;
+			if (c == ':') {
+				hashSignDetected = true;
+			}
+		} else if (c == '?') {
+			c = scanner.read();
+			nCharsToRollback++;
+			if (c == '?') {
+				c = scanner.read();
+				nCharsToRollback++;
+				if (c == '=') {
+					hashSignDetected = true;
+				}
+			}
+		}
+
+		if (hashSignDetected) {
 
 			do {
 				c = scanner.read();

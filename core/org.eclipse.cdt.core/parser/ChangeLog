@@ -29,6 +29,13 @@
 	Restructured AST class hierarchy.  
 	Removed the old IParserCallback return Objects from every Parser method.
 	
+2003-07-17 Victor Mozgin
+	Added support for digraphs and trigraphs.
+	Added support for hex floating point literals.
+	Fixed stack overflow problem with string literals concatenation.
+	Fixed problem with token pasting in macros.
+	This solves PR 39523, 39550, 39552.
+
 2003-07-15 Victor Mozgin
 	Fixed PR 39349 : Scanner fails on long long literals.
 	Fixed PR 39544 : Scanner fails on wide char literals.

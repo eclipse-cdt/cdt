@@ -1646,6 +1646,61 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( parm.getName(), "" );
 	}
      
+	public void testBug39550() throws Exception
+	{
+		parse("double x = 0x1.fp1;").getDeclarations().next();
+	}
 	
-	
+	public void testBug39552A() throws Exception
+	{
+		Writer code = new StringWriter();
+
+		code.write("%:define glue(x, y) x %:%: y	/* #define glue(x, y) x ## y. */\n");
+		code.write("#ifndef glue\n");
+		code.write("#error glue not defined!\n");
+		code.write("#endif\n");
+        
+		code.write("%:define str(x) %:x		/* #define str(x) #x */\n");
+        
+		code.write("int main (int argc, char *argv<::>) /* argv[] */\n");
+		code.write("glue (<, %) /* { */\n");
+		code.write("			 /* di_str[] = */\n");
+		code.write("  const char di_str glue(<, :)glue(:, >) = str(%:%:<::><%%>%:);\n");
+		code.write("  /* Check the glue macro actually pastes, and that the spelling of\n");
+		code.write("	 all digraphs is preserved.  */\n");
+		code.write("  if (glue(str, cmp) (di_str, \"%:%:<::><%%>%:\"))\n");
+		code.write("	err (\"Digraph spelling not preserved!\");\n");
+		code.write("  return 0;\n");
+		code.write("glue (%, >) /* } */\n");
+
+		parse(code.toString());
+	}
+    
+	public void testBug39552B() throws Exception
+	{
+		Writer code = new StringWriter();
+
+		code.write("??=include <stdio.h>\n");
+		code.write("??=define TWELVE 1??/\n");
+		code.write("2\n");
+        
+		code.write("static const char str??(??) = \"0123456789??/n\";\n");
+        
+		code.write("int\n");
+		code.write("main(void)\n");
+		code.write("??<\n");
+		code.write("  unsigned char x = 5;\n");
+		code.write("  if (sizeof str != TWELVE)\n");
+		code.write("	abort ();\n");
+		code.write("  /* Test ^=, the only multi-character token to come from trigraphs.  */\n");
+		code.write("  x ??'= 3;\n");
+		code.write("  if (x != 6)\n");
+		code.write("	abort ();\n");
+		code.write("  if ((5 ??! 3) != 7)\n");
+		code.write("	abort ();\n");
+		code.write("  return 0;\n");
+		code.write("??>\n");
+		
+		parse(code.toString());
+	}
 }

@@ -211,6 +211,8 @@ public class TortureTest extends FractionalAutomatedTest {
 	
 	
 	public void doFile() throws Throwable {
+		int timeOut = FractionalAutomatedTest.timeOut;
+		
 		assertNotNull (fileList);
 		
 		File file = (File)fileList.removeFirst();
@@ -229,6 +231,12 @@ public class TortureTest extends FractionalAutomatedTest {
 		}
 		
 		String testCode = code.toString();
+		
+		if ( file.getName().equals("concat1.C")) {
+			// This is a really time-consuming test,
+			// override timeout
+			timeOut = 600000;
+		}
 		
 		if (isExpectedToPass(testCode, file)) {
 			ParseThread thread = new ParseThread();

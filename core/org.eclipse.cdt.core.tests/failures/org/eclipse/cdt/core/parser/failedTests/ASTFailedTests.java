@@ -60,36 +60,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("int* gp_down = static_cast<int*>(gp_stat);");
     }
-
-    public void testBug39523()
-    {
-    	if( ! debugging )
-    	{
-			Writer code = new StringWriter();
-			try	{ 
-				code.write("#define e0	\"a\"\n");
-				code.write("#define e1	e0 e0 e0 e0 e0 e0 e0 e0 e0 e0\n");
-				code.write("#define e2	e1 e1 e1 e1 e1 e1 e1 e1 e1 e1\n");
-				code.write("#define e3	e2 e2 e2 e2 e2 e2 e2 e2 e2 e2\n");
-				code.write("#define e4	e3 e3 e3 e3 e3 e3 e3 e3 e3 e3\n");
-				code.write("#define e5	e4 e4 e4 e4 e4 e4 e4 e4 e4 e4\n");
-				code.write("void foo() { (void)(e5); }\n");
-			} catch( IOException ioe ){}
-			
-			boolean testPassed = false;
-			try {
-				parse(code.toString());
-				testPassed = true;
-				fail( "We should not reach this point");
-			} catch (Throwable e) {
-				if (!(e instanceof StackOverflowError))
-					fail("Unexpected Error: " + e.getMessage());
-			}
-			if (testPassed)
-				fail("The expected error did not occur.");
-    	}
-    }
-    
+   
     public void testBug39525() throws Exception
     {
         assertCodeFailsParse("C &(C::*DD)(const C &x) = &C::operator=;");
@@ -161,80 +132,19 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("struct X x = { .b = 40, .z = {} };");
     }
-    public void testBug39550() throws Exception
-    {
-        assertCodeFailsParse("double x = 0x1.fp1;");
-    }
+
     public void testBug39551A() throws Exception
     {
         IASTFunction function = (IASTFunction)parse("extern float _Complex conjf (float _Complex);").getDeclarations().next();
         assertEquals( function.getName(), "conjf");
     }
+
     public void testBug39551B() throws Exception
     {
         IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * __I__;").getDeclarations().next();
         assertEquals( variable.getName(), "id");
     }
     
-    public void testBug39552A() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write(
-                "%:define glue(x, y) x %:%: y	/* #define glue(x, y) x ## y. */\n");
-            code.write("#ifndef glue\n");
-            code.write("#error glue not defined!\n");
-            code.write("#endif\n");
-            code.write("%:define str(x) %:x		/* #define str(x) #x */\n");
-            code.write("int main (int argc, char *argv<::>) /* argv[] */\n");
-            code.write("glue (<, %) /* { */\n");
-            code.write("			 /* di_str[] = */\n");
-            code.write(
-                "  const char di_str glue(<, :)glue(:, >) = str(%:%:<::><%%>%:);\n");
-            code.write(
-                "  /* Check the glue macro actually pastes, and that the spelling of\n");
-            code.write("	 all digraphs is preserved.  */\n");
-            code.write("  if (glue(str, cmp) (di_str, \"%:%:<::><%%>%:\"))\n");
-            code.write("	err (\"Digraph spelling not preserved!\");\n");
-            code.write("  return 0;\n");
-            code.write("glue (%, >) /* } */\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-        assertCodeFailsParse(code.toString());
-    }
-    public void testBug39552B() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write("??=include <stdio.h>\n");
-            code.write("??=define TWELVE 1??/\n");
-            code.write("2\n");
-            code.write("static const char str??(??) = \"0123456789??/n\";\n");
-            code.write("int\n");
-            code.write("main(void)\n");
-            code.write("??<\n");
-            code.write("  unsigned char x = 5;\n");
-            code.write("  if (sizeof str != TWELVE)\n");
-            code.write("	abort ();\n");
-            code.write(
-                "  /* Test ^=, the only multi-character token to come from trigraphs.  */\n");
-            code.write("  x ??'= 3;\n");
-            code.write("  if (x != 6)\n");
-            code.write("	abort ();\n");
-            code.write("  if ((5 ??! 3) != 7)\n");
-            code.write("	abort ();\n");
-            code.write("  return 0;\n");
-            code.write("??>\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-        assertCodeFailsParse(code.toString());
-    }
     public void testBug39553() throws Exception
     {
         parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC");

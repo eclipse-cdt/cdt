@@ -64,7 +64,7 @@ public class CFile extends CElement implements ICFile {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getResource()
 	 */
-	public IResource getResource() throws CModelException {
+	public IResource getResource()  {
 		return file;
 	}
 

@@ -141,12 +141,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	protected IFile getFile() {
-		try {
-			IResource res = getResource();
-			if (res instanceof IFile) {
-				return (IFile)res;
-			}
-		} catch (CModelException e) {
+		IResource res = getResource();
+		if (res instanceof IFile) {
+			return (IFile)res;
 		}
 		return null;
 	}

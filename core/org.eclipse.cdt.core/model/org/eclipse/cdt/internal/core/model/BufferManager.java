@@ -13,8 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Enumeration;
 
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
@@ -95,17 +94,13 @@ public class BufferManager implements IBufferFactory {
 	 */
 	public IBuffer createBuffer(IOpenable owner) {
 		ICElement element = (ICElement)owner;
-		try{
-			IResource resource = element.getResource();
-			return 
-				new Buffer(
-					resource instanceof IFile ? (IFile)resource : null, 
-					owner, 
-					element.isReadOnly());
-		}
-		catch (CModelException e) {
-			return null;
-		}
+
+		IResource resource = element.getResource();
+		return 
+			new Buffer(
+				resource instanceof IFile ? (IFile)resource : null, 
+				owner, 
+				element.isReadOnly());
 	}
 	
 	/**

@@ -255,7 +255,7 @@ public interface ICElement extends IAdaptable {
 	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its resource
 	 */
-	IResource getResource() throws CModelException;
+	IResource getResource() ;
 	/**
 	 * Returns whether this C element is read-only. An element is read-only
 	 * if its structure cannot be modified by the C model. 

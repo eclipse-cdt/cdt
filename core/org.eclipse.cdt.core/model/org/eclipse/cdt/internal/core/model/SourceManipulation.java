@@ -141,7 +141,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		return getParent().getUnderlyingResource();
 	}
 
-	public IResource getResource() throws CModelException {
+	public IResource getResource() {
 		return null;
 	}
 	

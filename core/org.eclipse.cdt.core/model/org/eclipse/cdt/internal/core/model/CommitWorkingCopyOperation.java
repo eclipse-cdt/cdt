@@ -127,16 +127,12 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 			return new CModelStatus(ICModelStatusConstants.INVALID_ELEMENT_TYPES, wc);
 		}
 	
-		try {
-			ITranslationUnit original= (ITranslationUnit)wc.getOriginalElement();
-			IResource resource = original.getResource();
-			if (!wc.isBasedOn(resource) && !fForce) {
-				return new CModelStatus(ICModelStatusConstants.UPDATE_CONFLICT);
-			}
-		} catch (CModelException e){
-			// unable to get the underlying resource
-			return new CModelStatus(ICModelStatusConstants.INVALID_RESOURCE);
+		ITranslationUnit original= (ITranslationUnit)wc.getOriginalElement();
+		IResource resource = original.getResource();
+		if (!wc.isBasedOn(resource) && !fForce) {
+			return new CModelStatus(ICModelStatusConstants.UPDATE_CONFLICT);
 		}
+
 		// no read-only check, since some repository adapters can change the flag on save
 		// operation.	
 		return CModelStatus.VERIFIED_OK;

@@ -49,7 +49,7 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		return res;
 	}
 
-	public IResource getResource() throws CModelException {
+	public IResource getResource()  {
 		return resource;
 	}
 	

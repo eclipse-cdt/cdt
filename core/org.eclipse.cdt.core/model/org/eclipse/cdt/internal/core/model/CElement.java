@@ -6,10 +6,10 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.IOpenable;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -79,12 +79,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public boolean exists() {
-		try {
-			return getResource() != null;
-		} catch (CModelException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return getResource() != null;
 	}
 	
 	public boolean isReadOnly () {
@@ -163,7 +158,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	public abstract IResource getUnderlyingResource() throws CModelException;
 
-	public abstract IResource getResource() throws CModelException;
+	public abstract IResource getResource() ;
 
 	protected abstract CElementInfo createElementInfo();
 

@@ -223,13 +223,10 @@ public class CModelManager implements IResourceChangeListener {
 			if (parent instanceof CElement) {
 				ICElement[] children = ((CElement)parent).getElementInfo().getChildren();
 				for (int i = 0; i < children.length; i++) {
-					try {
-						IResource res = children[i].getResource();
-						if (res != null && res.equals(file)) {
-							cfile = children[i];
-							break;
-						}
-					} catch (CModelException e) {
+					IResource res = children[i].getResource();
+					if (res != null && res.equals(file)) {
+						cfile = children[i];
+						break;
 					}
 				}
 			}

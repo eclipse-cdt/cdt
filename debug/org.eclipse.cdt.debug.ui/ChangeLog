@@ -1,3 +1,12 @@
+2003-10-22 Mikhail Khodjaiants
+	Refactoring: converting nested types 'SourceListDialogField' and 'SourceLookupLabelProvider' 
+	of 'SourceLookupBlock' to the top level types.
+	Added 'dispose' method to 'SourceLookupBlock'.
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+	* SourceListDialogField.java
+	* SourceLookupLabelProvider.java
+
 2003-10-20 Mikhail Khodjaiants
 	Implementation of the "Search subfolders" option for directory source locations.
 	* AddDirectorySourceLocationBlock.java

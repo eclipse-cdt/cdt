@@ -172,4 +172,15 @@ public class SourcePropertyPage extends PropertyPage
 		}
 		return project;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose()
+	{
+		if ( fBlock != null )
+			fBlock.dispose();
+		super.dispose();
+	}
+
 }

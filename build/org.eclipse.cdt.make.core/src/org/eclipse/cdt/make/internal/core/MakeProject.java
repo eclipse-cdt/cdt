@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 public class MakeProject implements ICOwner {
 
 	public void configure(ICDescriptor cproject) throws CoreException {
+		cproject.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+		cproject.remove(CCorePlugin.BUILDER_MODEL_ID);
 		cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeScannerProvider.INTERFACE_IDENTITY);
 	}
 

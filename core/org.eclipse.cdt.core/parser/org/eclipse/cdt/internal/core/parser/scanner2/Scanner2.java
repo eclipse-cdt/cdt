@@ -746,6 +746,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			{
 				// escaped newline
 				++bufferPos[bufferStackPos];
+				++bufferLineNums[bufferStackPos];
 				len += 2;
 				escapedNewline = true;
 				continue;
@@ -1216,6 +1217,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				{
 					// escaped newline
 					++bufferPos[bufferStackPos];
+					++bufferLineNums[bufferStackPos];
 					len += 2;
 					continue;
 				}

@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
  *
  */
 public class ExpressionFactory {
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * 
 	 */

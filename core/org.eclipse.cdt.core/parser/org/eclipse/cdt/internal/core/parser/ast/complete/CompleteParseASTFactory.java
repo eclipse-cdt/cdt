@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -1560,21 +1559,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			info = provider.completeConstruction();
 			
 			//types that need a pointer
-			if( ParserFactory.USE_NEW_SCANNER ){
-			    if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
-			        (literal.length > 3 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
+			
+			if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
+			  (literal.length > 3 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
 				                             kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR )) )
-				{
-					info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
-				}
-			} else {
-				if( kind == IASTExpression.Kind.PRIMARY_STRING_LITERAL ||
-			        (literal.length > 1 && ( kind == IASTExpression.Kind.PRIMARY_CHAR_LITERAL || 
-				                             kind == IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR )) )
-				{
-					info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
-				}
+			{
+				info.addPtrOperator(new ITypeInfo.PtrOp(ITypeInfo.PtrOp.t_pointer));					
 			}
+			
 			return new ExpressionResult( info );
 		}
 

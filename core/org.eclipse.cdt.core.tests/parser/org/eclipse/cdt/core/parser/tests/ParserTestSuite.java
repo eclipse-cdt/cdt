@@ -16,7 +16,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.tests.scanner2.ObjectMapTest;
 import org.eclipse.cdt.core.parser.tests.scanner2.Scanner2Test;
 
@@ -29,14 +28,7 @@ import org.eclipse.cdt.core.parser.tests.scanner2.Scanner2Test;
 public class ParserTestSuite extends TestCase {
 	public static Test suite() { 
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
-		if( ParserFactory.USE_NEW_SCANNER )
-			suite.addTestSuite(Scanner2Test.class );
-		else
-		{
-			suite.addTestSuite(BranchTrackerTest.class);
-			suite.addTestSuite(ScannerTestCase.class);
-			suite.addTestSuite(ExprEvalTest.class);
-		}
+		suite.addTestSuite(Scanner2Test.class );
 		suite.addTestSuite(QuickParseASTTests.class);
 		suite.addTestSuite(ParserSymbolTableTest.class);
 		suite.addTestSuite(ParserSymbolTableTemplateTests.class );

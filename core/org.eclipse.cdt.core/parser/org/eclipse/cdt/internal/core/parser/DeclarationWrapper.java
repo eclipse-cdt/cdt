@@ -551,10 +551,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
         for( int i = 0; i < currentParameters.size(); ++i )
         {
             DeclarationWrapper wrapper = (DeclarationWrapper)currentParameters.get(i);
-            List declarators = wrapper.getDeclaratorsList();
-            for( int j = 0; j < declarators.size(); j++ )
+            List decls = wrapper.getDeclaratorsList();
+            for( int j = 0; j < decls.size(); j++ )
             {
-                Declarator declarator = (Declarator)declarators.get(j);
+                Declarator declarator = (Declarator)decls.get(j);
 
                 result.add(
                     astFactory.createParameterDeclaration(

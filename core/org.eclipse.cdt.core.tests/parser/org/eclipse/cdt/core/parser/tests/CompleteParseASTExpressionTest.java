@@ -249,10 +249,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		i = getDeclarations( test );
 		IASTVariable someInt = (IASTVariable) i.next();
 		IASTExpression exp = someInt.getInitializerClause().getAssigmentExpression();
-		if( ParserFactory.USE_NEW_SCANNER )
-			assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3L))" ); //$NON-NLS-1$
-		else
-			assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3))" ); //$NON-NLS-1$
+		assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3L))" ); //$NON-NLS-1$
 	}
 	
 	// Kind POSTFIX_TYPENAME_IDENTIFIER

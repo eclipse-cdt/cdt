@@ -187,8 +187,10 @@ public class ExpressionEvaluator {
 			long r2 = unaryExpression();
 			if (t == tMULT)
 				r1 = r1 * r2;
-			else // t == tDIV;
+			else if( r2 != 0 )// t == tDIV;
 				r1 = r1 / r2;
+			else
+				throw new EvalException( "Divide by 0 encountered"); //$NON-NLS-1$
 		}
 		return r1;
 	}

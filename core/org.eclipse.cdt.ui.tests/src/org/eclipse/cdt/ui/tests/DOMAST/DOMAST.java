@@ -809,9 +809,10 @@ public class DOMAST extends ViewPart {
      		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
-     			// TODO Devin when implemented in CPPVisitor
+     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
+     			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
      		} else {
-     			IASTName[] names = CVisitor.getDeclarations( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
+     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getDeclarations(name.resolveBinding());
      			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
      		}
      	}
@@ -832,10 +833,10 @@ public class DOMAST extends ViewPart {
      		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
-     			IASTName[] names = CPPVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
+     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
      			displayNames(names, OPEN_REFERENCES, pattern.toString());
      		} else {
-     			IASTName[] names = CVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
+     			IASTName[] names = ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit().getReferences(name.resolveBinding());
      			displayNames(names, OPEN_REFERENCES, pattern.toString());
      		}
      	}

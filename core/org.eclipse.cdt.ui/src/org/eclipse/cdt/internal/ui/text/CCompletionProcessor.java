@@ -5,24 +5,23 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.index.ITagEntry;
-import org.eclipse.cdt.core.index.IndexModel;
-import org.eclipse.cdt.core.index.TagFlags;
-import org.eclipse.cdt.internal.corext.template.ContextType;
-import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
-import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IFunctionSummary;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
+import org.eclipse.cdt.core.index.ITagEntry;
+import org.eclipse.cdt.core.index.IndexModel;
+import org.eclipse.cdt.core.index.TagFlags;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.corext.template.ContextType;
+import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
+import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
@@ -33,7 +32,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -42,33 +42,67 @@ import org.eclipse.ui.IFileEditorInput;
  * C completion processor.
  */
 public class CCompletionProcessor implements IContentAssistProcessor {
-	
+
 	private CEditor fEditor;
 	private char[] fProposalAutoActivationSet;
 	private CCompletionProposalComparator fComparator;
-	private TemplateEngine fTemplateEngine;
-	
+	private TemplateEngine[] fTemplateEngine;
+
 	private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
-	
+
 	private CElementLabelProvider fElementLabelProvider;
 	//private ImageRegistry fImageRegistry;
-	
-	
+
 	public CCompletionProcessor(IEditorPart editor) {
-		fEditor= (CEditor)editor;
-		ContextType contextType= ContextTypeRegistry.getInstance().getContextType("C"); //$NON-NLS-1$
-		if (contextType != null)
-			fTemplateEngine= new TemplateEngine(contextType);
-		fRestrictToMatchingCase= false;
-		fAllowAddIncludes= true;
-		
-		fComparator= new CCompletionProposalComparator();
-		
+		fEditor = (CEditor) editor;
+
+		//Determine if this is a C or a C++ file for the context completion       +        //This is _totally_ ugly and likely belongs in the main editor class.
+		String contextNames[] = new String[2];
+		ArrayList templateList = new ArrayList(2);
+		String filename = null;
+		if (fEditor != null && fEditor.getEditorInput() != null) {
+			filename = fEditor.getEditorInput().getName();
+		}
+		if (filename == null) {
+			contextNames[0] = "C"; //$NON-NLS-1$
+			contextNames[1] = "C++"; //$NON-NLS-1$
+		} else if (filename.endsWith(".c")) { //Straight C files are always C
+			contextNames[0] = "C"; //$NON-NLS-1$
+		} else if (
+			filename.endsWith(".cpp")
+				|| filename.endsWith(".cc")
+				|| filename.endsWith(".cxx")
+				|| filename.endsWith(".C")
+				|| filename.endsWith(".hxx")) {
+			contextNames[0] = "C++"; //$NON-NLS-1$
+			contextNames[1] = "C"; //$NON-NLS-1$
+		} else { //Defer to the nature of the project
+			IFile file = fEditor.getInputFile();
+			if (file != null && CoreModel.getDefault().hasCCNature(file.getProject())) {
+				contextNames[0] = "C++"; //$NON-NLS-1$
+				contextNames[1] = "C"; //$NON-NLS-1$
+			} else {
+				contextNames[0] = "C"; //$NON-NLS-1$
+			}
+		}
+		ContextType contextType;
+		for (int i = 0; i < contextNames.length; i++) {
+			contextType = ContextTypeRegistry.getInstance().getContextType(contextNames[i]);
+			if (contextType != null) {
+				templateList.add(new TemplateEngine(contextType));
+			}
+		}
+		fTemplateEngine = (TemplateEngine[]) templateList.toArray(new TemplateEngine[templateList.size()]);
+		fRestrictToMatchingCase = false;
+		fAllowAddIncludes = true;
+
+		fComparator = new CCompletionProposalComparator();
+
 		fElementLabelProvider = new CElementLabelProvider();
 		//fImageRegistry= CUIPlugin.getDefault().getImageRegistry();
 	}
-	
+
 	/**
 	 * Tells this processor to order the proposals alphabetically.
 	 * 
@@ -77,7 +111,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	public void orderProposalsAlphabetically(boolean order) {
 		fComparator.setOrderAlphabetically(order);
 	}
-	
+
 	/**
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
@@ -105,7 +139,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return fProposalAutoActivationSet;
 	}
-	
+
 	/**
 	 * Sets this processor's set of characters triggering the activation of the
 	 * completion proposal computation.
@@ -113,7 +147,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * @param activationSet the activation set
 	 */
 	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
-		fProposalAutoActivationSet= activationSet;
+		fProposalAutoActivationSet = activationSet;
 	}
 
 	/**
@@ -122,7 +156,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return null;
 	}
-	
+
 	/**
 	 * Tells this processor to restrict is proposals to those
 	 * starting with matching cases.
@@ -132,7 +166,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	public void restrictProposalsToMatchingCases(boolean restrict) {
 		// not yet supported
 	}
-	
+
 	/**
 	 * Tells this processor to add include statement for proposals that have
 	 * a fully qualified type name
@@ -140,7 +174,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 * @param restrict <code>true</code> if import can be added
 	 */
 	public void allowAddingIncludes(boolean allowAddingIncludes) {
-		fAllowAddIncludes= allowAddingIncludes;
+		fAllowAddIncludes = allowAddingIncludes;
 	}
 
 	/**
@@ -148,51 +182,54 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		//IDocument unit= fManager.getWorkingCopy(fEditor.getEditorInput());
-		IDocument document= viewer.getDocument();
+		IDocument document = viewer.getDocument();
 
 		ICCompletionProposal[] results = null;
 
 		try {
 			if (document != null) {
-				
-				int offset= documentOffset;
-				int length= 0;
-				
-				Point selection= viewer.getSelectedRange();
+
+				int offset = documentOffset;
+				int length = 0;
+
+				Point selection = viewer.getSelectedRange();
 				if (selection.y > 0) {
-					offset= selection.x;
-					length= selection.y;
+					offset = selection.x;
+					length = selection.y;
 				}
-				
+
 				//CCompletionEvaluator evaluator= new CCompletionEvaluator(document, offset, length);
 				//evaluator.restrictProposalsToMatchingCases(fRestrictToMatchingCase);
-				results= evalProposals(document, offset, length);
+				results = evalProposals(document, offset, length);
 			}
 		} catch (Exception e) {
 			CUIPlugin.getDefault().log(e);
 		}
-		
-		if(results == null) 
+
+		if (results == null)
 			results = new ICCompletionProposal[0];
 
-		if (fTemplateEngine != null) {
+		for (int i = 0; i < fTemplateEngine.length; i++) {
+			if (fTemplateEngine[i] == null) {
+				continue;
+			}
 			try {
-				fTemplateEngine.reset();
-				fTemplateEngine.complete(viewer, documentOffset, null);
+				fTemplateEngine[i].reset();
+				fTemplateEngine[i].complete(viewer, documentOffset, null);
 			} catch (Exception x) {
 				System.out.println("Template Exception");
 				CUIPlugin.getDefault().log(x);
-			}				
-			
-			ICCompletionProposal[] templateResults= fTemplateEngine.getResults();
+			}
+
+			ICCompletionProposal[] templateResults = fTemplateEngine[i].getResults();
 			if (results.length == 0) {
-				results= templateResults;
+				results = templateResults;
 			} else {
 				// concatenate arrays
-				ICCompletionProposal[] total= new ICCompletionProposal[results.length + templateResults.length];
+				ICCompletionProposal[] total = new ICCompletionProposal[results.length + templateResults.length];
 				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
 				System.arraycopy(results, 0, total, templateResults.length, results.length);
-				results= total;
+				results = total;
 			}
 		}
 
@@ -201,7 +238,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		 * applies to all proposals and not just those of the compilation unit. 
 		 */
 		order(results);
-		if((results.length == 1) && (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT))) {
+		if ((results.length == 1)
+			&& (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT))) {
 			results[0].apply(document);
 			// Trick the content assistant into thinking we have no proposals
 			return new ICCompletionProposal[0];
@@ -209,61 +247,56 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			return results;
 		}
 	}
-	
+
 	/**
 	 * Order the given proposals.
 	 */
 	private ICCompletionProposal[] order(ICCompletionProposal[] proposals) {
 		Arrays.sort(proposals, fComparator);
-		return proposals;	
+		return proposals;
 	}
-	
+
 	private void addProjectCompletions(IProject project, IRegion region, String frag, ArrayList completions) {
 		IndexModel model = IndexModel.getDefault();
-		
-		ITagEntry[] tags= model.query(project, frag+"*", false, false);
-		if(tags != null && tags.length > 0) {
+
+		ITagEntry[] tags = model.query(project, frag + "*", false, false);
+		if (tags != null && tags.length > 0) {
 			// We have some matches!
-			for(int i = 0; i < tags.length; i++) {
+			for (int i = 0; i < tags.length; i++) {
 
 				String fname = tags[i].getTagName();
 
 				int kind = tags[i].getKind();
 
-				if(kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
+				if (kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
 					fname = fname + "()";
 				}
 				String proto = fname + " - " + tags[i].getPattern();
 				//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
-				if(tags[i].getKind() != TagFlags.T_MEMBER) {
-					completions.add(
-						new CCompletionProposal(
-						fname,
-						region.getOffset(),
-						region.getLength(),
-						//fname.length() + 1,
-						getTagImage(kind),
-						proto.equals("") ? (fname + "()") : proto,
-						//null,
-						//null));
-						3));
+				if (tags[i].getKind() != TagFlags.T_MEMBER) {
+					completions.add(new CCompletionProposal(fname, region.getOffset(), region.getLength(),
+					//fname.length() + 1,
+					getTagImage(kind), proto.equals("") ? (fname + "()") : proto,
+					//null,
+					//null));
+					3));
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Evaluate the actual proposals for C
 	 */
 	private ICCompletionProposal[] evalProposals(IDocument document, int pos, int length) {
 		IRegion region;
 		String frag = "";
-	
+
 		// Move back the pos by one the position is 0-based
 		if (pos > 0) {
 			pos--;
 		}
-	
+
 		// First, check if we're on a space or trying to open a struct/union
 		if (pos > 1) {
 			try {
@@ -311,27 +344,26 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		// Based on the frag name, build a list of completion proposals
 		// We look in two places: the content outline and the libs
 
-
 		ArrayList completions = new ArrayList();
 
 		// Look in index manager
 		IProject project = null;
 		IEditorInput input = fEditor.getEditorInput();
-		if(input instanceof IFileEditorInput) {
-			project = ((IFileEditorInput)input).getFile().getProject();
+		if (input instanceof IFileEditorInput) {
+			project = ((IFileEditorInput) input).getFile().getProject();
 
 			// Bail out quickly, if the project was deleted.
 			if (!project.exists()) {
 				project = null;
 			}
 		}
-		if(project != null) {
+		if (project != null) {
 			addProjectCompletions(project, region, frag, completions);
 			// Now query referenced projects
 			IProject referenced[];
 			try {
 				referenced = project.getReferencedProjects();
-				if(referenced.length > 0) {
+				if (referenced.length > 0) {
 					for (int i = 0; i < referenced.length; i++) {
 						addProjectCompletions(referenced[i], region, frag, completions);
 					}
@@ -340,53 +372,46 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			}
 
 		}
-				
-		
+
 		IFunctionSummary[] summary;
-			
+
 		//UserHelpFunctionInfo inf = plugin.getFunctionInfo();
 		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(frag);
-		if(summary != null) {
-			for(int i = 0; i < summary.length; i++) {
+		if (summary != null) {
+			for (int i = 0; i < summary.length; i++) {
 				String fname = summary[i].getName();
 				String proto = summary[i].getPrototype();
-				completions.add(
-					new CCompletionProposal(
-						fname + "()",
-						region.getOffset(),
-						region.getLength(),
-						//fname.length() + 1,
-						CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION),
-						proto.equals("") ? (fname + "()") : proto,
-						//null,
-						//null));
-						2));
+				completions.add(new CCompletionProposal(fname + "()", region.getOffset(), region.getLength(),
+				//fname.length() + 1,
+				CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION), proto.equals("") ? (fname + "()") : proto,
+				//null,
+				//null));
+				2));
 			}
 		}
 		return (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]);
 	}
-	
+
 	private Image getTagImage(int kind) {
 		switch (kind) {
-			case TagFlags.T_PROTOTYPE:
+			case TagFlags.T_PROTOTYPE :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_DECLARATION);
-			case TagFlags.T_CLASS:
+			case TagFlags.T_CLASS :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_CLASS);
-			case TagFlags.T_ENUM:
-			case TagFlags.T_VARIABLE:
-			case TagFlags.T_MEMBER:
+			case TagFlags.T_ENUM :
+			case TagFlags.T_VARIABLE :
+			case TagFlags.T_MEMBER :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_FIELD);
-			case TagFlags.T_FUNCTION:
+			case TagFlags.T_FUNCTION :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION);
-			case TagFlags.T_STRUCT:
+			case TagFlags.T_STRUCT :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_STRUCT);
-			case TagFlags.T_UNION:
+			case TagFlags.T_UNION :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_UNION);
-			case TagFlags.T_MACRO:
+			case TagFlags.T_MACRO :
 				return CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 		}
 		return CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION);
 	}
-	
-}
 
+}

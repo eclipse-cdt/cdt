@@ -5,10 +5,12 @@ package org.eclipse.cdt.internal.corext.template;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.corext.template.c.CppContextType;
 
 
 /**
@@ -63,7 +65,7 @@ public class ContextTypeRegistry {
 	// XXX bootstrap with C and C++ types
 	private ContextTypeRegistry() {
 		add(new CContextType());
-		//add(new CppContextType());
+		add(new CppContextType());
 	}
 
 }

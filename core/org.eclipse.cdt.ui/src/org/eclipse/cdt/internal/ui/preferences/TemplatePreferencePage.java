@@ -357,7 +357,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		Template template= new Template();
 
 		ContextTypeRegistry registry=ContextTypeRegistry.getInstance();
-		ContextType type= registry.getContextType("java");
+		ContextType type= registry.getContextType("C");
 		
 		String contextTypeName;
 		if (type != null)

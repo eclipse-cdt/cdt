@@ -519,8 +519,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 		//sortByNameAction = new SortViewAction(this, false);
 		//sortByTypeAction = new SortViewAction(this, true);
-
-		patternFilterAction = new FilterSelectionAction(shell, this, "Filters..");
+		patternFilterAction = new FilterSelectionAction(shell, this, "Filters...");
 		clibFilterAction = new ShowLibrariesAction(shell, this, "Show Referenced Libs");
 
 		goIntoAction = new GoIntoAction(frameList);

@@ -1,3 +1,16 @@
+2003-0213 Thomas Fletcher
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/FilterSelectionAction.java
+	Cleaned up some text strings.
+	
+	* src/org/eclipse/cdt/internal/corext/template/ContextTypeRegistry.java
+	* src/org/eclipse/cdt/internal/corext/template/default-templates.xml
+	* src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+     Adds a C++ context and moves those templates which are C++ specific to that context
+	 Allows you to use the C++ and C contexts when you are working in C++ code,
+	  but only giving you the C contexts when you are working in C code. 
+
 2003-02-06 David Inglis
 	* src/org/eclipse/cdt/internal/core/DocumentInputStream.java (Removed)
 	* src/org/eclipse/cdt/internal/ui/DocumentInputStream.java (Added)

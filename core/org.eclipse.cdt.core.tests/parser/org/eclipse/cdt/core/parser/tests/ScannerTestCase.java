@@ -1578,4 +1578,10 @@ public class ScannerTestCase extends BaseScannerTest
     	initializeScanner( "\"\\?\\?<\""); //$NON-NLS-1$
     	validateString("\\?\\?<" ); //$NON-NLS-1$
 	}
+    
+    public void testBug62384() throws Exception
+	{
+    	initializeScanner( "18446744073709551615LL"); //$NON-NLS-1$
+    	validateInteger( "18446744073709551615"); //$NON-NLS-1$
+	}
 }

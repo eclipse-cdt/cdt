@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.Enum;
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration, IASTQualifiedNameElement {
+public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTScopedElement, IASTOffsetableNamedElement, IASTQualifiedNameElement {
 
 	public class ClassNameType extends Enum {
 
@@ -30,7 +30,7 @@ public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOf
 			super( t );
 		}
 	}
-
+	
 	public ClassNameType getClassNameType(); 
 
 	public ASTClassKind getClassKind();
@@ -38,5 +38,6 @@ public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOf
 	public Iterator getBaseClauses();
 	
 	public ASTAccessVisibility getCurrentVisibilityMode(); 
+	public void setCurrentVisibility( ASTAccessVisibility visibility );
 	 
 }

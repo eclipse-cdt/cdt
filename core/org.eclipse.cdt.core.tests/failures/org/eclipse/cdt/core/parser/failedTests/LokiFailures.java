@@ -14,18 +14,18 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.eclipse.cdt.core.parser.tests.BaseDOMTest;
+import org.eclipse.cdt.core.parser.tests.BaseASTTest;
 
 /**
  * @author jcamelon
  */
-public class LokiFailures extends BaseDOMTest  {
+public class LokiFailures extends BaseASTTest  {
 
 	public LokiFailures(String name) {
 		super(name);
 	}
 
-    public void testBugTypeManip151()
+    public void testBug40419()
     {
 		Writer code = new StringWriter();
 		try
@@ -34,7 +34,7 @@ public class LokiFailures extends BaseDOMTest  {
 			code.write( "enum { value = (::Loki::Conversion<const volatile U*, const volatile T*>::exists && \n" );
 			code.write( "!::Loki::Conversion<const volatile T*, const volatile void*>::sameType) };	};" );
 		} catch( IOException ioe ){}
-		failTest( code.toString() );
+		assertCodeFailsParse( code.toString() );
 	
     }	
 }

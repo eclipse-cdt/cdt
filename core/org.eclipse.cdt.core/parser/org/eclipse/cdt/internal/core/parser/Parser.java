@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -44,12 +43,16 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -57,8 +60,6 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
-
-
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
  * ANSI C and C++.
@@ -74,8 +75,7 @@ public class Parser implements IParser
     // sentinel initial value for offsets 
     private int firstErrorOffset = DEFAULT_OFFSET;
     // offset where the first parse error occurred
-    private IParserCallback callback;
-    // the parser callback that was registered with us
+   
     private ParserMode mode = ParserMode.COMPLETE_PARSE;
     // are we doing the high-level parse, or an in depth parse?
     private boolean parsePassed = true; // did the parse pass?
@@ -83,9 +83,8 @@ public class Parser implements IParser
     private ISourceElementRequestor requestor = null;
     // new callback mechanism
     private IASTFactory astFactory = null; // ast factory
-    
     private IProblemReporter problemReporter = null;
-    private ITranslationResult unitResult = null; 
+    private ITranslationResult unitResult = null;
     /**
      * This is the single entry point for setting parsePassed to 
      * false, and also making note what token offset we failed upon. 
@@ -106,25 +105,25 @@ public class Parser implements IParser
      * @param c				IParserCallback instance that will receive callbacks as we parse
      * @param quick			Are we asking for a high level parse or not? 
      */
-    public Parser(IScanner s, IParserCallback c, ParserMode m, IProblemReporter problemReporter, ITranslationResult unitResult)
+    public Parser(
+        IScanner scanner,
+        ISourceElementRequestor callback,
+        ParserMode mode,
+        IProblemReporter problemReporter,
+        ITranslationResult unitResult)
     {
-        callback = c;
-        scanner = s;
+        this.scanner = scanner;
         this.problemReporter = problemReporter;
         this.unitResult = unitResult;
-        if (c instanceof ISourceElementRequestor)
-            setRequestor((ISourceElementRequestor)c);
-        mode = m;
-        astFactory = ParserFactory.createASTFactory(m);
-        scanner.setMode(m);
-        scanner.setCallback(c);
+        if (callback instanceof ISourceElementRequestor)
+            setRequestor((ISourceElementRequestor)callback);
+        this.mode = mode;
+        astFactory = ParserFactory.createASTFactory(mode);
+        scanner.setMode(mode);
         scanner.setASTFactory(astFactory);
     }
-    
-	// counter that keeps track of the number of times Parser.parse() is called
+    // counter that keeps track of the number of times Parser.parse() is called
     private static int parseCount = 0;
-    
-     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#parse()
      */
@@ -145,11 +144,10 @@ public class Parser implements IParser
                 + (parsePassed ? "" : " - parse failure"));
         return parsePassed;
     }
-    
-    public void onParseEnd() {
+    public void onParseEnd()
+    {
         scanner.onParseEnd();
     }
-        
     /**
      * This is the top-level entry point into the ANSI C++ grammar.  
      * 
@@ -157,23 +155,9 @@ public class Parser implements IParser
      */
     protected void translationUnit()
     {
-        try
-        {
-            callback.setParser(this);
-        }
-        catch (Exception e)
-        {
-        }
-        Object translationUnit = null;
-        try
-        {
-            translationUnit = callback.translationUnitBegin();
-        }
-        catch (Exception e)
-        {
-        }
         IASTCompilationUnit compilationUnit =
             astFactory.createCompilationUnit();
+            
         requestor.enterCompilationUnit(compilationUnit);
         IToken lastBacktrack = null;
         IToken checkToken;
@@ -182,7 +166,7 @@ public class Parser implements IParser
             try
             {
                 checkToken = LA(1);
-                declaration(translationUnit, compilationUnit, null);
+                declaration(compilationUnit, null);
                 if (LA(1) == checkToken)
                     errorHandling();
             }
@@ -218,13 +202,6 @@ public class Parser implements IParser
             {
                 // we've done the best we can
             }
-        }
-        try
-        {
-            callback.translationUnitEnd(translationUnit);
-        }
-        catch (Exception e)
-        {
         }
         requestor.exitCompilationUnit(compilationUnit);
     }
@@ -268,83 +245,35 @@ public class Parser implements IParser
      * @param container		Callback object representing the scope these definitions fall into. 
      * @throws Backtrack	request for a backtrack
      */
-    protected void usingClause(Object container, IASTScope scope)
+    protected void usingClause(IASTScope scope)
         throws Backtrack
     {
         IToken firstToken = consume(IToken.t_using);
         if (LT(1) == IToken.t_namespace)
         {
-            Object directive = null;
-            try
-            {
-                directive = callback.usingDirectiveBegin(container);
-            }
-            catch (Exception e)
-            {
-            }
             // using-directive
             consume(IToken.t_namespace);
             // optional :: and nested classes handled in name
             TokenDuple duple = null;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
-            {
                 duple = name();
-                try
-                {
-                    callback.usingDirectiveNamespaceId(directive);
-                }
-                catch (Exception e)
-                {
-                }
-            }
             else
-            {
-                try
-                {
-                    callback.usingDirectiveAbort(directive);
-                }
-                catch (Exception e)
-                {
-                }
                 throw backtrack;
-            }
             if (LT(1) == IToken.tSEMI)
             {
-                consume(IToken.tSEMI);
-                try
-                {
-                    callback.usingDirectiveEnd(directive);
-                }
-                catch (Exception e)
-                {
-                }
+                IToken last = consume(IToken.tSEMI);
                 IASTUsingDirective astUD =
-                    astFactory.createUsingDirective(scope, duple);
+                    astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), last.getEndOffset());
                 requestor.acceptUsingDirective(astUD);
                 return;
             }
             else
             {
-                try
-                {
-                    callback.usingDirectiveAbort(directive);
-                }
-                catch (Exception e)
-                {
-                }
                 throw backtrack;
             }
         }
         else
         {
-            Object usingDeclaration = null;
-            try
-            {
-                usingDeclaration = callback.usingDeclarationBegin(container);
-            }
-            catch (Exception e)
-            {
-            }
             boolean typeName = false;
             if (LT(1) == IToken.t_typename)
             {
@@ -356,50 +285,20 @@ public class Parser implements IParser
             {
                 //	optional :: and nested classes handled in name
                 name = name();
-                try
-                {
-                    callback.usingDeclarationMapping(
-                        usingDeclaration,
-                        typeName);
-                }
-                catch (Exception e)
-                {
-                }
             }
             else
             {
-                try
-                {
-                    callback.usingDeclarationAbort(usingDeclaration);
-                }
-                catch (Exception e)
-                {
-                }
                 throw backtrack;
             }
             if (LT(1) == IToken.tSEMI)
             {
-                consume(IToken.tSEMI);
-                try
-                {
-                    callback.usingDeclarationEnd(usingDeclaration);
-                }
-                catch (Exception e)
-                {
-                }
+                IToken last = consume(IToken.tSEMI);
                 IASTUsingDeclaration declaration =
-                    astFactory.createUsingDeclaration(scope, typeName, name);
+                    astFactory.createUsingDeclaration(scope, typeName, name, firstToken.getOffset(), last.getEndOffset());
                 requestor.acceptUsingDeclaration(declaration);
             }
             else
             {
-                try
-                {
-                    callback.usingDeclarationAbort(usingDeclaration);
-                }
-                catch (Exception e)
-                {
-                }
                 throw backtrack;
             }
         }
@@ -414,27 +313,19 @@ public class Parser implements IParser
      * @param container Callback object representing the scope these definitions fall into.
      * @throws Backtrack	request for a backtrack
      */
-    protected void linkageSpecification(Object container, IASTScope scope)
+    protected void linkageSpecification(IASTScope scope)
         throws Backtrack
     {
-        consume(IToken.t_extern);
+        IToken firstToken = consume(IToken.t_extern);
         if (LT(1) != IToken.tSTRING)
             throw backtrack;
-        Object linkageSpec = null;
         IToken spec = consume(IToken.tSTRING);
-        try
-        {
-            linkageSpec =
-                callback.linkageSpecificationBegin(container, spec.getImage());
-        }
-        catch (Exception e)
-        {
-        }
+  
         if (LT(1) == IToken.tLBRACE)
         {
             consume(IToken.tLBRACE);
             IASTLinkageSpecification linkage =
-                astFactory.createLinkageSpecification(scope, spec.getImage());
+                astFactory.createLinkageSpecification(scope, spec.getImage(), firstToken.getOffset());
             requestor.enterLinkageSpecification(linkage);
             linkageDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
@@ -447,7 +338,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(linkageSpec, linkage, null);
+                            declaration(linkage, null);
                         }
                         catch (Backtrack bt)
                         {
@@ -460,29 +351,16 @@ public class Parser implements IParser
                     errorHandling();
             }
             // consume the }
-            consume();
-            try
-            {
-                callback.linkageSpecificationEnd(linkageSpec);
-            }
-            catch (Exception e)
-            {
-            }
+            IToken lastToken = consume();
+            linkage.setEndingOffset(lastToken.getEndOffset());
             requestor.exitLinkageSpecification(linkage);
         }
         else // single declaration
             {
             IASTLinkageSpecification linkage =
-                astFactory.createLinkageSpecification(scope, spec.getImage());
+                astFactory.createLinkageSpecification(scope, spec.getImage(), firstToken.getOffset());
             requestor.enterLinkageSpecification(linkage);
-            declaration(linkageSpec, linkage, null);
-            try
-            {
-                callback.linkageSpecificationEnd(linkageSpec);
-            }
-            catch (Exception e)
-            {
-            }
+            declaration(linkage, null);
             requestor.exitLinkageSpecification(linkage);
         }
     }
@@ -498,11 +376,14 @@ public class Parser implements IParser
      * @param container			Callback object representing the scope these definitions fall into.
      * @throws Backtrack		request for a backtrack
      */
-    protected void templateDeclaration(Object container, IASTScope scope) throws Backtrack
+    protected void templateDeclaration(IASTScope scope)
+        throws Backtrack
     {
         IToken firstToken = null;
+        boolean exported = false; 
         if (LT(1) == IToken.t_export)
         {
+        	exported = true;
             firstToken = consume(IToken.t_export);
             consume(IToken.t_template);
         }
@@ -511,28 +392,15 @@ public class Parser implements IParser
         if (LT(1) != IToken.tLT)
         {
             // explicit-instantiation
-            Object instantiation = null;
-            try
-            {
-                instantiation = callback.explicitInstantiationBegin(container);
-            }
-            catch (Exception e)
-            {
-            }
-            
-            IASTTemplateInstantiation templateInstantiation = astFactory.createTemplateInstantiation( scope, firstToken.getOffset() );
-            requestor.enterTemplateExplicitInstantiation( templateInstantiation );
-            declaration(instantiation, scope, templateInstantiation );
-            templateInstantiation.setEndingOffset( lastToken.getEndOffset() );
-			requestor.exitTemplateExplicitInstantiation( templateInstantiation );
-            
-            try
-            {
-                callback.explicitInstantiationEnd(instantiation);
-            }
-            catch (Exception e)
-            {
-            }
+            IASTTemplateInstantiation templateInstantiation =
+                astFactory.createTemplateInstantiation(
+                    scope,
+                    firstToken.getOffset());
+            requestor.enterTemplateExplicitInstantiation(templateInstantiation);
+            declaration(scope, templateInstantiation);
+            templateInstantiation.setEndingOffset(lastToken.getEndOffset());
+            requestor.exitTemplateExplicitInstantiation(templateInstantiation);
+ 
             return;
         }
         else
@@ -542,65 +410,33 @@ public class Parser implements IParser
             {
                 consume(IToken.tGT);
                 // explicit-specialization
-                Object specialization = null;
-                try
-                {
-                    specialization =
-                        callback.explicitSpecializationBegin(container);
-                }
-                catch (Exception e)
-                {
-                }
                 
-				IASTTemplateSpecialization  templateSpecialization = astFactory.createTemplateSpecialization( scope, firstToken.getOffset() );
-				requestor.enterTemplateSpecialization( templateSpecialization );
-				declaration(specialization, scope, templateSpecialization );
-				templateSpecialization.setEndingOffset( lastToken.getEndOffset() );
-				requestor.exitTemplateSpecialization( templateSpecialization );
-                
-                try
-                {
-                    callback.explicitSpecializationEnd(specialization);
-                }
-                catch (Exception e)
-                {
-                }
+                IASTTemplateSpecialization templateSpecialization =
+                    astFactory.createTemplateSpecialization(
+                        scope,
+                        firstToken.getOffset());
+                requestor.enterTemplateSpecialization(templateSpecialization);
+                declaration(scope, templateSpecialization);
+                templateSpecialization.setEndingOffset(
+                    lastToken.getEndOffset());
+                requestor.exitTemplateSpecialization(templateSpecialization);
                 return;
             }
         }
-        Object templateDeclaration = null;
+        
         try
         {
-            try
-            {
-                templateDeclaration =
-                    callback.templateDeclarationBegin(container, firstToken);
-            }
-            catch (Exception e)
-            {
-            }
-            templateParameterList(templateDeclaration);
+            List parms = templateParameterList();
             consume(IToken.tGT);
-            declaration(templateDeclaration, scope, null);
-            try
-            {
-                callback.templateDeclarationEnd(
-                    templateDeclaration,
-                    (Token)lastToken);
-            }
-            catch (Exception e)
-            {
-            }
+            IASTTemplateDeclaration templateDecl = astFactory.createTemplateDeclaration( scope, parms, exported, firstToken.getOffset() );
+            requestor.enterTemplateDeclaration( templateDecl );
+            declaration(scope, templateDecl );
+            templateDecl.setEndingOffset( lastToken.getEndOffset() );
+            requestor.exitTemplateDeclaration( templateDecl );
+            
         }
         catch (Backtrack bt)
         {
-            try
-            {
-                callback.templateDeclarationAbort(templateDeclaration);
-            }
-            catch (Exception e)
-            {
-            }
             throw bt;
         }
     }
@@ -629,134 +465,82 @@ public class Parser implements IParser
      * @param templateDeclaration		Callback's templateDeclaration which serves as a scope to this list.  
      * @throws Backtrack				request for a backtrack
      */
-    protected void templateParameterList(Object templateDeclaration)
+    protected List templateParameterList()
         throws Backtrack
     {
         // if we have gotten this far then we have a true template-declaration
         // iterate through the template parameter list
-        Object templateParameterList = null;
-        try
-        {
-            templateParameterList =
-                callback.templateParameterListBegin(templateDeclaration);
-        }
-        catch (Exception e)
-        {
-        }
+        List returnValue = new ArrayList();
+ 
         for (;;)
         {
             if (LT(1) == IToken.tGT)
-                return;
+                return returnValue;
             if (LT(1) == IToken.t_class || LT(1) == IToken.t_typename)
             {
-                Object currentTemplateParm = null;
+                IASTTemplateParameter.ParamKind kind =
+                    (consume().getType() == IToken.t_class)
+                        ? IASTTemplateParameter.ParamKind.CLASS
+                        : IASTTemplateParameter.ParamKind.TYPENAME;
+				
+				IToken id = null;
+				ITokenDuple typeId = null;
                 try
                 {
-                    try
-                    {
-                        currentTemplateParm =
-                            callback.templateTypeParameterBegin(
-                                templateParameterList,
-                                consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     if (LT(1) == IToken.tIDENTIFIER) // optional identifier
                     {
-                        identifier();
-                        try
-                        {
-                            callback.templateTypeParameterName(
-                                currentTemplateParm);
-                        }
-                        catch (Exception e)
-                        {
-                        }
+                        id = identifier();
+                        
                         if (LT(1) == IToken.tASSIGN) // optional = type-id
                         {
                             consume(IToken.tASSIGN);
-                            typeId(); // type-id
-                            try
-                            {
-                                callback.templateTypeParameterInitialTypeId(
-                                    currentTemplateParm);
-                            }
-                            catch (Exception e)
-                            {
-                            }
+                            typeId = typeId(); // type-id
                         }
                     }
-                    try
-                    {
-                        callback.templateTypeParameterEnd(currentTemplateParm);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+
                 }
                 catch (Backtrack bt)
                 {
-                    try
-                    {
-                        callback.templateTypeParameterAbort(
-                            currentTemplateParm);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     throw bt;
                 }
+				returnValue.add(
+					astFactory.createTemplateParameter(
+						kind,
+						( id == null )? "" : id.getImage(),
+						(typeId == null) ? null : typeId.toString(),
+						null,
+						null));
+
             }
             else if (LT(1) == IToken.t_template)
             {
                 IToken kind = consume(IToken.t_template);
                 consume(IToken.tLT);
-                Object newTemplateParm = null;
-                try
-                {
-                    newTemplateParm =
-                        callback.templateTypeParameterBegin(
-                            templateParameterList,
-                            kind);
-                }
-                catch (Exception e)
-                {
-                }
-                templateParameterList(newTemplateParm);
+
+                List subResult = templateParameterList();
                 consume(IToken.tGT);
                 consume(IToken.t_class);
+                IToken optionalId = null;
+                ITokenDuple optionalTypeId = null;
                 if (LT(1) == IToken.tIDENTIFIER) // optional identifier
                 {
-                    identifier();
-                    try
-                    {
-                        callback.templateTypeParameterName(newTemplateParm);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    optionalId = identifier();
+   
                     if (LT(1) == IToken.tASSIGN) // optional = type-id
                     {
                         consume(IToken.tASSIGN);
-                        typeId();
-                        try
-                        {
-                            callback.templateTypeParameterInitialTypeId(
-                                newTemplateParm);
-                        }
-                        catch (Exception e)
-                        {
-                        }
+                        optionalTypeId = typeId();
+    
                     }
                 }
-                try
-                {
-                    callback.templateTypeParameterEnd(newTemplateParm);
-                }
-                catch (Exception e)
-                {
-                }
+ 
+                returnValue.add(
+                    astFactory.createTemplateParameter(
+                        IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
+                        ( optionalId == null )? "" : optionalId.getImage(),
+                        ( optionalTypeId == null )  ? "" : optionalTypeId.toString(),
+                        null,
+                        subResult));
             }
             else if (LT(1) == IToken.tCOMMA)
             {
@@ -765,11 +549,30 @@ public class Parser implements IParser
             }
             else
             {
-                parameterDeclaration(templateParameterList, null); // this should be something real
+                ParameterCollection c = new ParameterCollection();
+                parameterDeclaration(c);
+                DeclarationWrapper wrapper =
+                    (DeclarationWrapper)c.getParameters().get(0);
+                Declarator declarator =
+                    (Declarator)wrapper.getDeclarators().next();
+                returnValue.add(
+                    astFactory.createTemplateParameter(
+                        IASTTemplateParameter.ParamKind.PARAMETER,
+                        null,
+                        null,
+                        astFactory.createParameterDeclaration(
+                            wrapper.isConst(),
+                            wrapper.getTypeSpecifier(),
+                            declarator.getPtrOps(),
+                            declarator.getArrayModifiers(),
+                            declarator.getName() == null
+                                ? ""
+                                : declarator.getName(),
+                            declarator.getInitializerClause()),
+                        null));
             }
         }
     }
-
     /**
      * The most abstract construct within a translationUnit : a declaration.  
      * 
@@ -793,7 +596,9 @@ public class Parser implements IParser
      * @param container		IParserCallback object which serves as the owner scope for this declaration.  
      * @throws Backtrack	request a backtrack
      */
-    protected void declaration(Object container, IASTScope scope, IASTTemplate ownerTemplate)
+    protected void declaration(
+        IASTScope scope,
+        IASTTemplate ownerTemplate)
         throws Backtrack
     {
         switch (LT(1))
@@ -812,43 +617,45 @@ public class Parser implements IParser
                         last.getEndOffset());
                 // if we made it this far, then we have all we need 
                 // do the callback
-                try
-                {
-                    callback.asmDefinition(container, assembly);
-                }
-                catch (Exception e)
-                {
-                }
+ 
                 requestor.acceptASMDefinition(asmDefinition);
                 return;
             case IToken.t_namespace :
-                namespaceDefinition(container, scope);
+                namespaceDefinition(scope);
                 return;
             case IToken.t_using :
-                usingClause(container, scope);
+                usingClause(scope);
                 return;
             case IToken.t_export :
             case IToken.t_template :
-                templateDeclaration(container, scope);
+                templateDeclaration(scope);
                 return;
             case IToken.t_extern :
                 if (LT(2) == IToken.tSTRING)
                 {
-                    linkageSpecification(container, scope);
+                    linkageSpecification(scope);
                     return;
                 }
             default :
                 IToken mark = mark();
                 try
                 {
-                    simpleDeclaration(container, true, false, scope, ownerTemplate);
+                    simpleDeclaration(
+                        true,
+                        false,
+                        scope,
+                        ownerTemplate);
                     // try it first with the original strategy
                 }
                 catch (Backtrack bt)
                 {
                     // did not work 
                     backup(mark);
-                    simpleDeclaration(container, false, false, scope, ownerTemplate);
+                    simpleDeclaration(
+                        false,
+                        false,
+                        scope,
+                        ownerTemplate);
                     // try it again with the second strategy
                 }
         }
@@ -864,31 +671,16 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
     
      */
-    protected void namespaceDefinition(Object container, IASTScope scope)
+    protected void namespaceDefinition(IASTScope scope)
         throws Backtrack
     {
-        Object namespace = null;
         IToken first = consume(IToken.t_namespace);
-        try
-        {
-            namespace = callback.namespaceDefinitionBegin(container, first);
-        }
-        catch (Exception e)
-        {
-        }
+ 
         IToken identifier = null;
         // optional name 		
         if (LT(1) == IToken.tIDENTIFIER)
-        {
             identifier = identifier();
-            try
-            {
-                callback.namespaceDefinitionId(namespace);
-            }
-            catch (Exception e)
-            {
-            }
-        }
+        
         if (LT(1) == IToken.tLBRACE)
         {
             consume();
@@ -910,7 +702,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(namespace, namespaceDefinition, null);
+                            declaration(namespaceDefinition, null);
                         }
                         catch (Backtrack bt)
                         {
@@ -924,26 +716,13 @@ public class Parser implements IParser
             }
             // consume the }
             IToken last = consume(IToken.tRBRACE);
-            try
-            {
-                callback.namespaceDefinitionEnd(namespace, (Token)last);
-            }
-            catch (Exception e)
-            {
-            }
+ 
             namespaceDefinition.setEndingOffset(
                 last.getOffset() + last.getLength());
             requestor.exitNamespaceDefinition(namespaceDefinition);
         }
         else
         {
-            try
-            {
-                callback.namespaceDefinitionAbort(namespace);
-            }
-            catch (Exception e)
-            {
-            }
             throw backtrack;
         }
     }
@@ -966,38 +745,39 @@ public class Parser implements IParser
      * @throws Backtrack		request a backtrack
      */
     protected void simpleDeclaration(
-        Object container,
         boolean tryConstructor,
         boolean forKR,
-        IASTScope scope, IASTTemplate ownerTemplate)
+        IASTScope scope,
+        IASTTemplate ownerTemplate)
         throws Backtrack
     {
-        Object simpleDecl = null;
-        DeclarationWrapper sdw = new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
-        try
-        {
-            simpleDecl = callback.simpleDeclarationBegin(container, LA(1));
-        }
-        catch (Exception e)
-        {
-        }
-        declSpecifierSeq(simpleDecl, false, tryConstructor, sdw);
-        if( sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED )
-           	sdw.setTypeSpecifier( astFactory.createSimpleTypeSpecifier( sdw.getSimpleType(), sdw.getName(), sdw.isShort(), sdw.isLong(), sdw.isSigned(), sdw.isUnsigned(), sdw.isTypeNamed() ) );        
+        DeclarationWrapper sdw =
+            new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
+
+        declSpecifierSeq(false, tryConstructor, sdw);
+        if (sdw.getTypeSpecifier() == null )
+            sdw.setTypeSpecifier(
+                astFactory.createSimpleTypeSpecifier(
+                    sdw.getSimpleType(),
+                    sdw.getName(),
+                    sdw.isShort(),
+                    sdw.isLong(),
+                    sdw.isSigned(),
+                    sdw.isUnsigned(),
+                    sdw.isTypeNamed()));
         
-        Object declarator = null;
-        DeclaratorDuple d = null; 
+        DeclaratorDuple d = null;
         if (LT(1) != IToken.tSEMI)
             try
             {
-                d = initDeclarator(simpleDecl, sdw);
-                declarator = d.getObject();
+                d = initDeclarator(sdw);
+                
                 while (LT(1) == IToken.tCOMMA)
                 {
                     consume();
                     try
                     {
-                        d = initDeclarator(simpleDecl, sdw);
+                        d = initDeclarator(sdw);
                     }
                     catch (Backtrack b)
                     {
@@ -1009,143 +789,125 @@ public class Parser implements IParser
             {
                 // allowed to be empty
             }
-        
-        boolean done = false; 
-        boolean hasFunctionBody = false; 
+        boolean done = false;
+        boolean hasFunctionBody = false;
         switch (LT(1))
         {
             case IToken.tSEMI :
                 consume(IToken.tSEMI);
-                done = true; 
+                done = true;
                 break;
             case IToken.tCOLON :
                 if (forKR)
                     throw backtrack;
-                ctorInitializer(declarator, d.getDeclarator());
+                ctorInitializer(d.getDeclarator());
                 // Falling through on purpose
             case IToken.tLBRACE :
                 if (forKR)
                     throw backtrack;
-         
-				d.getDeclarator().hasFunctionBody( true );
-				hasFunctionBody = true; 
+                d.getDeclarator().hasFunctionBody(true);
+                hasFunctionBody = true;
                 break;
             default :
                 throw backtrack;
         }
         
-        List l = sdw.createASTNodes(astFactory);
-		Iterator i = l.iterator(); 
-		if( hasFunctionBody && l.size() != 1 )
-		{
-			failParse(); 
-			throw backtrack; //TODO Should be an IProblem
-		}
-		
-		if( i.hasNext() ) // no need to do this unless we have a declarator
-		{
-			if( ! hasFunctionBody )
-			{
-				
-				while( i.hasNext() )
-				{
-					IASTDeclaration declaration = (IASTDeclaration)i.next(); 
-					((IASTOffsetableElement)declaration).setEndingOffset( lastToken.getEndOffset() );
-					if( declaration instanceof IASTField )
-						requestor.acceptField( (IASTField)declaration );
-					else if( declaration instanceof IASTVariable )
-						requestor.acceptVariable( (IASTVariable)declaration );
-					else if( declaration instanceof IASTMethod )
-						requestor.acceptMethodDeclaration( (IASTMethod)declaration );
-					else if( declaration instanceof IASTFunction )
-						requestor.acceptFunctionDeclaration( (IASTFunction)declaration );
-					else if( declaration instanceof IASTTypedef )
-						requestor.acceptTypedef( (IASTTypedef)declaration);
-					else 
-					{
-						if( hasFunctionBody && l.size() != 1 )
-						{
-							failParse(); 
-							throw backtrack; //TODO Should be an IProblem
-						}
-					}
-				}		
-			}
-			else
-			{
-				IASTDeclaration declaration = (IASTDeclaration)i.next(); 
-				if( declaration instanceof IASTMethod )
-					requestor.enterMethodBody( (IASTMethod)declaration );
-				else if( declaration instanceof IASTFunction )
-					requestor.enterFunctionBody( (IASTFunction)declaration );
-				else 
-				{
-					if( hasFunctionBody && l.size() != 1 )
-					{
-						failParse(); 
-						throw backtrack; //TODO Should be an IProblem
-					}
-				}
-				
-				Object function = null;
-				try
-				{
-					function = callback.functionBodyBegin(simpleDecl);
-				}
-				catch (Exception e)
-				{
-				}
-				handleFunctionBody(d.getDeclarator());
-				try
-				{
-					callback.functionBodyEnd(function);
-				}
-				catch (Exception e)
-				{
-				}
-				
-				if( declaration instanceof IASTMethod )
-					requestor.exitMethodBody( (IASTMethod)declaration );
-				else if( declaration instanceof IASTFunction )
-					requestor.exitFunctionBody( (IASTFunction)declaration );
-			}
-		}		
-
+        if( forKR ) return;
         
-        try
+        List l = sdw.createASTNodes(astFactory);
+        Iterator i = l.iterator();
+        if (hasFunctionBody && l.size() != 1)
         {
-            callback.simpleDeclarationEnd(simpleDecl, (Token)lastToken);
+            failParse();
+            throw backtrack; //TODO Should be an IProblem
         }
-        catch (Exception e)
+        if (i.hasNext()) // no need to do this unless we have a declarator
         {
+            if (!hasFunctionBody)
+            {
+                while (i.hasNext())
+                {
+                    IASTDeclaration declaration = (IASTDeclaration)i.next();
+                    ((IASTOffsetableElement)declaration).setEndingOffset(
+                        lastToken.getEndOffset());
+                    if (declaration instanceof IASTField)
+                        requestor.acceptField((IASTField)declaration);
+                    else if (declaration instanceof IASTVariable)
+                        requestor.acceptVariable((IASTVariable)declaration);
+                    else if (declaration instanceof IASTMethod)
+                        requestor.acceptMethodDeclaration(
+                            (IASTMethod)declaration);
+                    else if (declaration instanceof IASTFunction)
+                        requestor.acceptFunctionDeclaration(
+                            (IASTFunction)declaration);
+                    else if (declaration instanceof IASTTypedefDeclaration)
+                        requestor.acceptTypedef((IASTTypedefDeclaration)declaration);
+                    else if (declaration instanceof IASTPointerToFunction )
+                    	requestor.acceptPointerToFunction( (IASTPointerToFunction)declaration ); 
+					else if (declaration instanceof IASTPointerToMethod )
+						requestor.acceptPointerToMethod( (IASTPointerToMethod)declaration );                     
+                    else
+                    {
+                       failParse();
+                       throw backtrack; //TODO Should be an IProblem
+                    }
+                }
+            }
+            else
+            {
+                IASTDeclaration declaration = (IASTDeclaration)i.next();
+                if (declaration instanceof IASTMethod)
+                    requestor.enterMethodBody((IASTMethod)declaration);
+                else if (declaration instanceof IASTFunction)
+                    requestor.enterFunctionBody((IASTFunction)declaration);
+                else
+                {
+                    if (hasFunctionBody && l.size() != 1)
+                    {
+                        failParse();
+                        throw backtrack; //TODO Should be an IProblem
+                    }
+                }
+   
+                handleFunctionBody(d.getDeclarator());
+  
+                if (declaration instanceof IASTMethod)
+                    requestor.exitMethodBody((IASTMethod)declaration);
+                else if (declaration instanceof IASTFunction)
+                    requestor.exitFunctionBody((IASTFunction)declaration);
+            }
+        }
+        else
+        	requestor.acceptAbstractTypeSpecDeclaration( astFactory.createTypeSpecDeclaration(
+        		sdw.getScope(), sdw.getTypeSpecifier(), ownerTemplate, sdw.getStartingOffset(), lastToken.getEndOffset()) );
+        
+    }
+    protected void handleFunctionBody(Declarator d) throws Backtrack, EndOfFile
+    {
+        if (mode == ParserMode.QUICK_PARSE)
+        {
+            // speed up the parser by skiping the body
+            // simply look for matching brace and return
+            consume(IToken.tLBRACE);
+            int depth = 1;
+            while (depth > 0)
+            {
+                switch (consume().getType())
+                {
+                    case IToken.tRBRACE :
+                        --depth;
+                        break;
+                    case IToken.tLBRACE :
+                        ++depth;
+                        break;
+                }
+            }
+        }
+        else
+        {
+            functionBody();
         }
     }
-    
-	protected void handleFunctionBody(Declarator d) throws Backtrack, EndOfFile {
-		  if (mode == ParserMode.QUICK_PARSE)
-		    {
-		        // speed up the parser by skiping the body
-		        // simply look for matching brace and return
-		        consume(IToken.tLBRACE);
-		        int depth = 1;
-		        while (depth > 0)
-		        {
-		            switch (consume().getType())
-		            {
-		                case IToken.tRBRACE :
-		                    --depth;
-		                    break;
-		                case IToken.tLBRACE :
-		                    ++depth;
-		                    break;
-		            }
-		        }
-		    }
-		    else
-		    {
-		        functionBody();
-		    }
-	}
     /**
      * This method parses a constructor chain 
      * ctorinitializer:	 : meminitializerlist
@@ -1157,72 +919,32 @@ public class Parser implements IParser
      * @param declarator	IParserCallback object that represents the declarator (constructor) that owns this initializer
      * @throws Backtrack	request a backtrack
      */
-    protected void ctorInitializer(Object declarator, Declarator d) throws Backtrack
+    protected void ctorInitializer(Declarator d)
+        throws Backtrack
     {
         consume(IToken.tCOLON);
-        Object constructorChain = null;
-        try
-        {
-            constructorChain = callback.constructorChainBegin(declarator);
-        }
-        catch (Exception e)
-        {
-        }
+
         try
         {
             for (;;)
             {
                 if (LT(1) == IToken.tLBRACE)
                     break;
-                Object constructorChainElement = null;
-                try
-                {
-                    constructorChainElement =
-                        callback.constructorChainElementBegin(constructorChain);
-                }
-                catch (Exception e)
-                {
-                }
+
+
                 ITokenDuple duple = name();
-                try
-                {
-                    callback.constructorChainElementId(constructorChainElement);
-                }
-                catch (Exception e)
-                {
-                }
+
                 consume(IToken.tLPAREN);
-				IASTExpression expressionList = null;
-                Object expression = null;
-                try
-                {
-                    expression = callback.expressionBegin(constructorChainElement);
-                }
-                catch (Exception e)
-                {
-                }
-                expressionList = expression(expression);
-                try
-                {
-                    callback.expressionEnd(expressionList);
-                }
-                catch (Exception e)
-                {
-                }
-       
+                IASTExpression expressionList = null;
+
+                expressionList = expression();
+
                 consume(IToken.tRPAREN);
-                
-                try
-                {
-                    callback.constructorChainElementEnd(
-                        constructorChainElement);
-                }
-                catch (Exception e)
-                {
-                }
-                
-                d.addConstructorMemberInitializer( astFactory.createConstructorMemberInitializer( duple, expressionList ) );
-                
+
+                d.addConstructorMemberInitializer(
+                    astFactory.createConstructorMemberInitializer(
+                        duple,
+                        expressionList));
                 if (LT(1) == IToken.tLBRACE)
                     break;
                 consume(IToken.tCOMMA);
@@ -1230,22 +952,10 @@ public class Parser implements IParser
         }
         catch (Backtrack bt)
         {
-            try
-            {
-                callback.constructorChainAbort(constructorChain);
-            }
-            catch (Exception e)
-            {
-            }
+ 
             throw backtrack;
         }
-        try
-        {
-            callback.constructorChainEnd(constructorChain);
-        }
-        catch (Exception e)
-        {
-        }
+
     }
     /**
      * This routine parses a parameter declaration 
@@ -1253,35 +963,31 @@ public class Parser implements IParser
      * @param containerObject	The IParserCallback object representing the parameterDeclarationClause owning the parm. 
      * @throws Backtrack		request a backtrack
      */
-    protected void parameterDeclaration(Object containerObject, IParameterCollection collection)
+    protected void parameterDeclaration(
+        IParameterCollection collection)
         throws Backtrack
     {
         IToken current = LA(1);
-        Object parameterDecl = null;
-        try
-        {
-            parameterDecl = callback.parameterDeclarationBegin(containerObject);
-        }
-        catch (Exception e)
-        {
-        }
-        
-        DeclarationWrapper sdw = new DeclarationWrapper( null, current.getOffset(), null ); 
-        declSpecifierSeq(
-            parameterDecl,
-            true,
-            false,
-            sdw
-        );
-		if( sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED )
-			sdw.setTypeSpecifier( astFactory.createSimpleTypeSpecifier( sdw.getSimpleType(), sdw.getName(), sdw.isShort(), sdw.isLong(), sdw.isSigned(), sdw.isUnsigned(), sdw.isTypeNamed() ) );        
-
-        
+ 
+        DeclarationWrapper sdw =
+            new DeclarationWrapper(null, current.getOffset(), null);
+        declSpecifierSeq(true, false, sdw);
+        if (sdw.getTypeSpecifier() == null
+            && sdw.getSimpleType()
+                != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
+            sdw.setTypeSpecifier(
+                astFactory.createSimpleTypeSpecifier(
+                    sdw.getSimpleType(),
+                    sdw.getName(),
+                    sdw.isShort(),
+                    sdw.isLong(),
+                    sdw.isSigned(),
+                    sdw.isUnsigned(),
+                    sdw.isTypeNamed()));
         if (LT(1) != IToken.tSEMI)
             try
             {
-                DeclaratorDuple d = initDeclarator(parameterDecl, sdw );
-                Object declarator = d.getObject();
+                DeclaratorDuple d = initDeclarator(sdw);
             }
             catch (Backtrack b)
             {
@@ -1289,17 +995,7 @@ public class Parser implements IParser
             }
         if (current == LA(1))
             throw backtrack;
-        
-        if ( collection != null ) 
-        	collection.addParameter( sdw );
-        	
-        try
-        {
-            callback.parameterDeclarationEnd(parameterDecl);
-        }
-        catch (Exception e)
-        {
-        }
+        collection.addParameter(sdw);
     }
     /**
      * This class represents the state and strategy for parsing declarationSpecifierSequences
@@ -1444,18 +1140,10 @@ public class Parser implements IParser
                 || (LT(3) != IToken.tLPAREN && LT(3) != IToken.tASSIGN))
                 && !LA(2).isPointer());
     }
-    
-    private void callbackSimpleDeclToken( Object decl, Flags flags )
+    private void callbackSimpleDeclToken(Flags flags) throws Backtrack
     {
-		flags.setEncounteredRawType(true);
-		try
-		{
-			callback.simpleDeclSpecifier(decl, consume());
-		}
-		catch (Exception e)
-		{
-		}
-
+        flags.setEncounteredRawType(true);
+        consume(); 
     }
     /**
      * This function parses a declaration specifier sequence, as according to the ANSI C++ spec. 
@@ -1482,242 +1170,152 @@ public class Parser implements IParser
      * @throws Backtrack		request a backtrack
      */
     protected void declSpecifierSeq(
-        Object decl,
         boolean parm,
         boolean tryConstructor,
         DeclarationWrapper sdw)
         throws Backtrack
     {
         Flags flags = new Flags(parm, tryConstructor);
-        IToken typeNameBegin = null; 
-        IToken typeNameEnd = null; 
+        IToken typeNameBegin = null;
+        IToken typeNameEnd = null;
         declSpecifiers : for (;;)
         {
             switch (LT(1))
             {
                 case IToken.t_inline :
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                	consume(); 
                     sdw.setInline(true);
                     break;
                 case IToken.t_auto :
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     sdw.setAuto(true);
                     break;
                 case IToken.t_register :
                     sdw.setRegister(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    break;
+					consume(); 
+    	            break;
                 case IToken.t_static :
                     sdw.setStatic(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    break;
+					consume(); 
+    		        break;
                 case IToken.t_extern :
                     sdw.setExtern(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_mutable :
                     sdw.setMutable(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_virtual :
                     sdw.setVirtual(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_explicit :
                     sdw.setExplicit(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_typedef :
                     sdw.setTypedef(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_friend :
                     sdw.setFriend(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_const :
                     sdw.setConst(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_volatile :
                     sdw.setVolatile(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+					consume(); 
                     break;
                 case IToken.t_signed :
-                	sdw.setSigned(true);
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-					callbackSimpleDeclToken(decl, flags);
-                	break;
+                    sdw.setSigned(true);
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
+                    break;
                 case IToken.t_unsigned :
-                	sdw.setUnsigned( true );
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-					callbackSimpleDeclToken(decl, flags);
-				   	break;
+                    sdw.setUnsigned(true);
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
+                    break;
                 case IToken.t_short :
-                	sdw.setShort( true );
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1);                 	
-					callbackSimpleDeclToken(decl, flags);
-				   	break;
-				case IToken.t_long :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-				
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setLong( true ); 
-					break;
-                
+                    sdw.setShort(true);
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
+                    break;
+                case IToken.t_long :
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
+                    sdw.setLong(true);
+                    break;
                 case IToken.t_char :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.CHAR );
-					break;
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.CHAR);
+                    break;
                 case IToken.t_wchar_t :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.WCHAR_T);
-					break;
-					
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(
+                        IASTSimpleTypeSpecifier.Type.WCHAR_T);
+                    break;
                 case IToken.t_bool :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.BOOL);
-					break;
-
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.BOOL);
+                    break;
                 case IToken.t_int :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.INT);
-					break;
-
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
+                    break;
                 case IToken.t_float :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.FLOAT);
-					break;
-
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.FLOAT);
+                    break;
                 case IToken.t_double :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.DOUBLE );
-					break;
-
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(
+                        IASTSimpleTypeSpecifier.Type.DOUBLE);
+                    break;
                 case IToken.t_void :
-					if( typeNameBegin == null )
-						typeNameBegin = LA(1);
-					typeNameEnd = LA(1); 
-                
-					callbackSimpleDeclToken(decl, flags);
-					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.VOID );
-					break;
-
+                    if (typeNameBegin == null)
+                        typeNameBegin = LA(1);
+                    typeNameEnd = LA(1);
+                    callbackSimpleDeclToken(flags);
+                    sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.VOID);
+                    break;
                 case IToken.t_typename :
                     sdw.setTypenamed(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(
-                            decl,
-                            consume(IToken.t_typename));
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    consume(IToken.t_typename ); 
                     IToken first = LA(1);
                     IToken last = null;
                     last = name().getLastToken();
@@ -1725,24 +1323,10 @@ public class Parser implements IParser
                     {
                         consume(IToken.t_template);
                         last = templateId();
-                        try
-                        {
-                            callback.nameBegin(first);
-                            callback.nameEnd(last);
-                        }
-                        catch (Exception e)
-                        {
-                        }
                     }
                     ITokenDuple duple = new TokenDuple(first, last);
                     sdw.setTypeName(duple);
-                    try
-                    {
-                        callback.simpleDeclSpecifierName(decl);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+      
                     return;
                 case IToken.tCOLONCOLON :
                     consume(IToken.tCOLONCOLON);
@@ -1752,44 +1336,36 @@ public class Parser implements IParser
                     // handle nested later:
                     if (flags.haveEncounteredRawType())
                     {
-                    	if( typeNameBegin != null )
-                    		sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
+                        if (typeNameBegin != null)
+                            sdw.setTypeName(
+                                new TokenDuple(typeNameBegin, typeNameEnd));
                         return;
                     }
                     if (parm && flags.haveEncounteredTypename())
-					{
-						if( typeNameBegin != null )
-							sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
-						return;
-					}
+                    {
+                        if (typeNameBegin != null)
+                            sdw.setTypeName(
+                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        return;
+                    }
                     if (lookAheadForConstructorOrConversion(flags))
-					{
-						if( typeNameBegin != null )
-							sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
-						return;
-					}
+                    {
+                        if (typeNameBegin != null)
+                            sdw.setTypeName(
+                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        return;
+                    }
                     if (lookAheadForDeclarator(flags))
-					{
-						if( typeNameBegin != null )
-							sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
-						return;
-					}
-                    try
                     {
-                        callback.simpleDeclSpecifier(decl, LA(1));
+                        if (typeNameBegin != null)
+                            sdw.setTypeName(
+                                new TokenDuple(typeNameBegin, typeNameEnd));
+                        return;
                     }
-                    catch (Exception e)
-                    {
-                    }
+ 
                     ITokenDuple d = name();
                     sdw.setTypeName(d);
-                    try
-                    {
-                        callback.simpleDeclSpecifierName(decl);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    sdw.setSimpleType( IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME ); 
                     flags.setEncounteredTypename(true);
                     break;
                 case IToken.t_class :
@@ -1799,19 +1375,19 @@ public class Parser implements IParser
                     {
                         try
                         {
-                            classSpecifier(decl, sdw );
+                            classSpecifier(sdw);
                             return;
                         }
                         catch (Backtrack bt)
                         {
-                            elaboratedTypeSpecifier(decl, sdw);
+                            elaboratedTypeSpecifier(sdw);
                             flags.setEncounteredTypename(true);
                             break;
                         }
                     }
                     else
                     {
-                        elaboratedTypeSpecifier(decl, sdw);
+                        elaboratedTypeSpecifier(sdw);
                         flags.setEncounteredTypename(true);
                         break;
                     }
@@ -1820,20 +1396,20 @@ public class Parser implements IParser
                     {
                         try
                         {
-                            enumSpecifier(decl, sdw);
+                            enumSpecifier(sdw);
                             break;
                         }
                         catch (Backtrack bt)
                         {
                             // this is an elaborated class specifier
-                            elaboratedTypeSpecifier(decl, sdw);
+                            elaboratedTypeSpecifier(sdw);
                             flags.setEncounteredTypename(true);
                             break;
                         }
                     }
                     else
                     {
-                        elaboratedTypeSpecifier(decl, sdw);
+                        elaboratedTypeSpecifier(sdw);
                         flags.setEncounteredTypename(true);
                         break;
                     }
@@ -1841,9 +1417,8 @@ public class Parser implements IParser
                     break declSpecifiers;
             }
         }
-		if( typeNameBegin != null )
-			sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
-
+        if (typeNameBegin != null)
+            sdw.setTypeName(new TokenDuple(typeNameBegin, typeNameEnd));
     }
     /**
      * Parse an elaborated type specifier.  
@@ -1851,55 +1426,40 @@ public class Parser implements IParser
      * @param decl			Declaration which owns the elaborated type 
      * @throws Backtrack	request a backtrack
      */
-    protected void elaboratedTypeSpecifier(Object decl, DeclarationWrapper sdw) throws Backtrack
+    protected void elaboratedTypeSpecifier(DeclarationWrapper sdw)
+        throws Backtrack
     {
         // this is an elaborated class specifier
-        Object elab = null;
         IToken t = consume();
-        ASTClassKind eck = null; 
-        
-        switch( t.getType() )
+        ASTClassKind eck = null;
+        switch (t.getType())
         {
-        	case Token.t_class:
-				eck = ASTClassKind.CLASS;
-				break;
-        	case Token.t_struct:
-				eck = ASTClassKind.STRUCT;
-				break;
-        	case Token.t_union:
-				eck = ASTClassKind.UNION;
-				break;        	
-        	case Token.t_enum:
-        		eck = ASTClassKind.ENUM;
-        		break;
-        	default: 
-        		break;
+            case Token.t_class :
+                eck = ASTClassKind.CLASS;
+                break;
+            case Token.t_struct :
+                eck = ASTClassKind.STRUCT;
+                break;
+            case Token.t_union :
+                eck = ASTClassKind.UNION;
+                break;
+            case Token.t_enum :
+                eck = ASTClassKind.ENUM;
+                break;
+            default :
+                break;
         }
-        try
-        {
-            elab = callback.elaboratedTypeSpecifierBegin(decl, t );
-        }
-        catch (Exception e)
-        {
-        }
-        
+ 
         ITokenDuple d = name();
-        
-        IASTElaboratedTypeSpecifier elaboratedTypeSpec = astFactory.createElaboratedTypeSpecifier( eck, d.toString(), t.getOffset(), 
-        		d.getLastToken().getEndOffset() );
-        		
-        sdw.setTypeSpecifier( elaboratedTypeSpec );
-        
-        requestor.acceptElaboratedTypeSpecifier( elaboratedTypeSpec );
-        
-        try
-        {
-            callback.elaboratedTypeSpecifierName(elab);
-            callback.elaboratedTypeSpecifierEnd(elab);
-        }
-        catch (Exception e)
-        {
-        }
+        IASTElaboratedTypeSpecifier elaboratedTypeSpec =
+            astFactory.createElaboratedTypeSpecifier(
+                eck,
+                d.toString(),
+                t.getOffset(),
+                d.getLastToken().getEndOffset());
+        sdw.setTypeSpecifier(elaboratedTypeSpec);
+        requestor.acceptElaboratedTypeSpecifier(elaboratedTypeSpec);
+
     }
     /**
      * Consumes template parameters.  
@@ -1940,16 +1500,7 @@ public class Parser implements IParser
      */
     protected IToken identifier() throws Backtrack
     {
-        IToken first = consume(IToken.tIDENTIFIER);
-        // throws backtrack if its not that
-        try
-        {
-            callback.nameBegin(first);
-            callback.nameEnd(first);
-        }
-        catch (Exception e)
-        {
-        }
+        IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
         return first;
     }
     /**
@@ -1990,8 +1541,6 @@ public class Parser implements IParser
     {
         IToken first = consume(IToken.tIDENTIFIER);
         IToken last = consumeTemplateParameters(first);
-        callback.nameBegin(first);
-        callback.nameEnd(last);
         return last;
     }
     /**
@@ -2010,13 +1559,7 @@ public class Parser implements IParser
         IToken first = LA(1);
         IToken last = null;
         IToken mark = mark();
-        try
-        {
-            callback.nameBegin(first);
-        }
-        catch (Exception e)
-        {
-        }
+ 
         if (LT(1) == IToken.tCOLONCOLON)
             last = consume();
         // TODO - whacky way to deal with destructors, please revisit
@@ -2049,13 +1592,7 @@ public class Parser implements IParser
                     last = consumeTemplateParameters(last);
             }
         }
-        try
-        {
-            callback.nameEnd(last);
-        }
-        catch (Exception e)
-        {
-        }
+
         return new TokenDuple(first, last);
     }
     /**
@@ -2069,38 +1606,20 @@ public class Parser implements IParser
      * @return			Returns the same object sent in.
      * @throws Backtrack
      */
-    protected Object cvQualifier(Object ptrOp, boolean hasName, Declarator declarator) throws Backtrack
+    protected void cvQualifier(
+        Declarator declarator)
+        throws Backtrack
     {
         switch (LT(1))
         {
             case IToken.t_const :
-				try
-				{
-					callback.pointerOperatorCVModifier(ptrOp, consume());
-				}
-				catch (Exception e)
-				{
-				}
-				
-				if( hasName )
-					declarator.addPtrOp( ASTPointerOperator.CONST_POINTER_TO_FUNCTION );
-				else
-					declarator.addPtrOp( ASTPointerOperator.CONST_POINTER  );
-				return ptrOp;
-
+            	consume( IToken.t_const ); 
+                declarator.addPtrOp(ASTPointerOperator.CONST_POINTER);
+                return;
             case IToken.t_volatile :
-                try
-                {
-                    callback.pointerOperatorCVModifier(ptrOp, consume());
-                }
-                catch (Exception e)
-                {
-                }
-				if( hasName )
-					declarator.addPtrOp( ASTPointerOperator.VOLATILE_POINTER_TO_FUNCTION );
-				else
-					declarator.addPtrOp( ASTPointerOperator.VOLATILE_POINTER  );
-                return ptrOp;
+            	consume( IToken.t_volatile ); 
+                declarator.addPtrOp(ASTPointerOperator.VOLATILE_POINTER);
+                return;
             default :
                 throw backtrack;
         }
@@ -2114,143 +1633,85 @@ public class Parser implements IParser
      * @return				declarator that this parsing produced.  
      * @throws Backtrack	request a backtrack
      */
-    protected DeclaratorDuple initDeclarator(Object owner, DeclarationWrapper sdw)
+    protected DeclaratorDuple initDeclarator(
+        DeclarationWrapper sdw)
         throws Backtrack
     {
-        DeclaratorDuple duple = declarator(owner, sdw);
-        Object declarator = duple.getObject();
+        DeclaratorDuple duple = declarator(sdw);
         Declarator d = duple.getDeclarator();
-      
         // handle = initializerClause
-        if(LT(1) == IToken.tASSIGN )
+        if (LT(1) == IToken.tASSIGN)
         {
-        	consume( IToken.tASSIGN );
-            d.setInitializerClause( initializerClause( declarator ) );
-        }           
+            consume(IToken.tASSIGN);
+            d.setInitializerClause(initializerClause());
+        }
         else if (LT(1) == IToken.tLPAREN)
         {
-        	// initializer in constructor
+            // initializer in constructor
             consume(IToken.tLPAREN); // EAT IT!
-            Object expression = null;
-            IASTExpression astExpression = null; 
-            try
-            {
-                try
-                {
-                    expression = callback.expressionBegin(declarator);
-                }
-                catch (Exception e)
-                {
-                }
-                astExpression = expression(expression);
-				consume(IToken.tRPAREN);
-                try
-                {
-                    callback.expressionEnd(expression);
-                }
-                catch (Exception e)
-                {
-                }
-                d.setConstructorExpression( astExpression );
-            }
-            catch (Backtrack b)
-            {
-                if (expression != null)
-                {
-                    try
-                    {
-                        callback.expressionAbort(expression);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    throw b;
-                }
-            }
+            IASTExpression astExpression = null;
+            astExpression = expression();
+            consume(IToken.tRPAREN);
+            d.setConstructorExpression(astExpression);
         }
+        sdw.addDeclarator(d);
+        return duple;
+    }
+    /**
+     * 
+     */
+    protected IASTInitializerClause initializerClause()
+        throws Backtrack
+    {
+        if (LT(1) == IToken.tLBRACE)
+        {
+            //TODO - parse this for real
+            consume(IToken.tLBRACE);
+            if (LT(1) == (IToken.tRBRACE))
+            {
+                consume(IToken.tRBRACE);
+                return astFactory.createInitializerClause(
+                    IASTInitializerClause.Kind.EMPTY,
+                    null,
+                    null);
+            }
+            // otherwise it is a list of initializers
+            List initializerClauses = new ArrayList();
+            for (;;)
+            {
+                IASTInitializerClause clause = initializerClause();
+                initializerClauses.add(clause);
+                if (LT(1) == IToken.tRBRACE)
+                    break;
+                consume(IToken.tCOMMA);
+            }
+            consume(IToken.tRBRACE);
+            return astFactory.createInitializerClause(
+                IASTInitializerClause.Kind.INITIALIZER_LIST,
+                null,
+                initializerClauses);
+        }
+        // try this now instead
+        // assignmentExpression || { initializerList , } || { }
         try
         {
-            callback.declaratorEnd(declarator);
+  
+            IToken marked = mark();
+            IASTExpression assignmentExpression =
+                assignmentExpression();
+   
+            return astFactory.createInitializerClause(
+                IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
+                assignmentExpression,
+                null);
         }
-        catch (Exception e)
+        catch (Backtrack b)
         {
+			// who cares
         }
-        
-		sdw.addDeclarator(d);
-        return duple; 
+        throw backtrack;
     }
-
     /**
-	 * 
-	 */
-	protected IASTInitializerClause initializerClause(Object declarator) throws Backtrack 
-	{
-		if (LT(1) == IToken.tLBRACE)
-		{
-			//TODO - parse this for real
-			consume(IToken.tLBRACE);
-			if( LT(1) == (IToken.tRBRACE ) )
-			{
-				consume( IToken.tRBRACE );
-				return astFactory.createInitializerClause( IASTInitializerClause.Kind.EMPTY, null, null );
-			}
-			
-			// otherwise it is a list of initializers
-			List initializerClauses = new ArrayList(); 
-			for( ; ; )
-			{
-				IASTInitializerClause clause = initializerClause( declarator ); 
-				initializerClauses.add( clause );
-				if( LT(1) == IToken.tRBRACE ) break;
-				consume( IToken.tCOMMA );
-			}
-			consume( IToken.tRBRACE );
-			return astFactory.createInitializerClause( IASTInitializerClause.Kind.INITIALIZER_LIST, null, initializerClauses );
-		}
-		// try this now instead
-		// assignmentExpression || { initializerList , } || { }
-		Object expression = null;
-		try
-		{
-			try
-			{
-				expression = callback.expressionBegin(declarator);
-			}
-			catch (Exception e)
-			{
-			}
-			
-			IToken marked = mark(); 
-			IASTExpression assignmentExpression  = assignmentExpression(expression);
-			
-			try
-			{
-				callback.expressionEnd(expression);
-			}
-			catch (Exception e)
-			{
-			}
-			
-			return astFactory.createInitializerClause( IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION, assignmentExpression, null );
-		}
-		catch (Backtrack b)
-		{
-			if (expression != null)
-				try
-				{
-					callback.expressionAbort(expression);
-				}
-				catch (Exception e)
-				{
-				}
-		}
-		
-		
-		
-		throw backtrack;
-	}
-	
-	/**
      * Parse a declarator, as according to the ANSI C++ specification. 
      * 
      * declarator
@@ -2271,30 +1732,21 @@ public class Parser implements IParser
      * @return				declarator that this parsing produced.
      * @throws Backtrack	request a backtrack
      */
-    protected DeclaratorDuple declarator(Object container, IDeclaratorOwner owner) throws Backtrack
+    protected DeclaratorDuple declarator(
+        IDeclaratorOwner owner)
+        throws Backtrack
     {
-		Object declarator = null;
-		Declarator d = null;
-		DeclarationWrapper sdw = owner.getDeclarationWrapper();
-
-		overallLoop:
-        do
-        { 
-			declarator = null;
-			d = new Declarator( owner );
-            	
-            try
-            {
-                declarator = callback.declaratorBegin(container);
-            }
-            catch (Exception e)
-            {
-            }
+        Declarator d = null;
+        DeclarationWrapper sdw = owner.getDeclarationWrapper();
+        overallLoop : do
+        {
+            d = new Declarator(owner);
+ 
             for (;;)
             {
                 try
                 {
-                    ptrOperator(declarator, d);
+                    ptrOperator(d);
                 }
                 catch (Backtrack b)
                 {
@@ -2304,37 +1756,23 @@ public class Parser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                DeclaratorDuple subDeclarator = declarator(declarator, d);
+                DeclaratorDuple subDeclarator = declarator(d);
                 consume(IToken.tRPAREN);
-                try
-                {
-                    callback.declaratorEnd(subDeclarator.getObject());
-                }
-                catch (Exception e)
-                {
-                }
             }
             else if (LT(1) == IToken.t_operator)
-                  operatorId(declarator, d, null);
+                operatorId(d, null);
             else
             {
                 try
                 {
                     ITokenDuple duple = name();
-                    d.setName( duple );
-                    try
-                    {
-                        callback.declaratorId(declarator);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    
+                    d.setName(duple);
+
                 }
                 catch (Backtrack bt)
                 {
-					IToken start = null;
-					IToken mark = mark(); 
+                    IToken start = null;
+                    IToken mark = mark();
                     if (LT(1) == IToken.tCOLONCOLON
                         || LT(1) == IToken.tIDENTIFIER)
                     {
@@ -2342,21 +1780,20 @@ public class Parser implements IParser
                         IToken end = null;
                         if (start.getType() == IToken.tIDENTIFIER)
                             end = consumeTemplateParameters(end);
-                            
-                        while (LT(1) == IToken.tCOLONCOLON
-                              || LT(1) == IToken.tIDENTIFIER)
-                        {
-                             end = consume();
+                            while (LT(1) == IToken.tCOLONCOLON
+                                || LT(1) == IToken.tIDENTIFIER)
+                            {
+                                end = consume();
                                 if (end.getType() == IToken.tIDENTIFIER)
                                     end = consumeTemplateParameters(end);
-                        }
+                            }
                         if (LT(1) == IToken.t_operator)
-  							operatorId( declarator, d, start );
-  						else
-  						{
- 							backup( mark );
-  							throw backtrack;
-  						} 
+                            operatorId(d, start);
+                        else
+                        {
+                            backup(mark);
+                            throw backtrack;
+                        }
                     }
                 }
             }
@@ -2369,15 +1806,7 @@ public class Parser implements IParser
                         if (!LA(2).looksLikeExpression())
                         {
                             // parameterDeclarationClause
-                            d.setIsFunction( true );
-                            Object clause = null;
-                            try
-                            {
-                                clause = callback.argumentsBegin(declarator);
-                            }
-                            catch (Exception e)
-                            {
-                            }
+                            d.setIsFunction(true);
                             consume();
                             boolean seenParameter = false;
                             parameterDeclarationLoop : for (;;)
@@ -2397,20 +1826,14 @@ public class Parser implements IParser
                                     default :
                                         if (seenParameter)
                                             throw backtrack;
-                                        parameterDeclaration(clause, d);
+                                        parameterDeclaration(d);
                                         seenParameter = true;
                                 }
                             }
-                            try
-                            {
-                                callback.argumentsEnd(clause);
-                            }
-                            catch (Exception e)
-                            {
-                            }
+
                             if (LT(1) == IToken.tCOLON)
                             {
- 								break overallLoop;
+                                break overallLoop;
                             }
                             IToken beforeCVModifier = mark();
                             IToken cvModifier = null;
@@ -2427,22 +1850,14 @@ public class Parser implements IParser
                                 afterCVModifier = mark();
                             }
                             //check for throws clause here 
-                            List exceptionSpecIds = null; 
+                            List exceptionSpecIds = null;
                             if (LT(1) == IToken.t_throw)
                             {
-                            	exceptionSpecIds = new ArrayList(); 
-                                try
-                                {
-                                    callback.declaratorThrowsException(
-                                        declarator);
-                                }
-                                catch (Exception e)
-                                {
-                                }
+                                exceptionSpecIds = new ArrayList();
                                 consume(); // throw
                                 consume(IToken.tLPAREN); // (
                                 boolean done = false;
-                                ITokenDuple duple = null;  
+                                ITokenDuple duple = null;
                                 while (!done)
                                 {
                                     switch (LT(1))
@@ -2451,36 +1866,35 @@ public class Parser implements IParser
                                             consume();
                                             done = true;
                                             break;
-										case IToken.tCOMMA :
-											consume();
-											break;
+                                        case IToken.tCOMMA :
+                                            consume();
+                                            break;
                                         default :
-                                        	String image = LA(1).getImage();
-                                        	try {
-                                            	duple = typeId();
-                                            	exceptionSpecIds.add( duple );
-                                        	} catch (Backtrack e) {
-												failParse();
-												Util.debugLog( "Unexpected Token =" + image );
-												consume(); // eat this token anyway
-												continue;
-                                        	}
-                                            
-                                            try {	
-                                                callback
-                                                    .declaratorThrowExceptionName(
-                                                    declarator);
-                                            }
-                                            catch (Exception e)
+                                            String image = LA(1).getImage();
+                                            try
                                             {
+                                                duple = typeId();
+                                                exceptionSpecIds.add(duple);
+                                            }
+                                            catch (Backtrack e)
+                                            {
+                                                failParse();
+                                                Util.debugLog(
+                                                    "Unexpected Token ="
+                                                        + image);
+                                                consume();
+                                                // eat this token anyway
+                                                continue;
                                             }
                                             break;
                                     }
                                 }
-                                if( exceptionSpecIds != null )
-                                	d.setExceptionSpecification( astFactory.createExceptionSpecification( exceptionSpecIds ) );
+                                if (exceptionSpecIds != null)
+                                    d.setExceptionSpecification(
+                                        astFactory
+                                            .createExceptionSpecification(
+                                            exceptionSpecIds));
                             }
-                            
                             // check for optional pure virtual							
                             if (LT(1) == IToken.tASSIGN
                                 && LT(2) == IToken.tINTEGER
@@ -2488,69 +1902,45 @@ public class Parser implements IParser
                             {
                                 consume(IToken.tASSIGN);
                                 consume(IToken.tINTEGER);
-                                d.setPureVirtual( true ); 
-                                try
-                                {
-                                    callback.declaratorPureVirtual(declarator);
-                                }
-                                catch (Exception e)
-                                {
-                                }
+                                d.setPureVirtual(true);
                             }
- 
-                            if ( afterCVModifier != LA(1) ||  LT(1) == IToken.tSEMI )
+                            if (afterCVModifier != LA(1)
+                                || LT(1) == IToken.tSEMI)
                             {
                                 // There were C++-specific clauses after const/volatile modifier
                                 // Then it is a marker for the method
-                                if ( cvModifier != null ) {
-	                                try
-	                                {
-	                                    callback.declaratorCVModifier(
-	                                        declarator,
-	                                        cvModifier);
-	                                }
-	                                catch (Exception e)
-	                                {
-	                                }
-	                                
-	                                if( cvModifier.getType() == IToken.t_const )
-	                                	d.setConst( true );
-									if( cvModifier.getType() == IToken.t_volatile )
-										d.setVolatile( true );
+                                if (cvModifier != null)
+                                {
+               
+                                    if (cvModifier.getType() == IToken.t_const)
+                                        d.setConst(true);
+                                    if (cvModifier.getType()
+                                        == IToken.t_volatile)
+                                        d.setVolatile(true);
                                 }
-									
-								afterCVModifier = mark();
-                                
+                                afterCVModifier = mark();
                                 // In this case (method) we can't expect K&R parameter declarations,
                                 // but we'll check anyway, for errorhandling
                             }
                             else
                             {
                                 // let's try this modifier as part of K&R parameter declaration
-                                if (cvModifier != null) backup(beforeCVModifier);
+                                if (cvModifier != null)
+                                    backup(beforeCVModifier);
                             }
-                            
                             if (LT(1) != IToken.tSEMI)
                             {
                                 // try K&R-style parameter declarations
-                                Object oldKRParameterDeclarationClause = null;
-                                try
-                                {
-                                    oldKRParameterDeclarationClause =
-                                        callback.oldKRParametersBegin(clause);
-                                }
-                                catch (Exception e)
-                                {
-                                }
+  
                                 try
                                 {
                                     do
-                                    {                                    	
+                                    {
                                         simpleDeclaration(
-                                            oldKRParameterDeclarationClause,
                                             false,
                                             true,
-                                            sdw.getScope(), sdw.getOwnerTemplate());
+                                            sdw.getScope(),
+                                            sdw.getOwnerTemplate());
                                     }
                                     while (LT(1) != IToken.tLBRACE);
                                 }
@@ -2560,14 +1950,7 @@ public class Parser implements IParser
                                     // this is not a proper K&R declaration clause
                                     backup(afterCVModifier);
                                 }
-                                try
-                                {
-                                    callback.oldKRParametersEnd(
-                                        oldKRParameterDeclarationClause);
-                                }
-                                catch (Exception e)
-                                {
-                                }
+
                             }
                         }
                         break;
@@ -2575,185 +1958,99 @@ public class Parser implements IParser
                         while (LT(1) == IToken.tLBRACKET)
                         {
                             consume(); // eat the '['
-                            Object array = null;
-                            try
-                            {
-                                array =
-                                    callback.arrayDeclaratorBegin(declarator);
-                            }
-                            catch (Exception e)
-                            {
-                            }
-							IASTExpression exp = null;
+                          
+                            IASTExpression exp = null;
                             if (LT(1) != IToken.tRBRACKET)
                             {
-                                Object expression = null;
-                                try
-                                {
-                                    expression =
-                                        callback.expressionBegin(array);
-                                }
-                                catch (Exception e)
-                                {
-                                }
-                                exp = constantExpression(expression);
-                                try
-                                {
-                                    callback.expressionEnd(expression);
-                                }
-                                catch (Exception e)
-                                {
-                                }
+                                exp = constantExpression();
                             }
                             consume(IToken.tRBRACKET);
-							IASTArrayModifier arrayMod = astFactory.createArrayModifier( exp ); 
-							d.addArrayModifier( arrayMod );
+                            IASTArrayModifier arrayMod =
+                                astFactory.createArrayModifier(exp);
+                            d.addArrayModifier(arrayMod);
 
-                            try
-                            {
-                                callback.arrayDeclaratorEnd(array);
-                            }
-                            catch (Exception e)
-                            {
-                            }
                         }
                         continue;
                     case IToken.tCOLON :
                         consume(IToken.tCOLON);
-                        Object bitfield = null;
-                        try
-                        {
-                            bitfield = callback.startBitfield(declarator);
-                        }
-                        catch (Exception e)
-                        {
-                        }
-                        Object expression = null;
-                        IASTExpression exp = null; 
-                        try
-                        {
-                            expression = callback.expressionBegin(bitfield);
-                        }
-                        catch (Exception e)
-                        {
-                        }
-                        exp = constantExpression(expression);
-                        try
-                        {
-                            callback.expressionEnd(expression);
-                        }
-                        catch (Exception e)
-                        {
-                        }
-                        try
-                        {
-                            callback.endBitfield(bitfield);
-                        }
-                        catch (Exception e)
-                        {
-                        }
-                        d.setBitFieldExpression( exp );
+                        IASTExpression exp = null;
+                        exp = constantExpression();
+                        d.setBitFieldExpression(exp);
                     default :
                         break;
                 }
                 break;
             }
-            if (LA(1).getType() == IToken.tIDENTIFIER)
-            {
-                try
-                {
-                    callback.declaratorAbort(declarator);
-                }
-                catch (Exception e)
-                {
-                }
-                declarator = null;
-            }
-            else
-            {
-            	break;
-            }
+            if (LA(1).getType() != IToken.tIDENTIFIER)
+                break;
+
         }
         while (true);
-        
-		if( d.getOwner() instanceof Declarator )
-			((Declarator)d.getOwner()).setOwnedDeclarator(d);
-		return new DeclaratorDuple( declarator, d );
-        
+        if (d.getOwner() instanceof Declarator)
+             ((Declarator)d.getOwner()).setOwnedDeclarator(d);
+        return new DeclaratorDuple(d);
     }
-    
-    protected  void operatorId(Object declarator, Declarator d, IToken originalToken)
+    protected void operatorId(
+        Declarator d,
+        IToken originalToken)
         throws Backtrack, EndOfFile
     {
-          // we know this is an operator
-            IToken operatorToken = consume(IToken.t_operator);
-            IToken toSend = null;
-            if (LA(1).isOperator()
-                || LT(1) == IToken.tLPAREN
-                || LT(1) == IToken.tLBRACKET)
+        // we know this is an operator
+        IToken operatorToken = consume(IToken.t_operator);
+        IToken toSend = null;
+        if (LA(1).isOperator()
+            || LT(1) == IToken.tLPAREN
+            || LT(1) == IToken.tLBRACKET)
+        {
+            if ((LT(1) == IToken.t_new || LT(1) == IToken.t_delete)
+                && LT(2) == IToken.tLBRACKET
+                && LT(3) == IToken.tRBRACKET)
             {
-                if ((LT(1) == IToken.t_new || LT(1) == IToken.t_delete)
-                    && LT(2) == IToken.tLBRACKET
-                    && LT(3) == IToken.tRBRACKET)
-                {
-                    consume();
-                    consume(IToken.tLBRACKET);
-                    toSend = consume(IToken.tRBRACKET);
-                    // vector new and delete operators
-                }
-                else if (
-                    LT(1) == IToken.tLPAREN && LT(2) == IToken.tRPAREN)
-                {
-                    // operator ()
-                    consume(IToken.tLPAREN);
-                    toSend = consume(IToken.tRPAREN);
-                }
-                else if (
-                    LT(1) == IToken.tLBRACKET && LT(2) == IToken.tRBRACKET)
-                {
-                    consume(IToken.tLBRACKET);
-                    toSend = consume(IToken.tRBRACKET);
-                }
-                else if (LA(1).isOperator())
-                    toSend = consume();
-                else
-                    throw backtrack;
+                consume();
+                consume(IToken.tLBRACKET);
+                toSend = consume(IToken.tRBRACKET);
+                // vector new and delete operators
             }
+            else if (LT(1) == IToken.tLPAREN && LT(2) == IToken.tRPAREN)
+            {
+                // operator ()
+                consume(IToken.tLPAREN);
+                toSend = consume(IToken.tRPAREN);
+            }
+            else if (LT(1) == IToken.tLBRACKET && LT(2) == IToken.tRBRACKET)
+            {
+                consume(IToken.tLBRACKET);
+                toSend = consume(IToken.tRBRACKET);
+            }
+            else if (LA(1).isOperator())
+                toSend = consume();
             else
+                throw backtrack;
+        }
+        else
+        {
+            // must be a conversion function
+            typeId();
+            toSend = lastToken;
+            try
             {
-                // must be a conversion function
-                typeId();
+                // this ptrOp doesn't belong to the declarator, 
+                // it's just a part of the name
+                ptrOperator(d);
                 toSend = lastToken;
-                try
-                {
-                    // this ptrOp doesn't belong to the declarator, 
-                    // it's just a part of the name
-                    ptrOperator(null, d);
-                    toSend = lastToken;
-                }
-                catch (Backtrack b)
-                {
-                }
-                // In case we'll need better error recovery 
-                // while( LT(1) != Token.tLPAREN )	{ toSend = consume(); }
             }
-            ITokenDuple duple = new TokenDuple( originalToken == null ? operatorToken : originalToken ,toSend ); 
-            try
-            {
-                callback.nameBegin(originalToken == null ? operatorToken : originalToken );
-                callback.nameEnd(toSend);
-            }
-            catch (Exception e)
+            catch (Backtrack b)
             {
             }
-            try
-            {
-                callback.declaratorId(declarator);
-            }
-            catch (Exception e)
-            {
-            }
-			d.setName( duple ); 
+            // In case we'll need better error recovery 
+            // while( LT(1) != Token.tLPAREN )	{ toSend = consume(); }
+        }
+        ITokenDuple duple =
+            new TokenDuple(
+                originalToken == null ? operatorToken : originalToken,
+                toSend);
+   
+        d.setName(duple);
     }
     /**
      * Parse a Pointer Operator.   
@@ -2766,75 +2063,36 @@ public class Parser implements IParser
      * @param owner 		Declarator that this pointer operator corresponds to.  
      * @throws Backtrack 	request a backtrack
      */
-    protected void ptrOperator(Object owner, Declarator d) throws Backtrack
+    protected void ptrOperator(Declarator d) throws Backtrack
     {
         int t = LT(1);
-        Object ptrOp = null;
-        
-        try
-        {
-            ptrOp = callback.pointerOperatorBegin(owner);
-        }
-        catch (Exception e)
-        {
-        }
         if (t == IToken.tAMPER)
         {
-            try
-            {
-                callback.pointerOperatorType(ptrOp, consume(IToken.tAMPER));
-				callback.pointerOperatorEnd(ptrOp);
-            }
-            catch (Exception e)
-            {
-            }
-			d.addPtrOp( ASTPointerOperator.REFERENCE );
+        	consume( IToken.tAMPER ); 
+            d.addPtrOp(ASTPointerOperator.REFERENCE);
             return;
         }
         IToken mark = mark();
         IToken tokenType = LA(1);
-        boolean hasName = false;
         ITokenDuple nameDuple = null;
         if (t == IToken.tIDENTIFIER || t == IToken.tCOLONCOLON)
         {
-            callback.nameBegin(tokenType);
             nameDuple = name();
-            callback.nameEnd(lastToken);
-            hasName = true;
             t = LT(1);
         }
-        
         if (t == IToken.tSTAR)
         {
-            if (hasName)
-            {
-                try
-                {
-                	 
-                    callback.pointerOperatorName(ptrOp);
-                }
-                catch (Exception e)
-                {
-                }
-                consume(Token.tSTAR);
-            }
-            else
-            {
-                tokenType = consume(Token.tSTAR); // tokenType = "*"
-            }
-            
-            try
-            {
-                callback.pointerOperatorType(ptrOp, tokenType);
-            }
-            catch (Exception e)
-            {
-            }
+            tokenType = consume(Token.tSTAR); // tokenType = "*"
+
+			d.setPointerOperatorName(nameDuple);
+
+			boolean successful = false;
             for (;;)
             {
                 try
                 {
-                    ptrOp = cvQualifier(ptrOp, hasName, d);
+                    cvQualifier(d);
+                    successful = true;
                 }
                 catch (Backtrack b)
                 {
@@ -2842,23 +2100,12 @@ public class Parser implements IParser
                     break;
                 }
             }
-            try
-            {
-                callback.pointerOperatorEnd(ptrOp);
-            }
-            catch (Exception e)
-            {
-            }
+			if( !successful )
+				d.addPtrOp( ASTPointerOperator.POINTER );
+            
             return;
         }
         backup(mark);
-        try
-        {
-            callback.pointerOperatorAbort(ptrOp);
-        }
-        catch (Exception e)
-        {
-        }
         throw backtrack;
     }
     /**
@@ -2877,135 +2124,70 @@ public class Parser implements IParser
      * @param	owner		IParserCallback object that represents the declaration that owns this type specifier. 
      * @throws	Backtrack	request a backtrack
      */
-    protected void enumSpecifier(Object owner, DeclarationWrapper sdw) throws Backtrack
+    protected void enumSpecifier(DeclarationWrapper sdw)
+        throws Backtrack
     {
-        Object enumSpecifier = null;
         IToken mark = mark();
-        IToken identifier = null; 
-        try
-        {
-            enumSpecifier =
-                callback.enumSpecifierBegin(owner, consume(IToken.t_enum));
-        }
-        catch (Exception e)
-        {
-        }
+        IToken identifier = null;
+        consume( IToken.t_enum );
         if (LT(1) == IToken.tIDENTIFIER)
         {
             identifier = identifier();
-            try
-            {
-                callback.enumSpecifierId(enumSpecifier);
-            }
-            catch (Exception e)
-            {
-            }
         }
         if (LT(1) == IToken.tLBRACE)
         {
-        	IASTEnumerationSpecifier enumeration = astFactory.createEnumerationSpecifier( 
-        		( ( identifier == null ) ? "" : identifier.getImage()), 
-        		mark.getOffset(), 
-				( ( identifier == null ) ? mark.getOffset() : identifier.getOffset()) );
+            IASTEnumerationSpecifier enumeration =
+                astFactory.createEnumerationSpecifier(
+                    ((identifier == null) ? "" : identifier.getImage()),
+                    mark.getOffset(),
+                    ((identifier == null)
+                        ? mark.getOffset()
+                        : identifier.getOffset()));
             consume(IToken.tLBRACE);
             while (LT(1) != IToken.tRBRACE)
             {
-                Object defn;
-				IToken enumeratorIdentifier = null;
+                IToken enumeratorIdentifier = null;
                 if (LT(1) == IToken.tIDENTIFIER)
                 {
-                	
-                    defn = null;
-                    try
-                    {
-                        defn = callback.enumeratorBegin(enumSpecifier);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-					enumeratorIdentifier = identifier();
-                    try
-                    {
-                        callback.enumeratorId(defn);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    enumeratorIdentifier = identifier();
                 }
                 else
                 {
-                    try
-                    {
-                        callback.enumSpecifierAbort(enumSpecifier);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     throw backtrack;
                 }
                 IASTExpression initialValue = null;
                 if (LT(1) == IToken.tASSIGN)
                 {
                     consume(IToken.tASSIGN);
-                    Object expression = null;
-                    try
-                    {
-                        expression = callback.expressionBegin(defn);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    initialValue = constantExpression(expression);
-                    try
-                    {
-                        callback.expressionEnd(expression);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    
+                    initialValue = constantExpression();
                 }
-                try
-                {
-                    callback.enumeratorEnd(defn, lastToken);
-                }
-                catch (Exception e)
-                {
-                }
+  
                 if (LT(1) == IToken.tRBRACE)
                 {
-                	astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), initialValue); 
+                    astFactory.addEnumerator(
+                        enumeration,
+                        enumeratorIdentifier.getImage(),
+                        enumeratorIdentifier.getOffset(),
+                        enumeratorIdentifier.getEndOffset(),
+                        initialValue);
                     break;
                 }
                 if (LT(1) != IToken.tCOMMA)
                 {
-                    try
-                    {
-                        callback.enumSpecifierAbort(enumSpecifier);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     throw backtrack;
                 }
-				astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), initialValue ); 
+                astFactory.addEnumerator(
+                    enumeration,
+                    enumeratorIdentifier.getImage(),
+                    enumeratorIdentifier.getOffset(),
+                    enumeratorIdentifier.getEndOffset(),
+                    initialValue);
                 consume(IToken.tCOMMA);
             }
-            
-			IToken t = consume(IToken.tRBRACE);
-            try
-            {
-            	
-                callback.enumSpecifierEnd(
-                    enumSpecifier,
-                    t );
-            }
-            catch (Exception e)
-            {
-            }
-			enumeration.setEndingOffset( t.getEndOffset() );
-			requestor.acceptEnumerationSpecifier( enumeration );
-			sdw.setTypeSpecifier( enumeration );
+            IToken t = consume(IToken.tRBRACE);
+            enumeration.setEndingOffset(t.getEndOffset());
+            requestor.acceptEnumerationSpecifier(enumeration);
+            sdw.setTypeSpecifier(enumeration);
         }
         else
         {
@@ -3023,7 +2205,7 @@ public class Parser implements IParser
      * @param	owner		IParserCallback object that represents the declaration that owns this classSpecifier
      * @throws	Backtrack	request a backtrack
      */
-    protected void classSpecifier(Object owner, DeclarationWrapper sdw )
+    protected void classSpecifier(DeclarationWrapper sdw)
         throws Backtrack
     {
         ClassNameType nameType = ClassNameType.IDENTIFIER;
@@ -3050,40 +2232,15 @@ public class Parser implements IParser
             default :
                 throw backtrack;
         }
-        Object classSpec = null;
-        try
-        {
-            classSpec = callback.classSpecifierBegin(owner, classKey);
-        }
-        catch (Exception e)
-        {
-        }
+
         ITokenDuple duple = null;
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
-        {
             duple = className();
-            try
-            {
-                callback.classSpecifierName(classSpec);
-            }
-            catch (Exception e)
-            {
-            }
-        }
         if (duple != null && !duple.isIdentifier())
             nameType = ClassNameType.TEMPLATE;
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE)
         {
-            // this is not a classSpecification
-            try
-            {
-                callback.classSpecifierAbort(classSpec);
-            }
-            catch (Exception e)
-            {
-            }
-            classSpec = null;
             backup(mark);
             throw backtrack;
         }
@@ -3096,13 +2253,13 @@ public class Parser implements IParser
                     nameType,
                     access,
                     null,            //TODO add TemplateDeclaration here
-   					 classKey.getOffset(),
- 			       duple == null ? 0 : duple.getFirstToken().getOffset());
- 		sdw.setTypeSpecifier(astClassSpecifier);
+    classKey.getOffset(),
+        duple == null ? 0 : duple.getFirstToken().getOffset());
+        sdw.setTypeSpecifier(astClassSpecifier);
         // base clause
         if (LT(1) == IToken.tCOLON)
         {
-            baseSpecifier(classSpec, astClassSpecifier);
+            baseSpecifier(astClassSpecifier);
         }
         if (LT(1) == IToken.tLBRACE)
         {
@@ -3114,18 +2271,20 @@ public class Parser implements IParser
                 switch (LT(1))
                 {
                     case IToken.t_public :
+						consume(); 
+						consume(IToken.tCOLON);
+						astClassSpecifier.setCurrentVisibility( ASTAccessVisibility.PUBLIC );
+						break;                    
                     case IToken.t_protected :
+						consume(); 
+						consume(IToken.tCOLON);
+					astClassSpecifier.setCurrentVisibility( ASTAccessVisibility.PROTECTED);
+						break;
+
                     case IToken.t_private :
-                        try
-                        {
-                            callback.classMemberVisibility(
-                                classSpec,
-                                consume());
-                        }
-                        catch (Exception e)
-                        {
-                        }
+                    	consume(); 
                         consume(IToken.tCOLON);
+						astClassSpecifier.setCurrentVisibility( ASTAccessVisibility.PRIVATE);
                         break;
                     case IToken.tRBRACE :
                         consume(IToken.tRBRACE);
@@ -3133,7 +2292,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(classSpec,astClassSpecifier, null);
+                            declaration(astClassSpecifier, null);
                         }
                         catch (Backtrack bt)
                         {
@@ -3147,13 +2306,6 @@ public class Parser implements IParser
             }
             // consume the }
             IToken lastToken = consume(IToken.tRBRACE);
-            try
-            {
-                callback.classSpecifierEnd(classSpec, lastToken);
-            }
-            catch (Exception e)
-            {
-            }
             astClassSpecifier.setEndingOffset(lastToken.getEndOffset());
             requestor.exitClassSpecifier(astClassSpecifier);
         }
@@ -3172,19 +2324,10 @@ public class Parser implements IParser
      * @throws Backtrack
      */
     protected void baseSpecifier(
-        Object classSpecOwner,
         IASTClassSpecifier astClassSpec)
         throws Backtrack
     {
         consume(IToken.tCOLON);
-        Object baseSpecifier = null;
-        try
-        {
-            baseSpecifier = callback.baseSpecifierBegin(classSpecOwner);
-        }
-        catch (Exception e)
-        {
-        }
         boolean isVirtual = false;
         ASTAccessVisibility visibility = ASTAccessVisibility.PUBLIC;
         ITokenDuple nameDuple = null;
@@ -3195,91 +2338,38 @@ public class Parser implements IParser
                 case IToken.t_virtual :
                     consume(IToken.t_virtual);
                     isVirtual = true;
-                    try
-                    {
-                        callback.baseSpecifierVirtual(baseSpecifier, true);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     break;
                 case IToken.t_public :
-                    try
-                    {
-                        callback.baseSpecifierVisibility(
-                            baseSpecifier,
-                            consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                	consume(); 
                     break;
                 case IToken.t_protected :
-                    try
-                    {
-                        callback.baseSpecifierVisibility(
-                            baseSpecifier,
-                            consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    visibility = ASTAccessVisibility.PROTECTED;
+					consume();
+				    visibility = ASTAccessVisibility.PROTECTED;
                     break;
                 case IToken.t_private :
                     visibility = ASTAccessVisibility.PRIVATE;
-                    try
-                    {
-                        callback.baseSpecifierVisibility(
-                            baseSpecifier,
-                            consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    break;
+					consume();
+           			break;
                 case IToken.tCOLONCOLON :
                 case IToken.tIDENTIFIER :
                     nameDuple = name();
-                    try
-                    {
-                        callback.baseSpecifierName(baseSpecifier);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     break;
                 case IToken.tCOMMA :
-                    try
-                    {
-                        astFactory.addBaseSpecifier(
-                            astClassSpec,
-                            isVirtual,
-                            visibility,
-                            nameDuple.toString());
-                        isVirtual = false;
-                        visibility = ASTAccessVisibility.PUBLIC;
-                        nameDuple = null;
-                        callback.baseSpecifierEnd(baseSpecifier);
-                        baseSpecifier =
-                            callback.baseSpecifierBegin(classSpecOwner);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    astFactory.addBaseSpecifier(
+                        astClassSpec,
+                        isVirtual,
+                        visibility,
+                        nameDuple.toString());
+                    isVirtual = false;
+                    visibility = ASTAccessVisibility.PUBLIC;
+                    nameDuple = null;                        
                     consume();
                     continue baseSpecifierLoop;
                 default :
                     break baseSpecifierLoop;
             }
         }
-        try
-        {
-            callback.baseSpecifierEnd(baseSpecifier);
-        }
-        catch (Exception e)
-        {
-        }
+
         astFactory.addBaseSpecifier(
             astClassSpec,
             isVirtual,
@@ -3302,27 +2392,12 @@ public class Parser implements IParser
      */
     protected void statement() throws Backtrack
     {
-        Object expression = null;
+        
         switch (LT(1))
         {
             case IToken.t_case :
                 consume();
-                // TODO regarding this null
-                try
-                {
-                    expression = callback.expressionBegin(null);
-                }
-                catch (Exception e)
-                {
-                }
-                constantExpression(expression);
-                try
-                {
-                    callback.expressionEnd(expression);
-                }
-                catch (Exception e)
-                {
-                }
+                constantExpression();
                 consume(IToken.tCOLON);
                 statement();
                 return;
@@ -3377,22 +2452,8 @@ public class Parser implements IParser
                 consume(IToken.tSEMI);
                 if (LT(1) != IToken.tRPAREN)
                 {
-                    try
-                    {
-                        expression = callback.expressionBegin(null);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     //TODO get rid of NULL  
-                    expression(expression);
-                    try
-                    {
-                        callback.expressionEnd(expression);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    expression();
                 }
                 consume(IToken.tRPAREN);
                 statement();
@@ -3409,22 +2470,8 @@ public class Parser implements IParser
                 consume();
                 if (LT(1) != IToken.tSEMI)
                 {
-                    try
-                    {
-                        expression = callback.expressionBegin(null);
-                    }
-                    catch (Exception e)
-                    {
-                    }
                     //TODO get rid of NULL  
-                    expression(expression);
-                    try
-                    {
-                        callback.expressionEnd(expression);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    expression();
                 }
                 consume(IToken.tSEMI);
                 return;
@@ -3440,7 +2487,7 @@ public class Parser implements IParser
                 {
                     consume();
                     consume(IToken.tLPAREN);
-                    declaration(null, null, null); // was exceptionDeclaration
+                    declaration(null, null); // was exceptionDeclaration
                     consume(IToken.tRPAREN);
                     compoundStatement();
                 }
@@ -3463,22 +2510,7 @@ public class Parser implements IParser
                 // Since it only happens when we are in a statement
                 try
                 {
-                    try
-                    {
-                        expression = callback.expressionBegin(null);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    //TODO get rid of NULL  
-                    expression(expression);
-                    try
-                    {
-                        callback.expressionEnd(expression);
-                    }
-                    catch (Exception e)
-                    {
-                    }
+                    expression();
                     consume(IToken.tSEMI);
                     return;
                 }
@@ -3486,7 +2518,7 @@ public class Parser implements IParser
                 {
                 }
                 // declarationStatement
-                declaration(null,null, null);
+                declaration(null, null);
         }
     }
     /**
@@ -3517,122 +2549,157 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression constantExpression(Object expression) throws Backtrack
+    protected IASTExpression constantExpression()
+        throws Backtrack
     {
-        return conditionalExpression(expression);
+        return conditionalExpression();
     }
-    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#expression(java.lang.Object)
      */
-    public IASTExpression expression(Object expression) throws Backtrack
+    public IASTExpression expression() throws Backtrack
     {
-        IASTExpression assignmentExpression = assignmentExpression(expression);
+        IASTExpression assignmentExpression = assignmentExpression();
         while (LT(1) == IToken.tCOMMA)
         {
             IToken t = consume();
-            IASTExpression secondExpression = assignmentExpression(expression);
-            
-            try
-            {
-                callback.expressionOperator(expression, t);
-            }
-            catch (Exception e)
-            {
-            }
-            assignmentExpression = astFactory.createExpression( IASTExpression.Kind.EXPRESSIONLIST, assignmentExpression, secondExpression, null, "", "", "", null );
+            IASTExpression secondExpression = assignmentExpression();
+            assignmentExpression =
+                astFactory.createExpression(
+                    IASTExpression.Kind.EXPRESSIONLIST,
+                    assignmentExpression,
+                    secondExpression,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
         }
-        return assignmentExpression; 
+        return assignmentExpression;
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression assignmentExpression(Object expression) throws Backtrack
+    protected IASTExpression assignmentExpression()
+        throws Backtrack
     {
         if (LT(1) == IToken.t_throw)
         {
-            return throwExpression(expression);
+            return throwExpression();
         }
-        IASTExpression conditionalExpression = conditionalExpression(expression); 
+        IASTExpression conditionalExpression =
+            conditionalExpression();
         // if the condition not taken, try assignment operators
-        if (conditionalExpression != null && conditionalExpression.getExpressionKind() == IASTExpression.Kind.CONDITIONALEXPRESSION_HARD )
-			return conditionalExpression;
-        
+        if (conditionalExpression != null
+            && conditionalExpression.getExpressionKind()
+                == IASTExpression.Kind.CONDITIONALEXPRESSION_HARD)
+            return conditionalExpression;
         switch (LT(1))
         {
             case IToken.tASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL);
             case IToken.tSTARASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT);
             case IToken.tDIVASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV);
             case IToken.tMODASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD);
             case IToken.tPLUSASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS);
             case IToken.tMINUSASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS);
             case IToken.tSHIFTRASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT);
             case IToken.tSHIFTLASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT);
             case IToken.tAMPERASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND);
             case IToken.tXORASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR);
             case IToken.tBITORASSIGN :
-				return assignmentOperatorExpression(expression, IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR );
+                return assignmentOperatorExpression(
+                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR);
         }
-		return conditionalExpression;
-        	
+        return conditionalExpression;
     }
-    
-	protected IASTExpression assignmentOperatorExpression(Object expression, IASTExpression.Kind kind )
-		throws EndOfFile, Backtrack {
-		IToken t = consume();
-		IASTExpression assignmentExpression = assignmentExpression(expression);
-		try
-		{
-		    callback.expressionOperator(expression, t);
-		}
-		catch (Exception e)
-		{
-		}
-		return astFactory.createExpression( kind, assignmentExpression, null, null, "", "", "", null );
-	}
+    protected IASTExpression assignmentOperatorExpression(
+        IASTExpression.Kind kind)
+        throws EndOfFile, Backtrack
+    {
+        IToken t = consume();
+        IASTExpression assignmentExpression = assignmentExpression();
+ 
+        return astFactory.createExpression(
+            kind,
+            assignmentExpression,
+            null,
+            null,
+            "",
+            "",
+            "",
+            null);
+    }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression throwExpression(Object expression) throws Backtrack
+    protected IASTExpression throwExpression()
+        throws Backtrack
     {
         consume(IToken.t_throw);
-        IASTExpression throwExpression = null; 
+        IASTExpression throwExpression = null;
         try
         {
-            throwExpression = expression(expression);
+            throwExpression = expression();
         }
         catch (Backtrack b)
         {
         }
-        return astFactory.createExpression( IASTExpression.Kind.THROWEXPRESSION, throwExpression, null, null, "", "", "", null );
+        return astFactory.createExpression(
+            IASTExpression.Kind.THROWEXPRESSION,
+            throwExpression,
+            null,
+            null,
+            "",
+            "",
+            "",
+            null);
     }
     /**
      * @param expression
      * @return
      * @throws Backtrack
      */
-    protected IASTExpression conditionalExpression(Object expression) throws Backtrack
+    protected IASTExpression conditionalExpression()
+        throws Backtrack
     {
-        IASTExpression firstExpression = logicalOrExpression(expression);
+        IASTExpression firstExpression = logicalOrExpression();
         if (LT(1) == IToken.tQUESTION)
         {
             consume();
-            IASTExpression secondExpression = expression(expression);
+            IASTExpression secondExpression = expression();
             consume(IToken.tCOLON);
-            IASTExpression thirdExpression = assignmentExpression(expression);
-            return astFactory.createExpression( IASTExpression.Kind.CONDITIONALEXPRESSION_HARD, firstExpression, secondExpression, thirdExpression, "","","",null);
+            IASTExpression thirdExpression = assignmentExpression();
+            return astFactory.createExpression(
+                IASTExpression.Kind.CONDITIONALEXPRESSION_HARD,
+                firstExpression,
+                secondExpression,
+                thirdExpression,
+                "",
+                "",
+                "",
+                null);
         }
         else
             return firstExpression;
@@ -3641,22 +2708,25 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression logicalOrExpression(Object expression) throws Backtrack
+    protected IASTExpression logicalOrExpression()
+        throws Backtrack
     {
-        IASTExpression firstExpression = logicalAndExpression(expression);
-        
+        IASTExpression firstExpression = logicalAndExpression();
         while (LT(1) == IToken.tOR)
         {
             IToken t = consume();
-            IASTExpression secondExpression = logicalAndExpression(expression);
-            try
-            {
-                callback.expressionOperator(expression, t);
-            }
-            catch (Exception e)
-            {
-            }
-            firstExpression = astFactory.createExpression( IASTExpression.Kind.LOGICALOREXPRESSION, firstExpression, secondExpression, null, "", "", "", null );  
+            IASTExpression secondExpression = logicalAndExpression();
+
+            firstExpression =
+                astFactory.createExpression(
+                    IASTExpression.Kind.LOGICALOREXPRESSION,
+                    firstExpression,
+                    secondExpression,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
         }
         return firstExpression;
     }
@@ -3664,21 +2734,24 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression logicalAndExpression(Object expression) throws Backtrack
+    protected IASTExpression logicalAndExpression()
+        throws Backtrack
     {
-        IASTExpression firstExpression = inclusiveOrExpression(expression);
+        IASTExpression firstExpression = inclusiveOrExpression();
         while (LT(1) == IToken.tAND)
         {
             IToken t = consume();
-            IASTExpression secondExpression = inclusiveOrExpression(expression);
-            try
-            {
-                callback.expressionOperator(expression, t);
-            }
-            catch (Exception e)
-            {
-            }
-			firstExpression = astFactory.createExpression( IASTExpression.Kind.LOGICALANDEXPRESSION, firstExpression, secondExpression, null, "", "", "", null );
+            IASTExpression secondExpression = inclusiveOrExpression();
+            firstExpression =
+                astFactory.createExpression(
+                    IASTExpression.Kind.LOGICALANDEXPRESSION,
+                    firstExpression,
+                    secondExpression,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
         }
         return firstExpression;
     }
@@ -3686,65 +2759,25 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression inclusiveOrExpression(Object expression) throws Backtrack
+    protected IASTExpression inclusiveOrExpression()
+        throws Backtrack
     {
-        IASTExpression firstExpression = exclusiveOrExpression(expression);
+        IASTExpression firstExpression = exclusiveOrExpression();
         while (LT(1) == IToken.tBITOR)
         {
             IToken t = consume();
-            IASTExpression secondExpression = exclusiveOrExpression(expression);
-            try
-            {
-                callback.expressionOperator(expression, t);
-            }
-            catch (Exception e)
-            {
-            }
-			firstExpression = astFactory.createExpression( IASTExpression.Kind.INCLUSIVEOREXPRESSION, firstExpression, secondExpression, null, "", "", "", null );
-        }
-        return firstExpression; 
-    }
-    /**
-     * @param expression
-     * @throws Backtrack
-     */
-    protected IASTExpression exclusiveOrExpression(Object expression) throws Backtrack
-    {
-        IASTExpression firstExpression = andExpression(expression);
-        while (LT(1) == IToken.tXOR)
-        {
-            IToken t = consume();
-			IASTExpression secondExpression = andExpression(expression);
-            try
-            {
-                callback.expressionOperator(expression, t);
-            }
-            catch (Exception e)
-            {
-            }
-			firstExpression = astFactory.createExpression( IASTExpression.Kind.EXCLUSIVEOREXPRESSION, firstExpression, secondExpression, null, "", "", "", null );
-        }
-        return firstExpression; 
-    }
-    /**
-     * @param expression
-     * @throws Backtrack
-     */
-    protected IASTExpression andExpression(Object expression) throws Backtrack
-    {
-		IASTExpression firstExpression = equalityExpression(expression);
-        while (LT(1) == IToken.tAMPER)
-        {
-            IToken t = consume();
-			IASTExpression secondExpression = equalityExpression(expression);
-            try
-            {
-                callback.expressionOperator(expression, t);
-            }
-            catch (Exception e)
-            {
-            }
-			firstExpression = astFactory.createExpression( IASTExpression.Kind.ANDEXPRESSION, firstExpression, secondExpression, null, "", "", "", null );
+            IASTExpression secondExpression = exclusiveOrExpression();
+  
+            firstExpression =
+                astFactory.createExpression(
+                    IASTExpression.Kind.INCLUSIVEOREXPRESSION,
+                    firstExpression,
+                    secondExpression,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
         }
         return firstExpression;
     }
@@ -3752,26 +2785,83 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression equalityExpression(Object expression) throws Backtrack
+    protected IASTExpression exclusiveOrExpression()
+        throws Backtrack
     {
-		IASTExpression firstExpression = relationalExpression(expression);
+        IASTExpression firstExpression = andExpression();
+        while (LT(1) == IToken.tXOR)
+        {
+            IToken t = consume();
+            IASTExpression secondExpression = andExpression();
+
+            firstExpression =
+                astFactory.createExpression(
+                    IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
+                    firstExpression,
+                    secondExpression,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
+        }
+        return firstExpression;
+    }
+    /**
+     * @param expression
+     * @throws Backtrack
+     */
+    protected IASTExpression andExpression() throws Backtrack
+    {
+        IASTExpression firstExpression = equalityExpression();
+        while (LT(1) == IToken.tAMPER)
+        {
+            IToken t = consume();
+            IASTExpression secondExpression = equalityExpression();
+ 
+            firstExpression =
+                astFactory.createExpression(
+                    IASTExpression.Kind.ANDEXPRESSION,
+                    firstExpression,
+                    secondExpression,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
+        }
+        return firstExpression;
+    }
+    /**
+     * @param expression
+     * @throws Backtrack
+     */
+    protected IASTExpression equalityExpression()
+        throws Backtrack
+    {
+        IASTExpression firstExpression = relationalExpression();
         for (;;)
         {
             switch (LT(1))
             {
                 case IToken.tEQUAL :
-				case IToken.tNOTEQUAL :
+                case IToken.tNOTEQUAL :
                     IToken t = consume();
-					IASTExpression secondExpression = relationalExpression(expression);
-                    try
-                    {
-                        callback.expressionOperator(expression, t);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-					firstExpression = astFactory.createExpression( ( t.getType() == IToken.tEQUAL ) ? IASTExpression.Kind.EQUALITY_EQUALS : IASTExpression.Kind.EQUALITY_NOTEQUALS,
-						 firstExpression, secondExpression, null, "", "", "", null );
+                    IASTExpression secondExpression =
+                        relationalExpression();
+
+                    firstExpression =
+                        astFactory.createExpression(
+                            (t.getType() == IToken.tEQUAL)
+                                ? IASTExpression.Kind.EQUALITY_EQUALS
+                                : IASTExpression.Kind.EQUALITY_NOTEQUALS,
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
                     break;
                 default :
                     return firstExpression;
@@ -3782,9 +2872,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression relationalExpression(Object expression) throws Backtrack
+    protected IASTExpression relationalExpression()
+        throws Backtrack
     {
-		IASTExpression firstExpression = shiftExpression(expression); 
+        IASTExpression firstExpression = shiftExpression();
         for (;;)
         {
             switch (LT(1))
@@ -3796,7 +2887,8 @@ public class Parser implements IParser
                     IToken mark = mark();
                     IToken t = consume();
                     IToken next = LA(1);
-                    IASTExpression secondExpression = shiftExpression(expression);
+                    IASTExpression secondExpression =
+                        shiftExpression();
                     if (next == LA(1))
                     {
                         // we did not consume anything
@@ -3806,36 +2898,39 @@ public class Parser implements IParser
                     }
                     else
                     {
-                        try
+                        IASTExpression.Kind kind = null;
+                        switch (t.getType())
                         {
-                            callback.expressionOperator(expression, t);
+                            case IToken.tGT :
+                                kind =
+                                    IASTExpression.Kind.RELATIONAL_GREATERTHAN;
+                                break;
+                            case IToken.tLT :
+                                kind = IASTExpression.Kind.RELATIONAL_LESSTHAN;
+                                break;
+                            case IToken.tLTEQUAL :
+                                kind =
+                                    IASTExpression
+                                        .Kind
+                                        .RELATIONAL_LESSTHANEQUALTO;
+                                break;
+                            case IToken.tGTEQUAL :
+                                kind =
+                                    IASTExpression
+                                        .Kind
+                                        .RELATIONAL_GREATERTHANEQUALTO;
+                                break;
                         }
-                        catch (Exception e)
-                        {
-                        }
-                        
-                        IASTExpression.Kind kind = null; 
-                        switch( t.getType() )
-                        {
-							case IToken.tGT :
-								kind = IASTExpression.Kind.RELATIONAL_GREATERTHAN;
-								break;
-								
-							case IToken.tLT :
-								kind = IASTExpression.Kind.RELATIONAL_LESSTHAN;
-								break;
-
-							case IToken.tLTEQUAL :
-								kind = IASTExpression.Kind.RELATIONAL_LESSTHANEQUALTO;
-								break;
-
-							case IToken.tGTEQUAL :
-								kind = IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO;
-								break;
-
-                        }
-                        
-                        firstExpression = astFactory.createExpression( kind, firstExpression, secondExpression, null, "", "", "", null );
+                        firstExpression =
+                            astFactory.createExpression(
+                                kind,
+                                firstExpression,
+                                secondExpression,
+                                null,
+                                "",
+                                "",
+                                "",
+                                null);
                     }
                     break;
                 default :
@@ -3847,9 +2942,10 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression shiftExpression(Object expression) throws Backtrack
+    protected IASTExpression shiftExpression()
+        throws Backtrack
     {
-        IASTExpression firstExpression = additiveExpression(expression);
+        IASTExpression firstExpression = additiveExpression();
         for (;;)
         {
             switch (LT(1))
@@ -3857,47 +2953,20 @@ public class Parser implements IParser
                 case IToken.tSHIFTL :
                 case IToken.tSHIFTR :
                     IToken t = consume();
-                    IASTExpression secondExpression = additiveExpression(expression);
-                    try
-                    {
-                        callback.expressionOperator(expression, t);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    firstExpression = astFactory.createExpression( ( ( t.getType() == IToken.tSHIFTL ) ? IASTExpression.Kind.SHIFT_LEFT : IASTExpression.Kind.SHIFT_RIGHT ), 
-                      firstExpression, secondExpression, null, "", "", "", null );  
-                    break;
-                default :
-                    return firstExpression ;
-            }
-        }
-    }
-    /**
-     * @param expression
-     * @throws Backtrack
-     */
-    protected IASTExpression additiveExpression(Object expression) throws Backtrack
-    {
-        IASTExpression firstExpression = multiplicativeExpression(expression);
-        for (;;)
-        {
-            switch (LT(1))
-            {
-                case IToken.tPLUS :
-                case IToken.tMINUS :
-                    IToken t = consume();
-                    IASTExpression secondExpression = multiplicativeExpression(expression);
-                    try
-                    {
-                        callback.expressionOperator(expression, t);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-					firstExpression = astFactory.createExpression( ( ( t.getType() == IToken.tPLUS ) ? IASTExpression.Kind.ADDITIVE_PLUS : IASTExpression.Kind.ADDITIVE_MINUS), 
-						  firstExpression, secondExpression, null, "", "", "", null );  
-
+                    IASTExpression secondExpression =
+                        additiveExpression();
+                    firstExpression =
+                        astFactory.createExpression(
+                            ((t.getType() == IToken.tSHIFTL)
+                                ? IASTExpression.Kind.SHIFT_LEFT
+                                : IASTExpression.Kind.SHIFT_RIGHT),
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
                     break;
                 default :
                     return firstExpression;
@@ -3908,9 +2977,45 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression multiplicativeExpression(Object expression) throws Backtrack
+    protected IASTExpression additiveExpression()
+        throws Backtrack
     {
-        IASTExpression firstExpression = pmExpression(expression);
+        IASTExpression firstExpression = multiplicativeExpression();
+        for (;;)
+        {
+            switch (LT(1))
+            {
+                case IToken.tPLUS :
+                case IToken.tMINUS :
+                    IToken t = consume();
+                    IASTExpression secondExpression =
+                        multiplicativeExpression();
+                    firstExpression =
+                        astFactory.createExpression(
+                            ((t.getType() == IToken.tPLUS)
+                                ? IASTExpression.Kind.ADDITIVE_PLUS
+                                : IASTExpression.Kind.ADDITIVE_MINUS),
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                default :
+                    return firstExpression;
+            }
+        }
+    }
+    /**
+     * @param expression
+     * @throws Backtrack
+     */
+    protected IASTExpression multiplicativeExpression()
+        throws Backtrack
+    {
+        IASTExpression firstExpression = pmExpression();
         for (;;)
         {
             switch (LT(1))
@@ -3919,36 +3024,31 @@ public class Parser implements IParser
                 case IToken.tDIV :
                 case IToken.tMOD :
                     IToken t = consume();
-                    IASTExpression secondExpression = pmExpression(expression);
-                    try
+                    IASTExpression secondExpression = pmExpression();
+                    IASTExpression.Kind kind = null;
+                    switch (t.getType())
                     {
-                        callback.expressionOperator(expression, t);
+                        case IToken.tSTAR :
+                            kind = IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY;
+                            break;
+                        case IToken.tDIV :
+                            kind = IASTExpression.Kind.MULTIPLICATIVE_DIVIDE;
+                            break;
+                        case IToken.tMOD :
+                            kind = IASTExpression.Kind.MULTIPLICATIVE_MODULUS;
+                            break;
                     }
-                    catch (Exception e)
-                    {
-                    }
-    
-	                    
-					IASTExpression.Kind kind = null; 
-					switch( t.getType() )
-					{
-						case IToken.tSTAR :
-							kind = IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY;
-							break;
-									
-						case IToken.tDIV :
-							kind = IASTExpression.Kind.MULTIPLICATIVE_DIVIDE;
-							break;
-	
-						case IToken.tMOD :
-							kind = IASTExpression.Kind.MULTIPLICATIVE_MODULUS;
-							break;
-	
-					}
-	                        
-					firstExpression = astFactory.createExpression( kind, firstExpression, secondExpression, null, "", "", "", null );
-					break;
-                    
+                    firstExpression =
+                        astFactory.createExpression(
+                            kind,
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
                 default :
                     return firstExpression;
             }
@@ -3958,9 +3058,9 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression pmExpression(Object expression) throws Backtrack
+    protected IASTExpression pmExpression() throws Backtrack
     {
-        IASTExpression firstExpression = castExpression(expression);
+        IASTExpression firstExpression = castExpression();
         for (;;)
         {
             switch (LT(1))
@@ -3968,17 +3068,20 @@ public class Parser implements IParser
                 case IToken.tDOTSTAR :
                 case IToken.tARROWSTAR :
                     IToken t = consume();
-                    IASTExpression secondExpression = castExpression(expression);
-                    try
-                    {
-                        callback.expressionOperator(expression, t);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-					firstExpression = astFactory.createExpression( ( ( t.getType() == IToken.tDOTSTAR ) ? IASTExpression.Kind.PM_DOTSTAR : IASTExpression.Kind.PM_ARROWSTAR), 
-						  firstExpression, secondExpression, null, "", "", "", null );  
-
+                    IASTExpression secondExpression =
+                        castExpression();
+                    firstExpression =
+                        astFactory.createExpression(
+                            ((t.getType() == IToken.tDOTSTAR)
+                                ? IASTExpression.Kind.PM_DOTSTAR
+                                : IASTExpression.Kind.PM_ARROWSTAR),
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
                     break;
                 default :
                     return firstExpression;
@@ -3990,14 +3093,14 @@ public class Parser implements IParser
      * : unaryExpression
      * | "(" typeId ")" castExpression
      */
-    protected IASTExpression castExpression(Object expression) throws Backtrack
+    protected IASTExpression castExpression() throws Backtrack
     {
         // TO DO: we need proper symbol checkint to ensure type name
         if (LT(1) == IToken.tLPAREN)
         {
             IToken mark = mark();
             consume();
-            ITokenDuple duple = null; 
+            ITokenDuple duple = null;
             // If this isn't a type name, then we shouldn't be here
             try
             {
@@ -4011,24 +3114,31 @@ public class Parser implements IParser
                         consume();
                 }
                 consume(IToken.tRPAREN);
-                IASTExpression castExpression = castExpression(expression);
-                return astFactory.createExpression( IASTExpression.Kind.CASTEXPRESSION, castExpression, null, null, null, duple.toString(), "", null );
+                IASTExpression castExpression = castExpression();
+                return astFactory.createExpression(
+                    IASTExpression.Kind.CASTEXPRESSION,
+                    castExpression,
+                    null,
+                    null,
+                    null,
+                    duple.toString(),
+                    "",
+                    null);
             }
             catch (Backtrack b)
             {
                 backup(mark);
             }
         }
-        return unaryExpression(expression);
+        return unaryExpression();
     }
     /**
      * @throws Backtrack
      */
     protected ITokenDuple typeId() throws Backtrack
     {
-		IToken begin = LA(1);
-		IToken end = null;
-
+        IToken begin = LA(1);
+        IToken end = null;
         try
         {
             ITokenDuple d = name();
@@ -4067,21 +3177,18 @@ public class Parser implements IParser
             }
             if (end != null)
             {
-                try
-                {
-                    callback.nameBegin(begin);
-                    callback.nameEnd(end);
-                }
-                catch (Exception e)
-                {
-                }
-                return new TokenDuple( begin, end );
+                return new TokenDuple(begin, end);
             }
-            else if (LT(1) == IToken.t_typename || LT(1) == IToken.t_struct || LT(1) == IToken.t_class || LT(1) == IToken.t_enum || LT(1) == IToken.t_union )
+            else if (
+                LT(1) == IToken.t_typename
+                    || LT(1) == IToken.t_struct
+                    || LT(1) == IToken.t_class
+                    || LT(1) == IToken.t_enum
+                    || LT(1) == IToken.t_union)
             {
-            	consume();
-				ITokenDuple d = name();
-				return new TokenDuple( begin, d.getLastToken() );
+                consume();
+                ITokenDuple d = name();
+                return new TokenDuple(begin, d.getLastToken());
             }
             else
                 throw backtrack;
@@ -4091,7 +3198,8 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression deleteExpression(Object expression) throws Backtrack
+    protected IASTExpression deleteExpression()
+        throws Backtrack
     {
         if (LT(1) == IToken.tCOLONCOLON)
         {
@@ -4099,7 +3207,7 @@ public class Parser implements IParser
             consume();
         }
         consume(IToken.t_delete);
-        boolean vectored = false; 
+        boolean vectored = false;
         if (LT(1) == IToken.tLBRACKET)
         {
             // array delete
@@ -4107,9 +3215,18 @@ public class Parser implements IParser
             consume(IToken.tRBRACKET);
             vectored = true;
         }
-        IASTExpression castExpression = castExpression(expression);
-        return astFactory.createExpression( ( vectored ? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION : IASTExpression.Kind.DELETE_CASTEXPRESSION ), 
-        	castExpression, null, null, "", "", "", null ); 
+        IASTExpression castExpression = castExpression();
+        return astFactory.createExpression(
+            (vectored
+                ? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
+                : IASTExpression.Kind.DELETE_CASTEXPRESSION),
+            castExpression,
+            null,
+            null,
+            "",
+            "",
+            "",
+            null);
     }
     /**
      * Pazse a new-expression.  
@@ -4127,7 +3244,7 @@ public class Parser implements IParser
      *							directnewdeclarator [ constantexpression ]
      * newinitializer:	( expressionlist? )
      */
-    protected IASTExpression newExpression(Object expression) throws Backtrack
+    protected IASTExpression newExpression() throws Backtrack
     {
         if (LT(1) == IToken.tCOLONCOLON)
         {
@@ -4135,13 +3252,10 @@ public class Parser implements IParser
             consume();
         }
         consume(IToken.t_new);
-        
         boolean typeIdInParen = false;
         boolean placementParseFailure = true;
-        
         IToken beforeSecondParen = null;
         IToken backtrackMarker = null;
-        
         if (LT(1) == IToken.tLPAREN)
         {
             consume(IToken.tLPAREN);
@@ -4150,7 +3264,7 @@ public class Parser implements IParser
                 // Try to consume placement list
                 // Note: since expressionList and expression are the same...
                 backtrackMarker = mark();
-                expression(expression);
+                expression();
                 consume(IToken.tRPAREN);
                 placementParseFailure = false;
                 if (LT(1) == IToken.tLPAREN)
@@ -4228,7 +3342,7 @@ public class Parser implements IParser
                             // Worst-case scenario - this cannot be resolved w/o more semantic information.
                             // Luckily, we don't need to know what was that - we only know that 
                             // new-expression ends here.
-                            return null;  // TODO fix this
+                            return null; // TODO fix this
                         }
                     }
                     catch (Backtrack e)
@@ -4251,7 +3365,7 @@ public class Parser implements IParser
         {
             // array new
             consume();
-            assignmentExpression(expression);
+            assignmentExpression();
             consume(IToken.tRBRACKET);
         }
         // newinitializer
@@ -4259,55 +3373,73 @@ public class Parser implements IParser
         {
             consume(IToken.tLPAREN);
             if (LT(1) != IToken.tRPAREN)
-                expression(expression);
+                expression();
             consume(IToken.tRPAREN);
         }
         return null; //TODO fix this 
     }
-    
-    
-    protected IASTExpression unaryOperatorCastExpression( Object expression, IASTExpression.Kind kind, IToken consumed ) throws Backtrack
+    protected IASTExpression unaryOperatorCastExpression(
+        IASTExpression.Kind kind,
+        IToken consumed)
+        throws Backtrack
     {
-		IASTExpression castExpression = castExpression(expression);
-		try
-		{
-			callback.expressionOperator(expression, consumed);
-		}
-		catch (Exception e)
-		{
-		}
-		return astFactory.createExpression( kind, castExpression, null, null, "", "", "", null );
+        IASTExpression castExpression = castExpression();
+        return astFactory.createExpression(
+            kind,
+            castExpression,
+            null,
+            null,
+            "",
+            "",
+            "",
+            null);
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression unaryExpression(Object expression) throws Backtrack
+    protected IASTExpression unaryExpression()
+        throws Backtrack
     {
         switch (LT(1))
         {
             case IToken.tSTAR :
-				return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION, consume() );
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION,
+                    consume());
             case IToken.tAMPER :
-		    	return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION, consume() );
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION,
+                    consume());
             case IToken.tPLUS :
-			    return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION, consume() );
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION,
+                    consume());
             case IToken.tMINUS :
-			    return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION, consume() );
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION,
+                    consume());
             case IToken.tNOT :
-			    return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION, consume() );
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION,
+                    consume());
             case IToken.tCOMPL :
-			    return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION, consume() );
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION,
+                    consume());
             case IToken.tINCR :
-			    return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_INCREMENT, consume() );
-            case IToken.tDECR :            
-			    return unaryOperatorCastExpression( expression, IASTExpression.Kind.UNARY_DECREMENT, consume() );
-                  
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_INCREMENT,
+                    consume());
+            case IToken.tDECR :
+                return unaryOperatorCastExpression(
+                    IASTExpression.Kind.UNARY_DECREMENT,
+                    consume());
             case IToken.t_sizeof :
                 consume(IToken.t_sizeof);
                 IToken mark = LA(1);
                 ITokenDuple d = null;
-                IASTExpression unaryExpression = null;   
+                IASTExpression unaryExpression = null;
                 if (LT(1) == IToken.tLPAREN)
                 {
                     try
@@ -4319,295 +3451,439 @@ public class Parser implements IParser
                     catch (Backtrack bt)
                     {
                         backup(mark);
-                        unaryExpression = unaryExpression(expression);
+                        unaryExpression = unaryExpression();
                     }
                 }
                 else
                 {
-                    unaryExpression = unaryExpression(expression);
+                    unaryExpression = unaryExpression();
                 }
-                
-                if( d != null & unaryExpression == null )
-                	return astFactory.createExpression( IASTExpression.Kind.UNARY_SIZEOF_TYPEID, null, null, null, "", d.toString(), "", null );
-                else if( unaryExpression != null && d == null )
-					return astFactory.createExpression( IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION, unaryExpression, null, null, "", "", "", null );
+                if (d != null & unaryExpression == null)
+                    return astFactory.createExpression(
+                        IASTExpression.Kind.UNARY_SIZEOF_TYPEID,
+                        null,
+                        null,
+                        null,
+                        "",
+                        d.toString(),
+                        "",
+                        null);
+                else if (unaryExpression != null && d == null)
+                    return astFactory.createExpression(
+                        IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
+                        unaryExpression,
+                        null,
+                        null,
+                        "",
+                        "",
+                        "",
+                        null);
                 else
-                	throw backtrack;
-                
+                    throw backtrack;
             case IToken.t_new :
-                return newExpression(expression);
+                return newExpression();
             case IToken.t_delete :
-                return deleteExpression(expression);
+                return deleteExpression();
             case IToken.tCOLONCOLON :
                 switch (LT(2))
                 {
                     case IToken.t_new :
-                        return newExpression(expression);
+                        return newExpression();
                     case IToken.t_delete :
-                        return deleteExpression(expression);
+                        return deleteExpression();
                     default :
-                        return postfixExpression(expression);
+                        return postfixExpression();
                 }
             default :
-                return postfixExpression(expression);
+                return postfixExpression();
         }
     }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression postfixExpression(Object expression) throws Backtrack
+    protected IASTExpression postfixExpression()
+        throws Backtrack
     {
-    	IASTExpression firstExpression = null;
-		boolean isTemplate = false; 
+        IASTExpression firstExpression = null;
+        boolean isTemplate = false;
         switch (LT(1))
         {
             case IToken.t_typename :
                 consume(); //TODO: the rest of this 
                 break;
-             // simple-type-specifier ( assignment-expression , .. )
+                // simple-type-specifier ( assignment-expression , .. )
             case IToken.t_char :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR );
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR);
+                break;
             case IToken.t_wchar_t :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART );
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART);
+                break;
             case IToken.t_bool :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL);
+                break;
             case IToken.t_short :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT);
+                break;
             case IToken.t_int :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT);
+                break;
             case IToken.t_long :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG);
+                break;
             case IToken.t_signed :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED);
+                break;
             case IToken.t_unsigned :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED);
+                break;
             case IToken.t_float :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT);
-				break;
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT);
+                break;
             case IToken.t_double :
-				firstExpression = simpleTypeConstructorExpression(expression, IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE);
+                firstExpression =
+                    simpleTypeConstructorExpression(
+                        IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE);
                 break;
             case IToken.t_dynamic_cast :
-				firstExpression = specialCastExpression(expression, IASTExpression.Kind.POSTFIX_DYNAMIC_CAST );
-				break;
+                firstExpression =
+                    specialCastExpression(
+                        IASTExpression.Kind.POSTFIX_DYNAMIC_CAST);
+                break;
             case IToken.t_static_cast :
-				firstExpression = specialCastExpression(expression, IASTExpression.Kind.POSTFIX_STATIC_CAST );
-				break;
+                firstExpression =
+                    specialCastExpression(
+                        IASTExpression.Kind.POSTFIX_STATIC_CAST);
+                break;
             case IToken.t_reinterpret_cast :
-				firstExpression = specialCastExpression(expression, IASTExpression.Kind.POSTFIX_REINTERPRET_CAST );
-				break;
+                firstExpression =
+                    specialCastExpression(
+                        IASTExpression.Kind.POSTFIX_REINTERPRET_CAST);
+                break;
             case IToken.t_const_cast :
-				firstExpression = specialCastExpression(expression, IASTExpression.Kind.POSTFIX_CONST_CAST );
+                firstExpression =
+                    specialCastExpression(
+                        IASTExpression.Kind.POSTFIX_CONST_CAST);
                 break;
             case IToken.t_typeid :
                 consume();
                 consume(IToken.tLPAREN);
                 boolean isTypeId = true;
-                IASTExpression lhs = null; 
-                ITokenDuple typeId = null; 
+                IASTExpression lhs = null;
+                ITokenDuple typeId = null;
                 try
                 {
                     typeId = typeId();
                 }
                 catch (Backtrack b)
                 {
-                	isTypeId = false;
-                    lhs = expression(expression);
+                    isTypeId = false;
+                    lhs = expression();
                 }
                 consume(IToken.tRPAREN);
-                
-                firstExpression = astFactory.createExpression( ( isTypeId ? IASTExpression.Kind.POSTFIX_TYPEID_TYPEID : IASTExpression.Kind.POSTFIX_TYPEID_EXPRESSION ),
-                	  lhs, null, null, "", ( isTypeId ?  typeId.toString() : "" ), "", null );  
-                	
+                firstExpression =
+                    astFactory.createExpression(
+                        (isTypeId
+                            ? IASTExpression.Kind.POSTFIX_TYPEID_TYPEID
+                            : IASTExpression.Kind.POSTFIX_TYPEID_EXPRESSION),
+                        lhs,
+                        null,
+                        null,
+                        "",
+                        (isTypeId ? typeId.toString() : ""),
+                        "",
+                        null);
                 break;
             default :
-                firstExpression = primaryExpression(expression);
+                firstExpression = primaryExpression();
         }
-                
-        IASTExpression secondExpression = null; 
-     
-     	for( ; ; )
-     	{   
-	        switch (LT(1))
-	        {
-	           case IToken.tLBRACKET :
-	              // array access
-	              consume();
-	              secondExpression = expression(expression);
-	              consume(IToken.tRBRACKET);
-	              firstExpression = astFactory.createExpression( IASTExpression.Kind.POSTFIX_SUBSCRIPT, firstExpression, secondExpression, null, "", "", "", null );
-	              break;
-	           case IToken.tLPAREN :
-	              // function call
-	              consume();
-	              secondExpression = expression(expression);
-	              consume(IToken.tRPAREN);
-				  firstExpression = astFactory.createExpression( IASTExpression.Kind.POSTFIX_FUNCTIONCALL, firstExpression, secondExpression, null, "", "", "", null );
-				  break;
-	           case IToken.tINCR :
-				  consume();
-				  firstExpression = astFactory.createExpression( IASTExpression.Kind.POSTFIX_INCREMENT, firstExpression, null, null, "", "", "", null );
-				  break;
-	           case IToken.tDECR :
-	              consume();
-				  firstExpression = astFactory.createExpression( IASTExpression.Kind.POSTFIX_DECREMENT, firstExpression, null, null, "", "", "", null );
-				  break;
-	           case IToken.tDOT :
-				   // member access
-				   consume( IToken.tDOT );
-	 
-				   if( LT(1) == IToken.t_template )
-				   {
-				      consume( IToken.t_template );
-				      isTemplate = true; 
-				   }
-				   secondExpression = primaryExpression(expression);
-				   firstExpression = astFactory.createExpression( ( isTemplate ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION), 
-				   		firstExpression, secondExpression, null, "", "", "", null ); 			   
-	           	   break;
-	           case IToken.tARROW :
-				   // member access
-				   consume( IToken.tARROW );
-				   if( LT(1) == IToken.t_template )
-				   {
-					  consume( IToken.t_template );
-					  isTemplate = true; 
-				   }
-				   secondExpression = primaryExpression(expression);
-				   firstExpression = astFactory.createExpression( ( isTemplate ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION), 
-						firstExpression, secondExpression, null, "", "", "", null );
-				   break;		   
-	           default :
-	               return firstExpression;
-	         }
-   		 }
-         
-
+        IASTExpression secondExpression = null;
+        for (;;)
+        {
+            switch (LT(1))
+            {
+                case IToken.tLBRACKET :
+                    // array access
+                    consume();
+                    secondExpression = expression();
+                    consume(IToken.tRBRACKET);
+                    firstExpression =
+                        astFactory.createExpression(
+                            IASTExpression.Kind.POSTFIX_SUBSCRIPT,
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                case IToken.tLPAREN :
+                    // function call
+                    consume();
+                    secondExpression = expression();
+                    consume(IToken.tRPAREN);
+                    firstExpression =
+                        astFactory.createExpression(
+                            IASTExpression.Kind.POSTFIX_FUNCTIONCALL,
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                case IToken.tINCR :
+                    consume();
+                    firstExpression =
+                        astFactory.createExpression(
+                            IASTExpression.Kind.POSTFIX_INCREMENT,
+                            firstExpression,
+                            null,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                case IToken.tDECR :
+                    consume();
+                    firstExpression =
+                        astFactory.createExpression(
+                            IASTExpression.Kind.POSTFIX_DECREMENT,
+                            firstExpression,
+                            null,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                case IToken.tDOT :
+                    // member access
+                    consume(IToken.tDOT);
+                    if (LT(1) == IToken.t_template)
+                    {
+                        consume(IToken.t_template);
+                        isTemplate = true;
+                    }
+                    secondExpression = primaryExpression();
+                    firstExpression =
+                        astFactory.createExpression(
+                            (isTemplate
+                                ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
+                                : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION),
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                case IToken.tARROW :
+                    // member access
+                    consume(IToken.tARROW);
+                    if (LT(1) == IToken.t_template)
+                    {
+                        consume(IToken.t_template);
+                        isTemplate = true;
+                    }
+                    secondExpression = primaryExpression();
+                    firstExpression =
+                        astFactory.createExpression(
+                            (isTemplate
+                                ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
+                                : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION),
+                            firstExpression,
+                            secondExpression,
+                            null,
+                            "",
+                            "",
+                            "",
+                            null);
+                    break;
+                default :
+                    return firstExpression;
+            }
+        }
     }
-	protected IASTExpression specialCastExpression(Object expression, IASTExpression.Kind kind)
-		throws EndOfFile, Backtrack {
-		consume();
-		consume(IToken.tLT);
-		ITokenDuple duple = typeId();
-		consume(IToken.tGT);
-		consume(IToken.tLPAREN);
-		IASTExpression lhs = expression(expression);
-		consume(IToken.tRPAREN);
-		return astFactory.createExpression( kind, lhs, null, null, "", "", "", null );
-	}
-	
-	protected IASTExpression simpleTypeConstructorExpression(Object expression, Kind type)	throws EndOfFile, Backtrack {
-	   consume();
-	   consume(IToken.tLPAREN);
-	   IASTExpression inside = expression( expression );
-	   //                while (true)
-	   //                {
-	   //                    assignmentExpression(expression);
-	   //                    if (LT(1) == IToken.tRPAREN)
-	   //                        break;
-	   //                    consume(IToken.tCOMMA);
-	   //                }
-	   consume(IToken.tRPAREN);
-	   return astFactory.createExpression( type, inside, null, null, "", "", "", null );  
-	}
+    protected IASTExpression specialCastExpression(
+        IASTExpression.Kind kind)
+        throws EndOfFile, Backtrack
+    {
+        consume();
+        consume(IToken.tLT);
+        ITokenDuple duple = typeId();
+        consume(IToken.tGT);
+        consume(IToken.tLPAREN);
+        IASTExpression lhs = expression();
+        consume(IToken.tRPAREN);
+        return astFactory.createExpression(
+            kind,
+            lhs,
+            null,
+            null,
+            "",
+            "",
+            "",
+            null);
+    }
+    protected IASTExpression simpleTypeConstructorExpression(
+        Kind type)
+        throws EndOfFile, Backtrack
+    {
+        consume();
+        consume(IToken.tLPAREN);
+        IASTExpression inside = expression();
+        //                while (true)
+        //                {
+        //                    assignmentExpression(expression);
+        //                    if (LT(1) == IToken.tRPAREN)
+        //                        break;
+        //                    consume(IToken.tCOMMA);
+        //                }
+        consume(IToken.tRPAREN);
+        return astFactory.createExpression(
+            type,
+            inside,
+            null,
+            null,
+            "",
+            "",
+            "",
+            null);
+    }
     /**
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression primaryExpression(Object expression) throws Backtrack
+    protected IASTExpression primaryExpression()
+        throws Backtrack
     {
-		IToken t = null; 
+        IToken t = null;
         switch (LT(1))
         {
             // TO DO: we need more literals...
             case IToken.tINTEGER :
-            	t = consume();  
-				try
-				{
-					callback.expressionTerminal(expression, t );
-				}
-				catch (Exception e)
-				{
-				}
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null, null, null, "", "", t.getImage(), null );
-            
+                t = consume();
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_INTEGER_LITERAL,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    t.getImage(),
+                    null);
             case IToken.tFLOATINGPT :
-				t = consume();
-				try
-				{
-					callback.expressionTerminal(expression, t );
-				}
-				catch (Exception e)
-				{
-				}
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_FLOAT_LITERAL, null, null, null, "", "", t.getImage(), null );
-            
+                t = consume();
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_FLOAT_LITERAL,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    t.getImage(),
+                    null);
             case IToken.tSTRING :
             case IToken.tLSTRING :
 				t = consume();
-				try
-				{
-					callback.expressionTerminal(expression, t );
-				}
-				catch (Exception e)
-				{
-				}
 				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, "", "", t.getImage(), null );
             
             case IToken.t_false :
             case IToken.t_true :
-				t = consume();
-				try
-				{
-					callback.expressionTerminal(expression, t );
-				}
-				catch (Exception e)
-				{
-				}
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL, null, null, null, "", "", t.getImage(), null );
-            
+                t = consume();
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    t.getImage(),
+                    null);
+                  
             case IToken.tCHAR :
 			case IToken.tLCHAR :
-				t = consume();
-                try
-                {
-                    callback.expressionTerminal(expression, t );
-                }
-                catch (Exception e)
-                {
-                }
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_CHAR_LITERAL, null, null, null, "", "", t.getImage(), null );
+
+                t = consume();
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_CHAR_LITERAL,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    t.getImage(),
+                    null);
+                    
             case IToken.t_this :
-                consume( IToken.t_this );
-                return astFactory.createExpression( IASTExpression.Kind.PRIMARY_THIS, null, null, null, "", "", "", null );
+                consume(IToken.t_this);
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_THIS,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
             case IToken.tLPAREN :
                 consume();
-                IASTExpression lhs = expression(expression);
+                IASTExpression lhs = expression();
                 consume(IToken.tRPAREN);
-                return astFactory.createExpression( IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION, lhs, null, null, "", "", "", null );
-
-			case IToken.tIDENTIFIER :
-			
-				ITokenDuple duple = name(); //TODO should be an ID Expression really 
-				try
-				{
-					callback.expressionName(expression);
-				}
-				catch (Exception e)
-				{
-				}
-				return astFactory.createExpression( IASTExpression.Kind.ID_EXPRESSION, null, null, null, "", "", duple.toString(), null );
-			default :
-				return astFactory.createExpression( IASTExpression.Kind.PRIMARY_EMPTY, null, null, null, "", "", "", null ); 
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION,
+                    lhs,
+                    null,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
+            case IToken.tIDENTIFIER :
+                ITokenDuple duple = name();
+                //TODO should be an ID Expression really
+                return astFactory.createExpression(
+                    IASTExpression.Kind.ID_EXPRESSION,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    duple.toString(),
+                    null);
+            default :
+                return astFactory.createExpression(
+                    IASTExpression.Kind.PRIMARY_EMPTY,
+                    null,
+                    null,
+                    null,
+                    "",
+                    "",
+                    "",
+                    null);
         }
     }
     /**
@@ -4657,7 +3933,6 @@ public class Parser implements IParser
     }
     // the static instance we always use
     private static Backtrack backtrack = new Backtrack();
-
     // the static instance we always use
     public static EndOfFile endOfFile = new EndOfFile();
     // Token management
@@ -4695,7 +3970,7 @@ public class Parser implements IParser
      */
     protected IToken LA(int i) throws EndOfFile
     {
-        if (i < 1)            // can't go backwards
+        if (i < 1) // can't go backwards
             return null;
         if (currToken == null)
             currToken = fetchToken();
@@ -4787,7 +4062,6 @@ public class Parser implements IParser
         if (scanner != null)
             scanner.setCppNature(b);
     }
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#getLastErrorOffset()
      */
@@ -4795,7 +4069,6 @@ public class Parser implements IParser
     {
         return firstErrorOffset;
     }
-    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.IParser#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */

@@ -4,27 +4,30 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.internal.core.parser.Name;
-
 public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable, IAccessable {
 
-	private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_private );
+	private String classKeyImage = null;
+    private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_private );
 	private ClassKey key = new ClassKey();
-	private int startingOffset = 0, totalLength = 0;
+	private int startingOffset = 0, totalLength = 0, nameOffset = 0;
 	private int topLine = 0, bottomLine = 0; 
-	private IToken classKeyToken = null;
 
 	public int getClassKey() { return key.getClassKey(); }
 
 	public ClassSpecifier(int classKey, TypeSpecifier.IOwner declaration) {
 		super(declaration);
 		this.key.setClassKey(classKey);
+		if( classKey == ClassKey.t_class )
+			classKeyImage = "class";
+		else if( classKey == ClassKey.t_struct )
+			classKeyImage = "struct";
+		else if( classKey == ClassKey.t_union )
+			classKeyImage = "union";
 	}
 	
-	private Name name;
-	public void setName(Name n) { name = n; }
-	public Name getName() { return name; }
+	private String name;
+	public void setName(String n) { name = n; }
+	public String getName() { return name; }
 	
 	private List baseSpecifiers = new LinkedList();
 	public void addBaseSpecifier(BaseSpecifier baseSpecifier) {
@@ -63,6 +66,10 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 		return startingOffset;
 	}
 
+	public int getClassKeyEndOffset()
+	{
+		return startingOffset + classKeyImage.length();
+	}
 	/**
 	 * @return
 	 */
@@ -82,22 +89,6 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	 */
 	public void setTotalLength(int i) {
 		totalLength = i;
-	}
-
-	/**
-	 * Returns the classKeyToken.
-	 * @return Token
-	 */
-	public IToken getClassKeyToken() {
-		return classKeyToken;
-	}
-
-	/**
-	 * Sets the classKeyToken.
-	 * @param classKeyToken The classKeyToken to set
-	 */
-	public void setClassKeyToken(IToken classKeyToken) {
-		this.classKeyToken = classKeyToken;
 	}
 
 	/* (non-Javadoc)
@@ -127,5 +118,29 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	public int getBottomLine() {
 		return bottomLine;
 	}
+
+    /**
+     * @return
+     */
+    public String getClassKeyImage()
+    {
+        return classKeyImage;
+    }
+
+    /**
+     * @return
+     */
+    public int getNameOffset()
+    {
+        return nameOffset;
+    }
+
+    /**
+     * @param i
+     */
+    public void setNameOffset(int i)
+    {
+        nameOffset = i;
+    }
 
 }

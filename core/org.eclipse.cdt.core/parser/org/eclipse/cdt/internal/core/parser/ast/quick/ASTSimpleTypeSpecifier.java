@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 {
 	private final boolean isTypename;
-    private final SimpleType kind;
+    private final Type kind;
 	private final String typeName;  
 	private final boolean isLong, isShort, isSigned, isUnsigned; 
 	
@@ -31,19 +31,19 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 	static 
 	{
 		nameMap  = new Hashtable();
-		nameMap.put( SimpleType.BOOL, "bool");
-		nameMap.put( SimpleType.CHAR, "char");
-		nameMap.put( SimpleType.DOUBLE, "double");
-		nameMap.put( SimpleType.FLOAT, "float");
-		nameMap.put( SimpleType.INT, "int");
-		nameMap.put( SimpleType.VOID, "void" );
-		nameMap.put( SimpleType.WCHAR_T, "wchar_t" );
+		nameMap.put( Type.BOOL, "bool");
+		nameMap.put( Type.CHAR, "char");
+		nameMap.put( Type.DOUBLE, "double");
+		nameMap.put( Type.FLOAT, "float");
+		nameMap.put( Type.INT, "int");
+		nameMap.put( Type.VOID, "void" );
+		nameMap.put( Type.WCHAR_T, "wchar_t" );
 	}
     /**
      * @param kind
      * @param typeName
      */
-    public ASTSimpleTypeSpecifier(SimpleType kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename)
+    public ASTSimpleTypeSpecifier(Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename)
     {
         this.kind = kind;
         this.isLong = isLong;
@@ -54,17 +54,17 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 		
 		
 		StringBuffer type = new StringBuffer();
-		if( this.kind == IASTSimpleTypeSpecifier.SimpleType.CHAR || this.kind == IASTSimpleTypeSpecifier.SimpleType.WCHAR_T )
+		if( this.kind == IASTSimpleTypeSpecifier.Type.CHAR || this.kind == IASTSimpleTypeSpecifier.Type.WCHAR_T )
 		{
 			if (isUnsigned())
 				type.append("unsigned ");
 			type.append( (String)nameMap.get( this.kind ));
 		}
-		else if( this.kind == SimpleType.BOOL || this.kind == SimpleType.FLOAT || this.kind == SimpleType.VOID )
+		else if( this.kind == Type.BOOL || this.kind == Type.FLOAT || this.kind == Type.VOID )
 		{
 			type.append( (String) nameMap.get( this.kind ));
 		}
-		else if( this.kind == SimpleType.INT )
+		else if( this.kind == Type.INT )
 		{
 			if (isUnsigned())
 				type.append("unsigned ");
@@ -74,19 +74,19 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 				type.append("long ");
 			type.append( (String)nameMap.get( this.kind ));
 		}
-		else if( this.kind == SimpleType.DOUBLE )
+		else if( this.kind == Type.DOUBLE )
 		{
 			if (isLong())
 				type.append("long ");
 			type.append( (String)nameMap.get( this.kind ));
 		}
-		else if( this.kind == SimpleType.TYPENAME || this.kind == SimpleType.TEMPLATE )
+		else if( this.kind == Type.CLASS_OR_TYPENAME || this.kind == Type.TEMPLATE )
 		{
 			if (isTypename() )
 				type.append("typename ");
 			type.append(typeName.toString());
 		}
-		else if( this.kind == SimpleType.UNSPECIFIED )
+		else if( this.kind == Type.UNSPECIFIED )
 		{
 			if (isUnsigned())
 				type.append("unsigned ");
@@ -103,7 +103,7 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#getType()
      */
-    public SimpleType getType()
+    public Type getType()
     {
         return kind;
     }

@@ -40,7 +40,7 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier#getTypeName()
      */
-    public String getTypeName()
+    public String getName()
     {
         return typeName;
     }

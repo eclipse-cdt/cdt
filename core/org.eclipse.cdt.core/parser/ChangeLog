@@ -1,3 +1,11 @@
+2003-07-17 John Camelon
+	Removed IParserCallback.  
+	Partially converted DOM to ISourceElementRequestor (requires refactoring of CModelBuilder & StuctureComparator modules in near future).  
+	Completely finished ISourceElementRequestor/IASTFactory work for QuickParse mode.  
+	Added pointer to methods/functions into AST callback structure.  
+	Restructured AST class hierarchy.  
+	Removed the old IParserCallback return Objects from every Parser method.
+	
 2003-07-15 Victor Mozgin
 	Fixed PR 39349 : Scanner fails on long long literals.
 	Fixed PR 39544 : Scanner fails on wide char literals.

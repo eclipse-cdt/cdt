@@ -13,20 +13,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 /**
  * @author jcamelon
  *
@@ -34,8 +40,8 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType;
 public class DeclarationWrapper implements IDeclaratorOwner
 {
     private ITokenDuple name;
-    private SimpleType simpleType =
-        IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED;
+    private Type simpleType =
+        IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
     private boolean isSigned;
     private boolean isLong;
     private boolean isShort;
@@ -308,24 +314,40 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         boolean isWithinClass = (getScope() instanceof IASTClassSpecifier);
         boolean isFunction = declarator.isFunction();
+        boolean hasInnerDeclarator = ( declarator.getOwnedDeclarator() != null );
+        
+        if( hasInnerDeclarator )
+        {
+        	ITokenDuple innerPointerName = declarator.getOwnedDeclarator().getPointerOperatorNameDuple();
+        	if( innerPointerName != null && innerPointerName.getLastToken().getType() == IToken.tCOLONCOLON )
+        		return createP2MethodASTNode(declarator);
+        	else
+        		return createP2FunctionASTNode( declarator );
+        }
+        
         if (isTypedef())
             return createTypedef(declarator);
-        if (isWithinClass && isFunction)
-            return createMethodASTNode(declarator);
-        else if (isWithinClass && !isFunction)
-            return createFieldASTNode(declarator);
-        else if ((!isWithinClass) && isFunction)
-            return createFunctionASTNode(declarator);
-        else if (!isFunction && !isWithinClass)
-            return createVariableASTNode(declarator);
-        else
-        	throw new Error("WTF");  //return IProblem?
+
+        if (isWithinClass )
+        {
+        	if( isFunction)
+           		return createMethodASTNode(declarator);
+        	else 
+            	return createFieldASTNode(declarator);
+        }
+        else 
+        {	
+        	if (isFunction)
+               		return createFunctionASTNode(declarator);
+        	else 
+            	return createVariableASTNode(declarator);
+        }
     }
     /**
      * @param declarator
      * @return
      */
-    private IASTTypedef createTypedef(Declarator declarator)
+    private IASTTypedefDeclaration createTypedef(Declarator declarator)
     {
         return astFactory.createTypedef(
             scope,
@@ -466,6 +488,68 @@ public class DeclarationWrapper implements IDeclaratorOwner
             getStartingOffset(),
             declarator.getNameEndOffset());
     }
+    
+	/**
+	  * @param declarator
+	  * @return
+	  */
+	 private IASTPointerToMethod createP2MethodASTNode(Declarator declarator)
+	 {
+		
+		 return astFactory
+			 .createPointerToMethod(
+				 scope,
+				 declarator.getOwnedDeclarator().getPointerOperatorNameDuple().toString().trim() + 
+				 	declarator.getOwnedDeclarator().getName().trim(),
+				 createParameterList(declarator.getParameters()),
+				 astFactory.createAbstractDeclaration(
+					 constt,
+					 getTypeSpecifier(),
+					 declarator.getPtrOps(),
+					 declarator.getArrayModifiers()),
+				 declarator.getExceptionSpecification(),
+				 inline,
+				 friend,
+				 staticc,
+				 startingOffset,
+				 declarator.getNameStartOffset(),
+				 templateDeclaration,
+				 declarator.isConst(),
+				 declarator.isVolatile(),
+				 false,
+		 // isConstructor
+		 false, // isDestructor
+		 virtual,
+			 explicit,
+			 declarator.isPureVirtual(),
+			 ((scope instanceof IASTClassSpecifier )? ((IASTClassSpecifier)scope).getCurrentVisibilityMode() : ASTAccessVisibility.PUBLIC )
+			 , (ASTPointerOperator)declarator.getOwnedDeclarator().getPtrOps().get(0));
+	 }
+	 /**
+	  * @param declarator
+	  * @return
+	  */
+	 private IASTPointerToFunction createP2FunctionASTNode(Declarator declarator)
+	 {
+		 return astFactory.createPointerToFunction(
+			 scope,
+			 declarator.getOwnedDeclarator().getName(),
+			 createParameterList(declarator.getParameters()),
+			 astFactory.createAbstractDeclaration(
+				 constt,
+				 getTypeSpecifier(),
+				 declarator.getPtrOps(),
+				 declarator.getArrayModifiers()),
+			 declarator.getExceptionSpecification(),
+			 inline,
+			 friend,
+			 staticc,
+			 startingOffset,
+			 declarator.getNameStartOffset(),
+			 templateDeclaration, (ASTPointerOperator)declarator.getOwnedDeclarator().getPtrOps().get(0));
+	 }
+    
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IDeclaratorOwner#getDeclarationWrapper()
      */
@@ -532,14 +616,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @return
      */
-    public SimpleType getSimpleType()
+    public Type getSimpleType()
     {
         return simpleType;
     }
     /**
      * @param type
      */
-    public void setSimpleType(SimpleType type)
+    public void setSimpleType(Type type)
     {
         simpleType = type;
     }

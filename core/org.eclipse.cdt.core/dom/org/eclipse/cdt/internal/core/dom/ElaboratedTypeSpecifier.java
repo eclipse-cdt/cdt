@@ -1,6 +1,5 @@
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.Name;
 
 
 /**
@@ -27,9 +26,9 @@ public class ElaboratedTypeSpecifier extends TypeSpecifier {
 		this.classKey.setClassKey( classKey );
 	}
 
-	private Name name;
-	public void setName(Name n) { name = n; }
-	public Name getName() { return name; }
+	private String name;
+	public void setName(String n) { name = n; }
+	public String getName() { return name; }
 	
 	private ClassSpecifier classSpec = null;
 

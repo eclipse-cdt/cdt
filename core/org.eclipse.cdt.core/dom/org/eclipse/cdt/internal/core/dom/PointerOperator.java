@@ -12,8 +12,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.Name;
-
 /**
  * @author jcamelon
  *
@@ -89,12 +87,12 @@ public class PointerOperator {
     
 
     // This is not a complete name, it is something like A::B::, i.e. ends with ::
-    private Name nameSpecifier = null;
+    private String nameSpecifier = null;
     
     /**
      * @return Class name specifier for pointers to members
      */
-    public Name getNameSpecifier() {
+    public String getNameSpecifier() {
         return nameSpecifier;
     }
 
@@ -102,7 +100,7 @@ public class PointerOperator {
      * Sets the class name specifier for pointers to members.
      * @param name The name specifier to set
      */
-    public void setNameSpecifier(Name name) {
+    public void setNameSpecifier(String name) {
         this.nameSpecifier = name;
     }
 }

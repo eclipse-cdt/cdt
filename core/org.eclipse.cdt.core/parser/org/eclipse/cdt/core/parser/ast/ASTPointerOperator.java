@@ -22,9 +22,6 @@ public class ASTPointerOperator extends Enum
 	public static final ASTPointerOperator POINTER 		 			 	= new ASTPointerOperator( 1 );
 	public static final ASTPointerOperator CONST_POINTER 			 	= new ASTPointerOperator( 2 );
 	public static final ASTPointerOperator VOLATILE_POINTER 		 	= new ASTPointerOperator( 3 );
-	public static final ASTPointerOperator POINTER_TO_FUNCTION 		 	= new ASTPointerOperator( 4 );
-	public static final ASTPointerOperator CONST_POINTER_TO_FUNCTION 	= new ASTPointerOperator( 5 );
-	public static final ASTPointerOperator VOLATILE_POINTER_TO_FUNCTION = new ASTPointerOperator( 6 );
 
 
     /**

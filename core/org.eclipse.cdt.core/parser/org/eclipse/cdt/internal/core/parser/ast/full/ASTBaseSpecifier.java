@@ -8,9 +8,10 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.full;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 
@@ -24,10 +25,10 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 	private final boolean isVirtual;
 	private final ASTAccessVisibility visibility; 
 	
-	public ASTBaseSpecifier( IASTClassSpecifier c, ASTAccessVisibility a, boolean virtual )
+	public ASTBaseSpecifier( IASTClassSpecifier classSpec, ASTAccessVisibility a, boolean virtual )
 	{
 		isVirtual = virtual; 
-		baseClass = c; 
+		baseClass = classSpec; 
 		visibility = a; 
 	}
 	
@@ -48,8 +49,16 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParent()
 	 */
-	public IASTClassSpecifier getParent() {
-		return baseClass;
+	public String getParentClassName() {
+		return baseClass.getName();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParentClassSpecifier()
+     */
+    public IASTClassSpecifier getParentClassSpecifier() throws ASTNotImplementedException
+    {
+        return baseClass;
+    }
 
 }

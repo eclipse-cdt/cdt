@@ -23,6 +23,8 @@ public class ASTDeclaration implements IASTDeclaration {
 	public ASTDeclaration( IASTScope scope )
 	{
 		this.scope = scope; 
+		if( scope != null && scope instanceof IASTQScope )
+			((IASTQScope)scope).addDeclaration(this);
 	}
 
 	/* (non-Javadoc)

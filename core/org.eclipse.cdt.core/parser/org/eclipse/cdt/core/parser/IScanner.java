@@ -27,7 +27,6 @@ public interface IScanner  {
 	public void setCppNature( boolean value );
 	
 	public void setMode(ParserMode mode);
-	public void setCallback(IParserCallback c);
 	
 	public int  getCount();
 	public int  getDepth();

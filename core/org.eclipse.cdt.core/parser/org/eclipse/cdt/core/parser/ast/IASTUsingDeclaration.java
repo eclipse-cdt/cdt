@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTUsingDeclaration extends IASTDeclaration {
+public interface IASTUsingDeclaration extends IASTDeclaration, IASTOffsetableElement {
 
 	public boolean isTypename(); 
 	public String  usingTypeName(); 

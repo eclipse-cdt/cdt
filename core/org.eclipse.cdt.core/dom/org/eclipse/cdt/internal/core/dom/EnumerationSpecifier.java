@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.internal.core.parser.Name;
-
 /**
  * @author jcamelon
  *
@@ -29,10 +26,11 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 		super(declaration);
 	}
 	
-	private Name name = null;
+	private String name = null;
 	private List enumeratorDefinitions = new ArrayList();
 	private int startingOffset = 0, totalLength = 0;
-	private IToken startToken = null;
+	private int nameOffset = 0; 
+	private String startImage = null;
 	
 	public void addEnumeratorDefinition( EnumeratorDefinition def )
 	{
@@ -50,7 +48,7 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 	/**
 	 * @return Name
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -58,7 +56,7 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -94,16 +92,16 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 	 * Returns the startToken.
 	 * @return Token
 	 */
-	public IToken getStartToken() {
-		return startToken;
+	public String getStartImage() {
+		return startImage;
 	}
 
 	/**
 	 * Sets the startToken.
 	 * @param startToken The startToken to set
 	 */
-	public void setStartToken(IToken startToken) {
-		this.startToken = startToken;
+	public void setStartImage(String startImage) {
+		this.startImage= startImage;
 	}
 
 	private int topLine = 0, bottomLine = 0; 
@@ -137,5 +135,21 @@ public class EnumerationSpecifier extends TypeSpecifier implements IOffsetable {
 	public int getBottomLine() {
 		return bottomLine;
 	}
+
+    /**
+     * @return
+     */
+    public int getNameOffset()
+    {
+        return nameOffset;
+    }
+
+    /**
+     * @param i
+     */
+    public void setNameOffset(int i)
+    {
+        nameOffset = i;
+    }
 
 }

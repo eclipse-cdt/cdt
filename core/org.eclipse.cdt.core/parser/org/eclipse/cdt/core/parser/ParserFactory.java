@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Preprocessor;
+import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.TranslationOptions;
 import org.eclipse.cdt.internal.core.parser.TranslationResult;
@@ -42,15 +43,15 @@ public class ParserFactory {
 			return new FullParseASTFactory(); 
 	}
 	
-    public static IParser createParser( IScanner scanner, IParserCallback callback, ParserMode mode )
+    public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode )
     {
         return createParser(scanner, callback, mode, null, null);
     }
  	
-	public static IParser createParser( IScanner scanner, IParserCallback callback, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult )
+	public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult )
 	{
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		IParserCallback ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );   
+		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );   
 		return new Parser( scanner, ourCallback, ourMode, problemReporter, unitResult );
 	}
  	
@@ -100,5 +101,10 @@ public class ParserFactory {
 	public static ITranslationResult createTranslationResult( String fileName/*ITranslationUnit tu*/ )
 	{
 		return new TranslationResult( fileName /* tu */ );
+	}
+	
+	public static IQuickParseCallback createQuickParseCallback()
+	{
+		return new QuickParseCallback();
 	}
 }

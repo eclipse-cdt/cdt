@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -23,10 +24,12 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -45,8 +48,9 @@ public interface ISourceElementRequestor {
 	public void acceptUsingDirective( IASTUsingDirective usageDirective );
 	public void acceptUsingDeclaration( IASTUsingDeclaration usageDeclaration );
 	public void acceptASMDefinition( IASTASMDefinition asmDefinition );
-	public void acceptTypedef( IASTTypedef typedef );
+	public void acceptTypedef( IASTTypedefDeclaration typedef );
 	public void acceptEnumerationSpecifier( IASTEnumerationSpecifier enumeration );
+	public void acceptAbstractTypeSpecDeclaration( IASTAbstractTypeSpecifierDeclaration abstractDeclaration );
 
 	public void enterFunctionBody( IASTFunction function );
 	public void exitFunctionBody( IASTFunction function );
@@ -79,4 +83,14 @@ public interface ISourceElementRequestor {
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit );
 
     public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec);
+
+    /**
+     * @param function
+     */
+    public void acceptPointerToFunction(IASTPointerToFunction function);
+
+    /**
+     * @param method
+     */
+    public void acceptPointerToMethod(IASTPointerToMethod method);
 }

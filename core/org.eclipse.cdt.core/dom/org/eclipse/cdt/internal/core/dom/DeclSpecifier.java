@@ -2,8 +2,6 @@ package org.eclipse.cdt.internal.core.dom;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.internal.core.parser.Name;
 
 /**
  * @author jcamelon
@@ -168,86 +166,7 @@ public class DeclSpecifier {
 	public static final int t_double = 6;
 	public static final int t_void = 7;
 
-	public void setType(IToken token) {
-		switch (token.getType()) {
-			case IToken.t_typename:
-				setTypename(true);
-				break;
-			case IToken.t_auto :
-				setAuto(true);
-				break;
-			case IToken.t_register :
-				setRegister(true);
-				break;
-			case IToken.t_static :
-				setStatic(true);
-				break;
-			case IToken.t_extern :
-				setExtern(true);
-				break;
-			case IToken.t_mutable :
-				setMutable(true);
-				break;
-			case IToken.t_inline :
-				setInline(true);
-				break;
-			case IToken.t_virtual :
-				setVirtual(true);
-				break;
-			case IToken.t_explicit :
-				setExplicit(true);
-				break;
-			case IToken.t_typedef :
-				setTypedef(true);
-				break;
-			case IToken.t_friend :
-				setFriend(true);
-				break;
-			case IToken.t_const :
-				setConst(true);
-				break;
-			case IToken.t_volatile :
-				setVolatile(true);
-				break;
-			case IToken.t_char :
-				setType(DeclSpecifier.t_char);
-				break;
-			case IToken.t_wchar_t :
-				setType(DeclSpecifier.t_wchar_t);
-				break;
-			case IToken.t_bool :
-				setType(DeclSpecifier.t_bool);
-				break;
-			case IToken.t_short :
-				setShort(true);
-				break;
-			case IToken.t_int :
-				setType(DeclSpecifier.t_int);
-				break;
-			case IToken.t_long :
-				setLong(true);
-				break;
-			case IToken.t_signed :
-				setUnsigned(false);
-				break;
-			case IToken.t_unsigned :
-				setUnsigned(true);
-				break;
-			case IToken.t_float :
-				setType(DeclSpecifier.t_float);
-				break;
-			case IToken.t_double :
-				setType(DeclSpecifier.t_double);
-				break;
-			case IToken.t_void :
-				setType(DeclSpecifier.t_void);
-				break;
-			case IToken.tIDENTIFIER :
-				setType(DeclSpecifier.t_type);
-				break;
-		}
 
-	}
 
 	public void setType(int t) {
 		declSpecifierSeq = declSpecifierSeq & ~typeMask | t;
@@ -265,13 +184,13 @@ public class DeclSpecifier {
 
 	};
 
-	Name name = null;
+	String name = null;
 
 	/**
 	 * Returns the name.
 	 * @return Name
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -279,7 +198,7 @@ public class DeclSpecifier {
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 

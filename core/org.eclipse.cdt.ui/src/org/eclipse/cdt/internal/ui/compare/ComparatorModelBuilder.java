@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
 
@@ -195,7 +194,7 @@ public class ComparatorModelBuilder {
 		callback.structDeclBegin(
 			enumSpecifier.getName().toString(),
 			ICElement.C_ENUMERATION,
-			enumSpecifier.getName().getStartOffset(),
+			enumSpecifier.getNameOffset(),
 			enumSpecifier.getName().length(),
 			enumSpecifier.getStartingOffset(),
 			0,
@@ -224,7 +223,7 @@ public class ComparatorModelBuilder {
 			callback.structDeclBegin(
 				className,
 				kind,
-				classSpecifier.getName().getStartOffset(),
+				classSpecifier.getNameOffset(),
 				classSpecifier.getName().length(),
 				classSpecifier.getStartingOffset(),
 				0,
@@ -233,8 +232,8 @@ public class ComparatorModelBuilder {
 			callback.structDeclBegin(
 				className,
 				kind,
-				classSpecifier.getClassKeyToken().getOffset(),
-				classSpecifier.getClassKeyToken().getLength(),
+				classSpecifier.getStartingOffset(),
+				classSpecifier.getClassKeyImage().length(),
 				classSpecifier.getStartingOffset(),
 				0,
 				0);
@@ -243,8 +242,8 @@ public class ComparatorModelBuilder {
 		callback.structDeclBegin(
 			className,
 			kind,
-			classSpecifier.getClassKeyToken().getOffset(),
-			classSpecifier.getClassKeyToken().getLength(),
+			classSpecifier.getStartingOffset(),
+			classSpecifier.getClassKeyEndOffset(),
 			classSpecifier.getStartingOffset(),
 			0,
 			0);
@@ -253,11 +252,11 @@ public class ComparatorModelBuilder {
 
 	private void createTypeDef(Declarator declarator, SimpleDeclaration simpleDeclaration) {
 		// TODO:No typedef in the old callback
-		Name domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
+		String domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
 		String declaratorName = domName.toString();
 		callback.fieldDecl(
 			declaratorName,
-			domName.getStartOffset(),
+			declarator.getNameOffset(),
 			domName.length(),
 			simpleDeclaration.getStartingOffset(),
 			simpleDeclaration.getTotalLength(),
@@ -267,11 +266,11 @@ public class ComparatorModelBuilder {
 	}
 
 	private void createVariableSpecification(SimpleDeclaration simpleDeclaration, Declarator declarator) {
-		Name domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
+		String domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
 		String declaratorName = domName.toString();
 		callback.fieldDecl(
 			declaratorName,
-			domName.getStartOffset(),
+			declarator.getNameOffset(),
 			domName.length(),
 			simpleDeclaration.getStartingOffset(),
 			simpleDeclaration.getTotalLength(),
@@ -285,11 +284,11 @@ public class ComparatorModelBuilder {
 		Declarator declarator,
 		ParameterDeclarationClause pdc,
 		boolean isTemplate) {
-		Name domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
+		String domName = (declarator.getDeclarator() != null) ? declarator.getDeclarator().getName() : declarator.getName();
 		String declaratorName = domName.toString();
 		callback.functionDeclBegin(
 			declaratorName,
-			domName.getStartOffset(),
+			declarator.getNameOffset(),
 			domName.length(),
 			simpleDeclaration.getStartingOffset(),
 			0,

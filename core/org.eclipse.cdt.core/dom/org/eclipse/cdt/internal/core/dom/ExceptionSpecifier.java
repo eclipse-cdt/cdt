@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.Name;
-
 
 /**
  * @author jcamelon
@@ -35,7 +33,7 @@ public class ExceptionSpecifier {
 		return Collections.unmodifiableList( typeNames );
 	}
 
-	public void addTypeName( Name name )
+	public void addTypeName( String name )
 	{
 		typeNames.add( name );
 	}

@@ -16,9 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.internal.core.parser.Token;
-
 /**
  * @author jcamelon
  *
@@ -27,15 +24,14 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 
 	private final boolean exported;
 	private AccessSpecifier visibility = null; 
-	private IToken firstToken, lastToken; 
+	 
 	private List declarations = new ArrayList(); 
 	private TemplateParameterList templateParms = null;                
 
-	public TemplateDeclaration( IScope ownerScope, IToken exported )
+	public TemplateDeclaration( IScope ownerScope, boolean exported )
 	{
 		super( ownerScope );
-		this.firstToken = exported; 
-		this.exported = exported.getType() == IToken.t_export ? true : false;
+		this.exported = exported;
 	}
 
 	/* (non-Javadoc)
@@ -73,34 +69,19 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 		templateParms = list;
 	}
 
-	/**
-	 * @return
-	 */
-	public IToken getFirstToken() {
-		return firstToken;
-	}
 
 	/**
-	 * @return
+	 * @param token
 	 */
-	public IToken getLastToken() {
-		return lastToken;
+	public void setFirstOffset(int startingOffset) {
+		setStartingOffset( startingOffset );
 	}
 
 	/**
 	 * @param token
 	 */
-	public void setFirstToken(Token token) {
-		firstToken = token;
-		setStartingOffset( getFirstToken().getOffset() );
-	}
-
-	/**
-	 * @param token
-	 */
-	public void setLastToken(IToken token) {
-		lastToken = token;
-		setTotalLength( getLastToken().getOffset() + getLastToken().getLength() - getStartingOffset() ); 
+	public void setLastOffset(int lastOffset) {
+		setTotalLength( lastOffset - getStartingOffset() ); 
 	}
 
 	/**

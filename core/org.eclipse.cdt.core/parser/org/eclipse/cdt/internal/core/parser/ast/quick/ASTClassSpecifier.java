@@ -24,10 +24,10 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  * @author jcamelon
  *
  */
-public class ASTClassSpecifier
-    extends ASTQualifiedNamedDeclaration
-    implements IASTQClassSpecifier, IASTQScope
+public class ASTClassSpecifier implements IASTQClassSpecifier, IASTQScope
 {
+    
+    private final IASTScope scope;
     public ASTClassSpecifier(
         IASTScope scope,
         String name,
@@ -36,15 +36,15 @@ public class ASTClassSpecifier
         ASTAccessVisibility access,
         IASTTemplate ownerTemplate)
     {
-        super(scope, name );
+        this.scope = scope; 
+        qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
         classNameType = type;
         classKind = kind;
         this.access = access;
         this.name = name;
-        templateOwner = ownerTemplate;
     }
     
-    private IASTTemplate templateOwner = null;
+    private final ASTQualifiedNamedElement qualifiedNameElement;
     private final String name;
     private List declarations = new ArrayList();
     private List baseClauses = new ArrayList();
@@ -104,17 +104,11 @@ public class ASTClassSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setNameOffset(int o)
+    public void setElementNameOffset(int o)
     {
         offsets.setNameOffset(o);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration#getOwnerTemplateDeclaration()
-     */
-    public IASTTemplate getOwnerTemplateDeclaration()
-    {
-        return templateOwner;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
@@ -157,4 +151,26 @@ public class ASTClassSpecifier
     {
         baseClauses.add(baseSpecifier);
     }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedNameElement.getFullyQualifiedName();
+    }
+    /**
+     * @return
+     */
+    public IASTScope getOwnerScope()
+    {
+        return scope;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#setCurrentVisibility(org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
+     */
+    public void setCurrentVisibility(ASTAccessVisibility visibility)
+    {
+    	this.access = visibility;
+    }
+
 }

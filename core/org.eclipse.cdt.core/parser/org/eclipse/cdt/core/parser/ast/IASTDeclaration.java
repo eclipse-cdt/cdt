@@ -14,8 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTDeclaration {
+public interface IASTDeclaration extends IASTScopedElement {
 
-	IASTScope getOwnerScope(); 
 	
 }

@@ -23,14 +23,16 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  * @author jcamelon
  *
  */
-public class ASTNamespaceDefinition extends ASTQualifiedNamedDeclaration implements IASTNamespaceDefinition, IASTQScope {
+public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamespaceDefinition, IASTQScope {
 
 	private final String name;
-	private NamedOffsets offsets = new NamedOffsets(); 
+	private NamedOffsets offsets = new NamedOffsets();
+	private final ASTQualifiedNamedElement qualifiedNameElement; 
 	
 	public ASTNamespaceDefinition( IASTScope scope, String name )
 	{
-		super( scope, name );
+		super( scope );
+		qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
 		this.name = name; 
 	}
 	/* (non-Javadoc)
@@ -50,7 +52,7 @@ public class ASTNamespaceDefinition extends ASTQualifiedNamedDeclaration impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
 	 */
-	public void setNameOffset(int o) {
+	public void setElementNameOffset(int o) {
 		offsets.setNameOffset( o );
 	}
 
@@ -96,4 +98,11 @@ public class ASTNamespaceDefinition extends ASTQualifiedNamedDeclaration impleme
 	public void addDeclaration(IASTDeclaration declaration) {
 		declarations.add( declaration );
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedNameElement.getFullyQualifiedName();
+    }
 }

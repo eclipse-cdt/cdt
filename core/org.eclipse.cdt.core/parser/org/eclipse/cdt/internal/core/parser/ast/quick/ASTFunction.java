@@ -33,7 +33,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, 
     			boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate )
     {
-        super(scope);
+        super(ownerTemplate != null ? null : scope  );
         this.name = name; 
         this.parms = parameters;
         this.returnType = returnType;
@@ -42,6 +42,8 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
         this.isFriend = isFriend;
         this.isStatic = isStatic;
         this.ownerTemplateDeclaration = ownerTemplate;
+		if( ownerTemplate != null )
+			ownerTemplate.setOwnedDeclaration( this );
         offsets.setStartingOffset( startOffset );
         offsets.setNameOffset( nameOffset );
     }
@@ -115,7 +117,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setNameOffset(int o)
+    public void setElementNameOffset(int o)
     {
         offsets.setNameOffset( o );
     }

@@ -57,7 +57,7 @@ public class ASTEnumerationSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setNameOffset(int o)
+    public void setElementNameOffset(int o)
     {
         offsets.setNameOffset(o);
     }

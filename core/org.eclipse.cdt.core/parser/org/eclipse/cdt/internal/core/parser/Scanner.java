@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -386,11 +385,6 @@ public class Scanner implements IScanner {
 	
 	public void setMode(ParserMode mode) {
 		this.mode = mode;
-	}
-
-	private IParserCallback callback;
-	public void setCallback(IParserCallback c) {
-		callback = c;
 	}
 
 	private int getChar() throws ScannerException
@@ -1671,7 +1665,7 @@ public class Scanner implements IScanner {
 			IParser parser = ParserFactory.createParser(trial, new NullSourceElementRequestor(), ParserMode.QUICK_PARSE );
  
 			try {
-				IASTExpression exp = parser.expression(null);
+				IASTExpression exp = parser.expression();
 				if( exp.evaluateExpression() == 0 )
 					return false;
 			} catch( Backtrack b )
@@ -1815,11 +1809,6 @@ public class Scanner implements IScanner {
 		
 		if( mode == ParserMode.QUICK_PARSE )
 		{ 
-			if( callback != null )
-			{
-				callback.inclusionEnd(callback.inclusionBegin( f, offset, beginningOffset, !useIncludePath ));  
-			}
-			
 			if( requestor != null )
 			{
 				IASTInclusion i = astFactory.createInclusion( f, "", !useIncludePath, beginningOffset, 
@@ -1985,13 +1974,6 @@ public class Scanner implements IScanner {
 			System.out.println("Unexpected character " + ((char) c));
 			if (throwExceptionOnBadPreprocessorSyntax)
 				throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset());
-		}
-
-		// call the callback accordingly
-		if( callback != null )
-		{
-			// NOTE: return value is ignored!
-			callback.macro( key, offset, beginning, contextStack.getCurrentContext().getOffset() );
 		}
 		
 		if( requestor != null )

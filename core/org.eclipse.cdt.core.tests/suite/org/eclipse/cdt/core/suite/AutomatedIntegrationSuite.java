@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.model.tests.AllCoreTests;
 import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
-import org.eclipse.cdt.core.parser.failedTests.DOMFailedTest;
+import org.eclipse.cdt.core.parser.failedTests.ASTFailedTests;
 import org.eclipse.cdt.core.parser.failedTests.LokiFailures;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
@@ -87,7 +87,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTest(suite.new GenerateReport("startFailedTests"));
 		
 		// Add all failed tests
-		suite.addTestSuite(DOMFailedTest.class);
+		suite.addTestSuite(ASTFailedTests.class);
 		suite.addTestSuite(LokiFailures.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);

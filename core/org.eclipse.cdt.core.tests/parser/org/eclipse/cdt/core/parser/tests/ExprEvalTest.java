@@ -26,7 +26,7 @@ public class ExprEvalTest extends TestCase {
 	public void runTest(String code, int expectedValue) throws Exception {
 		
 		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), null ), new NullSourceElementRequestor(), ParserMode.QUICK_PARSE);
-		IASTExpression expression = parser.expression(null);
+		IASTExpression expression = parser.expression();
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}
 	

@@ -90,7 +90,7 @@ public class ASTInclusion implements IASTInclusion {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IOffsetableElementRW#setNameOffset(int)
 	 */
-	public void setNameOffset(int o) {
+	public void setElementNameOffset(int o) {
 		nameOffset = o;
 	}
 

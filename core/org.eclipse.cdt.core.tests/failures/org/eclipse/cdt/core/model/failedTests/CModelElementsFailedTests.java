@@ -44,7 +44,9 @@ import org.eclipse.core.runtime.Path;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CModelElementsFailedTests extends TestCase {
-	private ICProject fCProject;
+	
+	private static final boolean domCurrentlyBroken = true;
+    private ICProject fCProject;
 	private IFile headerFile;
 	private NullProgressMonitor monitor;
 		
@@ -100,6 +102,14 @@ public class CModelElementsFailedTests extends TestCase {
 		
 		// tu ---> namespace: MyPackage
 		ArrayList tuPackages = tu.getChildrenOfType(ICElement.C_NAMESPACE);
+		// INSERTED BY JOHNC 7/17/2003 to make fail test fail rather than err
+		if( domCurrentlyBroken )
+		{
+			assertFalse( "There are declarations - failure", tuPackages.size() != 0 );
+			return;
+		}
+			
+		
 		INamespace namespace = (INamespace) tuPackages.get(0);
 		assertEquals(namespace.getElementName(), new String("MyPackage"));
 

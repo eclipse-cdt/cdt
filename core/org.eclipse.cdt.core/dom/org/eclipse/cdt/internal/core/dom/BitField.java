@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.core.dom;
  * @author jcamelon
  *
  */
-public class BitField implements IExpressionOwner {
+public class BitField {
 
 
 	public BitField( Declarator owner )
@@ -22,21 +22,7 @@ public class BitField implements IExpressionOwner {
 		ownerDeclarator= owner;
 	}
 	private final Declarator ownerDeclarator; 
-	private Expression expression = null; 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
-	 */
-	public Expression getExpression() {
-		return expression;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
-	 */
-	public void setExpression(Expression exp) {
-		expression = exp;
-	}
-
+	
 	/**
 	 * @return
 	 */

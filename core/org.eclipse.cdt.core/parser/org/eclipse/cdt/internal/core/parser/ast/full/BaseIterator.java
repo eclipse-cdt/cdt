@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.ast.ASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 
 /**

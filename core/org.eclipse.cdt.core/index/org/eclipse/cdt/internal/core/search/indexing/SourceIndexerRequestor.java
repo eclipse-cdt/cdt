@@ -16,11 +16,11 @@ package org.eclipse.cdt.internal.core.search.indexing;
 */
 
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -33,10 +33,12 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -48,7 +50,7 @@ import org.eclipse.cdt.internal.core.index.IDocument;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class SourceIndexerRequestor implements IParserCallback,ISourceElementRequestor, IIndexConstants {
+public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexConstants {
 	
 	SourceIndexer indexer;
 	IDocument document;
@@ -122,7 +124,7 @@ public class SourceIndexerRequestor implements IParserCallback,ISourceElementReq
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedef(org.eclipse.cdt.core.parser.ast.IASTTypedef)
 	 */
-	public void acceptTypedef(IASTTypedef typedef) {
+	public void acceptTypedef(IASTTypedefDeclaration typedef) {
 		// TODO Auto-generated method stub
 		//System.out.println("acceptTypedef");
 	}
@@ -1050,6 +1052,30 @@ public class SourceIndexerRequestor implements IParserCallback,ISourceElementReq
 		// TODO Auto-generated method stub
 		
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptAbstractTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration)
+     */
+    public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTPointerToFunction)
+     */
+    public void acceptPointerToFunction(IASTPointerToFunction function)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTPointerToMethod)
+     */
+    public void acceptPointerToMethod(IASTPointerToMethod method)
+    {
+        // TODO Auto-generated method stub
+        
+    }
 
 //TODO: Get rid of these IParserCallbacks once the parser cleans up
 

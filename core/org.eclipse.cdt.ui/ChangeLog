@@ -1,3 +1,6 @@
+2003-07-17  John Camelon
+	Partially converted DOM to ISourceElementRequestor (requires refactoring of CModelBuilder & StuctureComparator modules in near future).  
+
 2003-07-16 Alain Magloire
 
 	Patch from Alex chapiro.

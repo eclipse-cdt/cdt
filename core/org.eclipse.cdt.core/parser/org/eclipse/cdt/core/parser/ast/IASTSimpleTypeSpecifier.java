@@ -18,23 +18,23 @@ import org.eclipse.cdt.core.parser.Enum;
  */
 public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 {
-	public static class SimpleType extends Enum 
+	public static class Type extends Enum 
 	{
-		public static final SimpleType UNSPECIFIED  = new SimpleType( 1 );
-		public static final SimpleType CHAR         = new SimpleType( 1 );
-		public static final SimpleType WCHAR_T      = new SimpleType( 2 );
-		public static final SimpleType BOOL         = new SimpleType( 3 );
-		public static final SimpleType INT          = new SimpleType( 4 );
-		public static final SimpleType FLOAT        = new SimpleType( 5 );
-		public static final SimpleType DOUBLE       = new SimpleType( 6 );
-		public static final SimpleType VOID         = new SimpleType( 7 );
-		public static final SimpleType TYPENAME     = new SimpleType( 8 );
-		public static final SimpleType TEMPLATE     = new SimpleType( 9 );
+		public static final Type UNSPECIFIED  = new Type( 1 );
+		public static final Type CHAR         = new Type( 1 );
+		public static final Type WCHAR_T      = new Type( 2 );
+		public static final Type BOOL         = new Type( 3 );
+		public static final Type INT          = new Type( 4 );
+		public static final Type FLOAT        = new Type( 5 );
+		public static final Type DOUBLE       = new Type( 6 );
+		public static final Type VOID         = new Type( 7 );
+		public static final Type CLASS_OR_TYPENAME     = new Type( 8 );
+		public static final Type TEMPLATE     = new Type( 9 );
 		
         /**
          * @param enumValue
          */
-        protected SimpleType(int enumValue)
+        protected Type(int enumValue)
         {
             super(enumValue);
         }
@@ -42,7 +42,7 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 	
 	}
 	
-	public SimpleType getType(); 
+	public Type getType(); 
 	public String     getTypename(); 
 	public boolean    isLong(); 
 	public boolean    isShort(); 

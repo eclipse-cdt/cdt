@@ -12,14 +12,14 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTTypedef extends ASTDeclaration implements IASTTypedef
+public class ASTTypedef extends ASTDeclaration implements IASTTypedefDeclaration
 {
     private final String name;
     private final IASTAbstractDeclaration mapping;
@@ -60,7 +60,7 @@ public class ASTTypedef extends ASTDeclaration implements IASTTypedef
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
-    public void setNameOffset(int o)
+    public void setElementNameOffset(int o)
     {
         // TODO Auto-generated method stub
         

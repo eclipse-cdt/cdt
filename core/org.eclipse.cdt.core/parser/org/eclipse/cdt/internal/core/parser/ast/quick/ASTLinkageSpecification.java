@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
  * @author jcamelon
@@ -28,10 +29,11 @@ public class ASTLinkageSpecification
 
 	private final String linkage; 
 	
-	public ASTLinkageSpecification( IASTScope scope, String linkage )
+	public ASTLinkageSpecification( IASTScope scope, String linkage, int startingOffset )
 	{
 		super( scope );
 		this.linkage = linkage;
+		setStartingOffset(startingOffset);
 	}
 
 	/* (non-Javadoc)
@@ -55,5 +57,35 @@ public class ASTLinkageSpecification
 	public void addDeclaration(IASTDeclaration declaration) {
 		declarations.add( declaration );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
+	 */
+	public void setStartingOffset(int o)
+	{
+		offsets.setStartingOffset(o);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+	 */
+	public void setEndingOffset(int o)
+	{
+		offsets.setEndingOffset(o);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
+	 */
+	public int getElementStartingOffset()
+	{
+		return offsets.getElementStartingOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
+	 */
+	public int getElementEndingOffset()
+	{
+		return offsets.getElementEndingOffset();
+	}
+	private Offsets offsets = new Offsets();
 
 }

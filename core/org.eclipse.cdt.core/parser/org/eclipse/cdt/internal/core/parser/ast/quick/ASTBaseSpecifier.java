@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 
@@ -22,11 +23,11 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 
 	private final ASTAccessVisibility visibility; 
 	private final boolean isVirtual; 
-	private final IASTClassSpecifier parentClass;
+	private final String parentClassName;
 	
-	public ASTBaseSpecifier( IASTClassSpecifier classSpec, boolean v, ASTAccessVisibility a )
+	public ASTBaseSpecifier( String className, boolean v, ASTAccessVisibility a )
 	{
-		parentClass = classSpec; 
+		parentClassName = className; 
 		isVirtual = v; 
 		visibility = a;
 	}
@@ -47,8 +48,15 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParent()
 	 */
-	public IASTClassSpecifier getParent() {
-		return parentClass;
+	public String getParentClassName() {
+		return parentClassName;
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParentClassSpecifier()
+     */
+    public IASTClassSpecifier getParentClassSpecifier() throws ASTNotImplementedException
+    {
+        throw new ASTNotImplementedException();
+    }
 
 }

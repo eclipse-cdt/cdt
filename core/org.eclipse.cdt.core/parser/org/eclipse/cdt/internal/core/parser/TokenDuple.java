@@ -92,5 +92,20 @@ public class TokenDuple implements ITokenDuple {
 	{
 		return ( firstToken == lastToken );
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ITokenDuple#length()
+     */
+    public int length()
+    {
+        int count = 0; 
+        Iterator i = iterator();
+        while( i.hasNext() )
+        {
+        	++count;
+        	i.next();
+        }
+        return count;
+    }
 	
 }

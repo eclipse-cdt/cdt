@@ -55,7 +55,6 @@ import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IProject;
 
@@ -341,12 +340,12 @@ public class CModelBuilder {
 		}
 		// set enumeration position
 		if(enumSpecifier.getName() != null ){
-			element.setIdPos(enumSpecifier.getName().getStartOffset(), enumSpecifier.getName().length());
+			element.setIdPos(enumSpecifier.getStartingOffset(), enumSpecifier.getName().length());
 		}else {
-			element.setIdPos(enumSpecifier.getStartToken().getOffset(), enumSpecifier.getStartToken().getLength());				
+			element.setIdPos(enumSpecifier.getStartingOffset(), enumSpecifier.getStartImage().length());				
 		}
 		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getTotalLength());
-		element.setTypeName(enumSpecifier.getStartToken().getImage());
+		element.setTypeName(enumSpecifier.getStartImage());
 		// set the element lines
 		element.setLines(enumSpecifier.getTopLine(), enumSpecifier.getBottomLine());
 		 
@@ -359,7 +358,7 @@ public class CModelBuilder {
 		// add to parent
 		enum.addChild(element);
 		// set enumerator position
-		element.setIdPos(enumDef.getName().getStartOffset(), enumDef.getName().length());
+		element.setIdPos(enumDef.getStartingOffset(), enumDef.getName().length());
 		element.setPos(enumDef.getStartingOffset(), enumDef.getTotalLength());
 		// set the element lines
 		element.setLines(enumDef.getTopLine(), enumDef.getBottomLine());
@@ -411,12 +410,12 @@ public class CModelBuilder {
 		if( classSpecifier.getName()  != null )
 		{
 			type = simpleDeclaration.getDeclSpecifier().getTypeName();
-			element.setIdPos( classSpecifier.getName().getStartOffset(), classSpecifier.getName().length() );
+			element.setIdPos( classSpecifier.getNameOffset(), classSpecifier.getName().length() );
 		}
 		else
 		{
-			type = classSpecifier.getClassKeyToken().getImage();
-			element.setIdPos(classSpecifier.getClassKeyToken().getOffset(), classSpecifier.getClassKeyToken().getLength());
+			type = classSpecifier.getClassKeyImage();
+			element.setIdPos(classSpecifier.getStartingOffset(), classSpecifier.getClassKeyImage().length());
 			
 		}
 		element.setTypeName( type );
@@ -433,7 +432,7 @@ public class CModelBuilder {
 	
 	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
 		// create the element
-		Name domName = getDOMName(declarator);
+		String domName = getDOMName(declarator);
         if (domName == null) {
             // Something is wrong, skip this element
             return null;             
@@ -450,7 +449,7 @@ public class CModelBuilder {
 		parent.addChild((CElement)element);
 
 		// set positions
-		element.setIdPos(domName.getStartOffset(), domName.length());	
+		element.setIdPos(declarator.getNameOffset(), domName.length());	
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
 		// set the element lines
 		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
@@ -461,7 +460,7 @@ public class CModelBuilder {
 
 	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate)
     {
-		Name domName = getDOMName(declarator); 
+		String domName = getDOMName(declarator); 
 		if (domName == null) {
 			// TODO : improve errorhandling
 			// When parsing syntactically incorrect code, we might
@@ -516,7 +515,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// set position
-		element.setIdPos( domName.getStartOffset(), domName.length() );
+		element.setIdPos( declarator.getNameOffset(), domName.length() );
 		if(!isTemplate){
 			// set element position
 			element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
@@ -530,7 +529,7 @@ public class CModelBuilder {
 
 	protected FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate)
     {
-		Name domName = getDOMName(declarator);
+		String domName = getDOMName(declarator);
         if (domName == null) {
             // Something is wrong, skip this element
             return null;             
@@ -614,7 +613,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( domName.getStartOffset(), domName.length() );
+		element.setIdPos( declarator.getNameOffset(), domName.length() );
 		if(!isTemplate){
 			// set the element position		
 			element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
@@ -986,7 +985,7 @@ public class CModelBuilder {
                     while (d.hasNext()) {
                         Declarator decl = (Declarator) d.next();
                         
-                        Name oldKRparamName = getDOMName(decl);                        
+						String oldKRparamName = getDOMName(decl);                        
                         String oldKRparamType = getType(declKR, decl);
     
                         if (   (oldKRparamType != null)
@@ -1028,10 +1027,10 @@ public class CModelBuilder {
 		return getParametersString(getParameterTypes(declarator));
 	}
     
-    private Name getDOMName(Declarator declarator) 
+    private String getDOMName(Declarator declarator) 
     {
         Declarator currentDeclarator = declarator;
-        Name name = null;
+        String name = null;
         
         if (currentDeclarator != null) {
             while (currentDeclarator.getDeclarator() != null) {

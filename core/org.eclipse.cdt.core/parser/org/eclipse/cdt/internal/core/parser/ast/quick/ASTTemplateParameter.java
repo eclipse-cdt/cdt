@@ -24,7 +24,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter
 {
     private final List templateParms;
     private final IASTParameterDeclaration parameter;
-    private final ParameterKind kind;
+    private final ParamKind kind;
     private final String identifier;
     private final String defaultValue;
     /**
@@ -33,7 +33,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter
      * @param defaultValue
      * @param parameter
      */
-    public ASTTemplateParameter(ParameterKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List templateParms)
+    public ASTTemplateParameter(ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List templateParms)
     {
         this.kind = kind; 
         this.identifier = identifier; 
@@ -44,7 +44,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getTemplateParameterKind()
      */
-    public ParameterKind getTemplateParameterKind()
+    public ParamKind getTemplateParameterKind()
     {
         return kind;
     }
@@ -67,7 +67,13 @@ public class ASTTemplateParameter implements IASTTemplateParameter
      */
     public Iterator getTemplateParameters()
     {
-        // TODO Auto-generated method stub
         return templateParms.iterator();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getParameterDeclaration()
+     */
+    public IASTParameterDeclaration getParameterDeclaration()
+    {
+        return parameter;
     }
 }

@@ -12,37 +12,21 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.Name;
 
 
 /**
  * @author jcamelon
  *
  */
-public class EnumeratorDefinition implements IExpressionOwner, IOffsetable {
+public class EnumeratorDefinition implements IOffsetable {
 
-	private Expression initialValue = null;
-	private Name name = null; 
+	private String  name = null; 
 	private int startingOffset = 0, totalLength = 0;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
-	 */
-	public Expression getExpression() {
-		return initialValue;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
-	 */
-	public void setExpression(Expression exp) {
-		initialValue = exp;
-	}
-
 	/**
 	 * @return Name
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -50,7 +34,7 @@ public class EnumeratorDefinition implements IExpressionOwner, IOffsetable {
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String  name) {
 		this.name = name;
 	}
 

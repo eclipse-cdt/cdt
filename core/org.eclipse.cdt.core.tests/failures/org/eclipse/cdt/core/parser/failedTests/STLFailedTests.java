@@ -12,12 +12,12 @@ package org.eclipse.cdt.core.parser.failedTests;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.eclipse.cdt.core.parser.tests.BaseDOMTest;
+import org.eclipse.cdt.core.parser.tests.BaseASTTest;
 
 /**
  * @author hamer
  */
-public class STLFailedTests extends BaseDOMTest  {
+public class STLFailedTests extends BaseASTTest  {
 
 	public STLFailedTests(String name) {
 		super(name);
@@ -29,7 +29,7 @@ public class STLFailedTests extends BaseDOMTest  {
 		code.write("template <class _CharT> class char_traits\n");
 		code.write(": public __char_traits_base<_CharT, _CharT>\n");
 		code.write("{};\n");
-		failTest(code.toString());
+		assertCodeFailsParse(code.toString());
 	}
 	
 }

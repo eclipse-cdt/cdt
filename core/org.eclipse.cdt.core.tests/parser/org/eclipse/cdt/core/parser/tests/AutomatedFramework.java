@@ -24,7 +24,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.parser.IParserCallback;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 
 /**
@@ -157,7 +157,7 @@ public abstract class AutomatedFramework extends TestCase {
 		return suite;
 	}
 
-	protected static IParserCallback nullCallback = new NullSourceElementRequestor();
+	protected static ISourceElementRequestor nullCallback = new NullSourceElementRequestor();
 	protected static Properties properties = new Properties();
 	protected static String defaultNature;
 	protected static String outputFile = null;

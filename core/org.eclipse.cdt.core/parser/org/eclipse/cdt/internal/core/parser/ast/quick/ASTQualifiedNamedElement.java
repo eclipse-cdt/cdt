@@ -13,26 +13,25 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTQualifiedNamedDeclaration extends ASTDeclaration
+public class ASTQualifiedNamedElement 
 {
 
     /**
      * @param scope
      */
-    public ASTQualifiedNamedDeclaration(IASTScope scope, String name )
+    public ASTQualifiedNamedElement(IASTScope scope, String name )
     {
-        super(scope);
-		Stack names = new Stack();
-		IASTScope parent = getOwnerScope();
+        Stack names = new Stack();
+		IASTScope parent = scope;
         
 		names.push( name ); // push on our own name
 		while (parent != null)
@@ -41,7 +40,8 @@ public class ASTQualifiedNamedDeclaration extends ASTDeclaration
 				|| parent instanceof IASTClassSpecifier )
 			{
 				names.push(((IASTOffsetableNamedElement)parent).getName());
-				parent = ((IASTDeclaration)parent).getOwnerScope();
+				if( parent instanceof IASTScopedElement  )
+					parent = ((IASTScopedElement)parent).getOwnerScope();				
 			}
 			else
 				break;

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser;
  * @author jcamelon
  *
  */
-public class ParserMode {
+public class ParserMode extends Enum {
 	
 	// follow inclusions, parse function/method bodies
 	public static final ParserMode COMPLETE_PARSE = new ParserMode( 1 );
@@ -25,10 +25,9 @@ public class ParserMode {
 	// do not follow inclusions, do not parse function/method bodies
 	public static final ParserMode QUICK_PARSE = new ParserMode( 3 );
 	
-	private ParserMode( int value )
+	protected ParserMode( int value )
 	{
-		this.value = value;
+		super( value );
 	}
-	
-	private final int value; 
+	 
 }

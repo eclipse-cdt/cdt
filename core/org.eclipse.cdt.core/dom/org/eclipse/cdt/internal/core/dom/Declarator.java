@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.Name;
 
 
 
-public class Declarator implements IExpressionOwner, IDeclaratorOwner {
+public class Declarator implements IDeclaratorOwner {
 	
 	public Declarator(DeclSpecifier.IContainer declaration) {
 		this.declaration = declaration;
@@ -23,6 +22,7 @@ public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 	
 	private final DeclSpecifier.IContainer declaration;
 	private final IDeclaratorOwner ownerDeclarator;
+	private int nameOffset;
 	
 	/**
 	 * Returns the declaration.
@@ -40,13 +40,13 @@ public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 		
 	}
 
-	private Name name;
+	private String name;
 	
 	/**
 	 * Returns the name.
 	 * @return Name
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -54,7 +54,7 @@ public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 	
@@ -71,22 +71,6 @@ public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 	 */
 	public ParameterDeclarationClause getParms() {
 		return parms;
-	}
-
-	private Expression initialExpression = null; 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
-	 */
-	public Expression getExpression() {
-		return initialExpression;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
-	 */
-	public void setExpression(Expression exp) {
-		initialExpression = exp;
 	}
 	
 	List pointerOperators = new ArrayList();
@@ -225,5 +209,21 @@ public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 	public void setBitField(BitField field) {
 		bitField = field;
 	}
+
+    /**
+     * @return
+     */
+    public int getNameOffset()
+    {
+        return nameOffset;
+    }
+
+    /**
+     * @param i
+     */
+    public void setNameOffset(int i)
+    {
+        nameOffset = i;
+    }
 
 }

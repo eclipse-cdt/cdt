@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.full;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
@@ -22,11 +23,12 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTLinkageSpecification implements IASTFLinkageSpecification {
 
-	public ASTLinkageSpecification( IContainerSymbol symbol, String linkage )
+	public ASTLinkageSpecification( IContainerSymbol symbol, String linkage, int startingOffset )
 	{
 		this.symbol = symbol;
 		symbol.setASTNode( this );
 		this.linkage = linkage;  
+		setStartingOffset(startingOffset);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
@@ -64,5 +66,35 @@ public class ASTLinkageSpecification implements IASTFLinkageSpecification {
 	public IASTScope getOwnerScope() {
 		return (IPSTContainerExtension)symbol.getContainingSymbol().getASTNode();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
+	 */
+	public void setStartingOffset(int o)
+	{
+		offsets.setStartingOffset(o);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+	 */
+	public void setEndingOffset(int o)
+	{
+		offsets.setEndingOffset(o);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
+	 */
+	public int getElementStartingOffset()
+	{
+		return offsets.getElementStartingOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
+	 */
+	public int getElementEndingOffset()
+	{
+		return offsets.getElementEndingOffset();
+	}
+	private Offsets offsets = new Offsets();
 
 }

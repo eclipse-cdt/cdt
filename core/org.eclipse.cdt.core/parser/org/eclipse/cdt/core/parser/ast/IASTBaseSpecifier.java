@@ -19,6 +19,7 @@ public interface IASTBaseSpecifier {
 
 	public ASTAccessVisibility getAccess(); 
 	public boolean isVirtual(); 
-	public IASTClassSpecifier getParent(); 
+	public String getParentClassName(); 
+	public IASTClassSpecifier getParentClassSpecifier() throws ASTNotImplementedException;
 
 }

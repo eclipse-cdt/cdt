@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
  * @author jcamelon
  *
  */
-public class ASTAbstractDeclaration implements IASTAbstractDeclaration
+public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
 {
 	private final boolean isConst; 
 	private final IASTTypeSpecifier typeSpecifier; 

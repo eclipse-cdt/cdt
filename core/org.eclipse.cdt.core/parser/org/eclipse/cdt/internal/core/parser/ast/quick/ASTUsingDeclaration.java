@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 
 /**
  * @author jcamelon
@@ -24,11 +25,13 @@ public class ASTUsingDeclaration
 	private final boolean isTypename; 
 	private final String  mappingName; 
 	
-	public ASTUsingDeclaration( IASTScope scope, boolean isTypeName, String mappingName )
+	public ASTUsingDeclaration( IASTScope scope, boolean isTypeName, String mappingName, int startingOffset, int endingOffset )
 	{
 		super( scope );
 		isTypename = isTypeName;
 		this.mappingName = mappingName;
+		setStartingOffset(startingOffset);
+		setEndingOffset(endingOffset);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#isTypename()
@@ -44,4 +47,33 @@ public class ASTUsingDeclaration
 		return mappingName;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
+	 */
+	public void setStartingOffset(int o)
+	{
+		offsets.setStartingOffset(o);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+	 */
+	public void setEndingOffset(int o)
+	{
+		offsets.setEndingOffset(o);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
+	 */
+	public int getElementStartingOffset()
+	{
+		return offsets.getElementStartingOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
+	 */
+	public int getElementEndingOffset()
+	{
+		return offsets.getElementEndingOffset();
+	}
+	private Offsets offsets = new Offsets();
 }

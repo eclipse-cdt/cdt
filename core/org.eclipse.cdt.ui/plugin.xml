@@ -501,7 +501,7 @@
       </scope>
       <category
             name="%category.source.name"
-            descrption="%category.source.description"
+            description="%category.source.description"
             id="org.eclipse.cdt.ui.category.source">
       </category>
       <command

@@ -19,5 +19,5 @@ public interface IASTOffsetableNamedElement extends IASTOffsetableElement {
 
 	public String getName(); 
 	public int getElementNameOffset(); 
-	public void setNameOffset( int o );
+	public void setElementNameOffset( int o );
 }

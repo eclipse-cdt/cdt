@@ -14,6 +14,6 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public class ASTNotImplementedException
+public class ASTNotImplementedException extends Exception
 {
 }

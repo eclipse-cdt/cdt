@@ -18,24 +18,25 @@ import org.eclipse.cdt.core.parser.Enum;
  */
 public interface IASTTemplateParameter  extends IASTTemplateParameterList {
 
-	public class ParameterKind extends Enum
+	public class ParamKind extends Enum
 	{
-		public static final ParameterKind CLASS = new ParameterKind( 1 );
-		public static final ParameterKind TYPENAME = new ParameterKind( 2 );
-		public static final ParameterKind TEMPLATE_LIST = new ParameterKind( 3 );
-		public static final ParameterKind PARAMETER = new ParameterKind( 4 );
+		public static final ParamKind CLASS = new ParamKind( 1 );
+		public static final ParamKind TYPENAME = new ParamKind( 2 );
+		public static final ParamKind TEMPLATE_LIST = new ParamKind( 3 );
+		public static final ParamKind PARAMETER = new ParamKind( 4 );
 
         /**
          * @param enumValue
          */
-        protected ParameterKind(int enumValue)
+        protected ParamKind(int enumValue)
         {
             super(enumValue);
         }
 	
 	}
 	
-	public ParameterKind getTemplateParameterKind(); 
+	public ParamKind getTemplateParameterKind(); 
 	public String        getIdentifier(); 
 	public String		 getDefaultValueIdExpression();
+	public IASTParameterDeclaration getParameterDeclaration();
 }

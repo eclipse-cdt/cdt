@@ -10,6 +10,7 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.ICon
 	private AccessSpecifier accessSpecifier = null;
 	private DeclSpecifier declSpec = null;
 	private boolean isFunctionDefinition = false;
+	private int nameOffset; 
 	 
 	 
 	public SimpleDeclaration(IScope owner )
@@ -84,4 +85,20 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.ICon
 	public void setFunctionDefinition(boolean b) {
 		isFunctionDefinition = b;
 	}
+    /**
+     * @return
+     */
+    public int getNameOffset()
+    {
+        return nameOffset;
+    }
+
+    /**
+     * @param i
+     */
+    public void setNameOffset(int i)
+    {
+        nameOffset = i;
+    }
+
 }

@@ -12,16 +12,15 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.Name;
 
 
 /**
  * @author jcamelon
  *
  */
-public class ConstructorChainElement implements IExpressionOwner {
+public class ConstructorChainElement  {
 
-	private Name name;
+	private String name;
 	private final ConstructorChain ownerChain; 
 	
 	ConstructorChainElement( ConstructorChain chain )
@@ -32,7 +31,7 @@ public class ConstructorChainElement implements IExpressionOwner {
 	/**
 	 * @return Name
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -40,7 +39,7 @@ public class ConstructorChainElement implements IExpressionOwner {
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -52,22 +51,5 @@ public class ConstructorChainElement implements IExpressionOwner {
 		return ownerChain;
 	}
 
-
-	private Expression exp = null; 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
-     */
-    public Expression getExpression()
-    {
-        return exp;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
-     */
-    public void setExpression(Expression exp)
-    {
-        this.exp = exp;
-    }
 
 }

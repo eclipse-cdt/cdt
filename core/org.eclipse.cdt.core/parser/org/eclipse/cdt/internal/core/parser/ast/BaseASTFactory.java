@@ -27,7 +27,7 @@ public class BaseASTFactory  {
 		IASTMacro m = new ASTMacro( name );
 		m.setStartingOffset( startingOffset );
 		m.setEndingOffset( endingOffset );
-		m.setNameOffset( nameOffset );
+		m.setElementNameOffset( nameOffset );
 		return m;
 	}
 
@@ -38,7 +38,7 @@ public class BaseASTFactory  {
 		IASTInclusion inclusion = new ASTInclusion( name, fileName, local );
 		inclusion.setStartingOffset( startingOffset );
 		inclusion.setEndingOffset( endingOffset );
-		inclusion.setNameOffset( nameOffset );
+		inclusion.setElementNameOffset( nameOffset );
 		return inclusion;
 	}
 

@@ -40,7 +40,7 @@ public interface IParser {
 	 * @throws Backtrack	thrown if the Scanner/Stream provided does not yield a valid
 	 * 						expression	
 	 */
-	public IASTExpression expression(Object expression) throws Backtrack;
+	public IASTExpression expression() throws Backtrack;
 	
 	/**
 	 * Is the parser configured for ANSI C or ANSI C++?

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -43,11 +44,13 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -95,8 +98,11 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
-	public void acceptTypedef(IASTTypedef typedef) 								{	}
+	public void acceptTypedef(IASTTypedefDeclaration typedef) 								{	}
 	public void acceptEnumerator(IASTEnumerator enumerator) 					{	}
+	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
+	public void acceptPointerToFunction(IASTPointerToFunction function) {}
+	public void acceptPointerToMethod(IASTPointerToMethod method)   { }
 	
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){
 		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
@@ -356,4 +362,5 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	
 	private IASTScope				currentScope = null;
 	private LinkedList				scopeStack = new LinkedList();
+
 }

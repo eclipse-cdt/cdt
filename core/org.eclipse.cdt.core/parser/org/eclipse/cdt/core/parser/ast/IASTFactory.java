@@ -36,12 +36,12 @@ public interface IASTFactory
         int nameOffset);
     public IASTUsingDirective createUsingDirective(
         IASTScope scope,
-        ITokenDuple duple)
+        ITokenDuple duple, int startingOffset, int endingOffset)
         throws Backtrack;
     public IASTUsingDeclaration createUsingDeclaration(
         IASTScope scope,
         boolean isTypeName,
-        ITokenDuple name);
+        ITokenDuple name, int startingOffset, int endingOffset);
     public IASTASMDefinition createASMDefinition(
         IASTScope scope,
         String assembly,
@@ -55,7 +55,7 @@ public interface IASTFactory
     public IASTCompilationUnit createCompilationUnit();
     public IASTLinkageSpecification createLinkageSpecification(
         IASTScope scope,
-        String spec);
+        String spec, int startingOffset);
     public IASTClassSpecifier createClassSpecifier(
         IASTScope scope,
         String name,
@@ -118,7 +118,7 @@ public interface IASTFactory
         ITokenDuple duple,
         IASTExpression expressionList);
     public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(
-        IASTSimpleTypeSpecifier.SimpleType kind,
+        IASTSimpleTypeSpecifier.Type kind,
         ITokenDuple typeName,
         boolean isShort,
         boolean isLong,
@@ -172,12 +172,47 @@ public interface IASTFactory
 	
 	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ); 
 
-	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParameterKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ); 
+	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ); 
 
 	public IASTTemplateInstantiation createTemplateInstantiation(IASTScope scope, int startingOffset); 
 	
 	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset); 
 	
-	public IASTTypedef createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset );
+	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset );
 
+	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset);
+
+	public IASTPointerToFunction createPointerToFunction(
+		IASTScope scope,
+		String name,
+		List parameters,
+		IASTAbstractDeclaration returnType,
+		IASTExceptionSpecification exception,
+		boolean isInline,
+		boolean isFriend,
+		boolean isStatic,
+		int startOffset,
+		int nameOffset,
+		IASTTemplate ownerTemplate, ASTPointerOperator pointerOperator);
+
+	public IASTPointerToMethod createPointerToMethod(
+		IASTScope scope,
+		String name,
+		List parameters,
+		IASTAbstractDeclaration returnType,
+		IASTExceptionSpecification exception,
+		boolean isInline,
+		boolean isFriend,
+		boolean isStatic,
+		int startOffset,
+		int nameOffset,
+		IASTTemplate ownerTemplate,
+		boolean isConst,
+		boolean isVolatile,
+		boolean isConstructor,
+		boolean isDestructor,
+		boolean isVirtual,
+		boolean isExplicit,
+		boolean isPureVirtual,
+		ASTAccessVisibility visibility, ASTPointerOperator pointerOperator);
 }

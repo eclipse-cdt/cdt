@@ -12,7 +12,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.Name;
 
 
 /**
@@ -34,8 +33,8 @@ public class TemplateParameter extends Declaration implements ITemplateParameter
 		this.kind = kind; 
 	}
 	
-	private Name name = null; 
-	private Name typeId = null;  
+	private String name = null; 
+	private String typeId = null;  
 
 
 	/**
@@ -48,14 +47,14 @@ public class TemplateParameter extends Declaration implements ITemplateParameter
 	/**
 	 * @return Name
 	 */
-	public Name getName() {
+	public String getName() {
 		return name;
 	}
 
 	/**
 	 * @return Name
 	 */
-	public Name getTypeId() {
+	public String getTypeId() {
 		return typeId;
 	}
 
@@ -63,7 +62,7 @@ public class TemplateParameter extends Declaration implements ITemplateParameter
 	 * Sets the name.
 	 * @param name The name to set
 	 */
-	public void setName(Name name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -71,7 +70,7 @@ public class TemplateParameter extends Declaration implements ITemplateParameter
 	 * Sets the typeId.
 	 * @param typeId The typeId to set
 	 */
-	public void setTypeId(Name typeId) {
+	public void setTypeId(String typeId) {
 		this.typeId = typeId;
 	}
 

@@ -15,26 +15,16 @@ package org.eclipse.cdt.internal.core.parser;
  */
 public class DeclaratorDuple {
 
-	public DeclaratorDuple( Object o, Declarator d )
+	public DeclaratorDuple( Declarator d )
 	{
-		object = o; 
 		declarator = d;
 	}
 	
-	private final Declarator declarator; 
-	private final Object object; 
+	private final Declarator declarator;  
 	/**
 	 * @return
 	 */
 	public Declarator getDeclarator() {
 		return declarator;
 	}
-
-	/**
-	 * @return
-	 */
-	public Object getObject() {
-		return object;
-	}
-
 }

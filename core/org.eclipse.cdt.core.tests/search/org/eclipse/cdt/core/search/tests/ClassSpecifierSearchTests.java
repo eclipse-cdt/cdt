@@ -5,18 +5,15 @@ package org.eclipse.cdt.core.search.tests;
 
 import java.io.FileInputStream;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
-import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
-import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.search.PathCollector;
-import org.eclipse.cdt.internal.core.search.PatternSearchJob;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -30,10 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * @author bgheorgh

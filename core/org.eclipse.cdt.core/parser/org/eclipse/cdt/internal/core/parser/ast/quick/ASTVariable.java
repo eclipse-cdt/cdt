@@ -119,56 +119,50 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
      */
     public IASTExpression getBitfieldExpression()
     {
-        // TODO Auto-generated method stub
         return bitfieldExpression;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
-     */
-    public void setStartingOffset(int o)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
-     */
-    public void setEndingOffset(int o)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
-     */
-    public int getElementStartingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
-     */
-    public int getElementEndingOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
-     */
-    public int getElementNameOffset()
-    {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
-     */
-    public void setNameOffset(int o)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+	/* (non-Javadoc)
+	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
+	*/
+   public void setStartingOffset(int o)
+   {
+	   offsets.setStartingOffset(o);
+   }
+   /* (non-Javadoc)
+	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setEndingOffset(int)
+	*/
+   public void setEndingOffset(int o)
+   {
+	   offsets.setEndingOffset(o);
+   }
+   /* (non-Javadoc)
+	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
+	*/
+   public int getElementStartingOffset()
+   {
+	   return offsets.getElementStartingOffset();
+   }
+   /* (non-Javadoc)
+	* @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
+	*/
+   public int getElementEndingOffset()
+   {
+	   return offsets.getElementEndingOffset();
+   }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getElementNameOffset()
+	 */
+	public int getElementNameOffset()
+	{
+	    return offsets.getElementNameOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+	 */
+	public void setElementNameOffset(int o)
+	{
+	    offsets.setNameOffset(o);
+	}
+   
  
 }

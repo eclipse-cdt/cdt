@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
@@ -26,7 +27,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
  */
 public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtension {
 
-	private final IDerivableContainerSymbol symbol;
+    private final IDerivableContainerSymbol symbol;
 	private final ASTClassKind classKind;
 	private final ClassNameType type;
 	private final String name;   
@@ -86,7 +87,7 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
 	 */
-	public void setNameOffset(int o) {
+	public void setElementNameOffset(int o) {
 		nameOffset = o;
 	}
 
@@ -151,5 +152,23 @@ public class ASTClassSpecifier implements IASTFClassSpecifier, IPSTSymbolExtensi
         // TODO Auto-generated method stub
         return null;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#setCurrentVisibility(org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
+     */
+    public void setCurrentVisibility(ASTAccessVisibility visibility)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
+     */
+    public IASTScope getOwnerScope()
+    {
+        return null;
+    }
+
 
 }

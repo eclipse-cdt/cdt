@@ -18,8 +18,10 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
@@ -35,6 +37,8 @@ import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
+import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
@@ -43,15 +47,14 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
-import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParameterKind;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -69,7 +72,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	
 	public IASTUsingDirective createUsingDirective(
 		IASTScope scope,
-		ITokenDuple duple)
+		ITokenDuple duple, int startingOffset, int endingOffset)
 		throws Backtrack {
 		Iterator iter = duple.iterator();
 		IToken t1 = (IToken)iter.next();
@@ -109,7 +112,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 			handlePSTException( pste );
 		}
 		
-		IASTUsingDirective astUD = new ASTUsingDirective( duple.toString() );
+		IASTUsingDirective astUD = new ASTUsingDirective( duple.toString(), startingOffset, endingOffset );
 		return astUD;
 	}
 	
@@ -145,7 +148,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		IASTFNamespaceDefinition namespaceDefinition = new ASTNamespaceDefinition( namespaceSymbol, identifier );
 		namespaceDefinition.setStartingOffset( first ); 
 		if( identifier != "" )
-			namespaceDefinition.setNameOffset( nameOffset );
+			namespaceDefinition.setElementNameOffset( nameOffset );
 		return namespaceDefinition;
 	}
 
@@ -154,9 +157,9 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 		return compilationUnit;
 	}
 	
-	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec) {
+	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec, int startingOffset) {
 		IContainerSymbol symbol = pst.newContainerSymbol("", ParserSymbolTable.TypeInfo.t_linkage );
-		IASTFLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec);
+		IASTFLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec, startingOffset);
 		return linkage;
 	}
 	
@@ -170,7 +173,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
-	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, ITokenDuple name) {
+	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, ITokenDuple name, int startingOffset, int endingOffset) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -273,7 +276,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createSimpleTypeSpecifier(org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.SimpleType, org.eclipse.cdt.core.parser.ITokenDuple, boolean, boolean, boolean, boolean)
      */
-    public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(SimpleType kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename)
+    public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename)
     {
         // TODO Auto-generated method stub
         return null;
@@ -345,7 +348,7 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTemplateParameter(org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParameterKind, org.eclipse.cdt.core.parser.IToken, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration)
      */
-    public IASTTemplateParameter createTemplateParameter(ParameterKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms)
+    public IASTTemplateParameter createTemplateParameter(IASTTemplateParameter.ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms)
     {
         // TODO Auto-generated method stub
         return null;
@@ -372,7 +375,34 @@ public class FullParseASTFactory extends BaseASTFactory implements IASTFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypedef(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration)
      */
-    public IASTTypedef createTypedef(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset)
+    public IASTTypedefDeclaration createTypedef(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypeSpecDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier, java.util.List, java.util.List)
+     */
+    public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration(IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToFunction(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate)
+     */
+    public IASTPointerToFunction createPointerToFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate, ASTPointerOperator pointerOperator)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createPointerToMethod(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, java.util.List, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.IASTTemplate, boolean, boolean, boolean, boolean, boolean, boolean, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
+     */
+    public IASTPointerToMethod createPointerToMethod(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int nameOffset, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isConstructor, boolean isDestructor, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, ASTAccessVisibility visibility, ASTPointerOperator pointerOperator)
     {
         // TODO Auto-generated method stub
         return null;

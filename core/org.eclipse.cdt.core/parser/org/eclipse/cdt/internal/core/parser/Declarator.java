@@ -29,7 +29,9 @@ import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
  */
 public class Declarator implements IParameterCollection, IDeclaratorOwner
 {
-	private boolean isFunction;
+	private ITokenDuple pointerOperatorNameDuple;
+    private ITokenDuple namedDuple;
+    private boolean isFunction;
     private boolean hasFunctionBody;
     private IASTExpression constructorExpression;
     private boolean pureVirtual = false;
@@ -172,6 +174,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
 		setName( duple.toString() );
 		setNameStartOffset( duple.getFirstToken().getOffset());
 		setNameEndOffset( duple.getLastToken().getEndOffset());
+		namedDuple = duple;
     }
 
     /**
@@ -365,4 +368,28 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
     }
 
 	
+    /**
+     * @return
+     */
+    public ITokenDuple getNamedDuple()
+    {
+        return namedDuple;
+    }
+
+    /**
+     * @param nameDuple
+     */
+    public void setPointerOperatorName(ITokenDuple nameDuple)
+    {
+        pointerOperatorNameDuple = nameDuple; 
+    }
+
+    /**
+     * @return
+     */
+    public ITokenDuple getPointerOperatorNameDuple()
+    {
+        return pointerOperatorNameDuple;
+    }
+
 }

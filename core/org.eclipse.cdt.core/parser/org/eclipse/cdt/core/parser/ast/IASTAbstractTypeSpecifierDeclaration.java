@@ -6,13 +6,15 @@
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors: 
- * Rational Software - Initial API and implementation
- ***********************************************************************/
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
+package org.eclipse.cdt.core.parser.ast;
 
-package org.eclipse.cdt.internal.core.dom;
-
-public interface IExpressionOwner {
-
-	public Expression getExpression(); 
-	public void setExpression( Expression exp );
+/**
+ * @author jcamelon
+ *
+ */
+public interface IASTAbstractTypeSpecifierDeclaration
+    extends IASTDeclaration, IASTTypeSpecifierOwner, IASTTemplatedDeclaration, IASTOffsetableElement
+{
 }

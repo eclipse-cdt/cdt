@@ -28,4 +28,5 @@ public interface ITokenDuple {
 	public abstract Iterator iterator();
 	public abstract String toString();
 	public abstract boolean isIdentifier();
+	public abstract int length(); 
 }

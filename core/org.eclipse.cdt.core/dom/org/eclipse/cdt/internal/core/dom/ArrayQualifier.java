@@ -16,23 +16,7 @@ package org.eclipse.cdt.internal.core.dom;
  * @author jcamelon
  *
  */
-public class ArrayQualifier implements IExpressionOwner {
-
-	private Expression constantExpression; 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
-	 */
-	public Expression getExpression() {
-		return constantExpression;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
-	 */
-	public void setExpression(Expression exp) {
-		constantExpression = exp;
-	}	
+public class ArrayQualifier  {
 	
 	public ArrayQualifier( Declarator owner )
 	{

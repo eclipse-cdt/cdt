@@ -32,8 +32,10 @@ import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -45,12 +47,12 @@ public class StandardBuildTests extends TestCase {
 	private static final String OVR_BUILD_ARGS = "-f";
 	private static final String OVR_BUILD_COMMAND = "/home/tester/bin/nmake";
 	private static final String OVR_BUILD_LOCATION = "src";
-	private static final String[] OVR_INC_PATHS = {"/test", "C:\\windows", "//dev/home/include"};
+	private static final String[] OVR_INC_PATHS = {new Path("/test").toOSString(), new Path("C:\\windows").toOSString(), new Path("//dev/home/include").toOSString()};
 	private static final String[] OVR_PREPROC_SYMS = {"_RELEASE", "NO ", " YES=1"};
 	private static final String PROJECT_NAME = "StandardBuildTest";
 
 	private class ScannerListener implements IScannerInfoChangeListener {
-		private final String[] expectedPaths = {"/usr/include", "/home/tester/include", "/opt/gnome/include"};
+		private final String[] expectedPaths = {new Path("/usr/include").toOSString(), new Path("/home/tester/include").toOSString(), new Path("/opt/gnome/include").toOSString()};
 		private final String[] expectedSymbols = {"_DEBUG", "TRUE=1", "FALSE ", ""};
 		private boolean bNotified = false;
 		
@@ -144,16 +146,21 @@ public class StandardBuildTests extends TestCase {
 	private void checkOverriddenProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
 
-		MakeScannerInfo scannerInfo = MakeScannerProvider.getDefault().getMakeScannerInfo(project, true);
+		IScannerInfo scannerInfo = CCorePlugin.getDefault().getScannerInfoProvider(project).getScannerInformation(project);
 		assertNotNull(scannerInfo);
 		String[] includePaths = scannerInfo.getIncludePaths();
 		assertNotNull(includePaths);
 		assertEquals(3, includePaths.length);
 		assertTrue(Arrays.equals(includePaths, OVR_INC_PATHS));
-		String[] definedSymbols = scannerInfo.getPreprocessorSymbols();
+		Map definedSymbols = scannerInfo.getDefinedSymbols();
 		assertNotNull(definedSymbols);
-		assertEquals(3, definedSymbols.length);
-		assertTrue(Arrays.equals(definedSymbols, OVR_PREPROC_SYMS));
+		assertEquals(3, definedSymbols.size());
+		assertTrue(definedSymbols.containsKey("_RELEASE"));
+		assertEquals("", definedSymbols.get("_RELEASE"));
+		assertTrue(definedSymbols.containsKey("YES"));
+		assertEquals("1", definedSymbols.get("YES"));
+		assertTrue(definedSymbols.containsKey("NO"));
+		assertEquals("", definedSymbols.get("NO"));
 		
 		// Check the rest of the project information
 		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
@@ -172,20 +179,27 @@ public class StandardBuildTests extends TestCase {
 	 * @return 
 	 * @throws CoreException
 	 */
-	private IProject createProject(String name) throws CoreException {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(name);
-		if (!project.exists()) {
-			project.create(null);
-		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		}
-        
-		if (!project.isOpen()) {
-			project.open(null);
-		}
-		CCorePlugin.getDefault().convertProjectToC(project, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
-		return project;	
+	private IProject createProject(final String name) throws CoreException {
+		final Object[] result = new Object[1];
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IProject project = root.getProject(name);
+				if (!project.exists()) {
+					project.create(null);
+				} else {
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+		        
+				if (!project.isOpen()) {
+					project.open(null);
+				}
+				CCorePlugin.getDefault().convertProjectToC(project, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
+				result[0] = project;
+			}
+		}, null);
+		return (IProject)result[0];	
 	}
 
 	/**

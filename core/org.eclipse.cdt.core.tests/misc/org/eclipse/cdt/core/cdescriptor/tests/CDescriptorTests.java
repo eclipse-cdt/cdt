@@ -4,7 +4,7 @@
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
-***********************************************************************/
+ ***********************************************************************/
 
 package org.eclipse.cdt.core.cdescriptor.tests;
 
@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.w3c.dom.Element;
@@ -43,7 +44,7 @@ public class CDescriptorTests extends TestCase {
 	static IProject fProject;
 	static CDescriptorListener listener = new CDescriptorListener();
 	static CDescriptorEvent fLastEvent;
-	
+
 	/**
 	 * Constructor for CDescriptorTest.
 	 * 
@@ -91,28 +92,32 @@ public class CDescriptorTests extends TestCase {
 
 	static public class CDescriptorListener implements ICDescriptorListener {
 
-		
 		public void descriptorChanged(CDescriptorEvent event) {
 			fLastEvent = event;
 		}
 	}
 
 	static void oneTimeSetUp() throws Exception {
-		IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject("testDescriptorProject");
-		if (!project.exists()) {
-			project.create(null);
-		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		}
-		if (!project.isOpen()) {
-			project.open(null);
-		}
-		CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(listener);
-		if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-			addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-		}
-		fProject = project;
+		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
+				IProject project = root.getProject("testDescriptorProject");
+				if (!project.exists()) {
+					project.create(null);
+				} else {
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+				if (!project.isOpen()) {
+					project.open(null);
+				}
+				CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(listener);
+				if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
+					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
+				}
+				fProject = project;
+			}
+		}, null);
 	}
 
 	static void oneTimeTearDown() throws Exception {
@@ -120,8 +125,12 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testDescriptorCreation() throws Exception {
-		CCorePlugin.getDefault().mapCProjectOwner(fProject, projectId, false);
+		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+			public void run(IProgressMonitor monitor) throws CoreException {
+				CCorePlugin.getDefault().mapCProjectOwner(fProject, projectId, false);
+			}
+		}, null);
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
 
 		Assert.assertNotNull(fLastEvent);
@@ -129,7 +138,7 @@ public class CDescriptorTests extends TestCase {
 		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_ADDED);
 		Assert.assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
-		
+
 		Assert.assertEquals(fProject, desc.getProject());
 		Assert.assertEquals("*", desc.getPlatform());
 	}
@@ -143,9 +152,9 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testDescriptorConversion() {
-	
+
 	}
-	
+
 	public void testExtensionCreation() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
 		ICExtensionReference extRef = desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
@@ -155,7 +164,7 @@ public class CDescriptorTests extends TestCase {
 		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
 		Assert.assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
 		fLastEvent = null;
-		
+
 		Assert.assertEquals("org.eclipse.cdt.testextension", extRef.getExtension());
 		Assert.assertEquals("org.eclipse.cdt.testextensionID", extRef.getID());
 	}
@@ -178,7 +187,7 @@ public class CDescriptorTests extends TestCase {
 		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
 		Assert.assertEquals(fLastEvent.getFlags(), 0);
 		fLastEvent = null;
-		
+
 		Assert.assertEquals("testValue", extRef[0].getExtensionData("testKey"));
 		extRef[0].setExtensionData("testKey", null);
 		Assert.assertEquals(null, extRef[0].getExtensionData("testKey"));

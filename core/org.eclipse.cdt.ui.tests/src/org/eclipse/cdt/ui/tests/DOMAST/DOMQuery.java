@@ -13,18 +13,15 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.internal.ui.search.CSearchResult;
 import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,26 +68,16 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
      	for (int i=0; i<nodes.length; i++) {
      		try {
      			String fileName = null;
-     			IFile file = null;
      			IPath path = null;
      			int start = 0;
      			int end = 0;
      			if ( nodes[i] != null ) {
-	     		   IASTNodeLocation [] location = nodes[i].getNodeLocations();
-	     		   if( location.length > 0 && location[0] instanceof IASTFileLocation )
-	     		      fileName = ((IASTFileLocation)location[0]).getFileName(); // TODO Devin this is in two places now, put into one, and fix up the location[0] for things like macros 
-	     		   else
-	     		   	fileName = BLANK_STRING;
-	     		   
+	     		  IASTFileLocation location = nodes[i].getTranslationUnit().flattenLocationsToFile( nodes[i].getNodeLocations() );
+                  fileName = location.getFileName();
 	     		  path = new Path(fileName);
-	              file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-	              
-	              if (nodes[i].getNodeLocations().length > 0) { // fix for 84223
-		              start = nodes[i].getNodeLocations()[0].getNodeOffset();
-		              end = nodes[i].getNodeLocations()[0].getNodeOffset() + nodes[i].getNodeLocations()[0].getNodeLength();
-		     			
-		     		  collector.acceptMatch( createMatch(file, start, end, nodes[i], path ) );
-	              }
+	              start = location.getNodeOffset();
+                  end = location.getNodeOffset() + location.getNodeLength();
+                  collector.acceptMatch( createMatch(path, start, end, nodes[i], path ) );
      			}
      		} catch (CoreException ce) {}
      	}

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog.IMacroDefinition;
 
 /**
  * @author Doug Schaefer
@@ -19,6 +20,7 @@ public class ObjectStyleMacro implements IMacro{
 
 	public char[] name;
 	public char[] expansion;
+    public IMacroDefinition attachment;
 	
 	public ObjectStyleMacro(char[] name, char[] expansion) {
 		this.name = name;
@@ -31,5 +33,9 @@ public class ObjectStyleMacro implements IMacro{
     
     public char[] getName(){
         return name;
+    }
+    
+    public String toString() {
+        return new String( name );
     }
 }

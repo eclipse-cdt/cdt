@@ -47,7 +47,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -454,7 +453,7 @@ public class DOMLocationTests extends AST2BaseTest {
 	}
     
     public void testBug86323() throws Exception {
-		String code = "void f() { int i=0;	for (; i<10; i++) {	} }";
+		String code = "void f() { int i=0;	for (; i<10; i++) {	} }"; //$NON-NLS-1$
         for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
                 : null) {
             IASTTranslationUnit tu = parse(code, p);

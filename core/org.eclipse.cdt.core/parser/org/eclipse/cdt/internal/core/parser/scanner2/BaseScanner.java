@@ -55,8 +55,6 @@ abstract class BaseScanner implements IScanner {
 
     protected static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 
-	// The eocToken marks the end of a completion parse.
-	// The offset is set to the max so that it is properly considered at the end of the parse.
 	protected final IToken eocToken = new SimpleToken(IToken.tEOC, Integer.MAX_VALUE, null, Integer.MAX_VALUE);
 	
     /**
@@ -77,6 +75,10 @@ abstract class BaseScanner implements IScanner {
             this.reader = reader;
             this.inclusion = inclusion;
         }
+        
+        public String toString() {
+            return reader.toString();
+        }
     }
 
     protected static class MacroData {
@@ -91,6 +93,10 @@ abstract class BaseScanner implements IScanner {
         public final int endOffset;
 
         public final IMacro macro;
+        
+        public String toString() {
+            return macro.toString();
+        }
     }
 
     protected ParserLanguage language;
@@ -3236,16 +3242,20 @@ abstract class BaseScanner implements IScanner {
             handleCompletionOnDefinition(new String(buffer, idstart, idlen));
 
         skipToNewLine();
-        processUndef(pos, bufferPos[bufferStackPos]);
+        
 
-        definitions.remove(buffer, idstart, idlen);
+        Object definition = definitions.remove(buffer, idstart, idlen);
+        processUndef(pos, bufferPos[bufferStackPos], CharArrayUtils.extract(buffer, idstart, idlen ), idstart, definition);
     }
 
     /**
      * @param pos
      * @param endPos
+     * @param symbol TODO
+     * @param namePos TODO
+     * @param definition TODO
      */
-    protected abstract void processUndef(int pos, int endPos);
+    protected abstract void processUndef(int pos, int endPos, char[] symbol, int namePos, Object definition);
 
     protected void handlePPIfdef(int pos, boolean positive)
             throws EndOfFileException {
@@ -3988,8 +3998,10 @@ abstract class BaseScanner implements IScanner {
                     result);
         }
         if (pushContext)
+        {
             pushContext(result, new MacroData(start, bufferPos[bufferStackPos],
                     macro));
+        }
         return result;
     }
 
@@ -4030,7 +4042,10 @@ abstract class BaseScanner implements IScanner {
         }
 
         if (expObject == null)
+        {
             return arg;
+        }
+        
 
         char[] expansion = null;
         if (expObject instanceof FunctionStyleMacro) {
@@ -4060,6 +4075,8 @@ abstract class BaseScanner implements IScanner {
                 System.arraycopy(arg, end + 1, result,
                         start + expansion.length, limit - end - 1);
 
+            
+            beforeReplaceAllMacros();
             //we need to put the macro on the context stack in order to detect
             // recursive macros
             pushContext(EMPTY_CHAR_ARRAY,
@@ -4068,8 +4085,27 @@ abstract class BaseScanner implements IScanner {
                             (IMacro) expObject));
             arg = replaceArgumentMacros(result); //rescan for more macros
             popContext();
+            afterReplaceAllMacros();
         }
+        
         return arg;
+    }
+
+
+    /**
+     * Hook for subclasses.
+     */
+    protected void afterReplaceAllMacros() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * Hook for subclasses.
+     */
+    protected void beforeReplaceAllMacros() {
+        // TODO Auto-generated method stub
+        
     }
 
     protected int expandFunctionStyleMacro(char[] expansion,
@@ -4161,6 +4197,7 @@ abstract class BaseScanner implements IScanner {
                         char[] rep = (char[]) ((replacedArgs != null) ? replacedArgs
                                 .get(repObject)
                                 : null);
+                        
                         if (rep != null)
                             repObject = rep;
                         else {

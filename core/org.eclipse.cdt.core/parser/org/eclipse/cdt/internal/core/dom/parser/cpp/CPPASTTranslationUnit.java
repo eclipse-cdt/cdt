@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -18,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
@@ -77,6 +78,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
     private static final String EMPTY_STRING = ""; //$NON-NLS-1$
     private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
+
+    private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
     public void addDeclaration(IASTDeclaration d) {
         if (decls == null) {
@@ -139,6 +142,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
      */
     public IASTName[] getDeclarations(IBinding b) {
+        if( b instanceof IMacroBinding )
+        {
+            if( resolver == null )
+                return EMPTY_NAME_ARRAY;
+            return resolver.getDeclarations( (IMacroBinding)b );
+        }
         return CPPVisitor.getDeclarations( this, b );
     }
 
@@ -148,6 +157,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
      */
     public IASTName[] getReferences(IBinding b) {
+        if( b instanceof IMacroBinding )
+        {
+            if( resolver == null )
+                return EMPTY_NAME_ARRAY;
+            return resolver.getReferences( (IMacroBinding)b );
+        }
     	return CPPVisitor.getReferences(this, b);
     }
     
@@ -366,7 +381,6 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
        if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
        IASTPreprocessorMacroDefinition [] result = resolver.getMacroDefinitions();
-       setParentRelationship( result, IASTTranslationUnit.PREPROCESSOR_STATEMENT );
        return result;
     }
 
@@ -378,20 +392,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
        if( resolver == null ) return EMPTY_PREPROCESSOR_INCLUSION_ARRAY;
        IASTPreprocessorIncludeStatement [] result = resolver.getIncludeDirectives();
-       setParentRelationship( result, IASTTranslationUnit.PREPROCESSOR_STATEMENT );
        return result;
-    }
-
-    /**
-     * @param result
-     * @param preprocessor_statement
-     */
-    protected void setParentRelationship(IASTNode[] result, ASTNodeProperty property ) {
-       for( int i = 0; i < result.length; ++i )
-       {
-          result[i].setParent( this );
-          result[i].setPropertyInParent( property );
-       }
     }
 
     /*
@@ -403,7 +404,6 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         if (resolver == null)
             return EMPTY_PREPROCESSOR_STATEMENT_ARRAY;
         IASTPreprocessorStatement [] result = resolver.getAllPreprocessorStatements();
-        setParentRelationship( result, IASTTranslationUnit.PREPROCESSOR_STATEMENT );
         return result;
     }
 
@@ -414,6 +414,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      */
     public void setLocationResolver(ILocationResolver resolver) {
         this.resolver = resolver;
+        resolver.setRootNode( this );
     }
 
     /*
@@ -477,4 +478,24 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         }
         return true;
     }
+    
+    public IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations) {
+        if( resolver == null )
+            return null;
+        return resolver.flattenLocations( nodeLocations );
+    }
+
+    public IASTName[] getMacroExpansions() {
+        if( resolver == null )
+            return EMPTY_NAME_ARRAY;
+        return resolver.getMacroExpansions();
+    }
+
+    public IDependencyTree getDependencyTree() {
+        if( resolver == null )
+            return null;
+        return resolver.getDependencyTree();
+    }
+
+    
 }

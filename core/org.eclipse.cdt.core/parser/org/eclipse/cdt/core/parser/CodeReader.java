@@ -127,5 +127,9 @@ public class CodeReader {
 	public boolean isFile() {
 		return !CharArrayUtils.equals( filename, NOFILE );
 	}
+    
+    public String toString() {
+        return new String( filename );
+    }
 	
 }

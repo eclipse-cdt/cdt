@@ -33,5 +33,7 @@ public interface IASTMacroExpansion extends IASTNodeLocation {
 	 * @return
 	 */
 	public IASTNodeLocation[] getExpansionLocations();
+    
+    
 
 }

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog.IMacroDefinition;
 
 /**
  * @author jcamelon
@@ -24,7 +25,8 @@ public abstract class DynamicStyleMacro implements IMacro{
 	{
 		name = n;
 	}
-	public final char [] name; 
+	public final char [] name;
+    public IMacroDefinition attachment; 
 
 	public char[] getSignature()
 	{

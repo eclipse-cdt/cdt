@@ -14,6 +14,8 @@ package org.eclipse.cdt.core.dom.ast;
  * This interface represent a preprocessor function-style macro definition. e.g.
  * #define ABC( def ) GHI
  * 
+ * Note: macros that are expanded as parameters to function style macros are not captured in this abstraction.
+ *  
  * @author jcamelon
  */
 public interface IASTPreprocessorFunctionStyleMacroDefinition extends

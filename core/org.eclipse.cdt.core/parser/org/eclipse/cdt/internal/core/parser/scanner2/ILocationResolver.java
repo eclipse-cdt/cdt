@@ -10,11 +10,16 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 
 /**
@@ -37,5 +42,12 @@ public interface ILocationResolver {
     public void cleanup();
 
     public ASTPreprocessorSelectionResult getPreprocessorNode( String path, int offset, int length ) throws InvalidPreprocessorNodeException;
+    
+    public void setRootNode(IASTTranslationUnit root );
+    public IASTFileLocation flattenLocations(IASTNodeLocation[] nodeLocations);
+    public IASTName[] getReferences(IMacroBinding binding);
+    public IASTName[] getDeclarations(IMacroBinding binding);
+    public IASTName[] getMacroExpansions();
+    public IDependencyTree getDependencyTree();
     
 }

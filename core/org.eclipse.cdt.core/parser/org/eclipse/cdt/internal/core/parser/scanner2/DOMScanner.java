@@ -20,9 +20,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
-import org.eclipse.cdt.internal.core.parser.token.SimpleExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
@@ -69,6 +67,36 @@ public class DOMScanner extends BaseScanner {
         postConstructorSetup(reader, info);
     }
 
+    private void registerMacros() {
+        for( int i = 0; i < definitions.size(); ++i )
+        {
+            IMacro m = (IMacro) definitions.get( definitions.keyAt(i) );
+            
+            if( m instanceof DynamicStyleMacro )
+            {
+                DynamicStyleMacro macro = (DynamicStyleMacro) m;
+                macro.attachment = locationMap.registerBuiltinDynamicStyleMacro( macro );
+            }
+            else if( m instanceof DynamicFunctionStyleMacro )
+            {
+                DynamicFunctionStyleMacro macro = (DynamicFunctionStyleMacro) m;
+                macro.attachment = locationMap.registerBuiltinDynamicFunctionStyleMacro( macro );
+            }
+            else if( m instanceof FunctionStyleMacro )
+            {
+                FunctionStyleMacro macro = (FunctionStyleMacro) m;
+                macro.attachment = locationMap.registerBuiltinFunctionStyleMacro( macro );
+            }
+            else if( m instanceof ObjectStyleMacro )
+            {
+                ObjectStyleMacro macro = (ObjectStyleMacro) m;
+                macro.attachment = locationMap.registerBuiltinObjectStyleMacro( macro );
+            }
+            
+        }
+        
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -113,14 +141,18 @@ public class DOMScanner extends BaseScanner {
     protected void processMacro(char[] name, int startingOffset,
             int startingLineNumber, int idstart, int idend, int nameLine,
             int textEnd, int endingLine, IMacro macro) {
+        IScannerPreprocessorLog.IMacroDefinition m = null;
         if (macro instanceof FunctionStyleMacro)
-            locationMap.defineFunctionStyleMacro((FunctionStyleMacro) macro,
-                    resolveOffset(startingOffset), resolveOffset(idstart),
-                    resolveOffset(idend), resolveOffset(textEnd));
+            m = locationMap.defineFunctionStyleMacro(
+                    (FunctionStyleMacro) macro, resolveOffset(startingOffset),
+                    resolveOffset(idstart), resolveOffset(idend),
+                    resolveOffset(textEnd));
         else if (macro instanceof ObjectStyleMacro)
-            locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
+            m = locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
                     resolveOffset(startingOffset), resolveOffset(idstart),
                     resolveOffset(idend), resolveOffset(textEnd));
+        if (m != null && macro instanceof ObjectStyleMacro)
+            ((ObjectStyleMacro) macro).attachment = m;
 
     }
 
@@ -161,8 +193,28 @@ public class DOMScanner extends BaseScanner {
                     resolveOffset(getCurrentOffset()));
             bufferDelta[bufferStackPos + 1] = 0;
         }
+
+        else if (data instanceof MacroData) {
+            MacroData d = (MacroData) data;
+            if (d.macro instanceof FunctionStyleMacro && fsmCount == 0) {
+                FunctionStyleMacro fsm = (FunctionStyleMacro) d.macro;
+                locationMap.startFunctionStyleExpansion(fsm.attachment,
+                        fsm.arglist, resolveOffset(d.startOffset),
+                        resolveOffset(d.endOffset));
+                bufferDelta[bufferStackPos + 1] = 0;
+            } else if (d.macro instanceof ObjectStyleMacro && fsmCount == 0) {
+                ObjectStyleMacro osm = (ObjectStyleMacro) d.macro;
+                locationMap.startObjectStyleMacroExpansion(osm.attachment,
+                        resolveOffset(d.startOffset),
+                        resolveOffset(d.endOffset));
+                bufferDelta[bufferStackPos + 1] = 0;
+            }
+        }
+
         super.pushContext(buffer, data);
     }
+
+    protected int fsmCount = 0;
 
     /*
      * (non-Javadoc)
@@ -170,13 +222,12 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popContext()
      */
     protected Object popContext() {
-        //TODO calibrate offsets
+        // TODO calibrate offsets
         Object result = super.popContext();
         if (result instanceof CodeReader) {
             locationMap.endTranslationUnit(bufferDelta[0]
                     + ((CodeReader) result).buffer.length);
-        }
-        if (result instanceof InclusionData) {
+        } else if (result instanceof InclusionData) {
             CodeReader codeReader = ((InclusionData) result).reader;
             if (log.isTracing()) {
                 StringBuffer buffer = new StringBuffer("Exiting inclusion "); //$NON-NLS-1$
@@ -188,6 +239,25 @@ public class DOMScanner extends BaseScanner {
                     + bufferPos[bufferStackPos + 1]);
             bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
                     + codeReader.buffer.length;
+        } else if (result instanceof MacroData) {
+            MacroData data = (MacroData) result;
+            if (data.macro instanceof FunctionStyleMacro && fsmCount == 0) {
+
+                locationMap
+                        .endFunctionStyleExpansion(getGlobalCounter(bufferStackPos + 1)
+                                + bufferPos[bufferStackPos + 1] + 1); // functionstyle
+                // macro)
+                // ;
+                bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
+                        + bufferPos[bufferStackPos + 1] + 1;
+            } else if (data.macro instanceof ObjectStyleMacro && fsmCount == 0) {
+                locationMap
+                        .endObjectStyleMacroExpansion(getGlobalCounter(bufferStackPos + 1)
+                                + bufferPos[bufferStackPos + 1]);
+                bufferDelta[bufferStackPos] += bufferDelta[bufferStackPos + 1]
+                        + bufferPos[bufferStackPos + 1];
+
+            }
         }
         return result;
     }
@@ -211,18 +281,6 @@ public class DOMScanner extends BaseScanner {
      * @return
      */
     protected IToken newToken(int signal) {
-        if (bufferData[bufferStackPos] instanceof MacroData) {
-            int mostRelevant;
-            for (mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant)
-                if (bufferData[mostRelevant] instanceof InclusionData
-                        || bufferData[mostRelevant] instanceof CodeReader)
-                    break;
-            MacroData data = (MacroData) bufferData[mostRelevant + 1];
-            return new SimpleExpansionToken(signal,
-                    resolveOffset(data.startOffset), data.endOffset
-                            - data.startOffset + 1, getCurrentFilename(),
-                    getLineNumber(bufferPos[mostRelevant] + 1));
-        }
         return new SimpleToken(signal,
                 resolveOffset(bufferPos[bufferStackPos] + 1),
                 getCurrentFilename(),
@@ -230,24 +288,12 @@ public class DOMScanner extends BaseScanner {
     }
 
     protected IToken newToken(int signal, char[] buffer) {
-        if (bufferData[bufferStackPos] instanceof MacroData) {
-            int mostRelevant;
-            for (mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant)
-                if (bufferData[mostRelevant] instanceof InclusionData
-                        || bufferData[mostRelevant] instanceof CodeReader)
-                    break;
-            MacroData data = (MacroData) bufferData[mostRelevant + 1];
-            return new ImagedExpansionToken(signal, buffer,
-                    resolveOffset(data.startOffset), data.endOffset
-                            - data.startOffset + 1, getCurrentFilename(),
-                    getLineNumber(bufferPos[mostRelevant] + 1));
-        }
         IToken i = new ImagedToken(signal, buffer,
                 resolveOffset(bufferPos[bufferStackPos] + 1), EMPTY_CHAR_ARRAY,
                 getLineNumber(bufferPos[bufferStackPos] + 1));
         if (buffer != null && buffer.length == 0 && signal != IToken.tSTRING
                 && signal != IToken.tLSTRING)
-            bufferPos[bufferStackPos] += 1; //TODO - remove this hack at some
+            bufferPos[bufferStackPos] += 1; // TODO - remove this hack at some
         // point
 
         return i;
@@ -259,7 +305,7 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#quickParsePushPopInclusion(java.lang.Object)
      */
     protected void quickParsePushPopInclusion(Object inclusion) {
-        //do nothing
+        // do nothing
     }
 
     /*
@@ -293,6 +339,7 @@ public class DOMScanner extends BaseScanner {
     protected void postConstructorSetup(CodeReader reader, IScannerInfo info) {
         super.postConstructorSetup(reader, info);
         locationMap.startTranslationUnit(getMainReader());
+        registerMacros();
     }
 
     /*
@@ -351,9 +398,12 @@ public class DOMScanner extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processUndef(int,
      *      int)
      */
-    protected void processUndef(int pos, int endPos) {
+    protected void processUndef(int pos, int endPos, char[] symbol,
+            int namePos, Object definition) {
+        final IScannerPreprocessorLog.IMacroDefinition macroDefinition = (definition instanceof ObjectStyleMacro) ? ((ObjectStyleMacro) definition).attachment
+                : null;
         locationMap.encounterPoundUndef(resolveOffset(pos),
-                resolveOffset(endPos));
+                resolveOffset(endPos), symbol, namePos, macroDefinition);
     }
 
     /*
@@ -389,4 +439,11 @@ public class DOMScanner extends BaseScanner {
                 resolveOffset(endPos));
     }
 
+    protected void beforeReplaceAllMacros() {
+        ++fsmCount;
+    }
+    
+    protected void afterReplaceAllMacros() {
+        --fsmCount;
+    }
 }

@@ -72,9 +72,7 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		if (node == null) return PROCESS_CONTINUE;
 		
 		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
-        if (!(nodeLocations.length > 0 && 
-				nodeLocations[0].getNodeOffset() >= 0 &&
-				nodeLocations[0].getNodeLength() > 0))
+        if (!(nodeLocations.length > 0 ) )
 			return PROCESS_CONTINUE;
 		
 		DOMASTNodeParent parent = root.findTreeParentForNode(node);

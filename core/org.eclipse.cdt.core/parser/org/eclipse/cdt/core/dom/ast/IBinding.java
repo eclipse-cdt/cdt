@@ -21,6 +21,12 @@ public interface IBinding {
 	 * @return name
 	 */
 	public String getName();
+    
+    /**
+     * The name of the binding.
+     * 
+     * @return name
+     */
 	public char[] getNameCharArray();
 	
 	/**

@@ -37,7 +37,7 @@ public interface IASTTranslationUnit extends IASTNode {
 	 */
 	public static final ASTNodeProperty PREPROCESSOR_STATEMENT = new ASTNodeProperty(
 			"IASTTranslationUnit.PREPROCESSOR_STATEMENT - IASTPreprocessorStatement for IASTTranslationUnit"); //$NON-NLS-1$
-
+    
 	/**
 	 * A translation unit contains an ordered sequence of declarations.
 	 * 
@@ -134,4 +134,34 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * @return String representation of path.
 	 */
 	public String getFilePath();
+    
+    /**
+     * Flatten the node locations provided into a single file location.  
+     * 
+     * @param nodeLocations <code>IASTNodeLocation</code>s to flatten
+     * @return null if not possible, otherwise, a file location representing where the macros are. 
+     */
+    public IASTFileLocation flattenLocationsToFile( IASTNodeLocation [] nodeLocations );
+    
+    public static final ASTNodeProperty EXPANSION_NAME = new ASTNodeProperty(
+    "IASTTranslationUnit.EXPANSION_NAME - IASTName generated for macro expansions."); //$NON-NLS-1$
+    
+    
+    public static interface IDependencyTree
+    {
+        public String getTranslationUnitPath();
+        
+        public static interface IASTInclusionNode
+        {
+            public IASTPreprocessorIncludeStatement getIncludeDirective();
+            public IASTInclusionNode [] getNestedInclusions();
+        }
+        
+        public IASTInclusionNode [] getInclusions();
+    }
+    
+    public IDependencyTree getDependencyTree();
+    
+    
+    
 }

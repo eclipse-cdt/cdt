@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.parser.CodeReader;
 
 /**
@@ -26,21 +27,30 @@ public interface IScannerPreprocessorLog {
 
     public void endInclusion(int offset);
 
-    public void enterObjectStyleMacroExpansion(char[] name, char[] expansion,
-            int offset);
+    public void startObjectStyleMacroExpansion(IMacroDefinition macro,
+            int startOffset, int endOffset);
 
-    public void exitObjectStyleMacroExpansion(char[] name, int offset);
+    public void endObjectStyleMacroExpansion(int offset);
 
-    public void enterFunctionStyleExpansion(char[] name, char[][] parameters,
-            char[] expansion, int offset);
+    
+    public void startFunctionStyleExpansion(IMacroDefinition macro,
+            char[][] parameters, int startOffset, int endOffset);
 
-    public void exitFunctionStyleExpansion(char[] name, int offset);
+    public void endFunctionStyleExpansion(int offset);
 
-    public void defineObjectStyleMacro(ObjectStyleMacro m, int startOffset,
-            int nameOffset, int nameEndOffset, int endOffset);
+    public interface IMacroDefinition {
+        public char[] getName();
+        public char[] getExpansion();
+        
+        public IMacroBinding getBinding();
+        public void setBinding( IMacroBinding b );
+    }
 
-    public void defineFunctionStyleMacro(FunctionStyleMacro m, int startOffset,
-            int nameOffset, int nameEndOffset, int endOffset);
+    public IMacroDefinition defineObjectStyleMacro(ObjectStyleMacro m,
+            int startOffset, int nameOffset, int nameEndOffset, int endOffset);
+
+    public IMacroDefinition defineFunctionStyleMacro(FunctionStyleMacro m,
+            int startOffset, int nameOffset, int nameEndOffset, int endOffset);
 
     public void encounterPoundIf(int startOffset, int endOffset, boolean taken);
 
@@ -60,7 +70,17 @@ public interface IScannerPreprocessorLog {
 
     public void encounterPoundError(int startOffset, int endOffset);
 
-    public void encounterPoundUndef(int startOffset, int endOffset);
+    public void encounterPoundUndef(int startOffset, int endOffset,
+            char[] symbol, int nameOffset, IMacroDefinition macroDefinition);
 
     public void encounterProblem(IASTProblem problem);
+
+    public IMacroDefinition registerBuiltinObjectStyleMacro(ObjectStyleMacro macro);
+
+    public IMacroDefinition registerBuiltinFunctionStyleMacro(FunctionStyleMacro macro);
+
+    public IMacroDefinition registerBuiltinDynamicFunctionStyleMacro(DynamicFunctionStyleMacro macro);
+
+    public IMacroDefinition registerBuiltinDynamicStyleMacro(DynamicStyleMacro macro);
+    
 }

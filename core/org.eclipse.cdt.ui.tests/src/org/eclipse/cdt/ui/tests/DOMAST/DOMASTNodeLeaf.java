@@ -279,21 +279,30 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	   IASTNodeLocation [] location = node.getNodeLocations();
 	   if( location.length > 0 && location[0] instanceof IASTFileLocation )
 	      return ((IASTFileLocation)location[0]).getFileName();
-	   return BLANK_STRING; //$NON-NLS-1$
+       IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
+       if( f == null )
+           return BLANK_STRING; //$NON-NLS-1$
+       return f.getFileName();
 	}
 	
 	public int getOffset() {
 	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location.length == 1 )
+	   if( location.length == 1 && location[0] instanceof IASTFileLocation )
 	      return location[0].getNodeOffset();
-	   return 0;
+       IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
+       if( f == null )
+           return 0; //$NON-NLS-1$
+       return f.getNodeOffset();
 	}
 	
 	public int getLength() {
 	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location.length == 1 )
+	   if( location.length == 1 && location[0] instanceof IASTFileLocation )
 	      return location[0].getNodeLength();
-	   return 0;
+       IASTFileLocation f = node.getTranslationUnit().flattenLocationsToFile(location);
+       if( f == null )
+           return 0; //$NON-NLS-1$
+       return f.getNodeLength();
 	}
 	
 	public void setFiltersFlag(int flag) {
@@ -447,9 +456,13 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			} else if (obj instanceof ASTNodeProperty) {
 				buffer.append(((ASTNodeProperty)obj).getName());
 			} else if (obj instanceof IASTName) {
-				buffer.append( trimObjectToString(((IASTName)obj).toString()) );
-				buffer.append(COLON_SEPARATOR);
-				buffer.append( getType(((IASTName)obj).resolveBinding()) );
+				final String toString = ((IASTName)obj).toString();
+                if( toString != null )
+                {
+                    buffer.append( trimObjectToString(toString) );
+                    buffer.append(COLON_SEPARATOR);
+                    buffer.append( getType(((IASTName)obj).resolveBinding()) );
+                }
 			} else if (obj instanceof IType) {
 				buffer.append(getType(obj));
 			} else if (obj instanceof IBinding) {

@@ -10,15 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-/**
- * This interface represents a preprocessor #undef statement.
- * 
- * @author jcamelon
- */
-public interface IASTPreprocessorUndefStatement extends
-		IASTPreprocessorStatement {
+public interface IMacroBinding extends IBinding {
 
-    public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty( "IASTPreprocessorUndefStatement.MACRO_NAME - the name of the macro being undefined"); //$NON-NLS-1$
-    public IASTName getMacroName();
-    
 }

@@ -26,5 +26,10 @@ public interface IExtendedScannerInfo extends IScannerInfo {
 	 */
 	public String [] getIncludeFiles();
 
+	/**
+     * Get local inclusions?
+     * 
+	 * @return
+	 */
 	public String [] getLocalIncludePath();
 }

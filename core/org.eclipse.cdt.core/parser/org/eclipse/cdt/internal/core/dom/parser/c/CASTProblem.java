@@ -273,12 +273,21 @@ public class CASTProblem extends CASTNode implements IASTProblem {
         IASTNodeLocation [] locs = getNodeLocations();
         String file = null;
         int offset = 0;
-        if( locs != null && locs.length > 0 ){
+        if( locs != null && locs.length == 1 && locs[0] instanceof IASTFileLocation ){
             file = ((IASTFileLocation) locs[0]).getFileName();
             offset = locs[0].getNodeOffset();
         } else {
-            file = ""; //$NON-NLS-1$
-            offset = 0;
+            IASTFileLocation f = getTranslationUnit().flattenLocationsToFile(locs);
+            if( f == null )
+            {
+                file = ""; //$NON-NLS-1$
+                offset = 0;
+            }
+            else
+            {
+                file = f.getFileName();
+                offset = f.getNodeOffset();
+            }
         }
         
         Object[] args = new Object[] { msg, file, new Integer( offset ) }; //$NON-NLS-1$        

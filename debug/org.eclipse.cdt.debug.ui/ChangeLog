@@ -1,3 +1,17 @@
+2004-04-01 Mikhail Khodjaiants
+	Moved the "Show Full Paths" action from toolbars to view's menus.
+	* CDebugModelPresentation.java - new (will replace CDTDebugModelPresentation)
+	* CDebugUIMessages.java - new
+	* CDebugUIMessages.properties - new
+	* ActionMessages.properties - new
+	* ActionMessages.java - new
+	* ShowFullPathsAction.java
+	* ViewFilterAction.java -new
+	* ICDebugPreferenceConstants.java
+	* icons/full/clcl16/show_paths.gif - new (replaced the old icon)
+	* plugin.properties
+	* plugin.xml
+
 2004-03-31 Mikhail Khodjaiants
 	Added default preferences to the C/C++ Debug preference page.
 	Removed the preference page of the Shared Libraries views.

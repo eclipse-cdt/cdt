@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 
@@ -25,8 +26,7 @@ public class DefaultMinGWScannerInfoCollector extends DefaultGCCScannerInfoColle
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(org.eclipse.core.resources.IResource, java.util.List, java.util.List, java.util.List)
 	 */
-	public void contributeToScannerConfig(IResource resource, List includes,
-			List symbols, List targetSpecificOptions) {
+	public void contributeToScannerConfig(IResource resource, List includes, List symbols, Map extraInfo) {
 		// This method will be called by the parser each time there is a new value
 		Iterator pathIter = includes.listIterator();
 		while (pathIter.hasNext()) {

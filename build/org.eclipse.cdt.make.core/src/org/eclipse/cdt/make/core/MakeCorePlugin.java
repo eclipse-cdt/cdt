@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Status;
  * The main plugin class to be used in the desktop.
  */
 public class MakeCorePlugin extends Plugin {
+	public static final String MAKE_PROJECT_ID = MakeCorePlugin.getUniqueIdentifier() + ".make";
 	private MakeTargetManager fTargetManager;
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
 	//The shared instance.

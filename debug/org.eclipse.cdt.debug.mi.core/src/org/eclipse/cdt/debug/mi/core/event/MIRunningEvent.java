@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MIRunningEvent extends MIEvent {
 
-	public static final int CONTINUE = 1;
+	public static final int CONTINUE = 0;
 	public static final int NEXT = 1;
 	public static final int NEXTI = 2;
 	public static final int STEP = 3;

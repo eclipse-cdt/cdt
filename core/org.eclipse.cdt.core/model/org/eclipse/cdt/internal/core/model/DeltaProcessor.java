@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -307,6 +309,25 @@ public class DeltaProcessor {
 	}
 
 	/**
+	 * This is use to remove the cache info for IArchive and IBinary
+	 * We can use IBinary.close() doing this will remove the binary
+	 * for the virtual binary/archive containers.
+	 * @param celement
+	 */
+	private void closeBinary(ICElement celement) {
+		CModelManager factory = CModelManager.getDefault();
+		CElementInfo pinfo = (CElementInfo)factory.peekAtInfo(celement);
+		if (pinfo != null) {
+			ArrayList list = new ArrayList();
+			ICElement[] celems = pinfo.getChildren();
+			for (int i = 0; i < celems.length; ++i) {
+				closeBinary(celems[i]);
+			}
+			factory.removeInfo(celement);
+		}
+	}
+
+	/**
 	 * Generic processing for elements with changed contents:<ul>
 	 * <li>The element is closed such that any subsequent accesses will re-open
 	 * the element reflecting its new structure.
@@ -314,15 +335,11 @@ public class DeltaProcessor {
 	 * </ul>
 	 */
 	protected void elementChanged(ICElement element, IResourceDelta delta) {
-		// For Binary/Archive We can not call close() to the work
+		// For Binary/Archive We can not call close() to do the work
 		// closing will remove the element from the {Binary,Archive}Container
 		// We nee to clear the cache explicitely
 		if (element instanceof IBinary || element instanceof IArchive) {
-			CModelManager factory = CModelManager.getDefault();
-			CElementInfo pinfo = (CElementInfo)factory.peekAtInfo(element);
-			if (pinfo != null) {
-				factory.removeInfo(element);
-			}
+			closeBinary(element);
 		} else if (element instanceof Openable) {
 			close((Openable)element);
 		}

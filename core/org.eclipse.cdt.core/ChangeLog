@@ -1,3 +1,7 @@
+2005-02-16 Alain Magloire
+	Fix for PR 85633, The IBinary info were not remove in the cache.
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
 2004-03-04 Peter Faltaous
 	Add e_machine values for X86_64.
 	getAttributes(): Add cases for X86_64.

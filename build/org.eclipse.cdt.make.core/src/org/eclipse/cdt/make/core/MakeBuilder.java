@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -53,21 +52,6 @@ public class MakeBuilder extends ACBuilder {
 	public MakeBuilder() {
 	}
 
-	public class MyResourceDeltaVisitor implements IResourceDeltaVisitor {
-		boolean bContinue;
-
-		public boolean visit(IResourceDelta delta) {
-			IResource resource = delta.getResource();
-			if (resource != null && resource.getProject() == getProject()) {
-				bContinue = true;
-				return false;
-			}
-			return true;
-		}
-		public boolean shouldBuild() {
-			return bContinue;
-		}
-	}
 	/**
 	 * @see IncrementalProjectBuilder#build
 	 */
@@ -79,22 +63,25 @@ public class MakeBuilder extends ACBuilder {
 			return new IProject[0];
 		}
 		if (kind == IncrementalProjectBuilder.AUTO_BUILD) {
-			MyResourceDeltaVisitor vis = new MyResourceDeltaVisitor();
 			IResourceDelta delta = getDelta(getProject());
 			if (delta != null) {
-				delta.accept(vis);
-				bPerformBuild = vis.shouldBuild();
-			} else
+				IResource res = delta.getResource();
+				if (res != null) {
+					bPerformBuild = res.getProject().equals(getProject());
+				}
+			} else {
 				bPerformBuild = false;
+			}
 		}
 		if (bPerformBuild) {
 			boolean isClean = invokeMake(kind, info, monitor);
 			if (isClean) {
 				forgetLastBuiltState();
 			}
-		} else { // This should really be based of last build state, for now its safer to just
-			    //  forget last, until we get some kind of build state manager in the CDT Core. 
-			forgetLastBuiltState();
+		} else {
+			// This should really be based of last build state, for now its safer to just
+			//  forget last, until we get some kind of build state manager in the CDT Core. 
+			//forgetLastBuiltState();
 		}
 		checkCancel(monitor);
 		return getProject().getReferencedProjects();

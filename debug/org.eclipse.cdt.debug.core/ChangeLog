@@ -1,3 +1,7 @@
+2003-01-13 Mikhail Khodjaiants
+	Fix in the thread created event handler: do nothing if thread has already created.
+	* CDebugTarget.java
+
 2003-01-10 Mikhail Khodjaiants
 	Implementation of address breakpoints.
 	* ICAddressBreakpoint.java

@@ -1432,16 +1432,11 @@ public class CDebugTarget extends CDebugElement
 	private void handleThreadCreatedEvent( ICDICreatedEvent event )
 	{
 		ICDIThread cdiThread = (ICDIThread)event.getSource();
-		CThread thread= findThread( cdiThread );
+		CThread thread = findThread( cdiThread );
 		if ( thread == null ) 
 		{
 			createThread( cdiThread );
 		} 
-		else 
-		{
-			thread.disposeStackFrames();
-			thread.fireChangeEvent( DebugEvent.CONTENT );
-		}
 	}
 
 	private void handleThreadTerminatedEvent( ICDIDestroyedEvent event )

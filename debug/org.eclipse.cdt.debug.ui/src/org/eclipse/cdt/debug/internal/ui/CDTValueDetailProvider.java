@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.internal.ui;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Enter type comment.
@@ -29,11 +30,17 @@ public class CDTValueDetailProvider
 		return fInstance;
 	}
 
-	public void computeDetail( IValue value, IValueDetailListener listener )
+	public void computeDetail( final IValue value, final IValueDetailListener listener )
 	{
 		if ( value instanceof ICValue )
 		{
-			listener.detailComputed( value, ((ICValue)value).computeDetail() );
+			Display.getCurrent().asyncExec( new Runnable()
+												{
+													public void run()
+													{
+														listener.detailComputed( value, ((ICValue)value).evaluateAsExpression() );
+													}
+												} );
 		}
 	}
 }

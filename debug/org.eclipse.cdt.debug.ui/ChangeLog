@@ -1,3 +1,7 @@
+2003-06-05 Mikhail Khodjaiants
+	Evaluate expressions of detail panel asynchronously.
+	* CDTValueDetailProvider.java
+
 2003-06-04 Mikhail Khodjaiants
 	Implementing the UI support of the detail panel.
 	* CDTDebugModelPresentation.java

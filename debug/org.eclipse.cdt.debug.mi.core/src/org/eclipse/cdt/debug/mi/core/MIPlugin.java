@@ -115,12 +115,17 @@ public class MIPlugin extends Plugin {
 		MISession session = createMISession(pgdb, pty, MISession.PROGRAM);
 		// For windows we need to start the inferior in a new console window
 		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
-		CommandFactory factory = session.getCommandFactory();
-		MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
-		session.postCommand(set);
-		MIInfo info = set.getMIInfo();
-		if (info == null) {
-			throw new MIException("No answer");
+		try {
+			CommandFactory factory = session.getCommandFactory();
+			MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
+			session.postCommand(set);
+			MIInfo info = set.getMIInfo();
+			if (info == null) {
+				throw new MIException("No answer");
+			}
+		} catch (MIException e) {
+			// We ignore this exception, for example
+			// on GNU/Linux the new-console is an error.
 		}
 		return new CSession(session, false);
 	}

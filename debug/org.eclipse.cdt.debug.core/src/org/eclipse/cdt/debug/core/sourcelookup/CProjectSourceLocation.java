@@ -9,6 +9,7 @@ import java.io.File;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -112,23 +113,35 @@ public class CProjectSourceLocation implements ICSourceLocation
 	private Object findFileByAbsolutePath( String name )
 	{
 		IPath path = new Path( name );
-		String fileName = path.toOSString();
-
-		String pPath = new String( getProject().getLocation().toOSString() );
-		int i = 0;
-		if ( (i = fileName.indexOf( pPath )) >= 0 ) 
-		{
-			i += pPath.length() + 1;
-			if ( fileName.length() > i )
-				return getProject().getFile( fileName.substring( i ) );
-		}
-		return null;
+		return findFile( getProject(), path.toOSString() );
 	}
 
 	private Object findFileByRelativePath( String fileName )
 	{
 		IPath path = getProject().getLocation().append( fileName );
-		return findFileByAbsolutePath( path.toOSString() );
+		Object result = findFileByAbsolutePath( path.toOSString() );
+		if ( result == null )
+		{
+			try
+			{
+				IResource[] members = getProject().members();
+				for ( int i = 0; i < members.length; ++i )
+				{
+					if ( members[i] instanceof IFolder )
+					{
+						path = members[i].getLocation().append( fileName );
+						result = findFile( (IContainer)members[i], path.toOSString() );
+						if ( result != null )
+							break;
+					}
+				}
+			}
+			catch( CoreException e )
+			{
+				// do nothing
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -142,5 +155,33 @@ public class CProjectSourceLocation implements ICSourceLocation
 			result = new IPath[] { getProject().getLocation() };
 		}
 		return result;
+	}
+	
+	private Object findFile( IContainer container, String fileName )
+	{
+		try
+		{
+			IResource[] members = container.members();
+			for ( int i = 0; i < members.length; ++i )
+			{
+				if ( members[i] instanceof IFile )
+				{
+					if ( members[i].getLocation().toOSString().equals( fileName ) )
+						return members[i];
+				}
+				else if ( members[i] instanceof IFolder )
+				{
+					Object result = findFile( (IContainer)members[i], fileName );
+					if ( result != null )
+						return result;
+				}
+			}
+		}
+		catch( CoreException e )
+		{
+			// do nothing
+		}
+		
+		return null;
 	}
 }

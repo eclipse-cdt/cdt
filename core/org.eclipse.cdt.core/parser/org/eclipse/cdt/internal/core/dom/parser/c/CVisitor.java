@@ -413,7 +413,7 @@ public class CVisitor {
 				kind = KIND_OBJ_FN;
 		}
 		
-		public int processNames( IASTName name ){
+		public int processName( IASTName name ){
 			ASTNodeProperty prop = name.getPropertyInParent();
 			switch( kind ){
 				case KIND_LABEL:

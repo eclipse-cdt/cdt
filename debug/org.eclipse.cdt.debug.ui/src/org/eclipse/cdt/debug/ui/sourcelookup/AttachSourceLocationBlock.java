@@ -6,8 +6,8 @@
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
+import org.eclipse.cdt.debug.internal.ui.SWTUtil;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -93,7 +93,7 @@ public class AttachSourceLocationBlock
 		composite.setLayoutData( data );
 		fLocationText = new Text( composite, SWT.SINGLE | SWT.BORDER );
 		fLocationText.setLayoutData( new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL ) );
-		Button button = createButton( composite, "&Browse...", converter );
+		Button button = createButton( composite, "&Browse..." );
 		button.addSelectionListener( new SelectionAdapter() 
 											{
 												/* (non-Javadoc)
@@ -148,15 +148,13 @@ public class AttachSourceLocationBlock
 			fAssociationText.setText( "" );
 	}
 
-	protected Button createButton( Composite parent, String label, PixelConverter pc )
+	protected Button createButton( Composite parent, String label )
 	{
 		Button button = new Button( parent, SWT.PUSH );
 		button.setText( label );
 		GridData data = new GridData( GridData.END );
-		data.heightHint = pc.convertVerticalDLUsToPixels( IDialogConstants.BUTTON_HEIGHT );
-		int widthHint = pc.convertHorizontalDLUsToPixels( IDialogConstants.BUTTON_WIDTH );
-		data.widthHint = Math.max( widthHint, button.computeSize( SWT.DEFAULT, SWT.DEFAULT, true ).x );
 		button.setLayoutData( data );
+		SWTUtil.setButtonDimensionHint( button );
 		button.setFont( parent.getFont() );
 
 		return button;

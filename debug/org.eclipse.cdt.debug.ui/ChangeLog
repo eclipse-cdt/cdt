@@ -1,4 +1,9 @@
 2002-12-19 Mikhail Khodjaiants
+	Added new utility class - SWTUtil
+	* SWTUtil.java
+	* AttachSourceLocationBlock.java
+
+2002-12-19 Mikhail Khodjaiants
 	Added new utility class - PixelConverter
 	* PixelCoverter.java
 	* AttachSourceLocationBlock.java

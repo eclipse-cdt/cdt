@@ -1,5 +1,13 @@
 2003-03-27 Alain Magloire
 
+	ICElement.getResource() no longer throw an exception.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+	* src/org/eclipse/cdt/internal/ui/uti./EditorUtility.java
+	
+2003-03-27 Alain Magloire
+
 	Some changes in the Core Model to make it closer to JDT, the hierarchy is now:
 	ICModel
 		ICProject

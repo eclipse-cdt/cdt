@@ -64,13 +64,13 @@ public class SelectionParser extends ContextualParser {
 			boolean change = false;
 			if( value.getOffset() == offsetRange.getFloorOffset() )
 			{
-				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				TraceUtil.outputTrace(log, "Offset Floor Hit w/token \"", null, value.getCharImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				firstTokenOfDuple = value;
 				change = true;
 			}
 			if( value.getEndOffset() == offsetRange.getCeilingOffset() )
 			{
-				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
+				TraceUtil.outputTrace(log, "Offset Ceiling Hit w/token \"", null, value.getCharImage(), "\"", null ); //$NON-NLS-1$ //$NON-NLS-2$
 				change = true;
 				lastTokenOfDuple = value;
 			}

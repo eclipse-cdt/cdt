@@ -2475,8 +2475,9 @@ public abstract class Parser extends ExpressionParser implements IParser
 								}
 						}
 						// check for optional pure virtual
+						char[] image = LA(2).getCharImage();
 						if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER
-								&& LA(2).getImage().equals("0")) //$NON-NLS-1$
+								&& ( image.length == 1 && image[0] == '0' ) ) //$NON-NLS-1$
 						{
 							consume(IToken.tASSIGN);
 							consume(IToken.tINTEGER);

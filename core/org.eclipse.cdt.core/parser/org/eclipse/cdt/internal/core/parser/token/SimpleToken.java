@@ -38,7 +38,7 @@ public class SimpleToken extends AbstractToken implements IToken {
 	}
 	
 	public int getLength() {
-		return getImage().length();
+		return getCharImage().length;
 	}
 	
 	/**

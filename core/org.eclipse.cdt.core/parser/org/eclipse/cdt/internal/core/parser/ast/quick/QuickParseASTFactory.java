@@ -120,7 +120,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createUsingDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope, boolean, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
 	public IASTUsingDeclaration createUsingDeclaration(IASTScope scope, boolean isTypeName, ITokenDuple name, int startingOffset, int startingLine, int endingOffset, int endingLine) {
-		return new ASTUsingDeclaration( scope, isTypeName, name.toString(), startingOffset, startingLine, endingOffset, endingLine, name.getFilename() );
+		return new ASTUsingDeclaration( scope, isTypeName, name.toCharArray(), startingOffset, startingLine, endingOffset, endingLine, name.getFilename() );
 	}
 
 	/* (non-Javadoc)

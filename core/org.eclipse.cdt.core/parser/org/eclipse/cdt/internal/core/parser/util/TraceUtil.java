@@ -29,6 +29,25 @@ public class TraceUtil {
 			log.traceLog( buffer.toString() );
 		}
 	}
+	public static void outputTrace(IParserLogService log, String preface, IProblem problem ) {
+		if( log.isTracing() ) {
+			StringBuffer buffer = new StringBuffer();
+			if( preface != null ) buffer.append( preface );
+			if( problem != null ) buffer.append( problem.getMessage());
+			log.traceLog( buffer.toString() );
+		}
+	}
+	public static void outputTrace(IParserLogService log, String preface, IProblem problem, char[] first, String second, String third ) {
+		if( log.isTracing() ) {
+			StringBuffer buffer = new StringBuffer();
+			if( preface != null ) buffer.append( preface );
+			if( problem != null ) buffer.append( problem.getMessage());
+			if( first   != null ) buffer.append( first );
+			if( second  != null ) buffer.append( second );
+			if( third   != null ) buffer.append( third );
+			log.traceLog( buffer.toString() );
+		}
+	}
 	public static void outputTrace(IParserLogService log, String preface, IProblem problem, int first, String second, int third ) {
 		if( log.isTracing() ) {
 			outputTrace(

@@ -2704,7 +2704,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			TraceUtil
 					.outputTrace(
 							log,
-							"ScannerException thrown : ", e.getProblem(), null, null, null); //$NON-NLS-1$
+							"ScannerException thrown : ", e.getProblem() ); //$NON-NLS-1$
 //			log.errorLog("Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$
 			return fetchToken();
 		}

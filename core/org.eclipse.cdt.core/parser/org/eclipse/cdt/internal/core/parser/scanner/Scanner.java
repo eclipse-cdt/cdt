@@ -130,7 +130,7 @@ public final class Scanner implements IScanner, IScannerData {
 				error );
 		
 		// trace log
-		TraceUtil.outputTrace(log, "Scanner problem encountered: ", problem, null, null, null ); //$NON-NLS-1$
+		TraceUtil.outputTrace(log, "Scanner problem encountered: ", problem ); //$NON-NLS-1$
 		
 		if( (! requestor.acceptProblem( problem )) && extra )
 			throw new ScannerException( problem );

@@ -311,11 +311,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				nextToken = null;
 				finished = true;
 			} else {
-				String t1 = lastToken.getImage();
-				String t2 = token2.getImage();
-				char[] pb = new char[t1.length() + t2.length()];
-				t1.getChars(0, t1.length(), pb, 0);
-				t2.getChars(0, t2.length(), pb, t1.length());
+				char[] pb = CharArrayUtils.concat( lastToken.getCharImage(), token2.getCharImage() );
 				pushContext(pb);
 				lastToken = oldToken;
 				nextToken = null;
@@ -327,7 +323,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				int tokenType = IToken.tSTRING; 
 				if( lastToken.getType() == IToken.tLSTRING || nextToken.getType() == IToken.tLSTRING )
 					tokenType = IToken.tLSTRING;
-				lastToken = new ImagedToken(tokenType, (lastToken.getImage() + nextToken.getImage()).toCharArray(), nextToken.getEndOffset(), getCurrentFilename() ); //TODO Fix this
+				lastToken = new ImagedToken(tokenType, CharArrayUtils.concat( lastToken.getCharImage(), nextToken.getCharImage() ), nextToken.getEndOffset(), getCurrentFilename() );
 				if (oldToken != null)
 					oldToken.setNext(lastToken);
 				nextToken = fetchToken();

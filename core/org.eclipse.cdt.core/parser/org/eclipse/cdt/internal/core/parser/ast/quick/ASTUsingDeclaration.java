@@ -27,7 +27,7 @@ public class ASTUsingDeclaration
 	implements IASTUsingDeclaration {
 
 	private final boolean isTypename; 
-	private final String  mappingName; 
+	private final char []  mappingName; 
     private final char [] fn;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
@@ -37,7 +37,7 @@ public class ASTUsingDeclaration
 	}
 
 	
-	public ASTUsingDeclaration( IASTScope scope, boolean isTypeName, String mappingName, int startingOffset, int startingLine, int endingOffset, int endingLine, char[] filename )
+	public ASTUsingDeclaration( IASTScope scope, boolean isTypeName, char[] mappingName, int startingOffset, int startingLine, int endingOffset, int endingLine, char[] filename )
 	{
 		super( scope );
 		isTypename = isTypeName;
@@ -57,7 +57,10 @@ public class ASTUsingDeclaration
 	 * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#usingTypeName()
 	 */
 	public String usingTypeName() {
-		return mappingName;
+		return String.valueOf(mappingName);
+	}
+	public char[] usingTypeNameCharArray(){
+	    return mappingName;
 	}
 
 	/* (non-Javadoc)

@@ -595,7 +595,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					addReference( references, createReference( (ISymbol) i.next(), name.getLastToken().getCharImage(), name.getLastToken().getOffset() ) );
 
 			}
-		ASTUsingDeclaration using = new ASTUsingDeclaration( scope, name.getLastToken().getImage(),
+		ASTUsingDeclaration using = new ASTUsingDeclaration( scope, name.getLastToken().getCharImage(),
 	        	endResult.getReferencedSymbols(), isTypeName, startingOffset, startingLine, endingOffset, endingLine, references, filename );
 		attachSymbolExtension( endResult, using );
 		
@@ -884,7 +884,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IProblem p = problemFactory.createProblem( id, 
 				startOffset, endOffset, lineNumber, filename, attribute, !isError, isError );
 		
-		TraceUtil.outputTrace(logService, "CompleteParseASTFactory - IProblem : ", p, null, null, null ); //$NON-NLS-1$
+		TraceUtil.outputTrace(logService, "CompleteParseASTFactory - IProblem : ", p ); //$NON-NLS-1$
 		
 		if( shouldThrowException( scope, id, !isError ) ) 
 			throw new ASTSemanticException(p);

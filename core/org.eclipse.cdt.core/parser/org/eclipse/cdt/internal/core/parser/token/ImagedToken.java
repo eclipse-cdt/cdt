@@ -66,7 +66,7 @@ public class ImagedToken extends SimpleToken {
 	 */
 	protected void setOffsetAndLength(IScannerContext context) {
 		if( getImage() == null ) return;
-		offset = context.getOffset() - getImage().length();		
+		offset = context.getOffset() - getCharImage().length;		
 		if( getType() == tSTRING || getType() == tCHAR )
 			offset--;
 		else if( getType() == tLSTRING || getType() == tLCHAR )
@@ -74,18 +74,18 @@ public class ImagedToken extends SimpleToken {
 	}
 	
 	public int getLength() {
-		if( getImage() == null )
+		if( getCharImage() == null )
 			return 0;
 		switch( getType() )
 		{
 			case tSTRING:
 			case tCHAR:
-				return getImage().length() + 2;  // 'c' is 3 characters, not 1
+				return getCharImage().length + 2;  // 'c' is 3 characters, not 1
 			case tLSTRING:
 			case tLCHAR:
-				return getImage().length() + 3;  // L"X" if 4 characters, not 1
+				return getCharImage().length + 3;  // L"X" if 4 characters, not 1
 			default:
-				return getImage().length();
+				return getCharImage().length;
 		}
 	}
 }

@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
@@ -25,25 +26,25 @@
       <debugger
             platform="native"
             name="%GDBDebugger.name"
-            class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
-            cpu="native"
             modes="run,core,attach"
+            cpu="native"
+            class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
             id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>
       <debugger
             platform="win32"
             name="%CygwinGDBDebugger.name"
-            class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
-            cpu="native"
             modes="run,core,attach"
+            cpu="native"
+            class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
             id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
       </debugger>
       <debugger
             platform="native"
             name="%GDBServer.name"
-            class="org.eclipse.cdt.debug.mi.core.GDBServerDebugger"
-            cpu="native"
             modes="run"
+            cpu="native"
+            class="org.eclipse.cdt.debug.mi.core.GDBServerDebugger"
             id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
       </debugger>
    </extension>

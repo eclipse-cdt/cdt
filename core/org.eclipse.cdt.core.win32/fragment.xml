@@ -12,6 +12,10 @@
       <library name="cdt_win32.jar"/>
    </runtime>
 
+   <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+   </requires>
+
 
    <extension
          point="org.eclipse.cdt.core.ProcessList">

@@ -14,12 +14,12 @@
    <requires>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.mi.core"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 

@@ -372,7 +372,11 @@ public class CModelBuilder {
 	}
 
 	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
-		String variableName = declarator.getName().toString();  
+		Name domName = ( declarator.getDeclarator() != null ) ? 
+			declarator.getDeclarator().getName() : 
+			declarator.getName(); 
+
+		String variableName = domName.toString();  
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		
 		VariableDeclaration element = null;
@@ -403,7 +407,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// set position
-		element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );
+		element.setIdPos( domName.getStartOffset(), domName.length() );
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
 			
 		this.newElements.put(element, element.getElementInfo());
@@ -411,7 +415,11 @@ public class CModelBuilder {
 	}
 
 	protected FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
-		String declaratorName = declarator.getName().toString();
+		Name domName = ( declarator.getDeclarator() != null ) ? 
+			declarator.getDeclarator().getName() : 
+			declarator.getName(); 
+
+		String declaratorName = domName.toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		// getParameterTypes
 		List parameterList = pdc.getDeclarations();
@@ -482,7 +490,7 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );		
+		element.setIdPos( domName.getStartOffset(), domName.length() );		
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -504,10 +512,14 @@ public class CModelBuilder {
 			|| ( parent instanceof INamespace ))
 		{		
 			element = new VariableDeclaration(parent, declaratorName);
-		}					
+		} else if( parent instanceof IStructure){
+			Field newElement = new Field(parent, declaratorName);
+			newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+			element = newElement;
+		}
+							
 		StringBuffer typeName = new StringBuffer();
 		typeName.append(getType(simpleDeclaration, declarator));
-		typeName.append("(*)");
 		if(parameterTypes.length > 0){
 			typeName.append("(");
 			int i = 0;
@@ -589,6 +601,10 @@ public class CModelBuilder {
 		type.append(getDeclarationType(declaration));
 		// add pointerr or reference from declarator if any
 		type.append(getDeclaratorPointerOperation(declarator));
+		// pointer to function or array of functions
+		if(declarator.getDeclarator() != null)
+		type.append("(*)");
+		// arrays
 		type.append(getDeclaratorArrayQualifiers(declarator));
 		return type.toString();		
 	}

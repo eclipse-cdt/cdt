@@ -368,7 +368,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 						ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 						String label = target.getName() + 
 									   MessageFormat.format( " (Signal ''{0}'' received. Meaning: {1})", 
-									   						 new String[] { signal.getName(), signal.getMeaning() } );
+									   						 new String[] { signal.getName(), signal.getDescription() } );
 						return label;
 					}
 					if ( info != null && info instanceof ICDIWatchpointTrigger )

@@ -50,6 +50,9 @@
       <super
             type="org.eclipse.debug.core.lineBreakpointMarker">
       </super>
+      <persistent
+            value="true">
+      </persistent>
    </extension>
    <extension
          id="cLineBreakpointMarker"
@@ -68,7 +71,7 @@
             type="org.eclipse.cdt.debug.core.commonCLineBreakpointMarker">
       </super>
       <persistent
-            value="org.eclipse.cdt.debug.core.persistent3">
+            value="true">
       </persistent>
       <attribute
             name="address">
@@ -103,17 +106,17 @@
    <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
-            markerType="cLineBreakpointMarker"
+            markerType="org.eclipse.cdt.debug.core.cLineBreakpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint"
             id="cLineBreakpoint">
       </breakpoint>
       <breakpoint
-            markerType="cAddressBreakpointMarker"
+            markerType="org.eclipse.cdt.debug.core.cAddressBreakpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint"
             id="cAddressBreakpoint">
       </breakpoint>
       <breakpoint
-            markerType="cFunctionBreakpointMarker"
+            markerType="org.eclipse.cdt.debug.core.cFunctionBreakpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint"
             id="cFunctionBreakpoint">
       </breakpoint>

@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICBreakpoint;
@@ -311,6 +312,20 @@ public class CBreakpointPropertiesDialog extends Dialog
 		{
 			public void run( IProgressMonitor monitor ) throws CoreException
 			{
+				ICBreakpoint breakpoint = getBreakpoint();
+				Iterator changed = changedProperties.iterator();
+				while ( changed.hasNext() ) 
+				{
+					String property = (String)changed.next();
+					if ( property.equals( CBreakpointPreferenceStore.IGNORE_COUNT ) )
+					{
+						breakpoint.setIgnoreCount( getPreferenceStore().getInt( CBreakpointPreferenceStore.IGNORE_COUNT ) );
+					}
+					else if ( property.equals( CBreakpointPreferenceStore.CONDITION ) )
+					{
+						breakpoint.setCondition( getPreferenceStore().getString( CBreakpointPreferenceStore.CONDITION ) );
+					}
+				}
 			}
 		};
 

@@ -64,6 +64,13 @@ public abstract class CBreakpoint extends Breakpoint
 	/**
 	 * Constructor for CBreakpoint.
 	 */
+	public CBreakpoint()
+	{
+	}
+
+	/**
+	 * Constructor for CBreakpoint.
+	 */
 	public CBreakpoint( final IResource resource, final String markerType, final Map attributes, final boolean add ) throws DebugException
 	{
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() 

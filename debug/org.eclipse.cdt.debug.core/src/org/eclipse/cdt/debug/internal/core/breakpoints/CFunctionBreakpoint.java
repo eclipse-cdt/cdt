@@ -33,6 +33,13 @@ public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakp
 	/**
 	 * Constructor for CFunctionBreakpoint.
 	 */
+	public CFunctionBreakpoint()
+	{
+	}
+
+	/**
+	 * Constructor for CFunctionBreakpoint.
+	 */
 	public CFunctionBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
 		super( resource, C_FUNCTION_BREAKPOINT, attributes, add );

@@ -33,6 +33,13 @@ public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoi
 	/**
 	 * Constructor for CAddressBreakpoint.
 	 */
+	public CAddressBreakpoint()
+	{
+	}
+
+	/**
+	 * Constructor for CAddressBreakpoint.
+	 */
 	public CAddressBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
 		super( resource, C_ADDRESS_BREAKPOINT, attributes, add );

@@ -159,7 +159,7 @@ public class CDebugModel
 			ICLineBreakpoint breakpoint = (ICLineBreakpoint)breakpoints[i];
 			if ( breakpoint.getMarker().getType().equals( markerType ) )
 			{
-				if ( breakpoint.getMarker().getResource().getLocation().toString().equals( fileName ) )
+				if ( breakpoint.getMarker().getResource().getLocation().toOSString().equals( fileName ) )
 				{
 					if ( breakpoint.getLineNumber() == lineNumber )
 					{

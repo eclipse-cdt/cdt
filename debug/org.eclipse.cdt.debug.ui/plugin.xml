@@ -90,6 +90,26 @@
                helpContextId="restart_action_context"
                label="%RestartAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%ManageBreakpointAction.label"
+               icon="icons/full/obj16/brkpi_obj.gif"
+               helpContextId="manage_breakpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.cdt.debug.ui.internal.actions.ManageBreakpointActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
          </action>
       </actionSet>
    </extension>
@@ -133,6 +153,18 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
          </action>
       </viewerContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.debug.core.ICBreakpoint"
+            id="org.eclipse.cdt.debug.ui.CBreakpointActions">
+         <action
+               label="%BreakpointPropertiesAction.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction">
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -152,6 +184,19 @@
                tooltip="%RestartAction.tooltip">
          </action>
       </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.cdt.ui.editor.CEditor"
+            id="org.eclipse.cdt.debug.ui.CEditor.BreakpointRulerActions">
+         <action
+               label="%Dummy.label"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+         </action>
+      </editorContribution>
    </extension>
 
 </plugin>

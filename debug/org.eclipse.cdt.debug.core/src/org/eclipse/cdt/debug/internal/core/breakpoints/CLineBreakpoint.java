@@ -28,6 +28,13 @@ public class CLineBreakpoint extends CBreakpoint implements ICLineBreakpoint
 	/**
 	 * Constructor for CLineBreakpoint.
 	 */
+	public CLineBreakpoint()
+	{
+	}
+
+	/**
+	 * Constructor for CLineBreakpoint.
+	 */
 	public CLineBreakpoint( IResource resource, Map attributes, boolean add ) throws DebugException
 	{
 		super( resource, getMarkerType(), attributes, add );

@@ -160,6 +160,8 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	private Object findFileByRelativePath( IContainer container, String fileName )
 	{
 		IPath rootPath = container.getLocation();
+		if ( rootPath == null )
+			return null;
 		IPath path = rootPath.append( fileName );
 		Object result = findFileByAbsolutePath( path.toOSString() );
 		if ( result == null )

@@ -1,3 +1,8 @@
+2003-07-24 Mikhail Khodjaiants
+	Fix for PR 40696. If the project contains the reference to a project that is 
+	deleted from the workspace the source locator tries to get the location of deleted project.
+	* CProjectSourceLocation.java
+
 2003-07-22 Mikhail Khodjaiants
 	Create a special type of ICDIVariable (ErrorVariable) if request to gdb fails.
 	* CVariable.java

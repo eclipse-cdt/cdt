@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Watchpoint;
+import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
@@ -107,7 +108,11 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				// Disable events.
 				if (ctarget.isRunning()) {
 					EventManager mgr = (EventManager)session.getEventManager();
-					int lastToken = ctarget.getLastExecutionToken();
+					Command cmd = ctarget.getLastExecutionCommand();
+					int lastToken = 0;
+					if (cmd != null) {
+						lastToken = cmd.getToken();
+					}
 					mgr.disableEventToken(lastToken);
 					ctarget.suspend();
 					shouldRestart = true;

@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.debug.mi.core"
    name="%pluginName"
-   version="1.0.0"
+   version="1.0.1"
    provider-name="%providerName"
    class="org.eclipse.cdt.debug.mi.core.MIPlugin">
 
@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.cdt.core"/>
    </requires>
+
 
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
@@ -35,7 +36,7 @@
             cpu="native"
             class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
             id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
-       </debugger>
+      </debugger>
    </extension>
 
 </plugin>

@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.debug.mi.ui"
    name="%pluginName"
-   version="1.0.0"
+   version="1.0.1"
    provider-name="%providerName"
    class="org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin">
 
@@ -35,9 +35,8 @@
             class="org.eclipse.cdt.debug.mi.internal.ui.CDebuggerPage"
             id="org.eclipse.cdt.debug.mi.CygwinCDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
-       </debugPage>
+      </debugPage>
    </extension>
-
    <extension
          point="org.eclipse.ui.preferencePages">
       <page

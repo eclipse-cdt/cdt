@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
 import org.eclipse.cdt.internal.ui.util.Util;
@@ -54,7 +55,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -103,6 +103,13 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private static ResourceBundle fgResourceBundle;
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	private CEditorTextHoverDescriptor[] fCEditorTextHoverDescriptors;
+
+	/**
+	 * The extension point registry for the <code>org.eclipse.jdt.ui.javaFoldingStructureProvider</code>
+	 * extension point.
+	 * 
+	 */
+	private CFoldingStructureProviderRegistry fFoldingStructureProviderRegistry;
 
 	/**
 	 * The combined preference store.
@@ -706,5 +713,18 @@ public class CUIPlugin extends AbstractUIPlugin {
 		CActions.addAll(CCActions);
 		return (String[]) CActions.toArray(new String[CActions.size()]);
 	}
-	
+
+	/**
+	 * Returns the registry of the extensions to the <code>org.eclipse.jdt.ui.javaFoldingStructureProvider</code>
+	 * extension point.
+	 * 
+	 * @return the registry of contributed <code>IJavaFoldingStructureProvider</code>
+	 * @since 3.0
+	 */
+	public synchronized CFoldingStructureProviderRegistry getFoldingStructureProviderRegistry() {
+		if (fFoldingStructureProviderRegistry == null)
+			fFoldingStructureProviderRegistry= new CFoldingStructureProviderRegistry();
+		return fFoldingStructureProviderRegistry;
+	}
+
 }

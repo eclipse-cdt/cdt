@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -31,8 +32,10 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
+import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -58,8 +61,10 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -73,6 +78,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -84,6 +90,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
@@ -144,6 +151,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     /** Preference key for hyperlink enablement */
     public final static String HYPERLINK_ENABLED = "hyperlinkEnable"; //$NON-NLS-1$
 
+	/** 
+	 * This editor's projection support 
+	 */
+	private ProjectionSupport fProjectionSupport;
+	/** 
+	 * This editor's projection model updater 
+	 */
+	private ICFoldingStructureProvider fProjectionModelUpdater;
+
+	/**
+	 * The action group for folding.
+	 *  
+	 */
+	private FoldingActionGroup fFoldingGroup;
+
+
     private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
         /*
          * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
@@ -193,6 +216,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fCEditorErrorTickUpdater.setAnnotationModel(getDocumentProvider().getAnnotationModel(input));
 		}
 		setOutlinePageInput(fOutlinePage, input);
+
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.initialize();
+		}
 	}
 
 	/**
@@ -236,6 +263,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			return getOutlinePage();
+		}
+		if (required == IShowInTargetList.class) {
+			return new IShowInTargetList() {
+				public String[] getShowInTargetIds() {
+					return new String[] { CUIPlugin.CVIEW_ID, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
+				}
+
+			};
+		}
+		if (ProjectionAnnotationModel.class.equals(required)) {
+			if (fProjectionSupport != null) {
+				Object adapter= fProjectionSupport.getAdapter(getSourceViewer(), required);
+				if (adapter != null)
+					return adapter;
+			}
 		}
 		return super.getAdapter(required);
 	}
@@ -289,7 +331,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 						disableBrowserLikeLinks();
 					return;
 				}
-				
+
+				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
+					if (asv instanceof ProjectionViewer) {
+						ProjectionViewer projectionViewer= (ProjectionViewer) asv;
+						if (fProjectionModelUpdater != null)
+							fProjectionModelUpdater.uninstall();
+						// either freshly enabled or provider changed
+						fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
+						if (fProjectionModelUpdater != null) {
+							fProjectionModelUpdater.install(this, projectionViewer);
+						}
+					}
+					return;
+				}
+
 				IContentAssistant c= asv.getContentAssistant();
 				if (c instanceof ContentAssistant)
 					ContentAssistPreference.changeConfiguration((ContentAssistant) c, getPreferenceStore(), event);
@@ -428,6 +484,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	public void dispose() {
 
+		if (fProjectionModelUpdater != null) {
+			fProjectionModelUpdater.uninstall();
+			fProjectionModelUpdater= null;
+		}
+		
+		if (fProjectionSupport != null) {
+			fProjectionSupport.dispose();
+			fProjectionSupport= null;
+		}
+
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.setAnnotationModel(null);
 			fCEditorErrorTickUpdater.dispose();
@@ -440,7 +506,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			IPreferenceStore preferenceStore = getPreferenceStore();
 			preferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 			fPropertyChangeListener = null;
-        
 		}
         
         if (fSelectionUpdateListener != null) {
@@ -478,7 +543,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fSelectionSearchGroup.dispose();
 			fSelectionSearchGroup = null;
 		}
-		
+
 		stopTabConversion();
 		disableBrowserLikeLinks();
 		
@@ -517,6 +582,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	protected void createActions() {
 		super.createActions();
+
+		fFoldingGroup= new FoldingActionGroup(this, getSourceViewer());
 
 		// Default text editing menu items
 
@@ -603,6 +670,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 	}
 
+	boolean isFoldingEnabled() {
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
+	}
+
+
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
@@ -614,6 +686,27 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+
+		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+		
+		fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
+		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
+//		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+//			public IInformationControl createInformationControl(Shell shell) {
+//				return new CustomSourceInformationControl(shell, IDocument.DEFAULT_CONTENT_TYPE);
+//			}
+//		});
+		fProjectionSupport.install();
+		
+		fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
+		if (fProjectionModelUpdater != null)
+			fProjectionModelUpdater.install(this, projectionViewer);
+
+		if (isFoldingEnabled())
+			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+		
+
 		WorkbenchHelp.setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);	
 		fSelectionUpdateListener = new ISelectionChangedListener() {
 			private Runnable fRunnable = new Runnable() {
@@ -831,7 +924,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * Adapted source viewer for CEditor
 	 */
 
-	public class AdaptedSourceViewer extends SourceViewer implements ITextViewerExtension {
+	public class AdaptedSourceViewer extends ProjectionViewer implements ITextViewerExtension {
 
 		private List fTextConverters;
 		private String fDisplayLanguage;
@@ -973,6 +1066,43 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		AsmTextTools asmTools = CUIPlugin.getDefault().getAsmTextTools();
 		return textTools.affectsBehavior(event) || asmTools.affectsBehavior(event);
+	}
+
+	/**
+	 * Returns the folding action group, or <code>null</code> if there is none.
+	 * 
+	 * @return the folding action group, or <code>null</code> if there is none
+	 */
+	protected FoldingActionGroup getFoldingActionGroup() {
+		return fFoldingGroup;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performRevert()
+	 */
+	protected void performRevert() {
+		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
+		projectionViewer.setRedraw(false);
+		try {
+			
+			boolean projectionMode= projectionViewer.isProjectionMode();
+			if (projectionMode) {
+				projectionViewer.disableProjection();				
+				if (fProjectionModelUpdater != null)
+					fProjectionModelUpdater.uninstall();
+			}
+			
+			super.performRevert();
+			
+			if (projectionMode) {
+				if (fProjectionModelUpdater != null)
+					fProjectionModelUpdater.install(this, projectionViewer);	
+				projectionViewer.enableProjection();
+			}
+			
+		} finally {
+			projectionViewer.setRedraw(true);
+		}
 	}
 
     /**

@@ -34,6 +34,9 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
+   <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint"/>
+   <!--extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/-->
+   
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
@@ -928,4 +931,16 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.ui.CUIPreferenceInitializer"/>
    </extension>
+
+<!-- Default folding -->
+	<extension
+		point= "org.eclipse.cdt.ui.foldingStructureProviders">
+		<provider
+			id="org.eclipse.cdt.ui.text.defaultFoldingProvider"
+			name= "%defaultFoldingStructureProviderName"
+			class="org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingStructureProvider"
+			preferencesClass="org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingPreferenceBlock">
+		</provider>
+	</extension>
+
 </plugin>

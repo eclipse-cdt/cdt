@@ -67,12 +67,12 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 public class CEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	protected final String[][] fListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.MultiLine"), ICColorConstants.C_MULTI_LINE_COMMENT }, { //$NON-NLS-1$
-			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.singleLine"), ICColorConstants.C_SINGLE_LINE_COMMENT }, { //$NON-NLS-1$
-			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.keywords"), ICColorConstants.C_KEYWORD }, { //$NON-NLS-1$
-			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.builtInTypes"), ICColorConstants.C_TYPE }, { //$NON-NLS-1$
-			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.strings"), ICColorConstants.C_STRING }, { //$NON-NLS-1$
-			PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
-            PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.singleLine"), ICColorConstants.C_SINGLE_LINE_COMMENT }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.keywords"), ICColorConstants.C_KEYWORD }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.builtInTypes"), ICColorConstants.C_TYPE }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.strings"), ICColorConstants.C_STRING }, { //$NON-NLS-1$
+		PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags.others"), ICColorConstants.C_DEFAULT }, { //$NON-NLS-1$
+        PreferencesMessages.getString("CEditorPreferencePage.cCommentTaskTags"), PreferenceConstants.EDITOR_TASK_TAG_COLOR } //$NON-NLS-1$
 	};
 
 	protected final String[][] fAppearanceColorListModel = new String[][] { { PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.lineNumberColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null }, //$NON-NLS-1$
@@ -82,7 +82,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.linkedPositionColor"), CEditor.LINKED_POSITION_COLOR, null }, //$NON-NLS-1$
 		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.selectionForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
 		{PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.selectionBackgroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
-					
 	};
 
 	protected OverlayPreferenceStore fOverlayStore;
@@ -136,6 +135,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	protected ColorEditor fAppearanceColorEditor;
 	private Button fAppearanceColorDefault;
 	private CEditorHoverConfigurationBlock fCEditorHoverConfigurationBlock;
+	private FoldingConfigurationBlock fFoldingConfigurationBlock;
+
 
 	public CEditorPreferencePage() {
 		setDescription(CUIPlugin.getResourceString("CEditorPreferencePage.description")); //$NON-NLS-1$
@@ -827,6 +828,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		initializeDefaultColors();
 
 		fCEditorHoverConfigurationBlock= new CEditorHoverConfigurationBlock(this, fOverlayStore);
+		fFoldingConfigurationBlock= new FoldingConfigurationBlock(fOverlayStore);
 
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -855,6 +857,9 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(fCEditorHoverConfigurationBlock.createControl(folder));
 
+		item= new TabItem(folder, SWT.NONE);
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.folding.title")); //$NON-NLS-1$
+		item.setControl(fFoldingConfigurationBlock.createControl(folder));
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.Navigation")); //$NON-NLS-1$
@@ -910,6 +915,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
+		fFoldingConfigurationBlock.initialize();
+
 	}
 
 	private void initializeFields() {
@@ -958,6 +965,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	public boolean performOk() {
 		fCEditorHoverConfigurationBlock.performOk();
+		fFoldingConfigurationBlock.performOk();
 		fOverlayStore.propagate();
 		return true;
 	}
@@ -973,6 +981,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		handleAppearanceColorListSelection();
 
 		fCEditorHoverConfigurationBlock.performDefaults();
+		fFoldingConfigurationBlock.performDefaults();
 
 		super.performDefaults();
 
@@ -983,6 +992,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see DialogPage#dispose()
 	 */
 	public void dispose() {
+
+		fFoldingConfigurationBlock.dispose();
 
 		if (fCTextTools != null) {
 			fCTextTools = null;

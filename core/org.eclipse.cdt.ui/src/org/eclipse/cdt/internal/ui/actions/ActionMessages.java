@@ -36,6 +36,17 @@ public class ActionMessages {
 	}
 
 	/**
+	 * Returns the resource bundle managed by the receiver.
+	 * 
+	 * @return the resource bundle
+	 * @since 3.0
+	 */
+	public static ResourceBundle getResourceBundle() {
+		return fgResourceBundle;
+	}
+	
+
+	/**
 	 * Returns the resource string associated with the given key in the resource bundle. If there isn't 
 	 * any value under the given key, the key is returned.
 	 *

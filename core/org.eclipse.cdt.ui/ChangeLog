@@ -1,3 +1,34 @@
+2004-08-24 Alain Magloire
+
+	Implementation for PR 69118: Folding.
+	Framework taken from the JDT folding adapted to C
+
+	* src/org/eclipse/cdt/internal/ui/action/ActionMessages.java
+	* src/org/eclipse/cdt/internal/ui/action/FoldingActionGroup.java
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+
+	* src/org/eclipse/cdt/internal/ui/preference/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preference/FoldingConfigurationBlock.java
+	* src/org/eclipse/cdt/internal/ui/preference/PreferencesMessages.properties
+
+	* src/org/eclipse/cdt/internal/ui/text/folding/CFoldingStructureProviderDescriptor.java
+	* src/org/eclipse/cdt/internal/ui/text/folding/CFoldingStructureProviderRegistry.java
+	* src/org/eclipse/cdt/internal/ui/text/folding/DefaultCFoldingPreferenceBlock.java
+	* src/org/eclipse/cdt/internal/ui/text/folding/DefaultCFoldingStructureProvider.java
+	* src/org/eclipse/cdt/internal/ui/text/folding/EmptyCFoldingPrefernceBlock.java
+	* src/org/eclipse/cdt/internal/ui/text/folding/FoldingMessages.java
+	* src/org/eclipse/cdt/internal/ui/text/folding/FoldingMessages.properties
+
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* src/org/eclipse/cdt/ui/PreferenceConstants.java
+
+	* src/org/eclipse/cdt/ui/text/folding/ICFoldingPreferenceBlock.java
+	* src/org/eclipse/cdt/ui/text/folding/ICFoldingStructureProvider.java
+
+	* plugin.properties
+	* plugin.xml
+
 2004-08-24 Chris Wiebe
 
 	fix sorting bug

@@ -289,6 +289,64 @@ public class PreferenceConstants {
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether folding is enabled in the C editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 */
+	public static final String EDITOR_FOLDING_ENABLED= "editor_folding_enabled"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that stores the configured folding provider.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 */
+	public static final String EDITOR_FOLDING_PROVIDER= "editor_folding_provider"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that stores the value for Structure folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EDITOR_FOLDING_STRUCTURES= "editor_folding_default_structures"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that stores the value for functions folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EDITOR_FOLDING_FUNCTIONS= "editor_folding_default_functions"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that stores the value for method folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EDITOR_FOLDING_METHODS= "editor_folding_default_methods"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that stores the value for macros folding for the default folding provider.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EDITOR_FOLDING_MACROS= "editor_folding_default_macros"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 * 
 	 * @return the CDT-UI preference store
@@ -317,6 +375,15 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + mod1Name); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + SWT.MOD1); //$NON-NLS-1$
 		//store.setDefault(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
+
+		// folding
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PROVIDER, "org.eclipse.cdt.ui.text.defaultFoldingProvider"); //$NON-NLS-1$
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, false);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_STRUCTURES, true);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_METHODS, false);
+		store.setDefault(PreferenceConstants.EDITOR_FOLDING_MACROS, true);
+
 
     }
 }

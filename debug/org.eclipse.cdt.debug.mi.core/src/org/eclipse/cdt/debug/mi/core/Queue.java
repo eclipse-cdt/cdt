@@ -35,6 +35,7 @@ public class Queue {
 			return item;
 		}
 	}
+
 	public void addItem(Object item) {
 		//print("in addItem() - entering");
 		synchronized (list) {
@@ -49,6 +50,15 @@ public class Queue {
 			//print("in addItem() - just notified");
 		}
 		//print("in addItem() - leaving");
+	}
+
+	public Object[] clearItems() {
+		Object[] array;
+		synchronized (list) {
+			array = list.toArray();
+			list.clear();
+		}
+		return array;
 	}
 
 	private static void print(String msg) {

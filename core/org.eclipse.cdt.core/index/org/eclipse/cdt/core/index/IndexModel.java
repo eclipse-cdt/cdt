@@ -37,6 +37,11 @@ public class IndexModel {
 		try {
 			if (project != null) {
 				project.setPersistentProperty(activationKey, prop);
+				if (on) {
+					addResource(project);
+				} else {
+					removeResource(project);
+				}
 			}
 		} catch (CoreException e) {
 		}
@@ -58,13 +63,20 @@ public class IndexModel {
 	
 	/**
 	 * Add a resource to be index.  Containers(Folder, projects)
-	 * resources are recusively search for C Files as define by
+	 * resources are recursively search for C Files as define by
 	 * CoreModel.isTranslationUnit().
 	 */
 	public void addResource(IResource resource) {
 		manager.addResource(resource);
 	}
 
+	/**
+	 * Remove the resource from the indexer list.
+	 */
+	public void removeResource(IResource resource) {
+		manager.removeResource(resource);
+	}
+	
 	/**
 	 * Add all the C files recurively going to all projects
 	 * identified as C Projects by CoreModel.

@@ -1,3 +1,7 @@
+2004-12-16 Mikhail Khodjaiants
+	Fix for bug 81381: Deadlock when single stepping.
+	* CThread.java
+
 2004-12-08 Mikhail Khodjaiants
 	Fix for bug 79678: NPE in Expression.
 	* CExpression.java

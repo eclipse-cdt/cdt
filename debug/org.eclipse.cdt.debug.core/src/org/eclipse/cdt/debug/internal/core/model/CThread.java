@@ -174,8 +174,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 					addStackFrames( frames, 0, depth - getLastStackDepth() );
 					updateStackFrames( frames, depth - getLastStackDepth(), fStackFrames, frames.length - depth + getLastStackDepth() );
 				}
-				else // depth == getLastStackDepth()
-				{
+				else { // depth == getLastStackDepth()
 					if ( depth != 0 ) {
 						// same number of frames - if top frames are in different
 						// function, replace all frames
@@ -246,7 +245,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		for( int i = 0; i < length; i++ ) {
 			CStackFrame frame = (CStackFrame)oldFrames.get( offset );
 			frame.setCDIStackFrame( newFrames[offset] );
-			frame.fireChangeEvent( DebugEvent.STATE );
 			offset++;
 		}
 	}

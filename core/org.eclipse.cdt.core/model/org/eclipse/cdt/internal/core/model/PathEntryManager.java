@@ -949,6 +949,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			}
 		}
+		// They may have remove some duplications, catch here .. consider it as reordering.
+		if (list.size() == 0 && oldEntries.length != newEntries.length) {
+			ICElementDelta delta = makePathEntryDelta(cproject, null, true);
+			if (delta != null) {
+				list.add(delta);
+			}
+		}
 		ICElementDelta[] deltas = new ICElementDelta[list.size()];
 		list.toArray(deltas);
 		return deltas;

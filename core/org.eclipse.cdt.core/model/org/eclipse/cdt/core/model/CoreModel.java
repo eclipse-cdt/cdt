@@ -672,7 +672,7 @@ public class CoreModel {
 	 * @see #setPathEntryContainer(IPath, ICProject[], IPathEntryContainer,
 	 *      IProgressMonitor)
 	 */
-	public IPathEntryContainer getPathEntryContainer(IPath containerPath, ICProject project) throws CModelException {
+	public static IPathEntryContainer getPathEntryContainer(IPath containerPath, ICProject project) throws CModelException {
 		return pathEntryManager.getPathEntryContainer(containerPath, project);
 	}
 

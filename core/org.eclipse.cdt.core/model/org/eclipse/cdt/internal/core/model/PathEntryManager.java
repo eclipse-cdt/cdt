@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -184,7 +185,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						}
 					}
 				} else {
-					list.add(entry);
+					IPathEntry e = getExpandedPathEntry(entry, cproject);
+					if (e != null) {
+						list.add(entry);
+					}
 				}
 			}
 			entries = new IPathEntry[list.size()];
@@ -192,6 +196,54 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			resolvedMap.put(cproject, entries);
 		}
 		return entries;
+	}
+
+	private IPathEntry getExpandedPathEntry(IPathEntry entry, ICProject cproject) throws CModelException {
+		switch(entry.getEntryKind()) {
+			case IPathEntry.CDT_INCLUDE: {
+				IIncludeEntry includeEntry = (IIncludeEntry)entry;
+				IPath includePath = includeEntry.getIncludePath();
+				IPath refPath = includeEntry.getBaseReference();
+				if (refPath != null && !refPath.isEmpty()) {
+					if (refPath.isAbsolute()) {
+						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
+						if (res != null && res.getType() == IResource.PROJECT) {
+							ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+							if (refCProject != null) {
+								IPathEntry[] entries = getResolvedPathEntries(refCProject);
+								for (int i = 0; i < entries.length; i++) {
+									if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+										IIncludeEntry refEntry = (IIncludeEntry)entries[i];
+										if (refEntry.getIncludePath().equals(includePath)) {
+											IPath newBasePath = refEntry.getBasePath();
+											return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath, includePath);											
+										}
+									}
+								}
+							}
+						}
+					} else { // Container ref
+						IPathEntryContainer container = getPathEntryContainer(refPath, cproject);
+						if (container != null) {
+							IPathEntry[] entries = container.getPathEntries();
+							for (int i = 0; i < entries.length; i++) {
+								if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+									IIncludeEntry refEntry = (IIncludeEntry)entries[i];
+									if (refEntry.getIncludePath().equals(includePath)) {
+										IPath newBasePath = refEntry.getBasePath();
+										return CoreModel.newIncludeEntry(includeEntry.getPath(), newBasePath, includePath);											
+									}
+								}
+							}
+						}
+					}
+				}
+				break;
+			}
+			case IPathEntry.CDT_MACRO:
+				break;
+		}
+		return entry;
 	}
 
 	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {

@@ -10,12 +10,21 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.pst;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TemplateInstance;
 /**
  * @author jcamelon
  *
  */
 public interface ISymbol {
 
+	public ParserSymbolTable getSymbolTable();
+	
+	public Object clone();
+		
 	public Object getCallbackExtension(); 
 	public void setCallbackExtension( Object obj );
 
@@ -24,19 +33,26 @@ public interface ISymbol {
 	public IContainerSymbol getContainingSymbol();
 	public void setContainingSymbol( IContainerSymbol containing );
 	
-	public boolean isType( int type );
-	public boolean isType( int type, int upperType );
-	public int getType();
-	public void setType(int t);
-	public ITypeInfo getTypeInfo();
+	public boolean isType( TypeInfo.eType type );
+	public boolean isType( TypeInfo.eType type, TypeInfo.eType upperType );
+	public TypeInfo.eType getType();
+	public void setType(TypeInfo.eType t);
+	public TypeInfo getTypeInfo();
+	public void setTypeInfo( TypeInfo info );
 	public ISymbol getTypeSymbol();
 	public void setTypeSymbol( ISymbol type );
-	public int getCVQualifier();
-	public void setCVQualifier( int cv );
-	public String getPtrOperator();
-	public void setPtrOperator( String ptrOp );
+
+	public int compareCVQualifiersTo( ISymbol symbol );
+	public LinkedList getPtrOperators();
+	public void addPtrOperator( TypeInfo.PtrOp ptrOp );
 	
-	public interface ITypeInfo {
+	public boolean isTemplateMember();
+	public void setIsTemplateMember( boolean isMember );
+	public ISymbol getTemplateInstance();
+	public HashMap getArgumentMap();
+	public void setTemplateInstance( TemplateInstance instance );
+	
+	/*public interface ITypeInfo {
 		public boolean checkBit(int mask);
 		public void setBit(boolean b, int mask);
 		public boolean isType( int type );
@@ -60,6 +76,6 @@ public interface ISymbol {
 		public boolean getHasDefault();
 		public void setHasDefault(boolean hasDefault);				
 	}
-	
+	*/
 	public int getDepth();
 }

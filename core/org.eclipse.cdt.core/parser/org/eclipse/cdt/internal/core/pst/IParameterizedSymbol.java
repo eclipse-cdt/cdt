@@ -16,8 +16,10 @@
  */
 package org.eclipse.cdt.internal.core.pst;
 
-import java.util.List;
-import java.util.Map;
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * @author aniefer
@@ -28,14 +30,21 @@ import java.util.Map;
 public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public void addParameter( ISymbol param );
-	public void addParameter( int type, int cvQual, String ptrOperator, boolean hasDefault );
-	public void addParameter( ISymbol typeSymbol, int cvQual, String ptrOperator, boolean hasDefault );
+	public void addParameter( TypeInfo.eType type, int info, TypeInfo.PtrOp ptrOp, boolean hasDefault );
+	public void addParameter( ISymbol typeSymbol, TypeInfo.PtrOp ptrOp, boolean hasDefault );
 	
-	public Map getParameterMap();
-	public List getParameterList();
+	public void addArgument( ISymbol arg );
+	public LinkedList getArgumentList();
+	
+	public HashMap getParameterMap();
+	public LinkedList getParameterList();
+	public void setParameterList( LinkedList list );
 
 	public boolean hasSameParameters(IParameterizedSymbol newDecl);
 	
-	public void setReturnType( int type );
-
+	public void setReturnType( TypeInfo.eType type );
+	
+	public boolean	hasSpecializations();
+	public void 	addSpecialization( IParameterizedSymbol spec );
+	public LinkedList getSpecializations();	
 }

@@ -1,3 +1,9 @@
+2003-05-29 Andrew Niefer
+	new Class eType for stronger type safety in TypeInfo
+	new class PtrOp for better handling of pointer operators and cv qualifiers
+	new class TemplateInstance to support templates
+	Start of implementation for templates & specializations
+
 2003-05-29 John Camelon
 	Remove all AST components.
 

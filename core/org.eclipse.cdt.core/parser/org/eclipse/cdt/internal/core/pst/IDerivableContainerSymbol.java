@@ -26,15 +26,15 @@ import java.util.List;
  */
 public interface IDerivableContainerSymbol extends IContainerSymbol {
 
-	public void addParent( IParentSymbol parent );
-	public void addParent( IDerivableContainerSymbol parent );
-	public void addParent( IDerivableContainerSymbol parent, boolean virtual );
+	public void addParent( ISymbol parent );
+	public void addParent( ISymbol parent, boolean virtual );
 	public List getParents();
 	public boolean hasParents();
 	
 	public interface IParentSymbol{
-		public void setParent( IDerivableContainerSymbol parent );
-		public IDerivableContainerSymbol getParent();
+		public void setParent( ISymbol parent );
+		public ISymbol getParent();
 		public boolean isVirtual();
+		public void setVirtual( boolean virtual );
 	}
 }

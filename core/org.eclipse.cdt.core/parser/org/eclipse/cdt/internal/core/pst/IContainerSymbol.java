@@ -16,6 +16,9 @@
  */
 package org.eclipse.cdt.internal.core.pst;
 
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
+import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TemplateInstance; 
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +42,14 @@ public interface IContainerSymbol extends ISymbol {
 			
 	public Map getContainedSymbols();
 	
-	public ISymbol ElaboratedLookup( int type, String name ) throws ParserSymbolTableException; 
+	public ISymbol ElaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException; 
 	public ISymbol Lookup( String name ) throws ParserSymbolTableException;
 	public ISymbol LookupMemberForDefinition( String name ) throws ParserSymbolTableException;
 	public IContainerSymbol LookupNestedNameSpecifier( String name ) throws ParserSymbolTableException;
 	public ISymbol QualifiedLookup( String name ) throws ParserSymbolTableException;
 	public IParameterizedSymbol UnqualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
 	public IParameterizedSymbol MemberFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
+
+	public TemplateInstance TemplateLookup( String name, LinkedList arguments ) throws ParserSymbolTableException;
+	public TemplateInstance instantiate( LinkedList arguments ) throws ParserSymbolTableException;
 }

@@ -2651,5 +2651,23 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, x, 2 );
         assertInstances( col, f, 2 );
     }
+    
+    public void testBug86827() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct C {                    \n"); //$NON-NLS-1$
+        buffer.append("   int c;                     \n"); //$NON-NLS-1$
+        buffer.append("   C() : c(0) { }             \n"); //$NON-NLS-1$
+        buffer.append("};                            \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IVariable c = (IVariable) col.getName(1).resolveBinding();
+
+        IASTName [] refs = tu.getReferences( c );
+        assertEquals( refs.length, 1 );
+        assertSame( refs[0], col.getName(3) );
+    }
 }
 

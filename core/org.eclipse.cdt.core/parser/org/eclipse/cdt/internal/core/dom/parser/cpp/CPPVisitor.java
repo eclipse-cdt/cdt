@@ -985,7 +985,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 						prop == ICPPASTUsingDeclaration.NAME ||
 						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
-						prop == IASTNamedTypeSpecifier.NAME)
+						prop == IASTNamedTypeSpecifier.NAME ||
+						prop == ICPPASTConstructorChainInitializer.MEMBER_ID)
 					{
 						break;
 					}

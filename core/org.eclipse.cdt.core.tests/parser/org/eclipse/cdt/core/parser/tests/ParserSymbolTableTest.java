@@ -1188,10 +1188,9 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IDerivableContainerSymbol cls = table.newDerivableContainerSymbol( "class", TypeInfo.t_class );
 		
-		IParameterizedSymbol fn = table.newParameterizedSymbol("function");
+		IParameterizedSymbol fn = table.newParameterizedSymbol("function", TypeInfo.t_function );
 		fn.setType( TypeInfo.t_function );
-		fn.getTypeInfo().addPtrOperator( new PtrOp( PtrOp.t_undef, true, false ) );
-		//fn.setCVQualifier( ParserSymbolTable.TypeInfo.cvConst );
+		fn.getTypeInfo().setBit( true, TypeInfo.isConst );
 		
 		table.getCompilationUnit().addSymbol( cls );
 		cls.addSymbol( fn );
@@ -1201,8 +1200,9 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertEquals( look.getType(), TypeInfo.t_type );
 		assertEquals( look.getTypeSymbol(), cls );
+		assertTrue( look.getTypeInfo().checkBit( TypeInfo.isConst ) );
 		assertEquals( ((PtrOp)look.getPtrOperators().iterator().next()).getType(), TypeInfo.PtrOp.t_pointer );
-		assertTrue( ((PtrOp)look.getPtrOperators().iterator().next()).isConst() );
+		
 		assertEquals( look.getContainingSymbol(), fn );
 	}
 	
@@ -1270,7 +1270,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol look = NS.lookup( "T" );
 		assertEquals( look, T );				
-		f.addParameter( look, null, false );
+		f.addParameter( look, 0, null, false );
 		
 		NS.addSymbol( f );	
 				
@@ -1433,7 +1433,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f3.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		f3.addParameter( TypeInfo.t_int, 0, null, false );
 		f3.addParameter( TypeInfo.t_char, 0, null, false );
-		f3.addParameter( C, new PtrOp( PtrOp.t_pointer ), false );
+		f3.addParameter( C, 0, new PtrOp( PtrOp.t_pointer ), false );
 		C.addSymbol( f3 );
 		
 		ISymbol look = compUnit.lookup("C");
@@ -1556,12 +1556,12 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f" );
 		f1.setType( TypeInfo.t_function );
-		f1.addParameter( A, new PtrOp( PtrOp.t_pointer ), false );
+		f1.addParameter( A, 0, new PtrOp( PtrOp.t_pointer ), false );
 		compUnit.addSymbol( f1 );
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f" );
 		f2.setType( TypeInfo.t_function );
-		f2.addParameter( B, new PtrOp( PtrOp.t_pointer ), false );
+		f2.addParameter( B, 0, new PtrOp( PtrOp.t_pointer ), false );
 		compUnit.addSymbol( f2 );
 		
 		ISymbol a = table.newSymbol( "a" );
@@ -1625,12 +1625,12 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f" );
 		f1.setType( TypeInfo.t_function );
-		f1.addParameter( A, new PtrOp( PtrOp.t_pointer ), false );
+		f1.addParameter( A, 0, new PtrOp( PtrOp.t_pointer ), false );
 		compUnit.addSymbol( f1 );
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f" );
 		f2.setType( TypeInfo.t_function );
-		f2.addParameter( A, null, false );
+		f2.addParameter( A, 0, null, false );
 		compUnit.addSymbol( f2 );
 
 		ISymbol a = table.newSymbol( "a" );
@@ -1706,12 +1706,12 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol constructor = table.newParameterizedSymbol("B");
 		constructor.setType( TypeInfo.t_constructor );
-		constructor.addParameter( A, null, false );
+		constructor.addParameter( A, 0, null, false );
 		B.addConstructor( constructor );
 		
 		IParameterizedSymbol f = table.newParameterizedSymbol( "f" );
 		f.setType( TypeInfo.t_function );
-		f.addParameter( B, null, false );
+		f.addParameter( B, 0, null, false );
 		compUnit.addSymbol( f );
 		
 		ISymbol a = table.newSymbol( "a" );
@@ -1744,7 +1744,7 @@ public class ParserSymbolTableTest extends TestCase {
 	 * 	  					//and 1L->short and 1L->int are indistinguishable
 	 * 	  f( &i, 'c' );		//calls f( int*, int) because &i->int * is better than &i->const int *
 	 * 	  					//and c->int is better than c->short
-	 * 	  f( (const)&i, 1L ); //calls f(const int *, short ) because const &i->int* is better than &i->int *
+	 * 	  f( (const int *)&i, 1L ); //calls f(const int *, short ) because const &i->int* is better than &i->int *
 	 * 	  					   //and 1L->short and 1L->int are indistinguishable
 	 * }
 	 */
@@ -1755,7 +1755,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f" );
 		f1.setType( TypeInfo.t_function );
-		f1.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer, true, false ), false );
+		f1.addParameter( TypeInfo.t_int, TypeInfo.isConst, new PtrOp( PtrOp.t_pointer, false, false ), false );
 		f1.addParameter( TypeInfo.t_int, TypeInfo.isShort, null, false );
 		
 		compUnit.addSymbol( f1 );
@@ -1810,13 +1810,12 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, f2 );
 		
 		params.clear();
-		p1.addPtrOperator( new PtrOp( PtrOp.t_undef, true, false ) );
-		//((PtrOp)p1.getPtrOperators().iterator().next()).setConst( true );
+		p1 = new TypeInfo( TypeInfo.t_int, TypeInfo.isConst, null, new PtrOp( PtrOp.t_pointer, false, false ), false );
+		
 		params.add( p1 );
 		params.add( p3 );
 		look = main.unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f1 );
-		
 	}
 	
 	/**
@@ -1859,7 +1858,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol constructA = table.newParameterizedSymbol( "A" );
 		constructA.setType( TypeInfo.t_constructor );
-		constructA.addParameter( B, new PtrOp( PtrOp.t_reference ), false );
+		constructA.addParameter( B, 0, new PtrOp( PtrOp.t_reference ), false );
 		A.addConstructor( constructA );
 		
 		IParameterizedSymbol operator = table.newParameterizedSymbol( "operator A" );
@@ -1868,7 +1867,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f" );
 		f1.setType( TypeInfo.t_function );
-		f1.addParameter( A, null, false );
+		f1.addParameter( A, 0, null, false );
 		compUnit.addSymbol( f1 );
 		
 		ISymbol b = table.newSymbol( "b" );
@@ -1894,12 +1893,12 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol constructC = table.newParameterizedSymbol("C");
 		constructC.setType( TypeInfo.t_constructor );
-		constructC.addParameter( B, new PtrOp( PtrOp.t_reference ), false );
+		constructC.addParameter( B, 0, new PtrOp( PtrOp.t_reference ), false );
 		C.addConstructor( constructC );
 
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f" );
 		f2.setType( TypeInfo.t_function );
-		f2.addParameter(  C, null, false );
+		f2.addParameter(  C, 0, null, false );
 		compUnit.addSymbol( f2 );
 		
 		try{
@@ -1911,7 +1910,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f" );
 		f3.setType( TypeInfo.t_function );
-		f3.addParameter(  B, null, false );
+		f3.addParameter(  B, 0, null, false );
 		compUnit.addSymbol( f3 );
 		
 		look = compUnit.unqualifiedFunctionLookup( "f", params );
@@ -2056,7 +2055,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IParameterizedSymbol fn1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
 		ISymbol lookup = table.getCompilationUnit().lookup( "A" );
 		assertEquals( lookup, forwardSymbol );
-		fn1.addParameter( lookup, new PtrOp( PtrOp.t_pointer ), false );
+		fn1.addParameter( lookup, 0, new PtrOp( PtrOp.t_pointer ), false );
 		fn1.getTypeInfo().setBit( true, TypeInfo.isStatic );
 		classB.addSymbol( fn1 );
 		
@@ -2115,7 +2114,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol classA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		
 		IParameterizedSymbol constructor1 = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
-		constructor1.addParameter( classA, new PtrOp( PtrOp.t_reference ), false );
+		constructor1.addParameter( classA, 0, new PtrOp( PtrOp.t_reference ), false );
 		
 		IParameterizedSymbol constructor2 = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
 		constructor2.addParameter( TypeInfo.t_int, 0, null, false );
@@ -2234,7 +2233,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol a = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		table.getCompilationUnit().addSymbol( a );
 		
-		f.addParameter( a, null, false );
+		f.addParameter( a, 0, null, false );
 		
 		table.getCompilationUnit().addSymbol( f );
 		
@@ -2313,11 +2312,11 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( returned, null );
 		
 		IParameterizedSymbol constructorA = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
-		constructorA.addParameter( clsC, null, false );
+		constructorA.addParameter( clsC, 0, null, false );
 		clsA.addConstructor( constructorA );
 		
 		IParameterizedSymbol constructorC = table.newParameterizedSymbol( "C", TypeInfo.t_constructor );
-		constructorC.addParameter( clsA, null, false );
+		constructorC.addParameter( clsA, 0, null, false );
 		clsC.addConstructor( constructorC );
 		
 		secondOp.getOperatorExpressions().clear();
@@ -2369,7 +2368,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.getCompilationUnit().addSymbol( c );
 		
 		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f1.addParameter( clsA, new PtrOp( PtrOp.t_reference ), false );
+		f1.addParameter( clsA, 0, new PtrOp( PtrOp.t_reference ), false );
 		table.getCompilationUnit().addSymbol( f1 );
 		
 		LinkedList parameters = new LinkedList();
@@ -2380,7 +2379,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, f1 );
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f2.addParameter( clsB, new PtrOp( PtrOp.t_reference ), false );
+		f2.addParameter( clsB, 0, new PtrOp( PtrOp.t_reference ), false );
 		table.getCompilationUnit().addSymbol( f2 );
 		
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
@@ -3280,6 +3279,81 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f );
 		
+	}
+	
+	/**
+	 * typedef int Int;
+	 * void f( int i );
+	 * void f( Int i );
+	 * 
+	 * 
+	 * @throws Exception
+	 */
+	public void testBug47636FunctionParameterComparisons_1() throws Exception{
+		newTable();
+		
+		ISymbol Int = table.newSymbol( "Int", TypeInfo.t_type );
+		Int.getTypeInfo().setBit( true, TypeInfo.isTypedef );
+		Int.setTypeSymbol( table.newSymbol( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_int ) );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( Int, 0, null, false );
+		
+		assertTrue( f1.hasSameParameters( f2 ) );
+	}
+
+	/**
+	* void g( char * );
+	* void g( char [] );
+	*/
+	public void testBug47636FunctionParameterComparisons_2() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol g1 = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		g1.addParameter( TypeInfo.t_char, 0, new PtrOp( PtrOp.t_pointer ), false );
+		
+		IParameterizedSymbol g2 = table.newParameterizedSymbol( "g", TypeInfo.t_function );
+		g2.addParameter( TypeInfo.t_char, 0, new PtrOp( PtrOp.t_array ), false );
+		
+		assertTrue( g1.hasSameParameters( g2 ) );
+	}
+	
+	/**
+	 * void h( int() );
+	 * void h( int (*) () );
+	 */
+	public void testBug47636FunctionParameterComparisons_3() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_function );
+		f.setReturnType( table.newSymbol( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_int ) );
+		
+		IParameterizedSymbol h1 = table.newParameterizedSymbol( "h", TypeInfo.t_function );
+		h1.addParameter( f, 0, null, false );
+		
+		IParameterizedSymbol h2 = table.newParameterizedSymbol( "h", TypeInfo.t_function );
+		h2.addParameter( f, 0, new PtrOp( PtrOp.t_pointer ), false );
+		
+		assertTrue( h1.hasSameParameters( h2 ) );
+	}
+	
+	/**
+	 * f( int );
+	 * f( const int );
+	 */
+	public void testBug47636FunctionParameterComparisons_4() throws Exception{
+		newTable();
+
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_int, TypeInfo.isConst, null, false );
+		
+		assertTrue( f1.hasSameParameters( f2 ) );
 	}
 }
 

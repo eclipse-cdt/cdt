@@ -341,23 +341,6 @@ public class TypeInfo {
 		Iterator iter1 = getPtrOperators().iterator();
 		Iterator iter2 = type.getPtrOperators().iterator();
 		TypeInfo.PtrOp ptr1 = null, ptr2 = null;
-		if( size2 < size ) {
-			for( int i = size; i > size2; i-- ){
-				ptr2 = (PtrOp) iter1.next();
-				if( ptr2.getType() != PtrOp.t_undef ){
-					return false;	
-				}
-			}
-			size = size2;
-		} else if ( size < size2 ){
-			for( int i = size2; i > size; i-- ){
-				ptr1 = (PtrOp)iter2.next();
-				if( ptr1.getType() != PtrOp.t_undef ){
-					return false;	
-				}
-			}
-			size2 = size;
-		}
 		
 		if( size == size2 ){
 			if( size > 0 ){

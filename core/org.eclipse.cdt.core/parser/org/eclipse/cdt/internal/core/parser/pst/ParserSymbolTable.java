@@ -1105,7 +1105,9 @@ public class ParserSymbolTable {
 						int order = TemplateEngine.orderTemplateFunctions( t1, t2 );
 						if ( order < 0 ){
 							hasBetter = true;	 				
-						} 
+						} else if( order > 0 ){
+							ambiguous = false;
+						}
 					}
 				}
 				if( hasBetter ){
@@ -1126,6 +1128,23 @@ public class ParserSymbolTable {
 		return bestFn;
 	}
 	
+	static private boolean functionHasParameters( IParameterizedSymbol function, List params ){
+		if( params == null ){
+			return function.getParameterList().isEmpty();
+		}
+		//create a new function that has params as its parameters, then use IParameterizedSymbol.hasSameParameters
+		IParameterizedSymbol tempFn = function.getSymbolTable().newParameterizedSymbol( EMPTY_NAME, TypeInfo.t_function );
+		
+		Iterator i = params.iterator();
+		while( i.hasNext() ){
+			ISymbol param = function.getSymbolTable().newSymbol( EMPTY_NAME );
+			param.setTypeInfo( (TypeInfo) i.next() );
+			tempFn.addParameter( param );
+		}
+		
+		return function.hasSameParameters( tempFn );
+	}
+	
 	static private void reduceToViable( LookupData data, List functions ){
 		int numParameters = ( data.parameters == null ) ? 0 : data.parameters.size();
 		int num;	
@@ -1140,6 +1159,9 @@ public class ParserSymbolTable {
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
+				if( data.exactFunctionsOnly && !functionHasParameters( function, data.parameters ) ){
+					iter.remove();
+				}
 				continue;
 			} 
 			//check for void
@@ -1455,11 +1477,7 @@ public class ParserSymbolTable {
 			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)iterator.next();
 
 			if( ptr.getType() == TypeInfo.PtrOp.t_reference ){
-				if( ptr.isConst() || ptr.isVolatile() ){
-					iterator.set( new PtrOp( PtrOp.t_undef, ptr.isConst(), ptr.isVolatile() ) );
-				} else {
-					iterator.remove();
-				}
+				iterator.remove();
 				cost.targetHadReference = true;
 			}
 			int size = targetPtrs.size();
@@ -1491,30 +1509,9 @@ public class ParserSymbolTable {
 		
 		Iterator iter1 = cost.source.getPtrOperators().iterator();
 		Iterator iter2 = cost.target.getPtrOperators().iterator();
-		
+
 		if( size != size2 ){
-			if( size2 - size == 1 ){
-				op2 = (PtrOp) iter2.next();
-				if( op2.isConst() || op2.isVolatile() ){
-					canConvert = true;
-				} else {
-					canConvert = false;
-				}
-			} else {
-				canConvert = false;
-			}
-		} else if ( size == 1 ){
-			op1 = (TypeInfo.PtrOp) iter1.next();
-			op2 = (TypeInfo.PtrOp) iter2.next();
-			
-			//can only convert if op2 is more qualified
-			if( ( op1.isConst()    && !op2.isConst() ) ||
-				( op1.isVolatile() && !op2.isVolatile() ) )
-			{
-				cost.qualification = 0;
-				return;
-			}
-			canConvert = true;
+			canConvert = false;
 		} else if( size > 0 ){
 			op1 = (TypeInfo.PtrOp) iter1.next();
 			op2 = (TypeInfo.PtrOp) iter2.next();
@@ -1548,6 +1545,12 @@ public class ParserSymbolTable {
 			}
 		}
 		
+		if( ( cost.source.checkBit( TypeInfo.isConst ) && !cost.target.checkBit( TypeInfo.isConst ) ) ||
+			( cost.source.checkBit( TypeInfo.isVolatile ) && !cost.target.checkBit( TypeInfo.isVolatile ) ) )
+		{
+			canConvert = false;
+		}
+
 		if( canConvert == true ){
 			cost.qualification = 1;
 			cost.rank = Cost.LVALUE_OR_QUALIFICATION_RANK;
@@ -1574,7 +1577,7 @@ public class ParserSymbolTable {
 		TypeInfo src = cost.source;
 		TypeInfo trg = cost.target;
 		 
-		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned | TypeInfo.isLongLong;
+		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned | TypeInfo.isLongLong | TypeInfo.isSigned;
 		
 		if( (src.isType( TypeInfo.t__Bool, TypeInfo.t_float ) || src.isType( TypeInfo.t_enumeration )) &&
 			(trg.isType( TypeInfo.t_int ) || trg.isType( TypeInfo.t_double )) )
@@ -1737,8 +1740,11 @@ public class ParserSymbolTable {
 					}
 				}
 			}
+		} else if( cost.source.getType() == cost.target.getType() && 
+				  (cost.source.getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) == (cost.target.getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) )
+		{
+			return cost;
 		}
-		
 		promotion( cost );
 		if( cost.promotion > 0 || cost.rank > -1 ){
 			return cost;
@@ -1904,7 +1910,7 @@ public class ParserSymbolTable {
 		
 		if( topInfo.getType() == TypeInfo.t_type && topInfo.getTypeSymbol() != null ){
 			returnInfo = new TypeInfo();
-			
+			returnInfo.setTypeInfo( topInfo.getTypeInfo() );
 			ISymbol typeSymbol = topInfo.getTypeSymbol();
 			
 			info = typeSymbol.getTypeInfo();
@@ -1913,7 +1919,7 @@ public class ParserSymbolTable {
 				typeSymbol = info.getTypeSymbol();
 				
 				returnInfo.addPtrOperator( info.getPtrOperators() );	
-				
+				returnInfo.setTypeInfo( ( returnInfo.getTypeInfo() | info.getTypeInfo() ) & ~TypeInfo.isTypedef & ~TypeInfo.isForward );
 				info = typeSymbol.getTypeInfo();
 			}
 			
@@ -1921,7 +1927,7 @@ public class ParserSymbolTable {
 				returnInfo.setType( TypeInfo.t_type );
 				returnInfo.setTypeSymbol( typeSymbol );
 			} else {
-				returnInfo.setTypeInfo( info.getTypeInfo() );
+				returnInfo.setTypeInfo( ( returnInfo.getTypeInfo() | info.getTypeInfo() ) & ~TypeInfo.isTypedef & ~TypeInfo.isForward );
 				returnInfo.setType( info.getType() );
 				returnInfo.setTypeSymbol( null );
 				returnInfo.addPtrOperator( info.getPtrOperators() );
@@ -1931,17 +1937,8 @@ public class ParserSymbolTable {
 			
 			if( topInfo.hasPtrOperators() ){
 				TypeInfo.PtrOp topPtr = (PtrOp) topInfo.getPtrOperators().iterator().next();
-				TypeInfo.PtrOp ptr = null;
-				if( returnInfo.hasPtrOperators() && topPtr.getType() == PtrOp.t_undef ){
-					ptr = (PtrOp)returnInfo.getPtrOperators().iterator().next();
-				} else {
-					ptr = new PtrOp();
-					returnInfo.addPtrOperator( ptr );	
-					ptr.setType( topPtr.getType() );				
-				}
-				
-				ptr.setConst( topPtr.isConst() );
-				ptr.setVolatile( topPtr.isVolatile() );
+				TypeInfo.PtrOp ptr = new PtrOp( topPtr.getType(), topPtr.isConst(), topPtr.isVolatile() );
+				returnInfo.addPtrOperator( ptr );
 			}
 		} else {
 			returnInfo = new TypeInfo( topInfo );
@@ -2046,6 +2043,7 @@ public class ParserSymbolTable {
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
 		public boolean forUserDefinedConversion = false;
+		public boolean exactFunctionsOnly = false;
 		
 		public Map foundItems = null;
 		

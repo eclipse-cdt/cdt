@@ -94,7 +94,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
      */
     public boolean isSigned()
     {
-        return ! symbol.getTypeInfo().checkBit( TypeInfo.isUnsigned);
+        return symbol.getTypeInfo().checkBit( TypeInfo.isSigned);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isUnsigned()

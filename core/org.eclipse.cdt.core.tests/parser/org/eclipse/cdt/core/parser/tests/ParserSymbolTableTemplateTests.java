@@ -275,7 +275,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		table.getCompilationUnit().addSymbol( f1 );
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f2.addParameter( lookA, null, false );
+		f2.addParameter( lookA, 0, null, false );
 		table.getCompilationUnit().addSymbol( f2 );
 		
 		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
@@ -1060,7 +1060,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		
 		IParameterizedSymbol compare = table.newParameterizedSymbol( "compare", TypeInfo.t_function );
 		compare.setIsForwardDeclaration( true );
-		compare.addParameter( T2, new PtrOp( PtrOp.t_reference, true, false ), false );
+		compare.addParameter( T2, 0, new PtrOp( PtrOp.t_reference, true, false ), false );
 		compare.setReturnType( T2 );
 		template2.addSymbol( compare );
 		
@@ -1083,7 +1083,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		IParameterizedSymbol compareDef = table.newParameterizedSymbol( "compare", TypeInfo.t_function );
 		ISymbol look = factory.lookupParam( "V" );
 		assertEquals( look, V );
-		compareDef.addParameter( look, new PtrOp( PtrOp.t_reference, true, false ), false );
+		compareDef.addParameter( look, 0, new PtrOp( PtrOp.t_reference, true, false ), false );
 		compareDef.setReturnType( look );
 		compare.setTypeSymbol( compareDef );
 		factory.addSymbol( compareDef );
@@ -1142,7 +1142,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		memberTemplate.addTemplateParameter( C );
 		
 		IParameterizedSymbol g = table.newParameterizedSymbol( "g", TypeInfo.t_function );
-		g.addParameter( C, null, false );
+		g.addParameter( C, 0, null, false );
 		g.getTypeInfo().setBit( true, TypeInfo.isVirtual );
 		
 		memberTemplate.addSymbol( g );
@@ -1400,7 +1400,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
 		ISymbol T = template1.lookup( "T" );
 		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f1.addParameter( T, null, false );
+		f1.addParameter( T, 0, null, false );
 		template1.addSymbol( f1 );
 		table.getCompilationUnit().addSymbol( template1 );
 		
@@ -1408,7 +1408,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
 		T = template2.lookup( "T" );
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f2.addParameter( T, new PtrOp( PtrOp.t_pointer ), false );
+		f2.addParameter( T, 0, new PtrOp( PtrOp.t_pointer ), false );
 		template2.addSymbol( f2 );
 		table.getCompilationUnit().addSymbol( template2 );
 		
@@ -1417,12 +1417,13 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template3.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
 		T = template3.lookup( "T" );
 		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f3.addParameter( T, new PtrOp( PtrOp.t_pointer, true, false ), false );
+		f3.addParameter( T, TypeInfo.isConst, new PtrOp( PtrOp.t_pointer, false, false ), false );
 		template3.addSymbol( f3 );
 		table.getCompilationUnit().addSymbol( template3 );
 		
 		ISymbol p = table.newSymbol( "p", TypeInfo.t_int );
-		p.addPtrOperator( new PtrOp( PtrOp.t_pointer, true, false ) );
+		p.getTypeInfo().setBit( true, TypeInfo.isConst );
+		p.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
 		table.getCompilationUnit().addSymbol( p );
 		
 		List params = new LinkedList();
@@ -1449,7 +1450,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
 		ISymbol T = template1.lookup( "T" );
 		IParameterizedSymbol g1 = table.newParameterizedSymbol( "g", TypeInfo.t_function );
-		g1.addParameter( T, null, false );
+		g1.addParameter( T, 0, null, false );
 		template1.addSymbol( g1 );
 		table.getCompilationUnit().addSymbol( template1 );
 		
@@ -1457,7 +1458,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template2.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
 		T = template2.lookup( "T" );
 		IParameterizedSymbol g2 = table.newParameterizedSymbol( "g", TypeInfo.t_function );
-		g2.addParameter( T, new PtrOp( PtrOp.t_reference ), false );
+		g2.addParameter( T, 0, new PtrOp( PtrOp.t_reference ), false );
 		template2.addSymbol( g2 );
 		table.getCompilationUnit().addSymbol( template2 );
 		
@@ -1465,7 +1466,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		List params = new LinkedList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, x ) );
 		try{
-			ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "g", params );
+			table.getCompilationUnit().unqualifiedFunctionLookup( "g", params );
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
@@ -1500,7 +1501,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template1.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
 		ISymbol T = template1.lookup( "T" );
 		IParameterizedSymbol h1 = table.newParameterizedSymbol( "h", TypeInfo.t_function );
-		h1.addParameter( T, new PtrOp( PtrOp.t_reference, true, false ), false );
+		h1.addParameter( T, TypeInfo.isConst, new PtrOp( PtrOp.t_reference, false, false ),false );
 		template1.addSymbol( h1 );
 		table.getCompilationUnit().addSymbol( template1 );
 		
@@ -1511,7 +1512,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		IParameterizedSymbol h2 = table.newParameterizedSymbol( "h", TypeInfo.t_function );
 		List argList = new LinkedList();
 		argList.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
-		h2.addParameter( templateA.instantiate( argList ), new PtrOp( PtrOp.t_reference ), false );
+		h2.addParameter( templateA.instantiate( argList ), 0, new PtrOp( PtrOp.t_reference ), false );
 		
 		template2.addSymbol( h2 );
 		table.getCompilationUnit().addSymbol( template2 );
@@ -1535,7 +1536,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		assertTrue( look.isTemplateInstance() );
 		assertEquals( look.getInstantiatedSymbol(), A );
 		z2.setTypeSymbol( look );
-		z2.addPtrOperator( new PtrOp( PtrOp.t_undef, true, false ) );
+		z2.getTypeInfo().setBit( true, TypeInfo.isConst );
 		
 		params.clear();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, z2 ) );
@@ -1789,12 +1790,12 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		ISymbol U = template.lookup( "U" );
 		
 		paramFunction.setReturnType( T );
-		paramFunction.addParameter( T, null, false );
-		paramFunction.addParameter( U, null, false );
-		paramFunction.addParameter( U, null, false );
+		paramFunction.addParameter( T, 0, null, false );
+		paramFunction.addParameter( U, 0, null, false );
+		paramFunction.addParameter( U, 0, null, false );
 		
 		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f.addParameter( paramFunction, null, false );
+		f.addParameter( paramFunction, 0, null, false );
 		
 		template.addSymbol( f );
 		
@@ -1857,7 +1858,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		template.addTemplateParameter( T );
 		
 		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		f.addParameter( T, new PtrOp( PtrOp.t_pointer, true, false ), false );
+		f.addParameter( T, 0, new PtrOp( PtrOp.t_pointer, true, false ), false );
 		template.addSymbol( f );
 		
 		table.getCompilationUnit().addSymbol( template );

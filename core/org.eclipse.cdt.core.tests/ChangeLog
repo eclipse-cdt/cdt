@@ -1,3 +1,13 @@
+2004-02-12 Andrew Niefer
+	UnCommented CompleteParseASTTest.testBug47628
+	Added CompleteParseASTTest.testBug47636
+	Added CompleteParseASTTest.testBug45697
+	Updated ParserSymbolTableTests & ParserSymbolTableTemplateTests for proper use of const & volatile
+	Added ParserSymbolTableTests.testbug47636FunctionParameterComparisons_1
+	Added ParserSymbolTableTests.testbug47636FunctionParameterComparisons_2
+	Added ParserSymbolTableTests.testbug47636FunctionParameterComparisons_3
+	Added ParserSymbolTableTests.testbug47636FunctionParameterComparisons_4
+	
 2004-02-11 John Camelon
 	Updated tests to accommodate for new Parser class hierarchy and factories.  
 

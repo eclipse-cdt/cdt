@@ -170,14 +170,15 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	public void addCopyConstructor() throws ParserSymbolTableException{
 		List parameters = new LinkedList();
 		
-		TypeInfo param = new TypeInfo( TypeInfo.t_type, 0, this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, true, false ), false ); 
+		TypeInfo param = new TypeInfo( TypeInfo.t_type, TypeInfo.isConst, this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ), false ); 
 		parameters.add( param );
 		
 		IParameterizedSymbol constructor = lookupConstructor( parameters );
 		
 		if( constructor == null ){
 			constructor = getSymbolTable().newParameterizedSymbol( getName(), TypeInfo.t_constructor );
-			constructor.addParameter( this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, true, false ), false );
+			constructor.addParameter( this, TypeInfo.isConst, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ), false );
+
 			addConstructor( constructor );	
 		}
 	}
@@ -248,10 +249,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 				//thisObj.setCVQualifier( obj.getCVQualifier() );
 				TypeInfo.PtrOp ptr = new TypeInfo.PtrOp();
 				ptr.setType( TypeInfo.PtrOp.t_pointer );
-				if( obj.getTypeInfo().hasPtrOperators() ){
-					ptr.setConst( ((TypeInfo.PtrOp) obj.getPtrOperators().iterator().next()).isConst() );
-					ptr.setVolatile( ((TypeInfo.PtrOp) obj.getPtrOperators().iterator().next()).isVolatile() );
-				}
+				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( TypeInfo.isConst ), TypeInfo.isConst );
+				thisObj.getTypeInfo().setBit( obj.getTypeInfo().checkBit( TypeInfo.isVolatile ), TypeInfo.isVolatile );
 				
 				thisObj.addPtrOperator(ptr);
 				

@@ -444,6 +444,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name, TypeInfo.t_any );
 		data.qualified = true;
 		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
+		data.exactFunctionsOnly = true;
 		
 		IContainerSymbol container = this;
 		

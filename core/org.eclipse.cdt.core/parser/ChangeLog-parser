@@ -1,3 +1,9 @@
+2004-02-12 Andrew Niefer
+	Fixed up symbol table handling of const & volatile
+	fixed bug 47628 - signed char is parsed as char 
+	fixed bug 47636 - char* and char[] are treated as different types 
+	fixed bug 45697 - Parser/Symbol table: Mismatched declaration & definition 
+
 2004-02-12 John Camelon
 	Removed IASTCompletionKind.SCOPED_REFERENCE as it was obsolete.  
 	Did preliminary work to support content assist within qualified names.

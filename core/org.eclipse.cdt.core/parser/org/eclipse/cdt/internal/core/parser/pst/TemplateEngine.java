@@ -44,22 +44,15 @@ public final class TemplateEngine {
 				TypeInfo targetInfo = new TypeInfo( (TypeInfo) argMap.get( info.getTypeSymbol() ) );
 				if( info.hasPtrOperators() ){
 					List infoOperators = new LinkedList( info.getPtrOperators() );
-					
-					if( targetInfo.hasPtrOperators() ){
-						List targetOperators = targetInfo.getPtrOperators();
-						
-						PtrOp lastTargetOp = (PtrOp) targetOperators.get( targetOperators.size() - 1 );
-						if( lastTargetOp.getType() == PtrOp.t_undef ){
-							targetOperators.remove( targetOperators.size() - 1 );
-							PtrOp infoOp = (PtrOp) infoOperators.get( 0 );
-							infoOp = new PtrOp( infoOp.getType(), infoOp.isConst() || lastTargetOp.isConst(), 
-									infoOp.isVolatile() || lastTargetOp.isVolatile() );
-							infoOperators.set( 0, infoOp );
-						}
-					}
-					
 					targetInfo.addPtrOperator( infoOperators );
 				}
+				
+				if( info.checkBit( TypeInfo.isConst ) )
+					targetInfo.setBit( true, TypeInfo.isConst );
+				
+				if( info.checkBit( TypeInfo.isVolatile ) )
+					targetInfo.setBit( true, TypeInfo.isVolatile );
+				
 				return targetInfo;
 			} else if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol().isType( TypeInfo.t_function ) ){
 				TypeInfo newInfo = new TypeInfo( info );
@@ -291,40 +284,48 @@ public final class TemplateEngine {
 				PtrOp newOp = new PtrOp( pOp.getType(), false, false );
 				pPtrs.set( 0, newOp );
 			}
+		} else {
+			p.setBit( false, TypeInfo.isConst );
+			p.setBit( false, TypeInfo.isVolatile );
 		}
+		
 
 		return p;
 	}
 	
 	/**
 	 * 14.8.2.1-2
+	 * if P is not a reference type
 	 * - If A is an array type, the pointer type produced by the array-to-pointer conversion is used instead
 	 * - If A is a function type, the pointer type produced by the function-to-pointer conversion is used instead
 	 * - If A is a cv-qualified type, the top level cv-qualifiers are ignored for type deduction 
 	 * @param aInfo
 	 * @return
 	 */
-	static private TypeInfo getArgumentTypeForDeduction( TypeInfo aInfo ){
+	static private TypeInfo getArgumentTypeForDeduction( TypeInfo aInfo, boolean pIsAReferenceType ){
 		
 		TypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo );
 		
-		List aPtrs = a.getPtrOperators();
-		ISymbol aSymbol = a.getTypeSymbol();
-		
-		if( a.getType() == TypeInfo.t_type && aSymbol.isType( TypeInfo.t_function ) ){
-			if( aPtrs.size() == 0 ){
-				aPtrs.add( new PtrOp( PtrOp.t_pointer ) );	
-			}
-		}
-		if( aPtrs.size() > 0 ){
-			PtrOp pOp = (PtrOp) aPtrs.get( 0 );
+		if( !pIsAReferenceType ){
+			List aPtrs = a.getPtrOperators();
+			ISymbol aSymbol = a.getTypeSymbol();
 			
-			if( pOp.getType() == PtrOp.t_array ){
-				aPtrs.set( 0, new PtrOp( PtrOp.t_pointer, false, false ) );
-			} else if( pOp.getType() == PtrOp.t_undef ){
-				aPtrs.remove( 0 );
+			if( a.getType() == TypeInfo.t_type && aSymbol.isType( TypeInfo.t_function ) ){
+				if( aPtrs.size() == 0 ){
+					aPtrs.add( new PtrOp( PtrOp.t_pointer ) );	
+				}
+			}
+			if( aPtrs.size() > 0 ){
+				PtrOp pOp = (PtrOp) aPtrs.get( 0 );
+				
+				if( pOp.getType() == PtrOp.t_array ){
+					aPtrs.set( 0, new PtrOp( PtrOp.t_pointer, false, false ) );
+				} else {
+					aPtrs.set( 0, new PtrOp( pOp.getType(), false, false ) );
+				}
 			} else {
-				aPtrs.set( 0, new PtrOp( pOp.getType(), false, false ) );
+				a.setBit( false, TypeInfo.isConst );
+				a.setBit( false, TypeInfo.isVolatile );
 			}
 		}
 		
@@ -415,8 +416,16 @@ public final class TemplateEngine {
 	static private boolean deduceTemplateArgument( Map map, ISymbol pSymbol, TypeInfo a ){//, Map argumentMap ){
 		ISymbol symbol;
 		
+		boolean pIsAReferenceType = false;
+		
+		Iterator i = pSymbol.getPtrOperators().iterator();
+		if( i.hasNext() && ((PtrOp)i.next()).getType() == TypeInfo.PtrOp.t_reference ){
+			pIsAReferenceType = true;
+		}
+		
 		TypeInfo p = getParameterTypeForDeduction( pSymbol );
-		a = getArgumentTypeForDeduction( a );
+		
+		a = getArgumentTypeForDeduction( a, pIsAReferenceType );
 		
 		if( p.isType( TypeInfo.t_type ) ){
 			symbol = p.getTypeSymbol();
@@ -429,7 +438,7 @@ public final class TemplateEngine {
 						//a = getFlatTypeInfo( a );
 						List aPtrs = a.getPtrOperators();
 						List pPtrs = p.getPtrOperators();
-						//TODO  cvlist T
+						
 						if( pPtrs != null && pPtrs.size() > 0){
 							if( aPtrs == null ){
 								return false;
@@ -447,28 +456,31 @@ public final class TemplateEngine {
 									aOp = (PtrOp) aIter.next();
 									if( pOp.getType() == aOp.getType() ){
 										if( !pOp.equals( aOp ) ){
-											if( pIter.hasNext() || pOp.compareCVTo( aOp ) > 0 ){
-												return false;
-											} else {
-												PtrOp newOp = new PtrOp( PtrOp.t_undef );
-												newOp.setConst( aOp.isConst() );
-												newOp.setVolatile( aOp.isVolatile() );
-												aIter.set( newOp );
-											}
+											return false;
 										} else {
 											aIter.remove();
-										}
-										
+										}	
 									} else {
 										return false;
 									}
 								}
-							}
-							return deduceArgument( map, symbol, a );
-						} else {
-							//T
-							return deduceArgument( map, symbol, a );
-						}		
+							} 
+						}
+						//cvlist T
+						if( p.checkBit( TypeInfo.isConst ) ){
+							if( !a.checkBit( TypeInfo.isConst ) )
+								return false;
+							a.setBit( false, TypeInfo.isConst);
+						}
+						if( p.checkBit( TypeInfo.isVolatile ) ){
+							if( !a.checkBit( TypeInfo.isVolatile ) )
+								return false;
+							a.setBit( false, TypeInfo.isVolatile);
+						}
+						
+						//T
+						return deduceArgument( map, symbol, a );
+							
 					} else if ( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
 						
 					} else {

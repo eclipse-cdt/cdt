@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -1590,6 +1591,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		s.getTypeInfo().setBit( isUnsigned, TypeInfo.isUnsigned );
 		s.getTypeInfo().setBit( isComplex, TypeInfo.isComplex );
 		s.getTypeInfo().setBit( isImaginary, TypeInfo.isImaginary );
+		s.getTypeInfo().setBit( isSigned, TypeInfo.isSigned );
 			
 		return new ASTSimpleTypeSpecifier( s, false, typeName.toString(), references );
 
@@ -1675,37 +1677,42 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		 
 		symbol.setIsForwardDeclaration(!isFunctionDefinition);
 		boolean previouslyDeclared = false;
-		if( isFunctionDefinition )
-		{
-			List functionParameters = new LinkedList();
-			// the lookup requires a list of type infos
-			// instead of a list of IASTParameterDeclaration
-			Iterator p = parameters.iterator();
-			while (p.hasNext()){
-				ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
-				functionParameters.add(param.getSymbol().getTypeInfo());
-			}
-			
-			IParameterizedSymbol functionDeclaration = null; 
-			
-			functionDeclaration = 
-				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getLastToken().getImage(), TypeInfo.t_function, functionParameters, 0, new ArrayList(), false, LookupType.UNQUALIFIED );                
 
-			if( functionDeclaration != null )
-			{
+		List functionParameters = new LinkedList();
+		// the lookup requires a list of type infos
+		// instead of a list of IASTParameterDeclaration
+		Iterator p = parameters.iterator();
+		while (p.hasNext()){
+			ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+			functionParameters.add(param.getSymbol().getTypeInfo());
+		}
+		
+		IParameterizedSymbol functionDeclaration = null; 
+		
+		functionDeclaration = 
+			(IParameterizedSymbol) lookupQualifiedName(ownerScope, name.getLastToken().getImage(), TypeInfo.t_function, functionParameters, 0, new ArrayList(), false, LookupType.FORDEFINITION );                
+
+		if( functionDeclaration != null ){
+			previouslyDeclared = true;
+			
+			if( isFunctionDefinition ){
 				functionDeclaration.setTypeSymbol( symbol );
-				previouslyDeclared = true;
 			}
 		}
 		
-		try
-		{
-			ownerScope.addSymbol( symbol );
+		if( previouslyDeclared == false || isFunctionDefinition ){
+			try
+			{
+				ownerScope.addSymbol( symbol );
+			}
+			catch (ParserSymbolTableException e)
+			{
+				throw new ASTSemanticException();   
+			}	
+		} else {
+			symbol = functionDeclaration;
 		}
-		catch (ParserSymbolTableException e)
-		{
-			throw new ASTSemanticException();   
-		}
+		
 		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, startLine, nameOffset, nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock );        
 	    try
 	    {
@@ -1823,6 +1830,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		ISymbol xrefSymbol = null;
 		List newReferences = null; 
+		int infoBits = 0;
 	    if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
 	    {
 	   		if( ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType() == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
@@ -1830,6 +1838,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    		xrefSymbol = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol(); 
 	    		newReferences = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getReferences();
 	    	}
+	   		
+	   		infoBits = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol().getTypeInfo().getTypeInfo();
 	    }
 	    else if( absDecl.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier )
 	    {
@@ -1848,6 +1858,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	    ISymbol paramSymbol = pst.newSymbol( paramName, type );
 	    if( xrefSymbol != null )
 	    	paramSymbol.setTypeSymbol( xrefSymbol.getTypeSymbol() );
+	    
+	    paramSymbol.getTypeInfo().setTypeInfo( infoBits );
+	    paramSymbol.getTypeInfo().setBit( absDecl.isConst(), TypeInfo.isConst );
+	    paramSymbol.getTypeInfo().setBit( absDecl.isVolatile(), TypeInfo.isVolatile );
 	    
 	    setPointerOperators( paramSymbol, absDecl.getPointerOperators(), absDecl.getArrayModifiers() );
 	
@@ -2317,6 +2331,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         newSymbol.getTypeInfo().setBit( isRegister, TypeInfo.isRegister );
         newSymbol.getTypeInfo().setBit( isStatic, TypeInfo.isStatic );
         newSymbol.getTypeInfo().setBit( abstractDeclaration.isConst(), TypeInfo.isConst );
+        newSymbol.getTypeInfo().setBit( abstractDeclaration.isVolatile(), TypeInfo.isVolatile );
     }
     
     protected ISymbol cloneSimpleTypeSymbol(
@@ -2779,6 +2794,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		result.getTypeInfo().setBit( id.isShort(), TypeInfo.isShort);
 		result.getTypeInfo().setBit( id.isLong(), TypeInfo.isLong);
 		result.getTypeInfo().setBit( id.isUnsigned(), TypeInfo.isUnsigned);
+		result.getTypeInfo().setBit( id.isSigned(), TypeInfo.isSigned );
 		
 		List refs = new ArrayList();
 		if( result.getType() == TypeInfo.t_type )

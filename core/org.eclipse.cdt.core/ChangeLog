@@ -1,3 +1,9 @@
+2004-04-06 David Inglis
+	
+	Fixed up syncing of binary runner and ::getBinaries()
+	
+	* model/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+
 2004-04-04 Alain Magloire
 
 	More support for external headers.

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -22,13 +21,10 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;

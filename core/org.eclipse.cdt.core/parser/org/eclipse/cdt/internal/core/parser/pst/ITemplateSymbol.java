@@ -72,7 +72,7 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 		private DeferredKind( int v ){
 			_val = v;
 		}
-		private int _val;
+		protected int _val;
 		
 		public static final DeferredKind RETURN_TYPE = new DeferredKind( 1 );
 		public static final DeferredKind PARENT      = new DeferredKind( 2 );

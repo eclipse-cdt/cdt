@@ -593,7 +593,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#instantiate(org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol, java.util.Map)
 	 */
-	public ISymbol instantiate(ITemplateSymbol template, Map argMap) throws ParserSymbolTableException {
+	public ISymbol instantiate(ITemplateSymbol template, Map argMapParm) throws ParserSymbolTableException {
 		// TODO Auto-generated method stub
 		return null;
 	}

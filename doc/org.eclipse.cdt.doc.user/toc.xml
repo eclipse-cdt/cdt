@@ -17,13 +17,15 @@
      </topic>
      <topic label="Concepts" href="cdt_o_concepts.htm">
           <topic label="C/C++ perspective" href="cdt_c_perspect.htm"/>
-          <topic label="Projects" href="cdt_c_projects.htm"/>
-          <topic label="Project file views" href="cdt_c_proj_file_views.htm"/>
+          <topic label="Projects" href="cdt_o_projects.htm">
+               <topic label="CDT Projects" href="cdt_c_projects.htm"/>
+               <topic label="Import" href="cdt_c_import.htm"/>
+               <topic label="Project file views" href="cdt_c_proj_file_views.htm"/>
+          </topic>
           <topic label="Code entry" href="cdt_o_code_entry.htm">
                <topic label="Outline view" href="cdt_c_outlineview.htm"/>
                <topic label="Comments" href="cdt_c_comments.htm"/>
                <topic label="Content assist" href="cdt_c_content_assist.htm"/>
-               <topic label="Code Templates" href="cdt_c_code_temp.htm"/>
                <topic label="Function information" href="cdt_c_hov_help.htm"/>
                <topic label="Search" href="cdt_c_search.htm"/>
           </topic>
@@ -45,15 +47,17 @@
                <topic label="Creating a .cpp file" href="cdt_t_new_cpp.htm"/>
                <topic label="Creating a makefile" href="cdt_t_new_make.htm"/>
                <topic label="Hiding files by type" href="cdt_t_prvw_hide_files.htm"/>
+               <topic label="Searching" href="cdt_t_search.htm"/>
           </topic>
           <topic label="Writing code" href="cdt_o_write_code.htm">
                <topic label="Customizing the C/C++ editor" href="cdt_t_cust_cpp_editor.htm"/>
                <topic label="Commenting out code" href="cdt_t_commentoutcode.htm"/>
-               <topic label="Using Content Assist to finish function names" href="cdt_t_contentassist.htm"/>
                <topic label="Adding #include directives" href="cdt_t_addincludedirectives.htm"/>
-               <topic label="Working with variables" href="cdt_t_variables.htm"/>
-               <topic label="Creating a code template" href="cdt_t_add_codetemp.htm"/>
-               <topic label="Inserting a code template" href="cdt_t_insert_codetemp.htm"/>
+               <topic label="Working with content assist" href="cdt_o_con_assist.htm">
+                    <topic label="Using Content Assist" href="cdt_t_contentassist.htm"/>
+                    <topic label="Creating code templates" href="cdt_t_add_codetemp.htm"/>
+                    <topic label="Importing and exporting code templates" href="topic_under_dev.htm"/>
+               </topic>
                <topic label="Shifting lines of code to the right or left" href="cdt_t_shift_code.htm"/>
           </topic>
           <topic label="Building" href="cdt_o_build_task.htm">
@@ -71,21 +75,21 @@
                </topic>
           </topic>
           <topic label="Running a program" href="cdt_t_run_prog.htm"/>
-          <topic label="Debugging" href="topic_under_dev.htm">
-               <topic label="Debugging a program" href="topic_under_dev.htm"/>
-               <topic label="Working with breakpoints and watchpoints" href="topic_under_dev.htm">
-                    <topic label="Adding breakpoints" href="topic_under_dev.htm"/>
-                    <topic label="Adding watchpoints" href="topic_under_dev.htm"/>
-                    <topic label="Removing breakpoints and watchpoints" href="topic_under_dev.htm"/>
-                    <topic label="Enabling and disabling breakpoints" href="topic_under_dev.htm"/>
-                    <topic label="Setting conditions" href="topic_under_dev.htm"/>
+          <topic label="Debugging" href="cdt_o_runanddebug.htm">
+               <topic label="Debugging a program" href="cdt_t_debug_prog.htm"/>
+               <topic label="Working with breakpoints and watchpoints" href="cdt_o_brkpnts_watch.htm">
+                    <topic label="Adding breakpoints" href="cdt_t_add_brkpnts.htm"/>
+                    <topic label="Adding watchpoints" href="cdt_t_add_watch.htm"/>
+                    <topic label="Removing breakpoints and watchpoints" href="cdt_t_rem_wtch_brk.htm"/>
+                    <topic label="Enabling and disabling breakpoints" href="cdt_t_endis_able_brk_wtch.htm"/>
+                    <topic label="Setting conditions" href="cdt_t_cond_watch_brkpnts.htm"/>
                </topic>
-               <topic label="Controlling your debug execution" href="topic_under_dev.htm"/>
-               <topic label="Disassembly mode" href="topic_under_dev.htm"/>
-               <topic label="Inspecting variables" href="topic_under_dev.htm"/>
-               <topic label="Evaluating expressions" href="topic_under_dev.htm"/>
-               <topic label="Inspecting registers" href="topic_under_dev.htm"/>
-               <topic label="Inspecting memory" href="topic_under_dev.htm"/>
+               <topic label="Controlling your debug execution" href="cdt_t_controldebug.htm"/>
+               <topic label="Disassembly mode" href="cdt_t_disassemblymode.htm"/>
+               <topic label="Working with variables" href="cdt_t_variables.htm"/>
+               <topic label="Working with expressions" href="cdt_t_expressions.htm"/>
+               <topic label="Working with registers" href="cdt_t_registers.htm"/>
+               <topic label="Working with memory" href="cdt_t_memory.htm"/>
           </topic>
      </topic>
      <topic label="Reference" href="topic_under_dev.htm">
@@ -116,6 +120,7 @@
                          <topic label="Expressions view" href="topic_under_dev.htm"/>
                     </topic>
                </topic>
+               <topic label="Outline view" href="topic_under_dev.htm"/>
                <topic label="Tasks view" href="topic_under_dev.htm"/>
                <topic label="Preferences" href="topic_under_dev.htm">
                     <topic label="Build Console" href="topic_under_dev.htm"/>

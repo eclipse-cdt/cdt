@@ -1,42 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin
-   id="org.eclipse.cdt.doc.user"
-   name="C/C++ Development User Guide"
-   version="1.1.0"
-   provider-name="Rational Software: IBM Software Group">
 
-   <runtime>
-   </runtime>
+<!-- ================================================= -->
+<!-- This is the plugin for declaring the help         -->
+<!-- contributions of a doc component plugin.          -->
+<!-- ================================================= -->
 
-<!-- This part should be in a documentation plugin -->
-<!-- Configure the help contribution for this plugin -->
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="toc.xml"
-            primary="true">
-      </toc>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contextHelp.xml"
-            plugin="org.eclipse.cdt.ui">
-      </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contextHelp.xml"
-            plugin="org.eclipse.debug.ui">
-      </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contextHelp.xml"
-            plugin="org.eclipse.cdt.debug.ui">
-      </contexts>
-   </extension>
+<plugin 
 
+   name = "C/C++ Development User Guide"
+   id = "org.eclipse.cdt.doc.user"
+   version = "1.0"
+  provider-name = "Rational Software: IBM Software Group">
+   <!-- Configure the help contribution for this plugin --> 
+   <!-- This part should be in a documentation plugin -->
+   <extension point="org.eclipse.help.toc">
+       <toc file="toc.xml" primary="true" /> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contextHelp.xml" plugin="org.eclipse.cdt.ui"/> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contextHelp.xml" plugin="org.eclipse.debug.ui"/> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contextHelp.xml" plugin="org.eclipse.cdt.debug.ui"/> 
+   </extension>
 </plugin>

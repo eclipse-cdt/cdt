@@ -1,0 +1,5 @@
+2002-10-11 Alain Magloire
+	* CEditorTextHoverDispatcher.java (getCurrentTextHover):
+	This fixes a null pointer exception received when we hover 
+	over the code in the C/C++ Editor colour preference dialog.
+	From Thomas Fletcher.

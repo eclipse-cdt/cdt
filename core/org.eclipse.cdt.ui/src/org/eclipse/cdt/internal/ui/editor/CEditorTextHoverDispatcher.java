@@ -47,9 +47,9 @@ public class CEditorTextHoverDispatcher implements ITextHover
 	
 	private ITextHover getCurrentTextHover()
 	{
-		IWorkbenchPage page = fEditor.getSite().getPage();
-		if ( page != null )
-		{
+		IWorkbenchPage page;
+		if(fEditor != null && fEditor.getSite() != null && 
+		   (page = fEditor.getSite().getPage()) != null) {
 			Object textHover = fTextHovers.get( page.getPerspective().getId() );
 			if ( textHover != null && textHover instanceof ITextHover )
 				return (ITextHover)textHover;

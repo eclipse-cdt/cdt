@@ -48,12 +48,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	protected int useCount = 1;
 
 	/**
-	 * If set, this is the problem requestor which will be used to notify problems
-	 * detected during reconciling.
-	 */
-	protected IProblemRequestor problemRequestor;
-
-	/**
 	 * Creates a working copy of this element
 	 */
 	public WorkingCopy(ICElement parent, IFile file, IBufferFactory bufferFactory) {
@@ -65,7 +59,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			bufferFactory == null ? 
 				getBufferManager() :
 				bufferFactory;
-		this.problemRequestor = requestor;
+		problemRequestor = requestor;
 	}
 
 	public WorkingCopy(ICElement parent, IPath path, IBufferFactory bufferFactory) {
@@ -222,12 +216,12 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			throw newNotPresentException();
 		} else {
 			super.open(monitor);
-			if (monitor != null && monitor.isCanceled()) return;
-			if (this.problemRequestor != null && this.problemRequestor.isActive()){
-				this.problemRequestor.beginReporting();
-				TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor); 
-				this.problemRequestor.endReporting();
-			}
+			//if (monitor != null && monitor.isCanceled()) return;
+			//if (this.problemRequestor != null && this.problemRequestor.isActive()){
+			//	this.problemRequestor.beginReporting();
+			//	TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor); 
+			//	this.problemRequestor.endReporting();
+			//}
 		}
 	}
 	/**

@@ -39,6 +39,13 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	IPath location = null;
 
+	/**
+	 * If set, this is the problem requestor which will be used to notify problems
+	 * detected during reconciling.
+	 */
+	protected IProblemRequestor problemRequestor;
+
+
 	SourceManipulationInfo sourceManipulationInfo = null;
 
 	public TranslationUnit(ICElement parent, IFile file) {
@@ -515,6 +522,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 			parent.removeChildren();
 		}
+	}
+
+	public IProblemRequestor getProblemRequestor() {
+		return problemRequestor;
 	}
 
 	/* (non-Javadoc)

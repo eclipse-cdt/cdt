@@ -21,9 +21,10 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITemplate;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -60,6 +61,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifierOwner;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
+import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IProject;
 
@@ -78,7 +81,7 @@ public class CModelBuilder {
 		this.newElements = new HashMap();
 	}
 
-	private IASTCompilationUnit parse( ITranslationUnit translationUnit, boolean quickParseMode, boolean throwExceptionOnError ) throws ParserException
+	private IASTCompilationUnit parse(boolean quickParseMode, boolean throwExceptionOnError) throws ParserException
 	{
 		IProject currentProject = null;
 		boolean hasCppNature = true;
@@ -99,12 +102,36 @@ public class CModelBuilder {
 		} catch (CModelException e) {
 			
 		}
+
+		final IProblemRequestor problemRequestor = translationUnit.getProblemRequestor();
 		// use quick or structural parse mode
 		ParserMode mode = quickParseMode ? ParserMode.QUICK_PARSE : ParserMode.STRUCTURAL_PARSE;
-		if(quickParseMode)
-			quickParseCallback = ParserFactory.createQuickParseCallback();
-		else
-			quickParseCallback = ParserFactory.createStructuralParseCallback();
+		if (problemRequestor == null) {
+			quickParseCallback = (quickParseMode) ? ParserFactory.createQuickParseCallback() :
+				ParserFactory.createStructuralParseCallback();
+		} else {
+			if (quickParseMode) {
+				quickParseCallback = new  QuickParseCallback() {
+					/* (non-Javadoc)
+					 * @see org.eclipse.cdt.internal.core.parser.QuickParseCallback#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+					 */
+					public boolean acceptProblem(IProblem problem) {
+						problemRequestor.acceptProblem(problem);
+						return true;
+					}
+				};
+			} else {
+				quickParseCallback = new StructuralParseCallback() {
+					/* (non-Javadoc)
+					 * @see org.eclipse.cdt.internal.core.parser.QuickParseCallback#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+					 */
+					public boolean acceptProblem(IProblem problem) {
+						problemRequestor.acceptProblem(problem);
+						return true;
+					}
+				};
+			}
+		}
 
 		// pick the language
 		ParserLanguage language = hasCppNature ? ParserLanguage.CPP : ParserLanguage.C;
@@ -144,7 +171,13 @@ public class CModelBuilder {
 			throw new ParserException( CCorePlugin.getResourceString("CModelBuilder.Parser_Construction_Failure")); //$NON-NLS-1$
 		}
 		// call parse
+		if (problemRequestor != null) {
+			problemRequestor.beginReporting();
+		}
 		hasNoErrors = parser.parse(); 
+		if (problemRequestor != null) {
+			problemRequestor.endReporting();
+		}
 		if( (!hasNoErrors)  && throwExceptionOnError )
 			throw new ParserException(CCorePlugin.getResourceString("CModelBuilder.Parse_Failure")); //$NON-NLS-1$
 		return quickParseCallback.getCompilationUnit(); 
@@ -155,7 +188,7 @@ public class CModelBuilder {
 		long startTime = System.currentTimeMillis();
 		try
 		{
-			compilationUnit = parse( translationUnit, quickParseMode, true);		
+			compilationUnit = parse(quickParseMode, true);		
 		}
 			
 		catch( ParserException e )

@@ -1587,7 +1587,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         List parameters = Collections.EMPTY_LIST;
         List arrayMods = Collections.EMPTY_LIST;
         boolean encounteredVarArgs = false;
-        Object bitField = null;
+        IASTExpression bitField = null;
         boolean isFunction = false;
         overallLoop: do {
 
@@ -1720,7 +1720,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
         else if (bitField != null) {
             IASTFieldDeclarator fl = createFieldDeclarator();
-            fl.setBitFieldSize((IASTExpression) bitField);
+            fl.setBitFieldSize(bitField);
             d = fl;
         } else 
         {
@@ -1840,10 +1840,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
                 arrayMod = temp;
             }
-            arrayMod.setConstantExpression( exp );
             ((CASTNode)arrayMod).setOffset( startOffset );
-            exp.setParent( arrayMod );
-            exp.setPropertyInParent( IASTArrayModifier.CONSTANT_EXPRESSION );
+            if( exp != null )
+            {
+                arrayMod.setConstantExpression( exp );
+                exp.setParent( arrayMod );
+                exp.setPropertyInParent( IASTArrayModifier.CONSTANT_EXPRESSION );
+            }
             arrayMods.add( arrayMod );
         }
     }

@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -198,27 +199,45 @@ public class CMainTab extends CLaunchConfigurationTab {
 				"Project must first be entered before searching for a program");
 			return;
 		}
-		ILabelProvider labelProvider = new CElementLabelProvider() {
+
+		ILabelProvider programLabelProvider = new CElementLabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
 					StringBuffer name = new StringBuffer();
+					name.append(bin.getPath().lastSegment());
+					return name.toString();
+				}
+				return super.getText(element);
+			}
+		};
+
+		ILabelProvider qualifierLabelProvider = new CElementLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IBinary) {
+					IBinary bin = (IBinary)element;
+					StringBuffer name = new StringBuffer();
+					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be"));
+					name.append(" - ");
 					name.append(bin.getPath().toString());
-					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
 					return name.toString();
 				}
 				return super.getText(element);
 			}
 		};
 		
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
+		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
 		dialog.setElements(getBinaryFiles(getCProject()));
-		dialog.setMessage("Choose a &program to run");
+		dialog.setMessage("Choose a &program to run:");
 		dialog.setTitle("Program Selection");
+		dialog.setUpperListLabel("Binaries:");
+		dialog.setLowerListLabel("Qualifier:");
+		dialog.setMultipleSelection(false);
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			IBinary binary = (IBinary) dialog.getFirstResult();
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
+
 	}
 
 	/**

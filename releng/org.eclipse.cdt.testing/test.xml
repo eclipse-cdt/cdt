@@ -18,7 +18,7 @@
 	</target>
 
 	<target name="cdt-core" depends="init">
-		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+		<ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${cdt-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>

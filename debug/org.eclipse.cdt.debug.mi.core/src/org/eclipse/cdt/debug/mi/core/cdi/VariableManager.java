@@ -310,7 +310,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 					obj.getPosition(),
 					obj.getStackDepth());
 			vo.setCastingArrayStart(obj.getCastingArrayStart() + start);
-			vo.setCastingArrayEnd(obj.getCastingArrayEnd() + length);
+			vo.setCastingArrayEnd(length);
 			return vo;
 		}
 		throw new CDIException("Unknown variable object");

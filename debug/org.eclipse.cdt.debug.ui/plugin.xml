@@ -1004,13 +1004,6 @@
          id="org.eclipse.cdt.debug.ui.editors"
          point="org.eclipse.ui.editors">
       <editor
-            name="%DisassemblyEditor.name"
-            icon="icons/full/obj16/disassembly_obj.gif"
-            extensions="dasm"
-            class="org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditor"
-            id="org.eclipse.cdt.debug.ui.DisassemblyEditor">
-      </editor>
-      <editor
             name="%CDebugEditor.name"
             icon="icons/full/obj16/filenotfound_obj.gif"
             contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"

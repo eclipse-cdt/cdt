@@ -1,3 +1,7 @@
+2005-01-04 Mikhail Khodjaiants
+	Removed the disassembly editor extension.
+	* plugin.xml
+
 2004-12-23 Mikhail Khodjaiants
 	The "ascii" renedering is removed from the default renderings.
 	* plugin.xml

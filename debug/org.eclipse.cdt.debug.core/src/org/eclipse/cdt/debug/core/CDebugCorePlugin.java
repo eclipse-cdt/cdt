@@ -136,7 +136,7 @@ public class CDebugCorePlugin extends Plugin {
 	 * @param status status to log
 	 */
 	public static void log( String message ) {
-		getDefault().getLog().log( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null ) );
+		getDefault().getLog().log( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), INTERNAL_ERROR, message, null ) );
 	}
 
 	private void initializeDebugConfiguration() {

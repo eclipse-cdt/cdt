@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.ui; 
 
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
-import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -33,7 +32,6 @@ public class CDebugUIPreferenceInitializer extends AbstractPreferenceInitializer
 	 */
 	public void initializeDefaultPreferences() {
 		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
-		MemoryViewPreferencePage.initDefaults( pstore );
 		CDebugPreferencePage.initDefaults( pstore );
 	}
 }

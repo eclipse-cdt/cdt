@@ -41,13 +41,6 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="%MemoryView.name"
-            icon="icons/full/cview16/memory_view.gif"
-            category="org.eclipse.debug.ui"
-            class="org.eclipse.cdt.debug.internal.ui.views.memory.MemoryView"
-            id="org.eclipse.cdt.debug.ui.MemoryView">
-      </view>
-      <view
             name="%SharedLibrariesView.name"
             icon="icons/full/cview16/sharedlibraries_view.gif"
             category="org.eclipse.debug.ui"
@@ -77,15 +70,6 @@
                relative="org.eclipse.debug.ui.VariableView"
                visible="false"
                relationship="stack"
-               id="org.eclipse.cdt.debug.ui.MemoryView">
-         </view>
-         <viewShortcut
-               id="org.eclipse.cdt.debug.ui.MemoryView">
-         </viewShortcut>
-         <view
-               relative="org.eclipse.debug.ui.VariableView"
-               visible="false"
-               relationship="stack"
                id="org.eclipse.cdt.debug.ui.SharedLibrariesView">
          </view>
          <viewShortcut
@@ -103,6 +87,9 @@
          <viewShortcut
                id="org.eclipse.debug.ui.RegisterView">
          </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.debug.ui.MemoryView">
+         </viewShortcut>
          <view
                relative="org.eclipse.ui.views.ContentOutline"
                visible="false"
@@ -119,12 +106,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
-      <page
-            name="%MemoryPreferencePage.name"
-            category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage"
-            id="org.eclipse.cdt.debug.ui.MemoryViewPreferencePage">
-      </page>
       <page
             name="%CDebugPreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -1029,7 +1010,7 @@
    <extension
          point="org.eclipse.debug.ui.contextViewBindings">
       <contextViewBinding
-            viewId="org.eclipse.cdt.debug.ui.MemoryView"
+            viewId="org.eclipse.debug.ui.MemoryView"
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding

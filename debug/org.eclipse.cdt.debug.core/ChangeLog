@@ -1,4 +1,17 @@
 2005-01-12 Mikhail Khodjaiants
+	Bug 73168: Use memory view provided by Eclipse platform in CDT. 
+	Removed the old memory view.
+	* CDebugCorePlugin.java
+	* CDebugModel.java: removed
+	* ICMemoryManager.java: removed
+	* IFormattedMemoryBlock.java: removed
+	* IFormattedMemoryBlockRow.java: removed
+	* CMemoryManager.java: removed
+	* CSignalManager.java
+	* CDebugTarget.java
+	* CFormattedMemoryBlock.java: removed
+
+2005-01-12 Mikhail Khodjaiants
 	Fix bug 82601: Enhance the ICDIMemoryBlock interface.
 	* CMemoryBlockExtension.java
 

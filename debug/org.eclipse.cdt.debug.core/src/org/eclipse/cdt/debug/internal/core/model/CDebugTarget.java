@@ -23,10 +23,8 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICGlobalVariableManager;
-import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -80,9 +78,8 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
-import org.eclipse.cdt.debug.internal.core.CMemoryBlockExtensionRetrieval;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
-import org.eclipse.cdt.debug.internal.core.CMemoryManager;
+import org.eclipse.cdt.debug.internal.core.CMemoryBlockExtensionRetrieval;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
 import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
 import org.eclipse.cdt.debug.internal.core.CSignalManager;
@@ -156,11 +153,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	private ICDITargetConfiguration fConfig;
 
 	/**
-	 * The memory manager for this target.
-	 */
-	private CMemoryManager fMemoryManager;
-
-	/**
 	 * The disassembly manager for this target.
 	 */
 	private Disassembly fDisassembly;
@@ -215,6 +207,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 */
 	private IAddressFactory fAddressFactory;
 
+	/**
+	 * Support for the memory retrival on this target.
+	 */
 	private CMemoryBlockExtensionRetrieval fMemoryBlockRetrieval;
 
 	/**
@@ -252,7 +247,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		initializeThreads( debugEvents );
 		initializeBreakpoints();
 		initializeRegisters();
-		initializeMemoryManager();
 		initializeSourceManager();
 		getLaunch().addDebugTarget( this );
 		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
@@ -298,7 +292,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 */
 	public void setBreakpoints() {
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] bps = manager.getBreakpoints( CDebugModel.getPluginIdentifier() );
+		IBreakpoint[] bps = manager.getBreakpoints( CDIDebugModel.getPluginIdentifier() );
 		for( int i = 0; i < bps.length; i++ ) {
 			if ( bps[i] instanceof ICBreakpoint && getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)bps[i] ) && !getBreakpointManager().isCDIRegistered( (ICBreakpoint)bps[i] ) ) {
 				if ( bps[i] instanceof ICAddressBreakpoint ) {
@@ -316,10 +310,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected void initializeRegisters() {
 		getRegisterManager().initialize();
-	}
-
-	protected void initializeMemoryManager() {
-		fMemoryManager = new CMemoryManager( this );
 	}
 
 	protected void initializeSourceManager() {
@@ -791,8 +781,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return this;
 		if ( adapter.equals( ICDITarget.class ) )
 			return fCDITarget;
-		if ( adapter.equals( ICMemoryManager.class ) )
-			return getMemoryManager();
 		if ( adapter.equals( IDebuggerProcessSupport.class ) )
 			return this;
 		if ( adapter.equals( IExecFileInfo.class ) )
@@ -982,7 +970,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
 		saveGlobalVariables();
 		disposeGlobalVariableManager();
-		disposeMemoryManager();
 		disposeSharedLibraryManager();
 		disposeSignalManager();
 		disposeRegisterManager();
@@ -1336,14 +1323,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected ISourceLocator getSourceLocator() {
 		return getLaunch().getSourceLocator();
-	}
-
-	protected CMemoryManager getMemoryManager() {
-		return fMemoryManager;
-	}
-
-	protected void disposeMemoryManager() {
-		getMemoryManager().dispose();
 	}
 
 	/* (non-Javadoc)

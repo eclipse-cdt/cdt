@@ -11,7 +11,7 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import java.util.ArrayList;
-import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.model.ICSignal;
@@ -122,7 +122,7 @@ public class CSignalManager implements IAdaptable {
 	 * Throws a debug exception with the given message, error code, and underlying exception.
 	 */
 	protected void throwDebugException( String message, int code, Throwable exception ) throws DebugException {
-		throw new DebugException( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), code, message, exception ) );
+		throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), code, message, exception ) );
 	}
 
 	protected CDebugTarget getDebugTarget() {

@@ -27,7 +27,12 @@ public class GDBDebugger implements ICDebugger {
 			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
 			if (mgr instanceof SharedLibraryManager) {
 				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
-				((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+				try {
+					((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+				} catch (CDIException e) {
+					// Ignore this error
+					// it seems to be a real problem on many gdb platform
+				}
 			}
 			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_SOLIB_PATH, new ArrayList(1));
 			if (p.size() > 0) {

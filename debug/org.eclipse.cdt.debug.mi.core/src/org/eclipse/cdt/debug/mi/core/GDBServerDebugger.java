@@ -34,7 +34,11 @@ public class GDBServerDebugger implements ICDebugger {
 			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
 			if (mgr instanceof SharedLibraryManager) {
 				boolean autolib = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
-				((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+				try {
+					((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+				} catch (CDIException e) {
+					// ignore this one, cause problems for many gdb.
+				}
 			}			
 			List p = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_SOLIB_PATH, new ArrayList(1));
 			if (p.size() > 0) {

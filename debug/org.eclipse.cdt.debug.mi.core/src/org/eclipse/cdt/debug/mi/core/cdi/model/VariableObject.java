@@ -11,6 +11,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIVoidType;
@@ -40,7 +42,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	int position;
 	ICDIStackFrame frame;
 	int stackdepth;
-	
+
 	String qualifiedName = null;
 	Type type = null;
 	String typename = null;
@@ -63,16 +65,6 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		castingLength = obj.getCastingArrayEnd();
 		castingType = obj.getCastingType();
 	}
-//	public VariableObject(VariableObject obj, String n) {
-//		super(obj.getTarget());
-//		name = n;
-//		try {
-//			frame = obj.getStackFrame();
-//		} catch (CDIException e) {
-//		}
-//		position = obj.getPosition();
-//		stackdepth = obj.getStackDepth();
-//	}
 
 	public VariableObject(ICDITarget target, String n, ICDIStackFrame stack, int pos, int depth) {
 		this(target, n, null, stack, pos, depth);
@@ -115,7 +107,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	public String getCastingType() {
 		return castingType;
 	}
-	
+
 	/**
 	 * If the variable was a cast encode the string appropriately for GDB.
 	 * For example castin to an array is of 2 elements:
@@ -125,21 +117,16 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	public String encodeVariable() {
 		StringBuffer buffer = new StringBuffer();
 		if (castingLength > 0 || castingIndex > 0) {
-			buffer.append("(");
-			//buffer.append('(');
-			if (castingType != null && castingType.length() > 0) {
-				buffer.append('(').append(castingType).append(')');
-			}
-			buffer.append(getName());
-			//buffer.append(')');
+			buffer.append("*(");
+			buffer.append('(').append(getName()).append(')');
 			if (castingIndex != 0) {
-					buffer.append('+').append(castingIndex);
+				buffer.append('+').append(castingIndex);
 			}
 			buffer.append(')');
-			buffer.append('@').append(castingLength - castingIndex);
+			buffer.append('@').append(castingLength);
 		} else if (castingType != null && castingType.length() > 0) {
-			buffer.append('(').append(castingType).append(')');
-			buffer.append('(').append(getName()).append(')');
+			buffer.append("((").append(castingType).append(')');
+			buffer.append(getName()).append(')');
 		} else {
 			buffer.append(getName());
 		}
@@ -217,10 +204,10 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	 */
 	public boolean isEditable() throws CDIException {
 		ICDIType t = getType();
-		if (t instanceof  ICDIArrayType ||
-		    t instanceof ICDIStructType ||
-		    t instanceof ICDIVoidType ||
-		    t instanceof ICDIFunctionType) {
+		if (t instanceof ICDIArrayType
+			|| t instanceof ICDIStructType
+			|| t instanceof ICDIVoidType
+			|| t instanceof ICDIFunctionType) {
 			return false;
 		}
 		return true;
@@ -258,6 +245,30 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#hasChildren()
+	 */
+	public boolean hasChildren() throws CDIException {
+		ICDIType t = getType();
+
+		// For reference we need to get the referenced type
+		// to make a decision.
+		if (t instanceof ICDIReferenceType) {
+			t = ((ICDIReferenceType) t).getComponentType();
+		}
+
+		if (t instanceof ICDIArrayType || t instanceof ICDIStructType) {
+			return true;
+		} else if (t instanceof ICDIPointerType) {
+			ICDIType sub = ((ICDIPointerType) t).getComponentType();
+			if (sub instanceof ICDIVoidType) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getQualifiedName()
 	 */
 	public String getQualifiedName() throws CDIException {
@@ -266,6 +277,5 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		}
 		return qualifiedName;
 	}
-
 
 }

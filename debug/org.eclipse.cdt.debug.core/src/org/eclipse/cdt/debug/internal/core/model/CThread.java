@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -59,6 +61,8 @@ public class CThread extends CDebugElement
 					 			ISwitchToFrame,
 					 			ICDIEventListener
 {
+	private boolean fSuspending;
+
 	private final static int MAX_STACK_DEPTH = 100;
 
 	/**
@@ -435,8 +439,7 @@ public class CThread extends CDebugElement
 			}
 			else if ( event instanceof ICDIResumedEvent )
 			{
-				if ( ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) ||
-					   source instanceof ICDITarget )
+				if ( ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) )
 				{
 					handleResumedEvent( (ICDIResumedEvent)event );
 				}
@@ -494,7 +497,7 @@ public class CThread extends CDebugElement
 	 */
 	public void resume() throws DebugException
 	{
-		if ( !isSuspended() )
+		if ( !isSuspended() && !isSuspending() )
 			return;
 		try
 		{
@@ -511,18 +514,39 @@ public class CThread extends CDebugElement
 	 */
 	public void suspend() throws DebugException
 	{
-		if ( isSuspended() )
-		{
+		if ( isSuspended() || isSuspending() )
 			return;
-		}
-		try
-		{
-			getCDIThread().suspend();
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), e );
-		}
+		
+		setSuspending(true);
+		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() { 
+				try {
+					getCDITarget().suspend();
+				} catch( CDIException e ) {
+					try {
+						targetRequestFailed( e.getMessage(), e );
+					} catch (DebugException e1) {
+						CDebugUtils.error(e1.getStatus(), CThread.this);
+					}
+					
+				} finally {
+					setSuspending(false);					
+				}
+			}
+		});
+	}
+	
+	protected void setSuspending( boolean value ) 
+	{
+		fSuspending = value;
+	}
+
+	protected boolean isSuspending() 
+	{
+		return fSuspending;
 	}
 
 	/* (non-Javadoc)
@@ -735,7 +759,7 @@ public class CThread extends CDebugElement
 			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
 			if ( frame != null )
 			{
-				frame.dispose();
+				((CStackFrame)frame).dispose();
 			}
 		}
 		fStackFrames.clear();
@@ -771,7 +795,6 @@ public class CThread extends CDebugElement
 		setRunning( false );
 		dispose();
 		cleanup();	
-		fireTerminateEvent();
 	}
 	
 	/* (non-Javadoc)
@@ -865,7 +888,7 @@ public class CThread extends CDebugElement
 		setRunning( false );
 		if ( event.getSource() instanceof ICDITarget ) 
 		{
-			if ( isCurrent() )
+			if ( isCurrent() && getCurrentStateId() != IState.SUSPENDED )
 			{
 				setCurrentStateId( IState.SUSPENDED );
 				ICDISessionObject reason = event.getReason();
@@ -1152,4 +1175,40 @@ public class CThread extends CDebugElement
 		return result;
 	}
 */
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString()
+	{
+		String result = "";
+		try
+		{
+			result = getName();
+		}
+		catch( DebugException e )
+		{
+		}
+		return result;
+	}
+
+	protected void resumed( int detail, List events )
+	{
+		setRunning( true );
+		setLastStackFrame( null );
+		int state = IState.RUNNING;
+		if ( isCurrent() && detail != DebugEvent.CLIENT_REQUEST && detail != DebugEvent.UNSPECIFIED )
+		{
+			preserveStackFrames();
+			state = IState.STEPPING;
+			events.add( createResumeEvent( detail ) );
+		}
+		else
+		{
+			disposeStackFrames();
+			events.add( createChangeEvent( DebugEvent.CONTENT ) );
+		}
+		setCurrentStateId( state );
+		setCurrentStateInfo( null );
+	}
 }

@@ -1,6 +1,19 @@
+2004-02-10 Mikhail Khodjaiants
+	Cache the endianness flag.
+	* CDebugTarget.java
+ 
 2004-01-30 Mikhail Khodjaiants
 	Fix for bug 50981: In the 'getValue' method of CVariable 'getType' should be only called once.
 	* CVariable.java
+
+2004-01-29 Mikhail Khodjaiants
+	Fire sets of debug events instead of firing it one by one.
+	* CDebugTarget.java
+	* CThread.java
+	
+2004-01-29 Mikhail Khodjaiants
+	Added DebugEvent factory methods to 'CDebugElement'.
+	* CDebugElement.java
 
 2004-01-15 Mikhail Khodjaiants
 	Fix for bug 48682: IThread.getBreakpoints() stubbed out.

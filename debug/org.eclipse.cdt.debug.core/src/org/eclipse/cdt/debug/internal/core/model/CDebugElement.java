@@ -120,9 +120,14 @@ public class CDebugElement extends PlatformObject
 	 * @param event The debug event to be fired to the listeners
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
-	protected void fireEvent(DebugEvent event)
+	protected void fireEvent( DebugEvent event )
 	{
 		DebugPlugin.getDefault().fireDebugEventSet( new DebugEvent[] { event } );
+	}
+
+	protected void fireEventSet( DebugEvent[] events )
+	{
+		DebugPlugin.getDefault().fireDebugEventSet( events );
 	}
 
 	/**
@@ -131,6 +136,11 @@ public class CDebugElement extends PlatformObject
 	public void fireCreationEvent()
 	{
 		fireEvent( new DebugEvent( this, DebugEvent.CREATE ) );
+	}
+
+	public DebugEvent createCreateEvent()
+	{
+		return new DebugEvent( this, DebugEvent.CREATE );
 	}
 
 	/**
@@ -145,6 +155,11 @@ public class CDebugElement extends PlatformObject
 		fireEvent( new DebugEvent( this, DebugEvent.RESUME, detail ) );
 	}
 
+	public DebugEvent createResumeEvent( int detail )
+	{
+		return new DebugEvent( this, DebugEvent.RESUME, detail );
+	}
+
 	/**
 	 * Fires a debug event marking the SUSPEND of this element with
 	 * the associated detail.
@@ -157,12 +172,22 @@ public class CDebugElement extends PlatformObject
 		fireEvent( new DebugEvent( this, DebugEvent.SUSPEND, detail ) );
 	}
 
+	public DebugEvent createSuspendEvent( int detail )
+	{
+		return new DebugEvent( this, DebugEvent.SUSPEND, detail );
+	}
+
 	/**
 	 * Fires a debug event marking the termination of this element.
 	 */
 	public void fireTerminateEvent()
 	{
 		fireEvent( new DebugEvent( this, DebugEvent.TERMINATE ) );
+	}
+
+	public DebugEvent createTerminateEvent()
+	{
+		return new DebugEvent( this, DebugEvent.TERMINATE );
 	}
 
 	/**
@@ -174,6 +199,11 @@ public class CDebugElement extends PlatformObject
 	public void fireChangeEvent( int detail )
 	{
 		fireEvent( new DebugEvent( this, DebugEvent.CHANGE, detail ) );
+	}
+
+	public DebugEvent createChangeEvent( int detail )
+	{
+		return new DebugEvent( this, DebugEvent.CHANGE, detail );
 	}
 
 	/**

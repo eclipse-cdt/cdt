@@ -1,12 +1,44 @@
+2003-11-10 Mikhail Khodjaiants
+	Ensure that all breakpoint creation and modification operations are running in the UI thread.
+	* CBreakpointManager.java
+
+2003-11-10 Mikhail Khodjaiants
+	Added synchronization to some of the 'CBreakpoint' methods.
+	* CBreakpoint.java
+
 2003-11-07 Mikhail Khodjaiants
 	Fix for PR 46358: NPE in the "setCurrentThread" method of "CDebugTarget".
 	'setCurrentThread': check if the old current thread is not null.
 	* CDebugTarget.java
 
 2003-11-07 Mikhail Khodjaiants
+	Use the corresponding methods of 'ICBreakpoint' to set breakpoint properties.
+	* CBreakpointManager.java
+
+2003-11-07 Mikhail Khodjaiants
 	Fix for PR 46303: Exception when selecting Debug... menu.
 	Check if the string passed to the 'getCommonSourceLocationsFromMemento' method is not empty.
 	* SourceUtils.java
+
+2003-11-05 Mikhail Khodjaiants
+	'getCDIBreakpointFile' returns wrong file for address breakpoints.
+	* CBreakpointManager.java
+
+2003-11-05 Mikhail Khodjaiants
+	Changed the handling of the breakpoint created event to reflect the CDI changes for deferred 
+	breakpoints support.
+	* CBreakpointManager.java
+	* CSharedLibraryManager.java
+	* CDebugTarget.java
+ 
+2003-11-05 Mikhail Khodjaiants
+	Moved all breakpoint-related functionality to the new class - 'CBreakpointManager'.
+	* CBreakpointManager.java
+
+2003-11-05 Mikhail Khodjaiants
+	The argument type of the 'getBreakpointAddress' method of 'ICBreakpointManager' is changed from 
+	'ICBreakpoint' to 'ICBreakpointManager'.
+	* ICBreakpointMaanger.java
 
 2003-10-30 Mikhail Khodjaiants
 	* CSourceManager.java: implements adapters for 'ISourceMode' and 'IPersistableSourceLocator'.
@@ -62,6 +94,15 @@
 	if the initialization of one fails.
 	* CSourceLocator.java
  
+2003-10-17 Alain Magloire
+
+	ICDIBreakpointManager new method
+	setLocationBreakpoint(...., deferred);
+	The new boolean "deferred" indicate if yes or not the breakpoint
+	should be on the deferred list if the setting fails.
+
+	* ICDIBreakpointManager.java
+
 2003-10-17 Mikhail Khodjaiants
 	Core support of the 'Search for duplicate source files' option.
 	* ICSourceLocation.java

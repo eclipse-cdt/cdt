@@ -5,8 +5,8 @@
  */
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * Enter type comment.
@@ -15,5 +15,5 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface ICBreakpointManager extends IAdaptable
 {
-	long getBreakpointAddress( IBreakpoint breakpoint );
+	long getBreakpointAddress( ICBreakpoint breakpoint );
 }

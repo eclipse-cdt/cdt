@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -52,7 +53,7 @@ public class Target  implements ICDITarget {
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
-	int lastExecutionToken;
+	Command lastExecutionCommand;
 	
 	public Target(Session s) {
 		session = s;
@@ -63,8 +64,8 @@ public class Target  implements ICDITarget {
 		return session;
 	}
 
-	public int getLastExecutionToken() {
-		return lastExecutionToken;
+	public Command getLastExecutionCommand() {
+		return lastExecutionCommand;
 	}
 
 	/**
@@ -308,6 +309,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecRun run = factory.createMIExecRun(new String[0]);
+		lastExecutionCommand = run;
 		try {
 			mi.postCommand(run);
 			MIInfo info = run.getMIInfo();
@@ -317,7 +319,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = run.getToken();
 	}
 
 	/**
@@ -330,6 +331,7 @@ public class Target  implements ICDITarget {
 		} else if (mi.getMIInferior().isSuspended()) {
 			CommandFactory factory = mi.getCommandFactory();
 			MIExecContinue cont = factory.createMIExecContinue();
+			lastExecutionCommand = cont;
 			try {
 				mi.postCommand(cont);
 				MIInfo info = cont.getMIInfo();
@@ -339,7 +341,6 @@ public class Target  implements ICDITarget {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
-			lastExecutionToken = cont.getToken();
 		} else if (mi.getMIInferior().isTerminated()) {
 			restart();
 		} else {
@@ -354,6 +355,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecStep step = factory.createMIExecStep();
+		lastExecutionCommand = step;
 		try {
 			mi.postCommand(step);
 			MIInfo info = step.getMIInfo();
@@ -363,7 +365,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = step.getToken();
 	}
 
 	/**
@@ -373,6 +374,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecStepInstruction stepi = factory.createMIExecStepInstruction();
+		lastExecutionCommand = stepi;
 		try {
 			mi.postCommand(stepi);
 			MIInfo info = stepi.getMIInfo();
@@ -382,7 +384,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = stepi.getToken();
 	}
 
 	/**
@@ -392,6 +393,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecNext next = factory.createMIExecNext();
+		lastExecutionCommand = next;
 		try {
 			mi.postCommand(next);
 			MIInfo info = next.getMIInfo();
@@ -401,7 +403,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = next.getToken();
 	}
 
 	/**
@@ -411,6 +412,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecNextInstruction nexti = factory.createMIExecNextInstruction();
+		lastExecutionCommand = nexti;
 		try {
 			mi.postCommand(nexti);
 			MIInfo info = nexti.getMIInfo();
@@ -420,7 +422,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = nexti.getToken();
 	}
 
 	/**
@@ -447,6 +448,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecFinish finish = factory.createMIExecFinish();
+		lastExecutionCommand = finish;
 		try {
 			mi.postCommand(finish);
 			MIInfo info = finish.getMIInfo();
@@ -456,7 +458,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = finish.getToken();
 	}
 
 	/**
@@ -465,6 +466,7 @@ public class Target  implements ICDITarget {
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecReturn ret = factory.createMIExecReturn();
+		lastExecutionCommand = ret;
 		try {
 			mi.postCommand(ret);
 			MIInfo info = ret.getMIInfo();
@@ -474,15 +476,12 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = ret.getToken();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#suspend()
 	 */
 	public void suspend() throws CDIException {
-		// Send the interrupt an sync for 10 seconds.
-		// for an answer.  The waiting time is arbitrary.
 		MISession mi = session.getMISession();
 		try {
 			mi.getMIInferior().interrupt();
@@ -529,6 +528,7 @@ public class Target  implements ICDITarget {
 			loc = "*" + location.getAddress();
 		}
 		MIExecUntil until = factory.createMIExecUntil(loc);
+		lastExecutionCommand = until;
 		try {
 			mi.postCommand(until);
 			MIInfo info = until.getMIInfo();
@@ -538,7 +538,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = until.getToken();
 
 	}
 
@@ -557,6 +556,7 @@ public class Target  implements ICDITarget {
 			loc = "*" + location.getAddress();
 		}
 		MIJump jump = factory.createMIJump(loc);
+		lastExecutionCommand = jump;
 		try {
 			mi.postCommand(jump);
 			MIInfo info = jump.getMIInfo();
@@ -566,7 +566,6 @@ public class Target  implements ICDITarget {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		lastExecutionToken = jump.getToken();
 	}
 
 	/**

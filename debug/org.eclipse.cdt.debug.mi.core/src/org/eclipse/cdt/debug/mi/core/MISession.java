@@ -89,7 +89,7 @@ public class MISession extends Observable {
 	 * @param timeout time in milliseconds to wait for command response.
 	 * @param type the type of debugin session.
 	 */
-	public MISession(Process process, PTY pty, int timeout, int type) throws MIException {
+	public MISession(Process process, PTY pty, int timeout, int type, int launchTimeout) throws MIException {
 
 		gdbProcess = process;
 		inChannel = process.getInputStream();
@@ -142,15 +142,15 @@ public class MISession extends Observable {
 		// Like confirmation and screen size.
 
 		MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
-		postCommand(confirm);
+		postCommand(confirm, launchTimeout);
 		confirm.getMIInfo(); 
 
 		MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
-		postCommand(width);
+		postCommand(width, launchTimeout);
 		confirm.getMIInfo(); 
 
 		MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
-		postCommand(height);
+		postCommand(height, launchTimeout);
 		confirm.getMIInfo(); 
 	}
 

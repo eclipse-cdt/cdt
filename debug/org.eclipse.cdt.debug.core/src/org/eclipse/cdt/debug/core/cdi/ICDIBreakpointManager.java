@@ -77,6 +77,29 @@ public interface ICDIBreakpointManager extends ICDIManager {
 	 * @param condition - the condition or <code>null</code>
 	 * @param threadId - the thread identifier if this is 
 	 * a thread-specific breakpoint or <code>null</code>
+	 * @param deferred - when set to <code>true</code>, if the breakpoint fails
+	 * to be set, it is put a deferred list and the debugger will retry to set
+	 * it when a new Shared library is loaded.
+	 * @return a breakpoint
+	 * @throws CDIException on failure. Reasons include:
+	 */
+	ICDILocationBreakpoint setLocationBreakpoint(
+		int type,
+		ICDILocation location,
+		ICDICondition condition,
+		String threadId, boolean deferred)
+		throws CDIException;
+
+	/**
+	 * Equivalent to :
+	 * setLocationBreakpoint(type, location, condition, threadID, false);
+	 * The breakpoint is not deferred.
+	 * 
+	 * @param type - a combination of TEMPORARY and HARDWARE or REGULAR
+	 * @param location - the location 
+	 * @param condition - the condition or <code>null</code>
+	 * @param threadId - the thread identifier if this is 
+	 * a thread-specific breakpoint or <code>null</code>
 	 * @return a breakpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */

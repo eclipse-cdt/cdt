@@ -1,3 +1,8 @@
+2003-11-05 Mikhail Khodjaiants
+	The argument type of the 'getBreakpointAddress' of 'ICBreakpointManager' is changed from 
+	'ICBreakpoint' to 'ICBreakpointManager'.
+	* DisassemblyMarkerAnnotationModel.java
+
 2003-11-03 Mikhail Khodjaiants
 	Fix for PR 45957: Memory view: last column does not show updates.
 	* MemoryPresentation.java

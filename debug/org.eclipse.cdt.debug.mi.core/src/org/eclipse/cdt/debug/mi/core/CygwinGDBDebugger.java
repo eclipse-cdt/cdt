@@ -33,11 +33,21 @@ public class CygwinGDBDebugger extends GDBDebugger {
 
 	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 		try {
-			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
-			if (mgr instanceof SharedLibraryManager) {
+			ICDISharedLibraryManager manager = session.getSharedLibraryManager();
+			if (manager instanceof SharedLibraryManager) {
+				SharedLibraryManager mgr = (SharedLibraryManager)manager;
 				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
 				try {
-					((SharedLibraryManager)mgr).setStopOnSolibEvents(stopOnSolibEvents);
+					mgr.setStopOnSolibEvents(stopOnSolibEvents);
+					// By default, we provide with the capability of deferred breakpoints
+					// And we set setStopOnSolib events for them(but they should not see the dll events ).
+					//
+					// If the user explicitly set stopOnSolibEvents well it probably
+					// means that they wanted to see those events so do no do deferred breakpoints.
+					if (!stopOnSolibEvents) {
+						mgr.setStopOnSolibEvents(true);
+						mgr.setDeferredBreakpoint(true);
+					}
 				} catch (CDIException e) {
 					// Ignore this error
 					// it seems to be a real problem on many gdb platform
@@ -45,11 +55,11 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			}
 			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
 			if (p.size() > 0) {
-				String[] oldPaths = mgr.getSharedLibraryPaths();
+				String[] oldPaths = manager.getSharedLibraryPaths();
 				String[] paths = new String[oldPaths.length + p.size()];
 				System.arraycopy((String[])p.toArray(new String[p.size()]), 0, paths, 0, p.size());
 				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
-				mgr.setSharedLibraryPaths(paths);
+				manager.setSharedLibraryPaths(paths);
 			}
 		} catch (CoreException e) {
 			throw new CDIException("Error initializing shared library options: " + e.getMessage());
@@ -77,6 +87,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 			// We ignore this exception, for example
 			// on GNU/Linux the new-console is an error.
 		}
+		initializeLibraries(config, session);
 		return session;
 	}
 
@@ -88,6 +99,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		Session session =
 			(Session) super.createAttachSession(config, exe, pid);
 		session.getMISession().setCommandFactory(commandFactory);
+		initializeLibraries(config, session);
 		return session;
 	}
 
@@ -99,6 +111,7 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		Session session =
 			(Session) super.createCoreSession(config, exe, corefile);
 		session.getMISession().setCommandFactory(commandFactory);
+		initializeLibraries(config, session);
 		return session;
 	}
 }

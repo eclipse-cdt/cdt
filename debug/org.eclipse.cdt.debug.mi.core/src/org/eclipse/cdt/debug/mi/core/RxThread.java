@@ -12,9 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
+import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNext;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
+import org.eclipse.cdt.debug.mi.core.command.MIExecReturn;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
@@ -146,6 +148,10 @@ public class RxThread extends Thread {
 						type = MIRunningEvent.UNTIL;
 					} else if (cmd instanceof MIExecFinish) {
 						type = MIRunningEvent.FINISH;
+					} else if (cmd instanceof MIExecReturn) {
+						type = MIRunningEvent.RETURN;
+					} else if (cmd instanceof MIExecContinue) {
+						type = MIRunningEvent.CONTINUE;
 					} else {
 						type = MIRunningEvent.CONTINUE;
 					}
@@ -199,6 +205,7 @@ public class RxThread extends Thread {
 	void processMIOOBRecord(MIOOBRecord oob, List list) {
 		if (oob instanceof MIAsyncRecord) {
 			processMIOOBRecord((MIAsyncRecord) oob, list);
+			oobList.clear();
 		} else if (oob instanceof MIStreamRecord) {
 			processMIOOBRecord((MIStreamRecord) oob);
 		}

@@ -72,6 +72,10 @@ public class MIBreakpoint {
 		return number;
 	}
 
+	public void setNumber(int num) {
+		number = num;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -84,7 +88,7 @@ public class MIBreakpoint {
 		return isWpt;
 	}
 
-	public void setWatcpoint(boolean w) {
+	public void setWatchpoint(boolean w) {
 		isWpt = w;
 	}
 

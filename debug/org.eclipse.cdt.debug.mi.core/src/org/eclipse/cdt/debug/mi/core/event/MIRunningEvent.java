@@ -20,6 +20,7 @@ public class MIRunningEvent extends MIEvent {
 	public static final int STEPI = 4;
 	public static final int FINISH = 5;
 	public static final int UNTIL = 6;
+	public static final int RETURN = 7;
 
 	int type;
 

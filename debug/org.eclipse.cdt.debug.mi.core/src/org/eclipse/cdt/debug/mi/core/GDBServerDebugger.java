@@ -22,9 +22,14 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GDBServerDebugger implements ICDebugger {
@@ -54,17 +59,40 @@ public class GDBServerDebugger implements ICDebugger {
 		try {
 			String gdb = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
 			File cwd = exe.getProject().getLocation().toFile();
-			String remote;
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			Session session = null;
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
-				remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid");
+				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid");
 				remote += ":";
 				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid");
+				String[] args = new String[] {"remote", remote};
+				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), 0, args, cwd, gdbinit);
 			} else {
-				remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid");
+				MIPlugin plugin = MIPlugin.getDefault();
+				Preferences prefs = plugin.getPluginPreferences();
+				int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
+
+				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid");
+				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid");
+				session = (Session)MIPlugin.getDefault().createCSession(gdb, (File)null, cwd, gdbinit);
+				MISession miSession = session.getMISession();
+				CommandFactory factory = miSession.getCommandFactory();
+				MIGDBSet setRemoteBaud = factory.createMIGDBSet(new String[]{"remotebaud", remoteBaud});
+				// Set serial line parameters
+				miSession.postCommand(setRemoteBaud, launchTimeout);
+				MIInfo info = setRemoteBaud.getMIInfo();
+				if (info == null) {
+					session.terminate();
+					throw new MIException ("Can not set Baud");
+				}
+				MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote});
+				miSession.postCommand(select, launchTimeout);
+				select.getMIInfo();
+				if (info == null) {
+					session.terminate();
+					throw new MIException ("No answer");
+				}
 			}
-			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
-			String[] args = new String[] {"remote", remote};
-			Session session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), 0, args, cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {

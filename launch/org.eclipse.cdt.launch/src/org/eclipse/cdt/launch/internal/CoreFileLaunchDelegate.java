@@ -18,10 +18,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -67,7 +65,6 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			launch,
 			dsession.getCurrentTarget(),
 			renderTargetLabel(debugConfig),
-			null,
 			exe.getProject());
 	}
 

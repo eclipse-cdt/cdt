@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
-import org.eclipse.cdt.debug.internal.core.model.CThread;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -42,7 +40,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IThread;
 
 /**
  * 
@@ -145,7 +142,6 @@ public class CDebugModel
 	public static IDebugTarget newAttachDebugTarget( final ILaunch launch,
 													 final ICDITarget cdiTarget,
 													 final String name,
-													 final IProcess process,
 													 final IProject project ) throws DebugException
 	{
 		final IDebugTarget[] target = new IDebugTarget[1];
@@ -158,7 +154,7 @@ public class CDebugModel
 											  ICDebugTargetType.TARGET_TYPE_LOCAL_ATTACH, 
 											  cdiTarget, 
 											  name,
-											  process,
+											  null,
 											  project,
 											  false,
 											  true );
@@ -173,8 +169,6 @@ public class CDebugModel
 			CDebugCorePlugin.log( e );
 			throw new DebugException( e.getStatus() );
 		}
-
-		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
 
 		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
 														{
@@ -196,7 +190,6 @@ public class CDebugModel
 	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch,
 													   final ICDITarget cdiTarget,
 													   final String name,
-													   final IProcess process,
 													   final IProject project ) throws DebugException
 	{
 		final IDebugTarget[] target = new IDebugTarget[1];
@@ -209,7 +202,7 @@ public class CDebugModel
 											  ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP, 
 											  cdiTarget, 
 											  name,
-											  process,
+											  null,
 											  project,
 											  true,
 											  false );
@@ -224,8 +217,6 @@ public class CDebugModel
 			CDebugCorePlugin.log( e );
 			throw new DebugException( e.getStatus() );
 		}
-
-		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
 
 		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
 														{

@@ -107,7 +107,6 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						launch,
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),
-						null,
 						exe.getProject());
 				}
 			} catch (CDIException e) {

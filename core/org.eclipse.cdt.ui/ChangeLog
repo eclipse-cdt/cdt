@@ -1,3 +1,17 @@
+2004-04-05 Alain Magloire
+
+	Changing the sequence when we shutdown, this will
+	help in PR #57128
+	In BaseCElementContentProvider do not call 
+	BinaryContainer.getBinaries() directly it is a blocking
+	operation.
+
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* browser/org/eclipse/cdt/ui/browser/typeinfo/AllTypesCache.java
+	* src/org/eclipse/cdt/internal/ui/BaseCElementCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+
 2004-04-05 Hoda Amer
 	Fix for bug#44378 : Content Assist: easy keyboard exit of argument-providing mode
 	Fix for bug#56614 : [Content Assist] Global variables do not appear in a global completion list.

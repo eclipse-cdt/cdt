@@ -186,8 +186,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 		if (element instanceof IBinaryContainer) {
 			IBinaryContainer cont = (IBinaryContainer)element;
-			IBinary[] bin = cont.getBinaries();
-			return (bin != null) && bin.length > 0;
+			IBinary[] bins = getExecutables(cont);
+			return (bins != null) && bins.length > 0;
 		}
 
 		if (element instanceof IParent) {
@@ -329,8 +329,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 	
 	private Object[] filterNonCResources(Object[] objects, ICProject cproject) {
-		ICElement[] binaries = cproject.getBinaryContainer().getChildren();
-		ICElement[] archives = cproject.getArchiveContainer().getChildren();
+		ICElement[] binaries = getExecutables(cproject);
+		ICElement[] archives = getArchives(cproject);
 		ISourceRoot[] roots = null;
 		try {
 			roots = cproject.getSourceRoots();
@@ -406,6 +406,35 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return true;
 	}
 
+	protected IBinary[] getExecutables(ICProject cproject) {
+		IBinaryContainer container = cproject.getBinaryContainer();
+		return getExecutables(container);
+	}
+	
+	protected IBinary[] getExecutables(IBinaryContainer container) {
+		ICElement[] celements = container.getChildren();
+		ArrayList list = new ArrayList(celements.length);
+		for (int i = 0; i < celements.length; i++) {
+			if (celements[i] instanceof IBinary) {
+				IBinary bin = (IBinary)celements[i];
+				if (bin.isExecutable()) {
+					list.add(bin);
+				}
+			}
+		}
+		IBinary[] bins = new IBinary[list.size()];
+		list.toArray(bins);
+		return bins;
+	}
+
+	protected IArchive[] getArchives(ICProject cproject) {
+		IArchiveContainer container = cproject.getArchiveContainer();
+		return getArchives(container);
+	}
+
+	protected IArchive[] getArchives(IArchiveContainer container) {
+		return container.getArchives();
+	}
 
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.

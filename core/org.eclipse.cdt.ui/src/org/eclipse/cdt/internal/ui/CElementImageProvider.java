@@ -13,6 +13,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
@@ -256,6 +257,8 @@ public class CElementImageProvider {
 					return CPluginImages.DESC_OBJS_BINARY;
 				} else if (celement instanceof ILibraryReference) {
 					return CPluginImages.DESC_OBJS_LIBRARY;
+				} else if (celement instanceof IIncludeReference) {
+					return CPluginImages.DESC_OBJS_INCLUDES_FOLDER;
 				}
 				return CPluginImages.DESC_OBJS_CONTAINER;
 

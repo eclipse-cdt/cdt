@@ -164,6 +164,10 @@ public class AllTypesCache {
 			TypeSearchResultCollector collector= new TypeSearchResultCollector(subMonitor);
 
 			IWorkspace workspace= CCorePlugin.getWorkspace();
+			if (workspace == null) {
+				return Status.CANCEL_STATUS;
+			}
+
 			ICSearchScope scope= SearchEngine.createWorkspaceScope();
 			SearchEngine engine= new SearchEngine();
 			
@@ -171,6 +175,8 @@ public class AllTypesCache {
 			try {
 				flushCache();
 				// start the search engine
+				if (progressMonitor.isCanceled())
+					throw new InterruptedException();
 				engine.search(workspace, pattern, scope, collector, true);
 				if (progressMonitor.isCanceled())
 					throw new InterruptedException();

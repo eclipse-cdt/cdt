@@ -299,8 +299,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 		unregisterAdapters();
 
-		super.shutdown();
-
 		if (fWorkingCopyManager != null) {
 			fWorkingCopyManager.shutdown();
 			fWorkingCopyManager= null;
@@ -311,6 +309,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fDocumentProvider= null;
 		}
 		Refactoring.getUndoManager().shutdown();		
+
+		// Do this last.
+		super.shutdown();
 	}
 
 	private void runUI(Runnable run) {

@@ -207,5 +207,21 @@ public class Declarator implements IExpressionOwner, IDeclaratorOwner {
 	public IDeclaratorOwner getOwnerDeclarator() {
 		return ownerDeclarator;
 	}
+	
+	private BitField bitField = null; 
+
+	/**
+	 * @return
+	 */
+	public BitField getBitField() {
+		return bitField;
+	}
+
+	/**
+	 * @param field
+	 */
+	public void setBitField(BitField field) {
+		bitField = field;
+	}
 
 }

@@ -918,5 +918,20 @@ public class DOMBuilder implements IParserCallback
 	public void expressionName(Object expression) {
 		Expression e = (Expression)expression;
 		e.add( currName );	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#startBitfield(java.lang.Object)
+	 */
+	public Object startBitfield(Object declarator) {
+		return new BitField((Declarator)declarator);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#endBitfield(java.lang.Object)
+	 */
+	public void endBitfield(Object bitfield) {
+		BitField b = (BitField)bitfield;
+		b.getOwnerDeclarator().setBitField( b );
+	}
  
 }

@@ -64,26 +64,4 @@ public class DOMFailedTest extends BaseDOMTest  {
 		failTest("FUNCTION_MACRO( 1, a );\n	int i;");
 	}
 
-	public void testBug36702() throws Exception
-	{
-		Writer code = new StringWriter(); 
-		code.write( "void mad_decoder_init(struct mad_decoder *, void *,\n" ); 
-		code.write( "			  enum mad_flow (*)(void *, struct mad_stream *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *, struct mad_header const *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *,\n" ); 
-		code.write( "					struct mad_stream const *,\n" ); 
-		code.write( "					struct mad_frame *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *,\n" ); 
-		code.write( "					struct mad_header const *,\n" ); 
-		code.write( "					struct mad_pcm *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *,\n" ); 
-		code.write( "					struct mad_stream *,\n" ); 
-		code.write( "					struct mad_frame *),\n" ); 
-		code.write( "			  enum mad_flow (*)(void *, void *, unsigned int *)\n" ); 
-		code.write( ");\n" );  
-		
-		failTest( code.toString() );
-		
-	}
-
 }

@@ -716,5 +716,19 @@ public class ExpressionEvaluator implements IParserCallback {
 		currName.setEnd(lastToken);
 	}
 
-	Name currName = null; 
+	Name currName = null;
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#startBitfield(java.lang.Object)
+	 */
+	public Object startBitfield(Object declarator) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#endBitfield(java.lang.Object)
+	 */
+	public void endBitfield(Object bitfield) {
+	} 
 }

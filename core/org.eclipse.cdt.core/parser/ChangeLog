@@ -1,3 +1,8 @@
+2003-04-25 John Camelon
+	Fixed bug36852  - outline window doesn't show all functions 
+	Fixed bug36764  - Bit fields cause parse errors 
+	Fixed bug36702  - Parser error when having function pointers as parameters 
+
 2003-04-24 John Camelon
 	Fixed Bug36799  STL Testing: Parser fails on Variable Definition 
 

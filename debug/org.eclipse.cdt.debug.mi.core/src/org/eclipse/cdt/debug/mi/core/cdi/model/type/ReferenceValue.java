@@ -31,9 +31,9 @@ public class ReferenceValue extends Value implements ICDIReferenceValue {
 	public long referenceValue() throws CDIException {
 		long value = 0;
 		String valueString = getValueString().trim();
-		if ( valueString.startsWith( "@" ) )
+		if ( valueString.startsWith("@") )
 			valueString = valueString.substring( 1 );
-		int space = valueString.indexOf(' ');
+		int space = valueString.indexOf(":");
 		if (space != -1) {
 			valueString = valueString.substring(0, space).trim();
 		}

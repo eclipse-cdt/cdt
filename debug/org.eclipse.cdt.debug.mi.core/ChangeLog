@@ -1,4 +1,8 @@
 2003-06-04 Mikhail Khodjaiants
+	Correction in the parsing of reference value.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ReferenceValue.java
+	
+2003-06-04 Mikhail Khodjaiants
 	Added some missing types and methods for the type parsing.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayType.java

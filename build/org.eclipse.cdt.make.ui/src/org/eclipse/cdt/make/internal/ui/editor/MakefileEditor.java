@@ -167,7 +167,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 				for (len = 0; len < var.length(); len++) {
 					char c = var.charAt(len);
 					//if (! (Character.isLetterOrDigit(c) || c == '.' || c == '_')) {
-					if (!(detector.isWordPart(c) || detector.isWordStart(c))) {
+					if (!(detector.isWordPart(c) || detector.isWordStart(c) || c == '-' || c == '_')) {
 						break;
 					}
 				}

@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -141,9 +142,12 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_HORIZONTAL);
+		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		comp.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
+		comp.setLayout(new GridLayout(2, true));
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
-
+		
 		Label label = ControlFactory.createLabel(comp, CUIMessages.getString("BinaryParserPage.label.addr2lineCommand")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -167,7 +171,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleAddr2LineButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText("addr2line Command"); //$NON-NLS-1$
+				dialog.setText(CUIMessages.getString("BinaryParserPage.label.addr2lineCommand")); //$NON-NLS-1$
 				String command = fAddr2LineCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -205,7 +209,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCPPFiltButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText("c++filt Command"); //$NON-NLS-1$
+				dialog.setText(CUIMessages.getString("BinaryParserPage.label.cppfiltCommand")); //$NON-NLS-1$
 				String command = fCPPFiltCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {

@@ -1,3 +1,13 @@
+2004-06-24 Tanya Wolff
+	Fix for PR 60299: Accessibility: Lost children in Binary Parser properties dialog
+	Switched the binary parsers Options group with its child composite so the
+	group is read before the controls in the group.
+	Externalized a few dialog titles.
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBock.java
+	* src/org/eclipse/cdt/ui/dialogs/CygwinBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUElfBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBock.java
+	
 2004-06-24 Hoda Amer
 	A small fix to the New Class Wizard "link to file" option.
 	Fix for PR# 47570 : [New Class Wizard] Use of internal Eclipse classes in CDT(LinkToFileGroup)

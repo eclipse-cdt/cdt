@@ -189,9 +189,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		binaryList.setButtonsMinWidth(buttonBarWidth);
 
 		// Add the Parser UI contribution.
-		Group parserGroup = new Group(composite, SWT.SHADOW_ETCHED_IN);
-		parserGroup.setText(CUIMessages.getString("BinaryParserBlock.binaryParserOptions")); //$NON-NLS-1$
-
+		
+		Composite parserGroup = new Composite(composite, SWT.NULL);
+		
 		GridData gd = new GridData();
 		gd.heightHint = converter.convertHorizontalDLUsToPixels(150);
 		gd.horizontalAlignment = GridData.FILL;

@@ -79,7 +79,12 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			ICDIArgumentObject[] argObjs = mgr.getArgumentObjects(this);
 			args = new ICDIArgument[argObjs.length];
 			for (int i = 0; i < args.length; i++) {
-				args[i] = mgr.createArgument(argObjs[i]);
+				try {
+					args[i] = mgr.createArgument(argObjs[i]);
+				} catch (CDIException e) {
+					args = null;
+					throw e;
+				}
 			}
 		}
 		return args;
@@ -95,7 +100,12 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			ICDIVariableObject[] varObjs = mgr.getLocalVariableObjects(this);
 			locals = new ICDIVariable[varObjs.length];
 			for (int i = 0; i < locals.length; i++) {
-				locals[i] = mgr.createVariable(varObjs[i]);
+				try {
+					locals[i] = mgr.createVariable(varObjs[i]);
+				} catch (CDIException e) {
+					locals = null;
+					throw e;
+				}
 			}
 		}
 		return locals;

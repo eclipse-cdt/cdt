@@ -62,6 +62,8 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			if (containsSharedLib(miLibs[i])) {
 				if (hasSharedLibChanged(miLibs[i])) {
 					// Fire ChangedEvent
+					SharedLibrary sharedlib = (SharedLibrary)getSharedLibrary(miLibs[i].getName());
+					sharedlib.setMIShared(miLibs[i]);
 					eventList.add(new MISharedLibChangedEvent(miLibs[i].getName())); 
 				}
 			} else {

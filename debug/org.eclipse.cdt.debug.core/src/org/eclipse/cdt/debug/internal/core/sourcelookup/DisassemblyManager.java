@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 public class DisassemblyManager
 {
 	// move to preferences
+	final static private int DISASSEMBLY_MAX_LINE_COUNT = 100;
 	final static private int DISASSEMBLY_BLOCK_SIZE = 100;
 	
 	private CDebugTarget fDebugTarget;
@@ -106,7 +107,7 @@ public class DisassemblyManager
 				ICDIInstruction[] instructions = new ICDIInstruction[0];
 				try
 				{
-					instructions = sm.getInstructions( fileName, lineNumber );
+					instructions = sm.getInstructions( fileName, lineNumber, DISASSEMBLY_MAX_LINE_COUNT );
 				}
 				catch( CDIException e )
 				{

@@ -1,4 +1,8 @@
 2002-10-10 Mikhail Khodjaiants
+	* DisassemblyManager.java: Replaced 'getInstructions( String fileName, int lineNumber )' 
+	by 'getInstructions( String fileName, int lineNumber, int maxLineCount )'.
+
+2002-10-10 Mikhail Khodjaiants
 	* CDebugTarget.java:  Implementing the disassembly mode.
 	* CThread.java:  Implementing the disassembly mode.
 

@@ -224,4 +224,14 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 0 );
 	}
+	
+	public void testBug63478(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::f(*)", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		
+		assertEquals( matches.size(), 4 );
+	}
 }

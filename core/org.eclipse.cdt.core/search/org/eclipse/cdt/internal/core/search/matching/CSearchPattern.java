@@ -39,9 +39,11 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
@@ -500,7 +502,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			
 			if( declarations == null || ! declarations.hasNext() )
 				return null;
-			IASTFunction function = (IASTFunction) declarations.next();
+			
+			IASTDeclaration decl = (IASTDeclaration) declarations.next();
+			if( !(decl instanceof IASTFunction) ){
+				//if the user puts something not so good in the brackets, we might not get a function back
+				return list;
+			}
+			
+			IASTFunction function = (IASTFunction) decl;
 			
 			Iterator parameters = function.getParameters();
 			char [] param = null;

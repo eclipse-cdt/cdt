@@ -1,3 +1,6 @@
+2004-05-21 Andrw Niefer
+	fix bug 63478
+
 2004-05-21 Andrew Niefer
 	Indexer problems reporting: group problems under the indexer job in progress view
 

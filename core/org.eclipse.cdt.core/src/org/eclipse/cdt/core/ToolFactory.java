@@ -1,16 +1,14 @@
-/*
- * Created on Aug 17, 2004
- *
- * Copyright 2004, QNX Software Systems Ltd. All Rights Reserved.
- *
- * This source code may contain confidential information of QNX Software
- * Systems Ltd.  (QSSL) and its licensors. Any use, reproduction,
- * modification, disclosure, distribution or transfer of this software,
- * or any software which includes or is based upon any of this code, is
- * prohibited unless expressly authorized by QSSL by written agreement. For
- * more information (including whether this source code file has been
- * published) please email licensing@qnx.com.
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.cdt.core;
 
 import java.util.Map;
@@ -24,7 +22,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * @author AChapiro
  */
 public class ToolFactory {
 

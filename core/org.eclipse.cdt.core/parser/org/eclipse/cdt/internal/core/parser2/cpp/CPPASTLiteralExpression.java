@@ -11,13 +11,45 @@
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTLiteralExpression;
+
 
 /**
  * @author jcamelon
  */
-public class CPPASTLiteralExpression extends CASTLiteralExpression implements
+public class CPPASTLiteralExpression extends CPPASTNode implements
         ICPPASTLiteralExpression {
+
+    private int kind;
+    private String value = "";  //$NON-NLS-1$
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#getKind()
+     */
+    public int getKind() {
+        return kind;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#setKind(int)
+     */
+    public void setKind(int value) {
+        this.kind = value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTLiteralExpression#setValue(java.lang.String)
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return value;
+    }
+
 
 
 }

@@ -12,12 +12,11 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
-import org.eclipse.cdt.internal.core.parser2.c.CASTNode;
 
 /**
  * @author jcamelon
  */
-public class CPPASTNamespaceAlias extends CASTNode implements
+public class CPPASTNamespaceAlias extends CPPASTNode implements
         ICPPASTNamespaceAlias {
 
     private IASTName alias;

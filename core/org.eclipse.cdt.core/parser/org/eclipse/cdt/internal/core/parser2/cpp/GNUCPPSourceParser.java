@@ -14,43 +14,59 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -78,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
@@ -110,23 +127,7 @@ import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser2.ASTNode;
 import org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser;
-import org.eclipse.cdt.internal.core.parser2.c.CASTBinaryExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatementExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTConditionalExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerator;
-import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionList;
-import org.eclipse.cdt.internal.core.parser2.c.CASTFieldDeclarator;
-import org.eclipse.cdt.internal.core.parser2.c.CASTFunctionCallExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTFunctionDefinition;
-import org.eclipse.cdt.internal.core.parser2.c.CASTIdExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTInitializerExpresion;
-import org.eclipse.cdt.internal.core.parser2.c.CASTInitializerList;
-import org.eclipse.cdt.internal.core.parser2.c.CASTName;
-import org.eclipse.cdt.internal.core.parser2.c.CASTSimpleDeclaration;
-import org.eclipse.cdt.internal.core.parser2.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.parser2.c.CASTTypeIdExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTUnaryExpression;
+import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
 
 /**
  * This is our implementation of the IParser interface, serving as a
@@ -1514,7 +1515,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     private IASTFunctionCallExpression createFunctionCallExpression() {
-        return new CASTFunctionCallExpression();
+        return new CPPASTFunctionCallExpression();
     }
 
     /**
@@ -1655,7 +1656,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTIdExpression createIdExpression() {
-        return new CASTIdExpression();
+        return new CPPASTIdExpression();
     }
 
     protected ITokenDuple idExpression() throws EndOfFileException, BacktrackException
@@ -2350,7 +2351,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected ICPPASTQualifiedName createQualifiedName(ITokenDuple duple) {
-        CPPASTName result = new CPPASTName();
+        CPPASTQualifiedName result = new CPPASTQualifiedName();
         result.setOffset( duple.getStartOffset());
         ITokenDuple [] segments = duple.getSegments();
         for( int i = 0; i < segments.length; ++i )
@@ -2377,8 +2378,35 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @param duple
      * @return
      */
-    private IASTName createTemplateID(ITokenDuple duple) {
-        return new CASTName(); //TODO - what is a template ID?
+    protected  ICPPASTTemplateId createTemplateID(ITokenDuple duple) {
+        ICPPASTTemplateId result = new CPPASTTemplateId();
+        ((ASTNode)result).setOffset( duple.getStartOffset() );
+        char [] image = duple.extractNameFromTemplateId();
+        CPPASTName templateIdName = (CPPASTName) createName();
+        templateIdName.setOffset(duple.getStartOffset());
+        templateIdName.setName( image );
+        result.setTemplateName( templateIdName );
+        templateIdName.setParent( result );
+        templateIdName.setPropertyInParent( ICPPASTTemplateId.TEMPLATE_NAME );
+        if( duple.getTemplateIdArgLists() != null ) 
+        {
+            List args = duple.getTemplateIdArgLists()[0];
+            if( args != null )
+                for( int i = 0; i < args.size(); ++i )
+                {
+                    IASTNode n = (IASTNode) args.get(i);
+                    if( n instanceof IASTTypeId || n instanceof IASTExpression )
+                    {
+	                    n.setParent( result );
+	                    n.setPropertyInParent( ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT );
+	                    if( n instanceof IASTTypeId )
+	                        result.addTemplateArgument((IASTTypeId) n);
+	                    else
+	                        result.addTemplateArgument((IASTExpression)n);
+                    }                   
+                }
+        }
+        return result;
     }
 
     /**
@@ -2388,7 +2416,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTName createName(ITokenDuple duple) {
         if( duple == null ) return createName();
         if( duple.getSegmentCount() != 1 ) return createQualifiedName( duple );
-        CASTName name = new CASTName( duple.toCharArray() );
+        CPPASTName name = new CPPASTName( duple.toCharArray() );
         name.setOffset( duple.getStartOffset());
         return name;
     }
@@ -2553,14 +2581,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTFunctionDefinition createFunctionDefinition() {
-        return new CASTFunctionDefinition();
+        return new CPPASTFunctionDefinition();
     }
 
     /**
      * @return
      */
     protected IASTSimpleDeclaration createSimpleDeclaration() {
-        return new CASTSimpleDeclaration();
+        return new CPPASTSimpleDeclaration();
     }
 
     /**
@@ -3258,14 +3286,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTInitializerList createInitializerList() {
-        return new CASTInitializerList();
+        return new CPPASTInitializerList();
     }
 
     /**
      * @return
      */
     private IASTInitializerExpression createInitializerExpression() {
-        return new CASTInitializerExpresion();
+        return new CPPASTInitializerExpresion();
     }
 
     /**
@@ -3599,7 +3627,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     private IASTFieldDeclarator createFieldDeclarator() {
-        return new CASTFieldDeclarator();
+        return new CPPASTFieldDeclarator();
     }
 
     /**
@@ -4100,7 +4128,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTTranslationUnit createTranslationUnit() {
-        return new CASTTranslationUnit();
+        return new CPPASTTranslationUnit();
     }
 
     protected void consumeArrayModifiers(List collection) throws EndOfFileException, BacktrackException {
@@ -4143,63 +4171,63 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createCompoundStatement()
      */
     protected IASTCompoundStatement createCompoundStatement() {
-        return new CASTCompoundStatement();
+        return new CPPASTCompoundStatement();
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createBinaryExpression()
      */
     protected IASTBinaryExpression createBinaryExpression()  {
-        return new CASTBinaryExpression();
+        return new CPPASTBinaryExpression();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createConditionalExpression()
      */
     protected IASTConditionalExpression createConditionalExpression() {
-        return new CASTConditionalExpression();
+        return new CPPASTConditionalExpression();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createUnaryExpression()
      */
     protected IASTUnaryExpression createUnaryExpression() {
-        return new CASTUnaryExpression();
+        return new CPPASTUnaryExpression();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createCompoundStatementExpression()
      */
     protected IGNUASTCompoundStatementExpression createCompoundStatementExpression() {
-        return new CASTCompoundStatementExpression();
+        return new CPPASTCompoundStatementExpression();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createExpressionList()
      */
     protected IASTExpressionList createExpressionList() {
-        return new CASTExpressionList();
+        return new CPPASTExpressionList();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createName(org.eclipse.cdt.core.parser.IToken)
      */
     protected IASTName createName(IToken token) {
-        return new CASTName( token.getCharImage() );
+        return new CPPASTName( token.getCharImage() );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createName()
      */
     protected IASTName createName() {
-        return new CASTName();
+        return new CPPASTName();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerator()
      */
     protected IASTEnumerator createEnumerator() {
-        return new CASTEnumerator();
+        return new CPPASTEnumerator();
     }
 
     /* (non-Javadoc)
@@ -4219,7 +4247,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     protected IASTTypeIdExpression createTypeIdExpression() {
-        return new CASTTypeIdExpression();
+        return new CPPASTTypeIdExpression();
     }
 
     /* (non-Javadoc)
@@ -4227,6 +4255,373 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTEnumerationSpecifier createEnumerationSpecifier() {
         return new CPPASTEnumerationSpecifier();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTLabelStatement createLabelStatement() {
+        return new CPPASTLabelStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTGotoStatement createGoToStatement() {
+        return new CPPASTGotoStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTReturnStatement createReturnStatement() {
+        return new CPPASTReturnStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTForStatement createForStatement() {
+        return new CPPASTForStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTContinueStatement createContinueStatement() {
+        return new CPPASTContinueStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTDoStatement createDoStatement() {
+        return new CPPASTDoStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTBreakStatement createBreakStatement() {
+        return new CPPASTBreakStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTWhileStatement createWhileStatement() {
+        return new CPPASTWhileStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTNullStatement createNullStatement() {
+        return new CPPASTNullStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTSwitchStatement createSwitchStatement() {
+        return new CPPASTSwitchStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTIfStatement createIfStatement() {
+        return new CPPASTIfStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTDefaultStatement createDefaultStatement() {
+        return new CPPASTDefaultStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTCaseStatement createCaseStatement() {
+        return new CPPASTCaseStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTExpressionStatement createExpressionStatement() {
+        return new CPPASTExpressionStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTDeclarationStatement createDeclarationStatement() {
+        return new CPPASTDeclarationStatement();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTASMDeclaration createASMDirective() {
+        return new CPPASTASMDeclaration();
+    }
+
+    /**
+     * @return
+     */
+    protected IASTCastExpression createCastExpression() {
+        return new CPPASTCastExpression();
+    }
+
+    protected IASTStatement statement() throws EndOfFileException, BacktrackException {
+    
+        switch (LT(1)) {
+        // labeled statements
+        case IToken.t_case:
+            int startOffset = consume(IToken.t_case).getOffset();
+            IASTExpression case_exp = constantExpression();
+            consume(IToken.tCOLON);
+            cleanupLastToken();
+            IASTCaseStatement cs = createCaseStatement();
+            ((ASTNode)cs).setOffset( startOffset );
+            cs.setExpression( case_exp );
+            case_exp.setParent( cs );
+            case_exp.setPropertyInParent( IASTCaseStatement.EXPRESSION );
+            return cs;
+        case IToken.t_default:
+            startOffset = consume(IToken.t_default).getOffset();
+            consume(IToken.tCOLON);
+            cleanupLastToken();
+            IASTDefaultStatement df = createDefaultStatement();
+            ((ASTNode)df).setOffset( startOffset );
+            return df;
+        // compound statement
+        case IToken.tLBRACE:
+            IASTCompoundStatement compound = compoundStatement();
+            cleanupLastToken();
+            return compound;
+        // selection statement
+        case IToken.t_if:
+    		startOffset = consume(IToken.t_if).getOffset();
+    		consume(IToken.tLPAREN);
+    		IASTExpression if_condition = condition();
+    		consume(IToken.tRPAREN);
+    		IASTStatement then_clause = statement();
+    		IASTStatement else_clause = null;
+    		if (LT(1) == IToken.t_else) {
+    			consume(IToken.t_else);
+    			else_clause = statement();
+    		}
+    		
+    		IASTIfStatement if_stmt = createIfStatement();
+    		if_stmt.setCondition( if_condition );
+    		((ASTNode)if_stmt).setOffset( startOffset );
+    	    if_condition.setParent( if_stmt );
+    	    if_condition.setPropertyInParent( IASTIfStatement.CONDITION );
+    	    if_stmt.setThenClause( then_clause );
+    	    then_clause.setParent( if_stmt );
+    	    then_clause.setPropertyInParent( IASTIfStatement.THEN );
+    	    if( else_clause != null )
+    	    {
+    	        if_stmt.setElseClause( else_clause );
+    	        else_clause.setParent( if_stmt );
+    	        else_clause.setPropertyInParent( IASTIfStatement.ELSE );
+    	    }
+    		cleanupLastToken();
+    		return if_stmt;
+        case IToken.t_switch:
+            startOffset = consume( IToken.t_switch ).getOffset();
+            consume(IToken.tLPAREN);
+            IASTExpression switch_condition = condition();
+            consume(IToken.tRPAREN);
+            IASTStatement switch_body = statement();
+            cleanupLastToken();
+            IASTSwitchStatement switch_statement = createSwitchStatement();
+            ((ASTNode)switch_statement).setOffset( startOffset );
+            switch_statement.setController( switch_condition );
+            switch_condition.setParent( switch_statement );
+            switch_condition.setPropertyInParent( IASTSwitchStatement.CONTROLLER );
+            switch_statement.setBody( switch_body );
+            switch_body.setParent( switch_statement );
+            switch_body.setPropertyInParent( IASTSwitchStatement.BODY );
+            return switch_statement;
+        //iteration statements
+        case IToken.t_while:
+            startOffset = consume(IToken.t_while).getOffset();
+            consume(IToken.tLPAREN);
+            IASTExpression while_condition = condition();
+            consume(IToken.tRPAREN);
+            IASTStatement while_body = statement();
+            cleanupLastToken();
+            IASTWhileStatement while_statement = createWhileStatement();
+            ((ASTNode)while_statement).setOffset( startOffset );
+            while_statement.setCondition( while_condition );
+            while_condition.setParent( while_statement );
+            while_condition.setPropertyInParent( IASTWhileStatement.CONDITION );
+            while_statement.setBody( while_body );
+            while_condition.setParent( while_statement );
+            while_condition.setPropertyInParent( IASTWhileStatement.BODY );
+            while_body.setParent( while_statement );
+            return while_statement;
+        case IToken.t_do:
+            startOffset = consume(IToken.t_do).getOffset();
+            IASTStatement do_body = statement();
+            consume(IToken.t_while);
+            consume(IToken.tLPAREN);
+            IASTExpression do_condition = condition();
+            consume(IToken.tRPAREN);
+            cleanupLastToken();
+            IASTDoStatement do_statement = createDoStatement();
+            ((ASTNode)do_statement).setOffset( startOffset );
+            do_statement.setBody( do_body );
+            do_body.setParent( do_statement );
+            do_body.setPropertyInParent( IASTDoStatement.BODY );
+            do_statement.setCondition( do_condition );
+            do_condition.setParent( do_statement );
+            do_condition.setPropertyInParent( IASTDoStatement.CONDITION );
+            return do_statement;
+        case IToken.t_for:
+            startOffset = consume( IToken.t_for ).getOffset();
+            consume(IToken.tLPAREN);
+            IASTNode init = forInitStatement();
+            IASTExpression for_condition = null;
+            if (LT(1) != IToken.tSEMI)
+                for_condition = condition();
+            consume(IToken.tSEMI);
+            IASTExpression iterationExpression = null;
+            if (LT(1) != IToken.tRPAREN) {
+                iterationExpression = expression();
+                cleanupLastToken();
+            }
+            consume(IToken.tRPAREN);
+            IASTStatement for_body = statement();
+            cleanupLastToken();
+            IASTForStatement for_statement = createForStatement();
+            ((ASTNode)for_statement).setOffset( startOffset );
+            if( init instanceof IASTDeclaration )
+            {
+                for_statement.setInit((IASTDeclaration) init);
+                ((IASTDeclaration) init).setParent( for_statement );
+                ((IASTDeclaration) init).setPropertyInParent( IASTForStatement.INITDECLARATION );
+            }
+            else if( init instanceof IASTExpression )
+            {
+                for_statement.setInit((IASTExpression) init);
+                ((IASTExpression) init).setParent( for_statement );
+                ((IASTExpression) init).setPropertyInParent( IASTForStatement.INITEXPRESSION );
+            }
+            if( for_condition != null )
+            {
+                for_statement.setCondition( for_condition );
+                for_condition.setParent( for_statement );
+                for_condition.setPropertyInParent( IASTForStatement.CONDITION );
+            }
+            if( iterationExpression != null )
+            {
+                for_statement.setIterationExpression( iterationExpression );
+                iterationExpression.setParent( for_statement );
+                iterationExpression.setPropertyInParent( IASTForStatement.ITERATION );
+            }
+            for_statement.setBody( for_body );
+            for_body.setParent( for_statement );
+            for_body.setPropertyInParent( IASTForStatement.BODY );
+            return for_statement;
+        //jump statement
+        case IToken.t_break:
+            startOffset = consume(IToken.t_break).getOffset();
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            IASTBreakStatement break_statement = createBreakStatement();
+            ((ASTNode)break_statement).setOffset( startOffset );
+            return break_statement;
+        case IToken.t_continue:
+            startOffset = consume(IToken.t_continue).getOffset();
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            IASTContinueStatement continue_statement = createContinueStatement();
+            ((ASTNode)continue_statement).setOffset( startOffset );
+            return continue_statement;
+        case IToken.t_return:
+            startOffset = consume(IToken.t_return).getOffset();
+        	IASTExpression result = null;
+            if (LT(1) != IToken.tSEMI) {
+                result = expression();
+                cleanupLastToken();
+            }
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            IASTReturnStatement return_statement = createReturnStatement();
+            ((ASTNode)return_statement).setOffset( startOffset );
+            if( result != null )
+            {
+                return_statement.setReturnValue( result );
+                result.setParent( return_statement );
+                result.setPropertyInParent( IASTReturnStatement.RETURNVALUE );
+            }
+            return return_statement;
+        case IToken.t_goto:
+            startOffset = consume(IToken.t_goto).getOffset();
+            IToken identifier = consume(IToken.tIDENTIFIER);
+            consume(IToken.tSEMI);
+            cleanupLastToken();
+            IASTName goto_label_name = createName( identifier );
+            IASTGotoStatement goto_statement = createGoToStatement();
+            ((ASTNode)goto_statement).setOffset( startOffset );
+            goto_statement.setName( goto_label_name );
+            goto_label_name.setParent( goto_statement );
+            goto_label_name.setPropertyInParent( IASTGotoStatement.NAME );
+            return goto_statement;
+        case IToken.tSEMI:
+            startOffset = consume(IToken.tSEMI ).getOffset();
+        	cleanupLastToken();
+        	IASTNullStatement null_statement = createNullStatement();
+        	((ASTNode)null_statement).setOffset( startOffset );
+        	return null_statement;
+        default:
+            // can be many things:
+            // label
+            if (LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON) {
+                IToken labelName = consume(IToken.tIDENTIFIER);
+                consume(IToken.tCOLON);
+                IASTLabelStatement label_statement = createLabelStatement();
+                ((ASTNode)label_statement).setOffset( labelName.getOffset() );
+                IASTName name = createName( labelName );
+                label_statement.setName( name );
+                name.setParent( label_statement );
+                name.setPropertyInParent( IASTLabelStatement.NAME );
+                return label_statement;
+            }
+            // expressionStatement
+            // Note: the function style cast ambiguity is handled in
+            // expression
+            // Since it only happens when we are in a statement
+            IToken mark = mark();
+            try {
+                IASTExpression expression = expression();
+                consume(IToken.tSEMI);
+                IASTExpressionStatement expressionStatement  = createExpressionStatement();
+                expressionStatement.setExpression( expression );
+                expression.setParent( expressionStatement );
+                expression.setPropertyInParent( IASTExpressionStatement.EXPFRESSION );
+                cleanupLastToken();
+                return expressionStatement;
+            } catch (BacktrackException b) {
+                backup(mark);
+            }
+    
+            // declarationStatement
+            IASTDeclaration d = declaration();
+            IASTDeclarationStatement ds = createDeclarationStatement();
+            ds.setDeclaration(d);
+            d.setParent( ds );
+            d.setPropertyInParent( IASTDeclarationStatement.DECLARATION );
+            cleanupLastToken();
+            return ds;
+        }
+    
     }
 
     

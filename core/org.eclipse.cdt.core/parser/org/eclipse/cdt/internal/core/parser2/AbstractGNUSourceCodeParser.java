@@ -59,25 +59,6 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.ParserProblemFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
-import org.eclipse.cdt.internal.core.parser2.c.CASTASMDeclaration;
-import org.eclipse.cdt.internal.core.parser2.c.CASTBreakStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTCaseStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTCastExpression;
-import org.eclipse.cdt.internal.core.parser2.c.CASTContinueStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTDeclarationStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTDefaultStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTDoStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerationSpecifier;
-import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTForStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTGotoStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTIfStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTLabelStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTNullStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTReturnStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTSwitchStatement;
-import org.eclipse.cdt.internal.core.parser2.c.CASTWhileStatement;
-import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
 
 /**
  * @author jcamelon
@@ -758,6 +739,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
+     * @return
+     */
+    protected abstract IASTBinaryExpression createBinaryExpression();
+
+    /**
      * @param expression
      * @throws BacktrackException
      */
@@ -804,11 +790,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             }
         }
     }
-
-    /**
-     * @return
-     */
-    protected abstract IASTBinaryExpression createBinaryExpression();
 
     /**
      * @param expression
@@ -1157,20 +1138,30 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return null;
     }
 
+    protected abstract IASTStatement statement() throws EndOfFileException,
+    BacktrackException;
+    
     /**
      * @return
      */
-    protected abstract IASTEnumerator createEnumerator();        
+    protected abstract IASTEnumerator createEnumerator();
+
+    /**
+     * @return
+     */
+    protected abstract IASTEnumerationSpecifier createEnumerationSpecifier();
+
+    /**
+     * @return
+     */
+    protected abstract IASTName createName();
 
     /**
      * @param token
      * @return
      */
-    protected abstract IASTName createName(IToken token); 
-    /**
-     * @return
-     */
-    protected abstract IASTName createName();
+    protected abstract IASTName createName(IToken token);
+        
 
     /**
      * @throws BacktrackException
@@ -1191,368 +1182,83 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser2.GNUBaseParser#statement(java.lang.Object)
+    /**
+     * @return
      */
-    protected IASTStatement statement() throws EndOfFileException,
-            BacktrackException {
+    protected abstract IASTDeclarationStatement createDeclarationStatement();
 
-        switch (LT(1)) {
-        // labeled statements
-        case IToken.t_case:
-            int startOffset = consume(IToken.t_case).getOffset();
-            IASTExpression case_exp = constantExpression();
-            consume(IToken.tCOLON);
-            cleanupLastToken();
-            IASTCaseStatement cs = createCaseStatement();
-            ((ASTNode)cs).setOffset( startOffset );
-            cs.setExpression( case_exp );
-            case_exp.setParent( cs );
-            case_exp.setPropertyInParent( IASTCaseStatement.EXPRESSION );
-            return cs;
-        case IToken.t_default:
-            startOffset = consume(IToken.t_default).getOffset();
-            consume(IToken.tCOLON);
-            cleanupLastToken();
-            IASTDefaultStatement df = createDefaultStatement();
-            ((ASTNode)df).setOffset( startOffset );
-            return df;
-        // compound statement
-        case IToken.tLBRACE:
-            IASTCompoundStatement compound = compoundStatement();
-            cleanupLastToken();
-            return compound;
-        // selection statement
-        case IToken.t_if:
-			startOffset = consume(IToken.t_if).getOffset();
-			consume(IToken.tLPAREN);
-			IASTExpression if_condition = condition();
-			consume(IToken.tRPAREN);
-			IASTStatement then_clause = statement();
-			IASTStatement else_clause = null;
-			if (LT(1) == IToken.t_else) {
-				consume(IToken.t_else);
-				else_clause = statement();
-			}
-			
-			IASTIfStatement if_stmt = createIfStatement();
-			if_stmt.setCondition( if_condition );
-			((ASTNode)if_stmt).setOffset( startOffset );
-		    if_condition.setParent( if_stmt );
-		    if_condition.setPropertyInParent( IASTIfStatement.CONDITION );
-		    if_stmt.setThenClause( then_clause );
-		    then_clause.setParent( if_stmt );
-		    then_clause.setPropertyInParent( IASTIfStatement.THEN );
-		    if( else_clause != null )
-		    {
-		        if_stmt.setElseClause( else_clause );
-		        else_clause.setParent( if_stmt );
-		        else_clause.setPropertyInParent( IASTIfStatement.ELSE );
-		    }
-			cleanupLastToken();
-			return if_stmt;
-        case IToken.t_switch:
-            startOffset = consume( IToken.t_switch ).getOffset();
-            consume(IToken.tLPAREN);
-            IASTExpression switch_condition = condition();
-            consume(IToken.tRPAREN);
-            IASTStatement switch_body = statement();
-            cleanupLastToken();
-            IASTSwitchStatement switch_statement = createSwitchStatement();
-            ((ASTNode)switch_statement).setOffset( startOffset );
-            switch_statement.setController( switch_condition );
-            switch_condition.setParent( switch_statement );
-            switch_condition.setPropertyInParent( IASTSwitchStatement.CONTROLLER );
-            switch_statement.setBody( switch_body );
-            switch_body.setParent( switch_statement );
-            switch_body.setPropertyInParent( IASTSwitchStatement.BODY );
-            return switch_statement;
-        //iteration statements
-        case IToken.t_while:
-            startOffset = consume(IToken.t_while).getOffset();
-            consume(IToken.tLPAREN);
-            IASTExpression while_condition = condition();
-            consume(IToken.tRPAREN);
-            IASTStatement while_body = statement();
-            cleanupLastToken();
-            IASTWhileStatement while_statement = createWhileStatement();
-            ((ASTNode)while_statement).setOffset( startOffset );
-            while_statement.setCondition( while_condition );
-            while_condition.setParent( while_statement );
-            while_condition.setPropertyInParent( IASTWhileStatement.CONDITION );
-            while_statement.setBody( while_body );
-            while_condition.setParent( while_statement );
-            while_condition.setPropertyInParent( IASTWhileStatement.BODY );
-            while_body.setParent( while_statement );
-            return while_statement;
-        case IToken.t_do:
-            startOffset = consume(IToken.t_do).getOffset();
-            IASTStatement do_body = statement();
-            consume(IToken.t_while);
-            consume(IToken.tLPAREN);
-            IASTExpression do_condition = condition();
-            consume(IToken.tRPAREN);
-            cleanupLastToken();
-            IASTDoStatement do_statement = createDoStatement();
-            ((ASTNode)do_statement).setOffset( startOffset );
-            do_statement.setBody( do_body );
-            do_body.setParent( do_statement );
-            do_body.setPropertyInParent( IASTDoStatement.BODY );
-            do_statement.setCondition( do_condition );
-            do_condition.setParent( do_statement );
-            do_condition.setPropertyInParent( IASTDoStatement.CONDITION );
-            return do_statement;
-        case IToken.t_for:
-            startOffset = consume( IToken.t_for ).getOffset();
-            consume(IToken.tLPAREN);
-            IASTNode init = forInitStatement();
-            IASTExpression for_condition = null;
-            if (LT(1) != IToken.tSEMI)
-                for_condition = condition();
-            consume(IToken.tSEMI);
-            IASTExpression iterationExpression = null;
-            if (LT(1) != IToken.tRPAREN) {
-                iterationExpression = expression();
-                cleanupLastToken();
-            }
-            consume(IToken.tRPAREN);
-            IASTStatement for_body = statement();
-            cleanupLastToken();
-            IASTForStatement for_statement = createForStatement();
-            ((ASTNode)for_statement).setOffset( startOffset );
-            if( init instanceof IASTDeclaration )
-            {
-                for_statement.setInit((IASTDeclaration) init);
-                ((IASTDeclaration) init).setParent( for_statement );
-                ((IASTDeclaration) init).setPropertyInParent( IASTForStatement.INITDECLARATION );
-            }
-            else if( init instanceof IASTExpression )
-            {
-                for_statement.setInit((IASTExpression) init);
-                ((IASTExpression) init).setParent( for_statement );
-                ((IASTExpression) init).setPropertyInParent( IASTForStatement.INITEXPRESSION );
-            }
-            if( for_condition != null )
-            {
-                for_statement.setCondition( for_condition );
-                for_condition.setParent( for_statement );
-                for_condition.setPropertyInParent( IASTForStatement.CONDITION );
-            }
-            if( iterationExpression != null )
-            {
-                for_statement.setIterationExpression( iterationExpression );
-                iterationExpression.setParent( for_statement );
-                iterationExpression.setPropertyInParent( IASTForStatement.ITERATION );
-            }
-            for_statement.setBody( for_body );
-            for_body.setParent( for_statement );
-            for_body.setPropertyInParent( IASTForStatement.BODY );
-            return for_statement;
-        //jump statement
-        case IToken.t_break:
-            startOffset = consume(IToken.t_break).getOffset();
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            IASTBreakStatement break_statement = createBreakStatement();
-            ((ASTNode)break_statement).setOffset( startOffset );
-            return break_statement;
-        case IToken.t_continue:
-            startOffset = consume(IToken.t_continue).getOffset();
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            IASTContinueStatement continue_statement = createContinueStatement();
-            ((ASTNode)continue_statement).setOffset( startOffset );
-            return continue_statement;
-        case IToken.t_return:
-            startOffset = consume(IToken.t_return).getOffset();
-        	IASTExpression result = null;
-            if (LT(1) != IToken.tSEMI) {
-                result = expression();
-                cleanupLastToken();
-            }
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            IASTReturnStatement return_statement = createReturnStatement();
-            ((ASTNode)return_statement).setOffset( startOffset );
-            if( result != null )
-            {
-                return_statement.setReturnValue( result );
-                result.setParent( return_statement );
-                result.setPropertyInParent( IASTReturnStatement.RETURNVALUE );
-            }
-            return return_statement;
-        case IToken.t_goto:
-            startOffset = consume(IToken.t_goto).getOffset();
-            IToken identifier = consume(IToken.tIDENTIFIER);
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            IASTName goto_label_name = createName( identifier );
-            IASTGotoStatement goto_statement = createGoToStatement();
-            ((ASTNode)goto_statement).setOffset( startOffset );
-            goto_statement.setName( goto_label_name );
-            goto_label_name.setParent( goto_statement );
-            goto_label_name.setPropertyInParent( IASTGotoStatement.NAME );
-            return goto_statement;
-        case IToken.tSEMI:
-            startOffset = consume(IToken.tSEMI ).getOffset();
-        	cleanupLastToken();
-        	IASTNullStatement null_statement = createNullStatement();
-        	((ASTNode)null_statement).setOffset( startOffset );
-        	return null_statement;
-        default:
-            // can be many things:
-            // label
-            if (LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON) {
-                IToken labelName = consume(IToken.tIDENTIFIER);
-                consume(IToken.tCOLON);
-                IASTLabelStatement label_statement = createLabelStatement();
-                ((ASTNode)label_statement).setOffset( labelName.getOffset() );
-                IASTName name = createName( labelName );
-                label_statement.setName( name );
-                name.setParent( label_statement );
-                name.setPropertyInParent( IASTLabelStatement.NAME );
-                return label_statement;
-            }
-            // expressionStatement
-            // Note: the function style cast ambiguity is handled in
-            // expression
-            // Since it only happens when we are in a statement
-            IToken mark = mark();
-            try {
-                IASTExpression expression = expression();
-                consume(IToken.tSEMI);
-                IASTExpressionStatement expressionStatement  = createExpressionStatement();
-                expressionStatement.setExpression( expression );
-                expression.setParent( expressionStatement );
-                expression.setPropertyInParent( IASTExpressionStatement.EXPFRESSION );
-                cleanupLastToken();
-                return expressionStatement;
-            } catch (BacktrackException b) {
-                backup(mark);
-            }
+    /**
+     * @return
+     */
+    protected abstract IASTExpressionStatement createExpressionStatement();
 
-            // declarationStatement
-            IASTDeclaration d = declaration();
-            IASTDeclarationStatement ds = createDeclarationStatement();
-            ds.setDeclaration(d);
-            d.setParent( ds );
-            d.setPropertyInParent( IASTDeclarationStatement.DECLARATION );
-            cleanupLastToken();
-            return ds;
-        }
+    /**
+     * @return
+     */
+    protected abstract IASTLabelStatement createLabelStatement();
 
-    }
+    /**
+     * @return
+     */
+    protected abstract IASTNullStatement createNullStatement();
 
+    /**
+     * @return
+     */
+    protected abstract IASTGotoStatement createGoToStatement();
 
+    /**
+     * @return
+     */
+    protected abstract IASTReturnStatement createReturnStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTContinueStatement createContinueStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTBreakStatement createBreakStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTForStatement createForStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTDoStatement createDoStatement();
+        
+    /**
+     * @return
+     */
+    protected abstract IASTWhileStatement createWhileStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTSwitchStatement createSwitchStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTIfStatement createIfStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTDefaultStatement createDefaultStatement();
+
+    /**
+     * @return
+     */
+    protected abstract IASTCaseStatement createCaseStatement();
 
     protected abstract IASTDeclaration declaration() throws BacktrackException, EndOfFileException;
 
-    /**
-     * @return
-     */
-    protected IASTLabelStatement createLabelStatement() {
-        return new CASTLabelStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTGotoStatement createGoToStatement() {
-        return new CASTGotoStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTReturnStatement createReturnStatement() {
-        return new CASTReturnStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTForStatement createForStatement() {
-        return new CASTForStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTContinueStatement createContinueStatement() {
-        return new CASTContinueStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTDoStatement createDoStatement() {
-        return new CASTDoStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTBreakStatement createBreakStatement() {
-        return new CASTBreakStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTWhileStatement createWhileStatement() {
-        return new CASTWhileStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTNullStatement createNullStatement() {
-        return new CASTNullStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTSwitchStatement createSwitchStatement() {
-        return new CASTSwitchStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTIfStatement createIfStatement() {
-        return new CASTIfStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTDefaultStatement createDefaultStatement() {
-        return new CASTDefaultStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTCaseStatement createCaseStatement() {
-        return new CASTCaseStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTExpressionStatement createExpressionStatement() {
-        return new CASTExpressionStatement();
-    }
-
-    /**
-     * @return
-     */
-    protected IASTDeclarationStatement createDeclarationStatement() {
-        return new CASTDeclarationStatement();
-    }
     
     protected abstract IASTNode forInitStatement() throws BacktrackException,
     EndOfFileException;
@@ -1587,13 +1293,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     /**
      * @return
      */
-    protected IASTASMDeclaration createASMDirective() {
-        return new CASTASMDeclaration();
-    }
-
-    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
-        return new CASTEnumerationSpecifier();
-    }
+    protected abstract IASTASMDeclaration createASMDirective();
 
     /**
      * @param op
@@ -1618,8 +1318,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     /**
      * @return
      */
-    protected IASTCastExpression createCastExpression() {
-        return new CASTCastExpression();
-    }
+    protected abstract IASTCastExpression createCastExpression();
 
 }

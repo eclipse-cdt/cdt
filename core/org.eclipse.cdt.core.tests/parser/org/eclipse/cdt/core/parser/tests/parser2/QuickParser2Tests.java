@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser2.IProblemRequestor;
 import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.c.GCCParserExtensionConfiguration;
@@ -38,7 +39,6 @@ import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfigura
 import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
 
 /**
  * @author jcamelon

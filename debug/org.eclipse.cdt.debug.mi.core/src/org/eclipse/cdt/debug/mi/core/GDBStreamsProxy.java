@@ -31,6 +31,7 @@ public class GDBStreamsProxy implements IStreamsProxy {
 	public IStreamMonitor getErrorStreamMonitor() {
 		if (miLog == null) {
 			miLog = new GDBStreamMonitor(session.getMILogStream());
+			miLog.startMonitoring();
 		}
 		return miLog;
 	}
@@ -41,6 +42,7 @@ public class GDBStreamsProxy implements IStreamsProxy {
 	public IStreamMonitor getOutputStreamMonitor() {
 		if (miConsole == null) {
 			miConsole = new GDBStreamMonitor(session.getMIConsoleStream());
+			miConsole.startMonitoring();
 		}
 		return miConsole;
 	}

@@ -50,11 +50,51 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIBreakInsert extends MICommand 
 {
-	public MIBreakInsert(String[] params) {
-		super("-break-insert", params);
+	public MIBreakInsert(boolean isTemporary, boolean isHardware,
+						 String condition, int ignoreCount, String line) {
+		super("-break-insert");
+
+		int i = 0;
+		if (isTemporary || isHardware) {
+			i++;
+		}
+		if (condition != null) {
+			i += 2;
+		}
+		if (ignoreCount > 0) {
+			i += 2;
+		}
+
+		String[] opts = new String[i];
+		
+		i = 0;
+		if (isTemporary) {
+			opts[i] = "-t";
+			i++;
+		} else if (isHardware) {
+			opts[i] = "-h";
+			i++;
+		}
+		if (condition != null) {
+			opts[i] = "-c";
+			i++;
+			opts[i] = condition;
+			i++;
+		}
+		if (ignoreCount > 0) {
+			opts[i] = "-i";
+			i++;
+			opts[i] = Integer.toString(ignoreCount);
+			i++;
+		}
+
+		if (opts.length > 0) {
+			setOptions(opts);
+		}
+		setParameters(new String[]{line});
 	}
 
-	public MIBreakInsert(String[] opts, String[] params) {
-		super("-break-insert", opts, params);
+	public MIBreakInsert(String regex) {
+		super("-break-insert", new String[]{"-r"}, new String[]{regex});
 	}
 }

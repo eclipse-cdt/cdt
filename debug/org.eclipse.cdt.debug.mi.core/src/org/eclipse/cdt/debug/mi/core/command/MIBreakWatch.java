@@ -21,10 +21,17 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIBreakWatch extends MICommand
 {
-	public MIBreakWatch (String[] opts, String expr) {
-		super("-break-watch", opts, new String[]{expr});
-	}
-	public MIBreakWatch (String expr) {
-		super("-break-watch", new String[]{expr});
+	public MIBreakWatch (boolean access, boolean read, String expr) {
+		super("-break-watch");
+		String[] opts = null;
+		if (access) {
+			opts = new String[] {"-a"};
+		} else if (read) {
+			opts = new String[] {"-r"};
+		}
+		if (opts != null) {
+			setOptions(opts);
+		}			
+		setParameters(new String[]{expr});
 	}
 }

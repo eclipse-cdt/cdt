@@ -61,11 +61,24 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIDataDisassemble extends MICommand 
 {
-	public MIDataDisassemble(String[] params) {
-		super("-data-disassemble", params);
+	public MIDataDisassemble(String start, String end, boolean mode) {
+		super("-data-disassemble");
+		setOptions(new String[]{"-s", start, "-e", end});
+		String mixed = "0";
+		if (mode) {
+			mixed = "1";
+		}
+		setParameters(new String[]{mixed});
 	}
 
-	public MIDataDisassemble(String[] opts, String[] params) {
-		super("-data-disassemble", opts, params);
+	public MIDataDisassemble(String file, int linenum, int lines, boolean mode) {
+		super("-data-disassemble");
+		setOptions(new String[]{"-f", file, "-l",
+			 Integer.toString(linenum), "-n", Integer.toString(lines)});
+		String mixed = "0";
+		if (mode) {
+			mixed = "1";
+		}
+		setParameters(new String[]{mixed});	
 	}
 }

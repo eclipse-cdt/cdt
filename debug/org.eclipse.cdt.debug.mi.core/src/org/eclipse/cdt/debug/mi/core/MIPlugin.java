@@ -1,5 +1,8 @@
 package org.eclipse.cdt.debug.mi.core;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
@@ -34,7 +37,7 @@ public class MIPlugin extends Plugin {
 	/**
 	 * Create a MI Session.
 	 */
-	public MISession createSession(Process proc) {
-		return new MISession(proc);
+	public MISession createMISession(InputStream in, OutputStream out) {
+		return new MISession(in, out);
 	}
 }

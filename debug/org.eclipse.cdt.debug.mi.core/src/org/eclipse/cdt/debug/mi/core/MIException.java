@@ -12,17 +12,14 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * 
  * A checked exception representing a failure.
- * 
- * @author Mikhail Khodjaiants
- * @since Jul 11, 2002
+ *
  */
 public class MIException extends CoreException
 {
 	/**
 	 * Constructor for MIException.
 	 */
-	public MIException( IStatus status )
-	{
-		super( status );
+	public MIException(IStatus status) {
+		super(status);
 	}
 }

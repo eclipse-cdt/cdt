@@ -4,9 +4,9 @@ import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
 
 /**
  */
-public class MIBreakpointInfo extends MIInfo {
+public class MIBreakpointHitInfo extends MIInfo {
 
-	public MIBreakpointInfo(MIResultRecord record) {
+	public MIBreakpointHitInfo(MIResultRecord record) {
 		super(record);
 	}
 
@@ -28,5 +28,9 @@ public class MIBreakpointInfo extends MIInfo {
 
 	int getLineNumber() {
 		return 0;
+	}
+
+	String[] getArguments () {
+		return null;
 	}
 }

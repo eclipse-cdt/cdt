@@ -7,7 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
 
 /**
  * 
@@ -27,5 +27,5 @@ public abstract class Command
 
 	public abstract String toString();
 
-	public abstract MIInfo parse(MIOutput out);
+	public abstract MIInfo getInfo(MIResultRecord rr);
 }

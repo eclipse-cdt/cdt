@@ -47,11 +47,20 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIDataReadMemory extends MICommand 
 {
 
-	public MIDataReadMemory(String[] params) {
-		super("-data-read-memory", params);
-	}
-
-	public MIDataReadMemory(String[] opts, String[] params) {
-		super("-data-read-memory", opts, params);
+	public MIDataReadMemory (int offset, String address, 
+				String wordFormat, int wordSize,
+				int rows, int cols, Character asChar) {
+		super("-data-read-memory");
+		if (offset != 0) {
+			setOptions(new String[]{"-o", Integer.toString(offset)});
+		}
+		if (asChar != null) {
+			setParameters(new String[]{wordFormat, Integer.toString(wordSize),
+					Integer.toString(rows), Integer.toString(cols)});
+		} else {
+			setParameters(new String[]{wordFormat, Integer.toString(wordSize),
+					Integer.toString(rows), Integer.toString(cols),
+					asChar.toString()});
+		}
 	}
 }

@@ -7,7 +7,7 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 import org.eclipse.cdt.debug.mi.core.MIInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class CLICommand extends Command
 		return "";
 	}
 
-	public MIInfo parse (MIOutput out) {
-		return new MIInfo();
+	public MIInfo getInfo (MIResultRecord rr) {
+		return new MIInfo(rr);
 	}
 }

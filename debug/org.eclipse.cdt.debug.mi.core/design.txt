@@ -1,0 +1,36 @@
+<html>
+<head>
+</head>
+<body>
+<pre>
+Note this is an interim the document and subject to changes.
+
+
+****
+This MI implementation is base on GDB/MI 5.2.1.
+
+To create an MISession an InputStream and OutputStream are
+needed(assuming this the pipe connected to gdb).
+	MISession MIPlugin.createSession(InputStream, OutputStream);
+During initialisation of the session(MISession) two threads
+are created(TxThread, RxThread). MI Commands created via the CommandFactory
+are added to the TxQueue, the TxThread will then wake up
+generate a token(ID) for the command and send it the pipe(gdb), after
+transmission the command is then move to the RxQueue waiting for the 
+result(MIResultRecord).
+
+Any responses will wake the RxThread, the thread would parse
+the response constructing an MIOutput then search the RxQueue
+for any commands with the same token waking any thread waiting
+for a synchronous response(MIResultRecord).  Any out-of-band
+responses(MIOOBRecord) are dispatch, clients interested in those
+notifications should register to MISession.
+
+
+****
+MI <==> CDI Adapters
+
+ To do.
+</pre>
+</body>
+</html>

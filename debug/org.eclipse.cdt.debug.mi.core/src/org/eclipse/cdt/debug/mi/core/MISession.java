@@ -2,7 +2,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
+import java.io.Reader;
 
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
@@ -11,54 +11,42 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class MISession {
 
-	Process process;
-	Writer consoleStreamOutput = null;
-	Writer targetStreamOutput = null;
-	Writer logStreamOutput = null;
+	InputStream in;
+	OutputStream out;
+	Reader consoleStream = null;
+	Reader targetStream = null;
+	Reader logStream = null;
 
 	/**
 	 * The constructor.
 	 */
-	MISession(Process proc) {
-		process = proc;
+	MISession(InputStream i, OutputStream o) {
+		in = i;
+		out = o;
 	}
 
 	/**
 	 * Set Console Stream.
 	 */
-	public void setConsoleStreamOutput(Writer consoleOutput) {
-		consoleStreamOutput = consoleOutput;
+	public void setConsoleStream(Reader console) {
+		consoleStream = console;
 	}
 
 	/**
 	 * Set Target Stream.
 	 */
-	public void setTargetStreamOutput(Writer targetOutput) {
-		targetStreamOutput = targetOutput;
+	public void setTargetStreamOutput(Reader target) {
+		targetStream = target;
 	}
 
 	/**
 	* Set Log Stream
 	*/
-	public void setLogStreamOutput(Writer logOutput) {
-		logStreamOutput = logOutput;
+	public void setLogStreamOutput(Reader log) {
+		logStream = log;
 	}
 
 	MIOutput parse(String buffer) {
-		return null;
-	}
-
-	OutputStream getSessionInputStream() {
-		if (process != null) {
-			process.getOutputStream();
-		}
-		return null;
-	}
-
-	InputStream getSessionOutputStream() {
-		if (process != null) {
-			process.getInputStream();
-		}
 		return null;
 	}
 }

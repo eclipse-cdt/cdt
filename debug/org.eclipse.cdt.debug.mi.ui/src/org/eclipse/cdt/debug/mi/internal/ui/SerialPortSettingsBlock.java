@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -33,15 +34,15 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SerialPortSettingsBlock extends Observable
 {
-	private final static String DEFAULT_ASYNC_DEVICE = "/dev/ttyS0";
-	private final static String DEFAULT_ASYNC_DEVICE_SPEED = "115200";
+	private final static String DEFAULT_ASYNC_DEVICE = "/dev/ttyS0"; //$NON-NLS-1$
+	private final static String DEFAULT_ASYNC_DEVICE_SPEED = "115200"; //$NON-NLS-1$
 
 	private Shell fShell;
 
 	private StringDialogField fDeviceField;
 	private ComboDialogField fSpeedField;
 
-	private String fSpeedChoices[] = { "9600", "19200", "38400", "57600", "115200" };
+	private String fSpeedChoices[] = { "9600", "19200", "38400", "57600", "115200" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	
 	private Control fControl;
 
@@ -109,7 +110,7 @@ public class SerialPortSettingsBlock extends Observable
 	private StringDialogField createDeviceField()
 	{
 		StringDialogField field = new StringDialogField();
-		field.setLabelText( "Device: " );
+		field.setLabelText( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Device") ); //$NON-NLS-1$
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
@@ -124,7 +125,7 @@ public class SerialPortSettingsBlock extends Observable
 	private ComboDialogField createSpeedField()
 	{
 		ComboDialogField field = new ComboDialogField( SWT.DROP_DOWN | SWT.READ_ONLY );
-		field.setLabelText( "Speed: " );
+		field.setLabelText( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Speed") ); //$NON-NLS-1$
 		field.setItems( fSpeedChoices );
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
@@ -216,11 +217,11 @@ public class SerialPortSettingsBlock extends Observable
 		if ( fDeviceField != null && fSpeedField != null )
 		{
 			if ( fDeviceField.getText().trim().length() == 0 )
-				setErrorMessage( "Device must be specified." );
+				setErrorMessage( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Device_must_be_specified") ); //$NON-NLS-1$
 			else if ( !deviceIsValid( fDeviceField.getText().trim() ) )
-				setErrorMessage( "Invalid device." );
+				setErrorMessage( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Invalid_device") ); //$NON-NLS-1$
 			else if ( fSpeedField.getSelectionIndex() < 0 )
-				setErrorMessage( "Speed must be specified." );
+				setErrorMessage( MIUIPlugin.getResourceString("mi.internal.ui.SerialPortSettingsBlock.Speed_must_be_specified") ); //$NON-NLS-1$
 		}
 	}
 

@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -54,8 +55,8 @@ public class GDBSolibBlock extends Observable implements Observer
 		}
 				
 		if ( autoSolib )
-		{		
-			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, "Load shared library symbols automatically" );
+		{	
+			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIPlugin.getResourceString("mi.internal.ui.GDBSolibBlock.Load_shared_lib_symbols_automatically") );
 			fAutoSoLibButton.addSelectionListener( 
 										new SelectionAdapter()
 											{
@@ -69,7 +70,7 @@ public class GDBSolibBlock extends Observable implements Observer
 
 		if ( stopOnSolibEvents )
 		{
-			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, "Stop on shared library events" );
+			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, MIUIPlugin.getResourceString("mi.internal.ui.GDBSolibBlock.Stop_on_shared_lib_events") ); //$NON-NLS-1$
 			fStopOnSolibEventsButton.addSelectionListener( 
 										new SelectionAdapter()
 											{
@@ -180,7 +181,7 @@ public class GDBSolibBlock extends Observable implements Observer
 	{
 		try
 		{
-			boolean enable = !ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals( configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, "" ) );
+			boolean enable = !ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals( configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, "" ) ); //$NON-NLS-1$
 			if ( fAutoSoLibButton != null )
 				fAutoSoLibButton.setEnabled( enable );
 			if ( fStopOnSolibEventsButton != null )

@@ -1,3 +1,16 @@
+2004-03-11 Tanya Wolff
+	Externalized strings and marked non translatable as such.
+	* CygwinDebuggerPage.java
+	* GDBDebuggerPage.java
+	* GDBServerDebuggerPage.java
+	* GDBSolibBlock.java
+	* MIUIPlugin.java
+	* SolibSearchPathBlock.java
+	* TCPSettingsBlock.java
+	* MIUIPluginResources.properties
+	* SetAutoSolibActionDelegate.java
+	* MIPreferencePage.java
+
 2003-12-17 Mikhail Khodjaiants
 	Fix for bug 49061: Different values are used as default for the "Load shared library symbols automatically" option.
 	* GDBSolibBlock.java

@@ -12,19 +12,20 @@ public class MIUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static MIUIPlugin plugin;
 	//Resource bundle.
-	private ResourceBundle resourceBundle;
-	
+	private static ResourceBundle resourceBundle;
+	static {
+		try {
+			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.debug.mi.internal.ui.MIUIPluginResources"); //$NON-NLS-1$
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+	}
 	/**
 	 * The constructor.
 	 */
 	public MIUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
-		try {
-			resourceBundle= ResourceBundle.getBundle("org.eclipse.cdt.debug.mi.ui.UiPluginResources");
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
 	}
 
 	/**
@@ -46,11 +47,12 @@ public class MIUIPlugin extends AbstractUIPlugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle= MIUIPlugin.getDefault().getResourceBundle();
 		try {
-			return bundle.getString(key);
+			return resourceBundle.getString(key);
 		} catch (MissingResourceException e) {
-			return key;
+			return '!' + key + '!';
+		} catch (NullPointerException e) {
+			return '#' + key + '#';
 		}
 	}
 

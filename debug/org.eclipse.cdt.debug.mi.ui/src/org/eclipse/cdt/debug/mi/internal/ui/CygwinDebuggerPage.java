@@ -5,13 +5,14 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 
 public class CygwinDebuggerPage extends GDBDebuggerPage 
 {
 	public String getName() 
 	{
-		return "Cygwin GDB Debugger Options";
+		return MIUIPlugin.getResourceString("internal.ui.CygwinDebuggerPage.Cygwin_GDB_Debugger_Options"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

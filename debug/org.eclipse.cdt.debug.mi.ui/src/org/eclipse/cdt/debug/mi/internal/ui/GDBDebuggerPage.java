@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements Observer 
 {
@@ -54,8 +55,8 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) 
 	{
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" );
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, "" );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, "" ); //$NON-NLS-1$
 		if ( fSolibBlock != null )
 			fSolibBlock.setDefaults( configuration );		
 	}
@@ -73,7 +74,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 		} 
 		else 
 		{
-			setErrorMessage( "Debugger executable must be specified" );
+			setErrorMessage( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Debugger_exec_must_be_specified") ); //$NON-NLS-1$
 			setMessage( null );
 		}
 		return valid;
@@ -81,12 +82,12 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 
 	public void initializeFrom( ILaunchConfiguration configuration ) 
 	{
-		String gdbCommand = "gdb";
-		String gdbInit = "";
+		String gdbCommand = "gdb"; //$NON-NLS-1$
+		String gdbInit = ""; //$NON-NLS-1$
 		try 
 		{
-			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" );
-			gdbInit = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, "" );
+			gdbCommand = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
+			gdbInit = configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, "" ); //$NON-NLS-1$
 		} 
 		catch( CoreException e ) 
 		{
@@ -111,7 +112,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 
 	public String getName() 
 	{
-		return "GDB Debugger Options";
+		return MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_Debugger_Options"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -154,7 +155,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 	public void createMainTab( TabFolder tabFolder )
 	{
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
-		tabItem.setText( "Main" );
+		tabItem.setText( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Main") ); //$NON-NLS-1$
 
 		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
@@ -163,7 +164,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
 
-		Label label = ControlFactory.createLabel( subComp, "GDB debugger:" );
+		Label label = ControlFactory.createLabel( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_debugger")+':' ); //$NON-NLS-1$
 		GridData gd = new GridData();
 //		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
@@ -178,7 +179,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 								}
 							} );
 
-		Button button = createPushButton( subComp, "&Browse...", null );
+		Button button = createPushButton( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Browse"), null ); //$NON-NLS-1$
 		button.addSelectionListener( 
 						new SelectionAdapter() 
 							{
@@ -191,7 +192,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 								private void handleGDBButtonSelected() 
 								{
 									FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-									dialog.setText( "GDB Command File" );
+									dialog.setText( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_Debugger") ); //$NON-NLS-1$
 									String gdbCommand = fGDBCommandText.getText().trim();
 									int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
 									if ( lastSeparatorIndex != -1 ) 
@@ -207,7 +208,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 								}
 							} );
 
-		label = ControlFactory.createLabel( subComp, "GDB command file:" );
+		label = ControlFactory.createLabel( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_command_file")+':' ); //$NON-NLS-1$
 		gd = new GridData();
 //		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
@@ -222,7 +223,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 													updateLaunchConfigurationDialog();
 												}
 											} );
-		button = createPushButton( subComp, "&Browse...", null );
+		button = createPushButton( subComp, MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Browse"), null ); //$NON-NLS-1$
 		button.addSelectionListener(
 						new SelectionAdapter() 
 						{
@@ -235,7 +236,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 							private void handleGDBInitButtonSelected() 
 							{
 								FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-								dialog.setText( "GDB command file" );
+								dialog.setText( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.GDB_Command_File") ); //$NON-NLS-1$
 								String gdbCommand = fGDBInitText.getText().trim();
 								int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
 								if ( lastSeparatorIndex != -1 ) 
@@ -252,7 +253,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 						} );
 
 		label = ControlFactory.createLabel( comp, 
-											"(Warning: Some commands in this file may interfere with the startup operation of the debugger, for example \"run\".)", 
+											MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Warning_startup_operation_interference"),  //$NON-NLS-1$
 											200,
 											SWT.DEFAULT,
 											SWT.WRAP );
@@ -265,7 +266,7 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 	public void createSolibTab( TabFolder tabFolder )
 	{
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
-		tabItem.setText( "Shared Libraries" );
+		tabItem.setText( MIUIPlugin.getResourceString("internal.ui.GDBDebuggerPage.Shared_libraries") ); //$NON-NLS-1$
 
 		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
 		tabItem.setControl( comp );

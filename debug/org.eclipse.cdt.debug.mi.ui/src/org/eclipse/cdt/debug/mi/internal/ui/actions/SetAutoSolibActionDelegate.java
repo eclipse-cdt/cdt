@@ -28,6 +28,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -222,7 +223,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 
 	protected String getStatusMessage()
 	{
-		return "Exceptions occurred attempting to set 'Automaticaly Load Symbols' mode.";
+		return MIUIPlugin.getResourceString("internal.ui.actions.SetAutoSolibActionDelegate.Exception_set_automatically_load_symbols"); //$NON-NLS-1$
 	}
 
 	/**
@@ -230,7 +231,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate,
 	 */
 	protected String getErrorDialogMessage()
 	{
-		return "Set 'Automatically Load Symbols' mode failed.";
+		return MIUIPlugin.getResourceString("internal.ui.actions.SetAutoSolibActionDelegate.Set_automatically_load_symbols_failed"); //$NON-NLS-1$
 	}
 	
 	protected void setStatus( IStatus status )

@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin;
 
 /**
  * Enter type comment.
@@ -31,8 +32,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class TCPSettingsBlock extends Observable
 {
-	private final static String DEFAULT_HOST_NAME = "localhost";
-	private final static String DEFAULT_PORT_NUMBER = "10000";
+	private final static String DEFAULT_HOST_NAME = "localhost"; //$NON-NLS-1$
+	private final static String DEFAULT_PORT_NUMBER = "10000"; //$NON-NLS-1$
 
 	private Shell fShell;
 
@@ -103,7 +104,7 @@ public class TCPSettingsBlock extends Observable
 	private StringDialogField createHostNameField()
 	{
 		StringDialogField field = new StringDialogField();
-		field.setLabelText( "Host name or IP address: " );
+		field.setLabelText( MIUIPlugin.getResourceString("TCPSettingsBlock.Host_or_IP") ); //$NON-NLS-1$
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
@@ -118,7 +119,7 @@ public class TCPSettingsBlock extends Observable
 	private StringDialogField createPortNumberField()
 	{ 
 		StringDialogField field = new StringDialogField();
-		field.setLabelText( "Port number: " );
+		field.setLabelText( MIUIPlugin.getResourceString("TCPSettingsBlock.Port") ); //$NON-NLS-1$
 		field.setDialogFieldListener( 
 						new IDialogFieldListener()
 							{
@@ -194,13 +195,13 @@ public class TCPSettingsBlock extends Observable
 		if ( fHostNameField != null && fPortNumberField != null )
 		{
 			if ( fHostNameField.getText().trim().length() == 0 )
-				setErrorMessage( "Host name or IP address must be specified." );
+				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Host_or_IP_must_be_specified") ); //$NON-NLS-1$
 			else if ( !hostNameIsValid( fHostNameField.getText().trim() ) )
-				setErrorMessage( "Invalid host name or IP address." );
+				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Invalid_host_or_IP") ); //$NON-NLS-1$
 			else if ( fPortNumberField.getText().trim().length() == 0 )
-				setErrorMessage( "Port number must be specified." );
+				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Port_must_be_specified") ); //$NON-NLS-1$
 			else if ( !portNumberIsValid( fPortNumberField.getText().trim() ) )
-				setErrorMessage( "Invalid port number." );
+				setErrorMessage( MIUIPlugin.getResourceString("TCPSettingsBlock.Invalid_port") ); //$NON-NLS-1$
 		}
 	}
 

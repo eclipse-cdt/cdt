@@ -1,0 +1,66 @@
+package org.eclipse.jdt.ui.tests.text;
+
+/**
+ * javadoc
+ */
+public class TestCase2 {
+	/*
+	 * multi line comment
+	 */
+	 private void foo() {
+	 	// single line comment
+	 	int value= 42;
+	 	
+	 	/**/
+	 	
+	 	String s= "string";
+	 	char c= 'c';
+	 	
+	 	String s2= "string2"/* ads*/;
+	 	
+	 	Nastyness: ""/**/''"";
+	 	
+	 	// open strings and characters
+	 	'open characters
+	 	"open strings
+	 	
+	 	// all state transitions
+	 	/* multi line comment */// single line comment
+	 	/* multi line comment *//* multi line comment */
+	 	/* multi line comment *//** java doc */
+	 	/* multi line comment */'character'
+	 	/* multi line comment */"string"
+	 	/* java doc */// single line comment
+	 	/* java doc *//* multi line comment */
+	 	/* java doc *//** java doc */
+	 	/* java doc */'character'
+	 	/* java doc */"string"
+	 	"string"// single line comment
+	 	"string"//* multi line comment */
+	 	"string"/** java doc */
+	 	"string"'character'
+	 	"string""string"
+	 	'character'// single line comment
+	 	'character'"//* multi line comment */
+	 	'character'/** java doc */
+	 	'character''character'
+	 	'character'"string"
+
+		// more nasty cases
+		/'asdf
+		/"asdf
+
+		/**
+		 *	// single line comment inside javadoc
+		 */
+		
+		/*
+		 *	// single line comment inside multi-line comment
+		 */
+		 
+		// would fail conformance, but it's ok
+		"<backslash>
+		'<backslash>		
+	 }
+
+}

@@ -18,4 +18,9 @@ public interface ICDIErrorInfo extends ICDISessionObject {
 	 * Returns the error message.
 	 */
 	public String getMessage();
+	
+	/**
+	 * Returns a more verbatim error message(if any).
+	 */
+	public String getDetailMessage();
 }

@@ -14,6 +14,8 @@ package org.eclipse.cdt.debug.core.cdi;
  */
 public class CDIException extends Exception {
 
+	String details = "";
+
 	public CDIException() {
 		super();
 	}
@@ -21,4 +23,17 @@ public class CDIException extends Exception {
 	public CDIException(String s) {
 		super(s);
 	}
+	
+	public CDIException(String s, String d) {
+		super(s);
+		details = d;
+	}
+
+	/**
+	 * Returns a more details message(if any).
+	 */
+	public String getDetailMessage() {
+		return details;
+	}
+
 }

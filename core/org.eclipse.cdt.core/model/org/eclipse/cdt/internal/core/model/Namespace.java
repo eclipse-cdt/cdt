@@ -20,8 +20,4 @@ public class Namespace extends SourceManipulation implements INamespace{
 		super(parent, name, CElement.C_NAMESPACE);
 	}
 
-	protected CElementInfo createElementInfo () {
-		return new SourceManipulationInfo(this);
-	}
-
 }

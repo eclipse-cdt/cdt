@@ -36,25 +36,6 @@ public class FieldInfo extends SourceManipulationInfo {
 	protected String getTypeName(){
 		return typeStr;
 	}
-
-	/**
-	 * Tests info stored in element info only
-	 * @param otherInfo
-	 * @return boolean
-	 */
-	public boolean hasSameContentsAs( SourceManipulationInfo info){
-		FieldInfo otherInfo = (FieldInfo) info;
-		if( (typeStr.equals(otherInfo.getTypeName())) 
-		&&  (isConst == otherInfo.isConst())
-		&&  (isVolatile == otherInfo.isVolatile())
-		&& 	(isMutable == otherInfo.isMutable())
-		&& 	(visibility == otherInfo.getVisibility())
-		&& 	(isStatic == otherInfo.isStatic())
-		)
-			return true;
-		else
-			return false;
-	}
 	
 	protected void setAccessControl(int flags) {
 		this.flags = flags;
@@ -110,4 +91,20 @@ public class FieldInfo extends SourceManipulationInfo {
 	public void setVisibility(int visibility) {
 		this.visibility = visibility;
 	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(SourceManipulationInfo)
+	 */
+	public boolean hasSameContentsAs( SourceManipulationInfo info){
+		
+		return( super.hasSameContentsAs(info)
+		&&  (typeStr.equals(((FieldInfo)info).getTypeName())) 
+		&&  (isConst == ((FieldInfo)info).isConst())
+		&&  (isVolatile == ((FieldInfo)info).isVolatile())
+		&& 	(isMutable == ((FieldInfo)info).isMutable())
+		&& 	(visibility == ((FieldInfo)info).getVisibility())
+		&& 	(isStatic == ((FieldInfo)info).isStatic())
+		);
+	}
+	
 }

@@ -83,4 +83,18 @@ public class MethodInfo extends FunctionInfo {
 		this.visibility = visibility;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(org.eclipse.cdt.internal.core.model.SourceManipulationInfo)
+	 */
+	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
+		return (super.hasSameContentsAs(otherInfo)
+		&&  (isConst == ((MethodInfo)otherInfo).isConst())
+		&&  (isAbstract == ((MethodInfo)otherInfo).isAbstract())
+		&& 	(isInline == ((MethodInfo)otherInfo).isInline())
+		&& 	(isVirtual == ((MethodInfo)otherInfo).isVirtual())
+		&& 	(isFriend == ((MethodInfo)otherInfo).isFriend())
+		&& 	(visibility == ((MethodInfo)otherInfo).getVisibility())
+		);
+	}
+
 }

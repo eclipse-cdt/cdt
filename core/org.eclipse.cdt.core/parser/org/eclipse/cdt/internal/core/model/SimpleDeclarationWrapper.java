@@ -325,6 +325,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		newElement.setVisibility(this.getCurrentVisibility());
 		newElement.setVolatile(isVolatile());
 		newElement.setStatic(isStatic());
+		newElement.setConst(isConst());
 		return newElement;		
 	}
 
@@ -349,6 +350,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		newElement.setVisibility(this.getCurrentVisibility());
 		newElement.setVolatile(isVolatile());
 		newElement.setStatic(isStatic());
+		newElement.setConst(isConst());
 		return newElement;		
 	}
 

@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration{
 	
 	boolean isConst;
-	boolean isVolatile;
+;
 
 	public MethodDeclaration(ICElement parent, String name){
 		super(parent, name, CElement.C_METHOD_DECLARATION);
@@ -90,15 +90,6 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setConst(isConst);
 	}
 
-	public boolean isVolatile(){
-		return isVolatile;
-	}
-
-	public void setVolatile(boolean isVolatile){
-		this.isVolatile = isVolatile; 
-		getMethodInfo().setVolatile(isVolatile);
-	}
-
 	public int getVisibility(){
 		return getMethodInfo().getVisibility();
 	}
@@ -119,9 +110,11 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	 * See if we need anything else to put in equals here
 	 */
 	public boolean equals(Object other) {
+		// Two methods are equal if
+		// their parents, names, parameter types and return types are equal and 
 		return ( super.equals(other)
+		// their constant directive is the same
 		&& isConst() == ((MethodDeclaration)other).isConst()
-		&& isVolatile() == ((MethodDeclaration)other).isVolatile()
 		);
 	}
 		

@@ -16,19 +16,17 @@ import org.eclipse.cdt.core.model.IEnumeration;
 
 public class Enumeration extends SourceManipulation implements IEnumeration{
 
-	String typeName = "";
-	boolean isStatic = false;
-	boolean isConst = false;
-	boolean isVolatile = false;
-	
 	public Enumeration(ICElement parent, String name) {
-		super(parent, name, CElement.C_ENUMERATION);
+		super(parent, name, CElement.C_ENUMERATION);		
 	}
 
 	protected CElementInfo createElementInfo () {
-		return new SourceManipulationInfo(this);
+		return new EnumerationInfo(this);
 	}
 
+	private EnumerationInfo getEnumerationInfo(){
+		return (EnumerationInfo) getElementInfo();
+	}
 	/**
 	 * @see org.eclipse.cdt.core.model.IVariable#getInitializer()
 	 */
@@ -40,14 +38,14 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getTypeName()
 	 */
 	public String getTypeName() {
-		return typeName;
+		return getEnumerationInfo().getTypeName();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#setTypeName(java.lang.String)
 	 */
 	public void setTypeName(String type) {
-		typeName = type;
+		getEnumerationInfo().setTypeName(type);
 	}
 
 	/**
@@ -61,21 +59,21 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
 	public boolean isConst() {
-		return isConst;
+		return getEnumerationInfo().isConst();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
 	 */
 	public boolean isStatic() {
-		return isStatic;
+		return getEnumerationInfo().isStatic();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
 	 */
 	public boolean isVolatile() {
-		return isVolatile;
+		return getEnumerationInfo().isVolatile();
 	}
 
 	/**
@@ -83,7 +81,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @param isConst The isConst to set
 	 */
 	public void setConst(boolean isConst) {
-		this.isConst = isConst;
+		getEnumerationInfo().setConst(isConst);
 	}
 
 	/**
@@ -91,7 +89,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @param isStatic The isStatic to set
 	 */
 	public void setStatic(boolean isStatic) {
-		this.isStatic = isStatic;
+		getEnumerationInfo().setStatic( isStatic);
 	}
 
 	/**
@@ -99,7 +97,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 * @param isVolatile The isVolatile to set
 	 */
 	public void setVolatile(boolean isVolatile) {
-		this.isVolatile = isVolatile;
-	}
+		getEnumerationInfo().setVolatile(isVolatile);
+	}	
 
 }

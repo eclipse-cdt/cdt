@@ -12,22 +12,17 @@ package org.eclipse.cdt.internal.core.model;
 ***********************************************************************/
 import org.eclipse.cdt.core.model.ICElement;
 
-public class StructureInfo extends SourceManipulationInfo {
+public class StructureInfo extends VariableInfo {
 	
-	String type;
-	boolean isConst = false;
-	boolean isVolatile = false;
-	boolean isStatic = false;
-
 	protected StructureInfo (CElement element) {
 		super(element);
 		
 		if (element.getElementType() == ICElement.C_CLASS)
-			type = "class";
+			this.setTypeName("class");
 		else if (element.getElementType() == ICElement.C_UNION)
-			type = "union";
+			this.setTypeName("union");
 		else
-			type = "struct";
+			this.setTypeName("struct");
 	}
 
 	public boolean isUnion() {
@@ -40,65 +35,6 @@ public class StructureInfo extends SourceManipulationInfo {
 
 	public boolean isStruct() {
 		return element.getElementType() == ICElement.C_STRUCT;
-	}
-
-	public String getTypeName(){
-		return type;
-	}
-	
-	public void setTypeString(String elmType){
-		type = elmType;
-	}
-	public boolean hasSameContentsAs( StructureInfo otherInfo){
-		return true;
-	}
-
-	/**
-	 * Returns the isConst.
-	 * @return boolean
-	 */
-	public boolean isConst() {
-		return isConst;
-	}
-
-	/**
-	 * Returns the isStatic.
-	 * @return boolean
-	 */
-	public boolean isStatic() {
-		return isStatic;
-	}
-
-	/**
-	 * Returns the isVolatile.
-	 * @return boolean
-	 */
-	public boolean isVolatile() {
-		return isVolatile;
-	}
-
-	/**
-	 * Sets the isConst.
-	 * @param isConst The isConst to set
-	 */
-	public void setConst(boolean isConst) {
-		this.isConst = isConst;
-	}
-
-	/**
-	 * Sets the isStatic.
-	 * @param isStatic The isStatic to set
-	 */
-	public void setStatic(boolean isStatic) {
-		this.isStatic = isStatic;
-	}
-
-	/**
-	 * Sets the isVolatile.
-	 * @param isVolatile The isVolatile to set
-	 */
-	public void setVolatile(boolean isVolatile) {
-		this.isVolatile = isVolatile;
 	}
 
 }

@@ -152,4 +152,9 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	protected SourceManipulationInfo getSourceManipulationInfo() {
 		return (SourceManipulationInfo)getElementInfo();
 	}
+	
+	public boolean isIdentical(SourceManipulation other){
+		return (this.equals(other) 
+		&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo())));
+	}
 }

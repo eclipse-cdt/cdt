@@ -146,7 +146,7 @@ class SourceManipulationInfo extends CElementInfo {
 	 *  subclasses  should override
 	 */
 	public boolean hasSameContentsAs( SourceManipulationInfo otherInfo){
-		return true;
+		return (this.element.fType == otherInfo.element.fType);
 	}
 	
 }

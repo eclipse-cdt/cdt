@@ -29,13 +29,6 @@ class VariableInfo extends SourceManipulationInfo {
 	protected void setTypeName(String type){
 		typeStr = type;
 	}
-
-	protected boolean hasSameContentsAs( VariableInfo otherInfo){
-		if(typeStr.equals(otherInfo.getTypeName())) 
-			return true;
-		else
-			return false;
-	}
 	
 	protected void setAccessControl(int flags) {
 		this.flags = flags;
@@ -60,12 +53,25 @@ class VariableInfo extends SourceManipulationInfo {
 		this.isVolatile = isVolatile;
 	}
 
-	public boolean isStatic() {
+	protected boolean isStatic() {
 		return isStatic;
 	}
 
-	public void setStatic(boolean isStatic) {
+	protected void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
 	
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(org.eclipse.cdt.internal.core.model.SourceManipulationInfo)
+	 */
+	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
+		return 
+		(	 super.hasSameContentsAs(otherInfo) 
+		&& ( typeStr.equals(((VariableInfo)otherInfo).getTypeName()) )
+		&& ( isConst() == ((VariableInfo)otherInfo).isConst() ) 
+		&& (isVolatile() == ((VariableInfo)otherInfo).isVolatile() ) 
+		&& (isStatic() == ((VariableInfo)otherInfo).isStatic() )
+		);
+	}
+
 }

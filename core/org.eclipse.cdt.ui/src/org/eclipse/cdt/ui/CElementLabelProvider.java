@@ -74,6 +74,8 @@ public class CElementLabelProvider extends LabelProvider {
 				case ICElement.C_METHOD_DECLARATION:
 					IFunctionDeclaration fDecl = (IFunctionDeclaration) celem;
 					name = fDecl.getSignature();		
+					name += " : ";
+					name += fDecl.getReturnType();
 				break;
 				case ICElement.C_STRUCT:
 				case ICElement.C_UNION:

@@ -10,14 +10,12 @@ package org.eclipse.cdt.internal.core.model;
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
+public class EnumerationInfo extends VariableInfo{
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITypeDef;
 
-public class TypeDef extends SourceManipulation implements ITypeDef{
-	
-	public TypeDef(ICElement parent, String name) {
-		super(parent, name, CElement.C_TYPEDEF);
+	protected EnumerationInfo(CElement element) {
+		super(element);
 	}
-
+	
+	
 }

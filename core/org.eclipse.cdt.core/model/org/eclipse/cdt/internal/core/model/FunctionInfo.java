@@ -8,8 +8,6 @@ package org.eclipse.cdt.internal.core.model;
 class FunctionInfo extends SourceManipulationInfo {
 
 	protected int flags;
-	protected String returnType = "";
-	protected int numOfParams;
 	protected boolean isStatic;
 	protected boolean isVolatile;
 	
@@ -27,13 +25,6 @@ class FunctionInfo extends SourceManipulationInfo {
 		this.flags = flags;
 	}
 
-	protected String getReturnType(){
-		return returnType;
-	}
-	
-	protected void setReturnType(String type){
-		returnType = type;
-	}	
 	/**
 	 * Returns the isStatic.
 	 * @return boolean
@@ -64,6 +55,16 @@ class FunctionInfo extends SourceManipulationInfo {
 	 */
 	public void setVolatile(boolean isVolatile) {
 		this.isVolatile = isVolatile;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.SourceManipulationInfo#hasSameContentsAs(org.eclipse.cdt.internal.core.model.SourceManipulationInfo)
+	 */
+	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
+		return (super.hasSameContentsAs(otherInfo)
+		&& (this.isStatic() == ((FunctionInfo)otherInfo).isStatic())
+		&& (this.isVolatile() == ((FunctionInfo)otherInfo).isVolatile())
+		);
 	}
 
 }

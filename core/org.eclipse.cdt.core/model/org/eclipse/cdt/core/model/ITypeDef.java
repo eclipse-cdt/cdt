@@ -9,8 +9,4 @@ package org.eclipse.cdt.core.model;
  * Represents a field declared in a type.
  */
 public interface ITypeDef extends ICElement, ISourceManipulation, ISourceReference {
-	/**
-	 * Return the type beeing alias.
-	 */
-	String getType() throws CModelException;
 }

@@ -35,7 +35,6 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 
 	public void setReturnType(String type){
 		returnType = type;
-		getFunctionInfo().setReturnType(type);
 	}
 
 	public int getNumberOfParameters() {
@@ -91,8 +90,12 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}
 	
 	public boolean equals(Object other) {
+		// Two function declarations are equal if
+		// Their parents and names are equal and
 		return ( super.equals(other) 
+		// their parameter types are equal and 
 		&& Util.equalArraysOrNull(fParameterTypes, ((FunctionDeclaration)other).fParameterTypes)
+		// their return types are equal
 		&& getReturnType().equals(((FunctionDeclaration)other).getReturnType())
 		);
 	}

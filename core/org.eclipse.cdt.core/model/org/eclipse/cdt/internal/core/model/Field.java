@@ -86,15 +86,4 @@ public class Field extends SourceManipulation implements IField {
 	protected CElementInfo createElementInfo () {
 		return new FieldInfo(this);
 	}
-
-	// tests both info stored in element and element info
-	public boolean isIdentical(Field other){
-		FieldInfo otherInfo= other.getFieldInfo();
-		if ( (this.equals(other))
-		 && (getFieldInfo().hasSameContentsAs(otherInfo))
-		 )
-			return true;
-		else
-			return false;
-	}
 }

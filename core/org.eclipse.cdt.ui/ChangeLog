@@ -1,3 +1,8 @@
+2004-10-14 Alain Magloire
+
+	Provide the hashCode method.
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java
+
 2004-09-24 Chris Wiebe
 
 	minor icon cleanup

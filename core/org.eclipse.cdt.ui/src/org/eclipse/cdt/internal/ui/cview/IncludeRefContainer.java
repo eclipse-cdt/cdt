@@ -99,4 +99,15 @@ public class IncludeRefContainer extends CElementGrouping {
 		}
 		return super.equals(obj);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		if (fCProject != null) {
+			return fCProject.hashCode();
+		}
+		return super.hashCode();
+	}
+
 }

@@ -1,3 +1,8 @@
+2003-03-11 Mikhail Khodjaiants
+	The implementation of the "Display As Array" action.
+	* CastToArrayActionDelegate.java
+	* CastToTypeActionDelegate.java
+
 2003-03-10 Mikhail Khodjaiants
 	Implementing the "Display As Array" action.
 	* plugin.xml

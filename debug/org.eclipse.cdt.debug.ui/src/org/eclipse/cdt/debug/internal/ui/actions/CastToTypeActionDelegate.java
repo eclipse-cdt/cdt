@@ -42,7 +42,7 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		{
 			if ( newText.trim().length() == 0 )
 			{
-				return "Type field must not be empty.";
+				return "The 'Type' field must not be empty.";
 			}
 			return null;
 		}

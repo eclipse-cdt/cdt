@@ -207,6 +207,7 @@ public class Thread extends CObject implements ICDIThread {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
+			// See comment in StackFrame constructor.
 			int miLevel = getStackFrameCount() - frameLevel;		
 			MIStackSelectFrame frame = factory.createMIStackSelectFrame(miLevel);
 			// Set ourself as the current thread first.

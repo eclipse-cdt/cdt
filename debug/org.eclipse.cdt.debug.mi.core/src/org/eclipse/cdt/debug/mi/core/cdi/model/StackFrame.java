@@ -26,6 +26,29 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	Thread cthread;
 	int level;
 
+	/*
+ 	 * 
+		GDB/MI does not keep the stack level, from what we expect.  In gdb, the
+		highest stack is level 0 and lower stack as the highest level:
+		-stack-list-frames
+		^done,stack=[frame={level="0 ",addr="0x0804845b",func="main",file="hello.c",line="24"},
+	 	            frame={level="1 ",addr="0x42017499",func="__libc_start_main",from="/lib/i686/libc.so.6"}]
+
+		-stack-list-frames
+		^done,stack=[frame={level="0 ",addr="0x08048556",func="main2",file="hello.c",line="58"},
+	    	         frame={level="1 ",addr="0x08048501",func="main",file="hello.c",line="41"},
+	        	     frame={level="2 ",addr="0x42017499",func="__libc_start_main",from="/lib/i686/libc.so.6"}]
+
+		This is of no use to us since the level is always "0".  The level is necessary for example when
+		doing recursive calls to make a distinction between frames.
+		So in CDT this reverse the hidghest frame will have the highest number. In CDT:
+		stack=[frame={level="2 ",addr="0x0804845b",func="main",file="hello.c",line="24"},
+		       frame={level="1 ",addr="0x42017499",func="__libc_start_main",from="/lib/i686/libc.so.6"}]
+
+		stack=[frame={level="3 ",addr="0x08048556",func="main2",file="hello.c",line="58"},
+		       frame={level="2 ",addr="0x08048501",func="main",file="hello.c",line="41"},
+	    	   frame={level="1 ",addr="0x42017499",func="__libc_start_main",from="/lib/i686/libc.so.6"}]
+	*/
 	public StackFrame(Thread thread, MIFrame f, int l) {
 		super(thread.getTarget());
 		cthread = thread;

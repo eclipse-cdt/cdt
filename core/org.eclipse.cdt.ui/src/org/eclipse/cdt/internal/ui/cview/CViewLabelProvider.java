@@ -46,7 +46,14 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof IIncludeReference) {
+		if (element instanceof IncludeReferenceProxy) {
+			IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
+			IPath location = ref.getPath();
+			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
+			if (containers.length > 0) {
+				return containers[0].getFullPath().makeRelative().toString();
+			}
+		} else if (element instanceof IIncludeReference) {
 			IIncludeReference ref = (IIncludeReference)element;
 			Object parent = ref.getParent();
 			if (parent instanceof IIncludeReference) {
@@ -58,11 +65,6 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 				}
 				return p.toString();
 			}
-			IPath location = ref.getPath();
-			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
-			if (containers.length > 0) {
-				return containers[0].getFullPath().makeRelative().toString();
-			}
 		}
 		return super.getText(element);
 	}
@@ -71,13 +73,14 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof IIncludeReference) {
-			IIncludeReference reference = (IIncludeReference)element;
+		if (element instanceof IncludeReferenceProxy) {
+			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
 			IPath path = reference.getPath();
 			IContainer container = reference.getCModel().getWorkspace().getRoot().getContainerForLocation(path);
 			if (container != null && container.isAccessible()) {
 				return getImage(reference.getCProject());
 			}
+		} else if (element instanceof IIncludeReference) {
 			ImageDescriptor desc = CElementImageProvider.getImageDescriptor(ICElement.C_CCONTAINER);
 			desc = new CElementImageDescriptor(desc, 0, CElementImageProvider.SMALL_SIZE);
 			return CUIPlugin.getImageDescriptorRegistry().get(desc);

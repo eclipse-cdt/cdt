@@ -33,7 +33,11 @@ public class IncludeReferenceProxy extends CElementGrouping {
 		this.reference = reference;
 		this.includeRefContainer = parent;
 	}
-	
+
+	public IIncludeReference getReference() {
+		return reference;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */

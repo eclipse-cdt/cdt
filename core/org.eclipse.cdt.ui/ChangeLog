@@ -1,4 +1,10 @@
 2004-09-07 Alain Magloire
+	Wrong icons
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/InlcudeReferenceProxy.java
+
+2004-09-07 Alain Magloire
 
 	Part of the uncoming work to supply formatting in CDT
 	* src/org/eclipse/cdt/internal/corext/CodeFormatterUtil.java

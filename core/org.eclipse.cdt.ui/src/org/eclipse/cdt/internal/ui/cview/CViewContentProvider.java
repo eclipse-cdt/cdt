@@ -186,8 +186,8 @@ public class CViewContentProvider extends CElementContentProvider {
 			} catch (CModelException e) {
 				return false;
 			}			
-		} else if (element instanceof IIncludeReference) {
-			IIncludeReference ref = (IIncludeReference)element;
+		} else if (element instanceof IncludeReferenceProxy) {
+			IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
 			IPath location = ref.getPath();
 			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
 			for (int i = 0; i < containers.length; ++i) {

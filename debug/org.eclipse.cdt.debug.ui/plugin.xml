@@ -24,7 +24,6 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
@@ -1247,7 +1246,7 @@
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding
-            viewId="org.eclipse.debug.ui.RegistersView"
+            viewId="org.eclipse.debug.ui.RegisterView"
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
    </extension>

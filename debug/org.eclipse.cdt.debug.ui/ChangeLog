@@ -1,4 +1,9 @@
 2004-04-02 Mikhail Khodjaiants
+	Removed dependency to xerces.
+	* DefaultSourceLocator.java
+	* plugin.xml
+
+2004-04-02 Mikhail Khodjaiants
 	Fix for bug 57160: Don't override Debug perspective's "autoClose" behavior.
 	* plugin.xml
 

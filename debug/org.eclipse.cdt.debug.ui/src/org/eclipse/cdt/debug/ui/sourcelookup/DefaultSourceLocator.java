@@ -15,8 +15,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -151,24 +151,34 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	{
 		if ( getCSourceLocator() != null )
 		{
-			Document doc = new DocumentImpl();
-			Element node = doc.createElement( ELEMENT_NAME );
-			doc.appendChild( node );
-			node.setAttribute( ATTR_PROJECT, getCSourceLocator().getProject().getName() );
-
-			IPersistableSourceLocator psl = getPersistableSourceLocator();
-			if ( psl != null )
+	        Document document = null;
+	        Throwable ex = null;
+	        try 
 			{
-				node.setAttribute( ATTR_MEMENTO, psl.getMemento() );
-			}
-			try
+	            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+	            Element element = document.createElement( ELEMENT_NAME );
+	            document.appendChild( element );
+				element.setAttribute( ATTR_PROJECT, getCSourceLocator().getProject().getName() );
+				IPersistableSourceLocator psl = getPersistableSourceLocator();
+				if ( psl != null )
+				{
+					element.setAttribute( ATTR_MEMENTO, psl.getMemento() );
+				}
+				return CDebugUtils.serializeDocument( document );
+	        }
+	        catch( ParserConfigurationException e ) 
 			{
-				return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
-			}
+	        	ex = e;
+	        }
 			catch( IOException e )
 			{
-				abort( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Unable_to_create_memento_for_src_location"), e ); //$NON-NLS-1$
+				ex = e;
 			}
+			catch( TransformerException e )
+			{
+				ex = e;
+			}
+			abort( CDebugUIPlugin.getResourceString( "ui.sourcelookup.DefaultSourceLocator.Unable_to_create_memento_for_src_location" ), ex ); //$NON-NLS-1$
 		}
 		return null;
 	}

@@ -1,3 +1,12 @@
+2004-04-02 Mikhail Khodjaiants
+	Removed dependency to xerces.
+	* CDebugUtils.java
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+	* SourceUtils.java
+	* plugin.xml
+
 2004-04-01 Mikhail Khodjaiants
 	Changes and additions to support the new implementations of Shared Libraries, 
 	Signals and Disassembly views.

@@ -7,16 +7,18 @@ package org.eclipse.cdt.debug.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -270,16 +272,16 @@ public class CDebugUtils
 	 * @param lineSeparator line separator
 	 * @return the document as a string
 	 */
-	public static String serializeDocument( Document doc, String lineSeparator ) throws IOException
-	{
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting( true );
-		format.setLineSeparator( lineSeparator ); //$NON-NLS-1$
-		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format ); //$NON-NLS-1$
-		serializer.asDOMSerializer().serialize( doc );
-		return s.toString( "UTF8" ); //$NON-NLS-1$		
-	}
+//	public static String serializeDocument( Document doc, String lineSeparator ) throws IOException
+//	{
+//		ByteArrayOutputStream s = new ByteArrayOutputStream();
+//		OutputFormat format = new OutputFormat();
+//		format.setIndenting( true );
+//		format.setLineSeparator( lineSeparator ); //$NON-NLS-1$
+//		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format ); //$NON-NLS-1$
+//		serializer.asDOMSerializer().serialize( doc );
+//		return s.toString( "UTF8" ); //$NON-NLS-1$		
+//	}
 
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format,
@@ -288,15 +290,17 @@ public class CDebugUtils
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 */
-	public static String serializeDocument( Document doc) throws IOException
+	public static String serializeDocument( Document doc ) throws IOException, TransformerException
 	{
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting( true );
-		format.setLineSeparator( System.getProperty( "line.separator" ) ); //$NON-NLS-1$
-		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format ); //$NON-NLS-1$
-		serializer.asDOMSerializer().serialize( doc );
-		return s.toString( "UTF8" ); //$NON-NLS-1$		
+		TransformerFactory factory = TransformerFactory.newInstance();
+		Transformer transformer = factory.newTransformer();
+		transformer.setOutputProperty( OutputKeys.METHOD, "xml" ); //$NON-NLS-1$
+		transformer.setOutputProperty( OutputKeys.INDENT, "yes" ); //$NON-NLS-1$
+		DOMSource source = new DOMSource( doc );
+		StreamResult outputTarget = new StreamResult( s );
+		transformer.transform( source, outputTarget );
+		return s.toString( "UTF8" ); //$NON-NLS-1$			
 	}
 
 

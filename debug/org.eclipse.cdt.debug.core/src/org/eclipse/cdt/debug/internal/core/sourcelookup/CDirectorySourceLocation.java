@@ -18,8 +18,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
@@ -293,21 +293,32 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	 */
 	public String getMemento() throws CoreException
 	{
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement( ELEMENT_NAME );
-		doc.appendChild( node );
-		node.setAttribute( ATTR_DIRECTORY, getDirectory().toOSString() );
-		if ( getAssociation() != null )
-			node.setAttribute( ATTR_ASSOCIATION, getAssociation().toOSString() );
-		node.setAttribute( ATTR_SEARCH_SUBFOLDERS, new Boolean( searchSubfolders() ).toString() );
-		try
+        Document document = null;
+        Throwable ex = null;
+        try 
 		{
-			return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
-		}
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element node = document.createElement( ELEMENT_NAME );
+            document.appendChild( node );
+    		node.setAttribute( ATTR_DIRECTORY, getDirectory().toOSString() );
+    		if ( getAssociation() != null )
+    			node.setAttribute( ATTR_ASSOCIATION, getAssociation().toOSString() );
+    		node.setAttribute( ATTR_SEARCH_SUBFOLDERS, new Boolean( searchSubfolders() ).toString() );
+			return CDebugUtils.serializeDocument( document );
+        }
+        catch( ParserConfigurationException e ) 
+		{
+        	ex = e;
+        }
 		catch( IOException e )
 		{
-			abort( MessageFormat.format( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_create_memento"), new String[] { getDirectory().toOSString() } ), e ); //$NON-NLS-1$
+			ex = e;
 		}
+		catch( TransformerException e )
+		{
+			ex = e;
+		}
+		abort( MessageFormat.format( CDebugCorePlugin.getResourceString( "internal.core.sourcelookup.CDirectorySourceLocation.Unable_to_create_memento" ), new String[] { getDirectory().toOSString() } ), ex ); //$NON-NLS-1$
 		// execution will not reach here
 		return null;
 	}

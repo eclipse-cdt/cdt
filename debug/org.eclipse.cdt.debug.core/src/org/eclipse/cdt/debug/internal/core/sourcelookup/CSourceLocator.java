@@ -19,8 +19,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
@@ -291,22 +291,32 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public String getMemento() throws CoreException
 	{
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement( SOURCE_LOCATOR_NAME );
-		doc.appendChild( node );
-
-		ICSourceLocation[] locations = getSourceLocations();
-		saveDisabledGenericSourceLocations( locations, doc, node );
-		saveAdditionalSourceLocations( locations, doc, node );
-		node.setAttribute( ATTR_DUPLICATE_FILES, new Boolean( searchForDuplicateFiles() ).toString() );
-		try
+        Document document = null;
+        Throwable ex = null;
+        try 
 		{
-			return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
-		}
+            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element node = document.createElement( SOURCE_LOCATOR_NAME );
+            document.appendChild( node );
+    		ICSourceLocation[] locations = getSourceLocations();
+    		saveDisabledGenericSourceLocations( locations, document, node );
+    		saveAdditionalSourceLocations( locations, document, node );
+    		node.setAttribute( ATTR_DUPLICATE_FILES, new Boolean( searchForDuplicateFiles() ).toString() );
+			return CDebugUtils.serializeDocument( document );
+        }
+        catch( ParserConfigurationException e ) 
+		{
+        	ex = e;
+        }
 		catch( IOException e )
 		{
-			abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CSourceLocator.Unable_to_create_memento"), e ); //$NON-NLS-1$
+			ex = e;
 		}
+		catch( TransformerException e )
+		{
+			ex = e;
+		}
+		abort( CDebugCorePlugin.getResourceString( "internal.core.sourcelookup.CSourceLocator.Unable_to_create_memento" ), ex ); //$NON-NLS-1$
 		// execution will not reach here
 		return null;
 	}
@@ -370,7 +380,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		abort( CDebugCorePlugin.getResourceString("internal.core.sourcelookup.CSourceLocator.Exception_initializing_src_locator"), ex ); //$NON-NLS-1$
 	}
 
-	private void removeDisabledLocations( Element root, List sourceLocations ) throws CoreException
+	private void removeDisabledLocations( Element root, List sourceLocations )
 	{
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();

@@ -153,7 +153,7 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) {
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
-						MIEvent event = new MIStoppedEvent(id);
+						MIEvent event = new MIStoppedEvent(rr);
 						session.fireEvent(event);
 					}
 				}
@@ -230,7 +230,7 @@ public class RxThread extends Thread {
 				// "reason" ??? still fire a stopped event.
 				if (e == null) {
 					session.getMIInferior().setSuspended();
-					e = new MIStoppedEvent(exec.getToken());
+					e = new MIStoppedEvent(exec);
 					list.add(e);
 				}
 			}

@@ -1,4 +1,16 @@
+2003-04-25 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/EventManager.java (update):
+	Remove the call to MIInferior.update(), wrong place.
+	* src/org/eclipse/cdt/debug/mi/core/EventThread.java (run):
+	Call MIInferior.update() when suspended.
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java (update):
+	Do not do the call to "info program" for type "attached" sessions.
+	* src/org/eclipse/cdt/debug/mi/core/MISession.java (terminate):
+	When terminate() is call disable posting commands to the queue etc...
+
 2003-04-25 Mikhail Khodjaiants
+
 	Fix for bug 36909.
 	* MIFrame.java: 
 	gdb returns "??" as a function name if symbols are not available.

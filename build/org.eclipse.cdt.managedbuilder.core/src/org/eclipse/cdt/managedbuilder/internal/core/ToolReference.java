@@ -157,6 +157,17 @@ public class ToolReference implements IToolReference {
 		command = parent.getToolCommand();
 		outputFlag = parent.getOutputFlag();
 		outputPrefix = parent.getOutputPrefix();
+		String[] extensions = parent.getOutputExtensions();
+		if (extensions != null) {
+			outputExtensions = new String();
+			for (int index = 0; index < extensions.length; ++index) {
+				if (extensions[index] == null) continue;
+				outputExtensions += extensions[index];
+				if (index < extensions.length - 1) {
+					outputExtensions += DEFAULT_SEPARATOR;
+				}
+			}
+		}
 		
 		if (owner instanceof Configuration) {
 			((Configuration)owner).addToolReference(this);
@@ -480,6 +491,14 @@ public class ToolReference implements IToolReference {
 			
 		return options;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtensions()
+	 */
+	public String[] getOutputExtensions() {
+		return outputExtensions.split(DEFAULT_SEPARATOR);
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtension(java.lang.String)

@@ -48,7 +48,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	private int natureFilter;
 	private Vector optionList;
 	private Map optionMap;
-	private String outputExtension;
+	private String outputExtensions;
 	private String outputFlag;
 	private String outputPrefix;
 	private boolean resolved = true;
@@ -374,6 +374,13 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtensions()
+	 */
+	public String[] getOutputExtensions() {
+		return outputExtensions.split(DEFAULT_SEPARATOR);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOutput(java.lang.String)
 	 */
 	public String getOutputExtension(String inputExtension) {
@@ -381,7 +388,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		ListIterator iter = getInputExtensions().listIterator();
 		while (iter.hasNext()) {
 			if (((String)iter.next()).equals(inputExtension)) {
-				return outputExtension;
+				return outputExtensions;
 			}
 		}
 		return null;
@@ -445,7 +452,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		}
 		
 		// Get the output extension
-		outputExtension = element.getAttribute(ITool.OUTPUTS) == null ? 
+		outputExtensions = element.getAttribute(ITool.OUTPUTS) == null ? 
 			new String() : 
 			element.getAttribute(ITool.OUTPUTS);
 			
@@ -484,7 +491,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */
 	public boolean producesFileType(String outputExtension) {
-		return this.outputExtension.equals(outputExtension);
+		return this.outputExtensions.equals(outputExtension);
 	}
 
 	/**

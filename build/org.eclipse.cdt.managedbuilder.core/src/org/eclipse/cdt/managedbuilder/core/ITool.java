@@ -92,6 +92,13 @@ public interface ITool extends IBuildObject {
 	public IOption[] getOptions();
 	
 	/**
+	 * Answers all of the output extensions that the receiver can build.
+	 * 
+	 * @return <code>String[]</code> of extensions
+	 */
+	public String[] getOutputExtensions();
+	
+	/**
 	 * Answer the output extension the receiver will create from the input, 
 	 * or <code>null</code> if the tool does not understand that extension.
 	 * 

@@ -30,7 +30,7 @@ import org.eclipse.ui.part.ViewPart;
 public class MakeView extends ViewPart {
 	
 	private BuildTargetAction buildTargetAction;
-	private RenameTargetAction renameTargetAction;
+	private EditTargetAction editTargetAction;
 	private DeleteTargetAction deleteTargetAction;
 	AddTargetAction addTargetAction;
 	TreeViewer viewer;
@@ -90,7 +90,7 @@ public class MakeView extends ViewPart {
 		buildTargetAction = new BuildTargetAction(viewer.getControl().getShell());
 		addTargetAction = new AddTargetAction(viewer.getControl().getShell());
 		deleteTargetAction = new DeleteTargetAction(viewer.getControl().getShell());
-		renameTargetAction = new RenameTargetAction(viewer.getControl().getShell());
+		editTargetAction = new EditTargetAction(viewer.getControl().getShell());
 	}
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -126,7 +126,7 @@ public class MakeView extends ViewPart {
 		manager.add(buildTargetAction);
 		manager.add(addTargetAction);
 		manager.add(deleteTargetAction);
-		manager.add(renameTargetAction);
+		manager.add(editTargetAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 
@@ -150,6 +150,6 @@ public class MakeView extends ViewPart {
 	void updateActions(IStructuredSelection sel) {
 		buildTargetAction.selectionChanged(sel);		
 		deleteTargetAction.selectionChanged(sel);
-		renameTargetAction.selectionChanged(sel);
+		editTargetAction.selectionChanged(sel);
 	}
 }

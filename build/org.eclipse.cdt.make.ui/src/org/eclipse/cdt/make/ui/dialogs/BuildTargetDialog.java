@@ -1,8 +1,9 @@
-package org.eclipse.cdt.make.ui.actions;
+package org.eclipse.cdt.make.ui.dialogs;
 
 import java.util.HashMap;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -26,6 +27,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class BuildTargetDialog extends TitleAreaDialog {
+	private IMakeTarget fSelection;
+	public static int OPEN_MODE_BUILD = 1;
+	public static int OPEN_MODE_CREATE_NEW = 2;
+	public static int OPEN_MODE_RENAME = 2;
+
+	private int openMode;
+
 	private static final String PREFIX = "SettingsBlock"; //$NON-NLS-1$
 
 	private static final String MAKE_SETTING_GROUP = PREFIX + ".makeSetting.group_label"; //$NON-NLS-1$
@@ -43,9 +51,9 @@ public class BuildTargetDialog extends TitleAreaDialog {
 	Text buildCommand;
 	Button defButton;
 
-	IMakeBuilderInfo fBuildInfo;	
+	IMakeBuilderInfo fBuildInfo;
 	IMakeTargetManager fTargetManager;
-	
+
 	/**
 	 * @param parentShell
 	 */
@@ -53,7 +61,7 @@ public class BuildTargetDialog extends TitleAreaDialog {
 		super(parentShell);
 		fTargetManager = MakeCorePlugin.getDefault().getTargetManager();
 		String[] id = fTargetManager.getTargetBuilders(container.getProject());
-		if ( id != null) {
+		if (id != null) {
 			fBuildInfo = MakeCorePlugin.createBuildInfo(new HashMap(), id[0]);
 		}
 	}
@@ -63,13 +71,13 @@ public class BuildTargetDialog extends TitleAreaDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
-		
+
 		createSettingControls(parent);
 		createBuildCmdControls(parent);
-		
+
 		return control;
 	}
-	
+
 	protected void createSettingControls(Composite parent) {
 		String[][] radios = new String[][] { { MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR), STOP_ARG }, {
 				MakeUIPlugin.getResourceString(MAKE_SETTING_KEEP_GOING), KEEP_ARG }
@@ -135,6 +143,18 @@ public class BuildTargetDialog extends TitleAreaDialog {
 			stopRadioButtons.setEnabled(false);
 		}
 		defButton.setSelection(fBuildInfo.isDefaultBuildCmd());
+	}
+
+	public void setOpenMode(int mode) {
+		openMode = mode;
+	}
+
+	public void setSelectedTarget(IMakeTarget target) {
+		fSelection = target;
+	}
+
+	public IMakeTarget getSelectedTarget() {
+		return null;
 	}
 
 }

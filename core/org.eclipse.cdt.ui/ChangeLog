@@ -1,3 +1,11 @@
+2002-12-11 Alain Magloire
+
+	Fix PR 27937.  NPE in the C Editor preference page.
+
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java (createBehaviourPage):
+	Remove listeners and variables for Margins, this will be enable by
+	only saving the changes in the store values.
+
 2002-12-06 Alain Magloire
 
 	The hovering uses to the indexer to gather some information, but

@@ -11,7 +11,6 @@
          <export name="*"/>
       </library>
    </runtime>
-
 <!-- ======================================================================= -->
 <!-- The C Plugin                                                            -->
 <!-- ======================================================================= -->
@@ -104,23 +103,90 @@
             class="org.eclipse.cdt.internal.core.make.MakeBuilder">
       </run>
    </extension>
-
 <!-- ================================================== -->
 <!-- Some well known C file extensions                  -->
 <!-- ================================================== -->
-   <extension point="org.eclipse.team.core.fileTypes">
-      <fileTypes extension="c" type="text"/>
-      <fileTypes extension="cc" type="text"/>
-      <fileTypes extension="cpp" type="text"/>
-      <fileTypes extension="cxx" type="text"/>
-      <fileTypes extension="h" type="text"/>
-      <fileTypes extension="hh" type="text"/>
-      <fileTypes extension="o" type="binary"/>
-      <fileTypes extension="a" type="binary"/>
-      <fileTypes extension="so" type="binary"/>
-      <fileTypes extension="dll" type="binary"/>
-      <fileTypes extension="exe" type="binary"/>
-      <fileTypes extension="com" type="binary"/>
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="c">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cc">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cpp">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cxx">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="h">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="hh">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="o">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="a">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="so">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="dll">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="exe">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="com">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension=".cdtproject">
+      </fileTypes>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.ignore">
+      <ignore
+            enabled="true"
+            pattern="*.o">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.obj">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.a">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.so">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.dll">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.exe">
+      </ignore>
    </extension>
 
 </plugin>

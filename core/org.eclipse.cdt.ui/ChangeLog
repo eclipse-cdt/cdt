@@ -1,3 +1,13 @@
+2004-05-12 Bogdan Gheorghe
+
+	Removed FileSearchAction, FileSearchActionInWorkingSet + related properties
+	
+	* src/org/eclipse/cdt/internal/ui/editor/FileSearchAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/FileSearchActionInWorkingSet.java
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.proerties
+	
 2004-05-11 Andrew Niefer
 	- content assist bug 60298:
 	 * src/org/eclipse/cdt/internal/ui/text/contentassist/CompletionEngine.java

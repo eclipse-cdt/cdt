@@ -369,7 +369,7 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 	 *
 	 * @return the vertical ruler
 	 */
-	private IVerticalRuler createVerticalRuler() {
+	protected IVerticalRuler createVerticalRuler() {
 		IVerticalRuler ruler = new VerticalRuler( VERTICAL_RULER_WIDTH, getAnnotationAccess() );
 		return ruler;
 	}

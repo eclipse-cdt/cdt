@@ -1,3 +1,7 @@
+2004-11-09 Mikhail Khodjaiants
+	Fix for bug 77251: Need protected access to DisassemblyView's createVerticalRuler() method. 
+	* DisassemblyView.java
+
 2004-11-05 Mikhail Khodjaiants
 	Cleanup.
 	* PreferenceMessages.properties

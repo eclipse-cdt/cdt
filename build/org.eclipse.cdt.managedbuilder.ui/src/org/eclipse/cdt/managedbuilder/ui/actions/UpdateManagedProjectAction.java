@@ -504,7 +504,6 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			try {
 				description = projects[index].getDescription();
 			} catch (CoreException e) {
-				ManagedBuilderUIPlugin.log(e);
 				continue;
 			}
 			// Make sure it has a managed nature

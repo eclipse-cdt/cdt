@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.cdt.managedbuilder.ui"
    name="%pluginName"
-   version="2.0.2"
+   version="2.0.3"
    provider-name="%providerName"
    class="org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin">
 

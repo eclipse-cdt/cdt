@@ -65,6 +65,20 @@
          </filter>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            name="%MngOtherProp.name"
+            class="org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderPropertyPage"
+            id="org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderProperties">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
+         </filter>
+      </page>
+   </extension>
 <!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"

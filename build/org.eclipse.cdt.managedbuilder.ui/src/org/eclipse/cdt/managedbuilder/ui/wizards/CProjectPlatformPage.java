@@ -23,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 
 public class CProjectPlatformPage extends WizardPage {
 	/*
@@ -46,6 +48,7 @@ public class CProjectPlatformPage extends WizardPage {
 	protected ITarget selectedTarget;
 	protected String[] targetNames;
 	protected ArrayList targets;
+	protected NewManagedProjectWizard parentWizard;
 
 	/*
 	 * Dialog variables and string constants
@@ -61,15 +64,16 @@ public class CProjectPlatformPage extends WizardPage {
 
 	/**
 	 * Constructor.
-	 * @param wizard
 	 * @param pageName
+	 * @param wizard
 	 */
-	public CProjectPlatformPage(String pageName) {
+	public CProjectPlatformPage(String pageName, NewManagedProjectWizard parentWizard) {
 		super(pageName);
 		setPageComplete(false);
 		populateTargets();
 		selectedTarget = null;
 		selectedConfigurations = new ArrayList(0);
+		this.parentWizard = parentWizard;
 	}
 
 	/**
@@ -174,7 +178,10 @@ public class CProjectPlatformPage extends WizardPage {
 		int index;
 		if (platformSelection != null
 			&& (index = platformSelection.getSelectionIndex()) != -1) {
-			selectedTarget = (ITarget) targets.get(index);
+			if (selectedTarget != (ITarget) targets.get(index)) {
+				selectedTarget = (ITarget) targets.get(index);
+				parentWizard.updateTargetProperties();
+			}
 		}
 		populateConfigurations();
 		setPageComplete(validatePage());
@@ -225,5 +232,12 @@ public class CProjectPlatformPage extends WizardPage {
 	private boolean validatePage() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
+	 */
+	public IProject getProject() {
+		return ((NewCProjectWizard)getWizard()).getNewProject();
 	}
 }

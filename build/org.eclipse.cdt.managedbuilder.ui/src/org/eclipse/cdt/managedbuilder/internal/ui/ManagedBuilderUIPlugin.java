@@ -12,11 +12,18 @@ package org.eclipse.cdt.managedbuilder.internal.ui;
  * **********************************************************************/
 
 import java.text.MessageFormat;
+import java.lang.reflect.InvocationTargetException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Shell;
 
 
 public class ManagedBuilderUIPlugin extends Plugin {
@@ -74,6 +81,40 @@ public class ManagedBuilderUIPlugin extends Plugin {
 			return "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
+
+	public static void log(IStatus status) {
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+
+	public static void log(Throwable e) {
+		if (e instanceof InvocationTargetException)
+			e = ((InvocationTargetException) e).getTargetException();
+		IStatus status = null;
+		if (e instanceof CoreException)
+			status = ((CoreException) e).getStatus();
+		else
+			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
+		log(status);
+	}
+
+	/**
+	* Utility method with conventions
+	*/
+	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
+		log(t);
+		IStatus status;
+		if (t instanceof CoreException) {
+			status = ((CoreException) t).getStatus();
+			// if the 'message' resource string and the IStatus' message are the same,
+			// don't show both in the dialog
+			if (status != null && message.equals(status.getMessage())) {
+				message = null;
+			}
+		} else {
+			status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
+		}
+		ErrorDialog.openError(shell, title, message, status);
 	}
 
 }

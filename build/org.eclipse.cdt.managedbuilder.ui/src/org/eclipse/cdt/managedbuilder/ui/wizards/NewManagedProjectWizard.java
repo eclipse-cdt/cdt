@@ -64,16 +64,21 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		super.addPages();
 		
 		// Add the configuration selection page
-		targetConfigurationPage = new CProjectPlatformPage(PREFIX);
+		targetConfigurationPage = new CProjectPlatformPage(PREFIX, this);
 		targetConfigurationPage.setTitle(ManagedBuilderUIPlugin.getResourceString(CONF_TITLE));
 		targetConfigurationPage.setDescription(ManagedBuilderUIPlugin.getResourceString(CONF_DESC));
 		addPage(targetConfigurationPage);
 		
 		// Add the options (tabbed) page
-		optionPage = new NewManagedProjectOptionPage(PREFIX);
+		optionPage = new NewManagedProjectOptionPage(PREFIX, this);
 		optionPage.setTitle(ManagedBuilderUIPlugin.getResourceString(OPTIONS_TITLE));
 		optionPage.setDescription(ManagedBuilderUIPlugin.getResourceString(OPTIONS_DESC));
 		addPage(optionPage);
+	}
+	
+	public void updateTargetProperties() {
+		//  Update the error parser list
+		optionPage.updateTargetProperties();
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
@@ -97,11 +102,6 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
 		} catch (CoreException e) {
 			// Bail out of the project creation
-		}
-		        
-		// Modify the project settings
-		if (newProject != null) {
-			optionPage.performApply(new SubProgressMonitor(monitor, 2));
 		}
 
 		// Add the target to the project
@@ -128,6 +128,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 				if (newConfigs.length > 0) {
 					ManagedBuildManager.setDefaultConfiguration(newProject, newConfigs[0]);
 				}
+				ManagedBuildManager.setSelectedTarget(newProject, newTarget);
 			}
 		} catch (BuildException e) {
 			// TODO Flag the error to the user
@@ -144,6 +145,11 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
 		} catch (CoreException e) {
 			// TODO Flag the error to the user
+		}
+        
+		// Modify the project settings
+		if (newProject != null) {
+			optionPage.performApply(new SubProgressMonitor(monitor, 2));
 		}
 		
 		// Save the build options
@@ -174,6 +180,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	public String getProjectID() {
 		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
 //		return ManagedBuilderCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
+	}
+	
+	public ITarget getSelectedTarget() {
+		return targetConfigurationPage.getSelectedTarget();
 	}
 
 }

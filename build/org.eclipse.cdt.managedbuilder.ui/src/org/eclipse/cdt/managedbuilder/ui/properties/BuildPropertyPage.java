@@ -171,6 +171,8 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	protected Control createContents(Composite parent)  {
 		// Initialize the key data
 		targets = ManagedBuildManager.getTargets(getProject());
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject(), true);
+		ITarget defaultTarget = info.getDefaultTarget();
 
 		// Create the container we return to the property page editor
 		Composite composite = ControlFactory.createComposite(parent, 1);
@@ -188,7 +190,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		configGroup.setLayout(form);
 		
 		Label platformLabel = ControlFactory.createLabel(configGroup, ManagedBuilderUIPlugin.getResourceString(PLATFORM_LABEL));
-		targetSelector = ControlFactory.createSelectCombo(configGroup, getPlatformNames(), null); 
+		targetSelector = ControlFactory.createSelectCombo(configGroup, getPlatformNames(), defaultTarget.getName()); 
 		targetSelector.addListener(SWT.Selection, new Listener () {
 			public void handleEvent(Event e) {
 				handleTargetSelection();
@@ -489,6 +491,13 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	/* (non-Javadoc)
 	 * @return
 	 */
+	public ITarget getSelectedTarget() {
+		return selectedTarget;
+	}
+
+	/* (non-Javadoc)
+	 * @return
+	 */
 	protected IConfiguration getSelectedConfiguration() {
 		return selectedConfiguration;
 	}
@@ -683,6 +692,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 
 		// Cache the platform at the selection index
 		selectedTarget = targets[targetSelector.getSelectionIndex()];
+		ManagedBuildManager.setSelectedTarget(getProject(), selectedTarget);
 		
 		// Update the contents of the configuration widget
 		populateConfigurations();		

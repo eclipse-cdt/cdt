@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedProjectOptionBlock;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.managedbuilder.internal.ui.ErrorParserBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -24,28 +24,49 @@ import org.eclipse.core.runtime.Preferences;
 public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 
 	public class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
+		
+		NewManagedProjectOptionPage parent;
+		ErrorParserBlock errorParsers;
 
-		public ManagedWizardOptionBlock(ICOptionContainer parent) {
-			super(parent);
+		public ManagedWizardOptionBlock(NewManagedProjectOptionPage parentPage) {
+			super(parentPage);
+			parent = parentPage;
+		}
+		
+		public void updateTargetProperties() {
+			//  Update the error parser list
+			if (errorParsers != null) {
+				errorParsers.updateValues();
+			}
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#addTabs()
+		 */
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
+			errorParsers = new ErrorParserBlock();
+			addTab(errorParsers);
 		}
 	}
+	
+	protected ManagedWizardOptionBlock optionBlock;
+	protected NewManagedProjectWizard parentWizard;
 
 	/**
 	 * @param pageName
 	 */
-	public NewManagedProjectOptionPage(String pageName) {
+	public NewManagedProjectOptionPage(String pageName, NewManagedProjectWizard parentWizard) {
 		super(pageName);
+		this.parentWizard = parentWizard;
+		optionBlock = new ManagedWizardOptionBlock(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage#createOptionBlock()
 	 */
 	protected TabFolderOptionBlock createOptionBlock() {
-		return new ManagedWizardOptionBlock(this);
+		return optionBlock;
 	}
 
 	/* (non-Javadoc)
@@ -61,5 +82,9 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 	public Preferences getPreferences() {
 		return ManagedBuilderUIPlugin.getDefault().getPluginPreferences();
 	}
-
+	
+	public void updateTargetProperties() {
+		//  Update the error parser list
+		optionBlock.updateTargetProperties();
+	}
 }

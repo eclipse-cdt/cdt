@@ -16,20 +16,25 @@ import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 
 public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 
+	ErrorParserBlock errParserBlock;
+	
 	/**
 	 * @param parent
 	 */
 	public ManagedProjectOptionBlock(ICOptionContainer parent) {
 		super(parent);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#addTabs()
 	 */
 	protected void addTabs() {
-		// TODO Auto-generated method stub
-
+		errParserBlock = new ErrorParserBlock();
+		addTab(errParserBlock);
 	}
 
+	public ErrorParserBlock getErrorParserBlock() {
+		return errParserBlock;
+	}
+	
 }

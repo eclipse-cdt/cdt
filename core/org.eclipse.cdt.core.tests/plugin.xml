@@ -200,6 +200,10 @@
                      value="C:\home\tester/include"
                      builtIn="false">
                </listOptionValue>
+               <listOptionValue
+		             value="&quot;../includes&quot;"
+                     builIn="false">
+               </listOptionValue>
             </option>
             <option
                   name="User Objects"

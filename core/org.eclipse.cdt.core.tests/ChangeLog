@@ -1,3 +1,7 @@
+2003-10-01 Andrew Niefer
+	added testBug43450 to ManagedBuildTests.java
+	added a user include to plugin.xml
+
 2003-09-30 Sean Evoy
 	Fix for bug 41826.
 	Updated the plugin file so that tool specifications have the new attribute 

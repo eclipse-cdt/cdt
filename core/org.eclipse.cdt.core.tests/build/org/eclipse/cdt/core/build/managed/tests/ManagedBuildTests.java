@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.build.managed.tests;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +22,16 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -34,6 +43,9 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
+import org.eclipse.cdt.testplugin.FileManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -71,6 +83,7 @@ public class ManagedBuildTests extends TestCase {
 		suite.addTest(new ManagedBuildTests("testTargetBuildArtifact"));
 		suite.addTest(new ManagedBuildTests("testMakeCommandManipulation"));
 		suite.addTest(new ManagedBuildTests("testScannerInfoInterface"));
+		suite.addTest(new ManagedBuildTests("testBug43450"));
 		suite.addTest(new ManagedBuildTests("cleanup"));
 		
 		return suite;
@@ -154,14 +167,6 @@ public class ManagedBuildTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testScannerInfoInterface(){
-		// These are the expected path settings
-		final String[] expectedPaths = new String[4];
-		// This first path is a built-in, so it will not be manipulated by build manager
-	 	expectedPaths[0] = "/usr/gnu/include";
-		expectedPaths[1] = (new Path("/usr/include")).toOSString();
-		expectedPaths[2] = (new Path("/opt/gnome/include")).toOSString();
-		expectedPaths[3] = (new Path("C:\\home\\tester/include")).toOSString();
-		
 		// Open the test project
 		IProject project = null;
 		try {
@@ -170,6 +175,15 @@ public class ManagedBuildTests extends TestCase {
 			fail("Failed to open project in 'testScannerInfoInterface': " + e.getLocalizedMessage());
 		}
 		
+		//These are the expected path settings
+		 final String[] expectedPaths = new String[5];
+		 // This first path is a built-in, so it will not be manipulated by build manager
+		 expectedPaths[0] = "/usr/gnu/include";
+		 expectedPaths[1] = (new Path("/usr/include")).toOSString();
+		 expectedPaths[2] = (new Path("/opt/gnome/include")).toOSString();
+		 expectedPaths[3] = (new Path("C:\\home\\tester/include")).toOSString();
+		 expectedPaths[4] = project.getLocation().append( "Sub Config\\\"..\\includes\"" ).toOSString();
+		 
 		// Create a new target in the project based on the sub target
 		ITarget baseTarget = ManagedBuildManager.getTarget(project, "test.sub");
 		assertNotNull(baseTarget);
@@ -845,7 +859,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals("More Includes", subOpts[2].getName());
 		assertEquals(IOption.INCLUDE_PATH, subOpts[2].getValueType());
 		String[] moreIncPath = subOpts[2].getIncludePaths();
-		assertEquals(1, moreIncPath.length);
+		assertEquals(2, moreIncPath.length);
 		assertEquals("C:\\home\\tester/include", moreIncPath[0]);
 		assertEquals("-I", subOpts[2].getCommand());
 		// Check the user object option
@@ -954,6 +968,32 @@ public class ManagedBuildTests extends TestCase {
 
 	public void testThatAlwaysFails() {
 		assertTrue(false);
+	}
+	
+	public void testBug43450 () throws Exception{
+		IProject project = createProject( projectName );
+		
+		FileManager fileManager = new FileManager();
+
+		IFolder folder = project.getProject().getFolder( "includes" );
+		if( !folder.exists() ){
+			folder.create( false, true, null );
+		}
+		
+		IFile file = project.getProject().getFile( "includes/header.h" );
+		if( !file.exists()   ){
+			file.create( new ByteArrayInputStream( "class A { public : static int i; };".getBytes() ), false, null );
+		}
+		
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+		IScannerInfo info = provider.getScannerInformation( project );
+		ISourceElementRequestor callback = new NullSourceElementRequestor();
+		
+		IScanner scanner = ParserFactory.createScanner( new StringReader( "#include <header.h>\n int A::i = 1;" ), 
+														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback );
+		
+		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP );
+		assertTrue( parser.parse() );
 	}
 	
 }

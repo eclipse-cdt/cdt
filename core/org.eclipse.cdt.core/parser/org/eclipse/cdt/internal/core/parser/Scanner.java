@@ -303,6 +303,16 @@ public class Scanner implements IScanner {
 			while (iter.hasNext()) {
 	
 				File pathFile = (File)iter.next();
+				String path = pathFile.getPath();
+				if( !pathFile.exists() && path.indexOf('\"') != -1 )
+				{
+					StringTokenizer tokenizer = new StringTokenizer(path, "\"" );	//$NON-NLS-1$
+					StringBuffer buffer = new StringBuffer(path.length() );
+					while( tokenizer.hasMoreTokens() ){
+						buffer.append( tokenizer.nextToken() );
+					}
+					pathFile = new File( buffer.toString() );
+				}
 				if (pathFile.isDirectory()) {
 					newPath = pathFile.getPath() + File.separatorChar + fileName;
 					File includeFile = new File(newPath);

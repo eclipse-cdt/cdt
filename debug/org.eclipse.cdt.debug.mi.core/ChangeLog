@@ -1,3 +1,9 @@
+2003-11-13 Mikhail Khodjaiants
+
+	* src/org/eclipse/cdt/debug/mi/core/output/MIFrame.java
+	Fix for PR 46592: Debug View shows Functions as func(type param,...)().
+	Return an empty string instead of "??" if the function name is not available.
+
 2003-11-20 Alain Magloire
 
 	Fix NPE: 46313. Setting breakpoint when the target was running

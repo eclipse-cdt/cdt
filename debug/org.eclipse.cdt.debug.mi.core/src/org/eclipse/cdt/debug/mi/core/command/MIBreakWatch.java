@@ -22,9 +22,9 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIBreakWatch extends MICommand
 {
 	public MIBreakWatch (String[] opts, String expr) {
-		super("-break-insert", opts, new String[]{expr});
+		super("-break-watch", opts, new String[]{expr});
 	}
 	public MIBreakWatch (String expr) {
-		super("-break-insert", new String[]{expr});
+		super("-break-watch", new String[]{expr});
 	}
 }

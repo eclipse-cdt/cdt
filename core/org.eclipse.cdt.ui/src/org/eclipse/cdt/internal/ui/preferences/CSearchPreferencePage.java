@@ -23,8 +23,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,7 +39,7 @@ public class CSearchPreferencePage extends PreferencePage
 		implements
 			IWorkbenchPreferencePage {
 	
-	Combo fExternLinks;
+	private Combo fExternLinks;
 	private Button fExternEnabled;
 	
 	protected OverlayPreferenceStore fOverlayStore;
@@ -83,38 +81,6 @@ public class CSearchPreferencePage extends PreferencePage
 		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		result.setLayout(layout);
 		
-		Group group= new Group(result, SWT.NONE);
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.ExternalSearchLinksGroup")); //$NON-NLS-1$
-
-		fExternEnabled = createCheckButton(group, PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.EnableMessage")); //$NON-NLS-1$
-		fExternEnabled.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-			public void widgetSelected(SelectionEvent e) {
-				Button button = (Button) e.widget;
-				boolean externLinkEnabled = false;
-				fExternLinks.setEnabled(false);
-				if (button.getSelection()){
-					fExternLinks.setEnabled(true);
-					externLinkEnabled = true;
-				}
-				
-				fOverlayStore.setValue(CSearchPage.EXTERNALMATCH_ENABLED, externLinkEnabled);
-			}
-		});
-	
-		fExternLinks = createComboBox(group,PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.EnableMarkerLinkType"),new String[]{PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")},PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		fExternLinks.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-			public void widgetSelected(SelectionEvent e) {
-				Combo combo = (Combo) e.widget;
-				fOverlayStore.setValue(CSearchPage.EXTERNALMATCH_VISIBLE, combo.getSelectionIndex());
-			}
-		});
-		
 		Group indexerTimeoutGroup= new Group(result, SWT.NONE);
 		indexerTimeoutGroup.setLayout(new GridLayout());
 		indexerTimeoutGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -129,12 +95,6 @@ public class CSearchPreferencePage extends PreferencePage
 	}
 	
 	private void initialize(){
-		boolean extEnabled = fOverlayStore.getBoolean(CSearchPage.EXTERNALMATCH_ENABLED);
-		fExternEnabled.setSelection(extEnabled);
-		
-		fExternLinks.select(fOverlayStore.getInt(CSearchPage.EXTERNALMATCH_VISIBLE));
-		fExternLinks.setEnabled(extEnabled);
-		
 		fTextControl.setText(fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
 	}
 	
@@ -216,8 +176,6 @@ public class CSearchPreferencePage extends PreferencePage
 	 * @param store
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, false);
-		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 0);
 		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT,TIMEOUT_VALUE);
 	}
 	

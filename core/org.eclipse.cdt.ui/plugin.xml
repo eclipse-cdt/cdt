@@ -499,6 +499,13 @@
             class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
       </editor>
+      <editor
+            symbolicFontName="org.eclipse.cdt.ui.editors.textfont"
+            class="org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor"
+            icon="icons/full/obj16/c_file_obj.gif"
+            name="%ExternalSearchEditor.name"
+            id="org.eclipse.cdt.ui.editor.ExternalSearchEditor"/>
+      
    </extension>
    <extension
        point="org.eclipse.ui.themes">

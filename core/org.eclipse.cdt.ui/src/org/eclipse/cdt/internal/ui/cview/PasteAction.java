@@ -21,6 +21,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
@@ -164,19 +165,23 @@ public class PasteAction extends SelectionListenerAction {
 		if (!super.updateSelection(selection))
 			return false;
 
-		// clipboard must have resources or files
-		ResourceTransfer resTransfer = ResourceTransfer.getInstance();
-		IResource[] resourceData = (IResource[]) clipboard.getContents(resTransfer);
-		FileTransfer fileTransfer = FileTransfer.getInstance();
-		String[] fileData = (String[]) clipboard.getContents(fileTransfer);
-		if (resourceData == null && fileData == null)
-			return false;
-
-		// can paste open projects regardless of selection
-		boolean isProjectRes = resourceData != null && resourceData.length > 0 && resourceData[0].getType() == IResource.PROJECT;
+		final IResource[][] clipboardData = new IResource[1][];
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				// clipboard must have resources or files
+				ResourceTransfer resTransfer = ResourceTransfer.getInstance();
+				clipboardData[0] = (IResource[])clipboard.getContents(resTransfer);
+			}
+		});
+		IResource[] resourceData = clipboardData[0];
+		boolean isProjectRes = resourceData != null
+			&& resourceData.length > 0
+			&& resourceData[0].getType() == IResource.PROJECT;
+                                                                                                                             
 		if (isProjectRes) {
 			for (int i = 0; i < resourceData.length; i++) {
 				// make sure all resource data are open projects
+				// can paste open projects regardless of selection
 				if (resourceData[i].getType() != IResource.PROJECT || ((IProject) resourceData[i]).isOpen() == false)
 					return false;
 			}
@@ -187,18 +192,16 @@ public class PasteAction extends SelectionListenerAction {
 		// or multiple file selection with the same parent
 		if (getSelectedNonResources().size() > 0)
 			return false;
-		List selectedResources = getSelectedResources();
-		IResource targetResource = getTarget();
 
 		// targetResource is null if no valid target is selected or 
 		// selection is empty	
+		IResource targetResource = getTarget();
 		if (targetResource == null)
 			return false;
 
-		// linked resources can only be pasted into projects
-		if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT)
-			return false;
-
+		// can paste files and folders to a single selection (file, folder,
+		// open project) or multiple file selection with the same parent
+		List selectedResources = getSelectedResources();
 		if (selectedResources.size() > 1) {
 			// if more than one resource is selected the selection has 
 			// to be all files with the same parent
@@ -211,14 +214,27 @@ public class PasteAction extends SelectionListenerAction {
 			}
 		}
 
-		if (targetResource.getType() == IResource.FOLDER && resourceData != null) {
-			// don't try to copy folder to self
-			for (int i = 0; i < resourceData.length; i++) {
-				if (targetResource.equals(resourceData[i]))
-					return false;
+		if (resourceData != null) {
+			// linked resources can only be pasted into projects
+			if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT)
+				return false;
+
+			if (targetResource.getType() == IResource.FOLDER) {
+				// don't try to copy folder to self
+				for (int i = 0; i < resourceData.length; i++) {
+					if (targetResource.equals(resourceData[i]))
+						return false;
+				}
 			}
+			return true;
 		}
 
-		return true;
+		TransferData[] transfers = clipboard.getAvailableTypes();
+		FileTransfer fileTransfer = FileTransfer.getInstance();
+		for (int i = 0; i < transfers.length; i++) {
+			if (fileTransfer.isSupportedType(transfers[i]))
+				return true;
+		}
+		return false;
 	}
 }

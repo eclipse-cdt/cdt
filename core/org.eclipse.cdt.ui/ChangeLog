@@ -1,5 +1,11 @@
 2004-02-28 Alain Magloire
 
+	PR 51757
+
+	* src/org/eclipse/cdt/internal/ui/cview/PasteAction.java
+
+2004-02-28 Alain Magloire
+
 	Provide an implementation of CView.selectReveal().
 	The problem was that ITranslationUnit != IWorkingCopy
 

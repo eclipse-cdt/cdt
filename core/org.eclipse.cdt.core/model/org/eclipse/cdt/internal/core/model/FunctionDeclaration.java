@@ -5,41 +5,94 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 
 public class FunctionDeclaration extends SourceManipulation implements IFunctionDeclaration {
+	/**
+	 * An empty list of Strings
+	 */
+	protected static final String[] fgEmptyList= new String[] {};
+	protected String[] fParameterTypes;
+	protected String returnType;
 	
 	public FunctionDeclaration(ICElement parent, String name) {
 		super(parent, name, CElement.C_FUNCTION_DECLARATION);
+		fParameterTypes= fgEmptyList;
 	}
 
-	public String[] getExceptions() throws CModelException {
-		return new String[] {};
+	public FunctionDeclaration(ICElement parent, String name, int type) {
+		super(parent, name, type);
+		fParameterTypes= fgEmptyList;
+	}
+
+	public String getReturnType(){
+		return returnType;
+	}
+
+	public void setReturnType(String type){
+		returnType = type;
+		getFunctionInfo().setReturnType(type);
 	}
 
 	public int getNumberOfParameters() {
-		return 0;
-	}
-
-	public String getParameterInitializer(int pos) {
-		return "";
+		return fParameterTypes == null ? 0 : fParameterTypes.length;
 	}
 
 	public String[] getParameterTypes() {
-		return new String[0];
+		return fParameterTypes;
+	}
+	
+	public void setParameterTypes(String[] parameterTypes) {
+		fParameterTypes = parameterTypes;
+	}		
+		
+	public String getSignature(){
+		String sig = getReturnType();
+		sig += " ";
+		sig += getElementName();
+		if(getNumberOfParameters() > 0){
+			sig += "(";
+			String[] paramTypes = getParameterTypes();
+			int i = 0;
+			sig += paramTypes[i++];
+			while (i < paramTypes.length){
+				sig += (", ");
+				sig += paramTypes[i++];
+			}
+			sig += ")";
+		}
+		else{
+			sig +=  "()";
+		}
+		return sig;
+	}
+		
+	public String getParameterInitializer(int pos) {
+		return "";
+	}
+	
+	public int getAccessControl(){
+		return getFunctionInfo().getAccessControl();
 	}
 
-	public String getReturnType() throws CModelException {
-		return  "";
-	}
-
-	public int getAccessControl() throws CModelException {
-		return 0;
+	public String[] getExceptions(){
+		return new String[] {};
 	}
 
 	protected CElementInfo createElementInfo () {
-		return new SourceManipulationInfo(this);
+		return new FunctionInfo(this);
 	}
+	
+	protected FunctionInfo getFunctionInfo(){
+		return (FunctionInfo) getElementInfo();
+	}
+	
+	public boolean equals(Object other) {
+		return ( super.equals(other) 
+		&& Util.equalArraysOrNull(fParameterTypes, ((FunctionDeclaration)other).fParameterTypes)
+		&& getReturnType().equals(((FunctionDeclaration)other).getReturnType())
+		);
+	}
+	
 }

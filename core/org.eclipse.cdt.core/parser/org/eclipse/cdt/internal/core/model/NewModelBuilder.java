@@ -129,9 +129,10 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		ICElementWrapper wrapper = (ICElementWrapper)container; 
 		Object parent = wrapper.getElement();
 		SimpleDeclarationWrapper result = new SimpleDeclarationWrapper();
-		if( wrapper instanceof SimpleDeclarationWrapper )
+		if( wrapper instanceof SimpleDeclarationWrapper ){
 			result.setParent( (CElement)wrapper.getElement() );
-		else if ( wrapper instanceof TranslationUnitWrapper )
+			result.setCurrentVisibility(((SimpleDeclarationWrapper)wrapper).getCurrentVisibility());
+		} else if ( wrapper instanceof TranslationUnitWrapper )
 			result.setParent( (TranslationUnit)wrapper.getElement());
 		return result;  	
 	}

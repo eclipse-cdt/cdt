@@ -8,6 +8,8 @@ package org.eclipse.cdt.internal.core.model;
 class FunctionInfo extends SourceManipulationInfo {
 
 	protected int flags;
+	protected String returnType;
+	protected int numOfParams;
 
 	protected FunctionInfo (CElement element) {
 		super(element);
@@ -21,4 +23,12 @@ class FunctionInfo extends SourceManipulationInfo {
 	protected void setAccessControl(int flags) {
 		this.flags = flags;
 	}
+
+	protected String getReturnType(){
+		return returnType;
+	}
+	
+	protected void setReturnType(String type){
+		returnType = type;
+	}	
 }

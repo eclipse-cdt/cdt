@@ -12,21 +12,20 @@ package org.eclipse.cdt.core.model;
  */
 public interface IMember extends ICElement, ISourceReference, ISourceManipulation {
 
-	///**
-	//* Returns the structure in which this member is declared, or <code>null</code>
-	//* if this member is not declared in a type (for example, a top-level type).
-	//*/
-	//IStructure belongsTo() throws CModelException;
+	static final int V_PUBLIC = 0;
+	static final int V_PROTECTED = 1;
+	static final int V_PRIVATE = 2;
+
 
 	/**
-	 * Returns true if the member as class scope.
-	 * For example static methods in C++ have class scope 
+	 * Returns true if the member has class scope. For example static methods in
+	 * C++ have class scope
 	 * 
 	 *
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	public boolean hasClassScope() throws CModelException;
+	public boolean hasClassScope();
 
 	/**
 	 * Returns whether this method/field is declared constant.
@@ -34,7 +33,13 @@ public interface IMember extends ICElement, ISourceReference, ISourceManipulatio
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	public boolean isConst() throws CModelException;
+	public boolean isConst();
+	
+	/**
+	 * Returns if this member is volatile or not
+	 * @return boolean
+	 */
+	public boolean isVolatile();
 
 	/**
 	 * Returns the access Control of the member. The access qualifier
@@ -44,5 +49,12 @@ public interface IMember extends ICElement, ISourceReference, ISourceManipulatio
 	 *      exception occurs while accessing its corresponding resource.
 	 * @see IAccessControl
 	 */
-	public int getAccessControl() throws CModelException;
+	public int getAccessControl();
+	/**
+	 * Returns the member's visibility
+	 * V_PRIVATE = 0 V_PROTECTED = 1 V_PUBLIC = 2
+	 * @return int
+	 */
+	public int getVisibility();	
+	
 }

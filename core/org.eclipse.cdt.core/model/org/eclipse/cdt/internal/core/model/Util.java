@@ -166,4 +166,66 @@ public class Util {
 	public static int combineHashCodes(int hashCode1, int hashCode2) {
 		return hashCode1 * 17 + hashCode2;
 	}
+	/**
+		 * Compares two arrays using equals() on the elements.
+		 * Either or both arrays may be null.
+		 * Returns true if both are null.
+		 * Returns false if only one is null.
+		 * If both are arrays, returns true iff they have the same length and
+		 * all elements compare true with equals.
+		 */
+		public static boolean equalArraysOrNull(Object[] a, Object[] b) {
+			if (a == b)	return true;
+			if (a == null || b == null) return false;
+
+			int len = a.length;
+			if (len != b.length) return false;
+			for (int i = 0; i < len; ++i) {
+				if (a[i] == null) {
+					if (b[i] != null) return false;
+				} else {
+					if (!a[i].equals(b[i])) return false;
+				}
+			}
+			return true;
+		}
+		/**
+		 * Compares two arrays using equals() on the elements.
+		 * Either or both arrays may be null.
+		 * Returns true if both are null.
+		 * Returns false if only one is null.
+		 * If both are arrays, returns true iff they have the same length and
+		 * all elements are equal.
+		 */
+		public static boolean equalArraysOrNull(int[] a, int[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			int len = a.length;
+			if (len != b.length)
+				return false;
+			for (int i = 0; i < len; ++i) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		/**
+		 * Compares two objects using equals().
+		 * Either or both array may be null.
+		 * Returns true if both are null.
+		 * Returns false if only one is null.
+		 * Otherwise, return the result of comparing with equals().
+		 */
+		public static boolean equalOrNull(Object a, Object b) {
+			if (a == b) {
+				return true;
+			}
+			if (a == null || b == null) {
+				return false;
+			}
+			return a.equals(b);
+		}	
 }

@@ -8,6 +8,9 @@ package org.eclipse.cdt.ui;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IVariable;
+import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
@@ -57,12 +60,29 @@ public class CElementLabelProvider extends LabelProvider {
 		if (element instanceof ICElement) {
 			ICElement celem= (ICElement)element;
 			
-			String name= celem.getElementName();
-			if (celem.getElementType() == ICElement.C_FUNCTION) {
-				name += "()";
-			} else if(celem.getElementType() == ICElement.C_FUNCTION_DECLARATION) {
-				name += "();";
+			String name;
+			switch(celem.getElementType()){
+				case ICElement.C_FUNCTION:
+				case ICElement.C_FUNCTION_DECLARATION:
+				case ICElement.C_METHOD:
+				case ICElement.C_METHOD_DECLARATION:
+					IFunctionDeclaration fdecl = (IFunctionDeclaration) celem;
+					name = fdecl.getSignature();		
+				break;
+				case ICElement.C_VARIABLE:
+					IVariable var = (IVariable) celem;
+					name = var.getTypeName() + " " + var.getElementName(); 					
+				break;
+				case ICElement.C_VARIABLE_DECLARATION:
+				case ICElement.C_FIELD:
+					IVariableDeclaration vdecl = (IVariableDeclaration) celem;
+					name = vdecl.getTypeName() + " " + vdecl.getElementName(); 					
+				break;					
+				default:
+					name= celem.getElementName();
+				break;				
 			}
+
 			if (celem instanceof IBinary) {
 				IBinary bin = (IBinary)celem;
 				name += " - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]";

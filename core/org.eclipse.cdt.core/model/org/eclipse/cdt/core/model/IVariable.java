@@ -9,7 +9,8 @@ package org.eclipse.cdt.core.model;
  * Represents a global variable.
  */
 public interface IVariable extends ICElement , ISourceManipulation, ISourceReference {
-	public String getType();
+	public String getTypeName();
+	public void setTypeName(String type);
 	public String getInitializer();
 	public int getAccessControl() throws CModelException;
 }

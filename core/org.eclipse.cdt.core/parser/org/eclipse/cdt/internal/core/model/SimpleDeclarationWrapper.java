@@ -88,34 +88,43 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 				//	this is an attribute or a varaible
 				if( parentElement instanceof IStructure )
 				{
-					declaration = new Field( parentElement, currentDeclarator.getName().toString() ); 
+					declaration = createField( parentElement, currentDeclarator.getName().toString() ); 
 				}
 				else if( parentElement instanceof ITranslationUnit )
 				{
-					declaration = new Variable( parentElement, currentDeclarator.getName().toString() );
+					if(isExtern())
+					{
+						declaration = createVariableDeclaration( parentElement, currentDeclarator.getName().toString() );
+					}
+					else
+					{
+						declaration = createVariable( parentElement, currentDeclarator.getName().toString() );						
+					}
 				}
 			}
 			else
 			{
+				Parameter [] parameters = (Parameter []) clause.toArray( new Parameter[ clause.size() ]);
 				// this is a function or a method
 				if( parentElement instanceof IStructure )
 				{
-					declaration = new Method( parentElement, currentDeclarator.getName().toString() ); 
+					declaration = createMethodDeclaration( parentElement, currentDeclarator.getName().toString(), parameters ); 
 		
 				}
 				else if( parentElement instanceof ITranslationUnit )
 				{
-					declaration = new FunctionDeclaration( parentElement, currentDeclarator.getName().toString() ); 
-				}
-				
-				Parameter [] parameters = (Parameter []) clause.toArray( new Parameter[ clause.size() ]);
-				
-				for( int j = 0; j< parameters.length; ++j )
-				{
-					Parameter parm = parameters[j];
-					 
-				}
-				
+					if (isFunctionDefinition())
+					{
+						// if it belongs to a class, then create a method
+						// else create a function
+						// this will not be known until we have cross reference information
+						declaration = createFunction( parentElement, currentDeclarator.getName().toString(), parameters ); 
+					}
+					else
+					{
+						declaration = createFunctionDeclaration( parentElement, currentDeclarator.getName().toString(), parameters ); 
+					}
+				}				
 			}
 			
 			// hook up the offsets
@@ -216,7 +225,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 
 	public static final int v_public = 0; 
 	public static final int v_protected = 1; 
-	public static final int v_private = 3; 
+	public static final int v_private = 2; 
 
 	private int currentVisibility; 
 	/**
@@ -232,6 +241,116 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 */
 	public void setCurrentVisibility(int currentVisibility) {
 		this.currentVisibility = currentVisibility;
+	}
+	
+	/**
+	 * Creates a Field and fills its info
+	 * @param parent
+	 * @param name
+	 * @return CElement
+	 */
+	private CElement createField(CElement parent, String name){
+		Field newElement = new Field( parent, name );
+		newElement.setTypeName ( getTypeName() );
+		newElement.setIsConst(isConst());
+		newElement.setIsMutable(isMutable());
+		newElement.setVisibility(this.getCurrentVisibility());
+		return newElement;
+	}
+
+	/**
+	 * Creates a Variable and fills its info
+	 * @param parent
+	 * @param name
+	 * @return CElement
+	 */
+	private CElement createVariable(CElement parent, String name){
+		Variable newElement = new Variable( parent, name );
+		newElement.setTypeName ( getTypeName() );
+		return newElement;
+	}
+
+	/**
+	 * Creates a VariableDeclaration and fills its info
+	 * @param parent
+	 * @param name
+	 * @return CElement
+	 */
+	private CElement createVariableDeclaration(CElement parent, String name){
+		VariableDeclaration newElement = new VariableDeclaration( parent, name );
+		newElement.setTypeName ( getTypeName() );
+		return newElement;
+	}
+
+
+	/**
+	 * Creates a MethodDeclaration and fills its info
+	 * @param parent
+	 * @param name
+	 * @param parameters
+	 * @return CElement
+	 */
+	private CElement createMethodDeclaration(CElement parent, String name, Parameter[] parameters){
+		String[] parameterTypes = new String[parameters.length];
+		for( int j = 0; j< parameters.length; ++j )
+		{
+			Parameter param = parameters[j];
+			parameterTypes[j] = new String(param.getTypeName());
+		}
+
+		MethodDeclaration newElement = new MethodDeclaration( parent, name );
+		newElement.setParameterTypes(parameterTypes);
+		newElement.setReturnType( getTypeName() );
+		newElement.setVisibility(this.getCurrentVisibility());
+		return newElement;		
+	}
+
+	/**
+	 * Creates a Method and fills its info
+	 * @param parent
+	 * @param name
+	 * @param parameters
+	 * @return CElement
+	 */
+	private CElement createMethod(CElement parent, String name, Parameter[] parameters){
+		String[] parameterTypes = new String[parameters.length];
+		for( int j = 0; j< parameters.length; ++j )
+		{
+			Parameter param = parameters[j];
+			parameterTypes[j] = new String(param.getTypeName());
+		}
+
+		Method newElement = new Method( parent, name );
+		newElement.setParameterTypes(parameterTypes);
+		newElement.setReturnType( getTypeName() );
+		newElement.setVisibility(this.getCurrentVisibility());
+		return newElement;		
+	}
+
+	/**
+	 * Creates a FunctionDeclaration and fills its info
+	 * @param parent
+	 * @param name
+	 * @param parameters
+	 * @return CElement
+	 */
+	private CElement createFunctionDeclaration(CElement parent, String name, Parameter[] parameters){
+		FunctionDeclaration newElement = new FunctionDeclaration( parent, name );
+		newElement.setReturnType( getTypeName() );
+		return newElement;
+	}
+
+	/**
+	 * Creates a Function and fills its info
+	 * @param parent
+	 * @param name
+	 * @param parameters
+	 * @return CElement
+	 */
+	private CElement createFunction(CElement parent, String name, Parameter[] parameters){
+		Function newElement = new Function( parent, name );
+		newElement.setReturnType( getTypeName() );
+		return newElement;
 	}
 
 }

@@ -220,5 +220,33 @@ public class DeclSpecifier {
 	public void setName(Name name) {
 		this.name = name;
 	}
+	
+	/**
+	 * Returns the type as a String
+	 * @return String
+	 */
+	public String getTypeName(){
+		switch(getType()){
+			case t_char:
+				return "char";
+			case t_wchar_t:
+				return "wchar_t";
+			case t_bool:
+				return "bool";
+			case t_int:
+				return "int";
+			case t_float:
+				return "float";
+			case t_double:
+				return "double";
+			case t_void:
+				return "void";
+			case t_type:
+				if (getName() != null)
+					return getName().toString();
+			default:
+				return "";
+		}
+	}
 
 }

@@ -16,5 +16,5 @@ public interface IField extends IMember, IVariableDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	public boolean isMutable() throws CModelException;
+	public boolean isMutable();
 }

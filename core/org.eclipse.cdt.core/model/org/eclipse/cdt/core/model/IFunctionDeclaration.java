@@ -23,7 +23,7 @@ public interface IFunctionDeclaration extends ICElement, ISourceReference, ISour
 	 *
 	 * @see Signature
 	 */
-	String[] getExceptions() throws CModelException;
+	String[] getExceptions();
 
 	/**
 	 * Returns the number of parameters of this method.
@@ -55,18 +55,14 @@ public interface IFunctionDeclaration extends ICElement, ISourceReference, ISour
 	String[] getParameterTypes();
 
 	/**
-	 * Returns the type signature of the return value of this method.
-	 * For constructors, this returns the signature for void.
-	 *
-	 * <p>For example, a source method declared as <code>public String getName()</code>
-	 * would return <code>"String"</code>.
-	 *
-	 * @exception CModelException if this element does not exist or if an
-	 *      exception occurs while accessing its corresponding resource.
-	 *
-	 * @see Signature
+	 * Returns the return value of this method. 
 	 */
-	String getReturnType() throws CModelException;
+	String getReturnType();
+	
+	/**
+	 * Returns the signature of the method. 
+	 */	
+	String getSignature();
 
 	/**
 	 * Returns the access Control of the member. The access qualifier
@@ -76,5 +72,5 @@ public interface IFunctionDeclaration extends ICElement, ISourceReference, ISour
 	 *      exception occurs while accessing its corresponding resource.
 	 * @see IAccessControl
 	 */
-	int getAccessControl() throws CModelException;
+	int getAccessControl();
 }

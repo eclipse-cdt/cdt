@@ -37,22 +37,22 @@ public class Structure extends SourceManipulation implements IStructure {
 	}
 
 	public boolean isUnion() {
-		return getElementType() == ICElement.C_UNION;
+		return getStructureInfo().isUnion();
 	}
 
 	public boolean isClass() {
-		return getElementType() == ICElement.C_CLASS;
+		return getStructureInfo().isClass();
 	}
 
 	public boolean isStruct() {
-		return getElementType() == ICElement.C_STRUCT;
+		return getStructureInfo().isStruct();
 	}
 
 	public boolean isAbstract() {
 		return false;
 	}
 
-	public int getAccessControl() throws CModelException {
+	public int getAccessControl(){
 		return 0;
 	}
 
@@ -67,14 +67,17 @@ public class Structure extends SourceManipulation implements IStructure {
 	/**
 	 * @see IVariable
 	 */
-	public String getType() {
-		if (isClass())
-			return "class";
-		if (isUnion())
-			return "union";
-		return "struct";
+	public String getTypeName() {
+		return getStructureInfo().getTypeName();
 	}
-
+	
+	public void setTypeName(String type){
+		getStructureInfo().setTypeString(type);
+	}
+	
+	public StructureInfo getStructureInfo(){
+		return (StructureInfo) getElementInfo();
+	}
 	/**
 	 * @see IVariable
 	 */
@@ -90,7 +93,7 @@ public class Structure extends SourceManipulation implements IStructure {
 	}
 
 	protected CElementInfo createElementInfo () {
-		return new SourceManipulationInfo(this);
+		return new StructureInfo(this);
 	}
 
 	/**

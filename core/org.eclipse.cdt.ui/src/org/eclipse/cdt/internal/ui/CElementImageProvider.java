@@ -14,6 +14,8 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.*;
 import org.eclipse.core.resources.IProject;
@@ -211,7 +213,17 @@ public class CElementImageProvider {
 			case ICElement.C_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 
-			case ICElement.C_METHOD:  // FIXME: provide an icon for methods.
+			case ICElement.C_METHOD:  
+			case ICElement.C_METHOD_DECLARATION:
+				IMethodDeclaration  md= (IMethodDeclaration)celement;
+				switch(md.getVisibility()){
+					case IMember.V_PUBLIC:
+						return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+					case IMember.V_PROTECTED:
+						return CPluginImages.DESC_OBJS_PROTECTED_METHOD;
+					case IMember.V_PRIVATE:
+						return CPluginImages.DESC_OBJS_PRIVATE_METHOD;
+				}
 			case ICElement.C_FUNCTION:
 				return CPluginImages.DESC_OBJS_FUNCTION;
 		
@@ -248,7 +260,9 @@ public class CElementImageProvider {
 			case ICElement.C_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 
-			case ICElement.C_METHOD: // FIXME: Provide a different icon.
+			case ICElement.C_METHOD: // assumed public
+				return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+				
 			case ICElement.C_FUNCTION:
 			case ICElement.C_FUNCTION_DECLARATION:
 				return CPluginImages.DESC_OBJS_FUNCTION;

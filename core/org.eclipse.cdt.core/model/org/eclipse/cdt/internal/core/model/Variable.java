@@ -14,10 +14,13 @@ public class Variable extends SourceManipulation implements IVariable {
 		super(parent, name, CElement.C_VARIABLE);
 	}
 
-	public String getType() {
-		return "";
+	public String getTypeName() {
+		return getVariableInfo().getTypeName();
 	}
 
+	public void setTypeName(String type){
+		getVariableInfo().setTypeName(type);
+	}
 	public String getInitializer() {
 		return "";
 	}

@@ -10,7 +10,6 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;

@@ -6,9 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
 

@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
-import org.eclipse.cdt.debug.internal.core.model.CValue;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;

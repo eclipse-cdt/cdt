@@ -5,10 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;

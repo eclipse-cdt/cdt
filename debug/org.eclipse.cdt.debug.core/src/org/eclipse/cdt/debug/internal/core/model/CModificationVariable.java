@@ -10,13 +10,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArrayValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStringValue;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStructureValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 

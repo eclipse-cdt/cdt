@@ -6,8 +6,6 @@
 
 package org.eclipse.cdt.debug.core;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 /**
  * 
  * Represents the current state of debug element.

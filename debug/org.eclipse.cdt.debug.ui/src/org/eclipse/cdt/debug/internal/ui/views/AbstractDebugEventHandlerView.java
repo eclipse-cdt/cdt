@@ -6,10 +6,6 @@
 package org.eclipse.cdt.debug.internal.ui.views;
 
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * 

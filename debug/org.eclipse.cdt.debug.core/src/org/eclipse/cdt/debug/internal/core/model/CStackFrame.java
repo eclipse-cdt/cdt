@@ -6,7 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -123,7 +122,6 @@ public class CStackFrame extends CDebugElement
 	protected void updateVariables() throws DebugException 
 	{
 		List locals = getAllCDIVariables();
-		int localIndex = -1;
 		int index = 0;
 		while( index < fVariables.size() )
 		{
@@ -289,7 +287,6 @@ public class CStackFrame extends CDebugElement
 			if ( frames != null && !frames.isEmpty() )
 			{
 				boolean bottomFrame = this.equals( frames.get( frames.size() - 1 ) );
-				boolean aboveObsoleteFrame = false;
 				return !bottomFrame && getThread().canStepReturn();
 			}
 		}

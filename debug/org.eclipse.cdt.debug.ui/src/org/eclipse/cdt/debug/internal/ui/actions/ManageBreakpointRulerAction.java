@@ -6,10 +6,8 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -26,7 +24,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
@@ -240,7 +237,6 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 			int lineNumber = bv.getValidBreakpointLocation( document, rulerLine );
 			if ( lineNumber > 0 )
 			{
-				IRegion line = document.getLineInformation( lineNumber - 1 );
 				String fileName = null;
 				if ( editorInput instanceof IFileEditorInput )
 				{
@@ -265,10 +261,6 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
 		}
 		catch( CoreException e )
-		{
-			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
-		}
-		catch( BadLocationException e )
 		{
 			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
 		}

@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;

@@ -6,7 +6,6 @@
 
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugModel;

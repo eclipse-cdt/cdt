@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

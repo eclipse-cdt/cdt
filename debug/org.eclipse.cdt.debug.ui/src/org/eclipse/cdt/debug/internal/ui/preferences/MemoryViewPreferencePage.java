@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -15,15 +14,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 /**
  * 

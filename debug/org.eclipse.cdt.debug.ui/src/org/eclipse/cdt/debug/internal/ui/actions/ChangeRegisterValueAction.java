@@ -13,7 +13,6 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;

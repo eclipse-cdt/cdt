@@ -5,7 +5,6 @@
  */
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
-import org.eclipse.cdt.debug.internal.ui.ICDebugUIInternalConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;

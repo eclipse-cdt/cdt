@@ -12,17 +12,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.internal.core.CDebugUtils;
-import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 /**

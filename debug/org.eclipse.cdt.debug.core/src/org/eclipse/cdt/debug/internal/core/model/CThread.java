@@ -6,13 +6,11 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
@@ -23,13 +21,12 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
-//import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;

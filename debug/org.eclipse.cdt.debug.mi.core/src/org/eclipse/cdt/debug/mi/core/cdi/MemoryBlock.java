@@ -121,7 +121,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 			MemoryBlock[] blocks = mgr.listMemoryBlocks();
 			for (int i = 0; i < blocks.length; i++) {
 				if (! blocks[i].equals(this) && blocks[i].contains(addresses)) {
-					blocks[i].setDirty(false);
+					blocks[i].setDirty(true);
 					mgr.update(blocks[i], null);
 				}
 			}

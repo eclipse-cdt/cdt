@@ -166,12 +166,12 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			data= CPluginImages.DESC_OVR_ABSTRACT.getImageData();
 			x-= data.width;
 			drawImage(data, x, 0);
-		}
-		if ((fFlags & FINAL) != 0) {
-			data= CPluginImages.DESC_OVR_FINAL.getImageData();
+		}*/
+		if ((fFlags & CONSTANT) != 0) {
+			data= CPluginImages.DESC_OVR_CONSTANT.getImageData();
 			x-= data.width;
 			drawImage(data, x, 0);
-		}*/
+		}
 		if ((fFlags & STATIC) != 0) {
 			data= CPluginImages.DESC_OVR_STATIC.getImageData();
 			x-= data.width;

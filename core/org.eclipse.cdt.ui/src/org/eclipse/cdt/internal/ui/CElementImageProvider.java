@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -211,6 +212,16 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_UNION;
 
 			case ICElement.C_FIELD:
+			IField  field = (IField)celement;
+			switch(field.getVisibility()){
+				case IMember.V_PUBLIC:
+					return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+				case IMember.V_PROTECTED:
+					return CPluginImages.DESC_OBJS_PROTECTED_FIELD;
+				case IMember.V_PRIVATE:
+					return CPluginImages.DESC_OBJS_PRIVATE_FIELD;
+			}
+			
 			case ICElement.C_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 
@@ -258,6 +269,8 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_UNION;
 
 			case ICElement.C_FIELD:
+				return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+
 			case ICElement.C_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 

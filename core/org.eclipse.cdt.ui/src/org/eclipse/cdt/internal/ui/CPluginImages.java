@@ -48,9 +48,12 @@ public class CPluginImages {
 	public static final String IMG_OBJS_STRUCT= NAME_PREFIX + "struct_obj.gif";
 	public static final String IMG_OBJS_UNION= NAME_PREFIX + "union_obj.gif";
 	public static final String IMG_OBJS_FUNCTION= NAME_PREFIX + "function_obj.gif";
-	public static final String IMG_OBJS_PUBLIC_METHOD= NAME_PREFIX + "public_m.gif";
-	public static final String IMG_OBJS_PROTECTED_METHOD= NAME_PREFIX + "protected_m.gif";
-	public static final String IMG_OBJS_PRIVATE_METHOD= NAME_PREFIX + "private_m.gif";	
+	public static final String IMG_OBJS_PUBLIC_METHOD= NAME_PREFIX + "method_public_obj.gif";
+	public static final String IMG_OBJS_PROTECTED_METHOD= NAME_PREFIX + "method_protected_obj.gif";
+	public static final String IMG_OBJS_PRIVATE_METHOD= NAME_PREFIX + "method_private_obj.gif";	
+	public static final String IMG_OBJS_PUBLIC_FIELD= NAME_PREFIX + "field_public_obj.gif";
+	public static final String IMG_OBJS_PROTECTED_FIELD= NAME_PREFIX + "field_protected_obj.gif";
+	public static final String IMG_OBJS_PRIVATE_FIELD= NAME_PREFIX + "field_private_obj.gif";	
 	public static final String IMG_OBJS_DECLARATION= NAME_PREFIX + "cdeclaration_obj.gif";
 	public static final String IMG_OBJS_INCLUDE= NAME_PREFIX + "include_obj.gif";
 	public static final String IMG_OBJS_MACRO= NAME_PREFIX + "define_obj.gif";
@@ -75,7 +78,10 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_FUNCTION= createManaged(T_OBJ, IMG_OBJS_FUNCTION);
 	public static final ImageDescriptor DESC_OBJS_PUBLIC_METHOD= createManaged(T_OBJ, IMG_OBJS_PUBLIC_METHOD);
 	public static final ImageDescriptor DESC_OBJS_PROTECTED_METHOD= createManaged(T_OBJ, IMG_OBJS_PROTECTED_METHOD);
-	public static final ImageDescriptor DESC_OBJS_PRIVATE_METHOD= createManaged(T_OBJ, IMG_OBJS_PRIVATE_METHOD);	
+	public static final ImageDescriptor DESC_OBJS_PRIVATE_METHOD= createManaged(T_OBJ, IMG_OBJS_PRIVATE_METHOD);
+	public static final ImageDescriptor DESC_OBJS_PUBLIC_FIELD= createManaged(T_OBJ, IMG_OBJS_PUBLIC_FIELD);
+	public static final ImageDescriptor DESC_OBJS_PROTECTED_FIELD= createManaged(T_OBJ, IMG_OBJS_PROTECTED_FIELD);
+	public static final ImageDescriptor DESC_OBJS_PRIVATE_FIELD= createManaged(T_OBJ, IMG_OBJS_PRIVATE_FIELD);			
 	public static final ImageDescriptor DESC_OBJS_DECLARARION= createManaged(T_OBJ, IMG_OBJS_DECLARATION);
 	public static final ImageDescriptor DESC_OBJS_INCLUDE= createManaged(T_OBJ, IMG_OBJS_INCLUDE);
 	public static final ImageDescriptor DESC_OBJS_MACRO= createManaged(T_OBJ, IMG_OBJS_MACRO);
@@ -103,7 +109,8 @@ public class CPluginImages {
 	public static final String IMG_EDIT_PROPERTIES= NAME_PREFIX + "prop_edt.gif";
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	
-	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif");//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif");
+	public static final ImageDescriptor DESC_OVR_CONSTANT= create(T_OVR, "c_ovr.gif");
 
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif");
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif");

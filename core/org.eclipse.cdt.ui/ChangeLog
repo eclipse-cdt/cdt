@@ -1,4 +1,7 @@
-2004-06-06 Chris Wiebe
+2004-07-06 Hoda Amer
+	Fix for PR 69330 : Outline is flickering.
+	
+2004-07-06 Chris Wiebe
 	This patch fixes a problem when using the class wizard, where the system
 	include separator '<' was used for project-relative include path instead
 	of '"'.

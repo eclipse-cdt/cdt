@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -30,7 +31,7 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setArguments(String)
 	 */
-	public void setArguments(String[] args) {
+	public void setArguments(String[] args) throws CDIException {
 		if (args == null || args.length == 0) {
 			return;
 		}
@@ -41,17 +42,17 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 			mi.postCommand(arguments);
 			MIInfo info = arguments.getMIInfo();
 			if (info == null) {
-				//throw new CDIException("No answer");
+				throw new CDIException("Unable to set arguments: target is not responding");
 			}
 		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
+			throw new CDIException("Unable to set arguments: " + e.getMessage());
 		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setEnvironment(Properties)
 	 */
-	public void setEnvironment(Properties props) {
+	public void setEnvironment(Properties props) throws CDIException {
 		if (props == null) {
 			return;
 		}
@@ -73,10 +74,10 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 				mi.postCommand(set);
 				MIInfo info = set.getMIInfo();
 				if (info == null) {
-					//throw new CDIException("No answer");
+					throw new CDIException("Unable to set environment: target is not responding");
 				}
 			} catch (MIException e) {
-				//throw new CDIException(e.getMessage());
+				throw new CDIException("Unable to set environment: " + e.getMessage());
 			}
 		}
 	}
@@ -84,7 +85,7 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setWorkingDirectory(String)
 	 */
-	public void setWorkingDirectory(String wd) {
+	public void setWorkingDirectory(String wd) throws CDIException {
 		if (wd == null || wd.length() == 0) {
 			return;
 		}
@@ -95,10 +96,10 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 			mi.postCommand(cd);
 			MIInfo info = cd.getMIInfo();
 			if (info == null) {
-				//throw new CDIException("No answer");
+				throw new CDIException("Unable to set working directory: target is not responding");
 			}
 		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
+			throw new CDIException("Unable to set working directory: " + e.getMessage());
 		}
 	}
 

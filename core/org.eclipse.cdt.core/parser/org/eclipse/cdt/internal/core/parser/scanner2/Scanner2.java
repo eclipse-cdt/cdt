@@ -819,7 +819,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @return
 	 */
 	private final boolean isLimitReached() {
-		if( offsetBoundary == -1 ) return false;
+		if( offsetBoundary == -1 || bufferStackPos != 0 ) return false;
 		if( bufferPos[bufferStackPos] == offsetBoundary - 1 ) return true;
 		if( bufferPos[bufferStackPos] == offsetBoundary )
 		{
@@ -1884,8 +1884,12 @@ public class Scanner2 implements IScanner, IScannerData {
 					break;
 				case '#' :
 				    if( stopAtPound ){
-					    --bufferPos[bufferStackPos];
-					    return false;
+						if( buffer[ bufferPos[bufferStackPos] + 1] != '#' ){
+						    --bufferPos[bufferStackPos];
+						    return false;
+						} else {
+							++bufferPos[ bufferStackPos ];
+						}
 				    }
 				    break;
 			}

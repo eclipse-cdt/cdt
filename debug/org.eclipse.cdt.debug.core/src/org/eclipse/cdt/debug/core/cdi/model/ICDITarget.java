@@ -34,16 +34,6 @@ public interface ICDITarget extends ICDIObject {
 	Process getProcess();
 
 	/**
-	 * Returns the shared libraries loaded in this target. 
-	 * An empty collection is returned if no shared libraries
-	 * are loaded in this target. 
-	 * 
-	 * @return a collection of shared libraries
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDISharedLibrary[] getSharedLibraries() throws CDIException;
-
-	/**
 	 * Returns the threads contained in this target. 
 	 * An empty collection is returned if this target contains no 
 	 * threads.

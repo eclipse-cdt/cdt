@@ -279,6 +279,16 @@ public class PreferenceConstants {
 	public static final String OUTLINE_GROUP_INCLUDES= "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls if the Outline view.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @see #LINK_PACKAGES_TO_EDITOR
+	 */
+	public static final String OUTLINE_GROUP_NAMESPACES= "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls if the CView.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.

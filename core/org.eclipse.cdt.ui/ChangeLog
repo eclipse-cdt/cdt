@@ -1,3 +1,16 @@
+2004-09-11 Alain Magloire
+
+	Allow grouping of namespace in the outliner.
+	See the appereance namespace.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinerProvider.java
+	* src/org/eclipse/cdt/internal/ui/preferences/AppearancePreferencePage.java
+	* src/org/eclipse/cdt/ui/CElementGrouping.java
+	* src/org/eclipse/cdt/ui/CUIPreferenceInitializer.java
+	* src/org/eclipse/cdt/ui/NamespacesGrouping.java
+	* src/org/eclipse/cdt/ui/PreferenceConstants.java
+
 2004-09-09 David Inglis
 
 	Fix large gap between image and text in CView and ProjectView

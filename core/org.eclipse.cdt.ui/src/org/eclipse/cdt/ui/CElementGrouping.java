@@ -42,7 +42,7 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 	public String getLabel(Object object) {
 		switch (type) {
 			case INCLUDES_GROUPING:
-				return "include directives";
+				return "include directives"; //$NON-NLS-1$
 		}
 		return super.getLabel(object);
 	}
@@ -54,6 +54,8 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 		switch (type) {
 			case INCLUDES_GROUPING:
 				return CPluginImages.DESC_OBJS_INCCONT;
+			case NAMESPACE_GROUPING:
+				return CPluginImages.DESC_OBJS_NAMESPACE;
 		}
 		return super.getImageDescriptor(object);
 	}

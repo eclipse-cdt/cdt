@@ -6,7 +6,9 @@ package org.eclipse.cdt.internal.ui;
  */
  
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ISourceRoot;
@@ -28,6 +31,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IncludesGrouping;
+import org.eclipse.cdt.ui.NamespacesGrouping;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -64,6 +68,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fProvideMembers= false;
 	protected boolean fProvideWorkingCopy= false;
 	protected boolean fIncludesGrouping= false;
+	protected boolean fNamespacesGrouping= false;
 	
 	public BaseCElementContentProvider() {
 		this(false, false);
@@ -120,6 +125,22 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 */
 	public void setIncludesGrouping(boolean b) {
 	    fIncludesGrouping = b;
+	}
+
+	/**
+	 * Can elements be group.
+	 * @return
+	 */
+	public boolean areNamespacesGroup() {
+	    return fNamespacesGrouping;
+	}
+
+	/**
+	 * Allow Elements to be group.
+	 * @param b
+	 */
+	public void setNamespacesGrouping(boolean b) {
+	    fNamespacesGrouping = b;
 	}
 
 	/* (non-Cdoc)
@@ -324,12 +345,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 
 	protected Object[] getTranslationUnitChildren(ITranslationUnit unit) throws CModelException {
+		Object[] children = unit.getChildren();
 		if (fIncludesGrouping) {
 			boolean hasInclude = false;
-			ICElement[] children = unit.getChildren();
 			ArrayList list = new ArrayList(children.length);
 			for (int i = 0; i < children.length; i++) {
-				if (children[i].getElementType() != ICElement.C_INCLUDE) {
+				if (!(children[i] instanceof IInclude)) {
 					list.add(children[i]);
 				} else {
 					hasInclude = true;
@@ -338,9 +359,42 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			if (hasInclude) {
 				list.add (0, new IncludesGrouping(unit));
 			}
-			return list.toArray();
+			children = list.toArray();
 		}
-		return unit.getChildren();
+		if (fNamespacesGrouping) {
+			// check if there is another namespace with the same name for the same parent			
+			List list = new ArrayList(children.length);
+			Map map = new HashMap();
+			for (int i = 0; i < children.length; ++i) {
+				if (children[i] instanceof INamespace) {
+					INamespace n1 = (INamespace)children[i];
+					NamespacesGrouping namespacesGrouping = (NamespacesGrouping)map.get(n1.getElementName());
+					if (namespacesGrouping == null) {
+						for (int j = i + 1; j < children.length; ++j) {
+							if (children[j] instanceof INamespace) {
+								INamespace n2 = (INamespace)children[j];
+								if (n1.getElementName().equals(n2.getElementName())) {
+									if (namespacesGrouping == null) {
+										namespacesGrouping = new NamespacesGrouping(unit, n1);
+										map.put(n1.getElementName(), namespacesGrouping);
+									}
+									namespacesGrouping.addNamespace(n2);
+								}
+							}
+						}
+						if (namespacesGrouping == null) {
+							list.add(n1);
+						} else {
+							list.add(namespacesGrouping);
+						}
+					}
+				} else {
+					list.add(children[i]);
+				}
+			}
+			children = list.toArray();
+		}
+		return children;
 	}
 
 	protected Object[] getCResources(ICContainer container) throws CModelException {
@@ -359,7 +413,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return concatenate(children, objects);
 	}
 
-	private Object[] getResources(IProject project) {
+	protected Object[] getResources(IProject project) {
 		try {
 			return project.members();
 		} catch (CoreException e) {
@@ -367,7 +421,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return NO_CHILDREN;
 	}
 
-	private Object[] getResources(IFolder folder) throws CModelException {
+	protected Object[] getResources(IFolder folder) throws CModelException {
 		ICProject cproject = CoreModel.getDefault().create(folder.getProject());
 		Object[] members = null;
 		try {

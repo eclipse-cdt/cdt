@@ -43,10 +43,12 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 
 	private static final String SHOW_TU_CHILDREN= PreferenceConstants.PREF_SHOW_CU_CHILDREN;
 	private static final String OUTLINE_GROUP_INCLUDES = PreferenceConstants.OUTLINE_GROUP_INCLUDES;
+	private static final String OUTLINE_GROUP_NAMESPACES = PreferenceConstants.OUTLINE_GROUP_NAMESPACES;
 	private static final String CVIEW_GROUP_INCLUDES = PreferenceConstants.CVIEW_GROUP_INCLUDES;
 
 	private SelectionButtonDialogField fShowTUChildren;
 	private SelectionButtonDialogField fOutlineGroupIncludes;
+	private SelectionButtonDialogField fOutlineGroupNamespaces;
 	private SelectionButtonDialogField fCViewGroupIncludes;
 	
 	public AppearancePreferencePage() {
@@ -67,6 +69,10 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupIncludes.setDialogFieldListener(listener);
 		fOutlineGroupIncludes.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.outlineGroupIncludes.label")); //$NON-NLS-1$
 
+		fOutlineGroupNamespaces= new SelectionButtonDialogField(SWT.CHECK);
+		fOutlineGroupNamespaces.setDialogFieldListener(listener);
+		fOutlineGroupNamespaces.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.outlineGroupNamespaces.label")); //$NON-NLS-1$
+
 		fCViewGroupIncludes= new SelectionButtonDialogField(SWT.CHECK);
 		fCViewGroupIncludes.setDialogFieldListener(listener);
 		fCViewGroupIncludes.setLabelText(PreferencesMessages.getString("AppearancePreferencePage.cviewGroupIncludes.label")); //$NON-NLS-1$
@@ -78,6 +84,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fShowTUChildren.setSelection(prefs.getBoolean(SHOW_TU_CHILDREN));
 		fCViewGroupIncludes.setSelection(prefs.getBoolean(CVIEW_GROUP_INCLUDES));
 		fOutlineGroupIncludes.setSelection(prefs.getBoolean(OUTLINE_GROUP_INCLUDES));
+		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(OUTLINE_GROUP_NAMESPACES));
 	}
 	
 	/*
@@ -105,6 +112,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fShowTUChildren.doFillIntoGrid(result, nColumns);
 		fCViewGroupIncludes.doFillIntoGrid(result, nColumns);				
 		fOutlineGroupIncludes.doFillIntoGrid(result, nColumns);
+		fOutlineGroupNamespaces.doFillIntoGrid(result, nColumns);
 
 		new Separator().doFillIntoGrid(result, nColumns);
 		
@@ -151,6 +159,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		prefs.setValue(SHOW_TU_CHILDREN, fShowTUChildren.isSelected());
 		prefs.setValue(CVIEW_GROUP_INCLUDES, fCViewGroupIncludes.isSelected());
 		prefs.setValue(OUTLINE_GROUP_INCLUDES, fOutlineGroupIncludes.isSelected());
+		prefs.setValue(OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
 		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}	
@@ -163,6 +172,7 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fShowTUChildren.setSelection(prefs.getDefaultBoolean(SHOW_TU_CHILDREN));
 		fCViewGroupIncludes.setSelection(prefs.getDefaultBoolean(CVIEW_GROUP_INCLUDES));
 		fOutlineGroupIncludes.setSelection(prefs.getDefaultBoolean(OUTLINE_GROUP_INCLUDES));
+		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(OUTLINE_GROUP_NAMESPACES));
 		super.performDefaults();
 	}
 }

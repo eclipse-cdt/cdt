@@ -112,6 +112,17 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 						}
 					}
 				}
+			} else if (prop.equals(PreferenceConstants.OUTLINE_GROUP_NAMESPACES)) {
+				Object newValue = event.getNewValue();
+				if (newValue instanceof Boolean) {
+					boolean value = ((Boolean)newValue).booleanValue();
+					if (areNamespacesGroup() != value) {
+						setNamespacesGrouping(value);
+						if (fOutliner != null) {
+							fOutliner.contentUpdated();
+						}
+					}
+				}
 			}
 		}
 

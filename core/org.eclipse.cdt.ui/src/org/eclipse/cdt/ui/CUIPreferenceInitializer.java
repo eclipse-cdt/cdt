@@ -35,7 +35,6 @@ public class CUIPreferenceInitializer extends AbstractPreferenceInitializer {
 
         PreferenceConstants.initializeDefaultValues(store);
         EditorsUI.useAnnotationsPreferencePage(store);
-        PreferenceConstants.initializeDefaultValues(store);
         EditorsUI.useAnnotationsPreferencePage(store);
 		AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(store);	
 		CPluginPreferencePage.initDefaults(store);

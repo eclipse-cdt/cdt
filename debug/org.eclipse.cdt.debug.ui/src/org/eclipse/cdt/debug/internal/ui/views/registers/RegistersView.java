@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -205,6 +206,29 @@ public class RegistersView extends AbstractDebugEventHandlerView
 
 	protected void setViewerInput( IStructuredSelection ssel )
 	{
+		IStackFrame frame = null;
+		if ( ssel.size() == 1 )
+		{
+			Object input = ssel.getFirstElement();
+			if ( input instanceof IStackFrame )
+			{
+				frame = (IStackFrame)input;
+			}
+		}
+
+		Object current = getViewer().getInput();
+		if ( current == null && frame == null )
+		{
+			return;
+		}
+
+		if ( current != null && current.equals( frame ) )
+		{
+			return;
+		}
+
+		showViewer();
+		getViewer().setInput( frame );
 	}
 
 	/**

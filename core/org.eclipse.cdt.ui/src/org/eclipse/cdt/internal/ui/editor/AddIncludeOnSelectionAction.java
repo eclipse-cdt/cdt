@@ -116,7 +116,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 
 	}
 	
-	private ITranslationUnit getTranslationUnit () {
+	protected ITranslationUnit getTranslationUnit () {
 		ITranslationUnit unit = null;
 		if (fEditor != null) {
 			IEditorInput editorInput= fEditor.getEditorInput();
@@ -222,6 +222,13 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				fs[0] = CCompletionContributorManager.getDefault().getFunctionInfo(name);
 			}
 		};
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
+		} catch (InvocationTargetException e) {
+			ExceptionHandler.handle(e, getShell(), CEditorMessages.getString("AddIncludeOnSelection.error.message1"), null); //$NON-NLS-1$
+		} catch (InterruptedException e) {
+			// Do nothing. Operation has been canceled.
+		}
 		return fs[0];
 	}
 

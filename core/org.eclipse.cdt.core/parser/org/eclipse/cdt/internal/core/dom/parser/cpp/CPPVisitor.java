@@ -465,8 +465,10 @@ public class CPPVisitor {
 			        return function;
 			    }
 			} 
-			
-			if( scope instanceof ICPPClassScope ){
+			IASTSimpleDeclaration simpleDecl = ( parent instanceof IASTSimpleDeclaration ) ? (IASTSimpleDeclaration)parent : null;
+			if( simpleDecl != null && simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
+				binding = new CPPTypedef( name );
+			} else if( scope instanceof ICPPClassScope ){
 				if( isConstructor( scope, declarator) )
 					binding = template ? (ICPPConstructor)  new CPPConstructorTemplate( name )
 									   : new CPPConstructor( (ICPPASTFunctionDeclarator) declarator );

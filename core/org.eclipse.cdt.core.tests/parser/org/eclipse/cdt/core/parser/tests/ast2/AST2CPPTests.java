@@ -3308,5 +3308,15 @@ public class AST2CPPTests extends AST2BaseTest {
         
         assertNotNull( dtor.getInitializer() );
     }
+    
+    public void testTypedefFunction() throws Exception {
+        IASTTranslationUnit tu = parse( "typedef int foo (int);", ParserLanguage.CPP ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	IBinding binding = col.getName(0).resolveBinding();
+    	assertTrue( binding instanceof ITypedef );
+    	assertTrue( ((ITypedef)binding).getType() instanceof IFunctionType );
+    }
 }
 

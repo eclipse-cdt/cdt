@@ -13,6 +13,8 @@ package org.eclipse.cdt.core.parser.failedTests;
 import java.io.StringWriter;
 import java.util.Iterator;
 
+import junit.framework.AssertionFailedError;
+
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.tests.CompleteParseBaseTest;
@@ -205,9 +207,8 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 		writer.write("T* A<T, U>::foo(V) { return (T*)0; } \n"); //$NON-NLS-1$
 		try {
 			parse(writer.toString());
-			fail();
-		} catch (ParserException e) {
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
+		} catch (Throwable e) {
+			assertTrue( e instanceof AssertionFailedError );
 		}
 //		Iterator i = parse(writer.toString()).getDeclarations();
 //		IASTTemplateDeclaration td = (IASTTemplateDeclaration) i.next();

@@ -72,7 +72,6 @@ public class CModelBuilder {
 	private org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
 	private Map newElements;
 	private IQuickParseCallback quickParseCallback; 
-	private IASTCompilationUnit compilationUnit;
 	// indicator if the unit has parse errors
 	private boolean hasNoErrors = false;
 
@@ -203,7 +202,7 @@ public class CModelBuilder {
 		long startTime = System.currentTimeMillis();
 		try
 		{
-			compilationUnit = parse(quickParseMode, true);		
+			parse(quickParseMode, true);		
 		}
 			
 		catch( ParserException e )

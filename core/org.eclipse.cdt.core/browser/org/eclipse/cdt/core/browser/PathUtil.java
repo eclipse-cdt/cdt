@@ -108,26 +108,28 @@ public class PathUtil {
         if (provider != null) {
             IScannerInfo info = provider.getScannerInformation(project);
             if (info != null) {
-                String[] includePaths = info.getIncludePaths();
-                IPath relativePath = null;
-                int mostSegments = 0;
-                for (int i = 0; i < includePaths.length; ++i) {
-                    IPath includePath = new Path(includePaths[i]);
-                    if (includePath.isPrefixOf(fullPath)) {
-                        int segments = includePath.matchingFirstSegments(fullPath);
-                        if (segments > mostSegments) {
-                            relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
-                            mostSegments = segments;
-                        }
-                    }
-                }
-                if (relativePath != null)
-                    return relativePath;
+                return makeRelativePathToIncludes(fullPath, info.getIncludePaths());
             }
         }
         return null;
     }
     
+    public static IPath makeRelativePathToIncludes(IPath fullPath, String[] includePaths) {
+        IPath relativePath = null;
+        int mostSegments = 0;
+        for (int i = 0; i < includePaths.length; ++i) {
+            IPath includePath = new Path(includePaths[i]);
+            if (includePath.isPrefixOf(fullPath)) {
+                int segments = includePath.matchingFirstSegments(fullPath);
+                if (segments > mostSegments) {
+                    relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
+                    mostSegments = segments;
+                }
+            }
+        }
+        return relativePath;
+    }
+
     public static IProject getEnclosingProject(IPath fullPath) {
 		IWorkspaceRoot root = getWorkspaceRoot();
 		if (root != null) {

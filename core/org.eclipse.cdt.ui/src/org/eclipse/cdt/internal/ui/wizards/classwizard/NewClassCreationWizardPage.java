@@ -12,10 +12,12 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -32,6 +34,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -133,7 +137,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	private NewClassCodeGenerator fCodeGenerator = null;
 
 	//TODO this should be a prefs option
-	private boolean fWarnIfBaseClassNotInPath = false;
+	private boolean fErrorIfBaseClassNotInPath = true;
 	
 	public NewClassCreationWizardPage() {
 		super(PAGE_NAME);
@@ -1220,26 +1224,58 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	protected IStatus baseClassesChanged() {
 		StatusInfo status = new StatusInfo();
-		IProject project = getCurrentProject();
-	    if (project != null) {
-	        if (fWarnIfBaseClassNotInPath) {
+        if (fErrorIfBaseClassNotInPath) {
+			IPath folderPath = getSourceFolderFullPath();
+			if (folderPath != null) {
 			    // make sure all classes belong to the project
 			    IBaseClassInfo[] baseClasses = getBaseClasses();
-			    for (int i = 0; i < baseClasses.length; ++i) {
-			        ITypeInfo baseType = baseClasses[i].getType();
-			        IProject baseProject = baseType.getEnclosingProject();
-			        if (baseProject == null || !baseProject.equals(project)) {
-			            ITypeReference ref = baseType.getResolvedReference();
-			            if (ref == null || PathUtil.makeRelativePathToProjectIncludes(ref.getLocation(), project) == null) {
-							status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.BaseClassNotExistsInProject", baseType.getQualifiedTypeName().toString())); //$NON-NLS-1$
-							return status;
+			    if (baseClasses != null && baseClasses.length > 0) {
+					// filter out classes not reachable from current source folder
+			        IProject project = PathUtil.getEnclosingProject(folderPath);
+			        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+			        if (provider != null) {
+				        //TODO get the scanner info for the actual source folder
+			            IScannerInfo info = provider.getScannerInformation(project);
+			            if (info != null) {
+			                String[] includePaths = info.getIncludePaths();
+					        for (int i = 0; i < baseClasses.length; ++i) {
+					            ITypeInfo baseType = baseClasses[i].getType();
+					            if (!isTypeReachable(baseType, project, includePaths)) {
+									status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.BaseClassNotExistsInProject", baseType.getQualifiedTypeName().toString())); //$NON-NLS-1$
+									return status;
+					            }
+					        }
 			            }
 			        }
-			    }
+				}
 	        }
 	    }
 		return status;
 	}
+
+	private boolean isTypeReachable(ITypeInfo type, IProject project, String[] includePaths) {
+        IProject baseProject = type.getEnclosingProject();
+		if (baseProject != null) {
+		    if (baseProject.equals(project)) {
+		        return true;
+		    } else {
+		        ITypeReference ref = type.getResolvedReference();
+		        for (int i = 0; i < includePaths.length; ++i) {
+		            IPath includePath = new Path(includePaths[i]);
+		            if (ref != null) {
+		                if (includePath.isPrefixOf(ref.getLocation()))
+		                    return true;
+		            } else {
+		                // we don't have the real location, so just check the project path
+		                if (baseProject.getLocation().isPrefixOf(includePath))
+		                    return true;
+		            }
+		        }
+		    }
+		}
+		return false;
+	}
+
 
 	/**
 	 * This method is a hook which gets called after the method stubs
@@ -2074,12 +2110,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		return null;
 	}
 	
-	private final int[] CLASS_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
-	
 	void chooseBaseClasses() {
 	    prepareTypeCache();
 	    
-		ITypeInfo[] elements = AllTypesCache.getTypes(new TypeSearchScope(true), CLASS_TYPES);
+		ITypeInfo[] elements = getAllReachableTypes();
 		if (elements == null || elements.length == 0) {
 			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$
 			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.message"); //$NON-NLS-1$
@@ -2100,6 +2134,36 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		    // restore the old contents
 		    fBaseClassesDialogField.setElements(oldContents);
 		}
+	}
+	
+	private final int[] CLASS_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
+	
+	private ITypeInfo[] getAllReachableTypes() {
+		ITypeInfo[] elements = AllTypesCache.getTypes(new TypeSearchScope(true), CLASS_TYPES);
+		if (elements != null && elements.length > 0) {
+			// filter out classes not reachable from current source folder
+			IPath folderPath = getSourceFolderFullPath();
+			if (folderPath != null) {
+		        IProject project = PathUtil.getEnclosingProject(folderPath);
+		        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+		        if (provider != null) {
+			        //TODO get the scanner info for the actual source folder
+		            IScannerInfo info = provider.getScannerInformation(project);
+		            if (info != null) {
+		                String[] includePaths = info.getIncludePaths();
+				        List filteredTypes = new ArrayList();
+				        for (int i = 0; i < elements.length; ++i) {
+				            ITypeInfo baseType = elements[i];
+				            if (isTypeReachable(baseType, project, includePaths)) {
+					            filteredTypes.add(baseType);
+					        }
+				        }
+					    return (ITypeInfo[]) filteredTypes.toArray(new ITypeInfo[filteredTypes.size()]);
+		            }
+		        }
+			}
+		}
+		return elements;
 	}
 
 	IPath chooseHeaderFile() {

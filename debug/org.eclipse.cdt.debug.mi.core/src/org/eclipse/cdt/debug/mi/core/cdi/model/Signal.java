@@ -70,6 +70,6 @@ public class Signal extends CObject implements ICDISignal {
 	 * Continue program giving it signal specified by the argument.
 	 */
 	public void signal() throws CDIException {
-		mgr.signal(this);
+		getTarget().signal(this);
 	}
 }

@@ -1,9 +1,0 @@
-The build is available at
-
-	http://update.eclipse.org/tools/cdt/updates/builds/2.0
-
-Cheers,
-dschaefer2, the buildmaster...
-
---- Compile logs ---
-

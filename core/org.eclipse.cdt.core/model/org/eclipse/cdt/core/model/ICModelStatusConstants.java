@@ -161,25 +161,22 @@ public interface ICModelStatusConstants {
 	 * Status constant indicating that a <code>DOMException</code>
 	 * occurred. 
 	 */
-	public static final int DOM_EXCEPTION = 986;
+	public static final int PARSER_EXCEPTION = 986;
 
 	/**
-	 * Status constant indicating that a <code>TargetException</code>
-	 * occurred. 
+	 * Variable path is invalid.
 	 */
-	public static final int TARGET_EXCEPTION = 987;
+	public static final int VARIABLE_PATH_UNBOUND = 987;
 
 	/**
-	 * Status constant indicating that the C builder
-	 * could not be initialized.
+	 * Container Entry could not be resolved.
 	 */
-	public static final int BUILDER_INITIALIZATION_ERROR = 990;
+	public static final int INVALID_CONTAINER_ENTRY = 988;
 
 	/**
-	 * Status constant indicating that the C builder's last built state
-	 * could not be serialized or deserialized.
+	 * Cycle when resolving the entries.
 	 */
-	public static final int BUILDER_SERIALIZATION_ERROR = 991;
+	public static final int PATHENTRY_CYCLE = 989;
 
 	/**
 	 * Status constant indicating that an error was encountered while
@@ -213,7 +210,7 @@ public interface ICModelStatusConstants {
 	 */
 	 public static final int INVALID_PROJECT = 997;
 
-	 //public static final int INVALID_NAMESPACE = 998;
+	 public static final int INVALID_NAMESPACE = 998;
 
 	/**
 	 * Status indicating that the corresponding resource has no local contents yet.
@@ -222,8 +219,4 @@ public interface ICModelStatusConstants {
 	 */
 	 public static final int NO_LOCAL_CONTENTS = 999;
 
-	///**
-	 //* Status constant indicating that a classpath entry was invalid
-	 //*/
-	//public static final int INVALID_CLASSPATH = 964;
 }

@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -37,11 +38,14 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * if no <code>String</code> is involved.
 	 */
 	protected String fString;
+	protected final static String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	/**
 	 * Empty children
 	 */
 	protected final static IStatus[] fgEmptyChildren = new IStatus[] {};
 	protected IStatus[] fChildren= fgEmptyChildren;
+	protected final static String DEFAULT_STRING= "CModelStatus"; //$NON-NLS-1$;
 
 	/**
 	 * Singleton OK object
@@ -53,15 +57,14 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus() {
 		// no code for an multi-status
-		super(ERROR, CCorePlugin.PLUGIN_ID, 0, "CModelStatus", null); //$NON-NLS-1$
+		this(0);
 	}
 
 	/**
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code) {
-		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
-		fElements = CElement.NO_ELEMENTS;
+		this(code, CElement.NO_ELEMENTS);
 	}
 
 	/**
@@ -69,9 +72,9 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * elements.
 	 */
 	public CModelStatus(int code, ICElement[] elements) {
-		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, DEFAULT_STRING, null);
 		fElements = elements;
-		fPath= null;
+		fPath= Path.EMPTY;
 	}
 
 	/**
@@ -82,25 +85,17 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	}
 
 	public CModelStatus(int severity, int code, String string) {
-		super(severity, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(severity, CCorePlugin.PLUGIN_ID, code, DEFAULT_STRING, null);
 		fElements = CElement.NO_ELEMENTS;
-		fPath= null;
+		fPath= Path.EMPTY;
 		fString = string;
 	}	
 
 	/**
 	 * Constructs an C model status with no corresponding elements.
 	 */
-	public CModelStatus(int code, Throwable throwable) {
-		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", throwable); //$NON-NLS-1$
-		fElements = CElement.NO_ELEMENTS;
-	}
-
-	/**
-	 * Constructs an C model status with no corresponding elements.
-	 */
 	public CModelStatus(int code, IPath path) {
-		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, DEFAULT_STRING, null);
 		fElements = CElement.NO_ELEMENTS;
 		fPath= path;
 	}
@@ -131,8 +126,16 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(CoreException coreException) {
-		super(ERROR, CCorePlugin.PLUGIN_ID, CORE_EXCEPTION, "CModelStatus", coreException); //$NON-NLS-1$
-		fElements= CElement.NO_ELEMENTS;
+		this(CORE_EXCEPTION, coreException);
+	}
+
+	/**
+	 * Constructs an C model status with no corresponding elements.
+	 */
+	public CModelStatus(int code, Throwable throwable) {
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, DEFAULT_STRING, throwable);
+		fElements = CElement.NO_ELEMENTS;
+		fPath = Path.EMPTY;
 	}
 
 	protected int getBits() {
@@ -165,23 +168,18 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				case CORE_EXCEPTION :
 					return CoreModelMessages.getFormattedString("status.coreException"); //$NON-NLS-1$
 
-				//case BUILDER_INITIALIZATION_ERROR:
-				//	return Util.bind("build.initializationError"); //$NON-NLS-1$
-
-				//case BUILDER_SERIALIZATION_ERROR:
-				//	return Util.bind("build.serializationError"); //$NON-NLS-1$
 
 				case DEVICE_PATH:
 					return CoreModelMessages.getFormattedString("status.cannotUseDeviceOnPath", getPath().toString()); //$NON-NLS-1$
 
-				//case DOM_EXCEPTION:
-				//	return Util.bind("status.JDOMError"); //$NON-NLS-1$
+				case PARSER_EXCEPTION:
+					return CoreModelMessages.getFormattedString("status.ParserError"); //$NON-NLS-1$
 
 				case ELEMENT_DOES_NOT_EXIST:
-					return CoreModelMessages.getFormattedString("element.doesNotExist",((ICElement)fElements[0]).toString()); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("element.doesNotExist", getFirstElementName()); //$NON-NLS-1$
 
 				case EVALUATION_ERROR:
-					return CoreModelMessages.getFormattedString("status.evaluationError", fString); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.evaluationError", getString()); //$NON-NLS-1$
 
 				case INDEX_OUT_OF_BOUNDS:
 					return CoreModelMessages.getFormattedString("status.indexOutOfBounds"); //$NON-NLS-1$
@@ -190,11 +188,11 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					return CoreModelMessages.getFormattedString("status.invalidContents"); //$NON-NLS-1$
 
 				case INVALID_DESTINATION:
-					return CoreModelMessages.getFormattedString("status.invalidDestination", ((ICElement)fElements[0]).toString()); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.invalidDestination", getFirstElementName()); //$NON-NLS-1$
 
 				case INVALID_ELEMENT_TYPES:
 					StringBuffer buff= new StringBuffer(CoreModelMessages.getFormattedString("operation.notSupported")); //$NON-NLS-1$
-					for (int i= 0; i < fElements.length; i++) {
+					for (int i = 0; i < fElements.length; i++) {
 						if (i > 0) {
 							buff.append(", "); //$NON-NLS-1$
 						}
@@ -203,10 +201,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					return buff.toString();
 
 				case INVALID_NAME:
-					return CoreModelMessages.getFormattedString("status.invalidName", fString); //$NON-NLS-1$
-
-				//case INVALID_PACKAGE:
-				//	return Util.bind("status.invalidPackage", string); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.invalidName", getString()); //$NON-NLS-1$
 
 				case INVALID_PATH:
 					if (fString != null) {
@@ -216,19 +211,19 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					}
 
 				case INVALID_PROJECT:
-					return CoreModelMessages.getFormattedString("status.invalidProject", fString); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.invalidProject", getString()); //$NON-NLS-1$
 
 				case INVALID_RESOURCE:
-					return CoreModelMessages.getFormattedString("status.invalidResource", fString); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.invalidResource", getString()); //$NON-NLS-1$
 
 				case INVALID_RESOURCE_TYPE:
-					return CoreModelMessages.getFormattedString("status.invalidResourceType", fString); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.invalidResourceType", getString()); //$NON-NLS-1$
 
 				case INVALID_SIBLING:
 					if (fString != null) {
-						return CoreModelMessages.getFormattedString("status.invalidSibling", fString); //$NON-NLS-1$
+						return CoreModelMessages.getFormattedString("status.invalidSibling", getString()); //$NON-NLS-1$
 					} else {
-						return CoreModelMessages.getFormattedString("status.invalidSibling", ((ICElement)fElements[0]).toString()); //$NON-NLS-1$
+						return CoreModelMessages.getFormattedString("status.invalidSibling", getFirstElementName()); //$NON-NLS-1$
 					}
 
 				case IO_EXCEPTION:
@@ -259,18 +254,13 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 					return CoreModelMessages.getFormattedString("operation.needString"); //$NON-NLS-1$
 
 				case PATH_OUTSIDE_PROJECT:
-					return CoreModelMessages.getFormattedString("operation.pathOutsideProject", new String[]{fString, ((ICElement)fElements[0]).toString()}); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("operation.pathOutsideProject", new String[]{getString(), getFirstElementName()}); //$NON-NLS-1$
 
 				case READ_ONLY:
-					ICElement element = fElements[0];
-					String name = element.getElementName();
-					return CoreModelMessages.getFormattedString("status.readOnly", name); //$NON-NLS-1$
+					return CoreModelMessages.getFormattedString("status.readOnly", getFirstElementName()); //$NON-NLS-1$
 
 				case RELATIVE_PATH:
 					return CoreModelMessages.getFormattedString("operation.needAbsolutePath", getPath().toString()); //$NON-NLS-1$
-
-				case TARGET_EXCEPTION:
-					return CoreModelMessages.getFormattedString("status.targetException"); //$NON-NLS-1$
 
 				case UPDATE_CONFLICT:
 					return CoreModelMessages.getFormattedString("status.updateConflict"); //$NON-NLS-1$
@@ -278,52 +268,21 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 				case NO_LOCAL_CONTENTS :
 					return CoreModelMessages.getFormattedString("status.noLocalContents", getPath().toString()); //$NON-NLS-1$
 
-				//case CP_CONTAINER_PATH_UNBOUND:
-				//	element = (ICElement)fElements[0];
-					//PathEContainerInitializer initializer = CoreModel.getPathEntryContainerInitializer(this.path.segment(0));
-					//String description = null;
-					//if (initializer != null) description = initializer.getDescription(this.path, javaProject);
-					//if (description == null) description = path.makeRelative().toString();
-				//	return CoreModelMessages.getFormattedString("pathentry.unboundContainerPath", element.getElementName()); //$NON-NLS-1$
+				case INVALID_CONTAINER_ENTRY:
+					return CoreModelMessages.getFormattedString("pathentry.invalidContainer", new String[] {getString(), getFirstElementName()}); //$NON-NLS-1$
 
-				//case INVALID_CP_CONTAINER_ENTRY:
-				//	element = (ICElement)fElements[0];
-					//IPathEntryContainer container = null;
-					//description = null;
-					//try {
-					//	container = CoreModel.getPathEntryContainer(path, javaProject);
-					//} catch(CModelException e){
-						// project doesn't exist: ignore
-					//}
-					//if (container == null) {
-					//	 initializer = CoreModel.getPathEntryContainerInitializer(path.segment(0));
-					//	if (initializer != null) description = initializer.getDescription(path, javaProject);
-					//} else {
-					//	description = container.getDescription();
-					//}
-					//if (description == null) description = path.makeRelative().toString();
-				//	return CoreModelMessages.getFormattedString("pathentry.invalidContainer", element.getElementName()); //$NON-NLS-1$
-
-			case CP_VARIABLE_PATH_UNBOUND:
-				element = (ICElement)fElements[0];
+			case VARIABLE_PATH_UNBOUND:
 				return CoreModelMessages.getFormattedString("pathentry.unboundVariablePath",
-						new String[] {getPath().makeRelative().toString(), element.getElementName()}); //$NON-NLS-1$
+						new String[] {getPath().makeRelative().toString(), getFirstElementName()}); //$NON-NLS-1$
 					
-			//case CLASSPATH_CYCLE: 
-			//	element = (ICElement)fElements[0];
-			//	return CoreModelMessages.getFormattedString("pathentry.cycle", element.getElementName()); //$NON-NLS-1$
+			case PATHENTRY_CYCLE: 
+				return CoreModelMessages.getFormattedString("pathentry.cycle", getFirstElementName()); //$NON-NLS-1$
 												 
 			//case DISABLED_CP_EXCLUSION_PATTERNS:
-
 			//case DISABLED_CP_MULTIPLE_OUTPUT_LOCATIONS:
 
-			//case INCOMPATIBLE_JDK_LEVEL:
 			}
-			if (fString != null) {
-				return fString;
-			} else {
-				return ""; // //$NON-NLS-1$
-			}
+			return getString();
 		} else {
 			String message = exception.getMessage();
 			if (message != null) {
@@ -338,6 +297,9 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * @see IOperationStatus
 	 */
 	public IPath getPath() {
+		if (fPath == null) {
+			return Path.EMPTY;
+		}
 		return fPath;
 	}
 
@@ -360,7 +322,17 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * @see ICModelStatus
 	 */
 	public String getString() {
+		if (fString == null) {
+			return EMPTY_STRING;
+		}
 		return fString;
+	}
+
+	public String getFirstElementName() {
+		if (fElements != null && fElements.length > 0) {
+			return fElements[0].getElementName();
+		}
+		return EMPTY_STRING;
 	}
 
 	/**

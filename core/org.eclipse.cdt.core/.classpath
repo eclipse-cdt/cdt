@@ -5,6 +5,7 @@
     <classpathentry kind="src" path="model/"/>
     <classpathentry kind="src" path="src/"/>
     <classpathentry kind="src" path="utils/"/>
+    <classpathentry kind="src" path="newparser"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>

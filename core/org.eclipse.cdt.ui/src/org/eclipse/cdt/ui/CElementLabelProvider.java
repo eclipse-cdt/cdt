@@ -17,7 +17,6 @@ import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;

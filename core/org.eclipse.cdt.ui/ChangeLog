@@ -1,3 +1,12 @@
+2004-07-30 Alain Magloire
+
+	Implementation of "Add Include" add the using directive.
+
+	* icons/full/obj16/using_obj.gif
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java
+
 2004-07-29 Tanya Wolff
 
 	Part Fix for 69768: CDT wasn't displaying non-English templates.

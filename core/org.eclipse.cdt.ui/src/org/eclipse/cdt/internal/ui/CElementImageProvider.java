@@ -195,6 +195,9 @@ public class CElementImageProvider {
 				
 			case ICElement.C_NAMESPACE:
 				return CPluginImages.DESC_OBJS_NAMESPACE;
+
+			case ICElement.C_USING:
+				return CPluginImages.DESC_OBJS_USING;
 		}
 		return null;
 	}
@@ -373,7 +376,10 @@ public class CElementImageProvider {
 				
 			case ICElement.C_NAMESPACE:
 				return getNamespaceImageDescriptor();
-										
+
+			case ICElement.C_USING:
+				return getUsingImageDescriptor();
+
 		}
 		return null;
 	}	
@@ -449,7 +455,7 @@ public class CElementImageProvider {
 	public static ImageDescriptor getEnumeratorImageDescriptor(){
 		return CPluginImages.DESC_OBJS_ENUMERATOR;	
 	}
-	
+
 	public static ImageDescriptor getFieldImageDescriptor(ASTAccessVisibility visibility) {
 		if (visibility == ASTAccessVisibility.PUBLIC)
 			return CPluginImages.DESC_OBJS_PUBLIC_FIELD;
@@ -458,17 +464,16 @@ public class CElementImageProvider {
 		
 		return CPluginImages.DESC_OBJS_PRIVATE_FIELD;			
 	}
-	
+
 	public static ImageDescriptor getMethodImageDescriptor(ASTAccessVisibility visibility) {
 		if( visibility == ASTAccessVisibility.PUBLIC)
 			return CPluginImages.DESC_OBJS_PUBLIC_METHOD;
 		if( visibility == ASTAccessVisibility.PROTECTED)
 			return CPluginImages.DESC_OBJS_PROTECTED_METHOD;
 		
-		return CPluginImages.DESC_OBJS_PRIVATE_METHOD;
-				
+		return CPluginImages.DESC_OBJS_PRIVATE_METHOD;				
 	}
-		
+
 	public static ImageDescriptor getVariableImageDescriptor(){
 		return getImageDescriptor(ICElement.C_VARIABLE);
 	}
@@ -480,27 +485,31 @@ public class CElementImageProvider {
 	public static ImageDescriptor getFunctionImageDescriptor(){
 		return getImageDescriptor(ICElement.C_FUNCTION);
 	}
-	
+
 	public static ImageDescriptor getVariableDeclarationImageDescriptor(){
 		return getImageDescriptor(ICElement.C_VARIABLE_DECLARATION);
 	}
-	
+
 	public static ImageDescriptor getFunctionDeclarationImageDescriptor(){
 		return getImageDescriptor(ICElement.C_FUNCTION_DECLARATION);
 	}
-	
+
 	public static ImageDescriptor getIncludeImageDescriptor(){
 		return getImageDescriptor(ICElement.C_INCLUDE);
 	}
-	
+
 	public static ImageDescriptor getMacroImageDescriptor(){
 		return getImageDescriptor(ICElement.C_MACRO);
 	}
-	
+
 	public static ImageDescriptor getNamespaceImageDescriptor(){
 		return getImageDescriptor(ICElement.C_NAMESPACE);
 	}
-	
+
+	public static ImageDescriptor getUsingImageDescriptor(){
+		return getImageDescriptor(ICElement.C_USING);
+	}
+
 	public static ImageDescriptor getKeywordImageDescriptor(){
 		return CPluginImages.DESC_OBJS_KEYWORD;
 	}

@@ -48,6 +48,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_LOCAL_VARIABLE= NAME_PREFIX + "variable_local_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CLASS= NAME_PREFIX + "class_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_NAMESPACE= NAME_PREFIX + "namespace_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_USING= NAME_PREFIX + "using_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_STRUCT= NAME_PREFIX + "struct_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_UNION= NAME_PREFIX + "union_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TYPEDEF= NAME_PREFIX + "typedef_obj.gif"; //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE= createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
 	public static final ImageDescriptor DESC_OBJS_CLASS= createManaged(T_OBJ, IMG_OBJS_CLASS);
 	public static final ImageDescriptor DESC_OBJS_NAMESPACE= createManaged(T_OBJ, IMG_OBJS_NAMESPACE);
+	public static final ImageDescriptor DESC_OBJS_USING = createManaged(T_OBJ, IMG_OBJS_USING);
 	public static final ImageDescriptor DESC_OBJS_STRUCT= createManaged(T_OBJ, IMG_OBJS_STRUCT);
 	public static final ImageDescriptor DESC_OBJS_UNION= createManaged(T_OBJ, IMG_OBJS_UNION);
 	public static final ImageDescriptor DESC_OBJS_TYPEDEF= createManaged(T_OBJ, IMG_OBJS_TYPEDEF);

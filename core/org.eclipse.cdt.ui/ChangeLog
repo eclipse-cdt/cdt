@@ -3,6 +3,8 @@
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java (isOverviewRulerVisible):
 	Change scope for protected to comply with Eclipse-2.1
 
+	* src/org/eclipse/cdt/ui/CelementContentProvider.java: Reorganize imports.
+
 2003-02-20 Alain Magloire
 
 	This patch provides the UI controls and filters to use the working set 

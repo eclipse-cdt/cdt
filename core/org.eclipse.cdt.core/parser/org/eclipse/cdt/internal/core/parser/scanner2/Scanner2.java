@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1179,7 +1180,19 @@ public class Scanner2 implements IScanner, IScannerData {
 			CodeReader reader = null;
 			
 			if (local) {
-				// TODO obviously...
+				// create an include path reconciled to the current directory
+				String finalPath = ScannerUtility.createReconciledPath( new File( new String( getCurrentFilename() ) ).getParentFile().getAbsolutePath(), filename );
+				reader = (CodeReader)fileCache.get(finalPath);
+				if (reader == null)
+					reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
+				if (reader != null) {
+					if (reader.filename != null)
+						fileCache.put(reader.filename, reader);
+					if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), new String( reader.filename ), local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine );
+					pushContext(reader.buffer, new InclusionData( reader, inclusion, addToFileIndex( reader.filename.toCharArray() ) ));
+					return;
+				}
 			}
 			
 			// iterate through the include paths
@@ -2545,7 +2558,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getFilenameForIndex(int)
 	 */
 	public String getFilenameForIndex(int index) {
-		if( index >= 0 && index < fileNames.length )
+		if( index >= 0 && index < fileIndexCounter )
 			return new String( fileNames[index] );
 		return EMPTY_STRING;
 	}

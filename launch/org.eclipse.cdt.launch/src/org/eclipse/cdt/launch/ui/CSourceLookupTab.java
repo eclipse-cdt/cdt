@@ -155,4 +155,13 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 		return string == null || string.length() == 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+	 */
+	public void dispose()
+	{
+		if ( fBlock != null )
+			fBlock.dispose();
+		super.dispose();
+	}
 }

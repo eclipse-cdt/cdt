@@ -11,10 +11,11 @@
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -72,6 +73,9 @@ class UpdateManagedProject12 {
 	private static final String NEW_CYGWIN_TARGET_ROOT = "cdt.managedbuild.target.gnu.cygwin";	//$NON-NLS-1$
 	private static final String NEW_POSIX_TARGET_ROOT = "cdt.managedbuild.target.gnu";	//$NON-NLS-1$
 	private static final String NEW_TOOL_ROOT = "cdt.managedbuild.tool.gnu";	//$NON-NLS-1$
+	private static final String OLD_TOOL_ROOT_LONG = "org.eclipse.cdt.build.tool";	//$NON-NLS-1$
+	private static final String OLD_TOOL_ROOT_SHORT = "cdt.build.tool";	//$NON-NLS-1$
+	private static final String REGEXP_SEPARATOR = "\\.";	//$NON-NLS-1$
 	private static final String TOOL_LANG_BOTH = "both";	//$NON-NLS-1$
 	private static final String TOOL_LANG_C = "c";	//$NON-NLS-1$
 	private static final String TOOL_LANG_CPP = "cpp";	//$NON-NLS-1$
@@ -91,23 +95,45 @@ class UpdateManagedProject12 {
 	private static Map configIdMap;
 	
 	/* (non-Javadoc)
-	 * Generates a valid 2.0.x eqivalent ID for an old 1.2 format
-	 * configuration.
+	 * Generates a valid 2.1 eqivalent ID for an old 1.2 format
+	 * configuration. Old built-in configurations had the format
+	 * 	cygin.[exec|so|exp|lib].[debug|release]
+	 * 	[linux|solaris].gnu.[exec|so|lib].[release|debug]
 	 * 
 	 * @param oldId
 	 * @return
 	 */
 	protected static String getNewConfigurationId(String oldId){
+	    boolean builtIn = false;
 		boolean cygwin = false;
 		boolean debug = false;
 		int type = -1;
 		
-		StringTokenizer idTokens = new StringTokenizer(oldId, ID_SEPARATOR);
-		while (idTokens.hasMoreTokens()) {
-			String id = idTokens.nextToken();
-			if (id.equalsIgnoreCase(ID_CYGWIN)) {
-				cygwin = true;
-			} else if(id.equalsIgnoreCase(ID_EXEC)) {
+		Vector idTokens = new Vector(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		try {
+		    String platform = (String) idTokens.get(0);
+		    if (platform.equalsIgnoreCase(ID_CYGWIN)) {
+		        cygwin = builtIn = true;
+		    } else if ((platform.equalsIgnoreCase(ID_LINUX) || platform.equalsIgnoreCase(ID_SOLARIS))
+		            && ((String)idTokens.get(1)).equalsIgnoreCase(ID_GNU)) {
+		       builtIn = true; 
+		    }
+		            
+		} catch (ArrayIndexOutOfBoundsException e) {
+		    // This just means the ID is not a built-in
+		    builtIn = false;
+		}
+		
+		// If this isn't a built-in configuration, don't convert it
+		if(!builtIn) {
+		    return oldId;
+		}
+		
+		// Otherwise make the conversion
+		Iterator iter = idTokens.iterator();
+		while (iter.hasNext()) {
+			String id = (String) iter.next();
+			if(id.equalsIgnoreCase(ID_EXEC)) {
 				type = TYPE_EXE;
 			} else if(id.equalsIgnoreCase(ID_SHARED)) {
 				type = TYPE_SHARED;
@@ -161,7 +187,7 @@ class UpdateManagedProject12 {
 		if(oldTarget.hasAttribute(ITarget.ARTIFACT_NAME)){
 			String buildGoal = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);
 			// The name may be in the form <name>[.ext1[.ext2[...]]]
-			String[] nameElements = buildGoal.split("\\.");	//$NON-NLS-1$
+			String[] nameElements = buildGoal.split(REGEXP_SEPARATOR);
 			// There had better be at least a name
 			String name = null;
 			try {
@@ -174,7 +200,7 @@ class UpdateManagedProject12 {
 			for (int index = 1; index < nameElements.length; ++index) {
 				extension += nameElements[index];
 				if (index < nameElements.length - 1) {
-					extension += ".";	//$NON-NLS-1$
+					extension += ID_SEPARATOR;	
 				}
 			}
 			newConfig.setArtifactName(name);
@@ -203,98 +229,106 @@ class UpdateManagedProject12 {
 	
 	protected static String getNewOptionId(IToolChain toolChain, ITool tool, String oldId)
 								throws CoreException{
-		String[] idTokens = oldId.split("\\.");	//$NON-NLS-1$
-		
-		// New ID will be in for gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
-		Vector newIdVector = new Vector(idTokens.length + 2);
-		
-		// We can ignore the first element of the old IDs since it is just [cygwin|linux|solaris]
-		for (int index = 1; index < idTokens.length; ++index) {
-			newIdVector.add(idTokens[index]);
-		}
- 		
-		// In the case of some Cygwin C++ tools, the old ID will be missing gnu
-		if (!((String)newIdVector.firstElement()).equals(ID_GNU)) {
-			newIdVector.add(0, ID_GNU);
-		}
-		
-		// In some old IDs the language specifier is missing for librarian and C++ options
-		String langToken = (String)newIdVector.get(1); 
-		if(!langToken.equals(TOOL_LANG_C)) {
-			// In the case of the librarian the language must be set to both
-			if (langToken.equals(TOOL_NAME_LIB) || langToken.equals(TOOL_NAME_AR)) {
-				newIdVector.add(1, TOOL_LANG_BOTH);
-			} else {
-				newIdVector.add(1, TOOL_LANG_CPP);
-			}
-		}
-		
-		// Standardize the next token to compiler, link, or lib
-		String toolToken = (String)newIdVector.get(2);
-		if (toolToken.equals(ID_PREPROC)) {
-			// Some compiler preprocessor options are missing this
-			newIdVector.add(2, TOOL_NAME_COMPILER);
-		} else if (toolToken.equals(TOOL_NAME_LINKER) || toolToken.equals(TOOL_NAME_SOLINK)) {
-			// Some linker options have linker or solink as the toolname
-			newIdVector.remove(2);
-			newIdVector.add(2, TOOL_NAME_LINK);
-		} else if (toolToken.equals(TOOL_NAME_AR)) {
-			// The cygwin librarian uses ar
-			newIdVector.remove(2);
-			newIdVector.add(2, TOOL_NAME_LIB);			
-		}
-		
-		// Add in the option tag
-		String optionToken = (String)newIdVector.get(3);
-		if (optionToken.equals(ID_OPTIONS)) {
-			// Some old-style options had "options" in the id
-			newIdVector.remove(3);
-		}
-		newIdVector.add(3, ID_OPTION);
-		
-		// Convert any lingering "incpaths" to "include.paths"
-		String badToken = (String) newIdVector.lastElement();
-		if (badToken.equals(ID_INCPATHS)) {
-			newIdVector.remove(newIdVector.lastElement());
-			newIdVector.addElement(ID_INCLUDE);
-			newIdVector.addElement(ID_PATHS);
-		}
 
-		// Edit out the "general" or "dirs" categories that may be in some older IDs
-		int generalIndex = newIdVector.indexOf(ID_GENERAL);
-		if (generalIndex != -1) {
-			newIdVector.remove(generalIndex);
-		}
-		int dirIndex = newIdVector.indexOf(ID_DIRS);
-		if (dirIndex != -1) {
-			newIdVector.remove(dirIndex);
-		}
-		
-		// Another boundary condition to check is the case where the linker option
-		// has gnu.[c|cpp].link.option.libs.paths or gnu.[c|cpp].link.option.libs.paths 
-		// because the new option format does away with the libs in the second last element
-		try {
-			if ((newIdVector.lastElement().equals(ID_PATHS) || newIdVector.lastElement().equals(ID_LIBS)) 
-					&& newIdVector.get(newIdVector.size() - 2).equals(ID_LIBS)) {
-				newIdVector.remove(newIdVector.size() - 2);
+	    String optId = null;	    
+		String[] idTokens = oldId.split(REGEXP_SEPARATOR);
+		Vector oldIdVector = new Vector(Arrays.asList(idTokens));
+			if (isBuiltInOption(oldIdVector)) {
+			
+			// New ID will be in form gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
+			Vector newIdVector = new Vector(idTokens.length + 2);
+			
+			// We can ignore the first element of the old IDs since it is just [cygwin|linux|solaris]
+			for (int index = 1; index < idTokens.length; ++index) {
+				newIdVector.add(idTokens[index]);
 			}
-		} catch (NoSuchElementException e) {
-			// ignore this exception
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// ignore this exception too
-		}
-		
-		
-		// Construct the new ID
-		String optId = new String();
-		for (int rebuildIndex = 0; rebuildIndex < newIdVector.size(); ++ rebuildIndex) {
-			String token = (String) newIdVector.get(rebuildIndex);
-			optId += token;
-			if (rebuildIndex < newIdVector.size() - 1) {
-				optId += ID_SEPARATOR;
+	 		
+			// In the case of some Cygwin C++ tools, the old ID will be missing gnu
+			if (!((String)newIdVector.firstElement()).equals(ID_GNU)) {
+				newIdVector.add(0, ID_GNU);
 			}
+			
+			// In some old IDs the language specifier is missing for librarian and C++ options
+			String langToken = (String)newIdVector.get(1); 
+			if(!langToken.equals(TOOL_LANG_C)) {
+				// In the case of the librarian the language must be set to both
+				if (langToken.equals(TOOL_NAME_LIB) || langToken.equals(TOOL_NAME_AR)) {
+					newIdVector.add(1, TOOL_LANG_BOTH);
+				} else {
+					newIdVector.add(1, TOOL_LANG_CPP);
+				}
+			}
+			
+			// Standardize the next token to compiler, link, or lib
+			String toolToken = (String)newIdVector.get(2);
+			if (toolToken.equals(ID_PREPROC)) {
+				// Some compiler preprocessor options are missing this
+				newIdVector.add(2, TOOL_NAME_COMPILER);
+			} else if (toolToken.equals(TOOL_NAME_LINKER) || toolToken.equals(TOOL_NAME_SOLINK)) {
+				// Some linker options have linker or solink as the toolname
+				newIdVector.remove(2);
+				newIdVector.add(2, TOOL_NAME_LINK);
+			} else if (toolToken.equals(TOOL_NAME_AR)) {
+				// The cygwin librarian uses ar
+				newIdVector.remove(2);
+				newIdVector.add(2, TOOL_NAME_LIB);			
+			}
+			
+			// Add in the option tag
+			String optionToken = (String)newIdVector.get(3);
+			if (optionToken.equals(ID_OPTIONS)) {
+				// Some old-style options had "options" in the id
+				newIdVector.remove(3);
+			}
+			newIdVector.add(3, ID_OPTION);
+			
+			// Convert any lingering "incpaths" to "include.paths"
+			String badToken = (String) newIdVector.lastElement();
+			if (badToken.equals(ID_INCPATHS)) {
+				newIdVector.remove(newIdVector.lastElement());
+				newIdVector.addElement(ID_INCLUDE);
+				newIdVector.addElement(ID_PATHS);
+			}
+	
+			// Edit out the "general" or "dirs" categories that may be in some older IDs
+			int generalIndex = newIdVector.indexOf(ID_GENERAL);
+			if (generalIndex != -1) {
+				newIdVector.remove(generalIndex);
+			}
+			int dirIndex = newIdVector.indexOf(ID_DIRS);
+			if (dirIndex != -1) {
+				newIdVector.remove(dirIndex);
+			}
+			
+			// Another boundary condition to check is the case where the linker option
+			// has gnu.[c|cpp].link.option.libs.paths or gnu.[c|cpp].link.option.libs.paths 
+			// because the new option format does away with the libs in the second last element
+			try {
+				if ((newIdVector.lastElement().equals(ID_PATHS) || newIdVector.lastElement().equals(ID_LIBS)) 
+						&& newIdVector.get(newIdVector.size() - 2).equals(ID_LIBS)) {
+					newIdVector.remove(newIdVector.size() - 2);
+				}
+			} catch (NoSuchElementException e) {
+				// ignore this exception
+			} catch (ArrayIndexOutOfBoundsException e) {
+				// ignore this exception too
+			}
+			
+			
+			// Construct the new ID
+			optId = new String();
+			for (int rebuildIndex = 0; rebuildIndex < newIdVector.size(); ++ rebuildIndex) {
+				String token = (String) newIdVector.get(rebuildIndex);
+				optId += token;
+				if (rebuildIndex < newIdVector.size() - 1) {
+					optId += ID_SEPARATOR;
+				}
+			}
+		} else {
+		    optId = oldId;
 		}
-		
+			
+		// Now look it up
 		IConfiguration configuration = toolChain.getParent();
 		
 		IOption options[] = tool.getOptions();		
@@ -375,18 +409,45 @@ class UpdateManagedProject12 {
 		
 	}
 	
+	/* (non-Javadoc)
+	 * Converts an old built-in target ID from 1.2 format to 
+	 * 2.1 format. A 1.2 target will have the format :
+	 * 	cygyin.[exec|so|lib]
+	 * 	[linux|solaris].gnu.[exec|so|lib]
+	 * @param oldId
+	 * @return
+	 */
 	protected static String getNewProjectId(String oldId){
 		// The type of target we are converting from/to
 		int type = -1;
 		// Use the Cygwin or generic target form
 		boolean posix = false;
+		// Is this a built-in target or one we cannot convert
+		boolean builtIn = false;
 
-		StringTokenizer idTokens = new StringTokenizer(oldId, ID_SEPARATOR);
-		while (idTokens.hasMoreTokens()) {
-			String token = idTokens.nextToken();
-			if (token.equals(ID_LINUX) || token.equals(ID_SOLARIS)) {
-				posix = true;
-			} else if (token.equalsIgnoreCase(ID_EXEC)){
+		Vector idTokens = new Vector(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		try {
+		    String platform = (String) idTokens.get(0);
+		    if (platform.equalsIgnoreCase(ID_CYGWIN)) {
+		        builtIn = true;
+		    } else if ((platform.equalsIgnoreCase(ID_LINUX) || platform.equalsIgnoreCase(ID_SOLARIS))
+		            && ((String)idTokens.get(1)).equalsIgnoreCase(ID_GNU)) {
+		       posix = builtIn = true; 
+		    }
+		    
+		} catch (ArrayIndexOutOfBoundsException e) {
+		    builtIn = false;
+		}
+		
+		// Just answer the original ID if this isn't something we know how to convert
+		if (!builtIn) {
+		    return oldId;
+		}
+		
+		Iterator iter = idTokens.iterator();
+		while (iter.hasNext()) {
+			String token = (String) iter.next();
+			if (token.equalsIgnoreCase(ID_EXEC)){
 				type = TYPE_EXE;
 			} else if (token.equalsIgnoreCase(ID_SHARED)){
 				type = TYPE_SHARED;
@@ -410,6 +471,14 @@ class UpdateManagedProject12 {
 		return defID;
 	}
 
+	/* (non-Javadoc)
+	 * 
+	 * @param project the project being upgraded
+	 * @param oldTarget a document element contain the old target information
+	 * @param monitor 
+	 * @return new 2.1 managed project 
+	 * @throws CoreException if the target is unknown
+	 */
 	protected static IManagedProject convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor) throws CoreException{
 		// What we want to create
 		IManagedProject newProject = null;
@@ -417,8 +486,8 @@ class UpdateManagedProject12 {
 	
 		// Get the parent
 		String id = oldTarget.getAttribute(ITarget.PARENT);
-		String parentID = getNewProjectId(id);
-
+		String parentID = getNewProjectId(id);	
+		
 		// Get the new target definitions we need for the conversion
 		newParent = ManagedBuildManager.getProjectType(parentID);
 
@@ -453,43 +522,53 @@ class UpdateManagedProject12 {
 	
 	protected static String getNewToolId(IToolChain toolChain, String oldId)
 								throws CoreException {
-		// All known tools have id NEW_TOOL_ROOT.[c|cpp].[compiler|linker|archiver]
-		String toolId = NEW_TOOL_ROOT;
-		boolean cppFlag = true;
-		int toolType = -1;
-		
-		// Figure out what kind of tool the ref pointed to
-		StringTokenizer idTokens = new StringTokenizer(oldId, ID_SEPARATOR);
-		while (idTokens.hasMoreTokens()) {
-			String token = idTokens.nextToken();
-			if(token.equals(TOOL_LANG_C)) {
-				cppFlag = false;
-			} else if (token.equalsIgnoreCase(TOOL_NAME_COMPILER)) {
-				toolType = TOOL_TYPE_COMPILER;
-			} else if (token.equalsIgnoreCase(TOOL_NAME_AR)) {
-				toolType = TOOL_TYPE_ARCHIVER;
-			} else if (token.equalsIgnoreCase(TOOL_NAME_LIB)) {
-				toolType = TOOL_TYPE_ARCHIVER;
-			} else if (token.equalsIgnoreCase(TOOL_NAME_LINK)) {
-				toolType = TOOL_TYPE_LINKER;
-			} else if (token.equalsIgnoreCase(TOOL_NAME_SOLINK)) {
-				toolType = TOOL_TYPE_LINKER;
+	    String toolId = null;
+	    
+	    // Make sure we can convert the ID
+	    if (!(oldId.startsWith(OLD_TOOL_ROOT_SHORT) ||  
+	            oldId.startsWith(OLD_TOOL_ROOT_LONG))) {
+	        toolId= oldId;
+	    } else {
+			// All known tools have id NEW_TOOL_ROOT.[c|cpp].[compiler|linker|archiver]
+			toolId = NEW_TOOL_ROOT;
+			boolean cppFlag = true;
+			int toolType = -1;
+			
+			// Figure out what kind of tool the ref pointed to
+			Vector idTokens = new Vector(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+			
+			Iterator iter = idTokens.iterator();
+			while (iter.hasNext()) {
+				String token = (String) iter.next();
+				if(token.equals(TOOL_LANG_C)) {
+					cppFlag = false;
+				} else if (token.equalsIgnoreCase(TOOL_NAME_COMPILER)) {
+					toolType = TOOL_TYPE_COMPILER;
+				} else if (token.equalsIgnoreCase(TOOL_NAME_AR)) {
+					toolType = TOOL_TYPE_ARCHIVER;
+				} else if (token.equalsIgnoreCase(TOOL_NAME_LIB)) {
+					toolType = TOOL_TYPE_ARCHIVER;
+				} else if (token.equalsIgnoreCase(TOOL_NAME_LINK)) {
+					toolType = TOOL_TYPE_LINKER;
+				} else if (token.equalsIgnoreCase(TOOL_NAME_SOLINK)) {
+					toolType = TOOL_TYPE_LINKER;
+				}
 			}
-		}
-		
-		// Now complete the new tool id
-		toolId += ID_SEPARATOR + (cppFlag ? "cpp" : "c") + ID_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$
-		switch (toolType) {
-			case TOOL_TYPE_COMPILER:
-				toolId += TOOL_NAME_COMPILER;
-				break;
-			case TOOL_TYPE_LINKER:
-				toolId  += TOOL_NAME_LINKER;
-				break;
-			case TOOL_TYPE_ARCHIVER:
-				toolId += TOOL_NAME_ARCHIVER;
-				break;
-		}
+			
+			// Now complete the new tool id
+			toolId += ID_SEPARATOR + (cppFlag ? "cpp" : "c") + ID_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$
+			switch (toolType) {
+				case TOOL_TYPE_COMPILER:
+					toolId += TOOL_NAME_COMPILER;
+					break;
+				case TOOL_TYPE_LINKER:
+					toolId  += TOOL_NAME_LINKER;
+					break;
+				case TOOL_TYPE_ARCHIVER:
+					toolId += TOOL_NAME_ARCHIVER;
+					break;
+			}
+	    }
 		
 		IConfiguration configuration = toolChain.getParent();
 		ITool tools[] = configuration.getTools();
@@ -551,11 +630,45 @@ class UpdateManagedProject12 {
 		}
 		monitor.worked(1);
 	}
-	
+
+	/* (non-Javadoc)
+	 * Answers true if the target is one supplied by the CDT which will have the 
+	 * format :
+	 * 	cygyin.[exec|so|lib]
+	 * 	[linux|solaris].gnu.[exec|so|lib]
+	 * 
+	 * @param id id to test
+	 * @return true if the target is recognized as built-in
+	 */
+//	private static boolean isBuiltInTarget(String id) {
+//		// Do the deed
+//		if (id == null) return false;
+//		String[] idTokens = id.split(REGEXP_SEPARATOR);
+//		if (!(idTokens.length == 2 || idTokens.length == 3)) return false;
+//		try {
+//			String platform = idTokens[0];
+//			if (platform.equals(ID_CYGWIN)) {
+//				return (idTokens[1].equals(ID_EXEC) 
+//						|| idTokens[1].equals(ID_SHARED)
+//						|| idTokens[1].equals(ID_STATIC));
+//			} else if (platform.equals(ID_LINUX) 
+//					|| platform.equals(ID_SOLARIS)) {
+//				if (idTokens[1].equals(ID_GNU)) {
+//					return (idTokens[2].equals(ID_EXEC) 
+//							|| idTokens[2].equals(ID_SHARED)
+//							|| idTokens[2].equals(ID_STATIC));					
+//				}
+//			}
+//		} catch (ArrayIndexOutOfBoundsException e) {
+//			return false;
+//		}
+//		return false;
+//	}
+
 	/**
 	 * @param monitor the monitor to allow users to cancel the long-running operation
 	 * @param project the <code>IProject</code> that needs to be upgraded
-	 * @throws CoreException
+	 * @throws CoreException if the update fails
 	 */
 	public static void doProjectUpdate(IProgressMonitor monitor, IProject project) throws CoreException {
 		String[] projectName = new String[]{project.getName()};
@@ -587,12 +700,11 @@ class UpdateManagedProject12 {
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
-				newProject = convertTarget(project, oldTarget, monitor);
-			
+			    newProject = convertTarget(project, oldTarget, monitor);
 				// Remove the old target
 				if (newProject != null) {
 					info.removeTarget(oldTargetId);
-					monitor.worked(9);
+					monitor.worked(1);
 				}
 			}
 			
@@ -606,11 +718,13 @@ class UpdateManagedProject12 {
 					info.setDefaultConfiguration(newDefaultConfig);
 					info.setSelectedConfiguration(newDefaultConfig);
 				} else {
-					IConfiguration[] newConfigs = newProject.getConfigurations();
-					if (newConfigs.length > 0) {
-						info.setDefaultConfiguration(newConfigs[0]);
-						info.setSelectedConfiguration(newConfigs[0]);
-					}
+			        // The only safe thing to do if there wasn't a default configuration for a built-in
+			        // target is to set the first defined configuration as the default
+			        IConfiguration[] newConfigs = newProject.getConfigurations();
+			        if (newConfigs.length > 0) {
+			            info.setDefaultConfiguration(newConfigs[0]);
+			            info.setSelectedConfiguration(newConfigs[0]);
+			        }
 				}
 			} catch (IndexOutOfBoundsException e) {
 					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
@@ -620,9 +734,9 @@ class UpdateManagedProject12 {
 			// Upgrade the version
 			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
 			info.setValid(true);
-		}catch (CoreException e){
+		} catch (CoreException e){
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					e.getMessage(), e));
 		} finally {
@@ -642,4 +756,46 @@ class UpdateManagedProject12 {
 		return configIdMap;
 	}
 
+	protected static boolean isBuiltInOption(Vector idTokens) {
+	    try {
+	        String platform = (String) idTokens.firstElement();
+	        String secondToken = (String) idTokens.get(1);
+	        if (platform.equals(ID_CYGWIN)) {
+	            // bit of a mess since was done first
+	            // but valid second tokens are 'compiler',
+	            // 'preprocessor', 'c', 'gnu', 'link', 
+	            // 'solink', or 'ar'
+	            if (secondToken.equals(TOOL_NAME_COMPILER) ||
+	                    secondToken.equals(ID_PREPROC) || 
+	                    secondToken.equals(TOOL_LANG_C) ||
+	                    secondToken.equals(ID_GNU) ||
+	                    secondToken.equals(TOOL_NAME_LINK) ||
+	                    secondToken.equals(TOOL_NAME_SOLINK)||
+	                    secondToken.equals(TOOL_NAME_AR)) {
+	                return true;
+	            }
+	        } else if (platform.equals(ID_LINUX)) {
+	            // Only going to see 'gnu' or 'c'
+	            if (secondToken.equals(ID_GNU) ||
+	                    secondToken.equals(TOOL_LANG_C)) {
+	                return true;
+	            }
+	        } else if (platform.equals(ID_SOLARIS)) {
+	            // Only going to see 'gnu', 'c', or 'compiler'
+	            if ( secondToken.equals(ID_GNU) || 
+	                    secondToken.equals(TOOL_LANG_C) ||
+	                    secondToken.equals(TOOL_NAME_COMPILER)) {
+	                return true;
+	            }	            
+	        } else {
+	            return false;
+	        }
+	    } catch (NoSuchElementException e) {
+	        // If the string is empty, it isn't valid
+            return false;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return false;
+        } 
+	    return false;
+	}
 }

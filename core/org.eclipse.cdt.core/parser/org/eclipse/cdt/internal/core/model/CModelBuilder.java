@@ -228,6 +228,8 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(inclusion.getNameOffset(), inclusion.getNameLength());
 		element.setPos(inclusion.getStartingOffset(), inclusion.getTotalLength());
+		// set the element lines
+		element.setLines(inclusion.getTopLine(), inclusion.getBottomLine());
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -240,6 +242,8 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(macro.getNameOffset(), macro.getNameLength());
 		element.setPos(macro.getStartingOffset(), macro.getTotalLength());
+		// set the element lines
+		element.setLines(macro.getTopLine(), macro.getBottomLine());
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -258,6 +262,8 @@ public class CModelBuilder {
 		}
 		element.setPos(nsDef.getStartingOffset(), nsDef.getTotalLength());
 		element.setTypeName(nsDef.getStartToken().getImage());
+		// set the element lines
+		element.setLines(nsDef.getTopLine(), nsDef.getBottomLine());
 		
 		this.newElements.put(element, element.getElementInfo());		
 		return element;
@@ -284,6 +290,8 @@ public class CModelBuilder {
 		}
 		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getTotalLength());
 		element.setTypeName(enumSpecifier.getStartToken().getImage());
+		// set the element lines
+		element.setLines(enumSpecifier.getTopLine(), enumSpecifier.getBottomLine());
 		 
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -296,6 +304,8 @@ public class CModelBuilder {
 		// set enumerator position
 		element.setIdPos(enumDef.getName().getStartOffset(), enumDef.getName().length());
 		element.setPos(enumDef.getStartingOffset(), enumDef.getTotalLength());
+		// set the element lines
+		element.setLines(enumDef.getTopLine(), enumDef.getBottomLine());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;		
@@ -345,6 +355,8 @@ public class CModelBuilder {
 		}
 		element.setTypeName( type );
 		element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getTotalLength());
+		// set the element lines
+		element.setLines(classSpecifier.getTopLine(), classSpecifier.getBottomLine());
 		
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -366,6 +378,8 @@ public class CModelBuilder {
 		// set positions
 		element.setIdPos(domName.getStartOffset(), domName.length());	
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
+		// set the element lines
+		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;	
@@ -409,6 +423,8 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos( domName.getStartOffset(), domName.length() );
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
+		// set the element lines
+		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 			
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -492,6 +508,9 @@ public class CModelBuilder {
 		// hook up the offsets
 		element.setIdPos( domName.getStartOffset(), domName.length() );		
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+		// set the element lines
+		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -544,6 +563,9 @@ public class CModelBuilder {
 		// hook up the offsets
 		element.setIdPos( declarator.getDeclarator().getName().getStartOffset(), declarator.getDeclarator().getName().length() );
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+		// set the element lines
+		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}	

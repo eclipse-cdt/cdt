@@ -294,4 +294,14 @@ public interface ICElement extends IAdaptable {
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	boolean isStructureKnown() throws CModelException;
+	/**
+	 * Returns the start line of the CElement
+	 * @return
+	 */
+	int getStartLine();
+	/**
+	 * Returns the end line of the CElement
+	 * @return
+	 */
+	int getEndLine();
 }

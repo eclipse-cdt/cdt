@@ -99,7 +99,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	private Object[] bufferData = new Object[bufferInitialSize];
 	private int[] bufferPos = new int[bufferInitialSize];
 	private int[] bufferLimit = new int[bufferInitialSize];
-	private int[] bufferLineNums = new int[bufferInitialSize];
+	private int[] lineNumbers = new int[bufferInitialSize];
+	private int[] lineOffsets = new int[bufferInitialSize];
 	
 	//branch tracking
 	private int branchStackPos = -1;
@@ -191,23 +192,28 @@ public class Scanner2 implements IScanner, IScannerData {
 			bufferLimit = new int[size];
 			System.arraycopy(oldBufferLimit, 0, bufferLimit, 0, oldBufferLimit.length);
 			
-			int [] oldBufferLineNums = bufferLineNums;
-			bufferLineNums = new int[size];
-			System.arraycopy( oldBufferLineNums, 0, bufferLineNums, 0, oldBufferLineNums.length);
-			
+			int [] oldLineNumbers = lineNumbers;
+			lineNumbers = new int[size];
+			System.arraycopy( oldLineNumbers, 0, lineNumbers, 0, oldLineNumbers.length );
+
+			int [] oldLineOffsets = lineOffsets;
+			lineOffsets = new int[size];
+			System.arraycopy( oldLineOffsets, 0, lineOffsets, 0, oldLineOffsets.length );
+
 		}
 		
 		bufferStack[bufferStackPos] = buffer;
 		bufferPos[bufferStackPos] = -1;
-		bufferLineNums[ bufferStackPos ] = 1;
 		bufferLimit[bufferStackPos] = buffer.length;
+		lineNumbers[bufferStackPos] = 1;
+		lineOffsets[bufferStackPos] = 0;
 	}
 	
 	private void pushContext(char[] buffer, Object data) {
 		pushContext(buffer);
 		bufferData[bufferStackPos] = data;
 		if( data instanceof InclusionData )
-			requestor.enterInclusion( ((InclusionData)data).inclusion ); 
+			requestor.enterInclusion( ((InclusionData)data).inclusion );
 	}
 	
 	private void popContext() {
@@ -215,7 +221,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( bufferData[bufferStackPos] instanceof InclusionData )
 			requestor.exitInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
 		bufferData[bufferStackPos] = null;
-		bufferLineNums[bufferStackPos] = 1;
 		--bufferStackPos;
 	}
 	
@@ -387,7 +392,6 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 			switch (buffer[pos]) {
 				case '\n':
-					++bufferLineNums[bufferStackPos];
 					continue;
 					
 				case 'L':
@@ -733,7 +737,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @return
 	 */
 	private IToken newToken( int signal ) {
-		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), bufferLineNums[bufferStackPos]  );
+		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
 	}
 
 	private IToken newToken( int signal, char [] buffer )
@@ -746,10 +750,10 @@ public class Scanner2 implements IScanner, IScannerData {
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
 			if( bufferData[bufferStackPos] instanceof ObjectStyleMacro )
-				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), bufferLineNums[bufferStackPos] );
-			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), bufferLineNums[bufferStackPos] );
+				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1) );
+			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		}
-		return new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), bufferLineNums[bufferStackPos]  );
+		return new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 	}
 	
 	private IToken scanIdentifier() {
@@ -770,7 +774,6 @@ public class Scanner2 implements IScanner, IScannerData {
 			{
 				// escaped newline
 				++bufferPos[bufferStackPos];
-				++bufferLineNums[bufferStackPos];
 				len += 2;
 				escapedNewline = true;
 				continue;
@@ -940,9 +943,35 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @param scanner_bad_character
 	 */
 	private void handleProblem(int id, int startOffset, char [] arg ) {
-		
-		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], bufferLineNums[bufferStackPos], getCurrentFilename(), arg != null ? arg : emptyCharArray, false, true );
+		if( parserMode == ParserMode.COMPLETION_PARSE ) return;
+		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename(), arg != null ? arg : emptyCharArray, false, true );
 		requestor.acceptProblem( p );
+	}
+
+	
+	/**
+	 * @param i
+	 * @return
+	 */
+	protected int getLineNumber(int offset) {
+		if( parserMode == ParserMode.COMPLETION_PARSE ) return -1;
+		int index = getCurrentFileIndex();
+		if( offset >= bufferLimit[ index ]) return -1;
+		
+		int lineNum = lineNumbers[ index ]; 
+		int startingPoint = lineOffsets[ index ]; 
+		
+		for( int i = startingPoint; i < offset; ++i )
+		{
+			if( bufferStack[ index ][i] == '\n')
+				++lineNum;
+		}
+		if( startingPoint < offset )
+		{
+			lineNumbers[ index ] = lineNum;
+			lineOffsets[ index ] = offset;
+		}
+		return lineNum;
 	}
 
 	private IToken scanNumber() {
@@ -1169,7 +1198,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void handlePPDirective(int pos) throws ScannerException, EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
-		int startingLineNumber = bufferLineNums[ bufferStackPos ];
+		int startingLineNumber = getLineNumber( pos );
 		skipOverWhiteSpace();
 		if( isLimitReached() ) 
 			handleCompletionOnPreprocessorDirective( "#" ); //$NON-NLS-1$
@@ -1289,7 +1318,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		char c = buffer[pos];
 		if( c == '\n') return;
 		if (c == '"') {
-			nameLine = bufferLineNums[ bufferStackPos ];
+			nameLine = getLineNumber( bufferPos[bufferStackPos] );
 			local = true;
 			int start = bufferPos[bufferStackPos] + 1;
 			int length = 0;
@@ -1313,7 +1342,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			nameEndOffset = start + length;
 			endOffset = start + length + 1;
 		} else if (c == '<') {
-			nameLine = bufferLineNums[ bufferStackPos ];
+			nameLine = getLineNumber( bufferPos[ bufferStackPos ] );
 			local = false;
 			int start = bufferPos[bufferStackPos] + 1;
 			int length = 0;
@@ -1343,7 +1372,6 @@ public class Scanner2 implements IScanner, IScannerData {
 				{
 					// escaped newline
 					++bufferPos[bufferStackPos];
-					++bufferLineNums[bufferStackPos];
 					len += 2;
 					continue;
 				}
@@ -1387,7 +1415,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		char [] fileNameArray = filename.toCharArray();
 		// TODO else we need to do macro processing on the rest of the line
-		endLine = bufferLineNums[ bufferStackPos ];
+		endLine = getLineNumber( bufferPos[ bufferStackPos ] );
 		skipToNewLine();
 
 		if( parserMode == ParserMode.QUICK_PARSE )
@@ -1487,7 +1515,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			break;
 		}
 		--bufferPos[bufferStackPos];
-		nameLine = bufferLineNums[ bufferStackPos ];
+		nameLine = getLineNumber( bufferPos[ bufferStackPos ] );
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
 		if (dlog != null) dlog.println("#define " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
@@ -1567,7 +1595,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 
 		int textlen = textend - textstart + 1;
-		endingLine = bufferLineNums[ bufferStackPos ] - 1;
+		endingLine = getLineNumber( bufferPos[ bufferStackPos ] );
 		char[] text = emptyCharArray;
 		if (textlen > 0) {
 			text = new char[textlen];
@@ -2932,7 +2960,15 @@ public class Scanner2 implements IScanner, IScannerData {
 				return ((CodeReader)bufferData[i]).filename;
 		}
 		return emptyCharArray;
+	}
 
+	private final int getCurrentFileIndex() {
+		for( int i = bufferStackPos; i >= 0; --i )
+		{
+			if( bufferData[i] instanceof InclusionData || bufferData[i] instanceof CodeReader ) 
+				return i;
+		}
+		return 0;
 	}
 	
 	private static CharArrayIntMap keywords;

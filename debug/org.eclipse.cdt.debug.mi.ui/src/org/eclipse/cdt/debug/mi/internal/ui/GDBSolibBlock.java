@@ -187,9 +187,9 @@ public class GDBSolibBlock extends Observable implements Observer
 		{
 			boolean enable = !ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals( configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, "" ) ); //$NON-NLS-1$
 			if ( fAutoSoLibButton != null )
-				fAutoSoLibButton.setSelection( enable );
+				fAutoSoLibButton.setEnabled( enable );
 			if ( fStopOnSolibEventsButton != null )
-				fStopOnSolibEventsButton.setSelection( enable );
+				fStopOnSolibEventsButton.setEnabled( enable );
 		}
 		catch( CoreException e )
 		{

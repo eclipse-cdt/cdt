@@ -1,3 +1,7 @@
+2004-07-14 Mikhail Khodjaiants
+	Wrong fix. Falling back.
+	* GDBSolibBlock.java
+
 2004-07-14 Alain Magloire
 
 	Wrong call the to the Button widget it should have been

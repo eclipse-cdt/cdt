@@ -12,23 +12,16 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
 import org.eclipse.cdt.debug.internal.ui.editors.NoSymbolOrSourceElement;
-import org.eclipse.cdt.debug.internal.ui.wizards.AddDirectorySourceLocationWizard;
-import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 
 /**
  * 
@@ -50,29 +43,18 @@ public class CUISourceLocator implements IAdaptable
 	private CSourceManager fSourceLocator;
 	
 	/**
-	 * Whether the user should be prompted for source.
-	 * Initially true, until the user checks the 'do not
-	 * ask again' box.
-	 */
-	protected boolean fAllowedToAsk;
-
-	protected boolean fNewLocationAttached;
-
-	/**
 	 * Constructor for CUISourceLocator.
 	 */
 	public CUISourceLocator( IProject project )
 	{
 		fProject = project;
 		fSourceLocator = new CSourceManager( new CSourceLocator( project ) );
-		fAllowedToAsk = true;
-		fNewLocationAttached = false;
 	}
 
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
 		Object res = fSourceLocator.getSourceElement( stackFrame );
-		if ( res == null && fAllowedToAsk )
+		if ( res == null )
 		{
 			IStackFrameInfo frameInfo = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
 			if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
@@ -85,32 +67,6 @@ public class CUISourceLocator implements IAdaptable
 			}
 		}
 		return res;
-	}
-
-	protected void attachSourceLocation( ILaunch launch, String fileName )
-	{
-		IPath path = new Path( fileName );
-		INewSourceLocationWizard wizard = null;
-		if ( path.isAbsolute() )
-		{
-			path = path.removeLastSegments( 1 );
-			wizard = new AddDirectorySourceLocationWizard( path );
-		}
-		else
-		{
-			wizard = new AddSourceLocationWizard( fSourceLocator.getSourceLocations() );
-		}
-		WizardDialog dialog = new WizardDialog( CDebugUIPlugin.getActiveWorkbenchShell(), wizard );
-		if ( dialog.open() == Window.OK )
-		{
-			fSourceLocator.addSourceLocation( wizard.getSourceLocation() );
-			if ( launch.getSourceLocator() instanceof IPersistableSourceLocator )
-			{
-				ILaunchConfiguration configuration = launch.getLaunchConfiguration();
-				saveChanges( configuration, (IPersistableSourceLocator)launch.getSourceLocator() );
-			}
-			fNewLocationAttached = true;
-		}
 	}
 
 	/* (non-Javadoc)

@@ -1,9 +1,13 @@
-2003-11-10 Mikhail Khodjaiants
+2003-10-16 Mikhail Khodjaiants
+	Cleanup.
+	* CUISourceLocator.java
+
+2003-10-11 Mikhail Khodjaiants
 	Reset the selection of variable after casting.
 	* CastToArrayActionDelegate.java
 	* CastToTypeActionDelegate.java
 
-2003-11-10 Mikhail Khodjaiants
+2003-10-11 Mikhail Khodjaiants
 	Moving the shared library search paths block to mi UI.
 	* SolibSearchPathBlock.java: moved to mi UI.
 

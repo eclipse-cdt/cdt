@@ -50,8 +50,11 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	private Button fBackgroundTypeCacheEnabled;
 	private Button fEditorCorrection;
 	
+	
 	protected OverlayPreferenceStore fOverlayStore;
 	private Text fTextControl;
+	
+	private static final String TIMEOUT_VALUE = "20000"; //$NON-NLS-1$
 	
 	public WorkInProgressPreferencePage(){
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -230,13 +233,23 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fOverlayStore.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT, fTextControl.getText());
+		
+		String timeOut = fTextControl.getText();
+		try{
+			Integer timeInt = new Integer(timeOut);
+		}
+		catch (NumberFormatException ex){
+			timeOut = TIMEOUT_VALUE;
+		}
+		
+		fOverlayStore.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT, timeOut);
 		
 		fOverlayStore.propagate();
 		
 //		Store IProblem Marker value in CCorePlugin Preferences 
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
-		prefs.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT,fOverlayStore.getString(SourceIndexer.CDT_INDEXER_TIMEOUT));
+		
+		prefs.setValue(SourceIndexer.CDT_INDEXER_TIMEOUT,timeOut);
 
 		prefs.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, fOverlayStore.getString(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
 
@@ -253,7 +266,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, false);
 		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 0);
-		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT, "20000"); //$NON-NLS-1$
+		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT,TIMEOUT_VALUE);
 		store.setDefault(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, true);
 	}
 	

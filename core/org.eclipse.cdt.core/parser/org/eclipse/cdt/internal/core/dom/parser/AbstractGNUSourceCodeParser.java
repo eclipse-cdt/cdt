@@ -1726,15 +1726,22 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         			    if_statement.setElseClause( new_if_statement );
         			    new_if_statement.setParent( if_statement );
         			    new_if_statement.setPropertyInParent( IASTIfStatement.ELSE );
-        			    if_statement = new_if_statement;
         			}
+        			if_statement = new_if_statement;
         			continue if_loop;
         		} 
         		IASTStatement elseStatement = statement();
         		new_if_statement.setElseClause( elseStatement );
         		elseStatement.setParent( new_if_statement );
         		elseStatement.setPropertyInParent( IASTIfStatement.ELSE );
-        		if_statement = new_if_statement;
+        		if( if_statement != null )
+        		{
+        		    if_statement.setElseClause( new_if_statement );
+        		    new_if_statement.setParent( if_statement );
+        		    new_if_statement.setPropertyInParent( IASTIfStatement.ELSE );
+        		}
+        		else
+        		    if_statement = new_if_statement;
         	}
         	else
         	    if_statement = new_if_statement;

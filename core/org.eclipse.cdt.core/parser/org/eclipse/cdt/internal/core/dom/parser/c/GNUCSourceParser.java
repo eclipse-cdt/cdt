@@ -536,6 +536,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             return;
         }
 
+        translationUnit.setLocationResolver(scanner.getLocationResolver());
+        
         int lastBacktrack = -1;
         while (true) {
             try {

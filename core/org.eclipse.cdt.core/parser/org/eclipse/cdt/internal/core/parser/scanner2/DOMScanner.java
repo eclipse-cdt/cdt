@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 public class DOMScanner extends BaseScanner {
 
     private final ICodeReaderFactory codeReaderFactory;
-//    private int overallOffset = 0;
     
     private static class DOMInclusion
     {
@@ -109,7 +108,30 @@ public class DOMScanner extends BaseScanner {
         return codeReaderFactory.createCodeReaderForInclusion(finalPath);
     }
     
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushContext(char[])
+     */
+    protected void pushContext(char[] buffer) {
+        //TODO calibrate offsets
+        super.pushContext(buffer);
+    }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#pushContext(char[], java.lang.Object)
+     */
+    protected void pushContext(char[] buffer, Object data) {
+        //TODO calibrate offsets
+        super.pushContext(buffer, data);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popContext()
+     */
+    protected void popContext() {
+        //TODO calibrate offsets
+        super.popContext();
+    }
 	/**
 	 * @return
 	 */

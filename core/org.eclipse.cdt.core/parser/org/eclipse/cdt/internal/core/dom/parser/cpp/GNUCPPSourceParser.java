@@ -149,7 +149,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
     private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
     private ScopeStack templateIdScopes = new ScopeStack();
-    protected IASTTranslationUnit translationUnit;
+    protected CPPASTTranslationUnit translationUnit;
     private static class ScopeStack {
         private int[] stack;
 
@@ -4080,8 +4080,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;
         }
-
-        //		compilationUnit.enterScope( requestor );
+        translationUnit.setLocationResolver(scanner.getLocationResolver());
 
         while (true) {
             try {
@@ -4145,7 +4144,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected IASTTranslationUnit createTranslationUnit() {
+    protected CPPASTTranslationUnit createTranslationUnit() {
         return new CPPASTTranslationUnit();
     }
 

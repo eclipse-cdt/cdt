@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.c.GCCParserExtensionConfiguration;
@@ -156,8 +155,6 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    }
 		}
 		IASTTranslationUnit tu = parser.parse();
-		if( tu instanceof IRequiresLocationInformation )
-		    ((IRequiresLocationInformation)tu).setLocationResolver( scanner.getLocationResolver() );
 		return tu;
     }
 

@@ -18,10 +18,16 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -922,26 +928,26 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testSimpleIfStatement() throws Exception
 	{
-		/*IASTTranslationUnit tu =*/ parse( "const bool T = true; int foo() { if( T ) { return 5; } else if( ! T ) return 20; else { return 10; } }"); //$NON-NLS-1$
+		IASTTranslationUnit tu =parse( "const bool T = true; int foo() { if( T ) { return 5; } else if( ! T ) return 20; else { return 10; } }"); //$NON-NLS-1$
 		
-//		IASTFunctionDefinition foo = (IASTFunctionDefinition) tu.getDeclarations()[1];
-//		IASTCompoundStatement compound  = (IASTCompoundStatement) foo.getBody();
-//		IASTIfStatement ifstmt = (IASTIfStatement) compound.getStatements()[0];
-//		assertTrue( ifstmt.getCondition() instanceof IASTIdExpression );
-//		assertTrue( ifstmt.getThenClause() instanceof IASTCompoundStatement );
-//		assertTrue( ifstmt.getElseClause() instanceof IASTIfStatement );
-//		ifstmt = (IASTIfStatement) ifstmt.getElseClause();
-//		assertTrue( ifstmt.getCondition() instanceof IASTUnaryExpression );
-//		assertTrue( ifstmt.getThenClause() instanceof IASTReturnStatement );
-//		assertTrue( ifstmt.getElseClause() instanceof IASTCompoundStatement );
-//		
-//		CPPNameCollector col = new CPPNameCollector();
-// 		CPPVisitor.visitTranslationUnit( tu, col );
-// 		
-// 		assertEquals( col.size(), 4 );
-// 		
-// 		IVariable T = (IVariable) col.getName(0).resolveBinding();
-// 		assertInstances( col, T, 3 );
+		IASTFunctionDefinition foo = (IASTFunctionDefinition) tu.getDeclarations()[1];
+		IASTCompoundStatement compound  = (IASTCompoundStatement) foo.getBody();
+		IASTIfStatement ifstmt = (IASTIfStatement) compound.getStatements()[0];
+		assertTrue( ifstmt.getCondition() instanceof IASTIdExpression );
+		assertTrue( ifstmt.getThenClause() instanceof IASTCompoundStatement );
+		assertTrue( ifstmt.getElseClause() instanceof IASTIfStatement );
+		ifstmt = (IASTIfStatement) ifstmt.getElseClause();
+		assertTrue( ifstmt.getCondition() instanceof IASTUnaryExpression );
+		assertTrue( ifstmt.getThenClause() instanceof IASTReturnStatement );
+		assertTrue( ifstmt.getElseClause() instanceof IASTCompoundStatement );
+		
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 4 );
+ 		
+ 		IVariable T = (IVariable) col.getName(0).resolveBinding();
+ 		assertInstances( col, T, 3 );
 	}
 	
 	public void testSimpleWhileStatement() throws Exception

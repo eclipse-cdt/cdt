@@ -78,7 +78,8 @@ public class AST2BaseTest extends TestCase {
             configuration = new GCCScannerConfiguration();
         else
             configuration = new GPPScannerConfiguration();
-        IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, SavedCodeReaderFactory.getInstance() );  
+        IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, SavedCodeReaderFactory.getInstance() );
+        
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )
         {
@@ -96,12 +97,15 @@ public class AST2BaseTest extends TestCase {
             parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, 
                 NULL_LOG, config );
         }
+        
         IASTTranslationUnit tu = parser2.parse();
+
         if( parser2.encounteredError() )
             throw new ParserException( "FAILURE"); //$NON-NLS-1$
         
         //TODO add in assertion here to visit all problems 
     
+        
         return tu;
     }
 

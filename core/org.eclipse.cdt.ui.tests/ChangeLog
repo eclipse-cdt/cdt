@@ -1,3 +1,6 @@
+2003-05-05 Andrew Niefer
+	Rewrote ParserSymbolTableTest to reflect structural changes to the symbol table.
+
 2003-05-01 Andrew Niefer
 	Updated FractionalAutomatedTest to use threads
 	Modified ScannerTestCase::testBug36287

@@ -1,3 +1,10 @@
+2003-05-05 Andrew Niefer
+	Structural changes to ParserSymbolTable:
+		- moved TypeInfo & Declaration inside ParserSymbolTable
+		- removed the stack & push/pop/peek
+		- moved nonstatic add/lookup fuctions from the table to Declaration
+		- began undo framework: added AddDeclarationCommand
+
 2003-05-01 Andrew Niefer
 	Fixed Bug 36287 - Parser failure with new CDT 1.1 parser
 	Fixed Bug 37011 - Scanner: #define A "//" not properly handled

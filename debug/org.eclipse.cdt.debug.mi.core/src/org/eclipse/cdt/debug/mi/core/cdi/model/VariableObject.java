@@ -44,6 +44,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	int stackdepth;
 
 	String qualifiedName = null;
+	String fullName = null;
 	Type type = null;
 	String typename = null;
 	String sizeof = null;
@@ -70,10 +71,10 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		this(target, n, null, stack, pos, depth);
 	}
 
-	public VariableObject(ICDITarget target, String n, String q, ICDIStackFrame stack, int pos, int depth) {
+	public VariableObject(ICDITarget target, String n, String fn, ICDIStackFrame stack, int pos, int depth) {
 		super(target);
 		name = n;
-		qualifiedName = q;
+		fullName = fn;
 		frame = stack;
 		position = pos;
 		stackdepth = depth;
@@ -115,22 +116,31 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	 * @return
 	 */
 	public String encodeVariable() {
-		StringBuffer buffer = new StringBuffer();
+		String fn = getFullName();
 		if (castingLength > 0 || castingIndex > 0) {
+			StringBuffer buffer = new StringBuffer();
 			buffer.append("*(");
-			buffer.append('(').append(getName()).append(')');
+			buffer.append('(').append(fn).append(')');
 			if (castingIndex != 0) {
 				buffer.append('+').append(castingIndex);
 			}
 			buffer.append(')');
 			buffer.append('@').append(castingLength);
+			fn = buffer.toString();
 		} else if (castingType != null && castingType.length() > 0) {
+			StringBuffer buffer = new StringBuffer();
 			buffer.append("((").append(castingType).append(')');
-			buffer.append(getName()).append(')');
-		} else {
-			buffer.append(getName());
+			buffer.append(fn).append(')');
+			fn = buffer.toString();
 		}
-		return buffer.toString();
+		return fn;
+	}
+
+	public String getFullName() {
+		if (fullName == null) {
+			fullName = getName();
+		}
+		return fullName;
 	}
 
 	/**

@@ -164,18 +164,18 @@ public class Variable extends VariableObject implements ICDIVariable {
 			MIVar[] vars = info.getMIVars();
 			children = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
-				String qName = getQualifiedName();
+				String fn= getFullName();
 				String childName = vars[i].getExp();
 				String childTypename = null;
 				boolean childFake = false;
 				ICDIType t = getType();
 				if (t instanceof ICDIArrayType) {
-					qName = "(" + getQualifiedName() + ")[" + i + "]";
+					fn = "(" + fn + ")[" + i + "]";
 					// For Array gdb varobj only return the index, override here.
 					int index = castingIndex + i;
 					childName = getName() + "[" + index + "]";
 				} else if (t instanceof ICDIPointerType) {
-					qName = "*(" + getQualifiedName() + ")";
+					fn = "*(" + fn + ")";
 				} else if (t instanceof ICDIStructType) {
 					if (isCPPLanguage()) {
 						// For C++ in GDB the children of the
@@ -199,13 +199,13 @@ public class Variable extends VariableObject implements ICDIVariable {
 							childFake = true;
 							childTypename = getTypeName();
 						} else {
-							qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
+							fn = "(" + fn + ")." + vars[i].getExp();
 						}
 					} else { // If not C++ language
-						qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
+						fn = "(" + fn + ")." + vars[i].getExp();
 					}
 				}
-				Variable v = new Variable(getTarget(), childName, qName, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
+				Variable v = new Variable(getTarget(), childName, fn, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
 				if (childTypename != null) {
 					// Hack to reset the typename to a known value
 					v.typename = childTypename;

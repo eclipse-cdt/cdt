@@ -1,10 +1,10 @@
 package org.eclipse.cdt.ui.dialogs;
-/***********************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v0.5 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors: QNX Software Systems - Initial API and implementation
  ******************************************************************************/
@@ -19,6 +19,7 @@ import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 public abstract class TabFolderOptionBlock {
+
 	protected boolean initializingTabs = true;
 	private Composite composite;
 	private boolean bShowMessageArea;
@@ -92,9 +94,9 @@ public abstract class TabFolderOptionBlock {
 		createFolder(composite);
 
 		addTabs();
-		setCurrentPage((ICOptionPage) pages.get(0));
+		setCurrentPage((ICOptionPage)pages.get(0));
 		initializingTabs = false;
-		String desc = ((ICOptionPage) pages.get(0)).getDescription();
+		String desc = ((ICOptionPage)pages.get(0)).getDescription();
 		if (messageLabel != null && desc != null) {
 			messageLabel.setText(desc);
 		}
@@ -105,7 +107,7 @@ public abstract class TabFolderOptionBlock {
 	 * @return
 	 */
 	protected ICOptionPage getStartPage() {
-		return (ICOptionPage) pages.get(0);
+		return (ICOptionPage)pages.get(0);
 	}
 
 	public int getPageIndex() {
@@ -118,9 +120,10 @@ public abstract class TabFolderOptionBlock {
 		fFolder.setLayout(new TabFolderLayout());
 
 		fFolder.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				if (!initializingTabs) {
-					setCurrentPage((ICOptionPage) ((TabItem) e.item).getData());
+					setCurrentPage((ICOptionPage) ((TabItem)e.item).getData());
 					fParent.updateContainer();
 				}
 			}
@@ -145,15 +148,25 @@ public abstract class TabFolderOptionBlock {
 	public boolean performApply(IProgressMonitor monitor) {
 		if (initializingTabs)
 			return false;
-		Iterator iter = pages.iterator();
-		while (iter.hasNext()) {
-			ICOptionPage tab = (ICOptionPage) iter.next();
-			try {
-				tab.performApply(new NullProgressMonitor());
-			} catch (CoreException e) {
-				CUIPlugin.errorDialog(composite.getShell(), CUIMessages.getString("TabFolderOptionBlock.error"), CUIMessages.getString("TabFolderOptionBlock.error.settingOptions"), e); //$NON-NLS-1$ //$NON-NLS-2$
-				return false;
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		monitor.beginTask("", pages.size()); //$NON-NLS-1$
+		try {
+			Iterator iter = pages.iterator();
+			while (iter.hasNext()) {
+				ICOptionPage tab = (ICOptionPage)iter.next();
+				try {
+					tab.performApply(new SubProgressMonitor(monitor, 1));
+				} catch (CoreException e) {
+					CUIPlugin.errorDialog(
+							composite.getShell(),
+							CUIMessages.getString("TabFolderOptionBlock.error"), CUIMessages.getString("TabFolderOptionBlock.error.settingOptions"), e); //$NON-NLS-1$ //$NON-NLS-2$
+					return false;
+				}
 			}
+		} finally {
+			monitor.done();
 		}
 		return true;
 	}
@@ -176,7 +189,7 @@ public abstract class TabFolderOptionBlock {
 		boolean ok = true;
 		Iterator iter = pages.iterator();
 		while (iter.hasNext()) {
-			ICOptionPage tab = (ICOptionPage) iter.next();
+			ICOptionPage tab = (ICOptionPage)iter.next();
 			ok = tab.isValid();
 			if (!ok) {
 				setErrorMessage(tab.getErrorMessage());
@@ -187,7 +200,7 @@ public abstract class TabFolderOptionBlock {
 			setErrorMessage(null);
 			ICOptionPage tab = getCurrentPage();
 			if (messageLabel != null) {
-		        messageLabel.setText(tab.getDescription() != null ? tab.getDescription() : ""); //$NON-NLS-1$
+				messageLabel.setText(tab.getDescription() != null ? tab.getDescription() : ""); //$NON-NLS-1$
 			}
 		}
 		setValid(ok);

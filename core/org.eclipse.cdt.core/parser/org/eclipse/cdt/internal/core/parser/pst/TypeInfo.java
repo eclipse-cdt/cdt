@@ -10,8 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -23,37 +24,37 @@ public class TypeInfo {
 		super();	
 	}
 
-	public TypeInfo( TypeInfo.eType type, int info, ISymbol symbol ){
+	public TypeInfo( TypeInfo.eType type, int bits, ISymbol symbol ){
 		super();
-		_typeInfo = info;
+		_typeBits = bits;
 		_type = type;
 		_typeDeclaration = symbol;	
 	}
 
-	public TypeInfo( TypeInfo.eType type, int info, ISymbol symbol, TypeInfo.PtrOp op, boolean hasDefault ){
+	public TypeInfo( TypeInfo.eType type, int bits, ISymbol symbol, TypeInfo.PtrOp op, boolean hasDefault ){
 		super();
-		_typeInfo = info;
+		_typeBits = bits;
 		_type = type;
 		_typeDeclaration = symbol;
 		if( op != null ){
-			_ptrOperators = new LinkedList();
+			_ptrOperators = new ArrayList(2);
 			_ptrOperators.add( op );
 		} else {
-			_ptrOperators = null;
+			_ptrOperators = Collections.EMPTY_LIST;
 		}
 		_hasDefaultValue = hasDefault;
 	}
 	
-	public TypeInfo( TypeInfo.eType type, int info, ISymbol symbol, TypeInfo.PtrOp op, Object def ){
+	public TypeInfo( TypeInfo.eType type, int bits, ISymbol symbol, TypeInfo.PtrOp op, Object def ){
 		super();
-		_typeInfo = info;
+		_typeBits = bits;
 		_type = type;
 		_typeDeclaration = symbol;
 		if( op != null ){
-			_ptrOperators = new LinkedList();
+			_ptrOperators = new ArrayList( 1 );
 			_ptrOperators.add( op );
 		} else {
-			_ptrOperators = null;
+			_ptrOperators = Collections.EMPTY_LIST;
 		}
 		_hasDefaultValue = true;
 		setDefault( def );
@@ -62,35 +63,34 @@ public class TypeInfo {
 	public TypeInfo( TypeInfo info ){
 		super();
 	
-		_typeInfo = info._typeInfo;
+		_typeBits = info._typeBits;
 		_type = info._type;
 		_typeDeclaration = info._typeDeclaration;
-		_ptrOperators = ( info._ptrOperators == null ) ? null : (LinkedList)info._ptrOperators.clone();
+		_ptrOperators = ( info._ptrOperators == Collections.EMPTY_LIST ) ? info._ptrOperators : (ArrayList)((ArrayList)info._ptrOperators).clone();
 		_hasDefaultValue = info._hasDefaultValue;
 		_defaultValue = info._defaultValue;
 	}
 
-    public static final int typeMask   = 0x001f;
-	public static final int isAuto     = 0x0020;
-	public static final int isRegister = 0x0040;
-	public static final int isStatic   = 0x0080;
-	public static final int isExtern   = 0x0100;
-	public static final int isMutable  = 0x0200;
-	public static final int isInline   = 0x0400;
-	public static final int isVirtual  = 0x0800;
-	public static final int isExplicit = 0x1000;
-	public static final int isTypedef  = 0x2000;
-	public static final int isFriend   = 0x4000;
-	public static final int isConst    = 0x8000;
-	public static final int isVolatile = 0x10000;
-	public static final int isUnsigned = 0x20000;
-	public static final int isShort    = 0x40000;
-	public static final int isLong     = 0x80000;
-	public static final int isForward  = 0x100000;
-	public static final int isComplex  = 0x200000;
-	public static final int isImaginary= 0x400000;
-	public static final int isLongLong = 0x800000;
-	public static final int isSigned   = 0x1000000;
+	public static final int isAuto     = 0x00001;
+	public static final int isRegister = 0x00002;
+	public static final int isStatic   = 0x00004;
+	public static final int isExtern   = 0x00008;
+	public static final int isMutable  = 0x00010;
+	public static final int isInline   = 0x00020;
+	public static final int isVirtual  = 0x00040;
+	public static final int isExplicit = 0x00080;
+	public static final int isTypedef  = 0x00100;
+	public static final int isFriend   = 0x00200;
+	public static final int isConst    = 0x00400;
+	public static final int isVolatile = 0x00800;
+	public static final int isUnsigned = 0x01000;
+	public static final int isShort    = 0x02000;
+	public static final int isLong     = 0x04000;
+	public static final int isForward  = 0x08000;
+	public static final int isComplex  = 0x10000;
+	public static final int isImaginary= 0x20000;
+	public static final int isLongLong = 0x40000;
+	public static final int isSigned   = 0x80000;
 	
 	// Types (maximum type is typeMask
 	// Note that these should be considered ordered and if you change
@@ -248,14 +248,14 @@ public class TypeInfo {
 		// Convenience methods
 	public void setBit(boolean b, int mask){
 		if( b ){
-			_typeInfo = _typeInfo | mask; 
+			_typeBits = _typeBits | mask; 
 		} else {
-			_typeInfo = _typeInfo & ~mask; 
+			_typeBits = _typeBits & ~mask; 
 		} 
 	}
 	
 	public boolean checkBit(int mask){
-		return (_typeInfo & mask) != 0;
+		return (_typeBits & mask) != 0;
 	}	
 	
 	public void setType( TypeInfo.eType t){
@@ -271,11 +271,11 @@ public class TypeInfo {
 	}
 
 	public int getTypeInfo(){
-		return _typeInfo;
+		return _typeBits;
 	}
 
 	public void setTypeInfo( int typeInfo ){
-		_typeInfo = typeInfo;
+		_typeBits = typeInfo;
 	}
 
 	public eType getTemplateParameterType(){
@@ -320,13 +320,10 @@ public class TypeInfo {
 	}
 
 	public boolean hasPtrOperators(){
-		return ( _ptrOperators != null && _ptrOperators.size() > 0 );	
+		return _ptrOperators.size() > 0;	
 	}
 	
 	public List getPtrOperators(){
-		if( _ptrOperators == null ){
-			_ptrOperators = new LinkedList();
-		}
 		return _ptrOperators;
 	}
 	
@@ -353,9 +350,6 @@ public class TypeInfo {
 	}
 
 	public List getOperatorExpressions(){
-		if( _operatorExpressions == null ){
-			_operatorExpressions = new LinkedList();
-		}
 		return _operatorExpressions;
 	}
 	
@@ -365,10 +359,9 @@ public class TypeInfo {
 			return;
 			
 		int size = ops.size();
-		Iterator iter = ops.iterator();
 		OperatorExpression op = null;
-		for( int i = size; i > 0; i-- ){
-			op = (OperatorExpression)iter.next();
+		for( int i = 0; i < size; i++ ){
+			op = (OperatorExpression)ops.get(i);
 			if( op == OperatorExpression.indirection ||
 				op == OperatorExpression.subscript )
 			{
@@ -393,24 +386,37 @@ public class TypeInfo {
 	}
 
 	public void addPtrOperator( TypeInfo.PtrOp ptr ){
-		if( _ptrOperators == null ){
-			_ptrOperators = new LinkedList();
+		if( _ptrOperators == Collections.EMPTY_LIST ){
+			_ptrOperators = new ArrayList(4);
 		}
 		if( ptr != null )
 			_ptrOperators.add( ptr );	
 	}
 	
 	public void addPtrOperator( List ptrs ){
-		if( _ptrOperators == null ){
-			_ptrOperators = new LinkedList();
+		if( ptrs == null || ptrs.size() == 0 )
+			return;
+		
+		if( _ptrOperators == Collections.EMPTY_LIST ){
+			_ptrOperators = new ArrayList( ptrs.size() );
 		}
-		if( ptrs != null )
-			_ptrOperators.addAll( ptrs );
+		
+		int size = ptrs.size();
+		for( int i = 0; i < size; i++ ){
+			_ptrOperators.add( ptrs.get( i ) );
+		}
+	}
+	
+	public void preparePtrOperators(int numPtrOps) {
+		if( _ptrOperators == Collections.EMPTY_LIST )
+			_ptrOperators = new ArrayList( numPtrOps );
+		else
+			((ArrayList) _ptrOperators).ensureCapacity( numPtrOps );
 	}
 	
 	public void addOperatorExpression( OperatorExpression exp ){
-		if( _operatorExpressions == null ){
-			_operatorExpressions = new LinkedList();
+		if( _operatorExpressions == Collections.EMPTY_LIST ){
+			_operatorExpressions = new ArrayList(4);
 		}
 		_operatorExpressions.add( exp );
 	}
@@ -461,7 +467,7 @@ public class TypeInfo {
 	
 		TypeInfo type = (TypeInfo)t;
 	
-		boolean result = ( _typeInfo == type._typeInfo );
+		boolean result = ( _typeBits == type._typeBits );
 		result &= ( _type == type._type );
 		
 		if( _typeDeclaration != null && type._typeDeclaration != null ){
@@ -499,17 +505,14 @@ public class TypeInfo {
 			result &= ( _typeDeclaration == type._typeDeclaration );
 		}
 			
-		int size1 = (_ptrOperators == null) ? 0 : _ptrOperators.size();
-		int size2 = (type._ptrOperators == null) ? 0 : type._ptrOperators.size();
+		int size1 = _ptrOperators.size();
+		int size2 = type._ptrOperators.size();
 		if( size1 == size2 ){
 			if( size1 != 0 ){
-				Iterator iter1 = _ptrOperators.iterator();
-				Iterator iter2 = type._ptrOperators.iterator();
-				
 				TypeInfo.PtrOp op1 = null, op2 = null;
-				for( int i = size1; i > 0; i-- ){
-					op1 = (TypeInfo.PtrOp)iter1.next();
-					op2 = (TypeInfo.PtrOp)iter2.next();
+				for( int i = 0; i < size1; i++ ){
+					op1 = (TypeInfo.PtrOp)_ptrOperators.get(i);
+					op2 = (TypeInfo.PtrOp)type._ptrOperators.get(i);
 					
 					if( !op1.equals(op2) ){
 						return false;
@@ -530,14 +533,13 @@ public class TypeInfo {
 		return TypeInfo._image[ getType().toInt() ];
 	}
 
-	private int 	_typeInfo = 0;
+	private int 	_typeBits = 0;
 	private eType   _type = TypeInfo.t_undef;
 	private eType	_templateParameterType = t_typeName;
 	private ISymbol _typeDeclaration;	
 
 	private boolean	_hasDefaultValue = false;
 	private Object _defaultValue = null;
-	private LinkedList _ptrOperators;	
-	private LinkedList _operatorExpressions;
-	
+	private List _ptrOperators = Collections.EMPTY_LIST;	
+	private List _operatorExpressions = Collections.EMPTY_LIST;
 }

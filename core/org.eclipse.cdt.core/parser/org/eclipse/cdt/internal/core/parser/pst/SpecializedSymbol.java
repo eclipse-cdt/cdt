@@ -13,13 +13,12 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Command;
 
 /**
  * @author aniefe
@@ -37,7 +36,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	public Object clone(){
 		SpecializedSymbol copy = (SpecializedSymbol)super.clone();
 		
-		copy._argumentList	  = ( _argumentList != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _argumentList.clone() : _argumentList;
+		copy._argumentList	  = ( _argumentList != Collections.EMPTY_LIST ) ? (List)((ArrayList) _argumentList).clone() : _argumentList;
 		
 		return copy;	
 	}
@@ -59,7 +58,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 			return null;
 		}
 		
-		List actualArgs = new LinkedList();
+		List actualArgs = new ArrayList( specArgs.size() );
 		
 		Iterator iter1 = specArgs.iterator();
 		Iterator iter2 = arguments.iterator();
@@ -126,34 +125,41 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		return _argumentList;
 	}
 	
+	public void prepareArguments( int size ){
+		if( _argumentList == Collections.EMPTY_LIST )
+			_argumentList = new ArrayList( size );
+		else
+			((ArrayList)_argumentList).ensureCapacity( size );
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addArgument(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addArgument(TypeInfo arg) {
-		if( _argumentList == ParserSymbolTable.EMPTY_LIST )
-			_argumentList = new LinkedList();
+		if( _argumentList == Collections.EMPTY_LIST )
+			_argumentList = new ArrayList(4);
 		
 		_argumentList.add( arg );
 		
 		//arg.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
-		Command command = new AddArgumentCommand( this, arg );
-		getSymbolTable().pushCommand( command );
+//		Command command = new AddArgumentCommand( this, arg );
+//		getSymbolTable().pushCommand( command );
 	}
 	
-	static private class AddArgumentCommand extends Command{
-		public AddArgumentCommand( ISpecializedSymbol container, TypeInfo arg ){
-			_decl = container;
-			_arg = arg;
-		}
-		public void undoIt(){
-			_decl.getArgumentList().remove( _arg );
-		}
-
-		private ISpecializedSymbol _decl;
-		private TypeInfo _arg;
-	}
+//	static private class AddArgumentCommand extends Command{
+//		public AddArgumentCommand( ISpecializedSymbol container, TypeInfo arg ){
+//			_decl = container;
+//			_arg = arg;
+//		}
+//		public void undoIt(){
+//			_decl.getArgumentList().remove( _arg );
+//		}
+//
+//		private ISpecializedSymbol _decl;
+//		private TypeInfo _arg;
+//	}
 	
-	private LinkedList      _argumentList = ParserSymbolTable.EMPTY_LIST;	  //template specialization arguments
+	private List      _argumentList = Collections.EMPTY_LIST;	  //template specialization arguments
 	private ITemplateSymbol _primaryTemplate; //our primary template
 }

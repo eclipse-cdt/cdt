@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,6 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeFilter;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.OperatorExpression;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
@@ -1159,7 +1157,7 @@ public class ParserSymbolTableTest extends TestCase {
 		foo.setType( TypeInfo.t_function );
 		compUnit.addSymbol( foo );
 
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		TypeInfo param = new TypeInfo( TypeInfo.t_char, 0, null );
 		paramList.add( param );
 		
@@ -1304,7 +1302,7 @@ public class ParserSymbolTableTest extends TestCase {
 		main.setReturnType( table.newSymbol( "", TypeInfo.t_int ) );
 		compUnit.addSymbol( main );
 
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		look = main.lookup( "parm" );
 		assertEquals( look, param );
 		TypeInfo p = new TypeInfo( TypeInfo.t_type, 0, look );
@@ -1389,7 +1387,7 @@ public class ParserSymbolTableTest extends TestCase {
 		a.setTypeSymbol( look );
 		compUnit.addSymbol( a );
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		look = compUnit.lookup( "a" );
 		assertEquals( look, a );
 		TypeInfo param = new TypeInfo( look.getType(), 0, look, null, false );
@@ -1464,7 +1462,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, c );
 		assertEquals( look.getTypeSymbol(), C );
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 															  
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
 		TypeInfo p2 = new TypeInfo( TypeInfo.t_char, 0, null );
@@ -1510,7 +1508,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f2.addParameter( TypeInfo.t_char, 0, null, true );
 		compUnit.addSymbol( f2 );
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
 		paramList.add( p1 );
 		
@@ -1589,7 +1587,7 @@ public class ParserSymbolTableTest extends TestCase {
 		c.setTypeSymbol( C );
 		c.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, a );
 		paramList.add( p1 );
 		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList );
@@ -1663,7 +1661,7 @@ public class ParserSymbolTableTest extends TestCase {
 		array.setTypeSymbol( A );
 		array.addPtrOperator( new PtrOp( PtrOp.t_array, false, false ) );
 				
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		TypeInfo p = new TypeInfo( TypeInfo.t_type, 0, a );
 		paramList.add( p );
 		
@@ -1734,7 +1732,7 @@ public class ParserSymbolTableTest extends TestCase {
 		a.setTypeSymbol( A );
 		compUnit.addSymbol( a );
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		TypeInfo p = new TypeInfo( TypeInfo.t_type, 0, a );
 		paramList.add( p );
 		
@@ -1794,7 +1792,7 @@ public class ParserSymbolTableTest extends TestCase {
 		main.setType( TypeInfo.t_function );
 		compUnit.addSymbol( main );
 		
-		LinkedList params = new LinkedList();
+		ArrayList params = new ArrayList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, i );
 		p1.addOperatorExpression( OperatorExpression.addressof );
 		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, 0, s );
@@ -1889,7 +1887,7 @@ public class ParserSymbolTableTest extends TestCase {
 		b.setType( TypeInfo.t_type );
 		b.setTypeSymbol( B );
 		
-		LinkedList params = new LinkedList();
+		ArrayList params = new ArrayList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, b );
 		params.add( p1 );
 		
@@ -1932,56 +1930,56 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, f3 );
 	}
 	
-	public void testMarkRollback() throws Exception{
-		newTable();
-		
-		IDerivableContainerSymbol A = table.newDerivableContainerSymbol("A");
-		A.setType( TypeInfo.t_class );
-		table.getCompilationUnit().addSymbol( A );
-		
-		Mark mark = table.setMark();
-		
-		ISymbol f = table.newSymbol("f");
-		A.addSymbol( f );
-		
-		ISymbol look = A.lookup("f");
-		assertEquals( look, f );
-		
-		assertTrue( table.rollBack( mark ) );
-		
-		look = A.lookup("f");
-		assertEquals( look, null );
-		
-		IDerivableContainerSymbol B = table.newDerivableContainerSymbol("B");
-		B.setType( TypeInfo.t_class );
-		
-		mark = table.setMark();
-		table.getCompilationUnit().addSymbol( B );
-		Mark mark2 = table.setMark();
-		A.addParent( B );
-		Mark mark3 = table.setMark();
-		
-		IParameterizedSymbol C = table.newParameterizedSymbol("C");
-		C.addParameter( TypeInfo.t_class, 0, null, false );
-		
-		assertEquals( C.getParameterList().size(), 1 );
-		table.rollBack( mark3 );
-		assertEquals( C.getParameterList().size(), 0 );
-		assertEquals( A.getParents().size(), 1 );
-		table.rollBack( mark2 );
-		assertEquals( A.getParents().size(), 0 );
-		
-		assertFalse( table.commit( mark2 ) );
-		assertFalse( table.rollBack( mark2 ) );
-		
-		B.setType( TypeInfo.t_namespace );
-		
-		mark = table.setMark();
-		C.addUsingDirective( B );
-		assertEquals( C.getUsingDirectives().size(), 1 );
-		table.rollBack( mark );
-		assertEquals( C.getUsingDirectives().size(), 0 );
-	}
+//	public void testMarkRollback() throws Exception{
+//		newTable();
+//		
+//		IDerivableContainerSymbol A = table.newDerivableContainerSymbol("A");
+//		A.setType( TypeInfo.t_class );
+//		table.getCompilationUnit().addSymbol( A );
+//		
+//		Mark mark = table.setMark();
+//		
+//		ISymbol f = table.newSymbol("f");
+//		A.addSymbol( f );
+//		
+//		ISymbol look = A.lookup("f");
+//		assertEquals( look, f );
+//		
+//		assertTrue( table.rollBack( mark ) );
+//		
+//		look = A.lookup("f");
+//		assertEquals( look, null );
+//		
+//		IDerivableContainerSymbol B = table.newDerivableContainerSymbol("B");
+//		B.setType( TypeInfo.t_class );
+//		
+//		mark = table.setMark();
+//		table.getCompilationUnit().addSymbol( B );
+//		Mark mark2 = table.setMark();
+//		A.addParent( B );
+//		Mark mark3 = table.setMark();
+//		
+//		IParameterizedSymbol C = table.newParameterizedSymbol("C");
+//		C.addParameter( TypeInfo.t_class, 0, null, false );
+//		
+//		assertEquals( C.getParameterList().size(), 1 );
+//		table.rollBack( mark3 );
+//		assertEquals( C.getParameterList().size(), 0 );
+//		assertEquals( A.getParents().size(), 1 );
+//		table.rollBack( mark2 );
+//		assertEquals( A.getParents().size(), 0 );
+//		
+//		assertFalse( table.commit( mark2 ) );
+//		assertFalse( table.rollBack( mark2 ) );
+//		
+//		B.setType( TypeInfo.t_namespace );
+//		
+//		mark = table.setMark();
+//		C.addUsingDirective( B );
+//		assertEquals( C.getUsingDirectives().size(), 1 );
+//		table.rollBack( mark );
+//		assertEquals( C.getUsingDirectives().size(), 0 );
+//	}
 	
 	/**
 	 * class A;
@@ -2110,7 +2108,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		/*..*/
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, a1 );
 		paramList.add( p1 );
 		ISymbol look = classB.memberFunctionLookup( "f", paramList );
@@ -2150,7 +2148,7 @@ public class ParserSymbolTableTest extends TestCase {
 			assertEquals( e.reason, ParserSymbolTableException.r_InvalidOverload );
 		}
 		
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		paramList.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		
 		ISymbol lookup = classA.lookupConstructor( paramList );
@@ -2221,7 +2219,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.getCompilationUnit().addSymbol( NSB );
 		
 		//look for function that has no parameters
-		LinkedList paramList = new LinkedList();
+		ArrayList paramList = new ArrayList();
 		ISymbol look = NSB.qualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );
 		
@@ -2252,7 +2250,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.getCompilationUnit().addSymbol( f );
 		
-		LinkedList paramList = new LinkedList ();
+		ArrayList paramList = new ArrayList ();
 		
 		TypeInfo param = new TypeInfo( TypeInfo.t_type, 0, null );
 		
@@ -2386,7 +2384,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f1.addParameter( clsA, 0, new PtrOp( PtrOp.t_reference ), false );
 		table.getCompilationUnit().addSymbol( f1 );
 		
-		LinkedList parameters = new LinkedList();
+		ArrayList parameters = new ArrayList();
 		TypeInfo param = new TypeInfo( TypeInfo.t_type, 0, b );
 		parameters.add( param );
 		
@@ -2470,7 +2468,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
 		table.getCompilationUnit().addSymbol( f );
 		
-		LinkedList parameters = new LinkedList();
+		ArrayList parameters = new ArrayList();
 		TypeInfo param = new TypeInfo( TypeInfo.t_void, 0, null );
 		parameters.add( param );
 		
@@ -2573,7 +2571,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IParameterizedSymbol init2 = table.newParameterizedSymbol( "initialize", TypeInfo.t_function );
 		
-		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new LinkedList() );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new ArrayList() );
 		assertEquals( look, init1 );
 		
 		init1.getTypeInfo().setIsForwardDeclaration( true );
@@ -2581,7 +2579,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.getCompilationUnit().addSymbol( init2 );
 		
-		look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new LinkedList() );
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new ArrayList() );
 		
 		assertEquals( look, init2 ); 
 	}
@@ -2622,7 +2620,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f3.addParameter( TypeInfo.t_char, 0, null, false );
 		B.addSymbol( f3 );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		
 		ISymbol look = B.qualifiedFunctionLookup( "f", params );
@@ -3000,7 +2998,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.getCompilationUnit().addSymbol( foo );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
 		params.add( p1 );
@@ -3029,7 +3027,7 @@ public class ParserSymbolTableTest extends TestCase {
 		foo2.addParameter( TypeInfo.t_int, 0, null, false );
 		table.getCompilationUnit().addSymbol( foo2 );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
 		params.add( p1 );
@@ -3057,7 +3055,7 @@ public class ParserSymbolTableTest extends TestCase {
 		foo2.setHasVariableArgs( true );
 		table.getCompilationUnit().addSymbol( foo2 );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		
 		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params );
 		
@@ -3203,7 +3201,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f2.addParameter( TypeInfo.t_int, TypeInfo.isLong, null, false );
 		table.getCompilationUnit().addSymbol( f2 );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_int, TypeInfo.isLong, null ) );
 		
 		IParameterizedSymbol lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
@@ -3241,7 +3239,7 @@ public class ParserSymbolTableTest extends TestCase {
 		g.addParameter( TypeInfo.t_float, 0, null, false );
 		table.getCompilationUnit().addSymbol( g );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t_float, TypeInfo.isComplex, null ) );
 		
 		IParameterizedSymbol lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
@@ -3280,7 +3278,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.getCompilationUnit().addSymbol( g );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		params.add( new TypeInfo( TypeInfo.t__Bool, 0, null ) );
 		
 		IParameterizedSymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
@@ -3412,7 +3410,7 @@ public class ParserSymbolTableTest extends TestCase {
 		look = B.qualifiedLookup( "i" );
 		assertNull( look );
 		
-		List params = new LinkedList();
+		List params = new ArrayList();
 		
 		look = B.qualifiedFunctionLookup( "f", params );
 		assertEquals( look, f1 );

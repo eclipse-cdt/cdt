@@ -14,14 +14,14 @@
  
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Command;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
 
 /**
@@ -48,9 +48,9 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	public Object clone(){
 		DerivableContainerSymbol copy = (DerivableContainerSymbol)super.clone();
 			
-		copy._parentScopes = ( _parentScopes != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _parentScopes.clone() : _parentScopes;
-		copy._constructors = ( _constructors != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _constructors.clone() : _constructors;
-		copy._friends      = ( _friends != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _friends.clone() : _friends;
+		copy._parentScopes = ( _parentScopes != Collections.EMPTY_LIST ) ? (List)((ArrayList)_parentScopes).clone() : _parentScopes;
+		copy._constructors = ( _constructors != Collections.EMPTY_LIST ) ? (List)((ArrayList) _constructors).clone() : _constructors;
+		copy._friends      = ( _friends != Collections.EMPTY_LIST ) ? (List)((ArrayList) _friends).clone() : _friends;
 			
 		return copy;	
 	}
@@ -122,15 +122,15 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addParent(org.eclipse.cdt.internal.core.parser.pst.ISymbol, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility, int, java.util.List)
 	 */
 	public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references ){
-		if( _parentScopes == ParserSymbolTable.EMPTY_LIST ){
-			_parentScopes = new LinkedList();
+		if( _parentScopes == Collections.EMPTY_LIST ){
+			_parentScopes = new ArrayList(4);
 		}
 		
 		ParentWrapper wrapper = new ParentWrapper( parent, virtual, visibility, offset, references );
 		_parentScopes.add( wrapper );
 		
-		Command command = new AddParentCommand( this, wrapper );
-		getSymbolTable().pushCommand( command );
+//		Command command = new AddParentCommand( this, wrapper );
+//		getSymbolTable().pushCommand( command );
 	}
 	
 	/* (non-Javadoc)
@@ -169,15 +169,15 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 
 		addToContents( constructor );
 		
-		Command command = new AddConstructorCommand( constructor, this );
-		getSymbolTable().pushCommand( command );			
+//		Command command = new AddConstructorCommand( constructor, this );
+//		getSymbolTable().pushCommand( command );			
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addCopyConstructor()
 	 */
 	public void addCopyConstructor() throws ParserSymbolTableException{
-		List parameters = new LinkedList();
+		List parameters = new ArrayList(1);
 		
 		ISymbol paramType = this;
 		if( getContainingSymbol() instanceof ITemplateSymbol ){
@@ -212,7 +212,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		
 		List constructors = null;
 		if( !getConstructors().isEmpty() ){
-			constructors = new LinkedList( getConstructors() );
+			constructors = new ArrayList( getConstructors() );
 		}
 		if( constructors != null )	
 			return ParserSymbolTable.resolveFunction( data, constructors );
@@ -227,8 +227,8 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	}
 
 	private void addToConstructors( IParameterizedSymbol constructor ){
-		if( _constructors == ParserSymbolTable.EMPTY_LIST )
-			_constructors = new LinkedList();
+		if( _constructors == Collections.EMPTY_LIST )
+			_constructors = new ArrayList(4);
 		_constructors.add( constructor );
 	}
 	/**
@@ -378,59 +378,59 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return _friends;
 	}
 	private void addToFriends( ISymbol friend ){
-		if( _friends == ParserSymbolTable.EMPTY_LIST ){
-			_friends = new LinkedList();
+		if( _friends == Collections.EMPTY_LIST ){
+			_friends = new ArrayList(4);
 		}
 		_friends.add( friend );
 	}
 	
-	static private class AddParentCommand extends Command{
-		public AddParentCommand( IDerivableContainerSymbol container, ParentWrapper wrapper ){
-			_decl = container;
-			_wrapper = wrapper;
-		}
-		
-		public void undoIt(){
-			List parents = _decl.getParents();
-			parents.remove( _wrapper );
-		}
-		
-		private IDerivableContainerSymbol _decl;
-		private ParentWrapper _wrapper;
-	}
-	
-	static private class AddConstructorCommand extends Command{
-		AddConstructorCommand( IParameterizedSymbol newConstr, IDerivableContainerSymbol context ){
-			_constructor = newConstr;
-			_context = context;
-		}
-		public void undoIt(){
-			List constructors = _context.getConstructors();
-			Iterator iter = constructors.listIterator();
-			
-			int size = constructors.size();
-			IParameterizedSymbol item = null;
-			for( int i = 0; i < size; i++ ){
-				item = (IParameterizedSymbol)iter.next();
-				if( item == _constructor ){
-					iter.remove();
-					break;
-				}
-			}
-			
-			ContentsIterator contents = (ContentsIterator) _context.getContentsIterator();
-			while( iter.hasNext() ){
-				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
-				if( ext == _constructor ){
-					contents.removeSymbol();
-					break;
-				}
-			}
-		}
-	
-		private final IParameterizedSymbol _constructor;
-		private final IDerivableContainerSymbol _context; 
-	}
+//	static private class AddParentCommand extends Command{
+//		public AddParentCommand( IDerivableContainerSymbol container, ParentWrapper wrapper ){
+//			_decl = container;
+//			_wrapper = wrapper;
+//		}
+//		
+//		public void undoIt(){
+//			List parents = _decl.getParents();
+//			parents.remove( _wrapper );
+//		}
+//		
+//		private IDerivableContainerSymbol _decl;
+//		private ParentWrapper _wrapper;
+//	}
+//	
+//	static private class AddConstructorCommand extends Command{
+//		AddConstructorCommand( IParameterizedSymbol newConstr, IDerivableContainerSymbol context ){
+//			_constructor = newConstr;
+//			_context = context;
+//		}
+//		public void undoIt(){
+//			List constructors = _context.getConstructors();
+//			Iterator iter = constructors.listIterator();
+//			
+//			int size = constructors.size();
+//			IParameterizedSymbol item = null;
+//			for( int i = 0; i < size; i++ ){
+//				item = (IParameterizedSymbol)iter.next();
+//				if( item == _constructor ){
+//					iter.remove();
+//					break;
+//				}
+//			}
+//			
+//			ContentsIterator contents = (ContentsIterator) _context.getContentsIterator();
+//			while( iter.hasNext() ){
+//				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
+//				if( ext == _constructor ){
+//					contents.removeSymbol();
+//					break;
+//				}
+//			}
+//		}
+//	
+//		private final IParameterizedSymbol _constructor;
+//		private final IDerivableContainerSymbol _context; 
+//	}
 	
 	public class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol
 	{
@@ -470,7 +470,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		private final List references; 
 	}
 	
-	private LinkedList _constructors = ParserSymbolTable.EMPTY_LIST;	//constructor list
-	private	LinkedList _parentScopes = ParserSymbolTable.EMPTY_LIST;	//inherited scopes (is base classes)
-	private	LinkedList _friends      = ParserSymbolTable.EMPTY_LIST;
+	private List _constructors = Collections.EMPTY_LIST;	//constructor list
+	private	List _parentScopes = Collections.EMPTY_LIST;	//inherited scopes (is base classes)
+	private	List _friends      = Collections.EMPTY_LIST;
 }

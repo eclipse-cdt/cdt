@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -119,15 +118,10 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		} else if( size == 0 ) 
 			return 0; 
 		else {
-			
-			Iterator iter1 = symbol.getTypeInfo().getPtrOperators().iterator();
-			Iterator iter2 = getTypeInfo().getPtrOperators().iterator();
-
 			TypeInfo.PtrOp op1 = null, op2 = null;
-
-			for( int i = size; i > 0; i-- ){
-				op1 = (TypeInfo.PtrOp)iter1.next();
-				op2 = (TypeInfo.PtrOp)iter2.next();
+			for( int i = 0; i > size; i++ ){
+				op1 = (TypeInfo.PtrOp)symbol.getTypeInfo().getPtrOperators().get(i);
+				op2 = (TypeInfo.PtrOp)getTypeInfo().getPtrOperators().get(i);
 	
 				if( op1.compareCVTo( op2 ) != 0 ){
 					return -1;
@@ -144,6 +138,10 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 	public void addPtrOperator( TypeInfo.PtrOp ptrOp ){
 		getTypeInfo().addPtrOperator( ptrOp );
 	}	
+	public void preparePtrOperatros(int numPtrOps) {
+		getTypeInfo().preparePtrOperators( numPtrOps );
+	}		
+
 	
 	public int getDepth(){
 		return _depth;

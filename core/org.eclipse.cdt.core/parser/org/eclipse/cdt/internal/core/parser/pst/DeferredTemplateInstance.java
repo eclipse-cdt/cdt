@@ -10,8 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 	public DeferredTemplateInstance( ParserSymbolTable table, ITemplateSymbol template, List args ){
 		super(table, ParserSymbolTable.EMPTY_NAME );
 		_template = template;
-		_arguments = new LinkedList( args );
+		_arguments = new ArrayList( args );
 		
 		setContainingSymbol( template );
 		if( template.getTemplatedSymbol() != null )
@@ -50,7 +50,7 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 
 	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
 		List args = getArguments();
-		List newArgs = new LinkedList();
+		List newArgs = new ArrayList( args.size() );
 		Iterator iter = args.iterator();
 		
 		while( iter.hasNext() ){

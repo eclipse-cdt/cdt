@@ -64,4 +64,6 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 	public int getDepth();
 	public boolean getIsInvisible();
 	public void setIsInvisible( boolean invisible );
+
+	public void preparePtrOperatros(int numPtrOps);
 }

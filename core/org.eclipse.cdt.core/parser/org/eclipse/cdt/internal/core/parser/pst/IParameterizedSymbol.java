@@ -43,4 +43,6 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	
 	public void setHasVariableArgs( boolean var );
 	public boolean hasVariableArgs( );
+
+	public void prepareForParameters(int i);
 }

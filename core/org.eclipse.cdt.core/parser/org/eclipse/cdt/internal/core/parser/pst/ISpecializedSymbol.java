@@ -33,4 +33,9 @@ public interface ISpecializedSymbol extends ITemplateSymbol {
 	public ITemplateSymbol getPrimaryTemplate();
 	public void setPrimaryTemplate( ITemplateSymbol templateSymbol );
 
+	/**
+	 * @param size
+	 */
+	public void prepareArguments(int size);
+
 }

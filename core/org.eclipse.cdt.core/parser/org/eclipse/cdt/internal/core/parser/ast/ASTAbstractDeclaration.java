@@ -70,6 +70,13 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     	if( pointerOperators == null ) return EmptyIterator.EMPTY_ITERATOR;
         return pointerOperators.iterator();
     }
+    
+    public int getNumPointerOperators(){
+    	if( pointerOperators == null )
+    		return 0;
+    	return pointerOperators.size();	
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getArrayModifiers()
      */
@@ -77,6 +84,12 @@ public class ASTAbstractDeclaration  implements IASTAbstractDeclaration
     {
 		if( arrayModifiers == null ) return EmptyIterator.EMPTY_ITERATOR;
         return arrayModifiers.iterator();
+    }
+    
+    public int getNumArrayModifiers(){
+    	if( arrayModifiers == null )
+    		return 0;
+    	return arrayModifiers.size();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration#getParameters()

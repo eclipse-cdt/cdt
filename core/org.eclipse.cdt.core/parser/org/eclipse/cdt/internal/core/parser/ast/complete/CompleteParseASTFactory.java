@@ -73,6 +73,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
+import org.eclipse.cdt.internal.core.parser.ast.ASTAbstractDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ExtensibleSymbolExtension;
@@ -2062,6 +2063,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		symbol.setHasVariableArgs( hasVariableArguments );
 		
+		symbol.prepareForParameters( parameters.size() );
 		setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
 		 
@@ -2380,6 +2382,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
 		symbol.setHasVariableArgs( hasVariableArguments );
 		    	
+		symbol.prepareForParameters( parameters.size() );
     	if( returnType.getTypeSpecifier() != null )
 			setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
@@ -2595,6 +2598,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
             isRegister,
             isStatic,
             newSymbol);
+        
+        int numPtrOps  = ((ASTAbstractDeclaration)abstractDeclaration).getNumArrayModifiers() +
+        				 ((ASTAbstractDeclaration)abstractDeclaration).getNumPointerOperators(); 
+        newSymbol.preparePtrOperatros( numPtrOps );
 		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
 		
 		newSymbol.setIsForwardDeclaration( isStatic || isExtern );

@@ -13,16 +13,16 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Command;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
@@ -48,12 +48,12 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	public Object clone(){
 		ParameterizedSymbol copy = (ParameterizedSymbol)super.clone();
 			
-		copy._parameterList = ( _parameterList != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _parameterList.clone() : _parameterList;
+		copy._parameterList = ( _parameterList != Collections.EMPTY_LIST ) ? (List) ((ArrayList)_parameterList).clone() : _parameterList;
 		
 		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-			copy._parameterMap	= ( _parameterMap != ParserSymbolTable.EMPTY_MAP ) ? (Map) ((TreeMap) _parameterMap).clone() : _parameterMap;
+			copy._parameterMap	= ( _parameterMap != Collections.EMPTY_MAP ) ? (Map) ((TreeMap) _parameterMap).clone() : _parameterMap;
 		else 
-			copy._parameterMap	= ( _parameterMap != ParserSymbolTable.EMPTY_MAP ) ? (Map) ((HashMap) _parameterMap).clone() : _parameterMap;
+			copy._parameterMap	= ( _parameterMap != Collections.EMPTY_MAP ) ? (Map) ((HashMap) _parameterMap).clone() : _parameterMap;
 			
 		return copy;	
 	}
@@ -104,19 +104,28 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		setReturnType( returnType.instantiate( template, argMap ) );
 	}
 	
+	
+	public void prepareForParameters( int numParams ){
+		if( _parameterList == Collections.EMPTY_LIST ){
+			_parameterList = new ArrayList( numParams );
+		} else {
+			((ArrayList)_parameterList).ensureCapacity( numParams );
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addParameter(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addParameter( ISymbol param ){
-		if( _parameterList == ParserSymbolTable.EMPTY_LIST )
-			_parameterList = new LinkedList();
+		if( _parameterList == Collections.EMPTY_LIST)
+			_parameterList = new ArrayList(8);
 
 		_parameterList.add( param );
 		
 		String name = param.getName();
 		if( name != null && !name.equals(ParserSymbolTable.EMPTY_NAME) )
 		{
-			if( _parameterMap == ParserSymbolTable.EMPTY_MAP ){
+			if( _parameterMap == Collections.EMPTY_MAP ){
 				if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
 					_parameterMap = new TreeMap( new SymbolTableComparator() );
 				else 
@@ -130,8 +139,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		param.setContainingSymbol( this );
 		param.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
-		Command command = new AddParameterCommand( this, param );
-		getSymbolTable().pushCommand( command );
+//		Command command = new AddParameterCommand( this, param );
+//		getSymbolTable().pushCommand( command );
 	}
 
 	/* (non-Javadoc)
@@ -287,29 +296,29 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		return _hasVarArgs;
 	}
 
-	static private class AddParameterCommand extends Command{
-		public AddParameterCommand( IParameterizedSymbol container, ISymbol parameter ){
-			_decl = container;
-			_param = parameter;
-		}
-		
-		public void undoIt(){
-			_decl.getParameterList().remove( _param );
-			
-			String name = _param.getName();
-			if( name != null && !name.equals( ParserSymbolTable.EMPTY_NAME) )
-			{	
-				_decl.getParameterMap().remove( name );
-			}
-		}
-		
-		private IParameterizedSymbol _decl;
-		private ISymbol _param;
-	}
+//	static private class AddParameterCommand extends Command{
+//		public AddParameterCommand( IParameterizedSymbol container, ISymbol parameter ){
+//			_decl = container;
+//			_param = parameter;
+//		}
+//		
+//		public void undoIt(){
+//			_decl.getParameterList().remove( _param );
+//			
+//			String name = _param.getName();
+//			if( name != null && !name.equals( ParserSymbolTable.EMPTY_NAME) )
+//			{	
+//				_decl.getParameterMap().remove( name );
+//			}
+//		}
+//		
+//		private IParameterizedSymbol _decl;
+//		private ISymbol _param;
+//	}
 	
 	
-	private 	LinkedList	_parameterList = ParserSymbolTable.EMPTY_LIST;	//have my cake
-	private 	Map			_parameterMap  = ParserSymbolTable.EMPTY_MAP;	//and eat it too
+	private 	List	_parameterList = Collections.EMPTY_LIST;	//have my cake
+	private 	Map			_parameterMap  = Collections.EMPTY_MAP;	//and eat it too
 	private 	ISymbol		_returnType;
 	private 	boolean		_hasVarArgs = false;	//whether or not this function has variable arguments
 }

@@ -10,9 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -31,8 +31,8 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 
 	private IContainerSymbol lastSymbol; 
 	
-	private List templates = new LinkedList();
-	private List symbols = new LinkedList();
+	private ArrayList templates = new ArrayList(4);
+	private ArrayList symbols = new ArrayList(4);
 	private Map  argMap = new HashMap();
 	
 	protected TemplateFactory( ParserSymbolTable table ){
@@ -49,7 +49,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	
 	public void pushTemplateId(ISymbol symbol, List args) {
 		symbols.add( symbol );
-		argMap.put( symbol, new LinkedList( args ) );
+		argMap.put( symbol, new ArrayList( args ) );
 	}
 
 	/* (non-Javadoc)
@@ -77,13 +77,14 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		} else {
 			//partial speciailization
 			ISpecializedSymbol spec = template.getSymbolTable().newSpecializedSymbol( symbol.getName() );
-			Iterator iter = params.iterator();
-			while( iter.hasNext() ){
-				spec.addTemplateParameter( (ISymbol) iter.next() );
+			int size = params.size();
+			for( int i = 0; i < size; i++){
+				spec.addTemplateParameter( (ISymbol) params.get( i ) );
 			}
-			iter = args.iterator();
-			while( iter.hasNext() ){
-				spec.addArgument( (TypeInfo) iter.next() );
+			size = args.size();
+			spec.prepareArguments( size );
+			for( int i = 0; i < size; i++){
+				spec.addArgument( (TypeInfo) args.get(i) );
 			}
 			
 			spec.addSymbol( symbol );
@@ -106,18 +107,18 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
 		lastSymbol = getLastSymbol();
 		
-		Iterator iter = symbols.iterator();
-		ListIterator tIter = templates.listIterator();
-		
 		ISymbol sym = null;
 		ISymbol container = null;
 		boolean templateParamState = false;
-		while( iter.hasNext() ){
-			sym = (ISymbol) iter.next();
+		int size = symbols.size();
+		int templatesSize = templates.size(), templatesIdx = 0;
+		for( int i = 0; i < size; i++ ){
+			sym = (ISymbol) symbols.get( i );
 			if( !sym.getContainingSymbol().isType( TypeInfo.t_template ) ){
-				iter.remove();
-			} else if( tIter.hasNext() ) {
-				ITemplateSymbol template = (ITemplateSymbol) tIter.next();
+				symbols.remove( i-- );
+				size--;
+			} else if( templatesIdx < templatesSize ) {
+				ITemplateSymbol template = (ITemplateSymbol) templates.get( templatesIdx-- );
 				if( template.getParameterList().size() == 0 ){
 					templateParamState = true;
 					container = sym;
@@ -155,10 +156,11 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		List argList = null;
 		if( symbol instanceof IParameterizedSymbol ){
-			argList = new LinkedList();
-			Iterator i = ((IParameterizedSymbol)symbol).getParameterList().iterator();
-			while( i.hasNext() ){
-				ISymbol param = (ISymbol) i.next();
+			List params = ((IParameterizedSymbol)symbol).getParameterList();
+			int size = params.size();
+			argList = new ArrayList( size );
+			for( int i = 0; i < size; i++ ){
+				ISymbol param = (ISymbol) params.get(i);
 				argList.add( param.getTypeInfo() );
 			}
 		}
@@ -182,7 +184,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		if( template.getParameterList().size() == 0 ){
 			//explicit specialization, deduce some arguments and use addTemplateId
-			ISymbol previous = findPreviousSymbol( symbol, new LinkedList() );
+			ISymbol previous = findPreviousSymbol( symbol, new ArrayList() );
 			if( previous == null || !(previous.getContainingSymbol() instanceof ITemplateSymbol) )
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 			
@@ -276,21 +278,21 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 		}
 		
-		Iterator tempIter = templates.iterator();
-		Iterator symIter = symbols.iterator();
-		
-		while( tempIter.hasNext() ){
+		int size = templates.size();
+		for( int i = 0; i < size; i++ ){
 			Map defnMap = new HashMap();
 			
-			ITemplateSymbol template = (ITemplateSymbol) tempIter.next();
-			ITemplateSymbol origTemplate = (ITemplateSymbol) ((ISymbol)symIter.next()).getContainingSymbol();
+			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
+			ITemplateSymbol origTemplate = (ITemplateSymbol) ((ISymbol)symbols.get(i)).getContainingSymbol();
 			
-			Iterator params = template.getParameterList().iterator();
-			Iterator origParams = origTemplate.getParameterList().iterator();
-						
-			while( params.hasNext() ){
-				ISymbol param = (ISymbol) params.next();
-				ISymbol origParam = (ISymbol) origParams.next();
+			List tList = template.getParameterList();
+			List oList = origTemplate.getParameterList();
+			int tListSize = tList.size();
+			if( oList.size() < tListSize )
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+			for( int j = 0; j < tListSize; j++ ){		
+				ISymbol param = (ISymbol) tList.get(j);
+				ISymbol origParam = (ISymbol) oList.get(j);
 				defnMap.put( param, origParam );	
 			}
 			
@@ -310,9 +312,9 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	private void addExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ) throws ParserSymbolTableException {
 		template.addExplicitSpecialization( symbol, arguments );
 		
-		Iterator i = symbols.iterator();
-		while( i.hasNext() ){
-			IContainerSymbol sym = (IContainerSymbol) i.next();
+		int size = symbols.size();
+		for( int i = 0; i < size; i++ ){
+			IContainerSymbol sym = (IContainerSymbol) symbols.get( 0 );
 			ISymbol instantiated = sym.getInstantiatedSymbol();
 			if( instantiated != null ){
 				IContainerSymbol container = instantiated.getContainingSymbol();
@@ -320,7 +322,6 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 					((ITemplateSymbol) container ).removeInstantiation( sym );
 				}
 			}
-				
 		}
 		
 		if( getASTExtension() != null ){
@@ -837,5 +838,11 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	 */
 	public List getFriends() {
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#preparePtrOperatros(int)
+	 */
+	public void preparePtrOperatros(int numPtrOps) {
 	}
 }

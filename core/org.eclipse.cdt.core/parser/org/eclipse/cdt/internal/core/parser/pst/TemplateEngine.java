@@ -10,11 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,8 +46,7 @@ public final class TemplateEngine {
 		{
 			TypeInfo targetInfo = new TypeInfo( (TypeInfo) argMap.get( info.getTypeSymbol() ) );
 			if( info.hasPtrOperators() ){
-				List infoOperators = new LinkedList( info.getPtrOperators() );
-				targetInfo.addPtrOperator( infoOperators );
+				targetInfo.addPtrOperator( info.getPtrOperators() );
 			}
 			
 			if( info.checkBit( TypeInfo.isConst ) )
@@ -316,16 +315,16 @@ public final class TemplateEngine {
 		TypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo );
 		
 		if( !pIsAReferenceType ){
-			List aPtrs = a.getPtrOperators();
 			ISymbol aSymbol = a.getTypeSymbol();
 			
 			if( a.getType() == TypeInfo.t_type ){
 				if( aSymbol == null ){
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
-				} else if( aSymbol.isType( TypeInfo.t_function ) &&  aPtrs.size() == 0 ){
-					aPtrs.add( new PtrOp( PtrOp.t_pointer ) );	
+				} else if( aSymbol.isType( TypeInfo.t_function ) &&  a.getPtrOperators().size() == 0 ){
+					a.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );	
 				}
 			}
+			List aPtrs = a.getPtrOperators();
 			if( aPtrs.size() > 0 ){
 				PtrOp pOp = (PtrOp) aPtrs.get( 0 );
 				
@@ -392,9 +391,10 @@ public final class TemplateEngine {
 		if( pTemplate instanceof ISpecializedSymbol ){
 			pTemplate = ((ISpecializedSymbol)pTemplate).getPrimaryTemplate();
 		}
-		Iterator iter = a.getParents().iterator();
-		while( iter.hasNext() ){
-			IParentSymbol wrapper = (IParentSymbol) iter.next();
+		List parents = a.getParents();
+		int size = parents.size();
+		for( int i = 0; i < size; i++ ){
+			IParentSymbol wrapper = (IParentSymbol) parents.get(i);
 			ISymbol parent = wrapper.getParent();
 			if( parent instanceof IDeferredTemplateInstance ){
 				IDeferredTemplateInstance parentInstance = (IDeferredTemplateInstance) parent;
@@ -430,8 +430,8 @@ public final class TemplateEngine {
 		
 		boolean pIsAReferenceType = false;
 		
-		Iterator i = pSymbol.getPtrOperators().iterator();
-		if( i.hasNext() && ((PtrOp)i.next()).getType() == TypeInfo.PtrOp.t_reference ){
+		List ptrOps = pSymbol.getPtrOperators();
+		if( ptrOps.size() > 0 && ((PtrOp)ptrOps.get(0)).getType() == TypeInfo.PtrOp.t_reference ){
 			pIsAReferenceType = true;
 		}
 		
@@ -457,21 +457,23 @@ public final class TemplateEngine {
 						if( aPtrs == null ){
 							return false;
 						}
+
+						int pSize = pPtrs.size();
+						int aSize = aPtrs.size();
+						if( pSize != aSize )
+							return false;
 						
-						Iterator pIter = pPtrs.iterator();
-						ListIterator aIter = aPtrs.listIterator();
 						PtrOp pOp = null;
 						PtrOp aOp = null;
-						while( pIter.hasNext() ){
-							pOp = (PtrOp) pIter.next();
-							if( !aIter.hasNext() ){
-								return false;
-							} 
-							aOp = (PtrOp) aIter.next();
+
+						int aIdx = 0;
+						for( int i = 0; i < pSize; i++ ){
+							pOp = (PtrOp) pPtrs.get(i);
+							aOp = (PtrOp) aPtrs.get(aIdx++);
 							if( pOp.getType() == aOp.getType() ){
 								if( !pOp.equals( aOp ) )
 									return false;
-								aIter.remove();
+								aPtrs.remove( --aIdx );
 							} else {
 								return false;
 							}
@@ -533,11 +535,10 @@ public final class TemplateEngine {
 				if( pParams.size() != aParams.size() ){
 					return false;
 				} 
-				Iterator pIter = pParams.iterator();
-				Iterator aIter = aParams.iterator();
-				while( pIter.hasNext() ){
-					TypeInfo info = ((ISymbol)aIter.next()).getTypeInfo();
-					if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), info ) ){
+				int size = pParams.size();
+				for( int i = 0; i < size; i++ ){
+					TypeInfo info = ((ISymbol)aParams.get( i )).getTypeInfo();
+					if( !deduceTemplateArgument( map, (ISymbol)pParams.get(i), info ) ){
 						return false;
 					}
 				}
@@ -599,10 +600,10 @@ public final class TemplateEngine {
 		if( pList == null || aList == null || pList.size() != aList.size()){
 			return false;				
 		}
-		Iterator pIter = pList.iterator();
-		Iterator aIter = aList.iterator();
-		while( pIter.hasNext() ){
-			Object obj = pIter.next();
+
+		int size = pList.size();
+		for( int i = 0; i < size; i++ ){
+			Object obj = pList.get( i );
 			ISymbol sym = null;
 			if( obj instanceof ISymbol ){
 				sym = (ISymbol) obj;
@@ -611,7 +612,7 @@ public final class TemplateEngine {
 				sym.setTypeInfo( (TypeInfo) obj );
 			}
 			
-			TypeInfo arg = transformTypeInfo( aIter.next(), null );
+			TypeInfo arg = transformTypeInfo( aList.get( i ), null );
 			
 			try {
 				if( !deduceTemplateArgument( map, sym, arg ) ){
@@ -637,11 +638,11 @@ public final class TemplateEngine {
 	static private Map deduceTemplateArgumentsUsingParameterList( ITemplateSymbol template, IParameterizedSymbol function ){
 
 		List aList = function.getParameterList();
-		LinkedList args = new LinkedList();
+		int size = aList.size();
+		ArrayList args = new ArrayList( size );
 		 
-		Iterator iter = aList.iterator();
-		while( iter.hasNext() ){
-			ISymbol symbol = (ISymbol) iter.next();
+		for( int i = 0; i < size; i++ ){
+			ISymbol symbol = (ISymbol) aList.get(i);
 			args.add( symbol.getTypeInfo() );
 		}
 		
@@ -658,7 +659,7 @@ public final class TemplateEngine {
 	 * after substitution of the deduced values, compatible with A.
 	 */
 	static private Map deduceTemplateArguments( ITemplateSymbol template, List arguments ){
-		if( template.getContainedSymbols() == ParserSymbolTable.EMPTY_MAP || template.getContainedSymbols().size() != 1 ){
+		if( template.getContainedSymbols() == Collections.EMPTY_MAP || template.getContainedSymbols().size() != 1 ){
 			return null;
 		}
 
@@ -677,12 +678,10 @@ public final class TemplateEngine {
 		
 		HashMap map = new HashMap();
 		
-		Iterator pIter = pList.iterator();
-		Iterator aIter = arguments.iterator();
-		
-		while( pIter.hasNext() ){
+		int size = pList.size();
+		for( int i = 0; i < size; i++ ){
 			try {
-				if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), (TypeInfo) aIter.next() ) ){
+				if( !deduceTemplateArgument( map, (ISymbol) pList.get(i), (TypeInfo) arguments.get(i) ) ){
 					return null;
 				}
 			} catch (ParserSymbolTableException e) {
@@ -796,8 +795,9 @@ public final class TemplateEngine {
 		HashMap map = new HashMap();
 		TypeInfo val = null;
 		List paramList = template.getParameterList();
-		for( Iterator iterator = paramList.iterator(); iterator.hasNext(); ) {
-			ISymbol param = (ISymbol) iterator.next();
+		int size = paramList.size();
+		for( int i = 0; i < size; i++ ){
+			ISymbol param = (ISymbol) paramList.get( i );
 			//template type parameter
 			if( param.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
 				val = new TypeInfo( TypeInfo.t_type, 0, template.getSymbolTable().newSymbol( "", TypeInfo.t_class ) ); //$NON-NLS-1$
@@ -891,7 +891,7 @@ public final class TemplateEngine {
 			
 			Iterator paramIter = template.getParameterList().iterator();
 			Iterator argsIter = (templateArguments != null ) ? templateArguments.iterator() : null;
-			List instanceArgs = new LinkedList();
+			List instanceArgs = new ArrayList( template.getParameterList().size() );
 			while( paramIter.hasNext() ){
 				ISymbol param = (ISymbol) paramIter.next();
 				TypeInfo arg = (TypeInfo) (( argsIter != null && argsIter.hasNext() )? argsIter.next() : null);
@@ -912,7 +912,7 @@ public final class TemplateEngine {
 			
 			if( instance != null ){
 				if( instances == null )
-					instances = new LinkedList();
+					instances = new ArrayList(4);
 				instances.add( instance );		
 			}
 		}
@@ -981,11 +981,10 @@ public final class TemplateEngine {
 			return false;
 		}
 		
-		Iterator iter1 = p1.iterator();
-		Iterator iter2 = p2.iterator();
-		while( iter1.hasNext() ){
-			ISymbol param1 = (ISymbol) iter1.next();
-			ISymbol param2 = (ISymbol) iter2.next();
+		int size = p1.size();
+		for( int i = 0; i < size; i++ ){
+			ISymbol param1 = (ISymbol) p1.get( i );
+			ISymbol param2 = (ISymbol) p2.get( i );
 			if( param1.getTypeInfo().getTemplateParameterType() != param2.getTypeInfo().getTemplateParameterType() ){
 				return false;
 			}
@@ -1001,10 +1000,10 @@ public final class TemplateEngine {
 		Map m [] = { new HashMap(), new HashMap() };
 		
 		for( List list = p1; list != null; list = p2 ){
-			Iterator i = list.iterator();
+			int size = list.size();
 			int index = 0;
-			while( i.hasNext() ){
-				m[ ( list == p2 )? 1 : 0 ].put( i.next(), new Integer( index++ ) );
+			for( int i = 0; i < size; i++ ) {
+				m[ ( list == p2 )? 1 : 0 ].put( list.get( i ), new Integer( index++ ) );
 			}
 			
 			if( list == p2 ){
@@ -1012,11 +1011,10 @@ public final class TemplateEngine {
 			}
 		}
 		
-		Iterator i1 = a1.iterator();
-		Iterator i2 = a2.iterator();
-		while( i1.hasNext() ){
-			TypeInfo t1 = (TypeInfo) i1.next();
-			TypeInfo t2 = (TypeInfo) i2.next();
+		int a1Size = a1.size();
+		for( int i = 0; i < a1Size; i++ ){
+			TypeInfo t1 = (TypeInfo) a1.get( i );
+			TypeInfo t2 = (TypeInfo) a2.get( i );
 			
 			if( t1.equals( t2 ) ){
 				continue;
@@ -1032,11 +1030,11 @@ public final class TemplateEngine {
 	}
 	
 	static private ISpecializedSymbol findPartialSpecialization( ITemplateSymbol template, List parameters, List arguments ){
-		
-		Iterator iter = template.getSpecializations().iterator();
+		List specs = template.getSpecializations();
+		int size = specs.size();
 		ISpecializedSymbol spec = null;
-		while( iter.hasNext() ){
-			spec = (ISpecializedSymbol) iter.next();
+		for( int i = 0; i < size; i++ ){
+			spec = (ISpecializedSymbol) specs.get(i);
 			
 			if( ! checkTemplateParameterListsAreEquivalent( spec.getParameterList(), parameters ) ){
 				continue;
@@ -1052,7 +1050,7 @@ public final class TemplateEngine {
 	}
 	
 	static protected ISymbol translateParameterForDefinition ( ISymbol templatedSymbol, ISymbol param, Map defnMap ){
-		if( defnMap == ParserSymbolTable.EMPTY_MAP ){
+		if( defnMap == Collections.EMPTY_MAP ){
 			return param;
 		}
 		
@@ -1112,10 +1110,11 @@ public final class TemplateEngine {
 				instance = spec.deferredInstance( spec.getArgumentList() );
 			} else {
 				ITemplateSymbol template = symbol;
-				Iterator iter = template.getParameterList().iterator();
-				List args = new LinkedList();
-				while( iter.hasNext() ){
-					args.add( new TypeInfo( TypeInfo.t_type, 0, (ISymbol) iter.next() ) );
+				List params = template.getParameterList();
+				int size = params.size();
+				List args = new ArrayList( size );
+				for( int i = 0; i < size; i++ ){
+					args.add( new TypeInfo( TypeInfo.t_type, 0, (ISymbol) params.get(i) ) );
 				}
 				
 				instance = template.deferredInstance( args );
@@ -1156,13 +1155,13 @@ public final class TemplateEngine {
 	}
 	
 	static protected List verifyExplicitArguments( ITemplateSymbol template, List arguments, ISymbol symbol ) throws ParserSymbolTableException{
-		List actualArgs = new LinkedList();
-		
-		Iterator params = template.getParameterList().iterator();
+		List params = template.getParameterList();
 		Iterator args   = arguments.iterator();
 		
-		while( params.hasNext() ){
-			ISymbol param = (ISymbol) params.next();
+		int numParams = params.size();
+		List actualArgs = new ArrayList( numParams );
+		for( int i = 0; i < numParams; i++ ){
+			ISymbol param = (ISymbol) params.get(i);
 			if( args.hasNext() ){
 				TypeInfo arg = (TypeInfo) args.next();
 				if( matchTemplateParameterAndArgument( param, arg ) ){
@@ -1226,7 +1225,7 @@ public final class TemplateEngine {
 	
 	static protected List resolveTemplateFunctionArguments( List args, ITemplateSymbol template, IParameterizedSymbol fn )
 	{
-		List resultList = new LinkedList();
+		List resultList = new ArrayList();
 		
 		List params = template.getParameterList();
 		Map map = null;
@@ -1323,14 +1322,13 @@ public final class TemplateEngine {
 		
 		List args = instance.getArguments();
 		List args2 = instance2.getArguments();
-		
-		if( args.size() != args2.size() )
+		int size = args.size();
+		if( size != args2.size() )
 			return false;
 		
-		Iterator iter1 = args.iterator(), iter2 = args2.iterator();
-		while( iter1.hasNext() ){
-			TypeInfo info1 = (TypeInfo) iter1.next();
-			TypeInfo info2 = (TypeInfo) iter2.next();
+		for( int i = 0; i < size; i++ ){
+			TypeInfo info1 = (TypeInfo) args.get(i);
+			TypeInfo info2 = (TypeInfo) args2.get(i);
 			
 			if( ! info1.equals( info2 ) )
 				return false;

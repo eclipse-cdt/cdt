@@ -133,8 +133,11 @@ public class SelectionParseAction extends Action {
 
 	//TODO: Change this to work with qualified identifiers
 	public SelSearchNode getSelection( int fPos ) {
-		IDocumentProvider prov = fEditor.getDocumentProvider();
- 		IDocument doc = prov.getDocument(fEditor.getEditorInput());
+		IDocumentProvider prov = ( fEditor != null ) ? fEditor.getDocumentProvider() : null;
+ 		IDocument doc = ( prov != null ) ? prov.getDocument(fEditor.getEditorInput()) : null;
+ 		
+ 		if( doc == null )
+ 			return null;
  		 
 		int pos= fPos;
 		char c;
@@ -182,7 +185,7 @@ public class SelectionParseAction extends Action {
 		
 		 String seltext = textSelection.getText();
 		 SelSearchNode sel = null;
-		 if (seltext.length() == 0 ) {
+		 if ( seltext == null || seltext.length() == 0 ) {
 	 		 int selStart =  textSelection.getOffset();
 	 		 sel = getSelection(selStart);
 		 } else {
@@ -196,7 +199,7 @@ public class SelectionParseAction extends Action {
 	
 	protected ISelection getSelection() {
 		ISelection sel = null;
-		if (fSite != null){
+		if (fSite != null && fSite.getSelectionProvider() != null ){
 			sel = fSite.getSelectionProvider().getSelection();
 		}
 		

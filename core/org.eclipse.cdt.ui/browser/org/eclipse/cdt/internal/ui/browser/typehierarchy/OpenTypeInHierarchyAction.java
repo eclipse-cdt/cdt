@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeDialog;
 import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages;
@@ -89,11 +90,10 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 		ITypeInfo info = (ITypeInfo) dialog.getFirstResult();
 		if (info == null)
 			return;
-
-		Object[] types= dialog.getResult();
-		if (types != null && types.length > 0) {
-			ICElement type= (ICElement)types[0];
-			OpenTypeHierarchyUtil.open(new ICElement[] { type }, fWindow);
+		
+		ICElement celem = AllTypesCache.getElementForType(info, false, true, null);
+		if (celem != null) {
+			OpenTypeHierarchyUtil.open(new ICElement[] { celem }, fWindow);
 		}
 	}
 	

@@ -1,3 +1,8 @@
+2004-11-24 Chris Wiebe
+
+	fix exception in OpenTypeInHierarchyAction
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeInHierarchyAction.java
+
 2004-11-08 Chris Wiebe
 
 	fix for 68883

@@ -67,7 +67,7 @@ public class MakeView extends ViewPart {
 		Object element = selection.getFirstElement ();
 		if (element instanceof MakeTarget) {
 			final MakeTarget ta = (MakeTarget)element;
-			Action add = new Action ("Add") {
+			Action add = new Action ("Add...") {
 				public void run() {
 					InputDialog dialog = new InputDialog(getViewSite().getShell(),
 								"Target Dialog: ", "Enter Target(s): ", null, null);
@@ -83,6 +83,24 @@ public class MakeView extends ViewPart {
 					}
 				}
 			};
+			Action edit = new Action ("Edit...") {
+				public void run() {
+					String oldtarget = ta.toString();
+					InputDialog dialog = new InputDialog(getViewSite().getShell(),
+								"Target Dialog: ", "Enter Target(s): ", oldtarget, null);
+					dialog.open ();
+					String value = dialog.getValue ();
+					if (value != null && value.length() > 0 && !value.equals(oldtarget)) {
+						IResource res = ta.getResource();
+						MakeUtil.replacePersistentTarget(res, oldtarget, value);
+						viewer.getControl().setRedraw(false);
+						viewer.refresh ();
+						viewer.getControl().setRedraw(true);
+						viewer.expandToLevel(ta, 2);
+					}
+				}
+			};
+
 			Action del = new Action ("Delete") {
 				public void run() {
 					String target = ta.toString();
@@ -102,7 +120,9 @@ public class MakeView extends ViewPart {
 					viewer.refresh ();
 				}
 			};
+			
 			menu.add (add);
+			menu.add (edit);
 			menu.add (del);
 			//menu.add (new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add (build);
@@ -110,6 +130,7 @@ public class MakeView extends ViewPart {
 			if (ta.isLeaf()) {
 				add.setEnabled(false);
 			} else {
+				edit.setEnabled(false);
 				del.setEnabled(false);
 			}
 		}

@@ -1,5 +1,3 @@
-package org.eclipse.cdt.managedbuilder.core;
-
 /**********************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -10,6 +8,7 @@ package org.eclipse.cdt.managedbuilder.core;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
+package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
@@ -25,10 +24,10 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	public static final String DEP_CALC_ID ="dependencyCalculator"; //$NON-NLS-1$
 	// The shared instance
 	private static ManagedBuilderCorePlugin plugin;
-	// The attribute name for the scanner info collector
-	public static final String SCANNER_INFO_ID = "scannerInfoCollector"; //$NON-NLS-1$
 	// The attribute name for the makefile generator
 	public static final String MAKEGEN_ID ="makefileGenerator"; //$NON-NLS-1$
+	public static final String BUILDFILEGEN_ID ="buildfileGenerator"; //$NON-NLS-1$
+	public static final String COMMANDLINEGEN_ID = "commandlineGenerator"; //$NON-NLS-1$
 	// The unique id for all managed make projects 
 	public static final String MANAGED_MAKE_PROJECT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedMake"; //$NON-NLS-1$
 

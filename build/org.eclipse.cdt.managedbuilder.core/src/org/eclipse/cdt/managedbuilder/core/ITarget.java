@@ -10,12 +10,15 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.internal.core.ProjectType;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IResource;
 
 /**
  * This class represents targets for the managed build process.  A target
  * is some type of resource built using a given collection of tools.
+ *
+ * Note: This class was deprecated in 2.1
  */
 public interface ITarget extends IBuildObject {
 	public static final String TARGET_ELEMENT_NAME = "target";	//$NON-NLS-1$
@@ -39,20 +42,20 @@ public interface ITarget extends IBuildObject {
 	 * change in the parent, unoverridden values are updated in the child
 	 * config as well.
 	 * 
-	 * @param parent The <code>IConfiguration</code> to use as a settings template
+	 * @param parent The <code>IConfigurationV2</code> to use as a settings template
 	 * @param id The unique id the new configuration will have
-	 * @return IConfiguration
+	 * @return IConfigurationV2
 	 */
-	public IConfiguration createConfiguration(IConfiguration parent, String id);
+	public IConfigurationV2 createConfiguration(IConfigurationV2 parent, String id);
 
 	/**
 	 * Creates a new configuration for the target.  It is populated with
 	 * the tools defined for that target and options set at their defaults.
 	 * 
 	 * @param id id for this configuration.
-	 * @return IConfiguration
+	 * @return IConfigurationV2
 	 */
-	public IConfiguration createConfiguration(String id);
+	public IConfigurationV2 createConfiguration(String id);
 	
 	/**
 	 * Answers the extension that should be applied to build artifacts created by 
@@ -105,9 +108,9 @@ public interface ITarget extends IBuildObject {
 	/**
 	 * Returns all of the configurations defined by this target.
 	 * 
-	 * @return IConfiguration[]
+	 * @return IConfigurationV2[]
 	 */
-	public IConfiguration[] getConfigurations();
+	public IConfigurationV2[] getConfigurations();
 
 	/**
 	 * Get the default extension that should be applied to build artifacts
@@ -149,9 +152,9 @@ public interface ITarget extends IBuildObject {
 	 * Returns the configuration with the given id, or <code>null</code> if not found.
 	 * 
 	 * @param id
-	 * @return IConfiguration
+	 * @return IConfigurationV2
 	 */
-	public IConfiguration getConfiguration(String id);
+	public IConfigurationV2 getConfiguration(String id);
 	
 	/**
 	 * Gets the resource that this target is applied to.
@@ -246,13 +249,6 @@ public interface ITarget extends IBuildObject {
 	public void removeConfiguration(String id);
 	
 	/**
-	 * Resets the make command in the receiver to the value specified in 
-	 * its parent.
-	 * 
-	 */
-	public void resetMakeCommand();
-	
-	/**
 	 * Set (override) the extension that should be appended to the build artifact
 	 * for the receiver.
 	 *  
@@ -283,7 +279,6 @@ public interface ITarget extends IBuildObject {
 	 */
 	public void setMakeCommand(String command);
 
-
 	/**
 	 * Sets the semicolon separated list of error parser ids
 	 * 
@@ -306,4 +301,18 @@ public interface ITarget extends IBuildObject {
 	 */
 	public void updateOwner(IResource resource);
 
+	/**
+	 * Converts a CDT V2.0 target into a ProjectType + Configuration + Toolchain +
+	 * Builder + TargetPlatform.
+	 *
+	 */
+	public void convertToProjectType();
+
+	/**
+	 * Returns the <code>ProjectType</code> that this Target has been converted to,
+	 * or <code>null</code> if it has not been converted. 
+	 *
+	 * @return ProjectType
+	 */
+	public ProjectType getCreatedProjectType();
 }

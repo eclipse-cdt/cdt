@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.wizards;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,14 +8,16 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Class that implements the target and configuration selection page in the new 
+ * Class that implements the project type and configuration selection page in the new 
  * project wizard for managed builder projects.
  * 
  * @since 1.2
@@ -65,11 +65,11 @@ public class CProjectPlatformPage extends WizardPage {
 	protected NewManagedProjectWizard parentWizard;
 	protected Combo platformSelection;
 	private ArrayList selectedConfigurations;
-	protected ITarget selectedTarget;
+	protected IProjectType selectedProjectType;
 	protected Button showAll;
 	protected CheckboxTableViewer tableViewer;
-	protected String[] targetNames;
-	protected ArrayList targets;
+	protected String[] projectTypeNames;
+	protected ArrayList projectTypes;
 
 	/**
 	 * Constructor.
@@ -79,7 +79,7 @@ public class CProjectPlatformPage extends WizardPage {
 	public CProjectPlatformPage(String pageName, NewManagedProjectWizard parentWizard) {
 		super(pageName);
 		setPageComplete(false);
-		selectedTarget = null;
+		selectedProjectType = null;
 		selectedConfigurations = new ArrayList(0);
 		this.parentWizard = parentWizard;
 	}
@@ -141,14 +141,14 @@ public class CProjectPlatformPage extends WizardPage {
 		WorkbenchHelp.setHelp(composite, ManagedBuilderHelpContextIds.MAN_PROJ_PLATFORM_HELP);
 
 		// Create the widgets
-		createTargetSelectGroup(composite);
+		createTypeSelectGroup(composite);
 		createConfigSelectionGroup(composite);
 		createShowAllGroup(composite);
 
-		// Select the first target in the list
-		populateTargets();
+		// Select the first project type in the list
+		populateTypes();
 		platformSelection.select(0);
-		handleTargetSelection();
+		handleTypeSelection();
 		
 		// Do the nasty
 		setErrorMessage(null);
@@ -168,9 +168,9 @@ public class CProjectPlatformPage extends WizardPage {
 		showAll.setText(ManagedBuilderUIMessages.getResourceString(SHOWALL_LABEL));
 		showAll.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				populateTargets();
+				populateTypes();
 				platformSelection.select(0);
-				handleTargetSelection();
+				handleTypeSelection();
 			}
 		});
 		showAll.addDisposeListener(new DisposeListener() {
@@ -180,7 +180,7 @@ public class CProjectPlatformPage extends WizardPage {
 		});
 	}
 	
-	private void createTargetSelectGroup(Composite parent) {
+	private void createTypeSelectGroup(Composite parent) {
 		// Create the group composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
@@ -197,7 +197,7 @@ public class CProjectPlatformPage extends WizardPage {
 		platformSelection.setToolTipText(ManagedBuilderUIMessages.getResourceString(TARGET_TIP));
 		platformSelection.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				handleTargetSelection();
+				handleTypeSelection();
 			}
 		});
 		platformSelection.addDisposeListener(new DisposeListener() {
@@ -227,13 +227,13 @@ public class CProjectPlatformPage extends WizardPage {
 	}
 
 	/**
-	 * Returns the name of the selected platform.
+	 * Returns the selected project type.
 	 * 
-	 * @return String containing platform name or <code>null</code> if an invalid selection
+	 * @return IProjectType Selected type or <code>null</code> if an invalid selection
 	 * has been made.
 	 */
-	public ITarget getSelectedTarget() {
-		return selectedTarget;
+	public IProjectType getSelectedProjectType() {
+		return selectedProjectType;
 	}
 
 	private void handleConfigurationSelectionChange() {
@@ -250,16 +250,16 @@ public class CProjectPlatformPage extends WizardPage {
 	 * @return <code>true</code> if all controls are valid, and
 	 *   <code>false</code> if at least one is invalid
 	 */
-	protected void handleTargetSelection() {
+	protected void handleTypeSelection() {
 		/*
-		 * The index in the combo is the offset into the target list
+		 * The index in the combo is the offset into the project type list
 		 */
 		int index;
 		if (platformSelection != null
 			&& (index = platformSelection.getSelectionIndex()) != -1) {
-			if (selectedTarget != (ITarget) targets.get(index)) {
-				selectedTarget = (ITarget) targets.get(index);
-				parentWizard.updateTargetProperties();
+			if (selectedProjectType != (IProjectType) projectTypes.get(index)) {
+				selectedProjectType = (IProjectType) projectTypes.get(index);
+				parentWizard.updateProjectTypeProperties();
 			}
 		}
 		populateConfigurations();
@@ -271,59 +271,66 @@ public class CProjectPlatformPage extends WizardPage {
 	 * By default, all the configurations are selected.
 	 */
 	private void populateConfigurations() {
-		// Make the root of the content provider the new target
-		tableViewer.setInput(selectedTarget);
+		// Make the root of the content provider the new project type
+		tableViewer.setInput(selectedProjectType);
 		tableViewer.setAllChecked(true);
 		handleConfigurationSelectionChange();
 	}
 
 	/* (non-Javadoc)
-	 * Extracts the names from the targets that are valid for the wizard
+	 * Extracts the names from the project types that are valid for the wizard
 	 * session and populates the combo widget with them.
 	 */
-	private void populateTargetNames() {
-		targetNames = new String[targets.size()];
-		ListIterator iter = targets.listIterator();
+	private void populateTypeNames() {
+		projectTypeNames = new String[projectTypes.size()];
+		ListIterator iter = projectTypes.listIterator();
 		int index = 0;
 		while (iter.hasNext()) {
-			targetNames[index++] = ((ITarget) iter.next()).getName();
+			projectTypeNames[index++] = ((IProjectType) iter.next()).getName();
 		}
 		
 		// Now setup the combo
 		platformSelection.removeAll();
-		platformSelection.setItems(targetNames);
+		platformSelection.setItems(projectTypeNames);
 	}
 
 	/* (non-Javadoc)
-	 * Collects all the valid targets for the platform Eclipse is running on
+	 * Collects all the valid project types for the platform Eclipse is running on
 	 */
-	private void populateTargets() {
+	private void populateTypes() {
 		// Get a list of platforms defined by plugins
-		ITarget[] allTargets = ManagedBuildManager.getDefinedTargets(null);
-		targets = new ArrayList();
+		IProjectType[] allProjectTypes = ManagedBuildManager.getDefinedProjectTypes();
+		projectTypes = new ArrayList();
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
-		// Add all of the concrete targets to the target list
-		for (int index = 0; index < allTargets.length; ++index) {
-			ITarget target = allTargets[index];
-			if (!target.isAbstract() && !target.isTestTarget()) {
+		// Add all of the concrete project types to the list
+		for (int index = 0; index < allProjectTypes.length; ++index) {
+			IProjectType type = allProjectTypes[index];
+			if (!type.isAbstract() && !type.isTestProjectType()) {
 				// If the check box is selected show all the targets
 				if (showAll != null && showAll.getSelection() == true) {
-					targets.add(target);
+					projectTypes.add(type);
 				} else {
 					// Apply the OS and ARCH filters to determine if the target should be shown
-					List targetOSList = Arrays.asList(target.getTargetOSList());
-					if (targetOSList.contains("all") || targetOSList.contains(os)) {	//$NON-NLS-1$
-						List targetArchList = Arrays.asList(target.getTargetArchList());
-						if (targetArchList.contains("all") || targetArchList.contains(arch)) { //$NON-NLS-1$
-							targets.add(target);
+					// Determine if the project type has any configuration with a tool-chain
+					// that supports this OS & Architecture.
+					IConfiguration[] configs = type.getConfigurations();
+					for (int j = 0; j < configs.length; ++j) {
+						IToolChain tc = configs[j].getToolChain();
+						List osList = Arrays.asList(tc.getOSList());
+						if (osList.contains("all") || osList.contains(os)) {	//$NON-NLS-1$
+							List archList = Arrays.asList(tc.getArchList());
+							if (archList.contains("all") || archList.contains(arch)) { //$NON-NLS-1$
+								projectTypes.add(type);
+								break;
+							}
 						}
 					}
 				}
 			}
 		}
-		targets.trimToSize();
-		populateTargetNames();
+		projectTypes.trimToSize();
+		populateTypeNames();
 	}
 
 	/**

@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.properties;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,9 +8,12 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -70,6 +71,16 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		selectorData.horizontalSpan = numColumns - 1;
 		selectorData.grabExcessHorizontalSpace = true;
 		optionSelector.setLayoutData(selectorData);
+		optionSelector.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				String oldValue = selected;
+				String name = optionSelector.getText();
+				int index = optionSelector.getSelectionIndex();
+				selected = index == -1 ? new String() : optionSelector.getItem(index);
+				setPresentsDefaultValue(false);
+				fireValueChanged(VALUE, oldValue, selected);					
+			}
+		});
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +112,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	protected void doStore() {
 		// Save the selected item in the store
 		int index = optionSelector.getSelectionIndex();
-		String selected = index == -1 ? new String() : optionSelector.getItem(index);
+		selected = index == -1 ? new String() : optionSelector.getItem(index);
 		getPreferenceStore().setValue(getPreferenceName(), selected);
 	}
 	

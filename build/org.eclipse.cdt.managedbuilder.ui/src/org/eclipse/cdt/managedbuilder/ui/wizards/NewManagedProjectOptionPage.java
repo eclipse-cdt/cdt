@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.wizards;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,6 +8,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +42,7 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 			parent = parentPage;
 		}
 		
-		public void updateTargetProperties() {
+		public void updateProjectTypeProperties() {
 			//  Update the error parser list
 			if (errorParsers != null) {
 				errorParsers.updateValues();
@@ -55,8 +54,13 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 		 */
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
-			errorParsers = new ErrorParserBlock();
-			addTab(errorParsers);
+			// NOTE: The setting of error parsers is commented out here
+			//       because they need to be set per-configuration.
+			//       The other tabs on this page are per-project.
+			//       Error parsers can be selected per configuration in the 
+			//        project properties
+			//errorParsers = new ErrorParserBlock();
+			//addTab(errorParsers);
 			addTab(indexBlock = new IndexerBlock());
 		}
 		
@@ -112,9 +116,9 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 		return ManagedBuilderUIPlugin.getDefault().getPluginPreferences();
 	}
 	
-	public void updateTargetProperties() {
+	public void updateProjectTypeProperties() {
 		//  Update the error parser list
-		optionBlock.updateTargetProperties();
+		optionBlock.updateProjectTypeProperties();
 	}
 	
 	public void setupHelpContextIds(){

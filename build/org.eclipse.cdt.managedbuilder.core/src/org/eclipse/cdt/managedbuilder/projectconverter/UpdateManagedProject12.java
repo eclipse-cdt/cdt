@@ -1,67 +1,48 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
- * IBM - Initial API and implementation
+ * Intel Corporation - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.projectconverter;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
-import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-/**
- * @since 2.0
- */
-public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegate {
+class UpdateManagedProject12 {
 	
 	
 	private static final String ID_CYGWIN = "cygwin";	//$NON-NLS-1$
@@ -104,44 +85,12 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	private static final int TYPE_SHARED = 1;
 	private static final int TYPE_STATIC = 2;
 	
-	/* (non-Javadoc)
-	 * Create a back-up file containing the pre-2.0 project settings. 
-	 * 
-	 * @param settingsFile
-	 * @param monitor
-	 * @param project
-	 * @throws CoreException
-	 */
-	protected static void backupFile(IFile settingsFile, IProgressMonitor monitor, IProject project) throws CoreException {
-		// Make a back-up of the settings file
-		String newName = settingsFile.getName() + "_12backup";	//$NON-NLS-1$
-		IContainer destFolder = (IContainer)project;
-		IFile backupFile = destFolder.getFile(new Path(newName)); 
-		if (backupFile.exists()) {
-			Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
-			boolean shouldUpdate = MessageDialog.openQuestion(shell,
-					ManagedBuilderUIMessages.getResourceString("ManagedBuildConvert.12x.warning.title"), //$NON-NLS-1$
-					ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.warning.message", project.getName())); //$NON-NLS-1$
-			if (shouldUpdate) {
-				backupFile.delete(true, monitor);
-			} else {
-				monitor.setCanceled(true);
-				throw new OperationCanceledException(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.cancelled.message", project.getName())); //$NON-NLS-1$
-			}
-		}
-		settingsFile.copy(backupFile.getFullPath(), true, monitor);
-	}
-	
-	protected static void convertConfiguration(ITarget newTarget, ITarget newParent, Element oldConfig, IProgressMonitor monitor) {
-		IConfiguration newParentConfig = null;
-		IConfiguration newConfig = null;
+	protected static String getNewConfigurationId(String oldId){
 		boolean cygwin = false;
 		boolean debug = false;
 		int type = -1;
 		
-		// Figure out what the original parent of the config is
-		String parentId = oldConfig.getAttribute(IConfiguration.PARENT);
-		StringTokenizer idTokens = new StringTokenizer(parentId, ID_SEPARATOR);
+		StringTokenizer idTokens = new StringTokenizer(oldId, ID_SEPARATOR);
 		while (idTokens.hasMoreTokens()) {
 			String id = idTokens.nextToken();
 			if (id.equalsIgnoreCase(ID_CYGWIN)) {
@@ -169,33 +118,71 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 				defId += ID_STATIC;
 				break;
 		}
-		defId += ID_SEPARATOR + (debug ? "debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$
-		newParentConfig = newParent.getConfiguration(defId);
+		defId += ID_SEPARATOR + (debug ? "debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$		
+		return defId;
+	}
+	
+	protected static void convertConfiguration(IManagedProject newProject, IProjectType newParent, Element oldConfig, IProgressMonitor monitor) 
+								throws CoreException {
+		IConfiguration newParentConfig = null;
+		IConfiguration newConfig = null;
+
+		
+		// Figure out what the original parent of the config is
+		String parentId = oldConfig.getAttribute(IConfigurationV2.PARENT);
+		parentId = getNewConfigurationId(parentId);
+
+		newParentConfig = newParent.getConfiguration(parentId);
 		if (newParentConfig == null) {
-			// Create a default gnu exe release or debug
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getFormattedString("UpdateManagedProject12.2",parentId), null)); //$NON-NLS-1$
 		}		
+
 		// Generate a random number for the new config id
-		Random rand = new Random();
-		rand.setSeed(System.currentTimeMillis());
-		int randomElement = rand.nextInt();
-		if (randomElement < 0) {
-			randomElement *= -1;
-		}
+		int randomElement = ManagedBuildManager.getRandomNumber();
+		String newConfigId = parentId + ID_SEPARATOR + randomElement;
 		// Create the new configuration
-		newConfig = newTarget.createConfiguration(newParentConfig, defId + ID_SEPARATOR + randomElement);
+		newConfig = newProject.createConfiguration(newParentConfig, newConfigId);
+		
+		Element oldTarget = (Element)oldConfig.getParentNode();
+		if(oldTarget.hasAttribute(ITarget.ARTIFACT_NAME)){
+			String artName = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);
+			String ext = newConfig.getArtifactExtension();
+			int extIndex = artName.lastIndexOf("."); //$NON-NLS-1$
+			try{
+				if(extIndex != -1){
+					String name_ext = artName.substring(extIndex+1);
+					if(!"".equals(name_ext) && name_ext.equalsIgnoreCase(ext)) //$NON-NLS-1$
+						artName = artName.substring(0,extIndex);
+				}
+			}
+			catch(IndexOutOfBoundsException e){
+				
+			}
+			newConfig.setArtifactName(artName);
+
+//			newConfig(oldTarget.getAttribute(ITarget.ARTIFACT_NAME));
+		}
 		
 		// Convert the tool references
-		NodeList toolRefNodes = oldConfig.getElementsByTagName(IConfiguration.TOOLREF_ELEMENT_NAME);
+		IToolChain toolChain = newConfig.getToolChain();
+
+		NodeList toolRefNodes = oldConfig.getElementsByTagName(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 		for (int refIndex = 0; refIndex < toolRefNodes.getLength(); ++refIndex) {
-			convertToolRef(newConfig, (Element) toolRefNodes.item(refIndex), monitor);
+			try{
+				convertToolRef(toolChain, (Element) toolRefNodes.item(refIndex), monitor);
+			}
+			catch(CoreException e){
+				newProject.removeConfiguration(newConfigId);
+				throw e;
+			}
 		}
 		monitor.worked(1);
 	}
 	
-	protected static void convertOptionRef(IConfiguration newConfig, ITool newTool, Element optRef) {
-		String optId = optRef.getAttribute(IOption.ID);
-		if (optId == null) return;
-		String[] idTokens = optId.split("\\.");	//$NON-NLS-1$
+	protected static String getNewOptionId(IToolChain toolChain, ITool tool, String oldId)
+								throws CoreException{
+		String[] idTokens = oldId.split("\\.");	//$NON-NLS-1$
 		
 		// New ID will be in for gnu.[compiler|link|lib].[c|c++|both].option.{1.2_component}
 		Vector newIdVector = new Vector(idTokens.length + 2);
@@ -262,26 +249,56 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		
 		// Construct the new ID
-		String newOptionId = new String();
+		String optId = new String();
 		for (int rebuildIndex = 0; rebuildIndex < newIdVector.size(); ++ rebuildIndex) {
 			String token = (String) newIdVector.get(rebuildIndex);
-			newOptionId += token;
+			optId += token;
 			if (rebuildIndex < newIdVector.size() - 1) {
-				newOptionId += ID_SEPARATOR;
+				optId += ID_SEPARATOR;
 			}
 		}
 		
-		// Get the option from the new tool
-		IOption newOpt = newTool.getOptionById(newOptionId);
-		if (newOpt == null) {
-			// TODO flag warning condition to user
-			return;
+		IConfiguration configuration = toolChain.getParent();
+		
+		IOption options[] = tool.getOptions();		
+		for(int i = 0; i < options.length; i++){
+			IOption curOption = options[i]; 
+			IOption parent = curOption.getSuperClass();
+			String curOptionId = curOption.getId();
+			
+			if(parent == null)
+				continue;
+			
+			String parentId = parent.getId();
+			if(!parentId.equals(optId))
+				continue;
+				
+			return curOption.getId();
 		}
+		throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+				ConverterMessages.getFormattedString("UpdateManagedProject12.3",optId), null)); //$NON-NLS-1$
+	}
+	
+	protected static void convertOptionRef(IToolChain toolChain, ITool tool, Element optRef) 
+							throws CoreException {
+		String optId = optRef.getAttribute(IOption.ID);
+		if (optId == null) return;
+		
+		optId = getNewOptionId(toolChain, tool, optId);
+		// Get the option from the new tool
+		IOption newOpt = tool.getOptionById(optId);
+		if (newOpt == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getFormattedString("UpdateManagedProject12.4",optId), null)); //$NON-NLS-1$
+		}
+
+		IConfiguration configuration = toolChain.getParent();
+
 		try {
 			switch (newOpt.getValueType()) {
 				case IOption.BOOLEAN:
 					Boolean bool = new Boolean(optRef.getAttribute(IOption.DEFAULT_VALUE));
-					newConfig.setOption(newOpt, bool.booleanValue());
+				configuration.setOption(tool, newOpt, bool.booleanValue());
 					break;
 				case IOption.STRING:
 				case IOption.ENUMERATED:
@@ -289,7 +306,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 					String name = (String) optRef.getAttribute(IOption.DEFAULT_VALUE);
 					// Convert it to the ID
 					String idValue = newOpt.getEnumeratedId(name);
-					newConfig.setOption(newOpt, idValue != null ? idValue : name);
+					configuration.setOption(tool, newOpt, idValue != null ? idValue : name);
 					break;
 				case IOption.STRING_LIST:
 				case IOption.INCLUDE_PATH:
@@ -307,29 +324,23 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 							}
 						}
 					}
-					newConfig.setOption(newOpt, (String[])values.toArray(new String[values.size()]));
+					configuration.setOption(tool, newOpt, (String[])values.toArray(new String[values.size()]));
 					break;
 			}
 		} catch (BuildException e) {
-			// TODO flag error to user
-			return;
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getFormattedString("UpdateManagedProject12.5",e.getMessage()), e)); //$NON-NLS-1$
 		}
 		
 	}
-	protected static ITarget convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor) {
-		// What we want to create
-		ITarget newTarget = null;
-		ITarget newParent = null;
+	
+	protected static String getNewProjectId(String oldId){
 		// The type of target we are converting from/to
 		int type = -1;
 		// Use the Cygwin or generic target form
 		boolean posix = false;
-		
-		// Get the parent
-		String id = oldTarget.getAttribute(ITarget.PARENT);
-		
-		// Figure out the new target definition to use for that type
-		StringTokenizer idTokens = new StringTokenizer(id, ID_SEPARATOR);
+
+		StringTokenizer idTokens = new StringTokenizer(oldId, ID_SEPARATOR);
 		while (idTokens.hasMoreTokens()) {
 			String token = idTokens.nextToken();
 			if (token.equals(ID_LINUX) || token.equals(ID_SOLARIS)) {
@@ -354,42 +365,69 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			case TYPE_STATIC :
 				defID += ID_STATIC;
 				break;
-		}		
-		
+		}
+		return defID;
+	}
+
+	protected static IManagedProject convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor) throws CoreException{
+		// What we want to create
+		IManagedProject newProject = null;
+		IProjectType newParent = null;
+	
+		// Get the parent
+		String id = oldTarget.getAttribute(ITarget.PARENT);
+		String parentID = getNewProjectId(id);
+
 		// Get the new target definitions we need for the conversion
-		newParent = ManagedBuildManager.getTarget(project, defID);
+		newParent = ManagedBuildManager.getProjectType(parentID);
+
 		if (newParent == null) {
-			// Return null and let the caller deal with the error reporting
-			return null;
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getFormattedString("UpdateManagedProject12.6",parentID), null)); //$NON-NLS-1$
 		}
 
 		try {
 			// Create a new target based on the new parent
-			newTarget = ManagedBuildManager.createTarget(project, newParent);
-			newTarget.setArtifactName(oldTarget.getAttribute(ITarget.ARTIFACT_NAME));
+			newProject = ManagedBuildManager.createManagedProject(project, newParent);
 			
 			// Create new configurations
-			NodeList configNodes = oldTarget.getElementsByTagName(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+			NodeList configNodes = oldTarget.getElementsByTagName(IConfigurationV2.CONFIGURATION_ELEMENT_NAME);
 			for (int configIndex = 0; configIndex < configNodes.getLength(); ++configIndex) {
-				convertConfiguration(newTarget, newParent, (Element) configNodes.item(configIndex), monitor);
+				try{
+					convertConfiguration(newProject, newParent, (Element) configNodes.item(configIndex), monitor);
+				}
+				catch(CoreException e){
+
+				}
+			}
+			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+			IConfiguration[] newConfigs = newProject.getConfigurations();
+			if (newConfigs.length > 0) {
+				info.setDefaultConfiguration(newConfigs[0]);
+				info.setSelectedConfiguration(newConfigs[0]);
+			}
+			else{
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+						ConverterMessages.getFormattedString("UpdateManagedProject12.7",newProject.getName()), null)); //$NON-NLS-1$
 			}
 		} catch (BuildException e) {
-			// Probably just a mismatch between option value and option
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getFormattedString("UpdateManagedProject12.8",new String[]{newProject.getName(),e.getMessage()}), null)); //$NON-NLS-1$
 		}
 		
 		monitor.worked(1);
-		return newTarget;
+		return newProject;
 	}
 	
-	protected static void convertToolRef(IConfiguration newConfig, Element oldToolRef, IProgressMonitor monitor) {
-		String oldToolId = oldToolRef.getAttribute(IToolReference.ID);
+	protected static String getNewToolId(IToolChain toolChain, String oldId)
+								throws CoreException {
 		// All known tools have id NEW_TOOL_ROOT.[c|cpp].[compiler|linker|archiver]
-		String newToolId = NEW_TOOL_ROOT;
+		String toolId = NEW_TOOL_ROOT;
 		boolean cppFlag = true;
 		int toolType = -1;
 		
 		// Figure out what kind of tool the ref pointed to
-		StringTokenizer idTokens = new StringTokenizer(oldToolId, ID_SEPARATOR);
+		StringTokenizer idTokens = new StringTokenizer(oldId, ID_SEPARATOR);
 		while (idTokens.hasMoreTokens()) {
 			String token = idTokens.nextToken();
 			if(token.equals(TOOL_LANG_C)) {
@@ -408,27 +446,76 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		
 		// Now complete the new tool id
-		newToolId += ID_SEPARATOR + (cppFlag ? "cpp" : "c") + ID_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$
+		toolId += ID_SEPARATOR + (cppFlag ? "cpp" : "c") + ID_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$
 		switch (toolType) {
 			case TOOL_TYPE_COMPILER:
-				newToolId += TOOL_NAME_COMPILER;
+				toolId += TOOL_NAME_COMPILER;
 				break;
 			case TOOL_TYPE_LINKER:
-				newToolId  += TOOL_NAME_LINKER;
+				toolId  += TOOL_NAME_LINKER;
 				break;
 			case TOOL_TYPE_ARCHIVER:
-				newToolId += TOOL_NAME_ARCHIVER;
+				toolId += TOOL_NAME_ARCHIVER;
 				break;
 		}
 		
+		IConfiguration configuration = toolChain.getParent();
+		ITool tools[] = configuration.getTools();
+		if(tools == null) {
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getResourceString("UpdateManagedProject12.9"), null)); //$NON-NLS-1$
+		}
+		
+		for(int i = 0; i < tools.length; i++){
+			ITool curTool = tools[i]; 
+			ITool parent = curTool.getSuperClass();
+			String curToolId = curTool.getId();
+			
+			if(parent == null)
+				continue;
+			
+			parent = parent.getSuperClass();
+			if(parent == null)
+				continue;
+
+			String parentId = parent.getId();
+			if(!parentId.equals(toolId))
+				continue;
+				
+			try{
+				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.')+1)); //$NON-NLS-1$
+			}
+			catch(IndexOutOfBoundsException e){
+				continue;
+			}
+			catch(NumberFormatException e){
+				continue;
+			}
+			return curTool.getId();
+		}		
+		throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+				ConverterMessages.getFormattedString("UpdateManagedProject12.10",toolId), null)); //$NON-NLS-1$
+	}
+
+	protected static void convertToolRef(IToolChain toolChain, Element oldToolRef, IProgressMonitor monitor) 
+								throws CoreException {
+		String toolId = oldToolRef.getAttribute(IToolReference.ID);
+
+		toolId = getNewToolId(toolChain, toolId);
+
+		IConfiguration configuration = toolChain.getParent();
+
 		// Get the new tool out of the configuration
-		ITool newTool = newConfig.getToolById(newToolId);
+		ITool newTool = configuration.getTool(toolId);
 		// Check that this is not null
+		if(newTool == null)
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					ConverterMessages.getFormattedString("UpdateManagedProject12.11",toolId), null)); //$NON-NLS-1$
 		
 		// The ref may or may not contain overridden options
 		NodeList optRefs = oldToolRef.getElementsByTagName(ITool.OPTION_REF);
 		for (int refIndex = optRefs.getLength() - 1; refIndex >= 0; --refIndex) {
-			convertOptionRef(newConfig, newTool, (Element) optRefs.item(refIndex));
+				convertOptionRef(toolChain, newTool, (Element) optRefs.item(refIndex));
 		}
 		monitor.worked(1);
 	}
@@ -438,7 +525,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	 * @param project the <code>IProject</code> that needs to be upgraded
 	 * @throws CoreException
 	 */
-	protected static void doProjectUpdate(IProgressMonitor monitor, IProject project) throws CoreException {
+	static void doProjectUpdate(IProgressMonitor monitor, IProject project) throws CoreException {
 		String[] projectName = new String[]{project.getName()};
 		IFile settingsFile = project.getFile(ManagedBuildManager.SETTINGS_FILE_NAME);
 		if (!settingsFile.exists()) {
@@ -447,10 +534,10 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		
 		// Backup the file
-		monitor.beginTask(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.monitor.message.backup", projectName), 1); //$NON-NLS-1$
-		backupFile(settingsFile, monitor, project);
+		monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject12.0", projectName), 1); //$NON-NLS-1$
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-		
+		UpdateManagedProjectManager.backupFile(settingsFile, "_12backup", monitor, project); ;	//$NON-NLS-1$
+
 		//Now convert each target to the new format
 		try {
 			// Load the old build file
@@ -462,119 +549,29 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			NodeList targetNodes = document.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
 			// This is a guess, but typically the project has 1 target, 2 configs, and 6 tool defs
 			int listSize = targetNodes.getLength();
-			monitor.beginTask(ManagedBuilderUIMessages.getFormattedString("ManagedBuildConvert.12x.monitor.message.project", projectName), listSize * 9); //$NON-NLS-1$	
+			monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject12.1", projectName), listSize * 9);	 //$NON-NLS-1$
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
-				ITarget newTarget = convertTarget(project, oldTarget, monitor);
+				IManagedProject newProject = convertTarget(project, oldTarget, monitor);
 			
 				// Remove the old target
-				if (newTarget != null) {
+				if (newProject != null) {
 					info.removeTarget(oldTargetId);
 					monitor.worked(9);
 				}
 			}
 			// Upgrade the version
 			((ManagedBuildInfo)info).setVersion(ManagedBuildManager.getBuildInfoVersion().toString());
-		} catch (ParserConfigurationException e) {
-			ManagedBuilderUIPlugin.log(e);
-		} catch (FactoryConfigurationError e) {
-			ManagedBuilderUIPlugin.log(e);
-		} catch (SAXException e) {
-			ManagedBuilderUIPlugin.log(e);
-		} catch (IOException e) {
-			ManagedBuilderUIPlugin.log(e);
+		}catch (CoreException e){
+			throw e;
+		}catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
+					e.getMessage(), e));
 		} finally {
 			ManagedBuildManager.saveBuildInfo(project, false);
 			monitor.done();
 		}
 	}
 
-	/**
-	 * Determines which projects in the workspace are still using 
-	 * the settings format defined in CDT 1.2.x. 
-	 * 
-	 * @return an array of <code>IProject</code> that need to have their  
-	 * project settings updated to the CDT 2.0 format 
-	 */
-	public static IProject[] getVersion12Projects() {
-		IProject[] projects = ManagedBuilderUIPlugin.getWorkspace().getRoot().getProjects();
-		Vector result = new Vector();
-		for (int index = projects.length - 1; index >=0 ; --index) {
-			if (projects[index].isAccessible()) {
-				IProjectDescription description;
-				try {
-					description = projects[index].getDescription();
-				} catch (CoreException e) {
-					// This can only mean that something really bad has happened
-					continue;
-				}
-				// Make sure it has a managed nature
-				if (description == null || !description.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
-					continue;
-				}
-				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[index]);
-				if (info != null && info.getVersion()== null) {
-					// This is a pre-2.0 file (no version info)
-					result.add(projects[index]);
-				}
-			}
-		}
-
-		return (IProject[]) result.toArray(new IProject[result.size()]);
-
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	static public void run(boolean fork, IRunnableContext context, final IProject project) {
-		try {
-			context.run(fork, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-							public void run(IProgressMonitor monitor) throws CoreException {
-								doProjectUpdate(monitor, project);
-							}
-						};
-						ManagedBuilderUIPlugin.getWorkspace().run(runnable, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					} catch (OperationCanceledException e) {
-						throw new InterruptedException(e.getMessage());
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			return;
-		} catch (InvocationTargetException e) {
-			CCorePlugin.log(e);	//$NON-NLS-1$
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-		
-	}
 }

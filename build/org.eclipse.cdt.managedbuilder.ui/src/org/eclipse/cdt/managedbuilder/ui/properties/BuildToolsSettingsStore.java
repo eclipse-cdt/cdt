@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.properties;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,6 +8,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -32,7 +32,10 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	private Map settingsMap;
 	private boolean dirtyFlag;
 	private IConfiguration owner;
-	
+
+	private IResourceConfiguration resConfigOwner;
+//	private IFile 	file;
+		
 	/**
 	 * 
 	 */
@@ -47,11 +50,22 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	public BuildToolsSettingsStore (IConfiguration config) {
 		this();
 		owner = config;
+		resConfigOwner = null;
 		// Now populate the options map
 		populateSettingsMap();
 	}
 
-
+    public BuildToolsSettingsStore(IResourceConfiguration resConfig) {
+    	this();
+  //  	owner = resConfig.getParent();
+    	owner = null;
+    	resConfigOwner = resConfig;
+    	populateSettingsMap();
+    }
+	/**
+	 * 
+	 */
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
@@ -213,86 +227,98 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 			getOptionsForCategory(children[i]);
 		}
 		// Else get the options for this category and add them to the map
-		IOption [] options = cat.getOptions(owner);
+		Object[][] options;
+		if(resConfigOwner != null) {
+			options = cat.getOptions(resConfigOwner);
+		} else {
+			options = cat.getOptions(owner);
+		}
+		
+		if ( options == null)
+			return;
 		for (int j = 0; j < options.length; ++j) {
-			IOption opt = options[j];
+			ITool tool = (ITool)options[j][0];
+			if (tool == null) break;	//  The array may not be full
+			IOption opt = (IOption)options[j][1];
 			String name = opt.getId();
 			Object value;
-			// Switch on the type of option
-			switch (opt.getValueType()) {
-				case IOption.BOOLEAN :
-					try {
-						value = new Boolean(opt.getBooleanValue());
-					} catch (BuildException e) {
-						// Exception occurs if there's an option value type mismatch
+			try {
+				// Switch on the type of option
+				switch (opt.getValueType()) {
+					case IOption.BOOLEAN :
+						try {
+							value = new Boolean(opt.getBooleanValue());
+						} catch (BuildException e) {
+							// Exception occurs if there's an option value type mismatch
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-
-				case IOption.ENUMERATED :
-					try{
-						String selId;
-						selId = opt.getSelectedEnum();
-						value = opt.getEnumName(selId);
-					} catch (BuildException e) {
+	
+					case IOption.ENUMERATED :
+						try{
+							String selId;
+							selId = opt.getSelectedEnum();
+							value = opt.getEnumName(selId);
+						} catch (BuildException e) {
+							break;
+						}
+							getSettingsMap().put(name, value);					
 						break;
-					}
-						getSettingsMap().put(name, value);					
-					break;
-					
-				case IOption.STRING :
-					try {
-						value = opt.getStringValue();
-					} catch (BuildException e) {
+						
+					case IOption.STRING :
+						try {
+							value = opt.getStringValue();
+						} catch (BuildException e) {
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-					
-				case IOption.STRING_LIST :
-					try {
-						value = createList(opt.getStringListValue());
-					} catch (BuildException e) {
+						
+					case IOption.STRING_LIST :
+						try {
+							value = createList(opt.getStringListValue());
+						} catch (BuildException e) {
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-				case IOption.INCLUDE_PATH :
-					try {
-						value = createList(opt.getIncludePaths());
-					} catch (BuildException e) {
+					case IOption.INCLUDE_PATH :
+						try {
+							value = createList(opt.getIncludePaths());
+						} catch (BuildException e) {
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-				case IOption.PREPROCESSOR_SYMBOLS :
-					try {
-						value = createList(opt.getDefinedSymbols());
-					} catch (BuildException e) {
+					case IOption.PREPROCESSOR_SYMBOLS :
+						try {
+							value = createList(opt.getDefinedSymbols());
+						} catch (BuildException e) {
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-				case IOption.LIBRARIES :
-					try {
-						value = createList(opt.getLibraries());
-					} catch (BuildException e) {
+					case IOption.LIBRARIES :
+						try {
+							value = createList(opt.getLibraries());
+						} catch (BuildException e) {
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-				case IOption.OBJECTS :
-					try {
-						value = createList(opt.getUserObjects());
-					} catch (BuildException e) {
+					case IOption.OBJECTS :
+						try {
+							value = createList(opt.getUserObjects());
+						} catch (BuildException e) {
+							break;
+						}
+						getSettingsMap().put(name, value);
 						break;
-					}
-					getSettingsMap().put(name, value);
-					break;
-				default :
-					break;
-			}
+					default :
+						break;
+				}
+			} catch (BuildException e) {}
 		}
 	}
 
@@ -340,7 +366,16 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	 */
 	private void populateSettingsMap() {
 		// Each configuration has a list of tools
-		ITool [] tools = owner.getTools();
+		ITool [] tools;
+		
+		// If resConfigOwner is not null, get the resource specific tools.
+		
+		if ( resConfigOwner != null) {
+			tools = resConfigOwner.getTools();
+		} else {
+			tools = owner.getFilteredTools();
+		}
+		
 		for (int index = 0; index < tools.length; ++index) {
 			// Add the tool to the map
 			ITool tool = tools[index];
@@ -468,4 +503,16 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		
 	}
 
+	/**
+	 * @return Returns the resConfigOwner.
+	 */
+	public IResourceConfiguration getResConfigOwner() {
+		return resConfigOwner;
+	}
+	/**
+	 * @param resConfigOwner The resConfigOwner to set.
+	 */
+	public void setResConfigOwner(IResourceConfiguration resConfigOwner) {
+		this.resConfigOwner = resConfigOwner;
+	}
 }

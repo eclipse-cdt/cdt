@@ -17,13 +17,14 @@ import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,23 +47,23 @@ public class ToolReference implements IToolReference {
 	 * Create a new tool reference based on information contained in 
 	 * a project file.
 	 * 
-	 * @param owner The <code>Configuration</code> the receiver will be added to.
+	 * @param owner The <code>ConfigurationV2</code> the receiver will be added to.
 	 * @param element The element defined in the project file containing build information
 	 * for the receiver.
 	 */
 	public ToolReference(BuildObject owner, Element element) {
 		this.owner = owner;
 		
-		if (owner instanceof Configuration) {
+		if (owner instanceof ConfigurationV2) {
 			if (parent == null) {
-				Target parentTarget = (Target) ((Configuration)owner).getTarget();
+				Target parentTarget = (Target) ((ConfigurationV2)owner).getTarget();
 				try {
 					parent = ((Target)parentTarget.getParent()).getTool(element.getAttribute(ID));
 				} catch (NullPointerException e) {
 					parent = null;
 				}
 			}
-			((Configuration)owner).addToolReference(this);
+			((ConfigurationV2)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
    			if (parent == null) {
    				try {
@@ -115,8 +116,8 @@ public class ToolReference implements IToolReference {
 		this.owner = owner;
 
 		// hook me up
-		if (owner instanceof Configuration) {
-			((Configuration)owner).addToolReference(this);
+		if (owner instanceof ConfigurationV2) {
+			((ConfigurationV2)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
 			((Target)owner).addToolReference(this);
 		}
@@ -201,8 +202,8 @@ public class ToolReference implements IToolReference {
 			}
 		}
 		
-		if (owner instanceof Configuration) {
-			((Configuration)owner).addToolReference(this);
+		if (owner instanceof ConfigurationV2) {
+			((ConfigurationV2)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
 			((Target)owner).addToolReference(this);
 		}
@@ -234,8 +235,8 @@ public class ToolReference implements IToolReference {
 			resolved = true;
 			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
 			// resolve my parent
-			if (owner instanceof Configuration) {
-				Target target = (Target) ((Configuration)owner).getTarget();
+			if (owner instanceof ConfigurationV2) {
+				Target target = (Target) ((ConfigurationV2)owner).getTarget();
 				parent = target.getTool(element.getAttribute(ID));
 			} else if (owner instanceof Target) {
 				parent = ((Target)owner).getTool(element.getAttribute(ID));
@@ -300,8 +301,8 @@ public class ToolReference implements IToolReference {
 	 */
 	protected List getAllOptionRefs() {
 		// First get all the option references this tool reference contains
-		if (owner instanceof Configuration) {
-			return ((Configuration)owner).getOptionReferences(parent);
+		if (owner instanceof ConfigurationV2) {
+			return ((ConfigurationV2)owner).getOptionReferences(parent);
 		} else if (owner instanceof Target) {
 			return ((Target)owner).getOptionReferences(parent);
 		} else {
@@ -644,9 +645,9 @@ public class ToolReference implements IToolReference {
 	 * @param config
 	 * @return
 	 */
-	public boolean ownedByConfiguration(IConfiguration config) {
-		if (owner instanceof Configuration) {
-			return ((IConfiguration)owner).equals(config);
+	public boolean ownedByConfiguration(IConfigurationV2 config) {
+		if (owner instanceof ConfigurationV2) {
+			return ((IConfigurationV2)owner).equals(config);
 		}
 		return false;
 	}
@@ -717,6 +718,39 @@ public class ToolReference implements IToolReference {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputFlag(java.lang.String)
+	 */
+	public void setOutputFlag(String flag) {
+		if (flag == null) return;
+		if (outputFlag == null || !(flag.equals(outputFlag))) {
+			outputFlag = flag;
+			isDirty = true;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputPrefix(java.lang.String)
+	 */
+	public void setOutputPrefix(String prefix) {
+		if (prefix == null) return;
+		if (outputPrefix == null || !(prefix.equals(outputPrefix))) {
+			outputPrefix = prefix;
+			isDirty = true;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputExtensions(java.lang.String)
+	 */
+	public void setOutputExtensions(String ext) {
+		if (ext == null) return;
+		if (outputExtensions == null || !(ext.equals(outputExtensions))) {
+			outputExtensions = ext;
+			isDirty = true;
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
@@ -732,4 +766,169 @@ public class ToolReference implements IToolReference {
 		}
 	}
 
+	/*
+	 * The following methods are here in order to implement the new ITool methods.
+	 * They should never be called.
+	 */
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getSuperClass()
+	 */
+	public ITool getSuperClass() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#isAbstract()
+	 */
+	public boolean isAbstract() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getUnusedChildren()
+	 */
+	public String getUnusedChildren() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getErrorParserList()
+	 */
+	public String[] getErrorParserList() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getErrorParserIds()
+	 */
+	public String getErrorParserIds() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setErrorParserIds()
+	 */
+	public void setErrorParserIds(String ids) {
+	}
+	
+	public List getInterfaceExtensions() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isExtensionElement()
+	 */
+	public boolean isExtensionElement() {
+		return false;
+	}
+
+	/*
+	 * The following methods are added to allow the converter from ToolReference -> Tool
+	 * to retrieve the actual value of attributes.  These routines do not go to the
+	 * referenced Tool for a value if the ToolReference does not have a value.
+	 */
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawOutputExtensions()
+	 */
+	public String getRawOutputExtensions() {
+		return outputExtensions;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawOutputFlag()
+	 */
+	public String getRawOutputFlag() {
+		return outputFlag;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawOutputPrefix()
+	 */
+	public String getRawOutputPrefix() {
+		return outputPrefix;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawToolCommand()
+	 */
+	public String getRawToolCommand() {
+		return command;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOption()
+	 */
+	public IOption createOption(IOption superClass, String Id, String name, boolean b) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption()
+	 */
+	public void removeOption(IOption o) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
+	 */
+	public IOptionCategory[] getChildCategories() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setParent(IBuildObject)
+	 */
+	public void setToolParent(IBuildObject newParent) {
+		if (parent == null) {
+			// bad reference
+			return;
+		}
+		// Set the parent in the parent of this ToolRefernce, the tool
+		((Tool)parent).setToolParent(newParent);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setIsAbstract(boolean)
+	 */
+	public void setIsAbstract(boolean b) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getParent()
+	 */
+	public IBuildObject getParent() {
+		return owner;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
+	 */
+	public String getCommandLinePattern() {
+		if( parent == null ) return new String();
+		return parent.getCommandLinePattern();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
+	 */
+	public void setCommandLinePattern(String pattern) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
+	 */
+	public IManagedCommandLineGenerator getCommandLineGenerator() {
+		if( parent == null ) return null;
+		return parent.getCommandLineGenerator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandFlags()
+	 */
+	public String[] getCommandFlags() throws BuildException {
+		if( parent == null ) return null;
+		return parent.getCommandFlags();
+	}
 }

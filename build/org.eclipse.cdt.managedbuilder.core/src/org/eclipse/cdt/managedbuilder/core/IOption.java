@@ -31,9 +31,16 @@ public interface IOption extends IBuildObject {
 	public static final String FILE = "file";	//$NON-NLS-1$
 	public static final int BROWSE_DIR = 2;
 	public static final String DIR = "directory";	//$NON-NLS-1$
+
+	// Resource Filter type
+	public static final int FILTER_ALL = 0;
+	public static final String ALL = "all";	//$NON-NLS-1$
+	public static final int FILTER_FILE = 1;
+	public static final int FILTER_PROJECT = 2;
+	public static final String PROJECT = "project";	//$NON-NLS-1$
 	
 	// Schema attribute names for option elements
-	public static final String BROSWE_TYPE = "browseType";	//$NON-NLS-1$
+	public static final String BROWSE_TYPE = "browseType";	//$NON-NLS-1$
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
@@ -41,6 +48,7 @@ public interface IOption extends IBuildObject {
 	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
 	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
 	public static final String LIST_VALUE = "listOptionValue"; //$NON-NLS-1$
+	public static final String RESOURCE_FILTER = "resourceFilter"; //$NON-NLS-1$
 	public static final String TYPE_BOOL = "boolean"; //$NON-NLS-1$
 	public static final String TYPE_ENUM = "enumerated"; //$NON-NLS-1$
 	public static final String TYPE_INC_PATH = "includePath"; //$NON-NLS-1$
@@ -48,12 +56,28 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_STRING = "string"; //$NON-NLS-1$
 	public static final String TYPE_STR_LIST = "stringList"; //$NON-NLS-1$
 	public static final String TYPE_USER_OBJS = "userObjs"; //$NON-NLS-1$
+	public static final String TYPE_DEFINED_SYMBOLS = "definedSymbols"; //$NON-NLS-1$
+	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VALUE_TYPE = "valueType"; //$NON-NLS-1$
 
 	// Schema attribute names for listOptionValue elements
 	public static final String LIST_ITEM_VALUE = "value"; //$NON-NLS-1$
 	public static final String LIST_ITEM_BUILTIN = "builtIn"; //$NON-NLS-1$
 
+	/**
+	 * Returns the tool defining this option.
+	 * 
+	 * @return ITool
+	 */
+	public ITool getParent();
+
+	/**
+	 * Returns the <code>IOption</code> that is the superclass of this
+	 * option, or <code>null</code> if the attribute was not specified.
+	 * 
+	 * @return IOption
+	 */
+	public IOption getSuperClass();
 	
 	/**
 	 * If this option is defined as an enumeration, this function returns
@@ -74,9 +98,32 @@ public interface IOption extends IBuildObject {
 	public boolean getBooleanValue() throws BuildException;
 	
 	/**
-	 * @return
+	 * Returns the setting of the browseType attribute
+	 * 
+	 * @return int
 	 */
 	public int getBrowseType();
+	
+	/**
+	 * Sets the browseType attribute.
+	 * 
+	 * @param int
+	 */
+	public void setBrowseType(int type);
+	
+	/**
+	 * Returns the setting of the resourceFilter attribute
+	 * 
+	 * @return int
+	 */
+	public int getResourceFilter();
+
+	/**
+	 * Sets the resourceFilter attribute.
+	 * 
+	 * @param int
+	 */
+	public void setResourceFilter(int filter);
 	
 	/**
 	 * Answers an array of strings containing the built-in values 
@@ -96,6 +143,13 @@ public interface IOption extends IBuildObject {
 	public IOptionCategory getCategory();
 	
 	/**
+	 * Sets the category for this option.
+	 * 
+	 * @param IOptionCategory
+	 */
+	public void setCategory(IOptionCategory category);
+	
+	/**
 	 * Answers a <code>String</code> containing the actual command line 
 	 * option associated with the option
 	 * 
@@ -104,11 +158,27 @@ public interface IOption extends IBuildObject {
 	public String getCommand();
 	
 	/**
+	 * Sets a <code>String</code> containing the actual command line 
+	 * option associated with the option
+	 * 
+	 * @param String
+	 */
+	public void setCommand(String command);
+	
+	/**
 	 * Answers a <code>String</code> containing the actual command line
 	 * option associated with a Boolean option when the value is False
 	 * @return String
 	 */
 	public String getCommandFalse();
+	
+	/**
+	 * Sets a <code>String</code> containing the actual command line
+	 * option associated with a Boolean option when the value is False
+	 * 
+	 * @param String
+	 */
+	public void setCommandFalse(String commandFalse);
 
 	/**
 	 * Answers the user-defined preprocessor symbols. 
@@ -127,20 +197,20 @@ public interface IOption extends IBuildObject {
 	 *  
 	 * @return 
 	 */
-	public String getEnumCommand (String id);
+	public String getEnumCommand (String id) throws BuildException;
 
 	/**
 	 * Answers the "name" associated with the enumeration id.
 	 *  
 	 * @return 
 	 */
-	public String getEnumName (String id);
+	public String getEnumName (String id) throws BuildException;
 
 	/**
 	 * @param name
 	 * @return
 	 */
-	public String getEnumeratedId(String name);
+	public String getEnumeratedId(String name) throws BuildException;
 
 	/**
 	 * Answers an array of <code>String</code> containing the includes paths
@@ -151,7 +221,6 @@ public interface IOption extends IBuildObject {
 	 */
 	public String[] getIncludePaths() throws BuildException;
 		
-
 	/**
 	 * Answers an array or <code>String</code>s containing the libraries
 	 * that must be linked into the project.
@@ -188,15 +257,7 @@ public interface IOption extends IBuildObject {
 	 * @throws BuildException
 	 */
 	public String getStringValue() throws BuildException;
-	
-	/**
-	 * Returns the tool defining this option.
-	 * 
-	 * @return ITool
-	 */
-	public ITool getTool();
-	
-	
+		
 	/**
 	 * Answers all of the user-defined object files that must be linked with
 	 * the final build target. 
@@ -207,10 +268,90 @@ public interface IOption extends IBuildObject {
 	public String [] getUserObjects() throws BuildException;
 	
 	/**
+	 * Returns the raw value of this option.
+	 * 
+	 * @return Object The Object that contains the raw value of the option.  The type
+	 *          of Object is specific to the option type.
+	 */
+	public Object getValue();
+	
+	/**
+	 * Returns the raw default value of this option.
+	 * 
+	 * @return Object The Object that contains the raw default value of the option.  The type
+	 *          of Object is specific to the option type.
+	 */
+	public Object getDefaultValue();
+	
+	/**
 	 * Get the type for the value of the option.
 	 * 
 	 * @return int
 	 */
-	public int getValueType();
+	public int getValueType() throws BuildException;
 
+	/**
+	 * Sets the boolean value of the receiver to the value specified in the argument. 
+	 * If the receiver is not a reference to a boolean option, method will throw an
+	 * exception.
+	 * 
+	 * @param value
+	 * @throws BuildException
+	 */
+	public void setValue(boolean value) throws BuildException;
+
+	/**
+	 * Sets the string value of the receiver to the value specified in the argument.
+	 *  
+	 * @param value
+	 * @throws BuildException
+	 */
+	public void setValue(String value) throws BuildException;
+	
+	/**
+	 * Sets the value of the receiver to be an array of strings.
+	 * 
+	 * @param value An array of strings to place in the option reference.
+	 * @throws BuildException
+	 */
+	public void setValue(String [] value) throws BuildException;
+	
+	/**
+	 * Sets the raw value of this option.
+	 * 
+	 * @param v The Object that contains the raw value of the option.  The type
+	 *          of Object is specific to the option type.
+	 */
+	public void setValue(Object v);
+	
+	/**
+	 * Sets the default value of this option.
+	 * 
+	 * @param v The Object that contains the default value of the option.  The type
+	 *          of Object is specific to the option type.
+	 */
+	public void setDefaultValue(Object v);
+
+	/**
+	 * Sets the value-type of this option.  Use with care.
+	 * 
+	 * @param type
+	 */
+	public void setValueType(int type);
+	
+	/**
+	 * Returns <code>true</code> if this option was loaded from a manifest file,
+	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
+	 * 
+	 * @return boolean
+	 */
+	public boolean isExtensionElement();
+
+	/**
+	 * Returns <code>true</code> if this option only oveerides the value attribute
+	 * of its superclass and <code>false</code> if it overrides other attributes.
+	 * 
+	 * @return boolean
+	 */
+	public boolean overridesOnlyValue();
 }

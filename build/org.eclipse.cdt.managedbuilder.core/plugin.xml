@@ -17,10 +17,12 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.cdt.make.core"/>
+      <import plugin="org.eclipse.ui"/>
    </requires>
 
 
-   <extension-point id="ManagedBuildInfo" name="Managed Build Tools" schema="schema/ManagedBuildTools.exsd"/>
+   <extension-point id="ManagedBuildInfo" name="Managed Build Tools 2.0 (Deprecated)" schema="schema/ManagedBuildTools.exsd"/>
+   <extension-point id="buildDefinitions" name="Managed Build Definitions" schema="schema/buildDefinitions.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Extension Point: IScannerInfoProvider for the managed Builder                       -->

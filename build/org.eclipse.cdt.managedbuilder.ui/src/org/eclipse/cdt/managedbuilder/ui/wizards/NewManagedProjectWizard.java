@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.wizards;
-
 /**********************************************************************
- * Copyright (c) 2002,2004 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,14 +8,16 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
-
-import java.util.Random;
+package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
@@ -55,7 +55,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	protected static final String SETTINGS_DESC = "MngMakeWizardSettings.description";	//$NON-NLS-1$
 	
 	// Wizard pages
-	protected CProjectPlatformPage targetConfigurationPage;
+	protected CProjectPlatformPage projectConfigurationPage;
 	protected NewManagedProjectOptionPage optionPage;
 
 	public NewManagedProjectWizard() {
@@ -71,10 +71,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		super.addPages();
 		
 		// Add the configuration selection page
-		targetConfigurationPage = new CProjectPlatformPage(PREFIX, this);
-		targetConfigurationPage.setTitle(ManagedBuilderUIMessages.getResourceString(CONF_TITLE));
-		targetConfigurationPage.setDescription(ManagedBuilderUIMessages.getResourceString(CONF_DESC));
-		addPage(targetConfigurationPage);
+		projectConfigurationPage = new CProjectPlatformPage(PREFIX, this);
+		projectConfigurationPage.setTitle(ManagedBuilderUIMessages.getResourceString(CONF_TITLE));
+		projectConfigurationPage.setDescription(ManagedBuilderUIMessages.getResourceString(CONF_DESC));
+		addPage(projectConfigurationPage);
 		
 		// Add the options (tabbed) page
 		optionPage = new NewManagedProjectOptionPage(PREFIX, this);
@@ -97,9 +97,9 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			optionPage.setupHelpContextIds();
 		}
 	}
-	public void updateTargetProperties() {
+	public void updateProjectTypeProperties() {
 		//  Update the error parser list
-		optionPage.updateTargetProperties();
+		optionPage.updateProjectTypeProperties();
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
@@ -120,40 +120,42 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			ManagedBuilderUIPlugin.log(e);
 		}
 		
-		// Add the target to the project
-		ITarget newTarget = null;
+		// Add the ManagedProject to the project
+		IManagedProject newManagedProject = null;
 		try {
 			ManagedBuildManager.createBuildInfo(newProject);
-			ITarget parent = targetConfigurationPage.getSelectedTarget();
-			newTarget = ManagedBuildManager.createTarget(newProject, parent);
-			if (newTarget != null) {
+			IProjectType parent = projectConfigurationPage.getSelectedProjectType();
+			newManagedProject = ManagedBuildManager.createManagedProject(newProject, parent);
+			if (newManagedProject != null) {
+				IConfiguration [] selectedConfigs = projectConfigurationPage.getSelectedConfigurations();
+				for (int i = 0; i < selectedConfigs.length; i++) {
+					IConfiguration config = selectedConfigs[i];
+					int id = ManagedBuildManager.getRandomNumber();
+					IConfiguration newConfig = newManagedProject.createConfiguration(config, config.getId() + "." + id); //$NON-NLS-1$
+					newConfig.setArtifactName(newManagedProject.getDefaultArtifactName());
+				}
+				// Now add the first config in the list as the default
+				IConfiguration[] newConfigs = newManagedProject.getConfigurations();
+				if (newConfigs.length > 0) {
+					ManagedBuildManager.setDefaultConfiguration(newProject, newConfigs[0]);
+					ManagedBuildManager.setSelectedConfiguration(newProject, newConfigs[0]);
+				}
+				ManagedBuildManager.setNewProjectVersion(newProject);
 				ICDescriptor desc = null;
 				try {
 					desc = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
 					desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
-					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
+					//  TODO:  The binary parser setting is currently per-project in the rest of CDT.
+					//         In the MBS, it is per-coonfiguration.  For now, select the binary parser of the
+					//         first configuration.
+					if (newConfigs.length > 0) {
+						IToolChain tc = newConfigs[0].getToolChain();
+						ITargetPlatform targetPlatform = tc.getTargetPlatform();
+					    desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, targetPlatform.getBinaryParserId());
+					}
 				} catch (CoreException e) {
 					ManagedBuilderUIPlugin.log(e);
 				}
-				newTarget.setArtifactName(getBuildGoalName());
-				IConfiguration [] selectedConfigs = targetConfigurationPage.getSelectedConfigurations();
-				Random r = new Random();
-				r.setSeed(System.currentTimeMillis());
-				for (int i = 0; i < selectedConfigs.length; i++) {
-					IConfiguration config = selectedConfigs[i];
-					int id = r.nextInt();
-					if (id < 0) {
-						id *= -1;
-					}
-					newTarget.createConfiguration(config, config.getId() + "." + id); //$NON-NLS-1$
-				}
-				// Now add the first config in the list as the default
-				IConfiguration[] newConfigs = newTarget.getConfigurations();
-				if (newConfigs.length > 0) {
-					ManagedBuildManager.setDefaultConfiguration(newProject, newConfigs[0]);
-				}
-				ManagedBuildManager.setSelectedTarget(newProject, newTarget);
-				ManagedBuildManager.setNewProjectVersion(newProject);
 			}
 		} catch (BuildException e) {
 			ManagedBuilderUIPlugin.log(e);
@@ -168,19 +170,6 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_SAVE));
 		ManagedBuildManager.saveBuildInfo(newProject, true);
 		monitor.done();
-	}
-
-	/**
-	 * @return
-	 */
-	private String getBuildGoalName() {
-		String name = new String();
-		// Check for spaces
-		String[] tokens = newProject.getName().split("\\s");	//$NON-NLS-1$
-		for (int index = 0; index < tokens.length; ++index) {
-			name += tokens[index];
-		}
-		return name;
 	}
 
 	/* (non-Javadoc)
@@ -211,8 +200,8 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		return ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID;
 	}
 	
-	public ITarget getSelectedTarget() {
-		return targetConfigurationPage.getSelectedTarget();
+	public IProjectType getSelectedProjectType() {
+		return projectConfigurationPage.getSelectedProjectType();
 	}
 
 }

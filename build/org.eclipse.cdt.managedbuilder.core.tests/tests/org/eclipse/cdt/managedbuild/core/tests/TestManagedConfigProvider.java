@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuild.core.tests;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElementProvider;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
@@ -45,11 +45,18 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 
 	private IManagedConfigElement createTarget(String targetId, String command) {
 		IManagedConfigElement toolRef = new TestConfigElement(
-			IConfiguration.TOOLREF_ELEMENT_NAME, 
+			IConfigurationV2.TOOLREF_ELEMENT_NAME, 
 			new String[][] {
 					{ITool.ID, "test.forward.tool"},
 					{ITool.COMMAND, command}},
 			new IManagedConfigElement[0]);
+
+		IManagedConfigElement config = new TestConfigElement(
+				IConfigurationV2.CONFIGURATION_ELEMENT_NAME, 
+				new String[][] {
+						{IConfigurationV2.ID, targetId + ".config"},
+						{IConfigurationV2.NAME, "test.forward.config"}},
+				new IManagedConfigElement[] {toolRef});
 				
 		IManagedConfigElement target = new TestConfigElement(
 			ITarget.TARGET_ELEMENT_NAME,
@@ -60,7 +67,7 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 					{ITarget.PARENT, "test.forward.parent.target"},
 					{ITarget.IS_TEST, "true"},
 					{ITarget.OS_LIST, "win32,linux,solaris"}},
-			new IManagedConfigElement[] {toolRef});
+			new IManagedConfigElement[] {config});
 		
 		return target;
 	}

@@ -30,11 +30,17 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
@@ -60,20 +66,22 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private static final QualifiedName defaultTargetProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "defaultTarget");	//$NON-NLS-1$
 	public static final String MAJOR_SEPERATOR = ";"; //$NON-NLS-1$
 	public static final String MINOR_SEPERATOR = "::"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = new String();
 
-	private boolean containerCreated;
-	private ICProject cProject; 
-	private String defaultConfigIds;
-	private Map defaultConfigMap;
-	private ITarget defaultTarget;
-	private String defaultTargetId;
+	private IManagedProject managedProject;
+	private ICProject cProject;
+	private IConfiguration defaultConfig;
+	private String defaultConfigId;
 	private boolean isDirty;
 	private IResource owner;
 	private boolean rebuildNeeded;
-	private ITarget selectedTarget;
+	private String version;
+	private IConfiguration selectedConfig;
+
 	private List targetList;
 	private Map targetMap;
-	private String version;
+	
+	private boolean isReadOnly = false;
 	
 
 	/**
@@ -85,29 +93,17 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		this.owner = owner;
 		cProject = CoreModel.getDefault().create(owner.getProject());
 
-		// The container for this project has never been created
-		containerCreated = false;
-
 		// Does not need a save but should be rebuilt
 		isDirty = false;
 		rebuildNeeded = true;
 
-		// The id of the default target from the project persistent settings store
+		// Get the default configs
 		IProject project = owner.getProject();
-		defaultTargetId = null;
+		defaultConfigId = null;
 		try {
-			defaultTargetId = project.getPersistentProperty(defaultTargetProperty);
+			defaultConfigId = project.getPersistentProperty(defaultConfigProperty);
 		} catch (CoreException e) {
-			// We have all the build elements so we can stop if this occurs
-			return;
-		}
-
-		// Get the default configs for every target out of the same store
-		defaultConfigIds = null;
-		try {
-			defaultConfigIds = project.getPersistentProperty(defaultConfigProperty);
-		} catch (CoreException e) {
-			// Again, hitting this error just means the default config is not set
+			// Hitting this error just means the default config is not set
 			return;
 		}
 	}
@@ -122,13 +118,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public ManagedBuildInfo(IResource owner, Element element) {
 		this(owner);
 		
-		// Container has already been created for this project
-		containerCreated = true;
-		
-		// Inflate the targets
-		NodeList targetNodes = element.getElementsByTagName(ITarget.TARGET_ELEMENT_NAME);
-		for (int targIndex = targetNodes.getLength() - 1; targIndex >= 0; --targIndex) {
-			new Target(this, (Element)targetNodes.item(targIndex));
+		// Recreate the managed build project element and its children
+		NodeList projNodes = element.getElementsByTagName(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
+		// TODO:  There should only be 1?
+		for (int projIndex = projNodes.getLength() - 1; projIndex >= 0; --projIndex) {
+			ManagedProject proj = new ManagedProject(this, (Element)projNodes.item(projIndex));
+			proj.resolveReferences();
 		}
 
 		// Switch the rebuild off since this is an existing project
@@ -136,24 +131,27 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#addTarget(org.eclipse.cdt.core.build.managed.ITarget)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setManagedProject(IManagedProject)
 	 */
-	public void addTarget(ITarget target) {
-		getTargetMap().put(target.getId(), target);
-		getTargets().add(target);
-		setDirty(true);
+	public void setManagedProject(IManagedProject managedProject) {
+		this.managedProject = managedProject;
+		//setDirty(true);  - It is primarily up to the ManagedProject to maintain the dirty state
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getManagedProject()
+	 */
+	public IManagedProject getManagedProject() {
+		return managedProject;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#buildsFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String srcExt) {
-		// Make sure the owner is treated as a project for the duration
-		IProject project = (IProject)owner;
-
 		// Check to see if there is a rule to build a file with this extension
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getFilteredTools(project);
+		IConfiguration config = getDefaultConfiguration();
+		ITool[] tools = config.getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			if (tool != null && tool.buildsFileType(srcExt)) {
@@ -168,9 +166,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String getBuildArtifactExtension() {
 		String ext = new String();
-		ITarget target = getDefaultTarget();
-		if (target != null) {
-			ext = target.getArtifactExtension();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			ext = config.getArtifactExtension();
 		} 
 		return ext;
 	}
@@ -179,11 +177,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getBuildArtifactName()
 	 */
 	public String getBuildArtifactName() {
-		// Get the default target and use its value
+		// Get the default configuration and use its value
 		String name = new String();
-		ITarget target = getDefaultTarget();
-		if (target != null) {
-			name = target.getArtifactName();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			name = config.getArtifactName();
 		}
 		return name;
 	}
@@ -194,9 +192,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public String getCleanCommand() {
 		// Get from the model
 		String command = new String();
-		ITarget target = getDefaultTarget();
-		if (target != null) {
-			command = target.getCleanCommand();
+		IConfiguration config = getDefaultConfiguration();
+		if (config != null) {
+			command = config.getCleanCommand();
 		}
 		return command;
 	}
@@ -206,7 +204,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String getConfigurationName() {
 		// Return the human-readable name of the default configuration
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		IConfiguration config = getDefaultConfiguration();
 		return config == null ? new String() : config.getName();
 	}
 
@@ -215,7 +213,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public String[] getConfigurationNames() {
 		ArrayList configNames = new ArrayList();
-		IConfiguration[] configs = getDefaultTarget().getConfigurations();
+		IConfiguration[] configs = managedProject.getConfigurations();
 		for (int i = 0; i < configs.length; i++) {
 			IConfiguration configuration = configs[i];
 			configNames.add(configuration.getName());
@@ -229,70 +227,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * 
-	 * @return Returns the map of ITarget ids to IConfigurations.
-	 */
-	private Map getDefaultConfigMap() {
-		if (defaultConfigMap == null) {
-			defaultConfigMap = new HashMap();
-			// We read this as part of the constructor
-			if (defaultConfigIds != null) {
-				String[] majorTokens = defaultConfigIds.split(MAJOR_SEPERATOR);
-				for (int index = majorTokens.length - 1; index >= 0; --index) {
-					// Now split each token into the target and config id component
-					String idToken = majorTokens[index];
-					if (idToken != null) {
-						String[] minorTokens = idToken.split(MINOR_SEPERATOR);
-						// The first token is the target ID
-						ITarget target = getTarget(minorTokens[0]);
-						if (target == null) continue;
-						// The second is the configuration ID
-						IConfiguration config = target.getConfiguration(minorTokens[1]);
-						if (config != null) {
-							defaultConfigMap.put(target.getId(), config);
-						}
-					}
-				}
-			}
-		}
-		return defaultConfigMap;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getDefaultConfiguration()
 	 */
-	public IConfiguration getDefaultConfiguration(ITarget target) {
-		// Get the default config associated with the defalt target
-		IConfiguration config = (IConfiguration) getDefaultConfigMap().get(target.getId());
-
-		// If null, look up the first configuration associated with the target
-		if (config == null) {
-			IConfiguration[] configs = getDefaultTarget().getConfigurations();
-			if (configs.length > 0) {
-				config = configs[0];
+	public IConfiguration getDefaultConfiguration() {
+		// Get the default config associated with the project
+		if (defaultConfig == null) {
+			if (defaultConfigId != null && managedProject != null) {
+				defaultConfig = managedProject.getConfiguration(defaultConfigId);
 			}
 		}
-		return config;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getDefaultTarget()
-	 */
-	public ITarget getDefaultTarget() {
-		if (defaultTarget == null) {
-			// See if there is a target that was persisted
-			if (defaultTargetId != null) {
-				defaultTarget = (ITarget) getTargetMap().get(defaultTargetId);
-			}
-			// If that failed, look for anything
-			if (defaultTarget == null) {
-				// Are there any defined targets
-				if (getTargets().size() > 0) {
-					return (ITarget) getTargets().get(0);
-				}
-			}
-		}
-		return defaultTarget;
+		return defaultConfig;
 	}
 
 	/* (non-Javadoc)
@@ -301,16 +245,18 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public Map getDefinedSymbols() {
 		// Return the defined symbols for the default configuration
 		HashMap symbols = getMacroPathEntries();
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getFilteredTools(owner.getProject());
+		IConfiguration config = getDefaultConfiguration();
+		if(config == null)
+			return symbols;
+		ITool[] tools = config.getFilteredTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
 			// Now extract the valid tool's options
 			IOption[] opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
 				IOption option = opts[j];
-				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
-					try {
+				try {
+					if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
 						ArrayList symbolList = new ArrayList();
 						symbolList.addAll(Arrays.asList(option.getDefinedSymbols()));
 						Iterator iter = symbolList.listIterator();
@@ -324,11 +270,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 							String value = (tokens.length > 1) ? tokens[1].trim() : new String();
 							symbols.put(key, value);
 						}
-
-					} catch (BuildException e) {
-						// we should never get here
-						continue;
 					}
+				} catch (BuildException e) {
+					// TODO: report error
+					continue;
 				}
 			}
 		}
@@ -339,13 +284,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getDependencyGenerator(java.lang.String)
 	 */
 	public IManagedDependencyGenerator getDependencyGenerator(String sourceExtension) {
-		// Find the tool and ask the target for its dep generator
+		// Find the tool and ask the Managed Build Manager for its dep generator
 		try {
-			ITarget target = getDefaultTarget();
-			ITool[] tools = getFilteredTools();
-			for (int index = 0; index < tools.length; ++index) {
-				if(tools[index].buildsFileType(sourceExtension)) {
-					return target.getDependencyGenerator(tools[index].getId());
+			if (getDefaultConfiguration() != null) {
+				ITool[] tools = getDefaultConfiguration().getFilteredTools();
+				for (int index = 0; index < tools.length; ++index) {
+					if(tools[index].buildsFileType(sourceExtension)) {
+						return ManagedBuildManager.getDependencyGenerator(tools[index].getId());
+					}
 				}
 			}
 		} catch (NullPointerException e) {
@@ -363,9 +309,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	private ITool[] getFilteredTools() {
 		// Get all the tools for the current config filtered by the project nature
-		IProject project = owner.getProject();
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		return config.getFilteredTools(project);
+		IConfiguration config = getDefaultConfiguration();
+		return config.getFilteredTools();
 	}
 	
 	/* (non-Javadoc)
@@ -388,9 +333,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolFlags(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getFlagsForConfiguration(java.lang.String)
 	 */
-	public String getFlagsForTarget(String extension) {
+	public String getFlagsForConfiguration(String extension) {
 		// Treat null extensions as an empty string
 		String ext = extension == null ? new String() : extension;
 		
@@ -440,22 +385,22 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public String[] getIncludePaths() {
 		// Return the include paths for the default configuration
 		ArrayList paths = getIncludePathEntries();
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		IConfiguration config = getDefaultConfiguration();
 		IPath location = owner.getLocation();
 		// If the build info is out of date this might be null
 		if (location == null) {
 			location = new Path("."); //$NON-NLS-1$
 		}
 		IPath root = location.addTrailingSeparator().append(config.getName());
-		ITool[] tools = config.getFilteredTools(owner.getProject());
+		ITool[] tools = config.getFilteredTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
 			// The tool checks out for this project, get its options
 			IOption[] opts = tool.getOptions();
 			for (int j = 0; j < opts.length; j++) {
 				IOption option = opts[j];
-				if (option.getValueType() == IOption.INCLUDE_PATH) {
-					try {
+				try {
+					if (option.getValueType() == IOption.INCLUDE_PATH) {
 						// Get all the user-defined paths from the option as absolute paths
 						String[] userPaths = option.getIncludePaths();
 						for (int index = 0; index < userPaths.length; ++index) {
@@ -466,11 +411,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 								IPath absPath = root.addTrailingSeparator().append(userPath);
 								paths.add(absPath.makeAbsolute().toOSString());
 							}
- 						}
-					} catch (BuildException e) {
-						// we should never get here, but continue anyway
-						continue;
+						}
 					}
+				} catch (BuildException e) {
+					// TODO: report error
+					continue;
 				}
 			}
 		}
@@ -480,9 +425,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getLibsForTarget(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getLibsForConfiguration(java.lang.String)
 	 */
-	public String[] getLibsForTarget(String extension) {
+	public String[] getLibsForConfiguration(String extension) {
 		Vector libs = new Vector();
 		ITool[] tools = getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
@@ -492,17 +437,18 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				// Look for the lib option type
 				for (int i = 0; i < opts.length; i++) {
 					IOption option = opts[i];
-					if (option.getValueType() == IOption.LIBRARIES) {
-						try {
+					try {
+						if (option.getValueType() == IOption.LIBRARIES) {
 							String command = option.getCommand();
 							String[] allLibs = option.getLibraries();
 							for (int j = 0; j < allLibs.length; j++) {
 								String string = allLibs[j];
 								libs.add(command + string);
 							}
-						} catch (BuildException e) {
-							continue;
 						}
+					} catch (BuildException e) {
+						// TODO: report error
+						continue;
 					}
 				}
 			}
@@ -534,15 +480,25 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeArguments()
 	 */
-	public String getMakeArguments() {
-		return getDefaultTarget().getMakeArguments();
+	public String getBuildArguments() {
+		if (getDefaultConfiguration() != null) {
+			IToolChain toolChain = getDefaultConfiguration().getToolChain();
+			IBuilder builder = toolChain.getBuilder();
+			return builder.getArguments();
+		}
+		return EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getMakeCommand()
 	 */
-	public String getMakeCommand() {
-		return getDefaultTarget().getMakeCommand();
+	public String getBuildCommand() {
+		if (getDefaultConfiguration() != null) {
+			IToolChain toolChain = getDefaultConfiguration().getToolChain();
+			IBuilder builder = toolChain.getBuilder();
+			return builder.getCommand();
+		}
+		return EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)
@@ -608,42 +564,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getSelectedTarget()
-	 */
-	public ITarget getSelectedTarget() {
-		return selectedTarget;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTarget(org.eclipse.cdt.core.build.managed.IConfiguration)
-	 */
-	public ITarget getTarget(String id) {
-		return (ITarget) getTargetMap().get(id);
-	}
-
-	/* (non-Javadoc)
-	 * Safe accessor.
-	 * 
-	 * @return Returns the map of IDs to ITargets.
-	 */
-	private Map getTargetMap() {
-		if (targetMap == null) {
-			targetMap = new HashMap();
-		}
-		return targetMap;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTargets(org.eclipse.cdt.core.build.managed.IConfiguration)
-	 */
-	public List getTargets() {
-		if (targetList == null) {
-			targetList = new ArrayList();
-		}
-		return targetList;	
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolForSource(java.lang.String)
 	 */
 	public String getToolForSource(String sourceExtension) {
@@ -661,7 +581,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getToolInvocation(java.lang.String)
 	 */
-	public String getToolForTarget(String extension) {
+	public String getToolForConfiguration(String extension) {
 		// Treat a null argument as an empty string
 		String ext = extension == null ? new String() : extension;
 		// Get all the tools for the current config
@@ -674,11 +594,30 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#generateCommandLineInfo(java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+	 */
+	public IManagedCommandLineInfo generateCommandLineInfo(
+			String sourceExtension, String[] flags, String outputFlag,
+			String outputPrefix, String outputName, String[] inputResources) {
+		ITool[] tools = getFilteredTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.buildsFileType(sourceExtension)) {
+				IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
+				return gen.generateCommandLineInfo( tool, tool.getToolCommand(), 
+						flags, outputFlag, outputPrefix, outputName, inputResources, 
+						tool.getCommandLinePattern() );
+			}
+		}
+		return null;
+	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getUserObjectsForTarget(java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getUserObjectsForConfiguration(java.lang.String)
 	 */
-	public String[] getUserObjectsForTarget(String extension) {
+	public String[] getUserObjectsForConfiguration(String extension) {
 		Vector objs = new Vector();
 		// Get all the tools for the current config
 		ITool[] tools = getFilteredTools();
@@ -690,12 +629,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 				// Look for the user object option type
 				for (int i = 0; i < opts.length; i++) {
 					IOption option = opts[i];
-					if (option.getValueType() == IOption.OBJECTS) {
-						try {
+					try {
+						if (option.getValueType() == IOption.OBJECTS) {
 							objs.addAll(Arrays.asList(option.getUserObjects()));
-						} catch (BuildException e) {
-							continue;
 						}
+					} catch (BuildException e) {
+						// TODO: report error
+						continue;
 					}
 				}
 			}
@@ -730,15 +670,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			return true;
 		}
 		
-		// Check if any of the defined targets are dirty
-		Iterator iter = getTargets().listIterator();
-		while (iter.hasNext()) {
-			if (((ITarget)iter.next()).isDirty()) {
-				return true;
-			}
-		}
-		
-		return false;
+		// Check if the project is dirty
+		return managedProject.isDirty();
 	}
 
 	/* (non-Javadoc)
@@ -748,8 +681,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		IProject project = (IProject)owner;
 
 		// Check to see if there is a rule to build a file with this extension
-		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		ITool[] tools = config.getTools();
+		IConfiguration config = getDefaultConfiguration();
+		ITool[] tools = config.getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
 			try {
@@ -781,67 +714,24 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public boolean needsRebuild() {
 		if (rebuildNeeded) return true;
 
-		Iterator iter = getTargets().listIterator();
-		while (iter.hasNext()) {
-			if (((ITarget)iter.next()).needsRebuild()) {
-				return true;
-			}
+		if (getDefaultConfiguration() != null) {			
+			return getDefaultConfiguration().needsRebuild();
 		}
-
 		return false;
 	}
 	
 	/* (non-Javadoc)
 	 * 
 	 */
-	private void persistDefaultConfigurations() {
-		// Create a buffer of the default configuration IDs
-		StringBuffer defaultConfigs = new StringBuffer();
-		Iterator iter = getTargets().listIterator();
-		while (iter.hasNext()) {
-			// Persist the default target configuration pair as <targ_ID>::<conf_ID>
-			ITarget targ = (ITarget)iter.next();
-			IConfiguration config = getDefaultConfiguration((ITarget)targ);
-			if (config != null) {
-				defaultConfigs.append(targ.getId());
-				defaultConfigs.append(MINOR_SEPERATOR);
-				defaultConfigs.append(config.getId());
-				defaultConfigs.append(MAJOR_SEPERATOR);
-			}
-		}
-		// Persist the default configurations
+	private void persistDefaultConfiguration() {
+		// Persist the default configuration
 		IProject project = owner.getProject();
 		try {
-			project.setPersistentProperty(defaultConfigProperty, defaultConfigs.toString().trim());
+			if(defaultConfigId != null)
+				project.setPersistentProperty(defaultConfigProperty, defaultConfigId.toString().trim());
 		} catch (CoreException e) {
 			// Too bad
 		}
-	}
-
-	/* (non-Javadoc)
-	 * 
-	 */
-	private void persistDefaultTarget() {
-		// Persist the default target as a project setting
-		IProject project = owner.getProject();
-		ITarget defTarget = getDefaultTarget();
-		if (defTarget != null){
-			try {
-				project.setPersistentProperty(defaultTargetProperty, defTarget.getId());
-			} catch (CoreException e) {
-				// Tough
-			}
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#removeTarget(java.lang.String)
-	 */
-	public void removeTarget(String id) {
-		getTargets().remove(getTarget(id));
-		getTargetMap().remove(id);
-		setDirty(true);
-		
 	}
 	
 	/**
@@ -852,47 +742,46 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
-		// Write out each target
-		Iterator iter = getTargets().listIterator();
-		while (iter.hasNext()) {
-			// Get the target
-			Target targ = (Target)iter.next();
-			// Create an XML element to hold the target settings
-			Element targetElement = doc.createElement(ITarget.TARGET_ELEMENT_NAME);
-			element.appendChild(targetElement);
-			targ.serialize(doc, targetElement);
+		// Write out the managed build project
+
+		if(managedProject != null){
+			Element projElement = doc.createElement(IManagedProject.MANAGED_PROJECT_ELEMENT_NAME);
+			element.appendChild(projElement);
+			managedProject.serialize(doc, projElement);
 		}
-		// Remember the default target and configurations
-		persistDefaultTarget();
-		persistDefaultConfigurations();
+		else{
+			Iterator iter = getTargets().listIterator();
+			while (iter.hasNext()) {
+				// Get the target
+				Target targ = (Target)iter.next();
+				// Create an XML element to hold the target settings
+				Element targetElement = doc.createElement(ITarget.TARGET_ELEMENT_NAME);
+				element.appendChild(targetElement);
+				targ.serialize(doc, targetElement);
+			}
+//			persistDefaultTarget();
+		}
+			
+		
+		// Remember the default configuration
+		persistDefaultConfiguration();
 
 		// I'm clean now
 		setDirty(false);
 	}
 
-	public void setContainerCreated(boolean isCreated) {
-		containerCreated = isCreated;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public void setDefaultConfiguration(IConfiguration configuration) {
 		// Sanity
 		if (configuration == null) return;
-		
-		// Get the target associated with the argument
-		ITarget target = configuration.getTarget();
-		
-		// See if there is anything to be done
-		IConfiguration oldDefault = getDefaultConfiguration(target);
-		if (defaultTarget == null || !configuration.equals(oldDefault)) {
-			// Make sure the containing target is also the default target
-			setDefaultTarget(target);
-			// Make the argument the default configuration 
-			getDefaultConfigMap().put(target.getId(), configuration);
+		if (!configuration.equals(getDefaultConfiguration())) {
 			// Save it
-			persistDefaultConfigurations();
+			defaultConfig = configuration;
+			defaultConfigId = configuration.getId();
+			// TODO: is this appropriate?
+			persistDefaultConfiguration();
 		}
 	}
 
@@ -902,7 +791,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public boolean setDefaultConfiguration(String configName) {
 		if (configName != null) {
 			// Look for the configuration with the same name as the argument
-			IConfiguration[] configs = getDefaultTarget().getConfigurations();
+			IConfiguration[] configs = managedProject.getConfigurations();
 			for (int index = configs.length - 1; index >= 0; --index) {
 				IConfiguration config = configs[index];
 				if (configName.equalsIgnoreCase(config.getName())) {
@@ -915,34 +804,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultTarget(org.eclipse.cdt.core.build.managed.ITarget)
-	 */
-	public void setDefaultTarget(ITarget target) {
-		// Sanity
-		if (target == null) return;
-		
-		// Make sure there is something to change 
-		if (!target.equals(defaultTarget)) {
-			defaultTarget = target;
-			defaultTargetId = target.getId();
-			persistDefaultTarget();
-			if (containerCreated) {
-				initializePathEntries();
-			}
-		}
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setDirty(boolean)
 	 */
 	public void setDirty(boolean isDirty) {
 		// Reset the dirty status here
 		this.isDirty = isDirty;
-		// and in the contained targets
-		Iterator iter = getTargets().listIterator();
-		while (iter.hasNext()) {
-			ITarget target = (ITarget)iter.next();
-			target.setDirty(isDirty);
+		// and in the managed project
+		if (managedProject != null) {
+			managedProject.setDirty(isDirty);
 		}
 	}
 
@@ -950,18 +819,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setRebuildState(boolean)
 	 */
 	public void setRebuildState(boolean rebuild) {
-		Iterator iter = getTargets().listIterator();
-		while (iter.hasNext()) {
-			((ITarget)iter.next()).setRebuildState(rebuild);
-		}
+		// Reset the status here
 		rebuildNeeded = rebuild;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setSelectedTarget(org.eclipse.cdt.core.build.managed.ITarget)
-	 */
-	public void setSelectedTarget(ITarget target) {
-		selectedTarget = target;
+		// TODO:  Is the appropriate?  Should the rebuild state be stored in the project file?
+		// and in the managed project
+		//managedProject.setRebuildNeeded(rebuild);
 	}
 
 	/**
@@ -970,7 +832,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public void setVersion(String version) {
 		if (version != null && !version.equals(this.version)) {
 			this.version = version;
-			setDirty(true);
+			//setDirty(true);  - It is primarily up to the ManagedProject to maintain the dirty state
 		}
 	}
 	
@@ -993,12 +855,8 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (resource != null) {
 			if (!owner.equals(resource)) {
 				owner = resource;
-				// Do the same for the targets
-				Iterator iter = getTargets().listIterator();
-				while(iter.hasNext()) {
-					ITarget target = (ITarget) iter.next();
-					target.updateOwner(resource);
-				}
+				// Do the same for the managed project
+				managedProject.updateOwner(resource);
 				// And finally update the cModelElement
 				cProject = CoreModel.getDefault().create(owner.getProject());
 
@@ -1008,5 +866,81 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getSelectedConfiguration()
+	 */
+	public IConfiguration getSelectedConfiguration() {
+		return selectedConfig;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setSelectedConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 */
+	public void setSelectedConfiguration(IConfiguration config) {
+		selectedConfig = config;
+	}
 
+	/*
+	 * Note:  "Target" routines are only currently applicable when loading a CDT 2.0
+	 *        or earlier managed build project file (.cdtbuild)
+	 */
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#addTarget(org.eclipse.cdt.core.build.managed.ITarget)
+	 */
+	public void addTarget(ITarget target) {
+		getTargetMap().put(target.getId(), target);
+		getTargets().add(target);
+		setDirty(true);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#removeTarget(java.lang.String)
+	 */
+	public void removeTarget(String id) {
+		getTargets().remove(getTarget(id));
+		getTargetMap().remove(id);
+		setDirty(true);
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTarget(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 */
+	public ITarget getTarget(String id) {
+		return (ITarget) getTargetMap().get(id);
+	}
+
+	/* (non-Javadoc)
+	 * Safe accessor.
+	 * 
+	 * @return Returns the map of IDs to ITargets.
+	 */
+	private Map getTargetMap() {
+		if (targetMap == null) {
+			targetMap = new HashMap();
+		}
+		return targetMap;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getTargets(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 */
+	public List getTargets() {
+		if (targetList == null) {
+			targetList = new ArrayList();
+		}
+		return targetList;	
+	}
+
+	public void setReadOnly(boolean readOnly){
+		if(!readOnly && isReadOnly)
+			setDirty(true);
+		isReadOnly = readOnly;
+	}
+	
+	public boolean isReadOnly(){
+		return isReadOnly;
+	}
 }

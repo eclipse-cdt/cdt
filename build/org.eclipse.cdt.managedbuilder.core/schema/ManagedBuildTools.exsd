@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="ManagedBuildTools" name="Managed Build Tools"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="ManagedBuildTools" name="Managed Build Tools 2.0 (deprecated)"/>
       </appInfo>
       <documentation>
          The managed build information model describes targets, configurations, and toolchains for the build system.

@@ -1,8 +1,6 @@
-package org.eclipse.cdt.managedbuilder.internal.core;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+ * Copyright (c) 2002,2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
@@ -10,6 +8,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
+package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -232,8 +231,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		// Create a makefile generator for the build
-		String targetID = info.getDefaultTarget().getParent().getId();
-		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getMakefileGenerator(targetID);
+		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
 
 		// So let's figure out why we got called
@@ -309,8 +307,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			// Create a makefile generator for the build
 			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.build.clean", buildDir.getName());	//$NON-NLS-1$
 			monitor.subTask(status);
-			String targetID = info.getDefaultTarget().getParent().getId();
-			IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getMakefileGenerator(targetID);
+			IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 			generator.initialize(getProject(), info, monitor);
 			cleanBuild(info, generator, monitor);
 		}
@@ -352,8 +349,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		checkCancel(monitor);
 		String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.rebuild.makefiles", getProject().getName());	//$NON-NLS-1$
 		monitor.subTask(statusMsg);
-		String targetID = info.getDefaultTarget().getParent().getId();
-		generator = ManagedBuildManager.getMakefileGenerator(targetID);
+		generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
 		MultiStatus result = generator.regenerateMakefiles();
 		if (result.getCode() == IStatus.WARNING || result.getCode() == IStatus.INFO) {
@@ -410,6 +406,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			if (extension != null) {
 				// There could be many of these
 				IExtension[] extensions = extension.getExtensions();
+				// Get the "configuraton elements" defined in the plugin.xml file.
+				// Note that these "configuration elements" are not related to the
+				// managed build system "configurations".  
+				// From the PDE Guide:
+				//  A configuration element, with its attributes and children, directly 
+				//  reflects the content and structure of the extension section within the 
+				//  declaring plug-in's manifest (plugin.xml) file. 
 				for (int i = 0; i < extensions.length; i++) {
 					IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 					for (int j = 0; j < configElements.length; j++) {
@@ -583,7 +586,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 
 			// Flag to the user that make is about to be called
-			IPath makeCommand = new Path(info.getMakeCommand()); 
+			IPath makeCommand = new Path(info.getBuildCommand()); 
 			if (makeCommand != null) {
 				String[] msgs = new String[2];
 				msgs[0] = makeCommand.toString();
@@ -624,7 +627,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 				// Get the arguments to be passed to make from build model
 				ArrayList makeArgs = new ArrayList();
-				String arg = info.getMakeArguments();
+				String arg = info.getBuildArguments();
 				if (arg.length() > 0) {
 					String[] args = arg.split("\\s"); //$NON-NLS-1$
 					for (int i = 0; i < args.length; ++i) {
@@ -655,7 +658,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 			
 				// Hook up an error parser manager
-				String[] errorParsers = info.getDefaultTarget().getErrorParserList(); 
+				String[] errorParsers = info.getDefaultConfiguration().getErrorParserList(); 
 				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectory, this, errorParsers);
 				epm.setOutputStream(consoleOutStream);
 				OutputStream stdout = epm.getOutputStream();

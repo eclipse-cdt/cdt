@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.properties;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -11,16 +9,22 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * Timesys - Initial API and implementation 
  * IBM Rational Software
  * *********************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 public class ToolListContentProvider implements ITreeContentProvider{
+	public static final int FILE = 0x1;
+	public static final int PROJECT = 0x4;
 	private static Object[] EMPTY_ARRAY = new Object[0];
-	private IConfiguration root;
+	private IConfiguration configRoot;
+	private IResourceConfiguration resConfigRoot;
+	private int elementType;
 
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -28,6 +32,9 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	public void dispose() {
 	}
 
+	public ToolListContentProvider(int elementType) {
+		this.elementType = elementType;
+	}
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
@@ -36,7 +43,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		if (parentElement instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration)parentElement;
 			// the categories are all accessed through the tools
-			return config.getTools();
+			return config.getFilteredTools();
+		} else if( parentElement instanceof IResourceConfiguration) {
+			// If parent is a resource configuration, return a list of its tools
+			IResourceConfiguration resConfig = (IResourceConfiguration)parentElement;
+			return resConfig.getTools();
 		} else if (parentElement instanceof ITool) {
 			// If this is a tool, return the categories it contains
 			ITool tool = (ITool)parentElement;
@@ -67,7 +78,10 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			IOptionCategory parent = cat.getOwner();
 			// Then we need to get the configuration we belong to
 			if (parent == null) {
-				return root;
+				if(elementType == FILE)
+					return resConfigRoot;
+				else
+					return configRoot;
 			}
 			return parent;
 		}
@@ -85,7 +99,14 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		root = (IConfiguration) newInput;
+		if(elementType == FILE) {
+			resConfigRoot = (IResourceConfiguration)newInput;
+			configRoot = null;
+		}
+		else if(elementType == PROJECT) {
+			configRoot = (IConfiguration) newInput;
+			resConfigRoot = null;
+		}
 	}
 }
 

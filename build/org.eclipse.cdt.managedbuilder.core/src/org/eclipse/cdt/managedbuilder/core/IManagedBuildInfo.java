@@ -1,5 +1,3 @@
-package org.eclipse.cdt.managedbuilder.core;
-
 /**********************************************************************
  * Copyright (c) 2003,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -10,15 +8,35 @@ package org.eclipse.cdt.managedbuilder.core;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
  ***********************************************************************/
+package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 
+/*
+ *  There is a ManagedBuildInfo per CDT managed build project.  Here are
+ *  some notes on their usage:
+ *   o  You can look up the managed build info associated with a CDT
+ *      project by using ManagedBuildManager.getBuildInfo(IProject).
+ *   o  Given a ManagedBuildInfo, you can retrieve the associated CDT
+ *      managed build system project by using getManagedProject.
+ *   o  The usage model of a ManagedBuildInfo is:
+ *      1. Call setDefaultConfiguration to set the context
+ *      2. Call other methods (e.g. getBuildArtifactName) which get
+ *         information from the default configuration, and the other managed
+ *         build system model elements that can be reached from the
+ *         configuration. 
+ */
 public interface IManagedBuildInfo {
 	public static final String DEFAULT_CONFIGURATION = "defaultConfig";	//$NON-NLS-1$
 	public static final String DEFAULT_TARGET = "defaultTarget";	//$NON-NLS-1$
 
+	/*
+	 * Note:  "Target" routines are only currently applicable when loading a CDT 2.0
+	 *        or earlier managed build project file (.cdtbuild)
+	 */
+	
 	/**
 	 * Add a new target to the build information for the receiver
 	 * 
@@ -35,6 +53,28 @@ public interface IManagedBuildInfo {
 	 */
 	public boolean buildsFileType(String srcExt);
 
+	/**
+	 * Returns <code>IManagedCommandLineInfo</code> for source with extension
+	 * @param sourceExtension - source extension
+	 * @param flags - build flags
+	 * @param outputFlag - output flag for build tool
+	 * @param outputPrefix 
+	 * @param outputName
+	 * @param inputResources
+	 * @return IManagedCommandLineInfo
+	 */
+	public IManagedCommandLineInfo generateCommandLineInfo( String sourceExtension, String[] flags, 
+			String outputFlag, String outputPrefix, String outputName, String[] inputResources );
+
+	/**
+	 * Answers a <code>String</code> containing the arguments to be passed to make. 
+	 * For example, if the user has selected a build that keeps going on error, the 
+	 * answer would contain {"-k"}.
+	 * 
+	 * @return String
+	 */
+	public String getBuildArguments();
+
 	
 	/**
 	 * Answers the file extension for the receivers build goal without a separator.
@@ -49,6 +89,12 @@ public interface IManagedBuildInfo {
 	 * @return
 	 */
 	public String getBuildArtifactName();
+
+	/**
+	 * Answers a <code>String</code> containing the make command invocation 
+	 * for the default configuration.
+	 */
+	public String getBuildCommand();
 
 	/**
 	 * Answers the command needed to remove files on the build machine
@@ -67,7 +113,7 @@ public interface IManagedBuildInfo {
 	
 	/**
 	 * Answers a <code>String</code> array containing the names of all the configurations
-	 * defined for the project's current target.
+	 * defined for the project.
 	 *  
 	 * @return
 	 */
@@ -78,21 +124,23 @@ public interface IManagedBuildInfo {
 	 * 
 	 * @return
 	 */
-	public IConfiguration getDefaultConfiguration(ITarget target);
-	
-	
-	/**
-	 * Returns the default target in the receiver.
-	 * 
-	 * @return
-	 */
-	public ITarget getDefaultTarget();
+	public IConfiguration getDefaultConfiguration();
 	
 	/**
 	 * @param sourceExtension
 	 * @return
 	 */
 	public IManagedDependencyGenerator getDependencyGenerator(String sourceExtension);
+
+	/**
+	 * Returns a <code>String</code> containing the flags, including 
+	 * those overridden by the user, for the tool in the configuration
+	 * defined by the argument.
+	 * 
+	 * @param extension
+	 * @return
+	 */
+	public String getFlagsForConfiguration(String extension);
 	
 	/**
 	 * Returns a <code>String</code> containing the flags, including 
@@ -105,37 +153,19 @@ public interface IManagedBuildInfo {
 	public String getFlagsForSource(String extension);
 
 	/**
-	 * Returns a <code>String</code> containing the flags, including 
-	 * those overridden by the user, for the tool that handles the 
-	 * type of target defined by the argument.
-	 * 
-	 * @param extension
-	 * @return
-	 */
-	public String getFlagsForTarget(String extension);
-
-	/**
 	 * Answers the libraries the project links in.
 	 * 
 	 * @param extension
 	 * @return
 	 */
-	public String[] getLibsForTarget(String extension);
+	public String[] getLibsForConfiguration(String extension);
 
 	/**
-	 * Answers a <code>String</code> containing the arguments to be passed to make. 
-	 * For example, if the user has selected a build that keeps going on error, the 
-	 * answer would contain {"-k"}.
+	 * Returns the ManagedProject associated with this build info
 	 * 
-	 * @return String
+	 * @return IManagedProject
 	 */
-	public String getMakeArguments();
-
-	/**
-	 * Answers a <code>String</code> containing the make command invocation 
-	 * for the default target/configuration.
-	 */
-	public String getMakeCommand();
+	public IManagedProject getManagedProject( );
 	
 	/**
 	 * Answers the extension that will be built by the current configuration
@@ -168,12 +198,12 @@ public interface IManagedBuildInfo {
 	public String getOutputPrefix(String outputExtension);
 	
 	/**
-	 * Get the currently selected target.  This is used while the project
+	 * Returns the currently selected configuration.  This is used while the project
 	 * property pages are displayed
 	 * 
-	 * @return target
+	 * @return IConfiguration
 	 */
-	public ITarget getSelectedTarget();
+	public IConfiguration getSelectedConfiguration();
 
 	/**
 	 * Get the target specified in the argument.
@@ -192,21 +222,21 @@ public interface IManagedBuildInfo {
 
 	/**
 	 * Returns a <code>String</code> containing the command-line invocation 
+	 * for the tool associated with the extension.
+	 * 
+	 * @param extension the file extension of the build goal
+	 * @return a String containing the command line invocation for the tool
+	 */
+	public String getToolForConfiguration(String extension);
+
+	/**
+	 * Returns a <code>String</code> containing the command-line invocation 
 	 * for the tool associated with the source extension.
 	 * 
 	 * @param sourceExtension the file extension of the file to be built
 	 * @return a String containing the command line invocation for the tool
 	 */
 	public String getToolForSource(String sourceExtension);
-
-	/**
-	 * Returns a <code>String</code> containing the command-line invocation 
-	 * for the tool associated with the target extension.
-	 * 
-	 * @param extension the file extension of the build goal
-	 * @return a String containing the command line invocation for the tool
-	 */
-	public String getToolForTarget(String extension);
 	
 	/**
 	 * Answers a <code>String</code> array containing the contents of the 
@@ -215,7 +245,7 @@ public interface IManagedBuildInfo {
 	 * @param extension the file ecxtension of the build target
 	 * @return
 	 */
-	public String[] getUserObjectsForTarget(String extension);
+	public String[] getUserObjectsForConfiguration(String extension);
 
 	
 	/**
@@ -234,12 +264,20 @@ public interface IManagedBuildInfo {
 	
 	/**
 	 * Answers <code>true</code> if the extension matches one of the special 
-	 * file extensions the tools for the target consider to be a header file. 
+	 * file extensions the tools for the configuration consider to be a header file. 
 	 * 
 	 * @param ext the file extension of the resource
 	 * @return boolean
 	 */
 	public boolean isHeaderFile(String ext);
+	
+	/**
+	 * gets the read only status of Managed Build Info
+	 * 
+	 * @return <code>true</code> if Managed Build Info is read only
+	 * otherwise returns <code>false</code>
+	 */
+	public boolean isReadOnly();
 
 	
 	/**
@@ -276,18 +314,25 @@ public interface IManagedBuildInfo {
 	public boolean setDefaultConfiguration(String configName);
 	
 	/**
-	 * Set the primary target for the receiver.
-	 * 
-	 * @param target
-	 */
-	public void setDefaultTarget(ITarget target);
-	
-	/**
 	 * Set the dirty flag for the build model to the value of the argument.
 	 * 
 	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
+
+	/**
+	 * Sets the ManagedProject associated with this build info
+	 * 
+	 * @param project
+	 */
+	public void setManagedProject(IManagedProject project);
+	
+	/**
+	 * sets the read only status of Managed Build Info
+	 * 
+	 * @param readOnly 
+	 */
+	public void setReadOnly(boolean readOnly);
 	
 	/**
 	 * Sets the rebuild state in the receiver to the value of the argument. 
@@ -300,10 +345,10 @@ public interface IManagedBuildInfo {
 	public void setRebuildState(boolean rebuild);
 	
 	/**
-	 * Set the currently selected target. This is used while the project 
+	 * Sets the currently selected configuration. This is used while the project 
 	 * property pages are displayed
 	 * 
-	 * @param target the user selection
+	 * @param configuration the user selection
 	 */
-	public void setSelectedTarget(ITarget target);
+	public void setSelectedConfiguration(IConfiguration configuration);
 }

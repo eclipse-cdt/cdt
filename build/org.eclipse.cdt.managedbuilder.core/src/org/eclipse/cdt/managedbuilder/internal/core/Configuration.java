@@ -12,285 +12,488 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolReference;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Configuration extends BuildObject implements IConfiguration {
-	private boolean isDirty = false;
+	
+	private static final String EMPTY_STRING = new String();
+	
+	//  Parent and children
 	private IConfiguration parent;
+	private ProjectType projectType;
+	private ManagedProject managedProject;
+	private ToolChain toolChain;
+	private List resourceConfigurationList;
+	private Map resourceConfigurationMap;
+	//  Managed Build model attributes
+	private String artifactName;
+	private String cleanCommand;
+	private String artifactExtension;
+	private String errorParserIds;
+	//  Miscellaneous
+	private boolean isExtensionConfig = false;
+	private boolean isDirty = false;
 	private boolean rebuildNeeded = false;
 	private boolean resolved = true;
-	private ITarget target;
-	private List toolReferences;
+
+	/*
+	 *  C O N S T R U C T O R S
+	 */
 
 	/**
-	 * Build a configuration from the project manifest file.
+	 * Create an extension configuration from the project manifest file element.
 	 * 
-	 * @param target The <code>Target</code> the configuration belongs to. 
-	 * @param element The element from the manifest that contains the overridden configuration information.
+	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 * @param element The element from the manifest that contains the configuration information.
 	 */
-	public Configuration(Target target, Element element) {
-		this.target = target;
+	public Configuration(ProjectType projectType, IManagedConfigElement element) {
+		this.projectType = projectType;
+		isExtensionConfig = true;
+		
+		// setup for resolving
+		resolved = false;
+		
+		// Initialize from the XML attributes
+		loadFromManifest(element);
+		
+		// Hook me up to the Managed Build Manager
+		ManagedBuildManager.addExtensionConfiguration(this);
+		
+		// Hook me up to the ProjectType
+		if (projectType != null) {
+			projectType.addConfiguration(this);
+		}
+		
+		// Load the children
+		IManagedConfigElement[] configElements = element.getChildren();
+		for (int l = 0; l < configElements.length; ++l) {
+			IManagedConfigElement configElement = configElements[l];
+			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
+				toolChain = new ToolChain(this, configElement);
+			}else if (configElement.getName().equals(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME)) {
+				ResourceConfiguration resConfig = new ResourceConfiguration(this, configElement);
+				addResourceConfiguration(resConfig);
+			}
+		}
+	}
+
+	/**
+	 * Create a new extension configuration based on one already defined.
+	 * 
+	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
+	 * @param id A unique ID for the new configuration.
+	 */
+	public Configuration(ProjectType projectType, IConfiguration parentConfig, String id) {
+		setId(id);
+		this.projectType = projectType;
+		isExtensionConfig = true;
+		
+		// setup for resolving
+		resolved = false;
+
+		if (parentConfig != null) {
+			name = parentConfig.getName();
+			// If this contructor is called to clone an existing 
+			// configuration, the parent of the parent should be stored. 
+			// As of 2.1, there is still one single level of inheritence to
+			// worry about
+			parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
+		}
+		
+		// Hook me up to the Managed Build Manager
+		ManagedBuildManager.addExtensionConfiguration(this);
+		
+		// Hook me up to the ProjectType
+		if (projectType != null) {
+			projectType.addConfiguration(this);
+		}
+	}
+
+	/**
+	 * Create a new extension configuration and fill in the attributes and childen later.
+	 * 
+	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 * @param id A unique ID for the new configuration.
+	 * @param name A name for the new configuration.
+	 */
+	public Configuration(ProjectType projectType, IConfiguration parentConfig, String id, String name) {
+		setId(id);
+		setName(name);
+		this.projectType = projectType;
+		parent = parentConfig;
+		isExtensionConfig = true;
+		
+		// Hook me up to the Managed Build Manager
+		ManagedBuildManager.addExtensionConfiguration(this);
+		
+		// Hook me up to the ProjectType
+		if (projectType != null) {
+			projectType.addConfiguration(this);
+		}
+	}
+
+	/**
+	 * Create a <code>Configuration</code> based on the specification stored in the 
+	 * project file (.cdtbuild).
+	 * 
+	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
+	 * @param element The XML element that contains the configuration settings.
+	 */
+	public Configuration(ManagedProject managedProject, Element element) {
+		this.managedProject = managedProject;
+		isExtensionConfig = false;
+		
+		// Initialize from the XML attributes
+		loadFromProject(element);
+
+		// Hook me up
+		managedProject.addConfiguration(this);
+
+		NodeList configElements = element.getChildNodes();
+		for (int i = 0; i < configElements.getLength(); ++i) {
+			Node configElement = configElements.item(i);
+			if (configElement.getNodeName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
+				toolChain = new ToolChain(this, (Element)configElement);
+			}else if (configElement.getNodeName().equals(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME)) {
+				ResourceConfiguration resConfig = new ResourceConfiguration(this, (Element)configElement);
+				addResourceConfiguration(resConfig);
+			}
+		}
+	}
+
+	/**
+	 * Create a new project, non-extension, configuration based on one already defined.
+	 * 
+	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
+	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
+	 * @param id A unique ID for the new configuration.
+	 */
+	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneTools) {
+		setId(id);
+		setName(cloneConfig.getName());
+		this.managedProject = managedProject;
+		isExtensionConfig = false;
+
+		// If this contructor is called to clone an existing 
+		// configuration, the parent of the cloning config should be stored. 
+		parent = cloneConfig.getParent() == null ? cloneConfig : cloneConfig.getParent();
+
+		//  Copy the remaining attributes
+		projectType = cloneConfig.projectType;
+		if (cloneConfig.artifactName != null) {
+			artifactName = new String(cloneConfig.artifactName);
+		}
+		if (cloneConfig.cleanCommand != null) {
+			cleanCommand = new String(cloneConfig.cleanCommand);
+		}
+		if (cloneConfig.artifactExtension != null) {
+			artifactExtension = new String(cloneConfig.artifactExtension);
+		}
+		if (cloneConfig.errorParserIds != null) {
+			errorParserIds = new String(cloneConfig.errorParserIds);
+		}
+		
+		// Clone the configuration's children
+		//  Tool Chain
+		int nnn = ManagedBuildManager.getRandomNumber();
+		String subId;
+		String subName;
+		if (cloneConfig.parent != null) {
+			subId = cloneConfig.parent.getToolChain().getId() + "." + nnn;		//$NON-NLS-1$
+			subName = cloneConfig.parent.getToolChain().getName(); 	//$NON-NLS-1$
+		} else {
+			subId = cloneConfig.getToolChain().getId() + "." + nnn;		//$NON-NLS-1$
+			subName = cloneConfig.getToolChain().getName(); 	//$NON-NLS-1$
+		}
+		
+		if (cloneTools) {
+		    toolChain = new ToolChain(this, subId, subName, (ToolChain)cloneConfig.getToolChain());
+		} else {
+			// Add a tool-chain element that specifies as its superClass the 
+			// tool-chain that is the child of the configuration.
+			ToolChain superChain = (ToolChain)cloneConfig.getToolChain();
+			subId = superChain.getId() + "." + nnn; //$NON-NLS-1$
+			IToolChain newChain = createToolChain(superChain, subId, superChain.getName(), false);
+			
+			// For each tool element child of the tool-chain that is the child of 
+			// the selected configuration element, create a tool element child of 
+			// the cloned configuration’s tool-chain element that specifies the 
+			// original tool element as its superClass.
+			Iterator iter = superChain.getToolList().listIterator();
+			while (iter.hasNext()) {
+			    Tool toolChild = (Tool) iter.next();
+				nnn = ManagedBuildManager.getRandomNumber();
+				subId = toolChild.getId() + "." + nnn; //$NON-NLS-1$
+				newChain.createTool(toolChild, subId, toolChild.getName(), false);
+			}
+		}
+
+		//  Resource Configurations
+		if (cloneConfig.resourceConfigurationList != null) {
+			List resElements = cloneConfig.getResourceConfigurationList();
+			Iterator iter = resElements.listIterator();
+			while (iter.hasNext()) {
+				ResourceConfiguration resConfig = (ResourceConfiguration) iter.next();
+				subId = getId() + "." + resConfig.getResourcePath(); //$NON-NLS-1$
+				ResourceConfiguration newResConfig = new ResourceConfiguration(this, resConfig, subId);
+				addResourceConfiguration(newResConfig);
+			}
+		}
+		
+		// Hook me up
+		managedProject.addConfiguration(this);
+		setDirty(true);
+		setRebuildState(true);
+	}
+
+	/*
+	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
+	 */
+	
+	/* (non-Javadoc)
+	 * Initialize the configuration information from an element in the 
+	 * manifest file or provided by a dynamicElementProvider
+	 * 
+	 * @param element An obejct implementing IManagedConfigElement 
+	 */
+	protected void loadFromManifest(IManagedConfigElement element) {
+		ManagedBuildManager.putConfigElement(this, element);
 		
 		// id
 		setId(element.getAttribute(IConfiguration.ID));
+
+		// name
+		name = element.getAttribute(IConfiguration.NAME);
 		
-		// hook me up
-		target.addConfiguration(this);
+		// parent
+		String parentID = element.getAttribute(IConfiguration.PARENT);
+		if (parentID != null) {
+			// Lookup the parent configuration by ID
+			parent = ManagedBuildManager.getExtensionConfiguration(parentID);
+		}
+
+		// Get the name of the build artifact associated with configuration
+		artifactName = element.getAttribute(ARTIFACT_NAME);
 		
+		// Get the semicolon separated list of IDs of the error parsers
+		errorParserIds = element.getAttribute(ERROR_PARSERS);
+
+		// Get the artifact extension
+		artifactExtension = element.getAttribute(EXTENSION);
+		
+		// Get the clean command
+		cleanCommand = element.getAttribute(CLEAN_COMMAND);
+	}
+	
+	/* (non-Javadoc)
+	 * Initialize the configuration information from the XML element 
+	 * specified in the argument
+	 * 
+	 * @param element An XML element containing the configuration information 
+	 */
+	protected void loadFromProject(Element element) {
+		
+		// id
+		setId(element.getAttribute(IConfiguration.ID));
+
 		// name
 		if (element.hasAttribute(IConfiguration.NAME))
 			setName(element.getAttribute(IConfiguration.NAME));
 		
 		if (element.hasAttribute(IConfiguration.PARENT)) {
-			// See if the target has a parent
-			ITarget targetParent = target.getParent();
-			// If so, then get my parent from it
-			if (targetParent != null) {
-				parent = targetParent.getConfiguration(element.getAttribute(IConfiguration.PARENT));
+			// See if the parent belongs to the same project
+			parent = managedProject.getConfiguration(element.getAttribute(IConfiguration.PARENT));
+			// If not, then try the extension configurations
+			if (parent == null) {
+				parent = ManagedBuildManager.getExtensionConfiguration(element.getAttribute(IConfiguration.PARENT));
 			}
-			else {
-				parent = null;
-			}
+		}
+
+		// Get the name of the build artifact associated with target (usually 
+		// in the plugin specification).
+		if (element.hasAttribute(ARTIFACT_NAME)) {
+			artifactName = element.getAttribute(ARTIFACT_NAME);
 		}
 		
-		NodeList configElements = element.getChildNodes();
-		for (int i = 0; i < configElements.getLength(); ++i) {
-			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
-				new ToolReference(this, (Element)configElement);
-			}
+		// Get the semicolon separated list of IDs of the error parsers
+		if (element.hasAttribute(ERROR_PARSERS)) {
+			errorParserIds = element.getAttribute(ERROR_PARSERS);
 		}
-	
+
+		// Get the artifact extension
+		if (element.hasAttribute(EXTENSION)) {
+			artifactExtension = element.getAttribute(EXTENSION);
+		}
+		
+		// Get the clean command
+		if (element.hasAttribute(CLEAN_COMMAND)) {
+			cleanCommand = element.getAttribute(CLEAN_COMMAND);
+		}
 	}
 
 	/**
-	 * Create a new configuration based on one already defined.
+	 * Persist this configuration to project file.
 	 * 
-	 * @param target The <code>Target</code> the receiver will be added to.
-	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
-	 * @param id A unique ID for the configuration.
+	 * @param doc
+	 * @param element
 	 */
-	public Configuration(Target target, IConfiguration parentConfig, String id) {
-		this.id = id;
-		this.name = parentConfig.getName();
-		this.target = target;
+	public void serialize(Document doc, Element element) {
+		element.setAttribute(IConfiguration.ID, id);
+		
+		if (name != null)
+			element.setAttribute(IConfiguration.NAME, name);
+			
+		if (parent != null)
+			element.setAttribute(IConfiguration.PARENT, parent.getId());
+		
+		if (artifactName != null)
+			element.setAttribute(ARTIFACT_NAME, artifactName);
+		
+		if (errorParserIds != null)
+			element.setAttribute(ERROR_PARSERS, errorParserIds);
 
-		// If this contructor is called to clone an existing 
-		// configuration, the parent of the parent should be stored. 
-		// As of 2.0, there is still one single level of inheritence to
-		// worry about
-		parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
-		
-		// Check that the tool and the project match
-		IProject project = (IProject) target.getOwner();
-		
-		// Get the tool references from the target and parent
-		List allToolRefs = new Vector(target.getLocalToolReferences());
-		allToolRefs.addAll(((Configuration)parentConfig).getLocalToolReferences());
-		Iterator iter = allToolRefs.listIterator();
+		if (artifactExtension != null)
+			element.setAttribute(EXTENSION, artifactExtension);
+
+		if (cleanCommand != null)
+			element.setAttribute(CLEAN_COMMAND, cleanCommand);
+				
+		// Serialize my children
+		Element toolChainElement = doc.createElement(IToolChain.TOOL_CHAIN_ELEMENT_NAME);
+		element.appendChild(toolChainElement);
+		toolChain.serialize(doc, toolChainElement);
+		List resElements = getResourceConfigurationList();
+		Iterator iter = resElements.listIterator();
 		while (iter.hasNext()) {
-			ToolReference toolRef = (ToolReference)iter.next();
-
-			// Make a new ToolReference based on the tool in the ref
-			ITool parentTool = toolRef.getTool();
-			ToolReference newRef = new ToolReference(this, parentTool);
-			
-			// The reference may have a different command than the parent tool
-			String refCmd = toolRef.getToolCommand(); 
-			if (!refCmd.equals(parentTool.getToolCommand())) {
-				newRef.setToolCommand(refCmd);
-			}
-			
-			List optRefs = toolRef.getOptionReferenceList();
-			Iterator optIter = optRefs.listIterator();
-			while (optIter.hasNext()) {
-				OptionReference optRef = (OptionReference)optIter.next();
-				IOption opt = optRef.getOption();
-				try {
-					switch (opt.getValueType()) {
-						case IOption.BOOLEAN:
-							new OptionReference(newRef, opt).setValue(optRef.getBooleanValue());
-							break;
-						case IOption.STRING:
-							new OptionReference(newRef, opt).setValue(optRef.getStringValue());
-							break;
-						case IOption.ENUMERATED:
-							new OptionReference(newRef, opt).setValue(optRef.getSelectedEnum());
-							break;
-						case IOption.STRING_LIST :
-							new OptionReference(newRef, opt).setValue(optRef.getStringListValue());
-							break;
-						case IOption.INCLUDE_PATH :
-							new OptionReference(newRef, opt).setValue(optRef.getIncludePaths());
-							break;
-						case IOption.PREPROCESSOR_SYMBOLS :
-							new OptionReference(newRef, opt).setValue(optRef.getDefinedSymbols());
-							break;
-						case IOption.LIBRARIES :
-						new OptionReference(newRef, opt).setValue(optRef.getLibraries());
-							break;
-						case IOption.OBJECTS :
-						new OptionReference(newRef, opt).setValue(optRef.getUserObjects());
-							break;
-					}
-				} catch (BuildException e) {
-					continue;
-				}
-			}
+			ResourceConfiguration resConfig = (ResourceConfiguration) iter.next();
+			Element resElement = doc.createElement(IResourceConfiguration.RESOURCE_CONFIGURATION_ELEMENT_NAME);
+			element.appendChild(resElement);
+			resConfig.serialize(doc, resElement);
 		}
 		
-		target.addConfiguration(this);
+		// I am clean now
+		isDirty = false;
 	}
 
-	/**
-	 * Create a new <code>Configuration</code> based on the specification in the plugin manifest.
-	 * 
-	 * @param target The <code>Target</code> the receiver will be added to.
-	 * @param element The element from the manifest that contains the default configuration settings.
+	/*
+	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
-	public Configuration(Target target, IManagedConfigElement element) {
-		this.target = target;
-		
-		// setup for resolving
-		ManagedBuildManager.putConfigElement(this, element);
-		resolved = false;
-		
-		// id
-		setId(element.getAttribute(IConfiguration.ID));
-		
-		// hook me up
-		target.addConfiguration(this);
-		
-		// name
-		setName(element.getAttribute(IConfiguration.NAME));
-
-		IManagedConfigElement[] configElements = element.getChildren();
-		for (int l = 0; l < configElements.length; ++l) {
-			IManagedConfigElement configElement = configElements[l];
-			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
-				new ToolReference(this, configElement);
-			}
-		}
-	}
-	
-	/**
-	 * A fresh new configuration for a target.
-	 * 
-	 * @param target
-	 * @param id
-	 */	
-	public Configuration(Target target, String id) {
-		this.id = id;
-		this.target = target;
-		
-		target.addConfiguration(this);
-	}
-
-	public void resolveReferences() {
-		if (!resolved) {
-			resolved = true;
-//			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
-			Iterator refIter = getLocalToolReferences().iterator();
-			while (refIter.hasNext()) {
-				ToolReference ref = (ToolReference)refIter.next();
-				ref.resolveReferences();
-			}
-		}
-	}
-	
-	/**
-	 * Adds a tool reference to the receiver.
-	 * 
-	 * @param toolRef
-	 */
-	public void addToolReference(ToolReference toolRef) {
-		getLocalToolReferences().add(toolRef);
-	}
 	
 	/* (non-Javadoc)
-	 * @param option
-	 * @return
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
 	 */
-	private OptionReference createOptionReference(IOption option) {
-		ToolReference searchRef = null;
-		ToolReference answer = null;
-		// The option may already be a reference created to hold user settings
-		if (option instanceof OptionReference) {
-			// The option reference belongs to an existing tool reference
-			OptionReference optionRef = (OptionReference)option;
-			searchRef = optionRef.getToolReference();
-			
-			// That tool reference may belong to a target or to the configuration
-			if (searchRef.ownedByConfiguration(this))
-				return optionRef;
-			else {
-				// All this means is that the tool ref does not belong to the receiver. 
-				// The receiver may also have a reference to the tool
-				if ((answer = findLocalReference(searchRef)) == null) {
-					// Otherwise, create one and save the option setting in it
-					answer = new ToolReference(this, searchRef);
-				}
-				return answer.createOptionReference(option);
-			}
-		} else {
-			// Find out if a tool reference already exists
-			searchRef = (ToolReference) getToolReference(option.getTool());
-			if (searchRef == null) {
-				answer = new ToolReference(this, option.getTool());
-			} else {
-				// The reference may belong to the target
-				if (!searchRef.ownedByConfiguration(this)) {
-					answer = new ToolReference(this, searchRef);
-				} else {
-					answer = searchRef;
-				}
-			}
-			return answer.createOptionReference(option);
-		}
+	public IConfiguration getParent() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
-	 * @param toolRef
-	 * @return
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getOwner()
 	 */
-	private ToolReference findLocalReference(ToolReference toolRef) {
-		Iterator iter = getLocalToolReferences().iterator();
-		
+	public IResource getOwner() {
+		if (managedProject != null)
+			return managedProject.getOwner();
+		else {
+			return null;	// Extension configurations don't have an "owner"
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getProjectType()
+	 */
+	public IProjectType getProjectType() {
+		return (IProjectType)projectType;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getManagedProject()
+	 */
+	public IManagedProject getManagedProject() {
+		return (IManagedProject)managedProject;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getToolChain(IToolChain, String, String, boolean)
+	 */
+	public IToolChain createToolChain(IToolChain superClass, String Id, String name, boolean isExtensionElement) {
+		toolChain = new ToolChain(this, superClass, Id, name, isExtensionElement);
+		setDirty(true);
+		return (IToolChain)toolChain;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getToolChain()
+	 */
+	public IToolChain getToolChain() {
+		return (IToolChain)toolChain;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getResourceConfigurations()
+	 */
+	public IResourceConfiguration[] getResourceConfigurations() {
+		IResourceConfiguration[] resConfigs = new IResourceConfiguration[getResourceConfigurationList().size()];
+		Iterator iter = getResourceConfigurationList().listIterator();
+		int i = 0;
 		while (iter.hasNext()) {
-			ToolReference ref = (ToolReference)iter.next();
-			if (toolRef.getTool().equals(ref.getTool())) {
-				return ref;
-			}
+			ResourceConfiguration resConfig = (ResourceConfiguration)iter.next();
+			resConfigs[i++] = (IResourceConfiguration)resConfig; 
 		}
-		
-		return null;
+		return resConfigs;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getFilteredTools(org.eclipse.core.resources.IProject)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getResourceConfiguration(java.lang.String)
 	 */
-	public ITool[] getFilteredTools(IProject project) {
-		ITool[] localTools = getTools();
+	public IResourceConfiguration getResourceConfiguration(String resPath) {
+		ResourceConfiguration resConfig = (ResourceConfiguration)getResourceConfigurationMap().get(resPath);
+		return (IResourceConfiguration)resConfig;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getFilteredTools()
+	 */
+	public ITool[] getFilteredTools() {
+		if (toolChain == null) {
+			return new ITool[0];
+		}
+		ITool[] localTools = toolChain.getTools();
+		IManagedProject manProj = getManagedProject();
+		if (manProj == null) {
+			//  If this is not associated with a project, then there is nothing to filter with
+			return localTools;
+		}
+		IProject project = (IProject)manProj.getOwner();
 		Vector tools = new Vector(localTools.length);
 		for (int i = 0; i < localTools.length; i++) {
 			ITool tool = localTools[i];
@@ -322,307 +525,109 @@ public class Configuration extends BuildObject implements IConfiguration {
 		return (ITool[])tools.toArray(new ITool[tools.size()]);
 	}
 
-	/* (non-javadoc)
-	 * A safety method to avoid NPEs. It answers the tool reference list in the 
-	 * receiver. It does not look at the tool references defined in the parent.
-	 * 
-	 * @return List
-	 */
-	protected List getLocalToolReferences() {
-		if (toolReferences == null) {
-			toolReferences = new ArrayList();
-		}
-		return toolReferences;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getName()
-	 */
-	public String getName() {
-		return (name == null && parent != null) ? parent.getName() : name;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getTools()
 	 */
 	public ITool[] getTools() {
-		ITool[] tools = parent != null
-			? parent.getTools()
-			: target.getTools();
-		
-		// Validate that the tools correspond to the nature
-		IProject project = (IProject)target.getOwner();
-		if (project != null) {
-			List validTools = new ArrayList();
-			
-			// The target is associated with a real project
-			for (int i = 0; i < tools.length; ++i) {
-				ITool tool = tools[i];
-				// Make sure the tool filter and project nature agree
-				switch (tool.getNatureFilter()) {
-					case ITool.FILTER_C:
-						try {
-							if (project.hasNature(CProjectNature.C_NATURE_ID) && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								validTools.add(tool);
-							}
-						} catch (CoreException e) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_CC:
-						try {
-							if (project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-								validTools.add(tool);
-							}
-						} catch (CoreException e) {
-							continue;
-						}
-						break;
-					case ITool.FILTER_BOTH:
-						validTools.add(tool);
-						break;
-				} 
-			}
-			// Now put the valid tools back into the array
-			tools = (ITool[]) validTools.toArray(new ITool[validTools.size()]);			
-		}
-		
-		// Replace tools with local overrides
-		for (int i = 0; i < tools.length; ++i) {
-			IToolReference ref = getToolReference(tools[i]);
-			if (ref != null)
-				tools[i] = ref;
-		}
-		
-		return tools;
+		return toolChain.getTools();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isDirty()
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTool(java.lang.String)
 	 */
-	public boolean isDirty() {
-		// If I need saving, just say yes
-		if (isDirty) return true;
-		
-		// Otherwise see if any tool references need saving
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			IToolReference ref = (IToolReference) iter.next();
-			if (ref.isDirty()) return true;
-		}
-		
-		return isDirty;
+	public ITool getTool(String id) {
+		return toolChain.getTool(id);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#needsRebuild()
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
-	public boolean needsRebuild() {
-		return rebuildNeeded;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
-	 */
-	public IConfiguration getParent() {
-		return parent;
-	}
-	
-	/* (non-javadoc)
-	 * 
-	 * @param tool
-	 * @return List
-	 */
-	protected List getOptionReferences(ITool tool) {
-		List references = new ArrayList();
-		
-		// Get all the option references I add for this tool
-		IToolReference toolRef = getToolReference(tool);
-		if (toolRef != null) {
-			references.addAll(toolRef.getOptionReferenceList());
-		}
-		
-		// See if there is anything that my parents add that I don't
-		if (parent != null) {
-			List temp = ((Configuration)parent).getOptionReferences(tool);
-			Iterator iter = temp.listIterator();
-			while (iter.hasNext()) {
-				OptionReference ref = (OptionReference) iter.next();
-				if (!references.contains(ref)) {
-					references.add(ref);
-				}
-			}
-		}
-		
-		return references;
+	public String getToolCommand(ITool tool) {
+		// TODO:  Do we need to verify that the tool is part of the configuration?
+		return tool.getToolCommand();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolById(java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
-	public ITool getToolById(String id) {
-		ITool[] tools = parent != null
-		? parent.getTools()
-		: target.getTools();
-
-		// Replace tools with local overrides
-		for (int i = 0; i < tools.length; ++i) {
-			IToolReference ref = getToolReference(tools[i]);
-			if (ref != null)
-				tools[i] = ref;
-		}
-
-		// Search the result for the ID
-		for (int index = tools.length - 1; index >= 0; --index) {
-			if (tools[index].getId().equals(id)) {
-				return tools[index];
-			}
-		}
-
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getTarget()
-	 */
-	public ITarget getTarget() {
-		return (target == null && parent != null) ? parent.getTarget() : target;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getOwner()
-	 */
-	public IResource getOwner() {
-		return getTarget().getOwner();
-	}
-
-	/* (non-Javadoc)
-	 * Returns the reference for a given tool or <code>null</code> if one is not
-	 * found.
-	 * 
-	 * @param tool
-	 * @return ToolReference
-	 */
-	private IToolReference getToolReference(ITool tool) {
-		// Sanity
-		if (tool == null) return null;
-
-		// See if the receiver has a reference to the tool
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			ToolReference temp = (ToolReference)iter.next(); 
-			if (temp.references(tool)) {
-				return temp;
-			}
-		}
-		
-		// See if the target that the receiver belongs to has a reference to the tool
-		ITool[] targetTools = target.getTools();
-		for (int index = targetTools.length - 1; index >= 0; --index) {
-			ITool targetTool = targetTools[index];
-			if (targetTool instanceof ToolReference) {
-				if (((ToolReference)targetTool).references(tool)) {
-					return (ToolReference)targetTool;
-				}
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * @param targetElement
-	 */
-	public void reset(IManagedConfigElement element) {
-		// I just need to reset the tool references
-		getLocalToolReferences().clear();
-		IManagedConfigElement[] configElements = element.getChildren();
-		for (int l = 0; l < configElements.length; ++l) {
-			IManagedConfigElement configElement = configElements[l];
-			if (configElement.getName().equals(IConfiguration.TOOLREF_ELEMENT_NAME)) {
-				ToolReference ref = new ToolReference(this, configElement);
-				ref.resolveReferences();
-			}
-		}
-		isDirty = true;
-	}
-
-	/**
-	 * Persist receiver to project file.
-	 * 
-	 * @param doc
-	 * @param element
-	 */
-	public void serialize(Document doc, Element element) {
-		element.setAttribute(IConfiguration.ID, id);
-		
-		if (name != null)
-			element.setAttribute(IConfiguration.NAME, name);
-			
-		if (parent != null)
-			element.setAttribute(IConfiguration.PARENT, parent.getId());
-		
-		// Serialize only the tool references defined in the configuration
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			ToolReference toolRef = (ToolReference) iter.next();
-			Element toolRefElement = doc.createElement(IConfiguration.TOOLREF_ELEMENT_NAME);
-			element.appendChild(toolRefElement);
-			toolRef.serialize(doc, toolRefElement);
-		}
-		
-		// I am clean now
-		isDirty = false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setDirty(boolean)
-	 */
-	public void setDirty(boolean isDirty) {
-		// Override the dirty flag
-		this.isDirty = isDirty;
-		// And do the same for the tool references
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			((ToolReference)iter.next()).setDirty(isDirty);
-		}
+	public void setToolCommand(ITool tool, String command) {
+		// TODO:  Do we need to verify that the tool is part of the configuration?
+		tool.setToolCommand(command);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, boolean)
 	 */
-	public void setOption(IOption option, boolean value) throws BuildException {
-		// Is there a delta
+	public IOption setOption(ITool tool, IOption option, boolean value) throws BuildException {
+		// Is there a change?
+		IOption retOpt = option;
 		if (option.getBooleanValue() != value) {
-			createOptionReference(option).setValue(value);
-			isDirty = true;
+			if (option.isExtensionElement()) {
+				//  If the extension element is only overriding the "value" of its superclass, hook the
+				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
+				//  elements that are automatically generated from V2.0 model optionReferences.  If these
+				//  end up in the project file, then the project could have a problem when the integration
+				//  provider switches to providing the new model.
+				IOption newSuperClass = option;
+				if (option.overridesOnlyValue()) {
+					newSuperClass = option.getSuperClass();
+				}
+				//  Create an Option element for the managed build project file (.CDTBUILD)
+				String subId;
+				int nnn = ManagedBuildManager.getRandomNumber();
+				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
+				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt.setValueType(option.getValueType());
+				retOpt.setValue(value);
+				setDirty(true);
+			} else {
+				option.setValue(value);
+			}
 			rebuildNeeded = true;
 		}
+		return retOpt;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String)
 	 */
-	public void setOption(IOption option, String value) throws BuildException {
+	public IOption setOption(ITool tool, IOption option, String value) throws BuildException {
+		IOption retOpt = option;
 		String oldValue;
-		// Check whether this is an enumerated option
-		if (option.getValueType() == IOption.ENUMERATED) {
-			oldValue = option.getSelectedEnum();
-		}
-		else {
-			oldValue = option.getStringValue(); 
-		}
+		oldValue = option.getStringValue(); 
 		if (oldValue != null && !oldValue.equals(value)) {
-			createOptionReference(option).setValue(value);
-			isDirty = true;
+			if (option.isExtensionElement()) {
+				//  If the extension element is only overriding the "value" of its superclass, hook the
+				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
+				//  elements that are automatically generated from V2.0 model optionReferences.  If these
+				//  end up in the project file, then the project could have a problem when the integration
+				//  provider switches to providing the new model.
+				IOption newSuperClass = option;
+				if (option.overridesOnlyValue()) {
+					newSuperClass = option.getSuperClass();
+				}
+				//  Create an Option element for the managed build project file (.CDTBUILD)
+				String subId;
+				int nnn = ManagedBuildManager.getRandomNumber();
+				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
+				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt.setValueType(option.getValueType());
+				retOpt.setValue(value);
+				setDirty(true);
+			} else {
+				option.setValue(value);
+			}
 			rebuildNeeded = true;
 		}
+		return retOpt;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
 	 */
-	public void setOption(IOption option, String[] value) throws BuildException {
-		// Is there a delta
+	public IOption setOption(ITool tool, IOption option, String[] value) throws BuildException {
+		IOption retOpt = option;
+		// Is there a change?
 		String[] oldValue;
 		switch (option.getValueType()) {
 			case IOption.STRING_LIST :
@@ -645,10 +650,338 @@ public class Configuration extends BuildObject implements IConfiguration {
 				break;
 		}
 		if(!Arrays.equals(value, oldValue)) {
-			createOptionReference(option).setValue(value);
-			isDirty = true;
+			if (option.isExtensionElement()) {
+				//  If the extension element is only overriding the "value" of its superclass, hook the
+				//  new option up to its superclass directly.  This is to avoid references to oddly id'ed
+				//  elements that are automatically generated from V2.0 model optionReferences.  If these
+				//  end up in the project file, then the project could have a problem when the integration
+				//  provider switches to providing the new model.
+				IOption newSuperClass = option;
+				if (option.overridesOnlyValue()) {
+					newSuperClass = option.getSuperClass();
+				}
+				//  Create an Option element for the managed build project file (.CDTBUILD)
+				String subId;
+				int nnn = ManagedBuildManager.getRandomNumber();
+				subId = newSuperClass.getId() + "." + nnn; //$NON-NLS-1$
+				retOpt = tool.createOption(newSuperClass, subId, null, false); 
+				retOpt.setValueType(option.getValueType());
+				retOpt.setValue(value);
+				setDirty(true);
+			} else {
+				option.setValue(value);
+			}
 			rebuildNeeded = true;
 		} 
+		return retOpt;
+	}
+	
+	/* (non-Javadoc)
+	 * Safe accessor for the list of resource configs.
+	 * 
+	 * @return List containing the tools
+	 */
+	private List getResourceConfigurationList() {
+		if (resourceConfigurationList == null) {
+			resourceConfigurationList = new ArrayList();
+		}
+		return resourceConfigurationList;
+	}
+	
+	/* (non-Javadoc)
+	 * Safe accessor for the map of resource paths to resource configs
+	 * 
+	 * @return
+	 */
+	private Map getResourceConfigurationMap() {
+		if (resourceConfigurationMap == null) {
+			resourceConfigurationMap = new HashMap();
+		}
+		return resourceConfigurationMap;
+	}
+
+	/* (non-Javadoc)
+	 * Adds the Resource Configuration to the Resource Configuration list and map
+	 * 
+	 * @param resConfig
+	 */
+	public void addResourceConfiguration(ResourceConfiguration resConfig) {
+		getResourceConfigurationList().add(resConfig);
+		getResourceConfigurationMap().put(resConfig.getResourcePath(), resConfig);
+	}
+
+	public void removeResourceConfiguration(IResourceConfiguration resConfig) {
+		getResourceConfigurationList().remove((ResourceConfiguration)resConfig);
+	}
+	/*
+	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
+	 */
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getName()
+	 */
+	public String getName() {
+		return (name == null && parent != null) ? parent.getName() : name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getArtifactExtension()
+	 */
+	public String getArtifactExtension() {
+		if (artifactExtension == null) {
+			// Ask my parent first
+			if (parent != null) {
+				return parent.getArtifactExtension();
+			} else {
+				return EMPTY_STRING;
+			}
+		} else {
+			return artifactExtension;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getArtifactName()
+	 */
+	public String getArtifactName() {
+		if (artifactName == null) {
+			// If I have a parent, ask it
+			if (parent != null) {
+				return parent.getArtifactName();
+			} else {
+				// I'm it and this is not good!
+				return EMPTY_STRING;
+			}
+		} else {
+			return artifactName;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getBuildArguments()
+	 */
+	public String getBuildArguments() {
+		IToolChain tc = getToolChain();
+		IBuilder builder = tc.getBuilder();
+		if (builder != null) {
+		    return builder.getArguments();
+		}
+		return new String("-k"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getBuildCommand()
+	 */
+	public String getBuildCommand() {
+		IToolChain tc = getToolChain();
+		IBuilder builder = tc.getBuilder();
+		if (builder != null) {
+		    return builder.getCommand();		
+		}
+		return new String("make"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getCleanCommand()
+	 */
+	public String getCleanCommand() {
+		// Return the command used to remove files
+		if (cleanCommand == null) {
+			if (parent != null) {
+				return parent.getCleanCommand();
+			} else {
+				// User forgot to specify it. Guess based on OS.
+				if (Platform.getOS().equals("OS_WIN32")) { //$NON-NLS-1$
+					return new String("del"); //$NON-NLS-1$
+				} else {
+					return new String("rm"); //$NON-NLS-1$
+				}
+			}
+		} else {
+			// This was spec'd in the manifest
+			return cleanCommand;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserIds()
+	 */
+	public String getErrorParserIds() {
+		if (errorParserIds != null) {
+			return errorParserIds;
+		}			
+		// If I have a parent, ask it
+		String errorParsers = null;
+		if (parent != null) {
+			errorParsers = parent.getErrorParserIds();
+		}
+		// If no error parsers are specified by the configuration, the default is 
+		// the error parsers from the tool-chain
+		if (errorParsers == null && toolChain != null) {
+			errorParsers = toolChain.getErrorParserIds(this);
+		}
+		return errorParsers;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserList()
+	 */
+	public String[] getErrorParserList() {
+		String parserIDs = getErrorParserIds();
+		String[] errorParsers;
+		if (parserIDs != null) {
+			// Check for an empty string
+			if (parserIDs.length() == 0) {
+				errorParsers = new String[0];
+			} else {
+				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
+				List list = new ArrayList(tok.countTokens());
+				while (tok.hasMoreElements()) {
+					list.add(tok.nextToken());
+				}
+				String[] strArr = {""};	//$NON-NLS-1$
+				errorParsers = (String[]) list.toArray(strArr);
+			}
+		} else {
+			// If no error parsers are specified, the default is 
+			// all error parsers
+			errorParsers = CCorePlugin.getDefault().getAllErrorParsersIDs();
+		}
+		return errorParsers;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setArtifactExtension(java.lang.String)
+	 */
+	public void setArtifactExtension(String extension) {
+		if (extension == null && artifactExtension == null) return;
+		if (artifactExtension == null || extension == null || !artifactExtension.equals(extension)) {
+			artifactExtension = extension;
+			setRebuildState(true);
+			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setArtifactName(java.lang.String)
+	 */
+	public void setArtifactName(String name) {
+		if (name == null && artifactName == null) return;
+		if (artifactName == null || name == null || !artifactName.equals(name)) {
+			artifactName = name;
+			setRebuildState(true);
+			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setErrorParserIds()
+	 */
+	public void setErrorParserIds(String ids) {
+		String currentIds = getErrorParserIds();
+		if (ids == null && currentIds == null) return;
+		if (currentIds == null || ids == null || !(currentIds.equals(ids))) {
+			errorParserIds = ids;
+			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setCleanCommand()
+	 */
+	public void setCleanCommand(String command) {
+		if (command == null && cleanCommand == null) return;
+		if (cleanCommand == null || command == null || !cleanCommand.equals(command)) {
+			cleanCommand = command;
+			isDirty = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setBuildArguments()
+	 */
+	public void setBuildArguments(String makeArgs) {
+		IToolChain tc = getToolChain();
+		IBuilder builder = tc.getBuilder();
+		if (builder.isExtensionElement()) {
+			int nnn = ManagedBuildManager.getRandomNumber();
+			String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
+			String builderName = builder.getName() + "." + getName(); 	//$NON-NLS-1$
+			builder = toolChain.createBuilder(builder, subId, builderName, false);
+		}
+		builder.setArguments(makeArgs);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setBuildCommand()
+	 */
+	public void setBuildCommand(String command) {
+		IToolChain tc = getToolChain();
+		IBuilder builder = tc.getBuilder();
+		if (builder.isExtensionElement()) {
+			int nnn = ManagedBuildManager.getRandomNumber();
+			String subId = builder.getId() + "." + nnn;		//$NON-NLS-1$
+			String builderName = builder.getName() + "." + getName(); 	//$NON-NLS-1$
+			builder = toolChain.createBuilder(builder, subId, builderName, false);
+		}
+		builder.setCommand(command);
+	}
+	
+	
+	/*
+	 *  O B J E C T   S T A T E   M A I N T E N A N C E
+	 */
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isExtensionElement()
+	 */
+	public boolean isExtensionElement() {
+		return isExtensionConfig;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isDirty()
+	 */
+	public boolean isDirty() {
+		// This shouldn't be called for an extension configuration
+ 		if (isExtensionConfig) return false;
+		
+		// If I need saving, just say yes
+		if (isDirty) return true;
+		
+		// Otherwise see if any children need saving
+		if (toolChain.isDirty()) return true;
+		Iterator iter = getResourceConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			ResourceConfiguration current = (ResourceConfiguration) iter.next();
+			if (current.isDirty()) return true;
+		}
+		
+		return isDirty;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#needsRebuild()
+	 */
+	public boolean needsRebuild() {
+		return rebuildNeeded;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setDirty(boolean)
+	 */
+	public void setDirty(boolean isDirty) {
+		// Override the dirty flag
+		this.isDirty = isDirty;
+		// Propagate "false" to the children
+		if (!isDirty) {
+			toolChain.setDirty(false);
+			Iterator iter = getResourceConfigurationList().listIterator();
+			while (iter.hasNext()) {
+				ResourceConfiguration current = (ResourceConfiguration) iter.next();
+				current.setDirty(false);
+			}		    
+		}
 	}
 
 	/* (non-Javadoc)
@@ -659,23 +992,90 @@ public class Configuration extends BuildObject implements IConfiguration {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#hasOverriddenBuildCommand()
 	 */
-	public void setToolCommand(ITool tool, String command) {
-		// Make sure the command is different
-		if (command != null) {
-			// Does this config have a ref to the tool
-			IToolReference ref = getToolReference(tool);
-			if (ref == null) {
-				// Then make one
-				ref = new ToolReference(this, tool);
+	public boolean hasOverriddenBuildCommand() {
+		IBuilder builder = getToolChain().getBuilder();
+		if (builder != null) {
+			IBuilder superB = builder.getSuperClass();
+			if (superB != null) {
+				String command = builder.getCommand();
+				if (command != null) {
+					String superC = superB.getCommand();
+					if (superC != null) {
+						if (!command.equals(superC)) {
+							return true;
+						}
+					}
+				}			
+				String args = builder.getArguments();
+				if (args != null) {
+					String superA = superB.getArguments();
+					if (superA != null) {
+						if (!args.equals(superA)) {
+							return true;
+						}
+					}
+				}			
 			}
-			// Set the ref's command
-			if (ref != null) {
-				isDirty = ref.setToolCommand(command);
-				rebuildNeeded = isDirty;
+		}
+		return false;
+	}
+	
+	public void resolveReferences() {
+		if (!resolved) {
+			resolved = true;
+			
+			// call resolve references on any children
+			toolChain.resolveReferences();
+			Iterator resConfigIter = getResourceConfigurationList().iterator();
+			while (resConfigIter.hasNext()) {
+				ResourceConfiguration current = (ResourceConfiguration)resConfigIter.next();
+				current.resolveReferences();
+			}
+		}
+	}
+	
+	/**
+	 * Reset the configuration's, tools', options
+	 */
+	public void reset() {
+		// We just need to remove all Options
+		ITool[] tools = getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			IOption[] opts = tool.getOptions();
+			for (int j = 0; j < opts.length; j++) {
+				tool.removeOption(opts[j]);
 			}
 		}
 	}
 
+	/*
+	 *  Create a resource configuration object for the passed-in file
+	 */
+	public IResourceConfiguration createResourceConfiguration(IFile file)
+	{	
+		String path = file.getFullPath().toString();
+		String resourceName = file.getName();
+		String id = getId() + "." + path; //$NON-NLS-1$
+		ResourceConfiguration resConfig = new ResourceConfiguration( (IConfiguration) this, id, resourceName, path);
+		
+		//	Get file extension.
+		String extString = file.getFileExtension();
+		
+		// Add the resource specific tools to this resource.
+		ITool tools[] = getFilteredTools();
+		String subId = new String();
+		for (int i = 0; i < tools.length; i++) {
+			if( tools[i].buildsFileType(extString) ) {
+				subId = tools[i].getId() + "." + path; //$NON-NLS-1$
+				resConfig.createTool(tools[i], subId, tools[i].getName(), false);
+			}
+		}
+		 
+		// Add this resource to the list.
+		addResourceConfiguration(resConfig);
+		return resConfig;
+	}
 }

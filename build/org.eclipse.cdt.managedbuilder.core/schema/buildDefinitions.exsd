@@ -1,0 +1,939 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.managedbuilder.core" id="buildDefinitions" name="Managed Build Definitions"/>
+      </appInfo>
+      <documentation>
+         The managed build object model describes project-types, configurations, tool-chains, etc. for the managed build system.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="projectType"/>
+            <element ref="configuration"/>
+            <element ref="toolChain"/>
+            <element ref="tool"/>
+            <element ref="targetPlatform"/>
+            <element ref="builder"/>
+            <element ref="dynamicElementProvider"/>
+            <element ref="managedBuildRevision"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="projectType">
+      <annotation>
+         <documentation>
+            Represents a class of project which acts as a template for the projects that the user will create, for example, a Linux static library. A project type contains a sequence of configurations. Project types are arranged in an inheritance hierarchy where a project type inherits the list of configurations from it&apos;s parent and can add to or override configurations in this list.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="configuration"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Used by the build model to uniquely identify the project type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human-readable project type name, such as &apos;Executable&apos;. This will be the name the user sees displayed in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of a projectType that this projectType is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isAbstract" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  An optional field that flags a project type as abstract.  If true, the project type will not appear in the UI.  The project type is used by other project types as their &quot;superclass&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="unusedChildren" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of child IDs of the superclass&apos; children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isTest" type="boolean">
+            <annotation>
+               <documentation>
+                  An optional field that flags a project type as test-only. If true, the project type will not appear in the UI.  The project type can be manipulated programmatically in JUnit tests, for example.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="project">
+      <annotation>
+         <documentation>
+            The project element is an instance of a projectType element.  It appears in the .cdtbuild file, not in an extension definition.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="configuration"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the project that the user sees displayed in the UI.  This is the name that the user entered in the New Project wizard.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="projectType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the projectType that this project is an instance of.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="configuration">
+      <annotation>
+         <documentation>
+            A configuration is used to gather together certain default tools and options to build project a certain way. For example, a &quot;Debug&quot; configuration might supply tools with the options set to build with debugging symbols, whereas a &quot;Release&quot; configuration would supply tools with options set to create the best performance.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="toolChain"/>
+            <element ref="resourceConfiguration"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for the configuration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  A descriptive name for the configuration to be used in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="artifactName" type="string">
+            <annotation>
+               <documentation>
+                  This is the name of the final build artifact associated with the configuration. The user will specify this is the UI, so there is no need to supply a default value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="artifactExtension" type="string">
+            <annotation>
+               <documentation>
+                  This is the extension that will be applied (if necessary) to any build artifact created by the configuration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="cleanCommand" type="string">
+            <annotation>
+               <documentation>
+                  This attribute maintains the command that removes the intermediate and output files for a particular configuration. For example, on POSIX platforms like Linuc, Solaris, or Cygwin, the command would be &lt;code&gt;rm -rf&lt;/code&gt; whereas on Win32 platforms it would be &lt;code&gt;del /F /S /Q&lt;/code&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="errorParsers" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default list of error parsers used by the configuration.  This attribute overrides the error parsers specified in the toolChain element.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toolChain">
+      <annotation>
+         <documentation>
+            A tool-integrator-defined, ordered set of tools that tranform the project&apos;s resources into the project&apos;s outputs.  A tool-chain can be defined as part of a configuration, or as an independent specification that is referenced from a separate configuration via the tool-chain superClass attribute.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="tool"/>
+            <element ref="targetPlatform"/>
+            <element ref="builder"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for the tool-chain.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  A descriptive name for the tool-chain to be used in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of a toolChain that this toolChain is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isAbstract" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  An optional field that flags a tool-chain as abstract.  An abstract tool-chain must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but tool-chains derived from this tool-chain will inherit its attributes and children.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="unusedChildren" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of child IDs of the superclass&apos; children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="osList" type="string">
+            <annotation>
+               <documentation>
+                  This field lists the host operating systems on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="archList" type="string">
+            <annotation>
+               <documentation>
+                  This field lists the host architectures on which the tool-chain runs and is used by the managed build system to decide when the tool-chain is applicable.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="errorParsers" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default list of error parsers used by the tool-chain.  Error parsers specified by child tool elements are added to this list.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="scannerInfoCollector" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a class that implements the &lt;code&gt;IManagedScannerInfoCollector&lt;/code&gt; for gathering the built-in compiler settings for a toolchain.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="resourceConfiguration">
+      <annotation>
+         <documentation>
+            A place to store build attributes of individual resources that are different from the configuration as a whole.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="tool"/>
+         </sequence>
+         <attribute name="resourcePath" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The path of the project resource to which this element applies.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="exclude" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether the resource is excluded from building in the parent configuration.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="tool">
+      <annotation>
+         <documentation>
+            Defines a tool used in the build process.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="option"/>
+            <element ref="optionCategory"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the tool that will be used by the build model.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Human-readable name for the tool to be used in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of a tool that this tool is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isAbstract" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  An optional field that flags a tool as abstract.  An abstract tool must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but tools derived from this tool will inherit its attributes and children.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="unusedChildren" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of child IDs of the superclass&apos; children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="sources" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of file extensions that the tool will produce output for.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="headerExtensions" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of file extensions that are used for header files. Since many other files depend on the interfaces defined in header files, the build system needs to be able to determine that a header file has changed to properly rebuild its dependents.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputs" type="string">
+            <annotation>
+               <documentation>
+                  The extension that the tool will produce from a given input.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputFlag" type="string">
+            <annotation>
+               <documentation>
+                  An optional flag for tools that allow users to specify a name for the artifact of the tool. For example, the GCC compiler and linker tools typically allow the user to specify the name of the output with the &apos;-o&apos; flag, whereas the archiver that creates libraries does not.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="outputPrefix" type="string">
+            <annotation>
+               <documentation>
+                  Some tools produce files with a special prefix that must be specified. For example, a librarian on POSIX systems expects the output to be lib&lt;target&gt;.a, so &apos;lib&apos; would be the prefix.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="natureFilter">
+            <annotation>
+               <documentation>
+                  Filter the display (and use) of the tool by the nature of the project. Selecting a value of &apos;cnature&apos; insures that the tool will be displayed IFF there is a cnature associated with the project. A ccnature will filter this tool out. If &apos;ccnature&apos; is selected, the tool will only be available for C++ projects. If &apos;both&apos; is selected, the tool will be displayed when either nature is present.  This attribute is required if it is not inherited from its superClass.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="cnature">
+                  </enumeration>
+                  <enumeration value="ccnature">
+                  </enumeration>
+                  <enumeration value="both">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  The command that invokes the tool. For example, gcc for the Gnu C compiler, or g++ for the Gnu C++ compiler.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="commandLinePattern" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the command &quot;pattern&quot; that indicates how the parts of the command line are used to create the entire command line.  The pattern consists of the replaceable variables command, flags, outputFlag, output, and inputs.  The default pattern is ${command} ${flags} ${outputflag}${output} ${inputs}  White space and other characters are significant and are copied to the generated command.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="commandLineGenerator" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the name of the class that implements IManagedCommandLineGenerator (TBS).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="dependencyCalculator" type="string">
+            <annotation>
+               <documentation>
+                  This is an optional field that specifies the class that provides the source file dependency calculation for a given tool. You can replace the default calculator with a class that implements the &lt;code&gt;IManagedDependencyGenerator&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="errorParsers" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default list of error parsers used by the tool.  Error parsers specified by the tool are added to this list specified by the tool-chain when a project resource is defined to use the tool.  It is automatically removed when there are no more project resources using the tool.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="optionCategory">
+      <annotation>
+         <documentation>
+            An optional, but useful, mechanism for grouping options together.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Used by the build model to uniquely identify the option category.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human-readable category name, such as &apos;Preprocessor Options&apos;. This will be the name the user sees displayed in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="owner" type="string">
+            <annotation>
+               <documentation>
+                  Option categories can belong to a tool or be nested inside other option categories. This is the ID of the owner of the category.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="option">
+      <annotation>
+         <documentation>
+            An option is associated with a tool. Options can contain boolean values, a simple text string, a selection from an enumerated list, or a list of values. Options also map the value they contain to a command-line flag, such as &apos;-g&apos; in the case of debugging symbol information for compilers.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="enumeratedOptionValue"/>
+            <element ref="listOptionValue"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  A descriptive name for the option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of an option that this option is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isAbstract" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  An optional field that flags an option as abstract.  An abstract option must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but options derived from this option will inherit its attributes and children.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="unusedChildren" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of child IDs of the superclass&apos; children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  This is the id of the option category for this option.  The id can be the id of the tool which is also a category.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="resourceFilter">
+            <annotation>
+               <documentation>
+                  Filter the display (and use) of the option by the type of the resource (currently Project or File). The value &apos;project&apos; causes the option to be used when applied to a project.  The value &apos;file&apos; causes the option to be used when applied to a file. If &apos;all&apos; is selected, the option applies to all types of resources.  The default is &quot;all&quot;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="project">
+                  </enumeration>
+                  <enumeration value="file">
+                  </enumeration>
+                  <enumeration value="all">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="valueType" use="default" value="string">
+            <annotation>
+               <documentation>
+                  General options can be one of the following types; &apos;string&apos; for catch-all entries for options that cannot be easily defined any other way, &apos;string list&apos; for entries that consist of a list of values such as defined symbols or paths, &apos;boolean&apos; for options that have two values, and &apos;enumerated&apos; for options that are one-of a list of values.
+
+Additional special types exist to flag options of special relevance to the build model; &apos;include&apos;, &apos;libs&apos;, &apos;userObjs&apos; and &apos;definedSymbols&apos;. You can pre-populate with optionValues, and they will display in the UI the same way the &apos;stringList&apos; options do. The build model will look specifically for these value types when clients query for include paths and preprocessor defines. The makefile generator will treat the libs and userObjs entries differently than other stringLists.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="string">
+                  </enumeration>
+                  <enumeration value="stringList">
+                  </enumeration>
+                  <enumeration value="boolean">
+                  </enumeration>
+                  <enumeration value="enumerated">
+                  </enumeration>
+                  <enumeration value="includePath">
+                  </enumeration>
+                  <enumeration value="definedSymbols">
+                  </enumeration>
+                  <enumeration value="libs">
+                  </enumeration>
+                  <enumeration value="userObjs">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="browseType">
+            <annotation>
+               <documentation>
+                  This value is used for list (and related) options only. If you need a list option to prompt the user to browse for a file or directory when adding a new value, set the value of the attribute accordingly. By default the value is treated as no browsing needed.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="none">
+                  </enumeration>
+                  <enumeration value="file">
+                  </enumeration>
+                  <enumeration value="directory">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the value assigned to the option by the end user or in a default configuration.  For boolean values, specify truth using the string &apos;true&apos;. All other strings will be treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultValue" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default value for the option if the &apos;value&apos; attribute is blank. For enumerated options the optionEnums will be searched for the default. For string list options, all defined optionValues will be treated as defaults. For boolean values, specify truth using the string &apos;true&apos;. All other strings will be treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  An optional value that specifies the actual command that will be passed to the tool on the command line.  The attribute value provides a &quot;pattern&quot; for specifying where the option &quot;value&quot; should be placed for options of type string and stringlist.  If no ${value} is specified in the command, the option value is appended to the end of the specified command.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="commandFalse" type="string">
+            <annotation>
+               <documentation>
+                  An optional value, used only with options of type Boolean, that specifies the actual command that will be passed to the tool on the command line when the value of the Boolean option is False.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="helpSupplier" type="string">
+            <annotation>
+               <documentation>
+                  This field is unused in 2.0
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="tip" type="string">
+            <annotation>
+               <documentation>
+                  Specifies a &quot;tip&quot; that can be displayed in hover help or on the property page. Not implemented in 2.0.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enumeratedOptionValue">
+      <annotation>
+         <documentation>
+            Defines a single value of an enumerated option.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for the option enumeration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A descriptive name for the enumeration.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isDefault" type="boolean">
+            <annotation>
+               <documentation>
+                  Flags this enumerated value as the default to apply to the option if the user has not changed the setting.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  The command that the enumerated value translates to on the command line.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="listOptionValue">
+      <annotation>
+         <documentation>
+            A value for defining individual elements of a list option.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The contents of the list item.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="builtIn" type="boolean">
+            <annotation>
+               <documentation>
+                  This attribute flags the list value as a built-in value as opposed to something the user has entered. Built-ins will not be passed to clients that generate command lines (like the makefile generator). However, clients that need to take these settings into account (like the indexing service), will receive these settings. These values will appear grey in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="builder">
+      <annotation>
+         <documentation>
+            Represents the utility that drives the build process (typically, but not necessarily, a variant of &quot;make&quot;).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the builder that will be used by the build model.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Human-readable name for the builder to be used in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of a builder that this builder is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isAbstract" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  An optional field that flags a builder as abstract.  An abstract builder must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but builders derived from this builder will inherit its attributes and children.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="unusedChildren" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of child IDs of the superclass&apos; children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="command" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default command to start the build utility for your toolchain. If the user changes this through the UI, the overriden value will be stored in the project build file. The build model will default to this value if the user ever resets a change.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="arguments" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the additional, default arguments that will be passed to the build utility when it is called by the builder. If the user changes the flags through the UI, the overriden value will be stored in the project build settings file. The build model will default to this value if the user ever resets a change.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="buildfileGenerator" type="string">
+            <annotation>
+               <documentation>
+                  Allows you to supply a custom build file generator that conforms to the &lt;code&gt;IManagedBuilderMakefileGenerator&lt;/code&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="errorParsers" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the default list of error parsers used by the builder.  These error parsers are added to this list specified by the parent tool-chain.  It is an ordered, semi-colon separated list of parser IDs.  The order specifies the order in which the error parsers are invoked during a build.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="targetPlatform">
+      <annotation>
+         <documentation>
+            Represents the os/architecture combination(s) upon which the outputs of a tool-chain can be deployed.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the target platform that will be used by the build model.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Human-readable name for the target platform to be used in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="superClass" type="string">
+            <annotation>
+               <documentation>
+                  The id of a target platform that this target platform is derived from.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isAbstract" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  An optional field that flags a target platform as abstract.  An abstract target platform must be defined as a top level object in the model definition and cannot be selected by the user in the UI, but target platforms derived from this targetPlatform will inherit its attributes and children.  The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="unusedChildren" type="string">
+            <annotation>
+               <documentation>
+                  A semi-colon separated list of child IDs of the superclass&apos; children that should not be automatically inherited by this element.  Note: This attribute is not yet implemented.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="osList" type="string">
+            <annotation>
+               <documentation>
+                  This field lists the target operating systems on which the outputs of a tool-chain runs.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="archList" type="string">
+            <annotation>
+               <documentation>
+                  This field lists the target architectures on which the outputs of a tool-chain runs.  The value should be a comma-separated list. Current values are &quot;win32&quot;, &quot;linux&quot;, &quot;solaris&quot;, &quot;hpux&quot;, &quot;aix&quot; or &quot;any&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="binaryParser" type="string">
+            <annotation>
+               <documentation>
+                  Set this to the ID of the binary parser for the output format of your configuration. Currently there are only 2 choices: org.eclipse.cdt.core.ELF for *nix executable artifacts, and &quot;org.eclipse.cdt.core.PE&quot; for artifacts that build for Windows, like Cygwin.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dynamicElementProvider">
+      <annotation>
+         <documentation>
+            An optional element that allows a tool implementor to supply a class that creates one or more dynamic toolchain elements. For example, the class might create a new tool reference based on the contents of a special file, and a new target that uses that reference.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class that implements the &lt;code&gt;IManagedConfigElementProvider&lt;/code&gt; interface. The logic of determining the elements is left to the implementer, but they must be correctly formed or the build model will have trouble loading.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedConfigElementProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A meaningful name for the type of element being provided.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="managedBuildRevision">
+      <annotation>
+         <documentation>
+            &lt;p&gt;
+Version identifier for the managed build extension point. It is a string representation, consisting of three (3) tokens separated by a decimal point. The 3 tokens are positive integer numbers. For example, the following are valid version identifiers:
+ &lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;0.0.0&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;1.0.1234&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;1.9&lt;/code&gt; (interpreted as &lt;code&gt;1.9.0&lt;/code&gt;)&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;3&lt;/code&gt; (interpreted as &lt;code&gt;3.0.0&lt;/code&gt;)&lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="fileVersion" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The actual string containing the three version tokens.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         This extension point was added in CDT 2.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the extension point usage:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         id=&quot;buildExample&quot;
+         name=&quot;Definitions for Build Example&quot;
+         point=&quot;org.eclipse.cdt.managedbuilder.core.buildDefinitions&quot;&gt;
+   etc...
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         An implementation of this extension point is supplied in &lt;samp&gt;org.eclipse.cdt.ui&lt;/samp&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2003, 2004 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,5 +1,3 @@
-package org.eclipse.cdt.managedbuilder.internal.core;
-
 /**********************************************************************
  * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -10,22 +8,28 @@ package org.eclipse.cdt.managedbuilder.internal.core;
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
+package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IResource;
@@ -36,7 +40,7 @@ import org.w3c.dom.Node;
 
 public class Target extends BuildObject implements ITarget {
 	private static final String EMPTY_STRING = new String();
-	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
+	private static final IConfigurationV2[] emptyConfigs = new IConfigurationV2[0];
 	private String artifactName;
 	private String binaryParserId;
 	private String cleanCommand;
@@ -59,6 +63,7 @@ public class Target extends BuildObject implements ITarget {
 	private List toolList;
 	private Map toolMap;
 	private List toolReferences;
+	private ProjectType createdProjectType;
 
 	/**
 	 * This constructor is called to create a target defined by an extension point in 
@@ -127,20 +132,23 @@ public class Target extends BuildObject implements ITarget {
 				targetArchList.add(archTokens[j].trim());
 			}
 		}
+
 		// Load any tool references we might have
-		IManagedConfigElement[] toolRefs = element.getChildren(IConfiguration.TOOLREF_ELEMENT_NAME);
+		IManagedConfigElement[] toolRefs = element.getChildren(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 		for (int k = 0; k < toolRefs.length; ++k) {
 			new ToolReference(this, toolRefs[k]);
 		}
 		// Then load any tools defined for the target
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int m = 0; m < tools.length; ++m) {
-			new Tool(this, tools[m]);
+			ITool newTool =  new Tool(this, tools[m]);
+			// Add this tool to the target, as this is not done in the constructor
+			this.addTool(newTool);
 		}
 		// Then load the configurations which may have tool references
-		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+		IManagedConfigElement[] configs = element.getChildren(IConfigurationV2.CONFIGURATION_ELEMENT_NAME);
 		for (int n = 0; n < configs.length; ++n) {
-			new Configuration(this, configs[n]);
+			new ConfigurationV2(this, configs[n]);
 		}
 	}
 	
@@ -166,12 +174,7 @@ public class Target extends BuildObject implements ITarget {
 		
 		// Copy the parent's identity
 		this.parent = parent;
-		Random r = new Random();
-		r.setSeed(System.currentTimeMillis());
-		int id = r.nextInt();
-		if (id < 0) {
-			id *= -1;
-		}
+		int id = ManagedBuildManager.getRandomNumber();
 		setId(owner.getName() + "." + parent.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
 		setName(parent.getName());
 		setArtifactName(parent.getArtifactName());
@@ -245,8 +248,8 @@ public class Target extends BuildObject implements ITarget {
 	
 		Node child = element.getFirstChild();
 		while (child != null) {
-			if (child.getNodeName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
-				new Configuration(this, (Element)child);
+			if (child.getNodeName().equals(IConfigurationV2.CONFIGURATION_ELEMENT_NAME)) {
+				new ConfigurationV2(this, (Element)child);
 			}
 			child = child.getNextSibling();
 		}
@@ -255,7 +258,7 @@ public class Target extends BuildObject implements ITarget {
 	/**
 	 * @param configuration
 	 */
-	public void addConfiguration(IConfiguration configuration) {
+	public void addConfiguration(IConfigurationV2 configuration) {
 		getConfigurationList().add(configuration);
 		getConfigurationMap().put(configuration.getId(), configuration);
 	}
@@ -301,20 +304,19 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration(org.eclipse.cdt.core.build.managed.IConfigurationV2)
 	 */
-	public IConfiguration createConfiguration(IConfiguration parent, String id) {
+	public IConfigurationV2 createConfiguration(IConfigurationV2 parent, String id) {
 		isDirty = true;
-		return new Configuration(this, parent, id);
+		return new ConfigurationV2(this, parent, id);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration()
 	 */
-	public IConfiguration createConfiguration(String id) {
-		return new Configuration(this, id);
+	public IConfigurationV2 createConfiguration(String id) {
+		return new ConfigurationV2(this, id);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getArtifactExtension()
@@ -395,8 +397,8 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
 	 */
-	public IConfiguration getConfiguration(String id) {
-		return (IConfiguration)getConfigurationMap().get(id);
+	public IConfigurationV2 getConfiguration(String id) {
+		return (IConfigurationV2)getConfigurationMap().get(id);
 	}
 	
 	/* (non-Javadoc)
@@ -426,10 +428,9 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getConfigurations()
 	 */
-	public IConfiguration[] getConfigurations() {
-		return (IConfiguration[])getConfigurationList().toArray(new IConfiguration[getConfigurationList().size()]);
+	public IConfigurationV2[] getConfigurations() {
+		return (IConfigurationV2[])getConfigurationList().toArray(new IConfigurationV2[getConfigurationList().size()]);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getDefaultExtension()
@@ -642,7 +643,7 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return (String[]) targetOSList.toArray(new String[targetOSList.size()]);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTool(java.lang.String)
 	 */
@@ -659,7 +660,7 @@ public class Target extends BuildObject implements ITarget {
 		
 		// If not defined in parents, check if defined at all
 		if (result == null) {
-			result = ManagedBuildManager.getTool(id);
+			result = ManagedBuildManager.getExtensionTool(id);
 		}
 
 		return result;
@@ -747,7 +748,7 @@ public class Target extends BuildObject implements ITarget {
 		// Iterate over the configurations and ask them if they need saving
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			if (((IConfiguration)iter.next()).isDirty()) {
+			if (((IConfigurationV2)iter.next()).isDirty()) {
 				return true;
 			}
 		}
@@ -769,7 +770,7 @@ public class Target extends BuildObject implements ITarget {
 		// Iterate over the configurations and ask them if they need saving
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			if (((IConfiguration)iter.next()).needsRebuild()) {
+			if (((IConfigurationV2)iter.next()).needsRebuild()) {
 				return true;
 			}
 		}
@@ -783,7 +784,7 @@ public class Target extends BuildObject implements ITarget {
 		// Remove the specified configuration from the list and map
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			 IConfiguration config = (IConfiguration)iter.next();
+			 IConfigurationV2 config = (IConfigurationV2)iter.next();
 			 if (config.getId().equals(id)) {
 			 	getConfigurationList().remove(config);
 				getConfigurationMap().remove(id);
@@ -819,7 +820,7 @@ public class Target extends BuildObject implements ITarget {
 				// should resolve before calling methods on it
 				((Target)parent).resolveReferences();
 				// copy over the parents configs
-				IConfiguration[] parentConfigs = parent.getConfigurations();
+				IConfigurationV2[] parentConfigs = parent.getConfigurations();
 				for (int i = 0; i < parentConfigs.length; ++i)
 					addConfiguration(parentConfigs[i]);
 			}
@@ -837,7 +838,7 @@ public class Target extends BuildObject implements ITarget {
 			}
 			Iterator configIter = getConfigurationList().iterator();
 			while (configIter.hasNext()) {
-				Configuration current = (Configuration)configIter.next();
+				ConfigurationV2 current = (ConfigurationV2)configIter.next();
 				current.resolveReferences();
 			}
 		}
@@ -877,8 +878,8 @@ public class Target extends BuildObject implements ITarget {
 		// Serialize the configuration settings
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			Configuration config = (Configuration) iter.next();
-			Element configElement = doc.createElement(IConfiguration.CONFIGURATION_ELEMENT_NAME);
+			ConfigurationV2 config = (ConfigurationV2) iter.next();
+			Element configElement = doc.createElement(IConfigurationV2.CONFIGURATION_ELEMENT_NAME);
 			element.appendChild(configElement);
 			config.serialize(doc, configElement);
 		}
@@ -917,7 +918,7 @@ public class Target extends BuildObject implements ITarget {
 		// and in the configurations
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			IConfiguration config = (IConfiguration)iter.next();
+			IConfigurationV2 config = (IConfigurationV2)iter.next();
 			config.setDirty(isDirty);
 		}
 	}
@@ -956,14 +957,13 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 	
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setRebuildState(boolean)
 	 */
 	public void setRebuildState(boolean rebuild) {
 		Iterator iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			((IConfiguration)iter.next()).setRebuildState(rebuild);
+			((IConfigurationV2)iter.next()).setRebuildState(rebuild);
 		}
 	}
 
@@ -975,6 +975,195 @@ public class Target extends BuildObject implements ITarget {
 			// Set the owner correctly
 			owner = resource;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#convertToProjectType()
+	 */
+	public void convertToProjectType() {
+		// Create a ProjectType + Configuration + Toolchain + Builder + TargetPlatform 
+		// from the Target
+		
+		// The "parent" needs to have been converted already.
+		// Do it now if necessary.
+		ProjectType parentProj = null;
+		if (parent != null) {
+			parentProj = parent.getCreatedProjectType();
+			if (parentProj == null) {
+				parent.convertToProjectType();
+				parentProj = parent.getCreatedProjectType();
+			}
+		}
+		ProjectType projectType = new ProjectType(parentProj, getId(), getName());
+		createdProjectType = projectType;
+		// Set the project type attributes
+		projectType.setIsAbstract(isAbstract);
+		projectType.setIsTest(isTest);
+		// Add children
+		// Add configurations  (Configuration -> ToolChain -> Builder -> TargetPlatform)
+		Iterator iter = getConfigurationList().listIterator();
+		while (iter.hasNext()) {
+			IConfigurationV2 configV2 = (IConfigurationV2)iter.next();
+			if (configV2.getCreatedConfig() != null) continue;
+			// The new config's superClass needs to be the 
+			// Configuration created from the ConfigurationV2 parent...
+			IConfiguration configSuperClass = null;
+			IConfigurationV2 parentV2 = configV2.getParent();
+			if (parentV2 != null) {
+				configSuperClass = parentV2.getCreatedConfig();
+			}
+			String id = configV2.getId();
+			String name = configV2.getName();
+			IConfiguration config = projectType.createConfiguration(configSuperClass, id, name);
+			configV2.setCreatedConfig(config);
+			// Set the configuration attributes
+			config.setArtifactName(getArtifactName());
+			config.setArtifactExtension(getArtifactExtension());
+			config.setCleanCommand(getCleanCommand());
+			config.setErrorParserIds(getErrorParserIds());
+			// Create the Tool-chain
+			String subId;
+			String subName;
+			subId = id + ".toolchain"; 	//$NON-NLS-1$
+			subName = name + ".toolchain"; 	//$NON-NLS-1$
+			IToolChain toolChain = config.createToolChain(null, subId, subName, true);
+			// Set the tool chain attributes
+			toolChain.setIsAbstract(isAbstract);
+			toolChain.setOSList(getTargetOSList());
+			toolChain.setArchList(getTargetArchList());
+			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
+			if (element instanceof DefaultManagedConfigElement) {
+				toolChain.setScannerInfoCollectorElement(((DefaultManagedConfigElement)element).getConfigurationElement());
+			}
+			// Create the Builder
+			subId = id + ".builder"; 	//$NON-NLS-1$
+			subName = name + ".builder"; 	//$NON-NLS-1$
+			IBuilder builder = toolChain.createBuilder(null, subId, subName, true);
+			// Set the builder attributes
+			builder.setIsAbstract(isAbstract);
+			builder.setCommand(getMakeCommand());
+			builder.setArguments(getMakeArguments());
+			if (element instanceof DefaultManagedConfigElement) {
+				builder.setBuildFileGeneratorElement(((DefaultManagedConfigElement)element).getConfigurationElement());
+			}
+			// Create the TargetPlatform
+			subId = id + ".targetplatform"; 	//$NON-NLS-1$
+			subName = name + ".targetplatform"; 	//$NON-NLS-1$
+			ITargetPlatform targetPlatform = toolChain.createTargetPlatform(null, subId, subName, true);
+			// Set the target platform attributes
+			targetPlatform.setIsAbstract(isAbstract);
+			targetPlatform.setOSList(getTargetOSList());
+			targetPlatform.setArchList(getTargetArchList());
+			targetPlatform.setBinaryParserId(getBinaryParserId());
+				
+			// Handle ConfigurationV2 children (ToolReference)
+			// The tools references fetched here are strictly local to the configuration,
+			// so additional work is required to fetch the tool references from the target
+			IToolReference[] configToolRefs = configV2.getToolReferences();
+			// Add the "local" tool references (they are direct children of the target and 
+			//  its parent targets)
+			Vector targetToolRefs = new Vector();
+			addTargetToolReferences(targetToolRefs);
+			IToolReference[] toolRefs;
+			if (targetToolRefs.size() > 0) {
+				toolRefs = new IToolReference[targetToolRefs.size() + configToolRefs.length];
+				int i;
+				for (i = 0; i < configToolRefs.length; ++i) {
+					toolRefs[i] = configToolRefs[i];
+				}				
+				Iterator localToolRefIter = targetToolRefs.iterator();			
+				while (localToolRefIter.hasNext()) {
+					toolRefs[i++] = (IToolReference)localToolRefIter.next();
+				}
+			} else {
+				toolRefs = configToolRefs;
+			}
+			for (int i = 0; i < toolRefs.length; ++i) {
+				IToolReference toolRef = toolRefs[i];
+				subId = id + "." + toolRef.getId(); //$NON-NLS-1$
+				// The ToolReference's Tool becomes the newTool's SuperClass
+				ITool newTool = toolChain.createTool(toolRef.getTool(), subId, toolRef.getName(), true);
+				// Set the tool attributes
+				newTool.setToolCommand(toolRef.getRawToolCommand());
+				newTool.setOutputPrefix(toolRef.getRawOutputPrefix());
+				newTool.setOutputFlag(toolRef.getRawOutputFlag());
+				newTool.setOutputExtensions(toolRef.getRawOutputExtensions());
+				// Handle ToolReference children (OptionReference)
+				Iterator optRefIter = toolRef.getOptionReferenceList().listIterator();
+				while (optRefIter.hasNext()) {
+					OptionReference optRef = (OptionReference)optRefIter.next();
+					subId = id + "." + optRef.getId(); //$NON-NLS-1$
+					IOption newOption = newTool.createOption(optRef.getOption(), subId, optRef.getName(), true);
+					// Set the option attributes
+					newOption.setValue(optRef.getValue());
+					newOption.setValueType(optRef.getValueType());
+				}
+			}
+			
+            // Process the tools in the configuration, adding them to the toolchain
+			// Tools for a configuration are stored in the enclosing target, so getting
+			// the tools for the configuration ultimately gets them from the enclosing target
+			ITool[] configTools = configV2.getTools();
+			for (int i = 0; i < configTools.length; ++i) {
+				ITool tool = configTools[i];
+                // If tool references encountered, they have already been processed, above,
+				// so ignore them now
+				if (!(tool instanceof ToolReference)) {   
+                	// See if the toolchain already has a tool with a SuperClass that has an id 
+                	// equal to the tool that we are considering adding to the toolchain; if so, 
+					// don't add it 
+					// This case arises when we have added a tool to the toolchain because
+					// we processed a ToolReference (above) that references this tool
+					// The original tool referenced in the ToolReference becomes the SuperClass
+					// of the tool that is created because of the ToolReference
+					boolean found = false;             
+				    ITool[] tools = toolChain.getTools();
+				    ITool currentTool;
+				    ITool supercurrentTool;
+					for (int j = 0; j < tools.length; ++j) {
+						currentTool = tools[j];
+						supercurrentTool = currentTool.getSuperClass();
+						if (supercurrentTool != null) {
+						    if (supercurrentTool.getId() == tool.getId()) {
+							    found = true;
+							    // If this tool was already added to the toolchain because of a 
+							    // ToolReference, then we disconnent this redundant
+							    // tool from the target by setting the parent to null
+							    ((Tool)tool).setToolParent(null);
+							    break;
+						    }
+						}
+					}
+                  
+					if (!found)
+						// This tool is not in the toolchain yet, so add it to the toolchain
+				        ((ToolChain)toolChain).addTool((Tool)tool);
+	
+				}
+			}
+			// Normalize the outputextensions list by adding an empty string for each tool
+			// which did not have an explicit output file extension specified
+			((ToolChain)toolChain).normalizeOutputExtensions();
+		}
+	}
+
+	/*
+	 *  A target element may contain toolReference elements.  These get applied to all of the configurations
+	 *  of the target.  The method adds the list of this target's local tool references to the passed in vector.
+	 */
+	public void addTargetToolReferences(Vector toolRefs) {
+		toolRefs.addAll(getLocalToolReferences());
+		if (parent != null) {
+			Target targetParent = (Target)parent;
+			targetParent.addTargetToolReferences(toolRefs);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getCreatedProjectType()
+	 */
+	public ProjectType getCreatedProjectType() {
+		return createdProjectType;
 	}
 
 }

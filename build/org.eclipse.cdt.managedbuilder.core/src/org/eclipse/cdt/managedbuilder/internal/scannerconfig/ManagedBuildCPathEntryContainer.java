@@ -26,6 +26,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
@@ -126,7 +127,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	}
 
 	protected void calculateBuiltIns(ITarget defaultTarget, IConfiguration config) {
-		ITool[] tools = config.getFilteredTools(info.getOwner().getProject());
+		ITool[] tools = config.getFilteredTools();
 
 		// Iterate over the list
 		for (int toolIndex = 0; toolIndex < tools.length; ++toolIndex) {
@@ -135,24 +136,26 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			IOption[] options = tool.getOptions();
 			for (int optIndex = 0; optIndex < options.length; ++optIndex) {
 				IOption option = options[optIndex];
-				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
-					String[] builtIns = option.getBuiltIns();
-					Map macroMap = new HashMap();
-					for (int biIndex = 0; biIndex < builtIns.length; ++biIndex) {
-						String  symbol = builtIns[biIndex];
-						String[] tokens = symbol.split("=");	//$NON-NLS-1$
-						String macro = tokens[0].trim();
-						String value = (tokens.length > 1) ? tokens[1] : new String();
-						macroMap.put(macro, value);
+				try {
+					if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+						String[] builtIns = option.getBuiltIns();
+						Map macroMap = new HashMap();
+						for (int biIndex = 0; biIndex < builtIns.length; ++biIndex) {
+							String  symbol = builtIns[biIndex];
+							String[] tokens = symbol.split("=");	//$NON-NLS-1$
+							String macro = tokens[0].trim();
+							String value = (tokens.length > 1) ? tokens[1] : new String();
+							macroMap.put(macro, value);
+						}
+						addDefinedSymbols(macroMap);
+					} else if (option.getValueType() == IOption.INCLUDE_PATH) {
+						// Make sure it is a built-in, not a user-defined path
+						String[] values = option.getBuiltIns();
+						if (values.length > 0) {
+							addIncludePaths(Arrays.asList(values));
+						}
 					}
-					addDefinedSymbols(macroMap);
-				} else if (option.getValueType() == IOption.INCLUDE_PATH) {
-					// Make sure it is a built-in, not a user-defined path
-					String[] values = option.getBuiltIns();
-					if (values.length > 0) {
-						addIncludePaths(Arrays.asList(values));
-					}
-				}
+				} catch (BuildException e) {}
 			}
 		}
 
@@ -199,22 +202,15 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information is null");	//$NON-NLS-1$
 			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 		}
-		defaultTarget = info.getDefaultTarget();
-		if (defaultTarget == null) {
+		IConfiguration defaultConfig = info.getDefaultConfiguration();
+		if (defaultConfig == null) {
 			// The build information has not been loaded yet
 			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
 			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
 		}
-		ITarget parent = defaultTarget.getParent();
-		if (parent == null) {
-			// The build information has not been loaded yet
-			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
-			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
-		}
-
+		
 		// See if we can load a dynamic resolver
-		String baseTargetId = parent.getId();
-		IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(baseTargetId); 
+		IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(defaultConfig); 
 		if (collector != null) {
 			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
 			collector.setProject(info.getOwner().getProject());
@@ -223,10 +219,9 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			addDefinedSymbols(collector.getDefinedSymbols());
 		} else {
 			// If none supplied, use the built-ins
-			IConfiguration config = info.getDefaultConfiguration(defaultTarget);
-			if (config != null) {
-				calculateBuiltIns(defaultTarget, config);
-				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + config.getName());	//$NON-NLS-1$
+			if (defaultConfig != null) {
+				calculateBuiltIns(defaultTarget, defaultConfig);
+				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + defaultConfig.getName());	//$NON-NLS-1$
 			} else {
 				ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
 				return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);

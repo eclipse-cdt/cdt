@@ -17,6 +17,13 @@ public interface IOptionCategory extends IBuildObject {
 
 	// Schema element names
 	public static final String OWNER = "owner"; //$NON-NLS-1$
+	
+//	 Resource Filter type
+	public static final int FILTER_ALL = 0;
+	public static final String ALL = "all";	//$NON-NLS-1$
+	public static final int FILTER_FILE = 1;
+	public static final int FILTER_PROJECT = 2;
+	public static final String PROJECT = "project";	//$NON-NLS-1$
 
 	/**
 	 * Returns the list of children of this node in the option category tree
@@ -26,12 +33,14 @@ public interface IOptionCategory extends IBuildObject {
 	public IOptionCategory[] getChildCategories();
 	
 	/**
-	 * Returns the options in this category for a given configuration.
+	 * Returns an array of ITool/IOption pairs for the options in this category
+	 * for a given configuration.
 	 * 
 	 * @param tool
-	 * @return
+	 * @return Object[][]
 	 */
-	public IOption[] getOptions(IConfiguration configuration);
+	public Object[][] getOptions(IConfiguration configuration);
+	public Object[][] getOptions(IResourceConfiguration resConfig);
 
 	/**
 	 * Returns the category that owns this category, or null if this is the
@@ -47,4 +56,19 @@ public interface IOptionCategory extends IBuildObject {
 	 * @return
 	 */
 	public ITool getTool();
+
+	/**
+	 * Returns <code>true</code> if this element has changes that need to 
+	 * be saved in the project file, else <code>false</code>.
+	 * 
+	 * @return boolean 
+	 */
+	public boolean isDirty();
+	
+	/**
+	 * Sets the element's "dirty" (have I been modified?) flag.
+	 * 
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty);
 }

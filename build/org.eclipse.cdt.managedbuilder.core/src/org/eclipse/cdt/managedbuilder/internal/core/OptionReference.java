@@ -34,9 +34,13 @@ import org.w3c.dom.NodeList;
  */
 public class OptionReference implements IOption {
 
+	private static final String EMPTY_STRING = new String();
+
 	// List of built-in values a tool defines
 	private List builtIns;
 	// Used for all option references that override the command
+	// Note: This is not currently used - don't start using it because 
+	//       it is not handled in converting from the CDT 2.0 object model
 	private String command;
 	// The option this reference overrides
 	private IOption option;
@@ -99,11 +103,16 @@ public class OptionReference implements IOption {
 			return;
 		}
 		
+		int optValType;
+		try {
+			optValType = option.getValueType(); 
+		} catch (BuildException e) {return;}
+		
 		// Hook the reference up		
 		owner.addOptionReference(this);
 
 		// value
-		switch (option.getValueType()) {
+		switch (optValType) {
 			case BOOLEAN:
 				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
 				break;
@@ -155,8 +164,15 @@ public class OptionReference implements IOption {
 				((OptionReference)option).resolveReferences();
 			}
 			
+			// Note:  The "value" loaded here when the optionReference is read from the manifest file.
+			//        This because the "valueType" is only known once the option reference is resolved.
+			int optValType;
+			try {
+				optValType = option.getValueType(); 
+			} catch (BuildException e) {return;}
+			
 			// value
-			switch (option.getValueType()) {
+			switch (optValType) {
 				case BOOLEAN:
 					value = new Boolean(element.getAttribute(DEFAULT_VALUE));
 					break;
@@ -165,14 +181,9 @@ public class OptionReference implements IOption {
 					break;
 				case ENUMERATED:
 					String temp = element.getAttribute(DEFAULT_VALUE);
-					if (temp == null) {
-						try {
-							temp = option.getSelectedEnum();
-						} catch (BuildException e) {
-							temp = new String();
-						}
+					if (temp != null) {
+						value = temp;
 					}
-					value = temp;
 					break;
 				case STRING_LIST:
 				case INCLUDE_PATH:
@@ -189,7 +200,8 @@ public class OptionReference implements IOption {
 						}
 						else {
 							valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
-						}				}
+						}
+					}
 					value = valueList;
 					break;
 			}
@@ -205,8 +217,16 @@ public class OptionReference implements IOption {
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(ID, option.getId());
 		
+		int optValType;
+		try {
+			optValType = option.getValueType(); 
+		} catch (BuildException e) {
+			// TODO: Issue an error message
+			return;
+		}
+		
 		// value
-		switch (option.getValueType()) {
+		switch (optValType) {
 			case BOOLEAN:
 				element.setAttribute(DEFAULT_VALUE, ((Boolean)value).toString());
 				break;
@@ -291,10 +311,12 @@ public class OptionReference implements IOption {
 			resolveReferences();
 		}
 		if (option != null) {
-			return option.getEnumCommand(id);
-		} else {
-			return new String();
+			try {
+				String command = option.getEnumCommand(id);
+				return command;
+			} catch (BuildException e) {}
 		}
+		return new String();
 	}
 
 	/* (non-Javadoc)
@@ -305,10 +327,12 @@ public class OptionReference implements IOption {
 			resolveReferences();
 		}
 		if (option != null) {
-			return option.getEnumName(id);
-		} else {
-			return new String();
-		}
+			try {
+				String name = option.getEnumName(id);
+				return name;
+			} catch (BuildException e) {}
+		} 
+		return new String();
 	}
 
 	/* (non-Javadoc)
@@ -319,11 +343,12 @@ public class OptionReference implements IOption {
 			resolveReferences();
 		}
 		if (option != null) {
-			return option.getEnumeratedId(name);
-		} else {
-			return new String();
+			try {
+				String id = option.getEnumeratedId(name); 
+				return id;
+			} catch (BuildException e) {}
 		}
-		
+		return new String();
 	}
 	
 	/* (non-Javadoc)
@@ -474,9 +499,9 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#getTool()
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getParent()
 	 */
-	public ITool getTool() {
+	public ITool getParent() {
 		return owner;
 	}
 
@@ -507,9 +532,21 @@ public class OptionReference implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueType()
 	 */
 	public int getValueType() {
-		return option.getValueType();
+		int optValType;
+		try {
+			optValType = option.getValueType(); 
+		} catch (BuildException e) {return -1;}
+		
+		return optValType;
 	}
 
+	/* (non-Javadoc)
+	 * Returns the raw value.
+	 */
+	public Object getValue() {
+		return value;
+	}
+	
 	/**
 	 * Answers <code>true</code> if the receiver is a reference to the 
 	 * <code>IOption</code> specified in the argument, esle answers <code>false</code>.
@@ -593,4 +630,95 @@ public class OptionReference implements IOption {
 		}
 	}
 
+	/*
+	 * The following methods are here in order to implement the new ITool methods.
+	 * They should never be called.
+	 */
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isExtensionElement()
+	 */
+	public boolean isExtensionElement() {
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#overridesOnlyValue()
+	 */
+	public boolean overridesOnlyValue() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * Sets the raw value.
+	 */
+	public void setValue(Object v) {
+		value = v;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setValueType()
+	 */
+	public void setValueType(int type) {
+	}
+	
+	/* (non-Javadoc)
+	 * Returns the raw default value.
+	 */
+	public Object getDefaultValue() {
+		return value;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setValue(Object)
+	 */
+	public void setDefaultValue(Object v) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getSuperClass()
+	 */
+	public IOption getSuperClass() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getResourceFilter()
+	 */
+	public int getResourceFilter() {
+		return FILTER_ALL;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setResourceFilter(int)
+	 */
+	public void setResourceFilter(int filter) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseType(int)
+	 */
+	public void setBrowseType(int type) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
+	 */
+	public void setCategory(IOptionCategory category) {
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setCommand(String)
+	 */
+	public void setCommand(String cmd) {
+		if (cmd == null && command == null) return;
+		if (cmd == null || command == null || !cmd.equals(command)) {
+			command = cmd;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#setCommandFalse(String)
+	 */
+	public void setCommandFalse(String cmd) {
+	}
+	
 }

@@ -1,7 +1,5 @@
-package org.eclipse.cdt.managedbuilder.ui.properties;
-
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Rational Software Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,9 +8,11 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -59,7 +59,7 @@ public class NewConfigurationDialog extends Dialog {
 	private IConfiguration[] defaultConfigs;
 	private IConfiguration[] definedConfigs;
 	private IConfiguration parentConfig;
-	private ITarget target;
+	private IManagedProject managedProject;
 	private String newName;
 	private String title = ""; //$NON-NLS-1$
 
@@ -67,21 +67,21 @@ public class NewConfigurationDialog extends Dialog {
 	/**
 	 * @param parentShell
 	 */
-	protected NewConfigurationDialog(Shell parentShell, ITarget managedTarget, String title) {
+	protected NewConfigurationDialog(Shell parentShell, IManagedProject managedProject, String title) {
 		super(parentShell);
 		this.title = title;
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 		newName = new String();
 		parentConfig = null;
-		this.target = managedTarget;
+		this.managedProject = managedProject;
 		
 		// The default behaviour is to clone the settings
 		clone = true;
 		
 		// Populate the list of default and defined configurations
-		definedConfigs = target.getConfigurations();
-		ITarget grandparent = target.getParent();
-		defaultConfigs = grandparent.getConfigurations();
+		definedConfigs = managedProject.getConfigurations();
+		IProjectType projectType = managedProject.getProjectType();
+		defaultConfigs = projectType.getConfigurations();
 	}
 	
 	/* (non-Javadoc)
@@ -242,7 +242,7 @@ public class NewConfigurationDialog extends Dialog {
 	}
 
 	/*
-	 * Returns the array of configuration names defined for all targets  
+	 * Returns the array of configuration names defined for all projects  
 	 * of this type in the plugin manifest. This list will be used to
 	 * populate the the configurations to copy default settings from.
 	 */
@@ -256,7 +256,7 @@ public class NewConfigurationDialog extends Dialog {
 	}
 	
 	/*
-	 * Returns the array of configuration names defined for this target.
+	 * Returns the array of configuration names defined for this managed project.
 	 * This list will be used to populate the list of configurations to 
 	 * clone.
 	 */
@@ -285,11 +285,11 @@ public class NewConfigurationDialog extends Dialog {
 	 * @return
 	 */
 	protected boolean isDuplicateName(String newName) {
-		// Return true if there is already a config of that name defined on the target
-		IConfiguration [] configs = target.getConfigurations();
+		// Return true if there is already a config of that name defined
+		IConfiguration [] configs = managedProject.getConfigurations();
 		for (int index = 0; index < configs.length; index++) {
 			IConfiguration configuration = configs[index];
-			if (configuration.getName() == newName) {
+			if (configuration.getName().equals(newName)) {
 				return true;
 			}
 		}

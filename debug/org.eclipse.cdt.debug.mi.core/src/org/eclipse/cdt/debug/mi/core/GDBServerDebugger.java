@@ -63,18 +63,18 @@ public class GDBServerDebugger implements ICDebugger {
 			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit"); //$NON-NLS-1$
 			if (config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false)) {
-				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid");
+				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_HOST, "invalid"); //$NON-NLS-1$
 				remote += ":"; //$NON-NLS-1$
-				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid");
-				String[] args = new String[] {"remote", remote};
+				remote += config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_PORT, "invalid"); //$NON-NLS-1$
+				String[] args = new String[] {"remote", remote}; //$NON-NLS-1$
 				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), 0, args, cwd, gdbinit);
 			} else {
 				MIPlugin plugin = MIPlugin.getDefault();
 				Preferences prefs = plugin.getPluginPreferences();
 				int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
 
-				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid");
-				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid");
+				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
+				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid"); //$NON-NLS-1$
 				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), -1, null, cwd, gdbinit);
 				MISession miSession = session.getMISession();
 				CommandFactory factory = miSession.getCommandFactory();
@@ -85,7 +85,7 @@ public class GDBServerDebugger implements ICDebugger {
 				if (info == null) {
 					throw new MIException (MIPlugin.getResourceString("src.GDBServerDebugger.Can_not_set_Baud")); //$NON-NLS-1$
 				}
-				MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote});
+				MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote}); //$NON-NLS-1$
 				miSession.postCommand(select, launchTimeout);
 				select.getMIInfo();
 				if (info == null) {

@@ -1,3 +1,10 @@
+2004-03-16 Tanya Wolff
+
+	Marked strings in src as non-translatable
+	* src/GDBServerDebugger.java
+	* src/GDBTypeParser.java
+	* src/RxThread.java
+	
 2004-03-14 Alain Magloire
 
 	Break the ChangeLog file in two.

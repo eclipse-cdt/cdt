@@ -243,7 +243,7 @@ public class RxThread extends Thread {
 				// any other alternatives.
 				String[] logs = getStreamRecords();
 				for (int i = 0; i < logs.length; i++) {
-					if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) {
+					if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
 						session.getMIInferior().setSuspended();
 						e = new MISharedLibEvent(exec);
 						list.add(e);

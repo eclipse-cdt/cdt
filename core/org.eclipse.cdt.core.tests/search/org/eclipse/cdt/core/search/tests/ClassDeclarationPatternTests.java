@@ -198,7 +198,7 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 3 );
+		assertEquals( matches.size(), 6 );
 	}
 	
 	public void testClassReferenceInFieldType(){
@@ -255,6 +255,6 @@ public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSe
 		
 		Set matches = resultCollector.getSearchResults();
 		
-		assertEquals( matches.size(), 4 );//TODO was 6, changed for bug 41445
+		assertEquals( matches.size(), 7 );
 	}
 }

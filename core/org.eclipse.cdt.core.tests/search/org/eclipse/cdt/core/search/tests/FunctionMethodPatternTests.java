@@ -73,7 +73,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		
-		assertEquals( matches.size(), 1 );
+		assertEquals( matches.size(), 4 );
 	}
 	
 	public void testMethodDeclarationWithParams() {
@@ -83,5 +83,24 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		
 		Set matches = resultCollector.getSearchResults();
 		
-		assertEquals( matches.size(), 1 );	}
+		assertEquals( matches.size(), 1 );	
+	}
+	
+	public void testMethodDeclarationParameterMatching(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "f( A & )", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "f( A * )", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "f( int &, const char  [],  A** )", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+	}
 }

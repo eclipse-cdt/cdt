@@ -15,9 +15,12 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -25,6 +28,16 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -210,10 +223,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		IScanner scanner = ParserFactory.createScanner( new StringReader( nameString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
 		
 		LinkedList names = scanForNames( scanner, null );
-		
-		scanner = ParserFactory.createScanner( new StringReader( paramString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
-		
-		LinkedList params = scanForParameters( scanner );
+
+		LinkedList params = scanForParameters( paramString );
 		
 		char [] name = (char [])names.removeLast();
 		char [][] qualifications = new char[0][];
@@ -298,53 +309,99 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param object
 	 * @return
 	 */
-	private static LinkedList scanForParameters(IScanner scanner) {
+	private static LinkedList scanForParameters( String paramString ) {
 		LinkedList list = new LinkedList();
 		
-		String param = new String("");
+		if( paramString == null || paramString.equals("") )
+			return list;
 		
-		boolean lastTokenWasWild = false;
-		try{
-			IToken token = scanner.nextToken();
-			
-			tokenConsumption:
-			while( true ){
-				switch( token.getType() ){
-					case IToken.tCOMMA :
-						list.addLast( param.toCharArray() );
-						param = new String("");
-						break;
-						
-					case IToken.tLPAREN :
-						break;
-						
-					case IToken.tRPAREN :
-						list.addLast( param.toCharArray() );
-						break tokenConsumption;
-						
-					case IToken.tSTAR:
-					case IToken.tQUESTION:
-						lastTokenWasWild = true;
-						param += token.getImage();
-						break;
-						
-					default:
-						if( !lastTokenWasWild && param.length() > 0 )
-							param += " ";
-						param += token.getImage();
-						break;
-				}
+		String functionString = "void f " + paramString + ";";
 				
-				token = scanner.nextToken();
+		IScanner scanner = ParserFactory.createScanner( new StringReader( functionString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, null );
+		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();			   
+		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.QUICK_PARSE, ParserLanguage.CPP ); 
+
+		if( parser.parse() ){
+			IASTCompilationUnit compUnit = callback.getCompilationUnit();
+			Iterator declarations = null;
+			try {
+				declarations = compUnit.getDeclarations();
+			} catch (ASTNotImplementedException e) {
 			}
-		} catch ( EndOfFile e ){
-			list.addLast( param.toCharArray() );
-		} catch( ScannerException e ){
+			
+			if( declarations == null || ! declarations.hasNext() )
+				return null;
+			IASTFunction function = (IASTFunction) declarations.next();
+			
+			Iterator parameters = function.getParameters();
+			char [] param = null;
+			while( parameters.hasNext() ){
+				param = getParamString( (IASTParameterDeclaration)parameters.next() );
+				list.add( param );
+			}
 		}
 		
 		return list;
 	}
 		
+	static public char [] getParamString( IASTParameterDeclaration param ){
+		if( param == null ) return null;
+		 
+		String signature = "";
+		
+		IASTTypeSpecifier typeSpec = param.getTypeSpecifier();
+		if( typeSpec instanceof IASTSimpleTypeSpecifier ){
+			IASTSimpleTypeSpecifier simple = (IASTSimpleTypeSpecifier)typeSpec;
+			signature += simple.getTypename();
+		} else if( typeSpec instanceof IASTElaboratedTypeSpecifier ){
+			IASTElaboratedTypeSpecifier elaborated = (IASTElaboratedTypeSpecifier)typeSpec;
+			if( elaborated.getClassKind() == ASTClassKind.CLASS ){
+				signature += "class ";
+			} else if( elaborated.getClassKind() == ASTClassKind.ENUM ) {
+				signature += "enum ";
+			} else if( elaborated.getClassKind() == ASTClassKind.STRUCT ) {
+				signature += "struct ";
+			} else if( elaborated.getClassKind() == ASTClassKind.UNION ) {
+				signature += "union";
+			}
+
+			signature += elaborated.getName();
+		} else if( typeSpec instanceof IASTClassSpecifier ){
+			IASTClassSpecifier classSpec = (IASTClassSpecifier)typeSpec;
+			signature += classSpec.getName();
+		} else if( typeSpec instanceof IASTEnumerationSpecifier ){
+			IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier)typeSpec;
+			signature += enumSpec.getName();
+		}
+		
+		signature += " ";
+		
+		if( param.isConst() ) signature += "const ";
+		if( param.isVolatile() ) signature += "volatile ";
+
+		Iterator ptrs = param.getPointerOperators();
+		while( ptrs.hasNext() ){
+			ASTPointerOperator ptrOp = (ASTPointerOperator) ptrs.next();
+			if( ptrOp == ASTPointerOperator.POINTER ){
+				signature += " * ";
+			} else if( ptrOp == ASTPointerOperator.REFERENCE ){
+				signature += " & ";
+			} else if( ptrOp == ASTPointerOperator.CONST_POINTER ){
+				signature += " const * ";
+			} else if( ptrOp == ASTPointerOperator.VOLATILE_POINTER ){
+				signature += " volatile * ";
+			}
+		}
+
+		Iterator arrayModifiers = param.getArrayModifiers();
+		while( arrayModifiers.hasNext() ){
+			arrayModifiers.next();
+			signature += " [] ";
+		}
+
+		return signature.toCharArray();
+	}
+	
 	static private LinkedList scanForNames( IScanner scanner, IToken unusedToken ){
 		LinkedList list = new LinkedList();
 		

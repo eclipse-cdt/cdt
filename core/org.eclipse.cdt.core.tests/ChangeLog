@@ -1,3 +1,10 @@
+2003-09-09 Andrew Niefer
+	Modified resources/search/classDecl.cpp
+	 - to include more function declarations to test parameter matching
+	 - to include an enumerator reference to test enumerators
+	Added testMethodDeclarationParameterMatching to FunctionMethodPatternTests.java
+	Added testEnumeratorReferences to OtherPatternTests
+	
 2003-09-08 John Camelon
 	Added CompleteParseASTTest::testThrowStatement(), testScoping(), testEnumeratorReferences().
 	Removed LineNumberTest source as it is obsolete.  

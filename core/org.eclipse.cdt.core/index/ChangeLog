@@ -1,3 +1,9 @@
+2003-09-09 Andrew Niefer
+	Enumerator references
+ 	 - Added createEnumeratorFullyQualifiedName in AbstractIndexer
+	 - Added addEnumeratorReference in AbstractIndexer
+	 - implemented acceptEnumeratorReference in SourceIndexerRequestor
+
 2003-09-08 Andrew Niefer
 	- Modified calls to ParserFactory to specify which language to use
 

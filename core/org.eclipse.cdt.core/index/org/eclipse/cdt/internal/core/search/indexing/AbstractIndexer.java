@@ -71,25 +71,35 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	public void addEnumerationSpecifier(IASTEnumerationSpecifier enumeration) {
 		this.output.addRef(encodeTypeEntry(enumeration.getFullyQualifiedName(), ENUM, ICSearchConstants.DECLARATIONS));
 		
-	Iterator i = enumeration.getEnumerators();
+		Iterator i = enumeration.getEnumerators();
 		while (i.hasNext())
 		{
 			IASTEnumerator en = (IASTEnumerator) i.next(); 	
-			String name = en.getName();
-			IASTEnumerationSpecifier parent = en.getOwnerEnumerationSpecifier();
-			String[] parentName = parent.getFullyQualifiedName();
-			
-			//See spec 7.2-10, the the scope of the enumerator is the same level as the enumeration
-			String[] enumeratorFullName = new String[ parentName.length ];
-			
-			System.arraycopy( parentName, 0, enumeratorFullName, 0, parentName.length);
-			enumeratorFullName[ parentName.length - 1 ] = name;
+			String[] enumeratorFullName =
+				createEnumeratorFullyQualifiedName(en);
 			
 			this.output.addRef(encodeEntry( enumeratorFullName, FIELD_DECL, FIELD_DECL_LENGTH ));
 
 		}
 	}
-	
+
+	protected String[] createEnumeratorFullyQualifiedName(IASTEnumerator en) {
+		String name = en.getName();
+		IASTEnumerationSpecifier parent = en.getOwnerEnumerationSpecifier();
+		String[] parentName = parent.getFullyQualifiedName();
+		
+		//See spec 7.2-10, the the scope of the enumerator is the same level as the enumeration
+		String[] enumeratorFullName = new String[ parentName.length ];
+		
+		System.arraycopy( parentName, 0, enumeratorFullName, 0, parentName.length);
+		enumeratorFullName[ parentName.length - 1 ] = name;
+		return enumeratorFullName;
+	}
+
+	public void addEnumeratorReference(IASTEnumerator enumerator) {
+		this.output.addRef(encodeEntry(createEnumeratorFullyQualifiedName(enumerator),FIELD_REF,FIELD_REF_LENGTH));	
+	}
+		
 	public void addMacro(IASTMacro macro) {
 		String[] macroName = new String[1];
 		macroName[0] = macro.getName();
@@ -574,6 +584,5 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		
 		return bestPrefix( prefix,  (char)0, macroName, null, matchMode, isCaseSenstive );	
 	}
-
 }
 

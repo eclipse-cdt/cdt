@@ -7,6 +7,9 @@ class Heal{};
 class A {
 	class B {
 		void f( A );
+		void f( A & );
+		void f( A* );
+		void f( int &, const char [], A ** );
 	};
 };
 
@@ -15,6 +18,7 @@ namespace NS {
 		struct a{};
 	}
 	class B: public A {
+	public:
 		struct AA {};
 		enum e {
 			One,
@@ -32,7 +36,7 @@ namespace NS {
 
 namespace NS3{
 	class C : public NS::B {
-		e eE;
+		e eE = One;
 	};
 }
 

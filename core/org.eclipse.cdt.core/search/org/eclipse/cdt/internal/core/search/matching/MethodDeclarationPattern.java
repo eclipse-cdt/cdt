@@ -19,11 +19,8 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
-import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
@@ -96,8 +93,9 @@ public class MethodDeclarationPattern extends CSearchPattern {
 		
 		//parameters
 		if( parameterNames != null && parameterNames.length > 0  &&	parameterNames[0].length > 0 ){
+
 			Iterator params = function.getParameters();
-			
+				
 			for( int i = 0; i < parameterNames.length; i++ ){
 			
 				//if this function doesn't have this many parameters, it is not a match.
@@ -105,21 +103,14 @@ public class MethodDeclarationPattern extends CSearchPattern {
 				if( !params.hasNext() || parameterNames[ i ] == null )
 					return IMPOSSIBLE_MATCH;
 					
-				IASTParameterDeclaration param = (IASTParameterDeclaration) params.next();
-				IASTTypeSpecifier typeSpec = param.getTypeSpecifier();
-				String paramName = null;
-				if( typeSpec instanceof IASTSimpleTypeSpecifier ){
-					paramName = ((IASTSimpleTypeSpecifier)typeSpec).getTypename();
-				} else if( typeSpec instanceof IASTOffsetableNamedElement ){
-					paramName = ((IASTOffsetableNamedElement)typeSpec).getName();
-				} else {
-					//???
-					return IMPOSSIBLE_MATCH;
-				}
+				IASTParameterDeclaration parameter = (IASTParameterDeclaration) params.next();
+				char[] param = CSearchPattern.getParamString( parameter );
 				
-				if( !matchesName( parameterNames[i], paramName.toCharArray() ) )
+				//no wildcards in parameters strings
+				if( !CharOperation.equals( parameterNames[i], param, _caseSensitive ) )
 					return IMPOSSIBLE_MATCH;
 			}
+			
 			//if this function still has more parameters, it is not a match
 			if( params.hasNext() )
 				return IMPOSSIBLE_MATCH;

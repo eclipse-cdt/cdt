@@ -1,3 +1,12 @@
+2003-09-09 Andrew Niefer
+	pattern matching on function parameters:
+	 - modified scanForParameters in CSearchPattern
+	 - added getParamString in CSearchPattern
+	 - modified matchLevel in MethodDeclarationPattern
+	 
+	Enumeration references
+	 - modified acceptEnumeratorReference in MatchLocator
+
 2003-09-05 Andrew Niefer
 	- fix searching for enumerators
 

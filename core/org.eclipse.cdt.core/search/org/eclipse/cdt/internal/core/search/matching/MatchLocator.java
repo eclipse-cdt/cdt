@@ -126,7 +126,15 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
 	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) 	{	}
 	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) 	{	}
+
+	public void enterCodeBlock(IASTCodeScope scope) {	}
+	public void exitCodeBlock(IASTCodeScope scope) 	{	}
 	
+	
+	public void acceptEnumeratorReference(IASTEnumeratorReference reference){
+		check( REFERENCES, reference );	
+	}
+		
 	public void acceptMacro(IASTMacro macro){
 		check( DECLARATIONS, macro );	
 	}
@@ -465,29 +473,5 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	  System.out.println("(" + Thread.currentThread() + ") " + log); 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
-	 */
-	public void enterCodeBlock(IASTCodeScope scope) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
-	 */
-	public void exitCodeBlock(IASTCodeScope scope) {
-		// TODO Auto-generated method stub
-		
-	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumeratorReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
-     */
-    public void acceptEnumeratorReference(IASTEnumeratorReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
 
 }

@@ -193,4 +193,13 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 	}
 	
+	public void testEnumeratorReferences(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", FIELD, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+	}
+	
 }

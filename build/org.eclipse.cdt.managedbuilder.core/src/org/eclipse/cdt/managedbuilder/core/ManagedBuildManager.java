@@ -47,8 +47,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IFile;
@@ -532,6 +532,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
 				transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
 				DOMSource source = new DOMSource(doc);
 				StreamResult result = new StreamResult(stream);
@@ -540,10 +541,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				// Save the document
 				IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
 				String utfString = stream.toString("UTF8");	//$NON-NLS-1$
+
 				if (projectFile.exists()) {
-					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes()), IResource.FORCE, null);
+					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF8")), IResource.FORCE, new NullProgressMonitor());
 				} else {
-					projectFile.create(new ByteArrayInputStream(utfString.getBytes()), IResource.FORCE, null);
+					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF8")), IResource.FORCE, new NullProgressMonitor());
 				}
 
 				// Close the streams
@@ -794,7 +796,6 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				project.setSessionProperty(buildInfoProperty, buildInfo);
 			}
 		} catch (Exception e) {
-			buildInfo = null;
 		}
 		return buildInfo;
 	}

@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -17,38 +18,61 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Class scope, declaration start, with NO prefix
- * Bug#50344 :Wrong completion in Class scope if before the first declaration
+ * Testing Single name reference, with prefix 
  *
  */
-public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBaseTest{
-	
-	private final String fileName = "CompletionTestStart13.h";
+public class CompletionTest_SingleName_NoPrefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart15.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTClassSpecifier";
+	private final String expectedScopeName = "ASTFunction";
 	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.FIELD_TYPE;
+	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
+			"x : int",
+			"aVariable : int",
+			"xVariable : int",
+			"aFunction() bool",
+			"anotherFunction() void",
+			"foo(int) void",
+			"xFunction() bool",
+			"xOtherFunction() void",
+			"aClass",
+			"anotherClass",
+			"xOtherClass",
+			"AStruct",
+			"XStruct",
+			"aNamespace",
+			"xNamespace",
+			"anEnumeration",
+			"xEnumeration",
+			"aFirstEnum",
+			"aSecondEnum",
+			"aThirdEnum",
+			"xFirstEnum",
+			"xSecondEnum",
+			"xThirdEnum",
+			"AMacro(x)",
+			"DEBUG",
+			"XMacro(x,y)"
 	};
 	
-	public CompletionTest_FieldType_NoPrefix2(String name) {
+	public CompletionTest_SingleName_NoPrefix(String name) {
 		super(name);
 	}
-
+	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_FieldType_NoPrefix2.class.getName());
-		suite.addTest(new CompletionTest_FieldType_NoPrefix2("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_SingleName_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_SingleName_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("      ") + 3;
+		return getBuffer().indexOf("      ") + 2;
 	}
 
 	/* (non-Javadoc)

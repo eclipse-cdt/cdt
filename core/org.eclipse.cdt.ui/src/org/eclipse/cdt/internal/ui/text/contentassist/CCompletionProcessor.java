@@ -409,7 +409,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		
 		if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
 			addProposalsFromTemplateEngine(viewer, fGlobalContextTemplateEngine, completions);
-		if(kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+		if( (kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+			|| (kind == IASTCompletionNode.CompletionKind.STATEMENT_START) )
 			addProposalsFromTemplateEngine(viewer, fFunctionContextTemplateEngine, completions);
 		if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE)
 			addProposalsFromTemplateEngine(viewer, fStructureContextTemplateEngine, completions);
@@ -439,7 +440,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		int length = prefix.length();
 		
 		// calling functions should happen only within the context of a code body
-		if(completionNode.getCompletionContext() != IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+		if(    (completionNode.getCompletionContext() != IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+			&& (completionNode.getCompletionContext() != IASTCompletionNode.CompletionKind.STATEMENT_START))
 			return;
 		
 		IFunctionSummary[] summary;
@@ -515,7 +517,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	
 		if (((projectScope) || (projectScopeAndDependency))
 				&& (   (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
-				    || (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
+					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.STATEMENT_START)
+					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
 					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.FIELD_TYPE) )
 				&& (prefix.length() > 0)){
 			List elementsFound = new LinkedList();
@@ -535,7 +538,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			orPattern.addPattern(SearchEngine.createSearchPattern( 
 					searchPrefix, ICSearchConstants.NAMESPACE, ICSearchConstants.DEFINITIONS, false ));
 			
-			if( (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)){
+			if( (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+			|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.STATEMENT_START)){
 				orPattern.addPattern(SearchEngine.createSearchPattern( 
 						searchPrefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));
 				orPattern.addPattern(SearchEngine.createSearchPattern( 

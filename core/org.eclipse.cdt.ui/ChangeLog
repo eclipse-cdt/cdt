@@ -1,3 +1,6 @@
+2004-01-23 Hoda Amer
+	Content Assist Work: Tuning of Completion Engine
+	
 2004-01-21 Hoda Amer
 	-Fixed bug#49854 : Enumerator code complete fails when no character provided
 	

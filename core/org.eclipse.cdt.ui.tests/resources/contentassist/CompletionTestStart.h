@@ -1,3 +1,4 @@
+#define DEBUG 1
 #define AMacro(x) x+1
 #define XMacro(x,y) x+y
 

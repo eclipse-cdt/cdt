@@ -582,7 +582,7 @@ public class CompletionEngine implements RelevanceConstants{
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// here we have to look for any names that could be referenced within this scope
 		// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[7];
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[9];
 		kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
 		kinds[1] = IASTNode.LookupKind.FIELDS; 
 		kinds[2] = IASTNode.LookupKind.VARIABLES; 
@@ -590,6 +590,8 @@ public class CompletionEngine implements RelevanceConstants{
 		kinds[4] = IASTNode.LookupKind.FUNCTIONS; 
 		kinds[5] = IASTNode.LookupKind.NAMESPACES; 
 		kinds[6] = IASTNode.LookupKind.ENUMERATORS;
+		kinds[7] = IASTNode.LookupKind.STRUCTURES;
+		kinds[8] = IASTNode.LookupKind.ENUMERATIONS;
 		String prefix = completionNode.getCompletionPrefix();
 		if(prefix.equals("("))
 			prefix = "";
@@ -666,6 +668,7 @@ public class CompletionEngine implements RelevanceConstants{
 			return null;
 		}
 		
+		log    ("Offset  = " + completionOffset);
 		logNode("Scope   = " , completionNode.getCompletionScope());
 		logNode("Context = " , completionNode.getCompletionContext());
 		logKind("Kind    = ", completionNode.getCompletionKind());		

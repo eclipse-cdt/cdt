@@ -8,39 +8,43 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist;
+package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Class scope, declaration start, with NO prefix
- * Bug#50344 :Wrong completion in Class scope if before the first declaration
+ * Testing Namespace_Reference, with prefix
+ * Bug#50471 : Wrong completion kind after the "using" keyword
  *
  */
-public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBaseTest{
+public class CompletionFailedTest_NamespaceRef_Prefix_Bug50471  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart13.h";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+	private final String fileName = "CompletionFailedTestStart4.cpp";
+	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTClassSpecifier";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.FIELD_TYPE;
-	private final String expectedPrefix = "";
+	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedContextName = "null"; 
+	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; // should be CompletionKind.NAMESPACE_REFERENCE;
+	private final String expectedPrefix = "a"; 
 	private final String[] expectedResults = {
+// Should be 			
+//			"aNamespace"
 	};
 	
-	public CompletionTest_FieldType_NoPrefix2(String name) {
+	public CompletionFailedTest_NamespaceRef_Prefix_Bug50471(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_FieldType_NoPrefix2.class.getName());
-		suite.addTest(new CompletionTest_FieldType_NoPrefix2("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionFailedTest_NamespaceRef_Prefix_Bug50471.class.getName());
+		suite.addTest(new CompletionFailedTest_NamespaceRef_Prefix_Bug50471("testCompletionProposals"));
 		return suite;
 	}		
 	
@@ -48,7 +52,7 @@ public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBase
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("      ") + 3;
+		return getBuffer().indexOf("using a ") + 7;
 	}
 
 	/* (non-Javadoc)

@@ -22,7 +22,7 @@
 #include "jni.h"
 #include "io.h"
 
-//#define DEBUG_MONITOR
+// #define DEBUG_MONITOR
 
 #define PIPE_SIZE 512
 #define MAX_CMD_SIZE 1024
@@ -85,7 +85,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	LPVOID envBlk = NULL;
     int ret = 0;
 	char  szCmdLine[MAX_CMD_SIZE];
-	char  szEnvBlock[MAX_ENV_SIZE];
+	int nBlkSize = MAX_ENV_SIZE; 
+	char  * szEnvBlock = (char *)malloc(nBlkSize);
 	jsize nCmdTokens = 0;
 	jsize nEnvVars = 0;
 	int i;
@@ -150,6 +151,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	nPos = sprintf(szCmdLine, "%sstarter.exe %s %s %s ", path, eventBreakName, eventWaitName, eventTerminateName);
 
+	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
 		{
 		jobject item = (*env) -> GetObjectArrayElement(env, cmdarray, i);
@@ -160,7 +162,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			{
 			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
 				{
-				ThrowByName(env, "java/Exception", "Too long command line");
+				ThrowByName(env, "java/lang/Exception", "Too long command line");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -172,6 +174,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	szCmdLine[nPos] = '\0';
 
+	// Prepare environment block
     if (nEnvVars > 0) 
 		{
 		nPos = 0;
@@ -182,6 +185,21 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
 			if(NULL != str)
 				{
+				while((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
+					{
+					nBlkSize += MAX_ENV_SIZE;
+					szEnvBlock = (char *)realloc(szEnvBlock, nBlkSize);
+					if(NULL == szEnvBlock) 
+						{
+						ThrowByName(env, "java/lang/Exception", "Not enough memory");
+						return 0;
+						}
+#ifdef DEBUG_MONITOR
+					sprintf(buffer, "Realloc environment block; new length is  %i \n", nBlkSize);
+					OutputDebugString(buffer);
+#endif
+
+					}
 				strncpy(szEnvBlock + nPos, str, len);
 				nPos += len;
 				szEnvBlock[nPos] = '\0';
@@ -244,7 +262,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	if(NULL != cwd)
 		free(cwd);
-
+	
+	free(szEnvBlock);
 
     CloseHandle(hread[0]);
     CloseHandle(hwrite[1]);
@@ -340,7 +359,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 	int i;
 	int nPos;
 	char  szCmdLine[MAX_CMD_SIZE];
-	char  szEnvBlock[MAX_ENV_SIZE];
+	int nBlkSize = MAX_ENV_SIZE; 
+	char * szEnvBlock = (char *)malloc(nBlkSize);
 
 
     sa.nLength = sizeof(sa);
@@ -353,6 +373,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	nPos = 0;
 
+	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
 		{
 		jobject item = (*env) -> GetObjectArrayElement(env, cmdarray, i);
@@ -363,7 +384,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			{
 			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
 				{
-				ThrowByName(env, "java/Exception", "Too long command line");
+				ThrowByName(env, "java/lang/Exception", "Too long command line");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -375,6 +396,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	szCmdLine[nPos] = '\0';
 
+	// Prepare environment block
     if (nEnvVars > 0) 
 		{
 		nPos = 0;
@@ -385,6 +407,16 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
 			if(NULL != str)
 				{
+				while((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
+					{
+					nBlkSize += MAX_ENV_SIZE;
+					szEnvBlock = (char *)realloc(szEnvBlock, nBlkSize);
+					if(NULL == szEnvBlock) 
+						{
+						ThrowByName(env, "java/lang/Exception", "Not enough memory");
+						return 0;
+						}
+					}
 				strncpy(szEnvBlock + nPos, str, len);
 				nPos += len;
 				szEnvBlock[nPos] = '\0';
@@ -433,6 +465,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	if(NULL != cwd)
 		free(cwd);
+	free(szEnvBlock);
 
     if (!ret) 
 		{
@@ -708,7 +741,12 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 	int totCpyLength = cpyLength;
 	BOOL bQoutedTerm = FALSE;
 
-	if(availSpace < cpyLength)
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "copyTo start: %s %d %d\n", source, cpyLength, availSpace);
+	OutputDebugString(buffer);
+#endif
+
+	if(availSpace <= cpyLength) // = to reserve space for final '\0'
 		return -1;
 	//strncpy(target, source, cpyLength);
 	//return cpyLength;

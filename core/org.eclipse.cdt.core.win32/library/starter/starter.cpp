@@ -83,19 +83,6 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 		++nPos;
 		}   
    szCmdLine[nPos] = _T('\0');
-/*   
-   for (int i = 4; i < argc; i++) {
-	  if(sizeof(szCmdLine) > (_tcslen(szCmdLine) + _tcslen(argv[i]))) 
-		{
-		_tcscat(szCmdLine, argv[i]); 
-		_tcscat(szCmdLine, __TEXT(" ")); 
-		}
-#ifdef DEBUG_MONITOR
-	  else
-		OutputDebugString("Command line is too long\n");
-#endif
-   }
-*/
 
    STARTUPINFO         si = { sizeof(si) };
    PROCESS_INFORMATION pi = { 0 };
@@ -202,10 +189,8 @@ int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 	int totCpyLength = cpyLength;
 	BOOL bQoutedTerm = FALSE;
 
-	if(availSpace < cpyLength)
+	if(availSpace <= cpyLength)  // = to reserve space for '\0'
 		return -1;
-//	strncpy(target, source, cpyLength);
-//	return cpyLength;
 
 	if((_T('\"') == *source) && (_T('\"') == *(source + cpyLength)))
 		bQoutedTerm = TRUE; // Already quoted

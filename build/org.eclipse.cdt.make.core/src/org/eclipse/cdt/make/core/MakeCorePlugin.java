@@ -146,6 +146,10 @@ public class MakeCorePlugin extends Plugin {
 				fTargetManager.shutdown();
 				fTargetManager = null;
 			}
+			if (fDiscoveryPathManager != null) {
+				fDiscoveryPathManager.shutdown();
+				fDiscoveryPathManager = null;
+			}
 		} finally {
 			super.stop(context);
 		}
@@ -177,6 +181,7 @@ public class MakeCorePlugin extends Plugin {
 	public IDiscoveredPathManager getDiscoveryManager() {
 		if ( fDiscoveryPathManager == null) {
 			fDiscoveryPathManager = new DiscoveredPathManager();
+			fDiscoveryPathManager.startup();
 		}
 		return fDiscoveryPathManager;
 	}

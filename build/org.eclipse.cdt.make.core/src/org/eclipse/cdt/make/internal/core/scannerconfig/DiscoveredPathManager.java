@@ -39,6 +39,11 @@ import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -50,7 +55,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-public class DiscoveredPathManager implements IDiscoveredPathManager {
+public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceChangeListener {
 
 	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".discoveredScannerInfo"; //$NON-NLS-1$
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
@@ -64,6 +69,35 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 
 	private static final int INFO_CHANGED = 1;
 	private static final int INFO_REMOVED = 2;
+
+	public DiscoveredPathManager() {
+	}
+	
+	public void startup() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+	}
+	
+	public void shutdown() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		if (event.getSource() instanceof IWorkspace) {
+			IResource resource = event.getResource();
+
+			switch (event.getType()) {
+				case IResourceChangeEvent.PRE_DELETE :
+				case IResourceChangeEvent.PRE_CLOSE :
+					if (resource.getType() == IResource.PROJECT) {
+						fDiscoveredMap.remove(resource);
+					}
+					break;
+			}
+		}
+	}
 
 	public IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException {
 		DiscoveredPathInfo info = (DiscoveredPathInfo)fDiscoveredMap.get(project);

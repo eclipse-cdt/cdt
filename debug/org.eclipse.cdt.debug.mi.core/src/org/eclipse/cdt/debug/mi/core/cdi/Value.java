@@ -1,10 +1,16 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
+import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
+import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 
 /**
  * @author alain
@@ -16,32 +22,71 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
  */
 public class Value extends CObject implements ICDIValue {
 
-	String val = "";
+	Variable variable;
 
-	public Value(CTarget target, String s) {
-		super(target);
-		val = s;
+	public Value(Variable v) {
+		super(v.getCTarget());
+		variable = v;
 	}
 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
-		return "";
+		return variable.getTypeName();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getValueString()
 	 */
 	public String getValueString() throws CDIException {
-		return val;
+		String result = "";
+		StackFrame stack = variable.getStackFrame();
+		stack.getCThread().setCurrentStackFrame(stack);
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarEvaluateExpression var =
+			factory.createMIVarEvaluateExpression(variable.getMIVar().getVarName());
+		try {
+			mi.postCommand(var);
+			MIVarEvaluateExpressionInfo info = var.getMIVarEvaluateExpressionInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			result = info.getValue();
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+		return result;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
-		return new ICDIVariable[0];
+		StackFrame stack = variable.getStackFrame();
+		stack.getCThread().setCurrentStackFrame(stack);
+		Variable[] variables = null;
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarListChildren var = 
+			factory.createMIVarListChildren(variable.getMIVar().getVarName());
+		try {
+			mi.postCommand(var);
+			MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			MIVar[] vars = info.getMIVars();
+			variables = new Variable[vars.length];
+			for (int i = 0; i < vars.length; i++) {
+				variables[i] =
+					new Variable(variable.getStackFrame(), vars[i].getExp(), vars[i]);
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+		return variables;
 	}
 
 }

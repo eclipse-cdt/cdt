@@ -20,42 +20,60 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 public class StackFrame extends CObject implements ICDIStackFrame {
 
 	MIFrame frame;
+	CThread cthread;
 
-	public StackFrame(CTarget target, MIFrame f) {
-		super(target);
+	public StackFrame(CThread thread, MIFrame f) {
+		super(thread.getCTarget());
+		cthread = thread;
 		frame = f;
+	}
+
+	MIFrame getMIFrame() {
+		return frame;
+	}
+
+	CThread getCThread() {
+		return cthread;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
 	public ICDIArgument[] getArguments() throws CDIException {
-		MIArg[] args = null;
 		ICDIArgument[] cdiArgs = null;
 		if (frame != null) {
-			MISession mi = getCTarget().getCSession().getMISession();
+			CSession session = getCTarget().getCSession();
+			VariableManager mgr = (VariableManager)session.getVariableManager();
+			mgr.update();
+			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			int level = frame.getLevel();
 			MIStackListArguments listArgs =
-				factory.createMIStackListArguments(true, level, level);
+				factory.createMIStackListArguments(false, level, level);
 			try {
+				MIArg[] args = null;
 				mi.postCommand(listArgs);
-				MIStackListArgumentsInfo info = listArgs.getMIStackListArgumentsInfo();
+				MIStackListArgumentsInfo info =
+					listArgs.getMIStackListArgumentsInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
 				MIFrame[] miFrames = info.getMIFrames();
 				if (miFrames != null && miFrames.length == 1) {
 					args = miFrames[0].getArgs();
 				}
+				if (args != null) {
+					cdiArgs = new ICDIArgument[args.length];
+					for (int i = 0; i < cdiArgs.length; i++) {
+						cdiArgs[i] =
+							mgr.createArgument(this, args[i].getName());
+					}
+				} else {
+					cdiArgs = new ICDIArgument[0];
+				}
 			} catch (MIException e) {
-				//throw new CDIException(e);
+				throw new CDIException(e.toString());
 			}
-		}
-		if (args != null) {
-			cdiArgs = new ICDIArgument[args.length];
-			for (int i = 0; i < cdiArgs.length; i++) {
-				cdiArgs[i] = new Argument(getCTarget(), args[i]);
-			}
-		} else {
-			cdiArgs = new ICDIArgument[0];
 		}
 		return cdiArgs;
 	}
@@ -64,31 +82,33 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
 	 */
 	public ICDIVariable[] getLocalVariables() throws CDIException {
-		MIArg[] args = null;
-		ICDIVariable[] variables = null;
-		MISession mi = getCTarget().getCSession().getMISession();
+		CSession session = getCTarget().getCSession();
+		VariableManager mgr = (VariableManager)session.getVariableManager();
+		mgr.update();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIStackListLocals locals = factory.createMIStackListLocals(true);
+		MIStackListLocals locals = factory.createMIStackListLocals(false);
 		try {
+			MIArg[] args = null;
+			ICDIVariable[] variables = null;
 			mi.postCommand(locals);
 			MIStackListLocalsInfo info = locals.getMIStackListLocalsInfo();
 			if (info == null) {
-				// throw new CDIException();
+				throw new CDIException("No answer");
 			}
 			args = info.getLocals();
-			
-		} catch (MIException e) {
-			//throw new CDIException(e);
-		}
-		if (args != null) {
-			variables = new ICDIVariable[args.length];
-			for (int i = 0; i < variables.length; i++) {
-				variables[i] = new Variable(getCTarget(), args[i]);
+			if (args != null) {
+				variables = new ICDIVariable[args.length];
+				for (int i = 0; i < variables.length; i++) {
+					variables[i] = mgr.createVariable(this, args[i].getName());
+				}
+			} else {
+				variables = new ICDIVariable[0];
 			}
-		} else {
-			variables = new ICDIVariable[0];
+			return variables;
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
 		}
-		return variables;
 	}
 
 	/**
@@ -111,4 +131,20 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		}
 		return 0;
 	}
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#equals(ICDIStackFrame)
+	 */
+	public boolean equals(ICDIStackFrame stackframe) {
+		if (stackframe instanceof StackFrame) {
+			StackFrame stack = (StackFrame)stackframe;
+			return  cthread != null &&
+				cthread.equals(stack.getCThread()) &&
+				frame != null &&
+				frame.getLevel() == stack.getMIFrame().getLevel() &&
+				frame.getFile().equals(stack.getMIFrame().getFile()) &&
+				frame.getFunction().equals(stack.getMIFrame().getFunction());
+		}
+		return super.equals(stackframe);
+	}
+
 }

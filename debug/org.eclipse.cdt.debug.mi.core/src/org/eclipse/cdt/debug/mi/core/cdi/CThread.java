@@ -7,20 +7,17 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
+import org.eclipse.cdt.debug.mi.core.command.MIStackSelectFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class CThread extends CObject implements ICDIThread {
 
 	int id;
+	StackFrame currentStackFrame;
 	
 	public CThread(CTarget target, int threadId) {
 		super(target);
@@ -53,17 +50,47 @@ public class CThread extends CObject implements ICDIThread {
 			mi.postCommand(frames);
 			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 			MIFrame[] miFrames = info.getMIFrames();
-			ICDIStackFrame[] stack = new ICDIStackFrame[miFrames.length];
+			StackFrame[] stack = new StackFrame[miFrames.length];
 			for (int i = 0; i < stack.length; i++) {
-				stack[i] = new StackFrame(getCTarget(), miFrames[i]);
+				stack[i] = new StackFrame(this, miFrames[i]);
+				if (i == 0) {
+					currentStackFrame = stack[i];
+				}
 			}
 			return stack;
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
 		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame)
+	 */
+	public void setCurrentStackFrame(StackFrame stackframe) throws CDIException {
+		getCTarget().setCurrentThread(this);
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		int frameNum = stackframe.getLevel();
+		MIStackSelectFrame frame = factory.createMIStackSelectFrame(frameNum);
+		try {
+			mi.postCommand(frame);
+			MIInfo info = frame.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			currentStackFrame = (StackFrame)stackframe;
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+	}
+
+	/**
+	 */
+	public StackFrame getCurrentStackFrame() throws CDIException {
+		return currentStackFrame;
 	}
 
 	/**
@@ -113,6 +140,17 @@ public class CThread extends CObject implements ICDIThread {
 	 */
 	public void suspend() throws CDIException {
 		getTarget().suspend();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#equals(ICDIThread)
+	 */
+	public boolean equals(ICDIThread thread) {
+		if (thread instanceof CThread) {
+			CThread cthread = (CThread) thread;
+			return id == cthread.getId();
+		}
+		return super.equals(thread);
 	}
 
 }

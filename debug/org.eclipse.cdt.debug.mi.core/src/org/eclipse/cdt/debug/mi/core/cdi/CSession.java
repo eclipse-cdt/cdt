@@ -12,7 +12,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -31,7 +31,8 @@ public class CSession implements ICDISession, ICDISessionObject {
 	MISession session;
 	BreakpointManager breakpointManager;
 	EventManager eventManager;
-	VariableManager expressionManager;
+	ExpressionManager expressionManager;
+	VariableManager variableManager;
 	MemoryManager memoryManager;
 	SignalManager signalManager;
 	SourceManager sourceManager;
@@ -43,7 +44,8 @@ public class CSession implements ICDISession, ICDISessionObject {
 		breakpointManager = new BreakpointManager(this);
 		eventManager = new EventManager(this);
 		s.addObserver(eventManager);
-		expressionManager = new VariableManager(this);
+		expressionManager = new ExpressionManager(this);
+		variableManager = new VariableManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
@@ -54,10 +56,6 @@ public class CSession implements ICDISession, ICDISessionObject {
 		return session;
 	}
 
-	ICDITarget getTarget() {
-		return ctarget;
-	}
-	
 	CTarget getCTarget() {
 		return ctarget;
 	}
@@ -86,10 +84,16 @@ public class CSession implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getVariableManager()
 	 */
-	public ICDIVariableManager getVariableManager() {
+	public ICDIExpressionManager getExpressionManager() {
 		return expressionManager;
 	}
 
+	/**
+	 * 
+	 */
+	public VariableManager getVariableManager() {
+		return variableManager;
+	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getMemoryManager()
 	 */
@@ -116,6 +120,23 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 */
 	public ICDITarget[] getTargets() {
 		return new ICDITarget[]{ctarget};
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getCurrentTarget()
+	 */
+	public ICDITarget getCurrentTarget() {
+		return ctarget;
+	}
+
+	/**
+	 */
+	public void setCurrentTarget(ICDITarget target) throws CDIException {
+		if (target instanceof CTarget) {
+			ctarget = (CTarget)target;
+			return;
+		}
+		throw new CDIException("Unkown target");
 	}
 
 	/**

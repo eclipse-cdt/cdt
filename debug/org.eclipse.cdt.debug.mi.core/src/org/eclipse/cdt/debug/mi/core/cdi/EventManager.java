@@ -80,6 +80,10 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 
 		// Fire the event;
+		fireEvent(cdiEvent);
+	}
+
+	public void fireEvent(ICDIEvent cdiEvent) {
 		if (cdiEvent != null) {
 			ICDIEventListener[] listeners =
 				(ICDIEventListener[])list.toArray(new ICDIEventListener[0]);

@@ -71,4 +71,18 @@ public class Location implements ICDILocation {
 	public int getLineNumber() {
 		return line;
 	}
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDILocation#equals(ICDILocation)
+	 */
+	public boolean equals(ICDILocation location) {
+		if (location instanceof Location) {
+			Location loc = (Location)location;
+			return addr == loc.getAddress() &&
+				file.equals(loc.getFile()) &&
+				function.equals(loc.getFunction()) &&
+				line == loc.getLineNumber();
+		}
+		return super.equals(location);
+	}
+
 }

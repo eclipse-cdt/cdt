@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
@@ -19,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -33,9 +33,11 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadListIds;
+import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
@@ -49,7 +51,7 @@ public class CTarget  implements ICDITarget {
 	public CTarget(CSession s) {
 		session = s;
 		threadList = new ArrayList(1);
-		dummyThread = new CThread(this, 0);
+		dummyThread = new CThread(this, 1);
 		currentThread = dummyThread;
 		threadList.add(dummyThread);
 	}
@@ -67,13 +69,20 @@ public class CTarget  implements ICDITarget {
 	}
 
 	void setCurrentThread(int id) {
-		for (int i = 0; i < threadList.size(); i++) {
-			CThread cthread = (CThread)threadList.get(i);
-			if (cthread.getId() == id) {
-				currentThread = cthread;
-				return ;
+		CThread cthread = null;
+		if (containsCThread(id)) {
+			for (int i = 0; i < threadList.size(); i++) {
+				CThread thread = (CThread)threadList.get(i);
+				if (thread.getId() == id) {
+					cthread  = thread;
+					break;
+				}
 			}
+		} else {
+			cthread = new CThread(this, id);
+			addCThread(cthread);
 		}
+		currentThread = cthread;
 	}
 
 	boolean containsCThread(int id) {
@@ -101,7 +110,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(detach);
 			MIInfo info = detach.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -119,7 +128,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(finish);
 			MIInfo info = finish.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -163,10 +172,28 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getCurrentThread()
 	 */
-	public ICDIThread getCurrentThread() throws CDIException {
+	public CThread getCurrentThread() throws CDIException {
 		return currentThread;
+	}
+
+	/**
+	 */
+	public void setCurrentThread(CThread cthread) throws CDIException {
+		session.setCurrentTarget(this);
+		int id = cthread.getId();
+		session.setCurrentTarget(this);
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIThreadSelect select = factory.createMIThreadSelect(id);
+		try {
+			mi.postCommand(select);
+			MIThreadSelectInfo info = select.getMIThreadSelectInfo();
+			int newId = info.getNewThreadId();
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+		setCurrentThread(id);
 	}
 
 	/**
@@ -182,7 +209,7 @@ public class CTarget  implements ICDITarget {
 			int[] ids = info.getThreadIds();
 			if (ids != null && ids.length > 0) {
 				// Ok that means it is a multiThreaded, remove the dummy Thread
-				removeCThread(dummyThread);
+				//removeCThread(dummyThread);
 				for (int i = 0; i < ids.length; i++) {
 					if (! containsCThread(ids[i])) {
 						addCThread(new CThread(this, ids[i]));
@@ -227,7 +254,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(run);
 			MIInfo info = run.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -248,7 +275,7 @@ public class CTarget  implements ICDITarget {
 				mi.postCommand(cont);
 				MIInfo info = cont.getMIInfo();
 				if (info == null) {
-					throw new CDIException("Timedout");
+					throw new CDIException("No answer");
 				}
 			} catch (MIException e) {
 				throw new CDIException(e.toString());
@@ -272,7 +299,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(step);
 			MIInfo info = step.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -290,7 +317,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(stepi);
 			MIInfo info = stepi.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -308,7 +335,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(next);
 			MIInfo info = next.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -326,7 +353,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(nexti);
 			MIInfo info = nexti.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -344,7 +371,7 @@ public class CTarget  implements ICDITarget {
 			mi.postCommand(interrupt);
 			MIInfo info = interrupt.getMIInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
@@ -380,7 +407,7 @@ public class CTarget  implements ICDITarget {
 			MIDataEvaluateExpressionInfo info =
 				evaluate.getMIDataEvaluateExpressionInfo();
 			if (info == null) {
-				throw new CDIException("Timedout");
+				throw new CDIException("No answer");
 			}
 			return info.getExpression();
 		} catch (MIException e) {
@@ -393,11 +420,9 @@ public class CTarget  implements ICDITarget {
 	 */
 	public ICDIValue evaluateExpressionToValue(String expressionText)
 		throws CDIException {
-		ICDIVariableManager mgr = session.getVariableManager();
-		ICDIExpression cexp = mgr.createExpression(expressionText);
-		ICDIValue value = cexp.getValue();
-		mgr.removeExpression(cexp);
-		return value;
+		VariableManager mgr = session.getVariableManager();
+		ICDIVariable var = mgr.createVariable(expressionText);
+		return var.getValue();
 	}
 
 	/**
@@ -406,5 +431,5 @@ public class CTarget  implements ICDITarget {
 	public ICDISession getSession() {
 		return session;
 	}
-	
+
 }

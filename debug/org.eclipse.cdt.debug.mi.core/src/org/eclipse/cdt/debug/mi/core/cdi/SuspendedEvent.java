@@ -29,25 +29,17 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	}
 
 	public ICDISessionObject getReason() {
-		if (event instanceof MIBreakpointEvent
-			|| event instanceof MIWatchpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
+		if (event instanceof MIBreakpointEvent || event instanceof MIWatchpointEvent) {
+			MIBreakpointEvent breakEvent = (MIBreakpointEvent)event;
 			int number = breakEvent.getNumber();
-			ICDIBreakpointManager mgr = session.getBreakpointManager();
-			// Ask the breakpoint manager the array of ICDIBreakpoint(s)
+			BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
+			// Ask the breakpointManager for the breakpoint
 			// We need to return the same object as the reason.
-			try {
-				ICDIBreakpoint[] bkpts = mgr.getBreakpoints();
-				for (int i = 0; i < bkpts.length; i++) {
-					if (bkpts[i] instanceof Breakpoint) {
-						Breakpoint point = (Breakpoint) bkpts[i];
-						MIBreakPoint miBreak = point.getMIBreakPoint();
-						if (miBreak.getNumber() == number) {
-							return point;
-						}
-					}
-				}
-			} catch (CDIException e) {
+			Breakpoint point = mgr.getBreakpoint(number);
+			if (point != null) {
+				return point;
+			}  else {
+				// FIXME: Create a new breakpoint.
 			}
 		} else if (event instanceof MISteppingRangeEvent) {
 			return new EndSteppingRange(session);

@@ -21,7 +21,7 @@ public class ResumedEvent implements ICDIResumedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		return session.getTarget();
+		return session.getCurrentTarget();
 	}
 
 	/**

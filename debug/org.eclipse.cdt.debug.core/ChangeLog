@@ -1,4 +1,8 @@
 2004-12-01 Mikhail Khodjaiants
+	Fix for bug 80034: Expressions view does not display correct no. of elements in array.
+	* CValueFactory.java
+
+2004-12-01 Mikhail Khodjaiants
 	Fix for bug 79454: Unable to remove a breakpoint set from the gdb console.
 	* CBreakpointManager.java
 

@@ -10,23 +10,28 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import java.util.List;
+
 /**
+ * 
  * @author Doug Schaefer
  */
-public interface IBinding {
+public interface IScope {
 
 	/**
-	 * The name of the binding.
+	 * Scopes are arranged hierarchically. Lookups will generally
+	 * flow upward to find resolution.
 	 * 
-	 * @return name
+	 * @return
 	 */
-	public String getName();
-	
+	public IScope getParent();
+
 	/**
-	 * Every name has a scope.
+	 * This is the general lookup entry point. It returns the list of
+	 * valid bindings for a given name.
 	 * 
-	 * @return the scope of this name
+	 * @param searchString
+	 * @return List of IBinding
 	 */
-	public IScope getScope();
-	
+	public List find(String name);
 }

@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
@@ -46,6 +48,8 @@ public class AST2Tests extends TestCase {
 		buff.append("}\n");
 		
 		IASTTranslationUnit tu = ASTFactory.parseString(buff);
+		IScope globalScope = tu.getScope();
+		
 		List declarations = tu.getDeclarations();
 		
 		// int x
@@ -57,19 +61,28 @@ public class AST2Tests extends TestCase {
 		assertEquals("x", name_x.toString());
 		// resolve the binding to get the variable object
 		IVariable var_x = (IVariable)name_x.resolveBinding();
+		assertEquals(globalScope, var_x.getScope());
 		
 		// function - void f()
 		IASTFunctionDefinition funcdef_f = (IASTFunctionDefinition)declarations.get(1);
 		IASTSimpleDeclSpecifier declspec_f = (IASTSimpleDeclSpecifier)funcdef_f.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_void, declspec_f.getType());
 		IASTFunctionDeclarator declor_f = (IASTFunctionDeclarator)funcdef_f.getDeclarator();
-		assertEquals("f", declor_f.getName().toString());
+		IASTName name_f = declor_f.getName();
+		assertEquals("f", name_f.toString());
+		IFunction func_f = (IFunction)name_f.resolveBinding();
+		assertEquals(globalScope, func_f.getScope());
+		
 		// parameter - int y
 		IASTParameterDeclaration decl_y = (IASTParameterDeclaration)declor_f.getParameters().get(0);
 		IASTSimpleDeclSpecifier declspec_y = (IASTSimpleDeclSpecifier)decl_y.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_y.getType());
 		IASTDeclarator declor_y = decl_y.getDeclarator();
-		assertEquals("y", declor_y.getName().toString());
+		IASTName name_y = declor_y.getName(); 
+		assertEquals("y", name_y.toString());
+		IVariable var_y = (IVariable)name_y.resolveBinding();
+		assertEquals(func_f, var_y.getScope());
+		
 		// int z
 		IASTCompoundStatement body_f = (IASTCompoundStatement)funcdef_f.getBody();
 		IASTDeclarationStatement declstmt_z = (IASTDeclarationStatement)body_f.getStatements().get(0);
@@ -77,7 +90,11 @@ public class AST2Tests extends TestCase {
 		IASTSimpleDeclSpecifier declspec_z = (IASTSimpleDeclSpecifier)decl_z.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_z.getType());
 		IASTDeclarator declor_z = (IASTDeclarator)decl_z.getDeclarators().get(0);
-		assertEquals("z", declor_z.getName().toString());
+		IASTName name_z = declor_z.getName();
+		assertEquals("z", name_z.toString());
+		IVariable var_z = (IVariable)name_z.resolveBinding();
+		assertEquals(func_f, var_z.getScope());
+		
 		// = x + y
 		IASTBinaryExpression init_z = (IASTBinaryExpression)declor_z.getInitializer();
 		assertEquals(IASTBinaryExpression.op_plus, init_z.getOperator());
@@ -88,9 +105,11 @@ public class AST2Tests extends TestCase {
 		assertEquals(var_x, (IVariable)name_ref_x.resolveBinding());
 		
 		IASTIdExpression ref_y = (IASTIdExpression)init_z.getOperand2();
-		assertEquals("y", ref_y.getName());
+		IASTName name_ref_y = ref_y.getName();
+		assertEquals("y", name_ref_y.toString());
+		assertEquals(var_y, (IVariable)name_ref_y.resolveBinding());
 	}
-	
+
 	public void testSimpleStruct() {
 		StringBuffer buff = new StringBuffer();
 		buff.append("typedef struct {");

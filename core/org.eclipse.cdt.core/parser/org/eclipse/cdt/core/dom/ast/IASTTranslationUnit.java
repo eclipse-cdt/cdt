@@ -26,4 +26,11 @@ public interface IASTTranslationUnit extends IASTNode {
 	 */
 	public List getDeclarations();
 	
+	/**
+	 * This returns the global scope for the translation unit.
+	 * 
+	 * @return the global scope
+	 */
+	public IScope getScope();
+	
 }

@@ -266,7 +266,9 @@ public class DoBuild implements IPlatformRunnable {
 		
 		// Save the version in a text file for inclusion in the build page
 		IPath resultDir = Platform.getLocation().removeLastSegments(1).append("results");
-		OutputStream stream = new FileOutputStream(resultDir.append("version.txt").toOSString());
+		String versionTxt = resultDir.append("version.txt").toOSString();
+		System.out.println("Storing version in: " + versionTxt);
+		OutputStream stream = new FileOutputStream(versionTxt);
 		PrintStream versionText = new PrintStream(stream);
 		versionText.println(version);
 		stream.close();

@@ -222,7 +222,7 @@ public class MIInferior extends Process {
 				inPiped = null;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		try {
 			if (errPiped != null) {
@@ -230,7 +230,7 @@ public class MIInferior extends Process {
 				errPiped = null;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		// If pty is not null then we are using a master/slave terminal
@@ -240,7 +240,7 @@ public class MIInferior extends Process {
 				try {
 						in.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				in = null;
 			}
@@ -248,7 +248,7 @@ public class MIInferior extends Process {
 				try {
 					out.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 				out = null;
 			}

@@ -437,6 +437,7 @@ public abstract class CVariable extends CDebugElement
 				((CValue)fValue).dispose();
 				fValue = null;
 			}
+			fTypeName = null;
 			fireChangeEvent( DebugEvent.STATE );
 		}
 	}
@@ -471,6 +472,7 @@ public abstract class CVariable extends CDebugElement
 			((CValue)fValue).dispose();
 			fValue = null;
 		}
+		fTypeName = null;
 		fireChangeEvent( DebugEvent.STATE );
 	}
 	

@@ -1,4 +1,11 @@
 2003-04-01 Mikhail Khodjaiants
+	The 'Auto-Refresh' preferences were moved to the code plugin. Changed the preference 
+	pages for the Registers and Shared Libraries views to reflect this.
+	* ICDebugPreferenceConstants.java
+	* RegistersViewPreferencePage.java
+	* SharedLibrariesViewPreferencePage.java
+
+2003-04-01 Mikhail Khodjaiants
 	Changed implementation and initialization of 'AutoRefreshAction'.
 	* AutoRefreshAction.java
 	* RegistersView.java

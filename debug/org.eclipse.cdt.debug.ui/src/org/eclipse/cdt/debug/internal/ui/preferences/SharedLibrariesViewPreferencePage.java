@@ -5,13 +5,17 @@
  */
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
@@ -26,6 +30,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 											   implements IWorkbenchPreferencePage
 {
+	private Button fAutoRefreshField = null;
 
 	/**
 	 * Constructor for SharedLibrariesViewPreferencePage.
@@ -43,7 +48,8 @@ public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void createFieldEditors()
 	{
-		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, "Auto-Refresh by default", getFieldEditorParent() ) );
+		fAutoRefreshField = ControlFactory.createCheckBox( getFieldEditorParent(), "Auto-Refresh by default" );
+		fAutoRefreshField.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 	}
 
 	/* (non-Javadoc)
@@ -64,7 +70,7 @@ public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 
 	public static void initDefaults( IPreferenceStore store )
 	{
-		store.setDefault( ICDebugPreferenceConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, true );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, true );
 	}
 
 	protected void createSpacer( Composite composite, int columnSpan )
@@ -81,7 +87,39 @@ public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 	public boolean performOk()
 	{
 		boolean ok = super.performOk();
+		storeValues();
 		CDebugUIPlugin.getDefault().savePluginPreferences();
+		CDebugCorePlugin.getDefault().savePluginPreferences();
 		return ok;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults()
+	{
+		setDefaultValues();
+		super.performDefaults();
+	}
+
+	private void setDefaultValues()
+	{
+		fAutoRefreshField.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
+	}
+
+	private void storeValues()
+	{
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, fAutoRefreshField.getSelection() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#adjustGridLayout()
+	 */
+	protected void adjustGridLayout()
+	{
+		super.adjustGridLayout();
+		// If there are no editor fields on this page set the number of columns to prevent stack overflow 
+		if ( ((GridLayout)getFieldEditorParent().getLayout()).numColumns == 0 )
+			((GridLayout)getFieldEditorParent().getLayout()).numColumns = 2;
 	}
 }

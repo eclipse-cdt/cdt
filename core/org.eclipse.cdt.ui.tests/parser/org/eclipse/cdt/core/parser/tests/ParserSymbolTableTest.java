@@ -18,6 +18,9 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.Declaration;
+import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.ParserSymbolTable.Mark;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTableException;
 
 /**
@@ -1893,6 +1896,55 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = compUnit.UnqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f3 );
+	}
+	
+	public void testMarkRollback() throws Exception{
+		newTable();
+		
+		Declaration A = table.new Declaration("A");
+		A.setType( TypeInfo.t_class );
+		table.getCompilationUnit().addDeclaration( A );
+		
+		Mark mark = table.setMark();
+		
+		Declaration f = table.new Declaration("f");
+		A.addDeclaration( f );
+		
+		Declaration look = A.Lookup("f");
+		assertEquals( look, f );
+		
+		assertTrue( table.rollBack( mark ) );
+		
+		look = A.Lookup("f");
+		assertEquals( look, null );
+		
+		Declaration B = table.new Declaration("B");
+		B.setType( TypeInfo.t_class );
+		
+		mark = table.setMark();
+		table.getCompilationUnit().addDeclaration( B );
+		Mark mark2 = table.setMark();
+		A.addParent( B );
+		Mark mark3 = table.setMark();
+		B.addParameter( TypeInfo.t_class, 0, "", false );
+		
+		assertEquals( B.getParameterList().size(), 1 );
+		table.rollBack( mark3 );
+		assertEquals( B.getParameterList().size(), 0 );
+		assertEquals( A.getParentScopes().size(), 1 );
+		table.rollBack( mark2 );
+		assertEquals( A.getParentScopes().size(), 0 );
+		
+		assertFalse( table.commit( mark2 ) );
+		assertFalse( table.rollBack( mark2 ) );
+		
+		B.setType( TypeInfo.t_namespace );
+		
+		mark = table.setMark();
+		A.addUsingDirective( B );
+		assertEquals( A.getUsingDirectives().size(), 1 );
+		table.rollBack( mark );
+		assertEquals( A.getUsingDirectives().size(), 0 );
 	}
 }
 

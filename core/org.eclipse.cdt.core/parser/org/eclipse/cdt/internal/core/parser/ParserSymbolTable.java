@@ -1208,9 +1208,53 @@ public class ParserSymbolTable {
 	//private Stack _contextStack = new Stack();
 	private Declaration _compilationUnit;
 	private LinkedList undoList = new LinkedList();
+	private HashSet markSet = new HashSet();
+	
+	private void pushCommand( Command command ){
+		undoList.addFirst( command );
+	}
+	
+	public Mark setMark(){
+		Mark mark = new Mark();
+		undoList.addFirst( mark );
+		markSet.add( mark );
+		return mark;
+	}
+	
+	public boolean rollBack( Mark toMark ){
+		if( markSet.contains( toMark ) ){
+			markSet.remove( toMark );
+			Command command = ( Command )undoList.removeFirst();
+			while( command != toMark ){
+				command.undoIt();
+				command = ( Command ) undoList.removeFirst();
+			}
+			
+			return true;
+		} 
+		
+		return false;
+	}
+	
+	public boolean commit( Mark toMark ){
+		if( markSet.contains( toMark ) ){
+			markSet.remove( toMark );
+			Command command = ( Command )undoList.removeLast();
+			while( command != toMark ){
+				command = (Command) undoList.removeLast();
+			}
+			return true;
+		}
+		
+		return false;
+	}
 	
 	static abstract private class Command{
 		abstract public void undoIt();
+	}
+	
+	static public class Mark extends Command{
+		public void undoIt(){ };
 	}
 	
 	static private class AddDeclarationCommand extends Command{
@@ -1249,6 +1293,53 @@ public class ParserSymbolTable {
 		private Declaration _decl;
 		private Declaration _context; 
 		private boolean 	_removeThis;
+	}
+	
+	static private class AddParentCommand extends Command{
+		public AddParentCommand( Declaration container, Declaration.ParentWrapper wrapper ){
+			_decl = container;
+			_wrapper = wrapper;
+		}
+		
+		public void undoIt(){
+			LinkedList parents = _decl.getParentScopes();
+			parents.remove( _wrapper );
+		}
+		
+		private Declaration _decl;
+		private Declaration.ParentWrapper _wrapper;
+	}
+	
+	static private class AddParameterCommand extends Command{
+		public AddParameterCommand( Declaration container, Declaration parameter ){
+			_decl = container;
+			_param = parameter;
+		}
+		
+		public void undoIt(){
+			_decl.getParameterList().remove( _param );
+			
+			String name = _param.getName();
+			if( name != null && !name.equals("") )
+			{	
+				_decl.getParameterMap().remove( name );
+			}
+		}
+		
+		private Declaration _decl;
+		private Declaration _param;
+	}
+	
+	static private class AddUsingDirectiveCommand extends Command{
+		public AddUsingDirectiveCommand( Declaration container, Declaration namespace ){
+			_decl = container;
+			_namespace = namespace;
+		}
+		public void undoIt(){
+			_decl.getUsingDirectives().remove( _namespace );
+		}
+		private Declaration _decl;
+		private Declaration _namespace;
 	}
 	
 	static private class LookupData
@@ -1437,7 +1528,11 @@ public class ParserSymbolTable {
 				_parentScopes = new LinkedList();
 			}
 			
-			_parentScopes.add( new ParentWrapper( parent, virtual ) );
+			ParentWrapper wrapper = new ParentWrapper( parent, virtual );
+			_parentScopes.add( wrapper );
+			
+			Command command = new AddParentCommand( this, wrapper );
+			pushCommand( command );
 		}
 	
 		public Map getContainedDeclarations(){
@@ -1506,6 +1601,9 @@ public class ParserSymbolTable {
 				if( !_parameterHash.containsKey( name ) )
 					_parameterHash.put( name, param );
 			}
+			
+			Command command = new AddParameterCommand( this, param );
+			pushCommand( command );
 		}
 		
 		public void addParameter( Declaration typeDecl, int cvQual, String ptrOperator, boolean hasDefault ){
@@ -1634,6 +1732,7 @@ public class ParserSymbolTable {
 			}
 			
 			Command command = new AddDeclarationCommand( obj, containing, addedThis );
+			pushCommand( command );
 		}
 		
 		/**
@@ -1801,6 +1900,9 @@ public class ParserSymbolTable {
 			}
 		
 			_usingDirectives.add( namespace );
+			
+			Command command = new AddUsingDirectiveCommand( this, namespace );
+			pushCommand( command );
 		}
 		
 		public LinkedList getUsingDirectives(){

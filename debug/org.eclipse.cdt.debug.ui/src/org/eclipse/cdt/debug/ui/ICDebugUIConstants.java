@@ -32,4 +32,9 @@ public interface ICDebugUIConstants
 	 * Memory view identifier (value <code>"org.eclipse.cdt.debug.ui.MemoryView"</code>).
 	 */
 	public static final String ID_MEMORY_VIEW = "org.eclipse.cdt.debug.ui.MemoryView"; //$NON-NLS-1$
+
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 150;
 }

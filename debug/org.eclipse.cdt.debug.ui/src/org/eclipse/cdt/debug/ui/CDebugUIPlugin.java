@@ -164,6 +164,16 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+
+	/**
+	 * Logs an internal error with the specified throwable
+	 * 
+	 * @param e the exception to be logged
+	 */	
+	public static void log( Throwable e )
+	{
+		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) );
+	}
 	
 	public ILaunchConfigurationTab getDebuggerPage(String debuggerID) {
 		if (fDebuggerPageMap == null) {	

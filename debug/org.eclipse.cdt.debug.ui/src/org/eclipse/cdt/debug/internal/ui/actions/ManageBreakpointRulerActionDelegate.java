@@ -38,7 +38,7 @@ public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
-	protected IAction createAction( ITextEditor editor, IVerticalRulerInfo rulerInfo )
+	public IAction createAction( ITextEditor editor, IVerticalRulerInfo rulerInfo )
 	{
 		return new ManageBreakpointRulerAction( rulerInfo, editor );
 	}

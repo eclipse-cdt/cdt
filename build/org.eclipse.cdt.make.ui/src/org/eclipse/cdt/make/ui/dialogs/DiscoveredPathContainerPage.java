@@ -41,13 +41,30 @@ import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementLabelProv
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementSorter;
 import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
  * A dialog page to manage discovered scanner configuration
@@ -86,6 +103,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 
 	private TreeListDialogField fDiscoveredContainerList;
 	private boolean dirty;
+	private CopyTextAction copyTextAction;
+	private HandlerSubmission submission;
 	
 	public DiscoveredPathContainerPage() {
 		super("DiscoveredScannerConfigurationContainerPage"); //$NON-NLS-1$
@@ -112,6 +131,15 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		fDiscoveredContainerList.setViewerSorter(new DiscoveredElementSorter());
 		dirty = false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		deregisterActionHandlers();
+		super.dispose();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#initialize(org.eclipse.cdt.core.model.ICProject, org.eclipse.cdt.core.model.IPathEntry[])
 	 */
@@ -289,6 +317,50 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		});
 
 		setControl(composite);
+		
+		fDiscoveredContainerList.selectFirstElement();
+		
+		// Create copy text action
+		Shell shell = fDiscoveredContainerList.getTreeViewer().getControl().getShell();
+		copyTextAction = new CopyTextAction(shell);
+		hookContextMenu();
+		registerActionHandler(shell, copyTextAction);
+	}
+
+	private void hookContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+//				if (copyTextAction.canBeApplied(fDiscoveredContainerList.getSelectedElements())) {
+					manager.add(copyTextAction);
+//				}
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(fDiscoveredContainerList.getTreeViewer().getControl());
+		fDiscoveredContainerList.getTreeViewer().getControl().setMenu(menu);
+	}
+
+	private void registerActionHandler(Shell shell, IAction action) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		
+		submission = new HandlerSubmission(null, shell, null,
+				CopyTextAction.ACTION_ID, new ActionHandler(action), Priority.MEDIUM);
+		commandSupport.addHandlerSubmission(submission);
+		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_DIALOG);
+	}
+
+	private void deregisterActionHandlers() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		
+		commandSupport.removeHandlerSubmission(submission);
+		contextSupport.unregisterShell(fDiscoveredContainerList.getTreeViewer().getControl().getShell());
 	}
 
 	/**
@@ -318,6 +390,9 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#selectionChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
 		 */
 		public void selectionChanged(TreeListDialogField field) {
+			if (copyTextAction != null) {
+				copyTextAction.canBeApplied(field.getSelectedElements());
+			}
 			containerPageSelectionChanged(field);
 		}
 
@@ -399,10 +474,12 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 				dirty |= deleteEntry();
 				break;
 		}
+		if (dirty) {
+			fDiscoveredContainerList.refresh();
+			fDiscoveredContainerList.setFocus();
+		}
 	}
-	/**
-	 * 
-	 */
+
 	private boolean moveUp() {
 		boolean rc = false;
 		List selElements = fDiscoveredContainerList.getSelectedElements();
@@ -425,14 +502,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 			}
 			parent.setChildren(children);
 		}
-		fDiscoveredContainerList.refresh();
 		fDiscoveredContainerList.postSetSelection(new StructuredSelection(selElements));
-		fDiscoveredContainerList.setFocus();
 		return rc;
 	}
-	/**
-	 * 
-	 */
+
 	private boolean moveDown() {
 		boolean rc = false;
 		List selElements = fDiscoveredContainerList.getSelectedElements();
@@ -457,14 +530,13 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 			}
 			parent.setChildren(children);
 		}
-		fDiscoveredContainerList.refresh();
 		fDiscoveredContainerList.postSetSelection(new StructuredSelection(selElements));
-		fDiscoveredContainerList.setFocus();
 		return rc;
 	}
+	
 	/**
-	 * 
-	 * @param remove
+	 * @param action
+	 * @return
 	 */
 	private boolean enableDisableEntry(int action) {
 		boolean rc = false;
@@ -479,13 +551,9 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 					rc = true;
 			}
 		}
-		fDiscoveredContainerList.refresh();
-		fDiscoveredContainerList.setFocus();
 		return rc;
 	}
-	/**
-	 * 
-	 */
+
 	private boolean deleteEntry() {
 		boolean rc = false;
 		List newSelection = new ArrayList();
@@ -533,9 +601,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 				}
 			}
 		}
-		fDiscoveredContainerList.refresh();
 		fDiscoveredContainerList.postSetSelection(new StructuredSelection(newSelection));
-		fDiscoveredContainerList.setFocus();
 		return rc;
 	}
 
@@ -543,15 +609,17 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 	 * @param field
 	 */
 	private void containerPageSelectionChanged(TreeListDialogField field) {
-		List selElements = fDiscoveredContainerList.getSelectedElements();
+		List selElements = field.getSelectedElements();
 		fDiscoveredContainerList.enableButton(IDX_UP, canMoveUpDown(selElements, DISC_UP));
 		fDiscoveredContainerList.enableButton(IDX_DOWN, canMoveUpDown(selElements, DISC_DOWN));
 		fDiscoveredContainerList.enableButton(IDX_DISABLE, canRemoveRestore(selElements));
 		fDiscoveredContainerList.enableButton(IDX_ENABLE, canRemoveRestore(selElements));
 		fDiscoveredContainerList.enableButton(IDX_DELETE, canDelete(selElements));
 	}
+
 	/**
 	 * @param selElements
+	 * @param direction
 	 * @return
 	 */
 	private boolean canMoveUpDown(List selElements, int direction) {
@@ -581,6 +649,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		}
 		return true;
 	}
+
 	/**
 	 * @param selElements
 	 * @return
@@ -600,6 +669,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 		}
 		return true;
 	}
+
 	/**
 	 * @param selElements
 	 * @return
@@ -615,5 +685,57 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Support for text copy/paste
+	 * 
+	 * @author vhirsl
+	 */
+	public class CopyTextAction extends Action {
+		static final String ACTION_ID = "org.eclipse.ui.edit.copy";	//$NON-NLS-1$
+		private Shell shell;
+		private Clipboard clipboard;
+		private String discoveredEntry = null;
+
+		public CopyTextAction(Shell shell) {
+			super(MakeUIPlugin.getResourceString("CopyDiscoveredPathAction.title")); //$NON-NLS-1$
+			setDescription(MakeUIPlugin.getResourceString("CopyDiscoveredPathAction.description")); //$NON-NLS-1$
+			setToolTipText(MakeUIPlugin.getResourceString("CopyDiscoveredPathAction.tooltip")); //$NON-NLS-1$
+			setActionDefinitionId(ACTION_ID);
+			clipboard = new Clipboard(shell.getDisplay());
+			this.shell = shell;
+		}
+
+		/**
+		 * @param selectedElements
+		 * @return
+		 */
+		boolean canBeApplied(List selElements) {
+			boolean rc = false;
+			if (selElements != null && selElements.size() == 1) {
+				DiscoveredElement elem = (DiscoveredElement) selElements.get(0);
+				switch (elem.getEntryKind()) {
+					case DiscoveredElement.INCLUDE_PATH:
+					case DiscoveredElement.SYMBOL_DEFINITION:
+						discoveredEntry = elem.getEntry();
+						rc = true;
+				}
+			}
+			setEnabled(rc);
+			return rc;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+			if (discoveredEntry != null) {
+				// copy to clipboard
+				clipboard.setContents(new Object[] {discoveredEntry}, 
+									  new Transfer[] {TextTransfer.getInstance()});
+				discoveredEntry = null;
+			}
+		}
 	}
 }

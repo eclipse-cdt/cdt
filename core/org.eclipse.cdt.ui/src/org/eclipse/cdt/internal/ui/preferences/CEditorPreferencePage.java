@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -58,6 +59,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
@@ -352,6 +354,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		WorkbenchHelp.setHelp(parent, ICHelpContextIds.C_EDITOR_PREF_PAGE);	
 	}
 
 	protected void handleListSelection() {

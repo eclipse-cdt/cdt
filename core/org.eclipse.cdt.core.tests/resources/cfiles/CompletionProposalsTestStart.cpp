@@ -1,9 +1,9 @@
 #include "CompletionProposalsTestStart.h"
 
-#define aMacro(x) x+1
+#define AMacro(x) x+1
 
 int aVariable = 0;
-void aFunction();
+bool aFunction();
 
 enum anEnumeration {
 	first,
@@ -11,8 +11,8 @@ enum anEnumeration {
 	third 
 };
 
-struct aStruct{
-	int aStructField = 0;
+struct AStruct{
+	int aStructField;
 };
 
 void foo(){

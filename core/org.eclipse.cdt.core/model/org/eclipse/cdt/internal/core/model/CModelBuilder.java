@@ -11,10 +11,8 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -23,19 +21,17 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -45,33 +41,30 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
-import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifierOwner;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.parser.ast.ASTArrayModifier;
+import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IProject;
 
 
 public class CModelBuilder {
 	
-	protected org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
-	protected Map newElements;
-	protected IQuickParseCallback quickParseCallback; 
-	protected IASTCompilationUnit compilationUnit; 
+	private org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
+	private Map newElements;
+	private IQuickParseCallback quickParseCallback; 
+	private IASTCompilationUnit compilationUnit; 
 		
 	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
 		this.translationUnit = tu ;
 		this.newElements = new HashMap();
 	}
 
-	protected IASTCompilationUnit parse( String code, boolean hasCppNature, boolean quick, boolean throwExceptionOnError ) throws ParserException
+	private IASTCompilationUnit parse( String code, boolean hasCppNature, boolean quick, boolean throwExceptionOnError ) throws ParserException
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
@@ -86,7 +79,7 @@ public class CModelBuilder {
 		return quickParseCallback.getCompilationUnit(); 
 	}
 	
-	protected IASTCompilationUnit parse( String code, boolean hasCppNature )throws ParserException
+	private IASTCompilationUnit parse( String code, boolean hasCppNature )throws ParserException
 	{
 		return parse( code, hasCppNature, true, true );
 	}
@@ -135,7 +128,7 @@ public class CModelBuilder {
 		
 	}	
 	
-	protected void generateModelElements(){
+	private void generateModelElements(){
 		Iterator i = quickParseCallback.iterateOffsetableElements();
 		while (i.hasNext()){
 			IASTOffsetableElement offsetable = (IASTOffsetableElement)i.next();
@@ -153,7 +146,7 @@ public class CModelBuilder {
 		} 
 	}	
 
-	protected void generateModelElements (Parent parent, IASTDeclaration declaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTDeclaration declaration) throws ASTNotImplementedException
 	{
 		if(declaration instanceof IASTNamespaceDefinition ) {
 			generateModelElements(parent, (IASTNamespaceDefinition) declaration);
@@ -174,7 +167,7 @@ public class CModelBuilder {
 		createSimpleElement(parent, declaration, false);
 	}
 	
-	protected void generateModelElements (Parent parent, IASTNamespaceDefinition declaration) throws ASTNotImplementedException{
+	private void generateModelElements (Parent parent, IASTNamespaceDefinition declaration) throws ASTNotImplementedException{
 		// IASTNamespaceDefinition 
 		IParent namespace = createNamespace(parent, declaration);
 		Iterator nsDecls = declaration.getDeclarations();
@@ -184,13 +177,13 @@ public class CModelBuilder {
 		}
 	}
 	
-	protected void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws ASTNotImplementedException
 	{
 		// IASTAbstractTypeSpecifierDeclaration 
 		CElement element = createAbstractElement(parent, abstractDeclaration, false);
 	}
 
-	protected void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws ASTNotImplementedException
 	{				
 		// Template Declaration 
 		IASTDeclaration declaration = (IASTDeclaration)templateDeclaration.getOwnedDeclaration();
@@ -200,7 +193,7 @@ public class CModelBuilder {
 			// set the element position		
 			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
 			// set the template parameters				
-			String[] parameterTypes = getTemplateParameters(templateDeclaration);
+			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);
 			ITemplate classTemplate = (ITemplate) element;
 			classTemplate.setTemplateParameterTypes(parameterTypes);				
 		}
@@ -212,12 +205,12 @@ public class CModelBuilder {
 			// set the element position		
 			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
 			// set the template parameters
-			String[] parameterTypes = getTemplateParameters(templateDeclaration);	
+			String[] parameterTypes = ASTUtil.getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
 		}
 	}
 
-	protected void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws ASTNotImplementedException
+	private void generateModelElements (Parent parent, IASTTypedefDeclaration declaration) throws ASTNotImplementedException
 	{
 		TypeDef typeDef = createTypeDef(parent, declaration);
 		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
@@ -266,7 +259,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected Include createInclusion(Parent parent, IASTInclusion inclusion){
+	private Include createInclusion(Parent parent, IASTInclusion inclusion){
 		// create element
 		Include element = new Include((CElement)parent, inclusion.getName(), !inclusion.isLocal());
 		element.setFullPathName(inclusion.getFullFileName());
@@ -280,7 +273,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected Macro createMacro(Parent parent, IASTMacro macro){
+	private Macro createMacro(Parent parent, IASTMacro macro){
 		// create element
 		org.eclipse.cdt.internal.core.model.Macro element = new  Macro(parent, macro.getName());
 		// add to parent
@@ -293,7 +286,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef){
+	private Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef){
 		// create element
 		String type = "namespace";
 		String nsName = (nsDef.getName() == null )  
@@ -310,7 +303,7 @@ public class CModelBuilder {
 		return element;
 	}
 
-	protected Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier){
+	private Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier){
 		// create element
 		String type = "enum";
 		String enumName = (enumSpecifier.getName() == null )
@@ -334,7 +327,7 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef){
+	private Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef){
 		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
 		// add to parent
 		enum.addChild(element);
@@ -346,7 +339,7 @@ public class CModelBuilder {
 		return element;		
 	}
 	
-	protected Structure createClass(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate){
+	private Structure createClass(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate){
 		// create element
 		String className = "";
 		String type = "";
@@ -413,13 +406,13 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	protected TypeDef createTypeDef(Parent parent, IASTTypedefDeclaration typeDefDeclaration){
+	private TypeDef createTypeDef(Parent parent, IASTTypedefDeclaration typeDefDeclaration){
 		// create the element
 		String name = typeDefDeclaration.getName();
         
         TypeDef element = new TypeDef( parent, name );
         
-        StringBuffer typeName = new StringBuffer(getType(typeDefDeclaration.getAbstractDeclarator()));
+        StringBuffer typeName = new StringBuffer(ASTUtil.getType(typeDefDeclaration.getAbstractDeclarator()));
 		element.setTypeName(typeName.toString());
 		
 		// add to parent
@@ -433,7 +426,7 @@ public class CModelBuilder {
 		return element;	
 	}
 
-	protected VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)throws ASTNotImplementedException
+	private VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)throws ASTNotImplementedException
     {
     	IASTAbstractDeclaration abstractDeclaration = varDeclaration.getAbstractDeclaration();
     	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate);
@@ -470,7 +463,7 @@ public class CModelBuilder {
 				}
 			}
 		}
-		element.setTypeName ( getType(varDeclaration.getAbstractDeclaration()) );
+		element.setTypeName ( ASTUtil.getType(varDeclaration.getAbstractDeclaration()) );
 		element.setConst(varDeclaration.getAbstractDeclaration().isConst());
 		element.setVolatile(varDeclaration.getAbstractDeclaration().isVolatile());
 		element.setStatic(varDeclaration.isStatic());
@@ -488,7 +481,7 @@ public class CModelBuilder {
 		return element;
 	}
 
-	protected FunctionDeclaration createFunctionSpecification(Parent parent, IASTFunction functionDeclaration, boolean isTemplate)
+	private FunctionDeclaration createFunctionSpecification(Parent parent, IASTFunction functionDeclaration, boolean isTemplate)
     {    	
 		String name = functionDeclaration.getName();
         if (name == null) {
@@ -497,7 +490,7 @@ public class CModelBuilder {
         } 
 
 		// get parameters types
-		String[] parameterTypes = getFunctionParameterTypes(functionDeclaration);
+		String[] parameterTypes = ASTUtil.getFunctionParameterTypes(functionDeclaration);
 		
 		FunctionDeclaration element = null;
 		
@@ -566,7 +559,7 @@ public class CModelBuilder {
 			}
 		}						
 		element.setParameterTypes(parameterTypes);
-		element.setReturnType( getType(functionDeclaration.getReturnType()) );
+		element.setReturnType( ASTUtil.getType(functionDeclaration.getReturnType()) );
 		element.setStatic(functionDeclaration.isStatic());
 
 		// add to parent
@@ -583,188 +576,4 @@ public class CModelBuilder {
 		return element;
 	}
 
-	private String[] getTemplateParameters(Iterator templateParams){
-		List paramList = new ArrayList();
-		while (templateParams.hasNext()){
-			StringBuffer paramType = new StringBuffer();
-			IASTTemplateParameter parameter = (IASTTemplateParameter)templateParams.next();
-			if((parameter.getIdentifier() != null) && (parameter.getIdentifier().length() != 0))
-			{
-				paramList.add(parameter.getIdentifier().toString());
-			}
-			else
-			{				
-				IASTTemplateParameter.ParamKind kind = parameter.getTemplateParameterKind();
-				if(kind == IASTTemplateParameter.ParamKind.CLASS){
-					paramType.append("class");
-				}
-				if(kind == IASTTemplateParameter.ParamKind.TYPENAME){
-					paramType.append("typename");
-				}
-				if(kind == IASTTemplateParameter.ParamKind.TEMPLATE_LIST){
-					paramType.append("template<");
-					String[] subParams = getTemplateParameters(parameter.getTemplateParameters());
-					int p = 0; 
-					if ( subParams.length > 0)
-						paramType.append(subParams[p++]);
-					while( p < subParams.length){
-						paramType.append(", ");
-						paramType.append(subParams[p++]);							
-					}
-					paramType.append(">");
-				}
-				if(kind == IASTTemplateParameter.ParamKind.PARAMETER){
-					paramType.append(getType(parameter.getParameterDeclaration()));				
-				}
-				paramList.add(paramType.toString());
-			} // end else
-		}// end while
-		String[] parameterTypes = new String[paramList.size()];
-		for(int j=0; j<paramList.size(); ++j){
-			parameterTypes[j] = (String) paramList.get(j);			
-		}
-		return parameterTypes;		
-		
-	}	
-	private String[] getTemplateParameters(IASTTemplateDeclaration templateDeclaration){
-		// add the parameters
-		Iterator i = templateDeclaration.getTemplateParameters();
-		return getTemplateParameters(i);
-	}
-		
-	private String getType(IASTAbstractDeclaration declaration)
-	{
-		StringBuffer type = new StringBuffer();
-			
-		// get type from declaration
-		type.append(getDeclarationType(declaration));
-		type.append(getPointerOperation(declaration));
-		type.append(getArrayQualifiers(declaration));
-		
-		type.append(getPointerToFunctionType(declaration));
-		return type.toString();
-	}
-	    
-	private String getPointerToFunctionType(IASTAbstractDeclaration declaration){
-		StringBuffer type = new StringBuffer();
-		ASTPointerOperator po = declaration.getPointerToFunctionOperator();
-		if(po != null){
-			type.append("(");
-			type.append(getPointerOperator(po));
-			type.append(")");
-			String[] parameters =getParameterTypes(declaration.getParameters()); 
-			type.append(getParametersString(parameters));
-		}
-		return type.toString();
-	}
-	private String getDeclarationType(IASTAbstractDeclaration declaration){
-		StringBuffer type = new StringBuffer();
-		
-		if(declaration.isConst())
-			type.append("const ");
-		IASTTypeSpecifier typeSpecifier = declaration.getTypeSpecifier();
-		if(typeSpecifier instanceof IASTElaboratedTypeSpecifier){
-			IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) typeSpecifier;
-			type.append(getElaboratedTypeSignature(elab));
-		}else if(typeSpecifier instanceof IASTSimpleTypeSpecifier){		
-			IASTSimpleTypeSpecifier simpleSpecifier = (IASTSimpleTypeSpecifier) typeSpecifier;		
-			type.append(simpleSpecifier.getTypename());
-		}
-		return type.toString();	
-	}
-	
-	private String getElaboratedTypeSignature(IASTElaboratedTypeSpecifier elab){
-		StringBuffer type = new StringBuffer();
-		ASTClassKind t = elab.getClassKind();
-		if( t == ASTClassKind.CLASS){
-			type.append("class");
-		} 
-		else if( t == ASTClassKind.STRUCT){
-			type.append("struct");
-		}
-		else if( t == ASTClassKind.UNION){
-			type.append("union");
-		}
-		else if( t == ASTClassKind.STRUCT){
-			type.append("enum");
-		}
-		type.append(" ");
-		type.append(elab.getName().toString());
-		return type.toString();
-	}
-	
-	private String getPointerOperation(IASTAbstractDeclaration declaration){		
-		StringBuffer pointerString = new StringBuffer();
-		Iterator i = declaration.getPointerOperators();
-		while(i.hasNext()){
-			ASTPointerOperator po = (ASTPointerOperator) i.next();
-			pointerString.append(getPointerOperator(po));
-		}
-		return pointerString.toString();
-	}
-	
-	private String getPointerOperator(ASTPointerOperator po){
-		String pointerString ="";
-		if(po == ASTPointerOperator.POINTER)
-			pointerString = ("*");
-
-		if(po == ASTPointerOperator.REFERENCE)
-			pointerString =("&");
-
-		if(po == ASTPointerOperator.CONST_POINTER)
-			pointerString =("* const");
-
-		if(po == ASTPointerOperator.VOLATILE_POINTER)
-			pointerString =("* volatile");
-			
-		return pointerString;						
-	}
-	
-	private String getArrayQualifiers(IASTAbstractDeclaration declaration){		
-		StringBuffer arrayString = new StringBuffer();
-		Iterator i  = declaration.getArrayModifiers(); 
-		while (i.hasNext()){
-			ASTArrayModifier q = (ASTArrayModifier) i.next();
-			arrayString.append("[]");				
-		}
-		return arrayString.toString();
-	}
-	
-    private String[] getFunctionParameterTypes(IASTFunction functionDeclaration)
-    {
-    	Iterator parameters = functionDeclaration.getParameters();
-    	return getParameterTypes(parameters);
-    }
-
-	private String[] getParameterTypes(Iterator parameters){
-		List paramList = new ArrayList();
-		while (parameters.hasNext()){
-			IASTParameterDeclaration param = (IASTParameterDeclaration)parameters.next();
-			paramList.add(getType(param));
-		}
-		String[] parameterTypes = new String[paramList.size()];
-		for(int i=0; i<paramList.size(); ++i){
-			parameterTypes[i] = (String)paramList.get(i); 
-		}
-		return parameterTypes;			
-	}
-	private String getParametersString(String[] parameterTypes) 
-	{
-		StringBuffer parameters = new StringBuffer("");
-		
-		if ((parameterTypes != null) && (parameterTypes.length > 0)) {
-			parameters.append("(");
-			int i = 0;
-			parameters.append(parameterTypes[i++]);
-			while (i < parameterTypes.length) {
-				parameters.append(", ");
-				parameters.append(parameterTypes[i++]);
-			}
-			parameters.append(")");
-		} else {
-			if (parameterTypes != null) parameters.append("()");
-		}
-		
-		return parameters.toString();
-	}	    
 }

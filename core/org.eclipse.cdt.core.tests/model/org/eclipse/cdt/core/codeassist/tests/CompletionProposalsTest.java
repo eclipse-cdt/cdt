@@ -108,7 +108,7 @@ public class CompletionProposalsTest  extends TestCase{
 			TranslationUnit tu = new TranslationUnit(fCProject, bodyFile);
 			String buffer = tu.getBuffer().getContents();
 			Document document = new Document(buffer);
-			int pos = buffer.indexOf(" a ") + 2; //255;
+			int pos = buffer.indexOf(" a ") + 2;
 			int length = 0;
 			CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
 			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, length, tu);
@@ -126,7 +126,7 @@ public class CompletionProposalsTest  extends TestCase{
 						assertEquals(displayString, "aVariable");
 					break;	
 					case 1:
-						assertEquals(displayString, "aFunction() void");
+						assertEquals(displayString, "aFunction() bool");
 					break;	
 					case 2:
 						assertEquals(displayString, "aClass");
@@ -135,10 +135,10 @@ public class CompletionProposalsTest  extends TestCase{
 						assertEquals(displayString, "anotherClass");
 					break;	
 					case 4:
-						assertEquals(displayString, "aStruct");
+						assertEquals(displayString, "AStruct");
 					break;	
 					case 5:
-						assertEquals(displayString, "aMacro");
+						assertEquals(displayString, "AMacro");
 					break;	
 					case 6:
 						assertEquals(displayString, "anEnumeration");

@@ -1,3 +1,14 @@
+<<<<<<< ChangeLog
+<<<<<<< ChangeLog
+2003-09-19 Hoda Amer
+	Solutions to 
+	bug#43162 : Code Assist not showing the right return value
+	Bug#43145 : foo function still showing in Code Assist even if "f" is deleted
+	Bug#42810 : Code Assist adding characters after pressing <enter>
+	Bug#42861 : Code Assist should be case insensitive. 
+	
+=======
+=======
 2003-09-22 Andrew Niefer
 	fix for bug 43327 Code Complete finds local variables  
 	- update calls to SearchEngine.search.  CodeCompletion passes true for excludeLocalDeclarations
@@ -15,6 +26,7 @@
 
 	* plugin.xml
 
+>>>>>>> 1.181
 2003-09-21 Alain Magloire
 
 	Patch contributed by Keith Campbell.
@@ -43,6 +55,7 @@
 
 	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmPartitionScanner.java
 
+>>>>>>> 1.179
 2003-09-18 Hoda Amer
 	Solution to bug#42611 : New Class Wizard should be hidden for C projects
 		

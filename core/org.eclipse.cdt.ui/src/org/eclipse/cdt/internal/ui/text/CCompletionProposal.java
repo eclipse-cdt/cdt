@@ -165,11 +165,11 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		int     functionBracketIndex;
 		boolean isBeforeBracket;
 		String  replacementStringCopy = fReplacementString;
-
+		fReplacementLength = offset - fReplacementOffset;
 		//If just providing context information, then don't move the cursor
-		if(offset != (fReplacementOffset + fReplacementLength)) {
-			fCursorPosition = offset - fReplacementOffset; 
-		}
+//		if(offset != (fReplacementOffset + fReplacementLength)) {
+//			fCursorPosition = offset - fReplacementOffset; 
+//		}
 		
 		try {
 			functionBracketIndex = fReplacementString.indexOf("()");

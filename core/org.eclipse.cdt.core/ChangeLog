@@ -1,3 +1,12 @@
+2003-09-19 Hoda Amer
+	Solution to bug#43162 : Code Assist not showing the right return value:
+	Saved a function return value string in the BasicSearchMatch object.
+	Created a new package org.eclipse.cdt.internal.core.parser.util and 
+	added ASTUtil class with static methods to help convert an ASTFunction 
+	return type from IASTAbstractDeclaration to String. Note that this was
+	previously implemented in the CModelBuilder. I just moved it to a common 
+	library for others (BasicSearchMatch) to use.
+	
 2003-09-16 Alain Magloire
 
 	Putting the draft work to do a special binary parser

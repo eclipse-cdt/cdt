@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -110,6 +111,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		
 		if( offsetable instanceof IASTFunction ){
 			result.name += getParameterString( (IASTFunction) offsetable );
+			result.returnType = ASTUtil.getType(((IASTFunction)offsetable).getReturnType());
 		}
 		
 		setElementInfo( result, offsetable );

@@ -6,6 +6,6 @@ public:
 
 class anotherClass {
 public:
-	int anotherField = 0;
+	int anotherField;
 	void anotherMethod();
 };

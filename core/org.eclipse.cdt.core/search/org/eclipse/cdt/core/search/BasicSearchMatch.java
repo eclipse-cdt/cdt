@@ -30,6 +30,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	public BasicSearchMatch(BasicSearchMatch basicMatch) {
 		name 		= basicMatch.name;
 		parentName 	= basicMatch.parentName;
+		returnType  = basicMatch.returnType;
 		resource 	= basicMatch.resource;
 		path 		= basicMatch.path;
 		startOffset = basicMatch.startOffset;
@@ -41,6 +42,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		
 		hashString += name;
 		hashString += ":" + parentName;
+		hashString += ":" + returnType;
 		hashString += ":" + getLocation().toString();
 		hashString += ":" + startOffset + ":" + endOffset;
 		hashString += ":" + type + ":" + visibility;
@@ -62,7 +64,9 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		if( type != match.getElementType() || visibility != match.getVisibility() )
 			return false;
 			
-		if( !name.equals( match.getName() ) || !parentName.equals( match.getParentName() ) )
+		if( !name.equals( match.getName() ) 
+		 || !parentName.equals( match.getParentName() )
+		 || !returnType.equals( match.getReturnType() ) )
 			return false; 
 		
 		IPath thisPath = getLocation();
@@ -90,14 +94,15 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		str1 += " " + getStartOffset()+ " ";
 		str2 += " " + match.getStartOffset()+ " ";
 		
-		str1 += getName() + " " + getParentName();
-		str2 += match.getName() + " " + match.getParentName();
+		str1 += getName() + " " + getParentName()+ " " + getReturnType();
+		str2 += match.getName() + " " + match.getParentName()+ " " + getReturnType();
 		
 		return str1.compareTo( str2 );
 	}
 	
 	public String name 		  = null;
 	public String parentName  = null;
+	public String returnType;
 	
 	public IResource resource = null;
 	public IPath     path 	  = null;
@@ -126,6 +131,10 @@ public class BasicSearchMatch implements IMatch, Comparable {
 
 	public String getParentName() {
 		return parentName;
+	}
+
+	public String getReturnType() {
+		return returnType;
 	}
 
 	public IResource getResource() {
@@ -205,6 +214,13 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	 */
 	public void setParentName(String string) {
 		parentName = string;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setReturnType(String string) {
+		returnType = string;
 	}
 
 	/**

@@ -5,6 +5,12 @@
 	clearly advertise.  Eclipse uses a tool to externalize strings,
 	to prevent this, strings need a comment "//$NON-NLS-1$".
 
+	This also incorporated some fixes by Alex Chapiro, in 
+	Spawner.Reaper Thread an exception can be thrown for
+	example if the application does not exist, the reaper
+	thread will catch the IOException an notify spawner of
+	the failure by setting pid = -1;
+
 	* utils/../utils/pty/PTYInputStream.java (close0):
 	Advertise that we can throw an IOException.
 	* utils/../utils/pty/PTYOutputStream.java (close): Put

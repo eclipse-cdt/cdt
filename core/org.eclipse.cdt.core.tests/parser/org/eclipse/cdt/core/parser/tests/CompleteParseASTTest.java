@@ -1867,4 +1867,23 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	
 
 	}
+    
+    public void testBug64010() throws Exception
+	{
+    	Writer writer = new StringWriter();
+    	writer.write( " #define ONE	else if (0) { } \n");
+    	writer.write( " #define TEN	ONE ONE ONE ONE ONE ONE ONE ONE ONE ONE \n ");
+    	writer.write( " #define HUN	TEN TEN TEN TEN TEN TEN TEN TEN TEN TEN \n ");
+    	writer.write( " #define THOU	HUN HUN HUN HUN HUN HUN HUN HUN HUN HUN \n");
+		writer.write("void foo()                                                ");
+		writer.write("{                                                         ");
+		writer.write("   if (0) { }                                             ");
+		writer.write("   /* 11,000 else if's.  */                               ");
+		writer.write("   THOU THOU THOU THOU THOU THOU THOU THOU THOU THOU THOU ");
+		writer.write("}                                                         ");
+		
+		Iterator d = parse( writer.toString() ).getDeclarations();
+	
+		IASTFunction f = (IASTFunction) d.next();
+	}
 }

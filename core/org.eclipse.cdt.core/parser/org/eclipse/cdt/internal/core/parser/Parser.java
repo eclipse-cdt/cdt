@@ -2855,7 +2855,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                 if (LT(1) == IToken.t_else)
                 {
                     consume( IToken.t_else );
-                    if( LT(1) != IToken.tLBRACE )
+                    if( LT(1) == IToken.t_if ){
+                    	//an else if, return and get the rest of the else if as the next statement instead of recursing
+                    	cleanupLastToken();
+                    	return;
+                    } else if( LT(1) != IToken.tLBRACE )
 						singleStatementScope(scope);
                     else
                     	statement( scope );

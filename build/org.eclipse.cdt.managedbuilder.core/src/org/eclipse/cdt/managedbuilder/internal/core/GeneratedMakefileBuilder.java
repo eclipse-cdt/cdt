@@ -94,12 +94,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		String statusMsg = ManagedBuilderCorePlugin.getFormattedString(START, getProject().getName());
+		IProject[] deps = getProject().getReferencedProjects();
 		if (statusMsg != null) {
 			monitor.subTask(statusMsg);
 		}
 		
 		// Get the build information
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
+		if (info == null) {
+			return deps;
+		}
 
 		if (kind == IncrementalProjectBuilder.FULL_BUILD || info.isDirty()) {
 			fullBuild(monitor, info);
@@ -124,7 +128,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		
 		// Scrub the build info of all the projects participating in the build
 		info.setDirty(false);
-		IProject[] deps = getProject().getReferencedProjects();
 		for (int i = 0; i < deps.length; i++) {
 			IProject project = deps[i];
 			IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(project);

@@ -23,8 +23,17 @@ public interface IOption extends IBuildObject {
 	public static final int PREPROCESSOR_SYMBOLS = 5;
 	public static final int LIBRARIES = 6;
 	public static final int OBJECTS = 7;
+
+	// Browse type
+	public static final int BROWSE_NONE = 0;
+	public static final String NONE = "none";	//$NON-NLS-1$
+	public static final int BROWSE_FILE = 1;
+	public static final String FILE = "file";	//$NON-NLS-1$
+	public static final int BROWSE_DIR = 2;
+	public static final String DIR = "directory";	//$NON-NLS-1$
 	
 	// Schema attribute names for option elements
+	public static final String BROSWE_TYPE = "browseType";	//$NON-NLS-1$
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
@@ -63,6 +72,11 @@ public interface IOption extends IBuildObject {
 	 * @throws BuildException
 	 */
 	public boolean getBooleanValue() throws BuildException;
+	
+	/**
+	 * @return
+	 */
+	public int getBrowseType();
 	
 	/**
 	 * Answers an array of strings containing the built-in values 

@@ -110,6 +110,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public void addTarget(ITarget target) {
 		getTargetMap().put(target.getId(), target);
 		getTargets().add(target);
+		setDirty(true);
 	}
 
 	/* (non-Javadoc)

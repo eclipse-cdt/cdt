@@ -335,6 +335,13 @@ public class OptionReference implements IOption {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseType()
+	 */
+	public int getBrowseType() {
+		return option.getBrowseType();
+	}
+
 	private List getBuiltInList() {
 		if (builtIns == null) {
 			builtIns = new ArrayList();

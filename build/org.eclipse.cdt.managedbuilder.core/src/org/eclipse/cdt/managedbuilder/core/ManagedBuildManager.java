@@ -12,8 +12,8 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,12 +23,17 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
@@ -297,37 +302,61 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void saveBuildInfo(IProject project, boolean force) {
 		// Create document
-		Document doc = new DocumentImpl();
-		Element rootElement = doc.createElement(ROOT_ELEM_NAME);
-		doc.appendChild(rootElement);
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.newDocument();
+			Element rootElement = doc.createElement(ROOT_ELEM_NAME);	
+			doc.appendChild(rootElement);
 
-		// Save the build info
-		ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
-		if (buildInfo != null && (force == true || buildInfo.isDirty())) {
-			buildInfo.serialize(doc, rootElement);
+			// Save the build info
+			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
+			if (buildInfo != null && (force == true || buildInfo.isDirty())) {
+				buildInfo.serialize(doc, rootElement);
 		
-			// Save the document
-			ByteArrayOutputStream s = new ByteArrayOutputStream();
-			OutputFormat format = new OutputFormat();
-			format.setIndenting(true);
-			format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-			String xml = null;
-			try {
-				Serializer serializer
-				= SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format); //$NON-NLS-1$
-				serializer.asDOMSerializer().serialize(doc);
-				xml = s.toString("UTF8"); //$NON-NLS-1$		
-				IFile rscFile = project.getFile(FILE_NAME);
-				InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-				// update the resource content
-				if (rscFile.exists()) {
-					rscFile.setContents(inputStream, IResource.FORCE, null);
+				// Transform the document to something we can save in a file
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");	//$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
+				DOMSource source = new DOMSource(doc);
+				StreamResult result = new StreamResult(stream);
+				transformer.transform(source, result);
+				
+				// Save the document
+				IFile projectFile = project.getFile(FILE_NAME);
+				InputStream inputStream = new ByteArrayInputStream(stream.toByteArray());
+				if (projectFile.exists()) {
+					projectFile.setContents(inputStream, IResource.FORCE, null);
 				} else {
-					rscFile.create(inputStream, IResource.FORCE, null);
+					projectFile.create(inputStream, IResource.FORCE, null);
 				}
-			} catch (Exception e) {
-				return;
+
+				// Close the streams
+				stream.close();
+				inputStream.close();
 			}
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// The save failed
+			e.printStackTrace();
+		} catch (CoreException e) {
+			// Save to IFile failed
+			e.printStackTrace();
 		}
 	}
 
@@ -411,7 +440,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.owner_not_project")); //$NON-NLS-1$
 		}
 		
-		// Passed validation
+		// Passed validation so create the target.
 		return new Target(resource, parentTarget);
 	}
 	

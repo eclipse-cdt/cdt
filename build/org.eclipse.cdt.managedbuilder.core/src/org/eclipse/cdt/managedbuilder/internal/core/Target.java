@@ -87,7 +87,7 @@ public class Target extends BuildObject implements ITarget {
 		}
 		setId(owner.getName() + "." + parent.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
 		setName(parent.getName());
-		this.artifactName = parent.getArtifactName();
+		setArtifactName(parent.getArtifactName());
 		this.binaryParserId = parent.getBinaryParserId();
 		this.defaultExtension = parent.getArtifactExtension();
 		this.isTest = parent.isTestTarget();
@@ -226,6 +226,9 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
@@ -282,6 +285,10 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#resetMakeCommand()
 	 */
 	public void resetMakeCommand() {
+		// Flag target as dirty if the reset actually changes something
+		if (makeCommand != null) {
+			setDirty(true);
+		}
 		makeCommand = null;
 		makeArguments = null;
 	}

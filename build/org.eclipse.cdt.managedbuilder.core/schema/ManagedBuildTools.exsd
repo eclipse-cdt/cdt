@@ -221,6 +221,23 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="browseType">
+            <annotation>
+               <documentation>
+                  This value is used for list (and related) options only. If you need a list option to prompt the user to browse for a file or directory when adding a new value, set the value of the attribute accordingly. By default the value is treated as no browsing needed.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="none">
+                  </enumeration>
+                  <enumeration value="file">
+                  </enumeration>
+                  <enumeration value="directory">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 
@@ -323,6 +340,10 @@ Additional special types exist to flag options of special relevance to the build
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="listOptionValue"/>
+            <element ref="enumeratedOptionValue"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>

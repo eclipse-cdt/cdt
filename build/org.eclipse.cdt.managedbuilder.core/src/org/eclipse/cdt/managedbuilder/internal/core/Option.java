@@ -30,6 +30,7 @@ public class Option extends BuildObject implements IOption {
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	// Private bookeeping attributes
+	private int browseType;
 	private List builtIns;
 	private IOptionCategory category;
 	private String command;
@@ -136,6 +137,17 @@ public class Option extends BuildObject implements IOption {
 			default :
 				break;
 		}
+		
+		// Determine if there needs to be a browse button
+		String browseTypeStr = element.getAttribute(BROSWE_TYPE);
+		if (browseTypeStr == null || browseTypeStr.equals(NONE)) {
+			browseType = BROWSE_NONE;
+		} else if (browseTypeStr.equals(FILE)) {
+			browseType = BROWSE_FILE;
+		} else if (browseTypeStr.equals(DIR)) {
+			browseType = BROWSE_DIR;
+		}
+		
 	}
 
 	public void resolveReferences() {
@@ -164,6 +176,13 @@ public class Option extends BuildObject implements IOption {
 		return bool.booleanValue();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseType()
+	 */
+	public int getBrowseType() {
+		return browseType;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
 	 */

@@ -12,6 +12,7 @@ package org.eclipse.cdt.make.internal.ui.properties;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
@@ -126,11 +127,8 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		return super.isValid();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferences()
-	 */
 	public Preferences getPreferences() {
-		return null;
+		return MakeCorePlugin.getDefault().getPluginPreferences();
 	}
 
 }

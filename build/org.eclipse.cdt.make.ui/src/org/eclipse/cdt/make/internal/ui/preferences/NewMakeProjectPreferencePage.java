@@ -92,7 +92,7 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferences()
 	 */
 	public Preferences getPreferences() {
-		return MakeUIPlugin.getDefault().getPluginPreferences();
+		return MakeCorePlugin.getDefault().getPluginPreferences();
 	}
 
 }

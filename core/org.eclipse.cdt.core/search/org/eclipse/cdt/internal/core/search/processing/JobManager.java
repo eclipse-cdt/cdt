@@ -13,8 +13,10 @@
  */
 package org.eclipse.cdt.internal.core.search.processing;
 
+import java.util.HashSet;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.search.indexing.IndexRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -38,7 +40,8 @@ public abstract class JobManager implements Runnable {
 	public boolean activated = false;
 	
 	private int awaitingClients = 0;
-
+	
+	protected HashSet jobSet = new HashSet();
 	public static void verbose(String log) {
 		System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
 	}
@@ -320,6 +323,11 @@ public abstract class JobManager implements Runnable {
 			return;
 		}
 
+		IndexRequest tempJob = null;
+		if (job instanceof IndexRequest)
+			tempJob = (IndexRequest) job;
+		
+		
 		// append the job to the list of ones to process later on
 		int size = awaitingJobs.length;
 		if (++jobEnd == size) { // when growing, relocate jobs starting at position 0
@@ -385,6 +393,7 @@ public abstract class JobManager implements Runnable {
 						//if (status == FAILED) request(job);
 					} finally {
 						executing = false;
+						jobFinishedNotification(currentJob());
 						if (VERBOSE) {
 							JobManager.verbose("FINISHED background job - " + job); //$NON-NLS-1$
 						}
@@ -447,5 +456,7 @@ public abstract class JobManager implements Runnable {
 		}
 		return buffer.toString();
 	}	
+	
+	protected abstract void jobFinishedNotification(IJob job);
 
 }

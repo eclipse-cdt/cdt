@@ -1,3 +1,8 @@
+2004-04-20 Bogdan Gheorghe
+	Added clear() to CSearchResultPage to solve refresh problem on Linux.
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
+	
 2004-04-20 Alain Magloire
 
 	In Eclipse-3.0 things changes to set partition scanner

@@ -84,7 +84,8 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#clear()
 	 */
 	protected void clear() {
-		// TODO Auto-generated method stub
+		if (_contentProvider!=null)
+			_contentProvider.clear();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)

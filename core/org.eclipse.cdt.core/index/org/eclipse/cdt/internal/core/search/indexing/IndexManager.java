@@ -111,6 +111,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public void addSource(IFile resource, IPath indexedContainer){
 		if (CCorePlugin.getDefault() == null) return;	
 		AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
+		
+		if (!jobSet.add(job.resource.getLocation()))
+			return;
+		
 		if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
 			// reduces the chance that the file is open later on, preventing it from being deleted
 			if (!job.initializeContents()) return;
@@ -595,5 +599,16 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public TimeOut getTimeout() {
 		// TODO Auto-generated method stub
 		return this.timeoutThread ;
-	}	
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.search.processing.JobManager#jobFinishedNotification(org.eclipse.cdt.internal.core.search.processing.IJob)
+	 */
+	protected void jobFinishedNotification(IJob job) {
+	
+		if (job instanceof AddCompilationUnitToIndex){
+			AddCompilationUnitToIndex tempJob = (AddCompilationUnitToIndex) job;
+			jobSet.remove(tempJob.resource.getLocation());
+		}
+	}
+
 }

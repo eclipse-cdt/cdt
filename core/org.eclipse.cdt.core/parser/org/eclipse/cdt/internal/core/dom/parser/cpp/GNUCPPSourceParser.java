@@ -1623,15 +1623,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       int startingOffset = LA(1).getOffset();
       consume();
       consume(IToken.tLPAREN);
-      IASTExpression operand = expression();
+      IASTExpression operand = null;
+      if( LT(1) != IToken.tRPAREN )
+          operand = expression();
       int l = consume(IToken.tRPAREN).getEndOffset();
       ICPPASTSimpleTypeConstructorExpression result = createSimpleTypeConstructorExpression();
       ((ASTNode) result).setOffsetAndLength(startingOffset, l - startingOffset);
       result.setSimpleType(operator);
-      result.setInitialValue(operand);
-      operand.setParent(result);
-      operand
-            .setPropertyInParent(ICPPASTSimpleTypeConstructorExpression.INITIALIZER_VALUE);
+      if( operand != null )
+      {
+          result.setInitialValue(operand);
+          operand.setParent(result);
+          operand
+                .setPropertyInParent(ICPPASTSimpleTypeConstructorExpression.INITIALIZER_VALUE);
+      }
       return result;
    }
 

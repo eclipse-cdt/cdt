@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
@@ -3267,6 +3268,12 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(((ICPPASTQualifiedName)col.getName(16)).isConversionOrOperator());
     }
 
-	
+	public void testBug88662() throws Exception {
+        IASTTranslationUnit tu = parse( "int foo() {  return int();}", ParserLanguage.CPP ); //$NON-NLS-1$
+        IASTReturnStatement returnStatement = (IASTReturnStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[0];
+        ICPPASTSimpleTypeConstructorExpression expression = (ICPPASTSimpleTypeConstructorExpression) returnStatement.getReturnValue();
+        assertEquals( expression.getInitialValue(), null );
+        assertEquals( expression.getSimpleType(), ICPPASTSimpleTypeConstructorExpression.t_int );
+    }
 }
 

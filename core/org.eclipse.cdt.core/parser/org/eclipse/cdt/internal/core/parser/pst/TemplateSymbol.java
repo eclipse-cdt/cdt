@@ -307,7 +307,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			//in defining the explicit specialization for a member function, the factory would have set 
 			//the specialization as the definition of the original declaration, which it is not
 			if( found.isForwardDeclaration() && found.getForwardSymbol() == symbol )
-				found.setTypeSymbol( null );
+				found.setForwardSymbol( null );
 			
 			//TODO, once we can instantiate members as we need them instead of at the same time as the class
 			//then found should stay as the instance, for now though, we need the original (not 100% correct

@@ -1090,11 +1090,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				if( !alreadyReturned.contains( extensible ) ){
 					if( extensible instanceof ISymbol ){
 						ISymbol symbol = (ISymbol) extensible;
-						if( symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null &&
-							symbol.getTypeSymbol().getContainingSymbol() == ContainerSymbol.this )
+						if( symbol.isForwardDeclaration() && symbol.getForwardSymbol() != null &&
+							symbol.getForwardSymbol().getContainingSymbol() == ContainerSymbol.this )
 						{
-							alreadyReturned.add( symbol.getTypeSymbol() );
-							return symbol.getTypeSymbol();
+							alreadyReturned.add( symbol.getForwardSymbol() );
+							return symbol.getForwardSymbol();
 						}
 					} else if( extensible instanceof IUsingDeclarationSymbol ){
 						IUsingDeclarationSymbol using = (IUsingDeclarationSymbol) extensible;

@@ -14,9 +14,6 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo.PtrOp;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo.eType;
 
@@ -27,7 +24,6 @@ public class TypeInfoProvider
     private static final int TYPE     = 1;
     private static final int TEMPLATE = 2;
     private static final int POOL_SIZE = 16;
-    private static final Map providerMap = new HashMap();
     
 	private final ITypeInfo [][] pool;
 	private final boolean   [][] free;
@@ -42,24 +38,17 @@ public class TypeInfoProvider
 	    
 		for( int i = 0; i < POOL_SIZE; i++ )
 		{
-			pool[i] = new ITypeInfo[] { new BasicTypeInfo(), new TypeInfo(), new TemplateParameterTypeInfo() };
+			pool[i] = new ITypeInfo[] { newInfo( ITypeInfo.t_void, true ), 
+			        					newInfo( ITypeInfo.t_type, true ),
+			        					newInfo( ITypeInfo.t_templateParameter, true ) };
 			free[i] = new boolean []  { true, true, true };
 		}
 	}	
 
-	static public TypeInfoProvider getProvider( ParserSymbolTable table ){
-	    if( providerMap.containsKey( table ) )
-	        return (TypeInfoProvider) providerMap.get( table );
-	    
-	    TypeInfoProvider provider = new TypeInfoProvider();
-	    providerMap.put( table, provider );
-	    return provider;
-	}
-
 	public ITypeInfo getTypeInfo( eType type )
 	{
 	    int idx = BASIC;
-	    if( type == ITypeInfo.t_type )					
+	    if( type == ITypeInfo.t_type || type == ITypeInfo.t_enumerator )					
 	        idx = TYPE;
 	    else if( type == ITypeInfo.t_templateParameter ) 
 	        idx = TEMPLATE;
@@ -196,7 +185,7 @@ public class TypeInfoProvider
      * @param def
      * @return
      */
-    public static ITypeInfo newTypeInfo( eType type, int bits, ISymbol symbol, PtrOp op, Object def ) {
+    public final static ITypeInfo newTypeInfo( eType type, int bits, ISymbol symbol, PtrOp op, Object def ) {
         ITypeInfo newInfo = newInfo( type, def != null );
         
         newInfo.setType( type );
@@ -209,7 +198,7 @@ public class TypeInfoProvider
     /**
      * @return
      */
-    public static ITypeInfo newTypeInfo() {
+    public final static ITypeInfo newTypeInfo() {
         return new BasicTypeInfo();
     }
 
@@ -250,10 +239,12 @@ public class TypeInfoProvider
         if( templateParamType != null )
             newInfo.setTemplateParameterType( templateParamType );
         
+        //clear the fields
+        beginTypeConstruction();
         return newInfo;
     }   
     
-    private static ITypeInfo newInfo( eType type, boolean def ){
+    private final static ITypeInfo newInfo( eType type, boolean def ){
         ITypeInfo newInfo = null;
         if( type == ITypeInfo.t_type || type == ITypeInfo.t_enumerator ){
             if( def )

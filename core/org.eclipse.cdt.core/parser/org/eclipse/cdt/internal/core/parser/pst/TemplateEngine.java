@@ -177,7 +177,7 @@ public final class TemplateEngine {
 			return true;
 		} else {
 			Cost cost = null;
-		    TypeInfoProvider provider = TypeInfoProvider.getProvider( param.getSymbolTable() );
+		    TypeInfoProvider provider = param.getSymbolTable().getTypeInfoProvider();
 			try{
 				ITypeInfo info = provider.getTypeInfo( param.getTypeInfo().getTemplateParameterType() );
 				try {
@@ -462,6 +462,8 @@ public final class TemplateEngine {
 			if( symbol == null || ( a.isType( ITypeInfo.t_type) && aSymbol == null ) || a.isType( ITypeInfo.t_undef ))
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			if( symbol instanceof IDeferredTemplateInstance || symbol.isTemplateInstance() ){
+			    if( aSymbol == null )
+			        return false;
 				return deduceFromTemplateTemplateArguments(map, symbol, aSymbol);	
 			} 
 			if( symbol.isType( ITypeInfo.t_templateParameter ) ){
@@ -1307,6 +1309,9 @@ public final class TemplateEngine {
 		
 		ITemplateSymbol t1 = getContainingTemplate( p1 );
 		ITemplateSymbol t2 = getContainingTemplate( p2 );
+		
+		if( t1 == null || t2 == null )
+		    return false;
 		
 		if( p1.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName )
 		{

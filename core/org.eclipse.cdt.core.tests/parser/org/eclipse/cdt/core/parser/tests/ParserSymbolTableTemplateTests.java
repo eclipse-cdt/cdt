@@ -51,7 +51,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	
 	public ParserSymbolTable newTable( ParserLanguage language ){
 		table = new ParserSymbolTable( language, ParserMode.COMPLETE_PARSE );
-		provider = TypeInfoProvider.getProvider( table );
+		provider = table.getTypeInfoProvider();
 		return table;
 	}
 	

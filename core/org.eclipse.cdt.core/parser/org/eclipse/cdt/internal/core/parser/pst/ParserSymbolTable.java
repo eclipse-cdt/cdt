@@ -456,7 +456,7 @@ public class ParserSymbolTable {
 			return true;
 		}
 		
-		TypeInfoProvider provider = TypeInfoProvider.getProvider( symbol.getSymbolTable() );
+		TypeInfoProvider provider = symbol.getSymbolTable().getTypeInfoProvider();
 		ITypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo(), provider );
 		boolean accept = data.getFilter().shouldAccept( symbol, typeInfo ) || data.getFilter().shouldAccept( symbol );
 		provider.returnTypeInfo( typeInfo );
@@ -817,7 +817,7 @@ public class ParserSymbolTable {
 			
 			//friend class declarations
 			if( origSymbol.getIsInvisible() && origSymbol.isType( newSymbol.getType() ) ){
-				origSymbol.getTypeInfo().setTypeSymbol(  newSymbol );
+				origSymbol.setForwardSymbol(  newSymbol );
 				return true;
 			}
 		}
@@ -1008,8 +1008,8 @@ public class ParserSymbolTable {
 				for (int i = 0; i < numFns; i++) {
 					IParameterizedSymbol fn = (IParameterizedSymbol) functions.get(i);
 					if( fn.isForwardDeclaration() && fn.getForwardSymbol() != null ){
-						if( functions.contains( fn.getTypeSymbol() ) ){
-							return (IParameterizedSymbol) fn.getTypeSymbol();
+						if( functions.contains( fn.getForwardSymbol() ) ){
+							return (IParameterizedSymbol) fn.getForwardSymbol();
 						}
 					}
 				}
@@ -1041,7 +1041,7 @@ public class ParserSymbolTable {
 		List sourceParameters = null;			//the parameters the function is being called with
 		List targetParameters = null;			//the current function's parameters
 		
-		TypeInfoProvider infoProvider = TypeInfoProvider.getProvider( this );
+		TypeInfoProvider infoProvider = getTypeInfoProvider();
 		
 		if( numSourceParams == 0 ){
 			//f() is the same as f( void )
@@ -1852,7 +1852,7 @@ public class ParserSymbolTable {
 	}
 	
 	protected Cost checkStandardConversionSequence( ITypeInfo source, ITypeInfo target ) throws ParserSymbolTableException{
-		Cost cost = lvalue_to_rvalue( TypeInfoProvider.getProvider( this ), source, target );
+		Cost cost = lvalue_to_rvalue( getTypeInfoProvider(), source, target );
 		
 		if( cost.getSource() == null || cost.getTarget() == null ){
 			return cost;
@@ -1900,7 +1900,7 @@ public class ParserSymbolTable {
 		try{
 			derivedToBaseConversion( cost );
 		} catch ( ParserSymbolTableException e ){
-			cost.release( TypeInfoProvider.getProvider( this ) );
+			cost.release( getTypeInfoProvider() );
 			throw e;
 		}
 		
@@ -1948,7 +1948,7 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		TypeInfoProvider provider = TypeInfoProvider.getProvider( this );
+		TypeInfoProvider provider = getTypeInfoProvider();
 		//conversion operators
 		if( source.getType() == ITypeInfo.t_type ){
 			source = getFlatTypeInfo( source, provider );
@@ -2139,6 +2139,7 @@ public class ParserSymbolTable {
 
 	private IContainerSymbol _compilationUnit;
 	private ParserLanguage   _language;
+	private TypeInfoProvider _typeInfoProvider;
 	private ParserMode		 _mode;
 	
 	public void setLanguage( ParserLanguage language ){
@@ -2154,7 +2155,7 @@ public class ParserSymbolTable {
 	}
 	
 	public TypeInfoProvider getTypeInfoProvider(){
-	    return TypeInfoProvider.getProvider( this );
+	    return _typeInfoProvider;
 	}
 	
 //	protected void pushCommand( Command command ){

@@ -201,7 +201,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			paramType = TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) getContainingSymbol() );
 		}
 		
-		ITypeInfo param = TypeInfoProvider.getProvider(getSymbolTable()).getTypeInfo( ITypeInfo.t_type );
+		ITypeInfo param = getSymbolTable().getTypeInfoProvider().getTypeInfo( ITypeInfo.t_type );
 		param.setType( ITypeInfo.t_type );
 		param.setBit( true, ITypeInfo.isConst );
 		param.setTypeSymbol( paramType );

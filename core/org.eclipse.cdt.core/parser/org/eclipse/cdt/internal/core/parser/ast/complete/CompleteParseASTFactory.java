@@ -1563,7 +1563,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		//basic types
 		if( kind.isBasicType() ){
-			TypeInfoProvider provider = TypeInfoProvider.getProvider( pst );
+			TypeInfoProvider provider = pst.getTypeInfoProvider();
 			provider.beginTypeConstruction();
 			
 			if( literal != null && !literal.equals(EMPTY_STRING) && kind.isLiteral() ){ 
@@ -2226,7 +2226,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     }
 
 	protected ITypeInfo getParameterTypeInfo( IASTAbstractDeclaration absDecl)throws ASTSemanticException{
-	    TypeInfoProvider provider = TypeInfoProvider.getProvider( pst );
+	    TypeInfoProvider provider = pst.getTypeInfoProvider();
 	    provider.beginTypeConstruction();
 		if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
 		{
@@ -3022,7 +3022,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
     	ISymbol symbol = null;
     	
-    	TypeInfoProvider provider = TypeInfoProvider.getProvider( pst );
+    	TypeInfoProvider provider = pst.getTypeInfoProvider();
     	provider.beginTypeConstruction();
     	
     	if( defaultValue != null ){

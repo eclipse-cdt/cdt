@@ -72,7 +72,7 @@ public class ParserSymbolTableTest extends TestCase {
 	
 	public ParserSymbolTable newTable( ParserLanguage language, ParserMode mode ){
 		table = new ParserSymbolTable( language, mode );
-		provider = TypeInfoProvider.getProvider( table );
+		provider = table.getTypeInfoProvider();
 		return table;
 	}
 	/**

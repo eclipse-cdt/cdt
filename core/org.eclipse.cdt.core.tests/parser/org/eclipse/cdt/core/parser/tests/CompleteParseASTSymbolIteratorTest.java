@@ -6,6 +6,8 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -22,6 +24,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
@@ -352,4 +355,19 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 		IASTUsingDeclaration using = (IASTUsingDeclaration) i.next();
 		assertFalse( i.hasNext() );
 	}
+	
+    public void testBug75482() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "class A { friend class B * helper(); };" ); //$NON-NLS-1$
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        IASTClassSpecifier A = (IASTClassSpecifier) i.next();
+        IASTFunction helper = (IASTFunction) i.next();
+        i = A.getDeclarations();
+        IASTElaboratedTypeSpecifier B = (IASTElaboratedTypeSpecifier) i.next(); 
+        assertFalse( i.hasNext() );
+        
+        i = A.getFriends();
+        assertEquals( i.next(), helper );
+        assertFalse( i.hasNext() );
+    }
 }

@@ -31,5 +31,13 @@ public class STLFailedTests extends BaseASTTest  {
 		code.write("{};\n");
 		assertCodeFailsParse(code.toString());
 	}
+
+	public void testBug40714() throws Exception{
+		// templates of variables
+		Writer code = new StringWriter();
+		code.write("template <bool __threads, int __inst>\n");
+		code.write("char* default_alloc_template<__threads, __inst>::_S_start_free = 0;\n");
+		assertCodeFailsParse(code.toString());
+	}
 	
 }

@@ -125,8 +125,8 @@ namespace MyPackage
 	template<class T, typename Tibor = junk> 
 	struct mystruct { /* */ };
 	// template variable
-	template <bool __threads, int __inst>
-	char* default_alloc_template<__threads, __inst>::_S_start_free = 0;
+//	template <bool __threads, int __inst>
+//	char* default_alloc_template<__threads, __inst>::_S_start_free = 0;
 };
 	// check arrays
 	// arrays

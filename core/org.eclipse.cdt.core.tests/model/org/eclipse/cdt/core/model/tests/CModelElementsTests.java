@@ -442,12 +442,14 @@ public class CModelElementsTests extends TestCase {
 		assertEquals(st.getTemplateSignature(), new String("mystruct<T, Tibor>"));
 		checkLineNumbers((CElement)st, 125, 126);
 
+		// moved to failed tests
+		// also commented in the source file
 		// template variable
-		ArrayList variableTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
-		VariableTemplate vt = (VariableTemplate)variableTemplates.get(0);
-		assertEquals(vt.getElementName(), new String("default_alloc_template<__threads,__inst>::_S_start_free"));
-		assertEquals(vt.getTemplateSignature(), new String("default_alloc_template<__threads,__inst>::_S_start_free<bool, int> : char*"));
-		checkLineNumbers((CElement)vt, 128, 129);
+//		ArrayList variableTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
+//		VariableTemplate vt = (VariableTemplate)variableTemplates.get(0);
+//		assertEquals(vt.getElementName(), new String("default_alloc_template<__threads,__inst>::_S_start_free"));
+//		assertEquals(vt.getTemplateSignature(), new String("default_alloc_template<__threads,__inst>::_S_start_free<bool, int> : char*"));
+//		checkLineNumbers((CElement)vt, 128, 129);
 	}
 	
 	private void checkArrays(IParent tu){

@@ -1,3 +1,6 @@
+2003-07-24 Hoda Amer
+	This patch updates the CModelBuilder to use the AST instead of the DOM. 
+
 2003-07-23  Bogdan Gheorghe
 	Added checkbox to Indexer tab to turn on dependency tree
 	service

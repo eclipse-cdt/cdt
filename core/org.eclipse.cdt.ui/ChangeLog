@@ -1,5 +1,11 @@
 2003-02-24 Alain Magloire
 
+	* src/org/eclipse/cdt/internal/ui/util/SelectionUtil.java:
+	Reorganized import to remove warnings.
+	* src/org/eclipse/cdt/ui/CelementLabelProvider.java: Reorganize imports.
+
+2003-02-24 Alain Magloire
+
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java (isOverviewRulerVisible):
 	Change scope for protected to comply with Eclipse-2.1
 

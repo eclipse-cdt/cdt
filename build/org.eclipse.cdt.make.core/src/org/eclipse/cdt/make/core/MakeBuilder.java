@@ -19,11 +19,11 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
-import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.make.internal.core.StreamMonitor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -99,7 +99,7 @@ public class MakeBuilder extends ACBuilder {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(MakeCorePlugin.getResourceString("MakeBuilder.Invoking_Make_Builder") + currProject.getName(), 100); //$NON-NLS-1$
 
 		try {
 			IPath buildCommand = info.getBuildCommand();
@@ -107,7 +107,7 @@ public class MakeBuilder extends ACBuilder {
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(currProject);
 
-				ConsoleOutputStream cos = console.getOutputStream();
+				OutputStream cos = console.getOutputStream();
 
 				// remove all markers for this project
 				removeAllMarkers(currProject);
@@ -115,11 +115,11 @@ public class MakeBuilder extends ACBuilder {
 				IPath workingDirectory = null;
 				if (!info.getBuildLocation().isEmpty()) {
 					IResource res = currProject.getParent().findMember(info.getBuildLocation());
-					if ( res instanceof IContainer && res.exists()) {
+					if (res instanceof IContainer && res.exists()) {
 						workingDirectory = res.getLocation();
 					}
 				}
-				if ( workingDirectory == null) {
+				if (workingDirectory == null) {
 					workingDirectory = currProject.getLocation();
 				}
 				String[] targets = getTargets(kind, info);
@@ -148,27 +148,32 @@ public class MakeBuilder extends ACBuilder {
 					}
 					env = (String[]) envList.toArray(new String[envList.size()]);
 				}
-				ErrorParserManager epm = new ErrorParserManager(getProject(), this, info.getErrorParsers());
-				epm.setOutputStream(cos);
-				OutputStream stdout = epm.getOutputStream();
-				OutputStream stderr = epm.getOutputStream();
-
 				String[] buildArguments = targets;
 				if (info.isDefaultBuildCmd()) {
-					if ( !info.isStopOnError()) {
+					if (!info.isStopOnError()) {
 						buildArguments = new String[targets.length + 1];
 						buildArguments[0] = "-k"; //$NON-NLS-1$
 						System.arraycopy(targets, 0, buildArguments, 1, targets.length);
 					}
 				} else {
 					String args = info.getBuildArguments();
-					if ( args != null && !args.equals("")) { //$NON-NLS-1$
-						String[] newArgs = makeArray(args);						
+					if (args != null && !args.equals("")) { //$NON-NLS-1$
+						String[] newArgs = makeArray(args);
 						buildArguments = new String[targets.length + newArgs.length];
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
 						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
 					}
 				}
+				if (true) {
+//					MakeRecon recon = new MakeRecon(buildCommand, buildArguments, env, workingDirectory, makeMonitor, cos);
+//					recon.invokeMakeRecon();
+//					cos = recon;
+					cos = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos);
+				}
+				ErrorParserManager epm = new ErrorParserManager(getProject(), this, info.getErrorParsers());
+				epm.setOutputStream(cos);
+				OutputStream stdout = epm.getOutputStream();
+				OutputStream stderr = epm.getOutputStream();
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);
 				if (p != null) {
 					try {
@@ -177,9 +182,9 @@ public class MakeBuilder extends ACBuilder {
 						p.getOutputStream().close();
 					} catch (IOException e) {
 					}
-					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN)) != CommandLauncher.OK)
+					if (launcher.waitAndRead(stdout, stderr, new SubProgressMonitor(monitor, 0))
+						!= CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
-
 					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
 					try {
@@ -192,6 +197,7 @@ public class MakeBuilder extends ACBuilder {
 				} else {
 					errMsg = launcher.getErrorMessage();
 				}
+//				makeMonitor.done();
 
 				if (errMsg != null) {
 					StringBuffer buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$
@@ -213,6 +219,7 @@ public class MakeBuilder extends ACBuilder {
 
 				monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				epm.reportProblems();
+				cos.close();
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);

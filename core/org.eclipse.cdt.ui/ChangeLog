@@ -1,4 +1,18 @@
-<<<<<<< ChangeLog
+2003-06-12 Alain Magloire
+
+	Patch From Thomas Fletcher, to clean up the working set.
+	
+	Removal of the homegrown working set implementation of filters and actions
+	to use the stock actions available with the Eclipse 2.1 release.
+
+	This patch should remove the need for the following files:
+	* src/org/eclipse/cdt/internal/ui/cview/NewWorkingSetFilterAction.java:
+	* src/org/eclipse/cdt/internal/ui/cview/AdjustWorkingSetFilterAction.java
+	* src/org/eclipse/cdt/internal/ui/cview/CWorkingSetFilter.java
+
+	Change the CView to use the action defines on the platform.
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+
 2003-06-06
 	I have added toolchain definitions for Cygnus and Linux to the plugin.xml file
 	for the new build model. There are two new wizards for adding a C and C++ project
@@ -40,7 +54,6 @@
 	and the path src/org/eclipse/cdt/internal/ui/CPluginImages.java class
 	has been modified to manage them.
 	
-=======
 2003-06-05 Alain Magloire
 
 	Patch from Christophe Juniet, this patch adds #ifdef guards
@@ -54,7 +67,6 @@
 	* src/org/eclipse/cdt/ui/wizards/NewClassWizardPage.java
 	* src/org/eclipse/cdt/internal/ui/wizards/NewWizardMessages.properties.
 
->>>>>>> 1.101
 2003-05-23 Alain Magloire
 
 	Patch from Victor Mozgin to deal with PR 38405

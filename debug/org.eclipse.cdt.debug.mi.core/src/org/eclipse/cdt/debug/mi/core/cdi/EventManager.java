@@ -273,7 +273,12 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			Target cTarget = (Target)currentTarget;
 			cTarget.updateState(threadId);
 			try {
-				cTarget.getCurrentThread().getCurrentStackFrame();
+				ICDIThread cthread = cTarget.getCurrentThread();
+					if (cthread != null) {
+						cthread.getCurrentStackFrame();
+					} else {
+						return false;
+					}
 			} catch (CDIException e1) {
 				//e1.printStackTrace();
 			}

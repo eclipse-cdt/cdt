@@ -204,7 +204,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (topBuildDir != null) {
 			invokeMake(true, topBuildDir, info, monitor);
 		} else {
-			monitor.done();
+			statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
+			monitor.subTask(statusMsg);
 			return;
 		}
 		monitor.worked(1);

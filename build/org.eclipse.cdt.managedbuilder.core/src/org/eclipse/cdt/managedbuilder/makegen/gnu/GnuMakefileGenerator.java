@@ -1086,7 +1086,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#getTopBuildDir()
 	 */
 	public IPath getBuildWorkingDir() {
-		return topBuildDir.removeFirstSegments(1);
+		if (topBuildDir != null) {
+			return topBuildDir.removeFirstSegments(1);
+		}
+		return null;
 	}
 	
 	/**

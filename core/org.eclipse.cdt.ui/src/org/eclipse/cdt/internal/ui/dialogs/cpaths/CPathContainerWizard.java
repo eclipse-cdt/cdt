@@ -89,7 +89,7 @@ public class CPathContainerWizard extends Wizard {
 	public boolean performFinish() {
 		if (fContainerPage != null) {
 			if (fContainerPage.finish()) {
-				fNewEntries = fContainerPage.getNewContainers();
+				fNewEntries = fContainerPage.getContainerEntries();
 				return true;
 			}
 		}

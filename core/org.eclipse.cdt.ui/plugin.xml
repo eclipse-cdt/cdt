@@ -32,7 +32,7 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
-   <extension-point id="CPathContainerPage" name="%CPathContainerPageExtensionPoint" schema="schema/CPathContainerPage.exsd"/>
+   <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
    
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
@@ -683,4 +683,12 @@
       </page>
    </extension>
 -->
+      <extension
+         point="org.eclipse.cdt.ui.PathContainerPage">
+      <PathContainerPage
+            name="%defaultClasspathContainerPage"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathContainerDefaultPage"
+            id="*">
+      </PathContainerPage>
+   </extension>
 </plugin>

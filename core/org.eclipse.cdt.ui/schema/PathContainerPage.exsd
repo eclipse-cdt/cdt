@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.ui" id="CPathContainerPage" name="%CPathContainerPageExtensionPoint"/>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="PathContainerPage" name="%PathContainerPageExtensionPoint"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -13,7 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="CPathContainerPage"/>
+            <element ref="PathContainerPage"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,7 +39,7 @@
       </complexType>
    </element>
 
-   <element name="CPathContainerPage">
+   <element name="PathContainerPage">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>

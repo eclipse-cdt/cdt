@@ -61,7 +61,7 @@ public interface ICPathContainerPage extends IWizardPage {
 	 * @return the classpath entries created on the page. All returned entries must be {@link
 	 * IClasspathEntry#CPE_CONTAINER}
 	 */
-	public IPathEntry[] getNewContainers();
+	public IPathEntry[] getContainerEntries();
 	
 	/**
 	 * Sets the path container entry to be edited or <code>null</code> 

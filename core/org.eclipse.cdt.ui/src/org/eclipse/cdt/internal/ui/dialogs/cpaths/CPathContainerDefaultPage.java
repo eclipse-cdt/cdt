@@ -104,7 +104,7 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	/* (non-Javadoc)
 	 * @see IClasspathContainerPage#getSelection()
 	 */
-	public IPathEntry[] getNewContainers() {
+	public IPathEntry[] getContainerEntries() {
 		return new IPathEntry[] {CoreModel.newContainerEntry(new Path(fEntryField.getText()))};
 	}
 	

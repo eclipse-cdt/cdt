@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -39,7 +40,7 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 			if (symbol != null && symbol.length() > 0) {
 				List cplist = fPathList.getElements();
 
-				CPListElement newPath = newCPElement(((ICElement) getSelection().get(0)).getResource());
+				CPListElement newPath = newCPElement(((ICElement) getSelection().get(0)).getResource(), null);
 				String name, value = ""; //$NON-NLS-1$
 				int index = symbol.indexOf("="); //$NON-NLS-1$
 				if (index != -1) {
@@ -57,5 +58,13 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 				}
 			}
 		}
+	}
+
+	protected CPListElement newCPElement(IResource resource, CPListElement copyFrom) {
+		CPListElement element =  new CPListElement(fCurrCProject, getEntryKind(), resource.getFullPath(), resource);
+		if (copyFrom != null) {
+			element.setAttribute(CPListElement.MACRO_NAME, copyFrom.getAttribute(CPListElement.MACRO_NAME));
+		}
+		return element;
 	}
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -47,7 +48,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 			if (newItem != null && !newItem.equals("")) { //$NON-NLS-1$
 				List cplist = fPathList.getElements();
 
-				CPListElement newPath = newCPElement(((ICElement) getSelection().get(0)).getResource());
+				CPListElement newPath = newCPElement(((ICElement) getSelection().get(0)).getResource(), null);
 				newPath.setAttribute(CPListElement.INCLUDE, new Path(newItem));
 				if (!cplist.contains(newPath)) {
 					fPathList.addElement(newPath);
@@ -85,6 +86,15 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 			});
 		}
 
+	}
+
+	protected CPListElement newCPElement(IResource resource, CPListElement copyFrom) {
+		CPListElement element =  new CPListElement(fCurrCProject, getEntryKind(), resource.getFullPath(), resource);
+		if (copyFrom != null) {
+			element.setAttribute(CPListElement.INCLUDE, copyFrom.getAttribute(CPListElement.INCLUDE));
+			element.setAttribute(CPListElement.SYSTEM_INCLUDE, copyFrom.getAttribute(CPListElement.SYSTEM_INCLUDE));
+		}
+		return element;
 	}
 
 }

@@ -67,7 +67,8 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 	private static final int IDX_ADD = 0;
 	private static final int IDX_ADD_WORKSPACE = 1;
 	private static final int IDX_ADD_CONTRIBUTED = 2;
-	private static final int IDX_REMOVE = 4;
+	private static final int IDX_EDIT = 4;
+	private static final int IDX_REMOVE = 5;
 	private String fPrefix;
 
 	private class IncludeListAdapter implements IListAdapter, IDialogFieldListener {
@@ -86,6 +87,11 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 				case IDX_ADD_CONTRIBUTED:
 					addContributed();
 					break;
+				case IDX_EDIT:
+					if (canEdit(field.getSelectedElements())) {
+						editPath((CPListElement) field.getSelectedElements().get(0));
+					}
+					break;
 				case IDX_REMOVE:
 					if (canRemove(field.getSelectedElements())) {
 						removePath((CPListElement) field.getSelectedElements().get(0));
@@ -97,6 +103,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		public void selectionChanged(ListDialogField field) {
 			List selected = fPathList.getSelectedElements();
 			fPathList.enableButton(IDX_REMOVE, canRemove(selected));
+			fPathList.enableButton(IDX_EDIT, canEdit(selected));
 		}
 
 		public void doubleClicked(ListDialogField field) {
@@ -145,7 +152,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 			 * @see Object#hashCode()
 			 */
 			public int hashCode() {
-				return fBaseImage.hashCode() | (showInherited ? 0x1 : 0);
+				return fBaseImage.hashCode() & (showInherited ? ~0x1 : ~0);
 			}
 
 			/**
@@ -179,7 +186,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 		public Image getImage(Object element) {
 			Image image = super.getImage(element);
-			if (isPathInherited((CPListElement) element)) {
+			if (isPathInheritedFromSelected((CPListElement) element)) {
 				image = new CPListImageDescriptor(image, true).createImage();
 			}
 			return image;
@@ -190,24 +197,10 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		}
 
 		public Color getForeground(Object element) {
-			if (isPathInherited((CPListElement) element)) {
+			if (isPathInheritedFromSelected((CPListElement) element)) {
 				return inDirect;
 			}
 			return null;
-		}
-
-		boolean isPathInherited(CPListElement element) {
-			IPath resPath = element.getPath();
-			List sel = getSelection();
-			if (!sel.isEmpty()) {
-				if (sel.get(0) instanceof ICElement) {
-					ICElement celem = (ICElement) sel.get(0);
-					if (!celem.getPath().equals(resPath)) {
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 	}
 
@@ -219,7 +212,8 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		String[] buttonLabel = new String[] { /* 0 */CPathEntryMessages.getString(prefix + ".add"), //$NON-NLS-1$
 				/* 1 */CPathEntryMessages.getString(prefix + ".addFromWorkspace"), //$NON-NLS-1$
 				/* 2 */CPathEntryMessages.getString(prefix + ".addContributed"), null, //$NON-NLS-1$
-				/* 4 */CPathEntryMessages.getString(prefix + ".remove")}; //$NON-NLS-1$
+				/* 4 */CPathEntryMessages.getString(prefix + ".edit"), //$NON-NLS-1$
+				/* 5 */CPathEntryMessages.getString(prefix + ".remove")}; //$NON-NLS-1$
 		fPathList = new ListDialogField(includeListAdaper, buttonLabel, new ModifiedCPListLabelProvider()) {
 
 			protected int getListStyle() {
@@ -251,7 +245,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		int buttonBarWidth = converter.convertWidthInCharsToPixels(30);
 		fPathList.setButtonsMinWidth(buttonBarWidth);
 		fPathList.enableButton(IDX_REMOVE, false);
-
+		fPathList.enableButton(IDX_EDIT, false);
 	}
 
 	public boolean isEntryKind(int kind) {
@@ -262,8 +256,32 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 	abstract int getEntryKind();
 
+	protected boolean isPathInheritedFromSelected(CPListElement element) {
+		IPath resPath = element.getPath();
+		List sel = getSelection();
+		if (!sel.isEmpty()) {
+			if (sel.get(0) instanceof ICElement) {
+				ICElement celem = (ICElement) sel.get(0);
+				if (!celem.getPath().equals(resPath)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	protected boolean canRemove(List selected) {
 		return !selected.isEmpty();
+	}
+
+	protected boolean canEdit(List selected) {
+		if( !selected.isEmpty() ) {
+			return !isPathInheritedFromSelected((CPListElement) selected.get(0));			
+		}
+		return false;
+	}
+	
+	protected void editPath(CPListElement element) {
 	}
 
 	protected void removePath(CPListElement element) {
@@ -370,12 +388,12 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, fCurrCProject, getRawClasspath());
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
-			IPathEntry[] created = wizard.getNewEntries();
-			if (created != null) {
-				CPListElement[] res = new CPListElement[created.length];
+			IPathEntry[] elements = wizard.getNewEntries();
+			if (elements != null) {
+				CPListElement[] res = new CPListElement[elements.length];
 				for (int i = 0; i < res.length; i++) {
-					res[i] = newCPElement(((ICElement) getSelection().get(0)).getResource());
-					res[i].setAttribute(CPListElement.BASE_REF, created[i].getPath());
+					res[i] = newCPElement(((ICElement) getSelection().get(0)).getResource(), (CPListElement) elements[i]);
+					res[i].setAttribute(CPListElement.BASE_REF, elements[i].getPath());
 				}
 				return res;
 			}
@@ -383,9 +401,7 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 		return null;
 	}
 
-	protected CPListElement newCPElement(IResource resource) {
-		return new CPListElement(fCurrCProject, getEntryKind(), resource.getFullPath(), resource);
-	}
+	abstract protected CPListElement newCPElement(IResource resource, CPListElement copyFrom);
 
 	private class WorkbenchCPathLabelProvider extends CPListLabelProvider {
 
@@ -482,8 +498,8 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 			Object[] elements = dialog.getResult();
 			CPListElement[] res = new CPListElement[elements.length];
 			for (int i = 0; i < res.length; i++) {
-				res[i] = newCPElement(((ICElement) getSelection().get(0)).getResource());
-
+				res[i] = newCPElement(((ICElement) getSelection().get(0)).getResource(), (CPListElement)elements[i]);
+				res[i].setAttribute(CPListElement.BASE_REF, ((CPListElement)elements[i]).getCProject().getPath());
 			}
 			return res;
 		}

@@ -91,7 +91,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -278,7 +280,12 @@ public class CDebugTarget extends CDebugElement
 	private Boolean fIsLittleEndian = null;
 	
 	private RunningInfo fRunningInfo = null;
-	
+
+	/**
+	 * The target's preference set.
+	 */
+	private Preferences fPreferences = null;
+
 	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
@@ -300,6 +307,7 @@ public class CDebugTarget extends CDebugElement
 		setName( name );
 		setProcess( debuggeeProcess );
 		setCDITarget( cdiTarget );
+		initializePreferences();
 		setExecFile( file );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		setThreadList( new ArrayList( 5 ) );
@@ -1249,6 +1257,7 @@ public class CDebugTarget extends CDebugElement
 		disposeSourceManager();
 		disposeBreakpointManager();
 		removeAllExpressions();
+		disposePreferences();
 	}
 	
 	/**
@@ -2469,5 +2478,51 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
 		return ( getBreakpointManager() != null ) ? getBreakpointManager().isTargetBreakpoint( breakpoint ) : false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#enableInstructionStepping(boolean)
+	 */
+	public void enableInstructionStepping( boolean enabled ) {
+		fPreferences.setValue( PREF_INSTRUCTION_STEPPING_MODE, enabled );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#isInstructionSteppingEnabled()
+	 */
+	public boolean isInstructionSteppingEnabled() {
+		return fPreferences.getBoolean( PREF_INSTRUCTION_STEPPING_MODE );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#supportsInstructionStepping()
+	 */
+	public boolean supportsInstructionStepping() {
+		return getConfiguration().supportsInstructionStepping();
+	}
+
+	private void initializePreferences() {
+		fPreferences = new Preferences();
+		fPreferences.setDefault( PREF_INSTRUCTION_STEPPING_MODE, false );
+	}
+
+	private void disposePreferences() {
+		fPreferences = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ITargetProperties#addPropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
+	 */
+	public void addPropertyChangeListener( IPropertyChangeListener listener ) {
+		if ( fPreferences!= null )
+			fPreferences.addPropertyChangeListener( listener );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ITargetProperties#removePropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
+	 */
+	public void removePropertyChangeListener( IPropertyChangeListener listener ) {
+		if ( fPreferences!= null )
+			fPreferences.removePropertyChangeListener( listener );
 	}
 }

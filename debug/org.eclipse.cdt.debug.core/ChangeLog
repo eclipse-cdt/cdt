@@ -1,3 +1,12 @@
+2004-05-13 Mikhail Khodjaiants
+	Support for the instruction stepping mode.
+	* ICDebugTarget.java
+	* ISteppingModeTarget.java: new
+	* ITargetProperties.java: new
+	* IInstructionstep.java: deleted
+	* CDebugTarget.java
+	* CThread.java
+
 2004-05-06 Mikhail Khodjaiants
 	Implementation of mixed disassembly mode.
 	* IAsmSourceLine.java: new

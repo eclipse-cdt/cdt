@@ -29,7 +29,9 @@ public interface ICDebugTarget extends IDebugTarget,
 									   IState,
 									   ISwitchToThread,
 									   ICDebugElement,
-									   IBreakpointTarget {
+									   IBreakpointTarget,
+									   ISteppingModeTarget,
+									   ITargetProperties {
 
 	/**
 	 * Returns the shared libraries loaded in this debug target. An

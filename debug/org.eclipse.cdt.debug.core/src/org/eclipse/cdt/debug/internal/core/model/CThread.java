@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
@@ -31,7 +32,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
-import org.eclipse.cdt.debug.core.model.IInstructionStep;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
@@ -45,7 +45,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /**
  * 
@@ -57,7 +56,6 @@ public class CThread extends CDebugElement
 					 implements IThread,
 					 			IState,
 					 			IRestart,
-					 			IInstructionStep,
 					 			IResumeWithoutSignal,
 					 			ISwitchToFrame,
 					 			ICDIEventListener
@@ -608,69 +606,62 @@ public class CThread extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
-	public void stepInto() throws DebugException
-	{
+	public void stepInto() throws DebugException {
 		if ( !canStepInto() )
 			return;
-		try
-		{
-			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
-			{
+		try {
+			if ( !isInstructionsteppingEnabled() ) {
 				getCDIThread().stepInto();
 			}
-			else
-			{
+			else {
 				getCDIThread().stepIntoInstruction();
 			}
-		}		
-		catch( CDIException e )
-		{
+		}
+		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
-	public void stepOver() throws DebugException
-	{
+	public void stepOver() throws DebugException {
 		if ( !canStepOver() )
 			return;
-		try
-		{
-			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
-			{
+		try {
+			if ( !isInstructionsteppingEnabled() ) {
 				getCDIThread().stepOver();
 			}
-			else
-			{
+			else {
 				getCDIThread().stepOverInstruction();
 			}
-		}		
-		catch( CDIException e )
-		{
+		}
+		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
-	public void stepReturn() throws DebugException
-	{
+	public void stepReturn() throws DebugException {
 		if ( !canStepReturn() )
 			return;
-		try
-		{
+		try {
 			getCDIThread().stepReturn();
-		}		
-		catch( CDIException e )
-		{
+		}
+		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate()
@@ -836,56 +827,6 @@ public class CThread extends CDebugElement
 	private void setCurrentStateInfo( Object info )
 	{
 		fCurrentStateInfo = info;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#canStepIntoInstruction()
-	 */
-	public boolean canStepIntoInstruction()
-	{
-		return canStepInto();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#canStepOverInstruction()
-	 */
-	public boolean canStepOverInstruction()
-	{
-		return canStepOver();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#stepIntoInstruction()
-	 */
-	public void stepIntoInstruction() throws DebugException
-	{
-		if ( !canStepIntoInstruction() )
-			return;
-		try
-		{
-			getCDIThread().stepIntoInstruction();
-		}		
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), e );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IInstructionStep#stepOverInstruction()
-	 */
-	public void stepOverInstruction() throws DebugException
-	{
-		if ( !canStepOverInstruction() )
-			return;
-		try
-		{
-			getCDIThread().stepOverInstruction();
-		}		
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), e );
-		}
 	}
 
 	private void handleSuspendedEvent( ICDISuspendedEvent event )
@@ -1219,5 +1160,9 @@ public class CThread extends CDebugElement
 		}
 		setCurrentStateId( state );
 		setCurrentStateInfo( null );
+	}
+
+	private boolean isInstructionsteppingEnabled() {
+		return ((CDebugTarget)getDebugTarget()).isInstructionSteppingEnabled();
 	}
 }

@@ -2,7 +2,7 @@
 <classpath>
     <classpathentry kind="src" path="src/"/>
     <classpathentry kind="src" path="utils.ui/"/>
-    <classpathentry kind="src" path="newparser"/>
+    <classpathentry kind="src" path="build"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>

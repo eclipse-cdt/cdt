@@ -8,14 +8,18 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,21 +27,9 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
-
-
-import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.builder.ICBuilder;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 
 
 public class OpenIncludeAction extends Action {
@@ -87,29 +79,30 @@ public class OpenIncludeAction extends Action {
 				EditorUtility.openInEditor(fileToOpen);
 			} else { // Try to get via the include path.
 
-				ICBuilder[] builders = CCorePlugin.getDefault().getBuilders(res.getProject());
-				
-				IPath includePath = null;
-				for( int j = 0; includePath == null && j < builders.length; j++ ) {				
-					IPath[] paths = builders[j].getIncludePaths();
-
-					for (int i = 0; i < paths.length; i++) {
-						if (res != null) {
-							// We've already scan the project.
-							if (paths[i].isPrefixOf(res.getProject().getLocation()))
-								continue;
-						}
-						IPath path = paths[i].append(include.getElementName());
-						if (path.toFile().exists()) {
-							includePath = path;
-							break;
-						}
-					}
-				}
-
-				if (includePath != null) {
-					EditorUtility.openInEditor(includePath);
-				}
+// This code is for getting the include paths from the builder.
+//				ICBuilder[] builders = CCorePlugin.getDefault().getBuilders(res.getProject());
+//				
+//				IPath includePath = null;
+//				for( int j = 0; includePath == null && j < builders.length; j++ ) {				
+//					IPath[] paths = builders[j].getIncludePaths();
+//
+//					for (int i = 0; i < paths.length; i++) {
+//						if (res != null) {
+//							// We've already scan the project.
+//							if (paths[i].isPrefixOf(res.getProject().getLocation()))
+//								continue;
+//						}
+//						IPath path = paths[i].append(include.getElementName());
+//						if (path.toFile().exists()) {
+//							includePath = path;
+//							break;
+//						}
+//					}
+//				}
+//
+//				if (includePath != null) {
+//					EditorUtility.openInEditor(includePath);
+//				}
 			}
 		} catch (CModelException e) {
 			CUIPlugin.getDefault().log(e.getStatus());

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
-import org.eclipse.cdt.internal.core.DocumentInputStream;
 
 public class CFileElementWorkingCopy extends TranslationUnit {
 	

@@ -1,3 +1,103 @@
+2003-02-24 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/util/SelectionUtil.java:
+	Reorganized import to remove warnings.
+	* src/org/eclipse/cdt/ui/CelementLabelProvider.java: Reorganize imports.
+
+2003-02-24 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java (isOverviewRulerVisible):
+	Change scope for protected to comply with Eclipse-2.1
+
+	* src/org/eclipse/cdt/ui/CelementContentProvider.java: Reorganize imports.
+
+2003-02-20 Alain Magloire
+
+	This patch provides the UI controls and filters to use the working set 
+	concept and apply it to the CView.  The UI mimics the behaviour of what is
+	used by the Java packages view (rather than incorporating it as a part of
+	the Filters... dialog as was done in the Navigator).  I didn't create a
+	specific C/C++ Working Set type since I figured that for C and C++ 
+	projects which might include other projects it wasn't required.
+	This can be re-examined at a later date if required.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
+	Listener of the property change for Working sets.
+	* src/org/eclipse/cdt/internal/ui/cview/AdjustWorkingSetFilterAction.java:
+	New file.
+	* src/org/eclipse/cdt/internal/ui/cview/CWorkingSetFilter.java:
+	New file.
+	* src/org/eclipse/cdt/internal/ui/cview/NewWorkingSetFilterAction.java:
+	New file.
+
+2003-02 -20 David Inglis
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java
+	Fixed minor label problem.
+
+2003-02-19 David Inglis
+	* src/org/eclipse/cdt/ui/wizards/conversion/ConversionWizard.java
+	* src/org/eclipse/cdt/ui/wizards/conversion/ConvertToStdMakeConversionWizard.java
+	Due to CDT extensions interface cleanup.
+
+2003-02-17 Doug Schaefer
+
+    Merged in Sam Robb's source for the build model.  The source can be
+    found in the build source folder.  There are new extension point schema
+    in the schema folder.  There are build icons in the icons/full/build16
+    folder.  As well a number of extension points and extensions have been
+    added to the plugin.xml file.
+
+2003-02-17 Judy N. Green
+	* plugin.xml
+	* icons/full/ctool16/convert-normal.gif
+	
+	Added a new icon for the conversion wizard
+	
+2003-02-13 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java:
+	Comment out old the reference to the builder.
+
+2003-02-13 Thomas Fletcher
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/FilterSelectionAction.java
+	Cleaned up some text strings.
+	
+	* src/org/eclipse/cdt/internal/corext/template/ContextTypeRegistry.java
+	* src/org/eclipse/cdt/internal/corext/template/default-templates.xml
+	* src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+     Adds a C++ context and moves those templates which are C++ specific to that context
+	 Allows you to use the C++ and C contexts when you are working in C++ code,
+	  but only giving you the C contexts when you are working in C code. 
+
+2003-02-06 David Inglis
+	* src/org/eclipse/cdt/internal/core/DocumentInputStream.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/DocumentInputStream.java (Added)
+	cleanup - moved to ui package
+
+	* src/org/eclipse/cdt/internal/ui/CContentProvider.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/CElementImageDescriptor.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/CElementLabelProvider.java (Removed)
+	* src/org/eclipse/cdt/ui/CElementContentProvider.java (Added)
+	* src/org/eclipse/cdt/ui/CElementImageDescriptor.java (Added)
+	* src/org/eclipse/cdt/ui/CElementLabelProvider.java (Added)
+	* src/org/eclipse/cdt/internal/ui/CFileElementWorkingCopy.java
+	* src/org/eclipse/cdt/internal/ui/CWorkbenchAdapter.java
+	* src/org/eclipse/cdt/internal/ui/compare/CStructureCreator.java
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/SelectionStatusDialog.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorErrorTickUpdater.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	cleanup - moved CElementContentProvider/LableProvider/ImageDescrptor out of internal package
+	to ui so it can be cleanly used by others.
+	
+	* src/org/eclipse/cdt/internal/ui/text/eclipse2/CRuleBasedDamagerRepairer.java (Removed)
+	* src/org/eclipse/cdt/internal/ui/text/eclipse2/CRuleBasedPartitioner.java (Removed)
+	cleanup - No longer needed.
+	
 2003-02-04 Alain Magloire
 
 	Cleanup of the annoying error generate by the JDT 2.1 compiler

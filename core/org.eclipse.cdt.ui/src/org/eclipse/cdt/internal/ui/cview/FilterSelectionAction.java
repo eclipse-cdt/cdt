@@ -53,9 +53,10 @@ class FilterSelectionAction extends SelectionProviderAction {
 				cview.getViewer(),
 				contentProvider,
 				new LabelProvider(),
-				"Select Filter"); //$NON-NLS-1$
+				"Select the filters to apply (matching files will be hidden):");
 	
 		dialog.setInitialSelections(contentProvider.getInitialSelections());
+		dialog.setTitle("C/C++ File Filters");
 		dialog.open();
 		if (dialog.getReturnCode() == Window.OK) {
 			Object[] results= dialog.getResult();

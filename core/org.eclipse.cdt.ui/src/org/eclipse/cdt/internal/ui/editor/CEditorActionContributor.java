@@ -105,8 +105,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		CPluginImages.setImageDescriptors(fShiftLeft, CPluginImages.T_LCL, CPluginImages.IMG_MENU_SHIFT_LEFT);
 		
 		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal.");
-		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection");
-		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection");
+		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection.");
+		fOpenOnSelection = new RetargetTextEditorAction(bundle, "OpenOnSelection.");
 
 		//fToggleTextHover= new ToggleTextHoverAction();
 		fPreviousError= new GotoErrorAction("Editor.PreviousError.", false); //$NON-NLS-1$

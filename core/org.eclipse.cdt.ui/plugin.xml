@@ -162,7 +162,7 @@
 <!-- For C Conversion Wizard -->
       <wizard
             name="%StdMakeConversionWizard.name"
-            icon="icons/full/ctool16/newcc_app.gif"
+            icon="icons/full/ctool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
             project="true"
@@ -192,7 +192,7 @@
 <!-- For C++ Conversion Wizard -->
       <wizard
             name="%StdMakeConversionWizard.name"
-            icon="icons/full/ctool16/newcc_app.gif"
+            icon="icons/full/ctool16/convert-normal.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
             project="true"
@@ -422,6 +422,94 @@
       <CBuildConsole
             class="org.eclipse.cdt.internal.ui.BuildConsole">
       </CBuildConsole>
+   </extension>
+
+   <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="Build Configurations"
+            icon="icons/full/build16/build_configs.gif"
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.ui.builder.internal.CBuildConfigView"
+            id="org.eclipse.cdt.ui.builder.internal.BuildConfigView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConfiguration">
+      <configuration
+            natures="*"
+            name="Debug"
+            class="org.eclipse.cdt.core.builder.CDebugBuildConfigurationProvider"
+            id="org.eclipse.cdt.core.builder.debugBuildConfiguration">
+      </configuration>
+      <configuration
+            natures="*"
+            name="Release"
+            class="org.eclipse.cdt.core.builder.CReleaseBuildConfigurationProvider"
+            id="org.eclipse.cdt.core.builder.releaseBuildConfiguration">
+      </configuration>
+      <configuration
+            natures="*"
+            name="Profile"
+            class="org.eclipse.cdt.core.builder.CProfileBuildConfigurationProvider"
+            id="org.eclipse.cdt.core.builder.profileBuildConfiguration">
+      </configuration>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CToolchain">
+      <provider
+            natures="*"
+            class="org.eclipse.cdt.gnu.tools.CGnuToolchainProvider"
+            id="org.eclipse.cdt.gnu.tools.native">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CToolType">
+      <type
+            name="RPC Protocol Compiler"
+            id="org.eclipse.cdt.core.tool.rpcgen">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CTool">
+      <tool
+            name="RPC Protocol Compiler"
+            type="org.eclipse.cdt.gnu.tools.rpcgen"
+            class="org.eclipse.cdt.gnu.tools.CToolRpcgen"
+            id="org.eclipse.cdt.gnu.tool.rpcgen">
+      </tool>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildVariable">
+      <variable
+            class="org.eclipse.cdt.gnu.tools.CStandardCVars"
+            id="org.eclipse.cdt.gnu.tools.stdCVars">
+      </variable>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.CToolTabGroup">
+      <toolTabGroup
+      		toolId="org.eclipse.cdt.gnu.tools.cc"
+            class="org.eclipse.cdt.gnu.tools.CTabGroupCC"
+            id="org.eclipse.cdt.gnu.tools.tabGroupCC">
+      </toolTabGroup>
+      <toolTabGroup
+      		toolId="org.eclipse.cdt.gnu.tools.cxx"
+            class="org.eclipse.cdt.gnu.tools.CTabGroupCXX"
+            id="org.eclipse.cdt.gnu.tools.tabGroupCXX">
+      </toolTabGroup>
+      <toolTabGroup
+      		toolId="org.eclipse.cdt.gnu.tools.cpp"
+            class="org.eclipse.cdt.gnu.tools.CTabGroupCPP"
+            id="org.eclipse.cdt.gnu.tools.tabGroupCPP">
+      </toolTabGroup>
+      <toolTabGroup
+      		toolId="org.eclipse.cdt.gnu.tools.ld"
+            class="org.eclipse.cdt.gnu.tools.CTabGroupLD"
+            id="org.eclipse.cdt.gnu.tools.tabGroupLD">
+      </toolTabGroup>
    </extension>
 
 </plugin>

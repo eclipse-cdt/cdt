@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.util.Assert;

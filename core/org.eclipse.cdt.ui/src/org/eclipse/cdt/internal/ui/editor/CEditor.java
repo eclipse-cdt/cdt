@@ -1561,7 +1561,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		asv.hideOverviewRuler();
 	}
 	
-	private boolean isOverviewRulerVisible() {
+	protected boolean isOverviewRulerVisible() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(OVERVIEW_RULER);
 	}

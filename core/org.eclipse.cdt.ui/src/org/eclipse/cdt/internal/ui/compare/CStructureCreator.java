@@ -27,10 +27,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.DocumentInputStream;
 import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.DocumentInputStream;
 import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * 

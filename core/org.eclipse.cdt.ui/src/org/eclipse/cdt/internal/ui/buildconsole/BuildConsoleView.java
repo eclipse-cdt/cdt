@@ -110,6 +110,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 			}
 		});
 		fTextViewer.setEditable(false);
+		origTitle = getTitle();
 		initializeWidgetFont(fTextViewer.getTextWidget());
 
 		initializeActions();
@@ -118,14 +119,14 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 
 		WorkbenchHelp.setHelp(fTextViewer.getControl(), ICHelpContextIds.CLEAR_CONSOLE_VIEW);
 
-		fTextViewer.setDocument(getDocument(getSite().getPage().getSelection()));
-		origTitle = getTitle();
-		setTitle(getSite().getPage().getSelection());
+		setProject(getSite().getPage().getSelection());
+		setDocument();
+		setTitle();
 		getSite().getPage().addSelectionListener(this);
 		fConsoleManager.addConsoleListener(this);
 	}
 
-	protected IProject getProject(ISelection selection) {
+	protected IProject setProject(ISelection selection) {
 		if ( selection == null ) {
 			return null;
 		}
@@ -141,26 +142,32 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 					resource = (IResource) input.getAdapter(IResource.class);
 				}
 				if (resource != null) {
-					return resource.getProject();
+					selProject = resource.getProject();
+					return selProject;
 				}
 			}
 		}
 		catch (ClassCastException e) {
 		}
-		return null;					
+		selProject = null;
+		return selProject;
 	}
 	
-	protected IDocument getDocument(ISelection selection) {
-		IProject project = getProject(selection);
+	protected IProject getProject() {
+		return selProject;
+	}
+	
+	protected IDocument setDocument() {
+		IProject project = getProject();
 		if (project != null ) {
-			return fConsoleManager.getConsoleDocument(project);
+			fTextViewer.setDocument(fConsoleManager.getConsoleDocument(project));
 		}
 		return null;
 	}
 
-	protected void setTitle(ISelection selection) {
+	protected void setTitle() {
 		String title = origTitle;
-		IProject project = getProject(selection);
+		IProject project = getProject();
 		if (project != null ) {
 			title += " [" + project.getName() + "]";
 		}
@@ -275,21 +282,19 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 	}
 	
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		fTextViewer.setDocument(getDocument(selection));
-		setTitle(selection);
+		setProject(selection);
+		setDocument();
+		setTitle();
 	}
+
 	public void consoleChange(IBuildConsoleEvent event) {
 		if ( event.getType() == IBuildConsoleEvent.CONSOLE_START ) {
 			Display display = fTextViewer.getControl().getDisplay();
-			final IProject project = event.getProject();
+			selProject = event.getProject();
 			display.asyncExec(new Runnable() {
 				public void run() {
-					String title = origTitle;
-					if (project != null ) {
-						title += " [" + project.getName() + "]";
-					}
-					setTitle(title);
-					fTextViewer.setDocument(fConsoleManager.getConsoleDocument(project));
+					setDocument();
+					setTitle();
 				}
 			});
 		}

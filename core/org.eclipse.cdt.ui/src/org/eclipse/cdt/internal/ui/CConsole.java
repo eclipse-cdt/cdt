@@ -6,6 +6,9 @@ package org.eclipse.cdt.internal.ui;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
+import org.eclipse.core.resources.IProject;
 
 public class CConsole implements IConsole {
 
@@ -16,6 +19,13 @@ public class CConsole implements IConsole {
 		super();
 	}
 
+	public void start(IProject project ) {
+		if (CPluginPreferencePage.isClearBuildConsole()
+			&& MakeUtil.getSessionConsoleMode(project)) {
+			clear();
+		}
+	}
+	
 	/**
 	 * @see org.eclipse.cdt.core.resources.IConsole#clear()
 	 */

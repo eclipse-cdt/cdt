@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
@@ -31,8 +32,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	
 	public static final String PREF_CONSOLE_FONT= "consoleFont";
 	
-	private static final String PREF_BUILD_LOCATION= "buildLocation";
-	private static final String PREF_STOP_ON_ERROR= "stopOnError";
+//	private static final String PREF_BUILD_LOCATION= "buildLocation";
+//	private static final String PREF_STOP_ON_ERROR= "stopOnError";
 	private static final String PREF_CLEAR_CONSOLE= "clearConsole";
 	private static final String PREF_CONSOLE_ON_TOP= "consoleOnTop";
 	private static final String PREF_AUTO_OPEN_CONSOLE = "autoOpenConsole";
@@ -40,7 +41,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public static final String SHOW_CU_CHILDREN="CUChildren"; //$NON-NLS-1$
 		
 	private static final String PAGE_DESC= "CBasePreferencePage.description";
-	private static final String BUILD_LOC_LABEL= "CBasePreferencePage.buildLocation.label";
+//	private static final String BUILD_LOC_LABEL= "CBasePreferencePage.buildLocation.label";
 	private static final String CLEAR_CONSOLE_LABEL= "CBasePreferencePage.clearConsole.label";
 	private static final String CONSOLE_ON_TOP_LABEL= "CBasePreferencePage.consoleOnTop.label";
 	private static final String AUTO_OPEN_CONSOLE_LABEL= "CBasePreferencePage.autoOpenConsole.label";
@@ -126,13 +127,13 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	/**
 	 * Returns the current preference setting of the build command location.
 	 */	
-	public static String getBuildLocation() {
-		return CPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LOCATION);
-	}
+//	public static String getBuildLocation() {
+//		return CPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LOCATION);
+//	}
 	
-	public static boolean isStopOnError() {
-		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_STOP_ON_ERROR);
-	}
+//	public static boolean isStopOnError() {
+//		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_STOP_ON_ERROR);
+//	}
 	/**
 	 * @see IWorkbenchPreferencePage#init
 	 */
@@ -143,8 +144,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 * Initializes the default values of this page in the preference bundle.
 	 */
 	public static void initDefaults(IPreferenceStore prefs) {
-		prefs.setDefault(PREF_BUILD_LOCATION, "make");
-		prefs.setDefault(PREF_STOP_ON_ERROR, false);
+//		prefs.setDefault(PREF_BUILD_LOCATION, "make");
+//		prefs.setDefault(PREF_STOP_ON_ERROR, false);
 		prefs.setDefault(PREF_CLEAR_CONSOLE, true);
 		prefs.setDefault(PREF_AUTO_OPEN_CONSOLE, false);
 		prefs.setDefault(PREF_CONSOLE_ON_TOP, true);

@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.mi.core;
 
+import java.util.regex.Pattern;
+
 /**
  * GDB Type Parser.
  * The code was lifted from: The C Programming Language
@@ -53,6 +55,7 @@ public class GDBTypeParser {
 		if (s == null) {
 			s = new String();
 		}
+		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");
 		s = s.trim();
 
 		// Initialize.
@@ -70,10 +73,13 @@ public class GDBTypeParser {
 
 		// Hack for GDB, the typename can be something like
 		// class A : public B, C { ... } *
-		// We are only interreste in "class A"
+		// We are only interested in "class A"
+		// Carefull for class A::data
 		int column = dataType.indexOf(':');
 		if (column > 0) {
-			dataType = dataType.substring(0, column);
+			if ((column + 1) < dataType.length() && dataType.charAt(column + 1) != ':') {
+				dataType = dataType.substring(0, column);
+			}
 		}
 		genericType = new GDBType(dataType);
 
@@ -220,7 +226,7 @@ public class GDBTypeParser {
 	// GDB hack accept ':' ',' part of the GDB hacks
 	// when doing ptype gdb returns "class A : public C { ..}"
 	boolean isCIdentifierPart(int c) {
-		if ((c >= '0' && c <= 9) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_') {
+		if ((c >= '0' && c <= 9) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == ':') {
 			return true;
 		}
 		return false;

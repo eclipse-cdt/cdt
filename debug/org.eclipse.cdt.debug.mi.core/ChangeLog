@@ -1,3 +1,15 @@
+2004-05-28 Alain Magloire
+
+	Fix to PR 60020.
+	GDB returns the children when a pointer
+	points to a structure.
+	Also ignore the keyword "const" when parsing.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2004-05-18 Alain Magloire
 
 	Remove dependencies on the compatibility plugin

@@ -42,11 +42,13 @@ import org.eclipse.cdt.debug.mi.core.command.MIDataDisassemble;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowDirectories;
 import org.eclipse.cdt.debug.mi.core.command.MIPType;
+import org.eclipse.cdt.debug.mi.core.command.MIWhatis;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;
 import org.eclipse.cdt.debug.mi.core.output.MIDataDisassembleInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowDirectoriesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIPTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MISrcAsm;
+import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
 
 
 /**
@@ -240,7 +242,12 @@ public class SourceManager extends Manager implements ICDISourceManager {
 				}
 				gdbType = ((GDBDerivedType)gdbType).getChild();
 			} else {
-				aType = toCDIType(target, gdbType.toString());
+				//try {
+					aType = toCDIType(target, gdbType.toString());
+				//} catch (CDIException e) {
+				//	String ptype = getDetailTypeName(gdbType.toString());
+				//	aType = getType(target, ptype);
+				//}
 				gdbType = null;
 			}
 			if (type instanceof DerivedType) {
@@ -417,6 +424,23 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			MIPType ptype = factory.createMIPType(typename);
 			mi.postCommand(ptype);
 			MIPTypeInfo info = ptype.getMIPtypeInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			return info.getType();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	public String getTypeName(String variable) throws CDIException {
+		try {
+			Session session = (Session) getSession();
+			MISession mi = session.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIWhatis whatis = factory.createMIWhatis(variable);
+			mi.postCommand(whatis);
+			MIWhatisInfo info = whatis.getMIWhatisInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}

@@ -165,7 +165,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 			for (int i = 0; i < vars.length; i++) {
 				String fn= getFullName();
 				String childName = vars[i].getExp();
-				String childTypename = null;
+				ICDIType childType = null;
 				boolean childFake = false;
 				ICDIType t = getType();
 				if (t instanceof ICDIArrayType) {
@@ -174,7 +174,22 @@ public class Variable extends VariableObject implements ICDIVariable {
 					int index = castingIndex + i;
 					childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (t instanceof ICDIPointerType) {
-					fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					ICDIType subType = ((ICDIPointerType)t).getComponentType();
+					if (subType instanceof ICDIStructType) {
+						if (isCPPLanguage()) {
+							if (!isFake()
+									|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								childFake = true;
+								childType = t;
+							} else {
+								fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						} else { // If not C++ language
+							fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					} else {
+						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} else if (t instanceof ICDIStructType) {
 					if (isCPPLanguage()) {
 						// For C++ in GDB the children of the
@@ -196,7 +211,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 						if (!isFake()
 							|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							childFake = true;
-							childTypename = getTypeName();
+							childType = t;
 						} else {
 							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 						}
@@ -205,9 +220,9 @@ public class Variable extends VariableObject implements ICDIVariable {
 					}
 				}
 				Variable v = new Variable(getTarget(), childName, fn, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
-				if (childTypename != null) {
+				if (childType != null) {
 					// Hack to reset the typename to a known value
-					v.typename = childTypename;
+					v.type = childType;
 				}
 				v.setIsFake(childFake);
 				children[i] = v;
@@ -220,20 +235,6 @@ public class Variable extends VariableObject implements ICDIVariable {
 
 	public int getChildrenNumber() throws CDIException {
 		return miVar.getNumChild();
-	}
-
-	/**
-	 * We overload the VariableObject since the gdb-varobject already knows
-	 * the type and its probably more accurate.
-	 * 
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getTypeName()
-	 */
-	public String getTypeName() throws CDIException {
-		// We overload here not to use the whatis command.
-		if (typename == null) {
-			typename = miVar.getType();
-		}
-		return typename;
 	}
 
 	/**

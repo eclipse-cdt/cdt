@@ -132,7 +132,7 @@ public class CLocalVariable extends CModificationVariable
 	public void handleDebugEvent( ICDIEvent event )
 	{
 		ICDIObject source = event.getSource();
-		if ( source.getCDITarget().equals( getCDITarget() ) )
+		if ( source.getTarget().equals( getCDITarget() ) )
 		{
 			if ( event instanceof ICDIChangedEvent )
 			{

@@ -25,12 +25,6 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	}
 	
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#addExpression(ICDIExpression)
-	 */
-	public void addExpression(ICDIExpression expression) throws CDIException {
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpression(String)
 	 */
 	public ICDIExpression getExpression(String expressionId)
@@ -56,6 +50,14 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 */
 	public void removeExpressions(ICDIExpression[] expressions)
 		throws CDIException {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
+	 */
+	public ICDIExpression createExpression(String expressionId)
+		throws CDIException {
+		return null;
 	}
 
 }

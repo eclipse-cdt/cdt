@@ -27,7 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDITerminatedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -359,7 +359,7 @@ public class CThread extends CDebugElement
 	 */
 	public String getName() throws DebugException
 	{
-		return "Thread " + getCDIThread().getId();
+		return "Thread " + getCDIThread().toString();
 	}
 
 	/* (non-Javadoc)
@@ -376,7 +376,7 @@ public class CThread extends CDebugElement
 	public void handleDebugEvent( ICDIEvent event )
 	{
 		ICDIObject source = event.getSource();
-		if ( source.getCDITarget().equals( getCDITarget() ) )
+		if ( source.getTarget().equals( getCDITarget() ) )
 		{
 			if ( event instanceof ICDISuspendedEvent )
 			{
@@ -392,11 +392,11 @@ public class CThread extends CDebugElement
 					handleResumedEvent( (ICDIResumedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDITerminatedEvent )
+			else if ( event instanceof ICDIDestroyedEvent )
 			{
 				if ( source instanceof ICDIThread )
 				{
-					handleTerminatedEvent( (ICDITerminatedEvent)event );
+					handleTerminatedEvent( (ICDIDestroyedEvent)event );
 				}
 			}
 			else if ( event instanceof ICDIDisconnectedEvent )
@@ -864,7 +864,7 @@ public class CThread extends CDebugElement
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
-	private void handleTerminatedEvent( ICDITerminatedEvent event )
+	private void handleTerminatedEvent( ICDIDestroyedEvent event )
 	{
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );

@@ -14,11 +14,12 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Value implements ICDIValue {
+public class Value extends CObject implements ICDIValue {
 
 	String val = "";
 
-	public Value(String s) {
+	public Value(CTarget target, String s) {
+		super(target);
 		val = s;
 	}
 	
@@ -43,24 +44,4 @@ public class Value implements ICDIValue {
 		return new ICDIVariable[0];
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
-	 */
-	public ICDITarget getCDITarget() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
-	 */
-	public String getId() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
-	 */
-	public ICDIObject getParent() {
-		return null;
-	}
 }

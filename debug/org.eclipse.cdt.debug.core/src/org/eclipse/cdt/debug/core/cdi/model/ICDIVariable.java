@@ -42,14 +42,6 @@ public interface ICDIVariable extends ICDIObject
 	ICDIValue getValue() throws CDIException;
 	
 	/**
-	 * Returns whether this variable's value has changed since the last suspend event. 
-	 *  
-	 * @return whether this variable's value has changed since the last suspend event
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	boolean hasValueChanged() throws CDIException;
-
-	/**
 	 * Attempts to set the value of this variable to the value of 
 	 * the given expression.
 	 * 

@@ -26,6 +26,10 @@ public class MIDataEvaluateExpression extends MICommand
 		super("-data-evaluate-expression", new String[]{expr});
 	}
 
+	public MIDataEvaluateExpressionInfo getMIDataEvaluateExpressionInfo() throws MIException {
+		return (MIDataEvaluateExpressionInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

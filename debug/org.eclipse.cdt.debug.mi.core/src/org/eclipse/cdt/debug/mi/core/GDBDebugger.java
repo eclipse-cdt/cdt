@@ -20,7 +20,8 @@ public class GDBDebugger implements ICDebugger {
 			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString());
 		}
 		catch (IOException e) {
-			throw new CDIException(new Status(0, MIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "error", e));
+			//throw new CDIException(new Status(0, MIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "error", e));
+			throw new CDIException("Error initializing");
 		}
 	}
 
@@ -29,7 +30,8 @@ public class GDBDebugger implements ICDebugger {
 			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString(), pid);
 		}
 		catch (IOException e) {
-			throw new CDIException(new Status(0, MIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "error", e));
+			//throw new CDIException(new Status(0, MIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "error", e));
+			throw new CDIException("Error initializing");
 		}
 	}
 
@@ -38,7 +40,8 @@ public class GDBDebugger implements ICDebugger {
 			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString(), corefile.getLocation().toOSString());
 		}
 		catch (IOException e) {
-			throw new CDIException(new Status(0, MIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "error", e));
+			//throw new CDIException(new Status(0, MIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "error", e));
+			throw new CDIException("Error initializing");
 		}
 	}
 

@@ -16,15 +16,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
  */
 public interface ICDIExpressionManager extends ICDISessionObject
 {
-	/**
-	 * Adds the given expression to the collection of registered 
-	 * expressions. This has no effect if the given expression is 
-	 * already registered.
-	 * 
-	 * @param expression - the expression to add
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	void addExpression( ICDIExpression expression ) throws CDIException;
 	
 	/**
 	 * Removes the given array of expressions from the expression 
@@ -50,7 +41,7 @@ public interface ICDIExpressionManager extends ICDISessionObject
 	 * @return ICDIExpression an expression specified by the given identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIExpression getExpression( String expressionId ) throws CDIException;
+	ICDIExpression createExpression( String expressionId ) throws CDIException;
 	
 	/**
 	 * Returns a collection of all registered expressions, possibly empty.

@@ -475,8 +475,9 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected static boolean equalFrame( ICDIStackFrame frameOne, ICDIStackFrame frameTwo )
 	{
-		return ( frameOne.getParent().equals( frameTwo.getParent() ) && 
-				 frameOne.getLocation().equals( frameTwo.getLocation() ) );
+		//return ( frameOne.getParent().equals( frameTwo.getParent() ) && 
+		//		 frameOne.getLocation().equals( frameTwo.getLocation() ) );
+		return (frameOne.getLocation().equals(frameTwo.getLocation()));
 	}
 
 	protected boolean exists() throws DebugException

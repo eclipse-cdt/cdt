@@ -15,11 +15,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIArg;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Variable implements ICDIVariable {
+public class Variable extends CObject implements ICDIVariable {
 
 	MIArg arg;
 
-	public Variable(MIArg a) {
+	public Variable(CTarget target, MIArg a) {
+		super(target);
 		arg = a;
 	}
 	/**
@@ -60,27 +61,6 @@ public class Variable implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
-	 */
-	public ICDITarget getCDITarget() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
-	 */
-	public String getId() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
-	 */
-	public ICDIObject getParent() {
-		return null;
 	}
 
 }

@@ -12,12 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
+import org.eclipse.cdt.debug.mi.core.command.MIExecNext;
+import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
+import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
+import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
+import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.event.EventThread;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStepEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
@@ -102,16 +108,33 @@ public class RxThread extends Thread {
 			// Notify any command waiting for a ResultRecord.
 			MIResultRecord rr = response.getMIResultRecord();
 			if (rr != null) {
+				int id = rr.geToken();
+				Command cmd = rxQueue.removeCommand(id);
+
 				// Check if the state changed.
 				String state = rr.getResultClass();
 				if ("running".equals(state)) {
-					session.getMIProcess().setRunning();
+					MIEvent[] events = new MIEvent[1];
+					// Check the type of command
+					// if it was a step instruction set state stepping
+					if (cmd instanceof MIExecNext ||
+						cmd instanceof MIExecNextInstruction ||
+						cmd instanceof MIExecStep ||
+						cmd instanceof MIExecStepInstruction ||
+						cmd instanceof MIExecUntil) {
+						session.getMIProcess().setStepping();
+						events[0] = new MIRunningEvent(true);
+					} else {
+						session.getMIProcess().setRunning();
+						events[0] = new MIRunningEvent();
+					}
+					Thread eventTread = new EventThread(session, events);
+					eventTread.start();
 				} else if ("exit".equals(state)) {
 					session.getMIProcess().setTerminated();
 				}
 
-				int id = rr.geToken();
-				Command cmd = rxQueue.removeCommand(id);
+				// Notify the waiting command.
 				if (cmd != null) {
 					synchronized (cmd) {
 						cmd.setMIOutput(response);
@@ -290,6 +313,9 @@ public class RxThread extends Thread {
 				event = new MIFunctionFinishedEvent(rr);
 			}
 		} else if ("exited-normally".equals(reason)) {
+			session.getMIProcess().setTerminated();
+			event = new MIInferiorExitEvent();
+		} else if ("exited-signalled".equals(reason)) {
 			session.getMIProcess().setTerminated();
 			event = new MIInferiorExitEvent();
 		}

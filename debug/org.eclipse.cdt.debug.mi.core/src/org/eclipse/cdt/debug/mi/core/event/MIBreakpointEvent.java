@@ -31,7 +31,7 @@ public class MIBreakpointEvent extends MIEvent {
 		parse();
 	}
 
-	public int getBreakNumber() {
+	public int getNumber() {
 		return bkptno;
 	}
 

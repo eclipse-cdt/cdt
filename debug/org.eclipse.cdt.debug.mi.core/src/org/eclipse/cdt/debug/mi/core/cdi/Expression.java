@@ -14,41 +14,43 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class Expression implements ICDIExpression {
+public class Expression extends CObject implements ICDIExpression {
+
+	public Expression(CTarget target) {
+		super(target);
+	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#getExpressionText()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getName()
 	 */
-	public String getExpressionText() {
+	public String getName() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#getValue()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getTypeName()
+	 */
+	public String getTypeName() throws CDIException {
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getValue()
 	 */
 	public ICDIValue getValue() throws CDIException {
 		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(ICDIValue)
 	 */
-	public ICDITarget getCDITarget() {
-		return null;
+	public void setValue(ICDIValue value) throws CDIException {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
-	public String getId() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
-	 */
-	public ICDIObject getParent() {
-		return null;
+	public void setValue(String expression) throws CDIException {
 	}
 
 }

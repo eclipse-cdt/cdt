@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -24,7 +25,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICDISession
  */
-public class CSession implements ICDISession {
+public class CSession implements ICDISession, ICDISessionObject {
 
 	Properties props;
 	MISession session;
@@ -50,6 +51,14 @@ public class CSession implements ICDISession {
 	
 	MISession getMISession() {
 		return session;
+	}
+
+	ICDITarget getTarget() {
+		return ctarget;
+	}
+	
+	CTarget getCTarget() {
+			return ctarget;
 	}
 
 	/**
@@ -108,17 +117,6 @@ public class CSession implements ICDISession {
 		return new ICDITarget[]{ctarget};
 	}
 
-	public ICDITarget getCTarget() {
-		return ctarget;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#isTerminated()
-	 */
-	public boolean isTerminated() {
-		return session.isTerminated();
-	}
-
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setAttribute(String, String)
 	 */
@@ -146,4 +144,12 @@ public class CSession implements ICDISession {
 	public ICDIRuntimeOptions getRuntimeOptions() {
 		return new RuntimeOptions();
 	}
+	
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionObject#getSession()
+	 */
+	public ICDISession getSession() {
+		return this;
+	}
+
 }

@@ -29,28 +29,12 @@ public interface ICDITarget extends ICDIObject
 	ICDISession getSession();
 
     /**
-     * Gets the output stream of the target process.
+     * Gets the target process.
      *
      * @return  the output stream connected to the normal input of the
      *          target process.
      */
-    OutputStream getOutputStream();
-
-    /**
-     * Gets the input stream of the target process.
-     *
-     * @return  the input stream connected to the normal output of the
-     *          target process.
-     */
-    InputStream getInputStream();
-
-    /**
-     * Gets the error stream of the target process.
-     *
-     * @return  the input stream connected to the error stream of the
-     *          target process.
-     */
-    InputStream getErrorStream();
+    Process getProcess();
 
 	/**
 	 * Returns the shared libraries loaded in this target. 
@@ -79,7 +63,7 @@ public interface ICDITarget extends ICDIObject
 	 * @return the thread associated with the given id
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIThread getThread( String id ) throws CDIException;
+	ICDIThread getCurrentThread() throws CDIException;
 	
 	/**
 	 * Returns a memory block that starts at the specified memory 

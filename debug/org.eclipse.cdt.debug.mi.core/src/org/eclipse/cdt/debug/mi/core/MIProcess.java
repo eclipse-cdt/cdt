@@ -22,7 +22,8 @@ public class MIProcess extends Process {
 
 	public final static int SUSPENDED = 1;
 	public final static int RUNNING = 2;
-	public final static int TERMINATED = 3;
+	public final static int STEPPING = 3;
+	public final static int TERMINATED = 4;
 
 	int state = 0;
 	MISession session;
@@ -130,6 +131,10 @@ public class MIProcess extends Process {
 		return state == RUNNING;
 	}
 
+	public synchronized boolean isStepping() {
+		return state == STEPPING;
+	}
+
 	public synchronized boolean isTerminated() {
 		return state == TERMINATED;
 	}
@@ -140,6 +145,10 @@ public class MIProcess extends Process {
 
 	public synchronized void setRunning() {
 		state = RUNNING;
+	}
+
+	public synchronized void setStepping() {
+		state = STEPPING;
 	}
 
 	public synchronized void setTerminated() {

@@ -51,6 +51,10 @@ public class MIStackListFrames extends MICommand
 			Integer.toString(high)});
 	}
 
+	public MIStackListFramesInfo getMIStackListFramesInfo() throws MIException {
+		return (MIStackListFramesInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

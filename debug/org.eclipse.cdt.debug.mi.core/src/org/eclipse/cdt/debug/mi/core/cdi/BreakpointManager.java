@@ -65,7 +65,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 				&& breakList.contains(breakpoints[i])) {
 				numbers[i] = ((Breakpoint)breakpoints[i]).getMIBreakPoint().getNumber();
 			} else {
-				//throw new CDIException();
+				throw new CDIException("Not a CDT breakpoint");
 			}
 		}
 		CSession s = getCSession();
@@ -75,10 +75,10 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			s.getMISession().postCommand(breakDelete);
 			MIInfo info = breakDelete.getMIInfo();
 			if (info == null) {
-				//throw new CDIException();
+				throw new CDIException("Timedout");
 			}
 		} catch (MIException e) {
-			// throw new CDIException(e);
+			throw new CDIException(e.toString());
 		}
 		for (int i = 0; i < breakpoints.length; i++) {
 			breakList.remove(breakpoints[i]);
@@ -90,7 +90,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		if (breakpoint instanceof Breakpoint && breakList.contains(breakpoint)) {
 			number = ((Breakpoint)breakpoint).getMIBreakPoint().getNumber();
 		} else {
-			//throw new CDIException();
+			throw new CDIException("Not a CDT breakpoint");
 		}
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
@@ -99,10 +99,10 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			s.getMISession().postCommand(breakEnable);
 			MIInfo info = breakEnable.getMIInfo();
 			if (info == null) {
-				//throw new CDIException();
+				throw new CDIException("Timedout");
 			}
 		} catch (MIException e) {
-			// throw new CDIException(e);
+			throw new CDIException(e.toString());
 		}
 		((Breakpoint)breakpoint).getMIBreakPoint().setEnabled(true);
 	}
@@ -112,7 +112,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		if (breakpoint instanceof Breakpoint && breakList.contains(breakpoint)) {
 			number = ((Breakpoint)breakpoint).getMIBreakPoint().getNumber();
 		} else {
-			// throw new CDIException();
+			throw new CDIException("Not a CDT breakpoint");
 		}
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
@@ -121,10 +121,10 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			s.getMISession().postCommand(breakDisable);
 			MIInfo info = breakDisable.getMIInfo();
 			if (info == null) {
-				//throw new CDIException();
+				throw new CDIException("Timeout");
 			}
 		} catch (MIException e) {
-			// throw new CDIException(e);
+			throw new CDIException(e.toString());
 		}
 		((Breakpoint)breakpoint).getMIBreakPoint().setEnabled(false);
 	}
@@ -141,8 +141,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	 */
 	public ICDICatchpoint setCatchpoint(int type, ICDICatchEvent event, String expression,
 		ICDICondition condition) throws CDIException {
-		// throw new CDIException();
-		return null;
+		throw new CDIException("Not Supported");
 	}
 
 	/**
@@ -184,14 +183,14 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			s.getMISession().postCommand(breakInsert);
 			MIBreakInsertInfo info = breakInsert.getMIBreakInsertInfo();
 			if (info == null) {
-				//throw new CDIException();
+				throw new CDIException("Timedout");
 			}
 			points = info.getBreakPoints();
 			if (points == null || points.length == 0) {
-				//throw new CDIException();
+				throw new CDIException("Error parsing");
 			}
 		} catch (MIException e) {
-			// throw new CDIException(e);
+			throw new CDIException(e.toString());
 		}
 
 		Breakpoint bkpt= new Breakpoint(this, points[0]);
@@ -215,14 +214,14 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			s.getMISession().postCommand(breakWatch);
 			MIBreakWatchInfo info = breakWatch.getMIBreakWatchInfo();
 			if (info == null) {
-				//throw new CDIException();
+				throw new CDIException("Timedout");
 			}
 			points = info.getBreakPoints();
 			if (points == null || points.length == 0) {
-				//throw new CDIException();
+				throw new CDIException("Parsing Error");
 			}
 		} catch (MIException e) {
-			// throw new CDIException(e);
+			throw new CDIException(e.toString());
 		}
 
 		Breakpoint bkpt= new Breakpoint(this, points[0]);

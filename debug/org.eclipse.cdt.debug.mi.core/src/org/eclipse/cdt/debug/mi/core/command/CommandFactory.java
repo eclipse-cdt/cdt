@@ -178,6 +178,10 @@ public class CommandFactory {
 		return new MIStackListArguments(showValue, lowFrame, highFrame);
 	}
 
+	public MIStackListFrames createMIStackListFrames() {
+		return new MIStackListFrames();
+	}
+
 	public MIStackListFrames createMIStackListFrames(int lowFrame, int highFrame) {
 		return new MIStackListFrames(lowFrame, highFrame);
 	}

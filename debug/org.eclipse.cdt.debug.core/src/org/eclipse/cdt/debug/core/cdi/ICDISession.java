@@ -97,13 +97,6 @@ public interface ICDISession
 	ICDIRuntimeOptions getRuntimeOptions();
 
 	/**
-	 * Returns whether this element is terminated.
-	 *
-	 * @return whether this element is terminated
-	 */
-	boolean isTerminated();
-
-	/**
 	 * Causes this element to terminate, generating a <code>KIND_TERMINATE</code> event.  
 	 *
 	 * @exception CDIException on failure. Reasons include:

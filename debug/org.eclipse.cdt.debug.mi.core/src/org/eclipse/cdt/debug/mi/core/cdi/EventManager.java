@@ -12,6 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -36,7 +37,8 @@ public class EventManager extends SessionObject implements ICDIEventManager {
 		public void update(Observable o, Object args) {
 			MIEvent[] events = (MIEvent[])args;
 			for (int i = 0; i < events.length; i++) {
-				// listener.handleDebugEvent(new CEventAdapter(events[i]));
+				ICDIEvent cdiEvent = EventAdapter.getCDIEvent(getCSession(), events[i]);
+				listener.handleDebugEvent(cdiEvent);
 			}
 		}
 	}

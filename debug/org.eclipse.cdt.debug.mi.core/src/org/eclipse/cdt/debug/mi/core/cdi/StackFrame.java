@@ -23,13 +23,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class StackFrame implements ICDIStackFrame {
+public class StackFrame extends CObject implements ICDIStackFrame {
 
-	CSession session;
 	MIFrame frame;
 
-	public StackFrame(CSession s, MIFrame f) {
-		session = s;
+	public StackFrame(CTarget target, MIFrame f) {
+		super(target);
 		frame = f;
 	}
 
@@ -37,12 +36,15 @@ public class StackFrame implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
 	public ICDIArgument[] getArguments() throws CDIException {
-		MIArg[] args = frame.getArgs();
-		ICDIArgument[] cargs = new ICDIArgument[args.length];
-		for (int i = 0; i < cargs.length; i++) {
-			cargs[i] = new Argument(args[i]);
+		if (frame != null) {
+			MIArg[] args = frame.getArgs();
+			ICDIArgument[] cargs = new ICDIArgument[args.length];
+			for (int i = 0; i < cargs.length; i++) {
+				cargs[i] = new Argument(getCTarget(), args[i]);
+			}
+			return cargs;
 		}
-		return cargs;
+		return new ICDIArgument[0];
 	}
 
 	/**
@@ -51,7 +53,7 @@ public class StackFrame implements ICDIStackFrame {
 	public ICDIVariable[] getLocalVariables() throws CDIException {
 		MIArg[] args = null;
 		ICDIVariable[] variables = null;
-		MISession mi = session.getMISession();
+		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackListLocals locals = factory.createMIStackListLocals(true);
 		try {
@@ -68,7 +70,7 @@ public class StackFrame implements ICDIStackFrame {
 		if (args != null) {
 			variables = new ICDIVariable[args.length];
 			for (int i = 0; i < variables.length; i++) {
-				variables[i] = new Variable(args[i]);
+				variables[i] = new Variable(getCTarget(), args[i]);
 			}
 		} else {
 			variables = new ICDIVariable[0];
@@ -80,28 +82,11 @@ public class StackFrame implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocation()
 	 */
 	public ICDILocation getLocation() {
-		return new Location(frame.getFile(), frame.getFunction(),
-				frame.getLine(), frame.getAddress());
+		if (frame != null) {
+			return new Location(frame.getFile(), frame.getFunction(),
+					frame.getLine(), frame.getAddress());
+		}
+		return new Location("", "", 0, 0);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getCDITarget()
-	 */
-	public ICDITarget getCDITarget() {
-		return session.getCTarget();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getId()
-	 */
-	public String getId() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getParent()
-	 */
-	public ICDIObject getParent() {
-		return null;
-	}
 }

@@ -19,7 +19,7 @@ public class MIStackListFramesInfo extends MIInfo {
 		super(out);
 	}
 
-	public MIFrame[] getFrames() {
+	public MIFrame[] getMIFrames() {
 		if (frames == null) {
 			parse();
 		}

@@ -32,7 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDITerminatedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -628,7 +628,7 @@ public class CDebugTarget extends CDebugElement
 	public void handleDebugEvent( ICDIEvent event )
 	{
 		ICDIObject source = event.getSource();
-		if ( source.getCDITarget().equals( this ) )
+		if ( source.getTarget().equals( this ) )
 		{
 			if ( event instanceof ICDICreatedEvent )
 			{
@@ -658,15 +658,15 @@ public class CDebugTarget extends CDebugElement
 					handleExitedEvent( (ICDIExitedEvent)event );
 				}
 			}
-			else if ( event instanceof ICDITerminatedEvent )
+			else if ( event instanceof ICDIDestroyedEvent )
 			{
 				if ( source instanceof ICDITarget )
 				{
-					handleTerminatedEvent( (ICDITerminatedEvent)event );
+					handleTerminatedEvent( (ICDIDestroyedEvent)event );
 				}
 				else if ( source instanceof ICDIThread )
 				{
-					handleThreadTerminatedEvent( (ICDITerminatedEvent)event );
+					handleThreadTerminatedEvent( (ICDIDestroyedEvent)event );
 				}
 			}
 			else if ( event instanceof ICDIDisconnectedEvent )
@@ -998,7 +998,7 @@ public class CDebugTarget extends CDebugElement
 		fireChangeEvent( DebugEvent.STATE );
 	}
 
-	private void handleTerminatedEvent( ICDITerminatedEvent event )
+	private void handleTerminatedEvent( ICDIDestroyedEvent event )
 	{
 		setCurrentStateId( IState.TERMINATED );
 		setCurrentStateInfo( null );
@@ -1045,7 +1045,7 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
-	private void handleThreadTerminatedEvent( ICDITerminatedEvent event )
+	private void handleThreadTerminatedEvent( ICDIDestroyedEvent event )
 	{
 		ICDIThread cdiThread = (ICDIThread)event.getSource();
 		CThread thread = findThread( cdiThread );

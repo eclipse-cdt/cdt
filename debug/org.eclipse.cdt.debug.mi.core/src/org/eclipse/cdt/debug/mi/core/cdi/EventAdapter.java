@@ -7,6 +7,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStepEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
@@ -21,16 +22,24 @@ import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
  */
 public class EventAdapter {
 
-	public static ICDIEvent getCEvent(final CSession session, final MIEvent miEvent) {
+	public static ICDIEvent getCDIEvent(CSession session, MIEvent miEvent) {
 		if (miEvent instanceof MIBreakpointEvent) {
-			return new SuspendedEvent(session, (MIBreakpointEvent)miEvent);
+			return new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIInferiorExitEvent) {
 		} else if (miEvent instanceof MIExitEvent) {
 		} else if (miEvent instanceof MIFunctionFinishedEvent) {
 		} else if (miEvent instanceof MILocationReachedEvent) {
 		} else if (miEvent instanceof MISignalEvent) {
 		} else if (miEvent instanceof MIStepEvent) {
+			return new SuspendedEvent(session, miEvent);
 		} else if (miEvent instanceof MIWatchpointEvent) {
+		} else if (miEvent instanceof MIRunningEvent) {
+			MIRunningEvent running = (MIRunningEvent)miEvent;
+			if (running.isStepping()) {
+				return new SteppingEvent(session, miEvent);
+			} else {
+				return new ResumedEvent(session, miEvent);
+			}
 		}
 		return null;
 	}

@@ -9,18 +9,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -56,18 +62,99 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 * The last valid operation.
 	 */
 	private int lastValidOperation = DND.DROP_NONE;
-
+	
 	/*
 	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void dragEnter(DropTargetEvent event) {
+	
 		if (FileTransfer.getInstance().isSupportedType(event.currentDataType) &&
 			event.detail == DND.DROP_DEFAULT) {
 			// default to copy when dragging from outside Eclipse. Fixes bug 16308.
 			event.detail = DND.DROP_COPY;
 		}		
+		
 		super.dragEnter(event);
 	}
+
+	
+	public void dropAccept(DropTargetEvent event){
+		if (getCurrentOperation() == DND.DROP_MOVE){
+			validateMove(event);
+		}
+	} 
+
+	/**
+	 * @param event
+	 */
+	private void validateMove(DropTargetEvent event) {
+		ICElement currentContainer = null;
+
+		Object currentTarget = getCurrentTarget();
+		if (currentTarget instanceof ICElement){
+			currentContainer =(ICElement) currentTarget;		
+		} else {
+			return;
+		}
+		
+		if ((!((currentContainer instanceof ICContainer) ||
+			  (currentContainer instanceof ICProject))) ||
+			  currentContainer.isReadOnly()){
+			event.detail = DND.DROP_NONE;
+			return;
+		} 
+		
+		ISelection sel = this.getViewer().getSelection();
+		if (sel instanceof IStructuredSelection){
+			StructuredSelection structSel = (StructuredSelection) sel;
+			Iterator iter=structSel.iterator(); 
+			while (iter.hasNext()){
+				Object tempSelection = iter.next();
+				if (tempSelection instanceof ICElement){
+					
+					if (tempSelection instanceof ICProject){
+						event.detail = DND.DROP_NONE;
+						break;
+					}
+					
+					ICElement tempElement = (ICElement) tempSelection;
+					ICElement tempElementParent = tempElement.getParent();
+					
+					if (tempElementParent.equals(currentContainer) ||
+						tempElement.equals(currentContainer) ||
+						tempElement.equals(currentContainer.getParent()) ||
+						tempElement.isReadOnly()){
+						event.detail = DND.DROP_NONE;
+						break;
+					}
+				}
+				else if (tempSelection instanceof IResource){
+					
+					if (tempSelection instanceof IProject){
+						event.detail = DND.DROP_NONE;
+						break;
+					}
+					
+				
+					IResource tempResource = (IResource) tempSelection;
+					IResource tempResourceParent = tempResource.getParent();
+					//Apples to apples...
+					IResource resourceCurrentContainer = currentContainer.getResource();
+				
+					if (tempResourceParent.equals(resourceCurrentContainer) ||
+						tempResource.equals(resourceCurrentContainer) ||
+						tempResource.equals(resourceCurrentContainer.getParent()) ||
+						tempResource.isReadOnly()){
+						event.detail = DND.DROP_NONE;
+						break;
+					}
+					
+				}
+			}
+		}
+		
+	}
+
 
 	/**
 	 * Returns an error status with the given info.
@@ -273,6 +360,8 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 			}
 		}
 		openError(status);
+		
+		
 		return result;
 	}
 
@@ -389,6 +478,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 * Ensures that the drop target meets certain criteria
 	 */
 	private IStatus validateTarget(Object target, TransferData transferType) {
+	
 		if (target instanceof IAdaptable) {
 			IResource r = (IResource)((IAdaptable) target).getAdapter(IResource.class);
 			if (r == null)
@@ -407,6 +497,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		if (destination.getType() == IResource.ROOT) {
 			return error("Resources Can Not Be Siblings"); //$NON-NLS-1$
 		}
+		
 		String message = null;
 		// drag within Eclipse?
 		if (LocalSelectionTransfer.getInstance().isSupportedType(transferType)) {
@@ -423,6 +514,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 					operation = new MoveFilesAndFoldersOperation(getShell());
 				}
 				message = operation.validateDestination(destination, selectedResources);
+			
 			}
 		} // file import?
 		else if (FileTransfer.getInstance().isSupportedType(transferType)) {
@@ -434,10 +526,12 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 			}				
 			CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
 			message = copyOperation.validateImportDestination(destination, sourceNames);
-		}		
+		}
+	
 		if (message != null) {
 			return error(message);
 		}
+		
 		return ok();
 	}
 

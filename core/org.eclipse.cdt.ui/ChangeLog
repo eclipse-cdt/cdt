@@ -1,3 +1,8 @@
+2004-06-10 Bogdan Gheorghe
+	Fix for Bug 65132: moving folder onto itself deletes entire project
+	
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java
+	
 2004-06-10 Hoda Amer
 	Fix for PR 66289: [Content assist] menu item contains red square icon
 	

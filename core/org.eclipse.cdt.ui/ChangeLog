@@ -1,3 +1,9 @@
+2003-09-21 Alain Magloire
+
+	Bug #41960, The asm editor did not know about '#' comment style
+
+	* src/org/eclipse/cdt/internal/ui/editor/asm/AsmPartitionScanner.java
+
 2003-09-18 Hoda Amer
 	Solution to bug#42611 : New Class Wizard should be hidden for C projects
 		
@@ -11,9 +17,9 @@
 	Work to the new BinaryParserBlock to add dynamic UI
 	contribution for binary parsers that need the flexibility.
 
-	* src/ore/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
-	* src/ore/eclipse/cdt/ui/dialogs/AbstractBinaryParserPage.java
-	* src/ore/eclipse/cdt/ui/dialogs/GNUElfBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/AbstractBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUElfBinaryParserPage.java
 
 2003-09-16 David Inglis
 	Removal of make builder ui components.

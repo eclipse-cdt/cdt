@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.IMatchLocator;
 import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
+import org.eclipse.cdt.internal.core.search.indexing.IndexProblemHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -115,7 +116,7 @@ public class MatchLocator implements IMatchLocator{
 		searchScope = scope;	
 	}
 
-	public boolean acceptProblem(IProblem problem) 								{ return DefaultProblemHandler.ruleOnProblem(problem, ParserMode.COMPLETE_PARSE );	}
+	public boolean acceptProblem(IProblem problem) 								{ return IndexProblemHandler.ruleOnProblem(problem, ParserMode.COMPLETE_PARSE );	}
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}

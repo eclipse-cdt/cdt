@@ -1,3 +1,10 @@
+2004-05-28 Bogdan Gheorghe
+	Fix for Bug 60946 - [Indexer] indexer should provide notification whenever index changes
+	Provide a notification to the listener of index events
+
+	Fix for Bug 44926 - add extensibility to gracefully handle preprocessor exceptions
+	Added an IndexProblemHandler to handle parser IProblem callbacks
+
 2004-05-27 Bogdan Gheorghe
 	Fix for Bug 58716 - [Refactoring] Subdirectories confuse refactoring
 	Added a listener to path change events from the core model; retrigger 

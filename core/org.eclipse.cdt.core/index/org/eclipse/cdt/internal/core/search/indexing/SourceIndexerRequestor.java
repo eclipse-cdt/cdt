@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -111,11 +110,15 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	private static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
 	
+	private ArrayList filesTraversed = null;
+	
 	public SourceIndexerRequestor(SourceIndexer indexer, IFile resourceFile, TimeOut timeOut) {
 		super();
 		this.indexer = indexer;
 		this.resourceFile = resourceFile;
 		this.timeoutThread =  timeOut;
+		this.filesTraversed = new ArrayList(15);
+		this.filesTraversed.add(resourceFile.getLocation().toOSString());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
@@ -145,7 +148,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 			}
 		}
 		
-		return DefaultProblemHandler.ruleOnProblem( problem, ParserMode.COMPLETE_PARSE );
+		return IndexProblemHandler.ruleOnProblem( problem, ParserMode.COMPLETE_PARSE );
 	}
 
 	/* (non-Javadoc)
@@ -258,6 +261,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		indexer.addInclude(inclusion, parent);
 		//Push on stack
 		pushInclude(inclusion);
+		//Add to traversed files
+		this.filesTraversed.add(inclusion.getFullFileName());
 	}
 
 	/* (non-Javadoc)
@@ -749,10 +754,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	}
 	
 	public boolean shouldRecordProblem( IProblem problem ){
-		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) ){
-			return problem.getID() != IProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
-		}
-		return false;
+		 return problem.checkCategory( IProblem.PREPROCESSOR_RELATED );
 	}
 
 	public void requestRemoveMarkers(IFile resource, IFile originator ){
@@ -830,5 +832,11 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		public IProblem getIProblem() {
 			return null;
 		}
+	}
+	/**
+	 * @return Returns the filesTraversed.
+	 */
+	public ArrayList getFilesTraversed() {
+		return filesTraversed;
 	}
 }

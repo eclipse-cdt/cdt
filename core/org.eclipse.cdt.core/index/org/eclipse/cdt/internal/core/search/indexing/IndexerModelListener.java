@@ -105,4 +105,9 @@ public class IndexerModelListener implements IElementChangedListener {
 		
 	}
 	
+	public void shutdown(){
+		if (indexerModelListener  != null)
+			CoreModel.getDefault().removeElementChangedListener(indexerModelListener);
+	}
+	
 }

@@ -11,7 +11,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 // This should be done in the Plugin.
 
@@ -19,64 +18,6 @@ public class CoreModel {
 
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = null;
-
-	/**
-	 * Plugin string id.
-     */
-	public final static String PLUGIN_ID = "org.eclipse.cdt.core";
-
-	/**
-	 * C nature string name, "cnature".
-     */
-	public final static String C_NATURE_NAME = "cnature";
-	/**
-	 * C nature string id, PLUGIN_ID + C_NATURE_NAME
-     */
-	public final static String C_NATURE_ID = PLUGIN_ID + "." + C_NATURE_NAME;
-
-	/**
-	 * C++ nature string name, "ccnature"
-     */
-	public final static String CC_NATURE_NAME = "ccnature";
-	/**
-	 * C++ nature string id, PLUGIN_ID + CC_NATURE_NAME
-     */
-	public final static String CC_NATURE_ID = PLUGIN_ID + "." + CC_NATURE_NAME;
-
-	/**
-	 * Returns the plugin id.
-	 */
-	public static String getPluginId() {
-		return PLUGIN_ID;
-	}
-
-	/**
-	 * Returns the C nature Name.
-	 */
-	public static String getCNatureName () {
-		return C_NATURE_NAME;
-	}
-
-	/**
-	 * Returns the C++ nature name.
-	 */
-	public static String getCCNatureName () {
-		return CC_NATURE_NAME;
-	}
-
-	/**
-	 * Returns the C nature Id.
-	 */
-	public static String getCNatureId () {
-		return C_NATURE_ID;
-	}
-
-	/**
-	 * Returns the C++ nature Id.
-	 */
-	public static String getCCNatureId () {
-		return CC_NATURE_ID;
-	}
 
 	/**
 	 * Creates an ICElement form and IPath.
@@ -185,32 +126,6 @@ public class CoreModel {
 		return manager.hasCCNature(project);
 	}
 
-	public static void addCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		manager.addCNature(project, monitor);
-	}
-
-	public static void addCCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		manager.addCCNature(project, monitor);
-	}
-
-	public static void removeCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		manager.removeCNature(project, monitor);
-	}
-
-	public static void removeCCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		manager.removeCCNature(project, monitor);
-	}
-
-	public static void addNature(IProject project, String natureId, IProgressMonitor monitor)
-		throws CModelException {
-		manager.addNature(project, natureId, monitor);
-	}
-
-	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor)
-		throws CModelException {
-		manager.removeNature(project, natureId, monitor);
-	}
-
 	/**
 	 * Return the singleton.
 	 */
@@ -238,4 +153,5 @@ public class CoreModel {
 
 	private CoreModel() {
 	}
+
 }

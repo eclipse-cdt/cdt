@@ -4,26 +4,21 @@ package org.eclipse.cdt.internal.core.model;
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @see ICModelStatus
  */
 
 public class CModelStatus extends Status implements ICModelStatus, ICModelStatusConstants, IResourceStatus {
-
-	// FIXME: Use the value in the plugin.
-	private static String PLUGIN_ID = CoreModel.getPluginId();
 
 	/**
 	 * The elements related to the failure, or <code>null</code>
@@ -56,14 +51,14 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 */
 	public CModelStatus() {
 		// no code for an multi-status
-		super(ERROR, PLUGIN_ID, 0, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, 0, "CModelStatus", null); //$NON-NLS-1$
 	}
 
 	/**
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code) {
-		super(ERROR, PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
 		//fElements= CElementInfo.fgEmptyChildren;
 	}
 
@@ -72,7 +67,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * elements.
 	 */
 	public CModelStatus(int code, ICElement[] elements) {
-		super(ERROR, PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
 		fElements= elements;
 		fPath= null;
 	}
@@ -81,7 +76,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code, String string) {
-		super(ERROR, PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
 		//fElements= CElementInfo.fgEmptyChildren;
 		fPath= null;
 		fString = string;
@@ -91,7 +86,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code, Throwable throwable) {
-		super(ERROR, PLUGIN_ID, code, "CModelStatus", throwable); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", throwable); //$NON-NLS-1$
 		//fElements= CElementInfo.fgEmptyChildren;
 	}
 
@@ -99,7 +94,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(int code, IPath path) {
-		super(ERROR, PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, code, "CModelStatus", null); //$NON-NLS-1$
 		//fElements= CElementInfo.fgEmptyChildren;
 		fPath= path;
 	}
@@ -125,7 +120,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	 * Constructs an C model status with no corresponding elements.
 	 */
 	public CModelStatus(CoreException coreException) {
-		super(ERROR, PLUGIN_ID, CORE_EXCEPTION, "CModelStatus", coreException); //$NON-NLS-1$
+		super(ERROR, CCorePlugin.PLUGIN_ID, CORE_EXCEPTION, "CModelStatus", coreException); //$NON-NLS-1$
 		//fElements= CElementInfo.fgEmptyChildren;
 	}
 

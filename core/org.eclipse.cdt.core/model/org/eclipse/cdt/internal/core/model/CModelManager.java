@@ -7,13 +7,12 @@ package org.eclipse.cdt.internal.core.model;
  
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -44,10 +42,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CModelManager implements IResourceChangeListener {
-
-	// FIXME: Get it from the plugin class.
-	private static String C_NATURE_ID = CoreModel.getCNatureId();
-	private static String CC_NATURE_ID = CoreModel.getCCNatureId();
 
 	private HashMap fParsedResources =  new HashMap();	
 
@@ -253,70 +247,6 @@ public class CModelManager implements IResourceChangeListener {
 		return croot;
 	}
 
-	public static void addCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		addNature(project, C_NATURE_ID, monitor);
-	}
-
-	public static void addCCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		addNature(project, CC_NATURE_ID, monitor);
-	}
-
-	public static void removeCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		removeNature(project, C_NATURE_ID, monitor);
-	}
-
-	public static void removeCCNature(IProject project, IProgressMonitor monitor) throws CModelException {
-		removeNature(project, CC_NATURE_ID, monitor);
-	}
-
-	/**
-	 * Utility method for adding a nature to a project.
-	 * 
-	 * @param proj the project to add the nature
-	 * @param natureId the id of the nature to assign to the project
-	 * @param monitor a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
-	 * 
-	 */
-	public static void addNature(IProject project, String natureId, IProgressMonitor monitor) throws CModelException {
-		try {
-			IProjectDescription description = project.getDescription();
-			String[] prevNatures= description.getNatureIds();
-			for (int i= 0; i < prevNatures.length; i++) {
-				if (natureId.equals(prevNatures[i]))
-					return;
-			}
-			String[] newNatures= new String[prevNatures.length + 1];
-			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-			newNatures[prevNatures.length]= natureId;
-			description.setNatureIds(newNatures);
-			project.setDescription(description, monitor);
-		} catch (CoreException e) {
-			throw new CModelException(e);
-		}
-	}
-
-	/**
-	 * Utility method for removing a project nature from a project.
-	 * 
-	 * @param proj the project to remove the nature from
-	 * @param natureId the nature id to remove
-	 * @param monitor a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
-	 */
-	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CModelException {
-		try {
-			IProjectDescription description = project.getDescription();
-			String[] prevNatures= description.getNatureIds();
-			List newNatures = new ArrayList(Arrays.asList(prevNatures));
-			newNatures.remove(natureId);
-			description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
-			project.setDescription(description, monitor);
-		} catch (CoreException e) {
-			throw new CModelException(e);
-		}
-	}
-
 	private void removeChildrenContainer(Parent container, IResource resource) {
 		if ( container.hasChildren() ) {
 			ICElement[] children = container.getChildren();
@@ -489,7 +419,7 @@ public class CModelManager implements IResourceChangeListener {
 	public static boolean hasCNature (IProject p) {
 		boolean ok = false;
 		try {
-			ok = (p.isOpen() && p.hasNature(C_NATURE_ID));
+			ok = (p.isOpen() && p.hasNature(CProjectNature.C_NATURE_ID));
 		} catch (CoreException e) {
 			//throws exception if the project is not open.
 			//System.out.println (e);
@@ -502,7 +432,7 @@ public class CModelManager implements IResourceChangeListener {
 	public static boolean hasCCNature (IProject p) {
 		boolean ok = false;
 		try {
-			ok = (p.isOpen() && p.hasNature(CC_NATURE_ID));
+			ok = (p.isOpen() && p.hasNature(CCProjectNature.CC_NATURE_ID));
 		} catch (CoreException e) {
 			//throws exception if the project is not open.
 			//System.out.println (e);

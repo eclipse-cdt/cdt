@@ -12,3 +12,14 @@
 	* src/../core/resources/ACBuilder.java:
 	* src/../internal/core/CBuilder.java:
 	Remove unused imports.
+
+2002-10-15 David Inglis
+	* model/../core/model/CoreModel.java
+	* model/../internal/core/model/CModelManager.java
+	* model/../internal/core/model/CModelStatus.java
+
+	Clean up model 
+		- removed plugin and nature id from model
+		  refernce core plugin and nature classes for ID.
+		- removed unsed methods in model for adding/removing
+		  natures.

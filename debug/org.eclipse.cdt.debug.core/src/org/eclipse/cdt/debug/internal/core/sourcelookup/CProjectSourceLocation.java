@@ -388,4 +388,9 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		fNotFoundCache.clear();
 		fSearchForDuplicateFiles = search;
 	}
+
+	public String toString()
+	{
+		return ( getProject() != null ) ? fProject.toString() : "";
+	}
 }

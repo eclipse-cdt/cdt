@@ -2629,22 +2629,26 @@ public abstract class Parser extends ExpressionParser implements IParser
             {
                 case IToken.t_virtual :
                     consume(IToken.t_virtual);
+                	setCompletionValues(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, KeywordSets.Key.EMPTY );
                     isVirtual = true;
                     break;
                 case IToken.t_public :
-                	consume(); 
+                	consume();
+                	setCompletionValues(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, KeywordSets.Key.EMPTY );
                     break;
                 case IToken.t_protected :
 					consume();
 				    visibility = ASTAccessVisibility.PROTECTED;
+				    setCompletionValues(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, KeywordSets.Key.EMPTY );
                     break;
                 case IToken.t_private :
                     visibility = ASTAccessVisibility.PRIVATE;
 					consume();
+					setCompletionValues(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, KeywordSets.Key.EMPTY );
            			break;
                 case IToken.tCOLONCOLON :
                 case IToken.tIDENTIFIER :
-                    nameDuple = name(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, Key.EMPTY );
+                    nameDuple = name(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, Key.BASE_SPECIFIER );
                     break;
                 case IToken.tCOMMA :
                     try
@@ -2668,6 +2672,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     visibility = ASTAccessVisibility.PUBLIC;
                     nameDuple = null;                        
                     consume();
+                    setCompletionValues(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE, KeywordSets.Key.BASE_SPECIFIER );
                     continue baseSpecifierLoop;
                 default :
                     break baseSpecifierLoop;

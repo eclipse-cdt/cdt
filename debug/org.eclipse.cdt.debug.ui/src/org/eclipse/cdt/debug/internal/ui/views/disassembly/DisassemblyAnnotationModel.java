@@ -45,8 +45,9 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 	}
 
 	protected void breakpointsAdded( final IBreakpoint[] breakpoints, final IDocument document ) {
-		if ( getInput().equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ||
-			 getInput().equals( DisassemblyEditorInput.PENDING_EDITOR_INPUT ) )
+		DisassemblyEditorInput input = getInput();
+		if ( DisassemblyEditorInput.EMPTY_EDITOR_INPUT.equals( input ) ||
+			 DisassemblyEditorInput.PENDING_EDITOR_INPUT.equals( input ) )
 			 return;
 		asyncExec( new Runnable() {		
 			public void run() {
@@ -56,8 +57,9 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 	}
 
 	protected void breakpointsRemoved( final IBreakpoint[] breakpoints, final IDocument document ) {
-		if ( getInput().equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ||
-			 getInput().equals( DisassemblyEditorInput.PENDING_EDITOR_INPUT ) )
+		DisassemblyEditorInput input = getInput();
+		if ( DisassemblyEditorInput.EMPTY_EDITOR_INPUT.equals( input ) ||
+			 DisassemblyEditorInput.PENDING_EDITOR_INPUT.equals( input ) )
 			 return;
 		asyncExec( new Runnable() {		
 			public void run() {
@@ -67,8 +69,9 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 	}
 
 	protected void breakpointsChanged( final IBreakpoint[] breakpoints, final IDocument document ) {
-		if ( getInput().equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ||
-			 getInput().equals( DisassemblyEditorInput.PENDING_EDITOR_INPUT ) )
+		DisassemblyEditorInput input = getInput();
+		if ( DisassemblyEditorInput.EMPTY_EDITOR_INPUT.equals( input ) ||
+			 DisassemblyEditorInput.PENDING_EDITOR_INPUT.equals( input ) )
 			 return;
 		asyncExec( new Runnable() {		
 			public void run() {

@@ -15,11 +15,15 @@ To open the C/C++ perspective: Click <b>Window > Open Perspective > C/C++ Develo
 
 	<item><b>What's new </b> 
 Learn about the new features in this version of the CDT. 
-  <topic href="/org.eclipse.cdt.doc.user/cdt_o_whatnew.htm">What's new </topic> 
-	</item>
+  <topic href="/org.eclipse.cdt.doc.user/cdt_o_whatnew.htm">What's new </topic></item>
 
 	<item><b>CDT Tutorial </b> 
 This quick tutorial guides you through the basic steps to get started. 
-  <topic href="/org.eclipse.cdt.doc.user/cdt_o_tutorial.htm">Tutorial </topic> 
-	</item>
+  <topic href="/org.eclipse.cdt.doc.user/cdt_o_tutorial.htm">Tutorial </topic></item>
+	
+	<item><b>CppUnit integration and other contributed plugins </b>
+Visit the <topic href="http://www.eclipse.org/cdt/">CDT Community Webpage</topic> to find a list of contributed plugins
+and a CppUnit integration in the CDT.</item>
+
+	
 </welcomePage>

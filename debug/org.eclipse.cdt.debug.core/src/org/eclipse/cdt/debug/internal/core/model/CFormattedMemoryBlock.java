@@ -465,4 +465,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 	{
 		getCDIMemoryBlock().setFrozen( frozen );
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#setWordSize(int)
+	 */
+	public void setWordSize( int size )
+	{
+		resetRows();
+		fWordSize = size;
+	}
 }

@@ -59,6 +59,13 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	int getWordSize();
 	
 	/**
+	 * Sets the size of memory unit.
+	 * 
+	 * @param size the size of memory unit
+	 */
+	void setWordSize( int size );
+	
+	/**
 	 * Returns the number of rows in the output table.
 	 * 
 	 * @return the number of rows in the output table

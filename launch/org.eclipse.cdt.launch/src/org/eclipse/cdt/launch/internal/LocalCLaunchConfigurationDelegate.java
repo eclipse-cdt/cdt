@@ -188,7 +188,12 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
 				dialog.setTitle(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Select_Process")); //$NON-NLS-1$
 				dialog.setMessage(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
-				IProcessList plist = CCorePlugin.getDefault().getProcessList();
+				IProcessList plist = null;
+				try {
+					plist = CCorePlugin.getDefault().getProcessList();
+				} catch (CoreException e) {
+					LaunchUIPlugin.errorDialog(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.CDT_Launch_Error"), e.getStatus()); //$NON-NLS-1$
+				}
 				if (plist == null) {
 					MessageDialog.openError(shell, LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.CDT_Launch_Error"), LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Platform_cannot_list_processes")); //$NON-NLS-1$ //$NON-NLS-2$
 					return;

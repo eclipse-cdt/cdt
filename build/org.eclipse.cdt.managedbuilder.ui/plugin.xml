@@ -226,7 +226,6 @@
             </optionCategory>
             <option
                   name="%Option.Posix.InclPaths"
-                  browseNeeded="directory"
                   category="cygwin.gnu.c.compiler.category.dirs"
                   command="-I"
                   browseType="directory"
@@ -572,7 +571,6 @@
             </optionCategory>
             <option
                   name="%Option.Posix.InclPaths"
-                  browseNeeded="directory"
                   category="cygwin.gnu.compiler.category.dirs"
                   command="-I"
                   browseType="directory"
@@ -895,7 +893,6 @@
             </optionCategory>
             <option
                   name="%Option.Posix.Libs"
-                  browseNeeded="file"
                   category="cygwin.gnu.c.linker.category.libs"
                   command="-l"
                   browseType="file"
@@ -904,7 +901,6 @@
             </option>
             <option
                   name="%Option.Posix.Libsearch"
-                  browseNeeded="directory"
                   category="cygwin.gnu.c.linker.category.libs"
                   command="-L"
                   browseType="directory"
@@ -932,7 +928,6 @@
             </option>
             <option
                   name="%Option.Posix.UserObjs"
-                  browseNeeded="file"
                   category="cygwin.gnu.c.linker.category.other"
                   browseType="file"
                   valueType="userObjs"
@@ -998,7 +993,6 @@
             </optionCategory>
             <option
                   name="%Option.Posix.Libs"
-                  browseNeeded="file"
                   category="cygwin.gnu.linker.category.libs"
                   command="-l"
                   browseType="file"
@@ -1007,7 +1001,6 @@
             </option>
             <option
                   name="%Option.Posix.Libsearch"
-                  browseNeeded="directory"
                   category="cygwin.gnu.linker.category.libs"
                   command="-L"
                   browseType="directory"
@@ -1035,7 +1028,6 @@
             </option>
             <option
                   name="%Option.Posix.UserObjs"
-                  browseNeeded="file"
                   category="cygwin.gnu.linker.category.other"
                   browseType="file"
                   valueType="userObjs"

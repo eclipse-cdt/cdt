@@ -83,14 +83,17 @@ public class BuildOptionSettingsPage extends BuildSettingsPage {
 					addField(comboField);
 					fieldsList.add(comboField);
 					break;
-				case IOption.STRING_LIST :
 				case IOption.INCLUDE_PATH :
+				case IOption.STRING_LIST :
 				case IOption.PREPROCESSOR_SYMBOLS :
 				case IOption.LIBRARIES :
 				case IOption.OBJECTS :
-					BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(
-							opt.getId(), opt.getName(), getFieldEditorParent());
-					listField.setBrowseStrategy(opt.getBrowseType());
+					FileListControlFieldEditor listField =
+						new FileListControlFieldEditor(
+							opt.getId(),
+							opt.getName(),
+							getFieldEditorParent(),
+							opt.getBrowseType());
 					addField(listField);
 					fieldsList.add(listField);
 					break;

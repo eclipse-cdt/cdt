@@ -1,0 +1,515 @@
+package org.eclipse.cdt.managedbuilder.ui.properties;
+
+/*******************************************************************************
+ * Copyright (c) 2004 BitMethods Inc and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: BitMethods Inc - Initial API and implementation
+ ******************************************************************************/
+
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.IInputValidator;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+
+/**
+ * Instances of this class allow the user to add,remove, delete, moveup and movedown
+ * the items in the list control.
+ */
+
+public class FileListControl {
+	/**
+	 * Multi-purpose dialog to prompt the user for a value, path, or file.
+	 * 
+	 * @since 2.0
+	 */
+	class SelectPathInputDialog extends InputDialog {
+		// Constants for externalized strings
+		private static final String BROWSE = "BuildPropertyCommon.label.browse"; //$NON-NLS-1$
+		private int type;
+
+		/**
+		 * @param parentShell
+		 * @param dialogTitle
+		 * @param dialogMessage
+		 * @param initialValue
+		 * @param validator
+		 * @param browseType
+		 */
+		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator, int type) {
+			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
+			this.type = type;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+		 */
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			if (type != IOption.BROWSE_NONE) {
+				final Button browse = createButton(parent, 3, ManagedBuilderUIPlugin.getResourceString(BROWSE), true);
+				browse.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent ev) {
+						String currentName;
+						String result;
+						switch (type) {
+							case IOption.BROWSE_DIR :
+								DirectoryDialog dialog = new DirectoryDialog(getParentShell(), SWT.OPEN);
+								currentName = getText().getText();
+								if(currentName != null && currentName.trim().length() != 0) {
+									dialog.setFilterPath(currentName);
+								}
+								result = dialog.open();
+								if(result != null) {
+									getText().setText(result);
+								}
+								break;
+							case IOption.BROWSE_FILE:
+								FileDialog browseDialog = new FileDialog(getParentShell());
+								currentName = getText().getText();
+								if (currentName != null && currentName.trim().length() != 0) {
+									browseDialog.setFilterPath(currentName);
+								}
+								result = browseDialog.open();
+								if (result != null) {
+									getText().setText(result);
+								}
+								break;
+						}
+					}
+				});
+			}
+		}
+
+	}
+
+	//toolbar
+	private ToolBar toolBar;
+	// toolbar items
+	private ToolItem titleItem, addItem, deleteItem, editItem, moveUpItem,
+			moveDownItem;
+	// title label
+	private Label title;
+	// images
+	private Image addImage, deleteImage, editImage, moveUpImage, moveDownImage;
+	private Composite composite;
+	// list control
+	private List list;
+	private String compTitle;
+	private SelectionListener selectionListener;
+	private GridData gdata, tgdata, grid3, grid4, grid2;
+	// types of dialogs that will be displayed when the add button is pressed.
+//	public static final int FILE_DIALOG = 0;
+//	public static final int DIR_DIALOG = 1;
+//	public static final int TEXT_DIALOG = 2;
+	private int browseType;
+	private IPath path;
+	private static final String ADD_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.add"); //$NON-NLS-1$
+	private static final String DEL_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.delete"); //$NON-NLS-1$
+	private static final String EDIT_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.edit"); //$NON-NLS-1$
+	private static final String MOVEUP_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.moveup"); //$NON-NLS-1$
+	private static final String MOVEDOWN_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.movedown"); //$NON-NLS-1$
+	private static final String FILE_TITLE = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.title.file");	//$NON-NLS-1$
+	private static final String DIR_TITLE = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.title.directory");	//$NON-NLS-1$
+	private static final String FILE_MSG = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.message.file");	//$NON-NLS-1$
+	private static final String DIR_MSG = ManagedBuilderUIPlugin.getResourceString("BrowseEntryDialog.message.directory");	//$NON-NLS-1$
+	private static final String TITLE = ManagedBuilderUIPlugin.getResourceString("BuildPropertyCommon.label.title");	//$NON-NLS-1$
+	//images
+	private final Image IMG_ADD = ManagedBuilderUIImages
+			.get(ManagedBuilderUIImages.IMG_FILELIST_ADD);
+	private final Image IMG_DEL = ManagedBuilderUIImages
+			.get(ManagedBuilderUIImages.IMG_FILELIST_DEL);
+	private final Image IMG_EDIT = ManagedBuilderUIImages
+			.get(ManagedBuilderUIImages.IMG_FILELIST_EDIT);
+	private final Image IMG_MOVEUP = ManagedBuilderUIImages
+			.get(ManagedBuilderUIImages.IMG_FILELIST_MOVEUP);
+	private final Image IMG_MOVEDOWN = ManagedBuilderUIImages
+			.get(ManagedBuilderUIImages.IMG_FILELIST_MOVEDOWN);
+	/**
+	 * Constructor
+	 * 
+	 * @param parent
+	 * @param compTitle
+	 * @param browseType
+	 */
+	public FileListControl(Composite parent, String compTitle, int type) {
+		// Default to no browsing
+		browseType = type;
+
+		//file panel
+		Composite filePanel = new Composite(parent, SWT.NONE);
+		GridLayout form1 = new GridLayout();
+		form1.numColumns = 1;
+		form1.horizontalSpacing = 0;
+		form1.verticalSpacing = 0;
+		form1.marginHeight = 0;
+		form1.marginWidth = 0;
+		filePanel.setLayout(form1);
+		gdata = new GridData(GridData.FILL_BOTH);
+		gdata.heightHint = 83;
+		filePanel.setLayoutData(gdata);
+		// title panel
+		Composite titlePanel = new Composite(filePanel, SWT.BORDER);
+		GridLayout titleform = new GridLayout();
+		titleform.numColumns = 2;
+		titleform.horizontalSpacing = 0;
+		titleform.verticalSpacing = 0;
+		titleform.marginHeight = 0;
+		titleform.marginWidth = 0;
+		titlePanel.setLayout(titleform);
+		tgdata = new GridData(GridData.FILL_HORIZONTAL);
+		tgdata.heightHint = 22;
+		titlePanel.setLayoutData(tgdata);
+		title = new Label(titlePanel, SWT.NONE | SWT.BOLD);
+		this.compTitle = "  " + compTitle; //$NON-NLS-1$
+		title.setText(this.compTitle);
+		grid2 = new GridData(GridData.FILL_HORIZONTAL);
+		title.setLayoutData(grid2);
+		//button panel
+		Composite buttonPanel = new Composite(titlePanel, SWT.NONE);
+		GridLayout form2 = new GridLayout();
+		form2.numColumns = 5;
+		form2.horizontalSpacing = 0;
+		form2.verticalSpacing = 0;
+		form2.marginWidth = 0;
+		form2.marginHeight = 0;
+		buttonPanel.setLayout(form2);
+		// toolbar
+		toolBar = new ToolBar(buttonPanel, SWT.HORIZONTAL | SWT.RIGHT
+				| SWT.FLAT);
+		// add toolbar item
+		addItem = new ToolItem(toolBar, SWT.PUSH);
+		addItem.setImage(IMG_ADD);
+		addItem.setToolTipText(ADD_STR);
+		addItem.addSelectionListener(getSelectionListener());
+		// delete toolbar item
+		deleteItem = new ToolItem(toolBar, SWT.PUSH);
+		deleteItem.setImage(IMG_DEL);
+		deleteItem.setToolTipText(DEL_STR);
+		deleteItem.addSelectionListener(getSelectionListener());
+		// edit toolbar item
+		editItem = new ToolItem(toolBar, SWT.PUSH);
+		editItem.setImage(IMG_EDIT);
+		editItem.setToolTipText(EDIT_STR);
+		editItem.addSelectionListener(getSelectionListener());
+		// moveup toolbar item
+		moveUpItem = new ToolItem(toolBar, SWT.PUSH);
+		moveUpItem.setImage(IMG_MOVEUP);
+		moveUpItem.setToolTipText(MOVEUP_STR);
+		moveUpItem.addSelectionListener(getSelectionListener());
+		// movedown toolbar item
+		moveDownItem = new ToolItem(toolBar, SWT.PUSH);
+		moveDownItem.setImage(IMG_MOVEDOWN);
+		moveDownItem.setToolTipText(MOVEDOWN_STR);
+		moveDownItem.addSelectionListener(getSelectionListener());
+		grid3 = new GridData(GridData.FILL_HORIZONTAL
+				| GridData.HORIZONTAL_ALIGN_END);
+		buttonPanel.setLayoutData(grid3);
+		// list control
+		list = new List(filePanel, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		grid4 = new GridData(GridData.FILL_BOTH);
+		grid4.heightHint = 38;
+		// force the list to be no wider than the title bar
+		grid4.widthHint = titlePanel.getSize().x;
+		grid4.horizontalSpan = 2;
+		list.setLayoutData(grid4);
+		list.addSelectionListener(getSelectionListener());
+		//Add a double-click event handler
+		list.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				// Popup the editor on the selected item from the list
+				editSelection();
+			}
+		});
+		// Add a delete event handler
+		list.addKeyListener(new KeyAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.KeyAdapter#keyPressed(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyPressed(KeyEvent e) {
+				// Is this the delete key
+				if (e.keyCode == SWT.DEL) {
+					removePressed();
+				} else {
+					super.keyPressed(e);
+				}
+			}
+		});
+
+		selectionChanged();
+	}
+	/**
+	 * Set list values
+	 * 
+	 * @param listVal
+	 */
+	public void setList(String[] listVal) {
+		if (list != null) {
+			list.removeAll();
+		}
+		for (int i = 0; i < listVal.length; i++) {
+			list.add(listVal[i]);
+		}
+	}
+	/**
+	 * Set selection
+	 * 
+	 * @param sel
+	 */
+	public void setSelection(int sel) {
+		if (list.getItemCount() > 0)
+			list.setSelection(sel);
+		selectionChanged();
+	}
+	/**
+	 * Set default selection
+	 */
+	public void setSelection() {
+		if (list.getItemCount() > 0)
+			list.setSelection(0);
+	}
+	/**
+	 * removes all items from list control
+	 */
+	public void removeAll() {
+		if (list != null)
+			list.removeAll();
+	}
+	/**
+	 * get list items
+	 * 
+	 * @return
+	 */
+	public String[] getItems() {
+		return list.getItems();
+	}
+	/**
+	 * Create selection listener for buttons
+	 */
+	private void createSelectionListener() {
+		selectionListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				Widget widget = event.widget;
+				if (widget == addItem) {
+					addPressed();
+				} else if (widget == deleteItem) {
+					removePressed();
+				} else if (widget == moveUpItem) {
+					upPressed();
+				} else if (widget == moveDownItem) {
+					downPressed();
+				} else if (widget == list) {
+					selectionChanged();
+				} else if (widget == editItem) {
+					editSelection();
+				}
+			}
+		};
+	}
+	/**
+	 * Returns selection listener
+	 * 
+	 * @return
+	 */
+	private SelectionListener getSelectionListener() {
+		if (selectionListener == null)
+			createSelectionListener();
+		return selectionListener;
+	}
+	/**
+	 * This method will be called when the add button is pressed
+	 */
+	private void addPressed() {
+		// Prompt user for a new item
+		String input = getNewInputObject();
+		
+		// Add it to the list
+		if (input != null && input.length() > 0) {
+			int index = list.getSelectionIndex();
+			if (index >= 0) {
+				list.add(input, index + 1);
+				list.setSelection(index + 1);
+			}
+			else {
+				list.add(input, 0);
+				list.setSelection(0);
+			}
+		}
+
+		selectionChanged();
+	}
+	/**
+	 * This method will be called when the remove button is pressed
+	 */
+	private void removePressed() {
+		int index = list.getSelectionIndex();
+		if (browseType == IOption.BROWSE_DIR || browseType == IOption.BROWSE_FILE) {
+			String quest = ManagedBuilderUIPlugin.getResourceString("FileListControl.deletedialog.message"); //$NON-NLS-1$
+			String title = ManagedBuilderUIPlugin.getResourceString("FileListControl.deletedialog.title"); //$NON-NLS-1$
+			boolean delDir = MessageDialog.openQuestion(list.getShell(), title,
+					quest);
+			if (delDir && index != -1)
+				list.remove(index);
+		} else if (index != -1)
+			list.remove(index);
+		selectionChanged();
+	}
+	/**
+	 * This method will be called when the move up button is pressed
+	 */
+	private void upPressed() {
+		int index = list.getSelectionIndex();
+		String curSelList = list.getItem(index);
+		String preList = list.getItem(index - 1);
+		list.setItem(index - 1, curSelList);
+		list.setItem(index, preList);
+		list.setSelection(index - 1);
+		selectionChanged();
+	}
+	/**
+	 * This method will be called when the move down button is pressed
+	 */
+	private void downPressed() {
+		int index = list.getSelectionIndex();
+		String curSelList = list.getItem(index);
+		String nextList = list.getItem(index + 1);
+		list.setItem(index + 1, curSelList);
+		list.setItem(index, nextList);
+		list.setSelection(index + 1);
+		selectionChanged();
+	}
+	/**
+	 * This method will be called when the edit button is pressed
+	 */
+	private void editSelection() {
+		int index = list.getSelectionIndex();
+		if (index != -1) {
+			String selItem = list.getItem(index);
+			String title = ManagedBuilderUIPlugin.getResourceString("FileListControl.editdialog.title"); //$NON-NLS-1$
+			if (selItem != null) {
+				InputDialog dialog = new InputDialog(null, title, compTitle,
+						selItem, null);
+				String newItem = null;
+				if (dialog.open() == InputDialog.OK) {
+					newItem = dialog.getValue();
+					if (newItem != null && !newItem.equals(selItem)) {
+						list.setItem(index, newItem);
+						selectionChanged();
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * This method will be called when the list selection changed
+	 */
+	public void selectionChanged() {
+		int index = list.getSelectionIndex();
+		int size = list.getItemCount();
+		deleteItem.setEnabled(size > 0);
+		moveUpItem.setEnabled(size > 1 && index > 0);
+		moveDownItem.setEnabled(size > 1 && index >= 0 && index < size - 1);
+		editItem.setEnabled(size > 0);
+	}
+	/**
+	 * Returns List control
+	 * 
+	 * @return
+	 */
+	public List getListControl() {
+		return list;
+	}
+
+	/**
+	 * Sets the IPath of the project the field editor was
+	 * created for.
+	 * 
+	 * @param path The path to the 
+	 */
+	public void setPath(IPath path) {
+		this.path = path;
+	}
+	
+	/**
+	 * Set browseType
+	 */
+	public void setType(int type) {
+		browseType = type;
+	}
+
+	/**
+	 * Returns the input dialog string
+	 * 
+	 * @return
+	 */
+	private String getNewInputObject() {
+		// Create a dialog to prompt for a new list item
+		String input = null;
+		String title = new String();
+		String message = new String();
+		String initVal = new String();
+		
+		if (browseType == IOption.BROWSE_DIR) {
+			title = DIR_TITLE;
+			message = DIR_MSG;
+			initVal = path == null ? initVal : path.toString();
+		} else if (browseType == IOption.BROWSE_FILE) {
+			title = FILE_TITLE;
+			message = FILE_MSG;
+			initVal = path == null ? initVal : path.toString();
+		} else {
+			title = TITLE;
+			message = compTitle;
+		}
+		
+		// Prompt for value
+		SelectPathInputDialog dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, initVal, null, browseType);
+		if (dialog.open() == SelectPathInputDialog.OK) {
+			input = dialog.getValue();
+			if (input == null || input.length() == 0) return "";	//$NON-NLS-1$
+		}
+		
+		// Double-quote the spaces in paths (if any)
+		switch (browseType) {
+			case IOption.BROWSE_DIR:
+			case IOption.BROWSE_FILE:
+				String[] segments = input.split("\\s"); //$NON-NLS-1$
+				if (segments.length > 1) {
+					// Double-quote paths with whitespaces
+					input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
+				}
+				break;
+			default:
+				break;
+		}
+		
+		return input;
+	}
+	
+}

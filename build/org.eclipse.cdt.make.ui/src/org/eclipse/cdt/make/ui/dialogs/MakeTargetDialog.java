@@ -58,6 +58,7 @@ public class MakeTargetDialog extends Dialog {
 
 	Text targetNameText;
 	Button stopOnErrorButton;
+	Button runAllBuildersButton;
 	Text commandText;
 	Button defButton;
 	Text targetText;
@@ -68,6 +69,7 @@ public class MakeTargetDialog extends Dialog {
 	private IPath buildCommand;
 	private boolean isDefaultCommand;
 	private boolean isStopOnError;
+	private boolean runAllBuilders = true;
 	private String buildArguments;
 	private String targetString;
 	private String targetName;
@@ -87,6 +89,7 @@ public class MakeTargetDialog extends Dialog {
 		targetName = target.getName();
 		targetString = target.getBuildTarget();
 		targetBuildID = target.getTargetBuilderID();
+		runAllBuilders = target.runAllBuilders();
 	}
 
 	/**
@@ -98,12 +101,12 @@ public class MakeTargetDialog extends Dialog {
 		fTargetManager = MakeCorePlugin.getDefault().getTargetManager();
 		String[] id = fTargetManager.getTargetBuilders(container.getProject());
 		if (id.length == 0) {
-			throw new CoreException(
-				new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, MakeUIPlugin.getResourceString("MakeTargetDialog.exception.noTargetBuilderOnProject"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1,
+					MakeUIPlugin.getResourceString("MakeTargetDialog.exception.noTargetBuilderOnProject"), null)); //$NON-NLS-1$
 		}
 		targetBuildID = id[0];
-		IMakeBuilderInfo buildInfo =
-			MakeCorePlugin.createBuildInfo(container.getProject(), fTargetManager.getBuilderID(targetBuildID));
+		IMakeBuilderInfo buildInfo = MakeCorePlugin.createBuildInfo(container.getProject(),
+				fTargetManager.getBuilderID(targetBuildID));
 		isStopOnError = buildInfo.isStopOnError();
 		isDefaultCommand = buildInfo.isDefaultBuildCmd();
 		buildCommand = buildInfo.getBuildCommand();
@@ -134,25 +137,23 @@ public class MakeTargetDialog extends Dialog {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		initializeDialogUnits(composite);
 
+		createNameControl(composite);
+		createTargetControl(composite);
+		createBuildCmdControls(composite);
+		createSettingControls(composite);
 
 		fStatusLine = new MessageLine(composite);
 		fStatusLine.setAlignment(SWT.LEFT);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		fStatusLine.setLayoutData(gd);
-		fStatusLine.setMessage(getTitle());
 
-		createNameControl(composite);
-		createTargetControl(composite);
-		createBuildCmdControls(composite);
-		createSettingControls(composite);
 		return composite;
 	}
 
 	protected void createNameControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 2);
 		((GridLayout)composite.getLayout()).makeColumnsEqualWidth = false;
-		((GridLayout)composite.getLayout()).horizontalSpacing = 0;
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(TARGET_NAME_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
@@ -161,6 +162,7 @@ public class MakeTargetDialog extends Dialog {
 		((GridData) (targetNameText.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetNameText.getLayoutData())).grabExcessHorizontalSpace = true;
 		targetNameText.addListener(SWT.Modify, new Listener() {
+
 			public void handleEvent(Event e) {
 				String newName = targetNameText.getText().trim();
 				if (newName.equals("")) { //$NON-NLS-1$
@@ -168,9 +170,8 @@ public class MakeTargetDialog extends Dialog {
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
 				} else
 					try {
-						if (fTarget != null
-							&& fTarget.getName().equals(newName)
-							|| fTargetManager.findTarget(fContainer, newName) == null) {
+						if (fTarget != null && fTarget.getName().equals(newName)
+								|| fTargetManager.findTarget(fContainer, newName) == null) {
 							fStatusLine.setErrorMessage(null);
 							getButton(IDialogConstants.OK_ID).setEnabled(true);
 						} else {
@@ -197,18 +198,23 @@ public class MakeTargetDialog extends Dialog {
 		} else {
 			stopOnErrorButton.setEnabled(false);
 		}
+		runAllBuildersButton = new Button(group, SWT.CHECK);
+		runAllBuildersButton.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.runAllBuilders")); //$NON-NLS-1$
+		if (runAllBuilders) {
+			runAllBuildersButton.setSelection(true);
+		}
 	}
 
 	protected void createBuildCmdControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_CMD_GROUP), 1);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.horizontalSpacing = 0;
 		layout.makeColumnsEqualWidth = false;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_DEFAULT));
 		defButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
 					commandText.setEnabled(false);
@@ -229,6 +235,7 @@ public class MakeTargetDialog extends Dialog {
 		((GridData) (commandText.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (commandText.getLayoutData())).grabExcessHorizontalSpace = true;
 		commandText.addListener(SWT.Modify, new Listener() {
+
 			public void handleEvent(Event e) {
 				if (commandText.getText().equals("")) { //$NON-NLS-1$
 					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
@@ -277,7 +284,8 @@ public class MakeTargetDialog extends Dialog {
 			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.create"), true); //$NON-NLS-1$
 		}
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		//do this here because setting the text will set enablement on the ok button
+		//do this here because setting the text will set enablement on the ok
+		// button
 		targetNameText.setFocus();
 		if (targetName != null) {
 			targetNameText.setText(targetName);
@@ -304,6 +312,10 @@ public class MakeTargetDialog extends Dialog {
 		return stopOnErrorButton.getSelection();
 	}
 
+	private boolean runAllBuilders() {
+		return runAllBuildersButton.getSelection();
+	}
+
 	private boolean useDefaultBuildCmd() {
 		return defButton.getSelection();
 	}
@@ -323,8 +335,8 @@ public class MakeTargetDialog extends Dialog {
 			if (fTarget == null) {
 				target = fTargetManager.createTarget(fContainer.getProject(), targetNameText.getText().trim(), targetBuildID);
 			}
-
 			target.setStopOnError(isStopOnError());
+			target.setRunAllBuilders(runAllBuilders());
 			target.setUseDefaultBuildCmd(useDefaultBuildCmd());
 			if (!useDefaultBuildCmd()) {
 				String bldLine = getBuildLine();
@@ -359,7 +371,9 @@ public class MakeTargetDialog extends Dialog {
 				}
 			}
 		} catch (CoreException e) {
-			MakeUIPlugin.errorDialog(getShell(), MakeUIPlugin.getResourceString("MakeTargetDialog.exception.makeTargetError"), MakeUIPlugin.getResourceString("MakeTargetDialog.exception.errorAddingTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			MakeUIPlugin.errorDialog(
+					getShell(),
+					MakeUIPlugin.getResourceString("MakeTargetDialog.exception.makeTargetError"), MakeUIPlugin.getResourceString("MakeTargetDialog.exception.errorAddingTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		super.okPressed();
 	}

@@ -1,11 +1,10 @@
-/*
+/*******************************************************************************
  * Created on 19-Aug-2003
- *
+ * 
  * Copyright (c) 2002,2003 QNX Software Systems Ltd.
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
 import java.util.HashMap;
@@ -13,13 +12,17 @@ import java.util.HashMap;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class MakeTarget implements IMakeTarget {
 
@@ -30,9 +33,10 @@ public class MakeTarget implements IMakeTarget {
 	private IPath buildCommand;
 	private boolean isDefaultBuildCmd;
 	private boolean isStopOnError;
+	private boolean runAllBuidlers = true;
 	private String targetBuilderID;
 	private IContainer container;
-	
+
 	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
 		this.targetBuilderID = targetBuilderID;
@@ -79,7 +83,7 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public IPath getBuildCommand() {
-		return buildCommand != null ? buildCommand: new Path(""); //$NON-NLS-1$
+		return buildCommand != null ? buildCommand : new Path(""); //$NON-NLS-1$
 	}
 
 	public void setBuildCommand(IPath command) throws CoreException {
@@ -104,7 +108,7 @@ public class MakeTarget implements IMakeTarget {
 		if (obj == this)
 			return true;
 		if (obj instanceof MakeTarget) {
-			MakeTarget other = (MakeTarget) obj;
+			MakeTarget other = (MakeTarget)obj;
 			return container.equals(other.getContainer()) && name.equals(other.getName());
 		}
 		return false;
@@ -115,26 +119,56 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public void build(IProgressMonitor monitor) throws CoreException {
-		IProject project = container.getProject();
-		String builderID = manager.getBuilderID(targetBuilderID);
-		HashMap infoMap = new HashMap();
+		final IProject project = container.getProject();
+		final String builderID = manager.getBuilderID(targetBuilderID);
+		final HashMap infoMap = new HashMap();
+
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(infoMap, builderID);
-		if ( buildArguments != null) {
+		if (buildArguments != null) {
 			info.setBuildArguments(buildArguments);
 		}
-		if ( buildCommand != null ) {
+		if (buildCommand != null) {
 			info.setBuildCommand(buildCommand);
 		}
 		info.setUseDefaultBuildCmd(isDefaultBuildCmd);
 		info.setStopOnError(isStopOnError);
 		info.setFullBuildEnable(true);
 		info.setFullBuildTarget(target);
-		if ( container != null) {
+		if (container != null) {
 			info.setBuildLocation(container.getFullPath());
 		}
 		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(project, builderID);
 		info.setErrorParsers(projectInfo.getErrorParsers());
-		project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
+		IWorkspaceRunnable op = new IWorkspaceRunnable() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public void run(IProgressMonitor monitor) throws CoreException {
+				if (runAllBuidlers) {
+					ICommand[] commands = project.getDescription().getBuildSpec();
+					monitor.beginTask("", commands.length); //$NON-NLS-1$
+					for (int i = 0; i < commands.length; i++) {
+						if (commands[i].getBuilderName().equals(builderID)) {
+							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
+						} else {
+							project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(),
+									commands[i].getArguments(), new SubProgressMonitor(monitor, 1));
+						}
+					}
+					monitor.done();
+				} else {
+					project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
+				}
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run(op, monitor);
+		} finally {
+			monitor.done();
+		}
 	}
 
 	public void setBuildTarget(String target) throws CoreException {
@@ -144,5 +178,23 @@ public class MakeTarget implements IMakeTarget {
 
 	public String getBuildTarget() {
 		return target != null ? target : ""; //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.make.core.IMakeTarget#setRunAllBuilders(boolean)
+	 */
+	public void setRunAllBuilders(boolean runAllBuilders) {
+		this.runAllBuidlers = runAllBuilders;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.make.core.IMakeTarget#runAllBuilders()
+	 */
+	public boolean runAllBuilders() {
+		return runAllBuidlers;
 	}
 }

@@ -32,7 +32,9 @@ public interface IMakeTarget {
 	void setBuildCommand(IPath command) throws CoreException;
 	String getBuildArguments();
 	void setBuildArguments(String arguments) throws CoreException;
-	
+
+	void setRunAllBuilders(boolean runAllBuilders);
+	boolean runAllBuilders();
 	
 	/**
 	 * Get the target build container.

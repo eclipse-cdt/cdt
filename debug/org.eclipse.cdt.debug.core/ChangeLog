@@ -1,3 +1,8 @@
+2003-02-11 Mikhail Khodjaiants
+	The 'load symbols' actions support in ICSharedLibraryManager.
+	* ICSharedLibraryManager.java
+	* CSharedLibraryManager.java
+
 2003-02-10 Mikhail Khodjaiants
 	Support of update ('Refresh', 'Auto-Refresh) actions.
 	* ICUpdateManager.java: new

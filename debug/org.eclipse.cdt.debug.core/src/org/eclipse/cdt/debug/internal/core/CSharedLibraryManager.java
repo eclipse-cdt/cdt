@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSharedLibrary;
@@ -118,6 +119,10 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 		{
 			return fDebugTarget;
 		}
+		if ( adapter.equals( ICDebugTarget.class ) )
+		{
+			return fDebugTarget;
+		}
 		return null;
 	}
 
@@ -203,5 +208,48 @@ public class CSharedLibraryManager implements ICSharedLibraryManager
 			return getDebugTarget().isSuspended();
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#loadSymbols(org.eclipse.cdt.debug.core.model.ICSharedLibrary)
+	 */
+	public void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException
+	{
+		ICDISharedLibraryManager slm = getCDIManager();
+		if ( slm != null )
+		{
+			ArrayList cdiLibs = new ArrayList( libraries.length );
+			for ( int i = 0; i < libraries.length; ++i )
+			{
+				cdiLibs.add( ((CSharedLibrary)libraries[i]).getCDISharedLibrary() );
+			}
+			try
+			{
+				slm.loadSymbols( (ICDISharedLibrary[])cdiLibs.toArray( new ICDISharedLibrary[cdiLibs.size()] ) );
+			}
+			catch( CDIException e )
+			{
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#loadSymbolsForAll()
+	 */
+	public void loadSymbolsForAll() throws DebugException
+	{
+		ICDISharedLibraryManager slm = getCDIManager();
+		if ( slm != null )
+		{
+			try
+			{
+				slm.loadSymbols();
+			}
+			catch( CDIException e )
+			{
+				((CDebugTarget)getDebugTarget()).targetRequestFailed( e.toString(), null );
+			}
+		}
 	}
 }

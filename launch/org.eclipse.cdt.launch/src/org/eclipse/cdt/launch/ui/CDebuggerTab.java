@@ -46,6 +46,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected Button fVarBookKeeping;
 
 	private final boolean DEFAULT_STOP_AT_MAIN = true;
+	private boolean pageUpdated;
 
 	public void createControl(Composite parent) {
 		GridData gd;
@@ -177,14 +178,19 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		// if no selection meaning nothing in config the force initdefault on tab
 		setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
 
+		pageUpdated = false;
 		fDCombo.select(selndx == -1 ? 0 : selndx);
 		//The behaviour is undefined for if the callbacks should be triggered for this,
-		//so to avoid unnecessary confusion, we force an update.
-		updateComboFromSelection();
+		//so force page update if needed.
+		if (!pageUpdated) {
+			updateComboFromSelection();
+		}
+		pageUpdated = false;
 		getControl().getParent().layout(true);
 	}
 
 	protected void updateComboFromSelection() {
+		pageUpdated = true;
 		handleDebuggerChanged();
 		ICDebugConfiguration debugConfig = getConfigForCurrentDebugger();
 		if (debugConfig != null) {

@@ -145,7 +145,13 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		if (debugConfig == null) {
 			setDynamicTab(null);
 		} else {
-			setDynamicTab(CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID()));
+			ILaunchConfigurationTab tab = null;
+			try {
+				tab = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
+			} catch (CoreException e) {
+				LaunchUIPlugin.errorDialog(LaunchUIPlugin.getResourceString("AbstractCDebuggerTab.ErrorLoadingDebuggerPage"), e.getStatus());  //$NON-NLS-1$
+			}
+			setDynamicTab(tab);
 			ICDebugConfiguration oldConfig = getDebugConfig();
 			if ( oldConfig != null && oldConfig != debugConfig ) {
 				setInitializeDefault(true);

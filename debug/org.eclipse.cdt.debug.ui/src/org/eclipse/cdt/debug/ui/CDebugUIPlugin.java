@@ -143,19 +143,14 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, message, null ) );
 	}
 
-	public ILaunchConfigurationTab getDebuggerPage( String debuggerID ) {
+	public ILaunchConfigurationTab getDebuggerPage( String debuggerID ) throws CoreException {
 		if ( fDebuggerPageMap == null ) {
 			initializeDebuggerPageMap();
 		}
 		IConfigurationElement configElement = (IConfigurationElement)fDebuggerPageMap.get( debuggerID );
 		ILaunchConfigurationTab tab = null;
 		if ( configElement != null ) {
-			try {
-				tab = (ILaunchConfigurationTab)configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
-			}
-			catch( CoreException ce ) {
-				log( new Status( IStatus.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce ) ); //$NON-NLS-1$
-			}
+			tab = (ILaunchConfigurationTab)configElement.createExecutableExtension( "class" ); //$NON-NLS-1$
 		}
 		return tab;
 	}

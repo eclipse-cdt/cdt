@@ -6,10 +6,12 @@ package org.eclipse.cdt.core.resources;
  */
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.core.resources.IProject;
 
 
 public interface IConsole {
-    void clear();
     ConsoleOutputStream getOutputStream();
+	void start(IProject project);
+    void clear();
 }
 

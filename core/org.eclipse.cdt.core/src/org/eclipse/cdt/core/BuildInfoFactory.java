@@ -23,7 +23,7 @@ public class BuildInfoFactory {
 	public static final String FULL_ARGUMENTS = "buildFullArguments";
 	public static final String INCREMENTAL_ARGUMENTS = "buildIncrementalArguments";
 	public static final String STOP_ON_ERROR = "stopOnError";
-	public static final String CLEAR_CONSOLE = "clearConsole";
+//	public static final String CLEAR_CONSOLE = "clearConsole";
 	public static final String DEFAULT_BUILD_CMD = "useDefaultBuildCmd";
 	
 	public static abstract class Store implements IBuildInfo {
@@ -88,9 +88,9 @@ public class BuildInfoFactory {
         	putValue(DEFAULT_BUILD_CMD, new Boolean(on).toString());
 		}
 
-        public boolean isClearBuildConsole() {
-        	return getBoolean(CLEAR_CONSOLE);
-        }
+//        public boolean isClearBuildConsole() {
+//        	return getBoolean(CLEAR_CONSOLE);
+//        }
 	
 	    public boolean getBoolean(String property) {
 	    	return Boolean.valueOf(getString(property)).booleanValue();
@@ -152,9 +152,9 @@ public class BuildInfoFactory {
 		public void setDefault(String name, String def) {
 		}
 		
-		public boolean isClearBuildConsole() {
-			return (new Preference()).isClearBuildConsole();
-		}
+//		public boolean isClearBuildConsole() {
+//			return (new Preference()).isClearBuildConsole();
+//		}
 	}
     
     public static IBuildInfo create() {

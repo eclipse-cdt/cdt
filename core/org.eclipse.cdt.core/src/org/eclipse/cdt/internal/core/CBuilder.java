@@ -83,11 +83,13 @@ public class CBuilder extends ACBuilder {
 			if (!makepath.isEmpty()) {
 				// clear console if requested
 				IConsole console = CCorePlugin.getDefault().getConsole();
+				console.start(currProject);
+/*
 				if (BuildInfoFactory.create().isClearBuildConsole()
 					&& MakeUtil.getSessionConsoleMode(currProject)) {
 					console.clear();
 				}
-				
+*/				
 				ConsoleOutputStream cos = console.getOutputStream();
 				
 				// remove all markers for this project

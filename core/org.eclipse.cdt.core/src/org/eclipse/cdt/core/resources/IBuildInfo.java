@@ -17,7 +17,7 @@ public interface IBuildInfo {
     void setIncrementalBuildArguments(String arguments);
     void setStopOnError(boolean on);
 
-    boolean isClearBuildConsole();
+//    boolean isClearBuildConsole();
 
     boolean isDefaultBuildCmd();
     void setUseDefaultBuildCmd(boolean on);

@@ -1,8 +1,14 @@
+2003-04-03 John Camelon
+	Updated ScannerTest::testSimpleIfdef() for bug36019.  
+	Updated ScannerTest::testNumerics() for bug36020.  
+	Added ScannerTest::testBug36045().  
+	Updated DOMTests::testTemplateDeclaration() for template grammar updates.  
+
 2003-04-01 Andrew Niefer
 	ParserSymbolTableTest. modifications to using declaration tests to reflect changes in the
 	symbol table.  Also added testUserDefinedConversionSequences()
 
-2003-04-01
+2003-04-01 John Camelon
 	Added testBug35906() to DOMTests.
 
 2003-03-31 John Camelon

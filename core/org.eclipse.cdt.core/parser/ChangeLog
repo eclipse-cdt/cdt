@@ -1,3 +1,7 @@
+2003-04-03 John Camelon
+	Fixed defects 36019, 36020, 36045.  
+	Finished template declarations and their callbacks for the DOM (not the Code Model).  
+
 2003-04-01 John Camelon
 	Updated Scanner to convert control-characters to ' '.  
 	Fixed logic error in SimpleDeclarationWrapper.

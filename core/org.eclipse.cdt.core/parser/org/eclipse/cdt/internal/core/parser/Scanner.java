@@ -359,7 +359,12 @@ public class Scanner implements IScanner {
 		callback = c;
 	}
 
-	private int getChar() {
+	private int getChar()
+	{
+		return getChar( false );
+	}
+
+	private int getChar( boolean insideString ) {
 		int c = NOCHAR;
 		if (currentContext == null)
 			// past the end of file
@@ -392,16 +397,18 @@ public class Scanner implements IScanner {
 			}
 		} while (!done);
 
-		if (c == '\\') {
-			c = getChar();
-			if (c == '\r') {
-				c = getChar();
-				if (c == '\n')
-					c = getChar();
-			} else if (c == '\n')
-				c = getChar();
+		if( ! insideString )
+		{
+			if (c == '\\') {
+				c = getChar(false);
+				if (c == '\r') {
+					c = getChar(false);
+					if (c == '\n')
+						c = getChar(false);
+				} else if (c == '\n')
+					c = getChar(false);
+			}
 		}
-
 		return c;
 	}
 
@@ -448,9 +455,31 @@ public class Scanner implements IScanner {
 
 		while (c != NOCHAR) {
 			if ( ! passOnToClient ) {
-				while (c != '#') {
+				
+				int state = 0; 
+				
+				while (c != NOCHAR && c != '#' ) 
+				{
 					c = getChar();
+					if( c == '/' )
+					{
+						c = getChar();
+						if( c == '/' )
+						{
+							while (c != '\n' && c != NOCHAR)
+								c = getChar();
+							continue;
+						}
+						else if( c == '*' )
+						{
+							skipOverMultilineComment();
+							c = getChar();
+							continue;
+						}
+					}
 				}
+				
+				if( c == NOCHAR ) continue;
 			}
 
 			if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
@@ -475,12 +504,16 @@ public class Scanner implements IScanner {
 				} 
 				 
 				// string
-				StringBuffer buff = new StringBuffer();
-				c = getChar();
+				StringBuffer buff = new StringBuffer(); 
+				int previous = c;
+				c = getChar(true);
 
-				while (c != '"' && c != '\n') {
+				for( ; ; )
+				{
+					if( ( c == '"' && previous != '\\' )|| ( c == '\n') )break;  
 					buff.append((char) c);
-					c = getChar();
+					previous = c;
+					c = getChar(true);
 				}
 
 				if (c != '\n') 
@@ -608,7 +641,12 @@ public class Scanner implements IScanner {
 				if( c == '.' )
 				{
 					buff.append( (char)c);
-					if( floatingPoint || hex ) throw new ScannerException( "Invalid floating point @ offset " + currentContext.getOffset() );
+					if( floatingPoint || hex ) 	{
+						if( buff.toString().equals( "..") && getChar() == '.' ) 
+							return newToken( Token.tELIPSE, "..." ); 
+						throw new ScannerException( "Invalid floating point @ offset " + currentContext.getOffset() );						
+					} 
+					
 					floatingPoint = true;
 					c= getChar(); 
 					while ((c >= '0' && c <= '9') )
@@ -1205,7 +1243,7 @@ public class Scanner implements IScanner {
 			}
 		}
 
-		if (throwExceptionOnEOFWithoutBalancedEndifs && (getDepth() != 0))
+		if (throwExceptionOnEOFWithoutBalancedEndifs && ( getDepth() != 0))
 			throw new ScannerException("End of file encountered without terminating #endif");
 
 		// we're done

@@ -710,4 +710,17 @@ public class ExpressionEvaluator implements IParserCallback {
 	public void pointerOperatorAbort(Object ptrOperator) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListBegin(java.lang.Object)
+	 */
+	public Object templateParameterListBegin(Object declaration) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListEnd(java.lang.Object)
+	 */
+	public void templateParameterListEnd(Object parameterList) {
+	}
+
 }

@@ -326,17 +326,22 @@ c, quick);
 	protected void templateParameterList( Object templateDeclaration ) throws EndOfFile, Backtrack {
 		// if we have gotten this far then we have a true template-declaration
 		// iterate through the template parameter list
+		
+		Object templateParameterList = null;
+		
+		try { templateParameterList = callback.templateParameterListBegin( templateDeclaration ); } catch( Exception e ) {}
+		
 		for ( ; ; )
 		{
 			if( LT(1) == Token.tGT ) return; 
-			Object currentTemplateParm = null;
 			if( LT(1) == Token.t_class || LT(1) == Token.t_typename )
 			{
+				Object currentTemplateParm = null;
 				try
 				{
 					try{ 
 						currentTemplateParm = callback.templateTypeParameterBegin( 
-								templateDeclaration, consume() );
+						templateParameterList, consume() );
 					} catch( Exception e ) {} 
 					if( LT(1) == Token.tIDENTIFIER ) // optional identifier
 					{
@@ -359,27 +364,25 @@ c, quick);
 			}
 			else if( LT(1) == Token.t_template )
 			{
-				try
+				Token kind = consume( Token.t_template );
+				consume( Token.tLT );
+				Object newTemplateParm = null;
+				try{ newTemplateParm = callback.templateTypeParameterBegin(templateParameterList,kind ); } catch( Exception e ) {}
+				templateParameterList( newTemplateParm );
+				consume( Token.tGT );						 
+				consume( Token.t_class );
+				if( LT(1) == Token.tIDENTIFIER ) // optional identifier
 				{
-					consume( Token.t_template );
-					consume( Token.tLT );
-					Object newTemplateDeclaration = null;
-					templateParameterList( newTemplateDeclaration ); 
-					consume( Token.tGT ); 
-					consume( Token.t_class );
-					if( LT(1) == Token.tIDENTIFIER ) // optional identifier
+					identifier();
+					try{ callback.templateTypeParameterName( newTemplateParm );} catch( Exception e ) {} 
+					if( LT(1) == Token.tASSIGN ) // optional = type-id
 					{
-						identifier(); 
-						if( LT(1) == Token.tASSIGN ) // optional = type-id
-						{
-							consume( Token.tASSIGN );
-							// id-expression()
-						}
+						consume( Token.tASSIGN );
+						name(); 
+						try{ callback.templateTypeParameterInitialTypeId( newTemplateParm );} catch( Exception e ) {}
 					}
 				}
-				catch( Backtrack bt )
-				{
-				}
+				try{ callback.templateTypeParameterEnd( newTemplateParm );} catch( Exception e ) {}
 			}
 			else if( LT(1) == Token.tCOMMA )
 			{
@@ -388,7 +391,7 @@ c, quick);
 			}
 			else
 			{
-				parameterDeclaration( templateDeclaration );
+				parameterDeclaration( templateParameterList );
 			}
 		}
 	}
@@ -1069,7 +1072,7 @@ c, quick);
 				switch (LT(1)) {
 					case Token.tLPAREN:
 						// temporary fix for initializer/function declaration ambiguity
-						if( LT(2) != Token.tINTEGER )
+						if( LT(2) != Token.tINTEGER && LT(2) != Token.t_false && LT(2) != Token.t_true )
 						{
 							// parameterDeclarationClause
 							Object clause = null; 
@@ -1983,11 +1986,12 @@ c, quick);
 		switch (type) {
 			// TO DO: we need more literals...
 			case Token.tINTEGER:
-				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
-				return;
 			case Token.tSTRING:
+			case Token.t_false: 
+			case Token.t_true:			
 				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
 				return;
+			
 			case Token.tIDENTIFIER:
 				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
 				return;
@@ -2068,7 +2072,7 @@ c, quick);
 			throw e;
 		} catch (ScannerException e) {
 			e.printStackTrace();
-			return null;
+			return fetchToken();  
 		}
 	}
 

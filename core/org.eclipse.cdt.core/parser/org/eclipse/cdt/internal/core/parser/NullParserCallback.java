@@ -414,7 +414,6 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
 	public Object enumSpecifierBegin(Object container, Token enumKey) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -422,31 +421,24 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierId(java.lang.Object)
 	 */
 	public void enumSpecifierId(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierAbort(java.lang.Object)
 	 */
 	public void enumSpecifierAbort(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierEnd(java.lang.Object)
 	 */
 	public void enumSpecifierEnd(Object enumSpec) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionBegin(java.lang.Object)
 	 */
 	public Object enumDefinitionBegin(Object enumSpec) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -454,16 +446,12 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionId(java.lang.Object)
 	 */
 	public void enumDefinitionId(Object enumDefn) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumDefinitionEnd(java.lang.Object)
 	 */
 	public void enumDefinitionEnd(Object enumDefn) {
-		
-		
 	}
 
 	/* (non-Javadoc)
@@ -609,6 +597,19 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#pointerOperatorAbort(java.lang.Object)
 	 */
 	public void pointerOperatorAbort(Object ptrOperator) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListBegin(java.lang.Object)
+	 */
+	public Object templateParameterListBegin(Object declaration) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListEnd(java.lang.Object)
+	 */
+	public void templateParameterListEnd(Object parameterList) {
 	}
 
 }

@@ -254,7 +254,7 @@ public class DOMBuilder implements IParserCallback
 	
 	public Object parameterDeclarationBegin( Object container )
 	{
-		ParameterDeclarationClause clause = (ParameterDeclarationClause)container; 
+		IScope clause = (IScope)container; 
 		ParameterDeclaration pd = new ParameterDeclaration();
 		clause.addDeclaration( pd ); 
 		return pd;
@@ -790,7 +790,7 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterBegin(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public Object templateTypeParameterBegin(Object templDecl, Token kind) {
-		TemplateParameter.ITemplateParameterList list = (TemplateParameter.ITemplateParameterList)templDecl;
+		TemplateParameterList list = (TemplateParameterList)templDecl;
 		int k; 
 		switch( kind.getType() )
 		{
@@ -800,10 +800,15 @@ public class DOMBuilder implements IParserCallback
 			case Token.t_typename:
 				k= TemplateParameter.k_typename;
 				break;
+			case Token.t_template:
+				k= TemplateParameter.k_template;
+				break;
 			default:
 				k = 0;  
 		}
-		return new TemplateParameter( list, k );
+		TemplateParameter p = new TemplateParameter( k );
+		list.addDeclaration(p);
+		return p;
 	}
 
 	/* (non-Javadoc)
@@ -824,8 +829,6 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateTypeParameterEnd(java.lang.Object)
 	 */
 	public void templateTypeParameterEnd(Object typeParm) {
-		TemplateParameter parm = ((TemplateParameter)typeParm);
-		parm.getContainer().addTemplateParameter(parm);
 	}
 
 	/* (non-Javadoc)
@@ -840,5 +843,21 @@ public class DOMBuilder implements IParserCallback
 	 */
 	public void pointerOperatorAbort(Object ptrOperator) {
 		ptrOperator = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListBegin(java.lang.Object)
+	 */
+	public Object templateParameterListBegin(Object declaration) {
+		ITemplateParameterListOwner d = (ITemplateParameterListOwner)declaration;
+		TemplateParameterList list = new TemplateParameterList(); 
+		d.setTemplateParms(list);
+		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListEnd(java.lang.Object)
+	 */
+	public void templateParameterListEnd(Object parameterList) {
 	}
 }

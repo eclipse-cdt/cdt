@@ -20,11 +20,12 @@ import java.util.List;
  * @author jcamelon
  *
  */
-public class TemplateDeclaration extends Declaration implements IScope, TemplateParameter.ITemplateParameterList {
+public class TemplateDeclaration extends Declaration implements IScope, ITemplateParameterListOwner {
 
 	private final boolean exported; 
 	private IScope ownerScope;  
 	private List declarations = new ArrayList(); 
+	private TemplateParameterList templateParms = null;                
 
 	public TemplateDeclaration( IScope ownerScope, boolean exported )
 	{
@@ -60,20 +61,18 @@ public class TemplateDeclaration extends Declaration implements IScope, Template
 		return ownerScope;
 	}
 
-
-	private List templateParameters = new ArrayList(); 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.TemplateParameter.ITemplateParameterList#getTemplateParameters()
+	/**
+	 * @return
 	 */
-	public List getTemplateParameters() {
-		return Collections.unmodifiableList(templateParameters);
+	public TemplateParameterList getTemplateParms() {
+		return templateParms;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.TemplateParameter.ITemplateParameterList#addTemplateParameter(org.eclipse.cdt.internal.core.dom.TemplateParameter)
+	/**
+	 * @param list
 	 */
-	public void addTemplateParameter(TemplateParameter parm) {
-		templateParameters.add( parm );
+	public void setTemplateParms(TemplateParameterList list) {
+		templateParms = list;
 	}
 
 }

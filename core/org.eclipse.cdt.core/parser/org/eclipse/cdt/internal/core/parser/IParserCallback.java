@@ -128,6 +128,9 @@ public interface IParserCallback {
 	public void 	templateDeclarationAbort( Object templateDecl );
 	public void		templateDeclarationEnd( Object templateDecl );	
 	
+	public Object	templateParameterListBegin( Object declaration );
+	public void		templateParameterListEnd( Object parameterList );
+	
 	public Object	templateTypeParameterBegin( Object templDecl, Token kind );
 	public void		templateTypeParameterName( Object typeParm );
 	public void		templateTypeParameterAbort( Object typeParm );

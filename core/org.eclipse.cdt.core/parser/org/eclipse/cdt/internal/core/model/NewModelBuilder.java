@@ -936,4 +936,20 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 		ptrOperator = null; 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListBegin(java.lang.Object)
+	 */
+	public Object templateParameterListBegin(Object declaration) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#templateParameterListEnd(java.lang.Object)
+	 */
+	public void templateParameterListEnd(Object parameterList) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -893,26 +893,53 @@ public class DOMTests extends TestCase {
 	}
 	
 	public void testTemplateDeclaration() throws Exception {
-		TranslationUnit tu = parse( "template<class T, typename Tibor = junk, class, typename> class myarray { /* ... */ };");
+		TranslationUnit tu = parse( "template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };");
 		assertEquals( tu.getDeclarations().size(), 1 );
 		TemplateDeclaration declaration = (TemplateDeclaration)tu.getDeclarations().get(0);
-		assertEquals( declaration.getTemplateParameters().size(), 4 );
-		TemplateParameter parameter = (TemplateParameter)declaration.getTemplateParameters().get(0);
+		assertEquals( declaration.getTemplateParms().getDeclarations().size(), 8 );
+		TemplateParameter parameter = (TemplateParameter)declaration.getTemplateParms().getDeclarations().get(0);
 		assertEquals( parameter.getKind(), TemplateParameter.k_class);
 		assertEquals( parameter.getName().toString(), "T" ); 
 		assertNull( parameter.getTypeId());
-		parameter = (TemplateParameter)declaration.getTemplateParameters().get(1);
+		parameter = (TemplateParameter)declaration.getTemplateParms().getDeclarations().get(1);
 		assertEquals( parameter.getKind(), TemplateParameter.k_typename);
 		assertEquals( parameter.getName().toString(), "Tibor" );
 		assertEquals( parameter.getTypeId().toString(), "junk");
-		parameter = (TemplateParameter)declaration.getTemplateParameters().get(2);
+		parameter = (TemplateParameter)declaration.getTemplateParms().getDeclarations().get(2);
 		assertEquals( parameter.getKind(), TemplateParameter.k_class);
 		assertNull( parameter.getName() );
 		assertNull( parameter.getTypeId());
-		parameter = (TemplateParameter)declaration.getTemplateParameters().get(3);
+		parameter = (TemplateParameter)declaration.getTemplateParms().getDeclarations().get(3);
 		assertEquals( parameter.getKind(), TemplateParameter.k_typename);
 		assertNull( parameter.getName() );
 		assertNull( parameter.getTypeId());
+		ParameterDeclaration decl = (ParameterDeclaration)declaration.getTemplateParms().getDeclarations().get(4);
+		assertEquals( decl.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+		assertEquals( 1, decl.getDeclarators().size() );
+		assertEquals( "x", ((Declarator)decl.getDeclarators().get(0)).getName().toString() );
+		 
+		decl = (ParameterDeclaration)declaration.getTemplateParms().getDeclarations().get(5);
+		assertEquals( decl.getDeclSpecifier().getType(), DeclSpecifier.t_float );
+		assertEquals( 1, decl.getDeclarators().size() );
+		assertEquals( "y", ((Declarator)decl.getDeclarators().get(0)).getName().toString() );
+		 
+		parameter = (TemplateParameter)declaration.getTemplateParms().getDeclarations().get(6);
+		assertEquals( parameter.getKind(), TemplateParameter.k_template );
+		assertEquals( parameter.getTemplateParms().getDeclarations().size(), 1 );
+		assertNull( parameter.getName() );
+		TemplateParameter subParameter = (TemplateParameter)parameter.getTemplateParms().getDeclarations().get(0);
+		assertEquals( subParameter.getKind(), TemplateParameter.k_class );
+		assertEquals( subParameter.getName().toString(), "Y" );
+		assertNull( subParameter.getTypeId() );
+		
+		parameter = (TemplateParameter)declaration.getTemplateParms().getDeclarations().get(7);
+		assertEquals( parameter.getKind(), TemplateParameter.k_template );
+		assertEquals( parameter.getTemplateParms().getDeclarations().size(), 1 );
+		subParameter = (TemplateParameter)parameter.getTemplateParms().getDeclarations().get(0);
+		assertEquals( subParameter.getKind(), TemplateParameter.k_class );
+		assertEquals( subParameter.getName().toString(), "A" );
+		assertNull( subParameter.getTypeId() );
+		assertEquals( parameter.getName().toString(), "AClass" );
 		assertEquals( declaration.getDeclarations().size(), 1 );
 		SimpleDeclaration myArray = (SimpleDeclaration)declaration.getDeclarations().get(0);
 		ClassSpecifier classSpec = (ClassSpecifier)myArray.getTypeSpecifier();
@@ -920,7 +947,7 @@ public class DOMTests extends TestCase {
 		assertEquals( classSpec.getName().toString(), "myarray");
 		assertEquals( 0, classSpec.getDeclarations().size() );
 	}
-	
+		
 	public void testStruct() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 

@@ -12,42 +12,29 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import java.util.List;
-
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * @author jcamelon
  *
  */
-public class TemplateParameter {
+public class TemplateParameter extends Declaration implements ITemplateParameterListOwner {
 
-	public interface ITemplateParameterList {
-		public List getTemplateParameters(); 
-		public void addTemplateParameter( TemplateParameter parm ); 
-	}
-
-	private ITemplateParameterList container;
 	private final int kind; 
 	
 	public final static int k_class = 2;
-	public final static int k_typename = 3; 
+	public final static int k_typename = 3;
+	public final static int k_template = 4;
 	
 	
-	public TemplateParameter( ITemplateParameterList container, int kind )
+	public TemplateParameter( int kind )
 	{
-		this.container = container;
 		this.kind = kind; 
 	}
 	
 	private Name name = null; 
 	private Name typeId = null;  
-	/**
-	 * @return ITemplateParameterList
-	 */
-	public ITemplateParameterList getContainer() {
-		return container;
-	}
+
 
 	/**
 	 * @return int
@@ -84,6 +71,22 @@ public class TemplateParameter {
 	 */
 	public void setTypeId(Name typeId) {
 		this.typeId = typeId;
+	}
+
+	TemplateParameterList list;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.ITemplateParameterListOwner#getTemplateParms()
+	 */
+	public TemplateParameterList getTemplateParms() {
+		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.ITemplateParameterListOwner#setTemplateParms(org.eclipse.cdt.internal.core.dom.TemplateParameterList)
+	 */
+	public void setTemplateParms(TemplateParameterList list) {
+		this.list = list;
 	}
 
 }

@@ -1,6 +1,7 @@
 package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.List;
 
 import junit.framework.Test;
@@ -219,13 +220,14 @@ public class ScannerTestCase extends TestCase
 	{
 		try
 		{
-			initializeScanner("3.0 0.9 .5 3. 4E5 2.01E-03");
+			initializeScanner("3.0 0.9 .5 3. 4E5 2.01E-03 ...");
 			validateFloatingPointLiteral( "3.0");
 			validateFloatingPointLiteral( "0.9");
 			validateFloatingPointLiteral( ".5");
 			validateFloatingPointLiteral( "3."); 
 			validateFloatingPointLiteral( "4E5");
 			validateFloatingPointLiteral( "2.01E-03" );
+			validateToken( Token.tELIPSE );
 			validateEOF();
 		}
 		catch( ScannerException se )
@@ -510,6 +512,9 @@ public class ScannerTestCase extends TestCase
 			validateInteger("101");
 			validateToken(Token.tSEMI);
 			validateEOF();
+			
+			initializeScanner( "/* NB: This is #if 0'd out */"); 
+			validateEOF(); 
 
 		}
 		catch (Exception e)
@@ -1066,10 +1071,10 @@ public class ScannerTestCase extends TestCase
 		try {
 			Token t= scanner.nextToken();
 			if( lString )
-				assertTrue(t.type == Token.tLSTRING);
+				assertTrue(t.getType() == Token.tLSTRING);
 			else
-				assertTrue(t.type == Token.tSTRING);
-			assertTrue(t.image.equals(expectedImage));
+				assertTrue(t.getType() == Token.tSTRING);
+			assertTrue(t.getImage().equals(expectedImage));
 		} catch (Parser.EndOfFile e) {
 			assertTrue(false);
 		}
@@ -1138,7 +1143,7 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 
-	public void test35892()
+	public void testBug35892()
 	{
 		try
 		{
@@ -1152,11 +1157,15 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 
-//	public void testStringConcatenation()
+//	public void testBug36047()
 //	{
 //		try
 //		{
-//			initializeScanner("# define MAD_VERSION_STRINGIZE(str)	#str" ); 
+//			StringWriter writer = new StringWriter(); 
+//			writer.write( "# define MAD_VERSION_STRINGIZE(str)	#str\n" ); 
+//			writer.write( "# define MAD_VERSION_STRING(num)	MAD_VERSION_STRINGIZE(num)\n" ); 
+//			writer.write( "# define MAD_VERSION		MAD_VERSION_STRING(MAD_VERSION_MAJOR) \".\"\n" );
+//			initializeScanner( writer.toString() );  
 //			validateEOF(); 
 //		}
 //		catch( ScannerException se )
@@ -1164,6 +1173,17 @@ public class ScannerTestCase extends TestCase
 //			fail( EXCEPTION_THROWN + se.toString() );
 //		}
 //	}
+
+	public void testBug36045() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( '"' );
+		buffer.append( '\\');
+		buffer.append( '"'); 
+		buffer.append( '"');
+		initializeScanner( buffer.toString());
+		validateString( "\\\"");
+	}
 
 	public void testConditionalWithBraces()
 	{

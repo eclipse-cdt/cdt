@@ -76,6 +76,15 @@ public interface ICDIVariableManager extends ICDIManager {
 	 * @return ICDIVariableObject[]
 	 * @throws CDIException
 	 */
+	ICDIVariableObject[] getLocalVariableObjects(ICDIStackFrame stack) throws CDIException;
+
+	/**
+	 * Method getVariableObjects.
+	 * Returns all the local variable objects of that stackframe.
+	 * @param stack
+	 * @return ICDIVariableObject[]
+	 * @throws CDIException
+	 */
 	ICDIVariableObject[] getVariableObjects(ICDIStackFrame stack) throws CDIException;
 
 	/**

@@ -1,3 +1,8 @@
+2004-05-31 Alain Magloire
+	The Extension point "org.eclipse.cdt.ui.textHover"
+	Changed adjust the Debugger.
+	* DebugTextHover.java
+
 2004-05-31 Mikhail Khodjaiants
 	Bug 39650: the Memory window has alignment problems.
 	Map the Memory view font to the platform text font which is monospace by default.

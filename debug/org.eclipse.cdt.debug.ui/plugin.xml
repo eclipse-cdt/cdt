@@ -973,12 +973,12 @@
    </extension>
    <extension
          point="org.eclipse.cdt.ui.textHovers">
-      <textHover
+      <hover
             name="%DebugTextHover"
             perspective="org.eclipse.debug.ui.DebugPerspective"
             class="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover"
             id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">
-      </textHover>
+      </hover>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">

@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
@@ -20,8 +21,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.ui.IEditorPart;
 
 /**
  *
@@ -29,9 +30,10 @@ import org.eclipse.jface.text.ITextViewer;
  * 
  * @since: Sep 12, 2002
  */
-public class DebugTextHover implements ITextHover
+public class DebugTextHover implements ICEditorTextHover
 {
 	static final private int MAX_HOVER_INFO_SIZE = 100;
+	private IEditorPart fEditor;
 
 	/**
 	 * Constructor for DebugTextHover.
@@ -202,5 +204,12 @@ public class DebugTextHover implements ITextHover
 			}
 		}
 		return buffer.toString();		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
+	 */
+	public void setEditor(IEditorPart editor) {
+		fEditor = editor;
 	}
 }

@@ -1,3 +1,6 @@
+2004-03-16 Tanya Wolff
+	Externalized strings and marked non-translatable ones.
+
 2004-03-16 Andrew Niefer
 	property files for class browser and type hierarchy
 

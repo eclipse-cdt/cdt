@@ -358,8 +358,8 @@ public class CDebugModel
 				throw new DebugException( new Status( IStatus.ERROR, 
 													  getPluginIdentifier(),
 													  DebugException.TARGET_REQUEST_FAILED, 
-													  "Create expression failed.", 
-													  e ) );
+													  e.getMessage(), 
+													  null ) );
 			}
 		}
 		return null;

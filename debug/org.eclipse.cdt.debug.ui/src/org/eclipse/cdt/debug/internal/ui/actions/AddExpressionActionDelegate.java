@@ -96,7 +96,7 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 										}
 										catch( DebugException e )
 										{
-											CDebugUIPlugin.errorDialog( e.getMessage(), e );
+											CDebugUIPlugin.errorDialog( "Evaluation of expression failed.", e );
 										}
 									}
 								} );

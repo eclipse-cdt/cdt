@@ -1807,5 +1807,15 @@ public class Scanner2Test extends BaseScanner2Test
         assertTrue( callback.problems.isEmpty() );
     }
     
+    public void testBug74176() throws Exception{
+        initializeScanner( "#define MYSTRING \"X Y Z " ); //$NON-NLS-1$
+        validateEOF();
+
+        initializeScanner( "#define m(b) #"); //$NON-NLS-1$
+        validateEOF();
+
+        initializeScanner( "#define m(foo,b) #b"); //$NON-NLS-1$
+        validateEOF();
+    }
     
 }

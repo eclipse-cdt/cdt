@@ -61,7 +61,7 @@ public interface ICTarget extends ICObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICSharedLibrary[] getSharedLibraries() throws CDIException;
-	
+
 	/**
 	 * Returns the threads contained in this target. 
 	 * An empty collection is returned if this target contains no 

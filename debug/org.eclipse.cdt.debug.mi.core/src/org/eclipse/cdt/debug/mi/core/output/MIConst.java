@@ -65,28 +65,29 @@ public class MIConst extends MIValue {
 	 * Assuming that the precedent character was the
 	 * escape sequence '\'
 	 */
-	private static char isoC(char c) {
+	private static String isoC(char c) {
+		String s = new Character(c).toString();
 		if (c == '"') {
-			c = '"';
+			s = "\"";
 		} else if (c == '\'') {
-			c = '\'';
+			s = "\'";
 		} else if (c == '?') {
-			c = '?';
+			s = "?";
 		} else if (c == 'a') {
-			c = 7;
+			s = "\007";
 		} else if (c == 'b') {
-			c = '\b';
+			s = "\b";
 		} else if (c == 'f') {
-			c = '\f';
+			s = "\f";
 		} else if (c == 'n') {
-			c = '\n';
+			s = System.getProperty("line.separator", "\n");
 		} else if (c == 'r') {
-			c = '\r';
+			s = "\r";
 		} else if (c == 't') {
-			c = '\t';
+			s = "\t";
 		} else if (c == 'v') {
-			c = 11;
+			s = "\013";
 		}
-		return c;
+		return s;
 	}
 }

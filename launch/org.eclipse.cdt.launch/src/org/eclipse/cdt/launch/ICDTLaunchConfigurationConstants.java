@@ -12,7 +12,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a name of
 	 * a C/C++ project associated with a C/C++ launch configuration.
 	 */
-	public static final String ATTR_PROJECT_NAME = LaunchUIPlugin.getUniqueIdentifier() + ".PROJECT_ATTR"; //$NON-NLS-1$
+	public static final String ATTR_PROJECT_NAME = LaunchUIPlugin.getUniqueIdentifier() + ".PROJECT_NAME"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying

@@ -11,7 +11,12 @@
 package org.eclipse.cdt.internal.ui.refactoring.actions;
 
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.corext.refactoring.RenameRefactoring;
+import org.eclipse.cdt.internal.ui.cview.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.UserInterfaceStarter;
@@ -20,6 +25,7 @@ import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -47,6 +53,35 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 		setEnabled(selection.size() == 1);
 	}
 
+	public void selectionChanged(ITextSelection selection) {
+		boolean enable = true;
+		ICElement element = null;
+		try {
+			element = SelectionConverter.getElementAtOffset(fEditor);
+		}catch (CModelException e) {
+			enable = false;
+		}
+		if((element == null) || (element instanceof ITranslationUnit)){
+			enable = false;
+		}
+		ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();			
+		if( (((CElement)element).getIdStartPos() != textSelection.getOffset()) 
+		|| (((CElement)element).getIdLength() != textSelection.getLength())) {
+			enable = false;
+		}
+		setEnabled(enable);
+	}
+
+	public void run(ITextSelection selection) {
+		try {
+			Object element= SelectionConverter.getElementAtOffset(fEditor);
+			RenameRefactoring refactoring= new RenameRefactoring(element);
+			run(refactoring, getShell());
+		} catch (CoreException e) {
+			ExceptionHandler.handle(e, getShell(), RefactoringMessages.getString("RenameRefactoringAction.label"), //$NON-NLS-1$
+					RefactoringMessages.getString("RenameRefactoringAction.unexpected_exception"));//$NON-NLS-1$
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.actions.SelectionDispatchAction#run(org.eclipse.jface.viewers.IStructuredSelection)

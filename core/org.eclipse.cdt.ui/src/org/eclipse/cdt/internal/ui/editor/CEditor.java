@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
 import org.eclipse.cdt.ui.actions.ShowInCViewAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -118,6 +119,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	private SearchDialogAction fSearchDialogAction;
 	
 	private ActionGroup fSelectionSearchGroup;
+	private ActionGroup fRefactoringActionGroup;
 	
 	protected ISelectionChangedListener fStatusLineClearer;
     
@@ -499,6 +501,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		
 		//Selection Search group
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
+		fRefactoringActionGroup = new RefactoringActionGroup(this);
 		
 		//Search items
 		fFileSearchAction = new FileSearchAction(getSelectionProvider());
@@ -545,6 +548,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenDeclarations"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
 		
+		fRefactoringActionGroup.fillContextMenu(menu);
 		fSelectionSearchGroup.fillContextMenu(menu);
 	
 	}

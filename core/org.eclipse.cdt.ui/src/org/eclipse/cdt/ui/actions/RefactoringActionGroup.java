@@ -1,13 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+/**********************************************************************
+ * Copyright (c) 2004 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * http://www.eclipse.org/legal/cpl-v05.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.ui.actions;
 
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.cdt.internal.ui.refactoring.actions.RedoRefactoringAction;
 import org.eclipse.cdt.internal.ui.refactoring.actions.RenameRefactoringAction;
@@ -26,7 +25,6 @@ import org.eclipse.cdt.internal.ui.refactoring.actions.UndoRefactoringAction;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -35,9 +33,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchSite;
@@ -145,28 +140,28 @@ public class RefactoringActionGroup extends ActionGroup {
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
-	public RefactoringActionGroup(CEditor editor, String groupName) {
-		fSite= editor.getEditorSite();
+	public RefactoringActionGroup(CEditor editor) {
+		fSite= editor.getEditorSite();		
 		fEditor= editor;
-		fGroupName= groupName;
+		
 		ISelectionProvider provider= editor.getSelectionProvider();
 		ISelection selection= provider.getSelection();
 		fEditorActions= new ArrayList();
 		
 		fRenameAction= new RenameRefactoringAction(editor);
-		fRenameAction.setActionDefinitionId(ICEditorActionDefinitionIds.RENAME_ELEMENT);
+//		fRenameAction.setActionDefinitionId(ICEditorActionDefinitionIds.RENAME_ELEMENT);
 		fRenameAction.update(selection);
 		editor.setAction("RenameElement", fRenameAction); //$NON-NLS-1$
 		fEditorActions.add(fRenameAction);
 
 		fUndoAction= new UndoRefactoringAction(editor);
-		fUndoAction.setActionDefinitionId(ICEditorActionDefinitionIds.UNDO_ACTION);
+//		fUndoAction.setActionDefinitionId(ICEditorActionDefinitionIds.UNDO_ACTION);
 		fUndoAction.update(selection);
 		editor.setAction("UndoAction", fUndoAction); //$NON-NLS-1$
 		fEditorActions.add(fUndoAction);
 
 		fRedoAction= new RedoRefactoringAction(editor);
-		fRedoAction.setActionDefinitionId(ICEditorActionDefinitionIds.REDO_ACTION);
+//		fRedoAction.setActionDefinitionId(ICEditorActionDefinitionIds.REDO_ACTION);
 		fRedoAction.update(selection);
 		editor.setAction("RedoAction", fRedoAction); //$NON-NLS-1$
 		fEditorActions.add(fRedoAction);
@@ -228,20 +223,21 @@ public class RefactoringActionGroup extends ActionGroup {
 	}
 	
 	private void addRefactorSubmenu(IMenuManager menu) {
-		IMenuManager refactorSubmenu= new MenuManager(ActionMessages.getString("RefactorMenu.label"), MENU_ID);  //$NON-NLS-1$		
+		IMenuManager refactorSubmenu= new MenuManager(ActionMessages.getString("RefactorMenu.label"), MENU_ID);  //$NON-NLS-1$
 		if (fEditor != null) {
-			refactorSubmenu.addMenuListener(new IMenuListener() {
-				public void menuAboutToShow(IMenuManager manager) {
-					refactorMenuShown(manager);
-				}
-			});
-			refactorSubmenu.add(fNoActionAvailable);
+			ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();								
+			for (Iterator iter= fEditorActions.iterator(); iter.hasNext(); ) {
+				SelectionDispatchAction action= (SelectionDispatchAction)iter.next();
+				action.update(textSelection);
+			}
+			refactorSubmenu.removeAll();
+			 if (fillRefactorMenu(refactorSubmenu) == 0)
+				refactorSubmenu.add(fNoActionAvailable);					
 			menu.appendToGroup(fGroupName, refactorSubmenu);
 		} else {
 			if (fillRefactorMenu(refactorSubmenu) > 0){
 				menu.appendToGroup(fGroupName, refactorSubmenu);
 			}
-			
 		}
 	}
 	
@@ -261,37 +257,7 @@ public class RefactoringActionGroup extends ActionGroup {
 		}
 		return 0;
 	}
-	
-	private void refactorMenuShown(final IMenuManager refactorSubmenu) {
-		// we know that we have an MenuManager since we created it in
-		// addRefactorSubmenu.
-		Menu menu= ((MenuManager)refactorSubmenu).getMenu();
-		menu.addMenuListener(new MenuAdapter() {
-			public void menuHidden(MenuEvent e) {
-				refactorMenuHidden(refactorSubmenu);
-			}
-		});
-		ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
-//		CTextSelection javaSelection= new CTextSelection(
-//			getEditorInput(), getDocument(), textSelection.getOffset(), textSelection.getLength());
-		
-		for (Iterator iter= fEditorActions.iterator(); iter.hasNext(); ) {
-			SelectionDispatchAction action= (SelectionDispatchAction)iter.next();
-//			action.update(javaSelection);
-		}
-		refactorSubmenu.removeAll();
-		if (fillRefactorMenu(refactorSubmenu) == 0)
-			refactorSubmenu.add(fNoActionAvailable);
-	}
-	
-	private void refactorMenuHidden(IMenuManager manager) {
-		ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
-		for (Iterator iter= fEditorActions.iterator(); iter.hasNext(); ) {
-			SelectionDispatchAction action= (SelectionDispatchAction)iter.next();
-			action.update(textSelection);
-		}
-	}
-	
+			
 	private ICElement getEditorInput() {
 		return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(
 			fEditor.getEditorInput());		

@@ -10,15 +10,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
-import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
-import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
-import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 
 /**
  */
@@ -95,33 +90,7 @@ public class Value extends CObject implements ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
-		Variable[] variables = null;
-		Session session = (Session)(getTarget().getSession());
-		MISession mi = session.getMISession();
-		VariableManager mgr = (VariableManager)session.getVariableManager();
-		CommandFactory factory = mi.getCommandFactory();
-		MIVarListChildren var = 
-			factory.createMIVarListChildren(variable.getMIVar().getVarName());
-		try {
-			mi.postCommand(var);
-			MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-			MIVar[] vars = info.getMIVars();
-			variables = new Variable[vars.length];
-			for (int i = 0; i < vars.length; i++) {
-				VariableObject varObj = new VariableObject(getTarget(),
-				 vars[i].getExp(), variable.getStackFrame(),
-				 variable.getVariableObject().getPosition(),
-				 variable.getVariableObject().getStackDepth());
-				variables[i] = mgr.createVariable(varObj, vars[i]);
-
-			}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
-		return variables;
+		return variable.getChildren();
 	}
 
 }

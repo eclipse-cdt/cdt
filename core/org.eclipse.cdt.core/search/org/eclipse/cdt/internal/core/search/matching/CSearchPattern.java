@@ -132,6 +132,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		if( limitTo == ALL_OCCURRENCES ){
 			OrPattern orPattern = new OrPattern();
 			orPattern.addPattern( createNamespacePattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createNamespacePattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createNamespacePattern( patternString, REFERENCES, matchMode, caseSensitive ) );
 			return orPattern;
 		}
@@ -190,6 +191,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			OrPattern orPattern = new OrPattern();
 			orPattern.addPattern( createFieldPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createFieldPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
+			orPattern.addPattern( createFieldPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			return orPattern;
 		}
 		

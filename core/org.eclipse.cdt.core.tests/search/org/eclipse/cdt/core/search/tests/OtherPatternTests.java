@@ -240,6 +240,73 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 3 );
 	}
 	
+	public void testBug43129(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "externalInt", VAR, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "externalInt", VAR, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 0 );
+		
+		pattern = SearchEngine.createSearchPattern( "externalIntWithInitializer", VAR, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "externalIntWithInitializer", VAR, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "externCInt", VAR, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "externCInt", VAR, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 0 );
+		
+		pattern = SearchEngine.createSearchPattern( "externCIntWithInitializer", VAR, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "externCIntWithInitializer", VAR, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "forwardFunction", FUNCTION, ALL_OCCURRENCES, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 2 );
+		
+		pattern = SearchEngine.createSearchPattern( "normalFunction", FUNCTION, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "normalFunction", FUNCTION, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "forwardMethod", METHOD, ALL_OCCURRENCES, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 2 );
+		
+		pattern = SearchEngine.createSearchPattern( "staticField", FIELD, ALL_OCCURRENCES, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 2 );
+	}
+	
 	public void testNoResourceSearching(){
 		String pluginRoot = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 		String path = pluginRoot + "resources/search/include.h";
@@ -256,5 +323,4 @@ public class OtherPatternTests extends BaseSearchTest {
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 4 );
 	}
-	
 }

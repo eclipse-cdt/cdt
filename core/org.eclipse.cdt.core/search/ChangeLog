@@ -1,4 +1,11 @@
 2003-09-25 Andrew Niefer
+	- bug43129 - Cannot search for definitions of global variables
+		- check definitions for variables, fields, enumerators and namespaces
+		- handle enter/exitLinkageSpecification
+		* search/org/eclipse/cdt/internal/core/search/matching/MatchLocator.java
+		* search/org/eclipse/cdt/internal/core/search/matching/CSearchPattern.java
+
+2003-09-25 Andrew Niefer
 	- partial fix for 43664	Modify Matchlocator to not try and create a link if we have no 
 	resource, instead just use the path
 

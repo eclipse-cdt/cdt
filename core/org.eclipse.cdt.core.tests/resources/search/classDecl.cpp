@@ -62,3 +62,17 @@ Head * Head::operator *= ( int index ){
 Head * Head::operator += ( int index ){
 	return array[ index ];
 }
+
+extern int externalInt;
+extern int externalIntWithInitializer = 2;
+extern "C" int externCInt;
+extern "C" int externCIntWithInitializer = 3;
+
+void forwardFunction() { }
+void normalFunction()  { }
+
+void DeclsAndDefns::forwardMethod(){ }
+
+int DeclsAndDefns::staticField = 5;
+
+

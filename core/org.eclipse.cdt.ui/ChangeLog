@@ -1,3 +1,8 @@
+2003-09-25 Andrew Niefer
+	-bug43129 - Search: Cannot search for definitions of global variables
+		- modify UI to allow selecting Definitions for more items
+		* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+
 2003-09-25 Hoda Amer
 	Solution to bug#43646: Code Assist won't work if missing end bracket
 

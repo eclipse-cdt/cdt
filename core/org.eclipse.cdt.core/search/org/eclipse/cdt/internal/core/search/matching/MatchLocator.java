@@ -116,7 +116,6 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
 	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
 
-	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}
 	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
 	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
 	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {	}
@@ -124,11 +123,17 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) 	{}
 	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
 	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) 	{	}
-	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) 	{	}
-
+	
 	public void enterCodeBlock(IASTCodeScope scope) {	}
 	public void exitCodeBlock(IASTCodeScope scope) 	{	}
 	
+	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec){
+		pushScope( linkageSpec );	
+	}
+
+	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec){
+		popScope();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
@@ -157,12 +162,27 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	
 	public void acceptVariable(IASTVariable variable){
 		lastDeclaration = variable;
-		check( DECLARATIONS, variable );   
+		
+		check( DECLARATIONS, variable );
+		
+		//A declaration is a definition unless...:
+		//it contains the extern specifier or a linkage-spec and no initializer
+		if( variable.getInitializerClause() != null ||
+		    ( !variable.isExtern() && !(currentScope instanceof IASTLinkageSpecification) ) ){
+			check( DEFINITIONS, variable );
+		}
 	}
 	
 	public void acceptField(IASTField field){
-		lastDeclaration = field; 
-		check( DECLARATIONS, field ); 	   
+		lastDeclaration = field;
+		if( currentScope instanceof IASTClassSpecifier ){
+			check( DECLARATIONS, field ); 	   
+			if( !field.isStatic() ){
+				check( DEFINITIONS, field ); 
+			}
+		} else {
+			check( DEFINITIONS, field );
+		}
 	}
 	
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){
@@ -173,6 +193,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			IASTEnumerator enumerator = (IASTEnumerator) iter.next();
 			lastDeclaration = enumerator;
 			check ( DECLARATIONS, enumerator );
+			check ( DEFINITIONS, enumerator );
 		}  
 	}
 		
@@ -240,6 +261,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
 		lastDeclaration = namespaceDefinition;
 		check( DECLARATIONS, namespaceDefinition );
+		check( DEFINITIONS, namespaceDefinition );
 		pushScope( namespaceDefinition );			
 	}
 

@@ -9,4 +9,15 @@ class Head {
 	Head ** array;
 };
 
+class DeclsAndDefns{
+	static int staticField;
+	int nonStaticField;
+	
+	void forwardMethod();
+	void inlineMethod() {}
+};
+
+void forwardFunction();
+
+
 #endif

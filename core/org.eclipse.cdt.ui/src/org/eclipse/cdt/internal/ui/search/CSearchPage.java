@@ -295,19 +295,17 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	
 	private void setLimitTo( List searchFor ) {
 		HashSet set = new HashSet();
-
-		set.add( DEFINITIONS );
+		
 		set.add( DECLARATIONS );
 		set.add( REFERENCES );
 		set.add( ALL_OCCURRENCES );
 				
 		for (Iterator iter = searchFor.iterator(); iter.hasNext();) {
 			SearchFor element = (SearchFor) iter.next();
-			if( element != FUNCTION && element != METHOD ){
-				set.remove( DEFINITIONS );
+			if( element == FUNCTION || element == METHOD || element == VAR || element == FIELD || element == NAMESPACE ){
+				set.add( DEFINITIONS );
 				break;
 			}
-			
 		}
 		
 		for( int i = 0; i < fLimitTo.length; i++ )

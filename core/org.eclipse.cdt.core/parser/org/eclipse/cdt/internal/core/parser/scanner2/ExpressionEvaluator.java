@@ -241,7 +241,7 @@ public class ExpressionEvaluator {
 		int limit = bufferLimit[bufferStackPos];
 
 		// check first character
-		int c = buffer[++bufferPos[bufferStackPos]];
+		char c = buffer[++bufferPos[bufferStackPos]];
 		if (!((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z'))) {
 			throw new EvalException("illegal identifier in defined()");
 		}
@@ -250,12 +250,14 @@ public class ExpressionEvaluator {
 		int idstart = bufferPos[bufferStackPos];
 		int idlen = 1;
 		while (++bufferPos[bufferStackPos] < limit) {
-			if ((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z') || (c >= '0' || c <= '9')) {
+			c = buffer[bufferPos[bufferStackPos]];
+			if ((c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
 				++idlen;
 				continue;
 			} else
 				break;
 		}
+		--bufferPos[bufferStackPos];
 		
 		// consume to the closing paren;
 		while (true) {
@@ -285,6 +287,8 @@ public class ExpressionEvaluator {
 			nextToken();
 		return value;
 	}
+	
+	private static char[] _defined = "defined".toCharArray();
 	
 	private void nextToken() throws EvalException {
 		contextLoop:
@@ -374,6 +378,14 @@ public class ExpressionEvaluator {
 
 						--bufferPos[bufferStackPos];
 						
+						// Check for defined(
+						pos = bufferPos[bufferStackPos];
+						if (pos + 1 < limit && buffer[pos + 1] == '('
+								&& CharArrayUtils.equals(buffer, start, len, _defined)) {
+							tokenType = t_defined;
+							return;
+						}
+
 						// Check for macro expansion
 						Object expObject = null;
 						if (bufferData[bufferStackPos] instanceof FunctionStyleMacro.Expansion) {

@@ -878,7 +878,8 @@ public class Scanner2Test extends BaseScanner2Test
 			try
 			{
 				validateEOF();
-				fail(EXPECTED_FAILURE);
+				// These are no longer scanner exceptions, the are simply ignored.
+				//fail(EXPECTED_FAILURE);
 			}
 			catch (ScannerException se)
 			{

@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
 import org.eclipse.cdt.internal.core.search.CSearchScope;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.PathCollector;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -172,54 +170,48 @@ public class SearchEngine implements ICSearchConstants{
 		
 		/* search is starting */
 		collector.aboutToStart();
-		ArrayList matches = new ArrayList();
-		try{
-			//initialize progress monitor
-			IProgressMonitor progressMonitor = collector.getProgressMonitor();
-			if( progressMonitor != null ){
-				progressMonitor.beginTask( Util.bind("engine.searching"), 100 ); //$NON_NLS-1$ //$NON-NLS-1$
-			}
-			
-			/* index search */
-			PathCollector pathCollector = new PathCollector();
-					
-			CModelManager modelManager = CModelManager.getDefault();
-			IndexManager indexManager = modelManager.getIndexManager();
-			
-			SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
-	
-			indexManager.performConcurrentJob( 
-				new PatternSearchJob(
-					(CSearchPattern) pattern,
-					scope,
-					pathCollector,
-					indexManager
-				),
-			    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-				subMonitor,
-				null );
-			
-			subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );
-			
-			matchLocator.setProgressMonitor(subMonitor);
-			
-			if( progressMonitor != null && progressMonitor.isCanceled() )
-				throw new InterruptedException();
-			
-			//indexer might have had a # files left to index subtask, replace that with searching again
-			if( progressMonitor != null )
-				progressMonitor.subTask( Util.bind( "engine.searching" ) );
-			
-			String[] indexerPaths = pathCollector.getPaths();
-			pathCollector = null; // release
-			
-			matchLocator.locateMatches( indexerPaths, workspace, filterWorkingCopies(this.workingCopies, scope), matches);
-		} finally {
-			AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation(collector, matches);
-			try {
-				CCorePlugin.getWorkspace().run(acceptMatchOp,null);
-			} catch (CoreException e) {}
+
+		//initialize progress monitor
+		IProgressMonitor progressMonitor = collector.getProgressMonitor();
+		if( progressMonitor != null ){
+			progressMonitor.beginTask( Util.bind("engine.searching"), 100 ); //$NON-NLS-1$
 		}
+		
+		/* index search */
+		PathCollector pathCollector = new PathCollector();
+				
+		CModelManager modelManager = CModelManager.getDefault();
+		IndexManager indexManager = modelManager.getIndexManager();
+		
+		SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
+
+		indexManager.performConcurrentJob( 
+			new PatternSearchJob(
+				(CSearchPattern) pattern,
+				scope,
+				pathCollector,
+				indexManager
+			),
+		    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+			subMonitor,
+			null );
+		
+		subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );
+		
+		matchLocator.setProgressMonitor(subMonitor);
+		
+		if( progressMonitor != null && progressMonitor.isCanceled() )
+			throw new InterruptedException();
+		
+		//indexer might have had a # files left to index subtask, replace that with searching again
+		if( progressMonitor != null )
+			progressMonitor.subTask( Util.bind( "engine.searching" ) );	//$NON-NLS-1$
+		
+		String[] indexerPaths = pathCollector.getPaths();
+		pathCollector = null; // release
+		
+		matchLocator.locateMatches( indexerPaths, workspace, filterWorkingCopies(this.workingCopies, scope));
+		collector.done();
 	}
 
 	/**

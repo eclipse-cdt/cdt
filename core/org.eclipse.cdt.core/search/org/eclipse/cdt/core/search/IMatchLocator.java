@@ -6,7 +6,6 @@
  */
 package org.eclipse.cdt.core.search;
 
-import java.util.ArrayList;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.core.resources.IWorkspace;
@@ -23,7 +22,7 @@ public interface IMatchLocator
 			ISourceElementRequestor,
 			ICSearchConstants {
 	
-	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies,ArrayList matches ) throws InterruptedException;
+	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ) throws InterruptedException;
 	
 	public void setProgressMonitor(IProgressMonitor progressMonitor);
 }

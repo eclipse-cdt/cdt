@@ -13,24 +13,20 @@
  */
 package org.eclipse.cdt.core.search.tests;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.OrPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
-import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.testplugin.CTestPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -338,24 +334,15 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		resultCollector.aboutToStart();
 
-		ArrayList matchesList = new ArrayList();
 		MatchLocator matchLocator = new MatchLocator( pattern, resultCollector, scope);
 		matchLocator.setProgressMonitor(monitor);
 		
 		try {
-			matchLocator.locateMatches( new String [] { path }, workspace, null, matchesList);
+			matchLocator.locateMatches( new String [] { path }, workspace, null );
 		} catch (InterruptedException e1) {
 		}
 		
-		AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation(resultCollector, matchesList);
-		try {
-			CCorePlugin.getWorkspace().run(acceptMatchOp,null);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//
-		//resultCollector.done();
+		resultCollector.done();
 		
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 4 );

@@ -42,7 +42,6 @@ public class AcceptMatchOperation implements IWorkspaceRunnable {
 		  IMatch match = (IMatch) i.next();	
 		  collector.acceptMatch(match); 
 		}
-		collector.done();
 	}
 
 }

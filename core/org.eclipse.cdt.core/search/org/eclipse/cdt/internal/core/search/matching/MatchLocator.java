@@ -341,12 +341,12 @@ public class MatchLocator implements IMatchLocator{
 	}
 		
    
-	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies,ArrayList matches ) throws InterruptedException{
+	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ) throws InterruptedException{
 		
 		if (!(paths.length > 0))
 			return;
 		
-		matchStorage = matches;
+		matchStorage = new ArrayList();
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
 		
 		HashMap wcPaths = new HashMap();
@@ -449,7 +449,7 @@ public class MatchLocator implements IMatchLocator{
 			
 			ParserLanguage language = null;
 			if( project != null ){
-				language = CoreModel.getDefault().hasCCNature( project ) ? ParserLanguage.CPP : ParserLanguage.C;
+				language = CoreModel.hasCCNature( project ) ? ParserLanguage.CPP : ParserLanguage.C;
 			} else {
 				//TODO no project, what language do we use?
 				language = ParserLanguage.CPP;
@@ -485,17 +485,10 @@ public class MatchLocator implements IMatchLocator{
 				}
 			}
 			
-			Iterator j = matches.iterator();
-			while (j.hasNext()){
-			  IMatch match = (IMatch) j.next();	
-			  try {
-				resultCollector.acceptMatch(match);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-			}
-			resultCollector.done();
+			AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation( resultCollector, matchStorage );
+			try {
+				CCorePlugin.getWorkspace().run(acceptMatchOp,null);
+			} catch (CoreException e) {}
 		}
 	}
 	

@@ -134,6 +134,8 @@ public class CBuilder extends ACBuilder {
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Parsing");
 
+				fatalBuild = epm.reportProblems();
+
 				if (errMsg != null) {
 					String errorDesc= CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());
 					StringBuffer buf= new StringBuffer(errorDesc);
@@ -142,9 +144,8 @@ public class CBuilder extends ACBuilder {
 					cos.write(buf.toString().getBytes());
 					cos.flush();
 					fatalBuild = true;
-				} else {
-					fatalBuild = epm.reportProblems();
 				}
+
 				subMonitor.done();
 				monitor.setCanceled(isCanceled);
 			}

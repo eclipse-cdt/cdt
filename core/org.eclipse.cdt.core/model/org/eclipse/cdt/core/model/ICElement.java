@@ -218,6 +218,17 @@ public interface ICElement extends IAdaptable {
 	boolean exists();
 
 	/**
+	 * Returns the first ancestor of this C element that has the given type.
+	 * Returns <code>null</code> if no such an ancestor can be found.
+	 * This is a handle-only method.
+	 *
+	 * @param ancestorType the given type
+	 * @return the first ancestor of this C element that has the given type, null if no such an ancestor can be found
+	 * @since 2.0
+	 */
+	ICElement getAncestor(int ancestorType);
+
+	/**
 	 * Returns the name of this element.
 	 *
 	 * @return the element name

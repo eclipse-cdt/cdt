@@ -12,6 +12,8 @@ import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -79,8 +81,41 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	public boolean exists() {
 		return getElementInfo() != null;
-	//	return getResource() != null;
 	}
+
+	/**
+	 * Returns the element that is located at the given source offset
+	 * in this element.  This is a helper method for <code>ITranslationUnit#getElementAtOffset</code>,
+	 * and only works on compilation units and types. The offset given is
+	 * known to be within this element's source range already, and if no finer
+	 * grained element is found at the offset, this element is returned.
+	 */
+	protected ICElement getSourceElementAtOffset(int offset) throws CModelException {
+		if (this instanceof ISourceReference && this instanceof Parent) {
+			ICElement[] children = ((Parent)this).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				ICElement aChild = children[i];
+				if (aChild instanceof ISourceReference) {
+					ISourceReference child = (ISourceReference) children[i];
+					ISourceRange range = child.getSourceRange();
+					int startPos = range.getStartPos();
+					int endPos = startPos + range.getLength();
+					if (offset < endPos && offset >= startPos) {
+						if (child instanceof Parent) {
+							return ((Parent)child).getSourceElementAtOffset(offset);
+						} else {
+							return (ICElement)child;
+						}
+					}
+				}
+			}
+		} else {
+			// should not happen
+			//Assert.isTrue(false);
+		}
+		return this;
+	}
+
 	
 	public boolean isReadOnly () {
 		IResource r = getUnderlyingResource();
@@ -328,7 +363,22 @@ public abstract class CElement extends PlatformObject implements ICElement {
 				//}
 			}
 		}
-	}	
+	}
+
+	/**
+	 * @see IJavaElement
+	 */
+	public ICElement getAncestor(int ancestorType) {
+		ICElement element = this;
+		while (element != null) {
+			if (element.getElementType() == ancestorType) {
+				 return element;
+			}
+			element= element.getParent();
+		}
+		return null;
+	}
+
 	/**
 	 * Returns true if this element is an ancestor of the given element,
 	 * otherwise false.

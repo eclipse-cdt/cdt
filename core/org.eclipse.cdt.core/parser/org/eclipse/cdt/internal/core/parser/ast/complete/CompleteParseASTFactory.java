@@ -1197,7 +1197,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			while( i.hasNext() )
 			{
 				ReferenceCache.ASTReference ref = (ReferenceCache.ASTReference) i.next();
-				if( ref.getName().equals( duple.toString() ) &&
+				if( CharArrayUtils.equals( ref.getNameCharArray(), duple.toCharArray() ) &&
 					ref.getOffset() == duple.getStartOffset() )
 				{
 					cache.returnReference( ref );
@@ -1256,13 +1256,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			ASTExpression astExpression = (ASTExpression) rhs;
 			Iterator refs = astExpression.getReferences().iterator();
-			String idExpression = astExpression.getIdExpression();
-			if( !idExpression.equals( "")) //$NON-NLS-1$
+			char[] idExpression = astExpression.getIdExpressionCharArray();
+			if( idExpression.length > 0 ) //$NON-NLS-1$
 			{
 				while( refs.hasNext() )
 				{
 					IASTReference r = (IASTReference) refs.next();
-					if( r.getName().equals( idExpression ) )
+					if( CharArrayUtils.equals( r.getNameCharArray(), idExpression ) )
 					{
 						refs.remove();
 						cache.returnReference(r);
@@ -2633,13 +2633,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			while( initializers.hasNext())
 			{
 				IASTConstructorMemberInitializer initializer = (IASTConstructorMemberInitializer)initializers.next();
-				if( !initializer.getName().equals( EMPTY_STRING) && 
+				if( initializer.getNameCharArray().length > 0 && 
 					initializer instanceof ASTConstructorMemberInitializer && 
 					((ASTConstructorMemberInitializer)initializer).requiresNameResolution() ) 
 				{
 					ASTConstructorMemberInitializer realInitializer = ((ASTConstructorMemberInitializer)initializer);
 					IDerivableContainerSymbol container = (IDerivableContainerSymbol) symbol.getContainingSymbol();
-					lookupQualifiedName(container, realInitializer.getNameArray(), ITypeInfo.t_any, null, realInitializer.getNameOffset(), realInitializer.getReferences(), false, LookupType.QUALIFIED);
+					lookupQualifiedName(container, realInitializer.getNameCharArray(), ITypeInfo.t_any, null, realInitializer.getNameOffset(), realInitializer.getReferences(), false, LookupType.QUALIFIED);
 					// TODO try and resolve parameter references now in the expression list
 				}
 			}
@@ -3608,9 +3608,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( reference instanceof ASTExpression )
 			{
 				ASTExpression expression = (ASTExpression) reference;
-				final String dupleAsString = duple.toString();
+				final char[] dupleAsCharArray = duple.toCharArray();
 				if( expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION &&
-						expression.getLHSExpression().equals( dupleAsString ))
+					CharArrayUtils.equals( expression.getLHSExpression().getIdExpressionCharArray(), dupleAsCharArray ))
 				{
 					try {
 						s = lookupQualifiedName( scopeToSymbol( scope ), duple, null, false );
@@ -3653,7 +3653,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 				}
 				else if( expression.getExpressionKind() == Kind.POSTFIX_FUNCTIONCALL && 
-						expression.getLHSExpression().getIdExpression().equals( dupleAsString ))
+						 CharArrayUtils.equals( expression.getLHSExpression().getIdExpressionCharArray(), dupleAsCharArray ))
 				{
 					try {
 						ISymbol symbol = getExpressionSymbol( scope, expression.getExpressionKind(), expression.getLHSExpression(), expression.getRHSExpression(), null, null );

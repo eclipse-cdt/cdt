@@ -26,14 +26,14 @@ public class ASTConstructorMemberInitializer
      * @param string
      * @param expressionList
      */
-    public ASTConstructorMemberInitializer(String name, IASTExpression expressionList)
+    public ASTConstructorMemberInitializer(char[] name, IASTExpression expressionList)
     {
         this.name = name; 
         this.expressionList = expressionList;
     }
     
     private final IASTExpression expressionList; 
-	private final String name; 
+	private final char[] name; 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer#getExpressionList()
      */
@@ -46,6 +46,9 @@ public class ASTConstructorMemberInitializer
      */
     public String getName()
     {
+        return String.valueOf(name);
+    }
+    public char[] getNameCharArray(){
         return name;
     }
     /* (non-Javadoc)

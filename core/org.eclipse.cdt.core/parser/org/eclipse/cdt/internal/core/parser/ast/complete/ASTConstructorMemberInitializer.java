@@ -54,7 +54,7 @@ public class ASTConstructorMemberInitializer
     {
         return String.valueOf( name );
     }
-    public char[] getNameArray(){
+    public char[] getNameCharArray(){
         return name;
     }
     /* (non-Javadoc)

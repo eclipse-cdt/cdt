@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
@@ -2300,7 +2301,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 									.getIdExpressionCharArray());
 						else if (firstExpression.getRHSExpression() != null
 								&& firstExpression.getRHSExpression()
-										.getIdExpression() != null) {
+										.getIdExpressionCharArray() != null) {
 							setCurrentFunctionName(firstExpression
 									.getRHSExpression().getIdExpressionCharArray());
 							context = astFactory
@@ -2386,7 +2387,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					if (secondExpression != null
 							&& secondExpression.getExpressionKind() == Kind.ID_EXPRESSION
-							&& secondExpression.getIdExpression().indexOf('~') != -1)
+							&& CharArrayUtils.indexOf( '~', secondExpression.getIdExpressionCharArray() ) != -1)
 						memberCompletionKind = Kind.POSTFIX_DOT_DESTRUCTOR;
 
 					try {
@@ -2424,7 +2425,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					if (secondExpression != null
 							&& secondExpression.getExpressionKind() == Kind.ID_EXPRESSION
-							&& secondExpression.getIdExpression().indexOf('~') != -1)
+							&& CharArrayUtils.indexOf( '~', secondExpression.getIdExpressionCharArray() ) != -1)
 						arrowCompletionKind = Kind.POSTFIX_ARROW_DESTRUCTOR;
 					try {
 						firstExpression = astFactory.createExpression(scope,

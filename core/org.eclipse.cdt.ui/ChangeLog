@@ -1,5 +1,11 @@
 2004-09-03 Alain Magloire
 
+	The Binaries were not showing children.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+
+2004-09-03 Alain Magloire
+
 	Provide key binding for AddInclude action
 	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

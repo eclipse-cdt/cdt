@@ -235,6 +235,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		Type headType = null;
 		Type type = null;
 
+		// Convert the GDBType to an ICDIType.
+		// So we go through the gdbType tree and reconstruct an ICDIType tree
 		for (Type aType = null; gdbType != null; type = aType) {
 			if (gdbType instanceof GDBDerivedType) {
 				switch(gdbType.getType()) {

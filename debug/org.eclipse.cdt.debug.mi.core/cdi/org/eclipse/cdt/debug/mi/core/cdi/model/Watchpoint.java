@@ -23,22 +23,21 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
 	String what;
 
 	public Watchpoint(Target target, String expression, int type, int wType, ICDICondition cond) {
-		super(target, type, null, cond, ""); //$NON-NLS-1$
+		super(target, type, null, cond); //$NON-NLS-1$
 		watchType = wType;
 		what = expression;
-	}
-
-	public Watchpoint(Target target, MIBreakpoint miBreak) {
-		super(target, miBreak);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#getWatchExpression()
 	 */
 	public String getWatchExpression() throws CDIException {
-		MIBreakpoint miPoint = getMIBreakpoint();
-		if (miPoint != null)
-			return getMIBreakpoint().getWhat();
+		if (what == null) {
+			MIBreakpoint[] miPoints = getMIBreakpoints();
+			if (miPoints != null && miPoints.length > 0) {
+				return miPoints[0].getWhat();
+			}
+		}
 		return what;
 	}
 
@@ -46,20 +45,22 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isReadType()
 	 */
 	public boolean isReadType() {
-		MIBreakpoint miPoint = getMIBreakpoint();
-		if (miPoint != null)
-			return getMIBreakpoint().isReadWatchpoint() || getMIBreakpoint().isAccessWatchpoint();
 		return ((watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ);
+//		MIBreakpoint miPoint = getMIBreakpoint();
+//		if (miPoint != null)
+//			return getMIBreakpoint().isReadWatchpoint() || getMIBreakpoint().isAccessWatchpoint();
+//		return ((watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isWriteType()
 	 */
 	public boolean isWriteType() {
-		MIBreakpoint miPoint = getMIBreakpoint();
-		if (miPoint != null)
-			return getMIBreakpoint().isAccessWatchpoint() || getMIBreakpoint().isWriteWatchpoint();
 		return ((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE);
+//		MIBreakpoint miPoint = getMIBreakpoint();
+//		if (miPoint != null)
+//			return getMIBreakpoint().isAccessWatchpoint() || getMIBreakpoint().isWriteWatchpoint();
+//		return ((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE);
 	}
 
 }

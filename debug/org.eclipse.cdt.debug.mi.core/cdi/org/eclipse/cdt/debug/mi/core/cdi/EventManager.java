@@ -75,6 +75,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
 
@@ -386,7 +387,10 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 								if (!enable) {
 									bpMgr.disableBreakpoint(bkpt);
 								}
-								eventList.add(new MIBreakpointCreatedEvent(miSession, bkpt.getMIBreakpoint().getNumber()));
+								MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
+								if (miBreakpoints != null && miBreakpoints.length > 0) {
+									eventList.add(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
+								}
 							} catch (CDIException e) {
 								// ignore
 							}

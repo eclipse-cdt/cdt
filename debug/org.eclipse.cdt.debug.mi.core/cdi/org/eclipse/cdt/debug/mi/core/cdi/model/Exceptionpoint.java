@@ -27,7 +27,7 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 	/**
 	 */
 	public Exceptionpoint(Target target, String clazz, boolean stopOnThrow, boolean stopOnCatch) {
-		super(target, ICDIBreakpoint.REGULAR, null, null, null);
+		super(target, ICDIBreakpoint.REGULAR, null, null);
 		fClazz = clazz;
 		fStopOnThrow = stopOnThrow;
 		fStopOnCatch = stopOnCatch;
@@ -41,9 +41,9 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 	 * @param target
 	 * @param miBreak
 	 */
-	public Exceptionpoint(Target target, MIBreakpoint miBreak) {
-		super(target, miBreak);
-	}
+//	public Exceptionpoint(Target target, MIBreakpoint miBreak) {
+//		super(target, miBreak);
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint#isStopOnThrow()

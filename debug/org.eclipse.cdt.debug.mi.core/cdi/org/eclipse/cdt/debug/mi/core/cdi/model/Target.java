@@ -698,9 +698,9 @@ public class Target  implements ICDITarget {
 	}
 
 	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
-			ICDICondition condition, String threadId, boolean deferred) throws CDIException {		
+			ICDICondition condition, boolean deferred) throws CDIException {		
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setLocationBreakpoint(this, type, location, condition, threadId, deferred);
+		return bMgr.setLocationBreakpoint(this, type, location, condition, deferred);
 	}
 
 	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
@@ -724,12 +724,19 @@ public class Target  implements ICDITarget {
 //	throw new CDIException("Not Implemented"); //$NON-NLS-1$
 //}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String)
-	 */
+	 /* 
+	  * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String, String)
+	  */
 	public ICDICondition createCondition(int ignoreCount, String expression) {
+		return createCondition(ignoreCount, expression, null);
+	}
+
+	 /* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String, String)
+	 */
+	public ICDICondition createCondition(int ignoreCount, String expression, String[] tids) {
 		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.createCondition(ignoreCount, expression);
+		return bMgr.createCondition(ignoreCount, expression, tids);
 	}
 
 	/* (non-Javadoc)

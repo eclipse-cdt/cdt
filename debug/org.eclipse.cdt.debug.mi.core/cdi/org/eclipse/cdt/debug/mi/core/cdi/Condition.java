@@ -18,10 +18,12 @@ public class Condition implements ICDICondition {
 
 	int ignoreCount;
 	String expression;
+	String[] tids;
 
-	public Condition(int ignore, String exp) {
+	public Condition(int ignore, String exp, String[] ids) {
 		ignoreCount = ignore;
 		expression = (exp == null) ? new String() : exp;
+		tids = (ids == null) ? new String[0] : ids;
 	}
 
 	/**
@@ -36,5 +38,12 @@ public class Condition implements ICDICondition {
 	 */
 	public String getExpression() {
 		return expression;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDICondition#getThreadId()
+	 */
+	public String[] getThreadIds() {
+		return tids;
 	}
 }

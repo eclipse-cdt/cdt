@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
@@ -30,41 +33,28 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
 	ICDILocation fLocation;
 	ICDICondition condition;
-	MIBreakpoint miBreakpoint;
-	//BreakpointManager mgr;
+	MIBreakpoint[] miBreakpoints;
 	int type;
-	String tid;
 	boolean enable;
 
-	public Breakpoint(Target target, int kind, ICDILocation loc, ICDICondition cond, String threadId) {
+	public Breakpoint(Target target, int kind, ICDILocation loc, ICDICondition cond) {
 		super(target);
-		//mgr = m;
 		type = kind;
 		fLocation = loc;
 		condition = cond;
-		tid = threadId;
 		enable = true;
 	}
 
-	public Breakpoint(Target target, MIBreakpoint miBreak) {
-		super(target);
-		miBreakpoint = miBreak;
-		//mgr = m;
+	public MIBreakpoint[] getMIBreakpoints() {
+		return miBreakpoints;
 	}
 
-	public MIBreakpoint getMIBreakpoint() {
-		return miBreakpoint;
-	}
-
-	public void setMIBreakpoint(MIBreakpoint newMIBreakpoint) {
-		miBreakpoint = newMIBreakpoint;
-		// Force the reset to use GDB's values.
-		condition = null;
-		fLocation = null;
+	public void setMIBreakpoints(MIBreakpoint[] newMIBreakpoints) {
+		miBreakpoints = newMIBreakpoints;
 	}
 
 	public boolean isDeferred() {
-		return (miBreakpoint == null);
+		return (miBreakpoints == null || miBreakpoints.length == 0);
 	}
 
 	/**
@@ -72,30 +62,26 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public ICDICondition getCondition() throws CDIException {
 		if (condition == null) {
-			if (miBreakpoint != null) {
-				condition =  new Condition(miBreakpoint.getIgnoreCount(), miBreakpoint.getCondition());
+			if (miBreakpoints != null && miBreakpoints.length > 0) {
+				List list = new ArrayList(miBreakpoints.length);
+				for (int i = 0; i < miBreakpoints.length; i++) {
+					list.add(miBreakpoints[i].getThreadId());
+				}
+				String[] tids = (String[]) list.toArray(new String[list.size()]);
+				int icount = miBreakpoints[0].getIgnoreCount();
+				String exp = miBreakpoints[0].getCondition();
+				condition = new Condition(icount, exp, tids);
+			} else {
+				condition =  new Condition(0, "", null);
 			}
 		}
 		return condition;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getThreadId()
-	 */
-	public String getThreadId() throws CDIException {
-		if (miBreakpoint != null) {
-			return miBreakpoint.getThreadId();
-		}
-		return tid;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isEnabled()
 	 */
 	public boolean isEnabled() throws CDIException {
-		if (miBreakpoint != null) {
-			return miBreakpoint.isEnabled();
-		}
 		return enable;
 	}
 
@@ -103,9 +89,6 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isHardware()
 	 */
 	public boolean isHardware() {
-		if (miBreakpoint != null) {
-			return miBreakpoint.isHardware();
-		}
 		return (type == ICDIBreakpoint.HARDWARE);
 	}
 
@@ -113,22 +96,23 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isTemporary()
 	 */
 	public boolean isTemporary() {
-		if (miBreakpoint != null) {
-			return miBreakpoint.isTemporary();
-		}
 		return (type == ICDIBreakpoint.TEMPORARY);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setCondition(ICDICondition)
 	 */
-	public void setCondition(ICDICondition condition) throws CDIException {
+	public void setCondition(ICDICondition newCondition) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		BreakpointManager mgr = session.getBreakpointManager();
 		if (isEnabled()) {
-			mgr.setCondition(this, condition);
+			mgr.setCondition(this, newCondition);
 		}
-		this.condition = condition;
+		setCondition0(newCondition);
+	}
+
+	public void setCondition0(ICDICondition newCondition) {
+		condition = newCondition;
 	}
 
 	/**
@@ -137,13 +121,15 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	public void setEnabled(boolean on) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		BreakpointManager mgr = session.getBreakpointManager();
-		if (miBreakpoint != null) {
-			if (on == false && isEnabled() == true) { 
-				mgr.disableBreakpoint(this);
-			} else if (on == true && isEnabled() == false) {
-				mgr.enableBreakpoint(this);
-			}
+		if (on == false && isEnabled() == true) { 
+			mgr.disableBreakpoint(this);
+		} else if (on == true && isEnabled() == false) {
+			mgr.enableBreakpoint(this);
 		}
+		setEnabled0(on);
+	}
+
+	public void setEnabled0(boolean on) {
 		enable = on;
 	}
 
@@ -152,11 +138,16 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public ICDILocation getLocation() throws CDIException {
 		if (fLocation == null) {
-			if (miBreakpoint != null) {
-				fLocation = new Location (miBreakpoint.getFile(),
-					miBreakpoint.getFunction(),
-					miBreakpoint.getLine(),
-					MIFormat.getBigInteger(miBreakpoint.getAddress()));
+			if (miBreakpoints != null && miBreakpoints.length > 0) {
+				BigInteger addr = BigInteger.ZERO;
+				String a = miBreakpoints[0].getAddress();
+				if (a != null) {
+					addr = MIFormat.getBigInteger(a);
+				}
+				fLocation = new Location (miBreakpoints[0].getFile(),
+					miBreakpoints[0].getFunction(),
+					miBreakpoints[0].getLine(),
+					addr);
 			}
 		}
 		return fLocation;

@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
@@ -477,15 +478,21 @@ public class Thread extends CObject implements ICDIThread {
 		ICDIBreakpoint[] bps = target.getBreakpoints();
 		ArrayList list = new ArrayList(bps.length);
 		for (int i = 0; i < bps.length; i++) {
-			String threadId = bps[i].getThreadId();
-			int tid = 0;
-			try {
-				tid = Integer.parseInt(threadId);
-			} catch (NumberFormatException e) {
-				//
+			ICDICondition condition = bps[i].getCondition();
+			if (condition == null) {
+				continue;
 			}
-			if (tid == getId()) {
-				list.add(bps[i]);
+			String[] threadIds = condition.getThreadIds();
+			for (int j = 0; j < threadIds.length; j++) {
+				int tid = 0;
+				try {
+					tid = Integer.parseInt(threadIds[j]);
+				} catch (NumberFormatException e) {
+					//
+				}
+				if (tid == getId()) {
+					list.add(bps[i]);
+				}
 			}
 		}
 		return (ICDIBreakpoint[]) list.toArray(new ICDIBreakpoint[list.size()]);
@@ -494,8 +501,23 @@ public class Thread extends CObject implements ICDIThread {
 	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
 			ICDICondition condition, boolean deferred) throws CDIException {
 		Target target = (Target)getTarget();
-		String threadId = Integer.toString(getId());
-		return target.setLocationBreakpoint(type, location, condition, threadId, deferred);
+		String[] threadIds = new String[] { Integer.toString(getId()) };
+		int icount = 0;
+		String exp = new String();
+		if (condition != null) {
+			icount = condition.getIgnoreCount();
+			exp = condition.getExpression();
+			String[] tids = condition.getThreadIds();
+			if (tids != null && tids.length > 0) {
+				String[] temp = new String[threadIds.length + tids.length];
+				System.arraycopy(threadIds, 0, temp, 0, threadIds.length);
+				System.arraycopy(tids, 0, temp, threadIds.length, tids.length);
+				threadIds = temp;
+			}
+		}
+		BreakpointManager bMgr = ((Session)target.getSession()).getBreakpointManager();
+		ICDICondition newCondition = bMgr.createCondition(icount, exp, threadIds);
+		return target.setLocationBreakpoint(type, location, newCondition, deferred);
 	}
 
 }

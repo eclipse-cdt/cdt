@@ -1,3 +1,20 @@
+2004-10-15 Alain Magloire
+
+	The way we do breakpoints is changing. gdb does not have
+	-break-thread-id command that would allow to change if a breakpoint
+	is associated with a particular thread(the same way as in
+	-break-condition, and -break-after). So to do thread breakpoint
+	we associate 1 Eclipse breakpoint with n GDB breakpoints:
+	1:n
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Condition.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Exceptionpoint.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Watchpoint.java
+
 2004-10-04 Alain Magloire
 
 	IllegalMonitorException fix.

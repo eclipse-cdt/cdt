@@ -1,3 +1,55 @@
+2003-03-19 Alain Magloire
+
+	Patch from Amer Hoda.
+	Introducing the WorkingCopy in the Core Model.
+	Those changes introduce the same functionnality as JDT.
+
+	All CElements have a common way of opening/modifying the source. In other words and
+	opening of Translation Unit (ITranslationUnit) is done via the buffer mechanism
+	To commit changes isConsistent and makeConsistent must be called.
+
+	The Core Model maintains an LRU cache of open elements, and automatically closes elements
+	as they are swapped out of the cache to make room for other elements.
+	Elements with unsaved changes are never removed from the cache, and thus, if the client
+	maintains many open elements with unsaved changes, the LRU cache can grow in size
+	(in this case the cache is not bounded). However, as elements
+	are saved, the cache will shrink back to its original bounded size. 
+
+	* model/org/eclipse/cdt/core/model/ElementChangeEvent.java
+	* model/org/eclipse/cdt/core/model/ICOpenable.java
+	* model/org/eclipse/cdt/core/model/ICResource.java
+	* model/org/eclipse/cdt/core/model/ITranslationUnit.java
+
+	* model/org/eclipse/cdt/internal/core/model/Buffer.java
+	* model/org/eclipse/cdt/internal/core/model/BufferChangedEvent.java
+	* model/org/eclipse/cdt/internal/core/model/CElement.java
+	* model/org/eclipse/cdt/internal/core/model/CElementDeltaBuilder.java
+	* model/org/eclipse/cdt/internal/core/model/CElementInfo.java
+	* model/org/eclipse/cdt/internal/core/model/CFile.java
+	* model/org/eclipse/cdt/internal/core/model/CFolder.java
+	* model/org/eclipse/cdt/internal/core/model/CModelCache.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CommitWorkingCopyOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/CResource.java
+	* model/org/eclipse/cdt/internal/core/model/CRoot.java
+	* model/org/eclipse/cdt/internal/core/model/CElementCache.java
+	* model/org/eclipse/cdt/internal/core/model/IBuffer.java
+	* model/org/eclipse/cdt/internal/core/model/IBufferChangedListener.java
+	* model/org/eclipse/cdt/internal/core/model/IBufferFactory.java
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnitInfo.java
+	* model/org/eclipse/cdt/internal/core/model/Util.java
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopy.java
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopyInfo.java
+
+
+	* model/org/eclipse/cdt/internal/core/util/ICacheEnumeration.java
+	* model/org/eclipse/cdt/internal/core/util/ILRUCache.java
+	* model/org/eclipse/cdt/internal/core/util/LRUCacheEnumeration.java
+	* model/org/eclipse/cdt/internal/core/util/OverFlowingLRUCache.java
+	* model/org/eclipse/cdt/internal/core/util/ToStringSorter.java
+
 2003-03-12 Alain Magloire
 
 	* utils/org/eclipse/cdt/utils/elf/Elf.java:

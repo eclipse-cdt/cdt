@@ -1,3 +1,16 @@
+2003-03-19 Alain Magloire
+
+	Patch From Amer Hoda, to use the Working Copy of ICElement use in
+	the Core Model.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java:
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java:
+	* src/org/eclipse/cdt/internal/ui/editor/DocumentAdapter.java:
+	* src/org/eclipse/cdt/internal/ui/editor/IWorkingCopyManager.java:
+	* src/org/eclipse/cdt/internal/ui/text/CReconcilingStrategy.java:
+	* src/org/eclipse/cdt/internal/ui/CFileWorkingCopy.java:
+	* src/org/eclipse/cdt/ui/CUIPlugin.java:
+
 2003-03-13 Alain Magloire
 
 	* src/org/eclipse/cdt/utils/ui/controls/RadioButton.java:

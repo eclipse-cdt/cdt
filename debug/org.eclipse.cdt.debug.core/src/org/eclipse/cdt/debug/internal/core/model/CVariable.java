@@ -224,10 +224,10 @@ public abstract class CVariable extends CDebugElement
 	
 	protected synchronized void setChanged( boolean changed ) throws DebugException
 	{
-		if ( getValue() != null )
+		if ( getValue() != null && getValue() instanceof ICValue )
 		{
-			((CValue)getValue()).setChanged( changed );
-			if ( !getValue().hasVariables() || ((CValue)getValue()).getType() == ICValue.TYPE_POINTER )
+			((ICValue)getValue()).setChanged( changed );
+			if ( !getValue().hasVariables() || ((ICValue)getValue()).getType() == ICValue.TYPE_POINTER )
 			{
 				fChanged = changed;
 			}

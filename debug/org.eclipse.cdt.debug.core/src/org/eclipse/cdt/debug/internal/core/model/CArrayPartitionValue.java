@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -122,5 +123,17 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	protected int getEnd()
 	{
 		return fEnd;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#setChanged(boolean)
+	 */
+	public void setChanged( boolean changed ) throws DebugException
+	{
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() )
+		{
+			((CVariable)it.next()).setChanged( changed );
+		}
 	}
 }

@@ -12,7 +12,6 @@ import org.eclipse.cdt.ui.AbstractCOptionPage;
 import org.eclipse.cdt.ui.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 public class SettingsBlock extends AbstractCOptionPage {
 
@@ -220,15 +218,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 		browse.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE));
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ContainerSelectionDialog dialog =
-					new ContainerSelectionDialog(getShell(), getContainer().getProject(), false, null);
-				dialog.open();
-				Object[] result = dialog.getResult();
-				if (result != null && result.length > 0) {
-					buildLocation.setText(((IContainer) result[0]).getProjectRelativePath().toOSString());
-				}
 			}
 		});
+		browse.setEnabled(false);
 		buildLocation.setText(fBuildInfo.getBuildLocation().toOSString());
 	}
 

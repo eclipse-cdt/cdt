@@ -5,8 +5,9 @@ package org.eclipse.cdt.internal.errorparsers;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.errorparsers.ErrorParserManager;
-import org.eclipse.cdt.errorparsers.IErrorParser;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParser;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.runtime.Path;
 
 public class MakeErrorParser implements IErrorParser {
@@ -55,6 +56,8 @@ public class MakeErrorParser implements IErrorParser {
 			    		/* Could check to see if they match */
 			    	}
 				}
+			} else if (msg.startsWith(" ***")) {
+				eoParser.generateMarker(null, 0, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
 			}
 		}
 		return false;

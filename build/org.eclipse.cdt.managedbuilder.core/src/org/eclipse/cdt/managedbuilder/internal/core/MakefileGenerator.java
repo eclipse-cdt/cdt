@@ -877,7 +877,12 @@ public class MakefileGenerator {
 		return subdirList;
 	}
 
-	/* (non-javadoc)
+	/* (non-Javadoc)
+	 * Return or create the folder needed for the build output. If we are
+	 * creating the folder, set the derived bit to true so the CM system 
+	 * ignores the contents. If the resource exists, respect the existing 
+	 * derived setting. 
+	 * 
 	 * @param string
 	 * @return IPath
 	 */
@@ -885,7 +890,6 @@ public class MakefileGenerator {
 		// Create or get the handle for the build directory 
 		IFolder folder = project.getFolder(dirName);
 		if (!folder.exists()) {
-
 			// Make sure that parent folders exist
 			IPath parentPath = (new Path(dirName)).removeLastSegments(1);
 			// Assume that the parent exists if the path is empty
@@ -906,11 +910,22 @@ public class MakefileGenerator {
 				else
 					throw e;
 			}
+
+			// Make sure the folder is marked as derived so it is not added to CM
+			if (!folder.isDerived()) {
+				folder.setDerived(true);
+			}
 		}
+	
 		return folder.getFullPath();
 	}
 
-	/* (non-javadoc)
+	/* (non-Javadoc)
+	 * Return or create the makefile needed for the build. If we are creating 
+	 * the resource, set the derived bit to true so the CM system ignores 
+	 * the contents. If the resource exists, respect the existing derived 
+	 * setting.
+	 *  
 	 * @param makefilePath
 	 * @param monitor
 	 * @return IFile
@@ -926,6 +941,11 @@ public class MakefileGenerator {
 		ByteArrayInputStream contents = new ByteArrayInputStream(new byte[0]);
 		try {
 			newFile.create(contents, false, monitor);
+			// Make sure the new file is marked as derived
+			if (!newFile.isDerived()) {
+				newFile.setDerived(true);
+			}
+
 		}
 		catch (CoreException e) {
 			// If the file already existed locally, just refresh to get contents
@@ -934,7 +954,7 @@ public class MakefileGenerator {
 			else
 				throw e;
 		}
-
+		
 		return newFile;
 	}
 

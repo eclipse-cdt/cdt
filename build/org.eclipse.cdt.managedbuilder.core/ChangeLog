@@ -1,3 +1,13 @@
+2004-03-09 Sean Evoy
+	Fix for bugzilla 45311: "CVS tries to check in contents of build output"
+	
+	The managed make builder generates the output directories, and the makefiles 
+	for those directories. Those files should be tagged as "derived" so that the
+	CM system will ignore the files on check-in. Now, that is done when a new 
+	build directory or file is added to the project. The workspace will take care 
+	of files created by the build process through the Ignored Resources 
+	extension point.
+
 2004-03-08 Sean Evoy
 	Committing the changes needed by our partners to better support a variety 
 	of tool references. A class hierarchy of tool references has been introduced. 

@@ -287,7 +287,7 @@ public class CDebugEditor extends CEditor
 		{
 			FileNotFoundElement element = (FileNotFoundElement)input.getAdapter( FileNotFoundElement.class );
 			if ( element != null )
-				fInputLabel.setText( MessageFormat.format( "The debugger can not find the file ''{0}''.", new String[] { element.getFullPath().toOSString() } ) );
+				fInputLabel.setText( MessageFormat.format( "Can not find the file ''{0}'' in the specified source locations.", new String[] { element.getFullPath().toOSString() } ) );
 		}
 
 		protected ScrolledComposite getScrolledComposite()

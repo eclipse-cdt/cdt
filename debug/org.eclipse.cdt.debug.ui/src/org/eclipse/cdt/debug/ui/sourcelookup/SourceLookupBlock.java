@@ -251,7 +251,7 @@ public class SourceLookupBlock implements Observer
 			if ( locator instanceof IAdaptable )
 			{
 				ICSourceLocator clocator = (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class );
-				if ( clocator != null )
+				if ( clocator != null && getProject() != null && getProject().equals( getProjectFromLaunchConfiguration( configuration ) ) )
 				{
 					clocator.setSourceLocations( getSourceLocations() );
 					clocator.setSearchForDuplicateFiles( searchForDuplicateFiles() );

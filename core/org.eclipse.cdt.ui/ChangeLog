@@ -1,3 +1,44 @@
+2003-02-04 Alain Magloire
+
+	Cleanup of the annoying error generate by the JDT 2.1 compiler
+	static versus non-static access to fields and methods.
+
+	* src/org/eclipse/cdt/internal/corext/template/Templates.java
+	* src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java
+	* src/org/eclipse/cdt/internal/ui/CCompletionContributorManager.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/ErrorTickAdornmentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java
+	* src/org/eclipse/cdt/internal/ui/editor/DefaultCEditorTextHover.java
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/OpenOnSelectionAction.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CLaunchingPropertyPage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/EditTemplateDialog.java
+	* src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/text/CAutoIndentStrategy.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	* src/org/eclipse/cdt/internal/ui/text/HTMLTextPresenter.java
+	* src/org/eclipse/cdt/internal/ui/text/link/LinkedPositionManager.java
+	* src/org/eclipse/cdt/internal/ui/text/link/LinkedPositionUI.java
+	* src/org/eclipse/cdt/internal/ui/text/template/TemplateProposal.java
+	* src/org/eclipse/cdt/internal/ui/text/template/TemplateVariableProposal.java
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	* src/org/eclipse/cdt/internal/ui/util/ProblemMarkerManager.java
+	* src/org/eclipse/cdt/internal/ui/wizards/OpenNewFileWizardAction.java
+	* src/org/eclipse/cdt/internal/ui/wizards/OpenNewFolderWizardAction.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/StringDialogField.java
+	* src/org/eclipse/cdt/internal/ui/wizards/swt/MGridLayout.java
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* src/org/eclipse/cdt/ui/wizards/CProjectWizard.java
+	* src/org/eclipse/cdt/ui/wizards/StdMakeProjectWizard.java
+	* src/org/eclipse/cdt/ui/wizards/TabFolderPage.java
+	* src/org/eclipse/cdt/ui/wizards/conversion/ConversionWizard.java
+	* src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java
+
 2003-02-01 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java:

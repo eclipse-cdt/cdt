@@ -2416,5 +2416,22 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	    	assertEquals(ip.getSourceLineNumber(), 4);
 		}
     }
+    
+    public void testBug77097() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#define SOME_MACRO() { \\\r\n"); //$NON-NLS-1$
+    	writer.write("printf(\"Hello World\"); \\\r\n"); //$NON-NLS-1$
+    	writer.write("printf(\"Good morning\"); \\\r\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
+    
+    public void testBug77276() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#if (!defined(OS_LIBMODE_R) && !defined(OS_LIBMODE_RP) && \\\r\n"); //$NON-NLS-1$
+    	writer.write("!defined(OS_LIBMODE_T))\r\n"); //$NON-NLS-1$
+    	writer.write("#define OS_LIBMODE_DP\r\n"); //$NON-NLS-1$
+    	writer.write("#endif\r\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
 }
 

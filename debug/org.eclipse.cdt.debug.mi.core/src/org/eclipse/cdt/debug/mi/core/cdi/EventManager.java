@@ -40,6 +40,9 @@ import org.eclipse.cdt.debug.mi.core.event.MIMemoryCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISharedLibUnloadedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
@@ -107,6 +110,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					} catch (CDIException e) {
 					}
 				}
+			} else if (miEvent instanceof MISharedLibChangedEvent) {
+				cdiList.add(new ChangedEvent(session, (MISharedLibChangedEvent)miEvent));
 			}
 		} else if (miEvent instanceof MIDestroyedEvent) {
 			if (miEvent instanceof MIThreadExitEvent) {
@@ -129,6 +134,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					} catch (CDIException e) {
 					}
 				}
+			} else if (miEvent instanceof MISharedLibUnloadedEvent) {
+				cdiList.add(new DestroyedEvent(session, (MISharedLibUnloadedEvent)miEvent));
 			}
 		} else if (miEvent instanceof MICreatedEvent) {
 			if (miEvent instanceof MIBreakpointCreatedEvent) {
@@ -151,6 +158,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				cdiList.add(new CreatedEvent(session, (MIThreadCreatedEvent)miEvent));
 			} else if (miEvent instanceof MIMemoryCreatedEvent) {
 				cdiList.add(new CreatedEvent(session, (MIMemoryCreatedEvent)miEvent));
+			} else if (miEvent instanceof MISharedLibCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MISharedLibCreatedEvent)miEvent));
 			}
 		}
 

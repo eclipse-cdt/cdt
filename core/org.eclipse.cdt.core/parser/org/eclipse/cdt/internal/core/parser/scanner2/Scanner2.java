@@ -1538,7 +1538,10 @@ public class Scanner2 implements IScanner, IScannerData {
 						skipOverWhiteSpace();
 						start = bufferPos[bufferStackPos] + 1;
 						skipToNewLine();
-						len = bufferPos[bufferStackPos] - start;
+						if (bufferPos[bufferStackPos] - 1 > 0 && buffer[bufferPos[bufferStackPos] - 1] == '\r')
+							len = bufferPos[bufferStackPos] - start - 1;
+						else
+							len = bufferPos[bufferStackPos] - start;
 						handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, start, CharArrayUtils.extract( buffer, start, len ));
 						break;
 					case ppEndif:

@@ -254,6 +254,8 @@ public class ExpressionEvaluator {
 				} 
 				handleProblem(IProblem.SCANNER_MISSING_R_PAREN, pos);
 				throw new EvalException("missing )"); //$NON-NLS-1$ 
+			case tCHAR:
+				return getChar();
 			default:
 				handleProblem(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, pos);
 				throw new EvalException("expression syntax error"); //$NON-NLS-1$ 
@@ -327,6 +329,21 @@ public class ExpressionEvaluator {
 	
 	private long consume() throws EvalException {
 		long value = tokenValue;
+		if (tokenType != tEOF)
+			nextToken();
+		return value;
+	}
+	
+	private long getChar() throws EvalException {
+		long value = 0;
+		
+		// if getting a character then make sure it's in '' otherwise leave it as 0
+		if (bufferPos[bufferStackPos] - 1 >= 0 && 
+				bufferPos[bufferStackPos] + 1 < bufferStack[bufferStackPos].length 
+				&& bufferStack[bufferStackPos][bufferPos[bufferStackPos] - 1] == '\'' 
+					&& bufferStack[bufferStackPos][bufferPos[bufferStackPos] + 1] == '\'')
+			value = bufferStack[bufferStackPos][bufferPos[bufferStackPos]];
+		
 		if (tokenType != tEOF)
 			nextToken();
 		return value;
@@ -470,6 +487,11 @@ public class ExpressionEvaluator {
 									pushContext(expText, null);
 							}
 							continue;
+						}
+						
+						if (len == 1) { // is a character
+							tokenType = tCHAR;
+							return;
 						}
 						
 						// undefined macro, assume 0
@@ -878,6 +900,7 @@ public class ExpressionEvaluator {
 	private static final int tQUESTION	= 25;
 	private static final int tCOLON		= 26;
 	private static final int t_defined	= 27;
+	private static final int tCHAR		= 28;
 	
 	private void pushContext(char[] buffer, Object data) {
 		if (++bufferStackPos == bufferStack.length) {

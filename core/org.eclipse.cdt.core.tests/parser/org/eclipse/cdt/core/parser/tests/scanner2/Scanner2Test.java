@@ -2266,4 +2266,32 @@ public class Scanner2Test extends BaseScanner2Test
         validateToken( IToken.tSEMI );
         validateEOF();
     }
+    
+    public void testBug79490A() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#define TEST 'n'\n"); //$NON-NLS-1$
+    	writer.write("#if TEST == 'y'\n"); //$NON-NLS-1$
+    	writer.write("#define TRUE 1\n"); //$NON-NLS-1$
+    	writer.write("#else\n"); //$NON-NLS-1$
+    	writer.write("#define FALSE 1\n"); //$NON-NLS-1$
+    	writer.write("#endif\n"); //$NON-NLS-1$
+    	initializeScanner( writer.toString() );
+    	validateEOF();
+		validateDefinition("TEST", "'n'"); //$NON-NLS-1$ //$NON-NLS-2$
+    	validateDefinition("FALSE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    public void testBug79490B() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#define TEST 'y'\n"); //$NON-NLS-1$
+    	writer.write("#if TEST == 'y'\n"); //$NON-NLS-1$
+    	writer.write("#define TRUE 1\n"); //$NON-NLS-1$
+    	writer.write("#else\n"); //$NON-NLS-1$
+    	writer.write("#define FALSE 1\n"); //$NON-NLS-1$
+    	writer.write("#endif\n"); //$NON-NLS-1$
+    	initializeScanner( writer.toString() );
+    	validateEOF();
+    	validateDefinition("TEST", "'y'"); //$NON-NLS-1$ //$NON-NLS-2$
+    	validateDefinition("TRUE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+   }
 }

@@ -2498,5 +2498,21 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write("if(VAL > VAL) { /* Syntax error is here */\n}\n}\n"); //$NON-NLS-1$
     	parse(writer.toString());
     }
+    
+    public void testBug79787() throws Exception {
+		try {
+			parse("#error what?\r\n");
+		} catch (ParserException pe) {
+			// expected IProblem
+		} finally {
+			Iterator probs = callback.getProblems();
+			assertTrue(probs.hasNext());
+			Object ipo = probs.next();
+			assertTrue(ipo instanceof IProblem);
+			IProblem ip = (IProblem) ipo;
+			assertEquals(ip.getArguments(), "what?");
+		}
+	}
+    	
 }
 

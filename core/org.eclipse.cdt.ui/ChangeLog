@@ -1,3 +1,12 @@
+2004-07-19 Vladimir Hirsl
+
+	Support for SOM/XCoff
+	* src/org/eclipse/cdt/ui/dialogs/AbstractGnuBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/CygwinPEBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUElfinaryParserpage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUSomBinaryParserpage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUXCoffinaryParserpage.java
+	
 2004-07-16 Tanya Wolff
 
 	Fix for 70221: unexternalized strings

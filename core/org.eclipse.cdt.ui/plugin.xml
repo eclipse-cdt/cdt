@@ -723,6 +723,11 @@
             parserID="org.eclipse.cdt.core.XCOFF32"
             id="XcoffBinaryParserPage">
       </parserPage>
+      <parserPage
+            class="org.eclipse.cdt.ui.dialogs.GNUSomBinaryParserPage"
+            parserID="org.eclipse.cdt.core.SOM"
+            id="SomBinaryParserPage">
+      </parserPage>
    </extension>
    <extension
          point="org.eclipse.ui.workingSets">

@@ -8,7 +8,14 @@
    plugin-version="1.0.0">
 
    <runtime>
+      <library name="cdt_qnx.jar"/>
    </runtime>
 
 
+   <extension
+         point="org.eclipse.cdt.core.ProcessList">
+      <processList
+            class="org.eclipse.cdt.internal.core.qnx.ProcessList">
+      </processList>
+   </extension>
 </fragment>

@@ -15,8 +15,7 @@ public class MIBreakpointDeletedEvent extends MIDestroyedEvent {
 	int no;
 
 	public MIBreakpointDeletedEvent(int number) {
-		super(0);
-		no = number;
+		this(0, number);
 	}
 
 	public MIBreakpointDeletedEvent(int id, int number) {

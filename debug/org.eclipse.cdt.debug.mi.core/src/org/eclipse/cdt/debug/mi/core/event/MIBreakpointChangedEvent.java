@@ -15,8 +15,7 @@ public class MIBreakpointChangedEvent extends MIChangedEvent {
 	int no;
 
 	public MIBreakpointChangedEvent(int number) {
-		super(0);
-		no = number;
+		this(0, number);
 	}
 
 	public MIBreakpointChangedEvent(int id, int number) {

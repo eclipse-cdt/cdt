@@ -15,8 +15,7 @@ public class MIBreakpointCreatedEvent extends MICreatedEvent {
 	int no;
 
 	public MIBreakpointCreatedEvent(int number) {
-		super(0);
-		no = number;
+		this(0, number);
 	}
 
 	public MIBreakpointCreatedEvent(int id, int number) {

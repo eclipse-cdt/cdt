@@ -1,5 +1,16 @@
 2003-11-20 Alain Magloire
 
+	Changes to the binaryParser.
+	To allow getting linenumber on the offset address of a symbol.
+
+	* src/org/eclipse/cdt/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/coff/parser/Symbol.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/Symbol.java
+
+2003-11-20 Alain Magloire
+
 	Only use JDK-1.3 methods.
 
 	* model/org/eclipse/cdt/internal/core/model/Binary.java

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ISourceRange;
@@ -63,13 +64,32 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return this;
 	}
 
-	public IInclude createInclude(String name, ICElement sibling, IProgressMonitor monitor)
+	public IInclude createInclude(String includeName, boolean isStd, ICElement sibling, IProgressMonitor monitor)
 		throws CModelException {
-		return null;
+		CreateIncludeOperation op = new CreateIncludeOperation(includeName, isStd, this);
+		if (sibling != null) {
+			op.createBefore(sibling);
+		}
+		CModelManager.getDefault().runOperation(op, monitor);
+		return getInclude(includeName);
 	}
 
-	public IUsing createUsing(String name, IProgressMonitor monitor) throws CModelException {
-		return null;
+	public IUsing createUsing(String usingName, boolean isDirective, ICElement sibling, IProgressMonitor monitor) throws CModelException {
+		CreateIncludeOperation op = new CreateIncludeOperation(usingName, isDirective, this);
+		if (sibling != null) {
+			op.createBefore(sibling);
+		}
+		CModelManager.getDefault().runOperation(op, monitor);
+		return getUsing(usingName);
+	}
+
+	public INamespace createNamespace(String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException {
+		CreateNamespaceOperation op = new CreateNamespaceOperation(namespace, this);
+		if (sibling != null) {
+			op.createBefore(sibling);
+		}
+		CModelManager.getDefault().runOperation(op, monitor);
+		return getNamespace(namespace);
 	}
 
 	public ICElement getElementAtLine(int line) throws CModelException {
@@ -105,6 +125,17 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (name == null || name.length() == 0) {
 			return null;
 		}
+		try {
+			ICElement[] celements = getChildren();
+			for (int i = 0; i < celements.length; i++) {
+				if (name.equals(celements[i].getElementName())) {
+					return celements[i];
+				}
+			}
+		} catch (CModelException e) {
+			//
+		}
+
 		String[] names = name.split("::"); //$NON-NLS-1$
 		ICElement current = this;
 		for (int j = 0; j < names.length; ++j) {
@@ -178,6 +209,45 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		}
 		return (IUsing[])aList.toArray(new IUsing[0]);
+	}
+
+	public INamespace getNamespace(String name) {
+		try {
+			String[] names = name.split("::"); //$NON-NLS-1$
+			ICElement current = this;
+			for (int j = 0; j < names.length; ++j) {
+				if (current instanceof IParent) {
+					ICElement[] celements = ((IParent)current).getChildren();
+					current = null;
+					for (int i = 0; i < celements.length; i++) {
+						if (celements[i].getElementType() == ICElement.C_NAMESPACE) {
+							if (name.equals(celements[i].getElementName())) {
+								current = celements[i];
+								break;
+							}
+						}
+					}
+				} else {
+					current = null;
+				}
+			}
+			if (current instanceof INamespace) {
+				return (INamespace)current;
+			}
+		} catch (CModelException e) {		
+		}		
+		return null;
+	}
+
+	public INamespace[] getNamespaces() throws CModelException {
+		ICElement[] celements = getChildren();
+		ArrayList aList = new ArrayList();
+		for (int i = 0; i < celements.length; i++) {
+			if (celements[i].getElementType() == ICElement.C_NAMESPACE) {
+				aList.add(celements[i]);
+			}
+		}
+		return (INamespace[])aList.toArray(new INamespace[0]);
 	}
 
 	public void setLocation(IPath loc) {

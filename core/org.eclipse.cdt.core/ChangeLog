@@ -1,3 +1,11 @@
+2005-01-28 Alain Magloire
+	Operation on translationUnit
+	* model/org/eclipse/cdt/core/model/ITranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/CreateIncludeOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateNamespaceOperation.java
+	* model/org/eclipse/cdt/internal/core/model/CreateUsingOperation.java
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+
 2005-01-26 Alain Magloire
 	The line and offset information should be cache in the SourceManipulationInfo
 	* model/org/eclipse/cdt/iternal/core/BinaryElement.java

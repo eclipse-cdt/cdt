@@ -45,16 +45,13 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid import name (INVALID_NAME)
 	 * </ul>
 	 */
-	IInclude createInclude(String name, ICElement sibling, IProgressMonitor monitor) throws CModelException;
+	IInclude createInclude(String name, boolean isStd, ICElement sibling, IProgressMonitor monitor) throws CModelException;
 
 	/**
-	 * Creates and returns a namesapce declaration in this translation unit
-	 * with the given package name.
+	 * Creates and returns a using declaration/directive in this translation unit
 	 *
-	 * <p>If the translation unit already includes the specified package declaration,
-	 * it is not generated (it does not generate duplicates).
 	 *
-	 * @param name the name of the namespace declaration to add (For example, <code>"std"</code>)
+	 * @param name the name of the using
 	 * @param monitor the progress monitor to notify
 	 * @return the newly inserted namespace declaration (or the previously existing one in case attempting to create a duplicate)
 	 *
@@ -65,7 +62,23 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * <li> The name is not a valid package name (INVALID_NAME)
 	 * </ul>
 	 */
-	IUsing createUsing (String name, IProgressMonitor monitor) throws CModelException;   
+	IUsing createUsing (String name, boolean isDirective, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
+
+	/**
+	 * Creates and returns a namespace in this translation unit
+	 *
+	 * @param name the name of the namespace
+	 * @param monitor the progress monitor to notify
+	 * @return the newly inserted namespace declaration (or the previously existing one in case attempting to create a duplicate)
+	 *
+	 * @exception CModelException if the element could not be created. Reasons include:
+	 * <ul>
+	 * <li>This C element does not exist (ELEMENT_DOES_NOT_EXIST)</li>
+	 * <li> A <code>CoreException</code> occurred while updating an underlying resource
+	 * <li> The name is not a valid package name (INVALID_NAME)
+	 * </ul>
+	 */
+	INamespace createNamespace (String namespace, ICElement sibling, IProgressMonitor monitor) throws CModelException;   
 
 	/**
 	 * Finds the shared working copy for this element, given a <code>IBuffer</code> factory. 
@@ -248,12 +261,31 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory, IProblemRequestor requestor) throws CModelException;
 
 	/**
-	 * Returns the first namespace declaration in this translation unit with the given package name
+	 * Returns the first using in this translation unit with the name
 	 * This is a handle-only method. The namespace declaration may or may not exist.
 	 *
 	 * @param name the name of the namespace declaration (For example, <code>"std"</code>)
 	 */
 	IUsing getUsing(String name);
+
+	/**
+	 * Returns the usings in this translation unit
+	 * in the order in which they appear in the source.
+	 *
+	 * @return an array of namespace declaration (normally of size one)
+	 *
+	 * @exception CModelException if this element does not exist or if an
+	 *		exception occurs while accessing its corresponding resource
+	 */
+	IUsing[] getUsings() throws CModelException;
+
+	/**
+	 * Returns the first namespace declaration in this translation unit with the given name
+	 * This is a handle-only method. The namespace declaration may or may not exist.
+	 *
+	 * @param name the name of the namespace declaration (For example, <code>"std"</code>)
+	 */
+	INamespace getNamespace(String name);
 
 	/**
 	 * Returns the namespace declarations in this translation unit
@@ -264,7 +296,7 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its corresponding resource
 	 */
-	IUsing[] getUsings() throws CModelException;
+	INamespace[] getNamespaces() throws CModelException;
 
 	/**
 	 * True if its a header.

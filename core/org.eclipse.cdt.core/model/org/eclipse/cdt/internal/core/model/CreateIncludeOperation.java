@@ -72,9 +72,8 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 	/**
 	 * Sets the correct position for the new include:<ul>
 	 * <li> after the last include
-	 * <li> if no include, before the first type
-	 * <li> if no type, after the package statement
-	 * <li> and if no package statement - first thing in the CU
+	 * </ul>
+	 *  if no include
 	 */
 	protected void initializeDefaultPosition() {
 		try {
@@ -109,6 +108,9 @@ public class CreateIncludeOperation extends CreateElementInTUOperation {
 		return CModelStatus.VERIFIED_OK;
 	}
 
+	/*
+	 * TODO: Use the ASTRewrite once it is available.
+	 */
 	protected String generateElement(ITranslationUnit unit) throws CModelException {
 		StringBuffer sb = new StringBuffer();
 		sb.append("#include "); //$NON-NLS-1$;

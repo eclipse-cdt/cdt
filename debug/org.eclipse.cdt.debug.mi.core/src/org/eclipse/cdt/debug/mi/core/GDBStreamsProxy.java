@@ -6,7 +6,7 @@
 package org.eclipse.cdt.debug.mi.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.Writer;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.debug.core.model.IStreamMonitor;
@@ -19,7 +19,8 @@ public class GDBStreamsProxy implements IStreamsProxy {
 	MISession session;
 	GDBStreamMonitor miConsole;
 	GDBStreamMonitor miLog;
-	OutputStream out;
+	Writer out;
+	int offset;
 	
 	public GDBStreamsProxy(MISession ses) {
 		session = ses;
@@ -52,31 +53,42 @@ public class GDBStreamsProxy implements IStreamsProxy {
 	 */
 	public void write(String input) throws IOException {
 		if (out == null) {
-			out = new OutputStream() {
+			out = new Writer() {
 				StringBuffer buf = new StringBuffer();
-				public void write(int b) throws IOException {
-					buf.append((char)b);
-					if (b == '\n') {
-						flush();
+				public void write(char[] cbuf, int off, int len) throws IOException {
+					for (int i = off; i < cbuf.length && len > 0; i++, len--) {
+						if (cbuf[i] == '\n') {
+							flush();
+						} else {
+							buf.append(cbuf[i]);
+						}
 					}
 				}
+				
+				public void close () {
+					buf.setLength(0);
+				}
+				
 				// Encapsulate the string sent to gdb in a fake
 				// command and post it to the TxThread.
 				public void flush() throws IOException {
-					CLICommand cmd = new CLICommand(buf.toString()) {
-						public void setToken(int token) {
-							token = token;
-							// override to do nothing;
-						}
-					};
+					CLICommand cmd = new CLICommand(buf.toString());
+					buf.setLength(0);
 					try {
 						session.postCommand(cmd);
 					} catch (MIException e) {
-						throw new IOException("no session");
+						// throw new IOException("no session:" + e.getMessage());
 					}
 				}
 			};
 		}
-		out.write(input.getBytes());
+
+		if (input.length() > offset) {
+			input = input.substring(offset);
+			offset += input.length();
+		} else {
+			offset = input.length();
+		}
+		out.write(input);
 	}
 }

@@ -189,8 +189,12 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public IBinding[] find(String name) {
+	public IBinding[] find(String name) throws DOMException {
 	    char [] n = name.toCharArray();
+	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+	    if( CharArrayUtils.equals( n, compType.getName().toCharArray() ) ){
+	        return (IBinding[]) ArrayUtil.addAll( IBinding.class, null, getConstructors() );
+	    }
 	    if( bindings.containsKey( n ) ){
 	        Object o = bindings.get( n );
 	        if( o instanceof IBinding[] )

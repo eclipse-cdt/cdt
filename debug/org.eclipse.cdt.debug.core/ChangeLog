@@ -1,3 +1,7 @@
+2005-02-22 Mikhail Khodjaiants
+	Bug 84799: Implement Memory View and renderings with new rendering APIs.
+	* CMemoryBlockExtensionRetrieval.java
+
 2005-02-18 Mikhail Khodjaiants
 	Remove.
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDIManager.java

@@ -90,14 +90,6 @@ public class CMemoryBlockExtensionRetrieval implements IMemoryBlockExtensionRetr
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.memory.IExtendedMemoryBlockRetrieval#getPaddedString()
-	 */
-	public String getPaddedString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
 	public boolean supportsStorageRetrieval() {

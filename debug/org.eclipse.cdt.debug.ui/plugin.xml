@@ -1173,17 +1173,15 @@
       <initializer class="org.eclipse.cdt.debug.internal.ui.CDebugUIPreferenceInitializer"/>
    </extension>
    <extension
-         point="org.eclipse.debug.ui.memoryRenderingTypes">
-      <renderingBinding renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint">
+         point="org.eclipse.debug.ui.memoryRenderings">
+      <renderingBindings
+            defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
+            primaryId="org.eclipse.debug.ui.rendering.raw_memory"
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint">
          <enablement>
             <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
          </enablement>
-      </renderingBinding>
-      <defaultRenderings renderingIds="org.eclipse.debug.ui.rendering.raw_memory">
-         <enablement>
-            <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
-         </enablement>
-      </defaultRenderings>
+      </renderingBindings>
    </extension>
 
 </plugin>

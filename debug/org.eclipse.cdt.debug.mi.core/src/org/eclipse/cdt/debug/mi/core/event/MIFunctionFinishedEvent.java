@@ -26,12 +26,14 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 	MIExecAsyncOutput exec;
 	MIResultRecord rr;
 
-	public MIFunctionFinishedEvent(MIExecAsyncOutput record) {
-		exec = record;
+	public MIFunctionFinishedEvent(MIExecAsyncOutput async) {
+		super(async.getToken());
+		exec = async;
 		parse();
 	}
 
 	public MIFunctionFinishedEvent(MIResultRecord record) {
+		super(record.getToken());
 		rr = record;
 		parse();
 	}

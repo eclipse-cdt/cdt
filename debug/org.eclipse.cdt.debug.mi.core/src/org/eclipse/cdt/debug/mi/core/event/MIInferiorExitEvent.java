@@ -26,15 +26,18 @@ public class MIInferiorExitEvent extends MIEvent {
         MIExecAsyncOutput exec = null;
         MIResultRecord rr = null;
 
-	public MIInferiorExitEvent() {
+	public MIInferiorExitEvent(int token) {
+		super(token);
 	}
 
-	public MIInferiorExitEvent(MIExecAsyncOutput record) {
-		exec = record;
+	public MIInferiorExitEvent(MIExecAsyncOutput async) {
+		super(async.getToken());
+		exec = async;
 		parse();
 	}
 
 	public MIInferiorExitEvent(MIResultRecord record) {
+		super(record.getToken());
 		rr = record;
 		parse();
 	}

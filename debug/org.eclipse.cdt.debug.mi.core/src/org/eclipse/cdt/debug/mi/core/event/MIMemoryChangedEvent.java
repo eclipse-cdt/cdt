@@ -14,7 +14,13 @@ package org.eclipse.cdt.debug.mi.core.event;
 public class MIMemoryChangedEvent extends MIChangedEvent {
 
 	Long[] addresses;
+
 	public MIMemoryChangedEvent(Long[] addrs) {
+		this(0, addrs);
+	}
+
+	public MIMemoryChangedEvent(int token, Long[] addrs) {
+		super(token);
 		addresses = addrs;
 	}
 

@@ -13,7 +13,8 @@ package org.eclipse.cdt.debug.mi.core.event;
  */
 public class MIDetachedEvent extends MIEvent {
 
-	public MIDetachedEvent() {
+	public MIDetachedEvent(int token) {
+		super(token);
 	}
 
 	public String toString() {

@@ -12,4 +12,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  *
  */
 public abstract class MIChangedEvent extends MIEvent {
+	public MIChangedEvent(int id) {
+		super(id);
+	}
 }

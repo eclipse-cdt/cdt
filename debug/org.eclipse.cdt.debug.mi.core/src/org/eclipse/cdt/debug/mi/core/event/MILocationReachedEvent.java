@@ -24,12 +24,14 @@ public class MILocationReachedEvent extends MIStoppedEvent {
 	MIExecAsyncOutput exec;
 	MIResultRecord rr;
 
-	public MILocationReachedEvent(MIExecAsyncOutput record) {
-		exec = record;
+	public MILocationReachedEvent(MIExecAsyncOutput async) {
+		super(async.getToken());
+		exec = async;
 		parse();
 	}
 
 	public MILocationReachedEvent(MIResultRecord record) {
+		super(record.getToken());
 		rr = record;
 		parse();
 	}

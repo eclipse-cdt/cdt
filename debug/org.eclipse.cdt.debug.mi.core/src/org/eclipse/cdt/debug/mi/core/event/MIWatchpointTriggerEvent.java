@@ -29,12 +29,14 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 	MIExecAsyncOutput exec;
 	MIResultRecord rr;
 
-	public MIWatchpointTriggerEvent(MIExecAsyncOutput record) {
-		exec = record;
+	public MIWatchpointTriggerEvent(MIExecAsyncOutput async) {
+		super(async.getToken());
+		exec = async;
 		parse();
 	}
 
 	public MIWatchpointTriggerEvent(MIResultRecord record) {
+		super(record.getToken());
 		rr = record;
 		parse();
 	}

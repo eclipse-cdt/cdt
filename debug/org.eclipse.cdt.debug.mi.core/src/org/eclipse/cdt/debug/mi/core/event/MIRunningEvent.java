@@ -23,7 +23,8 @@ public class MIRunningEvent extends MIEvent {
 
 	int type;
 
-	public MIRunningEvent(int t) {
+	public MIRunningEvent(int token, int t) {
+		super(token);
 		type = t;
 	}
 

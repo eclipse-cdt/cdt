@@ -16,7 +16,8 @@ public class MIVarChangedEvent extends MIChangedEvent {
 	String varName;
 	boolean inScope;
 
-	public MIVarChangedEvent(String var, boolean scope) {
+	public MIVarChangedEvent(int token, String var, boolean scope) {
+		super(token);
 		varName = var;
 		inScope = scope;
 	}

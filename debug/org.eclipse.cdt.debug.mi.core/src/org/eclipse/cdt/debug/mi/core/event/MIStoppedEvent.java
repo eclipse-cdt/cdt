@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  */
 public class MIStoppedEvent extends MIEvent {
 
-	public MIStoppedEvent() {
+	public MIStoppedEvent(int token) {
+		super(token);
 	}
 }

@@ -26,12 +26,14 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
 	MIExecAsyncOutput exec;
 	MIResultRecord rr;
 
-	public MIWatchpointScopeEvent(MIExecAsyncOutput record) {
-		exec = record;
+	public MIWatchpointScopeEvent(MIExecAsyncOutput async) {
+		super(async.getToken());
+		exec = async;
 		parse();
 	}
 
 	public MIWatchpointScopeEvent(MIResultRecord record) {
+		super(record.getToken());
 		rr = record;
 		parse();
 	}

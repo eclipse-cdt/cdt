@@ -27,11 +27,13 @@ public class MIBreakpointEvent extends MIStoppedEvent {
 	MIResultRecord rr;
 
 	public MIBreakpointEvent(MIExecAsyncOutput record) {
+		super(record.getToken());
 		exec = record;
 		parse();
 	}
 
 	public MIBreakpointEvent(MIResultRecord record) {
+		super(record.getToken());
 		rr = record;
 		parse();
 	}

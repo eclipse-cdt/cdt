@@ -15,6 +15,11 @@ public class MIThreadExitEvent extends MIEvent {
 	int tid;
 
 	public MIThreadExitEvent(int id) {
+		this(0, id);
+	}
+
+	public MIThreadExitEvent(int token, int id) {
+		super(token);
 		tid = id;
 	}
 

@@ -13,19 +13,20 @@ package org.eclipse.cdt.debug.mi.core.event;
  */
 public class MIRegisterChangedEvent extends MIChangedEvent {
 
-		String regName;
-		int regno;
+	String regName;
+	int regno;
 
-		public MIRegisterChangedEvent(String name, int no) {
-			regName = name;
-			regno = no;
-		}
+	public MIRegisterChangedEvent(int token, String name, int no) {
+		super(token);
+		regName = name;
+		regno = no;
+	}
 
-		public String getName() {
-			return regName;
-		}
+	public String getName() {
+		return regName;
+	}
 
-		public int getNumber() {
-			return regno;
-		}
+	public int getNumber() {
+		return regno;
+	}
 }

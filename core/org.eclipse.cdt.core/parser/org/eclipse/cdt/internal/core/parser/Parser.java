@@ -428,6 +428,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     protected IASTDeclaration templateDeclaration(IASTScope scope)
         throws EndOfFileException, BacktrackException
     {
+    	IToken mark = mark();
         IToken firstToken = null;
         boolean exported = false; 
         if (LT(1) == IToken.t_export)
@@ -452,6 +453,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             catch (Exception e)
             {
             	logException( "templateDeclaration:createTemplateInstantiation", e ); //$NON-NLS-1$
+            	backup( mark );
                 throw backtrack;
             }
             templateInstantiation.enterScope( requestor );
@@ -480,6 +482,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 catch (Exception e)
                 {
                 	logException( "templateDeclaration:createTemplateSpecialization", e ); //$NON-NLS-1$
+                	backup( mark );
                     throw backtrack;
                 }
 				templateSpecialization.enterScope(requestor);
@@ -524,6 +527,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         }
         catch (BacktrackException bt)
         {
+        	backup( mark );
             throw bt;
         }
     }
@@ -569,11 +573,10 @@ public abstract class Parser extends ExpressionParser implements IParser
                 return returnValue;
             if (LT(1) == IToken.t_class || LT(1) == IToken.t_typename)
             {
-                IASTTemplateParameter.ParamKind kind =
-                    (consume().getType() == IToken.t_class)
-                        ? IASTTemplateParameter.ParamKind.CLASS
-                        : IASTTemplateParameter.ParamKind.TYPENAME;
-				
+                IASTTemplateParameter.ParamKind kind = (consume().getType() == IToken.t_class)
+                                                       ? IASTTemplateParameter.ParamKind.CLASS
+                                                       : IASTTemplateParameter.ParamKind.TYPENAME;
+                IToken startingToken = lastToken;				
 				IToken id = null;
 				IASTTypeId typeId = null;
                 try
@@ -603,7 +606,12 @@ public abstract class Parser extends ExpressionParser implements IParser
                     		typeId,
                     		null,
                     		null,
-							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null ));
+							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
+							startingToken.getOffset(), startingToken.getLineNumber(), 
+							(id != null) ? id.getOffset() : 0, 
+							(id != null) ? id.getEndOffset() : 0, 
+							(id != null) ? id.getLineNumber() : 0,
+							lastToken.getEndOffset(), lastToken.getLineNumber() ));
                 }
                 catch (Exception e)
                 {
@@ -615,6 +623,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             else if (LT(1) == IToken.t_template)
             {
                 consume(IToken.t_template);
+                IToken startingToken = lastToken;
                 consume(IToken.tLT);
 
                 List subResult = templateParameterList(parameterScope);
@@ -643,7 +652,12 @@ public abstract class Parser extends ExpressionParser implements IParser
                             optionalTypeId,
                             null,
                             subResult, 
-							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null ));
+							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
+							startingToken.getOffset(), startingToken.getLineNumber(), 
+							(optionalId != null) ? optionalId.getOffset() : 0, 
+							(optionalId != null) ? optionalId.getEndOffset() : 0, 
+							(optionalId != null) ? optionalId.getLineNumber() : 0,
+							lastToken.getEndOffset(), lastToken.getLineNumber() ));
                 }
                 catch (Exception e)
                 {
@@ -660,10 +674,8 @@ public abstract class Parser extends ExpressionParser implements IParser
             {
                 ParameterCollection c = new ParameterCollection();
                 parameterDeclaration(c, parameterScope);
-                DeclarationWrapper wrapper =
-                    (DeclarationWrapper)c.getParameters().get(0);
-                Declarator declarator =
-                    (Declarator)wrapper.getDeclarators().next();
+                DeclarationWrapper wrapper = (DeclarationWrapper)c.getParameters().get(0);
+                Declarator declarator = (Declarator)wrapper.getDeclarators().next();
                 try
                 {
                     returnValue.add(
@@ -677,11 +689,17 @@ public abstract class Parser extends ExpressionParser implements IParser
                                 wrapper.getTypeSpecifier(),
                                 declarator.getPointerOperators(),
                                 declarator.getArrayModifiers(),
-                                null, null, declarator.getName() == null
-                                                ? "" //$NON-NLS-1$
-                                                : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), wrapper.getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), wrapper.getEndLine()),
+                                null, null, 
+								declarator.getName() == null ? "" : declarator.getName(), //$NON-NLS-1$
+                                declarator.getInitializerClause(), 
+								wrapper.getStartingOffset(), wrapper.getStartingLine(), 
+								declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
+								wrapper.getEndOffset(), wrapper.getEndLine()),
                             null, 
-							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null ));
+							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
+							wrapper.getStartingOffset(), wrapper.getStartingLine(), 
+							declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
+							wrapper.getEndOffset(), wrapper.getEndLine() ));
                 }
                 catch (Exception e)
                 {

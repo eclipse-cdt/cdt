@@ -202,33 +202,33 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		if( !param.isType( TypeInfo.t_templateParameter ) )
 			return false;
 		
-		if( param.getName().equals( getName() ) ){
+		if(  !getName().equals( ParserSymbolTable.EMPTY_NAME ) && param.getName().equals( getName() ) ){
 			return false;
 		}
 		
 		if( param.getTypeInfo().getTemplateParameterType() != TypeInfo.t_typeName &&
-				param.getTypeInfo().getTemplateParameterType() != TypeInfo.t_template )
+			param.getTypeInfo().getTemplateParameterType() != TypeInfo.t_template )
 		{
-			if( param.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
-					param.isType( TypeInfo.t_enumerator ) )
-			{
-				return true;
-			}
-			
-			//a non-tpye template parameter shall have one of the following:
+			TypeInfo info = param.getTypeInfo();
+			//a non-type template parameter shall have one of the following:
 			//integral or enumeration type
 			//pointer to object or pointer to function
 			//reference to object or reference to function
 			//pointer to member
 
+			//14.1-7
 			//A non-type template-parameter shall not be declared to have floating point, class or void type
-			if( param.isType( TypeInfo.t_float ) || 
-					param.isType( TypeInfo.t_double )||
-					param.isType( TypeInfo.t_class ) ||
-					param.isType( TypeInfo.t_void ) )
-			{
-				return false;				
-			}
+			if( info.getPtrOperators().size() == 0 )
+				if( info.getTemplateParameterType() == TypeInfo.t_float        ||
+					info.getTemplateParameterType() == TypeInfo.t_double       ||
+					info.getTemplateParameterType() == TypeInfo.t_class        ||
+					info.getTemplateParameterType() == TypeInfo.t_struct       ||
+					info.getTemplateParameterType() == TypeInfo.t_union        ||
+					info.getTemplateParameterType() == TypeInfo.t_enumeration  ||
+					info.getTemplateParameterType() == TypeInfo.t_void         )
+				{
+					return false;
+				}
 		}
 		return true;			
 	}

@@ -909,12 +909,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     		return null;
     	}
     	
+    	Iterator i = symbol.getASTExtension().getAllDefinitions();
+    	ASTSymbol declaration = i.hasNext() ? (ASTSymbol) i.next() : null;
+    	ASTSymbol definition  = i.hasNext() ? (ASTSymbol) i.next() : null;
+    			
 //    	assert (symbol != null ) : "createReference cannot be called on null symbol ";
     	if( symbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ||
 		    symbol.getASTExtension().getPrimaryDeclaration() instanceof IASTTypedefDeclaration )
-			return new ASTTypedefReference( offset, referenceElementName, (IASTTypedefDeclaration)symbol.getASTExtension().getPrimaryDeclaration());
+			return new ASTTypedefReference( offset, referenceElementName, (IASTTypedefDeclaration)declaration);
         else if( symbol.getType() == TypeInfo.t_namespace )
-        	return new ASTNamespaceReference( offset, referenceElementName, (IASTNamespaceDefinition)symbol.getASTExtension().getPrimaryDeclaration());
+        	return new ASTNamespaceReference( offset, referenceElementName, (IASTNamespaceDefinition)declaration);
         else if( symbol.getType() == TypeInfo.t_class || 
 				 symbol.getType() == TypeInfo.t_struct || 
 				 symbol.getType() == TypeInfo.t_union ) 
@@ -922,10 +926,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		else if( symbol.getType() == TypeInfo.t_enumeration )
 			return new ASTEnumerationReference( offset, referenceElementName,  (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
 		else if( symbol.getType() == TypeInfo.t_enumerator )
-			return new ASTEnumeratorReference( offset, referenceElementName, (IASTEnumerator)symbol.getASTExtension().getPrimaryDeclaration() );
+			return new ASTEnumeratorReference( offset, referenceElementName, (IASTEnumerator)declaration );
 		else if(( symbol.getType() == TypeInfo.t_function ) || (symbol.getType() == TypeInfo.t_constructor))
 		{
-			ASTNode referenced = symbol.getASTExtension().getPrimaryDeclaration(); 
+			ASTNode referenced = (definition != null) ? definition : declaration;
 			if( referenced instanceof IASTMethod )
 				return new ASTMethodReference( offset, referenceElementName, (IASTMethod)referenced ); 
 			else
@@ -947,7 +951,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				symbol.getContainingSymbol().getType() == TypeInfo.t_struct || 
 				symbol.getContainingSymbol().getType() == TypeInfo.t_union )
 			{
-				return new ASTFieldReference( offset, referenceElementName, (IASTField)symbol.getASTExtension().getPrimaryDeclaration());
+				return new ASTFieldReference( offset, referenceElementName, (IASTField)(definition != null ? definition : declaration ));
 			}
 			else if( ( 	symbol.getContainingSymbol().getType() == TypeInfo.t_function || 
 						symbol.getContainingSymbol().getType() == TypeInfo.t_constructor ) && 
@@ -955,11 +959,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList() != null && 
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList().contains( symbol ) )
 			{
-				return new ASTParameterReference( offset, referenceElementName, (IASTParameterDeclaration)symbol.getASTExtension().getPrimaryDeclaration() );
+				return new ASTParameterReference( offset, referenceElementName, (IASTParameterDeclaration)declaration );
 			}
 			else
 			{
-				ASTNode s = symbol.getASTExtension().getPrimaryDeclaration();
+				ASTNode s = (definition != null) ? definition : declaration;
 				if(s instanceof IASTVariable)
 					return new ASTVariableReference( offset, referenceElementName, (IASTVariable)s);
 				else if (s instanceof IASTParameterDeclaration)
@@ -2807,7 +2811,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTTypeId defaultValue,
         IASTParameterDeclaration parameter,
         List parms, 
-		IASTCodeScope parameterScope ) throws ASTSemanticException
+		IASTCodeScope parameterScope,
+		int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine ) throws ASTSemanticException
     {
     	ISymbol symbol = null;
     	if( kind == ParamKind.TEMPLATE_LIST ){
@@ -2830,7 +2835,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     		if(  kind == ParamKind.CLASS || kind == ParamKind.TYPENAME ){
         		symbol.getTypeInfo().setTemplateParameterType( TypeInfo.t_typeName );
         	} else /*ParamKind.PARAMETER*/ {
-        		pst.newSymbol( identifier, TypeInfo.t_templateParameter );
            		symbol.setName( parameter.getName() );
         		symbol.setTypeInfo( ((ASTSimpleTypeSpecifier)parameter.getTypeSpecifier()).getSymbol().getTypeInfo() );
         		symbol.getTypeInfo().setTemplateParameterType( symbol.getType() );
@@ -2852,7 +2856,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			} catch (ASTNotImplementedException e1) {
 			}
 		}
-    	ASTTemplateParameter ast = new ASTTemplateParameter( symbol, defaultValue,  parameter, parms );
+		
+    	ASTTemplateParameter ast = new ASTTemplateParameter( symbol, defaultValue,  parameter, parms, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine );
     	
    	    attachSymbolExtension( symbol, ast, false );
         
@@ -2865,7 +2870,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTScope scope,
         int startingOffset, int startingLine)
     {
-        return new ASTTemplateInstantiation( scope );
+    	ASTTemplateInstantiation inst = new ASTTemplateInstantiation( scope );
+    	inst.setStartingOffsetAndLineNumber( startingOffset, startingLine );
+        return inst; 
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTemplateSpecialization(org.eclipse.cdt.core.parser.ast.IASTScope, int)
@@ -2877,7 +2884,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ITemplateSymbol template = pst.newTemplateSymbol( ParserSymbolTable.EMPTY_NAME );
 
         ASTTemplateSpecialization ast = new ASTTemplateSpecialization( template, scope );
-		
+		ast.setStartingOffsetAndLineNumber( startingOffset, startingLine );
         attachSymbolExtension( template, ast, false );
 
         return ast; 

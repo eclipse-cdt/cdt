@@ -58,36 +58,46 @@ public class ParserSymbolTable {
 	}
 	
 	public IContainerSymbol newContainerSymbol( String name ){
+		if( name == null ) name = EMPTY_NAME;
 		return new ContainerSymbol( this, name );
 	}
 	public IContainerSymbol newContainerSymbol( String name, TypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME;
 		return new ContainerSymbol( this, name, type );
 	}
 	
 	public ISymbol newSymbol( String name ){
+		if( name == null ) name = EMPTY_NAME;
 		return new BasicSymbol( this, name );
 	}
 	public ISymbol newSymbol( String name, TypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME;
 		return new BasicSymbol( this, name, type );
 	}
 	
 	public IDerivableContainerSymbol newDerivableContainerSymbol( String name ){
+		if( name == null ) name = EMPTY_NAME;
 		return new DerivableContainerSymbol( this, name );
 	}
 	public IDerivableContainerSymbol newDerivableContainerSymbol( String name, TypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME;
 		return new DerivableContainerSymbol( this, name, type );
 	}
 	public IParameterizedSymbol newParameterizedSymbol( String name ){
+		if( name == null ) name = EMPTY_NAME;
 		return new ParameterizedSymbol( this, name );
 	}
 	public IParameterizedSymbol newParameterizedSymbol( String name, TypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME;
 		return new ParameterizedSymbol( this, name, type );
 	}
 	public ITemplateSymbol newTemplateSymbol( String name ){
+		if( name == null ) name = EMPTY_NAME;
 		return new TemplateSymbol( this, name );
 	}
 	
 	public ISpecializedSymbol newSpecializedSymbol( String name ){
+		if( name == null ) name = EMPTY_NAME;
 		return new SpecializedSymbol( this, name );
 	}
 	

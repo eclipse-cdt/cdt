@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
@@ -63,7 +65,7 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
 
         factory.pushTemplate( template );
         
-        templateParameters = parameters;
+        templateParameters = ( parameters != null ) ? parameters : new LinkedList();
         ownerScope = scope;
     }
     
@@ -85,8 +87,14 @@ public class ASTTemplateDeclaration extends ASTSymbol implements IASTTemplateDec
     public IASTDeclaration getOwnedDeclaration()
     {
     	if( owned != null && owned.getASTExtension() != null ){
-    		ASTNode node = owned.getASTExtension().getPrimaryDeclaration();
-    		return ( node instanceof IASTDeclaration ) ? (IASTDeclaration)node : null;
+    		ISymbolASTExtension extension = owned.getASTExtension();
+    		Iterator i = extension.getAllDefinitions();
+    		ASTSymbol s = null;
+    		while( i.hasNext() ){
+    			s = (ASTSymbol) i.next();
+    		}
+
+    		return s;
     	}
     	
     	IContainerSymbol ownedSymbol = getTemplateSymbol().getTemplatedSymbol();

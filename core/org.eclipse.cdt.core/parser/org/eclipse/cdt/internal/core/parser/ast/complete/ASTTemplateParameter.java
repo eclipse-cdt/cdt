@@ -40,12 +40,17 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	 * @param parameter2
 	 * @param parms2
 	 */
-	public ASTTemplateParameter(ISymbol sym, IASTTypeId defVal, IASTParameterDeclaration param, List parms ) {
+	public ASTTemplateParameter(ISymbol sym, IASTTypeId defVal, IASTParameterDeclaration param, List parms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine ) {
 		super( sym );
 		symbol = sym;
 		defaultValue = defVal;
 		parameter = (ASTParameterDeclaration) param;
 		this.parms = parms;
+		
+		setStartingOffsetAndLineNumber(startingOffset, startingLine);
+		setEndingOffsetAndLineNumber(endingOffset, endingLine);
+		setNameOffset(nameOffset);
+		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getTemplateParameterKind()

@@ -737,7 +737,8 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		String identifier,
 		IASTTypeId defaultValue,
 		IASTParameterDeclaration parameter,
-		List parms, IASTCodeScope parameterScope) {
+		List parms, IASTCodeScope parameterScope,
+		int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -28,7 +28,7 @@
 
    <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
-   <extension-point id="CProjectInfo" name="%CProjectInfo.name"/>
+   <extension-point id="CProjectOwner" name="%CProjectOwner.name"/>
 
    <extension
          id="cbuilder"
@@ -50,14 +50,6 @@
       <super
             type="org.eclipse.core.resources.textmarker">
       </super>
-   </extension>
-   <extension
-         point="org.eclipse.ui.projectNatureImages">
-      <image
-            icon="icons/full/ovr16/c_ovr.gif"
-            natureId="org.eclipse.cdt.core.cnature"
-            id="org.eclipse.cdt.cProjectNatureImage">
-      </image>
    </extension>
    <extension
          id="cnature"
@@ -86,10 +78,10 @@
       </buildcommand>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.CProjectInfo"
-         name="%projectinfo.name"
+         point="org.eclipse.cdt.core.CProjectOwner"
+         name="%projectowner.name"
          id="make">
-         <platform id="org.eclipse.cdt.core.genericmake"
+         <platform id="*"
          	name="%genericmake.name" architecture="*"/>
          <run 
          	class = "org.eclipse.cdt.internal.core.make.MakeProject">

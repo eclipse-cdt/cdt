@@ -29,7 +29,13 @@
    <extension-point id="CProject" name="%CProject.name"/>
    <extension-point id="CBuildModel" name="%CBuilder.name"/>
    <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
+   <extension-point id="BinaryParser" name="BinaryParser"/>
 
+   <extension id="parser" name="C Parser" point="org.eclipse.cdt.core.BinaryParser">
+      <parser format="ELF" class="org.eclipse.cdt.internal.core.model.parser.ElfParser"/>
+      <parser format="PE"  class="org.eclipse.cdt.internal.core.model.parser.PEParser"/>
+   </extension>
+   
    <extension
          id="cbuilder"
          name="C Builder"

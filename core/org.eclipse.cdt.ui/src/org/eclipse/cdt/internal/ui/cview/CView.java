@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
@@ -1127,12 +1128,18 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		Object obj= selection.getFirstElement();
 
 		if (selection.size() == 1) {
-			IEditorPart part= EditorUtility.isOpenInEditor(obj);
-			if (part != null) {
-				IWorkbenchPage page= getSite().getPage();
-				page.bringToTop(part);
-				if (obj instanceof ICElement) 
-					EditorUtility.revealInEditor(part, (ICElement) obj);
+			if (obj instanceof ISourceReference) {
+				ITranslationUnit tu = ((ISourceReference)obj).getTranslationUnit();
+				if (tu != null) {
+					IEditorPart part= EditorUtility.isOpenInEditor(obj);
+					if (part != null) {
+						IWorkbenchPage page= getSite().getPage();
+						page.bringToTop(part);
+						if (obj instanceof ICElement) {
+							EditorUtility.revealInEditor(part, (ICElement) obj);
+						}
+					}
+				}
 			}
 		}
 		

@@ -564,10 +564,19 @@ public class CDTDebugModelPresentation extends LabelProvider
 						label.append( ']' );					
 					}
 				}
-				else if ( !((ICVariable)var).isStructure() && value.getValueString() != null && value.getValueString().trim().length() > 0 )
+
+				else if ( !((ICVariable)var).isStructure() &&  value.getValueString() != null )
 				{
-					label.append( "= " );
-					label.append( value.getValueString().trim() );
+					String valueString = value.getValueString().trim();
+					if ( valueString.length() == 0 && ((ICVariable)var).isCharacter() )
+						valueString = ".";
+					if ( ((ICVariable)var).isNaN() )
+						valueString = "NAN";
+					if ( valueString.length() > 0 )
+					{
+						label.append( "= " );
+						label.append( valueString );
+					}
 				}
 			}
 		}

@@ -19,7 +19,7 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.platform" version="2.1.0" match="compatible"/>
+      <import plugin="org.eclipse.platform" version="2.1.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

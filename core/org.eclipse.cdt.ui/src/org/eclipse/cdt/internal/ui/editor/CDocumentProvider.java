@@ -94,8 +94,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input = (IFileEditorInput)element;
 			original = createTranslationUnit(input.getFile());
-			IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
-			copy = original.getSharedWorkingCopy(getProgressMonitor(), factory);
+			if (original != null) {
+				IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
+				copy = original.getSharedWorkingCopy(getProgressMonitor(), factory);
+			}
 		} else if (element instanceof ITranslationUnitEditorInput) {
 			ITranslationUnitEditorInput input = (ITranslationUnitEditorInput)element;
 			copy = new CFileElementWorkingCopy(input.getTranslationUnit());

@@ -1,3 +1,9 @@
+2003-04-02 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdt/model/Target.java:
+	suspend() sync for at least < 10 seconds to allow the gdb to
+	suspend via SIGINT the program.
+
 2003-03-28 Mikhail Khodjaiants
 	Added time stamp to the trace messages.
 	* MIPlugin.java

@@ -341,4 +341,56 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( collector, BC, 2 );
         assertInstances( collector, f ,1 );
 	}
+	
+	public void testNameHiding() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "int A;                       \n"); //$NON-NLS-1$
+	    buffer.append( "class A {};                  \n"); //$NON-NLS-1$
+	    buffer.append( "void f() {                   \n"); //$NON-NLS-1$
+	    buffer.append( "   A++;                      \n"); //$NON-NLS-1$
+	    buffer.append( "   class A a;                \n"); //$NON-NLS-1$
+	    buffer.append( "}                            \n"); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+	    
+	    CPPNameCollector collector = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit( tu, collector );
+	    
+	    assertEquals( collector.size(), 6 );
+	    IVariable vA = (IVariable) collector.getName( 0 ).resolveBinding();
+	    ICompositeType cA = (ICompositeType) collector.getName( 1 ).resolveBinding();
+	    IVariable a = (IVariable) collector.getName( 5 ).resolveBinding();
+	    
+	    assertSame( a.getType(), cA );
+	    assertInstances( collector, vA, 2 );
+	    assertInstances( collector, cA, 2 );
+	}
+	
+	public void testBlockTraversal() throws Exception {
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "class A { void f(); };            \n" ); //$NON-NLS-1$
+	    buffer.append( "class B;                          \n" ); //$NON-NLS-1$
+	    buffer.append( "void A::f() {                     \n" ); //$NON-NLS-1$
+	    buffer.append( "   B b;                           \n" ); //$NON-NLS-1$
+	    buffer.append( "}                                 \n" ); //$NON-NLS-1$
+	    buffer.append( "int B;                            \n" ); //$NON-NLS-1$
+	    
+	    IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+	    CPPNameCollector collector = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit( tu, collector );
+	    
+	    assertEquals( collector.size(), 9 );
+	    ICompositeType A = (ICompositeType) collector.getName( 0 ).resolveBinding();
+	    ICPPMethod f = (ICPPMethod) collector.getName( 1 ).resolveBinding();
+	    ICompositeType B = (ICompositeType) collector.getName( 2 ).resolveBinding();
+	    
+	    IVariable b = (IVariable) collector.getName( 7 ).resolveBinding();
+	    IVariable B2 = (IVariable) collector.getName( 8 ).resolveBinding();
+	    assertSame( b.getType(), B );
+	    assertInstances( collector, A, 2 );
+	    assertInstances( collector, f, 3 );
+	    assertInstances( collector, B, 2 );
+	    assertInstances( collector, b, 1 );
+	    assertInstances( collector, B2, 1 );
+	}
 }

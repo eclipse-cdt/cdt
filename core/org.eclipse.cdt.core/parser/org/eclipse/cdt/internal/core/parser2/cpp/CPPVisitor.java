@@ -97,6 +97,7 @@ import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
+import org.eclipse.cdt.internal.core.parser2.ASTNode;
 
 /**
  * @author aniefer
@@ -127,6 +128,16 @@ public class CPPVisitor {
 	}
 	
 	private static IBinding createBinding( ICPPASTElaboratedTypeSpecifier elabType ){
+	    IASTNode parent = elabType.getParent();
+	    if( parent instanceof IASTSimpleDeclaration ){
+	        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators();
+	        if( dtors.length > 0 ){
+	            IBinding binding = resolveBinding( elabType.getName() );
+	            if( binding != null )
+	                return binding;
+	        }
+	    }
+	    
 		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
 		CPPClassType binding = (CPPClassType) scope.getBinding( 0, elabType.getName().toCharArray() );
 		if( binding == null ){
@@ -308,13 +319,12 @@ public class CPPVisitor {
 			if( p instanceof IASTDeclarationStatement )
 				return p;
 			return parent;
-		}
-		//if parent is something that can contain a declaration
-		else if ( parent instanceof IASTCompoundStatement || 
-				  parent instanceof IASTTranslationUnit   ||
-				  parent instanceof IASTForStatement )
-		{
-			return node;
+		} else if( parent instanceof IASTExpression ){
+			IASTNode p = parent.getParent();
+			if( p instanceof IASTStatement )
+				return parent;
+		} else if ( parent instanceof IASTStatement || parent instanceof IASTTranslationUnit ) {
+			return parent;
 		}
 		
 		return getContainingBlockItem( parent );
@@ -338,7 +348,7 @@ public class CPPVisitor {
 		public boolean ignoreUsingDirectives = false;
 		public boolean usingDirectivesOnly = false;
 		public boolean forDefinition = false;
-		
+		public boolean typesOnly = false;
 		public List foundItems = null;
 		
 		public LookupData( char[] n ){
@@ -354,11 +364,10 @@ public class CPPVisitor {
 		lookup( data, name );
 		
 		//3: resolve ambiguities
-		//TODO
-		if( data.foundItems != null && data.foundItems.size() == 1 ){
-			IASTName found = (IASTName) data.foundItems.get(0);
+		IASTName found = resolveAmbiguities( data, name );
+		if( found != null ) {
 			IBinding binding = found.resolveBinding();
-			if( data.forDefinition ){
+			if( binding != null && data.forDefinition ){
 				addDefinition( binding, name );
 			}
 			return binding;
@@ -386,29 +395,78 @@ public class CPPVisitor {
 			}
 		} else if( parent instanceof IASTDeclarator ){
 			data.forDefinition = true;
-		} else if ( parent instanceof ICPPASTBaseSpecifier ) {
-			//filter out non-type names
+		} else if ( parent instanceof ICPPASTBaseSpecifier ||
+		        	parent instanceof ICPPASTElaboratedTypeSpecifier) 
+		{
+			data.typesOnly = true;
 		}
 		return data;
 	}
 	
-	static private IASTName collectResult( LookupData data, IASTNode declaration, boolean checkAux ){
+	static private IASTName resolveAmbiguities( LookupData data, IASTName name ) {
+	    if( data.foundItems == null || data.foundItems.size() == 0 )
+	        return null;
+	    
+	    if( data.foundItems.size() == 1 ){
+			return (IASTName) data.foundItems.get(0);
+		}
+	    
+	    IASTName type = null;
+	    IASTName obj  = null;
+	    for( int i = 0; i < data.foundItems.size(); i++ ){
+	        IASTName n = (IASTName) data.foundItems.get( i );
+	        IASTNode parent = n.getParent();
+	        if( parent instanceof IASTDeclarator ){
+	            if( obj == null ){
+	                obj = n;
+	            } else {
+	                //TODO
+	            }
+	        } else if( parent instanceof ICPPASTElaboratedTypeSpecifier ||
+	                   parent instanceof IASTEnumerationSpecifier       ||
+	                   parent instanceof ICPPASTCompositeTypeSpecifier )
+	        {
+	            if( type == null ){
+	                type = n;
+	            } else {
+	                //TODO
+	            }
+	        }
+	    }
+	    
+	    if( type != null ) {
+	        if( obj != null ){
+	            if( obj.resolveBinding().getScope() != type.resolveBinding().getScope() ){
+	                return null; //ambiguous
+	            }
+	        } else {
+	            return type;
+	        }
+	    }
+	    return obj;
+	}
+	static private IASTName collectResult( LookupData data, IASTNode node, boolean checkAux ){
+	    IASTDeclaration declaration = null;
+	    if( node instanceof IASTDeclaration ) 
+	        declaration = (IASTDeclaration) node;
 		if( declaration instanceof IASTDeclarationStatement )
-			declaration = ((IASTDeclarationStatement)declaration).getDeclaration();
+			declaration = ((IASTDeclarationStatement)node).getDeclaration();
 		else if( declaration instanceof IASTForStatement )
-			declaration = ((IASTForStatement)declaration).getInitDeclaration();
+			declaration = ((IASTForStatement)node).getInitDeclaration();
 		
 		if( declaration == null )
 			return null;
 		
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
-			IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
-			for( int i = 0; i < declarators.length; i++ ){
-				IASTDeclarator declarator = declarators[i];
-				IASTName declaratorName = declarator.getName();
-				if( CharArrayUtils.equals( declaratorName.toCharArray(), data.name ) ){
-					return declaratorName;
+			if( !data.typesOnly ) { 
+				IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
+				for( int i = 0; i < declarators.length; i++ ){
+					IASTDeclarator declarator = declarators[i];
+					IASTName declaratorName = declarator.getName();
+					if( CharArrayUtils.equals( declaratorName.toCharArray(), data.name ) ){
+						return declaratorName;
+					}
 				}
 			}
 
@@ -430,19 +488,24 @@ public class CPPVisitor {
 			    if( CharArrayUtils.equals( eName.toCharArray(), data.name ) ){
 					return eName;
 				}
-			    //check enumerators too
-			    IASTEnumerator [] list = enumeration.getEnumerators();
-			    for( int i = 0; i < list.length; i++ ) {
-			        IASTEnumerator enumerator = list[i];
-			        if( enumerator == null ) break;
-			        eName = enumerator.getName();
-			        if( CharArrayUtils.equals( eName.toCharArray(), data.name ) ){
-						return eName;
-					}
+			    if( !data.typesOnly ) {
+				    //check enumerators too
+				    IASTEnumerator [] list = enumeration.getEnumerators();
+				    for( int i = 0; i < list.length; i++ ) {
+				        IASTEnumerator enumerator = list[i];
+				        if( enumerator == null ) break;
+				        eName = enumerator.getName();
+				        if( CharArrayUtils.equals( eName.toCharArray(), data.name ) ){
+							return eName;
+						}
+				    }
 			    }
-			    
 			}
-		} else if( declaration instanceof IASTFunctionDefinition ){
+		} 
+		if( data.typesOnly )
+		    return null;
+		
+		if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
 			IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 			
@@ -472,6 +535,7 @@ public class CPPVisitor {
 			if( CharArrayUtils.equals( namespaceName.toCharArray(), data.name ) )
 				return namespaceName;
 		}
+		
 		return null;
 	}
 	static private void lookup( LookupData data, IASTName name ){
@@ -480,6 +544,9 @@ public class CPPVisitor {
 		ICPPScope scope = (ICPPScope) getContainingScope( node );		
 		while( scope != null ){
 			IASTNode blockItem = getContainingBlockItem( node );
+			if( scope.getPhysicalNode() != blockItem.getParent() )
+				blockItem = node;
+			
 			List directives = null;
 			if( !data.usingDirectivesOnly ){
 				directives = new ArrayList(2);
@@ -523,7 +590,7 @@ public class CPPVisitor {
 				data.usingDirectivesOnly = true;
 			
 			if( blockItem != null )
-				node = blockItem.getParent();
+				node = blockItem;
 			scope = (ICPPScope) scope.getParent();
 		}
 	}
@@ -697,7 +764,7 @@ public class CPPVisitor {
 		IASTNode item = ( nodes != null ? (nodes.length > 0 ? nodes[++idx] : null ) : parent );
 
 		while( item != null ) {
-			if( item == null || item == blockItem )
+			if( item == null || item == blockItem || ( blockItem != null && ((ASTNode)item).getOffset() > ((ASTNode) blockItem).getOffset() ))
 				break;
 			
 			if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {

@@ -2398,6 +2398,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 subName = createTemplateID( segments[i] );
             subName.setParent( result );
             subName.setPropertyInParent( ICPPASTQualifiedName.SEGMENT_NAME );
+            ((ASTNode)subName).setOffset( segments[i].getStartOffset() );
             result.addName( subName );
         }
         

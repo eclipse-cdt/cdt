@@ -1344,6 +1344,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             lastTokenOfExpression = consume(IToken.tSEMI);
             expressionStatement = createExpressionStatement();
             expressionStatement.setExpression( expression );
+            ((ASTNode)expressionStatement).setOffset(mark.getOffset());
             expression.setParent( expressionStatement );
             expression.setPropertyInParent( IASTExpressionStatement.EXPFRESSION );
         } catch (BacktrackException b) {
@@ -1358,6 +1359,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             IASTDeclaration d = declaration();
             ds = createDeclarationStatement();
             ds.setDeclaration(d);
+            ((ASTNode)ds).setOffset(mark.getOffset());
             d.setParent( ds );
             d.setPropertyInParent( IASTDeclarationStatement.DECLARATION );
         }

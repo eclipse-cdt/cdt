@@ -121,7 +121,16 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	}
 
 	boolean hasBreakpointChanged(MIBreakpoint miBreakpoint) {
-		return false;
+		boolean changed = false;
+		int no = miBreakpoint.getNumber();
+		Breakpoint point = getBreakpoint(no);
+		if (point != null) {
+			MIBreakpoint miBreak = point.getMIBreakpoint();
+			changed = (miBreak.isEnabled() != miBreakpoint.isEnabled()) ||
+				!miBreak.getCondition().equals(miBreakpoint.getCondition()) ||
+				(miBreak.getIgnoreCount() != miBreakpoint.getIgnoreCount());
+		}
+		return changed;
 	}
 
 	public Breakpoint getBreakpoint(int number) {

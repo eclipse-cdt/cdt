@@ -17,7 +17,7 @@ public class CWordDetector implements IWordDetector {
 	 * @see IWordDetector#isWordIdentifierStart
 	 */
 	public boolean isWordStart(char c) {
-		return Character.isJavaIdentifierStart(c) || c == '#';
+		return Character.isJavaIdentifierStart(c);
 	}
 	
 	/**

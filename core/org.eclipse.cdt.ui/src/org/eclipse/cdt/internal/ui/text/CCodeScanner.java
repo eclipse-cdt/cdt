@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
@@ -101,16 +100,15 @@ public final class CCodeScanner extends AbstractCScanner {
 			wordRule.addWord(fgTypes[i], token);
 		for (int i=0; i<fgConstants.length; i++)
 			wordRule.addWord(fgConstants[i], token);
-		for (int i=0; i<fgPreprocessor.length; i++)
-			wordRule.addWord(fgPreprocessor[i], token);
 		rules.add(wordRule);
+
+		token = getToken(ICColorConstants.C_TYPE);
+		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), token);
 					
-		PatternRule patternRule;
 		for (int i=0; i<fgPreprocessor.length; i++) {
-			patternRule = new PatternRule(fgPreprocessor[i], " ", getToken(ICColorConstants.C_TYPE), (char)0, true);
-			patternRule.setColumnConstraint(0); // For now, until we have a better rule
-			//rules.add(patternRule);
+			preprocessorRule.addWord(fgPreprocessor[i], token);
 		}
+		rules.add(preprocessorRule);
 		
 		setDefaultReturnToken(getToken(ICColorConstants.C_DEFAULT));
 		return rules;

@@ -1,3 +1,6 @@
+2004-01-29 John Camelon
+	Fixed Bug 50821 - Freezes when opening / saving .c file 
+
 2003-11-07 John Camelon
 	Fixed Bug 39554 : _Pragma directive is not supported (ANSI C99) 
 

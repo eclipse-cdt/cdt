@@ -1528,4 +1528,13 @@ public class ScannerTestCase extends BaseScannerTest
 		assertEquals( callback.inclusions.size(), 1 );
 		assertEquals( callback.inclusions.get(0), "stdio.h"); 
     }
+    
+	public void testBug50821() throws Exception
+	{
+	  Callback callback = new Callback( ParserMode.QUICK_PARSE );
+	  initializeScanner( "\'\n\n\n", ParserMode.QUICK_PARSE,  callback );
+	  scanner.nextToken(); 
+	  assertEquals( callback.problems.size(), 1 );
+	}
+
 }

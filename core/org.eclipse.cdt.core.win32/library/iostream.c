@@ -79,8 +79,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerInputStream_rea
 
 	while(len > nBuffOffset)
 		{
-		int nNumberOfBytesToRead = min(len - nBuffOffset, BUFF_SIZE);
-		int nNumberOfBytesRead;
+		DWORD nNumberOfBytesToRead = min(len - nBuffOffset, BUFF_SIZE);
+		DWORD nNumberOfBytesRead;
 	    if(0 == ReadFile((HANDLE)fd, tmpBuf, nNumberOfBytesToRead, &nNumberOfBytesRead, &overlapped ))
 			{
 			int err = GetLastError();
@@ -182,8 +182,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_SpawnerOutputStream_wr
 
 	while(len > nBuffOffset)
 		{
-		int nNumberOfBytesToWrite = min(len - nBuffOffset, BUFF_SIZE);
-		int nNumberOfBytesWritten;
+		DWORD nNumberOfBytesToWrite = min(len - nBuffOffset, BUFF_SIZE);
+		DWORD nNumberOfBytesWritten;
 		(*env) -> GetByteArrayRegion(env, buf, nBuffOffset, nNumberOfBytesToWrite, tmpBuf);
 		if(0 == WriteFile((HANDLE)fd, tmpBuf, nNumberOfBytesToWrite, &nNumberOfBytesWritten, NULL)) 
 			{

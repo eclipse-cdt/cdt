@@ -32,6 +32,7 @@ public class MIInferior extends Process {
 
 	boolean attached = false;
 
+	int exitCode = 0;
 	int state = 0;
 
 	MISession session;
@@ -139,12 +140,12 @@ public class MIInferior extends Process {
 				try {
 					session.postCommand(code);
 					MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
-					return info.getCode();
+					exitCode = info.getCode();
 				} catch (MIException e) {
 					// no rethrown.
 				}
 			}
-			return 0;
+			return exitCode;
 		}
 		throw new IllegalThreadStateException();
 	}
@@ -161,7 +162,7 @@ public class MIInferior extends Process {
 				interrupt();
 				session.postCommand(abort);
 				MIInfo info = abort.getMIInfo();
-				setTerminated();
+				setTerminated(true);
 			} catch (MIException e) {
 			}
 		}
@@ -219,6 +220,10 @@ public class MIInferior extends Process {
 	}
 
 	public synchronized void setTerminated() {
+		setTerminated(false);
+	}
+
+	synchronized void setTerminated(boolean fireEvent) {
 		state = TERMINATED;
 		// Close the streams.
 		try {
@@ -258,7 +263,9 @@ public class MIInferior extends Process {
 				out = null;
 			}
 		}
-		session.fireEvent(new MIInferiorExitEvent());
+		if (fireEvent) {
+			session.fireEvent(new MIInferiorExitEvent());
+		}
 		notifyAll();
 	}
 

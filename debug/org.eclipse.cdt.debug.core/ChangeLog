@@ -1,3 +1,7 @@
+2004-10-22 Mikhail Khodjaiants
+	Fire the suspend event for the current thread on the target creation.
+	* CDebugTarget.java
+
 2004-10-21 Mikhail Khodjaiants
 	Thread should handle CDI events from the corresponding CDI thread only.
 	"canSuspend" should return true if the thread is stepping.

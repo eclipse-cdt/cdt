@@ -102,6 +102,12 @@ public class CTarget  implements ICDITarget {
 			} catch (MIException e) {
 				throw new CDIException(e.getMessage());
 			}
+
+			// Resetting threads may change the value of
+			// some variables like Register.  Send an update
+			// To generate changeEvents.
+			VariableManager varMgr = session.getVariableManager();
+			varMgr.update();
 		}
 
 		// We should be allright now.

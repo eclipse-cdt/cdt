@@ -93,7 +93,8 @@ public class CThread extends CObject implements ICDIThread {
 	}
 
 	public void setCurrentStackFrame(StackFrame stackframe) throws CDIException {
-		MISession mi = getCTarget().getCSession().getMISession();
+		CSession session = getCTarget().getCSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		int frameNum = 0;
 		if (stackframe != null) {
@@ -109,6 +110,13 @@ public class CThread extends CObject implements ICDIThread {
 				throw new CDIException("No answer");
 			}
 			currentFrame = stackframe;
+
+			// Resetting threads may change the value of
+			// some variables like Register.  Send an update
+			// To generate changeEvents.
+			VariableManager varMgr = session.getVariableManager();
+			varMgr.update();
+
 		} catch (MIException e) {
 			throw new CDIException(e.getMessage());
 		}

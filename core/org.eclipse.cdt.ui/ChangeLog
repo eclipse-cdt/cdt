@@ -1,3 +1,10 @@
+2004-08-16 Chris Wiebe
+
+	better handling of source folders in class wizard
+	* src/org/eclipse/cdt/internal/corext/util/CModelUtil.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardMessages.properties
+
 2004-08-16 Tanya Wolff
 	Fix for 70906: Duplicate entries in C/C++ preferences
 	

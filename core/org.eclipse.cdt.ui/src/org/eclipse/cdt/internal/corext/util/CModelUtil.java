@@ -10,7 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -57,6 +59,30 @@ public class CModelUtil {
 		return null;
 	}
 
+	/**
+	 * Returns the source folder of <code>ICElement</code>. If the given
+	 * element is already a source folder, the element itself is returned.
+	 */
+	public static ICContainer getSourceFolder(ICElement element) {
+		ICContainer folder = null;
+	    if (element != null) {
+			boolean foundSourceRoot = false;
+			ICElement curr = element;
+			while (curr != null && !foundSourceRoot) {
+				if (curr instanceof ICContainer && folder == null) {
+				    folder = (ICContainer)curr;
+				}
+				foundSourceRoot = (curr instanceof ISourceRoot);
+				curr = curr.getParent();
+			}
+			if (folder == null) {
+			    ICProject cproject = element.getCProject();
+				folder = cproject.findSourceRoot(cproject.getProject());
+			}
+	    }
+		return folder;
+	}
+	
 	/**
 	 * Returns <code>true</code> if the given source root is
 	 * referenced. This means it is own by a different project but is referenced

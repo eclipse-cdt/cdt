@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -94,7 +95,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected static final String SOURCE_FOLDER = PAGE_NAME + ".sourcefolder"; //$NON-NLS-1$
 	private StringButtonDialogField fSourceFolderDialogField;
 	protected IStatus fSourceFolderStatus;
-	ISourceRoot fCurrentSourceFolder;
+	ICContainer fCurrentSourceFolder;
 	
 	/** ID of the namespace input field. */
 	protected final static String NAMESPACE = PAGE_NAME + ".namespace"; //$NON-NLS-1$
@@ -126,9 +127,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	MethodStubsListDialogField fMethodStubsDialogField;
 	protected IStatus fMethodStubsStatus;
 
+	/** ID of the header file input field. */
+	protected final static String HEADERFILE = PAGE_NAME + ".headerfile"; //$NON-NLS-1$
 	StringButtonDialogField fHeaderFileDialogField;
+	protected IStatus fHeaderFileStatus;
+	IPath fCurrentHeaderFile;
 
+	/** ID of the header file input field. */
+	protected final static String SOURCEFILE = PAGE_NAME + ".sourcefile"; //$NON-NLS-1$
 	StringButtonDialogField fSourceFileDialogField;
+	protected IStatus fSourceFileStatus;
+	IPath fCurrentSourceFile;
    
 	private NewClassCodeGenerator fCodeGenerator = null;
 
@@ -190,10 +199,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fClassNameStatus = new StatusInfo();
 		fBaseClassesStatus = new StatusInfo();
 		fMethodStubsStatus = new StatusInfo();
+		fHeaderFileStatus = new StatusInfo();
+		fSourceFileStatus = new StatusInfo();
 
 		fCurrentSourceFolder = null;
 		fCanModifyNamespace = true;
 		fCurrentEnclosingClass = null;
+		fCurrentHeaderFile = null;
+		fCurrentSourceFile = null;
 		fCanModifyEnclosingClass = true;
 		updateEnableState();
 	}
@@ -492,9 +505,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     	setNamespace(namespace, true);
     	setEnclosingClass(enclosingClass, true);
     	setEnclosingClassSelection(false, true);
-    	
     	setClassName(className, true);
-    	
         addMethodStub(new ConstructorMethodStub(), true);
         addMethodStub(new DestructorMethodStub(), true);
     }
@@ -505,29 +516,28 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * @param elem the C element used to compute the initial folder
      */
     protected void initSourceFolder(ICElement elem) {
-    	ISourceRoot initRoot = null;
+    	ICContainer folder = null;
     	if (elem != null) {
-    		initRoot = CModelUtil.getSourceRoot(elem);
-    		if (initRoot == null) {
+    	    folder = CModelUtil.getSourceFolder(elem);
+    		if (folder == null) {
     			ICProject cproject = elem.getCProject();
     			if (cproject != null) {
     				try {
-    					initRoot = null;
     					if (cproject.exists()) {
     					    ISourceRoot[] roots = cproject.getSourceRoots();
     					    if (roots != null && roots.length > 0)
-    					        initRoot = roots[0];
+    					        folder = roots[0];
     					}
     				} catch (CModelException e) {
     					CUIPlugin.getDefault().log(e);
     				}
-    				if (initRoot == null) {
-    					initRoot = cproject.findSourceRoot(cproject.getResource());
+    				if (folder == null) {
+    				    folder = cproject.findSourceRoot(cproject.getResource());
     				}
     			}
     		}
     	}	
-    	setSourceFolder(initRoot, true);
+    	setSourceFolder(folder, true);
     }
 	
 	/**
@@ -573,7 +583,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     private class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
 			// take the current cproject as init element of the dialog
-			ISourceRoot folder = chooseSourceFolder(fCurrentSourceFolder);
+			ICContainer folder = chooseSourceFolder(fCurrentSourceFolder);
 			if (folder != null) {
 				setSourceFolder(folder, true);
 				prepareTypeCache();
@@ -698,17 +708,33 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     private class HeaderFileFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
+			// take the current cproject as init element of the dialog
+			ITranslationUnit headerFile = chooseHeaderFile(fCurrentSourceFolder);
+			if (headerFile != null) {
+				setHeaderFile(headerFile.getPath(), true);
+			}
 		}
 		
 		public void dialogFieldChanged(DialogField field) {
+			fHeaderFileStatus = headerFileChanged();
+			// tell all others
+			handleFieldChanged(HEADERFILE);
 		}
 	}
 
     private class SourceFileFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
+			// take the current cproject as init element of the dialog
+			ITranslationUnit sourceFile = chooseSourceFile(fCurrentSourceFolder);
+			if (sourceFile != null) {
+				setSourceFile(sourceFile.getPath(), true);
+			}
 		}
 		
 		public void dialogFieldChanged(DialogField field) {
+			fSourceFileStatus = sourceFileChanged();
+			// tell all others
+			handleFieldChanged(SOURCEFILE);
 		}
     }
 		
@@ -733,41 +759,29 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		IPath path = new Path(str);
 		IResource res = fWorkspaceRoot.findMember(path);
-		if (res != null) {
+		if (res != null && res.exists()) {
 			int resType = res.getType();
 			if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
 				IProject proj = res.getProject();
 				if (!proj.isOpen()) {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.ProjectClosed", proj.getFullPath().toString())); //$NON-NLS-1$
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", str)); //$NON-NLS-1$
 					return status;
-				}				
-				ICProject cproject = CoreModel.getDefault().create(proj);
-				fCurrentSourceFolder = cproject.findSourceRoot(res);
-				//TODO check for null
-				if (res.exists()) {
-//					try {
-					    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-//						if (!proj.hasNature(CoreModel.NATURE_ID)) {
-							if (resType == IResource.PROJECT) {
-								status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
-							} else {
-								status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
-							}
-							return status;
-						}
-//					} catch (CoreException e) {
-//						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
-//					}
-//					if (!cproject.isOnClasspath(fCurrRoot)) {
-//					if (!cproject.isOnSourceRoot(fCurrRoot)) {
-//						status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NotOnClassPath", str)); //$NON-NLS-1$
-//					}
-//					if (fCurrRoot.isArchive()) {
-//						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.ContainerIsBinary", str)); //$NON-NLS-1$
-//						return status;
-//					}
 				}
-				return status;
+				ICProject cproject = CoreModel.getDefault().create(proj);
+			    ICElement e = CoreModel.getDefault().create(res.getFullPath());
+			    fCurrentSourceFolder = CModelUtil.getSourceFolder(e);
+				if (fCurrentSourceFolder == null) {
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotASourceFolder", str)); //$NON-NLS-1$
+					return status;
+				}
+			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+					if (resType == IResource.PROJECT) {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
+						return status;
+					} else {
+						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+					}
+				}
 			} else {
 				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", str)); //$NON-NLS-1$
 				return status;
@@ -776,6 +790,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.SourceFolderDoesNotExist", str)); //$NON-NLS-1$
 			return status;
 		}
+		return status;
 	}
 		
 	/**
@@ -856,17 +871,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		String enclosing = getEnclosingClass();
 		// must not be empty
 		if (enclosing.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterClassName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterEnclosingClassName")); //$NON-NLS-1$
 			return status;
 		}
 
 		IStatus val = CConventions.validateClassName(enclosing);
 		if (val.getSeverity() == IStatus.ERROR) {
-			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidClassName", val.getMessage())); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidEnclosingClassName", val.getMessage())); //$NON-NLS-1$
 			return status;
-		} else if (val.getSeverity() == IStatus.WARNING) {
-			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.ClassNameDiscouraged", val.getMessage())); //$NON-NLS-1$
-			// continue checking
 		}
 	
 	    IProject project = getCurrentProject();
@@ -890,12 +902,18 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			    types = AllTypesCache.getTypes(project, qualName, true);
 		        for (int i = 0; i < types.length; ++i) {
 		            if (types[i].getCElementType() == ICElement.C_CLASS) {
-						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingClassExistsDifferentCase")); //$NON-NLS-1$
 						return status;
 		            }
 		        }
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameNotExists")); //$NON-NLS-1$
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingClassNotExists")); //$NON-NLS-1$
 				return status;
+	        } else {
+                IProject enclosingProject = fCurrentEnclosingClass.getEnclosingProject();
+                if (enclosingProject == null || !enclosingProject.equals(project)) {
+    				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnclosingClassNotExistsInProject")); //$NON-NLS-1$
+    				return status;
+                }
 	        }
 	    }
 		return status;
@@ -993,6 +1011,20 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	protected IStatus baseClassesChanged() {
 		StatusInfo status = new StatusInfo();
+
+		IProject project = getCurrentProject();
+	    if (project != null) {
+		    // make sure all classes belong to the project
+		    IBaseClassInfo[] baseClasses = getBaseClasses();
+		    for (int i = 0; i < baseClasses.length; ++i) {
+		        ITypeInfo baseType = baseClasses[i].getType();
+		        IProject baseProject = baseType.getEnclosingProject();
+		        if (baseProject != null && !baseProject.equals(project)) {
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.BaseClassNotExistsInProject", baseType.getQualifiedTypeName().toString())); //$NON-NLS-1$
+					return status;
+		        }
+		    }
+	    }
 		return status;
 	}
 
@@ -1006,6 +1038,118 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	protected IStatus methodStubsChanged() {
 		StatusInfo status = new StatusInfo();
+		return status;
+	}
+
+	/**
+	 * This method is a hook which gets called after the header file's
+	 * text input field has changed. This default implementation updates
+	 * the model and returns an error status. The underlying model
+	 * is only valid if the returned status is OK.
+	 * 
+	 * @return the model's error status
+	 */
+	protected IStatus headerFileChanged() {
+		StatusInfo status = new StatusInfo();
+		
+		fCurrentHeaderFile = null;
+		String str = getHeaderFileName();
+		if (str.length() == 0) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFolderName")); //$NON-NLS-1$
+			return status;
+		}
+		IPath path = new Path(str);
+		IResource res = fWorkspaceRoot.findMember(path);
+		if (res != null && res.exists()) {
+		}
+//				if (res.exists()) {
+////					try {
+//					    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+////						if (!proj.hasNature(CoreModel.NATURE_ID)) {
+//							if (resType == IResource.PROJECT) {
+//								status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
+//							} else {
+//								status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+//							}
+//							return status;
+//						}
+////					} catch (CoreException e) {
+////						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
+////					}
+////					if (!cproject.isOnClasspath(fCurrRoot)) {
+////					if (!cproject.isOnSourceRoot(fCurrRoot)) {
+////						status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NotOnClassPath", str)); //$NON-NLS-1$
+////					}
+////					if (fCurrRoot.isArchive()) {
+////						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.ContainerIsBinary", str)); //$NON-NLS-1$
+////						return status;
+////					}
+//				}
+//				return status;
+//			} else {
+//				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", str)); //$NON-NLS-1$
+//				return status;
+//			}
+//		} else {
+//			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.SourceFolderDoesNotExist", str)); //$NON-NLS-1$
+//			return status;
+//		}
+		return status;
+	}
+
+	/**
+	 * This method is a hook which gets called after the source file's
+	 * text input field has changed. This default implementation updates
+	 * the model and returns an error status. The underlying model
+	 * is only valid if the returned status is OK.
+	 * 
+	 * @return the model's error status
+	 */
+	protected IStatus sourceFileChanged() {
+		StatusInfo status = new StatusInfo();
+		
+		fCurrentHeaderFile = null;
+		String str = getHeaderFileName();
+		if (str.length() == 0) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFolderName")); //$NON-NLS-1$
+			return status;
+		}
+		IPath path = new Path(str);
+		IResource res = fWorkspaceRoot.findMember(path);
+		if (res != null && res.exists()) {
+		}
+//				if (res.exists()) {
+////					try {
+//					    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+////						if (!proj.hasNature(CoreModel.NATURE_ID)) {
+//							if (resType == IResource.PROJECT) {
+//								status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
+//							} else {
+//								status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+//							}
+//							return status;
+//						}
+////					} catch (CoreException e) {
+////						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
+////					}
+////					if (!cproject.isOnClasspath(fCurrRoot)) {
+////					if (!cproject.isOnSourceRoot(fCurrRoot)) {
+////						status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NotOnClassPath", str)); //$NON-NLS-1$
+////					}
+////					if (fCurrRoot.isArchive()) {
+////						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.ContainerIsBinary", str)); //$NON-NLS-1$
+////						return status;
+////					}
+//				}
+//				return status;
+//			} else {
+//				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", str)); //$NON-NLS-1$
+//				return status;
+//			}
+//		} else {
+//			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.SourceFolderDoesNotExist", str)); //$NON-NLS-1$
+//			return status;
+//		}
 		return status;
 	}
 
@@ -1040,6 +1184,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			fClassNameStatus,
 			fBaseClassesStatus,
 			fMethodStubsStatus,
+			fHeaderFileStatus,
+			fSourceFileStatus
 		};
 		
 		// the mode severe status will be displayed and the ok button enabled/disabled.
@@ -1172,7 +1318,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	public void setClassName(String name, boolean canBeModified) {
 		fClassNameDialogField.setText(name);
 		fClassNameDialogField.setEnabled(canBeModified);
-	}	
+	}
 	
     public void addBaseClass(ITypeInfo newBaseClass, ASTAccessVisibility access, boolean isVirtual) {
         List baseClasses = fBaseClassesDialogField.getElements();
@@ -1260,7 +1406,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @param canBeModified if <code>false</code> the source folder field can 
 	 * not be changed by the user. If <code>true</code> the field is editable
 	 */ 
-	public void setSourceFolder(ISourceRoot folder, boolean canBeModified) {
+	public void setSourceFolder(ICContainer folder, boolean canBeModified) {
 		fCurrentSourceFolder = folder;
 		String str = (folder == null) ? "" : folder.getPath().makeRelative().toString(); //$NON-NLS-1$
 		fSourceFolderDialogField.setText(str);
@@ -1320,6 +1466,40 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		updateEnableState();
 	}
 	
+	/**
+	 * Sets the current header file.
+	 * 
+	 * @param path The new header path
+	 * @param canBeModified if <code>false</code> the header file field can 
+	 * not be changed by the user. If <code>true</code> the field is editable
+	 */ 
+	public void setHeaderFile(IPath headerPath, boolean canBeModified) {
+		fCurrentHeaderFile = headerPath;
+	    if (fCurrentSourceFolder != null && fCurrentSourceFolder.getPath().isPrefixOf(headerPath)) {
+	        headerPath = headerPath.removeFirstSegments(fCurrentSourceFolder.getPath().segmentCount());
+	    }
+		String str = (headerPath == null) ? "" : headerPath.makeRelative().toString(); //$NON-NLS-1$
+		fHeaderFileDialogField.setText(str);
+		fHeaderFileDialogField.setEnabled(canBeModified);
+	}	
+
+	/**
+	 * Sets the current source file.
+	 * 
+	 * @param path The new source path
+	 * @param canBeModified if <code>false</code> the header file field can 
+	 * not be changed by the user. If <code>true</code> the field is editable
+	 */ 
+	public void setSourceFile(IPath sourcePath, boolean canBeModified) {
+		fCurrentSourceFile = sourcePath;
+	    if (fCurrentSourceFolder != null && fCurrentSourceFolder.getPath().isPrefixOf(sourcePath)) {
+	        sourcePath = sourcePath.removeFirstSegments(fCurrentSourceFolder.getPath().segmentCount());
+	    }
+		String str = (sourcePath == null) ? "" : sourcePath.makeRelative().toString(); //$NON-NLS-1$
+		fSourceFileDialogField.setText(str);
+		fSourceFileDialogField.setEnabled(canBeModified);
+	}	
+
 	/*
 	 * Updates the enable state of buttons related to the enclosing class selection checkbox.
 	 */
@@ -1327,32 +1507,32 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		boolean enclosing = isEnclosingClassSelected();
 		fNamespaceDialogField.setEnabled(fCanModifyNamespace && !enclosing);
 		fEnclosingClassDialogField.setEnabled(fCanModifyEnclosingClass && enclosing);
-	}	
+	}
 	
-	ISourceRoot chooseSourceFolder(ICElement initElement) {
-		Class[] acceptedClasses = new Class[] { ISourceRoot.class, ICProject.class };
+	ICContainer chooseSourceFolder(ICElement initElement) {
+		Class[] acceptedClasses = new Class[] { ICContainer.class, ICProject.class };
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false) {
 			public boolean isSelectedValid(Object element) {
 				if (element instanceof ICProject) {
 					ICProject cproject = (ICProject)element;
 					IPath path = cproject.getProject().getFullPath();
 					return (cproject.findSourceRoot(path) != null);
-				} else if (element instanceof ISourceRoot) {
-					return true;
+				} else if (isValidSourceFolder(element)) {
+				    return true;
 				}
 				return false;
 			}
 		};
 		
-		acceptedClasses = new Class[] { ICModel.class, ISourceRoot.class, ICProject.class };
+		acceptedClasses = new Class[] { ICModel.class, ICContainer.class, ICProject.class };
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses) {
 			public boolean select(Viewer viewer, Object parent, Object element) {
-				if (element instanceof ISourceRoot) {
-				    return true;
-				}
+				if (isValidSourceFolder(element)) {
+			        return true;
+			    }
 				return super.select(viewer, parent, element);
 			}
-		};		
+		};
 
 		CElementContentProvider provider = new CElementContentProvider();
 		ILabelProvider labelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT); 
@@ -1370,14 +1550,29 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			if (element instanceof ICProject) {
 				ICProject cproject = (ICProject)element;
 				return cproject.findSourceRoot(cproject.getProject());
-			} else if (element instanceof ISourceRoot) {
-				return (ISourceRoot)element;
+			} else if (element instanceof ICContainer) {
+				return (ICContainer)element;
 			}
 			return null;
 		}
 		return null;
 	}	
 	
+	boolean isValidSourceFolder(Object obj) {
+		return (obj instanceof ICContainer
+		        && CModelUtil.getSourceFolder((ICContainer)obj) != null);
+	}
+	
+	boolean isValidHeaderFile(Object obj) {
+		return (obj instanceof ITranslationUnit
+		        && CModelUtil.getSourceFolder((ITranslationUnit)obj) != null);
+	}
+
+	boolean isValidSourceFile(Object obj) {
+		return (obj instanceof ITranslationUnit
+		        && CModelUtil.getSourceFolder((ITranslationUnit)obj) != null);
+	}
+
 	ITypeInfo chooseNamespace() {
 	    ITypeSearchScope scope = prepareTypeCache();
 	    if (scope == null)
@@ -1510,6 +1705,96 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 	}
 
+	ITranslationUnit chooseHeaderFile(ICElement initElement) {
+		Class[] acceptedClasses = new Class[] { ITranslationUnit.class, ICContainer.class, ICProject.class };
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false) {
+			public boolean isSelectedValid(Object element) {
+			    return isValidHeaderFile(element);
+			}
+		};
+		
+		acceptedClasses = new Class[] { ICModel.class, ICContainer.class, ICProject.class, ITranslationUnit.class };
+		ViewerFilter filter = new TypedViewerFilter(acceptedClasses) {
+			public boolean select(Viewer viewer, Object parent, Object element) {
+			    if (isValidHeaderFile(element)) {
+				    return true;
+				}
+				return super.select(viewer, parent, element);
+			}
+		};		
+
+		CElementContentProvider provider = new CElementContentProvider();
+		ILabelProvider labelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT); 
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, provider);
+		dialog.setValidator(validator);
+		dialog.setSorter(new CElementSorter());
+		dialog.setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseHeaderFileDialog.title")); //$NON-NLS-1$
+		dialog.setMessage(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseHeaderFileDialog.description")); //$NON-NLS-1$
+		dialog.addFilter(filter);
+		ICElement input = CoreModel.create(fWorkspaceRoot);
+		if (fCurrentSourceFolder != null) {
+		    ICProject cproject = fCurrentSourceFolder.getCProject();
+		    if (cproject != null)
+		        input = cproject;
+		}
+	    dialog.setInput(input);
+		dialog.setInitialSelection(initElement);
+		
+		if (dialog.open() == Window.OK) {
+			Object element = dialog.getFirstResult();
+			if (element instanceof ITranslationUnit) {
+			    return (ITranslationUnit)element;
+			}
+			return null;
+		}
+		return null;
+	}	
+	
+	ITranslationUnit chooseSourceFile(ICElement initElement) {
+		Class[] acceptedClasses = new Class[] { ITranslationUnit.class, ICContainer.class, ICProject.class };
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, false) {
+			public boolean isSelectedValid(Object element) {
+				return isValidSourceFile(element);
+			}
+		};
+		
+		acceptedClasses = new Class[] { ICModel.class, ICContainer.class, ICProject.class, ITranslationUnit.class };
+		ViewerFilter filter = new TypedViewerFilter(acceptedClasses) {
+			public boolean select(Viewer viewer, Object parent, Object element) {
+			    if (isValidSourceFile(element)) {
+				    return true;
+				}
+				return super.select(viewer, parent, element);
+			}
+		};		
+
+		CElementContentProvider provider = new CElementContentProvider();
+		ILabelProvider labelProvider = new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT); 
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, provider);
+		dialog.setValidator(validator);
+		dialog.setSorter(new CElementSorter());
+		dialog.setTitle(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFileDialog.title")); //$NON-NLS-1$
+		dialog.setMessage(NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFileDialog.description")); //$NON-NLS-1$
+		dialog.addFilter(filter);
+		ICElement input = CoreModel.create(fWorkspaceRoot);
+		if (fCurrentSourceFolder != null) {
+		    ICProject cproject = fCurrentSourceFolder.getCProject();
+		    if (cproject != null)
+		        input = cproject;
+		}
+	    dialog.setInput(input);
+		dialog.setInitialSelection(initElement);
+		
+		if (dialog.open() == Window.OK) {
+			Object element = dialog.getFirstResult();
+			if (element instanceof ITranslationUnit) {
+			    return (ITranslationUnit)element;
+			}
+			return null;
+		}
+		return null;
+	}	
+	
 	// ---- creation ----------------
 
 	/**

@@ -9,12 +9,11 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 import java.util.Collections;
 import java.util.Observable;
 
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
-import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
-import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
-import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
-import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.IListAdapter;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.LayoutUtil;
+import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;

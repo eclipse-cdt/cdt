@@ -70,11 +70,13 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -171,6 +173,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see AbstractTextEditor#doSetInput(IEditorInput)
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
+		// If the file is not a Storage or an IFile use a different
+		// DocumentProvider. TODO: Rewrite CDocuemtnProviver to handle this.
+		if (!(input instanceof IStorageEditorInput || input instanceof IFileEditorInput)) {
+			setDocumentProvider(new TextFileDocumentProvider(null));
+		}
 		super.doSetInput(input);
 		fCEditorErrorTickUpdater.setAnnotationModel(getDocumentProvider().getAnnotationModel(input));
 		setOutlinePageInput(fOutlinePage, input);

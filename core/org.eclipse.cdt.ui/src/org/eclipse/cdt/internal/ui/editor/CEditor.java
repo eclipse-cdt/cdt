@@ -725,7 +725,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	interface ITextConverter {
 		void customizeDocumentCommand(IDocument document, DocumentCommand command);
-	};
+	}
 
 	static class TabConverter implements ITextConverter {
 
@@ -776,7 +776,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			}
 			command.text = buffer.toString();
 		}
-	};
+	}
 
 	/* Source code language to display */
 	public final static String LANGUAGE_CPP = "CEditor.language.cpp"; //$NON-NLS-1$
@@ -860,7 +860,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		public String getDisplayLanguage() {
 			return fDisplayLanguage;
 		}
-	};
+	}
 
 	/*
 	 * @see AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)

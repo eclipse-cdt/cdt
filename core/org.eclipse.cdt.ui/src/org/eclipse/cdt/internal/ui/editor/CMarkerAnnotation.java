@@ -8,18 +8,14 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
 
 
 public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnotation {		
@@ -28,7 +24,6 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	private IDocument fDocument;
 	private int error_start = -1;
 	private int error_length = 0;
-	private IDebugModelPresentation fPresentation;
 
 	public CMarkerAnnotation(IMarker marker, IDocument document) {
 		super(marker);
@@ -148,16 +143,6 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 			if (MarkerUtilities.isMarkerType(marker, SearchUI.SEARCH_MARKER)) {
 				setLayer(2);
 				setImage(SearchUI.getSearchMarkerImage());
-				fIsProblemMarker= false;
-				return;
-			}
-			else if (MarkerUtilities.isMarkerType(marker, IBreakpoint.LINE_BREAKPOINT_MARKER)) {
-				if (fPresentation == null) 
-					fPresentation= DebugUITools.newDebugModelPresentation();
-				
-				setLayer(4);
-				setImage(fPresentation.getImage(marker));
-			
 				fIsProblemMarker= false;
 				return;
 			} else if (MarkerUtilities.isMarkerType(getMarker(), ICModelMarker.C_MODEL_PROBLEM_MARKER)) {

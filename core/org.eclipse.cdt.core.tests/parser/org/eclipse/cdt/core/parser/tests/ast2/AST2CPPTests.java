@@ -1159,16 +1159,35 @@ public class AST2CPPTests extends AST2BaseTest {
       assertEquals( name.getNames()[2].toString(), "ghi" ); //$NON-NLS-1$
    }
    
-   public void _test84679() throws Exception {
+   public void testBug84679() throws Exception {
    		StringBuffer buffer = new StringBuffer();
-   		buffer.append("namespace Y { void f(float); }  // NPE on resolve binding            \n"); //$NON-NLS-1$
-   		buffer.append("namespace A { using namespace Y; f(int); } // NPE on resolve binding \n" ); //$NON-NLS-1$
-   		buffer.append("namespace B { void f(char);  } // NPE on resolve binding             \n "); //$NON-NLS-1$
-   		buffer.append("namespace AB { using namespace A; using namespace B; }               \n" ); //$NON-NLS-1$
+   		buffer.append("namespace Y { void f(float); }                         \n"); //$NON-NLS-1$
+   		buffer.append("namespace A { using namespace Y; f(int); }             \n"); //$NON-NLS-1$
+   		buffer.append("namespace B { void f(char);  }                         \n"); //$NON-NLS-1$
+   		buffer.append("namespace AB { using namespace A; using namespace B; } \n"); //$NON-NLS-1$
    		buffer.append("void h(){         \n"); //$NON-NLS-1$
    		buffer.append("   AB::f(1);      \n"); //$NON-NLS-1$
    		buffer.append("   AB::f(’c’);    \n"); //$NON-NLS-1$
    		buffer.append("}                 \n"); //$NON-NLS-1$
+   		
+   		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+
+        ICPPNamespace Y = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPNamespace A = (ICPPNamespace) col.getName(3).resolveBinding();
+        ICPPNamespace B = (ICPPNamespace) col.getName(7).resolveBinding();
+        ICPPNamespace AB = (ICPPNamespace) col.getName(10).resolveBinding(); 
+        
+        IFunction f = (IFunction) col.getName(16).resolveBinding();
+        IFunction fdef = (IFunction) col.getName(5).resolveBinding();
+        IProblemBinding f2 = (IProblemBinding) col.getName(19).resolveBinding();
+        assertSame( f, fdef );
+        assertEquals( IProblemBinding.SEMANTIC_NAME_NOT_FOUND, f2.getID() );
+        assertInstances( col, Y, 2 );
+        assertInstances( col, A, 2 );
+        assertInstances( col, B, 2 );
+        assertInstances( col, AB, 3 );
    }
    
    public void testBug84692() throws Exception {
@@ -1194,6 +1213,24 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, Node, 3 );
         assertInstances( col, Data, 2 );
    	}
+
+   public void testBug84686() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append("namespace B { int b; }                        \n"); //$NON-NLS-1$
+   		buffer.append("namespace A { using namespace B;  int a;  }   \n"); //$NON-NLS-1$
+   		buffer.append("namespace B { using namespace A; }            \n"); //$NON-NLS-1$
+   		buffer.append("void f() { B::a++;  }                         \n"); //$NON-NLS-1$
+   		
+   		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+
+        assertEquals(col.size(), 11);
+
+        IVariable a1 = (IVariable) col.getName(4).resolveBinding();
+        IVariable a2 = (IVariable) col.getName(10).resolveBinding();
+        assertSame( a1, a2 );
+   }
 
 }
 

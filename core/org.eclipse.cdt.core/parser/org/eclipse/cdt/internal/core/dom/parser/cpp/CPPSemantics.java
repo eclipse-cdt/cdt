@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -457,7 +458,7 @@ public class CPPSemantics {
 		ICPPScope scope = getLookupScope( name );		
 		while( scope != null ){
 			IASTNode blockItem = CPPVisitor.getContainingBlockItem( node );
-			if( scope.getPhysicalNode() != blockItem.getParent() )
+			if( scope.getPhysicalNode() != blockItem.getParent() && !(scope instanceof ICPPNamespaceScope) )
 				blockItem = node;
 			
 			List directives = null;
@@ -703,7 +704,7 @@ public class CPPSemantics {
 		    namespaceDefs = namespace.getNamespaceDefinitions();
 		    
 			nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
-			namespaceIdx = -1;
+			namespaceIdx = 0;
 		} else if( parent instanceof ICPPASTFunctionDeclarator ){
 		    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
 	        nodes = dtor.getParameters();
@@ -740,7 +741,7 @@ public class CPPSemantics {
 			    if( namespaceIdx > -1 ) {
 			        //check all definitions of this namespace
 				    while( namespaceIdx > -1 && namespaceDefs.length > ++namespaceIdx ){
-				        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[0].getParent()).getDeclarations();
+				        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
 					    if( nodes.length > 0 ){
 					        idx = 0;
 					        item = nodes[0];
@@ -995,7 +996,7 @@ public class CPPSemantics {
 	        } else {
 	        	if( obj == null )
 	        		obj = temp;
-	        	else {
+	        	else if( obj != temp ){
 	        	    return new ProblemBinding( IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, data.name );
 	        	}
 	        }
@@ -1200,6 +1201,8 @@ public class CPPSemantics {
 			
 			for( int j = 0; j < numSourceParams || j == 0; j++ ){
 				source = getSourceParameterType( sourceParameters, j );
+				if( source instanceof IProblemBinding )
+					return (IBinding) source;
 				
 				if( j < numTargetParams ){
 					if( targetLength == 0  && j == 0 ){

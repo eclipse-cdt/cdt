@@ -1569,6 +1569,8 @@ public class CPPVisitor {
                 } catch ( DOMException e ) {
                     return e.getProblem();
                 }
+			} else if( binding instanceof IProblemBinding ){
+				return (IType) binding;
 			}
 	    } else if( expression instanceof IASTCastExpression ){
 	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();

@@ -205,12 +205,21 @@ public class MakefileGenerator {
 						keepLooking = true;
 						break;
 				}
+			} if (resource.getType() == IResource.PROJECT) {
+				// If there is a zero-length delta, something the project depends on has changed so just call make
+				IResourceDelta[] children = delta.getAffectedChildren();
+				if (children != null && children.length == 0) {
+					generator.shouldRunBuild(true);
+				} else {
+					keepLooking = true;
+				}
 			} else {
 				// If the resource is part of the generated directory structure don't recurse
 				if (!generator.isGeneratedResource(resource)) {
 					keepLooking = true;
 				}
 			}
+
 			return keepLooking;
 		}
 	}	
@@ -816,7 +825,7 @@ public class MakefileGenerator {
 	 * @param fileHandle The file to place the contents in.
 	 * @param rebuild FLag signalling that the user is doing a full rebuild
 	 */
-	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) {
+	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		
 		// Add the macro definitions
@@ -829,12 +838,7 @@ public class MakefileGenerator {
 		buffer.append(addTargets(rebuild));
 
 		// Save the file
-		try {
-			Util.save(buffer, fileHandle);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Util.save(buffer, fileHandle);
 	}
 
 	/* (non-javadoc)

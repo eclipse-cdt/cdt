@@ -1,3 +1,19 @@
+2003-09-26 Sean Evoy
+	I added a fix to the builder and makefile generator to properly handle the following case.
+	Project A depends on Project B. Something changes in project B and the user requests 
+	that A be built. Inthis case, the incremental builder is invoked, but it is passed a 
+	0-length delta on the top resource. Now, the logic of the builder is to treat that case as a 
+	build event that triggers no makefile regeneration, just an invocation of make.
+	
+	Now handles the case where there is no flag applied to the make command and just 
+	passes the targets as arguments.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	
+	The makefile generator now considers the case where the delta is for a project resource 
+	and has no children. If so, it flags that a build is needed but no makefile generation 
+	occurs. It also throws a new exception if the top makefile is not saved.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+
 2003-09-25 Sean Evoy
 	A patch to resolve the problem with refreshing the project after a build, or
 	bug 42522 if you care about those sorts of things. The managed make builder was

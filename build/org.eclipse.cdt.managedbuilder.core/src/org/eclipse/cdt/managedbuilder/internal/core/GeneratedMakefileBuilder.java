@@ -171,6 +171,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					if (e.getStatus().getCode() == GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR) {
 						// Just keep looking for other projects
 						continue;
+					} else {
+						// Throw the exception back to the builder
+						throw e;
 					}
 				}
 			}
@@ -312,7 +315,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	
 				// Get the arguments to be passed to make from build model
 				ArrayList makeArgs = new ArrayList();
-				makeArgs.add(info.getMakeArguments());
+				String args = info.getMakeArguments();
+				if (args.length() > 0) {
+					makeArgs.add(args);
+				}
 				makeArgs.addAll(Arrays.asList(getMakeTargets(fullBuild)));
 				String[] makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);
 			

@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SettingsBlock extends AbstractCOptionPage {
 
@@ -328,7 +327,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 		setControl(composite);
 
-		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
+		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_BUILDER_SETTINGS);
 
 		if (fBuildInfo == null) {
 			ControlFactory.createEmptySpace(composite);

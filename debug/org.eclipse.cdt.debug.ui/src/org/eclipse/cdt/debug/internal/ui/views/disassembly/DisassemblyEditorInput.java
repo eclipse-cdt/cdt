@@ -59,7 +59,10 @@ public class DisassemblyEditorInput implements IEditorInput {
 			return this.fDisassembly;
 		}
 
-		public boolean containsAddress( long address ) {
+		public boolean containsFrame( ICStackFrame frame ) {
+			if ( !getDisassembly().getDebugTarget().equals( frame.getDebugTarget() ) )
+				return false;
+			long address = frame.getAddress();
 			return (address >= fStartAddress && address <= fEndAddress);
 		}
 
@@ -243,7 +246,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public boolean contains( ICStackFrame frame ) {
 		if ( fStorage != null ) {
-			return fStorage.containsAddress( frame.getAddress() );
+			return fStorage.containsFrame( frame );
 		}
 		return false;
 	}

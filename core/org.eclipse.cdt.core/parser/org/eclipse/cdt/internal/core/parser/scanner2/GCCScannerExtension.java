@@ -66,6 +66,12 @@ public class GCCScannerExtension implements IScannerExtension {
 	= new ObjectStyleMacro("__signed__".toCharArray(), "signed".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __cdecl = new
 		ObjectStyleMacro( "__cdecl".toCharArray(), emptyCharArray ); //$NON-NLS-1$
+	private static final ObjectStyleMacro __complex__ = 
+		new ObjectStyleMacro( "__complex__".toCharArray(), "_Complex".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __real__ = 
+		new ObjectStyleMacro( "__real__".toCharArray(), "(int)".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __imag__ = 
+		new ObjectStyleMacro( "__imag__".toCharArray(), "(int)".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	
 	private static final FunctionStyleMacro __attribute__
@@ -100,6 +106,9 @@ public class GCCScannerExtension implements IScannerExtension {
 		scannerData.getRealDefinitions().put(__restrict.name, __restrict);
 		scannerData.getRealDefinitions().put(__volatile__.name, __volatile__);
 		scannerData.getRealDefinitions().put(__signed__.name, __signed__ );
+		scannerData.getRealDefinitions().put(__complex__.name, __complex__ );
+		scannerData.getRealDefinitions().put(__imag__.name, __imag__ );
+		scannerData.getRealDefinitions().put(__real__.name, __real__ );
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
 			scannerData.getRealDefinitions().put(__asm__.name, __asm__);
 		else
@@ -148,6 +157,8 @@ public class GCCScannerExtension implements IScannerExtension {
 		additionalCPPKeywords.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
 		additionalCPPKeywords.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );		
 		additionalCPPKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
+		additionalCPPKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
+		additionalCPPKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );
 		
 		additionalCOperators = new CharArrayIntMap(2, -1);
 		additionalCPPOperators = new CharArrayIntMap( 2, -1);
@@ -198,6 +209,20 @@ public class GCCScannerExtension implements IScannerExtension {
 		else if (language == ParserLanguage.C )
 			return ( additionalCOperators.containsKey( query ));
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isValidNumericLiteralSuffix(char)
+	 */
+	public boolean isValidNumericLiteralSuffix(char c) {
+		switch( c )
+		{
+			case 'i':
+			case 'j':
+				return true;
+			default:
+				return false;
+		}
 	}
 
 }

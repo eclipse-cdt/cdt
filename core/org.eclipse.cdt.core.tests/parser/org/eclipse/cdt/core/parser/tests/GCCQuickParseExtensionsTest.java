@@ -105,4 +105,16 @@ public class GCCQuickParseExtensionsTest extends BaseASTTest {
  		IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));"); //$NON-NLS-1$
 		assertEquals( f.getName(), "func2"); //$NON-NLS-1$
     }
+    
+    public void testBug39686() throws Exception
+    {
+        Writer code = new StringWriter();
+        code.write("__complex__ double x; // complex double\n"); //$NON-NLS-1$
+        code.write("__complex__ short int a; // complex short int\n"); //$NON-NLS-1$
+        code.write("__complex__ float y = 2.5fi; // 2.5 imaginary float literal\n"); //$NON-NLS-1$
+        code.write("__complex__ int a = 3i; // imaginary intege r literal\n"); //$NON-NLS-1$
+        code.write("double v = __real__ x; // real part of expression\n"); //$NON-NLS-1$
+        code.write("double w = __imag__ x; // imaginary part of expression\n"); //$NON-NLS-1$
+        parse(code.toString());
+    }
 }

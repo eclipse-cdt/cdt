@@ -72,25 +72,7 @@ public class ASTFailedTests extends BaseASTTest
             "The expected error did not occur.",
             typedef.getName().equals( "name" ) );
     }
-
-    public void testBug39686() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write("__complex__ double x; // complex double\n");
-            code.write("__complex__ short int a; // complex short int\n");
-            code.write("x = 2.5fi; // 2.5 imaginary float literal\n");
-            code.write("a = 3i; // imaginary integer literal\n");
-            code.write("double v = __real__ x; // real part of expression\n");
-            code.write(
-                "double w = __imag__ x; // imaginary part of expression\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-        assertCodeFailsParse(code.toString());
-    }
+    
     public void testBug39687() throws Exception
     {
         assertCodeFailsParse("struct entry tester (int len; char data[len][len], int len) {}");

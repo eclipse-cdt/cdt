@@ -74,7 +74,7 @@ public class CFormattingStrategy extends ContextBasedFormattingStrategy {
 			try {
 				
 				final TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_COMPILATION_UNIT, 
-						document, 
+						document.get(), 
 						partition.getOffset(), 
 						partition.getLength(), 
 						0, 

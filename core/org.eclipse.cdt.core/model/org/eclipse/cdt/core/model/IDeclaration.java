@@ -14,15 +14,5 @@ package org.eclipse.cdt.core.model;
 public interface IDeclaration extends ICElement, ISourceManipulation, ISourceReference {
 	boolean isStatic();
 	boolean isConst();
-	boolean isVolatile();
-	
-	/**
-	 * Returns the access Control of the member. The access qualifier
-	 * can be examine using the AccessControl class.
-	 *
-	 * @exception CModelException if this element does not exist or if an
-	 *      exception occurs while accessing its corresponding resource.
-	 * @see IAccessControl
-	 */
-	int getAccessControl();	
+	boolean isVolatile();	
 }

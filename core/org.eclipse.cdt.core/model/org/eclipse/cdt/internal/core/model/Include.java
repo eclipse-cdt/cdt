@@ -10,7 +10,8 @@ import org.eclipse.cdt.core.model.IInclude;
 
 public class Include extends SourceManipulation implements IInclude {
 	
-	private final boolean standard; 
+	private final boolean standard;
+	private String fullPath;
 	
 	public Include(ICElement parent, String name, boolean isStandard) {
 		super(parent, name, CElement.C_INCLUDE);
@@ -28,4 +29,26 @@ public class Include extends SourceManipulation implements IInclude {
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IInclude#getFullFileName()
+	 */
+	public String getFullFileName() {
+		return fullPath;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IInclude#isLocal()
+	 */
+	public boolean isLocal() {
+		return !isStandard();
+	}
+
+	/*
+	 * This is not yet populated properly by the parse;
+	 * however, it might be in the near future.
+	 */
+	public void setFullPathName(String fullPath) {
+		this.fullPath = fullPath;
+	}
+
 }

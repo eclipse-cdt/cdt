@@ -17,45 +17,48 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration{
 	
-	boolean isConst;
-;
+	boolean isConst = false;
+	boolean isConstructor = false;
+	boolean isDestructor = false;
 
 	public MethodDeclaration(ICElement parent, String name){
 		super(parent, name, CElement.C_METHOD_DECLARATION);
 	}
 
-
 	public MethodDeclaration(ICElement parent, String name, int type){
 		super(parent, name, type);
 	}
 	
-	/**
-	 * @see IMethod
-	 */
 	public boolean isConstructor(){
+		// Still a problem with the parser
+		//return isConstructor;
 		return getElementName().equals(getParent().getElementName());
 	}
 
-	/**
-	 * @see IMethod
-	 */
 	public boolean isDestructor() {
+		// still a problem with the parser
+		//return isDestructor;
 		return getElementName().startsWith("~");
 	}
 
-	/**
-	 * @see IMethod
-	 */
+	public void setConstructor(boolean isConstructor) {
+		this.isConstructor = isConstructor;
+	}
+
+	public void setDestructor(boolean isDestructor) {
+		this.isDestructor = isDestructor;
+	}
+
 	public boolean isOperator(){
 		return getElementName().startsWith("operator");
 	}
 
-	public boolean isAbstract(){
-		return getMethodInfo().isAbstract();
+	public boolean isPureVirtual(){
+		return getMethodInfo().isPureVirtual();
 	}
 
-	public void setIsAbstract(boolean isAbstract){
-		getMethodInfo().setAbstract(isAbstract);
+	public void setPureVirtual(boolean isPureVirtual){
+		getMethodInfo().setPureVirtual(isPureVirtual);
 	}
 
 	public boolean isInline(){
@@ -119,4 +122,5 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		);
 	}
 		
+
 }

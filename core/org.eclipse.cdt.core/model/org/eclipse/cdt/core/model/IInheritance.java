@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.
  * All Rights Reserved.
@@ -10,12 +12,11 @@ package org.eclipse.cdt.core.model;
  */
 public interface IInheritance {
 	/**
-	 * Return the inherited structures.
+	 * Return the inherited structures names.
 	 */
-	public IStructure [] getBaseTypes() throws CModelException;
-
+	public String[] getSuperClassesNames();
 	/**
-	 * Return the access control for each inherited structure.
+	 * Returns the super class access : ASTAccessVisibility 
 	 */
-	public int getAccessControl(int pos) throws CModelException;
+	public ASTAccessVisibility getSuperClassAccess(String name);
 }

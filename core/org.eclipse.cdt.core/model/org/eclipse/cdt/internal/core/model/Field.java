@@ -15,10 +15,6 @@ public class Field extends VariableDeclaration implements IField {
 		super(parent, name, CElement.C_FIELD);
 	}
 
-	public int getAccessControl(){
-		return getFieldInfo().getAccessControl();
-	}
-
 	public boolean isMutable(){
 		return getFieldInfo().isMutable();
 	}

@@ -22,4 +22,8 @@ public interface IInclude extends ICElement, ISourceReference, ISourceManipulati
 	 * <code>"#include "foobar.h"</code> returns false.
 	 */
 	boolean isStandard();
+	
+	public String getFullFileName(); 
+	
+	public boolean isLocal(); 
 }

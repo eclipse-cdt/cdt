@@ -42,7 +42,7 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
 	 */
-	boolean isAbstract();
+	boolean isPureVirtual();
 
 	/**
 	 * Returns if this method is static or not

@@ -18,10 +18,6 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		super(parent, name, type);
 	}
 
-	public int getAccessControl() {
-		return getVariableInfo().getAccessControl();
-	}
-
 	public String getTypeName() {
 		return getVariableInfo().getTypeName();
 	}

@@ -7,7 +7,6 @@ package org.eclipse.cdt.internal.core.model;
 
 class FunctionInfo extends SourceManipulationInfo {
 
-	protected int flags;
 	protected boolean isStatic;
 	protected boolean isVolatile;
 	protected boolean isConst;
@@ -15,15 +14,6 @@ class FunctionInfo extends SourceManipulationInfo {
 
 	protected FunctionInfo (CElement element) {
 		super(element);
-		flags = 0;
-	}
-
-	protected int getAccessControl() {
-		return flags;
-	}
-
-	protected void setAccessControl(int flags) {
-		this.flags = flags;
 	}
 
 	/**

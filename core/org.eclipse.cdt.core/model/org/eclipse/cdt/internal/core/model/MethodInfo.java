@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class MethodInfo extends FunctionInfo {
 
-	boolean isAbstract = false;
+	boolean isPureVirtual = false;
 	boolean isInline = false;
 	boolean isVirtual = false;
 	boolean isFriend = false;
@@ -27,12 +27,12 @@ public class MethodInfo extends FunctionInfo {
 		visibility = ASTAccessVisibility.PRIVATE;
 	}
 	
-	public boolean isAbstract(){
-		return isAbstract;
+	public boolean isPureVirtual(){
+		return isPureVirtual;
 	}
 
-	public void setAbstract(boolean isAbstract){
-		this.isAbstract = isAbstract;
+	public void setPureVirtual(boolean isPureVirtual){
+		this.isPureVirtual = isPureVirtual;
 	}
 
 	public boolean isInline(){
@@ -89,7 +89,7 @@ public class MethodInfo extends FunctionInfo {
 	public boolean hasSameContentsAs(SourceManipulationInfo otherInfo) {
 		return (super.hasSameContentsAs(otherInfo)
 		&&  (isConst == ((MethodInfo)otherInfo).isConst())
-		&&  (isAbstract == ((MethodInfo)otherInfo).isAbstract())
+		&&  (isPureVirtual == ((MethodInfo)otherInfo).isPureVirtual())
 		&& 	(isInline == ((MethodInfo)otherInfo).isInline())
 		&& 	(isVirtual == ((MethodInfo)otherInfo).isVirtual())
 		&& 	(isFriend == ((MethodInfo)otherInfo).isFriend())

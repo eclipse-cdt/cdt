@@ -1,3 +1,8 @@
+2003-08-21 Hoda Amer
+	Enabled some tests in the IStructureTests, namely:
+	testGetFields(), testGetField(), testGetMethods(), testGetMethod(),
+	testIsAbstract(), testGetBaseTypes(), and testGetAccessControl().
+	
 2003-08-19 Sean Evoy
 	In order to properly support the indexing feature, the scanner has to 
 	function as well as the version that ships with the toolset if possible. 

@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class FieldInfo extends SourceManipulationInfo {
 
-	int flags = 0;
 	String typeStr = "";
 	boolean isConst = false;
 	boolean isVolatile = false;
@@ -25,20 +24,11 @@ public class FieldInfo extends SourceManipulationInfo {
 	
 	protected FieldInfo (CElement element) {
 		super(element);
-		flags = 0;
 		visibility = ASTAccessVisibility.PRIVATE;
-	}
-
-	protected int getAccessControl() {
-		return flags;
 	}
 
 	protected String getTypeName(){
 		return typeStr;
-	}
-	
-	protected void setAccessControl(int flags) {
-		this.flags = flags;
 	}
 	
 	protected void setTypeName(String type){

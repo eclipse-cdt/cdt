@@ -62,13 +62,5 @@ public class BinaryVariable extends BinaryElement implements IVariable {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IDeclaration#getAccessControl()
-	 */
-	public int getAccessControl() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
 }

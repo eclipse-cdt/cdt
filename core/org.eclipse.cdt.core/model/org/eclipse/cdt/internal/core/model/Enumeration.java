@@ -49,13 +49,6 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IDeclaration#getAccessControl()
-	 */
-	public int getAccessControl() {
-		return 0;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
 	public boolean isConst() {

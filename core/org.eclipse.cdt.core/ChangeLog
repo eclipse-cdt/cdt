@@ -1,3 +1,15 @@
+2003-08-21 Hoda Amer
+	- C Model cleanups + solutions to bug#38985 & bug#38986
+		getField(String)		Implemented
+		getFields()				Implemented
+		getMethod(String)		Implemented
+		getMethods()			Implemented
+		isAbstract()			Implemented
+		getBaseTypes()			Has been replaced by getSuperClassesNames()
+		getAccessControl(int)	Has been replaced by getSuperClassAccess(String name)
+	- Added some methods to IMethodDeclaration, namely:
+	isFriend(), isInline(), isVirtual(), and isPureVirtual().
+	
 2003-08-20 Alain Magloire
 
 	When doing the IPlugin.shutdown().  We have to make

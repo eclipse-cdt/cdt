@@ -5,6 +5,7 @@
 package org.eclipse.cdt.core.model.tests;
 
 import org.eclipse.cdt.core.model.*;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 import junit.framework.*;
 
@@ -48,18 +49,18 @@ public class IStructureTests extends IntegratedCModelTest {
 		// Interface tests:
 		suite.addTest( new IStructureTests("testGetChildrenOfTypeStruct"));
 		suite.addTest( new IStructureTests("testGetChildrenOfTypeClass")); // C++ only
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testGetFields"));
-		suite.addTest( new IStructureTests("testGetFieldsHack"));
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testGetField"));
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testGetMethods")); // C++ only
-		suite.addTest( new IStructureTests("testGetMethodsHack")); // C++ only
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testGetMethod")); // C++ only
+		suite.addTest( new IStructureTests("testGetFields"));
+		//Bug# 38985: solved. suite.addTest( new IStructureTests("testGetFieldsHack"));
+		suite.addTest( new IStructureTests("testGetField"));
+		suite.addTest( new IStructureTests("testGetMethods")); // C++ only
+		//Bug# 38985: solved. suite.addTest( new IStructureTests("testGetMethodsHack")); // C++ only
+		suite.addTest( new IStructureTests("testGetMethod")); // C++ only
 		suite.addTest( new IStructureTests("testIsStruct"));
 		suite.addTest( new IStructureTests("testIsClass")); // C++ only
 		suite.addTest( new IStructureTests("testIsUnion"));
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testIsAbstract")); // C++ only
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testGetBaseTypes")); // C++ only
-		// TODO Bug# 38985: suite.addTest( new IStructureTests("testGetAccessControl")); // C++ only
+		suite.addTest( new IStructureTests("testIsAbstract")); // C++ only
+		suite.addTest( new IStructureTests("testGetBaseTypes")); // C++ only
+		suite.addTest( new IStructureTests("testGetAccessControl")); // C++ only
 		
 		// Language Specification tests:		
 		suite.addTest( new IStructureTests("testAnonymousStructObject"));
@@ -157,7 +158,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		ITranslationUnit tu = getTU();
 		ArrayList myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
-		IMethod[] myArrayIMethod = myIStruct.getMethods();
+		IMethodDeclaration[] myArrayIMethod = myIStruct.getMethods();
 		String[] myExpectedMethods = {
 			"method1","method2","testStruct1","~testStruct1"
 		};
@@ -194,7 +195,7 @@ public class IStructureTests extends IntegratedCModelTest {
 			"method1","method2","testStruct1","~testStruct1"
 		};
 		for(int i=0; i<myExpectedMethods.length; i++) {
-			IMethod myIMethod = myIStruct.getMethod( myExpectedMethods[i] );
+			IMethodDeclaration myIMethod = myIStruct.getMethod( myExpectedMethods[i] );
 			assertNotNull( "Failed on "+i, myIMethod);
 		}		
 		
@@ -202,7 +203,7 @@ public class IStructureTests extends IntegratedCModelTest {
 			"method7","method8","method9",
 		};
 		for(int i=0; i<myUnexpectedMethods.length; i++) {
-			IMethod myIMethod = myIStruct.getMethod( myUnexpectedMethods[i] );
+			IMethodDeclaration myIMethod = myIStruct.getMethod( myUnexpectedMethods[i] );
 			assertNull( "Failed on "+i, myIMethod);
 		}		
 	}
@@ -300,7 +301,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		assertTrue( myStructAbstract.isAbstract() );
 
 		assertNotNull( myElementNonAbstract );
-		assertTrue( myElementNonAbstract.getElementType()!=ICElement.C_CLASS );		
+		assertTrue( myElementNonAbstract.getElementType() == ICElement.C_CLASS );		
 		IStructure myStructNonAbstract = (IStructure) myElementNonAbstract;
 		assertNotNull( myStructNonAbstract );
 		assertFalse( myStructNonAbstract.isAbstract() );
@@ -310,14 +311,14 @@ public class IStructureTests extends IntegratedCModelTest {
 	public void testGetBaseTypes() {
 		ITranslationUnit tu = getTU();
 		ICElement myElementDerived = null;
-		IStructure[] myBaseTypes = null;
+		String[] myBaseTypes = null;
 		try {
 			myElementDerived = tu.getElement("testClass5"); // throws
 			assertNotNull( myElementDerived );
 			assertTrue( myElementDerived.getElementType()==ICElement.C_CLASS );		
 			IStructure myStructDerived = (IStructure) myElementDerived;
 			assertNotNull( myStructDerived );
-			myBaseTypes = myStructDerived.getBaseTypes(); // throws
+			myBaseTypes = myStructDerived.getSuperClassesNames();
 		}
 		catch( CModelException c )
 		{
@@ -325,37 +326,36 @@ public class IStructureTests extends IntegratedCModelTest {
 		}
 		
 		String[] myExpectedBaseTypes = {
-			"testClass1","testClass3","testClass4"
+			"testClass1","testClass3","testClass4Abstract"
 		};
 		assertEquals( myExpectedBaseTypes.length, myBaseTypes.length );
 		for(int i=0; i<myBaseTypes.length; i++) {
-			assertEquals( "Failed on "+i, myExpectedBaseTypes[i], myBaseTypes[i].getElementName() );
+			assertEquals( "Failed on "+i, myExpectedBaseTypes[i], myBaseTypes[i] );
 		}		
 	}
 
-	// tests IInheritance.getAccessControl(int),
-	// not IDeclaration.getAccessControl()
+	// IInheritance
 	public void testGetAccessControl() {
 		ITranslationUnit tu = getTU();
 		ICElement myElementDerived = null;
-		IStructure[] myBaseTypes = null;
+		String[] myBaseTypes = null;
 		try {
 			myElementDerived = tu.getElement("testClass5"); // throws
 			assertNotNull( myElementDerived );
 			assertTrue( myElementDerived.getElementType()==ICElement.C_CLASS );		
 			IStructure myStructDerived = (IStructure) myElementDerived;
 			assertNotNull( myStructDerived );
-			myBaseTypes = myStructDerived.getBaseTypes(); // throws
+			myBaseTypes = myStructDerived.getSuperClassesNames();
 		
-			int[] myExpectedAccessControl = {
+			ASTAccessVisibility[] myExpectedAccessControl = {
 				// TODO #38986: expect appropriate access control tags 
-				ICElement.CPP_PUBLIC,
-				org.eclipse.cdt.core.index.TagFlags.T_PROTECTED,
-				ICElement.CPP_PRIVATE
+				ASTAccessVisibility.PUBLIC,
+				ASTAccessVisibility.PROTECTED,
+				ASTAccessVisibility.PRIVATE
 			};
 			assertEquals( myExpectedAccessControl.length, myBaseTypes.length );
 			for(int i=0; i<myBaseTypes.length; i++) {
-				int myAccessControl = myStructDerived.getAccessControl(i); // throws
+				ASTAccessVisibility myAccessControl = myStructDerived.getSuperClassAccess(myBaseTypes[i]);
 				assertEquals( "Failed on "+i, myExpectedAccessControl[i], myAccessControl );
 			}		
 		}

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
@@ -265,6 +266,7 @@ public class CModelBuilder {
 	protected Include createInclusion(Parent parent, IASTInclusion inclusion){
 		// create element
 		Include element = new Include((CElement)parent, inclusion.getName(), !inclusion.isLocal());
+		element.setFullPathName(inclusion.getFullFileName());
 		// add to parent
 		parent.addChild((CElement) element);
 		// set position
@@ -387,6 +389,12 @@ public class CModelBuilder {
 			element = classTemplate;
 		}
 		
+		// store super classes names
+		Iterator baseClauses = classSpecifier.getBaseClauses();
+		while (baseClauses.hasNext()){
+			IASTBaseSpecifier baseSpec = (IASTBaseSpecifier)baseClauses.next();
+			element.addSuperClass(baseSpec.getParentClassName(), baseSpec.getAccess()); 
+		}
 
 		// add to parent
 		parent.addChild((ICElement) element);
@@ -493,17 +501,16 @@ public class CModelBuilder {
 		if( functionDeclaration instanceof IASTMethod )
 		{
 			IASTMethod methodDeclaration = (IASTMethod) functionDeclaration;
+			MethodDeclaration methodElement = null;
 			if (methodDeclaration.hasFunctionBody())
 			{
 				// method
 				if(!isTemplate){
 					Method newElement = new Method( parent, name );
-					newElement.setVisibility(methodDeclaration.getVisiblity());
-					element = newElement;				
+					methodElement = newElement;				
 				}else {
 					MethodTemplate newElement = new MethodTemplate(parent, name);
-					newElement.setVisibility(methodDeclaration.getVisiblity());
-					element = newElement;				
+					methodElement = newElement;				
 				}
 			}
 			else
@@ -511,17 +518,24 @@ public class CModelBuilder {
 				// method declaration
 				if(!isTemplate){
 					MethodDeclaration newElement = new MethodDeclaration( parent, name );
-					newElement.setVisibility(methodDeclaration.getVisiblity());
-					element = newElement;				
+					methodElement = newElement;				
 				}else {
 					MethodTemplate newElement = new MethodTemplate(parent, name);
-					newElement.setVisibility(methodDeclaration.getVisiblity());
-					element = newElement;				
+					methodElement = newElement;				
 				}
 				
 			}
-			element.setVolatile(methodDeclaration.isVolatile());
-			element.setConst(methodDeclaration.isConst());				
+			// Common settings for method declaration
+			methodElement.setVisibility(methodDeclaration.getVisiblity());
+			methodElement.setVolatile(methodDeclaration.isVolatile());
+			methodElement.setConst(methodDeclaration.isConst());
+			methodElement.setVirtual(methodDeclaration.isVirtual());
+			methodElement.setPureVirtual(methodDeclaration.isPureVirtual());
+			methodElement.setInline(methodDeclaration.isInline());
+			methodElement.setFriend(methodDeclaration.isFriend());
+			methodElement.setConstructor(methodDeclaration.isConstructor());
+			methodElement.setDestructor(methodDeclaration.isDestructor());
+			element = methodElement;				
 		}
 		else // instance of IASTFunction 
 		{

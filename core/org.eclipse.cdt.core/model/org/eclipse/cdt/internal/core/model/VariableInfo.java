@@ -7,7 +7,6 @@ package org.eclipse.cdt.internal.core.model;
 
 class VariableInfo extends SourceManipulationInfo {
 
-	protected int flags;
 	String typeStr = "";
 	boolean isConst = false;
 	boolean isVolatile = false;
@@ -15,11 +14,6 @@ class VariableInfo extends SourceManipulationInfo {
 	
 	protected VariableInfo (CElement element) {
 		super(element);
-		flags = 0;
-	}
-
-	protected int getAccessControl() {
-		return flags;
 	}
 
 	protected String getTypeName(){
@@ -28,10 +22,6 @@ class VariableInfo extends SourceManipulationInfo {
 	
 	protected void setTypeName(String type){
 		typeStr = type;
-	}
-	
-	protected void setAccessControl(int flags) {
-		this.flags = flags;
 	}
 	
 	protected void setTypeString(String type){

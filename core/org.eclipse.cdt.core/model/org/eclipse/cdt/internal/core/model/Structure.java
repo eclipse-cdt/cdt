@@ -5,34 +5,57 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IStructure;
-import org.eclipse.cdt.core.model.IMethod;
-import org.eclipse.cdt.core.model.IField;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-public class Structure extends SourceManipulation implements IStructure {
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IField;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+
+public class Structure extends SourceManipulation implements  IStructure {
 	
-	String [] baseTypes;
+	Map superClassesNames = new LinkedHashMap();
 
 	public Structure(ICElement parent, int kind, String name) {
 		super(parent, name, kind);
-		baseTypes = new String[0];
 	}
 
 	public IField[] getFields() {
-		return new IField[0];
+		List fields = new ArrayList();
+		fields.addAll(getChildrenOfType(ICElement.C_FIELD));
+		return (IField[]) fields.toArray(new IField[fields.size()]);
 	}
 
 	public IField getField(String name) {
+		IField[] fields = getFields();
+		for (int i = 0; i<fields.length; i++){
+			IField field = fields[i];
+			if(field.getElementName().equals(name)){
+				return field;
+			}
+		}
 		return null;
 	}
 
-	public IMethod[] getMethods() {
-		return new IMethod[0];
+	public IMethodDeclaration[] getMethods() {
+		List methods = new ArrayList();
+		methods.addAll(getChildrenOfType(ICElement.C_METHOD_DECLARATION));
+		methods.addAll(getChildrenOfType(ICElement.C_METHOD));
+		return (IMethodDeclaration[])methods.toArray(new IMethodDeclaration[methods.size()]);
 	}
 
-	public IMethod getMethod(String name) {
+	public IMethodDeclaration getMethod(String name) {
+		IMethodDeclaration[] methods = getMethods();
+		for (int i = 0; i<methods.length; i++){
+			IMethodDeclaration method = methods[i];
+			if(method.getElementName().equals(name)){
+				return method;
+			}
+		}
 		return null;
 	}
 
@@ -49,27 +72,23 @@ public class Structure extends SourceManipulation implements IStructure {
 	}
 
 	public boolean isAbstract() {
+		IMethodDeclaration[] methods = getMethods();
+		for(int i=0; i<methods.length; i++){
+			IMethodDeclaration method = methods[i];
+			if(method.isPureVirtual())
+				return true;
+		}
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IDeclaration#getAccessControl()
-	 */
-	public int getAccessControl(){
-		return 0;
+	public String[] getSuperClassesNames(){
+		return (String[])superClassesNames.keySet().toArray(new String[superClassesNames.keySet().size()]);
 	}
 
-	/**
-	 * Return the inherited structures.
-	 * @IInheritance
-	 */
-	public IStructure [] getBaseTypes() throws CModelException {
-		return new IStructure[0];
+	public ASTAccessVisibility getSuperClassAccess(String name){
+		return (ASTAccessVisibility)superClassesNames.get(name);
 	}
 
-	/**
-	 * @see IVariable
-	 */
 	public String getTypeName() {
 		return getStructureInfo().getTypeName();
 	}
@@ -105,31 +124,17 @@ public class Structure extends SourceManipulation implements IStructure {
 	public StructureInfo getStructureInfo(){
 		return (StructureInfo) getElementInfo();
 	}
-	/**
-	 * @see IVariable
-	 */
-	public String getInitializer() {
-		return "";
-	}
 
 	public void addSuperClass(String name) {
-		String[] newBase = new String[baseTypes.length + 1];
-		System.arraycopy(baseTypes, 0, newBase, 0, baseTypes.length);
-		newBase[baseTypes.length] = name;
-		baseTypes = newBase;
+		superClassesNames.put(name, ASTAccessVisibility.PUBLIC);
 	}
 
+	public void addSuperClass(String name, ASTAccessVisibility access) {
+		superClassesNames.put(name, access);
+	}
 
 	protected CElementInfo createElementInfo () {
 		return new StructureInfo(this);
-	}
-
-	/**
-	 * Return the access control for each inherited structure.
-	 * @IInheritance
-	 */
-	public int getAccessControl(int pos) throws CModelException {
-		return 0;
 	}
 
 }

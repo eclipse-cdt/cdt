@@ -83,11 +83,6 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return "";
 	}
 	
-	public int getAccessControl(){
-		return getFunctionInfo().getAccessControl();
-	}
-
-
 	public String[] getExceptions(){
 		return new String[] {};
 	}

@@ -1,3 +1,9 @@
+2002-10-24 Mikhail Khodjaiants
+	Implementation of the 'Number Of Columns' action.
+	* MemoryNumberOfColumnAction.java: the action class
+	* MemoryViewer.java: support of the action
+	* MemoryView.java: support of the action
+
 2002-10-25 Mikhail Khodjaiants
 	Replaced the usage of 'setWordSize' method by the 'reformat' method of 'IFormattedMemoryBlock'.
 	* MemorySizeAction.java

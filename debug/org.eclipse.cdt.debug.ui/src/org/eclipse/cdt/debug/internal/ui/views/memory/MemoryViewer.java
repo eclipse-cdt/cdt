@@ -226,4 +226,20 @@ public class MemoryViewer extends ContentViewer
 			((MemoryControlArea)fTabFolder.getSelection().getControl()).refresh();
 		}
 	}
+	
+	public int getCurrentNumberOfColumns()
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		return ( block != null ) ? block.getNumberOfColumns() : 0;
+	}
+	
+	public void setNumberOfColumns( int numberOfColumns ) throws DebugException
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		if ( block != null )
+		{ 
+			block.reformat( block.getFormat(), block.getWordSize(), block.getNumberOfRows(), numberOfColumns );
+			((MemoryControlArea)fTabFolder.getSelection().getControl()).refresh();
+		}
+	}
 }

@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ClearMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemoryActionSelectionGroup;
+import org.eclipse.cdt.debug.internal.ui.actions.MemoryNumberOfColumnAction;
 import org.eclipse.cdt.debug.internal.ui.actions.MemorySizeAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowAsciiAction;
@@ -56,6 +57,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 {
 	private IDebugModelPresentation fModelPresentation = null;
 	private MemoryActionSelectionGroup fMemorySizeGroup = null;
+	private MemoryActionSelectionGroup fMemoryNumberOfColumnsGroup = null;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(Composite)
@@ -103,6 +105,9 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		fMemorySizeGroup = new MemoryActionSelectionGroup();
 		createSizeActionGroup( fMemorySizeGroup );
 
+		fMemoryNumberOfColumnsGroup = new MemoryActionSelectionGroup();
+		createNumberOfColumnsActionGroup( fMemoryNumberOfColumnsGroup );
+
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	}
@@ -138,6 +143,16 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		MenuManager subMenu = new MenuManager( "Memory Unit Size         " );
 		{
 			IAction[] actions = fMemorySizeGroup.getActions();
+			for ( int i = 0; i < actions.length; ++i )
+			{
+				subMenu.add( actions[i] );
+			}
+		}
+		menu.appendToGroup( ICDebugUIConstants.FORMAT_GROUP, subMenu );
+
+		subMenu = new MenuManager( "Number Of Columns" );
+		{
+			IAction[] actions = fMemoryNumberOfColumnsGroup.getActions();
 			for ( int i = 0; i < actions.length; ++i )
 			{
 				subMenu.add( actions[i] );
@@ -199,6 +214,8 @@ public class MemoryView extends AbstractDebugEventHandlerView
 	{
 		removeActionGroup( fMemorySizeGroup );
 		fMemorySizeGroup.dispose();
+		removeActionGroup( fMemoryNumberOfColumnsGroup );
+		fMemoryNumberOfColumnsGroup.dispose();
 
 		remove( (ShowAsciiAction)getAction( "ShowAscii" ) );
 		remove( (ClearMemoryAction)getAction( "ClearMemory" ) );
@@ -295,6 +312,23 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		for ( int i = 0; i < ids.length; ++i )
 		{
 			MemorySizeAction action = new MemorySizeAction( group, (MemoryViewer)getViewer(), ids[i] );
+			action.setEnabled( false );
+			setAction( action.getActionId(), action ); //$NON-NLS-1$
+			add( action );
+			group.addAction( action );
+		}
+	}
+	
+	private void createNumberOfColumnsActionGroup( MemoryActionSelectionGroup group )
+	{
+		int[] nocs = new int[] { IFormattedMemoryBlock.MEMORY_NUMBER_OF_COLUMNS_1,
+								 IFormattedMemoryBlock.MEMORY_NUMBER_OF_COLUMNS_2, 
+								 IFormattedMemoryBlock.MEMORY_NUMBER_OF_COLUMNS_4, 
+								 IFormattedMemoryBlock.MEMORY_NUMBER_OF_COLUMNS_8, 
+								 IFormattedMemoryBlock.MEMORY_NUMBER_OF_COLUMNS_16 }; 
+		for ( int i = 0; i < nocs.length; ++i )
+		{
+			MemoryNumberOfColumnAction action = new MemoryNumberOfColumnAction( group, (MemoryViewer)getViewer(), nocs[i] );
 			action.setEnabled( false );
 			setAction( action.getActionId(), action ); //$NON-NLS-1$
 			add( action );

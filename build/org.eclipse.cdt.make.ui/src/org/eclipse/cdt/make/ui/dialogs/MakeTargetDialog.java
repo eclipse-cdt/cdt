@@ -1,10 +1,13 @@
 /*******************************************************************************
- * Created on 22-Aug-2003
+ * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Copyright (c) 2002,2003 QNX Software Systems Ltd.
- * 
- * Contributors: QNX Software Systems - Initial API and implementation
- ******************************************************************************/
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;

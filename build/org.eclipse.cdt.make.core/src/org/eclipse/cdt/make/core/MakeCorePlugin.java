@@ -1,6 +1,5 @@
-package org.eclipse.cdt.make.core;
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +7,8 @@ package org.eclipse.cdt.make.core;
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
- * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
+package org.eclipse.cdt.make.core;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -18,6 +17,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
+import org.eclipse.cdt.make.internal.core.MakeTargetProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Preferences;
  * The main plugin class to be used in the desktop.
  */
 public class MakeCorePlugin extends Plugin {
+	private IMakeTargetProvider fTargetProvider;
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
 	//The shared instance.
 	private static MakeCorePlugin plugin;
@@ -117,5 +118,12 @@ public class MakeCorePlugin extends Plugin {
 
 	public static IMakeBuilderInfo create(Map args, String builderID) {
 		return BuildInfoFactory.create(args, builderID);
+	}
+
+	public IMakeTargetProvider getTargetProvider() {
+		if ( fTargetProvider == null) {
+			fTargetProvider = new MakeTargetProvider();
+		}
+		return fTargetProvider;
 	}
 }

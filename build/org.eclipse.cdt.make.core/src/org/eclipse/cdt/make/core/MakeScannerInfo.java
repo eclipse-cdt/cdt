@@ -1,9 +1,13 @@
-/*
- * Created on Aug 14, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.make.core;
 
 import java.util.ArrayList;

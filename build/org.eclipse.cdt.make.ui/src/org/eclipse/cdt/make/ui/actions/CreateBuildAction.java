@@ -12,7 +12,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class CreateBuildAction extends AbstractMakeBuilderAction implements IWorkbenchWindowActionDelegate {
+public class CreateBuildAction extends AbstractMakeBuilderAction implements IWorkbenchWindowActionDelegate {
 
 	public void init(IWorkbenchWindow window) {
 	}

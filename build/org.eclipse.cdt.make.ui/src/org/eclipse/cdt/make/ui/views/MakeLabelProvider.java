@@ -10,20 +10,19 @@ import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MakeLabelProvider extends LabelProvider {
-
+	WorkbenchLabelProvider fLableProvider = new WorkbenchLabelProvider();
 	/**
 	 * @see ILabelProvider#getImage(Object)
 	 */
 	public Image getImage(Object obj) {
 		Image image = null;
 		if (obj instanceof IMakeTarget) {
-			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKE_TARGET);
+			return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_BUILD_TARGET);
 		} else if (obj instanceof IContainer) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+			return fLableProvider.getImage(obj);			
 		}
 		return image;
 	}
@@ -32,11 +31,17 @@ public class MakeLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getText(Object)
 	 */
 	public String getText(Object obj) {
-		if (obj instanceof MakeTarget) {
+		if (obj instanceof IMakeTarget) {
 			return ((IMakeTarget)obj).getName();
 		} else if (obj instanceof IContainer) {
-			return ((IContainer)obj).getName();
+			return fLableProvider.getText(obj);			
 		}
 		return ""; //$NON-NLS-1$
 	}
+	
+	public void dispose() {
+		super.dispose();
+		fLableProvider.dispose();
+	}
+
 }

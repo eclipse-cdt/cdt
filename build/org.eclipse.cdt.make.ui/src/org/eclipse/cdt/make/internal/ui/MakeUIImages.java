@@ -21,7 +21,6 @@ public class MakeUIImages {
 	/**
 	 * Bundle of all images used by the Make plugin.
 	 */
-
 	// The plugin registry
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 
@@ -40,8 +39,14 @@ public class MakeUIImages {
 	public static final String OBJ = "obj16/"; //$NON-NLS-1$
 
 	// For the build image
-	public static final String IMG_OBJS_MAKE_TARGET = NAME_PREFIX + "make_target.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_BUILD_TARGET = createManaged(OBJ, IMG_OBJS_MAKE_TARGET);
+	public static final String IMG_OBJS_BUILD_TARGET = NAME_PREFIX + "target.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_BUILD_TARGET = createManaged(OBJ, IMG_OBJS_BUILD_TARGET);
+
+	public static final String IMG_TOOLS_MAKE_TARGET_BUILD = NAME_PREFIX + "target_build.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_MAKE_TARGET_ADD = NAME_PREFIX + "target_add.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_MAKE_TARGET_DELETE = NAME_PREFIX + "target_delete.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_MAKE_TARGET_RENAME = NAME_PREFIX + "target_rename.gif"; //$NON-NLS-1$
+
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);
@@ -77,9 +82,9 @@ public class MakeUIImages {
 	 */
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath = relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create("d" + type, relPath)); //$NON-NLS-1$
-		action.setHoverImageDescriptor(create("c" + type, relPath)); //$NON-NLS-1$
-		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
+		action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$
+		action.setHoverImageDescriptor(create("c" + type + "/", relPath)); //$NON-NLS-1$
+		action.setImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$
 	}
 
 	/**

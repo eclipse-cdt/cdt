@@ -11,7 +11,7 @@
 		<project>org.eclipse.cdt.make.core</project>
 		<project>org.eclipse.cdt.ui</project>
 		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.ui.workbench</project>
+		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

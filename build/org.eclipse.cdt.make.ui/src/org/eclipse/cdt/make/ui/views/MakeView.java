@@ -5,7 +5,7 @@ package org.eclipse.cdt.make.ui.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -23,11 +23,16 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
 public class MakeView extends ViewPart {
 	
+	private BuildTargetAction buildTargetAction;
+	private RenameTargetAction renameTargetAction;
+	private DeleteTargetAction deleteTargetAction;
+	AddTargetAction addTargetAction;
 	TreeViewer viewer;
 	DrillDownAdapter drillDownAdapter;
 
@@ -73,7 +78,7 @@ public class MakeView extends ViewPart {
 
 		viewer.setContentProvider(new MakeContentProvider());
 		viewer.setLabelProvider(new MakeLabelProvider());
-		viewer.setInput(MakeCorePlugin.getDefault().getTargetProvider());
+		viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		getSite().setSelectionProvider(viewer);
 
 		makeActions();
@@ -82,8 +87,10 @@ public class MakeView extends ViewPart {
 	}
 
 	private void makeActions() {
-		// dinglis-TODO Auto-generated method stub
-		
+		buildTargetAction = new BuildTargetAction(viewer.getControl().getShell());
+		addTargetAction = new AddTargetAction(viewer.getControl().getShell());
+		deleteTargetAction = new DeleteTargetAction(viewer.getControl().getShell());
+		renameTargetAction = new RenameTargetAction(viewer.getControl().getShell());
 	}
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -93,6 +100,7 @@ public class MakeView extends ViewPart {
 
 	private void fillLocalToolBar(IToolBarManager toolBar) {
 		drillDownAdapter.addNavigationActions(toolBar);
+		toolBar.add(buildTargetAction);
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
@@ -110,50 +118,38 @@ public class MakeView extends ViewPart {
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
+//		getSite().registerContextMenu(menuMgr, viewer);
 	}
 
 
 	protected void fillContextMenu(IMenuManager manager) {
-//		manager.add(deleteAction);
-//		manager.add(renameAction);
+		manager.add(buildTargetAction);
+		manager.add(addTargetAction);
+		manager.add(deleteTargetAction);
+		manager.add(renameTargetAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
+
 		// Other plug-ins can contribute there actions here
-		manager.add(new Separator("Additions"));
+		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	protected void handleDeleteKeyPressed() {
-		// dinglis-TODO Auto-generated method stub
-		
+		deleteTargetAction.run();
 	}
 
-
 	protected void handleDoubleClick(DoubleClickEvent event) {
-		IStructuredSelection s = (IStructuredSelection) event.getSelection();
-		Object element = s.getFirstElement();
-		//System.out.println ("Double click on " + element);
-		if (element instanceof MakeTarget) {
-			MakeTarget ta = (MakeTarget) element;
-//			Action build = new MakeBuildAction(new MakeTarget[] { ta }, getViewSite().getShell(), "Build");
-//			build.run();
-		}
-		//if (viewer.isExpandable(element)) {
-		//	viewer.setExpandedState(element, !viewer.getExpandedState(element));
-		//}
+		buildTargetAction.run();
 	}
 
 	void handleSelectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-//		updateStatusLine(sel);
 		updateActions(sel);
 	}
 	
 	void updateActions(IStructuredSelection sel) {
-//		deleteAction.selectionChanged(sel);
-//		renameAction.selectionChanged(sel);
+		buildTargetAction.selectionChanged(sel);		
+		deleteTargetAction.selectionChanged(sel);
+		renameTargetAction.selectionChanged(sel);
 	}
-
-
-
 }

@@ -41,6 +41,4 @@ public abstract class AbstractMakeBuilderAction extends ActionDelegate implement
 		return part.getSite().getShell();
 	}
 
-	protected abstract String getBuilderID();
-
 }

@@ -9,13 +9,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.make.ui.views.MakeTarget;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IEditorInput;
@@ -27,21 +28,21 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BuildAction;
 
-public class MakeBuild {
+public class TargetBuild {
 
 	/**
 	 * Causes all editors to save any modified resources depending on the user's
 	 * preference.
 	 */
-	static void saveAllResources(MakeTarget[] targets) {
+	static void saveAllResources(IMakeTarget[] targets) {
 
 		if (!BuildAction.isSaveAllSet())
 			return;
 
 		List projects = new ArrayList();
 		for (int i = 0; i < targets.length; ++i) {
-			MakeTarget target = targets[i];
-			projects.add(target.getResource().getProject());
+			IMakeTarget target = targets[i];
+			projects.add(target.getContainer().getProject());
 		}
 
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -66,7 +67,7 @@ public class MakeBuild {
 		}
 	}
 	
-	static public void run(boolean fork, IRunnableContext context, final MakeTarget[] targets) {
+	static public void run(boolean fork, IRunnableContext context, final IMakeTarget[] targets) {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -74,11 +75,10 @@ public class MakeBuild {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) throws CoreException {
 								saveAllResources(targets);
-
-//								Map infoMap = new HashMap();
-//								IMakeBuilderInfo info = MakeCorePlugin.create(infoMap, MakeBuilder.BUILDER_ID);
-//								project.build(IncrementalProjectBuilder.FULL_BUILD, MakeBuilder.BUILDER_ID, infoMap, monitor);
-
+								monitor.beginTask("Building Targets...", targets.length);
+								for( int i = 0; i < targets.length; i++) {
+									targets[i].build(new SubProgressMonitor(monitor, 1));
+								}
 							}
 						};
 						MakeUIPlugin.getWorkspace().run(runnable, monitor);

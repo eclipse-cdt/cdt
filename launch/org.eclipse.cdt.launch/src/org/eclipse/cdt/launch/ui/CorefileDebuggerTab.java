@@ -1,7 +1,13 @@
-/*
- * (c) Copyright QNX Software System Ltd. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2002 - 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -73,8 +79,10 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		String projectCPU = "*"; //$NON-NLS-1$
 		if (ce != null) {
 			try {
-				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
-				projectPlatform = descriptor.getPlatform();
+				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject(), false);
+				if (descriptor != null) {
+					projectPlatform = descriptor.getPlatform();
+				}
 				IBinary bin = (IBinary) ce;
 				projectCPU = bin.getCPU();
 			} catch (Exception e) {
@@ -156,8 +164,10 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		String projectCPU = "*"; //$NON-NLS-1$
 		if (ce != null) {
 			try {
-				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
-				projectPlatform = descriptor.getPlatform();
+				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject(), false);
+				if (descriptor != null) {
+					projectPlatform = descriptor.getPlatform();
+				}
 				IBinary bin = (IBinary) ce;
 				projectCPU = bin.getCPU();
 			} catch (Exception e) {

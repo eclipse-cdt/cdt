@@ -1,6 +1,13 @@
-/*
- * (c) Copyright QNX Software System Ltd. 2002. All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2002 - 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.launch;
 
 import java.io.File;
@@ -64,13 +71,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			throws CoreException;
 
 	/**
-	 * Return the save environment variables in the configuration. The array does not include the default environment of the target.
-	 * array[n] : name=value
+	 * Return the save environment variables in the configuration. The array
+	 * does not include the default environment of the target. array[n] :
+	 * name=value
 	 */
 	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
 		Map env = null;
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
 		} catch (CoreException e) {
 		}
 		if (env == null) {
@@ -80,21 +88,21 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Iterator entries = env.entrySet().iterator();
 		Entry entry;
 		for (int i = 0; entries.hasNext() && i < array.length; i++) {
-			entry = (Entry) entries.next();
-			array[i] = ((String) entry.getKey()) + "=" + ((String) entry.getValue()); //$NON-NLS-1$
+			entry = (Entry)entries.next();
+			array[i] = ((String)entry.getKey()) + "=" + ((String)entry.getValue()); //$NON-NLS-1$
 		}
 		return array;
 	}
 
 	/**
-	 * Return the save environment variables of this configuration. The array does not include the default environment of the
-	 * target.
+	 * Return the save environment variables of this configuration. The array
+	 * does not include the default environment of the target.
 	 */
 	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
 		Properties prop = new Properties();
 		Map env = null;
 		try {
-			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map)null);
 		} catch (CoreException e) {
 		}
 		if (env == null)
@@ -102,8 +110,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Iterator entries = env.entrySet().iterator();
 		Entry entry;
 		while (entries.hasNext()) {
-			entry = (Entry) entries.next();
-			prop.setProperty((String) entry.getKey(), (String) entry.getValue());
+			entry = (Entry)entries.next();
+			prop.setProperty((String)entry.getKey(), (String)entry.getValue());
 		}
 		return prop;
 	}
@@ -116,22 +124,22 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Expand the variable with the format ${key}. example: HOME=/foobar NEWHOME = ${HOME}/project The environement NEWHOME will be
-	 * /foobar/project.
+	 * Expand the variable with the format ${key}. example: HOME=/foobar NEWHOME =
+	 * ${HOME}/project The environement NEWHOME will be /foobar/project.
 	 */
 	protected Properties expandEnvironment(ILaunchConfiguration config) {
 		return expandEnvironment(getEnvironmentProperty(config));
 	}
 
 	/**
-	 * Expand the variable with the format ${key}. example: HOME=/foobar NEWHOME = ${HOME}/project The environement NEWHOME will be
-	 * /foobar/project.
+	 * Expand the variable with the format ${key}. example: HOME=/foobar NEWHOME =
+	 * ${HOME}/project The environement NEWHOME will be /foobar/project.
 	 */
 	protected Properties expandEnvironment(Properties props) {
 		Enumeration names = props.propertyNames();
 		if (names != null) {
 			while (names.hasMoreElements()) {
-				String key = (String) names.nextElement();
+				String key = (String)names.nextElement();
 				String value = props.getProperty(key);
 				if (value != null && value.indexOf('$') != -1) {
 					StringBuffer sb = new StringBuffer();
@@ -170,7 +178,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 									String v = null;
 									String p = param.toString();
 									/*
-									 * Search in the current property only if it is not the same name.
+									 * Search in the current property only if it
+									 * is not the same name.
 									 */
 									if (!p.equals(key)) {
 										v = props.getProperty(p);
@@ -197,7 +206,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 							sb.append(ch);
 						} else {
 							/* Do not had the '{' */
-							if (!(ch == '{' && prev == '$')) {
+							if (! (ch == '{' && prev == '$')) {
 								param.append(ch);
 							}
 						}
@@ -211,12 +220,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Returns the working directory specified by the given launch configuration, or <code>null</code> if none.
+	 * Returns the working directory specified by the given launch
+	 * configuration, or <code>null</code> if none.
 	 * 
 	 * @deprecated Should use getWorkingDirectory()
 	 * @param configuration
 	 *            launch configuration
-	 * @return the working directory specified by the given launch configuration, or <code>null</code> if none
+	 * @return the working directory specified by the given launch
+	 *         configuration, or <code>null</code> if none
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
@@ -225,11 +236,13 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Returns the working directory specified by the given launch configuration, or <code>null</code> if none.
+	 * Returns the working directory specified by the given launch
+	 * configuration, or <code>null</code> if none.
 	 * 
 	 * @param configuration
 	 *            launch configuration
-	 * @return the working directory specified by the given launch configuration, or <code>null</code> if none
+	 * @return the working directory specified by the given launch
+	 *         configuration, or <code>null</code> if none
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
@@ -238,7 +251,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
-		String path = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
+		String path = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 		if (path != null) {
 			return new Path(path);
 		}
@@ -246,12 +259,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Throws a core exception with an error status object built from the given message, lower level exception, and error code.
+	 * Throws a core exception with an error status object built from the given
+	 * message, lower level exception, and error code.
 	 * 
 	 * @param message
 	 *            the status message
 	 * @param exception
-	 *            lower level exception associated with the error, or <code>null</code> if none
+	 *            lower level exception associated with the error, or
+	 *            <code>null</code> if none
 	 * @param code
 	 *            error code
 	 */
@@ -284,16 +299,17 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 	}
 
 	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
+		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String)null);
 	}
 
 	/**
-	 * Assigns a default source locator to the given launch if a source locator has not yet been assigned to it, and the associated
-	 * launch configuration does not specify a source locator.
+	 * Assigns a default source locator to the given launch if a source locator
+	 * has not yet been assigned to it, and the associated launch configuration
+	 * does not specify a source locator.
 	 * 
 	 * @param launch
 	 *            launch object
@@ -306,7 +322,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		//  set default source locator if none specified
 		if (launch.getSourceLocator() == null) {
 			IPersistableSourceLocator sourceLocator;
-			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
+			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (id == null) {
 				ICProject cProject = getCProject(configuration);
 				if (cProject == null) {
@@ -317,7 +333,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				sourceLocator.initializeDefaults(configuration);
 			} else {
 				sourceLocator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(id);
-				String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String) null);
+				String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
 				if (memento == null) {
 					sourceLocator.initializeDefaults(configuration);
 				} else {
@@ -334,7 +350,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @return the program arguments as a String
 	 */
 	public String getProgramArguments(ILaunchConfiguration config) throws CoreException {
-		return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
+		return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
 
 	}
 	/**
@@ -394,7 +410,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	protected String renderDebuggerProcessLabel() {
 		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
-		return MessageFormat.format(format, new String[]{LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Debugger_Process"), timestamp}); //$NON-NLS-1$
+		return MessageFormat.format(format, new String[]{
+				LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Debugger_Process"), timestamp}); //$NON-NLS-1$
 	}
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
@@ -427,7 +444,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
 		}
 
-		IFile programPath = ((IProject) cproject.getResource()).getFile(fileName);
+		IFile programPath = ((IProject)cproject.getResource()).getFile(fileName);
 		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
 			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
 					new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
@@ -442,12 +459,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Verifies the working directory specified by the given launch configuration exists, and returns the working directory, or
+	 * Verifies the working directory specified by the given launch
+	 * configuration exists, and returns the working directory, or
 	 * <code>null</code> if none is specified.
 	 * 
 	 * @param configuration
 	 *            launch configuration
-	 * @return the working directory specified by the given launch configuration, or <code>null</code> if none
+	 * @return the working directory specified by the given launch
+	 *         configuration, or <code>null</code> if none
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
@@ -469,7 +488,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
 						new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
 								"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
-								ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 				if (res instanceof IContainer && res.exists()) {
@@ -478,7 +497,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
 						new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString(
 								"AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
-								ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
 		return null;
@@ -499,7 +518,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 			ch = getNext();
 			while (ch > 0) {
-				while (Character.isWhitespace((char) ch))
+				while (Character.isWhitespace((char)ch))
 					ch = getNext();
 
 				if (ch == '"') {
@@ -531,7 +550,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					}
 				}
 				if (ch > 0) {
-					buf.append((char) ch);
+					buf.append((char)ch);
 					ch = getNext();
 				}
 			}
@@ -544,14 +563,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		private String parseToken() {
 			StringBuffer buf = new StringBuffer();
 
-			while (ch > 0 && !Character.isWhitespace((char) ch)) {
+			while (ch > 0 && !Character.isWhitespace((char)ch)) {
 				if (ch == '\\') {
 					ch = getNext();
 					if (ch > 0) {
 						if (ch != '"') { // Only escape double quotes
 							buf.append('\\');
 						}
-						buf.append((char) ch);
+						buf.append((char)ch);
 						ch = getNext();
 					} else if (ch == -1) { // Don't lose a trailing backslash
 						buf.append('\\');
@@ -559,7 +578,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				} else if (ch == '"') {
 					buf.append(parseString());
 				} else {
-					buf.append((char) ch);
+					buf.append((char)ch);
 					ch = getNext();
 				}
 			}
@@ -575,7 +594,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * @param referencedProjSet
 	 *            A set of referenced projects
 	 * @throws CoreException
-	 *             if an error occurs while getting referenced projects from the current project
+	 *             if an error occurs while getting referenced projects from the
+	 *             current project
 	 */
 	private void getReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException {
 		IProject[] projects = project.getReferencedProjects();
@@ -590,7 +610,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * creates a list of project ordered by their build order from an unordered list of projects.
+	 * creates a list of project ordered by their build order from an unordered
+	 * list of projects.
 	 * 
 	 * @param resourceCollection
 	 *            The list of projects to sort.
@@ -600,14 +621,15 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 		if (orderedNames != null) {
 			List orderedProjects = new ArrayList(resourceCollection.size());
-			//Projects may not be in the build order but should be built if selected
+			//Projects may not be in the build order but should be built if
+			// selected
 			List unorderedProjects = new ArrayList(resourceCollection.size());
 			unorderedProjects.addAll(resourceCollection);
 
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
 				for (int j = 0; j < resourceCollection.size(); j++) {
-					IProject project = (IProject) resourceCollection.get(j);
+					IProject project = (IProject)resourceCollection.get(j);
 					if (project.getName().equals(projectName)) {
 						orderedProjects.add(project);
 						unorderedProjects.remove(project);
@@ -622,7 +644,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 		// Try the project prerequisite order then
 		IProject[] projects = new IProject[resourceCollection.size()];
-		projects = (IProject[]) resourceCollection.toArray(projects);
+		projects = (IProject[])resourceCollection.toArray(projects);
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 		ArrayList orderedProjects = new ArrayList();
 		orderedProjects.addAll(Arrays.asList(po.projects));
@@ -630,7 +652,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Builds the current project and all of it's prerequisite projects if necessary. Respects specified build order if any exists.
+	 * Builds the current project and all of it's prerequisite projects if
+	 * necessary. Respects specified build order if any exists.
 	 * 
 	 * @param configuration
 	 *            the configuration being launched
@@ -638,7 +661,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 *            the mode the configuration is being launched in
 	 * @param monitor
 	 *            progress monitor
-	 * @return whether the debug platform should perform an incremental workspace build before the launch
+	 * @return whether the debug platform should perform an incremental
+	 *         workspace build before the launch
 	 * @throws CoreException
 	 *             if an exception occurrs while building
 	 */
@@ -649,7 +673,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 					orderedProjects.size() + 1);
 
 			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-				IProject proj = (IProject) i.next();
+				IProject proj = (IProject)i.next();
 				monitor.subTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.building") + proj.getName()); //$NON-NLS-1$
 				proj.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 			}
@@ -662,8 +686,9 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Searches for compile errors in the current project and any of its prerequisite projects. If any compile errors, give the user
-	 * a chance to abort the launch and correct the errors.
+	 * Searches for compile errors in the current project and any of its
+	 * prerequisite projects. If any compile errors, give the user a chance to
+	 * abort the launch and correct the errors.
 	 * 
 	 * @param configuration
 	 * @param mode
@@ -683,7 +708,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 				//check prerequisite projects for compile errors.
 				for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
-					IProject proj = (IProject) i.next();
+					IProject proj = (IProject)i.next();
 					monitor.subTask(LaunchUIPlugin.getResourceString("AbstractCLaunchConfigurationDelegate.searching_for_errors_in") //$NON-NLS-1$
 							+ proj.getName());
 					compileErrorsInProjs = existsErrors(proj);
@@ -703,7 +728,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				if (compileErrorsInProjs) {
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
-						continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
+						continueLaunch = ((Boolean)prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
 					}
 				}
 			}
@@ -725,7 +750,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 		if (markers.length > 0) {
 			for (int j = 0; j < markers.length; j++) {
-				if (((Integer) markers[j].getAttribute(IMarker.SEVERITY)).intValue() == IMarker.SEVERITY_ERROR) {
+				if ( ((Integer)markers[j].getAttribute(IMarker.SEVERITY)).intValue() == IMarker.SEVERITY_ERROR) {
 					return true;
 				}
 			}

@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -33,9 +34,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -287,32 +288,92 @@ public class AST2Tests extends TestCase {
     
     public void testCExpressions() throws ParserException
     {
-        validateExpressionC("x-y", IASTBinaryExpression.op_minus ); //$NON-NLS-1$
-        validateExpressionC("x+y", IASTBinaryExpression.op_plus ); //$NON-NLS-1$
-        validateExpressionC("x/y", IASTBinaryExpression.op_divide ); //$NON-NLS-1$
-        validateExpressionC("x*y", IASTBinaryExpression.op_multiply); //$NON-NLS-1$
-        validateExpressionC("x<<y", IASTBinaryExpression.op_shiftLeft ); //$NON-NLS-1$
-        validateExpressionC("x>>y", IASTBinaryExpression.op_shiftRight ); //$NON-NLS-1$
-        validateExpressionC("x<y", IASTBinaryExpression.op_lessThan ); //$NON-NLS-1$
-        validateExpressionC("x>y", IASTBinaryExpression.op_greaterThan); //$NON-NLS-1$
-        validateExpressionC("x<=y", IASTBinaryExpression.op_lessEqual ); //$NON-NLS-1$
-        validateExpressionC("x>=y", IASTBinaryExpression.op_greaterEqual ); //$NON-NLS-1$
-        validateExpressionC("x==y", IASTBinaryExpression.op_equals ); //$NON-NLS-1$
-        validateExpressionC("x!=y", IASTBinaryExpression.op_notequals ); //$NON-NLS-1$
-        validateExpressionC("x&y", IASTBinaryExpression.op_binaryAnd ); //$NON-NLS-1$
-        validateExpressionC("x^y", IASTBinaryExpression.op_binaryXor ); //$NON-NLS-1$
-        validateExpressionC("x|y", IASTBinaryExpression.op_binaryOr ); //$NON-NLS-1$
-        validateExpressionC("x&&y", IASTBinaryExpression.op_logicalAnd ); //$NON-NLS-1$
-        validateExpressionC("x||y", IASTBinaryExpression.op_logicalOr ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "++x", IASTUnaryExpression.op_prefixIncr ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "--x", IASTUnaryExpression.op_prefixDecr ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "+x", IASTUnaryExpression.op_plus ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "-x", IASTUnaryExpression.op_minus ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "!x", IASTUnaryExpression.op_not ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "~x", IASTUnaryExpression.op_tilde ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "*x", IASTUnaryExpression.op_star ); //$NON-NLS-1$
+        validateSimpleUnaryExpressionC( "&x", IASTUnaryExpression.op_amper ); //$NON-NLS-1$
+        
+        
+        
+        
+        validateSimpleBinaryExpressionC("x=y", IASTBinaryExpression.op_assign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x*=y", IASTBinaryExpression.op_multiplyAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x/=y", IASTBinaryExpression.op_divideAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x%=y", IASTBinaryExpression.op_moduloAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x+=y", IASTBinaryExpression.op_plusAssign); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x-=y", IASTBinaryExpression.op_minusAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x<<=y", IASTBinaryExpression.op_shiftLeftAssign); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x>>=y", IASTBinaryExpression.op_shiftRightAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x&=y", IASTBinaryExpression.op_binaryAndAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x^=y", IASTBinaryExpression.op_binaryXorAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x|=y", IASTBinaryExpression.op_binaryOrAssign ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x-y", IASTBinaryExpression.op_minus ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x+y", IASTBinaryExpression.op_plus ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x/y", IASTBinaryExpression.op_divide ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x*y", IASTBinaryExpression.op_multiply); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x%y", IASTBinaryExpression.op_modulo ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x<<y", IASTBinaryExpression.op_shiftLeft ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x>>y", IASTBinaryExpression.op_shiftRight ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x<y", IASTBinaryExpression.op_lessThan ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x>y", IASTBinaryExpression.op_greaterThan); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x<=y", IASTBinaryExpression.op_lessEqual ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x>=y", IASTBinaryExpression.op_greaterEqual ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x==y", IASTBinaryExpression.op_equals ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x!=y", IASTBinaryExpression.op_notequals ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x&y", IASTBinaryExpression.op_binaryAnd ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x^y", IASTBinaryExpression.op_binaryXor ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x|y", IASTBinaryExpression.op_binaryOr ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x&&y", IASTBinaryExpression.op_logicalAnd ); //$NON-NLS-1$
+        validateSimpleBinaryExpressionC("x||y", IASTBinaryExpression.op_logicalOr ); //$NON-NLS-1$
+        validateConditionalExpressionC( "x ? y : x" ); //$NON-NLS-1$
     }
+    
+    /**
+     * @param string
+     * @param op_prefixIncr
+     * @throws ParserException
+     */
+    protected void validateSimpleUnaryExpressionC(String code , int operator ) throws ParserException {
+        IASTUnaryExpression e = (IASTUnaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
+        assertNotNull( e );
+        assertEquals( e.getOperator(), operator );
+        IASTIdExpression x = (IASTIdExpression) e.getOperand();
+        assertEquals( x.getName().toString(), "x"); //$NON-NLS-1$
+    }
+
+
+    /**
+     * @param code 
+     * @throws ParserException
+     */
+    protected void validateConditionalExpressionC(String code ) throws ParserException {
+        IASTConditionalExpression e = (IASTConditionalExpression) getExpressionFromStatementInCode( code , ParserLanguage.C );
+        assertNotNull( e );
+        IASTIdExpression x = (IASTIdExpression) e.getLogicalConditionExpression();
+        assertEquals( x.getName().toString(), "x" ); //$NON-NLS-1$
+        IASTIdExpression y = (IASTIdExpression) e.getPositiveResultExpression();
+        assertEquals( y.getName().toString(), "y"); //$NON-NLS-1$
+        IASTIdExpression x2 = (IASTIdExpression) e.getNegativeResultExpression();
+        assertEquals( x.getName().toString(), x2.getName().toString() );
+    }
+
+
     /**
      * @param operand
      * @throws ParserException
      */
-    protected void validateExpressionC( String code, int operand) throws ParserException {
+    protected void validateSimpleBinaryExpressionC( String code, int operand) throws ParserException {
         IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C ); //$NON-NLS-1$
         assertNotNull( e );
         assertEquals( e.getOperator(), operand );
+        IASTIdExpression x = (IASTIdExpression) e.getOperand1();
+        assertEquals( x.getName().toString(), "x"); //$NON-NLS-1$
+        IASTIdExpression y = (IASTIdExpression) e.getOperand2();
+        assertEquals( y.getName().toString(), "y"); //$NON-NLS-1$
     }
 
 
@@ -325,7 +386,6 @@ public class AST2Tests extends TestCase {
         IASTTranslationUnit tu = parse( buffer.toString(), language );
         IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations().get(0);
         IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
-        IASTDeclarationStatement ds = (IASTDeclarationStatement) cs.getStatements().get( 0 );
         IASTExpressionStatement s = (IASTExpressionStatement) cs.getStatements().get( 1 );
         return s.getExpression();
     }

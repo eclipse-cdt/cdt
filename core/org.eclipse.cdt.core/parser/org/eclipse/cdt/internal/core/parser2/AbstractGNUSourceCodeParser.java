@@ -15,9 +15,11 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -589,15 +591,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTExpression assignmentOperatorExpression(int kind, IASTExpression lhs) throws EndOfFileException, BacktrackException {
         consume();
         IASTExpression rhs = assignmentExpression();
-        IASTBinaryExpression result = createBinaryExpression();
-        result.setOffset( lhs.getOffset() );
-        result.setOperand1(lhs);
-        lhs.setParent( result );
-        lhs.setPropertyInParent( IASTBinaryExpression.OPERAND_ONE );
-        result.setOperand2(rhs );
-        rhs.setParent( result );
-        rhs.setPropertyInParent( IASTBinaryExpression.OPERAND_TWO );
-        return result;
+        return buildBinaryExpression( kind, lhs, rhs );
     }
 
     /**
@@ -619,7 +613,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         while (LT(1) == IToken.tOR) {
             consume(IToken.tOR);
             IASTExpression secondExpression = logicalAndExpression();
-            firstExpression = binaryExpression( IASTBinaryExpression.op_logicalOr, firstExpression, secondExpression );
+            firstExpression = buildBinaryExpression( IASTBinaryExpression.op_logicalOr, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -634,7 +628,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         while (LT(1) == IToken.tAND) {
             consume(IToken.tAND);
             IASTExpression secondExpression = inclusiveOrExpression();
-            firstExpression = binaryExpression( IASTBinaryExpression.op_logicalAnd, firstExpression, secondExpression );
+            firstExpression = buildBinaryExpression( IASTBinaryExpression.op_logicalAnd, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -649,7 +643,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         while (LT(1) == IToken.tBITOR) {
             consume(IToken.tBITOR);
             IASTExpression secondExpression = exclusiveOrExpression();
-            firstExpression = binaryExpression( IASTBinaryExpression.op_binaryOr, firstExpression, secondExpression  );
+            firstExpression = buildBinaryExpression( IASTBinaryExpression.op_binaryOr, firstExpression, secondExpression  );
         }
         return firstExpression;
     }
@@ -664,7 +658,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         while (LT(1) == IToken.tXOR) {
             consume(IToken.tXOR );
             IASTExpression secondExpression = andExpression();
-            firstExpression = binaryExpression( IASTBinaryExpression.op_binaryXor, firstExpression, secondExpression );
+            firstExpression = buildBinaryExpression( IASTBinaryExpression.op_binaryXor, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -680,7 +674,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         while (LT(1) == IToken.tAMPER) {
             consume();
             IASTExpression secondExpression = equalityExpression();
-            firstExpression = binaryExpression( IASTBinaryExpression.op_binaryAnd, firstExpression, secondExpression );
+            firstExpression = buildBinaryExpression( IASTBinaryExpression.op_binaryAnd, firstExpression, secondExpression );
         }
         return firstExpression;
     }
@@ -699,7 +693,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 IToken t = consume();
             	int operator = (( t.getType() == IToken.tEQUAL) ? IASTBinaryExpression.op_equals : IASTBinaryExpression.op_notequals);   
             	IASTExpression secondExpression = relationalExpression();
-                firstExpression = binaryExpression( operator, firstExpression, secondExpression );
+                firstExpression = buildBinaryExpression( operator, firstExpression, secondExpression );
                 break;
             default:
                 return firstExpression;
@@ -707,7 +701,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         }
     }
 
-    protected IASTExpression binaryExpression( int operator, IASTExpression firstExpression, IASTExpression secondExpression )
+    protected IASTExpression buildBinaryExpression( int operator, IASTExpression firstExpression, IASTExpression secondExpression )
     {
         IASTBinaryExpression result = createBinaryExpression();
         result.setOperator( operator );
@@ -734,7 +728,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 IToken t = consume();
             	int operator = t.getType() == IToken.tSHIFTL ? IASTBinaryExpression.op_shiftLeft: IASTBinaryExpression.op_shiftRight;
                 IASTExpression secondExpression = additiveExpression();
-                firstExpression = binaryExpression( operator, firstExpression, secondExpression );
+                firstExpression = buildBinaryExpression( operator, firstExpression, secondExpression );
                 break;
             default:
                 return firstExpression;
@@ -756,7 +750,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 IToken t = consume();
             	int operator = ( t.getType() == IToken.tPLUS ) ? IASTBinaryExpression.op_plus : IASTBinaryExpression.op_minus; 
                 IASTExpression secondExpression = multiplicativeExpression();
-                firstExpression = binaryExpression( operator, firstExpression, secondExpression );
+                firstExpression = buildBinaryExpression( operator, firstExpression, secondExpression );
                 break;
             default:
                 return firstExpression;
@@ -776,60 +770,60 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected IASTExpression conditionalExpression()
             throws BacktrackException, EndOfFileException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int ln = la.getLineNumber();
-        char[] fn = la.getFilename();
-
         IASTExpression firstExpression = logicalOrExpression();
         if (LT(1) == IToken.tQUESTION) {
             consume(IToken.tQUESTION);
             IASTExpression secondExpression = expression();
             consume(IToken.tCOLON);
             IASTExpression thirdExpression = assignmentExpression();
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            try {
-                return null; /*
-                              * astFactory.createExpression(scope,
-                              * IASTExpression.Kind.CONDITIONALEXPRESSION,
-                              * firstExpression, secondExpression,
-                              * thirdExpression, null, null, EMPTY_STRING,
-                              * null);
-                              */
-            } /*
-               * catch (ASTSemanticException e) {
-               * throwBacktrack(e.getProblem()); }
-               */catch (Exception e) {
-                logException("conditionalExpression::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, endOffset, ln, fn);
-            }
+            IASTConditionalExpression result = createConditionalExpression();
+            result.setLogicalConditionExpression( firstExpression );
+            firstExpression.setParent( result );
+            firstExpression.setPropertyInParent( IASTConditionalExpression.LOGICAL_CONDITION );
+            result.setPositiveResultExpression( secondExpression );
+            secondExpression.setParent( result );
+            secondExpression.setPropertyInParent( IASTConditionalExpression.POSITIVE_RESULT );
+            result.setNegativeResultExpression( thirdExpression );
+            thirdExpression.setParent( result );
+            thirdExpression.setPropertyInParent( IASTConditionalExpression.NEGATIVE_RESULT );
+            return result;
         }
         return firstExpression;
     }
 
-    protected IASTExpression unaryOperatorCastExpression(Object kind)
+    /**
+     * @return
+     */
+    protected abstract IASTConditionalExpression createConditionalExpression();
+
+    protected IASTExpression unaryOperatorCastExpression(int operator)
             throws EndOfFileException, BacktrackException {
-        IToken la = LA(1);
-        int startingOffset = la.getOffset();
-        int line = la.getLineNumber();
-        char[] fn = la.getFilename();
-        la = null;
-        Object castExpression = castExpression();
-        int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-        try {
-            return null; /*
-                          * astFactory.createExpression(scope, kind,
-                          * castExpression, null, null, null, null,
-                          * EMPTY_STRING, null); } catch (ASTSemanticException
-                          * e) { throwBacktrack(e.getProblem());
-                          */
-        } catch (Exception e) {
-            logException("unaryOperatorCastExpression::createExpression()", e); //$NON-NLS-1$
-            throwBacktrack(startingOffset, endOffset, line, fn);
-        }
-        return null;
+        int offset= consume().getOffset();
+        IASTExpression castExpression = castExpression();
+        return buildUnaryExpression( operator, castExpression, offset );
     }
     
+    /**
+     * @param operator
+     * @param castExpression
+     * @param offset TODO
+     * @return
+     */
+    protected IASTExpression buildUnaryExpression(int operator, IASTExpression castExpression, int offset) {
+        IASTUnaryExpression result = createUnaryExpression();
+        result.setOffset( offset );
+        result.setOperator( operator );
+        result.setOperand( castExpression );
+        castExpression.setParent( result );
+        castExpression.setPropertyInParent( IASTUnaryExpression.OPERAND );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected abstract IASTUnaryExpression createUnaryExpression();
+
     /**
      * @return @throws
      *         BacktrackException

@@ -15,9 +15,11 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -41,6 +43,8 @@ import org.eclipse.cdt.internal.core.parser2.IParameterCollection;
 import org.eclipse.cdt.internal.core.parser2.ParameterCollection;
 import org.eclipse.cdt.internal.core.parser2.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatement;
+import org.eclipse.cdt.internal.core.parser2.c.CASTConditionalExpression;
+import org.eclipse.cdt.internal.core.parser2.c.CASTUnaryExpression;
 
 /**
  * This is our implementation of the IParser interface, serving as a
@@ -1382,29 +1386,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         char[] fn = la.getFilename();
         switch (LT(1)) {
         case IToken.tSTAR:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_star );//IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION);
         case IToken.tAMPER:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_amper);//IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION);
         case IToken.tPLUS:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_plus );//IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION);
         case IToken.tMINUS:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_minus );//IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
         case IToken.tNOT:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_not );//IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
         case IToken.tCOMPL:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);//IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
         case IToken.tINCR:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_INCREMENT);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);//IASTExpression.Kind.UNARY_INCREMENT);
         case IToken.tDECR:
-            consume();
-            return unaryOperatorCastExpression(null );//IASTExpression.Kind.UNARY_DECREMENT);
+            return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixDecr);//IASTExpression.Kind.UNARY_DECREMENT);
         case IToken.t_sizeof:
             consume(IToken.t_sizeof);
             IToken mark = LA(1);
@@ -4557,6 +4553,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTBinaryExpression createBinaryExpression()  {
         return new CASTBinaryExpression();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createConditionalExpression()
+     */
+    protected IASTConditionalExpression createConditionalExpression() {
+        return new CASTConditionalExpression();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createUnaryExpression()
+     */
+    protected IASTUnaryExpression createUnaryExpression() {
+        return new CASTUnaryExpression();
     }
 
 }

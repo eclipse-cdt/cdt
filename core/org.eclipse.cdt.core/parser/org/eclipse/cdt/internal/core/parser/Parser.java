@@ -2198,8 +2198,9 @@ public abstract class Parser implements IParser
 	                                    case IToken.tRPAREN :
 	                                        consume();
 	                                        break parameterDeclarationLoop;
-	                                    case IToken.tELIPSE :
+	                                    case IToken.tELLIPSIS :
 	                                        consume();
+	                                        d.setIsVarArgs( true );
 	                                        break;
 	                                    case IToken.tCOMMA :
 	                                        consume();
@@ -3046,8 +3047,8 @@ public abstract class Parser implements IParser
         {
             consume(IToken.t_catch);
             consume(IToken.tLPAREN);
-            if( LT(1) == IToken.tELIPSE )
-            	consume( IToken.tELIPSE );
+            if( LT(1) == IToken.tELLIPSIS )
+            	consume( IToken.tELLIPSIS );
             else 
             	declaration(scope, null); // was exceptionDeclaration
             consume(IToken.tRPAREN);

@@ -483,7 +483,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                     virtual,
                     explicit,
                     declarator.isPureVirtual(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), 
-                    declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock());
+                    declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), declarator.isVarArgs());
         }
         catch (ASTSemanticException e)
         {
@@ -524,7 +524,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
             virtual,
             explicit,
             declarator.isPureVirtual(),
-            declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock() );
+            declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), 
+			declarator.isVarArgs() );
         }
         catch (ASTSemanticException e)
         {

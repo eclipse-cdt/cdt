@@ -51,7 +51,8 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
 	private boolean isKandR = false;  
 	
 	
-	private int nameStartOffset, nameEndOffset; 
+	private int nameStartOffset, nameEndOffset;
+	private boolean varArgs; 
 
     public Declarator( IDeclaratorOwner owner )
 	{
@@ -432,5 +433,19 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     {
         hasFunctionTryBlock = b;
     }
+
+	/**
+	 * @param b
+	 */
+	public void setIsVarArgs(boolean b) {
+		varArgs = b;
+	}
+
+	/**
+	 * @return Returns the varArgs.
+	 */
+	public boolean isVarArgs() {
+		return varArgs;
+	}
 
 }

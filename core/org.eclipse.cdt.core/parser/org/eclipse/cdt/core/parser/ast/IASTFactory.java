@@ -26,7 +26,7 @@ public interface IASTFactory
         String name,
         int startingOffset,
         int nameOffset,
-        int nameEndOffset, int endingOffset) ;
+        int nameEndOffset, int endingOffset);
         
     public IASTInclusion createInclusion(
         String name,
@@ -131,7 +131,7 @@ public interface IASTFactory
     /**
      * @param exp
      */
-    public IASTArrayModifier createArrayModifier(IASTExpression exp) ;
+    public IASTArrayModifier createArrayModifier(IASTExpression exp);
 
     /**
      * @param duple
@@ -169,7 +169,7 @@ public interface IASTFactory
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock ) throws ASTSemanticException;
+		boolean isPureVirtual, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments ) throws ASTSemanticException;
     
     
     public IASTAbstractDeclaration createAbstractDeclaration(
@@ -195,7 +195,7 @@ public interface IASTFactory
         boolean isVolatile,
         boolean isVirtual,
         boolean isExplicit,
-        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock) throws ASTSemanticException;
+        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments) throws ASTSemanticException;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
 		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression ) throws ASTSemanticException;

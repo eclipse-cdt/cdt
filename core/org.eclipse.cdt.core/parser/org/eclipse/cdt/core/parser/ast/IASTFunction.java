@@ -22,6 +22,8 @@ public interface IASTFunction extends IASTCodeScope, IASTOffsetableNamedElement,
 	public boolean isFriend();
 	public boolean isStatic();
 
+	public boolean takesVarArgs(); 
+	
 	public String getName();
 
 	public IASTAbstractDeclaration getReturnType();   

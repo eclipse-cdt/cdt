@@ -1596,7 +1596,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isExplicit,
 		boolean isPureVirtual, 
 		List constructorChain, 
-		boolean isFunctionDefinition, boolean hasFunctionTryBlock ) throws ASTSemanticException
+		boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments ) throws ASTSemanticException
 	{
 		List references = new ArrayList();
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
@@ -1641,7 +1641,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                     ASTAccessVisibility.PRIVATE,
                     constructorChain,
                     references,
-                    isFunctionDefinition, hasFunctionTryBlock );
+                    isFunctionDefinition, hasFunctionTryBlock, hasVariableArguments );
 			}
 		}
 	
@@ -1684,7 +1684,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			throw new ASTSemanticException();   
 		}
-		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock );        
+		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, hasVariableArguments );        
 	    try
 	    {
 	        attachSymbolExtension(symbol, function);
@@ -1892,12 +1892,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isVirtual,
 		boolean isExplicit,
 		boolean isPureVirtual, 
-		ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock ) throws ASTSemanticException
+		ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments ) throws ASTSemanticException
 	{
 		return createMethod(scope, name, parameters, returnType, exception,
 		isInline, isFriend, isStatic, startOffset, nameOffset, nameEndOffset,
 		ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-		visibility, constructorChain, null, isFunctionDefinition, hasFunctionTryBlock );
+		visibility, constructorChain, null, isFunctionDefinition, hasFunctionTryBlock, hasVariableArguments );
 	}   
 	  
     public IASTMethod createMethod(
@@ -1920,7 +1920,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isPureVirtual,
         ASTAccessVisibility visibility, 
         List constructorChain,
-        List references, boolean isFunctionDefinition, boolean hasFunctionTryBlock ) throws ASTSemanticException
+        List references, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments ) throws ASTSemanticException
     {
 		boolean isConstructor = false;
 		boolean isDestructor = false;
@@ -1997,7 +1997,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		resolveLeftoverConstructorInitializerMembers( symbol, constructorChain );
   
-        ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock );
+        ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments );
         try
         {
             attachSymbolExtension( symbol, method );

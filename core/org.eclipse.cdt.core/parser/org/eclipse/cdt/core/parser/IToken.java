@@ -123,7 +123,7 @@ public interface IToken {
 
 	static public final int tSHIFTLASSIGN = 47;
 
-	static public final int tELIPSE = 48;
+	static public final int tELLIPSIS = 48;
 
 	static public final int tDOTSTAR = 49;
 

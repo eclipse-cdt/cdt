@@ -1102,4 +1102,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		
 		assertAllReferences( 5, createTaskList( new Task( namespace, 2 ), new Task( classA, 2 ), new Task( a ) ) );
 	}
+	
+	public void testBug43110() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer(); 
+		buffer.append("void x( int y, ... );\n");
+		buffer.append("void y( int x... );\n");
+		buffer.append("void z(...);");
+		Iterator i = parse(buffer.toString() ).getDeclarations();
+		while( i.hasNext() )
+			assertTrue( ((IASTFunction)i.next()).takesVarArgs() );
+	}
 }

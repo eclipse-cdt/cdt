@@ -2022,4 +2022,12 @@ public class QuickParseASTTests extends BaseASTTest
 		assertEquals( exp.getLiteralString(), "ab");
 	}
 	
+	public void testBug43110() throws Exception
+	{
+		IASTFunction function = (IASTFunction) assertSoleDeclaration( "void x( int y, ... );");
+		assertTrue( function.takesVarArgs() );
+		function = (IASTFunction) assertSoleDeclaration( "void x( int y... );");
+		assertTrue( function.takesVarArgs() );
+	}
+	
 }

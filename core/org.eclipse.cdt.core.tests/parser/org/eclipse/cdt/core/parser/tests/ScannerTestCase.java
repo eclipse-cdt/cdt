@@ -190,7 +190,7 @@ public class ScannerTestCase extends BaseScannerTest
 			validateFloatingPointLiteral( "3."); 
 			validateFloatingPointLiteral( "4E5");
 			validateFloatingPointLiteral( "2.01E-03" );
-			validateToken( IToken.tELIPSE );
+			validateToken( IToken.tELLIPSIS );
 			validateEOF();
 		}
 		catch( ScannerException se )
@@ -1033,7 +1033,7 @@ public class ScannerTestCase extends BaseScannerTest
 		
 		initializeScanner( "foo...bar");
 		validateIdentifier("foo");
-		validateToken( IToken.tELIPSE );
+		validateToken( IToken.tELLIPSIS );
 		validateIdentifier("bar");
 		validateEOF();
 	}

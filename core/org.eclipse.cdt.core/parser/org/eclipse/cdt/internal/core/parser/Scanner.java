@@ -944,7 +944,7 @@ public class Scanner implements IScanner {
 							return newToken( IToken.tDOTSTAR, ".*", contextStack.getCurrentContext() );
 						} else if( c == '.' ){
 							if( getChar() == '.' )
-								return newToken( IToken.tELIPSE, "..." );
+								return newToken( IToken.tELLIPSIS, "..." );
 							else
 								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true, true );				
 						} else {
@@ -1557,7 +1557,7 @@ public class Scanner implements IScanner {
 								switch (c) {
 									case '.' :
 										return newToken(
-											IToken.tELIPSE,
+											IToken.tELLIPSIS,
 											"...",
 											contextStack.getCurrentContext());
 									default :

@@ -25,6 +25,7 @@ public class PTY {
 		if (hasPTY) {
 			slave= forkpty();
 		}
+
 		if (slave == null) {
 			throw new IOException("Can not create pty");
 		}

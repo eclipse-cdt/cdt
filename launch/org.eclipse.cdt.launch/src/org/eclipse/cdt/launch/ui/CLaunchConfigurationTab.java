@@ -2,6 +2,7 @@ package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -12,6 +13,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -30,15 +32,18 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	/**
 	 * Returns the current C element context from which to initialize
 	 * default settings, or <code>null</code> if none.
-	 * 
+	 * Note, if possible we will return the IBinary based on config entry
+	 * as this may be more usefull then just the project.
 	 * @return C element context.
 	 */
 	protected ICElement getContext(ILaunchConfiguration config, String platform) {
 		String projectName = null;
+		String programName = null;
 		IWorkbenchPage page = LaunchUIPlugin.getActivePage();
 		Object obj = null;
 		try {
 			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
 		}
 		catch (CoreException e) {
 		}
@@ -78,11 +83,26 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 					return null;
 				}
 				String projectPlatform = descriptor.getPlatform();
-				if (projectPlatform.equals(platform) || projectPlatform.equals("*")) {
-					return (ICElement) obj;
+				if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) {
+					obj = null;
 				}
 			}
-			else {
+			if (obj != null) {
+				if (programName == null || programName.equals("")) {
+					return (ICElement) obj;
+				}
+				ICElement ce = (ICElement) obj;
+				IProject project;
+				try {
+					project = (IProject) ce.getCProject().getResource();
+					IPath programFile = project.getFile(programName).getLocation();
+					ce = CCorePlugin.getDefault().getCoreModel().create(programFile);
+					if (ce != null && ce.exists()) {
+						return ce;
+					}
+				}
+				catch (CModelException e) {
+				}
 				return (ICElement) obj;
 			}
 		}

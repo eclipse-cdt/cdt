@@ -1,3 +1,12 @@
+2002-11-13 David Inglis
+	* src/.../launch/ui/CDebuggerTab.java
+	* src/.../launch/ui/CLaunchConfigurationTab.java
+	* src/.../launch/ui/CorefileDebuggerTab.java
+	Added support for supported cpus on a debugger and filters list based on
+	selected IBinary.
+	Default debugger selection is not the first exact matching debugger for 
+	the specified platform.
+	
 2002-11-06 David Inglis
 	* src/.../launch/ui/CMainTab.java
 	* src/.../launch/ui/ClaunchCOnfigurationTAb.java

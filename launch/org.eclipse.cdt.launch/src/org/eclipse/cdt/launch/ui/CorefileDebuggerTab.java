@@ -6,6 +6,7 @@ package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
@@ -56,19 +57,23 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	}
 
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
-		if ( initializingComboBox ) {
+		if (initializingComboBox) {
 			return;
 		}
 		initializingComboBox = true;
 		ICDebugConfiguration[] debugConfigs;
-		String platform = getPlatform(config);
+		String configPlatform = getPlatform(config);
 		ICElement ce = getContext(config, null);
-		String projectPlatform = "local";
-		if ( ce != null ) {
+		String projectPlatform = "native";
+		String projectCPU = "native";
+		if (ce != null) {
 			try {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
-			 	projectPlatform = descriptor.getPlatform();
-			} catch (Exception e) {
+				projectPlatform = descriptor.getPlatform();
+				IBinary bin = (IBinary) ce;
+				projectCPU = bin.getCPU();
+			}
+			catch (Exception e) {
 			}
 		}
 		fDCombo.removeAll();
@@ -77,24 +82,27 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		int selndx = -1;
 		for (int i = 0; i < debugConfigs.length; i++) {
 			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-				String supported[] = debugConfigs[i].getPlatforms();
-				boolean isLocal = platform.equals(projectPlatform);
-				for (int j = 0; j < supported.length; j++) {
-					if (supported[j].equalsIgnoreCase(projectPlatform) || (isLocal && supported[j].equalsIgnoreCase("local"))) {
+				String debuggerPlatform = debugConfigs[i].getPlatform();
+				boolean isNative = configPlatform.equals(projectPlatform);
+				if (debuggerPlatform.equalsIgnoreCase(projectPlatform)
+					|| (isNative && debuggerPlatform.equalsIgnoreCase("native"))) {
+					if (debugConfigs[i].supportsCPU(projectCPU)) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
-						if (selection.equals(debugConfigs[i].getID())) {
+						// select first exact matching debugger for platform or requested selection
+						if ((selndx == -1 && debuggerPlatform.equalsIgnoreCase(projectPlatform)) ||
+							selection.equals(debugConfigs[i].getID())) {
 							selndx = x;
 						}
 						x++;
-						break;
 					}
 				}
 			}
 		}
-		if ( selndx != -1 ) {
-			fDCombo.select(selndx);
-		}
+		fDCombo.select(selndx == -1 ? 0 : selndx);
+		//The behaviour is undefined for if the callbacks should be triggered for this,
+		//so to avoid unnecessary confusion, we force an update.
+		handleDebuggerChanged();
 		fDCombo.getParent().layout(true);
 		initializingComboBox = false;
 	}
@@ -118,7 +126,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	}
 
 	public boolean isValid(ILaunchConfiguration config) {
-		if ( !validateDebuggerConfig(config) ) {
+		if (!validateDebuggerConfig(config)) {
 			setErrorMessage("No debugger available");
 			return false;
 		}
@@ -128,28 +136,31 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	private boolean validateDebuggerConfig(ILaunchConfiguration config) {
 		String platform = getPlatform(config);
 		ICElement ce = getContext(config, null);
-		String projectPlatform = "local";
-		if ( ce != null ) {
+		String projectPlatform = "native";
+		String projectCPU = "native";
+		if (ce != null) {
 			try {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
-			 	projectPlatform = descriptor.getPlatform();
-			} catch (Exception e) {
+				projectPlatform = descriptor.getPlatform();
+				IBinary bin = (IBinary) ce;
+				projectCPU = bin.getCPU();
+			}
+			catch (Exception e) {
 			}
 		}
 		ICDebugConfiguration debugConfig = getDebugConfig();
-		if ( debugConfig == null ) {
+		if (debugConfig == null) {
 			return false;
 		}
-		String supported[] = debugConfig.getPlatforms();
-		boolean isLocal = platform.equals(projectPlatform);
-		for (int j = 0; j < supported.length; j++) {
-			if (supported[j].equalsIgnoreCase(projectPlatform) || (isLocal && supported[j].equalsIgnoreCase("local"))) {
+		String debuggerPlatform = debugConfig.getPlatform();
+		boolean isNative = platform.equals(projectPlatform);
+		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (isNative && debuggerPlatform.equalsIgnoreCase("native"))) {
+			if (debugConfig.supportsCPU(projectCPU)) {
 				return true;
 			}
 		}
 		return false;
 	}
-
 
 	/**
 	 * Return the class that implements <code>ILaunchConfigurationTab</code>

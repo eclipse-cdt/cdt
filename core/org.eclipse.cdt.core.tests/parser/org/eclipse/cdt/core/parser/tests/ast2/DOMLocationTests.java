@@ -51,9 +51,10 @@ public class DOMLocationTests extends AST2BaseTest {
    }
 
    public void testSimpleDeclaration() throws ParserException {
+      String code ="int xLen5, * yLength8, zLength16( int );"; //$NON-NLS-1$
       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
             : null) {
-         IASTTranslationUnit tu = parse("int xLen5, * yLength8, zLength16( int );", p); //$NON-NLS-1$
+         IASTTranslationUnit tu = parse(code, p); 
          IASTDeclaration[] declarations = tu.getDeclarations();
          assertEquals(declarations.length, 1);
          IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) declarations[0];
@@ -64,7 +65,7 @@ public class DOMLocationTests extends AST2BaseTest {
          IASTFileLocation fileLocation = ((IASTFileLocation) nodeLocations[0]);
          assertEquals(fileLocation.getFileName(), _TEXT_); //$NON-NLS-1$
          assertEquals(fileLocation.getNodeOffset(), 0);
-         assertEquals(fileLocation.getNodeLength(), 40);
+         assertEquals(fileLocation.getNodeLength(), code.indexOf( ";") + 1); //$NON-NLS-1$
          IASTDeclarator[] declarators = declaration.getDeclarators();
          assertEquals( declarators.length, 3 );
          for( int i = 0; i < 3; ++i )
@@ -73,13 +74,13 @@ public class DOMLocationTests extends AST2BaseTest {
             switch( i )
             {
                case 0:
-                  assertSoleLocation( declarator, 4, 5 );
+                  assertSoleLocation( declarator, code.indexOf( "xLen5"), "xLen5".length() ); //$NON-NLS-1$ //$NON-NLS-2$
                   break;
                case 1:
-                  assertSoleLocation( declarator, 11, 10 );
+                  assertSoleLocation( declarator, code.indexOf( "* yLength8"), "* yLength8".length()); //$NON-NLS-1$ //$NON-NLS-2$
                   break;
                case 2:
-                  assertSoleLocation( declarator, 23, 16 );
+                  assertSoleLocation( declarator, code.indexOf( "zLength16( int )"), "zLength16( int )".length() ); //$NON-NLS-1$ //$NON-NLS-2$
                   break;
             }
          }

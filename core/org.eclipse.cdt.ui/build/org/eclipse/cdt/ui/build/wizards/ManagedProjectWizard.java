@@ -94,7 +94,9 @@ public abstract class ManagedProjectWizard extends CProjectWizard {
 			ITarget newTarget = ManagedBuildManager.createTarget(project, parent);
 			if (newTarget != null) {
 				// TODO add name entry field to project
-				newTarget.setBuildArtifact(project.getName() + "." + parent.getDefaultExtension());
+				String artifactName = project.getName();
+				artifactName +=  parent.getDefaultExtension().length() == 0 ? "" : "." + parent.getDefaultExtension();
+				newTarget.setBuildArtifact(artifactName);
 				IConfiguration [] selectedConfigs = targetConfigurationPage.getSelectedConfigurations();
 				for (int i = 0; i < selectedConfigs.length; i++) {
 					IConfiguration config = selectedConfigs[i];

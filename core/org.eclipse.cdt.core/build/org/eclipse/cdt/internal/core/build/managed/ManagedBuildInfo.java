@@ -186,12 +186,15 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getToolFlags(java.lang.String)
 	 */
 	public String getFlagsForTarget(String extension) {
+		// Treat null extensions as an empty string
+		String ext = extension == null ? new String()  :  extension;
+		
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.producesFileType(extension)) {
+			if (tool.producesFileType(ext)) {
 				String flags = new String();
 				try {
 					flags = tool.getToolFlags();
@@ -306,13 +309,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
 	 */
 	public String getOutputFlag(String outputExt) {
+		// Treat null extension as an empty string
+		String ext = outputExt == null ? new String() : outputExt;
+		
 		// Get all the tools for the current config
 		String flags = new String();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.producesFileType(outputExt)) {
+			if (tool.producesFileType(ext)) {
 				flags = tool.getOutputFlag();
 			}
 		}
@@ -323,13 +329,16 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputPrefix(java.lang.String)
 	 */
 	public String getOutputPrefix(String outputExtension) {
+		// Treat null extensions as empty string
+		String ext = outputExtension == null ? new String() : outputExtension;
+		
 		// Get all the tools for the current config
 		String flags = new String();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.producesFileType(outputExtension)) {
+			if (tool.producesFileType(ext)) {
 				flags = tool.getOutputPrefix();
 			}
 		}
@@ -373,12 +382,14 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IResourceBuildInfo#getToolInvocation(java.lang.String)
 	 */
 	public String getToolForTarget(String extension) {
+		// Treat a null argument as an empty string
+		String ext = extension == null ? new String() : extension;
 		// Get all the tools for the current config
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
 		ITool[] tools = config.getTools();
 		for (int index = 0; index < tools.length; index++) {
 			ITool tool = tools[index];
-			if (tool.producesFileType(extension)) {
+			if (tool.producesFileType(ext)) {
 				return tool.getToolCommand();
 			}
 		}

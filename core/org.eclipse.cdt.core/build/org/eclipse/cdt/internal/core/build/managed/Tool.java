@@ -127,6 +127,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#handlesFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String extension) {
+		if (extension == null)  { 
+			return false;
+		}
 		return getInputExtensions().contains(extension);
 	}
 
@@ -350,7 +353,7 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#producesFileType(java.lang.String)
 	 */
 	public boolean producesFileType(String outputExtension) {
-		return outputExtension.equals(this.outputExtension);
+		return this.outputExtension.equals(outputExtension);
 	}
 
 }

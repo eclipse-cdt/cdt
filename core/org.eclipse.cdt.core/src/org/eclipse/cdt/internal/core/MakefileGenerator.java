@@ -196,12 +196,14 @@ public class MakefileGenerator {
 		
 		// Get the clean command from the build model
 		buffer.append("RM := ");
-		buffer.append(info.getCleanCommand() + NEWLINE);
+		buffer.append(info.getCleanCommand() + NEWLINE + NEWLINE);
 		
 		buffer.append(CCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
 		buffer.append("C_SRCS := " + NEWLINE);
-		buffer.append("CC_SRCS := " + NEWLINE);
+		buffer.append("CC_SRCS := " + NEWLINE + NEWLINE);
 		
+		// Add the libraries this project dependes on
+		buffer.append("LIBS := ");
 		buffer.append(NEWLINE + NEWLINE);
 		return buffer;
 	}
@@ -401,6 +403,14 @@ public class MakefileGenerator {
 	public void appendModule(IResource resource) {
 		// The build model knows how to build this file
 		IContainer container = resource.getParent();
+
+		// But is this a generated directory ...
+		IPath root = new Path(info.getConfigurationName());
+		IPath path = container.getProjectRelativePath();
+		if (root.isPrefixOf(path)) {
+			return;
+		}
+
 		if (!getModuleList().contains(container)) {
 			getModuleList().add(container);		
 		}

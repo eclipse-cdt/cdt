@@ -1,3 +1,14 @@
+2003-08-14 Sean Evoy
+	Added initial toolchain description for Solaris and Linux targets using Gnu tools.
+	* plugin.xml
+	
+	Moved tool and option category names into the properties for eventual I18N
+	* plugin.properties
+
+	For build targets without an extension, the new project wizard was appending a 'dot' to the
+	name. It no loonger does this.
+	* build/org/eclipse/cdt/ui/build/wizards/ManagedProjectWizard.java
+
 2003-08-13 Sean Evoy
 	A simple change to add transparency information to the build property page 
 	GIFs. They were not being drawn properly on Solaris/Motif and would probably

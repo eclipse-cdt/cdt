@@ -1,4 +1,19 @@
 2003-08-13 Sean Evoy
+	Changed text generated into makefile comments from the rather abstract 
+	term 'module' to the more meaningful 'subdirectory'.
+	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties
+	
+	Added place-holder macro for LIBS and changed the source file look-up code to 
+	ignore source it finds in generated directories during a build, even if it has a tool 
+	that says it builds for it.
+	* src/org/eclipse/cdt/internal/core/MakefileGenerator.java
+	
+	Changed class to deal with build targets that do not specify an extension 
+	(like POSIX executables). 
+	* build/org/eclipse/cdt/internal/core/build/managed/ManagedBuildInfo.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Tool.java
+
+2003-08-13 Sean Evoy
 	The major change in the increment of work is the new discovery mechanism 
 	that clients will use to find the IScannerInfoProvider for a project. 
 	Rather than a simple extension point which requires the client to iterate 

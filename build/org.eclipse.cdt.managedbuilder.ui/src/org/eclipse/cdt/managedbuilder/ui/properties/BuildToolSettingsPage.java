@@ -220,9 +220,9 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 							option.getId());
 					if (enumCommand.indexOf(DEFAULT_SEPERATOR) != -1)
 						enumCommand = option.getSelectedEnum();
-					String enum = option.getEnumCommand(enumCommand);
-					if (enum.length() > 0) {
-						buf.append(enum);
+					String enumeration = option.getEnumCommand(enumCommand);
+					if (enumeration.length() > 0) {
+						buf.append(enumeration);
 					}
 					break;
 				case IOption.STRING :
@@ -339,18 +339,18 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 								}
 								break;
 							case IOption.ENUMERATED :
-								String enum = ""; //$NON-NLS-1$
+								String enumeration = ""; //$NON-NLS-1$
 								String[] enumValues = opt.getApplicableValues();
 								for (int i = 0; i < enumValues.length; i++) {
 									if (opt.getEnumCommand(enumValues[i]).equals(
 											optionValue)) {
-										enum = enumValues[i];
+										enumeration = enumValues[i];
 										optionValueExist = true;
 									}
 								}
-								if (!enum.equals("")) //$NON-NLS-1$
+								if (!enumeration.equals("")) //$NON-NLS-1$
 									getToolSettingsPreferenceStore()
-											.setValue(opt.getId(), enum);
+											.setValue(opt.getId(), enumeration);
 								break;
 							case IOption.STRING_LIST :
 							case IOption.INCLUDE_PATH :

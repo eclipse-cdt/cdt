@@ -54,7 +54,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 		throws CModelException {
 		// this will bootstrap/start the runner for the project.
-		CModelManager.getDefault().getBinaryRunner(getCProject());
+		CModelManager.getDefault().getBinaryRunner(getCProject(), true);
 		return true;
 	}
 

@@ -40,4 +40,26 @@ public interface ICDISharedLibraryManager extends ICDIManager {
 	 */
 	void loadSymbols() throws CDIException;
 
+	/**
+	 * Automatically load the symbols.
+	 * @throws CDIException
+	 */
+	void setAutoLoadSymbols(boolean set) throws CDIException;
+	
+	/**
+	 * return the search paths for shared libraries.
+	 * 
+	 * @return String[]
+	 * @throws CDIException
+	 */
+	String[] getSharedLibraryPaths() throws CDIException;
+
+	/**
+	 * Reset the shared libs paths to libpaths.
+	 * @param libpaths
+	 * @throws CDIException
+	 */
+	void setSharedLibraryPaths(String[] libpaths) throws CDIException;
+
+
 }

@@ -1461,7 +1461,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        // If this isn't a type name, then we shouldn't be here
 	        try
 	        {
-	            typeId = typeId(scope, false, ((kind == CompletionKind.SINGLE_NAME_REFERENCE )? kind : CompletionKind.TYPE_REFERENCE));
+				typeId = typeId(scope, false, getCastExpressionKind(kind));
 	            consume(IToken.tRPAREN);
 	            if( templateIdScopes != null ){ templateIdScopes.pop();	popped = true;}
 	            IASTExpression castExpression = castExpression(scope,kind,key);
@@ -1496,6 +1496,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	}
 
 	/**
+	 * @param kind
+	 * @return
+	 */
+	private CompletionKind getCastExpressionKind(CompletionKind kind) {
+		return ((kind == CompletionKind.SINGLE_NAME_REFERENCE || kind == CompletionKind.FUNCTION_REFERENCE)? kind : CompletionKind.TYPE_REFERENCE);
+	}
+	/**
 	 * @param completionKind TODO
 	 * @throws BacktrackException
 	 */
@@ -1513,7 +1520,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		{
 	        try
 	        {
-	            name  = name(scope, completionKind, Key.EMPTY );
+	            name  = name(scope, completionKind, Key.DECL_SPECIFIER_SEQUENCE );
 	            kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	            break;
 	        }

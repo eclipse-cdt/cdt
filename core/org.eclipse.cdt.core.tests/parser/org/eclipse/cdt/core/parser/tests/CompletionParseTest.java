@@ -984,42 +984,42 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	
 	public void testConstructors() throws Exception
 	{
-		String code = "class Foo{ public: Foo(); };  Foo::SP ";
+		String code = "class Foo{ public: Foo(); };  Foo::SP "; //$NON-NLS-1$
 		
-		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) ); //$NON-NLS-1$
 		
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
                                                                  new IASTNode.LookupKind[]{ IASTNode.LookupKind.CONSTRUCTORS },
                                                                  node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 1 );
 		IASTMethod constructor = (IASTMethod) result.getNodes().next();
-		assertEquals( constructor.getName(), "Foo" );
+		assertEquals( constructor.getName(), "Foo" ); //$NON-NLS-1$
 	}
 
 	public void testBug50807() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "void foo();" );
-		writer.write( "void foo( int );" );
-		writer.write( "void foo( int, char );" );
-		writer.write( "void foo( int, int, int );" );
-		writer.write( "void bar(){ " );
+		writer.write( "void foo();" ); //$NON-NLS-1$
+		writer.write( "void foo( int );" ); //$NON-NLS-1$
+		writer.write( "void foo( int, char );" ); //$NON-NLS-1$
+		writer.write( "void foo( int, int, int );" ); //$NON-NLS-1$
+		writer.write( "void bar(){ " ); //$NON-NLS-1$
 		
-		String code = writer.toString() + "foo( SP";
-		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		String code = writer.toString() + "foo( SP"; //$NON-NLS-1$
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) ); //$NON-NLS-1$
 		
-		assertEquals( node.getCompletionPrefix(), "" );
-		assertEquals( node.getFunctionName(), "foo" );
+		assertEquals( node.getCompletionPrefix(), "" ); //$NON-NLS-1$
+		assertEquals( node.getFunctionName(), "foo" ); //$NON-NLS-1$
 		ILookupResult result = node.getCompletionScope().lookup( node.getFunctionName(), 
                                                                  new IASTNode.LookupKind[]{ IASTNode.LookupKind.FUNCTIONS },
                                                                  node.getCompletionContext(), null );
 		assertEquals( result.getResultsSize(), 4 );
 		
-		code = writer.toString() + "foo( 1, SP";
-		node = parse( code, code.indexOf( "SP" ) );
+		code = writer.toString() + "foo( 1, SP"; //$NON-NLS-1$
+		node = parse( code, code.indexOf( "SP" ) ); //$NON-NLS-1$
 		
-		assertEquals( node.getCompletionPrefix(), "" );
-		assertEquals( node.getFunctionName(), "foo" );
+		assertEquals( node.getCompletionPrefix(), "" ); //$NON-NLS-1$
+		assertEquals( node.getFunctionName(), "foo" ); //$NON-NLS-1$
 		result = node.getCompletionScope().lookup( node.getFunctionName(), 
                                                    new IASTNode.LookupKind[]{ IASTNode.LookupKind.FUNCTIONS },
                                                    node.getCompletionContext(), node.getFunctionParameters() );
@@ -1030,10 +1030,10 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testBug60298() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( "class ABC { public: ABC(); int myInt(); };\n");
-		writer.write( "int ABC::" );
+		writer.write( "class ABC { public: ABC(); int myInt(); };\n"); //$NON-NLS-1$
+		writer.write( "int ABC::" ); //$NON-NLS-1$
 		String code = writer.toString();
-		IASTCompletionNode node = parse( code, code.indexOf( "::") + 2 );
+		IASTCompletionNode node = parse( code, code.indexOf( "::") + 2 ); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), CompletionKind.SINGLE_NAME_REFERENCE );
 		
 	}
@@ -1041,12 +1041,29 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testBug62344() throws Exception
 	{
 		Writer writer = new StringWriter();
-		writer.write( " namespace Foo{  class bar{}; }     ");
-		writer.write( " void main() {                      ");
-		writer.write( "    Foo::bar * foobar = new Foo::SP ");
+		writer.write( " namespace Foo{  class bar{}; }     "); //$NON-NLS-1$
+		writer.write( " void main() {                      "); //$NON-NLS-1$
+		writer.write( "    Foo::bar * foobar = new Foo::SP "); //$NON-NLS-1$
 		
 		String code = writer.toString();
-		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) ); //$NON-NLS-1$
 		assertEquals( node.getCompletionKind(), CompletionKind.NEW_TYPE_REFERENCE );
+	}
+	
+	public void testBug62339() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct Cube { int nLength; int nWidth; int nHeight; };\n" ); //$NON-NLS-1$
+		writer.write( "int main(int argc, char **argv) { struct Cube * pCube;\n" ); //$NON-NLS-1$
+		writer.write( "  pCube = (str" ); //$NON-NLS-1$
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "(str") + 4 );  //$NON-NLS-1$
+		assertNotNull( node );
+		boolean foundStruct = false;
+		Iterator i = node.getKeywords();
+		while( i.hasNext() )
+			if( ((String) i.next()).equals( "struct"))  //$NON-NLS-1$
+				foundStruct = true;
+		assertTrue( foundStruct );		
 	}
 }

@@ -97,14 +97,7 @@ public class ASTTypeId implements IASTTypeId
     {
     	return references;
     }
-    
-    public void finalize()
-    {
-    	references.clear();
-    	references = null;
-    	tokenDuple = null;
-    }
-    
+        
     public ITokenDuple getTokenDuple()
     {
     	return tokenDuple;

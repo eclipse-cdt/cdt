@@ -7,7 +7,9 @@
    class="org.eclipse.cdt.debug.ui.CDebugUIPlugin">
 
    <runtime>
-      <library name="cdebugui.jar"/>
+      <library name="cdebugui.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>

@@ -131,6 +131,7 @@ public class CExpression extends CVariable implements IExpression {
 		if ( fValue instanceof AbstractCValue ) {
 			((AbstractCValue)fValue).reset();
 		}
+		fValue = null;
 	}
 
 	/* (non-Javadoc)

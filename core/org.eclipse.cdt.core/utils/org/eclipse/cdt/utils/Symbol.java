@@ -52,7 +52,7 @@ public class Symbol implements ISymbol, Comparable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getBinarObject()
 	 */
-	public IBinaryObject getBinarObject() {
+	public IBinaryObject getBinaryObject() {
 		return binary;
 	}
 	

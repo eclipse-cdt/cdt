@@ -220,7 +220,7 @@ public interface IBinaryParser extends IAdaptable {
 		 * Return the binary object this symbol is from.
 		 * @return
 		 */
-		IBinaryObject getBinarObject();
+		IBinaryObject getBinaryObject();
 	}
 
 	/**

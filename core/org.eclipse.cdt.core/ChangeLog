@@ -1,4 +1,9 @@
 2004-11-10 Alain Magloire
+	Typo in method IBinaryParser.ISymbol
+	* src/org/eclipse/cdt/core/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/Symbol.java
+
+2004-11-10 Alain Magloire
 	Fix for PR 78308, on deleting of non-C resources, no deltas
 	was fired.
 

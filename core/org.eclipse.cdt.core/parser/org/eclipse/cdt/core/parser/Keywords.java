@@ -176,7 +176,7 @@ public class Keywords {
 		
 	public static final char[] cpCOLONCOLON = "::".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpCOLON = ":".toCharArray(); //$NON-NLS-1$
-	public static final char[] cpSEMI = ".toCharArray();".toCharArray(); //$NON-NLS-1$
+	public static final char[] cpSEMI = ";".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpCOMMA =	",".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpQUESTION = "?".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpLPAREN  = "(".toCharArray(); //$NON-NLS-1$

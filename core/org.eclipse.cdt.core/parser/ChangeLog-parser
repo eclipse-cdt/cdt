@@ -1,3 +1,7 @@
+2004-04-13 Andrew Niefer
+	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=46246
+	modified symbol table sorting to use a collator instead of String.compare()
+
 2004-04-11 John Camelon
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=55785.
 	Fix required update to ISourceElementRequestor interface : clients updated accordingly.

@@ -1450,4 +1450,26 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( baseClauses.hasNext() );
 		assertEquals( baseClause.getParentClassSpecifier(), AltG2 );
 	}
+	
+	public void testBug46246() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct A {                 ");
+		writer.write( "   struct B { int ab; } b; ");
+		writer.write( "   int a;                  ");
+		writer.write( "};                         ");
+		writer.write( "struct A a1;               ");
+		writer.write( "struct B b1;               ");
+		
+		Iterator i = parse( writer.toString(), true, ParserLanguage.C ).getDeclarations();
+		IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable a1 = (IASTVariable) i.next();
+		IASTVariable b1 = (IASTVariable) i.next();
+		i = getDeclarations( A );
+		IASTField b = (IASTField) i.next();
+		IASTField a = (IASTField) i.next();
+		IASTClassSpecifier B = (IASTClassSpecifier) b.getAbstractDeclaration().getTypeSpecifier();
+		
+		assertAllReferences( 2, createTaskList( new Task( A ), new Task( B ) ) );
+	}
 }

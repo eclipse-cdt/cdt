@@ -14,6 +14,7 @@
  
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.text.Collator;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
@@ -173,6 +175,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		if( obj.isType( TypeInfo.t_template ) ){
 			if( ! TemplateEngine.canAddTemplate( containing, (ITemplateSymbol) obj ) ) {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+			}
+		}
+		
+		//in C, structs, unions, enums don't nest
+		if( getSymbolTable().getLanguage() == ParserLanguage.C ){
+			if( obj.isType( TypeInfo.t_struct, TypeInfo.t_enumeration ) ){
+				containing = getScopeForCTag( containing );
 			}
 		}
 		
@@ -918,7 +927,16 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return false;
 	}
 	
-
+	private IContainerSymbol getScopeForCTag( IContainerSymbol container ){
+		while( !container.isType( TypeInfo.t_namespace ) && 
+			   !container.isType( TypeInfo.t_function )  &&
+			   !container.isType( TypeInfo.t_block ) )
+		{
+			container = container.getContainingSymbol();
+		} 
+		return container;
+	}
+	
 	protected List getContents(){
 		if(_contents == null ){
 			_contents = new LinkedList();
@@ -927,7 +945,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	}
 	
 	public Iterator getContentsIterator(){
-		//return getContents().iterator();
 		return new ContentsIterator( getContents().iterator() );
 	}
 	
@@ -1069,10 +1086,14 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	}
 
 	static protected class SymbolTableComparator implements Comparator{
+		static final private Collator collator = Collator.getInstance();
+		static { collator.setStrength( Collator.PRIMARY ); }
 		public int compare( Object o1, Object o2 ){
-			int result = ((String) o1).compareToIgnoreCase( (String) o2 );
+			int result = collator.compare( o1, o2 );
 			if( result == 0 ){
-				return ((String) o1).compareTo( (String) o2 );
+				collator.setStrength( Collator.IDENTICAL );
+				result = collator.compare( o1, o2 );
+				collator.setStrength( Collator.PRIMARY );
 			}
 			return result;
 		}

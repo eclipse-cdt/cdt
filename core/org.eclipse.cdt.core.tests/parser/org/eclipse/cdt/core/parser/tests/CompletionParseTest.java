@@ -1251,4 +1251,13 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertEquals( result.getResultsSize(), 2 );
 	}
 	
+	public void testBug69439() throws Exception
+	{
+		String code = "float f = 123."; //$NON-NLS-1$
+		IASTCompletionNode node = parse( code, code.indexOf( ".") + 1 ); //$NON-NLS-1$
+		assertNotNull( node );
+		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.NO_SUCH_KIND );
+		
+	}
+	
 }

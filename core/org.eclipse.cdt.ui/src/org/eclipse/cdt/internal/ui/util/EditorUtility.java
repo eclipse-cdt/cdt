@@ -158,7 +158,7 @@ public class EditorUtility {
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
 				} else {
-					return new ExternalEditorInput(getStorage(unit));					
+					return new ExternalEditorInput(unit, getStorage(unit));					
 				}
 			}
                         
@@ -220,7 +220,7 @@ public class EditorUtility {
 		if (cu.isWorkingCopy())
 			return cu;
 
-		return (ITranslationUnit)cu.findSharedWorkingCopy(CUIPlugin.getBufferFactory());
+		return (ITranslationUnit)cu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
 	}
 
 

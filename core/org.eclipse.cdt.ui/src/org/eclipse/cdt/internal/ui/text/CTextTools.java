@@ -11,6 +11,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
@@ -237,4 +239,33 @@ public class CTextTools {
 		if (fStringScanner.affectsBehavior(event))
 			fStringScanner.adaptToPreferenceChange(event);
 	}
+
+	/**
+	 * Sets up the document partitioner for the given document for the given partitioning.
+	 * 
+	 * @param document the document to be set up
+	 * @param partitioning the document partitioning
+	 * @since 3.0
+	 */
+	public void setupCDocumentPartitioner(IDocument document, String partitioning) {
+		IDocumentPartitioner partitioner= createDocumentPartitioner();
+		if (document instanceof IDocumentExtension3) {
+			IDocumentExtension3 extension3= (IDocumentExtension3) document;
+			extension3.setDocumentPartitioner(partitioning, partitioner);
+		} else {
+			document.setDocumentPartitioner(partitioner);
+		}
+		partitioner.connect(document);
+	}
+	
+	/**
+	 * Sets up the given document for the default partitioning.
+	 * 
+	 * @param document the document to be set up
+	 * @since 3.0
+	 */
+	public void setupCDocument(IDocument document) {
+		setupCDocumentPartitioner(document, IDocumentExtension3.DEFAULT_PARTITIONING);
+	}
+	
 }

@@ -143,7 +143,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					if(!(element instanceof IWorkingCopy)){
 						// if it has a valid working copy
 						ITranslationUnit tu = (ITranslationUnit)element;
-						IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getBufferFactory());
+						IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
 						if(copy != null) {
 							return ((IParent)copy).getChildren();
 						}

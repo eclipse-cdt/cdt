@@ -5,8 +5,8 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
-import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludeOperation;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
@@ -15,10 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -28,9 +24,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -53,7 +46,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		//WorkbenchHelp.setHelp(this,	new Object[] { IJavaHelpContextIds.ADD_IMPORT_ON_SELECTION_ACTION });	
 	}
 	
-	private void addInclude(IRequiredInclude[] inc, CFileElementWorkingCopy tu) {
+	private void addInclude(IRequiredInclude[] inc, ITranslationUnit tu) {
 		AddIncludeOperation op= new AddIncludeOperation(fEditor, tu, inc, false);
 		try {
 			ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
@@ -66,22 +59,11 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		}
 	}
 	
-	private CFileElementWorkingCopy getTranslationUnit () {
-		CFileElementWorkingCopy unit = null;
+	private ITranslationUnit getTranslationUnit () {
+		ITranslationUnit unit = null;
 		if(fEditor != null) {
 			IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
-			IDocumentProvider provider= fEditor.getDocumentProvider();
-			try {
-				if (editorInput instanceof IFileEditorInput)
-					unit = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
-				else if (editorInput instanceof IStorageEditorInput)
-					unit = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
-				else
-					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, CEditorMessages.getString("AddIncludeOnSelectionAction.error.noInput"), null)); //$NON-NLS-1$
-
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e.getStatus());
-			}
+			unit = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 		}
 		return unit;
 	}
@@ -129,7 +111,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		}
 
 		if(requiredIncludes != null && requiredIncludes.length > 0) {
-			CFileElementWorkingCopy tu= getTranslationUnit();
+			ITranslationUnit tu= getTranslationUnit();
 			if(tu != null) {
 				addInclude(requiredIncludes, tu);
 			}

@@ -7,20 +7,25 @@ package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.ILocationProvider;
 
 
 /**
  * An EditorInput for a JarEntryFile.
  */
-public class ExternalEditorInput implements IStorageEditorInput {
+public class ExternalEditorInput implements ITranslationUnitEditorInput {
            
-	IStorage externalFile;
+	private IStorage externalFile;
+	private ITranslationUnit unit;
 
 	/*
 	*/
@@ -45,7 +50,9 @@ public class ExternalEditorInput implements IStorageEditorInput {
 	* @see IAdaptable#getAdapter(Class)
 	*/
 	public Object getAdapter(Class adapter) {
-		return null;
+		if (ILocationProvider.class.equals(adapter))
+			return this;
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/*
@@ -100,5 +107,24 @@ public class ExternalEditorInput implements IStorageEditorInput {
 
 	public ExternalEditorInput(IStorage exFile) {
 		externalFile = exFile;
+	}
+
+	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
+		this(exFile);
+		this.unit = unit;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput#getTranslationUnit()
+	 */
+	public ITranslationUnit getTranslationUnit() {
+		return unit;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
+	 */
+	public IPath getPath(Object element) {
+		return externalFile.getFullPath();
 	}
 }

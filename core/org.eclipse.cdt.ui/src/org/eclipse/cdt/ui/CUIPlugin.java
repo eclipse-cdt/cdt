@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
@@ -110,15 +111,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	public static IBufferFactory getBufferFactory() {
-		CDocumentProvider provider= CUIPlugin.getDefault().getDocumentProvider();
-		if (provider != null)
-			return provider.getBufferFactory();
-		return null;
+	public synchronized IBufferFactory getBufferFactory() {
+		if (fBufferFactory == null)
+			fBufferFactory= new CustomBufferFactory();
+		return fBufferFactory;
 	}
-
+	
 	public static IWorkingCopy[] getSharedWorkingCopies() {
-		return CCorePlugin.getSharedWorkingCopies(getBufferFactory());
+		return CCorePlugin.getSharedWorkingCopies(getDefault().getBufferFactory());
 	}
 	
 	public static String getResourceString(String key) {
@@ -217,6 +217,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
+	private IBufferFactory fBufferFactory;
 	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
 	private AsmTextTools fAsmTextTools;

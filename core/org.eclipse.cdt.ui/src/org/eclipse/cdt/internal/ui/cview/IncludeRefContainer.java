@@ -82,4 +82,14 @@ public class IncludeRefContainer implements IAdaptable, IWorkbenchAdapter{
 		return fCProject;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof IncludeRefContainer) {
+			IncludeRefContainer other = (IncludeRefContainer)obj;
+			return fCProject.equals(other.getCProject());
+		}
+		return super.equals(obj);
+	}
 }

@@ -1,3 +1,37 @@
+2004-04-18 Alain Magloire
+
+	First part to move to Eclipse-3.0 new DocumentProvider scheme
+	for the CEditor.  Changes were made to the IBufferFactory, it
+	is now one class CustomBufferFactory in CUIPlugin.getBufferFactory()
+
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinerPage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CStorageDocumentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CustomBufferFactory.java
+	* src/org/eclipse/cdt/internal/ui/editor/DocumenAdapter.java
+	* src/org/eclipse/cdt/internal/ui/editor/ITranslationUnitEditorInput.java
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/WorkingCopyManager.java
+
+	* src/org/eclipse/cdt/internal/ui/text/CTextTools.java
+
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	* src/org/eclipse/cdt/internal/ui/util/ExternalEditorInput.java
+
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+
+	* src/org/eclipse/cdt/ui/wizards/NewClassWizardPage.java
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CFileElementWorkingCopy.java
+
+	* src/org/eclipse/cdt/internal/ui/codemanipulation/AddIncludeOperation.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/IncludRefContainer.java
+	
 2004-04-16 Hoda Amer
 	Fix for bug#44364 : [Content Assist] case sensitivity option
 	Fix for bug#53446 : [New Class Wizard] Be able to configure new class wizard to not open source

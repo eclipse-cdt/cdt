@@ -9,7 +9,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
@@ -33,7 +33,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class AddIncludeOperation extends WorkspaceModifyOperation {
 	
-	private CFileElementWorkingCopy fTranslationUnit;
+	private ITranslationUnit fTranslationUnit;
 	private IRequiredInclude[] fIncludes;
 	private boolean fDoSave;
 	private ITextEditor fEditor;
@@ -45,7 +45,7 @@ public class AddIncludeOperation extends WorkspaceModifyOperation {
 	 * Elements must be of type IType (-> single import) or IPackageFragment
 	 * (on-demand-import). Other JavaElements are ignored
 	 */
-	public AddIncludeOperation(ITextEditor ed, CFileElementWorkingCopy tu, IRequiredInclude[] includes, boolean save) {
+	public AddIncludeOperation(ITextEditor ed, ITranslationUnit tu, IRequiredInclude[] includes, boolean save) {
 		super();
 		fEditor = ed;
 		fIncludes= includes;

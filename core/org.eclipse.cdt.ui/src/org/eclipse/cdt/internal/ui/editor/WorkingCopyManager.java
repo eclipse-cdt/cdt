@@ -88,7 +88,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	 * @see org.eclipse.cdt.internal.ui.editor.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
 	public void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy) {
-		if (fDocumentProvider.isConnected(input)) {
+		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
 				fMap= new HashMap();
 			fMap.put(input, workingCopy);

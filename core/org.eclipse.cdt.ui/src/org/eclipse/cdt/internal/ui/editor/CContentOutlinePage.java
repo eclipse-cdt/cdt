@@ -9,20 +9,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.WorkingCopy;
-import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -41,19 +35,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
-	private IWorkingCopy fInput;
+	private ITranslationUnit fInput;
 	private ProblemTreeViewer treeViewer;
 	private ListenerList selectionChangedListeners = new ListenerList();
 	private TogglePresentationAction fTogglePresentation;
@@ -194,29 +184,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this);
 		
-		
-		IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
-		IDocumentProvider provider= fEditor.getDocumentProvider();
-		try {
-			if (editorInput instanceof IFileEditorInput){				
-				IWorkingCopyManager wcManager = CUIPlugin.getDefault().getWorkingCopyManager();
-				fInput = (WorkingCopy)wcManager.getWorkingCopy(editorInput);
-				if (fInput == null) {
-					// XXX This should never happen.  Put an assert.
-					fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
-				}
-			} else if (editorInput instanceof IStorageEditorInput){
-				// CHECKPOINT: do we create a CFileElementWorkingCopy or just a working copy for the IStorageEditorInput?
-				// If it is an IStorage it means that there is no underlying IFile.
-				fInput = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
-			} else {
-				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, CEditorMessages.getString("CContentOutlinePage.error.noInput"), null)); //$NON-NLS-1$
-			}
-			treeViewer.setInput(fInput);
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e.getStatus());
-			fInput= null;
-		}
+		treeViewer.setInput(fInput);
+
 	}
 	
 	public void dispose() {
@@ -315,7 +284,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	/**
 	 * @param unit
 	 */
-	public void setInput(IWorkingCopy unit) {
+	public void setInput(ITranslationUnit unit) {
 		fInput = unit;
 		if (treeViewer != null) {
 			treeViewer.setInput (fInput);

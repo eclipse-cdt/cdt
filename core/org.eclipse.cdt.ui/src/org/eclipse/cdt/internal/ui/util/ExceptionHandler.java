@@ -55,7 +55,7 @@ public class ExceptionHandler {
 	 * @param message message to be displayed by the dialog window
 	 */
 	public static void handle(CoreException e, String title, String message) {
-		handle(e, CUIPlugin.getDefault().getActiveWorkbenchShell(), title, message);
+		handle(e, CUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class ExceptionHandler {
 	 * @param message message to be displayed by the dialog window
 	 */
 	public static void handle(InvocationTargetException e, String title, String message) {
-		handle(e, CUIPlugin.getDefault().getActiveWorkbenchShell(), title, message);
+		handle(e, CUIPlugin.getActiveWorkbenchShell(), title, message);
 	}
 	
 	/**

@@ -104,4 +104,21 @@ public class CViewContentProvider extends CElementContentProvider {
 		}
 		return extras;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#internalGetParent(java.lang.Object)
+	 */
+	public Object internalGetParent(Object element) {
+		// since we insert logical containers we have to fix
+		// up the parent for includereference so that they refer
+		// to the container and containers refere to the project
+		Object parent = super.internalGetParent(element);
+		if (element instanceof IIncludeReference) {
+			if (parent instanceof ICProject) {
+				parent = new IncludeRefContainer((ICProject)parent);
+			}
+		} else if (element instanceof IncludeRefContainer) {
+			parent = ((IncludeRefContainer)element).getCProject();
+		}
+		return parent;
+	}
 }

@@ -1,293 +1,170 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003,2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.eclipse.cdt.core.model.CModelException;
+import java.util.Iterator;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IEditorInputDelegate;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DefaultLineTracker;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.GapTextStore;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.ILineTracker;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
-public class CDocumentProvider extends FileDocumentProvider {
-
+/**
+ * CDocumentProvider2
+ */
+public class CDocumentProvider extends TextFileDocumentProvider {
 	/**
-	 * Bundle of all required informations to allow working copy management. 
+	 * Bundle of all required informations to allow working copy management.
 	 */
-	protected class CDocument extends AbstractDocument {
-		
-		/**
-		 * Creates a new empty document.
-		 */
-		public CDocument() {
-			super();
-			setTextStore(new GapTextStore(50, 300));
-			setLineTracker(new DefaultLineTracker());
-			completeInitialization();
-		}
-		
-		/**
-		 * Creates a new document with the given initial content.
-		 *
-		 * @param initialContent the document's initial content
-		 */
-		public CDocument(String initialContent) {
-			super();
-			setTextStore(new GapTextStore(50, 300));
-			setLineTracker(new DefaultLineTracker());	
-			getStore().set(initialContent);
-			getTracker().set(initialContent);
-			completeInitialization();
-		}
-	};
-	
-	/**
-	 * Bundle of all required informations to allow working copy management. 
-	 */
-	protected class TranslationUnitFileInfo extends FileInfo {
-			
-		IWorkingCopy fCopy;
-			
-		TranslationUnitFileInfo(IDocument document, IAnnotationModel model, FileSynchronizer fileSynchronizer, IWorkingCopy copy) {
-			super(document, model, fileSynchronizer);
-			fCopy= copy;
-		}
-			
-		void setModificationStamp(long timeStamp) {
-			fModificationStamp= timeStamp;
-		}
-	};
-	/**
-	 * Creates <code>IBuffer</code>s based on documents.
-	 */
-	protected class BufferFactory implements IBufferFactory {
-			
-		private IDocument internalGetDocument(IFileEditorInput input) throws CoreException {
-			IDocument document= getDocument(input);
-			if (document != null)
-				return document;
-			return CDocumentProvider.this.createDocument(input);
-		}
-			
-		public IBuffer createBuffer(IOpenable owner) {
-			if (owner instanceof IWorkingCopy) {
-						
-				IWorkingCopy unit= (IWorkingCopy) owner;
-				ITranslationUnit original= (ITranslationUnit) unit.getOriginalElement();
-				IResource resource= original.getResource();
-				if (resource instanceof IFile) {
-					IFileEditorInput providerKey= new FileEditorInput((IFile) resource);
-						
-					IDocument document= null;
-					IStatus status= null;
-						
-					try {
-						document= internalGetDocument(providerKey);
-					} catch (CoreException x) {
-						status= x.getStatus();
-						document= new Document();
-						initializeDocument(document);
-					}
-							
-					DocumentAdapter adapter= new DocumentAdapter(unit, document, new DefaultLineTracker(), CDocumentProvider.this, providerKey);
-					adapter.setStatus(status);
-					return adapter;
-				}
-							
-			}
-			return DocumentAdapter.NULL;
-		}
-	};
+	static protected class TranslationUnitInfo extends FileInfo {
+		public IWorkingCopy fCopy;
+	}
 
-
-	/** The buffer factory */
-	private IBufferFactory fBufferFactory= new BufferFactory();
 	/** Indicates whether the save has been initialized by this provider */
-	private boolean fIsAboutToSave= false;
+	private boolean fIsAboutToSave = false;
+
+	/** The save policy used by this provider */
+	//private ISavePolicy fSavePolicy;
 
 	/**
-	 * @see AbstractDocumentProvider#createDocument(Object)
-	 */ 
-	protected IDocument createDocument(Object element) throws CoreException {
-		IDocument document = null;
-		IStorage storage = null;
-
-		if (element instanceof IEditorInputDelegate) {
-			if (((IEditorInputDelegate) element).getDelegate() != null)
-				return createDocument(((IEditorInputDelegate) element).getDelegate());
-			else
-				storage = ((IEditorInputDelegate) element).getStorage();
-		}
-			
-		if (element instanceof IStorageEditorInput)
-			storage= ((IStorageEditorInput) element).getStorage();
-		
-		if ( storage != null ) {
-			document = new CDocument();
-			setDocumentContent(document, storage.getContents(), getDefaultEncoding());
-		}
-
-		//IDocument document= super.createDocument(element);
-		initializeDocument(document);
-		return document;
-	}
-	
-	/*
-	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
+	 *  
 	 */
-	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
-		if ( element instanceof IEditorInputDelegate && ((IEditorInputDelegate)element).getDelegate() != null )
-			return createAnnotationModel( ((IEditorInputDelegate)element).getDelegate() );
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-			return new CMarkerAnnotationModel(input.getFile());
-		} else if (element instanceof IStorageEditorInput) {
-			// Fall back on the adapter.
-			IStorageEditorInput input = (IStorageEditorInput) element;
-			IResource res = (IResource)input.getAdapter(IResource.class);
-			if (res != null && res.exists()) {
-				return new CMarkerAnnotationModel(res);
-			}
-		}
-		
-		return super.createAnnotationModel(element);
+	public CDocumentProvider() {
+		super();
+		setParentDocumentProvider(new TextFileDocumentProvider(new CStorageDocumentProvider()));		
 	}
-	
-	/*
-	 * @see AbstractDocumentProvider#createElementInfo(Object)
-	 */
-	protected ElementInfo createElementInfo(Object element) throws CoreException {
-		if ( !(element instanceof IFileEditorInput))
-			return super.createElementInfo(element);
-			
-		IFileEditorInput input= (IFileEditorInput) element;
-		ITranslationUnit original= createTranslationUnit(input.getFile());
-		if (original != null) {
-				
-			try {
-								
-				try {
-					refreshFile(input.getFile());
-				} catch (CoreException x) {
-					handleCoreException(x, CEditorMessages.getString("TranslationUnitDocumentProvider.error.createElementInfo")); //$NON-NLS-1$
-				}
-				
-				IAnnotationModel m= createAnnotationModel(input);
-				IBufferFactory factory = getBufferFactory();
-				IWorkingCopy c= (IWorkingCopy) original.getSharedWorkingCopy(getProgressMonitor(), factory);
-				
-				DocumentAdapter a= null;
-				try {
-					a= (DocumentAdapter) c.getBuffer();
-				} catch (ClassCastException x) {
-					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, CStatusConstants.TEMPLATE_IO_EXCEPTION, "Shared working copy has wrong buffer", x); //$NON-NLS-1$
-					throw new CoreException(status);
-				}
-				
-				FileSynchronizer f= new FileSynchronizer(input); 
-				f.install();
-				
-				TranslationUnitFileInfo info= new TranslationUnitFileInfo(a.getDocument(), m, f, c);
-				info.setModificationStamp(computeModificationStamp(input.getFile()));
-				info.fStatus= a.getStatus();
-				info.fEncoding= getPersistedEncoding(input);
-								
-				return info;
-				
-			} catch (CModelException x) {
-				throw new CoreException(x.getStatus());
-			}
-		} else {		
-			return super.createElementInfo(element);
-		}
-	}
-	/*
-	 * Creates a translation unit using the core model
+
+	/**
+	 * Creates a translation unit from the given file.
+	 * 
+	 * @param file
+	 *            the file from which to create the translation unit
 	 */
 	protected ITranslationUnit createTranslationUnit(IFile file) {
-		Object element= CoreModel.getDefault().create(file);
-		if (element instanceof ITranslationUnit)
+		Object element = CoreModel.getDefault().create(file);
+		if (element instanceof ITranslationUnit) {
 			return (ITranslationUnit) element;
+		}
 		return null;
 	}
+
 	/*
-	 * @see AbstractDocumentProvider#disposeElementInfo(Object, ElementInfo)
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
 	 */
-	protected void disposeElementInfo(Object element, ElementInfo info) {
-		
-		if (info instanceof TranslationUnitFileInfo) {
-			TranslationUnitFileInfo cuInfo= (TranslationUnitFileInfo) info;
-			cuInfo.fCopy.destroy();
-		}
-		
-		super.disposeElementInfo(element, info);
+	protected FileInfo createEmptyFileInfo() {
+		return new TranslationUnitInfo();
 	}
 
 	/*
-	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
 	 */
-	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
+	protected IAnnotationModel createAnnotationModel(IFile file) {
+		return new CMarkerAnnotationModel(file);
+	}
 
-		ElementInfo elementInfo= getElementInfo(element);		
-		if (elementInfo instanceof TranslationUnitFileInfo) {
-			TranslationUnitFileInfo info= (TranslationUnitFileInfo) elementInfo;
-			
-			// update structure, assumes lock on info.fCopy
-			info.fCopy.reconcile();
-			
-			ITranslationUnit original= (ITranslationUnit) info.fCopy.getOriginalElement();
-			IResource resource= original.getResource();
-			
-			if (resource == null) {
-				// underlying resource has been deleted, just recreate file, ignore the rest
-				super.doSaveDocument(monitor, element, document, overwrite);
-				return;
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
+	 */
+	protected FileInfo createFileInfo(Object element) throws CoreException {
+		ITranslationUnit original = null;
+		IWorkingCopy copy = null;
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input = (IFileEditorInput)element;
+			original = createTranslationUnit(input.getFile());
+			IBufferFactory factory = CUIPlugin.getDefault().getBufferFactory();
+			copy = (IWorkingCopy) original.getSharedWorkingCopy(getProgressMonitor(), factory);
+		} else if (element instanceof ITranslationUnitEditorInput) {
+			ITranslationUnitEditorInput input = (ITranslationUnitEditorInput)element;
+			copy = new CFileElementWorkingCopy(input.getTranslationUnit());
+		}
+		
+		if (copy == null) {
+			return null;
+		}
+		
+		FileInfo info = super.createFileInfo(element);
+		if (!(info instanceof TranslationUnitInfo))
+			return null;
+		TranslationUnitInfo tuInfo = (TranslationUnitInfo) info;
+		setUpSynchronization(tuInfo);
+		
+		//IProblemRequestor requestor= tuInfo.fModel instanceof IProblemRequestor ? (IProblemRequestor) tuInfo.fModel : null;
+		//original.becomeWorkingCopy(requestor, getProgressMonitor());
+
+		tuInfo.fCopy = copy;
+
+		//if (tuInfo.fModel instanceof CMarkerAnnotationModel) {
+		//	CMarkerAnnotationModel model= (CMarkerAnnotationModel) tuInfo.fModel;
+		//	model.setCompilationUnit(tuInfo.fCopy);
+		//}
+		//if (tuInfo.fModel != null)
+		//	tuInfo.fModel.addAnnotationModelListener(fGlobalAnnotationModelListener);
+		//if (requestor instanceof IProblemRequestorExtension) {
+		//	IProblemRequestorExtension extension= (IProblemRequestorExtension)requestor;
+		//	extension.setIsActive(isHandlingTemporaryProblems());
+		//}
+		return tuInfo;
+	}
+
+	private void setUpSynchronization(TranslationUnitInfo cuInfo) {
+		IDocument document = cuInfo.fTextFileBuffer.getDocument();
+		IAnnotationModel model = cuInfo.fModel;
+		if (document instanceof ISynchronizable && model instanceof ISynchronizable) {
+			Object lock = ((ISynchronizable) document).getLockObject();
+			((ISynchronizable) model).setLockObject(lock);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object,
+	 *      org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
+	 */
+	protected void disposeFileInfo(Object element, FileInfo info) {
+		if (info instanceof TranslationUnitInfo) {
+			TranslationUnitInfo tuInfo = (TranslationUnitInfo) info;
+			tuInfo.fCopy.destroy();
+			//if (cuInfo.fModel != null)
+			//	cuInfo.fModel.removeAnnotationModelListener(fGlobalAnnotationModelListener);
+		}
+		super.disposeFileInfo(element, info);
+	}
+
+	protected void commitFileBuffer(IProgressMonitor monitor, Object element, FileInfo fileInfo, boolean overwrite)
+			throws CoreException {
+		if (fileInfo instanceof TranslationUnitInfo) {
+			TranslationUnitInfo info = (TranslationUnitInfo)fileInfo;
+
+			synchronized (info.fCopy) {
+				info.fCopy.reconcile();
 			}
-			
-			if (resource != null && !overwrite)
-				checkSynchronizationState(info.fModificationStamp, resource);
-				
-//			if (fSavePolicy != null)
-//				fSavePolicy.preSave(info.fCopy);
-			
-			// inform about the upcoming content change
-			fireElementStateChanging(element);	
+
+			//if (fSavePolicy != null)
+			//	fSavePolicy.preSave(info.fCopy);
+
 			try {
-				fIsAboutToSave= true;
-				// commit working copy
-				info.fCopy.commit(overwrite, monitor);
+				fIsAboutToSave = true;
+				//info.fCopy.commit(overwrite, monitor);
+				super.commitFileBuffer(monitor, info, overwrite);
 			} catch (CoreException x) {
 				// inform about the failure
 				fireElementStateChangeFailed(element);
@@ -297,41 +174,33 @@ public class CDocumentProvider extends FileDocumentProvider {
 				fireElementStateChangeFailed(element);
 				throw x;
 			} finally {
-				fIsAboutToSave= false;
+				fIsAboutToSave = false;
 			}
-			
-			// If here, the dirty state of the editor will change to "not dirty".
-			// Thus, the state changing flag will be reset.
-			
-			AbstractMarkerAnnotationModel model= (AbstractMarkerAnnotationModel) info.fModel;
-			model.updateMarkers(info.fDocument);
-			
-			if (resource != null)
-				info.setModificationStamp(computeModificationStamp(resource));
-				
-//			if (fSavePolicy != null) {
-//				ICompilationUnit unit= fSavePolicy.postSave(original);
-//				if (unit != null) {
-//					IResource r= unit.getResource();
-//					IMarker[] markers= r.findMarkers(IMarker.MARKER, true, IResource.DEPTH_ZERO);
-//					if (markers != null && markers.length > 0) {
-//						for (int i= 0; i < markers.length; i++)
-//							model.updateMarker(markers[i], info.fDocument, null);
-//					}
-//				}
-//			}
-				
-			
 		} else {
-			super.doSaveDocument(monitor, element, document, overwrite);
-		}		
+			super.commitFileBuffer(monitor, fileInfo, overwrite);
+		}
 	}
 
-	/**
-	 * Gets the BufferFactory.
+	/*
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#getWorkingCopy(java.lang.Object)
 	 */
-	public IBufferFactory getBufferFactory() {
-		return fBufferFactory;
+	public IWorkingCopy getWorkingCopy(Object element) {
+		FileInfo fileInfo = getFileInfo(element);
+		if (fileInfo instanceof TranslationUnitInfo) {
+			TranslationUnitInfo info = (TranslationUnitInfo) fileInfo;
+			return info.fCopy;
+		}
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#shutdown()
+	 */
+	public void shutdown() {
+		//CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
+		Iterator e = getConnectedElementsIterator();
+		while (e.hasNext())
+			disconnect(e.next());
 	}
 
 	/**
@@ -348,78 +217,21 @@ public class CDocumentProvider extends FileDocumentProvider {
 		return null;
 	}
 
-	public IWorkingCopy getWorkingCopy(IEditorInput element) {
-		
-		ElementInfo elementInfo= getElementInfo(element);		
-		if (elementInfo instanceof TranslationUnitFileInfo) {
-			TranslationUnitFileInfo info= (TranslationUnitFileInfo) elementInfo;
-			return info.fCopy;
-		}
-		return null;
-	}
-
-	protected void initializeDocument(IDocument document) {
-		if (document != null) {
-			IDocumentPartitioner partitioner= CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
-			partitioner.connect(document);
-			document.setDocumentPartitioner(partitioner);
-		}
-	}
-	/**
-	 * Saves the content of the given document to the given element.
-	 * This is only performed when this provider initiated the save.
-	 * 
-	 * @param monitor the progress monitor
-	 * @param element the element to which to save
-	 * @param document the document to save
-	 * @param overwrite <code>true</code> if the save should be enforced
+	/*
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#saveDocumentContent(org.eclipse.core.runtime.IProgressMonitor,
+	 *      java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
 	 */
-	public void saveDocumentContent(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
-		
+	public void saveDocumentContent(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite)
+			throws CoreException {
 		if (!fIsAboutToSave)
 			return;
-		
-		if (element instanceof IFileEditorInput) {
-			IFileEditorInput input= (IFileEditorInput) element;
-			try {
-				String encoding= getEncoding(element);
-				if (encoding == null)
-					encoding= ResourcesPlugin.getEncoding();
-				InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
-				IFile file= input.getFile();
-				file.setContents(stream, overwrite, true, monitor);
-			} catch (IOException x)  {
-				IStatus s= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
-				throw new CoreException(s);
-			}
-		}
+		super.saveDocument(monitor, element, document, overwrite);
 	}
 
-	/**
-	 * 
+	/*
+	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#createLineTracker(java.lang.Object)
 	 */
-	public void shutdown() {
-		// TODO Auto-generated method stub	
-	}
-
-	/**
-	 * @param input
-	 * @return
-	 */
-	public boolean isConnected(IEditorInput input) {
-		return getElementInfo(input) != null;
-	}
-	
-	/**
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#getStatus(Object)
-	 */
-	public IStatus getStatus(Object element) {
-		if (element instanceof IEditorInputDelegate) {
-			if (((IEditorInputDelegate) element).getDelegate() != null)
-				return super.getStatus(((IEditorInputDelegate) element).getDelegate());
-			else
-				return new Status(IStatus.INFO,CUIPlugin.getPluginId(),0,"",null); //$NON-NLS-1$
-		}
-		return super.getStatus(element);
+	public ILineTracker createLineTracker(Object element) {
+		return new DefaultLineTracker();
 	}
 }

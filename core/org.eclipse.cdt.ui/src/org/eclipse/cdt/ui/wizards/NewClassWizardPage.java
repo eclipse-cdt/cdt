@@ -587,7 +587,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 			if(parentHeaderTU != null){
 		 		 		 		 String header = constructHeaderFileContent(parentHeaderTU, lineDelimiter);
-				IWorkingCopy headerWC = parentHeaderTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getDocumentProvider().getBufferFactory());
+				IWorkingCopy headerWC = parentHeaderTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 				headerWC.getBuffer().append(header);
 				synchronized(headerWC)	{
 					headerWC.reconcile();	
@@ -599,7 +599,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			}
 			if(parentBodyTU != null){
 				String body = constructBodyFileContent(lineDelimiter);
-				IWorkingCopy bodyWC = parentBodyTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getDocumentProvider().getBufferFactory());
+				IWorkingCopy bodyWC = parentBodyTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 				bodyWC.getBuffer().append(body);
 				synchronized(bodyWC){
 					bodyWC.reconcile();

@@ -11,10 +11,12 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -107,8 +109,11 @@ public class OpenIncludeAction extends Action {
 				if (file != null) {
 					EditorUtility.openInEditor(file);
 				}  else {
-					FileStorage storage = new FileStorage(null, fileToOpen);
-					EditorUtility.openInEditor(storage);
+					ICProject cproject = include.getCProject();
+					ITranslationUnit unit = CoreModel.getDefault().createTranslationUnitFrom(cproject, fileToOpen);
+					if (unit != null) {
+						EditorUtility.openInEditor(unit);
+					}
 				}
 			} 
 		} catch (CModelException e) {
@@ -160,7 +165,7 @@ public class OpenIncludeAction extends Action {
 			}
 		};
 		
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getDefault().getActiveWorkbenchShell(), renderer, false, false);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), renderer, false, false);
 		dialog.setTitle(CUIPlugin.getResourceString(DIALOG_TITLE));
 		dialog.setMessage(CUIPlugin.getResourceString(DIALOG_MESSAGE));
 		dialog.setElements(filesFound);

@@ -126,7 +126,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		return "";
 	}
 	
-	static private void reportHang( String code, String file ){
+	static public void reportHang( String code, String file ){
 		String output = outputFile( code.toString() );
 		if( output.equals("") )
 			output = "Parser hang while parsing " + file + "\n";
@@ -142,7 +142,7 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		fail( output );
 	}
 	
-	static private void reportException( String code, String file, String exception ){
+	static public void reportException( String code, String file, String exception ){
 		String output = outputFile( code.toString() );
 
 		if( output.equals("") )
@@ -244,9 +244,9 @@ public class FractionalAutomatedTest extends AutomatedFramework {
 		}
 	}
 	
-	static private int stepSize = 50;
-	static private int windowSize = 200;
-	static private int timeOut = 5000;
-	static private String outputDir = null;
-	static private int failures = 0;
+	static protected int stepSize = 50;
+	static protected int windowSize = 200;
+	static protected int timeOut = 5000;
+	static protected String outputDir = null;
+	static protected int failures = 0;
 }

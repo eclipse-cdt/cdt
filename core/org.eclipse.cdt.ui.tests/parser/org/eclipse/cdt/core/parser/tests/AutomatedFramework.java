@@ -73,6 +73,8 @@ public abstract class AutomatedFramework extends TestCase {
 					}
 					
 					if(	filePath.endsWith(".cpp") || filePath.endsWith(".hpp") || 
+						filePath.endsWith(".cc") || filePath.endsWith(".CC") ||
+						filePath.endsWith(".C") ||
 						filePath.endsWith(".hxx") || filePath.endsWith(".hh") )
 					{
 						AutomatedTest.natures.put( filePath, "cpp" );
@@ -170,9 +172,12 @@ public abstract class AutomatedFramework extends TestCase {
 		public boolean accept(File dir, String name) {
 			if( name.endsWith(".cpp") 	|| 
 				name.endsWith(".c") 	|| 
-				name.endsWith(".cc") 	|| 
+				name.endsWith(".cc") 	||
+				name.endsWith(".CC") 	||
+				name.endsWith(".C") 	|| 
 				name.endsWith(".h") 	||
 				name.endsWith(".hh")	||
+				name.endsWith(".hpp")	||
 				name.endsWith(".hxx"))
 			{
 				return true;

@@ -43,6 +43,7 @@ public interface ICDebugHelpContextIds
 	public static final String SIGNALS_VIEW = PREFIX + "signals_view_context"; //$NON-NLS-1$
 
 	// Preference pages
+	public static final String SOURCE_PREFERENCE_PAGE = PREFIX + "source_preference_page_context"; //$NON-NLS-1$
 	public static final String SHARED_LIBRARIES_PREFERENCE_PAGE = PREFIX + "shared_libraries_preference_page_context"; //$NON-NLS-1$
 	public static final String MEMORY_PREFERENCE_PAGE = PREFIX + "memory_preference_page_context"; //$NON-NLS-1$
 	public static final String REGISTERS_PREFERENCE_PAGE = PREFIX + "registers_preference_page_context"; //$NON-NLS-1$

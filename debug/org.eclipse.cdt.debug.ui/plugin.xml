@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 
@@ -129,6 +130,12 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage"
             id="org.eclipse.cdt.debug.ui.CDebugPreferencePage">
+      </page>
+      <page
+            name="%SourcePreferencePage.name"
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.SourcePreferencePage"
+            id="org.eclipse.cdt.debug.ui.SourcePreferencePage">
       </page>
    </extension>
    <extension
@@ -1236,6 +1243,19 @@
             class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
             id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="%DefaultSourceLocator.name"
+            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
+            id="org.eclipse.cdt.debug.ui.DefaultSourceLocator">
+      </sourceLocator>
+      <sourceLocator
+            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
+            name="%OldDefaultSourceLocator.name"
+            id="org.eclipse.cdt.launch.DefaultSourceLocator">
+      </sourceLocator>
    </extension>
 
 </plugin>

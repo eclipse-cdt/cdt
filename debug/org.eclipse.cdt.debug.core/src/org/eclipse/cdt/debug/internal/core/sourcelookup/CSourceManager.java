@@ -136,6 +136,12 @@ public class CSourceManager implements ICSourceLocator,
 	{
 		if ( adapter.equals( CSourceManager.class ) )
 			return this;
+		if ( adapter.equals( ICSourceLocator.class ) )
+			return this;
+		if ( adapter.equals( ISourceMode.class ) )
+			return this;
+		if ( adapter.equals( IPersistableSourceLocator.class ) )
+			return this;
 		if ( adapter.equals( IResourceChangeListener.class ) &&
 			 fSourceLocator instanceof IResourceChangeListener )
 			return fSourceLocator;

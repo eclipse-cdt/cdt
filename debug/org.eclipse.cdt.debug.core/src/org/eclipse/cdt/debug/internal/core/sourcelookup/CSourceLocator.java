@@ -27,7 +27,7 @@ import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
-import org.eclipse.cdt.debug.core.sourcelookup.SourceLocationFactory;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -219,7 +219,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		ArrayList list = new ArrayList();
 		if ( project != null && project.exists() )
 		{
-			list.add( SourceLocationFactory.createProjectSourceLocation( project ) );
+			list.add( SourceLookupFactory.createProjectSourceLocation( project ) );
 			addReferencedSourceLocations( list, project );
 		}
 		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
@@ -236,7 +236,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 				{
 					if (  projects[i].exists() && !containsProject( list, projects[i] ) )
 					{
-						list.add( SourceLocationFactory.createProjectSourceLocation( projects[i] ) );
+						list.add( SourceLookupFactory.createProjectSourceLocation( projects[i] ) );
 						addReferencedSourceLocations( list, projects[i] );
 					}
 				}
@@ -656,12 +656,12 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		Iterator it = fReferencedProjects.iterator();
 		ArrayList list = new ArrayList( fReferencedProjects.size() );
 		if ( getProject() != null && getProject().exists() && getProject().isOpen() )
-			list.add( SourceLocationFactory.createProjectSourceLocation( getProject() ) );
+			list.add( SourceLookupFactory.createProjectSourceLocation( getProject() ) );
 		while( it.hasNext() )
 		{
 			IProject project = (IProject)it.next();
 			if ( project != null && project.exists() && project.isOpen() )
-				list.add( SourceLocationFactory.createProjectSourceLocation( project ) );
+				list.add( SourceLookupFactory.createProjectSourceLocation( project ) );
 		}
 		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
@@ -721,7 +721,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		{
 			IProject project = (IProject)it.next();
 			if ( !fReferencedProjects.contains( project ) )
-				newLocations.add( SourceLocationFactory.createProjectSourceLocation( project ) );
+				newLocations.add( SourceLookupFactory.createProjectSourceLocation( project ) );
 		}
 		fReferencedProjects = newRefs;
 		setSourceLocations( (ICSourceLocation[])newLocations.toArray( new ICSourceLocation[newLocations.size()] ) );

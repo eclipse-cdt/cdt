@@ -91,7 +91,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	public Object findSourceElement( String name ) throws CoreException
 	{
 		Object result = null;
-		if ( getDirectory() != null )
+		if ( !isEmpty( name ) && getDirectory() != null )
 		{
 			File file = new File( name );
 			if ( file.isAbsolute() )
@@ -187,7 +187,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 						return result;
 				}
 			}
-			return list;
+			if ( list.size() > 0 ) 
+				return ( list.size() == 1 ) ? list.getFirst() : list;
 		}
 		return null;
 	}
@@ -200,17 +201,12 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		IPath filePath = new Path( name );
 		IPath path = new Path( folder.getAbsolutePath() );
 		IPath association = getAssociation();
-		if ( isPrefix( path, filePath ) )
+		if ( !isPrefix( path, filePath ) || path.segmentCount() + 1 != filePath.segmentCount() )
 		{
-			filePath = path.append( filePath.removeFirstSegments( path.segmentCount() ) );
-		}
-		else if ( association != null && isPrefix( association, filePath ) )
-		{
-			filePath = path.append( filePath.removeFirstSegments( association.segmentCount() ) );
-		}
-		else
-		{
-			return null;
+			if ( association != null && isPrefix( association, filePath ) && association.segmentCount() + 1 == filePath.segmentCount() )
+				filePath = path.append( filePath.removeFirstSegments( association.segmentCount() ) );
+			else
+				return null;
 		}
 
 		// Try for a file in another workspace project
@@ -226,7 +222,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 			return ( list.size() == 1 ) ? list.getFirst() : list;
 
 		file = filePath.toFile();
-		if ( file.exists() )
+		if ( file.exists() && file.isFile() )
 		{
 			return createExternalFileStorage( filePath );
 		}
@@ -257,7 +253,8 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 						return result;
 				}
 			}
-			return list;
+			if ( list.size() > 0 )
+				return ( list.size() == 1 ) ? list.getFirst() : list;
 		}
 		return null;
 	}
@@ -267,7 +264,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		IPath path = new Path( folder.getAbsolutePath() );
 		path = path.append( fileName );	
 		File file = path.toFile();
-		if ( file.exists() )
+		if ( file.exists() && file.isFile() )
 		{
 			path = new Path( file.getAbsolutePath() );
 			IFile[] wsFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
@@ -458,6 +455,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 
 	public void setSearchSubfolders( boolean search )
 	{
+		resetFolders();
 		fSearchSubfolders = search;
 	}
 
@@ -501,5 +499,20 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		for ( int i = 0; i < folders.length; ++i )
 			list.addAll( getFileFolders( folders[i] ) );
 		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString()
+	{
+		return ( getDirectory() != null ) ? getDirectory().toOSString() : "";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#dispose()
+	 */
+	public void dispose()
+	{
 	}
 }

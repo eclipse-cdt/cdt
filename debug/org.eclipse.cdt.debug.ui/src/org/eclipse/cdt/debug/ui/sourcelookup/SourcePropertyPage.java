@@ -5,12 +5,9 @@
  */
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -68,8 +65,7 @@ public class SourcePropertyPage extends PropertyPage
 
 	protected Control createActiveContents( Composite parent )
 	{
-		fBlock.setProject( getProject() );
-		fBlock.initialize( getSourceLocator() );
+		fBlock.initialize( getLaunchConfiguration() );
 		fBlock.createControl( parent );
 		return fBlock.getControl();
 	}
@@ -80,19 +76,6 @@ public class SourcePropertyPage extends PropertyPage
 		if ( element != null )
 		{
 			return (ICDebugTarget)element.getAdapter( ICDebugTarget.class );
-		}
-		return null;
-	}
-	
-	private ICSourceLocator getSourceLocator()
-	{
-		ICDebugTarget target = getDebugTarget();
-		if ( target != null )
-		{
-			if ( target.getLaunch().getSourceLocator() instanceof IAdaptable )
-			{
-				return (ICSourceLocator)((IAdaptable)target.getLaunch().getSourceLocator()).getAdapter( ICSourceLocator.class );
-			}
 		}
 		return null;
 	}
@@ -153,23 +136,20 @@ public class SourcePropertyPage extends PropertyPage
 		}
 	}
 
-	private IProject getProject()
+	private ILaunchConfiguration getLaunchConfiguration()
 	{
-		IProject project = null;
 		ICDebugTarget target = getDebugTarget();
-		if ( target != null )
-		{
-			ILaunchConfiguration configuration = target.getLaunch().getLaunchConfiguration();
-			try
-			{
-				String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
-				if ( projectName != null && projectName.length() > 0 )
-					project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
-			}
-			catch( CoreException e )
-			{
-			}
-		}
-		return project;
+		return ( target != null ) ? target.getLaunch().getLaunchConfiguration() : null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose()
+	{
+		if ( fBlock != null )
+			fBlock.dispose();
+		super.dispose();
+	}
+
 }

@@ -96,7 +96,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	public Object findSourceElement( String name ) throws CoreException
 	{
 		Object result = null;
-		if ( getProject() != null && !notFoundCacheLookup( name ) )
+		if ( !isEmpty( name ) && getProject() != null && !notFoundCacheLookup( name ) )
 		{
 			result = cacheLookup( name );
 			if ( result == null )
@@ -216,7 +216,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		fNotFoundCache.add( name );
 	}
 
-	protected void dispose()
+	public void dispose()
 	{
 		fCache.clear();
 		fNotFoundCache.clear();
@@ -387,5 +387,10 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		fCache.clear();
 		fNotFoundCache.clear();
 		fSearchForDuplicateFiles = search;
+	}
+
+	public String toString()
+	{
+		return ( getProject() != null ) ? fProject.toString() : "";
 	}
 }

@@ -2,6 +2,61 @@
 	Fix for PR 45957: Memory view: last column does not show updates.
 	* MemoryPresentation.java
 
+2003-10-28 Mikhail Khodjaiants
+	Changed name of source lookup preference page.
+	* plugin.properties
+
+2003-10-27 Mikhail Khodjaiants
+	Added support of the old launch configurations.
+	* plugin.xml
+	* plugin.properties
+	
+2003-10-27 Mikhail Khodjaiants
+	Changed the initialization of 'SourceLookupBlock'.
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+
+2003-10-27 Mikhail Khodjaiants
+	Moved the 'org.eclipse.debug.core.sourceLocators' extension from the launcher.
+	* plugin.xml
+	* plugin.properties
+
+2003-10-27 Mikhail Khodjaiants
+	Added dependency to 'org.apache.xerces'.
+	* plugin.xml
+	* .classpath
+	* .project 
+
+2003-10-27 Mikhail Khodjaiants
+	Moved 'DefaultSourceLocator' from the 'org.eclipse.cdt.launch' plugin and merge it with 'CUISourceLocator'.
+	* CUISourceLocator.java: removed
+	* DefaultSourceLocator.java: moved from the launcher.
+	* CDebugUIPlugin.java: added the 'createSourceLocator' method.
+
+2003-10-27 Mikhail Khodjaiants
+	Renamed 'SourceLocationFactory' to 'SourceLookupFactory'.
+	* AddDirectorySourceLocationBlock.java
+	* AddProjectSourceLocationBlock.java
+
+2003-10-23 Mikhail Khodjaiants
+	Added a preference page for the source lookup.
+	It includes two new preferences: 'Source Locations' and 'Search For Duplicate Source Files'.
+	* plugin.properties
+	* plugin.xml
+	* ICDebugHelpContextIds.java
+	* SourcePreferencePage.java
+	* SourceListDialogField.java
+	* SourceLookupBlock.java
+
+2003-10-22 Mikhail Khodjaiants
+	Refactoring: converting nested types 'SourceListDialogField' and 'SourceLookupLabelProvider' 
+	of 'SourceLookupBlock' to the top level types.
+	Added 'dispose' method to 'SourceLookupBlock'.
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+	* SourceListDialogField.java
+	* SourceLookupLabelProvider.java
+
 2003-10-20 Mikhail Khodjaiants
 	Implementation of the "Search subfolders" option for directory source locations.
 	* AddDirectorySourceLocationBlock.java

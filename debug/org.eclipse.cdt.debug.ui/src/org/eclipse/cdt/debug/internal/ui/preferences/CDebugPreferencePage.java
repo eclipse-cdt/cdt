@@ -56,8 +56,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	// View setting widgets
 	private Button fPathsButton;
 
-	private Button fRefreshSolibsButton;
-
 	private Combo fVariableFormatCombo;
 
 	private Combo fExpressionFormatCombo;
@@ -154,7 +152,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void setValues() {
 		IPreferenceStore store = getPreferenceStore();
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
-		fRefreshSolibsButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 		getMaxNumberOfInstructionsText().setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
 		getDisassemblySourceColor().load();
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
@@ -204,7 +201,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void createViewSettingPreferences( Composite parent ) {
 		Composite comp = createGroupComposite( parent, 1, PreferenceMessages.getString( "CDebugPreferencePage.4" ) ); //$NON-NLS-1$
 		fPathsButton = createCheckButton( comp, PreferenceMessages.getString( "CDebugPreferencePage.5" ) ); //$NON-NLS-1$
-		fRefreshSolibsButton = createCheckButton( comp, PreferenceMessages.getString( "CDebugPreferencePage.7" ) ); //$NON-NLS-1$
 		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
 		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
 		fVariableFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.8" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
@@ -336,7 +332,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void storeValues() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, fRefreshSolibsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, getMaxNumberOfInstructionsText().getIntValue() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
@@ -357,7 +352,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
 		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
-		fRefreshSolibsButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 		getMaxNumberOfInstructionsText().setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
 		getDisassemblySourceColor().loadDefault();
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );

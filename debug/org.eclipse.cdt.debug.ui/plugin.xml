@@ -441,36 +441,6 @@
             targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
             id="org.eclipse.cdt.debug.ui.SharedLibrariesViewPopupActions">
          <action
-               helpContextId="refresh_shared_libraries_context"
-               label="%RefreshAction.label"
-               tooltip="%RefreshAction.tooltip"
-               icon="icons/full/elcl16/refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction"
-               style="push"
-               menubarPath="refreshGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="auto_refresh_shared_libraries_context"
-               label="%AutoRefreshAction.label"
-               tooltip="%AutoRefreshAction.tooltip"
-               icon="icons/full/elcl16/auto_refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshSharedLibrariesActionDelegate"
-               style="toggle"
-               menubarPath="refreshGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshSharedLibrariesActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
                helpContextId="load_symbols_for_all_context"
                label="%LoadSymbolsForAllAction.label"
                tooltip="%LoadSymbolsForAllAction.tooltip"
@@ -897,40 +867,6 @@
       <viewContribution
             targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
             id="org.eclipse.debug.ui.sharedLibrariesView.toolbar">
-         <action
-               helpContextId="refresh_shared_libraries_context"
-               disabledIcon="icons/full/dlcl16/refresh_co.gif"
-               hoverIcon="icons/full/clcl16/refresh_co.gif"
-               toolbarPath="refreshGroup"
-               label="%RefreshAction.label"
-               tooltip="%RefreshAction.tooltip"
-               icon="icons/full/elcl16/refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction"
-               style="push"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RefreshSharedLibrariesAction">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
-         <action
-               helpContextId="auto_refresh_shared_libraries_context"
-               disabledIcon="icons/full/dlcl16/auto_refresh_co.gif"
-               hoverIcon="icons/full/clcl16/auto_refresh_co.gif"
-               toolbarPath="refreshGroup"
-               label="%AutoRefreshAction.label"
-               tooltip="%AutoRefreshAction.tooltip"
-               icon="icons/full/elcl16/auto_refresh_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshSharedLibrariesActionDelegate"
-               style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshSharedLibrariesActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-            </enablement>
-         </action>
          <action
                helpContextId="load_symbols_for_all_context"
                disabledIcon="icons/full/dlcl16/load_all_symbols_co.gif"

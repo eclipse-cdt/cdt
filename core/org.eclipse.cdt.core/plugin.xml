@@ -43,6 +43,7 @@
 <!-- =================================================================================== -->
 <!-- Extension Point: CFileType and CFileTypeAssociation for translation unit ident      -->
 <!-- =================================================================================== -->
+   <extension-point id="CLanguage" name="CLanguage" schema="schema/CLanguage.exsd"/>
    <extension-point id="CFileType" name="CFileType" schema="schema/CFileType.exsd"/>
    <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" schema="schema/CFileTypeAssociation.exsd"/>
 
@@ -176,53 +177,77 @@
 <!-- CDT file type mappings                                                              -->
 <!-- =================================================================================== -->
    <extension
+         point="org.eclipse.cdt.core.CLanguage">
+      <language
+            name="C"
+            id="org.eclipse.cdt.core.language.c">
+      </language>
+      <language
+            name="C++"
+            id="org.eclipse.cdt.core.language.cxx">
+      </language>
+      <language
+            name="Assembly"
+            id="org.eclipse.cdt.core.language.asm">
+      </language>
+   </extension>
+   <extension
          point="org.eclipse.cdt.core.CFileType">
       <fileType
             name="C Source File"
             type="source"
+            language="org.eclipse.cdt.core.language.c"
             id="org.eclipse.cdt.core.fileType.c_source">
       </fileType>
       <fileType
             name="C Header File"
             type="header"
+            language="org.eclipse.cdt.core.language.c"
             id="org.eclipse.cdt.core.fileType.c_header">
       </fileType>
       <fileType
             name="C++ Source File"
             type="source"
+            language="org.eclipse.cdt.core.language.cxx"
             id="org.eclipse.cdt.core.fileType.cxx_source">
       </fileType>
       <fileType
             name="C++ Header File"
             type="header"
+            language="org.eclipse.cdt.core.language.cxx"
             id="org.eclipse.cdt.core.fileType.cxx_header">
       </fileType>
       <fileType
             name="Assembly Source File"
             type="source"
+            language="org.eclipse.cdt.core.language.asm"
             id="org.eclipse.cdt.core.fileType.asm_source">
       </fileType>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CFileTypeAssociation">
-         <association
-               pattern="*.c"
-               type="org.eclipse.cdt.core.fileType.c_source" />
-         <association
-               pattern="*.h"
-               type="org.eclipse.cdt.core.fileType.c_header" />
-         <association
-               pattern="*.cpp,*.cxx,*.cc,*.C" 
-               type="org.eclipse.cdt.core.fileType.cxx_source" />
-         <association
-               pattern="*.hpp,*.hxx,*.hh,*.H" 
-               file="template/cpp_headers"
-               type="org.eclipse.cdt.core.fileType.cxx_header" />
-         <association
-               pattern="*.asm,*.s,*.S" 
-               type="org.eclipse.cdt.core.fileType.asm_source" />
+      <association
+            type="org.eclipse.cdt.core.fileType.c_source"
+            pattern="*.c">
+      </association>
+      <association
+            type="org.eclipse.cdt.core.fileType.c_header"
+            pattern="*.h">
+      </association>
+      <association
+            type="org.eclipse.cdt.core.fileType.cxx_source"
+            pattern="*.cpp,*.cxx,*.cc,*.C">
+      </association>
+      <association
+            file="template/cpp_headers"
+            type="org.eclipse.cdt.core.fileType.cxx_header"
+            pattern="*.hpp,*.hxx,*.hh,*.H">
+      </association>
+      <association
+            type="org.eclipse.cdt.core.fileType.asm_source"
+            pattern="*.asm,*.s,*.S">
+      </association>
    </extension>
-
 <!-- =================================================================================== -->
 <!-- Some well known C file extensions override for the team plugins                     -->
 <!-- =================================================================================== -->

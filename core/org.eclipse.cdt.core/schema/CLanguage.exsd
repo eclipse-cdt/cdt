@@ -3,19 +3,19 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="CFileType" name="CFileType"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="CLanguage" name="CLanguage"/>
       </appInfo>
       <documentation>
-         Extension point representing a CDT file type.  File types consist of a unique identifier (id), a human-readable name, an associated source language, and an enumerated value that indicates how this file should be treated by CDT.
+         Extension point representing a CDT language.  At the moment, languages consist of a unique identifier (id), and a human-readable name.
 
-By themselves, file types don&apos;t serve much purpose.  However, they are used to build file type assocations (see the CFileTypeAssocation extension point), which are used by CDT to classify files and determine how they should be processed.
+By themselves, languages don&apos;t serve much purpose.  However, they are used to build file types (see the CFileType extension point), which are used by CDT to classify files and determine how they should be processed.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="fileType" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="language" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,30 +41,8 @@ By themselves, file types don&apos;t serve much purpose.  However, they are used
       </complexType>
    </element>
 
-   <element name="fileType">
+   <element name="language">
       <complexType>
-         <attribute name="type" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="source">
-                  </enumeration>
-                  <enumeration value="header">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -72,7 +50,7 @@ By themselves, file types don&apos;t serve much purpose.  However, they are used
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="language" type="string" use="required">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -96,19 +74,17 @@ By themselves, file types don&apos;t serve much purpose.  However, they are used
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         To declare a new type:
+         To declare a new language:
 
    &lt;extension
-         point=&quot;org.eclipse.cdt.core.CFileType&quot;&gt;
-      &lt;fileType
-            name=&quot;My File Type&quot;
-            type=&quot;source&quot;
-            language=&quot;com.example.product.language.my_language&quot;
-            id=&quot;com.example.product.fileType.my_language_source&quot;&gt;
+         point=&quot;org.eclipse.cdt.core.CLanguage&quot;&gt;
+      &lt;language
+            name=&quot;My Language&quot;
+            id=&quot;com.example.product.language.my_language&quot;&gt;
       &lt;/fileType&gt;
    &lt;/extension&gt;
    
-This indicates to CDT that there is a new file type, identified using the file type id &quot;com.example.product.fileType.my_file_type&quot;, and that files that have this file type should be handled as source files.
+This indicates to CDT that there is a new language, identified using the language id &quot;com.example.product.language.my_language&quot;.
       </documentation>
    </annotation>
 

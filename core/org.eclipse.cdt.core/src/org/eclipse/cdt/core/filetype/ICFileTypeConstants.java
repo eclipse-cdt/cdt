@@ -15,17 +15,33 @@ package org.eclipse.cdt.core.filetype;
  */
 public interface ICFileTypeConstants {
 
-	public static String ID_PREFIX		= "org.eclipse.cdt.core.fileType."; //$NON-NLS-1$
+	public static String ID_PREFIX		= "org.eclipse.cdt.core."; //$NON-NLS-1$
 	
-	public static String UNKNOWN		= ID_PREFIX + "unknown"; //$NON-NLS-1$
+	// Default languages known to CDT
+	
+	public static String LANG_PREFIX	= ID_PREFIX + "language."; //$NON-NLS-1$
 
-	public static String C_SOURCE		= ID_PREFIX + "c_source"; //$NON-NLS-1$
+	public static String LANG_UNKNOWN	= LANG_PREFIX + "unknown"; //$NON-NLS-1$
 	
-	public static String C_HEADER		= ID_PREFIX + "c_header"; //$NON-NLS-1$
+	public static String LANG_C			= LANG_PREFIX + "c"; //$NON-NLS-1$
 	
-	public static String CXX_HEADER		= ID_PREFIX + "cxx_source"; //$NON-NLS-1$
+	public static String LANG_CXX		= LANG_PREFIX + "cxx"; //$NON-NLS-1$
 	
-	public static String CXX_SOURCE		= ID_PREFIX + "cxx_header"; //$NON-NLS-1$
+	public static String LANG_ASM		= LANG_PREFIX + "asm"; //$NON-NLS-1$
+
+	// Default file types known to CDT
 	
-	public static String ASM_SOURCE		= ID_PREFIX + "asm_source"; //$NON-NLS-1$
+	public static String FT_PREFIX		= ID_PREFIX + "fileType."; //$NON-NLS-1$
+	
+	public static String FT_UNKNOWN		= FT_PREFIX + "unknown"; //$NON-NLS-1$
+
+	public static String FT_C_SOURCE	= FT_PREFIX + "c_source"; //$NON-NLS-1$
+	
+	public static String FT_C_HEADER	= FT_PREFIX + "c_header"; //$NON-NLS-1$
+	
+	public static String FT_CXX_HEADER	= FT_PREFIX + "cxx_source"; //$NON-NLS-1$
+	
+	public static String FT_CXX_SOURCE	= FT_PREFIX + "cxx_header"; //$NON-NLS-1$
+	
+	public static String FT_ASM_SOURCE	= FT_PREFIX + "asm_source"; //$NON-NLS-1$
 }

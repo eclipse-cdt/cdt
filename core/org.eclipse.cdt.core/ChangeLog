@@ -1,3 +1,16 @@
+2004-04-16 Alain Magloire
+
+	Patch from Sam Robb to cover PR 52864
+	* src/org/eclipse/cdt/core/internal/fileType/CFileType.java
+	* src/org/eclipse/cdt/core/internal/fileType/CFileTypeResolver.java
+	* src/org/eclipse/cdt/core/internal/fileType/CLanguage.java
+	* srcorg.eclipse/cdt/core/filetype/ICFileType.java
+	* srcorg.eclipse/cdt/core/filetype/ICFileTypeConstants.java
+	* srcorg.eclipse/cdt/core/filetype/ICLanguage.java
+	* schema/CFileType.exsd
+	* schema/CLanguage.exsd
+	* plugin.xml
+
 2004-04-16 Hoda Amer
 	-CModelBuilder and scalability problems: Starting children list with initial size = 0
 	Now 25,000 element Translation unit takes 450 ms in CModelBuilder.

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
 import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
+import org.eclipse.cdt.core.filetype.ICLanguage;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -38,9 +39,11 @@ import org.eclipse.core.runtime.IExtensionPoint;
  */
 public class CFileTypeResolver implements ICFileTypeResolver {
 
+	private static final String EXTENSION_LANG	= "CLanguage"; //$NON-NLS-1$
 	private static final String EXTENSION_TYPE	= "CFileType"; //$NON-NLS-1$
 	private static final String EXTENSION_ASSOC = "CFileTypeAssociation"; //$NON-NLS-1$
 	private static final String ATTR_ID	 		= "id"; //$NON-NLS-1$
+	private static final String ATTR_LANGUAGE	= "langauge"; //$NON-NLS-1$
 	private static final String ATTR_NAME 		= "name"; //$NON-NLS-1$
 	private static final String ATTR_TYPE 		= "type"; //$NON-NLS-1$
 	private static final String ATTR_EXT  		= "pattern"; //$NON-NLS-1$
@@ -49,18 +52,26 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	private static final String ATTR_VAL_HEADER = "header"; //$NON-NLS-1$
 	
 	/**
+	 * Default language, returned when no other language matches a language id.
+	 */
+	public static final ICLanguage DEFAULT_LANG_TYPE =
+		new CLanguage(ICFileTypeConstants.LANG_UNKNOWN, ""); //$NON-NLS-1$	
+
+	/**
 	 * Default file type, returned when no other file type matches a file name.
 	 */
 	public static final ICFileType DEFAULT_FILE_TYPE =
-		new CFileType(ICFileTypeConstants.UNKNOWN, "", ICFileType.TYPE_UNKNOWN);	
+		new CFileType(ICFileTypeConstants.FT_UNKNOWN, ICFileTypeConstants.LANG_UNKNOWN, "", ICFileType.TYPE_UNKNOWN); //$NON-NLS-1$	
 
 	// Singleton
 	private static ICFileTypeResolver instance = new CFileTypeResolver();
 
 	// Private ctor to preserve singleton status
 	private CFileTypeResolver() {
+		loadLanguages();
 		loadTypes();
 		loadAssociations();
+		
 		if (CCorePlugin.getDefault().isDebugging()) {
 			String[] test = { "foo.c", "bar.h", "baz.s", "numeric" }; 
 			for (int i = 0; i < test.length; i++) {
@@ -77,6 +88,11 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 		return instance;
 	}
 	
+	/**
+	 * The language map holds a map of language IDs to descriptive strings.
+	 */
+	private Map fLangMap = new HashMap();
+
 	/**
 	 * The type map holds a map of file type IDs to file types.
 	 */
@@ -120,7 +136,29 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	}
 
 	/**
-	 * @return the file types know to the resolver
+	 * Get the language that has the specified id.
+	 * Returns null if no language has that id.
+	 * 
+	 * @param languageId language id
+	 * 
+	 * @return language with the specified id, or null
+	 */
+	public ICLanguage getLanguageById(String languageId) {
+		ICLanguage lang = (ICLanguage) fLangMap.get(languageId);
+		return ((null != lang) ? lang : DEFAULT_LANG_TYPE);
+	}
+
+
+	/**
+	 * @return the languages known to the resolver
+	 */
+	public ICLanguage[] getLanguages() {
+		Collection values = fLangMap.values();
+		return (ICLanguage[]) values.toArray(new ICLanguage[values.size()]);
+	}
+
+	/**
+	 * @return the file types known to the resolver
 	 */
 	public ICFileType[] getFileTypes() {
 		Collection values = fTypeMap.values();
@@ -128,10 +166,47 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	}
 
 	/**
-	 * @return the file type associations know to the resolver
+	 * @return the file type associations known to the resolver
 	 */
 	public ICFileTypeAssociation[] getFileTypeAssociations() {
 		return (ICFileTypeAssociation[]) fAssocList.toArray(new ICFileTypeAssociation[fAssocList.size()]);
+	}
+
+	/**
+	 * Add an instance of a language to the languages known to the
+	 * resolver.
+	 * 
+	 * Returns true if the instance is added; returns false if the
+	 * instance is not added, or if it is already present in the list.
+	 * 
+	 * @param lang language instance to add
+	 * 
+	 * @return true if the language is added, false otherwise
+	 */
+	public boolean addLanguage(ICLanguage lang) {
+		if (CCorePlugin.getDefault().isDebugging()) {
+			System.out.println("File Type Resolver: adding language " + lang.getId() + " as " + lang.getName());
+		}
+		boolean added = false;
+		if (!fLangMap.containsValue(lang)) {
+			added = (null != fTypeMap.put(lang.getId(), lang));
+		}
+		return added;
+	}
+
+	/**
+	 * Remove a language from the list of languages known to the resolver.
+	 * 
+	 * @param lang language to remove
+	 * 
+	 * @return true if the language is removed, false otherwise
+	 */
+	public boolean removeLanguage(ICLanguage lang) {
+		if (CCorePlugin.getDefault().isDebugging()) {
+			System.out.println("File Type Resolver: removing language " + lang.getId() + " as " + lang.getName());
+		}
+		// TODO: must remove any file types based on this language as well
+		return (null != fLangMap.remove(lang));
 	}
 
 	/**
@@ -148,7 +223,6 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	public boolean addFileType(ICFileType type) {
 		if (CCorePlugin.getDefault().isDebugging()) {
 			System.out.println("File Type Resolver: adding type " + type.getId() + " as " + type.getName());
-			System.out.println();
 		}
 		boolean added = false;
 		if (!fTypeMap.containsValue(type)) {
@@ -200,6 +274,25 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 		}
 		return fAssocList.remove(assoc);
 	}
+
+	/**
+	 * Load languages declared through the CLanguage extension point.
+	 */
+	private void loadLanguages() {
+		IExtensionPoint			point 		= getExtensionPoint(EXTENSION_LANG);
+		IExtension[]			extensions 	= point.getExtensions();
+		IConfigurationElement[]	elements 	= null;
+
+		for (int i = 0; i < extensions.length; i++) {
+			elements = extensions[i].getConfigurationElements();
+			for (int j = 0; j < elements.length; j++) {
+				String id	= elements[j].getAttribute(ATTR_ID);
+				String name = elements[j].getAttribute(ATTR_NAME);
+				addLanguage(new CLanguage(id, name));
+			}
+		}
+		
+	}
 	
 	/**
 	 * Load file type declared through the CFileType extension point.
@@ -213,9 +306,10 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 			elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
 				String	id	 = elements[j].getAttribute(ATTR_ID);
+				String	lang = elements[j].getAttribute(ATTR_LANGUAGE);
 				String	name = elements[j].getAttribute(ATTR_NAME);
 				String	type = elements[j].getAttribute(ATTR_TYPE);
-				addFileType(new CFileType(id, name, parseType(type)));
+				addFileType(new CFileType(id, lang, name, parseType(type)));
 			}
 		}
 	}

@@ -10,50 +10,26 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.internal.filetype;
 
-import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICLanguage;
 
 /**
  * Representation of a declared file type.
  */
-public class CFileType implements ICFileType {
+public class CLanguage implements ICLanguage {
 
 	private String	fId;
-	private String	fLangId;
 	private String	fName;
-	private int		fType;
 
-	public CFileType(String id, String languageId, String name, int type) {
+	public CLanguage(String id, String name) {
 		fId		= id;
-		fLangId	= languageId;	
 		fName	= name;
-		fType	= type;
 	}
 	
 	public String getId() {
 		return fId;
 	}
 
-	public String getLanguageId() {
-		return fLangId;
-	}
-
 	public String getName() {
 		return fName;
-	}
-
-	public int getType() {
-		return fType;
-	}
-
-	public boolean isSource() {
-		return (ICFileType.TYPE_SOURCE == fType);
-	}
-
-	public boolean isHeader() {
-		return (ICFileType.TYPE_HEADER == fType);
-	}
-
-	public boolean isTranslationUnit() {
-		return (isSource() || isHeader());
 	}
 }

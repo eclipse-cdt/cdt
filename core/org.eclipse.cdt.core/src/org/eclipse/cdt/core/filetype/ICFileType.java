@@ -28,7 +28,12 @@ public interface ICFileType {
      * @return Id associated with this file type.
      */
     public String getId();
-	
+
+	/**
+     * @return Language id associated with this file type.
+     */
+	public String getLanguageId();
+
 	/**
      * @return Name of this file type.
      */

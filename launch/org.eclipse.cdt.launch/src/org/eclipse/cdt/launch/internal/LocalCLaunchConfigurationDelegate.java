@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Properties;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
@@ -39,14 +38,15 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
@@ -99,8 +99,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 					debugger =  dsession.getSessionProcess();
 					if ( debugger != null ) {
-						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
-//						launch.removeProcess(debuggerProcess);
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Debugger_Process")); //$NON-NLS-1$
 					}
 					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 					CDebugModel.newDebugTarget(
@@ -206,7 +205,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					return;
 				}
 				dialog.setElements(plist.getProcessList());
-				if (dialog.open() == ElementListSelectionDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					IProcessInfo info = (IProcessInfo) dialog.getFirstResult();
 					if ( info != null ) {
 						pid[0] = info.getPid();

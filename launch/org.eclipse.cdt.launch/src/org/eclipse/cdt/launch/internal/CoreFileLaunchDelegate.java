@@ -67,7 +67,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			abort(LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.Failed_Launching_CDI_Debugger"), e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
 		if ( debugger != null ) {
-			debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
+			debuggerProcess = DebugPlugin.newProcess(launch, debugger, LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.Debugger_Process")); //$NON-NLS-1$
 //			launch.removeProcess(debuggerProcess);
 		}
 		// set the source locator

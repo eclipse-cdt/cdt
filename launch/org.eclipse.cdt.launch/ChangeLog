@@ -1,3 +1,11 @@
+2004-05-09 Mikhail Khodjaiants
+	Fix for bug 66015: I18N: English "Debug Console" in Debug and Console views.
+	Warning cleanup.
+	* src/org/eclise/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclise/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchUIPluginResources.properties
+	* src/org/eclise/cdt/launch/internal/CApplicationLaunchShortcut.java
+
 2004-06-08 Alain Magloire
 	Make sure when something goes wrong before
 	getting out the launch sequence to terminate the session.

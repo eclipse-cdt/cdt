@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -218,7 +219,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		provider.dispose();
-		if (result == ElementListSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ICDebugConfiguration) dialog.getFirstResult();
 		}
 		return null;
@@ -251,7 +252,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
-		if (result == ElementListSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;
@@ -308,7 +309,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		dialog.setUpperListLabel(LaunchUIPlugin.getResourceString("Launch.common.BinariesColon")); //$NON-NLS-1$
 		dialog.setLowerListLabel(LaunchUIPlugin.getResourceString("Launch.common.QualifierColon")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
-		if (dialog.open() == ElementListSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			return (IBinary) dialog.getFirstResult();
 		}
 

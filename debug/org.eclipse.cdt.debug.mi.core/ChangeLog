@@ -1,4 +1,7 @@
 2004-11-09 Alain Magloire
+	Throw not implemented exception for exception breakpoint
+
+2004-11-09 Alain Magloire
 	Reverting the changes below, for PR 74496. After exchanging with
 	the Palm folks, it was not fixing the problem.
 	This PR can not be fix for CDT-2.1 moving

@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
@@ -734,10 +735,10 @@ public class Target extends SessionObject implements ICDITarget {
 		bMgr.deleteAllBreakpoints(this);		
 	}
 
-//	public ICDIExceptionBreakpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
-//	throws CDIException {
-//	throw new CDIException("Not Implemented"); //$NON-NLS-1$
-//}
+	public ICDIExceptionpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
+	throws CDIException {
+		throw new CDIException(CdiResources.getString("cdi.Common.Not_implemented")); //$NON-NLS-1$
+	}
 
 	 /* 
 	  * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String, String)

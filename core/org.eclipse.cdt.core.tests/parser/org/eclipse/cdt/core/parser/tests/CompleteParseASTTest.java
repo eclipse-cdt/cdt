@@ -1770,4 +1770,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 											     new Task( b ),
 											     new Task( f21, 1, false, false ) ) );
 	}
+	
+	public void testBug54531() throws Exception
+	{
+		Iterator i = parse( "typedef enum _A {} A, *pA;" ).getDeclarations();
+		IASTTypedefDeclaration theEnum  = (IASTTypedefDeclaration) i.next();
+		assertEquals( theEnum.getName(), "A");
+		IASTTypedefDeclaration thePointer = (IASTTypedefDeclaration) i.next();
+		assertEquals( thePointer.getName(), "pA" );
+		assertFalse( i.hasNext() );
+	}
+
 }

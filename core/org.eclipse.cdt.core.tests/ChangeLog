@@ -1,3 +1,6 @@
+2003-03-22 John Camelon
+	Added CompleteParseASTTest::testBug54531(). 
+
 2003-03-22 Andrew Niefer
 	Typedefs & templates
 	- added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTypedefedTemplate()

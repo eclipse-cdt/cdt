@@ -1,3 +1,6 @@
+2003-12-09 Hoda Amer
+	Added a method to return the created class element to the class wizard.
+	
 2003-11-14 David Inglis
 	Fixed bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=46685
 	

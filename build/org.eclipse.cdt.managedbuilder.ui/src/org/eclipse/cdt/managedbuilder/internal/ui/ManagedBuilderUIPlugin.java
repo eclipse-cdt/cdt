@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -112,47 +111,6 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}
-
-	/**
-	 * Convenience method to log an exception without displaying a 
-	 * message dialog
-	 * @param e
-	 */
-	public static void logException(Throwable e) {
-		logException(e, null, null);
-	}
-
-	/**
-	 * @param exception
-	 * @param string
-	 * @param string2
-	 */
-	public static void logException(Throwable exception, final String title, String message) {
-		if (exception instanceof InvocationTargetException) {
-			exception = ((InvocationTargetException) exception).getTargetException();
-		}
-		IStatus status = null;
-		if (exception instanceof CoreException)
-			status = ((CoreException) exception).getStatus();
-		else {
-			if (message == null)
-				message = exception.getMessage();
-			if (message == null)
-				message = exception.toString();
-			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, message, exception);
-		}
-		ResourcesPlugin.getPlugin().getLog().log(status);
-		Display display;
-		display = Display.getCurrent();
-		if (display == null)
-			display = Display.getDefault();
-		final IStatus fstatus = status;
-		display.asyncExec(new Runnable() {
-			public void run() {
-				ErrorDialog.openError(null, title, null, fstatus);
-			}
-		});
 	}
 
 	/**

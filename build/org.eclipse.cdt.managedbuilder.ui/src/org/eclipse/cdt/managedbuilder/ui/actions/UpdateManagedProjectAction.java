@@ -22,6 +22,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -373,7 +374,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 				convertConfiguration(newTarget, newParent, (Element) configNodes.item(configIndex), monitor);
 			}
 		} catch (BuildException e) {
-			ManagedBuilderUIPlugin.logException(e);
+			// Probably just a mismatch between option value and option
 		}
 		
 		monitor.worked(1);
@@ -500,20 +501,23 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		IProject[] projects = ManagedBuilderUIPlugin.getWorkspace().getRoot().getProjects();
 		Vector result = new Vector();
 		for (int index = projects.length - 1; index >=0 ; --index) {
-			IProjectDescription description;
-			try {
-				description = projects[index].getDescription();
-			} catch (CoreException e) {
-				continue;
-			}
-			// Make sure it has a managed nature
-			if (description == null || !description.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
-				continue;
-			}
-			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[index]);
-			if (info != null && info.getVersion()== null) {
-				// This is a pre-2.0 file (no version info)
-				result.add(projects[index]);
+			if (projects[index].isAccessible()) {
+				IProjectDescription description;
+				try {
+					description = projects[index].getDescription();
+				} catch (CoreException e) {
+					// This can only mean that something really bad has happened
+					continue;
+				}
+				// Make sure it has a managed nature
+				if (description == null || !description.hasNature(ManagedCProjectNature.MNG_NATURE_ID)) {
+					continue;
+				}
+				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[index]);
+				if (info != null && info.getVersion()== null) {
+					// This is a pre-2.0 file (no version info)
+					result.add(projects[index]);
+				}
 			}
 		}
 
@@ -562,9 +566,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
-			ManagedBuilderUIPlugin.logException(e, 
-					ManagedBuilderUIMessages.getResourceString("ManagedBuilderStartup.update.exception.error"),	//$NON-NLS-1$
-					ManagedBuilderUIMessages.getFormattedString("ManagedBuilderStartup.update.exception.message", project.getName()));	//$NON-NLS-1$
+			CCorePlugin.log(e);	//$NON-NLS-1$
 		}
 	}
 

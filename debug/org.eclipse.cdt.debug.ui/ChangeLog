@@ -1,3 +1,8 @@
+2003-04-05 Alain Magloire
+
+	* CDebugEditor.java
+	Change to make the ContentOutline work.
+
 2003-04-01 Mikhail Khodjaiants
 	Changed the labels of the C/C++ specific actions.
 	* plugin.properties

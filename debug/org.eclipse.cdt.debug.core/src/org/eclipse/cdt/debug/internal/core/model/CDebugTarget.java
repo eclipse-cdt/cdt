@@ -357,7 +357,7 @@ public class CDebugTarget extends CDebugElement
 					{
 					}
 				}
-				breakpointAdded( bps[i] );
+				breakpointAdded0( bps[i] );
 			}
 		}
 	}
@@ -678,6 +678,13 @@ public class CDebugTarget extends CDebugElement
 		if ( !(breakpoint instanceof ICBreakpoint) || 
 			 !getBreakpointManager().isTargetBreakpoint( (ICBreakpoint)breakpoint ) || 
 			 !isAvailable() )
+			return;
+		breakpointAdded0( breakpoint );
+	}
+
+	private void breakpointAdded0( IBreakpoint breakpoint )
+	{
+		if ( !isAvailable() )
 			return;
 		if ( breakpoint instanceof ICAddressBreakpoint && !getBreakpointManager().supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint ) )
 			return;

@@ -1,4 +1,9 @@
 2003-11-26 Mikhail Khodjaiants
+	Extracted the main part of the 'breakpointAdded' method into a separate method to avoid 
+	double checking.
+	* CDebugTarget.java
+
+2003-11-26 Mikhail Khodjaiants
 	Cleanup.
 	* CDebugModel.java
 	* CDebugUtils.java

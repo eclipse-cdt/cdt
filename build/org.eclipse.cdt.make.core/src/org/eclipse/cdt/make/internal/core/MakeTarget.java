@@ -44,7 +44,7 @@ public class MakeTarget implements IMakeTarget {
 		isStopOnError = info.isStopOnError();
 	}
 
-	void setContainer(IContainer container) {
+	public void setContainer(IContainer container) {
 		this.container = container;
 	}
 

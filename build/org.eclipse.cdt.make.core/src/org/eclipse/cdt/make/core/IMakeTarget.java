@@ -33,7 +33,20 @@ public interface IMakeTarget {
 	String getBuildArguments();
 	void setBuildArguments(String arguments);
 	
+	
+	/**
+	 * Get the target build container.
+	 * 
+	 * @return IContainer of where target build will be invoked. 
+	 */
 	IContainer getContainer();
+	
+	/**
+	 * Make this target temporary on the container, this target will not be persisted, 
+	 * and may not be added to the IMakeTargetManager. 
+	 * @param container
+	 */
+	void setContainer(IContainer container);
 	
 	void build(IProgressMonitor monitor) throws CoreException;
 }

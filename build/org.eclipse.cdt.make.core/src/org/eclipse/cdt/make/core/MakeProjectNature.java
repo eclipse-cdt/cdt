@@ -16,14 +16,13 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class MakeProjectNature implements IProjectNature {
 	
 	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeNature"; //$NON-NLS-1$
 	private IProject fProject;
 
-	public static void addNature(IProject project, SubProgressMonitor monitor) throws CoreException {
+	public static void addNature(IProject project, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] prevNatures= description.getNatureIds();
 		for (int i= 0; i < prevNatures.length; i++) {

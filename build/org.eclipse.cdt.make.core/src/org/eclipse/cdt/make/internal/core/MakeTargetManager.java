@@ -66,6 +66,9 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
 		}
+		if ( target.getContainer() != null) {
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.add_temporary_target"), null)); //$NON-NLS-1$
+		}
 		IProject project = container.getProject();
 		ProjectTargets projectTargets = (ProjectTargets) projectMap.get(project);
 		if (projectTargets == null) {

@@ -178,6 +178,11 @@ public class SignalsView extends AbstractDebugEventHandlerView
 			}
 		}
 
+		if ( getViewer() == null )
+		{
+			return;
+		}
+
 		Object current = getViewer().getInput();
 		if ( current != null && current.equals( sm ) )
 		{

@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -209,8 +210,13 @@ public class CVisitor {
 		} else {
 		    type = getExpressionType( fieldOwner );
 		}
-	    while( type != null && type instanceof ITypedef )
-			type = ((ITypedef)type).getType();
+	    while( type != null && (type instanceof ITypedef || type instanceof ICPointerType)) {
+	    	if (type instanceof ITypedef) {
+	    		type = ((ITypedef)type).getType();
+	    	} else if (type instanceof ICPointerType) {
+	    		type = ((ICPointerType)type).getType();
+	    	}
+	    }
 		
 		if( type != null && type instanceof ICompositeType ){
 			return ((ICompositeType) type).findField( fieldReference.getFieldName().toString() );

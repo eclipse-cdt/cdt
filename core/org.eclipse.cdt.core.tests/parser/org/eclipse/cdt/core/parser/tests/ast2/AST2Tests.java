@@ -340,7 +340,9 @@ public class AST2Tests extends AST2BaseTest {
     	ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
     	ICompositeType str2 = (ICompositeType) nameA2.resolveBinding();
     	IVariable var = (IVariable) namea.resolveBinding();
-    	ICompositeType str3 = (ICompositeType) var.getType();
+    	IType str3pointer = var.getType();
+    	assertTrue(str3pointer instanceof IPointerType);
+    	ICompositeType str3 = (ICompositeType) ((IPointerType)str3pointer).getType();
     	ICompositeType str4 = (ICompositeType) nameA3.resolveBinding();
     	assertNotNull( str1 );
     	assertNotNull( str2 );
@@ -383,7 +385,8 @@ public class AST2Tests extends AST2BaseTest {
     	ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
     	ICompositeType str2 = (ICompositeType) nameA2.resolveBinding();
     	IVariable var = (IVariable) namea.resolveBinding();
-    	ICompositeType str3 = (ICompositeType) var.getType();
+    	IPointerType str3pointer = (IPointerType) var.getType();
+    	ICompositeType str3 = (ICompositeType) str3pointer.getType();
     	assertNotNull( str1 );
     	assertSame( str1, str2 );
     	assertSame( str2, str3 );
@@ -440,7 +443,8 @@ public class AST2Tests extends AST2BaseTest {
 		//bindings
 		IVariable var_a1 = (IVariable) name_aref.resolveBinding();
 		IVariable var_i1 = (IVariable) name_iref.resolveBinding();
-		ICompositeType structA_1 = (ICompositeType) var_a1.getType();
+		IPointerType structA_1pointer = (IPointerType) var_a1.getType();
+		ICompositeType structA_1 = (ICompositeType) structA_1pointer.getType();
 		ICompositeType structA_2 = (ICompositeType) name_A1.resolveBinding();
 		ICompositeType structA_3 = (ICompositeType) name_A2.resolveBinding();
 		ICompositeType structA_4 = (ICompositeType) name_Adef.resolveBinding();
@@ -876,11 +880,14 @@ public class AST2Tests extends AST2BaseTest {
          
     }
     
-    public void _testBasicTypes() throws Exception {
+    public void testBasicTypes() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append( "int a;       \n" ); //$NON-NLS-1$
         buffer.append( "char * b;    \n" ); //$NON-NLS-1$
         buffer.append( "const int c; \n" ); //$NON-NLS-1$
+        buffer.append( "const char * const d; \n" ); //$NON-NLS-1$
+        buffer.append( "const char ** e; \n" ); //$NON-NLS-1$
+        buffer.append( "const char ***** f; \n" ); //$NON-NLS-1$
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
@@ -890,26 +897,77 @@ public class AST2Tests extends AST2BaseTest {
         IVariable b = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
         decl = (IASTSimpleDeclaration) tu.getDeclarations()[2];
         IVariable c = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[3];
+        IVariable d = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[4];
+        IVariable e = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
+        decl = (IASTSimpleDeclaration) tu.getDeclarations()[5];
+        IVariable f = (IVariable) decl.getDeclarators()[0].getName().resolveBinding();
         
         IType t_a_1 = a.getType();
         assertTrue( t_a_1 instanceof IBasicType );
+        assertFalse( ((IBasicType)t_a_1).isLong() );
+        assertFalse( ((IBasicType)t_a_1).isShort() );
+        assertFalse( ((IBasicType)t_a_1).isSigned() );
+        assertFalse( ((IBasicType)t_a_1).isUnsigned() );
+        assertEquals( ((IBasicType)t_a_1).getType(), IBasicType.t_int );
         
         IType t_b_1 = b.getType();
         assertTrue( t_b_1 instanceof IPointerType );
         IType t_b_2 = ((IPointerType) t_b_1).getType();
         assertTrue( t_b_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_b_2).getType(), IBasicType.t_char );
 
         IType t_c_1 = c.getType();
         assertTrue( t_c_1 instanceof IQualifierType );
-        assertTrue( ((IQualifierType)t_c_1).isConst());
+        assertTrue( ((IQualifierType)t_c_1).isConst() );
         IType t_c_2 = ((IQualifierType)t_c_1).getType();
         assertTrue( t_c_2 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_c_2).getType(), IBasicType.t_int );
+        
+        IType t_d_1 = d.getType();
+        assertTrue( t_d_1 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_d_1).isConst() );
+        IType t_d_2 = ((IPointerType)t_d_1).getType();
+        assertTrue( t_d_2 instanceof IQualifierType );
+        assertTrue( ((IQualifierType)t_d_2).isConst() );
+        IType t_d_3 = ((IQualifierType)t_d_2).getType();
+        assertTrue( t_d_3 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_d_3).getType(), IBasicType.t_char );
+        
+        IType t_e_1 = e.getType();
+        assertTrue( t_e_1 instanceof IPointerType );
+        IType t_e_2 = ((IPointerType)t_e_1).getType();
+        assertTrue( t_e_2 instanceof IPointerType );
+        IType t_e_3 = ((IPointerType)t_e_2).getType();
+        assertTrue( t_e_3 instanceof IQualifierType );
+        assertTrue( ((IQualifierType)t_e_3).isConst() );
+        IType t_e_4 = ((IQualifierType)t_e_3).getType();
+        assertTrue( t_e_4 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_e_4).getType(), IBasicType.t_char );
+        
+        IType t_f_1 = f.getType();
+        assertTrue( t_f_1 instanceof IPointerType );
+        IType t_f_2 = ((IPointerType)t_f_1).getType();
+        assertTrue( t_f_2 instanceof IPointerType );
+        IType t_f_3 = ((IPointerType)t_f_2).getType();
+        assertTrue( t_f_2 instanceof IPointerType );
+        IType t_f_4 = ((IPointerType)t_f_3).getType();
+        assertTrue( t_f_2 instanceof IPointerType );
+        IType t_f_5 = ((IPointerType)t_f_4).getType();
+        assertTrue( t_f_2 instanceof IPointerType );
+        IType t_f_6 = ((IPointerType)t_f_5).getType();
+        assertTrue( t_f_6 instanceof IQualifierType );
+        assertTrue( ((IQualifierType)t_f_6).isConst() );
+        IType t_f_7 = ((IQualifierType)t_f_6).getType();
+        assertTrue( t_f_7 instanceof IBasicType );
+        assertEquals( ((IBasicType)t_f_7).getType(), IBasicType.t_char );
     }
     
-    public void _testCompositeTypes() throws Exception{
+    public void testCompositeTypes() throws Exception{
         StringBuffer buffer = new StringBuffer();
         buffer.append( "struct A {} a1;              \n"); //$NON-NLS-1$
-        buffer.append( "typedef A * AP;              \n"); //$NON-NLS-1$
+        buffer.append( "typedef struct A * AP;       \n"); //$NON-NLS-1$
         buffer.append( "struct A * const a2;         \n"); //$NON-NLS-1$
         buffer.append( "AP a3;                       \n"); //$NON-NLS-1$
         

@@ -18,11 +18,16 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
 
 /**
  * Created on Nov 5, 2004
@@ -66,15 +71,75 @@ public class CVariable implements IVariable {
 		IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) declarator.getParent();
 		IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
 		if( declSpec instanceof ICASTTypedefNameSpecifier ){
+			IType lastType = null;
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-			return (IType) nameSpec.getName().resolveBinding();
+			lastType = (IType) nameSpec.getName().resolveBinding();			
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+			
+			return lastType;
 		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+			IType lastType = null;
 			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
-			return (IType) elabTypeSpec.getName().resolveBinding();
+			lastType = (IType) elabTypeSpec.getName().resolveBinding();
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+			
+			return lastType;
 		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+			IType lastType = null;
 			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
-			return (IType) compTypeSpec.getName().resolveBinding();
+			lastType = (IType) compTypeSpec.getName().resolveBinding();
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+			
+			return lastType;
+		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
+			IType lastType = null;
+			if (declSpec.isConst() || declSpec.isVolatile() || ((ICASTSimpleDeclSpecifier)declSpec).isRestrict())
+				lastType = new CQualifierType((ICASTDeclSpecifier)declSpec);
+			else						
+				lastType = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+
+			return lastType;
 		}
+		return null;
+	}
+	
+	private IType setupPointerChain(IASTPointerOperator[] ptrs, IType lastType) {
+		CPointerType pointerType = null;
+		
+		if ( ptrs != null && ptrs.length > 0 ) {
+			pointerType = new CPointerType();
+											
+			if (ptrs.length == 1) {
+				pointerType.setType(lastType);
+				pointerType.setPointer((ICASTPointer)ptrs[0]);
+			} else {
+				CPointerType tempType = new CPointerType();
+				pointerType.setType(tempType);
+				pointerType.setPointer((ICASTPointer)ptrs[0]);
+				for (int i=1; i<ptrs.length - 1; i++) {
+					tempType.setType(new CPointerType());
+					tempType.setPointer((ICASTPointer)ptrs[i]);
+					tempType = (CPointerType)tempType.getType();
+				}					
+				tempType.setType(lastType);
+			}
+			
+			return pointerType;
+		}
+		
 		return null;
 	}
 

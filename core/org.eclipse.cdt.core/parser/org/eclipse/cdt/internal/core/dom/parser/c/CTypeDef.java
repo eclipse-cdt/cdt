@@ -11,16 +11,22 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 
 /**
  * Created on Nov 8, 2004
@@ -44,11 +50,76 @@ public class CTypeDef implements ITypedef {
 		IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) declarator.getParent();
 		
 		IASTDeclSpecifier declSpec = declaration.getDeclSpecifier();
-		if( declSpec instanceof ICASTCompositeTypeSpecifier ){
-			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
-			return (IType) compTypeSpec.getName().resolveBinding();
-		}
+		if( declSpec instanceof ICASTTypedefNameSpecifier ){
+			IType lastType = null;
+			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
+			lastType = (IType) nameSpec.getName().resolveBinding();			
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
 
+			if (pointerChain != null) return pointerChain;
+			
+			return lastType;
+		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+			IType lastType = null;
+			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
+			lastType = (IType) elabTypeSpec.getName().resolveBinding();
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+			
+			return lastType;
+		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+			IType lastType = null;
+			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
+			lastType = (IType) compTypeSpec.getName().resolveBinding();
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+			
+			return lastType;
+		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
+			IType lastType = null;
+			if (declSpec.isConst() || declSpec.isVolatile() || ((ICASTSimpleDeclSpecifier)declSpec).isRestrict())
+				lastType = new CQualifierType((ICASTDeclSpecifier)declSpec);
+			else						
+				lastType = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+			
+			IType pointerChain = setupPointerChain(declarator.getPointerOperators(), lastType);
+
+			if (pointerChain != null) return pointerChain;
+
+			return lastType;
+		}
+		return null;
+	}
+
+	private IType setupPointerChain(IASTPointerOperator[] ptrs, IType lastType) {
+		CPointerType pointerType = null;
+		
+		if ( ptrs != null && ptrs.length > 0 ) {
+			pointerType = new CPointerType();
+											
+			if (ptrs.length == 1) {
+				pointerType.setType(lastType);
+				pointerType.setPointer((ICASTPointer)ptrs[0]);
+			} else {
+				CPointerType tempType = new CPointerType();
+				pointerType.setType(tempType);
+				pointerType.setPointer((ICASTPointer)ptrs[0]);
+				for (int i=1; i<ptrs.length - 1; i++) {
+					tempType.setType(new CPointerType());
+					tempType.setPointer((ICASTPointer)ptrs[i]);
+					tempType = (CPointerType)tempType.getType();
+				}					
+				tempType.setType(lastType);
+			}
+			
+			return pointerType;
+		}
+		
 		return null;
 	}
 

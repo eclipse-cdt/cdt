@@ -210,6 +210,9 @@ public class AST2BaseTest extends TestCase {
 
     protected void assertInstances( CNameCollector collector, IBinding binding, int num ) throws Exception {
         int count = 0;
+        
+        if (binding == null) assertTrue(false);
+        
         for( int i = 0; i < collector.size(); i++ )
             if( collector.getName( i ).resolveBinding() == binding )
                 count++;

@@ -20,7 +20,6 @@ import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
-import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
@@ -31,13 +30,18 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 	private final static String[] keywords = { "define", "endef", "ifdef", "ifndef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"ifeq", "ifneq", "else", "endif", "include", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		"-include", "sinclude", "override", "endef", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"export", "unexport", "vpath" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		"export", "unexport", "vpath" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	};
+
 	private final static String[] functions = { "subst", "patsubst", "strip", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		"findstring", "filter", "sort", "dir", "notdir", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		"suffix", "basename", "addsuffix", "addprefix", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"join", "word", "words", "wordlist", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		"firstword", "wildcard", "error", "warning", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		"shell", "origin", "foreach", "call" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		"shell", "origin", "foreach", "call" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	};
+
+
 	/**
 	 * Constructor for MakefileCodeScanner
 	 */
@@ -53,7 +57,7 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 		List rules = new ArrayList();
 
 		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("#", comment)); //$NON-NLS-1$
+		rules.add(new EndOfLineRule("#", comment, '\\')); //$NON-NLS-1$
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {
@@ -63,7 +67,7 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 		}));
 
 		// Add word rule for keywords, types, and constants.
-		WordRule wordRule = new WordRule(new MakefileWordDetector(), Token.UNDEFINED);
+		WordRule wordRule = new WordRule(new MakefileWordDetector(), other);
 		for (int i = 0; i < keywords.length; i++)
 			wordRule.addWord(keywords[i], keyword);
 		for (int i = 0; i < functions.length; i++)
@@ -71,9 +75,12 @@ public class MakefileCodeScanner extends RuleBasedScanner {
 
 		rules.add(wordRule);
 
-		rules.add(new PatternRule("$(", ")", macro, '\\', true)); //$NON-NLS-1$ //$NON-NLS-2$
+		//rules.add(new PatternRule("$(", ")", macro, '\\', true)); //$NON-NLS-1$ //$NON-NLS-2$
+		rules.add(new MakefileSimpleMacroRule(macro)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		rules.add(new MacroRule(macro, other));
+
+		setDefaultReturnToken(other);
 
 		IRule[] result = new IRule[rules.size()];
 

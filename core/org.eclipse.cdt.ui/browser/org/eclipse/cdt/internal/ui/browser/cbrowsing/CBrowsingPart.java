@@ -57,8 +57,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.Assert;
@@ -102,6 +100,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public abstract class CBrowsingPart extends ViewPart implements IMenuListener, ISelectionListener, IViewPartInputProvider {
@@ -759,7 +758,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					for (int j = 0; j < enclosedTypes.length; ++j) {
 						ITypeInfo enclosedType = enclosedTypes[j];
 						if (enclosedType.getResolvedReference() != null) {
-							ICElement typeElem = enclosedType.getResolvedReference().getCElement();
+							ICElement typeElem = enclosedType.getCElement();
 							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
 								return namespaces[i];
 							}
@@ -820,10 +819,11 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					for (int j = 0; j < enclosedTypes.length; ++j) {
 						ITypeInfo enclosedType = enclosedTypes[j];
 						if (enclosedType.getResolvedReference() != null) {
-							ICElement typeElem = enclosedType.getResolvedReference().getCElement();
-							if (typeElem != null && typeElem.equals(cElem)) {
+							ICElement typeElem = enclosedType.getCElement();
+							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
 								return enclosedType;
 							}
+							
 						}
 					}
 				}
@@ -1221,9 +1221,9 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 				}
 			};
 			
-			IRunnableContext runnableContext = new ProgressMonitorDialog(getShell());
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			try {
-				runnableContext.run(true, true, runnable);
+				service.busyCursorWhile(runnable);
 			} catch (InvocationTargetException e) {
 				String title = OpenTypeMessages.getString("OpenTypeAction.exception.title"); //$NON-NLS-1$
 				String message = OpenTypeMessages.getString("OpenTypeAction.exception.message"); //$NON-NLS-1$
@@ -1250,13 +1250,13 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		}
 	}
 
-	protected boolean openInEditor(ITypeReference location) {
-		ICElement cElement = location.getCElement();
+	private boolean openInEditor(ITypeReference location) {
+		ITranslationUnit unit = location.getTranslationUnit();
 		IEditorPart editorPart = null;
 		
 		try {
-			if (cElement != null)
-				editorPart = EditorUtility.openInEditor(cElement);
+			if (unit != null)
+				editorPart = EditorUtility.openInEditor(unit);
 			if (editorPart == null) {
 				// open as external file
 				IPath path = location.getLocation();
@@ -1265,8 +1265,13 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					editorPart = EditorUtility.openInEditor(storage);
 				}
 			}
-			if (editorPart == null)
-				return false;
+
+			// highlight the type in the editor
+			if (editorPart != null && editorPart instanceof ITextEditor) {
+				ITextEditor editor = (ITextEditor) editorPart;
+				editor.selectAndReveal(location.getOffset(), location.getLength());
+				return true;
+			}
 		} catch (CModelException ex) {
 			ex.printStackTrace();
 			return false;
@@ -1275,16 +1280,6 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 			return false;
 		}
 		
-		// highlight the type in the editor
-		if (cElement != null && editorPart instanceof CEditor) {
-			CEditor editor = (CEditor) editorPart;
-			editor.setSelection(cElement);
-			return true;
-		} else if (editorPart instanceof ITextEditor) {
-			ITextEditor editor = (ITextEditor) editorPart;
-			editor.selectAndReveal(location.getOffset(), location.getLength());
-			return true;
-		}
 		return false;
 	}
 

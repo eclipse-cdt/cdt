@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
@@ -28,8 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -37,6 +35,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
@@ -62,9 +62,9 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 				}
 			};
 			
-			IRunnableContext runnableContext = new ProgressMonitorDialog(getShell());
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			try {
-				runnableContext.run(true, true, runnable);
+				service.busyCursorWhile(runnable);
 			} catch (InvocationTargetException e) {
 				String title = OpenTypeMessages.getString("OpenTypeAction.exception.title"); //$NON-NLS-1$
 				String message = OpenTypeMessages.getString("OpenTypeAction.exception.message"); //$NON-NLS-1$
@@ -106,9 +106,9 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 				}
 			};
 			
-			IRunnableContext runnableContext = new ProgressMonitorDialog(getShell());
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			try {
-				runnableContext.run(true, true, runnable);
+				service.busyCursorWhile(runnable);
 			} catch (InvocationTargetException e) {
 				String title = OpenTypeMessages.getString("OpenTypeAction.exception.title"); //$NON-NLS-1$
 				String message = OpenTypeMessages.getString("OpenTypeAction.exception.message"); //$NON-NLS-1$
@@ -146,12 +146,12 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 	 * @return true if succesfully displayed.
 	 */
 	private boolean openTypeInEditor(ITypeReference location) {
-		ICElement cElement = location.getCElement();
+		ITranslationUnit unit = location.getTranslationUnit();
 		IEditorPart editorPart = null;
 		
 		try {
-			if (cElement != null)
-				editorPart = EditorUtility.openInEditor(cElement);
+			if (unit != null)
+				editorPart = EditorUtility.openInEditor(unit);
 			if (editorPart == null) {
 				// open as external file
 				IPath path = location.getLocation();

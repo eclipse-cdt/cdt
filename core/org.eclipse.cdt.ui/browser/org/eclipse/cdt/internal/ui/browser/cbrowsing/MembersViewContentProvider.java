@@ -24,12 +24,12 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 
 class MembersViewContentProvider extends CBrowsingContentProvider {
 
@@ -165,10 +165,10 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 					}
 				}
 			};
-			
-			IRunnableContext runnableContext = new ProgressMonitorDialog(getShell());
+
+			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			try {
-				runnableContext.run(true, true, runnable);
+				service.busyCursorWhile(runnable);
 			} catch (InvocationTargetException e) {
 				String title = OpenTypeMessages.getString("OpenTypeAction.exception.title"); //$NON-NLS-1$
 				String message = OpenTypeMessages.getString("OpenTypeAction.exception.message"); //$NON-NLS-1$
@@ -184,7 +184,7 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 	
 		ICElement elem = null;
 		if (location != null)
-			elem = location.getCElement();
+			elem = info.getCElement();
 
 		if (elem == null) {
 			// could not resolve location

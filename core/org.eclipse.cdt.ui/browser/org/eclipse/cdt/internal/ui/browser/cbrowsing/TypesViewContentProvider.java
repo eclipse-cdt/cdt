@@ -77,9 +77,10 @@ class TypesViewContentProvider extends CBrowsingContentProvider {
 			
 			if (element instanceof ITypeInfo) {
 				ITypeInfo info = (ITypeInfo)element;
-				final int kinds[] = { ICElement.C_CLASS, ICElement.C_STRUCT };
-//						ICElement.C_UNION, ICElement.C_ENUMERATION,
-//						ICElement.C_TYPEDEF};
+				final int kinds[] = { ICElement.C_CLASS, ICElement.C_STRUCT,
+						ICElement.C_UNION, ICElement.C_ENUMERATION,
+						ICElement.C_TYPEDEF};
+				//TODO this should be a prefs option
 				return info.getEnclosedTypes(kinds);
 			}
 

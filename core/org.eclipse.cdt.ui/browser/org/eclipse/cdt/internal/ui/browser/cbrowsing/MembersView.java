@@ -116,7 +116,7 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	protected boolean isValidInput(Object element) {
 		if (element instanceof ITypeInfo) {
 			ITypeInfo type= (ITypeInfo)element;
-			if (type.getCElementType() == ICElement.C_NAMESPACE && exists(type))
+			if (type.getCElementType() != ICElement.C_NAMESPACE && exists(type))
 				return true;
 		}
 		return false;

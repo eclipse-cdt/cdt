@@ -642,13 +642,16 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	      	
 	      	if (newProblem){
 		        IMarker marker = tempFile.createMarker(ICModelMarker.INDEXER_MARKER);
-		 		
+		 		int start = problem.getSourceStart();
+		 		int end = problem.getSourceEnd();
+		 		if( end <= start )
+		 			end = start + 1;
 				marker.setAttribute(IMarker.LOCATION, problem.getSourceLineNumber());
 				marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + problem.getMessage());
 				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 				marker.setAttribute(IMarker.LINE_NUMBER, problem.getSourceLineNumber());
-				marker.setAttribute(IMarker.CHAR_START, problem.getSourceStart());
-				marker.setAttribute(IMarker.CHAR_END, problem.getSourceEnd());	
+				marker.setAttribute(IMarker.CHAR_START, start);
+				marker.setAttribute(IMarker.CHAR_END, end);	
 				marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString() );
 	      	}
 			

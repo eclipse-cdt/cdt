@@ -55,10 +55,11 @@ public class IndexerModelListener implements IElementChangedListener {
 		int flags= delta.getFlags();
 		ICElement element= delta.getElement();
 		
-		switch(delta.getKind()){		
+		switch(kind){		
 			case ICElementDelta.CHANGED:
 				if ((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0 ||
-					(flags & ICElementDelta.F_CHANGED_PATHENTRY_MACRO) != 0){
+					(flags & ICElementDelta.F_CHANGED_PATHENTRY_MACRO) != 0 ||
+					(flags & ICElementDelta.F_ADDED_PATHENTRY_SOURCE) != 0 ){
 					IResource tempResource = element.getResource();
 					SourceRoot tempRootElement = null;
 					
@@ -81,6 +82,12 @@ public class IndexerModelListener implements IElementChangedListener {
 						break;
 					}
 					
+				} else if( (flags & ICElementDelta.F_REMOVED_PATHENTRY_SOURCE) != 0 ){
+					IResource tempResource = element.getResource();
+					IProject project = tempResource.getProject();
+					if( indexManager.indexProblemsEnabled(project) != 0 ){
+						indexManager.removeIndexerProblems( tempResource );
+					}
 				}
 			break;			
 		}

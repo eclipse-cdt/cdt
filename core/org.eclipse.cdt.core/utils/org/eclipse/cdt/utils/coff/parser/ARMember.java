@@ -29,7 +29,7 @@ public class ARMember extends BinaryObject {
 	PEArchive.ARHeader header;
 
 	public ARMember(IPath p, PEArchive.ARHeader h) throws IOException {
-		super(p);
+		super(p, h.getPE());
 		header = h;
 	}
 

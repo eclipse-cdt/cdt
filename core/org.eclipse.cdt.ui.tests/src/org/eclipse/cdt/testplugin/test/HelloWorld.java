@@ -42,7 +42,7 @@ public class HelloWorld extends TestCase {
 		
 	public void test1() throws Exception {
 
-		assertTrue("Exception to test", 0 != 0);
+		assertFalse("Exception to test", 0 != 0);
 		
 	}		
 

@@ -526,7 +526,11 @@ public class ParserSymbolTable {
 						if( obj == null ){
 							obj = foundSymbol;	
 						} else {
-							if( data.isPrefixLookup() ){
+						    if( obj.isForwardDeclaration() && obj.getForwardSymbol() == foundSymbol )
+						        obj = foundSymbol;
+						    else if( foundSymbol.isForwardDeclaration() && foundSymbol.getForwardSymbol() == obj ){
+						        //we already have what we want.
+						    } else if( data.isPrefixLookup() ){
 								data.addAmbiguity( foundSymbol.getName() );
 							} else {
 								throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );

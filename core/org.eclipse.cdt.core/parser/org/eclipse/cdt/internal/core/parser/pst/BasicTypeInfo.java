@@ -202,7 +202,10 @@ public class BasicTypeInfo implements ITypeInfo {
     
     	ITypeInfo type = (ITypeInfo)t;
     
-    	boolean result = ( _typeBits == type.getTypeBits() );
+    	int bits1 = _typeBits & ~isTypedef & ~isForward & ~isStatic & ~isExtern;
+    	int bits2 = type.getTypeBits() & ~isTypedef & ~isForward & ~isStatic & ~isExtern;
+    	boolean result = ( bits1 == bits2 );
+    	
     	result &= ( _type == type.getType() );
     		
 //    	Object def1 = getDefault();

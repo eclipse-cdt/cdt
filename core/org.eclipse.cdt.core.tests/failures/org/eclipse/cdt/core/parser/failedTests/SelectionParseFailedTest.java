@@ -9,10 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.parser.failedTests;
 
-import java.io.StringWriter;
-import java.io.Writer;
-
-import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.tests.SelectionParseBaseTest;
 
 /**
@@ -21,18 +17,6 @@ import org.eclipse.cdt.core.parser.tests.SelectionParseBaseTest;
  */
 public class SelectionParseFailedTest extends SelectionParseBaseTest {
 	
-	public void testBug61800() throws Exception
-	{
-		Writer writer = new StringWriter();
-		writer.write( "class ABCDEF {\n"); //$NON-NLS-1$
-		writer.write( " static int stInt; };\n"); //$NON-NLS-1$
-		writer.write( "int ABCDEF::stInt = 5;\n"); //$NON-NLS-1$
-		String code = writer.toString();
-		int startIndex = code.indexOf( "::stInt") + 2; //$NON-NLS-1$
-		IASTNode node = parse( code, startIndex, startIndex+ 5, false );
-//		IASTNode node = parse( code, startIndex, startIndex+ 5 );
-//		assertTrue( node instanceof IASTField );
-//		assertEquals( ((IASTField)node).getName(), "stInt" ); //$NON-NLS-1$
-	}
+
 	
 }

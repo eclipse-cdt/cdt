@@ -2706,12 +2706,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
 			if( variableDeclaration != null && newSymbol.getType() == variableDeclaration.getType() )
 			{
-				if( !newSymbol.isType( ITypeInfo.t_type ) ||
-					(newSymbol.isType( ITypeInfo.t_type ) && newSymbol.getTypeSymbol() != variableDeclaration.getTypeSymbol() ) )
+			    TypeInfoProvider provider = pst.getTypeInfoProvider();
+			    
+			    ITypeInfo newInfo = newSymbol.getTypeInfo().getFinalType( provider );
+			    ITypeInfo varInfo = variableDeclaration.getTypeInfo().getFinalType( provider );
+			    
+				if( newInfo.equals( varInfo ) )
 				{
 					variableDeclaration.setForwardSymbol( newSymbol );
 					previouslyDeclared = true;
 				}
+				provider.returnTypeInfo( newInfo );
+				provider.returnTypeInfo( varInfo );
 			}
 		}
 		try
@@ -2934,8 +2940,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			
 			if( fieldDeclaration != null && newSymbol.getType() == fieldDeclaration.getType() )
 			{
-				if( !newSymbol.isType( ITypeInfo.t_type ) ||
-					(newSymbol.isType( ITypeInfo.t_type ) && newSymbol.getTypeSymbol() != fieldDeclaration.getTypeSymbol() ) )
+			    TypeInfoProvider provider = pst.getTypeInfoProvider();
+			    
+			    ITypeInfo newInfo = newSymbol.getTypeInfo().getFinalType( provider );
+			    ITypeInfo fieldInfo = fieldDeclaration.getTypeInfo().getFinalType( provider );
+			    
+				if( newInfo.equals( fieldInfo ) )
 				{
 					previouslyDeclared = true;
 					fieldDeclaration.setForwardSymbol( newSymbol );
@@ -2943,6 +2953,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 //					ASTReference reference = (ASTReference) fieldReferences.iterator().next();
 					visibility = ((IASTField)fieldDeclaration.getASTExtension().getPrimaryDeclaration()).getVisiblity();
 				}
+				provider.returnTypeInfo( newInfo );
+				provider.returnTypeInfo( fieldInfo );
 			}
 		}
 		

@@ -464,6 +464,9 @@ public class BasicTokenDuple implements ITokenDuple {
 			}
 			i = i.getNext();
 		}
+		if( i.getType() == IToken.tIDENTIFIER ){
+		    qn.add( i.getImage() );
+		}
 		String [] qualifiedName = new String[ qn.size() ];
 		return (String[]) qn.toArray( qualifiedName );
 	}

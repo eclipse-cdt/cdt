@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -330,5 +331,20 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		String code = writer.toString();
 		int startIndex = code.indexOf( "static_function( file )"); //$NON-NLS-1$
 		parse( code, startIndex, startIndex + "static_function".length() ); //$NON-NLS-1$
+	}
+	
+	public void testBug61800() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class B {};\n"); //$NON-NLS-1$
+		writer.write( "class ABCDEF {\n"); //$NON-NLS-1$
+		writer.write( " static B stInt; };\n"); //$NON-NLS-1$
+		writer.write( "B ABCDEF::stInt = 5;\n"); //$NON-NLS-1$
+		String code = writer.toString();
+		int startIndex = code.indexOf( "::stInt") + 2; //$NON-NLS-1$
+
+		IASTNode node = parse( code, startIndex, startIndex+ 5 );
+		assertTrue( node instanceof IASTField );
+		assertEquals( ((IASTField)node).getName(), "stInt" ); //$NON-NLS-1$
 	}
 }

@@ -15,7 +15,12 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakPointChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakPointCreatedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakPointDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MICreatedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIDestroyedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
@@ -76,15 +81,34 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						blocks[i].setDirty(false);
 					}
 				}
+			} else if (miEvent instanceof MIBreakPointChangedEvent) {
+				MIBreakPointChangedEvent bpoint = (MIBreakPointChangedEvent)miEvent;
+				if (bpoint.getNumber() > 0) {
+					cdiList.add(new ChangedEvent(session, (MIBreakPointChangedEvent)miEvent));
+				} else {
+					// Try to update to figure out what have change.
+					try {
+						((BreakpointManager)(session.getBreakpointManager())).update();
+					} catch (CDIException e) {
+					}
+				}
 			}
-		} else if (miEvent instanceof MIThreadExitEvent) {
-			cdiList.add(new DestroyedEvent(session,(MIThreadExitEvent)miEvent)); 
-		} else if (miEvent instanceof MIInferiorExitEvent) {
-			cdiList.add(new ExitedEvent(session, (MIInferiorExitEvent)miEvent));
-		} else if (miEvent instanceof MIGDBExitEvent) {
-			cdiList.add(new DestroyedEvent(session));
-		} else if (miEvent instanceof MIDetachedEvent) {
-			cdiList.add(new DisconnectedEvent(session));
+		} else if (miEvent instanceof MIDestroyedEvent) {
+			if (miEvent instanceof MIThreadExitEvent) {
+				cdiList.add(new DestroyedEvent(session,(MIThreadExitEvent)miEvent)); 
+			} else if (miEvent instanceof MIInferiorExitEvent) {
+				cdiList.add(new ExitedEvent(session, (MIInferiorExitEvent)miEvent));
+			} else if (miEvent instanceof MIGDBExitEvent) {
+				cdiList.add(new DestroyedEvent(session));
+			} else if (miEvent instanceof MIDetachedEvent) {
+				cdiList.add(new DisconnectedEvent(session));
+			} else if (miEvent instanceof MIBreakPointDeletedEvent) {
+				cdiList.add(new DestroyedEvent(session));
+			}
+		} else if (miEvent instanceof MICreatedEvent) {
+			if (miEvent instanceof MIBreakPointCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MIBreakPointCreatedEvent)miEvent));
+			}
 		}
 
 		// Fire the event;

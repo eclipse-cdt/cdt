@@ -86,6 +86,7 @@ public class CDescriptor implements ICDescriptor {
 
 	boolean fUpdating;
 	boolean isInitializing = true;
+	boolean bDirty = false;
 
 	protected CDescriptor(CDescriptorManager manager, IProject project, String id) throws CoreException {
 		fProject = project;
@@ -102,10 +103,10 @@ public class CDescriptor implements ICDescriptor {
 			String ownerID = readCDTProjectFile(descriptionPath);
 			if (ownerID.equals(id)) {
 				status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
-						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), (Throwable) null); //$NON-NLS-1$
+						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), (Throwable)null); //$NON-NLS-1$
 			} else {
 				status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_MISMATCH,
-						CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId"), (Throwable) null); //$NON-NLS-1$
+						CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId"), (Throwable)null); //$NON-NLS-1$
 			}
 			throw new CoreException(status);
 		}
@@ -195,7 +196,7 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	synchronized public ICExtensionReference[] get(String extensionID) {
-		CExtensionReference[] refs = (CExtensionReference[]) extMap.get(extensionID);
+		CExtensionReference[] refs = (CExtensionReference[])extMap.get(extensionID);
 		if (refs == null)
 			return new ICExtensionReference[0];
 		return refs;
@@ -209,9 +210,7 @@ public class CDescriptor implements ICDescriptor {
 				isInitializing = true;
 				fOwner.update(fProject, this, extensionID);
 				isInitializing = oldIsInitializing;
-				if (!isInitializing) {
-					updateOnDisk();
-				}
+				updateIfDirty();
 				refs = get(extensionID);
 			} catch (CoreException e) {
 			}
@@ -220,7 +219,7 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	private CExtensionReference createRef(String extensionPoint, String extension) {
-		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
+		CExtensionReference extensions[] = (CExtensionReference[])extMap.get(extensionPoint);
 		if (extensions == null) {
 			extensions = new CExtensionReference[1];
 			extMap.put(extensionPoint, extensions);
@@ -239,8 +238,8 @@ public class CDescriptor implements ICDescriptor {
 		CExtensionReference extRef;
 		synchronized (this) {
 			extRef = createRef(extensionPoint, extension);
+			updateOnDisk();
 			if (!isInitializing) {
-				updateOnDisk();
 				fireEvent = true;
 			}
 		}
@@ -253,38 +252,37 @@ public class CDescriptor implements ICDescriptor {
 	synchronized public void remove(ICExtensionReference ext) throws CoreException {
 		boolean fireEvent = false;
 		synchronized (this) {
-		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(ext.getExtension());
-		for (int i = 0; i < extensions.length; i++) {
-			if (extensions[i] == ext) {
-				System.arraycopy(extensions, i, extensions, i + 1, extensions.length - 1 - i);
-				if (extensions.length > 1) {
-					CExtensionReference[] newExtensions = new CExtensionReference[extensions.length - 1];
-					System.arraycopy(extensions, 0, newExtensions, 0, newExtensions.length);
-					extMap.put(ext.getExtension(), newExtensions);
-				} else {
-					extMap.remove(ext.getExtension());
-				}
-				if (!isInitializing) {
+			CExtensionReference extensions[] = (CExtensionReference[])extMap.get(ext.getExtension());
+			for (int i = 0; i < extensions.length; i++) {
+				if (extensions[i] == ext) {
+					System.arraycopy(extensions, i, extensions, i + 1, extensions.length - 1 - i);
+					if (extensions.length > 1) {
+						CExtensionReference[] newExtensions = new CExtensionReference[extensions.length - 1];
+						System.arraycopy(extensions, 0, newExtensions, 0, newExtensions.length);
+						extMap.put(ext.getExtension(), newExtensions);
+					} else {
+						extMap.remove(ext.getExtension());
+					}
 					updateOnDisk();
-					fireEvent = true;
+					if (!isInitializing) {
+						fireEvent = true;
+					}
 				}
 			}
 		}
-		}
 		if (fireEvent) {
-			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED,
-					CDescriptorEvent.EXTENSION_CHANGED));
+			fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 		}
 	}
 
 	public void remove(String extensionPoint) throws CoreException {
 		boolean fireEvent = false;
 		synchronized (this) {
-			CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
+			CExtensionReference extensions[] = (CExtensionReference[])extMap.get(extensionPoint);
 			if (extensions != null) {
 				extMap.remove(extensionPoint);
+				updateOnDisk();
 				if (!isInitializing) {
-					updateOnDisk();
 					fireEvent = true;
 				}
 			}
@@ -295,7 +293,7 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	synchronized CExtensionInfo getInfo(CExtensionReference cProjectExtension) {
-		CExtensionInfo info = (CExtensionInfo) extInfoMap.get(cProjectExtension);
+		CExtensionInfo info = (CExtensionInfo)extInfoMap.get(cProjectExtension);
 		if (info == null) {
 			info = new CExtensionInfo();
 			extInfoMap.put(cProjectExtension, info);
@@ -312,6 +310,7 @@ public class CDescriptor implements ICDescriptor {
 
 			public void run(IProgressMonitor mon) throws CoreException {
 				String xml;
+				bDirty = false;
 				if (!fProject.isAccessible()) {
 					return;
 				}
@@ -355,9 +354,19 @@ public class CDescriptor implements ICDescriptor {
 	boolean isUpdating() {
 		return fUpdating;
 	}
+	
+	void updateIfDirty() {
+		if ( bDirty ) {
+			updateOnDisk();
+		}
+	}
 
 	synchronized void updateOnDisk() {
 		if (isUpdating()) {
+			return;
+		}
+		if (isInitializing) {
+			bDirty = true;
 			return;
 		}
 		fUpdating = true;
@@ -409,13 +418,13 @@ public class CDescriptor implements ICDescriptor {
 				extChanges = false;
 				Iterator entries = extMap.entrySet().iterator();
 				while (entries.hasNext()) {
-					Entry entry = (Entry) entries.next();
+					Entry entry = (Entry)entries.next();
 					if (!origExtMap.containsKey(entry.getKey())) {
 						extChanges = true;
 						break;
 					}
-					CExtensionReference origExt[] = (CExtensionReference[]) origExtMap.get(entry.getKey());
-					CExtensionReference newExt[] = (CExtensionReference[]) entry.getValue();
+					CExtensionReference origExt[] = (CExtensionReference[])origExtMap.get(entry.getKey());
+					CExtensionReference newExt[] = (CExtensionReference[])entry.getValue();
 					if (!Arrays.equals(origExt, newExt)) {
 						extChanges = true;
 						break;
@@ -439,13 +448,13 @@ public class CDescriptor implements ICDescriptor {
 			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				if (childNode.getNodeName().equals(PROJECT_EXTENSION)) {
 					try {
-						decodeProjectExtension((Element) childNode);
+						decodeProjectExtension((Element)childNode);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					}
 				} else if (childNode.getNodeName().equals(PROJECT_DATA)) {
 					try {
-						decodeProjectData((Element) childNode);
+						decodeProjectData((Element)childNode);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					}
@@ -472,19 +481,19 @@ public class CDescriptor implements ICDescriptor {
 		Element element;
 		Iterator extIterator = extMap.values().iterator();
 		while (extIterator.hasNext()) {
-			CExtensionReference extension[] = (CExtensionReference[]) extIterator.next();
+			CExtensionReference extension[] = (CExtensionReference[])extIterator.next();
 			for (int i = 0; i < extension.length; i++) {
 				configRootElement.appendChild(element = doc.createElement(PROJECT_EXTENSION));
 				element.setAttribute(PROJECT_EXTENSION_ATTR_POINT, extension[i].getExtension());
 				element.setAttribute(PROJECT_EXTENSION_ATTR_ID, extension[i].getID());
-				CExtensionInfo info = (CExtensionInfo) extInfoMap.get(extension[i]);
+				CExtensionInfo info = (CExtensionInfo)extInfoMap.get(extension[i]);
 				if (info != null) {
 					Iterator attribIterator = info.getAttributes().entrySet().iterator();
 					while (attribIterator.hasNext()) {
-						Entry entry = (Entry) attribIterator.next();
+						Entry entry = (Entry)attribIterator.next();
 						Element extAttributes = doc.createElement(PROJECT_EXTENSION_ATTRIBUTE);
-						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY, (String) entry.getKey());
-						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE, (String) entry.getValue());
+						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY, (String)entry.getKey());
+						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE, (String)entry.getValue());
 						element.appendChild(extAttributes);
 					}
 				}
@@ -520,13 +529,13 @@ public class CDescriptor implements ICDescriptor {
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
 			if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
-				cExtension = (InternalCExtension) element[i].createExecutableExtension("run"); //$NON-NLS-1$
+				cExtension = (InternalCExtension)element[i].createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtenionReference(ext);
 				cExtension.setProject(fProject);
 				break;
 			}
 		}
-		return (ICExtension) cExtension;
+		return (ICExtension)cExtension;
 	}
 
 	protected IConfigurationElement[] getConfigurationElement(ICExtensionReference ext) throws CoreException {
@@ -549,7 +558,7 @@ public class CDescriptor implements ICDescriptor {
 	public Element getProjectData(String id) throws CoreException {
 		NodeList nodes = getProjectDataDoc().getDocumentElement().getElementsByTagName(PROJECT_DATA_ITEM);
 		for (int i = 0; i < nodes.getLength(); ++i) {
-			Element element = (Element) nodes.item(i);
+			Element element = (Element)nodes.item(i);
 			if (element.getAttribute(PROJECT_DATA_ID).equals(id))
 				return element;
 		}
@@ -593,7 +602,7 @@ public class CDescriptor implements ICDescriptor {
 			Element dataElements = dataDoc.getDocumentElement();
 			NodeList nodes = dataElements.getElementsByTagName(PROJECT_DATA_ITEM);
 			for (int i = 0; i < nodes.getLength(); ++i) {
-				Element item = (Element) nodes.item(i);
+				Element item = (Element)nodes.item(i);
 				if (!item.hasChildNodes()) { // remove any empty item tags
 					dataElements.removeChild(item);
 					i--; //nodeList is live.... removeal changes nodelist

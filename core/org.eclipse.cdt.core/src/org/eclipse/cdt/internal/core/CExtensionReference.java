@@ -57,8 +57,8 @@ public class CExtensionReference implements ICExtensionReference {
 	
 	public void setExtensionData(String key, String value) throws CoreException {
 		getInfo().setAttribute(key, value);
+		fDescriptor.updateOnDisk();
 		if (!fDescriptor.isInitializing) {
-			fDescriptor.updateOnDisk();
 			fDescriptor.fManager.fireEvent(new CDescriptorEvent(fDescriptor, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 		}
 	}

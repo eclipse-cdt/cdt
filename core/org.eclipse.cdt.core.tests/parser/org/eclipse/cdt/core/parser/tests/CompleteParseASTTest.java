@@ -2433,5 +2433,52 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write("#endif\r\n"); //$NON-NLS-1$
     	parse(writer.toString());
     }
+    
+    public void testBug78165() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("struct Node {\n"); //$NON-NLS-1$
+    	writer.write("struct Node* Next; // OK: Refers to Node at global scope\n"); //$NON-NLS-1$
+    	writer.write("struct Data* Data; // OK: Declares type Data at global scope and member Data\n"); //$NON-NLS-1$
+    	writer.write("};\n"); //$NON-NLS-1$
+    	writer.write("struct Data {\n"); //$NON-NLS-1$
+    	writer.write("struct Node* Node; // OK: Refers to Node at global scope\n"); //$NON-NLS-1$
+    	writer.write("friend struct Glob; // OK: Refers to (as yet) undeclared Glob at global scope.\n"); //$NON-NLS-1$
+    	writer.write("};\n"); //$NON-NLS-1$
+    	writer.write("struct Base {\n"); //$NON-NLS-1$
+    	writer.write("struct Data; // OK: Declares nested Data\n"); //$NON-NLS-1$
+    	writer.write("struct ::Data* thatData; // OK: Refers to ::Data\n"); //$NON-NLS-1$
+    	writer.write("struct Base::Data* thisData; // OK: Refers to nested Data\n"); //$NON-NLS-1$
+    	writer.write("friend class ::Data; // OK: global Data is a friend\n"); //$NON-NLS-1$
+    	writer.write("friend class Data; // OK: nested Data is a friend\n"); //$NON-NLS-1$
+    	writer.write("struct Data { /* ... */ }; // Defines nested Data\n"); //$NON-NLS-1$
+    	writer.write("struct Data; // OK: Redeclares nested Data\n"); //$NON-NLS-1$
+    	writer.write("};\n"); //$NON-NLS-1$
+    	writer.write("struct Data; // OK: Redeclares Data at global scope\n"); //$NON-NLS-1$
+    	writer.write("struct Base::Data* pBase; // OK: refers to nested Data\n"); //$NON-NLS-1$
+
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	IASTAbstractTypeSpecifierDeclaration node = (IASTAbstractTypeSpecifierDeclaration)i.next();
+    	assertEquals(node.getStartingLine(), 1);
+    	assertTrue(node.getTypeSpecifier() instanceof IASTClassSpecifier);
+    	IASTClassSpecifier typeSpec = (IASTClassSpecifier)node.getTypeSpecifier();
+    	assertEquals(typeSpec.getName(), "Node"); //$NON-NLS-1$
+    	IASTAbstractTypeSpecifierDeclaration data = (IASTAbstractTypeSpecifierDeclaration)i.next();
+    	assertEquals(data.getStartingLine(), 5);
+    	assertTrue(data.getTypeSpecifier() instanceof IASTClassSpecifier);
+    	typeSpec = (IASTClassSpecifier)data.getTypeSpecifier();
+    	assertEquals(typeSpec.getName(), "Data"); //$NON-NLS-1$
+    	IASTAbstractTypeSpecifierDeclaration base = (IASTAbstractTypeSpecifierDeclaration)i.next();
+    	assertEquals(base.getStartingLine(), 9);
+    	assertTrue(base.getTypeSpecifier() instanceof IASTClassSpecifier);
+    	typeSpec = (IASTClassSpecifier)base.getTypeSpecifier();
+    	assertEquals(typeSpec.getName(), "Base"); //$NON-NLS-1$
+    	IASTAbstractTypeSpecifierDeclaration data2 = (IASTAbstractTypeSpecifierDeclaration)i.next();
+    	assertEquals(data2.getStartingLine(), 18);
+    	assertTrue(data2.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier);
+    	IASTElaboratedTypeSpecifier typeSpec2 = (IASTElaboratedTypeSpecifier)data2.getTypeSpecifier();
+    	assertEquals(typeSpec2.getName(), "Data"); //$NON-NLS-1$
+    	IASTVariable pBase = (IASTVariable)i.next();
+    	assertEquals(pBase.getStartingLine(), 19);
+    }
 }
 

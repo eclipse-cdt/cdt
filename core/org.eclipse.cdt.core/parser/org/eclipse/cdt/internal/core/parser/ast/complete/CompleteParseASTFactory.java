@@ -3283,7 +3283,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol checkSymbol = null;
 		if (!isTemplateId) {
 			try {
-				if (isFriend && isForewardDecl) {
+				if (isFriend && isForewardDecl && currentScopeSymbol instanceof IDerivableContainerSymbol) {
 					checkSymbol = ((IDerivableContainerSymbol) currentScopeSymbol)
 							.lookupForFriendship(newSymbolName);
 				} else {

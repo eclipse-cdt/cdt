@@ -20,13 +20,10 @@ import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 public class TxThread extends Thread {
 
 	MISession session;
-	int token;
 
 	public TxThread(MISession s) {
 		super("MI TX Thread");
 		session = s;
-		// start at one, zero is special means no token.
-		token = 1;
 	}
 
 	public void run () {
@@ -44,13 +41,9 @@ public class TxThread extends Thread {
 				}
 
 				if (cmd != null) {
-					// Give the command a token and increment. 
-					cmd.setToken(token++);
-					// Move to the RxQueue only if we have
-					// a valid token, this is to permit input(HACK!)
-					// or commands that do not want to wait for responses.
+					// Move to the RxQueue only if RxThread is alive.
 					Thread rx = session.getRxThread();
-					if (cmd.getToken() > 0 && rx != null && rx.isAlive()) {
+					if (rx != null && rx.isAlive()) {
 						CommandQueue rxQueue = session.getRxQueue();
 						rxQueue.addCommand(cmd);
 					} else {
@@ -121,7 +114,7 @@ public class TxThread extends Thread {
 		}
 		if (type != -1) {
 			session.getMIInferior().setRunning();
-			MIEvent event = new MIRunningEvent(type);
+			MIEvent event = new MIRunningEvent(cmd.getToken(), type);
 			session.fireEvent(event);
 		}
 	}

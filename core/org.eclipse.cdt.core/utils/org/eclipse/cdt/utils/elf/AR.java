@@ -30,11 +30,26 @@ public class AR {
     public void dispose() {
         try 
         {
-            efile.close();
+            if (efile != null)
+            {
+               efile.close();
+               efile = null;
+            }
         }
         catch( IOException e )
         {}
     }
+
+   protected void finalize() throws Throwable {
+        try
+        {
+            dispose();
+        }
+        finally
+        {
+           super.finalize();
+        }
+   }
 
     /**
      * The <code>ARHeader</code> class is used to store the per-object file 

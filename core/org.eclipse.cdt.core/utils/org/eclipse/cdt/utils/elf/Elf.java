@@ -687,15 +687,30 @@ public class Elf {
 	}
 	
 	public void dispose() {
-		if ( addr2line != null ) {
+		if (addr2line != null) {
 			addr2line.dispose();
 		}
-		if ( cppFilt != null ) {
+		if (cppFilt != null) {
 			cppFilt.dispose();
 		}
 		try {
-			efile.close();
-		} catch (IOException e) {}
+			if (efile != null) {
+				efile.close();
+				efile = null;
+			}
+		} catch (IOException e) {
+		}
+	}
+
+	/**
+	 * Make sure we do not leak the fds.
+	 */
+	protected void finalize() throws Throwable {
+		try {
+			dispose();
+		} finally {
+			super.finalize();
+		}
 	}
 	
 	public Section[] getSections(int type) throws IOException {		

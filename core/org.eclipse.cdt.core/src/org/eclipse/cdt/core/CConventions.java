@@ -95,7 +95,7 @@ public class CConventions {
 			if (!status.isOK()) {
 				return status;
 			}
-			String type = name.substring(index + 1).trim();
+			String type = name.substring(index + scopeResolutionOperator.length()).trim();
 			scannedID = type.toCharArray();
 		}
 	

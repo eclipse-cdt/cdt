@@ -1,3 +1,11 @@
+2004-03-09 Alain Magloire
+
+	Patch from Chris Wiebe
+	CConventions.validateClassName() where the
+	scope resolution operator :: is parsed incorrectly.
+
+	* src/org/eclipse/cdt/core/CConventions.java
+
 2004-03-08 Alain Magloire
 
 	In the Editor if the changes are discarded i.e.

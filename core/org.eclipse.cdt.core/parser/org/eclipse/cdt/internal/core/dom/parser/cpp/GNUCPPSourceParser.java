@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -3494,7 +3495,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         IASTDeclarator d = declarator(strategy, false, false);
 
-        IASTInitializer initializer = optionalCPPInitializer();
+        IASTInitializer initializer = optionalCPPInitializer( d );
         if (initializer != null) {
             d.setInitializer(initializer);
             initializer.setParent(d);
@@ -3506,7 +3507,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return d;
     }
 
-    protected IASTInitializer optionalCPPInitializer()
+    protected IASTInitializer optionalCPPInitializer( IASTDeclarator d )
             throws EndOfFileException, BacktrackException {
         // handle initializer
 
@@ -3520,6 +3521,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 throw eof;
             }
         } else if (LT(1) == IToken.tLPAREN) {
+            if( d instanceof IASTFunctionDeclarator ){
+                //constructor initializer doesn't make sense for a function declarator, 
+                //C++98:8.5-11 A parenthesized initializer can be a list of expressions
+                //only when the entity  has a class type
+                return null;
+            }
             // initializer in constructor
             int o = consume(IToken.tLPAREN).getOffset(); // EAT IT!
             IASTExpression astExpression = expression();

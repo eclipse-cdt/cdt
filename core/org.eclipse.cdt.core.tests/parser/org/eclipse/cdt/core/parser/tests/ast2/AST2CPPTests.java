@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -3274,6 +3276,21 @@ public class AST2CPPTests extends AST2BaseTest {
         ICPPASTSimpleTypeConstructorExpression expression = (ICPPASTSimpleTypeConstructorExpression) returnStatement.getReturnValue();
         assertEquals( expression.getInitialValue(), null );
         assertEquals( expression.getSimpleType(), ICPPASTSimpleTypeConstructorExpression.t_int );
+    }
+	
+    public void testBug90498() throws Exception {
+        IASTTranslationUnit tu = parse( "typedef INT ( FOO ) (INT);", ParserLanguage.CPP ); //$NON-NLS-1$
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+        IASTDeclSpecifier declSpec = decl.getDeclSpecifier();
+        assertTrue( declSpec instanceof ICPPASTNamedTypeSpecifier );
+        assertEquals( ((ICPPASTNamedTypeSpecifier)declSpec).getName().toString(), "INT" ); //$NON-NLS-1$
+        
+        IASTDeclarator dtor = decl.getDeclarators()[0];
+        assertTrue( dtor instanceof IASTFunctionDeclarator );
+        assertNotNull( dtor.getNestedDeclarator() );
+        IASTDeclarator nested = dtor.getNestedDeclarator();
+        assertEquals( nested.getName().toString(), "FOO" );  //$NON-NLS-1$
     }
 }
 

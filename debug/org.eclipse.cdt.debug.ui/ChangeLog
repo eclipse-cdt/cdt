@@ -1,4 +1,12 @@
 2003-02-05 Mikhail Khodjaiants
+	Removed warnings.
+	* AddAddressBreakpointActionDelegate.java
+	* AddExpressionActionDelegate.java
+	* CBreakpointPropertiesDialog.java
+	* CUISourceLocator.java
+	* SourceLookupBlock.java
+
+2003-02-05 Mikhail Khodjaiants
 	Implementation of the 'Resume At C/C++ Line' action.
 	* RunToLineActionDelegate.java
 	* JumpToLineActionDelegate.java

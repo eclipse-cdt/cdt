@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -259,7 +260,7 @@ public class CUISourceLocator implements IAdaptable
 			wizard = new AddSourceLocationWizard( fSourceLocator.getSourceLocations() );
 		}
 		WizardDialog dialog = new WizardDialog( CDebugUIPlugin.getActiveWorkbenchShell(), wizard );
-		if ( dialog.open() == dialog.OK )
+		if ( dialog.open() == Window.OK )
 		{
 			fSourceLocator.addSourceLocation( wizard.getSourceLocation() );
 			fNewLocationAttached = true;

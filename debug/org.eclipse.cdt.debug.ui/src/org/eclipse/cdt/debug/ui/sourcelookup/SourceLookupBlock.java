@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -161,7 +162,7 @@ public class SourceLookupBlock
 	{
 		AddSourceLocationWizard wizard = new AddSourceLocationWizard( getSourceLocations() );
 		WizardDialog dialog = new WizardDialog( fControl.getShell(), wizard );
-		if ( dialog.open() == dialog.OK )
+		if ( dialog.open() == Window.OK )
 		{
 			fSourceListField.addElement( wizard.getSourceLocation() );
 		}

@@ -460,7 +460,7 @@ public class CBreakpointPropertiesDialog extends Dialog
 		fTitleImage.setBackground( bg );
 		fTitleImage.setImage( CDebugUIPlugin.getDefault().getImageRegistry().get( PREF_DLG_TITLE_IMG ) );
 		gd = new GridData();
-		gd.horizontalAlignment = gd.END;
+		gd.horizontalAlignment = GridData.END;
 		fTitleImage.setLayoutData( gd );
 
 		return fTitleArea;

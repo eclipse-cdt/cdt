@@ -147,7 +147,7 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 	 */
 	protected void showExpressionView()
 	{
-		IWorkbenchPage page = CDebugUIPlugin.getDefault().getActivePage();
+		IWorkbenchPage page = CDebugUIPlugin.getActivePage();
 		if ( page != null )
 		{
 			IViewPart part = page.findView( IDebugUIConstants.ID_EXPRESSION_VIEW );
@@ -159,7 +159,7 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 				}
 				catch( PartInitException e )
 				{
-					CDebugUIPlugin.getDefault().log( e.getStatus() );
+					CDebugUIPlugin.log( e.getStatus() );
 				}
 			}
 			else

@@ -13,6 +13,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
 
 /**
  * 
@@ -68,7 +69,7 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 											  "Enter address:",
 											  null,
 											  new AddressValidator() );
-		if ( dialog.open() == dialog.OK )
+		if ( dialog.open() == Window.OK )
 		{
 			CDebugModel.createAddressBreakpoint( ((IExecFileInfo)getDebugTarget( element ).getAdapter( IExecFileInfo.class )).getExecFile(),
 												 parseValue( dialog.getValue().trim() ),

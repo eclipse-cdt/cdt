@@ -1,3 +1,6 @@
+2004-07-08 Hoda Amer
+	Partial fix for PR 69439: content assist confusion	
+
 2004-07-08 Bogdan Gheorghe
 	Fix for 64177: [Search] Clean up Selection Search UI
 	Fix for 57121: [Search] Searching when all of the "Search For" checkboxes are unchecked causes an exception

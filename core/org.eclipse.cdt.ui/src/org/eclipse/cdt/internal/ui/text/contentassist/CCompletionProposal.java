@@ -649,5 +649,29 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	public void updateReplacementLength(int length) {
 		setReplacementLength(length);
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fDisplayString.hashCode() 
+		+ fReplacementString.hashCode() 
+		+ ((fContextInformation == null) ? 0 : fContextInformation.hashCode());
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object other) {
+		if(!(other instanceof CCompletionProposal))
+			return false;
+		if(!(fDisplayString.equals(((CCompletionProposal)other).fDisplayString)))
+			return false;
+		if(!(fReplacementString.equals(((CCompletionProposal)other).fReplacementString)))
+			return false;
+		if((fContextInformation != null) && (((CCompletionProposal)other).fContextInformation != null) && (!(fContextInformation.equals(((CCompletionProposal)other).fContextInformation))))
+			return false;
+		
+		return true;
+	}
+
 
 }

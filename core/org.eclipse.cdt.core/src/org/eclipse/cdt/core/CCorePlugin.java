@@ -52,6 +52,8 @@ public class CCorePlugin extends Plugin {
 	private static ResourceBundle fgResourceBundle;
 
 	private CDescriptorManager fDescriptorManager;
+	private CoreModel fCoreModel;
+	private IndexModel fIndexModel;
 
 	// -------- static methods --------
 
@@ -113,7 +115,15 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		fDescriptorManager.shutdown();
+		if (fDescriptorManager != null) {
+			fDescriptorManager.shutdown();
+		}
+		if (fIndexModel != null) {
+			fIndexModel.shutdown();
+		}
+		if (fCoreModel != null) {
+			fCoreModel.shutdown();
+		}
 	}
 
 	/**
@@ -123,9 +133,13 @@ public class CCorePlugin extends Plugin {
 		super.startup();
 
 		// Fired up the model.
-		getCoreModel();
+		fCoreModel = CoreModel.getDefault();
+		fCoreModel.startup();
+
 		// Fired up the indexer. It should delay itself for 10 seconds
-		getIndexModel();
+		fIndexModel = IndexModel.getDefault();
+		fIndexModel.startup();
+
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
 		
@@ -206,11 +220,11 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public CoreModel getCoreModel() {
-		return CoreModel.getDefault();
+		return fCoreModel;
 	}
 
 	public IndexModel getIndexModel() {
-		return IndexModel.getDefault();
+		return fIndexModel;
 	}
 
 	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {

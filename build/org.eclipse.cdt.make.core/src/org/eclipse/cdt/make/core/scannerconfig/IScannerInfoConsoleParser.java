@@ -19,17 +19,13 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IScannerInfoConsoleParser {
 	/**
-	 * Get a utility object to be initialized
-	 */
-	public IScannerInfoConsoleParserUtility getUtility();
-
-	/**
 	 * Optional one time initialization of a console parser.
 	 * 
 	 * @param project
+	 * @param util - utility functions for file and path management
 	 * @param collector - scanner info collector
 	 */
-	public void startup(IProject project, IScannerInfoCollector collector);
+	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector);
 	
 	/**
 	 * Parse one line of output.

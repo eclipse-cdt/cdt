@@ -17,9 +17,9 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerInfoConsoleParserUtility;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -51,12 +51,9 @@ public class ScannerInfoConsoleParserFactory {
 			// get the ESIProvider console parser 
 			IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
 				getScannerInfoConsoleParser(scBuildInfo.getESIProviderConsoleParserId());
-			// initialize the utility object
-			IScannerInfoConsoleParserUtility util = clParser.getUtility();
-			if (util != null) {
-				util.initialize(currentProject, currentProject.getLocation(), null);
-			}
-			clParser.startup(currentProject, collector);
+			// initialize it with the utility
+			clParser.startup(currentProject, null /*new ScannerInfoConsoleParserUtility(
+				currentProject, null, markerGenerator)*/, collector);
 			// create an output stream sniffer
 			return new ConsoleOutputStreamSniffer(outputStream, new 
 				IScannerInfoConsoleParser[] {clParser});
@@ -96,14 +93,11 @@ public class ScannerInfoConsoleParserFactory {
 					// get the make builder console parser 
 					IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
 						getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			
-					// initialize the utility object
-					IScannerInfoConsoleParserUtility util = clParser.getUtility();
-					if (util != null) {
-						util.initialize(currentProject, workingDirectory,
-										scBuildInfo.isSIProblemGenerationEnabled() ?
-										markerGenerator : null);
-					}
-					clParser.startup(currentProject, ScannerInfoCollector.getInstance());
+					// initialize it with the utility
+					clParser.startup(currentProject, new ScannerInfoConsoleParserUtility(
+							currentProject, workingDirectory,
+							scBuildInfo.isSIProblemGenerationEnabled() ? markerGenerator : null),
+							ScannerInfoCollector.getInstance());
 					// create an output stream sniffer
 					return new ConsoleOutputStreamSniffer(outputStream, new 
 						IScannerInfoConsoleParser[] {clParser});

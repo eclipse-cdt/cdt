@@ -10,9 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
-import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Common work required by the scanner info console parsers
@@ -20,5 +21,12 @@ import org.eclipse.core.runtime.IPath;
  * @author vhirsl
  */
 public interface IScannerInfoConsoleParserUtility {
-	public void initialize(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator);
+	// Problem marker related
+	public void generateMarker(IResource file, int lineNumber, String desc, int severity, String varName);
+	public boolean reportProblems();
+	// File path management
+	public void changeMakeDirectory(String dir, int dirLevel, boolean enterDir);
+	public IFile findFile(String fileName);
+	public List translateRelativePaths(IFile file, String fileName, List includes);
+	public String normalizePath(String path);
 }

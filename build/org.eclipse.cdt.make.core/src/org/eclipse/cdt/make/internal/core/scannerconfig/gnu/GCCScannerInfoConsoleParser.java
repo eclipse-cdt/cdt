@@ -17,7 +17,6 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
@@ -37,24 +36,18 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 	private final static String DOUBLE_QUOTE_STRING = "\""; //$NON-NLS-1$
 	
 	private IProject fProject = null;
-	private ScannerInfoConsoleParserUtility fUtil = new ScannerInfoConsoleParserUtility();
+	private IScannerInfoConsoleParserUtility fUtil = null;
 	private IScannerInfoCollector fCollector = null;
 	
 	private boolean bMultiline = false;
 	private String sMultiline = ""; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#getUtility()
-	 */
-	public IScannerInfoConsoleParserUtility getUtility() {
-		return fUtil;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
 	 */
-	public void startup(IProject project, IScannerInfoCollector collector) {
+	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector) {
 		fProject = project;
+		fUtil = util;
 		fCollector = collector;
 	}
 
@@ -321,5 +314,4 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		}
 		return num;
 	}
-
 }

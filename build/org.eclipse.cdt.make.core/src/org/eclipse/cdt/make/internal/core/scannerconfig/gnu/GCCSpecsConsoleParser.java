@@ -42,20 +42,14 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	private List includes = new ArrayList();
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#getUtility()
+	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
 	 */
-	public IScannerInfoConsoleParserUtility getUtility() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector)
-	 */
-	public void startup(IProject project, IScannerInfoCollector collector) {
+	public void startup(IProject project, IScannerInfoConsoleParserUtility util, IScannerInfoCollector collector) {
 		this.fProject = project;
+		this.fUtil = util;
 		this.fCollector = collector;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#processLine(java.lang.String)
 	 */
@@ -115,5 +109,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
 	 */
 	public void shutdown() {
+		if (fUtil != null) {
+			fUtil.reportProblems();
+		}
 	}
 }

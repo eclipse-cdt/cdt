@@ -271,11 +271,11 @@ class CPElementLabelProvider extends LabelProvider {
 		} else if (element instanceof CPElementGroup) {
 			switch ( ((CPElementGroup)element).getEntryType()) {
 				case IPathEntry.CDT_INCLUDE :
-					return fRegistry.get(fIncludeIcon);
+					return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
 				case IPathEntry.CDT_MACRO :
 					return fRegistry.get(fMacroIcon);
 				case IPathEntry.CDT_LIBRARY :
-					return fRegistry.get(fLibIcon);
+					return CPluginImages.get(CPluginImages.IMG_OBJS_LIBRARY);
 			}
 		}
 		return null;

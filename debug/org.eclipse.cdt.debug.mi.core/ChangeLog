@@ -1,3 +1,29 @@
+2003-01-09 Alain Magloire
+
+	Generate CreatedEvent's for Variable, Argument, Expression, Memory, Thread
+	objects when they are created.  This makes it consistent with the generated
+	DestroyedEvent's.
+
+	* src/.../mi/core/cdi/EventManager.java (update): Deal with
+	MI{Register,Memory,Thread,Var}CreatedEvent events.
+	* src/.../mi/core/cdi/model/Ctarget.java (updateState): Fire events
+	when threads are created or destroyed.
+	* src/.../mi/core/cdi/model/MemoryBlock.java: Move here.
+	* src/.../mi/core/cdi/model/Register.java (getID): rename getId() to getID().
+	* src/.../mi/core/cdi/event/CreatedEvent.java: New constructors
+	to deal with MI{Register,Memory,Thread,Var}CreatedEvent.
+
+	* src/.../mi/core/event/MIMemoryCreatedEvent.java: New file.
+	* src/.../mi/core/event/MIRegisterCreatedEvent.java: New file.
+	* src/.../mi/core/event/MIThreadCreatedEvent.java: New file.
+	* src/.../mi/core/event/MIVarCreatedEvent.java: New file.
+	* src/.../mi/core/event/MIBreakpointChangedEvent.java (MIBreakpointChangedEvent):
+	Reuse the constructor.
+	* src/.../mi/core/event/MIBreakpointCreatedEvent.java (MIBreakpointCreatedEvent):
+	Reuse the constructor.
+	* src/.../mi/core/event/MIBreakpointDeletedEvent.java (MIBreakpointDeletedEvent):
+	Reuse the constructor.
+
 2003-01-08 Alain Magloire
 
 	Refactoring, split the org.eclipse.cdt.debug.mi.core.cdi in pacackages

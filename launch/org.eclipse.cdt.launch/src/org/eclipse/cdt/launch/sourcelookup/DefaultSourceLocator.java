@@ -7,10 +7,10 @@ package org.eclipse.cdt.launch.sourcelookup;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.ui.sourcelookup.CUISourceLocator;
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;

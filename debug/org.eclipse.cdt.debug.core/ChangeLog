@@ -1,3 +1,9 @@
+2003-02-05 David Inglis
+
+	Refactor Constants to debug.core
+	* src/org/eclipse/cdt/debug/core/ICDTLaunchConfigurationConstants.java
+	
+
 2003-02-05 Mikhail Khodjaiants
 	Support of the 'Resume At C/C++ Line' action.
 	* IJumpToLine.java: new

@@ -2,8 +2,8 @@ package org.eclipse.cdt.launch.internal.ui;
 import java.io.File;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;

@@ -6,9 +6,9 @@ package org.eclipse.cdt.launch.internal.ui;
 
 import java.util.Map;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;

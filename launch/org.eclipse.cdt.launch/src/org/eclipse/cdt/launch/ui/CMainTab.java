@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.boot.BootLoader;

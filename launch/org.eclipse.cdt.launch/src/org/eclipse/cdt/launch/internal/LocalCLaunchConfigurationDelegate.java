@@ -16,13 +16,13 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
@@ -67,6 +67,9 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		command.add(projectPath.toOSString());
 		command.addAll(Arrays.asList(arguments));
 		String[] commandArray = (String[]) command.toArray(new String[command.size()]);
+
+		// set the default source locator if required
+		setSourceLocator(launch, config);
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			IProcess debuggerProcess = null;
@@ -137,8 +140,6 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			Process process = exec(commandArray, getEnvironmentProperty(config), wd);
 			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 		}
-		// set the default source locator if required
-		setDefaultSourceLocator(launch, config);
 		
 		monitor.done();
 		

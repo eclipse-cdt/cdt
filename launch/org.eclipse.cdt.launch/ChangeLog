@@ -1,3 +1,24 @@
+2003-02-07 David Inglis
+	
+	Refactor LaunchConstants into debug.core and make setting source locator happen before
+	debug target it created.
+	
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/ICDTLaunchConfigurationConstants.java
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+	* src/org/eclipse/cdt/launch/internal/ui/AbstractCDebuggerTab.java
+	* src/org/eclipse/cdt/launch/internal/ui/CoreFileCLaunchConfigurationTabGroup.java
+	* src/org/eclipse/cdt/launch/internal/ui/WorkingDirectoryBlock.java
+	* src/org/eclipse/cdt/launch/sourcelookup/DefaultSourceLocator.java
+	* src/org/eclipse/cdt/launch/ui/CArgumentsTab.java
+	* src/org/eclipse/cdt/launch/ui/CDebuggerTab.java
+	* src/org/eclipse/cdt/launch/ui/CEnvironmentTab.java
+	* src/org/eclipse/cdt/launch/ui/CLaunchConfigurationTab.java
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+	* src/org/eclipse/cdt/launch/ui/CorefileDebuggerTab.java
+
 2003-02-06 Alain Magloire
 
 	* src/.../launch/internal/ui/WorkingDirectoryBlock.java (geLaunchConfiguration):

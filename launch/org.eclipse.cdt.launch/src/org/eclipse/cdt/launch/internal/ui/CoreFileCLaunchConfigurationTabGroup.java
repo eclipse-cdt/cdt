@@ -1,6 +1,6 @@
 package org.eclipse.cdt.launch.internal.ui;
 
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.cdt.launch.ui.CorefileDebuggerTab;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;

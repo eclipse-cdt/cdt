@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.*;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -287,18 +288,28 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 * @param configuration configuration being launched
 	 * @exception CoreException if unable to set the source locator
 	 */
-	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
+	protected void setSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
 		//  set default source locator if none specified
 		if (launch.getSourceLocator() == null) {
+			IPersistableSourceLocator sourceLocator;
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
 			if (id == null) {
 				ICProject cProject = getCProject(configuration);
-				if (cProject != null) {
-					IPersistableSourceLocator sourceLocator = new DefaultSourceLocator();
+				if (cProject == null) {
+					abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				}
+				sourceLocator = new DefaultSourceLocator();
+				sourceLocator.initializeDefaults(configuration);
+			} else {
+				sourceLocator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(id);
+				String memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+				if (memento == null) {
 					sourceLocator.initializeDefaults(configuration);
-					launch.setSourceLocator(sourceLocator);
+				} else {
+					sourceLocator.initializeFromMemento(memento);
 				}
 			}
+			launch.setSourceLocator(sourceLocator);
 		}
 	}
 

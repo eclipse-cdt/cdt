@@ -2,11 +2,11 @@ package org.eclipse.cdt.launch.internal;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
-import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -66,6 +66,9 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
 			launch.removeProcess(debuggerProcess);
 		}
+		// set the source locator
+		setSourceLocator(launch, config);
+
 		CDebugModel.newCoreFileDebugTarget(
 			launch,
 			dsession.getCurrentTarget(),
@@ -73,8 +76,6 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			debuggerProcess,
 			exe);
 		
-		// set the default source locator if required
-		setDefaultSourceLocator(launch, config);
 		monitor.done();
 	}
 

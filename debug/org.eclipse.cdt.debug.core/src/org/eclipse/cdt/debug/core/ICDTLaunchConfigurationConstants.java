@@ -1,13 +1,15 @@
-package org.eclipse.cdt.launch;
+package org.eclipse.cdt.debug.core;
 
 /*
  * (c) Copyright QNX Software System 2002.
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 
 public interface ICDTLaunchConfigurationConstants {
+
+	public static final String CDT_LAUNCH_ID = "org.eclipse.cdt.launch";
+	
 	/**
 	 * This is the launch type id.
 	 */
@@ -17,20 +19,20 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a name of
 	 * a C/C++ project associated with a C/C++ launch configuration.
 	 */
-	public static final String ATTR_PROJECT_NAME = LaunchUIPlugin.getUniqueIdentifier() + ".PROJECT_ATTR"; //$NON-NLS-1$
+	public static final String ATTR_PROJECT_NAME = CDT_LAUNCH_ID + ".PROJECT_ATTR"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying
 	 * application a C/C++ launch configuration.
 	 */
-	public static final String ATTR_PROGRAM_NAME = LaunchUIPlugin.getUniqueIdentifier() + ".PROGRAM_NAME"; //$NON-NLS-1$
+	public static final String ATTR_PROGRAM_NAME = CDT_LAUNCH_ID + ".PROGRAM_NAME"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying
 	 * application arguments for a C/C++ launch configuration, as they should appear
 	 * on the command line.
 	 */
-	public static final String ATTR_PROGRAM_ARGUMENTS = LaunchUIPlugin.getUniqueIdentifier() + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
+	public static final String ATTR_PROGRAM_ARGUMENTS = CDT_LAUNCH_ID + ".PROGRAM_ARGUMENTS"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying a
@@ -40,41 +42,41 @@ public interface ICDTLaunchConfigurationConstants {
 	 * file system. When specified as a full path, the path represents a workspace
 	 * relative path.
 	 */
-	public static final String ATTR_WORKING_DIRECTORY = LaunchUIPlugin.getUniqueIdentifier() + ".WORKING_DIRECTORY"; //$NON-NLS-1$
+	public static final String ATTR_WORKING_DIRECTORY = CDT_LAUNCH_ID + ".WORKING_DIRECTORY"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying 
 	 * whether the current enviroment should be inherited when the application
 	 * is launched. 
 	 */
-	public static final String ATTR_PROGRAM_ENVIROMENT_INHERIT = LaunchUIPlugin.getUniqueIdentifier() + ".ENVIRONMENT_INHERIT"; //$NON-NLS-1$
+	public static final String ATTR_PROGRAM_ENVIROMENT_INHERIT = CDT_LAUNCH_ID + ".ENVIRONMENT_INHERIT"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a Map specifying the
 	 * environment to use when launching a C/C++ application. 
 	 */
-	public static final String ATTR_PROGRAM_ENVIROMENT_MAP = LaunchUIPlugin.getUniqueIdentifier() + ".ENVIRONMENT_MAP"; //$NON-NLS-1$
+	public static final String ATTR_PROGRAM_ENVIROMENT_MAP = CDT_LAUNCH_ID + ".ENVIRONMENT_MAP"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute key. The value is the platform string of the launch configuration
 	 */
-	public static final String ATTR_PLATFORM = LaunchUIPlugin.getUniqueIdentifier() + ".PLATFFORM"; //$NON-NLS-1$
+	public static final String ATTR_PLATFORM = CDT_LAUNCH_ID + ".PLATFFORM"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is the debugger id
 	 * used when launching a C/C++ application for debug.
 	 */
-	public static final String ATTR_DEBUGGER_ID = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_ID"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_ID = CDT_LAUNCH_ID + ".DEBUGGER_ID"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is the platform string of the launch configuration
 	 */
-	public static final String ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP = CDT_LAUNCH_ID + ".DEBUGGER_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying whether to stop at main().
 	 */
-	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = CDT_LAUNCH_ID + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is an int specifying the process id to attach to
@@ -82,13 +84,13 @@ public interface ICDTLaunchConfigurationConstants {
 	 * entry indicates that the user should be asked to supply this value.  This value is primarily
 	 * designed to be used by programatic users of the debug interface.
 	 */
-	public static final String ATTR_ATTACH_PROCESS_ID = LaunchUIPlugin.getUniqueIdentifier() + ".ATTACH_PROCESS_ID"; //$NON-NLS-1$
+	public static final String ATTR_ATTACH_PROCESS_ID = CDT_LAUNCH_ID + ".ATTACH_PROCESS_ID"; //$NON-NLS-1$
 
 
 	/**
 	 * Launch configuration attribute key. The value is the startup mode for the debugger.
 	 */
-	public static final String ATTR_DEBUGGER_START_MODE = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_START_MODE"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_START_MODE = CDT_LAUNCH_ID + ".DEBUGGER_START_MODE"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.

@@ -1,3 +1,26 @@
+2003-04-05 Alain Magloire
+
+	The way the working copy was implemented, the outline could not
+	work with file outside of the C Model, for example a c file in
+	a non C project.  Also some other extended the CEditor to reuse
+	the highligth and outliner functions,  but since the DocumentProvider
+	was singleton in CUIPlugin.getDocumentProvider(), the outliner did not
+	work either.  A solution is to take the same path as the JDT and provide
+	a workingcopy that can be use by other so they can "connect" thre input.
+
+	Part of this patch a small refactory of IWorkingCopyManager so
+	it can be visible outside.
+
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* src/org/eclipse/cdt/ui/IWorkingCopyManager.java
+	* src/org/eclipse/cdt/ui/IWorkingCopyManagerExtension.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutline.java:
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/WorkingCopyManager.java
+	* src/org/eclipse/cdt/internal/ui/editor/WorkingCopyManager.java
+	* src/org/eclipse/cdt/internal/ui/text/CReconcilerStrategy.java
+
 2003-04-04 Alain Magloire
 
 	The TextEditor provides a way to select a range to be edited.

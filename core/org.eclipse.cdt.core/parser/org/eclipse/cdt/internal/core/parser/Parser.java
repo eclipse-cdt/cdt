@@ -433,6 +433,8 @@ public class Parser implements IParser
             IASTTemplateDeclaration templateDecl = astFactory.createTemplateDeclaration( scope, parms, exported, firstToken.getOffset() );
             templateDecl.enterScope( requestor );
             declaration(scope, templateDecl );
+			templateDecl.setEndingOffset(
+				lastToken.getEndOffset() );
 			templateDecl.exitScope( requestor );
             
         }
@@ -2248,7 +2250,7 @@ public class Parser implements IParser
                         nameType,
                         access,
                         classKey.getOffset(),
-            			duple == null ? 0 : duple.getFirstToken().getOffset());
+            			duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset());
         }
         catch (ASTSemanticException e)
         {
@@ -2304,8 +2306,8 @@ public class Parser implements IParser
                     errorHandling();
             }
             // consume the }
-            IToken lastToken = consume(IToken.tRBRACE);
-            astClassSpecifier.setEndingOffset(lastToken.getEndOffset());
+            IToken lt = consume(IToken.tRBRACE);
+            astClassSpecifier.setEndingOffset(lt.getEndOffset());
             astClassSpecifier.exitScope( requestor );
         }
     }

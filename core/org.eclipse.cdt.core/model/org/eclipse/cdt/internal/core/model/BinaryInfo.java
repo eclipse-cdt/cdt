@@ -204,6 +204,7 @@ class BinaryInfo extends CFileInfo {
 				addChild(tu);
 			}
 			function = new Function(tu, symbol.getName());
+			function.setLines(symbol.getLineNumber(), symbol.getLineNumber());
 			tu.addChild(function);
 		} else {
 			function = new Function(parent, symbol.getName());
@@ -232,6 +233,7 @@ class BinaryInfo extends CFileInfo {
 				addChild(tu);
 			}
 			variable = new Variable(tu, symbol.getName());
+			variable.setLines(symbol.getLineNumber(), symbol.getLineNumber());
 			tu.addChild(variable);
 		} else {
 			variable = new Variable(parent, symbol.getName());

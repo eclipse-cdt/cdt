@@ -22,11 +22,12 @@
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
-      		platform="native"
             name="%GDBDebugger.name"
             modes="run,core,attach"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
-            id="org.eclipse.cdt.debug.mi.core.CDebugger">
+            id="org.eclipse.cdt.debug.mi.core.CDebugger"
+      		cpu="native"
+      		platform="native">
       </debugger>
    </extension>
 

@@ -1,3 +1,7 @@
+2002-11-13
+	* plugin.xml
+	Added "native" cpu support.
+	
 2002-11-06 Alain Magloire
 
 	* src/.../mi/core/StackFrame.java (getLocals):

@@ -11,7 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 
 
 /**
@@ -36,13 +36,19 @@ public interface IParser  {
 	 */
 	public IASTCompletionNode parse( int offset) throws ParseError;
 	
+	
+	public static interface ISelectionParseResult
+	{
+		public IASTOffsetableNamedElement getOffsetableNamedElement();
+		public String   getFilename();
+	}
 	/**
 	 * 
 	 * @param startingOffset
 	 * @param endingOffset
 	 * @return
 	 */
-	public IASTNode parse( int startingOffset, int endingOffset ) throws ParseError;
+	public ISelectionParseResult parse( int startingOffset, int endingOffset ) throws ParseError;
 	
 	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  

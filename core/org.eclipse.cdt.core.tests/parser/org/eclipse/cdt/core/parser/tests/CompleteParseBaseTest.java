@@ -129,6 +129,22 @@ public class CompleteParseBaseTest extends TestCase
 			return null;
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ast.IASTNode#getFileIndex()
+		 */
+		public int getFileIndex() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ast.IASTNode#setFileIndex(int)
+		 */
+		public void setFileIndex(int index) {
+			// TODO Auto-generated method stub
+			
+		}
+
     }
     
     public static class CodeScope extends Scope implements IASTCodeScope

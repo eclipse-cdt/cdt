@@ -28,7 +28,7 @@ public class ScannerContext implements IScannerContext
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion, int, int, int)
      */
-	public ScannerContext(Reader r, String f, int k, IASTInclusion i, int mO, int mL, int l)
+	public ScannerContext(Reader r, String f, int k, IASTInclusion i, int mO, int mL, int l, int index)
 	{
 		reader = r;
 		filename = f;
@@ -38,14 +38,15 @@ public class ScannerContext implements IScannerContext
         macroOffset = mO;
         macroLength = mL;
         line = l;
+        this.index = index;
 	}
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion)
      */
-    public ScannerContext(Reader r, String f, int k, IASTInclusion i)
+    public ScannerContext(Reader r, String f, int k, IASTInclusion i, int index)
     {
-        this(r, f, k, i, -1, -1, 1);
+        this(r, f, k, i, -1, -1, 1, index);
     }
 		
 	public int read() throws IOException {
@@ -176,6 +177,7 @@ public class ScannerContext implements IScannerContext
 	}
 	
 	private IASTInclusion inc = null;
+	private final int index;
 	
 	
 
@@ -190,5 +192,12 @@ public class ScannerContext implements IScannerContext
 		buffer.append( ":"); //$NON-NLS-1$
 		buffer.append( getLine() );
 		return buffer.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerContext#getFilenameIndex()
+	 */
+	public int getFilenameIndex() {
+		return index;
 	}
 }

@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
@@ -149,7 +148,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 		}
 	}
 
-	public IASTNode parse(int startingOffset, int endingOffset) {
+	public ISelectionParseResult parse(int startingOffset, int endingOffset) {
 		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
 

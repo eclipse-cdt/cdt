@@ -2916,4 +2916,16 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
 	    return first;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFileIndex()
+	 */
+	public int getCurrentFileIndex() {
+		return scanner.getCurrentFileIndex();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getFilenameForIndex(int)
+	 */
+	public String getFilenameForIndex(int index) {
+		return scanner.getFilenameForIndex(index);
+	}
 }

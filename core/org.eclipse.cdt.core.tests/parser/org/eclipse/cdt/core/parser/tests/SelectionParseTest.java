@@ -53,7 +53,9 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 							ParserLanguage.CPP,
 							ParserUtil.getParserLogService());
 		
-		return parser.parse( offset1, offset2 );
+		IParser.ISelectionParseResult result =parser.parse( offset1, offset2 );
+		if( result == null ) return null;
+		return (IASTNode) result.getOffsetableNamedElement();
 
 	}
 	

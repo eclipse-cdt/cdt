@@ -30,8 +30,8 @@ public class LimitedScannerContext
 	 * @param object
 	 * @param offsetLimit
 	 */
-	public LimitedScannerContext(Scanner scanner, Reader reader, String string, int kind, int offsetLimit) {
-		super( reader, string, kind, null );
+	public LimitedScannerContext(Scanner scanner, Reader reader, String string, int kind, int offsetLimit, int index ) {
+		super( reader, string, kind, null, index );
 		this.scanner = scanner;
 		limit = offsetLimit;
 	}

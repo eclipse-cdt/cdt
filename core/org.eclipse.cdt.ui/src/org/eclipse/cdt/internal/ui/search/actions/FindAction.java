@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -183,10 +184,13 @@ public abstract class FindAction extends Action {
 		 
 		IFile resourceFile = fEditor.getInputFile();
 		IParser parser = setupParser(resourceFile);
-		IASTNode node = null;
+		IASTOffsetableNamedElement node = null;
+		IParser.ISelectionParseResult result = null;
 		
 		try{
-			node = parser.parse(selectionStart,selectionEnd);
+			result = parser.parse(selectionStart,selectionEnd);
+			if( result != null )
+				node = result.getOffsetableNamedElement();
 		} 
 		catch (ParseError er){}
 		catch (Exception ex){}
@@ -196,12 +200,12 @@ public abstract class FindAction extends Action {
 			}
 		}
 		
-		if (node == null){
+		if (node == null || !( node instanceof IASTNode )){
 			operationNotAvailableDialog();
 			return;
 		}
 	
-		CSearchQuery job = createSearchQuery(selectedText.getText(),getSearchForFromNode(node));
+		CSearchQuery job = createSearchQuery(selectedText.getText(),getSearchForFromNode((IASTNode)node));
 		NewSearchUI.activateSearchResultView();
 		
 		NewSearchUI.runQuery(job);

@@ -10,7 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -45,6 +47,8 @@ public class SelectionParser extends ContextualParser {
 	private ITokenDuple greaterContextDuple = null;
 	private boolean pastPointOfSelection = false;
 	private IASTNode contextNode = null;
+	private static final int DEFAULT_MAP_SIZE = 512;
+	private static final float DEFAULT_FLOAT_SIZE = 0.75f;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNewToken(org.eclipse.cdt.core.parser.IToken)
@@ -102,7 +106,7 @@ public class SelectionParser extends ContextualParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
-	public IASTNode parse(int startingOffset, int endingOffset) {
+	public ISelectionParseResult parse(int startingOffset, int endingOffset) {
 		offsetRange = new OffsetDuple( startingOffset, endingOffset );
 		translationUnit();
 		return reconcileTokenDuple();
@@ -111,7 +115,7 @@ public class SelectionParser extends ContextualParser {
 	/**
 	 * 
 	 */
-	protected IASTNode reconcileTokenDuple() throws ParseError {
+	protected ISelectionParseResult reconcileTokenDuple() throws ParseError {
 		if( firstTokenOfDuple == null || lastTokenOfDuple == null )
 			throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );
 		
@@ -130,7 +134,7 @@ public class SelectionParser extends ContextualParser {
 	 * @param duple
 	 * @return
 	 */
-	protected IASTNode provideSelectionNode(ITokenDuple duple) {
+	protected ISelectionParseResult provideSelectionNode(ITokenDuple duple) {
 		
 		ITokenDuple finalDuple = null;
 		// reconcile the name to look up first
@@ -150,8 +154,15 @@ public class SelectionParser extends ContextualParser {
 		else
 			finalDuple = greaterContextDuple;
 		
+		IASTNode node = lookupNode(finalDuple);
+		if( node == null ) return null;
+		if( !(node instanceof IASTOffsetableNamedElement )) return null;
+		int indexValue = -1;
+		Object index = nodeTable.get( node );
+		if( index instanceof Integer )
+			indexValue = ((Integer)index).intValue();
 		
-		return lookupNode(finalDuple);
+		return new SelectionParseResult( (IASTOffsetableNamedElement) node, getFilenameForIndex(indexValue) ); 
 	}
 
 
@@ -255,6 +266,43 @@ public class SelectionParser extends ContextualParser {
 		{
 			contextNode = expression;
 			throw new EndOfFileException();
+		}
+		
+	}
+	
+	protected Map nodeTable = new Hashtable( DEFAULT_MAP_SIZE, DEFAULT_FLOAT_SIZE );
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleNode(org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	protected void handleNode(IASTOffsetableNamedElement node) {
+		if( node != null )
+			nodeTable.put( node, new Integer( getCurrentFileIndex()) );
+	}
+	
+	public static class SelectionParseResult implements ISelectionParseResult 
+	{
+
+		public SelectionParseResult( IASTOffsetableNamedElement node, String fileName )
+		{
+			this.node = node;
+			this.fileName = fileName;
+		}
+		
+		private final String fileName;
+		private final IASTOffsetableNamedElement node;
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.IParser.ISelectionParseResult#getNode()
+		 */
+		public IASTOffsetableNamedElement getOffsetableNamedElement() {
+			return node;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.IParser.ISelectionParseResult#getFilename()
+		 */
+		public String getFilename() {
+			return fileName;
 		}
 		
 	}

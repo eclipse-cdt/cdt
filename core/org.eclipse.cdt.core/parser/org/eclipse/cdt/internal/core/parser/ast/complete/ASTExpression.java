@@ -344,6 +344,7 @@ public class ASTExpression extends ASTNode implements IASTExpression
 	 * @return
 	 */
 	private ASTExpression recursiveFindExpressionForDuple(IASTExpression expression, ITokenDuple duple) {
+		if( expression == null ) return null;
 		return ((ASTExpression)expression).findOwnerExpressionForIDExpression(duple);
 	}
 	

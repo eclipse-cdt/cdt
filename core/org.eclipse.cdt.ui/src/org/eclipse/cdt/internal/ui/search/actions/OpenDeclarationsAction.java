@@ -42,10 +42,11 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.OrPattern;
@@ -61,7 +62,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -146,6 +151,48 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 		 		 return null;
 		 }
 	 }
+	 
+	private static class Storage
+	{
+		private IASTOffsetableNamedElement element;
+		private IResource resource;
+		private String fileName;
+
+		public IASTOffsetableNamedElement getNamedElement()
+		{
+			return element;
+		}
+		/**
+		 * @return Returns the fileName.
+		 */
+		public final String getFileName() {
+			return fileName;
+		}
+		/**
+		 * @param fileName The fileName to set.
+		 */
+		public final void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
+		/**
+		 * @return Returns the resource.
+		 */
+		public final IResource getResource() {
+			return resource;
+		}
+		/**
+		 * @param resource The resource to set.
+		 */
+		public final void setResource(IResource resource) {
+			this.resource = resource;
+		}
+		/**
+		 * @param element The element to set.
+		 */
+		public final void setElement(IASTOffsetableNamedElement element) {
+			this.element = element;
+		}
+	}
 	/**
 	 * @see IAction#actionPerformed
 	 */
@@ -156,28 +203,27 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 			return;
 		}
 		
-		final ArrayList elementsFound = new ArrayList();
+//		final ArrayList elementsFound = new ArrayList();
+		final Storage storage = new Storage();
+		
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() 
 		{
 			public void run(IProgressMonitor monitor) {
-				BasicSearchResultCollector  resultCollector =  new BasicSearchResultCollector(monitor);
-		 		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-		 		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
-		 		//TODO: Change to Project Scope
-				ICElement[] projectScopeElement = new ICElement[1];
-				projectScopeElement[0] = unit.getCProject();//(ICElement)currentScope.getCProject();
-				ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
+//				IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
+//		 		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
 			
 				IFile resourceFile = fEditor.getInputFile();
 				IParser parser = setupParser(resourceFile);
-				
-				IASTNode node = null;
-				
+ 		 		int selectionStart = selNode.selStart;
+ 		 		int selectionEnd = selNode.selEnd;
+
+				IParser.ISelectionParseResult result = null;
+				IASTOffsetableNamedElement node = null;
 				try{
-	 		 		int selectionStart = selNode.selStart;
-	 		 		int selectionEnd = selNode.selEnd;
-					node = parser.parse(selectionStart,selectionEnd);
+					result = parser.parse(selectionStart,selectionEnd);
+					if( result != null )
+						node = result.getOffsetableNamedElement();
 				} 
 				catch (ParseError er){}
 				catch ( VirtualMachineError vmErr){
@@ -191,42 +237,84 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 					if (node == null){
 						return;
 					}
-				
-					SearchFor searchFor = getSearchForFromNode(node);
-					ICSearchPattern pattern = SearchEngine.createSearchPattern( selNode.selText,searchFor,ICSearchConstants.DECLARATIONS,true);
-					
-					
-					
-					try {
-						searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector, true);
-					} catch (InterruptedException e) {
-					}
-			 		elementsFound.addAll(resultCollector.getSearchResults());	 
 				}
+
+				storage.setFileName( result.getFilename() );
+				storage.setElement( node );
+				storage.setResource( ParserUtil.getResourceForFilename( result.getFilename() ) );
+				return;
 			}
  		};
 
 		try {
 	 		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
 	 		progressMonitor.run(true, true, runnable);
-	
-	 		if (elementsFound.isEmpty() == true) {
-	 			//TODO: Get rid of back up search when selection search improves
-	 			//MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ 
-	 			temporaryBackUpSearch();
+	 		
+	 		if( storage.getResource() != null )
+	 		{
+	 			open( storage.getResource(), storage.getNamedElement().getNameOffset(), storage.getNamedElement().getNameEndOffset() - storage.getNamedElement().getNameOffset() );
 	 			return;
 	 		}
-	
-	 		IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
-	 		if (selected != null) {
-	 			open(selected);
-	 			return;
+	 		else
+	 		{
+	 			if( open( storage.getFileName(), storage.getNamedElement().getNameOffset(), storage.getNamedElement().getNameEndOffset() - storage.getNamedElement().getNameOffset()) );
+	 				return;
 	 		}
+
+//			BasicSearchResultCollector resultCollector =  new BasicSearchResultCollector(new NullProgressMonitor() );
+//
+//			SearchFor searchFor = getSearchForFromNode(((IASTNode)storage.getNamedElement()));
+//			ICSearchPattern pattern = SearchEngine.createSearchPattern( selNode.selText,searchFor,ICSearchConstants.DECLARATIONS,true);
+//			IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
+//	 		//TODO: Change to Project Scope
+//			ICElement[] projectScopeElement = new ICElement[1];
+//			ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
+//			projectScopeElement[0] = unit.getCProject();//(ICElement)currentScope.getCProject();
+//			ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
+//			
+//			try {
+//				searchEngine.search(CUIPlugin.getWorkspace(), pattern, scope, resultCollector, true);
+//			} catch (InterruptedException e) {
+//			}
+//	 		elementsFound.addAll(resultCollector.getSearchResults());	 
+//
+//	 		
+//	 		if (elementsFound.isEmpty() == true) {
+//	 			//TODO: Get rid of back up search when selection search improves
+//	 			//MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ 
+//	 			temporaryBackUpSearch();
+//	 			return;
+//	 		}
+//	
+//	 		IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
+//	 		if (selected != null) {
+//	 			open(selected);
+//	 			return;
+//	 		}
 		} catch(Exception x) {
 		 		 CUIPlugin.getDefault().log(x);
 		}
 	}
 
+	/**
+	 * @param string
+	 * @param i
+	 */
+	protected boolean open(String filename, int offset, int length) throws PartInitException, CModelException {
+		IPath path = new Path( filename );
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+		if( file != null )
+		{
+			open( file, offset, length );
+			return true;
+		}
+
+		FileStorage storage = new FileStorage(null, path);
+		IEditorPart part = EditorUtility.openInEditor(storage);
+		setSelectionAtOffset(part, offset, length);
+		return true;
+		
+	}
 	protected Shell getShell() {
 		return fEditor.getSite().getShell();
 	}
@@ -293,11 +381,25 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 		}
 	}
 	
+	protected void open( IMatch element ) throws CModelException, PartInitException
+	{
+		open( element.getResource(), element.getStartOffset(), element.getEndOffset() - element.getStartOffset() );
+	}
+	
 	/**
 	 * Opens the editor on the given element and subsequently selects it.
 	 */
-	protected void open(IMatch element) throws CModelException, PartInitException {
-		IEditorPart part= EditorUtility.openInEditor(element.getResource());
+	protected void open( IResource resource, int offset, int length ) throws CModelException, PartInitException {
+		IEditorPart part= EditorUtility.openInEditor(resource);
+		setSelectionAtOffset(part, offset, length);
+	}
+						
+	/**
+	 * @param part
+	 * @param offset
+	 * @param length TODO
+	 */
+	private void setSelectionAtOffset(IEditorPart part, int offset, int length) {
 		//int line = element.getStartOffset();
 		//if(line > 0) line--;
 		if(part instanceof CEditor) {
@@ -308,11 +410,10 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
 				//if(line > 3) {
 				//	ed.selectAndReveal(document.getLineOffset(line - 3), 0);
 				//}
-				ed.selectAndReveal(element.getStartOffset() /*document.getLineOffset(line)*/, 0);
+				ed.selectAndReveal(offset, length);
 			} catch (Exception e) {}
 		}
 	}
-						
 	/**
 	 * Shows a dialog for resolving an ambigous C element.
 	 * Utility method that can be called by subclassers.

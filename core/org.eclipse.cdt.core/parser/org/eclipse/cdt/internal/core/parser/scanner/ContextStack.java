@@ -45,13 +45,49 @@ public class ContextStack {
 		public int getLine() { return -1; }
 		public int undoStackSize() { return 0; }  
 		public int popUndo() { return '\n'; }
+		public int getFilenameIndex() {	return -1;	}
 	}
 	private final IParserLogService log;
 	private int current_size = 8;
-
+	 
 	private IScannerContext [] cs = new IScannerContext[current_size];
 	private int cs_pos = 0;
 	
+	private int currentInclusionArraySize  = 16;
+	private int currentInclusionIndex = 0;
+	private String [] fileNames = new String[ currentInclusionArraySize ];
+	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
+	
+	
+	
+	public final String getInclusionFilename( int index )
+	{
+		try
+		{
+			return fileNames[ index ];
+		}
+		catch( ArrayIndexOutOfBoundsException aioobe )
+		{
+			return EMPTY_STRING;
+		}
+	}
+	
+	private final void addInclusionFilename( String filename )
+	{
+		try
+		{
+			fileNames[ currentInclusionIndex++ ] = filename; 
+		}
+		catch( ArrayIndexOutOfBoundsException aioobe )
+		{
+			int newSize = currentInclusionArraySize * 2;
+			String newFileNames [] = new String[ newSize ];
+			System.arraycopy( fileNames, 0, newFileNames, 0, fileNames.length );
+			newFileNames[ currentInclusionArraySize++ ] = filename;
+			currentInclusionArraySize = newSize;
+			fileNames = newFileNames;
+		}
+	}
 	
 	private static IScannerContext sentinel = new SentinelContext();
 	 
@@ -65,11 +101,7 @@ public class ContextStack {
 		{
 			int new_size = current_size*2;
 			IScannerContext [] new_cs = new IScannerContext[new_size];
-			
-			for (int i = 0; i < current_size; i++) {
-				new_cs[i] = cs[i];
-			}
-			
+			System.arraycopy( cs, 0, new_cs, 0, cs.length );			
 			new_cs[current_size] = c;
 			current_size = new_size;
 			cs = new_cs;
@@ -96,6 +128,7 @@ public class ContextStack {
 	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ContextException 
     {
 		int startLine = 1;
+		int index = -1;
 		
         // If we expand a macro within a macro, then keep offsets of the top-level one,
         // as only the top level macro identifier is properly positioned    
@@ -107,8 +140,13 @@ public class ContextStack {
             
 			startLine = getCurrentContext().getLine();
         }
-
-		IScannerContext context = new ScannerContext( reader, filename, type, null, macroOffset, macroLength, startLine );
+        else if( type == IScannerContext.ContextKind.INCLUSION )
+        {
+        	addInclusionFilename( filename );
+        	index = currentInclusionIndex - 1;
+        }
+        	
+		IScannerContext context = new ScannerContext( reader, filename, type, null, macroOffset, macroLength, startLine, index );
 		context.setExtension(inclusion); 
 		push( context, requestor );	
 	}
@@ -121,7 +159,11 @@ public class ContextStack {
 			
 			TraceUtil.outputTrace(log, "Scanner::ContextStack: entering inclusion ", null, context.getFilename(), null, null ); //$NON-NLS-1$
 			context.getExtension().enterScope( requestor );				
-		} 
+		}
+        else if( context.getKind() == IScannerContext.ContextKind.TOP )
+        {
+        	addInclusionFilename( context.getFilename() );
+        }
 		
 //		This could be replaced with a check for shouldExpandMacro -- but it is called by 
 //		the scanner before this point

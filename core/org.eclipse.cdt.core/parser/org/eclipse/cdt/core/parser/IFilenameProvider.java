@@ -16,5 +16,7 @@ package org.eclipse.cdt.core.parser;
 public interface IFilenameProvider {
 	
 	public char [] getCurrentFilename();
+	public int     getCurrentFileIndex();
+	public String  getFilenameForIndex( int index );
 	
 }

@@ -2402,6 +2402,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		resolveLeftoverConstructorInitializerMembers( symbol, constructorChain );
   
         ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, startingLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, isFriend );
+        if( functionDeclaration != null && isFunctionDefinition )
+        	attachSymbolExtension( symbol, (ASTSymbol) functionDeclaration.getASTExtension().getPrimaryDeclaration(), false );
         attachSymbolExtension( symbol, method, isFunctionDefinition );
         return method;
     }

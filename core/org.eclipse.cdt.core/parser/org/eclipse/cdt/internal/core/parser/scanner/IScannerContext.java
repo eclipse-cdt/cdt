@@ -63,6 +63,8 @@ public interface IScannerContext {
 
 	public IASTInclusion getExtension(); 
 	public void setExtension( IASTInclusion ext );
+	
+	public int getFilenameIndex();
 
 	/**
 	 * @return

@@ -157,6 +157,7 @@ public class ASTInclusion implements IASTInclusion {
 	}
 
 	private int startingLineNumber, endingLineNumber, nameLineNumber;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()
 	 */
@@ -174,5 +175,20 @@ public class ASTInclusion implements IASTInclusion {
 	 */
 	public int getNameLineNumber() {
 		return nameLineNumber;
+	}
+
+	private int fileIndex;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFileIndex()
+	 */
+	public int getFileIndex() {
+		return fileIndex;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setFileIndex()
+	 */
+	public void setFileIndex(int index) {
+		fileIndex = index;
 	}
 }

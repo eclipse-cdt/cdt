@@ -57,13 +57,7 @@ public class ParserUtil
 		// IResource in the workspace
 		try
 		{
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IPath path = new Path( finalPath );
-			
-			if( workspace.getRoot().getLocation().isPrefixOf( path ) )
-				path = path.removeFirstSegments(workspace.getRoot().getLocation().segmentCount() );
-
-			IResource resultingResource = workspace.getRoot().findMember(path);
+			IResource resultingResource = getResourceForFilename(finalPath);
 			
 			if( resultingResource != null && resultingResource.getType() == IResource.FILE )
 			{
@@ -86,13 +80,28 @@ public class ParserUtil
 	}
 
 	/**
+	 * @param finalPath
+	 * @return
+	 */
+	public static IResource getResourceForFilename(String finalPath) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IPath path = new Path( finalPath );
+		
+		if( workspace.getRoot().getLocation().isPrefixOf( path ) )
+			path = path.removeFirstSegments(workspace.getRoot().getLocation().segmentCount() );
+
+		IResource resultingResource = workspace.getRoot().findMember(path);
+		return resultingResource;
+	}
+
+	/**
 	 * @param resultingResource
 	 * @param workingCopies
 	 * @return
 	 */
 	protected static Reader findWorkingCopy(IResource resultingResource, Iterator workingCopies) {
 		if( parserLogService.isTracing() )
-			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() );
+			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() ); //$NON-NLS-1$
 		while( workingCopies.hasNext() )
 		{
 			Object next = workingCopies.next();
@@ -102,12 +111,12 @@ public class ParserUtil
 			{
 				CharArrayReader arrayReader = new CharArrayReader( copy.getContents() );
 				if( parserLogService.isTracing() )
-					parserLogService.traceLog( "Working copy found!!" );
+					parserLogService.traceLog( "Working copy found!!" ); //$NON-NLS-1$
 				return new BufferedReader( arrayReader );
 			}
 		}
 		if( parserLogService.isTracing() )
-			parserLogService.traceLog( "Working copy not found." );
+			parserLogService.traceLog( "Working copy not found." ); //$NON-NLS-1$
 
 		return null;
 	}

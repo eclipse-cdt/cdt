@@ -282,9 +282,9 @@ public class Scanner implements IScanner {
     	try
     	{
     		if( offsetLimit == NO_OFFSET_LIMIT )
-    			context = new ScannerContext(scannerData.getInitialReader(), resolvedFilename, ScannerContext.ContextKind.TOP, null );
+    			context = new ScannerContext(scannerData.getInitialReader(), resolvedFilename, ScannerContext.ContextKind.TOP, null, 0 );
     		else
-    			context = new LimitedScannerContext( this, scannerData.getInitialReader(), resolvedFilename, ScannerContext.ContextKind.TOP, offsetLimit );
+    			context = new LimitedScannerContext( this, scannerData.getInitialReader(), resolvedFilename, ScannerContext.ContextKind.TOP, offsetLimit, 0 );
     		scannerData.getContextStack().push( context, scannerData.getClientRequestor() ); 
     	} catch( ContextException  ce )
     	{
@@ -2132,7 +2132,7 @@ public class Scanner implements IScanner {
         return newToken( type, buffer.toString());                      
     }
 
-
+    
 
     protected String getCurrentFile()
 	{
@@ -3213,5 +3213,21 @@ public class Scanner implements IScanner {
 		else
 			buffer.append( "EOF"); //$NON-NLS-1$
 		return buffer.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFileIndex()
+	 */
+	public int getCurrentFileIndex() {
+		IScannerContext mostRelevantFileContext = scannerData.getContextStack().getMostRelevantFileContext();
+		return (( mostRelevantFileContext == null ) ? -1 : 	mostRelevantFileContext.getFilenameIndex() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getFilenameForIndex(int)
+	 */
+	public String getFilenameForIndex(int index) {
+		if( index < 0 ) return EMPTY_STRING;
+		return scannerData.getContextStack().getInclusionFilename(index);
 	}
 }

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParseError.ParseErrorKind;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 
@@ -69,7 +68,7 @@ public class StructuralParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
-	public IASTNode parse(int startingOffset, int endingOffset) throws ParseError {
+	public ISelectionParseResult parse(int startingOffset, int endingOffset) throws ParseError {
 		throw new ParseError( ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
 	

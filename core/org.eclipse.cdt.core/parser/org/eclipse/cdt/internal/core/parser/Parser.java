@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
@@ -3076,7 +3077,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int, int)
 	 */
-	public IASTNode parse(int startingOffset, int endingOffset)
+	public ISelectionParseResult parse(int startingOffset, int endingOffset)
 		throws ParseError {
 		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
@@ -3111,6 +3112,8 @@ public abstract class Parser extends ExpressionParser implements IParser
 	protected void endDeclaration( IASTDeclaration declaration ) throws EndOfFileException
 	{
 		cleanupLastToken();
+		if( declaration instanceof IASTOffsetableNamedElement )
+			handleNode( (IASTOffsetableNamedElement) declaration );
 	}
 	
 	/**
@@ -3125,5 +3128,12 @@ public abstract class Parser extends ExpressionParser implements IParser
 	protected void endExpressionStatement( IASTExpression expression ) throws EndOfFileException
 	{
 		cleanupLastToken();
+	}
+
+
+	/**
+	 * @param expression
+	 */
+	protected void handleNode(IASTOffsetableNamedElement node ) {
 	}
 }

@@ -1,3 +1,7 @@
+2003-03-26 Andrew Niefer
+	Moved type information and ParameterInfo from Declaration into util.TypeInfo
+	Initial implementation of standard conversion sequences for function resolution
+
 2003-03-24 John Camelon
 	Added callback support for namespace definitions.  
 	Updated Parser exception hierarchy. 

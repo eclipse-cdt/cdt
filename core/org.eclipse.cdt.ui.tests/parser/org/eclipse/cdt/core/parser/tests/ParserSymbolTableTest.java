@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.internal.core.parser.Declaration;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.util.TypeInfo;
 
 /**
  * @author aniefer
@@ -379,13 +380,13 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addDeclaration( d );
 		
 		Declaration enum = new Declaration("enum");
-		enum.setType( Declaration.t_enumeration );
+		enum.setType( TypeInfo.t_enumeration );
 		
 		Declaration enumerator = new Declaration( "enumerator" );
-		enumerator.setType( Declaration.t_enumerator );
+		enumerator.setType( TypeInfo.t_enumerator );
 		
 		Declaration stat = new Declaration("static");
-		stat.setStatic(true);
+		stat.getTypeInfo().setBit( true, TypeInfo.isStatic );
 		
 		Declaration x = new Declaration("x");
 		
@@ -438,13 +439,13 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration cls = new Declaration( "class" );
-		cls.setType( Declaration.t_class );
+		cls.setType( TypeInfo.t_class );
 		
 		Declaration struct = new Declaration("struct");
-		struct.setType( Declaration.t_struct );
+		struct.setType( TypeInfo.t_struct );
 		
 		Declaration union = new Declaration("union");
-		union.setType( Declaration.t_union );
+		union.setType( TypeInfo.t_union );
 		
 		Declaration hideCls = new Declaration( "class" );
 		Declaration hideStruct = new Declaration("struct");
@@ -466,11 +467,11 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addDeclaration(union);
 		table.pop();
 		
-		Declaration look = table.ElaboratedLookup( Declaration.t_class, "class" );
+		Declaration look = table.ElaboratedLookup( TypeInfo.t_class, "class" );
 		assertEquals( look, cls );
-		look = table.ElaboratedLookup( Declaration.t_struct, "struct" );
+		look = table.ElaboratedLookup( TypeInfo.t_struct, "struct" );
 		assertEquals( look, struct );
-		look = table.ElaboratedLookup( Declaration.t_union, "union" );
+		look = table.ElaboratedLookup( TypeInfo.t_union, "union" );
 		assertEquals( look, union );
 	}
 	
@@ -528,19 +529,19 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration struct = new Declaration( "stat");
-		struct.setType( Declaration.t_struct );
+		struct.setType( TypeInfo.t_struct );
 		table.addDeclaration( struct );
 		
 		Declaration function = new Declaration( "stat" );
-		function.setType( Declaration.t_function );
+		function.setType( TypeInfo.t_function );
 		table.addDeclaration( function );
 		
 		Declaration f = new Declaration("f");
-		f.setType( Declaration.t_function );
+		f.setType( TypeInfo.t_function );
 		table.addDeclaration( f );
 		table.push( f );
 		
-		Declaration look = table.ElaboratedLookup( Declaration.t_struct, "stat" );
+		Declaration look = table.ElaboratedLookup( TypeInfo.t_struct, "stat" );
 		assertEquals( look, struct );
 		
 		look = table.Lookup( "stat" );
@@ -582,7 +583,7 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration nsA = new Declaration("A");
-		nsA.setType( Declaration.t_namespace );
+		nsA.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsA );
 		table.push( nsA );
 		
@@ -590,12 +591,12 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addDeclaration( nsA_i );
 		
 		Declaration nsB = new Declaration("B");
-		nsB.setType( Declaration.t_namespace );
+		nsB.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsB );
 		table.push( nsB );
 		
 		Declaration nsC = new Declaration("C");
-		nsC.setType( Declaration.t_namespace );
+		nsC.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsC );
 		table.push( nsC );
 		
@@ -607,7 +608,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addUsingDirective( look );
 		
 		Declaration f1 = new Declaration("f");
-		f1.setType( Declaration.t_function );
+		f1.setType( TypeInfo.t_function );
 		table.push( f1 );
 		
 		look = table.Lookup( "i" );
@@ -619,7 +620,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( table.peek(), nsA );
 		
 		Declaration nsD = new Declaration("D");
-		nsD.setType( Declaration.t_namespace );
+		nsD.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsD );
 		table.push( nsD );
 		
@@ -632,7 +633,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addUsingDirective( look );
 		
 		Declaration f2 = new Declaration( "f2" );
-		f2.setType( Declaration.t_function );
+		f2.setType( TypeInfo.t_function );
 		table.addDeclaration( f2 );
 		table.push( f2 );
 		
@@ -650,7 +651,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop(); //end nsD
 		
 		Declaration f3 = new Declaration ("f3");
-		f3.setType( Declaration.t_function );
+		f3.setType( TypeInfo.t_function );
 		table.addDeclaration( f3 );
 		table.push( f3 );
 		
@@ -661,7 +662,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration f4 = new Declaration ("f4");
-		f4.setType( Declaration.t_function );
+		f4.setType( TypeInfo.t_function );
 		table.addDeclaration( f4 );
 		table.push( f4 );
 		
@@ -693,7 +694,7 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration nsM = new Declaration( "M" );
-		nsM.setType( Declaration.t_namespace );
+		nsM.setType( TypeInfo.t_namespace );
 		
 		table.addDeclaration( nsM );
 		
@@ -703,7 +704,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration nsN = new Declaration( "N" );
-		nsN.setType( Declaration.t_namespace );
+		nsN.setType( TypeInfo.t_namespace );
 		
 		table.addDeclaration( nsN );
 		
@@ -765,7 +766,7 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration nsA = new Declaration("A");
-		nsA.setType( Declaration.t_namespace );
+		nsA.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsA );
 		table.push( nsA );
 		
@@ -774,21 +775,21 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration nsB = new Declaration("B");
-		nsB.setType( Declaration.t_namespace );
+		nsB.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsB );
 		table.push( nsB );
 		table.addUsingDirective( nsA );
 		table.pop();
 
 		Declaration nsC = new Declaration("C");
-		nsC.setType( Declaration.t_namespace );
+		nsC.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsC );
 		table.push( nsC );
 		table.addUsingDirective( nsA );
 		table.pop();	
 		
 		Declaration nsBC = new Declaration("BC");
-		nsBC.setType( Declaration.t_namespace );
+		nsBC.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsBC );
 		table.push( nsBC );
 		table.addUsingDirective( nsB );
@@ -796,7 +797,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration f = new Declaration("f");
-		f.setType(Declaration.t_function);
+		f.setType(TypeInfo.t_function);
 		table.addDeclaration( f );
 		table.push(f);
 		
@@ -834,7 +835,7 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration nsB = new Declaration( "B" );
-		nsB.setType( Declaration.t_namespace );
+		nsB.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsB );
 		table.push( nsB );
 		
@@ -843,7 +844,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration nsA = new Declaration( "A" );
-		nsA.setType( Declaration.t_namespace );
+		nsA.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsA );
 		table.push( nsA );
 		
@@ -908,11 +909,11 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration nsA = new Declaration( "A" );
-		nsA.setType( Declaration.t_namespace );
+		nsA.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsA );
 			
 		Declaration nsB = new Declaration( "B" );
-		nsB.setType( Declaration.t_namespace );
+		nsB.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsB );
 		table.push( nsB );
 		table.addUsingDirective( nsA );
@@ -961,39 +962,39 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration nsA = new Declaration("A");
-		nsA.setType( Declaration.t_namespace );
+		nsA.setType( TypeInfo.t_namespace );
 		
 		table.addDeclaration( nsA );
 		table.push( nsA );
 		
 		Declaration structX = new Declaration("x");
-		structX.setType( Declaration.t_struct );
+		structX.setType( TypeInfo.t_struct );
 		table.addDeclaration( structX );
 		
 		Declaration intX = new Declaration("x");
-		intX.setType( Declaration.t_int );
+		intX.setType( TypeInfo.t_int );
 		table.addDeclaration( intX );
 		
 		Declaration intY = new Declaration("y");
-		intY.setType( Declaration.t_int );
+		intY.setType( TypeInfo.t_int );
 		table.addDeclaration( intY );
 
 		table.pop();
 		
 		Declaration nsB = new Declaration("B");
-		nsB.setType( Declaration.t_namespace );
+		nsB.setType( TypeInfo.t_namespace );
 		
 		table.addDeclaration( nsB );
 		table.push( nsB );
 		
 		Declaration structY = new Declaration("y");
-		structY.setType( Declaration.t_struct );
+		structY.setType( TypeInfo.t_struct );
 		table.addDeclaration( structY );
 		
 		table.pop();
 		
 		Declaration nsC = new Declaration("C");
-		nsC.setType( Declaration.t_namespace);
+		nsC.setType( TypeInfo.t_namespace);
 		table.addDeclaration( nsC );
 		
 		table.push( nsC );
@@ -1044,17 +1045,17 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 	
 		Declaration nsA = new Declaration( "A" );
-		nsA.setType( Declaration.t_namespace );
+		nsA.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsA );
 		table.push( nsA );
 	
 		Declaration nsB = new Declaration( "B" );
-		nsB.setType( Declaration.t_namespace );
+		nsB.setType( TypeInfo.t_namespace );
 		table.addDeclaration( nsB );
 		table.push( nsB );
 	
 		Declaration f1 = new Declaration("f1");
-		f1.setType( Declaration.t_function );
+		f1.setType( TypeInfo.t_function );
 		table.addDeclaration( f1 );
 	
 		table.pop();
@@ -1102,21 +1103,21 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration B = new Declaration("B");
-		B.setType( Declaration.t_struct );
+		B.setType( TypeInfo.t_struct );
 		table.addDeclaration( B );
 		table.push( B );
 		
 		Declaration f = new Declaration("f");
-		f.setType( Declaration.t_function );
+		f.setType( TypeInfo.t_function );
 		table.addDeclaration( f );
 	
 		Declaration E = new Declaration( "E" );
-		E.setType( Declaration.t_enumeration );
+		E.setType( TypeInfo.t_enumeration );
 		table.addDeclaration( E );
 		
 		table.push( E );
 		Declaration e = new Declaration( "e" );
-		e.setType( Declaration.t_enumerator );
+		e.setType( TypeInfo.t_enumerator );
 		table.addDeclaration( e );
 		table.pop();
 		
@@ -1125,17 +1126,17 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration C = new Declaration( "C" );
-		C.setType( Declaration.t_class );
+		C.setType( TypeInfo.t_class );
 		table.addDeclaration( C );
 		
 		table.push( C );
 		Declaration g = new Declaration( "g" );
-		g.setType( Declaration.t_function );
+		g.setType( TypeInfo.t_function );
 		table.addDeclaration( g );
 		table.pop();
 		
 		Declaration D = new Declaration( "D" );
-		D.setType( Declaration.t_struct );
+		D.setType( TypeInfo.t_struct );
 		Declaration look = table.Lookup( "B" );
 		assertEquals( look, B );
 		D.addParent( look );
@@ -1212,15 +1213,15 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration A = new Declaration( "A" );
-		A.setType( Declaration.t_namespace );
+		A.setType( TypeInfo.t_namespace );
 		table.addDeclaration( A );
 		
 		table.push( A );
 		
 		Declaration f1 = new Declaration( "f" );
-		f1.setType( Declaration.t_function );
-		f1.setReturnType( Declaration.t_void );
-		f1.addParameter( Declaration.t_int, "", false );
+		f1.setType( TypeInfo.t_function );
+		f1.setReturnType( TypeInfo.t_void );
+		f1.addParameter( TypeInfo.t_int, 0, "", false );
 		table.addDeclaration( f1 );
 		
 		table.pop();
@@ -1239,21 +1240,20 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.push( look );
 		Declaration f2 = new Declaration("f");
-		f2.setType( Declaration.t_function );
-		f2.setReturnType( Declaration.t_void );
-		f2.addParameter( Declaration.t_char, "", false );
+		f2.setType( TypeInfo.t_function );
+		f2.setReturnType( TypeInfo.t_void );
+		f2.addParameter( TypeInfo.t_char, 0, "", false );
 		
 		table.addDeclaration( f2 );
 		
 		table.pop();
 		
 		Declaration foo = new Declaration("foo");
-		foo.setType( Declaration.t_function );
+		foo.setType( TypeInfo.t_function );
 		table.addDeclaration( foo );
 		table.push( foo );
 		LinkedList paramList = new LinkedList();
-		Declaration.ParameterInfo param = foo.new ParameterInfo();
-		param.typeInfo = Declaration.t_char;
+		TypeInfo param = new TypeInfo( TypeInfo.t_char, null );
 		paramList.add( param );
 		
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
@@ -1273,11 +1273,11 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration cls = new Declaration("class");
-		cls.setType( Declaration.t_class );
+		cls.setType( TypeInfo.t_class );
 		
 		Declaration fn = new Declaration("function");
-		fn.setType( Declaration.t_function );
-		fn.setCVQualifier("const");
+		fn.setType( TypeInfo.t_function );
+		fn.setCVQualifier( TypeInfo.cvConst );
 		
 		table.addDeclaration( cls );
 		table.push( cls );
@@ -1288,7 +1288,7 @@ public class ParserSymbolTableTest extends TestCase {
 		Declaration look = table.Lookup("this");
 		assertTrue( look != null );
 		
-		assertEquals( look.getType(), Declaration.t_type );
+		assertEquals( look.getType(), TypeInfo.t_type );
 		assertEquals( look.getTypeDeclaration(), cls );
 		assertEquals( look.getPtrOperator(), "*" );
 		assertEquals( look.getCVQualifier(), fn.getCVQualifier() );
@@ -1307,10 +1307,10 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration cls = new Declaration("class");
-		cls.setType( Declaration.t_class );
+		cls.setType( TypeInfo.t_class );
 		
 		Declaration enumeration = new Declaration("enumeration");
-		enumeration.setType( Declaration.t_enumeration );
+		enumeration.setType( TypeInfo.t_enumeration );
 		
 		table.addDeclaration( cls );
 		table.push( cls );
@@ -1318,7 +1318,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.push( enumeration );
 		
 		Declaration enumerator = new Declaration( "enumerator" );
-		enumerator.setType( Declaration.t_enumerator );
+		enumerator.setType( TypeInfo.t_enumerator );
 		table.addDeclaration( enumerator );
 		
 		table.pop();
@@ -1346,23 +1346,23 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration NS = new Declaration("NS");
-		NS.setType( Declaration.t_namespace );
+		NS.setType( TypeInfo.t_namespace );
 		
 		table.addDeclaration( NS );
 		table.push( NS );
 		
 		Declaration T = new Declaration("T");
-		T.setType( Declaration.t_class );
+		T.setType( TypeInfo.t_class );
 		
 		table.addDeclaration( T );
 		
 		Declaration f = new Declaration("f");
-		f.setType( Declaration.t_function );
-		f.setReturnType( Declaration.t_void );
+		f.setType( TypeInfo.t_function );
+		f.setReturnType( TypeInfo.t_void );
 		
 		Declaration look = table.Lookup( "T" );
 		assertEquals( look, T );				
-		f.addParameter( look, "", false );
+		f.addParameter( look, 0, "", false );
 		
 		table.addDeclaration( f );	
 		
@@ -1376,13 +1376,13 @@ public class ParserSymbolTableTest extends TestCase {
 		table.pop();
 		
 		Declaration param = new Declaration("parm");
-		param.setType( Declaration.t_type );
+		param.setType( TypeInfo.t_type );
 		param.setTypeDeclaration( look );
 		table.addDeclaration( param );
 		
 		Declaration main = new Declaration("main");
-		main.setType( Declaration.t_function );
-		main.setReturnType( Declaration.t_int );
+		main.setType( TypeInfo.t_function );
+		main.setReturnType( TypeInfo.t_int );
 		table.addDeclaration( main );
 		table.push( main );
 		
@@ -1390,11 +1390,7 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.Lookup( "parm" );
 		assertEquals( look, param );
 		
-		Declaration.ParameterInfo p = look.new ParameterInfo();
-		p.typeInfo = look.getType();
-		p.typeDeclaration = look.getTypeDeclaration();
-		
-		paramList.add( p );
+		paramList.add( look.getTypeInfo() );
 		
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );
@@ -1427,20 +1423,20 @@ public class ParserSymbolTableTest extends TestCase {
 		newTable();
 		
 		Declaration NS1 = new Declaration( "NS1" );
-		NS1.setType( Declaration.t_namespace );
+		NS1.setType( TypeInfo.t_namespace );
 		 
 		table.addDeclaration( NS1 );
 		table.push( NS1 );
 		
 		Declaration f1 = new Declaration( "f" );
-		f1.setType( Declaration.t_function );
-		f1.setReturnType( Declaration.t_void );
-		f1.addParameter( Declaration.t_void, "*", false );
+		f1.setType( TypeInfo.t_function );
+		f1.setReturnType( TypeInfo.t_void );
+		f1.addParameter( TypeInfo.t_void, 0, "*", false );
 		table.addDeclaration( f1 );
 		table.pop();
 		
 		Declaration NS2 = new Declaration( "NS2" );
-		NS2.setType( Declaration.t_namespace );
+		NS2.setType( TypeInfo.t_namespace );
 		
 		table.addDeclaration( NS2 );
 		table.push( NS2 );
@@ -1450,18 +1446,18 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addUsingDirective( look );
 		
 		Declaration B = new Declaration( "B" );
-		B.setType( Declaration.t_class );
+		B.setType( TypeInfo.t_class );
 		table.addDeclaration( B );
 		
 		Declaration f2 = new Declaration( "f" );
-		f2.setType( Declaration.t_function );
-		f2.setReturnType( Declaration.t_void );
-		f2.addParameter( Declaration.t_void, "*", false );
+		f2.setType( TypeInfo.t_function );
+		f2.setReturnType( TypeInfo.t_void );
+		f2.addParameter( TypeInfo.t_void, 0, "*", false );
 		table.addDeclaration( f2 );
 		table.pop();
 		
 		Declaration A = new Declaration( "A" );
-		A.setType( Declaration.t_class );
+		A.setType( TypeInfo.t_class );
 		look = table.LookupNestedNameSpecifier( "NS2" );
 		assertEquals( look, NS2 );
 		table.push( look );
@@ -1474,14 +1470,14 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.Lookup( "A" );
 		assertEquals( look, A );
 		Declaration a = new Declaration( "a" );
-		a.setType( Declaration.t_type );
+		a.setType( TypeInfo.t_type );
 		a.setTypeDeclaration( look );
 		table.addDeclaration( a );
 		
 		LinkedList paramList = new LinkedList();
 		look = table.Lookup( "a" );
 		assertEquals( look, a );
-		Declaration.ParameterInfo param = look.new ParameterInfo( look.getType(), look, "&", false );
+		TypeInfo param = new TypeInfo( look.getType(), look, 0, "&", false );
 		paramList.add( param );
 		
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
@@ -1517,24 +1513,24 @@ public class ParserSymbolTableTest extends TestCase {
 		table.push(C);
 				
 		Declaration f1 = new Declaration("foo");
-		f1.setType( Declaration.t_function );
-		f1.setReturnType( Declaration.t_void );
-		f1.addParameter( Declaration.t_int, "", false );
+		f1.setType( TypeInfo.t_function );
+		f1.setReturnType( TypeInfo.t_void );
+		f1.addParameter( TypeInfo.t_int, 0, "", false );
 		table.addDeclaration( f1 );
 		
 		Declaration f2 = new Declaration("foo");
-		f2.setType( Declaration.t_function );
-		f2.setReturnType( Declaration.t_void );
-		f2.addParameter( Declaration.t_int, "", false );
-		f2.addParameter( Declaration.t_char, "", false );
+		f2.setType( TypeInfo.t_function );
+		f2.setReturnType( TypeInfo.t_void );
+		f2.addParameter( TypeInfo.t_int, 0, "", false );
+		f2.addParameter( TypeInfo.t_char, 0, "", false );
 		table.addDeclaration( f2 );
 		
 		Declaration f3 = new Declaration("foo");
-		f3.setType( Declaration.t_function );
-		f3.setReturnType( Declaration.t_void );
-		f3.addParameter( Declaration.t_int, "", false );
-		f3.addParameter( Declaration.t_char, "", false );
-		f3.addParameter( C, "*", false );
+		f3.setType( TypeInfo.t_function );
+		f3.setReturnType( TypeInfo.t_void );
+		f3.addParameter( TypeInfo.t_int, 0, "", false );
+		f3.addParameter( TypeInfo.t_char, 0, "", false );
+		f3.addParameter( C, 0, "*", false );
 		table.addDeclaration( f3 );
 		table.pop();
 		
@@ -1542,7 +1538,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, C );
 		
 		Declaration c = new Declaration("c");
-		c.setType( Declaration.t_class );
+		c.setType( TypeInfo.t_class );
 		c.setTypeDeclaration( look );
 		table.addDeclaration( c );
 		
@@ -1552,9 +1548,9 @@ public class ParserSymbolTableTest extends TestCase {
 		table.push( look.getTypeDeclaration() );
 		
 		LinkedList paramList = new LinkedList();
-		Declaration.ParameterInfo p1 = c.new ParameterInfo(Declaration.t_int, null, "", false);
-		Declaration.ParameterInfo p2 = c.new ParameterInfo(Declaration.t_char, null, "", false);
-		Declaration.ParameterInfo p3 = c.new ParameterInfo(Declaration.t_class, C, "", false);
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, null, 0, "", false);
+		TypeInfo p2 = new TypeInfo( TypeInfo.t_char, null, 0, "", false);
+		TypeInfo p3 = new TypeInfo( TypeInfo.t_type, C, 0, "*", false);
 		
 		paramList.add( p1 );
 		look = table.MemberFunctionLookup( "foo", paramList );
@@ -1567,5 +1563,110 @@ public class ParserSymbolTableTest extends TestCase {
 		paramList.add( p3 );
 		look = table.MemberFunctionLookup( "foo", paramList );
 		assertEquals( look, f3 );
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 * test basic function resolution
+	 * 
+	 * void f( int i ); 
+	 * void f( char c = 'c' );
+	 * 
+	 * f( 1 );		//calls f( int );
+	 * f( 'b' ); 	//calls f( char );
+	 * f(); 		//calls f( char );
+	 */
+	public void testFunctionResolution_1() throws Exception{
+		newTable();
+		
+		Declaration f1 = new Declaration("f");
+		f1.setType( TypeInfo.t_function );
+		f1.addParameter( TypeInfo.t_int, 0, "", false );
+		table.addDeclaration( f1 );
+		
+		Declaration f2 = new Declaration("f");
+		f2.setType( TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_char, 0, "", true );
+		table.addDeclaration( f2 );
+		
+		LinkedList paramList = new LinkedList();
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, null, 0, "", false );
+		paramList.add( p1 );
+		
+		Declaration look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f1 );
+		
+		paramList.clear();
+		TypeInfo p2 = new TypeInfo( TypeInfo.t_char, null, 0, "", false );
+		paramList.add( p2 );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f2 );
+		
+		paramList.clear();
+		TypeInfo p3 = new TypeInfo( TypeInfo.t_bool, null, 0, "", false );
+		paramList.add( p3 );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f1 );
+		
+		look = table.UnqualifiedFunctionLookup( "f", null );
+		assertEquals( look, f2 );
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 *
+	 * class A { };
+	 * class B : public A {};
+	 * class C : public B {};
+	 * 
+	 * void f ( A * );
+	 * void f ( B * );
+	 * 
+	 * A* a = new A();
+	 * C* c = new C();
+	 * 
+	 * f( a );		//calls f( A * );
+	 * f( c );		//calls f( B * );   	      
+	 */
+	public void testFunctionResolution_2() throws Exception{
+		newTable();
+		
+		Declaration A = new Declaration( "A" );
+		A.setType( TypeInfo.t_class );
+		table.addDeclaration( A );
+		
+		Declaration B = new Declaration( "B" );
+		B.setType( TypeInfo.t_class );
+		B.addParent( A );
+		table.addDeclaration( B );
+		
+		Declaration C = new Declaration( "C" );
+		C.setType( TypeInfo.t_class );
+		C.addParent( B );
+		table.addDeclaration( C );
+		
+		Declaration f1 = new Declaration( "f" );
+		f1.setType( TypeInfo.t_function );
+		f1.addParameter( A, 0, "*", false );
+		table.addDeclaration( f1 );
+		
+		Declaration f2 = new Declaration( "f" );
+		f2.setType( TypeInfo.t_function );
+		f2.addParameter( B, 0, "*", false );
+		table.addDeclaration( f2 );
+		
+		LinkedList paramList = new LinkedList();
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, A, 0, "*", false );
+		paramList.add( p1 );
+		Declaration look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f1 );
+		
+		paramList.clear();
+		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, C, 0, "*", false );
+		paramList.add( p2 );
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f2 );
 	}
 }

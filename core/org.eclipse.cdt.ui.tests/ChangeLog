@@ -1,3 +1,8 @@
+2003-03-26 Andrew Niefer
+	In ParserSymbolTableTest : 
+		updated all tests to reflect TypeInfo changes
+		Added testFunctionResolution() & testFunctionResolution_2() in
+
 2003-03-25 John Camelon
 	Added testDeclSpecifier(), testNamespaceDefinition(), testLinkageSpecification(), 
 	testUsingClauses() and testEnumSpecifier() to DOMTests.

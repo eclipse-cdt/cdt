@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.core.parser.util.TypeInfo;
+
 /**
  * @author aniefer
  *
@@ -32,15 +34,20 @@ public class Declaration implements Cloneable {
 	 */
 	public Declaration(){
 		super();
+		_typeInfo = new TypeInfo();
 	}
 
 	public Declaration( String name ){
+		super();
 		_name = name;
+		_typeInfo = new TypeInfo();
 	}
 	
 	public Declaration( String name, Object obj ){
+		super();
 		_name   = name;
 		_object = obj;
+		_typeInfo = new TypeInfo();
 	}
 
 	/**
@@ -77,134 +84,32 @@ public class Declaration implements Cloneable {
 		return copy;	
 	}
 	
-	public static final int typeMask   = 0x001f;
-	public static final int isAuto     = 0x0020;
-	public static final int isRegister = 0x0040;
-	public static final int isStatic   = 0x0080;
-	public static final int isExtern   = 0x0100;
-	public static final int isMutable  = 0x0200;
-	public static final int isInline   = 0x0400;
-	public static final int isVirtual  = 0x0800;
-	public static final int isExplicit = 0x1000;
-	public static final int isTypedef  = 0x2000;
-	public static final int isFriend   = 0x4000;
-	public static final int isConst    = 0x8000;
-	public static final int isVolatile = 0x10000;
-	public static final int isUnsigned = 0x20000;
-	public static final int isShort    = 0x40000;
-	public static final int isLong     = 0x80000;
-	
-	public void setAuto(boolean b) { setBit(b, isAuto); }
-	public boolean isAuto() { return checkBit(isAuto); }
-	
-	public void setRegister(boolean b) { setBit(b, isRegister); }
-	public boolean isRegister() { return checkBit(isRegister); } 
-	
-	public void setStatic(boolean b) { setBit(b, isStatic); }
-	public boolean isStatic() { return checkBit(isStatic); }
-	
-	public void setExtern(boolean b) { setBit(b, isExtern); }
-	public boolean isExtern() { return checkBit(isExtern); }
-	
-	public void setMutable(boolean b) { setBit(b, isMutable); }
-	public boolean isMutable() { return checkBit(isMutable); }
-	
-	public void setInline(boolean b) { setBit(b, isInline); }
-	public boolean isInline() { return checkBit(isInline); }
-	
-	public void setVirtual(boolean b) { setBit(b, isVirtual); }
-	public boolean isVirtual() { return checkBit(isVirtual); }
-	
-	public void setExplicit(boolean b) { setBit(b, isExplicit); }
-	public boolean isExplicit() { return checkBit(isExplicit); }
-	
-	public void setTypedef(boolean b) { setBit(b, isTypedef); }
-	public boolean isTypedef() { return checkBit(isTypedef); }
-	
-	public void setFriend(boolean b) { setBit(b, isFriend); }
-	public boolean isFriend() { return checkBit(isFriend); }
-	
-	public void setConst(boolean b) { setBit(b, isConst); }
-	public boolean isConst() { return checkBit(isConst); }
-	
-	public void setVolatile(boolean b) { setBit(b, isVolatile); }
-	public boolean isVolatile() { return checkBit(isVolatile); }
-
-	public void setUnsigned(boolean b) { setBit(b, isUnsigned); }
-	public boolean isUnsigned() {	return checkBit(isUnsigned); }
-	
-	public void setShort(boolean b) { setBit(b, isShort); }
-	public boolean isShort() { return checkBit(isShort); }
-
-	public void setLong(boolean b) { setBit(b, isLong); }
-	public boolean isLong() {	return checkBit(isLong); }
-	
-	// Types
-	// Note that these should be considered ordered and if you change
-	// the order, you should consider the ParserSymbolTable uses
-	public static final int t_type        =  0; // Type Specifier
-	public static final int t_namespace   =  1;
-	public static final int t_class       =  2;
-	public static final int t_struct      =  3;
-	public static final int t_union       =  4;
-	public static final int t_enumeration =  5;
-	public static final int t_function    =  6;
-	public static final int t_char        =  7;
-	public static final int t_wchar_t     =  8;
-	public static final int t_bool        =  9;
-	public static final int t_int         = 10;
-	public static final int t_float       = 11;
-	public static final int t_double      = 12;
-	public static final int t_void        = 13;
-	public static final int t_enumerator  = 14;
-	
-
-	public void setType(int t) throws ParserSymbolTableException{ 
-		//sanity check, t must fit in its allocated 5 bits in _typeInfo
-		if( t > typeMask ){
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
-		}
-		
-		_typeInfo = _typeInfo & ~typeMask | t; 
+	public void setType(int t) throws ParserSymbolTableException{
+		_typeInfo.setType( t );	 
 	}
 	
 	public int getType(){ 
-		return _typeInfo & typeMask; 
+		return _typeInfo.getType(); 
 	}
 	
 	public boolean isType( int type ){
-		return isType( type, 0 ); 
+		return _typeInfo.isType( type, 0 ); 
 	}
-	
-	/**
-	 * 
-	 * @param type
-	 * @param upperType
-	 * @return boolean
-	 * 
-	 * type checking, check that this declaration's type is between type and
-	 * upperType (inclusive).  upperType of 0 means no range and our type must
-	 * be type.
-	 */
+
 	public boolean isType( int type, int upperType ){
-		//type of -1 means we don't care
-		if( type == -1 )
-			return true;
-		
-		//upperType of 0 means no range
-		if( upperType == 0 ){
-			return ( getType() == type );
-		} else {
-			return ( getType() >= type && getType() <= upperType );
-		}
+		return _typeInfo.isType( type, upperType );
 	}
 		
 	public Declaration getTypeDeclaration(){	
-		return _typeDeclaration; 
+		return _typeInfo.getTypeDeclaration(); 
 	}
 	
 	public void setTypeDeclaration( Declaration type ){
-		_typeDeclaration = type; 
+		_typeInfo.setTypeDeclaration( type ); 
+	}
+	
+	public TypeInfo getTypeInfo(){
+		return _typeInfo;
 	}
 	
 	public String getName() { return _name; }
@@ -252,11 +157,11 @@ public class Declaration implements Cloneable {
 		_needsDefinition = need;
 	}
 	
-	public String getCVQualifier(){
+	public int getCVQualifier(){
 		return _cvQualifier;
 	}
 	
-	public void setCVQualifier( String cv ){
+	public void setCVQualifier( int cv ){
 		_cvQualifier = cv;
 	}
 	
@@ -275,30 +180,22 @@ public class Declaration implements Cloneable {
 		_returnType = type;
 	}
 	
-	public void addParameter( Declaration typeDecl, String ptrOperator, boolean hasDefault ){
+	public void addParameter( Declaration typeDecl, int cvQual, String ptrOperator, boolean hasDefault ){
 		if( _parameters == null ){
 			_parameters = new LinkedList();
 		}
 		
-		ParameterInfo info = new ParameterInfo();
-		info.typeInfo = t_type;
-		info.typeDeclaration = typeDecl;
-		info.ptrOperator = ptrOperator;
-		info.hasDefaultValue = hasDefault;
+		TypeInfo info = new TypeInfo( TypeInfo.t_type, typeDecl, cvQual, ptrOperator, hasDefault );
 				
 		_parameters.add( info );
 	}
 	
-	public void addParameter( int type, String ptrOperator, boolean hasDefault ){
+	public void addParameter( int type, int cvQual, String ptrOperator, boolean hasDefault ){
 		if( _parameters == null ){
 			_parameters = new LinkedList();
 		}
 		
-		ParameterInfo info = new ParameterInfo();
-		info.typeInfo = type;
-		info.typeDeclaration = null;
-		info.ptrOperator = ptrOperator;
-		info.hasDefaultValue = hasDefault;
+		TypeInfo info = new TypeInfo(type, null, cvQual, ptrOperator, hasDefault );
 				
 		_parameters.add( info );
 	}
@@ -316,12 +213,12 @@ public class Declaration implements Cloneable {
 		Iterator iter = _parameters.iterator();
 		Iterator fIter = function._parameters.iterator();
 		
-		ParameterInfo info = null;
-		ParameterInfo fInfo = null;
+		TypeInfo info = null;
+		TypeInfo fInfo = null;
 		
 		for( int i = size; i > 0; i-- ){
-			info = (ParameterInfo) iter.next();
-			fInfo = (ParameterInfo) fIter.next();
+			info = (TypeInfo) iter.next();
+			fInfo = (TypeInfo) fIter.next();
 			
 			if( !info.equals( fInfo ) ){
 				return false;
@@ -332,26 +229,12 @@ public class Declaration implements Cloneable {
 		return true;
 	}
 	
-	// Convenience methods
-	private void setBit(boolean b, int mask){
-		if( b ){
-			_typeInfo = _typeInfo | mask; 
-		} else {
-			_typeInfo = _typeInfo & ~mask; 
-		} 
-	}
-	
-	private boolean checkBit(int mask){
-		return (_typeInfo & mask) != 0;
-	}	
-	
-	private 	int   		_typeInfo;				//our type info
 	private 	String 		_name;					//our name
 	private	Object 		_object;				//the object associated with us
-	private 	Declaration	_typeDeclaration;		//our type if _typeInfo says t_type
 	private	boolean	_needsDefinition;		//this name still needs to be defined
-	private	String		_cvQualifier;
+	private	int		_cvQualifier;
 	private	String		_ptrOperator;
+	protected	TypeInfo	_typeInfo;				//our type info
 	protected	Declaration	_containingScope;		//the scope that contains us
 	protected	LinkedList 	_parentScopes;			//inherited scopes (is base classes)
 	protected	LinkedList 	_usingDirectives;		//collection of nominated namespaces
@@ -371,28 +254,5 @@ public class Declaration implements Cloneable {
 		
 		public boolean isVirtual = false;
 		public Declaration parent = null;
-	}
-	
-	public class ParameterInfo
-	{
-		public ParameterInfo() {}
-		public ParameterInfo( int t, Declaration decl, String ptr, boolean def ){
-			typeInfo = t;
-			typeDeclaration = decl;
-			ptrOperator = ptr;
-			hasDefaultValue = def;
-		}
-		
-		public boolean equals( ParameterInfo obj ){
-			return	( hasDefaultValue == obj.hasDefaultValue ) &&
-				    ( typeInfo == obj.typeInfo ) &&
-				    ( typeDeclaration == obj.typeDeclaration ) &&
-				    ( ptrOperator.equals( obj.ptrOperator ) );
-		}
-		
-		public boolean	hasDefaultValue;
-		public int		typeInfo;
-		public Declaration	typeDeclaration;
-		public String		ptrOperator;
 	}
 }

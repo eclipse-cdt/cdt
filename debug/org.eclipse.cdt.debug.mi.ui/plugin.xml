@@ -27,13 +27,13 @@
    <extension
          point="org.eclipse.cdt.debug.ui.CDebuggerPage">
       <debugPage
-            class="org.eclipse.cdt.debug.mi.internal.ui.CDebuggerPage"
-            id="org.eclipse.cdt.debug.mi.CDebuggerPage"
+            class="org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage"
+            id="org.eclipse.cdt.debug.mi.GDBDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugPage>
       <debugPage
-            class="org.eclipse.cdt.debug.mi.internal.ui.CDebuggerPage"
-            id="org.eclipse.cdt.debug.mi.CygwinCDebuggerPage"
+            class="org.eclipse.cdt.debug.mi.internal.ui.CygwinDebuggerPage"
+            id="org.eclipse.cdt.debug.mi.CygwinDebuggerPage"
             debuggerID="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
       </debugPage>
    </extension>

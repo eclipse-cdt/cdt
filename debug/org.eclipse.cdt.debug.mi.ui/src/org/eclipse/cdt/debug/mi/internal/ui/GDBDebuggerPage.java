@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class CDebuggerPage extends AbstractLaunchConfigurationTab {
+public class GDBDebuggerPage extends AbstractLaunchConfigurationTab {
 
 	private Text fGDBCommandText;
 	private Text fGDBInitText;
@@ -90,6 +90,8 @@ public class CDebuggerPage extends AbstractLaunchConfigurationTab {
 		subComp = new Composite(comp, SWT.NONE);
 		gdbLayout = new GridLayout();
 		gdbLayout.numColumns = 2;
+		gdbLayout.marginHeight = 0;
+		gdbLayout.marginWidth = 0;
 		subComp.setLayout(gdbLayout);
 		subComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 

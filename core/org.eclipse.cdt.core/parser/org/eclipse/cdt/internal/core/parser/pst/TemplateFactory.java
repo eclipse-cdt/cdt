@@ -278,17 +278,34 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		int size = templates.size();
 		for( int i = 0; i < size; i++ ){
 			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
-			ITemplateSymbol origTemplate = (ITemplateSymbol) ((ISymbol)symbols.get(i)).getContainingSymbol();
-			
+			ISymbol origContainer = (ISymbol) symbols.get(i);
+			if ( origContainer instanceof IDeferredTemplateInstance )
+				origContainer = ((IDeferredTemplateInstance) origContainer).getTemplate().getTemplatedSymbol();
+			ITemplateSymbol origTemplate = (ITemplateSymbol)origContainer.getContainingSymbol();
+			ObjectMap containerDefnMap = null;
 			List tList = template.getParameterList();
+			if( origTemplate.getDefinitionParameterMap().containsKey( origContainer ) ){
+				containerDefnMap = (ObjectMap) origTemplate.getDefinitionParameterMap().get( origContainer );
+			}
 			List oList = origTemplate.getParameterList();
 			int tListSize = tList.size();
 			if( oList.size() < tListSize )
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 		    ObjectMap defnMap = new ObjectMap(tListSize);
-			for( int j = 0; j < tListSize; j++ ){		
+			for( int j = 0; j < tListSize; j++ ) {		
 				ISymbol param = (ISymbol) tList.get(j);
 				ISymbol origParam = (ISymbol) oList.get(j);
+				if( containerDefnMap != null ) {
+					ISymbol keyParam, valParam;
+					for( int k = 0; k < containerDefnMap.size(); ++k ) {
+						keyParam = (ISymbol) containerDefnMap.keyAt( k );
+						valParam = (ISymbol) containerDefnMap.getAt( k );
+						if ( valParam.equals(origParam) ) {
+							origParam = keyParam;
+							break;
+						}
+					}
+				}
 				defnMap.put( param, origParam );	
 			}
 			

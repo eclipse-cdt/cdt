@@ -1,3 +1,36 @@
+2004-10-06 Vladimir Hirsl
+
+	Fix for PR 75728 [ParserSymbolTable] NPE in TypeInfoProvider.newTypeInfo
+	Corrected mappings added to to TemplateSymbol._defnParameterMap
+	
+	* parser/org/eclipse/cdt/internal/core/parser/ast/TemplateFactory.java
+	
+	Another NPE fix (caused by the fact that UndefinedTemplateSymbols do not have
+	any associated extension objects).
+	
+	* parser/org/eclipse/cdt/internal/core/parser/ast/complete/CompleteParseASTFactory.java
+
+2004-10-04 Vladimir Hirsl
+
+	Fix for PR 60307 [Templates] Template parameter qualified types not supported
+	Added new symbol type: UndefinedTemplateSymbol that represents template paramater
+	qualified types. At instantiation the unknown types are replaced with the real ones.
+	
+	* parser/org/eclipse/cdt/internal/core/parser/Parser.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/complete/ASTNode.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/complete/CompleteParseASTFactory.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/ContainerSymbol.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/IContainerSymbol.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/ParametrizedSymbol.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/ParserSymbolTable.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/TemplateEngine.java
+	* parser/org/eclipse/cdt/internal/core/parser/ast/TemplateFactory.java
+	+ parser/org/eclipse/cdt/internal/core/parser/ast/UndefinedTemplateSymbol.java
+	
+	* failures/org/eclipse/cdt/core/parser/failedTests/FailedCompleteParseASTTest.java
+	* parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.java
+	* parser/org/eclipse/cdt/core/parser/tests/ParserSymbolTableTest.java
+	
 2004-09-03 Alain Magloire
 
 	Provide the extension for the Core Plugin Preference Initializer.

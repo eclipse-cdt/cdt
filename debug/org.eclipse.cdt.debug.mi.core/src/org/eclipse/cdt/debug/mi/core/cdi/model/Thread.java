@@ -66,7 +66,7 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
 	public ICDIStackFrame[] getStackFrames() throws CDIException {
-
+		int depth = 0;
 		ICDIStackFrame[] stacks = noStack;
 		Session session = (Session)getTarget().getSession();
 		Target currentTarget = (Target)session.getCurrentTarget();
@@ -76,6 +76,7 @@ public class Thread extends CObject implements ICDIThread {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIStackListFrames frames = factory.createMIStackListFrames();
+			depth = getStackFrameCount();
 			mi.postCommand(frames);
 			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 			if (info == null) {
@@ -84,7 +85,7 @@ public class Thread extends CObject implements ICDIThread {
 			MIFrame[] miFrames = info.getMIFrames();
 			stacks = new StackFrame[miFrames.length];
 			for (int i = 0; i < stacks.length; i++) {
-				stacks[i] = new StackFrame(this, miFrames[i]);
+				stacks[i] = new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel());
 			}
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());
@@ -97,7 +98,7 @@ public class Thread extends CObject implements ICDIThread {
 		}
 		if (currentFrame == null) {
 			for (int i = 0; i < stacks.length; i++) {
-				if (stacks[i].getLevel() == 0) {
+				if (stacks[i].getLevel() == depth) {
 					currentFrame = stacks[i];
 				}
 			}
@@ -147,6 +148,7 @@ public class Thread extends CObject implements ICDIThread {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIStackListFrames frames = factory.createMIStackListFrames(low, high);
+			int depth = getStackFrameCount();
 			mi.postCommand(frames);
 			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 			if (info == null) {
@@ -155,7 +157,7 @@ public class Thread extends CObject implements ICDIThread {
 			MIFrame[] miFrames = info.getMIFrames();
 			stacks = new StackFrame[miFrames.length];
 			for (int i = 0; i < stacks.length; i++) {
-				stacks[i] = new StackFrame(this, miFrames[i]);
+				stacks[i] = new StackFrame(this, miFrames[i], depth - miFrames[i].getLevel());
 			}
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());
@@ -168,7 +170,8 @@ public class Thread extends CObject implements ICDIThread {
 		}
 		if (currentFrame == null) {
 			for (int i = 0; i < stacks.length; i++) {
-				if (stacks[i].getLevel() == 0) {
+				StackFrame f = (StackFrame)stacks[i];
+				if (f.getMIFrame().getLevel() == 0) {
 					currentFrame = stacks[i];
 				}
 			}
@@ -187,14 +190,14 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame, boolean)
 	 */
 	public void setCurrentStackFrame(ICDIStackFrame stackframe, boolean doUpdate) throws CDIException {
-		int frameNum = 0;
+		int frameLevel = 0;
 		if (stackframe != null) {
-			frameNum = stackframe.getLevel();
+			frameLevel = stackframe.getLevel();
 		}
 		
 		// Check to see if we are already at this level
 		ICDIStackFrame current = getCurrentStackFrame();
-		if (current != null && current.getLevel() == frameNum) {
+		if (current != null && current.getLevel() == frameLevel) {
 			// noop
 			return;
 		}
@@ -202,8 +205,10 @@ public class Thread extends CObject implements ICDIThread {
 		try {
 			Session session = (Session)getTarget().getSession();
 			MISession mi = session.getMISession();
-			CommandFactory factory = mi.getCommandFactory();		
-			MIStackSelectFrame frame = factory.createMIStackSelectFrame(frameNum);
+			CommandFactory factory = mi.getCommandFactory();
+			// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
+			int miLevel = getStackFrameCount() - frameLevel;		
+			MIStackSelectFrame frame = factory.createMIStackSelectFrame(miLevel);
 			// Set ourself as the current thread first.
 			((Target)getTarget()).setCurrentThread(this, doUpdate);
 			mi.postCommand(frame);

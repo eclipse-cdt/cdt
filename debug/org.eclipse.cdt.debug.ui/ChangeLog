@@ -1,4 +1,9 @@
 2003-05-29 Mikhail Khodjaiants
+	PR 38268: added the image cache for overlay images.
+	* OverlayImageCache.java: new
+	* CDTDebugModelPresentation.java
+
+2003-05-29 Mikhail Khodjaiants
 	Changed the vizualization of arrays and structures.
 	* CDTDebugModelPresentation.java
 

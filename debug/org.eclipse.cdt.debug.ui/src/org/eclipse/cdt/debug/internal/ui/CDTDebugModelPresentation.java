@@ -100,6 +100,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	private static CDTDebugModelPresentation fInstance = null;
 
+	private OverlayImageCache fImageCache = new OverlayImageCache();
+
 	/**
 	 * Constructor for CDTDebugModelPresentation.
 	 */
@@ -218,8 +220,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 						break;
 				}
 			}
-			OverlayImageDescriptor overlayImage = new OverlayImageDescriptor( baseImage, overlays );
-			return overlayImage.createImage();
+			return fImageCache.getImageFor( new OverlayImageDescriptor( baseImage, overlays ) );
 		}
 		return null;
 	}
@@ -627,8 +628,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			descriptor = DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED );
 		}
 		;
-		OverlayImageDescriptor overlayImage = new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( breakpoint ) );
-		return overlayImage.createImage();
+		return fImageCache.getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( breakpoint ) ) );
 	}
 
 	protected Image getWatchpointImage( ICWatchpoint watchpoint ) throws CoreException
@@ -652,8 +652,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			else
 				descriptor = CDebugImages.DESC_OBJS_WATCHPOINT_DISABLED;
 		}
-		OverlayImageDescriptor overlayImage = new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( watchpoint ) );
-		return overlayImage.createImage();
+		return fImageCache.getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( watchpoint ) ) );
 	}
 
 	protected IBreakpoint getBreakpoint( IMarker marker )
@@ -930,5 +929,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 		}
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+	 */
+	public void dispose()
+	{
+		fImageCache.disposeAll();
 	}
 }

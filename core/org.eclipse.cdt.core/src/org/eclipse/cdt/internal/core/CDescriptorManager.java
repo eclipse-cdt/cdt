@@ -337,13 +337,17 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException {
 		ICDescriptor descriptor = getDescriptor(project);
+		CDescriptorEvent event = null;
 		synchronized (descriptor) {
 			beginOperation(descriptor);
 			try {
 				op.execute(descriptor, monitor);
 			} finally {
-				endOperation(descriptor);
+				event = endOperation(descriptor);
 			}
+		}
+		if (event != null) {
+			fireEvent(event);
 		}
 	}
 
@@ -351,11 +355,8 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		fOperationMap.put(descriptor, null);
 	}
 
-	private void endOperation(ICDescriptor descriptor) {
-		CDescriptorEvent event = (CDescriptorEvent) fOperationMap.remove(descriptor);
-		if (event != null) {
-			fireEvent(event);
-		}
+	private CDescriptorEvent endOperation(ICDescriptor descriptor) {
+		return (CDescriptorEvent) fOperationMap.remove(descriptor);
 	}
 
 	/*

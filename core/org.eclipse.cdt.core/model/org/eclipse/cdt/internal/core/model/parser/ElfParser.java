@@ -32,4 +32,11 @@ public class ElfParser implements IBinaryParser {
 		return new ElfBinaryArchive(file);
 	}
 
+	/**
+	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
+	 */
+	public String getFormat() {
+		return "ELF";
+	}
+
 }

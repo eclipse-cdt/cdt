@@ -162,7 +162,7 @@ public class NewClassCodeGenerator {
 		            // create a working copy with a new owner
 		            sourceWorkingCopy = sourceTU.getWorkingCopy();
 		
-		            String sourceContent = constructSourceFileContent(sourceTU, headerTU, publicMethods, protectedMethods, privateMethods, new SubProgressMonitor(monitor, 100));
+		            String sourceContent = constructSourceFileContent(sourceTU, headerTU, publicMethods, protectedMethods, privateMethods, sourceWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
 		            sourceWorkingCopy.getBuffer().setContents(sourceContent);
 		
 		            if (monitor.isCanceled()) {
@@ -190,15 +190,17 @@ public class NewClassCodeGenerator {
     }
 
     public String constructHeaderFileContent(ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) throws CodeGeneratorException {
-
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header"), 100); //$NON-NLS-1$
+        
+        if (oldContents != null && oldContents.length() == 0)
+            oldContents = null;
         
         //TODO should use code templates
         StringBuffer text = new StringBuffer();
         
         int appendFirstCharPos = -1;
         if (oldContents != null) {
-	        int insertionPos = getInsertionPos(oldContents);
+	        int insertionPos = getClassDefInsertionPos(oldContents);
 	        if (insertionPos == -1) {
 		        text.append(oldContents);
 	        } else {
@@ -267,7 +269,10 @@ public class NewClassCodeGenerator {
         return newContents;
     }
 
-    private int getInsertionPos(String contents) {
+    private int getClassDefInsertionPos(String contents) {
+        if (contents.length() == 0) {
+            return -1;
+        }
         //TODO temporary hack
         int insertPos = contents.lastIndexOf("#endif"); //$NON-NLS-1$
         if (insertPos != -1) {
@@ -569,15 +574,52 @@ public class NewClassCodeGenerator {
 	    return list;
     }
     
-    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, IProgressMonitor monitor) {
-
+    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) {
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.source"), 150); //$NON-NLS-1$
         
+        if (oldContents != null && oldContents.length() == 0)
+            oldContents = null;
+
         //TODO should use code templates
         StringBuffer text = new StringBuffer();
 
+        String includeString = null;
         if (headerTU != null) {
-            addHeaderInclude(sourceTU, headerTU, text, new SubProgressMonitor(monitor, 50));
+            includeString = getHeaderIncludeString(sourceTU, headerTU, text, new SubProgressMonitor(monitor, 50));
+	        if (includeString != null) {
+	            // check if file already has the include
+	            if (oldContents != null && hasInclude(oldContents, includeString)) {
+	                // don't bother to add it
+	                includeString = null;
+	            }
+	        }
+        }
+        
+        if (includeString != null) {
+            if (oldContents != null) {
+    	        int insertionPos = getIncludeInsertionPos(oldContents);
+    	        if (insertionPos == -1) {
+    		        text.append(oldContents);
+                    text.append(fLineDelimiter);
+                    text.append(includeString);
+                    text.append(fLineDelimiter);
+    	        } else {
+    	            text.append(oldContents.substring(0, insertionPos));
+                    text.append(includeString);
+                    text.append(fLineDelimiter);
+                    text.append(oldContents.substring(insertionPos));
+    	        }
+            } else {
+                text.append(includeString);
+                text.append(fLineDelimiter);
+            }
+
+            // add a blank line
+            text.append(fLineDelimiter);
+        } else if (oldContents != null) {
+	        text.append(oldContents);
+
+	        // add a blank line
             text.append(fLineDelimiter);
         }
         
@@ -602,8 +644,8 @@ public class NewClassCodeGenerator {
         monitor.done();
         return newContents;
     }
-
-    private void addHeaderInclude(ITranslationUnit sourceTU, ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) {
+    
+    private String getHeaderIncludeString(ITranslationUnit sourceTU, ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) {
         IProject project = headerTU.getCProject().getProject();
         IPath projectLocation = project.getLocation();
         IPath headerLocation = headerTU.getResource().getLocation();
@@ -620,9 +662,68 @@ public class NewClassCodeGenerator {
         if (includePath == null)
             includePath = headerLocation;
 
-        String include = getIncludeString(includePath.toString(), isSystemIncludePath);
-        text.append(include);
-        text.append(fLineDelimiter);
+        return getIncludeString(includePath.toString(), isSystemIncludePath);
+    }
+
+    private boolean hasInclude(String contents, String include) {
+        int maxStartPos = contents.length() - include.length() - 1;
+        if (maxStartPos < 0) {
+            return false;
+        }
+        int startPos = 0;
+        while (startPos <= maxStartPos) {
+	        int includePos = contents.indexOf(include, startPos);
+	        if (includePos == -1) {
+	            return false;
+	        } else {
+	            if (includePos == startPos) {
+	                return true;
+	            }
+	            
+	            // TODO detect if it's commented out
+
+	            // make sure it's on a line by itself
+	            int linePos = findFirstLineChar(contents, includePos);
+	            if (linePos == -1 || linePos == includePos) {
+	                return true;
+	            }
+	            boolean badLine = false;
+	            for (int pos = linePos; pos < includePos; ++pos) {
+	                char c = contents.charAt(pos);
+	                if (!Character.isWhitespace(c)) {
+	                    badLine = true;
+	                    break;
+	                }
+	            }
+	            if (!badLine) {
+	                return true;
+	            }
+
+	            // keep searching
+	            startPos = includePos + include.length();
+	        }
+        }
+        return false;
+    }
+
+    private int getIncludeInsertionPos(String contents) {
+        if (contents.length() == 0) {
+            return -1;
+        }
+        //TODO temporary hack
+        int includePos = contents.lastIndexOf("#include "); //$NON-NLS-1$
+        if (includePos != -1) {
+            // find the end of line
+            int startPos = includePos + "#include ".length(); //$NON-NLS-1$
+            int eolPos = findLastLineChar(contents, startPos);
+            if (eolPos != -1) {
+                int insertPos = eolPos + 1;
+                if (insertPos < (contents.length() - 1)) {
+                    return insertPos;
+                }
+            }
+        }
+        return -1;
     }
 
     private void addMethodBodies(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text, IProgressMonitor monitor) {
@@ -660,7 +761,7 @@ public class NewClassCodeGenerator {
         }
     }
 
-    private static String getIncludeString(String fileName, boolean isSystemInclude) {
+    private String getIncludeString(String fileName, boolean isSystemInclude) {
         StringBuffer buf = new StringBuffer();
         buf.append("#include "); //$NON-NLS-1$
         if (isSystemInclude)
@@ -674,4 +775,41 @@ public class NewClassCodeGenerator {
             buf.append('\"'); //$NON-NLS-1$
         return buf.toString();
     }
- }
+    
+    private int findLastLineChar(String contents, int startPos) {
+        int endPos = contents.length() - 1;
+        int linePos = startPos;
+        while (linePos <= endPos) {
+            char c = contents.charAt(linePos);
+            if (c == '\r') {
+                // could be '\r\n' as one delimiter
+                if (linePos < endPos && contents.charAt(linePos + 1) == '\n') {
+                    return linePos + 1;
+                }
+                return linePos;
+            } else if (c == '\n') {
+                return linePos;
+            }
+            ++linePos;
+        }
+        return -1;
+    }
+    
+    private int findFirstLineChar(String contents, int startPos) {
+        int linePos = startPos;
+        while (linePos >= 0) {
+            char c = contents.charAt(linePos);
+            if (c == '\n' || c == '\r') {
+                if (linePos + 1 < startPos) {
+                    return linePos + 1;
+                } else {
+                    return -1;
+                }
+            }
+            --linePos;
+        }
+        return -1;
+    }
+    
+}
+

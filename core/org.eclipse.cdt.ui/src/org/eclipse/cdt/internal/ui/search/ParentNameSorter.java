@@ -13,14 +13,10 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.search.ui.ISearchResultView;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
 
 /**
  * @author aniefer
@@ -28,73 +24,29 @@ import org.eclipse.search.ui.SearchUI;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class ParentNameSorter extends ViewerSorter {
-	
+public class ParentNameSorter extends ElementNameSorter {
+		
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		String name1= null;
-		String name2= null;
-		
-		ISearchResultViewEntry entry1 = null;
-		ISearchResultViewEntry entry2 = null;
-		
-		if (e1 instanceof ISearchResultViewEntry){
-			name1 = _labelProvider.getText(e1);
-			entry1 = (ISearchResultViewEntry)e1;
-		}
-			
-		if (e2 instanceof ISearchResultViewEntry){
-			name2 = _labelProvider.getText(e2);
-			entry2 = (ISearchResultViewEntry)e2;
-		}
-			
-		if (name1 == null)
-			name1= ""; //$NON-NLS-1$
-			
-		if (name2 == null)
-			name2= ""; //$NON-NLS-1$
-			
-		int compare = getCollator().compare( name1, name2 );
-		
-		if( compare == 0 ){
-			int startPos1 = -1;
-			int startPos2 = -1;
-			IMarker marker1 = entry1.getSelectedMarker();
-			IMarker marker2 = entry2.getSelectedMarker();
-
-			if (marker1 != null)
-				startPos1 = marker1.getAttribute( IMarker.CHAR_START, -1 );
-			if (marker2 != null)
-				startPos2 = marker2.getAttribute( IMarker.CHAR_START, -1 );
-			
-			compare = startPos1 - startPos2;
-		}
-		
-		return compare;
-	}
-
-	/*
-	 * Overrides method from ViewerSorter
-	 */
-	public boolean isSorterProperty(Object element, String property) {
-		return true;
-	}
-
-	/*
-	 * Overrides method from ViewerSorter
-	 */
-	public void sort(Viewer viewer, Object[] elements) {
-		// Set label provider to show "path - resource"
-		ISearchResultView view = SearchUI.getSearchResultView();
-		if (view == null)
-			return;
-			
-		_labelProvider = view.getLabelProvider();
-		
-		if( _labelProvider instanceof CSearchResultLabelProvider )
-			((CSearchResultLabelProvider)_labelProvider).setOrder( CSearchResultLabelProvider.SHOW_CONTAINER_ELEMENT );
-
-		super.sort( viewer, elements );
+		String leftParent= getParentName(e1);
+		String rightParent= getParentName(e2);
+		return collator.compare(leftParent, rightParent);
 	}
 	
-	private ILabelProvider _labelProvider;
+	private String getParentName(Object element) {
+		if (element instanceof ICElement) {
+			ICElement parent= ((ICElement)element).getParent();
+		
+			if (parent != null)
+				return parent.getElementName();
+		}
+		if (element instanceof IResource) {
+			IResource parent= ((IResource)element).getParent();
+			if (parent != null)
+				return parent.getName();
+		}
+		if (element instanceof BasicSearchMatch){
+			return ((BasicSearchMatch) element).getParentName();
+		}
+		return ""; //$NON-NLS-1$
+	}
 }

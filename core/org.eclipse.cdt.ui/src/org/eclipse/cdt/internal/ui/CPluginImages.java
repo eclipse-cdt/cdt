@@ -88,6 +88,8 @@ public class CPluginImages {
 	public static final String IMG_OBJS_SOURCE_ATTACH_ATTRIB = NAME_PREFIX + "source_attach_attrib.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ARCHIVE_WSRC= NAME_PREFIX + "ar_src_obj.gif"; //$NON-NLS-1$
 
+	public static final String IMG_OBJS_PROJECT=NAME_PREFIX + "prj_obj.gif"; //$NON-NLS-1$
+	
 	// Breakpoint images
 	public static final String IMG_OBJS_BREAKPOINT = NAME_PREFIX + "breakpoint.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "breakpoint_disabled.gif"; //$NON-NLS-1$

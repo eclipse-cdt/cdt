@@ -13,14 +13,11 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.search.ui.ISearchResultView;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
 
 /**
  * @author aniefer
@@ -30,64 +27,24 @@ import org.eclipse.search.ui.SearchUI;
  */
 public class ElementNameSorter extends ViewerSorter {
 
-	public int compare( Viewer viewer, Object e1, Object e2 ){
-		String name1 = null, name2 = null;
-		
-		ISearchResultViewEntry entry1 = null;
-		ISearchResultViewEntry entry2 = null;
-		
-		if (e1 instanceof ISearchResultViewEntry){
-			name1 = _labelProvider.getText(e1);
-			entry1 = (ISearchResultViewEntry)e1;
-		}
-			
-		if (e2 instanceof ISearchResultViewEntry){
-			name2 = _labelProvider.getText(e2);
-			entry2 = (ISearchResultViewEntry)e2;
-		}
-			
-		if (name1 == null)
-			name1= ""; //$NON-NLS-1$
-			
-		if (name2 == null)
-			name2= ""; //$NON-NLS-1$
-			
-		int compare = getCollator().compare( name1, name2 );
-		
-		if( compare == 0 ){
-			int startPos1 = -1;
-			int startPos2 = -1;
-			IMarker marker1 = entry1.getSelectedMarker();
-			IMarker marker2 = entry2.getSelectedMarker();
-
-			if (marker1 != null)
-				startPos1 = marker1.getAttribute( IMarker.CHAR_START, -1 );
-			if (marker2 != null)
-				startPos2 = marker2.getAttribute( IMarker.CHAR_START, -1 );
-			
-			compare = startPos1 - startPos2;
-		}
-		
-		return compare;
+	public int compare(Viewer viewer, Object e1, Object e2) {
+		String property1= getProperty(e1);
+		String property2= getProperty(e2);
+		return collator.compare(property1, property2);
 	}
 
-	public boolean isSorterProperty( Object element, String property ){
+	protected String getProperty(Object element) {
+		if (element instanceof ICElement)
+			return ((ICElement)element).getElementName();
+		if (element instanceof IResource)
+			return ((IResource)element).getName();
+		if (element instanceof BasicSearchMatch)
+			return ((BasicSearchMatch) element).getName(); 
+		return ""; //$NON-NLS-1$
+	}
+
+	public boolean isSorterProperty(Object element, String property) {
 		return true;
 	}
 	
-	public void sort( Viewer viewer, Object[] elements ) {
-		// Set label provider to show "element - path"
-		ISearchResultView view = SearchUI.getSearchResultView();
-		if (view == null)
-			return;
-			
-		_labelProvider = view.getLabelProvider();
-		
-		if( _labelProvider instanceof CSearchResultLabelProvider ) {
-			((CSearchResultLabelProvider)_labelProvider).setOrder( CSearchResultLabelProvider.SHOW_ELEMENT_CONTAINER );
-			super.sort( viewer, elements );
-		}
-	}
-	
-	private ILabelProvider _labelProvider;
 }

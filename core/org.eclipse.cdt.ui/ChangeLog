@@ -1,3 +1,15 @@
+2004-05-16 Bogdan Gheorghe 
+	Added sorters to the search results
+	
+		* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
+		* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java
+		* src/org/eclipse/cdt/internal/ui/search/ElementNameSorter.java
+		* src/org/eclipse/cdt/internal/ui/search/LevelTreeContentProvider.java
+		* src/org/eclipse/cdt/internal/ui/search/ParentNameSorter.java
+		* src/org/eclipse/cdt/internal/ui/search/PathNameSorter.java
+		* src/org/eclipse/cdt/internal/ui/search/actions/GroupAction.java
+		* src/org/eclipse/cdt/internal/ui/search/actions/SortAction.java
+	
 2004-05-14 Bogdan Gheorghe
 	fix bug 48020, Duplicate Mnemonics in Search Dialog
 	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties

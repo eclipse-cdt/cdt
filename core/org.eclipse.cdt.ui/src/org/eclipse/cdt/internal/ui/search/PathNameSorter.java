@@ -13,15 +13,12 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.search.ui.ISearchResultView;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
 
 /**
  * @author aniefer
@@ -29,87 +26,35 @@ import org.eclipse.search.ui.SearchUI;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class PathNameSorter extends ViewerSorter {
+public class PathNameSorter extends ElementNameSorter {
 
-	/*
-	 * Overrides method from ViewerSorter
-	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		String name1 = null;
-		String name2 = null;
-		ISearchResultViewEntry entry1 = null;
-		ISearchResultViewEntry entry2 = null;
-		IMatch match1 = null;
-		IMatch match2 = null;
-
-		if( e1 instanceof ISearchResultViewEntry ) {
-			entry1 = (ISearchResultViewEntry)e1;
-			try {
-				match1 = (IMatch)entry1.getSelectedMarker().getAttribute( CSearchResultCollector.IMATCH );
-			} catch (CoreException e) {
-			}
-			if( match1 == null ){
-				return 0;
-			}
-			name1 = match1.getLocation().toString();
-		}
-		if( e2 instanceof ISearchResultViewEntry ) {
-			entry2 = (ISearchResultViewEntry)e2;
-			try {
-				match2 = (IMatch)entry2.getSelectedMarker().getAttribute( CSearchResultCollector.IMATCH );
-			} catch (CoreException e) {
-			}
-			if( match2 == null ){
-				return 0;
-			}
-			//name2 = _labelProvider.getText( e2 );
-			name2 = match2.getLocation().toString();
-		}
-		
-		if( name1 == null )
-			name1 = ""; //$NON-NLS-1$
-			
-		if( name2 == null )
-			name2 = ""; //$NON-NLS-1$
-		
-		int compare = getCollator().compare( name1, name2 );
-		
-		if( compare == 0 ){
-			int startPos1 = -1;
-			int startPos2 = -1;
-			
-			if (match1 != null)
-				startPos1 = match1.getStartOffset();
-			if (match2 != null)
-				startPos2 = match2.getStartOffset();
-			
-			compare = startPos1 - startPos2;
-		}
-		
-		return compare;
-	}
-
-	/*
-	 * Overrides method from ViewerSorter
-	 */
-	public boolean isSorterProperty(Object element, String property) {
-		return true;
-	}
-
-	/*
-	 * Overrides method from ViewerSorter
-	 */
-	public void sort( Viewer viewer, Object[] elements ) {
-		// Set label provider to show "path - resource"
-		ISearchResultView view = SearchUI.getSearchResultView();
-		if( view == null )
-			return;
-		
-		_labelProvider = view.getLabelProvider();
-		if( _labelProvider instanceof CSearchResultLabelProvider )
-			((CSearchResultLabelProvider)_labelProvider).setOrder( CSearchResultLabelProvider.SHOW_PATH );
-		super.sort( viewer, elements );
+		IPath path1= getPath(e1);
+		IPath path2=getPath(e2);
+		return compare(path1, path2);
 	}
 	
-	private ILabelProvider _labelProvider;
+	/**
+	 * @param e1
+	 * @return
+	 */
+	private IPath getPath(Object element) {
+		if (element instanceof ICElement)
+			return ((ICElement)element).getPath();
+		if (element instanceof IResource)
+			return ((IResource)element).getFullPath();
+		if (element instanceof BasicSearchMatch)
+			return ((BasicSearchMatch) element).getLocation();
+		return new Path(""); //$NON-NLS-1$
+	}
+
+	protected int compare(IPath path1, IPath path2) {
+		int segmentCount= Math.min(path1.segmentCount(), path2.segmentCount());
+		for (int i= 0; i < segmentCount; i++) {
+			int value= collator.compare(path1.segment(i), path2.segment(i));
+			if (value != 0)
+				return value;
+		}
+		return path1.segmentCount() - path2.segmentCount();
+	}
 }

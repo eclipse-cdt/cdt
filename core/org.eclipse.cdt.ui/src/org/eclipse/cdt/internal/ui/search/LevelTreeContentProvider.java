@@ -39,6 +39,10 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 			{IResource.ROOT}};
 	private static final int MAX_LEVEL= C_ELEMENT_TYPES.length - 1;
 	private int fCurrentLevel;
+	
+	public static final int LEVEL_FILE= 1;
+	public static final int LEVEL_NAMESPACE= 2;
+	public static final int LEVEL_PROJECT= 3;
 
 	public LevelTreeContentProvider(AbstractTreeViewer viewer, int level) {
 		fTreeViewer= viewer;

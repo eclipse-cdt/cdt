@@ -15,14 +15,23 @@ import java.util.HashMap;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.search.actions.GroupAction;
+import org.eclipse.cdt.internal.ui.search.actions.SortAction;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
@@ -36,6 +45,48 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	private int _currentSortOrder;
 	private int _currentGrouping;
 	
+	private SortAction _parentSortAction;
+	private SortAction _pathSortAction;
+	private SortAction _elementNameSortAction;
+	
+	private GroupAction _groupFileAction;
+	private GroupAction _groupNamespaceAction;
+	private GroupAction _groupProjectAction;
+	
+	private static final String KEY_GROUPING= "org.eclipse.cdt.search.resultpage.grouping"; //$NON-NLS-1$
+	
+	
+	public CSearchResultPage(){
+	   _parentSortAction = new SortAction(CSearchMessages.getString("CSearchResultPage.parent_name"),this,CSearchResultLabelProvider.SHOW_CONTAINER_ELEMENT); //$NON-NLS-1$
+	   _pathSortAction = new SortAction(CSearchMessages.getString("CSearchResultPage.path_name"),this,CSearchResultLabelProvider.SHOW_PATH); //$NON-NLS-1$
+	   _elementNameSortAction = new SortAction(CSearchMessages.getString("CSearchResultPage.element_name"),this, CSearchResultLabelProvider.SHOW_ELEMENT_CONTAINER); //$NON-NLS-1$
+	   _currentSortOrder=  CSearchResultLabelProvider.SHOW_ELEMENT_CONTAINER;
+
+		initGroupingActions();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void initGroupingActions() {
+		_groupProjectAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_project"),CSearchMessages.getString("CSearchResultPage.groupby_project.tooltip"), this, LevelTreeContentProvider.LEVEL_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
+		CPluginImages.setImageDescriptors(_groupProjectAction,CPluginImages.T_TOOL, CPluginImages.IMG_OBJS_PROJECT); //$NON-NLS-1$)//.setLocalImageDescriptors(f
+	
+		_groupNamespaceAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_namespace"), CSearchMessages.getString("CSearchResultPage.groupby_namespace.tooltip"), this, LevelTreeContentProvider.LEVEL_NAMESPACE); //$NON-NLS-1$ //$NON-NLS-2$
+		CPluginImages.setImageDescriptors(_groupNamespaceAction,CPluginImages.T_TOOL, CPluginImages.IMG_OBJS_PROJECT);  //$NON-NLS-1$
+		
+		_groupFileAction= new GroupAction(CSearchMessages.getString("CSearchResultPage.groupby_file"), CSearchMessages.getString("CSearchResultPage.groupby_file.tooltip"), this, LevelTreeContentProvider.LEVEL_FILE); //$NON-NLS-1$ //$NON-NLS-2$
+		CPluginImages.setImageDescriptors(_groupFileAction,CPluginImages.T_TOOL,CPluginImages.IMG_OBJS_PROJECT);  //$NON-NLS-1$
+		
+		try {
+			_currentGrouping= getSettings().getInt(KEY_GROUPING);
+		} catch (NumberFormatException e) {
+			_currentGrouping= LevelTreeContentProvider.LEVEL_PROJECT;
+		}
+	}
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int)
 	 */
@@ -91,10 +142,13 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)
 	 */
 	protected void configureTreeViewer(TreeViewer viewer) {
-		//viewer.setSorter(new ViewerSorter());
-		viewer.setLabelProvider(new CountLabelProvider(this,new CSearchResultLabelProvider()));
+		viewer.setSorter(new ViewerSorter());
+		CSearchResultLabelProvider labelProvider = new CSearchResultLabelProvider();
+		labelProvider.setOrder(CSearchResultLabelProvider.SHOW_NAME_ONLY);
+		viewer.setLabelProvider(labelProvider);
 		_contentProvider= new LevelTreeContentProvider(viewer, _currentGrouping);
 		viewer.setContentProvider(_contentProvider);
+		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
@@ -103,7 +157,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		viewer.setLabelProvider(new CountLabelProvider(this, new CSearchResultLabelProvider()));
 		_contentProvider=new CSearchTableContentProvider(viewer);
 		viewer.setContentProvider(_contentProvider);
-		//setSortOrder(_currentSortOrder);
+		setSortOrder(_currentSortOrder);
 	}
 	
 	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
@@ -119,4 +173,80 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 			throw new PartInitException("Search Result Error", e); //$NON-NLS-1$
 		}
 	}
+	/**
+	 * @param sortOrder
+	 */
+	public void setSortOrder(int sortOrder) {
+		_currentSortOrder= sortOrder;
+		StructuredViewer viewer= getViewer();
+		CountLabelProvider lpWrapper= (CountLabelProvider) viewer.getLabelProvider();
+		((CSearchResultLabelProvider)lpWrapper.getLabelProvider()).setOrder(sortOrder);
+		
+		if (sortOrder == CSearchResultLabelProvider.SHOW_ELEMENT_CONTAINER) {
+			viewer.setSorter(new ElementNameSorter());
+		} else if (sortOrder == CSearchResultLabelProvider.SHOW_PATH) {
+			viewer.setSorter(new PathNameSorter());
+		} else
+			viewer.setSorter(new ParentNameSorter());
+		
+	}
+	
+	protected void fillContextMenu(IMenuManager mgr) {
+		super.fillContextMenu(mgr);
+		addSortActions(mgr);
+		//fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
+		//fActionGroup.fillContextMenu(mgr);
+	}
+	
+	private void addSortActions(IMenuManager mgr) {
+		if (getLayout() != FLAG_LAYOUT_FLAT)
+			return;
+		MenuManager sortMenu= new MenuManager(CSearchMessages.getString("CSearchResultPage.sort")); //$NON-NLS-1$
+		sortMenu.add(_elementNameSortAction);
+		sortMenu.add(_pathSortAction);
+		sortMenu.add(_parentSortAction);
+		
+		_elementNameSortAction.setChecked(_currentSortOrder == _elementNameSortAction.getSortOrder());
+		_pathSortAction.setChecked(_currentSortOrder == _pathSortAction.getSortOrder());
+		_parentSortAction.setChecked(_currentSortOrder == _parentSortAction.getSortOrder());
+		
+		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, sortMenu);
+	}
+	
+	private void addGroupActions(IToolBarManager mgr) {
+		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupProjectAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupNamespaceAction);
+		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, _groupFileAction);
+		//mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fGroupTypeAction);
+		
+		updateGroupingActions();
+	}
+
+
+	/**
+	 * @param _grouping
+	 */
+	public void setGrouping(int groupOrder) {
+		_currentGrouping = groupOrder;
+		StructuredViewer viewer= getViewer();
+		LevelTreeContentProvider cp= (LevelTreeContentProvider) viewer.getContentProvider();
+		cp.setLevel(groupOrder);
+		updateGroupingActions();
+		getSettings().put(KEY_GROUPING, _currentGrouping);
+	}
+	
+
+	private void updateGroupingActions() {
+		_groupProjectAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_PROJECT);
+		_groupNamespaceAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_NAMESPACE);
+		_groupFileAction.setChecked(_currentGrouping == LevelTreeContentProvider.LEVEL_FILE);
+	}
+	
+	protected void fillToolbar(IToolBarManager tbm) {
+		super.fillToolbar(tbm);
+		if (getLayout() != FLAG_LAYOUT_FLAT)
+			addGroupActions(tbm);
+	}
+		
+	
 }

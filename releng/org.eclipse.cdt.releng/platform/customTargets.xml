@@ -24,15 +24,15 @@
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.hpux.motif.PA_RISC">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
-		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-hpux.PA_RISC.tar.gz"/>
-	</ant>
-</target>
-
 <target name="assemble.org.eclipse.cdt.linux.gtk.x86">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-linux.x86.tar.gz"/>
+	</ant>
+</target>
+
+<target name="assemble.org.eclipse.cdt.linux.gtk.x86_64">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-linux.x86_64.tar.gz"/>
 	</ant>
 </target>
 

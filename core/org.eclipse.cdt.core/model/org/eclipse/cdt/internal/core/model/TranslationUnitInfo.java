@@ -59,7 +59,7 @@ class TranslationUnitInfo extends CFileInfo {
 				// cdt 1.0 parser
 				ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
 				CStructurizer.getCStructurizer().parse(modelBuilder, in);
-			} else if (false) {
+			} else if (true) {
 				// new parser
 				NewModelBuilder modelBuilder = new NewModelBuilder((TranslationUnit)getElement());
 				Parser2 parser = new Parser2(in, modelBuilder, true);

@@ -168,10 +168,26 @@ public class Parser2 {
 				consume();
 				break;
 			case Token.tLBRACE:
-				// functionBody();
+				// function body - TO DO: right now we just skip the body
+				// simply look for matching brace and return
+				consume();
+				int depth = 1;
+				while (depth > 0) {
+					switch (consume().getType()) {
+						case Token.tRBRACE:
+							--depth;
+							break;
+						case Token.tLBRACE:
+							++depth;
+							break;
+						case Token.tEOF:
+							// Oops, no match
+							throw backtrack;
+					}
+				}
 				break;
 			default:
-				throw backtrack;
+				//throw backtrack;
 		}
 		
 		return simpleDeclaration;
@@ -412,10 +428,25 @@ public class Parser2 {
 		for (;;) {
 			switch (LT(1)) {
 				case Token.tLPAREN:
+					// parameterDeclarationClause
 					consume();
-					// parameterDeclarationClause();
-					consume(Token.tRPAREN);
-					continue;
+					parameterDeclarationLoop:
+					for (;;) {
+						switch (LT(1)) {
+							case Token.tRPAREN:
+								consume();
+								break parameterDeclarationLoop;
+							case Token.tELIPSE:
+								consume();
+								break;
+							case Token.tCOMMA:
+								consume();
+								break;
+							default:
+								declaration();
+						}
+					}
+					break;
 				case Token.tLBRACKET:
 					consume();
 					// constantExpression();
@@ -541,7 +572,37 @@ public class Parser2 {
 		// If we don't get a "{", assume elaborated type
 		if (LT(1) == Token.tLBRACE) {
 			consume();
-			consume(Token.tRBRACE);
+			
+			int access = classSpecifier.getClassKey() == ClassSpecifier.t_class
+				? MemberDeclaration.t_private : MemberDeclaration.t_public;
+			
+			memberDeclarationLoop:
+			while (LT(1) != Token.tRBRACE) {
+				switch (LT(1)) {
+					case Token.t_public:
+						consume();
+						consume(Token.tCOLON);
+						access = MemberDeclaration.t_public;
+						break;
+					case Token.t_protected:
+						consume();
+						consume(Token.tCOLON);
+						access = MemberDeclaration.t_public;
+						break;
+					case Token.t_private:
+						consume();
+						consume(Token.tCOLON);
+						access = MemberDeclaration.t_public;
+						break;
+					case Token.tRBRACE:
+						consume(Token.tRBRACE);
+						break memberDeclarationLoop;
+					default:
+						classSpecifier.addMemberDeclaration(new MemberDeclaration(access, declaration()));
+				}
+			}
+			// consume the }
+			consume();
 		}
 		
 		return classSpecifier;

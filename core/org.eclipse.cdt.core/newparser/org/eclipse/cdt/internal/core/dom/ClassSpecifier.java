@@ -24,4 +24,10 @@ public class ClassSpecifier extends DeclSpecifierSeq {
 		baseSpecifiers.add(baseSpecifier);
 	}
 	public List getBaseSpecifiers() { return baseSpecifiers; }
+	
+	private List memberDeclarations = new LinkedList();
+	public void addMemberDeclaration(MemberDeclaration memberDeclaration) {
+		memberDeclarations.add(memberDeclaration);
+	}
+	public List getMemberDeclarations() { return memberDeclarations; }
 }

@@ -39,7 +39,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 			if(NULL != p)
 				*(p + 1) = _T('\0');
 			else
-				_tcscat(path, _T("\\")); 
+				_tcscat(path, L"\\"); 
 			}
 			break;
 		case DLL_THREAD_ATTACH:

@@ -93,5 +93,10 @@ public interface IProblemBinding extends IBinding, IScope, IType {
      */
     public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = 0x009;
     
-    public static final int LAST_PROBLEM = SEMANTIC_LABEL_STATEMENT_NOT_FOUND;
+    /**
+     * there was a problem creating the scope
+     */
+    public static final int SEMANTIC_BAD_SCOPE = 0x00A;
+    
+    public static final int LAST_PROBLEM = SEMANTIC_BAD_SCOPE;
 }

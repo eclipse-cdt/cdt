@@ -52,6 +52,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
         errorMessages[SEMANTIC_DEFINITION_NOT_FOUND - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.definitionNotFound"); //$NON-NLS-1$
         errorMessages[SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND - 1] = ParserMessages.getString("ASTProblemFactory.error.semantic.dom.knrParameterDeclarationNotFound"); //$NON-NLS-1$
         errorMessages[SEMANTIC_LABEL_STATEMENT_NOT_FOUND - 1]	= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.labelStatementNotFound"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_BAD_SCOPE - 1]					= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.badScope"); //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
@@ -68,7 +69,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
         if (message != null)
             return message;
 
-        String msg = ( id >= 0 && id < LAST_PROBLEM ) ? errorMessages[ id - 1 ] : ""; //$NON-NLS-1$
+        String msg = ( id >= 0 && id <= LAST_PROBLEM ) ? errorMessages[ id - 1 ] : ""; //$NON-NLS-1$
 
         if (arg != null) {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });

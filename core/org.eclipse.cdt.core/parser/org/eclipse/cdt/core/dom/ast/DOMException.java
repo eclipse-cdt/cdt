@@ -31,7 +31,7 @@ public class DOMException extends Exception {
      * 
      */
     public DOMException( IProblemBinding problem ) {
-        super( problem != null ? problem.getMessage() : CPPSemantics.EMPTY_NAME );
+        super( CPPSemantics.EMPTY_NAME );
         problemBinding = problem;
     }
 
@@ -42,5 +42,9 @@ public class DOMException extends Exception {
      */
     public IProblemBinding getProblem(){
         return problemBinding;
+    }
+    
+    public String getMessage() {
+        return problemBinding.getMessage();
     }
 }

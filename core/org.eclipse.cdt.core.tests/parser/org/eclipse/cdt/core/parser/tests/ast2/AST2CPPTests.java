@@ -2871,5 +2871,16 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue( t instanceof IGPPPointerToMemberType );
         assertTrue( ((IGPPPointerToMemberType) t).isRestrict() );
     }
+    
+    public void testBug87705() throws Exception {
+        IASTTranslationUnit tu = parse( "class A { friend class B::C; };", ParserLanguage.CPP, true ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        IProblemBinding B = (IProblemBinding) col.getName(2).resolveBinding();
+        assertEquals( B.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND );
+        IProblemBinding C = (IProblemBinding) col.getName(3).resolveBinding();
+        assertEquals( C.getID(), IProblemBinding.SEMANTIC_BAD_SCOPE );
+    }
 }
 

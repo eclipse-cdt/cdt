@@ -127,9 +127,11 @@ public class CPPVisitor {
 		{
 			binding = CPPSemantics.resolveBinding( name ); 
 			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName ){
-				//if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND ){
+			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
+			    if( ns[ ns.length - 1 ] == name )
 					parent = parent.getParent();
-				//}
+			    else
+			        return binding;
 			} else {
 				return binding;
 			}
@@ -233,12 +235,19 @@ public class CPPVisitor {
 	    IBinding binding = null;
 	    boolean mustBeSimple = true;
 	    boolean isFriend = false;
+	    boolean qualified = false;
+	    IASTName name = elabType.getName();
+	    if( name instanceof ICPPASTQualifiedName ){
+	        qualified = true;
+	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
+	    }
 	    if( parent instanceof IASTSimpleDeclaration ){
 	        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators();
 	        ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	        isFriend = declSpec.isFriend() && dtors.length == 0;
 	        if( dtors.length > 0 || isFriend ){
-	        	binding = CPPSemantics.resolveBinding( elabType.getName() );
+	        	binding = CPPSemantics.resolveBinding( name );
 	        	mustBeSimple = !isFriend;
 	        } else {
 	        	mustBeSimple = false;
@@ -261,7 +270,7 @@ public class CPPVisitor {
 	    if( mustBeSimple && elabType.getName() instanceof ICPPASTQualifiedName )
 	    	return binding;
 	    
-		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
+		ICPPScope scope = (ICPPScope) getContainingScope( name );
 		
 		if( mustBeSimple ){
 			//3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype scope that contains
@@ -273,7 +282,7 @@ public class CPPVisitor {
 				}
 			}
 		}
-		if( scope instanceof ICPPClassScope && isFriend ){
+		if( scope instanceof ICPPClassScope && isFriend && !qualified ){
 	        try {
 	            while( scope instanceof ICPPClassScope )
 	                scope = (ICPPScope) scope.getParent();
@@ -578,7 +587,7 @@ public class CPPVisitor {
 					} else if( binding instanceof IProblemBinding ){
 						if( binding instanceof ICPPScope )
 							return (IScope) binding;
-						return new CPPScope.CPPScopeProblem( -1, names[i-1].toCharArray() );
+						return new CPPScope.CPPScopeProblem( IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
 					}
 				}
 				else if( ((ICPPASTQualifiedName)parent).isFullyQualified() )

@@ -133,16 +133,21 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocation()
 	 */
 	public ICDILocation getLocation() {
+		BigInteger addr = BigInteger.ZERO;
 		if (frame != null) {
 			if (fLocation == null) {
+				String a = frame.getAddress();
+				if (a != null) {
+					addr = MIFormat.getBigInteger(a);
+				}
 				fLocation = new Location(frame.getFile(), 
 					            frame.getFunction(),
 					            frame.getLine(),  
-								MIFormat.getBigInteger(frame.getAddress()));
+								addr);
 			}
 			return fLocation;
 		}
-		return new Location("", "", 0, BigInteger.ZERO); //$NON-NLS-1$ //$NON-NLS-2$
+		return new Location("", "", 0, addr); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

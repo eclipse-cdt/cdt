@@ -23,8 +23,6 @@ import org.eclipse.cdt.utils.elf.Elf;
 public class StabsAddr2line {
 
 	Stabs stabs;
-	long lastAddress;
-	Stabs.Entry entry;
 
 	public StabsAddr2line(byte[] stab, byte[] stabstr, boolean le) throws IOException {
 		stabs = new Stabs(stab, stabstr, le);
@@ -44,17 +42,8 @@ public class StabsAddr2line {
 	 * @see IAddr2line#getStartLine(long)
 	 */
 	public int getStartLine(long address) throws IOException {
-		if (address != lastAddress || entry == null) {
-			Stabs.Entry[] entries = stabs.getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].addr == address) {
-					lastAddress = address;
-					entry = entries[i];
-					break;
-				}
-			}
-		}
-		if (address == lastAddress && entry != null) {
+		Stabs.Entry entry = stabs.getEntry(address);
+		if (entry != null) {
 			return entry.startLine;
 		}
 		return 0;
@@ -66,17 +55,8 @@ public class StabsAddr2line {
 	 * @see IAddr2line#getEndLine(long)
 	 */
 	public int getEndLine(long address) throws IOException {
-		if (address != lastAddress || entry == null) {
-			Stabs.Entry[] entries = stabs.getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].addr == address) {
-					lastAddress = address;
-					entry = entries[i];
-					break;
-				}
-			}
-		}
-		if (address == lastAddress && entry != null) {
+		Stabs.Entry entry = stabs.getEntry(address);
+		if (entry != null) {
 			if (entry instanceof Stabs.Function) {
 				return ((Stabs.Function)entry).endLine;
 			}
@@ -91,17 +71,8 @@ public class StabsAddr2line {
 	 * @see IAddr2line#getFunction(long)
 	 */
 	public String getFunction(long address) throws IOException {
-		if (address != lastAddress || entry == null) {
-			Stabs.Entry[] entries = stabs.getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].addr == address) {
-					lastAddress = address;
-					entry = entries[i];
-					break;
-				}
-			}
-		}
-		if (address == lastAddress && entry != null) {
+		Stabs.Entry entry = stabs.getEntry(address);
+		if (entry != null) {
 			return entry.string;
 		}
 		return null;
@@ -113,17 +84,8 @@ public class StabsAddr2line {
 	 * @see IAddr2line#getFileName(long)
 	 */
 	public String getFileName(long address) throws IOException {
-		if (address != lastAddress || entry == null) {
-			Stabs.Entry[] entries = stabs.getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].addr == address) {
-					lastAddress = address;
-					entry = entries[i];
-					break;
-				}
-			}
-		}
-		if (address == lastAddress && entry instanceof Stabs.LocatableEntry) {
+		Stabs.Entry entry = stabs.getEntry(address);
+		if (entry instanceof Stabs.LocatableEntry) {
 			return ((Stabs.LocatableEntry)entry).filename;
 		}
 		return null;
@@ -150,11 +112,12 @@ public class StabsAddr2line {
 				byte[] strtab = stabstr.loadSectionData();
 				StabsAddr2line addr2line = new StabsAddr2line(array, strtab, true);
 				long address = Integer.decode(args[1]).longValue();
-				int line = addr2line.getStartLine(address);
+				int startLine = addr2line.getStartLine(address);
+				int endLine = addr2line.getEndLine(address);
 				String function = addr2line.getFunction(address);
 				String filename = addr2line.getFileName(address);
 				System.out.println(Long.toHexString(address));
-				System.out.println(filename + ":" + function + ":" + line);
+				System.out.println(filename + ":" + function + ":" + startLine + ":" + endLine);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -13,6 +13,7 @@ package org.eclipse.cdt.utils.stabs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.utils.elf.Elf;
@@ -22,17 +23,33 @@ public class Stabs {
 	byte[] stabData;
 	byte[] stabstrData;
 	boolean isLe;
-	List entries;
+	Entry[] entries;
 
-	public class Entry {
+	public class Entry implements Comparable{
 		public long addr;
+		public long size;
 		public int startLine;
 		public String string;
 
 		public Entry(String s) {
 			string = s;
 		}
+		public int compareTo(Object obj) {
+			long thisVal = 0;
+			long anotherVal = 0;
+			if (obj instanceof Entry) {
+				Entry entry = (Entry) obj;
+				thisVal = this.addr;
+				anotherVal = entry.addr;
+			} else if (obj instanceof Long) {
+				Long val = (Long) obj;
+				anotherVal = val.longValue();
+				thisVal = (long) this.addr;
+			}
+			return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
+		}
 
+		
 		public String toString() {
 			StringBuffer buf = new StringBuffer();
 			buf.append("Name: ").append(string).append("\n");
@@ -201,14 +218,31 @@ public class Stabs {
 		if (entries == null) {
 			parse();
 		}
-		Entry[] array = new Entry[entries.size()];
-		entries.toArray(array);
-		return array;
+		return entries;
+	}
+
+	public Entry getEntry(long addr) throws IOException {
+		if (entries == null) {
+			parse();
+		}
+		int insertion = Arrays.binarySearch(entries, new Long(addr));
+		if (insertion >= 0) {
+			return entries[insertion];
+		}
+		if (insertion == -1) {
+			return null;
+		}
+		insertion = -insertion - 1;
+		Entry entry =  entries[insertion - 1];
+		if (addr < (entry.addr + entry.size)) {
+			return entries[insertion - 1];
+		}
+		return null;		
 	}
 
 	void parse() throws IOException {
 
-		entries = new ArrayList();
+		List list = new ArrayList();
 
 		long nstab = stabData.length / StabConstant.SIZE;
 		int i, offset, bracket;
@@ -325,7 +359,7 @@ public class Stabs {
 					variable.startLine = desc;
 					variable.function = currentFunction;
 					variable.filename = currentFile;
-					entries.add(variable);
+					list.add(variable);
 					if (currentFunction != null) {
 						currentFunction.variables.add(variable);
 					}
@@ -336,6 +370,7 @@ public class Stabs {
 							currentFunction.endLine = currentFunction.startLine = desc;
 						} else {
 							currentFunction.endLine = desc;
+							currentFunction.size = value;
 						}
 						currentFunction.lines.add(new Integer(desc));
 					}
@@ -349,7 +384,7 @@ public class Stabs {
 					currentFunction.addr = value;
 					currentFunction.startLine = desc;
 					currentFunction.filename = currentFile;
-					entries.add(currentFunction);
+					list.add(currentFunction);
 					break;
 				case StabConstant.N_LBRAC :
 					bracket++;
@@ -360,7 +395,7 @@ public class Stabs {
 				case StabConstant.N_BINCL :
 					Include include = new Include(name);
 					include.index = includeCount++;
-					entries.add(include);
+					list.add(include);
 					break;
 				case StabConstant.N_EINCL :
 					break;
@@ -379,11 +414,15 @@ public class Stabs {
 			//System.out.println(" " + i + "\t" + Stab.type2String(type) + "\t" + other + "\t\t" +
 			//	desc + "\t" + Long.toHexString(value) + "\t" + + stroff + "\t\t" +name);
 		}
+		entries = new Entry[list.size()];
+		list.toArray(entries);
+		list.clear();
+		Arrays.sort(entries);
 	}
 
 	public void print() {
-		for (int i = 0; i < entries.size(); i++) {
-			Entry entry = (Entry) entries.get(i);
+		for (int i = 0; i < entries.length; i++) {
+			Entry entry = entries[i];
 			System.out.println(entry);
 		}
 	}

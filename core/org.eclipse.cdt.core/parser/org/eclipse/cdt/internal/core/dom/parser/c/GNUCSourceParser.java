@@ -172,7 +172,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     ICASTDesignatedInitializer desigInitializer = createDesignatorInitializer();
                     ((CASTNode) desigInitializer).setOffsetAndLength(
                             ((CASTNode) newDesignators.get(0)).getOffset(),
-                            ((CASTNode) newDesignators.get(0)).getLength());
+							((CASTNode)initializer).getOffset() + ((CASTNode)initializer).getLength() - ((CASTNode) newDesignators.get(0)).getOffset());
                     for (int i = 0; i < newDesignators.size(); ++i) {
                         ICASTDesignator d = (ICASTDesignator) newDesignators
                                 .get(i);

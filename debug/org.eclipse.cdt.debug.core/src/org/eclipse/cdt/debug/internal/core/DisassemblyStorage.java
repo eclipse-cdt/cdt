@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.IDisassemblyStorage;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
@@ -144,9 +145,23 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	private void createContent()
 	{
 		StringBuffer lines = new StringBuffer();
+		int maxFunctionName = 0;
+		long maxOffset = 0;
 		for ( int i = 0; i < fInstructions.length; ++i )
 		{
-			lines.append( getInstructionString( fInstructions[i] ) );
+			if ( fInstructions[i].getFuntionName().length() > maxFunctionName )
+			{
+				maxFunctionName = fInstructions[i].getFuntionName().length();
+			}
+			if ( fInstructions[i].getOffset() > maxOffset )
+			{
+				maxOffset = fInstructions[i].getOffset();
+			}
+		}
+		int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );		
+		for ( int i = 0; i < fInstructions.length; ++i )
+		{
+			lines.append( getInstructionString( fInstructions[i], instrPos ) );
 		}
 		fInputStream = new ByteArrayInputStream( lines.toString().getBytes() );
 	}
@@ -160,12 +175,14 @@ public class DisassemblyStorage implements IDisassemblyStorage
 		}
 	}
 	
-	private String getInstructionString( ICDIInstruction instruction )
+	private String getInstructionString( ICDIInstruction instruction, int instrPosition )
 	{
+		char[] spaces= new char[instrPosition];
+		Arrays.fill( spaces, ' ' );
 		StringBuffer sb = new StringBuffer();
 		if ( instruction != null )
 		{
-			sb .append( CDebugUtils.toHexAddressString( instruction.getAdress() ) );
+			sb.append( CDebugUtils.toHexAddressString( instruction.getAdress() ) );
 			sb.append( ' ' );
 			if ( instruction.getFuntionName() != null && instruction.getFuntionName().length() > 0 )
 			{
@@ -177,11 +194,16 @@ public class DisassemblyStorage implements IDisassemblyStorage
 					sb.append( instruction.getOffset() );
 				}
 				sb.append( ">:" );
-				sb.append( '\t' );
+				sb.append( spaces, 0, instrPosition - sb.length() );
 			}
 			sb.append( instruction.getInstruction() );
 			sb.append( '\n' );
 		}
 		return sb.toString();
+	}
+	
+	private int calculateInstructionPosition( int maxFunctionName, long maxOffset )
+	{
+		return ( 16 + maxFunctionName + Long.toString( maxOffset ).length() );
 	}
 }

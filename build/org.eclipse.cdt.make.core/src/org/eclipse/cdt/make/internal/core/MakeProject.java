@@ -7,14 +7,16 @@
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICOwner;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 
 public class MakeProject implements ICOwner {
 
@@ -25,12 +27,15 @@ public class MakeProject implements ICOwner {
 	}
 
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException {
-		if ( extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
+		if (extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
 			cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeScannerProvider.INTERFACE_IDENTITY);
 		}
-		if ( extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
-			cproject.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, CCorePlugin.PLUGIN_ID + ".Elf"); //$NON-NLS-1$
+		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
+			Preferences makePrefs = MakeCorePlugin.getDefault().getPluginPreferences();
+			String id = makePrefs.getString(CCorePlugin.PREF_BINARY_PARSER);
+			if (id != null && id.length() != 0) {
+				cproject.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, id);
+			}
 		}
-		
 	}
 }

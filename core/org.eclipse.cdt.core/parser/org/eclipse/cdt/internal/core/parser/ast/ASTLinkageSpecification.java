@@ -24,6 +24,7 @@ public class ASTLinkageSpecification implements IASTLinkageSpecification {
 	public ASTLinkageSpecification( IContainerSymbol symbol, String linkage )
 	{
 		this.symbol = symbol;
+		symbol.setASTNode( this );
 		this.linkage = linkage;  
 	}
 	/* (non-Javadoc)

@@ -1222,7 +1222,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	 */
 	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) {
 		LinkageSpecification linkage = (LinkageSpecification)domScopes.pop();
-		linkage.getOwnerScope().addDeclaration(linkage );	
+		getCurrentDOMScope().addDeclaration(linkage );	
 	}
 
 	/* (non-Javadoc)

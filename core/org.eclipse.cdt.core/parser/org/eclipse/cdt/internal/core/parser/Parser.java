@@ -391,8 +391,15 @@ c, quickParse);
 		}
 		else // single declaration
 		{
+			
+			IContainerSymbol symbol = pst.newContainerSymbol("", ParserSymbolTable.TypeInfo.t_linkage );
+			IASTLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec.getImage() );
+		
+			requestor.enterLinkageSpecification( linkage );
+
 			declaration( linkageSpec );
 			try{ callback.linkageSpecificationEnd( linkageSpec );} catch( Exception e ) {}
+			requestor.exitLinkageSpecification( linkage );
 		}
 	}
 	

@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifierOwner;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -195,23 +196,7 @@ public class CModelBuilder {
 	protected void generateModelElements (Parent parent, IASTAbstractTypeSpecifierDeclaration abstractDeclaration) throws ASTNotImplementedException
 	{
 		// IASTAbstractTypeSpecifierDeclaration 
-		 IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier(); 
-		// IASTEnumerationSpecifier
-		if ( typeSpec instanceof IASTEnumerationSpecifier){
-			IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
-			IParent enumElement = createEnumeration (parent, enumSpecifier);
-		}
-		// IASTClassSpecifier
-		else if (typeSpec instanceof IASTClassSpecifier){
-			IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
-			IParent classElement = createClass (parent, classSpecifier, false);
-			// create the sub declarations 
-			Iterator j = classSpecifier.getDeclarations();
-			while (j.hasNext()){
-				IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
-				generateModelElements((Parent)classElement, subDeclaration);					
-			} // end while j
-		}
+		CElement element = createAbstractElement(parent, abstractDeclaration, false);
 	}
 
 	protected void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws ASTNotImplementedException
@@ -219,29 +204,16 @@ public class CModelBuilder {
 		// Template Declaration 
 		IASTDeclaration declaration = (IASTDeclaration)templateDeclaration.getOwnedDeclaration();
 		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration){
-			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;			
-			IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier();
-			if (typeSpec instanceof IASTClassSpecifier){
-				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
-				ITemplate classTemplate = (StructureTemplate)createClass(parent, classSpecifier, true);
-				CElement element = (CElement) classTemplate;
-				
-				// set the element position		
-				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
-				// set the element lines
-				//element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
-				// set the template parameters				
-				String[] parameterTypes = getTemplateParameters(templateDeclaration);
-				classTemplate.setTemplateParameterTypes(parameterTypes);				
-	
-				// create the sub declarations 
-				Iterator j  = classSpecifier.getDeclarations();
-				while (j.hasNext()){
-					IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
-					generateModelElements((Parent)classTemplate, subDeclaration);					
-				} // end while j
-			}
-
+			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;
+			CElement element = createAbstractElement(parent, abstractDeclaration , true);			
+			// set the element position		
+			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
+			// set the element lines
+			//element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
+			// set the template parameters				
+			String[] parameterTypes = getTemplateParameters(templateDeclaration);
+			ITemplate classTemplate = (ITemplate) element;
+			classTemplate.setTemplateParameterTypes(parameterTypes);				
 		}
 		ITemplate template = null;
 
@@ -266,8 +238,6 @@ public class CModelBuilder {
 			CElement element = (CElement)template;
 			// set the element position		
 			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getEndingOffset() - templateDeclaration.getStartingOffset());	
-			// set the element lines
-			//element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
 			// set the template parameters
 			String[] parameterTypes = getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
@@ -278,30 +248,34 @@ public class CModelBuilder {
 	{
 		TypeDef typeDef = createTypeDef(parent, declaration);
 		IASTAbstractDeclaration abstractDeclaration = declaration.getAbstractDeclarator();
-		generateModelElements(parent, abstractDeclaration);
+		CElement element = createAbstractElement(parent, abstractDeclaration, false);
 	}
-	
-	protected void generateModelElements (Parent parent, IASTAbstractDeclaration abstractDeclaration) throws ASTNotImplementedException{
-		/*-------------------------------------------
-		 * Checking the type if it is a composite one
-		 *-------------------------------------------*/
-		 IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier(); 
-		// IASTEnumerationSpecifier
-		if ( typeSpec instanceof IASTEnumerationSpecifier){
-			IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
-			IParent enumElement = createEnumeration (parent, enumSpecifier);
-		}
-		// IASTClassSpecifier
-		else if (typeSpec instanceof IASTClassSpecifier){
-			IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
-			IParent classElement = createClass (parent, classSpecifier, false);
-			// create the sub declarations 
-			Iterator j = classSpecifier.getDeclarations();
-			while (j.hasNext()){
-				IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
-				generateModelElements((Parent)classElement, subDeclaration);					
-			} // end while j
-		}
+		
+	private CElement createAbstractElement(Parent parent, IASTTypeSpecifierOwner abstractDeclaration, boolean isTemplate)throws ASTNotImplementedException{
+		CElement element = null;
+		if(abstractDeclaration != null){
+			IASTTypeSpecifier typeSpec = abstractDeclaration.getTypeSpecifier();
+			// IASTEnumerationSpecifier
+			if ( typeSpec instanceof IASTEnumerationSpecifier){
+				IASTEnumerationSpecifier enumSpecifier = (IASTEnumerationSpecifier) typeSpec;
+				IParent enumElement = createEnumeration (parent, enumSpecifier);
+				element = (CElement) enumElement;
+			}
+			// IASTClassSpecifier
+			else if (typeSpec instanceof IASTClassSpecifier){
+				IASTClassSpecifier classSpecifier = (IASTClassSpecifier) typeSpec;
+				IParent classElement = createClass(parent, classSpecifier, isTemplate);
+				element = (CElement) classElement;
+						
+				// create the sub declarations 
+				Iterator j  = classSpecifier.getDeclarations();
+				while (j.hasNext()){
+					IASTDeclaration subDeclaration = (IASTDeclaration)j.next();
+					generateModelElements((Parent)classElement, subDeclaration);					
+				} // end while j
+			}
+		}				
+		return element;		
 	}
 	
 	protected Include createInclusion(Parent parent, IASTInclusion inclusion){
@@ -312,8 +286,7 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(inclusion.getNameOffset(), inclusion.getName().length());
 		element.setPos(inclusion.getStartingOffset(), inclusion.getEndingOffset() - inclusion.getStartingOffset());
-		// set the element lines
-		//element.setLines(inclusion.getTopLine(), inclusion.getBottomLine());
+
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -326,8 +299,7 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(macro.getNameOffset(), macro.getName().length());
 		element.setPos(macro.getStartingOffset(), macro.getEndingOffset() - macro.getStartingOffset());
-		// set the element lines
-		//element.setLines(macro.getTopLine(), macro.getBottomLine());
+
 		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
@@ -344,8 +316,6 @@ public class CModelBuilder {
 		element.setIdPos(nsDef.getNameOffset(), (nsName.length() == 0) ? type.length() : nsName.length());
 		element.setPos(nsDef.getStartingOffset(), nsDef.getEndingOffset() - nsDef.getStartingOffset());
 		element.setTypeName(type);
-		// set the element lines
-		//element.setLines(nsDef.getTopLine(), nsDef.getBottomLine());
 		
 		this.newElements.put(element, element.getElementInfo());		
 		return element;
@@ -370,8 +340,6 @@ public class CModelBuilder {
 		element.setIdPos(enumSpecifier.getNameOffset(), (enumName.length() == 0) ? type.length() : enumName.length());
 		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getEndingOffset() - enumSpecifier.getStartingOffset());
 		element.setTypeName(type);
-		// set the element lines
-		//element.setLines(enumSpecifier.getTopLine(), enumSpecifier.getBottomLine());
 		 
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -384,8 +352,6 @@ public class CModelBuilder {
 		// set enumerator position
 		element.setIdPos(enumDef.getStartingOffset(), enumDef.getName().length());
 		element.setPos(enumDef.getStartingOffset(), enumDef.getEndingOffset() - enumDef.getStartingOffset());
-		// set the element lines
-		//element.setLines(enumDef.getTopLine(), enumDef.getBottomLine());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;		
@@ -446,8 +412,6 @@ public class CModelBuilder {
 		if(!isTemplate){
 			// set the element position
 			element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getEndingOffset() - classSpecifier.getStartingOffset());
-			// set the element lines
-			//element.setLines(classSpecifier.getTopLine(), classSpecifier.getBottomLine());
 		}
 		
 		this.newElements.put(element, element.getElementInfo());
@@ -469,15 +433,16 @@ public class CModelBuilder {
 		// set positions
 		element.setIdPos(typeDefDeclaration.getNameOffset(),name.length());	
 		element.setPos(typeDefDeclaration.getStartingOffset(), typeDefDeclaration.getEndingOffset() - typeDefDeclaration.getStartingOffset());
-		// set the element lines
-		//element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;	
 	}
 
-	protected VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)
+	protected VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)throws ASTNotImplementedException
     {
+    	IASTAbstractDeclaration abstractDeclaration = varDeclaration.getAbstractDeclaration();
+    	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate);
+    	
 		String variableName = varDeclaration.getName(); 
 		if(variableName == null){
 			// something is wrong, skip this element
@@ -523,8 +488,6 @@ public class CModelBuilder {
 		if(!isTemplate){
 			// set element position
 			element.setPos(varDeclaration.getStartingOffset(), varDeclaration.getEndingOffset() - varDeclaration.getStartingOffset());
-			// set the element lines
-			//element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 		}
 			
 		this.newElements.put(element, element.getElementInfo());
@@ -615,8 +578,6 @@ public class CModelBuilder {
 		if(!isTemplate){
 			// set the element position		
 			element.setPos(functionDeclaration.getStartingOffset(), functionDeclaration.getEndingOffset() - functionDeclaration.getStartingOffset());	
-			// set the element lines
-			//element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
 		}
 
 		this.newElements.put(element, element.getElementInfo());
@@ -678,139 +639,17 @@ public class CModelBuilder {
 			
 		// get type from declaration
 		type.append(getDeclarationType(declaration));
-		type.append(getSubtype(declaration));
-		
-//		type.append(getSubType(declarator, new SubTypeProcessingFlags(false)));
-		
-		return type.toString();
-	}
-	
-
-	private String getSubtype(IASTAbstractDeclaration declaration){
-		StringBuffer type = new StringBuffer();
 		type.append(getPointerOperation(declaration));
 		type.append(getArrayQualifiers(declaration));
-		return type.toString();		
-	}
-    
-/*    private class SubTypeProcessingFlags {
-        boolean returnTypeForFunction = false;
-        boolean processedInnermostParameterList = false;
-        
-        SubTypeProcessingFlags(boolean returnTypeForFunction) {
-            this.returnTypeForFunction = returnTypeForFunction;
-        }
-    }
-*/	
-/*	private String getSubType(Declarator declarator, SubTypeProcessingFlags flags) {
-		StringBuffer type = new StringBuffer();
-						
-		// add pointer or reference from declarator if any
-		String declaratorPointerOperation = getDeclaratorPointerOperation(declarator);
-		try  {
-			switch (declaratorPointerOperation.charAt(0)) {
-				case '*':
-				case '&':
-					break; // pointer/reference
-				default:
-					type.append(" "); // pointer to member
-			}
-		} catch (Exception e) {} // Empty/null strings
-		type.append(declaratorPointerOperation);
-        
-        String subType = null;
-						
-		if (declarator.getDeclarator() != null){
-			// process inner declarator
-			subType = getSubType(declarator.getDeclarator(), flags);
-			boolean appendParen = true;
-			
-			if (  (subType == null) || (subType.length() == 0)
-			    ||
-			    	((subType.charAt(0) == '(') 
-			      && 
-			        (subType.charAt(subType.length()-1) == ')'))) {
-			        	
-			        		// Additional () are not necessary
-			        		appendParen = false;
-	        }
-			
-			if (appendParen) type.append("(");
-			type.append(subType);
-			if (appendParen) type.append(")");
-		}			
-			
-		// parameters
-		if (declarator.getParms() != null) { 
-            // If we process return type for a function,
-            // skip innermost parameter list - it is a part
-            // of function's signature
-            if ( !flags.returnTypeForFunction 
-               || flags.processedInnermostParameterList) {
-                   
-                   if ((subType == null) || (subType.length() == 0)) {
-                       type.append("()");
-                   }
-
-                   type.append(getParametersString(declarator));
-            }
-            flags.processedInnermostParameterList = true;
-		}
-				 
-		// arrays
-		type.append(getDeclaratorArrayQualifiers(declarator));
-			
+		
 		return type.toString();
 	}
-*/    
-    
-    /**
-     *  Here is a tricky one. Determines if a declarator represents a function
-     * specification, or a variable declaration (that includes pointers to functions).
-     * If none of the nested declarators contain parameter list, then it is obviously a variable.
-     * It is a function specification only if no declarators in (A..B] range
-     * contain any pointer/array specificators. A is the declarator containing 
-     * the innermost parameter list (which corresponds to parameters of the function),
-     * and B is the innermost declarator (should contain the name of the element).
-     * 
-     * @param declarator
-     * @return True, if the declarator represents a function specification
-     */
-    
-/*    private boolean isFunctionSpecification(Declarator declarator)
-    {
-        Declarator currentDeclarator = declarator;
-        boolean result = false;
-        
-        while (currentDeclarator != null) {
-            if (currentDeclarator.getParms() != null) {
-                result = true;
-            } else {          
-                List ptrOps = currentDeclarator.getPointerOperators();
-                List arrayQs = currentDeclarator.getArrayQualifiers();
-                
-                if (    ((ptrOps != null) && (ptrOps.size() > 0)) 
-                     || ((arrayQs != null) && (arrayQs.size() > 0)) 
-                   )  
-                   {
-                    result = false;
-                } 
-            }
-            
-            currentDeclarator = currentDeclarator.getDeclarator();
-        }
-        
-        return result;
-    }
-*/	
+	    
 	private String getDeclarationType(IASTAbstractDeclaration declaration){
 		StringBuffer type = new StringBuffer();
 		
 		if(declaration.isConst())
 			type.append("const ");
-		// TODO: Fix volatile
-//		if(declaration.isVolatile())
-//			type.append("volatile ");
 		IASTTypeSpecifier typeSpecifier = declaration.getTypeSpecifier();
 		if(typeSpecifier instanceof IASTElaboratedTypeSpecifier){
 			IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) typeSpecifier;
@@ -857,10 +696,7 @@ public class CModelBuilder {
 				pointerString.append(" const");
 
 			if(po == ASTPointerOperator.VOLATILE_POINTER)
-				pointerString.append(" volatile");
-				
-//				case PointerOperator.t_pointer_to_member:
-//					pointerString.append(po.getNameSpecifier());
+				pointerString.append(" volatile");				
 		}
 		return pointerString.toString();
 	}
@@ -875,46 +711,6 @@ public class CModelBuilder {
 		return arrayString.toString();
 	}
 	
-    	
-/*	private String[] getParameterTypes(Declarator declarator, HashMap mapOfKRParams) 
-	{	
-		if (declarator == null) return null;
-		
-		ParameterDeclarationClause pdc = declarator.getParms();
-		String[] parameterTypes = null;
-		
-		if (pdc != null) {
-			List parameterList = pdc.getDeclarations();
-			parameterTypes = new String[parameterList.size()];
-
-			for (int j = 0; j < parameterList.size(); ++j) {
-				ParameterDeclaration param = (ParameterDeclaration) parameterList.get(j);
-                Declarator decl = (Declarator) param.getDeclarators().get(0);
-				parameterTypes[j] =	getType(param);
-                
-                if (    (mapOfKRParams != null) 
-                    &&  (mapOfKRParams.size() > 0) 
-                    && (decl.getName() == null)) 
-                {
-                    // We have some K&R-style parameter declarations,
-                    // and the current parameter has been declared with a single identifier,
-                    // (like  ...(argname)...)
-                    // It has been parsed as a typename, so 'argname' is a name of the type,
-                    // and parameter name is empty. But for this particular case, 
-                    // 'argname' is a name, and its type we have to lookup in the map
-                    // of old K&R-style parameter declarations.
-                    // If we can't find it, we keep parameter name in the signature
-                    String oldKRParamType = (String)mapOfKRParams.get(parameterTypes[j]);
-                    if (oldKRParamType != null) {
-                        parameterTypes[j] = oldKRParamType; 
-                    }
-                }
-			}
-		}
-		
-		return parameterTypes;
-	}
-*/    
     private String[] getFunctionParameterTypes(IASTFunction functionDeclaration)
     {
     	Iterator parameters = functionDeclaration.getParameters();
@@ -928,53 +724,6 @@ public class CModelBuilder {
 			parameterTypes[i] = (String)paramList.get(i); 
 		}
     	return parameterTypes;
-    	
-/*        Declarator currentDeclarator = declarator;
-        Declarator innermostPDCDeclarator = null;
-
-        while (currentDeclarator != null) {
-            if (currentDeclarator.getParms() != null) {
-                innermostPDCDeclarator = currentDeclarator;
-            }
-            currentDeclarator = currentDeclarator.getDeclarator();
-        }
-        
-        HashMap mapOfKRParams = null;
-        
-        if (    declarator != null 
-            && declarator.getParms() != null 
-            && declarator.getParms().getOldKRParms() != null) {
-                
-            mapOfKRParams = new HashMap();
-                
-            OldKRParameterDeclarationClause oldKRpdc = declarator.getParms().getOldKRParms();
-            List oldKRParameterList = oldKRpdc.getDeclarations();
-            
-            for (int j = 0; j < oldKRParameterList.size(); ++j) {
-                if(oldKRParameterList.get(j) instanceof SimpleDeclaration) { // Must be
-                    SimpleDeclaration declKR = (SimpleDeclaration)oldKRParameterList.get(j);
-                    
-                    List declarators = declKR.getDeclarators();
-                    Iterator d = declarators.iterator();
-                    while (d.hasNext()) {
-                        Declarator decl = (Declarator) d.next();
-                        
-						String oldKRparamName = getDOMName(decl);                        
-                        String oldKRparamType = getType(declKR, decl);
-    
-                        if (   (oldKRparamType != null)
-                            && (oldKRparamName != null)
-                            && (oldKRparamName.toString().length() > 0)
-                            ) {
-                                mapOfKRParams.put(oldKRparamName.toString(), oldKRparamType);
-                        }
-                    }
-                }
-            }
-        }
-
-        return getParameterTypes(innermostPDCDeclarator, mapOfKRParams);
-*/	
     }
 	
 	private String getParametersString(String[] parameterTypes) 

@@ -1,6 +1,7 @@
 2003-07-24 Hoda Amer
 	Moved part of the CModelElementsTest (Templates of Variables ) to the failed tests.
-
+	Moved the same test (Templates of Variables) from ITemplateTests to failed tests.
+	
 2003-07-24 Hoda Amer
 	This patch updates the CModelBuilder to use the AST instead of the DOM. 
 	

@@ -34,11 +34,6 @@ public interface ICDebugPreferenceConstants
 	public static final String PREF_SHOW_FULL_PATHS = ICDebugUIConstants.PLUGIN_ID + "cDebug.show_full_paths"; //$NON-NLS-1$
 
 	/**
-	 * The RGB for the color to be used to indicate changed registers
-	 */
-	public static final String CHANGED_REGISTER_RGB = "Changed.Register.RGB"; //$NON-NLS-1$
-	
-	/**
 	 * The default values for the memory view parameters. 
 	 */
 	public static final String DEFAULT_MEMORY_PADDING_CHAR = "."; //$NON-NLS-1$

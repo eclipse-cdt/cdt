@@ -1109,6 +1109,11 @@
             class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
             name="%FilteringBreakpointPage.label"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"/>
+      <page
+            objectClass="org.eclipse.cdt.debug.core.model.ICSignal"
+            class="org.eclipse.cdt.debug.internal.ui.propertypages.SignalPropertyPage"
+            name="%CommonSignalPage.label"
+            id="org.eclipse.cdt.debug.ui.propertypages.signal.common"/>
    </extension>
    <extension
          id="org.eclipse.cdt.debug.ui.editors"
@@ -1275,7 +1280,8 @@
             class="org.eclipse.cdt.debug.internal.ui.CBreakpointWorkbenchAdapterFactory"
             adaptableType="org.eclipse.cdt.debug.core.model.ICBreakpoint">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-      </factory>
+      </factory>dt.debug.core.model.ICSignal"/>
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
    </extension>
    <extension
          point="org.eclipse.ui.themes">

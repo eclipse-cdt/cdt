@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICType;
@@ -305,6 +306,10 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		try {
 			if ( element instanceof ICSharedLibrary ) {
 				label.append( getSharedLibraryText( (ICSharedLibrary)element, showQualified ) );
+				return label.toString();
+			}
+			if ( element instanceof ICSignal ) {
+				label.append( getSignalText( (ICSignal)element ) );
 				return label.toString();
 			}
 			if ( element instanceof IRegisterGroup ) {
@@ -592,6 +597,17 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		if ( !path.isEmpty() )
 			label += (qualified ? path.toOSString() : path.lastSegment());
 		return label;
+	}
+
+	protected String getSignalText( ICSignal signal ) {
+		StringBuffer sb = new StringBuffer( CDebugUIMessages.getString( "CDTDebugModelPresentation.12" ) ); //$NON-NLS-1$
+		try {
+			String name = signal.getName();
+			sb.append( " \'" ).append( name ).append( '\'' ); //$NON-NLS-1$
+		}
+		catch( DebugException e ) {
+		}
+		return sb.toString();
 	}
 
 	/**

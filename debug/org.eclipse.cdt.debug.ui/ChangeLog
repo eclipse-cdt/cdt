@@ -1,3 +1,15 @@
+2004-10-15 Mikhail Khodjaiants
+	Replaced the "Signal Properties" dialog by the standard property page.
+	* plugin.xml
+	* plugin.properties
+	* CDebugUIMessages.properties
+	* CDTDebugModelPresentation.java
+	* ActionMessages.properties
+	* SignalPropertiesActionDelegate.java
+	* PropertyPageMessages.properties
+	* SignalPropertyPage.java: new
+	* SignalPropertiesDialog.java: removed
+
 2004-10-08 Mikhail Khodjaiants
 	Added the bookkeeping of registers and register groups.
 	* CDebugImages.java

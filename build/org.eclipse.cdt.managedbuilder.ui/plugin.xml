@@ -418,24 +418,87 @@
                   id="cygwin.linker.category.general">
             </optionCategory>
             <option
-                  name="Linker Flags"
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.NoStartFiles"
                   category="cygwin.linker.category.general"
-                  valueType="string"
-                  id="cygwin.link.ld.flags">
+                  command="-nostartfiles"
+                  valueType="boolean"
+                  id="linux.gnu.linker.options.nostart">
             </option>
             <option
-                  name="%Option.Posix.Libs"
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.NoDefLibs"
                   category="cygwin.linker.category.general"
+                  command="-nodefaultlibs"
+                  valueType="boolean"
+                  id="cygwin.gnu.linker.options.nodeflibs">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.NoStdLibs"
+                  category="cygwin.linker.category.general"
+                  command="-nostdlib"
+                  valueType="boolean"
+                  id="cygwin.gnu.linker.options.nostdlibs">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.Strip"
+                  category="linux.gnu.linker.category.options"
+                  command="-s"
+                  valueType="boolean"
+                  id="cygwin.gnu.linker.options.strip">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.Static"
+                  category="cygwin.linker.category.general"
+                  command="-static"
+                  valueType="boolean"
+                  id="cygwin.gnu.linker.options.noshared">
+            </option>
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.link"
+                  name="%OptionCategory.Libs"
+                  id="cygwin.gnu.linker.category.libs">
+            </optionCategory>
+            <option
+                  name="%Option.Posix.Libs"
+                  category="cygwin.gnu.linker.category.libs"
                   command="-l"
                   valueType="libs"
                   id="cygwin.link.libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
-                  category="cygwin.linker.category.general"
+                  category="cygwin.gnu.linker.category.libs"
                   command="-L"
                   valueType="stringList"
                   id="cygwin.link.ld.paths">
+            </option>
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.link"
+                  name="%OptionCategory.Misc"
+                  id="cygwin.gnu.linker.category.other">
+            </optionCategory>
+            <option
+                  name="Linker Flags"
+                  category="cygwin.gnu.linker.category.other"
+                  valueType="string"
+                  id="cygwin.link.ld.flags">
+            </option>
+            <option
+                  name="%Option.Posix.Linker.XLinker"
+                  category="cygwin.gnu.linker.category.other"
+                  command="-Xlinker"
+                  valueType="stringList"
+                  id="cygwin.gnu.linker.options.other">
+            </option>
+            <option
+                  name="%Option.Posix.UserObjs"
+                  category="cygwin.gnu.linker.category.other"
+                  valueType="userObjs"
+                  id="cygwin.gnu.link.ld.userobjs">
             </option>
          </tool>
       </target>
@@ -490,28 +553,83 @@
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.solink"
                   name="%OptionCategory.General"
-                  id="cygwin.solink.category.general">
+                  id="cygwin.gnu.solink.category.general">
             </optionCategory>
             <option
-                  defaultValue=""
-                  name="Linker Flags"
-                  category="cygwin.solink.category.general"
-                  valueType="string"
-                  id="cygwin.solink.ld.flags">
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.NoStartFiles"
+                  category="cygwin.gnu.solink.category.general"
+                  command="-nostartfiles"
+                  valueType="boolean"
+                  id="linux.gnu.solink.options.nostart">
             </option>
             <option
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.NoDefLibs"
+                  category="cygwin.gnu.solink.category.general"
+                  command="-nodefaultlibs"
+                  valueType="boolean"
+                  id="cygwin.gnu.solink.options.nodeflibs">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.NoStdLibs"
+                  category="cygwin.gnu.solink.category.general"
+                  command="-nostdlib"
+                  valueType="boolean"
+                  id="cygwin.gnu.solink.options.nostdlibs">
+            </option>
+            <option
+                  defaultValue="false"
+                  name="%Option.Posix.Linker.Strip"
+                  category="cygwin.gnu.solink.category.general"
+                  command="-s"
+                  valueType="boolean"
+                  id="cygwin.gnu.solink.options.strip">
+            </option>
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.solink"
+                  name="%OptionCategory.Libs"
+                  id="cygwin.gnu.solink.category.libs">
+            </optionCategory>
+            <option
                   name="%Option.Posix.Libs"
-                  category="cygwin.solink.category.general"
+                  category="cygwin.gnu.solink.category.libs"
                   command="-l"
                   valueType="libs"
                   id="cygwin.solink.libs">
             </option>
             <option
                   name="%Option.Posix.Libsearch"
-                  category="cygwin.solink.category.general"
+                  category="cygwin.gnu.solink.category.libs"
                   command="-L"
                   valueType="stringList"
                   id="cygwin.solink.ld.paths">
+            </option>
+            <optionCategory
+                  owner="org.eclipse.cdt.build.tool.cygwin.solink"
+                  name="%OptionCategory.Misc"
+                  id="cygwin.gnu.solink.category.other">
+            </optionCategory>
+            <option
+                  defaultValue=""
+                  name="Linker Flags"
+                  category="cygwin.gnu.solink.category.other"
+                  valueType="string"
+                  id="cygwin.solink.ld.flags">
+            </option>
+            <option
+                  name="%Option.Posix.Linker.XLinker"
+                  category="cygwin.gnu.solink.category.other"
+                  command="-Xlinker"
+                  valueType="stringList"
+                  id="cygwin.gnu.solinker.options.other">
+            </option>
+            <option
+                  name="%Option.Posix.UserObjs"
+                  category="cygwin.gnu.solink.category.other"
+                  valueType="userObjs"
+                  id="cygwin.gnu.solink.userobjs">
             </option>
          </tool>
       </target>
@@ -1002,7 +1120,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not use standard start files (-nostartfiles)"
+                  name="%Option.Posix.Linker.NoStartFiles"
                   category="linux.gnu.linker.category.options"
                   command="-nostartfiles"
                   valueType="boolean"
@@ -1010,7 +1128,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Do not use default libraries (-nodefaultlibs)"
+                  name="%Option.Posix.Linker.NoDefLibs"
                   category="linux.gnu.linker.category.options"
                   command="-nodefaultlibs"
                   valueType="boolean"
@@ -1018,7 +1136,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="No startup or default libs (-nostdlib)"
+                  name="%Option.Posix.Linker.NoStdLibs"
                   category="linux.gnu.linker.category.options"
                   command="-nostdlib"
                   valueType="boolean"
@@ -1026,7 +1144,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Remove symbol table (-s)"
+                  name="%Option.Posix.Linker.Strip"
                   category="linux.gnu.linker.category.options"
                   command="-s"
                   valueType="boolean"
@@ -1034,30 +1152,17 @@
             </option>
             <option
                   defaultValue="false"
-                  name="No shared libraries (-static)"
+                  name="%Option.Posix.Linker.Static"
                   category="linux.gnu.linker.category.options"
                   command="-static"
                   valueType="boolean"
                   id="linux.gnu.linker.options.noshared">
-            </option>
-            <option
-                  name="Other options (-Xlinker [option])"
-                  category="linux.gnu.linker.category.options"
-                  command="-Xlinker"
-                  valueType="stringList"
-                  id="linux.gnu.linker.options.other">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.link"
                   name="%OptionCategory.Libs"
                   id="linux.gnu.linker.category.libs">
             </optionCategory>
-            <option
-                  name="%Option.Posix.Linker.Flags"
-                  category="linux.gnu.linker.category.libs"
-                  valueType="string"
-                  id="linux.gnu.linker.libs.flags">
-            </option>
             <option
                   name="%Option.Posix.Libs"
                   category="linux.gnu.linker.category.libs"
@@ -1071,6 +1176,30 @@
                   command="-L"
                   valueType="stringList"
                   id="linux.gnu.linker.libs.paths">
+            </option>
+            <optionCategory
+                  owner="cdt.build.tool.linux.gnu.link"
+                  name="%OptionCategory.Misc"
+                  id="linux.gnu.linker.category.other">
+            </optionCategory>
+            <option
+                  name="%Option.Posix.Linker.Flags"
+                  category="linux.gnu.linker.category.other"
+                  valueType="string"
+                  id="linux.gnu.linker.libs.flags">
+            </option>
+            <option
+                  name="%Option.Posix.Linker.XLinker"
+                  category="linux.gnu.linker.category.other"
+                  command="-Xlinker"
+                  valueType="stringList"
+                  id="linux.gnu.linker.options.other">
+            </option>
+            <option
+                  name="%Option.Posix.UserObjs"
+                  category="linux.gnu.linker.category.other"
+                  valueType="userObjs"
+                  id="linux.gnu.linker.userobjs">
             </option>
          </tool>
       </target>
@@ -1127,7 +1256,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not use standard start files (-nostartfiles)"
+                  name="%Option.Posix.Linker.NoStartFiles"
                   category="linux.gnu.solink.category.options"
                   command="-nostartfiles"
                   valueType="boolean"
@@ -1135,7 +1264,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Do not use default libraries (-nodefaultlibs)"
+                  name="%Option.Posix.Linker.NoDefLibs"
                   category="linux.gnu.solink.category.options"
                   command="-nodefaultlibs"
                   valueType="boolean"
@@ -1143,7 +1272,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="No startup or default libs (-nostdlib)"
+                  name="%Option.Posix.Linker.NoStdLibs"
                   category="linux.gnu.solink.category.options"
                   command="-nostdlib"
                   valueType="boolean"
@@ -1151,46 +1280,17 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Remove symbol table (-s)"
+                  name="%Option.Posix.Linker.Strip"
                   category="linux.gnu.solink.category.options"
                   command="-s"
                   valueType="boolean"
                   id="linux.gnu.solink.options.strip">
-            </option>
-            <option
-                  defaultValue="false"
-                  name="No shared libraries (-static)"
-                  category="linux.gnu.solink.category.options"
-                  command="-static"
-                  valueType="boolean"
-                  id="linux.gnu.solink.options.noshared">
-            </option>
-            <option
-                  defaultValue="false"
-                  name="Bind global symbol references (-symbolic)"
-                  category="linux.gnu.solink.category.options"
-                  command="-symbolic"
-                  valueType="boolean"
-                  id="linux.gnu.solink.options.symbolic">
-            </option>
-            <option
-                  name="Other options (-Xlinker [option])"
-                  category="linux.gnu.solink.category.options"
-                  command="-Xlinker"
-                  valueType="stringList"
-                  id="linux.gnu.solink.options.other">
             </option>
             <optionCategory
                   owner="cdt.build.tool.linux.gnu.solink"
                   name="%OptionCategory.Libs"
                   id="linux.gnu.solink.category.libs">
             </optionCategory>
-            <option
-                  category="linux.gnu.solink.category.libs"
-                  name="%Option.Posix.Linker.Flags"
-                  id="linux.gnu.solink.libs.flags"
-                  valueType="string">
-            </option>
             <option
                   name="%Option.Posix.Libs"
                   category="linux.gnu.solink.category.libs"
@@ -1204,6 +1304,30 @@
                   command="-L"
                   valueType="stringList"
                   id="linux.gnu.solink.libs.paths">
+            </option>
+            <optionCategory
+                  owner="cdt.build.tool.linux.gnu.solink"
+                  name="%OptionCategory.Misc"
+                  id="linux.gnu.solink.category.other">
+            </optionCategory>
+            <option
+                  name="%Option.Posix.Linker.Flags"
+                  category="linux.gnu.solink.category.other"
+                  valueType="string"
+                  id="linux.gnu.solink.libs.flags">
+            </option>
+            <option
+                  name="%Option.Posix.Linker.XLinker"
+                  category="linux.gnu.solink.category.other"
+                  command="-Xlinker"
+                  valueType="stringList"
+                  id="linux.gnu.solink.options.other">
+            </option>
+            <option
+                  name="%Option.Posix.UserObjs"
+                  category="linux.gnu.solink.category.other"
+                  valueType="userObjs"
+                  id="linux.gnu.solink.userobjs">
             </option>
          </tool>
       </target>
@@ -1601,7 +1725,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not use standard start files (-nostartfiles)"
+                  name="%Option.Posix.Linker.NoStartFiles"
                   category="solaris.gnu.linker.category.options"
                   command="-nostartfiles"
                   valueType="boolean"
@@ -1609,7 +1733,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Do not use default libraries (-nodefaultlibs)"
+                  name="%Option.Posix.Linker.NoDefLibs"
                   category="solaris.gnu.linker.category.options"
                   command="-nodefaultlibs"
                   valueType="boolean"
@@ -1617,7 +1741,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="No startup or default libs (-nostdlib)"
+                  name="%Option.Posix.Linker.NoStdLibs"
                   category="solaris.gnu.linker.category.options"
                   command="-nostdlib"
                   valueType="boolean"
@@ -1625,7 +1749,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Remove symbol table (-s)"
+                  name="%Option.Posix.Linker.Strip"
                   category="solaris.gnu.linker.category.options"
                   command="-s"
                   valueType="boolean"
@@ -1633,30 +1757,17 @@
             </option>
             <option
                   defaultValue="false"
-                  name="No shared libraries (-static)"
+                  name="%Option.Posix.Linker.Static"
                   category="solaris.gnu.linker.category.options"
                   command="-static"
                   valueType="boolean"
                   id="solaris.gnu.linker.options.noshared">
-            </option>
-            <option
-                  name="Other options (-Xlinker [option])"
-                  category="solaris.gnu.linker.category.options"
-                  command="-Xlinker"
-                  valueType="stringList"
-                  id="solaris.gnu.linker.options.other">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.link"
                   name="%OptionCategory.Libs"
                   id="solaris.gnu.linker.category.libs">
             </optionCategory>
-            <option
-                  category="solaris.gnu.linker.category.libs"
-                  name="%Option.Posix.Linker.Flags"
-                  id="solaris.gnu.linker.libs.flags"
-                  valueType="string">
-            </option>
             <option
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.linker.category.libs"
@@ -1670,6 +1781,30 @@
                   command="-L"
                   valueType="stringList"
                   id="solaris.gnu.linker.libs.paths">
+            </option>
+            <optionCategory
+                  owner="cdt.build.tool.solaris.gnu.link"
+                  name="%OptionCategory.Misc"
+                  id="solaris.gnu.linker.category.other">
+            </optionCategory>
+            <option
+                  name="%Option.Posix.Linker.Flags"
+                  category="solaris.gnu.linker.category.other"
+                  valueType="string"
+                  id="solaris.gnu.linker.libs.flags">
+            </option>
+            <option
+                  name="%Option.Posix.Linker.XLinker"
+                  category="solaris.gnu.linker.category.other"
+                  command="-Xlinker"
+                  valueType="stringList"
+                  id="solaris.gnu.linker.options.other">
+            </option>
+            <option
+                  name="%Option.Posix.UserObjs"
+                  category="solaris.gnu.linker.category.other"
+                  valueType="userObjs"
+                  id="solaris.gnu.linker.userobjs">
             </option>
          </tool>
       </target>
@@ -1726,7 +1861,7 @@
             </optionCategory>
             <option
                   defaultValue="false"
-                  name="Do not use standard start files (-nostartfiles)"
+                  name="%Option.Posix.Linker.NoStartFiles"
                   category="solaris.gnu.solink.category.options"
                   command="-nostartfiles"
                   valueType="boolean"
@@ -1734,7 +1869,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Do not use default libraries (-nodefaultlibs)"
+                  name="%Option.Posix.Linker.NoDefLibs"
                   category="solaris.gnu.solink.category.options"
                   command="-nodefaultlibs"
                   valueType="boolean"
@@ -1742,7 +1877,7 @@
             </option>
             <option
                   defaultValue="false"
-                  name="No startup or default libs (-nostdlib)"
+                  name="%Option.Posix.Linker.NoStdLibs"
                   category="solaris.gnu.solink.category.options"
                   command="-nostdlib"
                   valueType="boolean"
@@ -1750,46 +1885,17 @@
             </option>
             <option
                   defaultValue="false"
-                  name="Remove symbol table (-s)"
+                  name="%Option.Posix.Linker.Strip"
                   category="solaris.gnu.solink.category.options"
                   command="-s"
                   valueType="boolean"
                   id="solaris.gnu.solink.options.strip">
-            </option>
-            <option
-                  defaultValue="false"
-                  name="No shared libraries (-static)"
-                  category="solaris.gnu.solink.category.options"
-                  command="-static"
-                  valueType="boolean"
-                  id="solaris.gnu.solink.options.noshared">
-            </option>
-            <option
-                  defaultValue="false"
-                  name="Bind global symbol references (-symbolic)"
-                  category="solaris.gnu.solink.category.options"
-                  command="-symbolic"
-                  valueType="boolean"
-                  id="solaris.gnu.solink.options.symbolic">
-            </option>
-            <option
-                  name="Other options (-Xlinker [option])"
-                  category="solaris.gnu.solink.category.options"
-                  command="-Xlinker"
-                  valueType="stringList"
-                  id="solaris.gnu.solink.options.other">
             </option>
             <optionCategory
                   owner="cdt.build.tool.solaris.gnu.solink"
                   name="%OptionCategory.Libs"
                   id="solaris.gnu.solink.category.libs">
             </optionCategory>
-            <option
-                  name="%Option.Posix.Linker.Flags"
-                  category="solaris.gnu.solink.category.libs"
-                  valueType="string"
-                  id="solaris.gnu.solink.libs.flags">
-            </option>
             <option
                   name="%Option.Posix.Libs"
                   category="solaris.gnu.solink.category.libs"
@@ -1803,6 +1909,30 @@
                   command="-L"
                   valueType="stringList"
                   id="solaris.gnu.solink.libs.paths">
+            </option>
+            <optionCategory
+                  owner="cdt.build.tool.solaris.gnu.solink"
+                  name="%OptionCategory.Misc"
+                  id="solaris.gnu.solink.category.other">
+            </optionCategory>
+            <option
+                  name="%Option.Posix.Linker.Flags"
+                  category="solaris.gnu.solink.category.other"
+                  valueType="string"
+                  id="solaris.gnu.solink.libs.flags">
+            </option>
+            <option
+                  name="%Option.Posix.Linker.XLinker"
+                  category="solaris.gnu.solink.category.other"
+                  command="-Xlinker"
+                  valueType="stringList"
+                  id="solaris.gnu.solink.options.other">
+            </option>
+            <option
+                  name="%Option.Posix.UserObjs"
+                  category="solaris.gnu.solink.category.other"
+                  valueType="userObjs"
+                  id="solaris.gnu.solink.userobjs">
             </option>
          </tool>
       </target>

@@ -22,6 +22,7 @@ public interface IOption extends IBuildObject {
 	public static final int INCLUDE_PATH = 4;
 	public static final int PREPROCESSOR_SYMBOLS = 5;
 	public static final int LIBRARIES = 6;
+	public static final int OBJECTS = 7;
 	
 	// Schema attribute names for option elements
 	public static final String CATEGORY = "category";
@@ -36,6 +37,7 @@ public interface IOption extends IBuildObject {
 	public static final String TYPE_LIB = "libs";
 	public static final String TYPE_STRING = "string";
 	public static final String TYPE_STR_LIST = "stringList";
+	public static final String TYPE_USER_OBJS = "userObjs";
 	public static final String VALUE_TYPE = "valueType";
 
 	// Schema attribute names for listOptionValue elements
@@ -48,14 +50,15 @@ public interface IOption extends IBuildObject {
 	 * the list of possible values for that enum.
 	 * 
 	 * If this option is not defined as an enumeration, it returns <code>null</code>.
-	 * @return
+	 * 
+	 * @return String []
 	 */
 	public String [] getApplicableValues();
 
 	/**
 	 * Answers the value for a boolean option.
 	 * 
-	 * @return 
+	 * @return boolean
 	 * @throws BuildException
 	 */
 	public boolean getBooleanValue() throws BuildException;
@@ -66,14 +69,14 @@ public interface IOption extends IBuildObject {
 	 * option. If none have been defined, the array will be empty but
 	 * never <code>null</code>.
 	 * 
-	 * @return
+	 * @return String[]
 	 */
 	public String[] getBuiltIns();
 		
 	/**
 	 * Returns the category for this option.
 	 * 
-	 * @return
+	 * @return IOptionCategory
 	 */
 	public IOptionCategory getCategory();
 	
@@ -81,12 +84,14 @@ public interface IOption extends IBuildObject {
 	 * Answers a <code>String</code> containing the actual command line 
 	 * option associated with the option
 	 * 
-	 * @return  
+	 * @return String
 	 */
 	public String getCommand();
 	
 	/**
-	 * @return
+	 * Answers the user-defined preprocessor symbols. 
+	 * 
+	 * @return String[]
 	 * @throws BuildException
 	 */
 	public String[] getDefinedSymbols() throws BuildException;
@@ -105,7 +110,7 @@ public interface IOption extends IBuildObject {
 	 * Answers an array of <code>String</code> containing the includes paths
 	 * defined in the build model.
 	 * 
-	 * @return
+	 * @return String[]
 	 * @throws BuildException
 	 */
 	public String[] getIncludePaths() throws BuildException;
@@ -114,7 +119,9 @@ public interface IOption extends IBuildObject {
 	/**
 	 * Answers an array or <code>String</code>s containing the libraries
 	 * that must be linked into the project.
-	 * @return
+	 * 
+	 * @return String[]
+	 * @throws BuildException
 	 */
 	public String[] getLibraries() throws BuildException ;
 
@@ -125,7 +132,7 @@ public interface IOption extends IBuildObject {
 	 * If the user has modified the selection, the receiver will answer with the
 	 * overridden selection.
 	 * 
-	 * @return 
+	 * @return String
 	 * @throws BuildException
 	 */
 	public String getSelectedEnum () throws BuildException;	
@@ -133,7 +140,7 @@ public interface IOption extends IBuildObject {
 	/**
 	 * Returns the current value for this option if it is a List of Strings.
 	 * 
-	 * @return
+	 * @return String []
 	 * @throws BuildException
 	 */
 	public String [] getStringListValue() throws BuildException;
@@ -141,7 +148,7 @@ public interface IOption extends IBuildObject {
 	/**
 	 * Returns the current value for this option if it is a String
 	 * 
-	 * @return
+	 * @return String
 	 * @throws BuildException
 	 */
 	public String getStringValue() throws BuildException;
@@ -149,14 +156,24 @@ public interface IOption extends IBuildObject {
 	/**
 	 * Returns the tool defining this option.
 	 * 
-	 * @return
+	 * @return ITool
 	 */
 	public ITool getTool();
+	
+	
+	/**
+	 * Answers all of the user-defined object files that must be linked with
+	 * the final build target. 
+	 * 
+	 * @return
+	 * @throws BuildException
+	 */
+	public String [] getUserObjects() throws BuildException;
 	
 	/**
 	 * Get the type for the value of the option.
 	 * 
-	 * @return
+	 * @return int
 	 */
 	public int getValueType();
 

@@ -42,7 +42,8 @@ public class OptionReference implements IOption {
 	private Object value;
 
 	/**
-	 * Created internally.
+	 * Constructor called when the option reference is created from an 
+	 * existing <code>IOption</code>
 	 * 
 	 * @param owner
 	 * @param option
@@ -56,26 +57,27 @@ public class OptionReference implements IOption {
 	}
 
 	/**
-	 * Created from extension point.
+	 * This constructor will be called when the receiver is created from 
+	 * the settings found in an extension point.
 	 * 
 	 * @param owner
 	 * @param element
 	 */
 	public OptionReference(ToolReference owner, IConfigurationElement element) {
 		this.owner = owner;
-		option = owner.getTool().getOption(element.getAttribute(IOption.ID));
+		option = owner.getTool().getOption(element.getAttribute(ID));
 		
 		owner.addOptionReference(this);
 
 		// value
 		switch (option.getValueType()) {
-			case IOption.BOOLEAN:
-				value = new Boolean(element.getAttribute(IOption.DEFAULT_VALUE));
+			case BOOLEAN:
+				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
 				break;
-			case IOption.STRING:
-				value = element.getAttribute(IOption.DEFAULT_VALUE);
+			case STRING:
+				value = element.getAttribute(DEFAULT_VALUE);
 				break;
-			case IOption.ENUMERATED:
+			case ENUMERATED:
 				String temp = element.getAttribute(DEFAULT_VALUE);
 				if (temp == null) {
 					try {
@@ -86,21 +88,22 @@ public class OptionReference implements IOption {
 				}
 				value = temp;
 				break;
-			case IOption.STRING_LIST:
-			case IOption.INCLUDE_PATH:
-			case IOption.PREPROCESSOR_SYMBOLS:
-			case IOption.LIBRARIES:
+			case STRING_LIST:
+			case INCLUDE_PATH:
+			case PREPROCESSOR_SYMBOLS:
+			case LIBRARIES:
+			case OBJECTS:
 				List valueList = new ArrayList();
 				builtIns = new ArrayList();
-				IConfigurationElement[] valueElements = element.getChildren(IOption.LIST_VALUE);
+				IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
 					IConfigurationElement valueElement = valueElements[i];
-					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(IOption.LIST_ITEM_BUILTIN));
+					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
-						builtIns.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+						builtIns.add(valueElement.getAttribute(LIST_ITEM_VALUE));
 					}
 					else {
-						valueList.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+						valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
 					}				}
 				value = valueList;
 				break;
@@ -115,34 +118,35 @@ public class OptionReference implements IOption {
 	 */
 	public OptionReference(ToolReference owner, Element element) {
 		this.owner = owner;	
-		option = owner.getTool().getOption(element.getAttribute(IOption.ID));
+		option = owner.getTool().getOption(element.getAttribute(ID));
 		
 		owner.addOptionReference(this);
 
 		// value
 		switch (option.getValueType()) {
-			case IOption.BOOLEAN:
-				value = new Boolean(element.getAttribute(IOption.DEFAULT_VALUE));
+			case BOOLEAN:
+				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
 				break;
-			case IOption.STRING:
-			case IOption.ENUMERATED:
-				value = (String) element.getAttribute(IOption.DEFAULT_VALUE);
+			case STRING:
+			case ENUMERATED:
+				value = (String) element.getAttribute(DEFAULT_VALUE);
 				break;
-			case IOption.STRING_LIST:
-			case IOption.INCLUDE_PATH:
-			case IOption.PREPROCESSOR_SYMBOLS:
-			case IOption.LIBRARIES:
+			case STRING_LIST:
+			case INCLUDE_PATH:
+			case PREPROCESSOR_SYMBOLS:
+			case LIBRARIES:
+			case OBJECTS:
 				List valueList = new ArrayList();
 				builtIns = new ArrayList();
-				NodeList nodes = element.getElementsByTagName(IOption.LIST_VALUE);
+				NodeList nodes = element.getElementsByTagName(LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
 					Node node = nodes.item(i);
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(IOption.LIST_ITEM_BUILTIN));
+						Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
 						if (isBuiltIn.booleanValue()) {
-							builtIns.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+							builtIns.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
 						} else {
-							valueList.add(((Element)node).getAttribute(IOption.LIST_ITEM_VALUE));
+							valueList.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
 						}
 					}
 				}
@@ -159,36 +163,37 @@ public class OptionReference implements IOption {
 	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
-		element.setAttribute(IOption.ID, option.getId());
+		element.setAttribute(ID, option.getId());
 		
 		// value
 		switch (option.getValueType()) {
-			case IOption.BOOLEAN:
-				element.setAttribute(IOption.DEFAULT_VALUE, ((Boolean)value).toString());
+			case BOOLEAN:
+				element.setAttribute(DEFAULT_VALUE, ((Boolean)value).toString());
 				break;
-			case IOption.STRING:
-			case IOption.ENUMERATED:
-				element.setAttribute(IOption.DEFAULT_VALUE, (String)value);
+			case STRING:
+			case ENUMERATED:
+				element.setAttribute(DEFAULT_VALUE, (String)value);
 				break;
-			case IOption.STRING_LIST:
-			case IOption.INCLUDE_PATH:
-			case IOption.PREPROCESSOR_SYMBOLS:
-			case IOption.LIBRARIES:
+			case STRING_LIST:
+			case INCLUDE_PATH:
+			case PREPROCESSOR_SYMBOLS:
+			case LIBRARIES:
+			case OBJECTS:
 				ArrayList stringList = (ArrayList)value;
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
-					Element valueElement = doc.createElement(IOption.LIST_VALUE);
-					valueElement.setAttribute(IOption.LIST_ITEM_VALUE, (String)iter.next());
-					valueElement.setAttribute(IOption.LIST_ITEM_BUILTIN, "false");
+					Element valueElement = doc.createElement(LIST_VALUE);
+					valueElement.setAttribute(LIST_ITEM_VALUE, (String)iter.next());
+					valueElement.setAttribute(LIST_ITEM_BUILTIN, "false");
 					element.appendChild(valueElement);
 				}
 				// Serialize the built-ins that have been overridden
 				if (builtIns != null) {
 					iter = builtIns.listIterator();
 					while (iter.hasNext()) {
-						Element valueElement = doc.createElement(IOption.LIST_VALUE);
-						valueElement.setAttribute(IOption.LIST_ITEM_VALUE, (String)iter.next());
-						valueElement.setAttribute(IOption.LIST_ITEM_BUILTIN, "true");
+						Element valueElement = doc.createElement(LIST_VALUE);
+						valueElement.setAttribute(LIST_ITEM_VALUE, (String)iter.next());
+						valueElement.setAttribute(LIST_ITEM_BUILTIN, "true");
 						element.appendChild(valueElement);
 					}
 				}
@@ -223,7 +228,7 @@ public class OptionReference implements IOption {
 	public String[] getDefinedSymbols() throws BuildException {
 		if (value == null)
 			return option.getDefinedSymbols();
-		else if (getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+		else if (getValueType() == PREPROCESSOR_SYMBOLS) {
 			ArrayList list = (ArrayList)value;
 			return (String[]) list.toArray(new String[list.size()]);
 		}
@@ -252,7 +257,7 @@ public class OptionReference implements IOption {
 	public String[] getIncludePaths() throws BuildException {
 		if (value == null)
 			return option.getIncludePaths();
-		else if (getValueType() == IOption.INCLUDE_PATH) {
+		else if (getValueType() == INCLUDE_PATH) {
 			ArrayList list = (ArrayList)value;
 			return (String[]) list.toArray(new String[list.size()]);
 		}
@@ -266,7 +271,7 @@ public class OptionReference implements IOption {
 	public String[] getLibraries() throws BuildException {
 		if (value == null)
 			return option.getLibraries();
-		else if (getValueType() == IOption.LIBRARIES) {
+		else if (getValueType() == LIBRARIES) {
 			ArrayList list = (ArrayList)value;
 			return (String[]) list.toArray(new String[list.size()]);
 		}
@@ -289,7 +294,7 @@ public class OptionReference implements IOption {
 		if (value == null){
 			return option.getBooleanValue();
 		} 
-		else if (getValueType() == IOption.BOOLEAN) {
+		else if (getValueType() == BOOLEAN) {
 			Boolean bool = (Boolean) value;
 			return bool.booleanValue();
 		} else {
@@ -315,7 +320,7 @@ public class OptionReference implements IOption {
 		if (value == null) {
 			// Return the default defined for the enumeration in the manifest.
 			return option.getSelectedEnum();
-		} else if (getValueType() == IOption.ENUMERATED) {
+		} else if (getValueType() == ENUMERATED) {
 			// Value will contain the human-readable name of the enum 
 			return (String) value;
 		} else {
@@ -329,7 +334,7 @@ public class OptionReference implements IOption {
 	public String[] getStringListValue() throws BuildException {
 		if (value == null)
 			return option.getStringListValue();
-		else if (getValueType() == IOption.STRING_LIST) {
+		else if (getValueType() == STRING_LIST) {
 			ArrayList list = (ArrayList)value;
 			return (String[]) list.toArray(new String[list.size()]);
 		}
@@ -343,7 +348,7 @@ public class OptionReference implements IOption {
 	public String getStringValue() throws BuildException {
 		if (value == null)
 			return option.getStringValue();
-		else if (getValueType() == IOption.STRING)
+		else if (getValueType() == STRING)
 			return (String)value;
 		else
 			throw new BuildException("bad value type");
@@ -356,10 +361,29 @@ public class OptionReference implements IOption {
 		return owner;
 	}
 
+	/**
+	 * Answers the tool reference that contains the receiver.
+	 * 
+	 * @return ToolReference
+	 */
 	public ToolReference getToolReference() {
 		return owner;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getUserObjects()
+	 */
+	public String[] getUserObjects() throws BuildException {
+		if (value == null)
+			return option.getDefinedSymbols();
+		else if (getValueType() == OBJECTS) {
+			ArrayList list = (ArrayList)value;
+			return (String[]) list.toArray(new String[list.size()]);
+		}
+		else
+			throw new BuildException("bad value type");
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueType()
 	 */
@@ -367,30 +391,47 @@ public class OptionReference implements IOption {
 		return option.getValueType();
 	}
 
+	/**
+	 * Answers <code>true</code> if the receiver is a reference to the 
+	 * <code>IOption</code> specified in the argument, esle answers <code>false</code>.
+	 * 
+	 * @param target
+	 * @return boolean
+	 */
 	public boolean references(IOption target) {
-		if (equals(target))
+		if (equals(target)) {
 			// we are the target
 			return true;
-		else if (option instanceof OptionReference)
+		} else if (option instanceof OptionReference) {
 			// check the reference we are overriding
 			return ((OptionReference)option).references(target);
-		else
+		} else {
 			// the real reference
 			return option.equals(target);
+		}
 	}
 
 	/**
+	 * Sets the boolean value of the receiver to the value specified in the argument. 
+	 * If the receive is not a reference to a boolean option, method will throw an
+	 * exception.
+	 * 
 	 * @param value
+	 * @throws BuildException
 	 */
 	public void setValue(boolean value) throws BuildException {
-		if (getValueType() == IOption.BOOLEAN)
+		if (getValueType() == BOOLEAN)
 			this.value = new Boolean(value);
 		else
 			throw new BuildException("bad value type");
 	}
 
+	/**
+	 * @param value
+	 * @throws BuildException
+	 */
 	public void setValue(String value) throws BuildException {
-		if (getValueType() == IOption.STRING || getValueType() == IOption.ENUMERATED)
+		if (getValueType() == STRING || getValueType() == ENUMERATED)
 			this.value = value;
 		else
 			throw new BuildException("bad value type");
@@ -403,14 +444,16 @@ public class OptionReference implements IOption {
 	 * @throws BuildException
 	 */
 	public void setValue(String [] value) throws BuildException {
-		if (getValueType() == IOption.STRING_LIST
-			|| getValueType() == IOption.INCLUDE_PATH
-			|| getValueType() == IOption.PREPROCESSOR_SYMBOLS
-			|| getValueType() == IOption.LIBRARIES) {
+		if (getValueType() == STRING_LIST
+			|| getValueType() == INCLUDE_PATH
+			|| getValueType() == PREPROCESSOR_SYMBOLS
+			|| getValueType() == LIBRARIES
+			|| getValueType() == OBJECTS) {
 			// Just replace what the option reference is holding onto 
 			this.value = new ArrayList(Arrays.asList(value));
 		}
 		else
 			throw new BuildException("bad value type");
 	}
+
 }

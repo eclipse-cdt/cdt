@@ -183,6 +183,12 @@ public interface IManagedBuildInfo {
 	public String getToolForTarget(String extension);
 	
 	/**
+	 * @param extension
+	 * @return
+	 */
+	public String[] getUserObjectsForTarget(String extension);
+
+	/**
 	 * Answers true if the build model has been changed by the user.
 	 * 
 	 * @return

@@ -805,9 +805,9 @@ public class ManagedBuildTests extends TestCase {
 		// Now get the tool defined for this target
 		ITool subTool = tools[1];
 		assertEquals("Sub Tool", subTool.getName());
-		// Confirm that it has three options
+		// Confirm that it has four options
 		IOption[] subOpts = subTool.getOptions();
-		assertEquals(3, subOpts.length);
+		assertEquals(4, subOpts.length);
 		assertEquals("", subTool.getOutputFlag());
 		assertTrue(subTool.buildsFileType("yarf"));
 		assertTrue(subTool.producesFileType("bus"));
@@ -841,7 +841,14 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(1, moreIncPath.length);
 		assertEquals("C:\\home\\tester/include", moreIncPath[0]);
 		assertEquals("-I", subOpts[2].getCommand());
-
+		// Check the user object option
+		assertEquals("User Objects", subOpts[3].getName());
+		assertEquals(IOption.OBJECTS, subOpts[3].getValueType());
+		String[] objs = subOpts[3].getUserObjects();
+		assertEquals(2, objs.length);
+		assertEquals("obj1.o", objs[0]);
+		assertEquals("obj2.o", objs[1]);
+		
 		// Get the configs for this target; it should inherit all the configs defined for the parent
 		IConfiguration[] configs = target.getConfigurations();
 		assertEquals(4, configs.length);

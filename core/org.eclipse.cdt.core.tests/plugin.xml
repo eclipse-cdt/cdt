@@ -125,12 +125,12 @@
             <toolReference
                   id="root.tool">
                <optionReference
-                     id="string.option"
-                     defaultValue="overridden">
+                     defaultValue="overridden"
+                     id="string.option">
                </optionReference>
                <optionReference
-                     id="boolean.option"
-                     defaultValue="true">
+                     defaultValue="true"
+                     id="boolean.option">
                </optionReference>
                <optionReference
                      defaultValue="-e2"
@@ -196,6 +196,19 @@
                   id="sub.tool.opts.inc.paths.more">
                <listOptionValue
                      value="C:\home\tester/include"
+                     builtIn="false">
+               </listOptionValue>
+            </option>
+            <option
+                  name="User Objects"
+                  valueType="userObjs"
+                  id="sub.tool.opt.objs">
+               <listOptionValue
+                     value="obj1.o"
+                     builtIn="false">
+               </listOptionValue>
+               <listOptionValue
+                     value="obj2.o"
                      builtIn="false">
                </listOptionValue>
             </option>

@@ -476,6 +476,35 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getUserObjectsForTarget(java.lang.String)
+	 */
+	public String[] getUserObjectsForTarget(String extension) {
+		ArrayList objs = new ArrayList();
+		// Get all the tools for the current config
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int index = 0; index < tools.length; index++) {
+			ITool tool = tools[index];
+			if (tool.producesFileType(extension)) {
+				IOption[] opts = tool.getOptions();
+				// Look for the user object option type
+				for (int i = 0; i < opts.length; i++) {
+					IOption option = opts[i];
+					if (option.getValueType() == IOption.OBJECTS) {
+						try {
+							objs.addAll(Arrays.asList(option.getUserObjects()));
+						} catch (BuildException e) {
+							continue;
+						}
+					}
+				}
+			}
+		}
+		objs.trimToSize();
+		return (String[])objs.toArray(new String[objs.size()]);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isDirty()
 	 */
 	public boolean isDirty() {

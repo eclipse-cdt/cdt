@@ -22,9 +22,6 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-/**
- * 
- */
 public class Option extends BuildObject implements IOption {
 	// Static default return values
 	private static final String EMPTY_STRING = new String();
@@ -49,82 +46,85 @@ public class Option extends BuildObject implements IOption {
 		this(tool);
 		
 		// Get the unique id of the option
-		setId(element.getAttribute(IOption.ID));
+		setId(element.getAttribute(ID));
 		
 		// Hook me up to a tool
 		tool.addOption(this);
 		
 		// Get the option Name (this is what the user will see in the UI)
-		setName(element.getAttribute(IOption.NAME));
+		setName(element.getAttribute(NAME));
 
 		// Options can be grouped into categories
-		String categoryId = element.getAttribute(IOption.CATEGORY);
+		String categoryId = element.getAttribute(CATEGORY);
 		if (categoryId != null)
 			setCategory(tool.getOptionCategory(categoryId));
 		
 		// Get the command defined for the option
-		command = element.getAttribute(IOption.COMMAND);
+		command = element.getAttribute(COMMAND);
 		
 		// Options hold different types of values
-		String valueTypeStr = element.getAttribute(IOption.VALUE_TYPE);
+		String valueTypeStr = element.getAttribute(VALUE_TYPE);
 		if (valueTypeStr == null)
 			valueType = -1;
-		else if (valueTypeStr.equals(IOption.TYPE_STRING))
-			valueType = IOption.STRING;
-		else if (valueTypeStr.equals(IOption.TYPE_STR_LIST))
-			valueType = IOption.STRING_LIST;
-		else if (valueTypeStr.equals(IOption.TYPE_BOOL))
-			valueType = IOption.BOOLEAN;
-		else if (valueTypeStr.equals(IOption.TYPE_ENUM))
-			valueType = IOption.ENUMERATED;
-		else if (valueTypeStr.equals(IOption.TYPE_INC_PATH))
-			valueType = IOption.INCLUDE_PATH;
-		else if (valueTypeStr.equals(IOption.TYPE_LIB))
-			valueType = IOption.LIBRARIES;
+		else if (valueTypeStr.equals(TYPE_STRING))
+			valueType = STRING;
+		else if (valueTypeStr.equals(TYPE_STR_LIST))
+			valueType = STRING_LIST;
+		else if (valueTypeStr.equals(TYPE_BOOL))
+			valueType = BOOLEAN;
+		else if (valueTypeStr.equals(TYPE_ENUM))
+			valueType = ENUMERATED;
+		else if (valueTypeStr.equals(TYPE_INC_PATH))
+			valueType = INCLUDE_PATH;
+		else if (valueTypeStr.equals(TYPE_LIB))
+			valueType = LIBRARIES;
+		else if (valueTypeStr.equals(TYPE_USER_OBJS))
+			valueType = OBJECTS;
 		else
-			valueType = IOption.PREPROCESSOR_SYMBOLS;
+			valueType = PREPROCESSOR_SYMBOLS;
 		
 		// Now get the actual value
 		enumCommands = new HashMap();
 		switch (valueType) {
-			case IOption.BOOLEAN:
+			case BOOLEAN:
 				// Convert the string to a boolean
-				value = new Boolean(element.getAttribute(IOption.DEFAULT_VALUE));
+				value = new Boolean(element.getAttribute(DEFAULT_VALUE));
 				break;
-			case IOption.STRING:
+			case STRING:
 				// Just get the value out of the option directly
-				value = element.getAttribute(IOption.DEFAULT_VALUE);
+				value = element.getAttribute(DEFAULT_VALUE);
 			break;
-			case IOption.ENUMERATED:
+			case ENUMERATED:
 				List enumList = new ArrayList();
-				IConfigurationElement[] enumElements = element.getChildren(IOption.ENUM_VALUE);
+				IConfigurationElement[] enumElements = element.getChildren(ENUM_VALUE);
 				for (int i = 0; i < enumElements.length; ++i) {
-					String optName = enumElements[i].getAttribute(IOption.NAME);
-					String optCommand = enumElements[i].getAttribute(IOption.COMMAND); 
+					String optName = enumElements[i].getAttribute(NAME);
+					String optCommand = enumElements[i].getAttribute(COMMAND); 
 					enumList.add(optName);
 					enumCommands.put(optName, optCommand);
-					Boolean isDefault = new Boolean(enumElements[i].getAttribute(IOption.IS_DEFAULT));
+					Boolean isDefault = new Boolean(enumElements[i].getAttribute(IS_DEFAULT));
 					if (isDefault.booleanValue()) {
 						defaultEnumName = optName; 
 					}
 				}
 				value = enumList;
 				break;
-			case IOption.STRING_LIST:
-			case IOption.INCLUDE_PATH:
-			case IOption.PREPROCESSOR_SYMBOLS:
-			case IOption.LIBRARIES:
+			case STRING_LIST:
+			case INCLUDE_PATH:
+			case PREPROCESSOR_SYMBOLS:
+			case LIBRARIES:
+			case OBJECTS:
 				List valueList = new ArrayList();
 				builtIns = new ArrayList();
-				IConfigurationElement[] valueElements = element.getChildren(IOption.LIST_VALUE);
+				IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
 					IConfigurationElement valueElement = valueElements[i];
-					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(IOption.LIST_ITEM_BUILTIN));
+					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
-						builtIns.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+						builtIns.add(valueElement.getAttribute(LIST_ITEM_VALUE));
 					}
 					else {
-						valueList.add(valueElement.getAttribute(IOption.LIST_ITEM_VALUE));
+						valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
 					}
 				}
 				value = valueList;
@@ -177,7 +177,7 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefinedSymbols()
 	 */
 	public String[] getDefinedSymbols() throws BuildException {
-		if (valueType != IOption.PREPROCESSOR_SYMBOLS) {
+		if (valueType != PREPROCESSOR_SYMBOLS) {
 			throw new BuildException("bad value type");
 		}
 		List v = (List)value;
@@ -198,7 +198,7 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getIncludePaths()
 	 */
 	public String[] getIncludePaths() throws BuildException {
-		if (valueType != IOption.INCLUDE_PATH) {
+		if (valueType != INCLUDE_PATH) {
 			throw new BuildException("bad value type");
 		}
 		List v = (List)value;
@@ -211,7 +211,7 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getLibraries()
 	 */
 	public String[] getLibraries() throws BuildException {
-		if (valueType != IOption.LIBRARIES) {
+		if (valueType != LIBRARIES) {
 			throw new BuildException("bad value type");
 		}
 		List v = (List)value;
@@ -224,7 +224,7 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
 	 */
 	public String getSelectedEnum() throws BuildException {
-		if (valueType != IOption.ENUMERATED) {
+		if (valueType != ENUMERATED) {
 			throw new BuildException("bad value type");
 		}
 		return defaultEnumName == null ? EMPTY_STRING : defaultEnumName;
@@ -234,7 +234,7 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringListValue()
 	 */
 	public String[] getStringListValue() throws BuildException {
-		if (valueType != IOption.STRING_LIST) {
+		if (valueType != STRING_LIST) {
 			throw new BuildException("bad value type");
 		}
 		List v = (List)value;
@@ -247,7 +247,7 @@ public class Option extends BuildObject implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringValue()
 	 */
 	public String getStringValue() throws BuildException {
-		if (valueType != IOption.STRING) {
+		if (valueType != STRING) {
 			throw new BuildException("bad value type");
 		}
 		return value == null ? EMPTY_STRING : (String)value;
@@ -258,6 +258,20 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public ITool getTool() {
 		return tool;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getUserObjects()
+	 */
+	public String[] getUserObjects() throws BuildException {
+		if (valueType != OBJECTS) {
+			throw new BuildException("bad value type");
+		}
+		// This is the right puppy, so return its list value
+		List v = (List)value;
+		return v != null
+			? (String[])v.toArray(new String[v.size()])
+			: EMPTY_STRING_ARRAY;
 	}
 
 	/* (non-Javadoc)
@@ -281,7 +295,7 @@ public class Option extends BuildObject implements IOption {
 		throws BuildException
 	{
 		if (valueType != IOption.STRING
-			|| valueType != IOption.ENUMERATED)
+			|| valueType != ENUMERATED)
 			throw new BuildException("Bad value for type");
 
 		if (config == null) {
@@ -299,10 +313,11 @@ public class Option extends BuildObject implements IOption {
 	public IOption setValue(IConfiguration config, String[] value)
 		throws BuildException
 	{
-		if (valueType != IOption.STRING_LIST 
-			|| valueType != IOption.INCLUDE_PATH
-			|| valueType != IOption.PREPROCESSOR_SYMBOLS
-			|| valueType != IOption.LIBRARIES)
+		if (valueType != STRING_LIST 
+			|| valueType != INCLUDE_PATH
+			|| valueType != PREPROCESSOR_SYMBOLS
+			|| valueType != LIBRARIES
+			|| valueType != OBJECTS)
 			throw new BuildException("Bad value for type");
 		
 		if (config == null) {

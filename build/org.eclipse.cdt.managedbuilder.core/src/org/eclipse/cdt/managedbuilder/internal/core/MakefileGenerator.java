@@ -329,6 +329,15 @@ public class MakefileGenerator {
 		}
 		buffer.append(NEWLINE + NEWLINE);
 		
+		// Add the extra user-specified objects
+		buffer.append("USER_OBJS := ");
+		String[] userObjs = info.getUserObjectsForTarget(extension);
+		for (int j = 0; j < userObjs.length; j++) {
+			String string = userObjs[j];
+			buffer.append(LINEBREAK + NEWLINE + string);
+		}
+		buffer.append(NEWLINE + NEWLINE);
+		
 		buffer.append("OBJS = $(C_SRCS:$(ROOT)/%.c=%.o) $(CC_SRCS:$(ROOT)/%.cc=%.o) $(CXX_SRCS:$(ROOT)/%.cxx=%.o) $(CAPC_SRCS:$(ROOT)/%.C=%.o) $(CPP_SRCS:$(ROOT)/%.cpp=%.o)" + NEWLINE);
 		return (buffer.append(NEWLINE));
 	}
@@ -336,11 +345,11 @@ public class MakefileGenerator {
 	/* (non-javadoc)
 	 * @return
 	 */
-	protected StringBuffer addModules() {
+	protected StringBuffer addSubdirectories() {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(MOD_LIST) + NEWLINE);
-		buffer.append("MODULES := " + LINEBREAK + NEWLINE);
+		buffer.append("SUBDIRS := " + LINEBREAK + NEWLINE);
 		
 		// Get all the module names
 		ListIterator iter = getSubdirList().listIterator();
@@ -358,7 +367,7 @@ public class MakefileGenerator {
 		// Now add the makefile instruction to include all the subdirectory makefile fragments
 		buffer.append(NEWLINE);
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
-		buffer.append("include ${patsubst %, %/module.mk, $(MODULES)}" + NEWLINE);
+		buffer.append("-include ${patsubst %, %/module.mk, $(SUBDIRS)}" + NEWLINE);
 
 		buffer.append(NEWLINE + NEWLINE);
 		return buffer;
@@ -487,7 +496,7 @@ public class MakefileGenerator {
 		/*
 		 * Write out the target rule as:
 		 * <prefix><target>.<extension>: $(OBJS) [<dep_proj_1_output> ... <dep_proj_n_output>]
-		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $^ $(LIB_DEPS)
+		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 */
 		//
 		buffer.append(outputPrefix + target + COLON + WHITESPACE + "$(OBJS)");
@@ -496,17 +505,17 @@ public class MakefileGenerator {
 			buffer.append(WHITESPACE + (String)iter.next());
 		}
 		buffer.append(NEWLINE);
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$(OBJS) $(LIBS)");
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)");
 		buffer.append(NEWLINE + NEWLINE);
 
 		// Always add a clean target
 		buffer.append("clean:" + NEWLINE);
-		buffer.append(TAB + "$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target + NEWLINE + NEWLINE);
+		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target + NEWLINE + NEWLINE);
 		
 		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE);
 		
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
-		buffer.append("include ${patsubst %, %/module.dep, $(MODULES)}" + NEWLINE);
+		buffer.append("-include ${patsubst %, %/module.dep, $(SUBDIRS)}" + NEWLINE);
 		return buffer;
 	}
 
@@ -807,7 +816,7 @@ public class MakefileGenerator {
 		buffer.append(addMacros());
 
 		// Append the module list		
-		buffer.append(addModules()); 
+		buffer.append(addSubdirectories()); 
 
 		// Add targets
 		buffer.append(addTargets(rebuild));

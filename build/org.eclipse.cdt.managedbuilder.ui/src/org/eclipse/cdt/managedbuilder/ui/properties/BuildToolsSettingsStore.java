@@ -259,6 +259,14 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					}
 					getOptionMap().put(name, value);
 					break;
+				case IOption.OBJECTS :
+					try {
+						value = createList(opt.getUserObjects());
+					} catch (BuildException e) {
+						break;
+					}
+					getOptionMap().put(name, value);
+					break;
 				default :
 					break;
 			}

@@ -1,4 +1,21 @@
 2003-09-25 Sean Evoy
+	For bug (really an enhancement request)43756, I added the word default to a 
+	widget label to try and make it clear that a new configuration will be based 
+	on default values, not user-overridden stuff. It remains to be seen if this 
+	actually helps, but it seems reasonable.
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	
+	For bug 43220 I now display a widget just for user objects.
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildToolSettingsPage.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildToolsSettingsStore.java
+	
+	I also reordered the plugin definition for the linker tools, and moved some of 
+	the option labels to the plugin property file. I also added a user object option 
+	to each linker tool definition.
+	* plugin.properties
+	* plugin.xml
+	
+2003-09-25 Sean Evoy
 	This patch contains a lot of changes needed to implement fixes for 42648 and 
 	43122. 
 	

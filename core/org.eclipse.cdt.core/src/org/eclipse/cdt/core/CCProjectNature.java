@@ -18,5 +18,9 @@ public class CCProjectNature extends CProjectNature {
 	public static void addCCNature(IProject project, IProgressMonitor mon) throws CoreException {
 		addNature(project, CC_NATURE_ID, mon);
 	}
+	
+	public static void removeCCNature(IProject project, IProgressMonitor mon) throws CoreException {
+		removeNature(project, CC_NATURE_ID, mon);
+	}
 
 }

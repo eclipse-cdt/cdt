@@ -36,7 +36,7 @@ public class SpeedTest2 extends TestCase {
 	}
 
 	public void test() throws Exception {
-		runTest(10);
+		runTest(20);
 	}
 	
 	private void runTest(int n) throws Exception {

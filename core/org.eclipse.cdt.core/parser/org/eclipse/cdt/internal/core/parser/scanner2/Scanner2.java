@@ -223,6 +223,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return false;
 	}
 
+	private IToken lastToken;
 	private IToken nextToken;
 	private boolean finished = false;
 	
@@ -239,41 +240,26 @@ public class Scanner2 implements IScanner, IScannerData {
 				throw EOF;
 		}
 		
-		IToken token = nextToken;
+		if (lastToken != null)
+			lastToken.setNext(nextToken);
+		IToken oldToken = lastToken;
+		lastToken = nextToken;
 		nextToken = fetchToken();
-		token.setNext(nextToken);
 		
 		if (nextToken == null)
 			finished = true;
-		else if (nextToken.getType() == IToken.tPOUNDPOUND) {
-			// time for a pasting
-			IToken token2 = fetchToken();
-			if (token2 == null) {
-				nextToken = null;
-				finished = true;
-			} else {
-				String t1 = token.getImage();
-				String t2 = token2.getImage();
-				char[] pb = new char[t1.length() + t2.length()];
-				t1.getChars(0, t1.length(), pb, 0);
-				t2.getChars(0, t2.length(), pb, t1.length());
-				pushContext(pb);
-				nextToken = null;
-				return nextToken();
-			}
-		} else if (token.getType() == IToken.tSTRING) {
+		else if (lastToken.getType() == IToken.tSTRING) {
 			while (nextToken != null && nextToken.getType() == IToken.tSTRING) {
 				// Concatenate the adjacent strings
-				String t1 = token.getImage();
+				String t1 = lastToken.getImage();
 				String t2 = nextToken.getImage();
-				token = new ImagedToken(IToken.tSTRING, t1 + t2);
+				lastToken = new ImagedToken(IToken.tSTRING, t1 + t2);
+				oldToken.setNext(lastToken);
 				nextToken = fetchToken();
 			}
 		}
 		
-		// TODO Check if token is ## and proceed with pasting
-		
-		return token;
+		return lastToken;
 	}
 	
 	// Return null to signify end of file

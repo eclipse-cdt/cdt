@@ -468,10 +468,12 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	public boolean shouldIndex(IFile fileToBeIndexed) {
 		if (fileToBeIndexed != null){
 			ICFileType type = CCorePlugin.getDefault().getFileType(fileToBeIndexed.getProject(),fileToBeIndexed.getName());
-			if (type.isSource()){
+			if (type.isSource() || type.isHeader()){
 			  String id = type.getId();
 			  if (id.equals(AbstractIndexer.C_SOURCE_ID) ||
-			  	  id.equals(AbstractIndexer.CPP_SOURCE_ID))
+			  	  id.equals(AbstractIndexer.CPP_SOURCE_ID) ||
+				  id.equals(AbstractIndexer.C_HEADER_ID) ||
+				  id.equals(AbstractIndexer.CPP_HEADER_ID))
 			  	return true;
 			}
 		}
@@ -566,7 +568,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 		else {
 			//Definitions
-			return "noEnumtorDefs".toCharArray();
+			return "noEnumtorDefs".toCharArray(); //$NON-NLS-1$
 		}
 		
 		return bestPrefix( prefix, (char)0, enumeratorName, containingTypes, matchMode, isCaseSensitive );

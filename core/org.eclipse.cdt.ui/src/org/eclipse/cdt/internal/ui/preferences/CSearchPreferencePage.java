@@ -105,7 +105,7 @@ public class CSearchPreferencePage extends PreferencePage
 			}
 		});
 	
-		fExternLinks = createComboBox(group,PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.EnableMarkerLinkType"),new String[]{PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Visible"),PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")},PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		fExternLinks = createComboBox(group,PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.EnableMarkerLinkType"),new String[]{PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")},PreferencesMessages.getString("CSearchPreferences.ExternalSearchLinks.Invisible")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		fExternLinks.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}

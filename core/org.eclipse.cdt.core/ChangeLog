@@ -1,3 +1,6 @@
+2004-06-28 Bogdan Gheorghe
+	Fix for 67656: [Indexer] getting called twice after creating a project with a file system
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
 2004-06-28 Alain Magloire
 
 	Possible fix for 68665

@@ -1,3 +1,6 @@
+2004-06-28 Bogdan Gheorghe
+	Fix for Bug 60948: indexer should pick up all headers in include path
+	
 2004-06-25 Bogdan Gheorghe
 	Indirect fix for Bug 65551: [Search] Search for Variable references should not include parameters
 	Instead of excluding parameter references from searches, added parm declarations to the index (for

@@ -39,7 +39,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Composite;
@@ -263,6 +262,9 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	}
 		
 	private IFile getCanonicalFile(IFile originalFile){
+		
+		if (originalFile == null)
+			return null;
 		
 		File tempFile = originalFile.getRawLocation().toFile();
 		String canonicalPath = null;

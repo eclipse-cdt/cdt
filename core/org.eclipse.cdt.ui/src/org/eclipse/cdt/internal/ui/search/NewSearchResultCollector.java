@@ -100,9 +100,6 @@ public class NewSearchResultCollector extends BasicSearchResultCollector {
           		linksFile.createLink(externalMatchLocation,IResource.NONE,null);
           		int number = store.getInt(CSearchPage.EXTERNALMATCH_VISIBLE);
           		if (number==0){
-          			linksFile.setDerived(true);
-          		}
-          		else{
           			linksFile.setTeamPrivateMember(true);
           		}
           		

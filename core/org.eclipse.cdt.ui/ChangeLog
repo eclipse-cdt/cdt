@@ -1,3 +1,15 @@
+2004-02-11 Alain Magloire
+
+	Reorganize the CView to better deal with the menu actions.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CopyAction.java
+	* src/org/eclipse/cdt/internal/ui/cview/PasteAction.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMoveAction.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewRenameAction.java
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/RefactorActionGroup.java
+	
 2004-02-10 Hoda Amer
 	Content Assist Preference : Reduced search options to two choices:
 	Current file (plus its included files) + Current project (plus its included paths)

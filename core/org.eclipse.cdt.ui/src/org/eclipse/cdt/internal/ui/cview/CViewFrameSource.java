@@ -24,7 +24,7 @@ public class CViewFrameSource extends TreeViewerFrameSource {
                 cview.updateTitle();
         }
         public CViewFrameSource(CView cview) {
-                super(cview.getResourceViewer());
+                super(cview.getViewer());
                 this.cview = cview;
         }
 }

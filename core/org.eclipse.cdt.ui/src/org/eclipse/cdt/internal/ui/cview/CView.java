@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.cview;
  * All Rights Reserved.
  */
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,47 +21,29 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.CProject;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.ResourceTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.TransferDragSourceListener;
-import org.eclipse.cdt.internal.ui.editor.FileSearchAction;
-import org.eclipse.cdt.internal.ui.editor.FileSearchActionInWorkingSet;
-import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
-import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.ui.*;
 import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CElementSorter;
 import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -88,106 +71,54 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
-import org.eclipse.ui.actions.AddBookmarkAction;
-import org.eclipse.ui.actions.BuildAction;
-import org.eclipse.ui.actions.CloseResourceAction;
-import org.eclipse.ui.actions.CopyResourceAction;
-import org.eclipse.ui.actions.DeleteResourceAction;
-import org.eclipse.ui.actions.MoveResourceAction;
-import org.eclipse.ui.actions.NewWizardMenu;
-import org.eclipse.ui.actions.OpenFileAction;
-import org.eclipse.ui.actions.OpenInNewWindowAction;
-import org.eclipse.ui.actions.OpenResourceAction;
-import org.eclipse.ui.actions.OpenSystemEditorAction;
-import org.eclipse.ui.actions.OpenWithMenu;
-import org.eclipse.ui.actions.RefreshAction;
-import org.eclipse.ui.actions.RenameResourceAction;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.views.framelist.BackAction;
-import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
-import org.eclipse.ui.views.framelist.GoIntoAction;
-import org.eclipse.ui.views.framelist.UpAction;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
-
-
-
-public class CView extends ViewPart implements IMenuListener, ISetSelectionTarget,
+/**
+ * 
+ * CView
+ *
+ */
+public class CView extends ViewPart implements ISetSelectionTarget,
 	IPropertyChangeListener, IShowInTarget {
 
 	ProblemTreeViewer viewer;
 	IMemento memento;
 
-	// Actions for Menu context.
-	AddBookmarkAction addBookmarkAction;
-	CopyResourceAction copyResourceAction;
-	DeleteResourceAction deleteResourceAction;
-	OpenFileAction openFileAction;
-	OpenSystemEditorAction openSystemEditorAction;
-	PropertyDialogAction propertyDialogAction;
-	RefreshAction refreshAction;
-	RenameResourceAction renameResourceAction;
-	MoveResourceAction moveResourceAction;
-
-	CloseResourceAction closeProjectAction;
-	OpenResourceAction openProjectAction;
-	BuildAction buildAction;
-	BuildAction rebuildAction;
-
-	// CElement action
-	OpenIncludeAction openIncludeAction;
-
-	BackAction backAction;
-	ForwardAction forwardAction;
-	GoIntoAction goIntoAction;
-	UpAction upAction;
+	CViewActionGroup actionGroup;
 	WorkingSetFilterActionGroup wsFilterActionGroup;
 	
 	FrameList frameList;
 	CViewFrameSource frameSource;
 
-	CPatternFilter patternFilter = new CPatternFilter ();
-	FilterSelectionAction patternFilterAction;
-
 	CLibFilter clibFilter = new CLibFilter ();
-	ShowLibrariesAction clibFilterAction;
-
+	CPatternFilter patternFilter = new CPatternFilter ();
+	
 	ResourceWorkingSetFilter workingSetFilter = new ResourceWorkingSetFilter();
 	
 	ActionContributionItem adjustWorkingSetContributions [] = new ActionContributionItem[5];
 
-	// Collapsing
-	CollapseAllAction collapseAllAction;
-
-	//Search
-	FileSearchAction fFileSearchAction;
-	FileSearchActionInWorkingSet fFileSearchActionInWorkingSet;
-	SearchDialogAction fSearchDialogAction;
 	
 	// Persistance tags.
 	static final String TAG_SELECTION= "selection"; //$NON-NLS-1$
@@ -200,15 +131,12 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	static final String TAG_FILTER = "filter"; //$NON-NLS-1$
 	static final String TAG_SHOWLIBRARIES = "showLibraries"; //$NON-NLS-1$
 	static final String TAG_WORKINGSET = "workingSet"; //$NON-NLS-1$
+	static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
 
 	//Menu tags
 	final String WORKING_GROUP_MARKER = "workingSetGroup";
 	final String WORKING_GROUP_MARKER_END = "end-workingSetGroup";
 
-	// Menu tags for the build
-	final String BUILD_GROUP_MARKER = "buildGroup";
-	final String BUILD_GROUP_MARKER_END = "end-buildGroup";
-	
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
 			if (part instanceof IEditorPart) {
@@ -233,7 +161,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			if(prop == null) {
 				return;
 			}
-
 			if(prop.equals(WorkingSetFilterActionGroup.CHANGE_WORKING_SET)) {
 				workingSetFilter.setWorkingSet((IWorkingSet)ev.getNewValue());
 				doViewerUpdate();
@@ -273,7 +200,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	public void selectReveal(ISelection selection) {
 		IStructuredSelection ssel = convertSelectionToCElement(selection);
 		if (!ssel.isEmpty()) {
-			getResourceViewer().setSelection(ssel, true);
+			getViewer().setSelection(ssel, true);
 		}
 	}
 
@@ -330,35 +257,50 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	* Handles key events in viewer.
 	*/
 	void handleKeyPressed(KeyEvent event) {
-		if (event.character == SWT.DEL
-			&& event.stateMask == 0 && deleteResourceAction.isEnabled()) {
-			IStructuredSelection isel = deleteResourceAction.getStructuredSelection();
-			Object[] array = isel.toArray();
-			for (int i = 0; i < array.length; i++){
-				if (array[i] instanceof IBinaryContainer
-					|| array[i] instanceof IArchiveContainer) {
-					return;
-				}
-			}
-			deleteResourceAction.run();
+		if (getActionGroup() != null) {
+			getActionGroup().handleKeyPressed(event);
 		}
 	}
 
+        /**
+         * Handles a key release in the viewer.  Does nothing by default.
+         *
+         */
+        protected void handleKeyReleased(KeyEvent event) {
+        }
 
-	/* (non-Javadoc)
-	 * Method declared on IViewPart.
+	/**
+	 * Handles selection changed in viewer.
+	 * Updates global actions.
+	 * Links to editor (if option enabled)
 	 */
-	public void init(IViewSite site,IMemento memento) throws PartInitException {
-		super.init(site,memento);
-		this.memento = memento;
+	void handleSelectionChanged(SelectionChangedEvent event) {
+		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+		updateStatusLine(sel);
+		if (getActionGroup() != null) {
+			getActionGroup().runDefaultAction(sel);
+		}
+		linkToEditor(sel);
 	}
 
-	void initFrameList() {
-		frameSource = new CViewFrameSource(this);
-		frameList = new FrameList(frameSource);
-		frameSource.connectTo(frameList);
+	/**
+	 * Returns the action group.
+	 *
+	 * @return the action group
+	 */
+	protected CViewActionGroup getActionGroup() {
+		return actionGroup;
 	}
 
+	/**
+	 * Sets the action group.
+	 *
+	 * @param actionGroup the action group
+	 */
+	protected void setActionGroup(CViewActionGroup actionGroup) {
+		this.actionGroup = actionGroup;
+	}
+	
 	/**
 	* Answer the property defined by key.
 	*/
@@ -368,6 +310,40 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		return super.getAdapter(key);
 	}
 
+	/* (non-Javadoc)
+	 * Method declared on IViewPart.
+	 */
+	public void init(IViewSite site,IMemento memento) throws PartInitException {
+		super.init(site,memento);
+		this.memento = memento;
+	}
+
+	/**
+	 * init the frame source and the framelist.
+	 */
+	void initFrameList() {
+		frameSource = new CViewFrameSource(this);
+		frameList = new FrameList(frameSource);
+		frameSource.connectTo(frameList);
+	}
+
+	/**
+	 * Initializes the sorter.
+	 */
+	void initCElementSorter() {
+		viewer.setSorter(new CElementSorter());
+	}
+
+	/**
+	 * Adds the filters to the viewer.
+	 *
+	 * @param viewer the viewer
+	 */
+	void initFilters(TreeViewer viewer) {
+		viewer.addFilter(patternFilter);
+		viewer.addFilter(workingSetFilter);
+		//viewer.addFilter(clibFilter);
+	}
 
 	/**
 	 * Adds drag and drop support to the navigator.
@@ -408,6 +384,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		store.setDefault(TAG_SHOWLIBRARIES, true);
 	}
 
+	/**
+	 * get the default preferences.
+	 */
 	void initFilterFromPreferences() {
 		CUIPlugin plugin = CUIPlugin.getDefault();
 		boolean show = plugin.getPreferenceStore().getBoolean(TAG_SHOWLIBRARIES);
@@ -415,81 +394,45 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	/**
-	* Create the KeyListener for doing the refresh on the viewer.
-	*/
-	void initRefreshKey() {
-		viewer.getControl().addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent event) {
-				if (event.keyCode == SWT.F5) {
-					refreshAction.selectionChanged(
-						(IStructuredSelection)viewer.getSelection());
-						if (refreshAction.isEnabled())
-							refreshAction.run();
-				}
-			}
-		});
-	}
-
-	/**
-	* Handles selection changed in viewer.
-	* Updates global actions.
-	* Links to editor (if option enabled)
-	*/
-	void handleSelectionChanged(SelectionChangedEvent event) {
-		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-		updateStatusLine(sel);
-		updateActions(sel);
-		updateGlobalActions(sel);
-		goIntoAction.update();
-		linkToEditor(sel);
-	}
-
-
-	/**
-	* @see ContentOutlinePage#createControl
-	*/
-	public void createPartControl (Composite parent) {
-
-		viewer = createViewer(parent);
-		viewer.setUseHashlookup (true);
+	 * Sets the content provider for the viewer.
+	 */
+	void initContentProvider(TreeViewer viewer) {
 		CElementContentProvider provider = createContentProvider();
 		viewer.setContentProvider(provider);
-		setLabelDecorator(PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
-		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
-		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
+	
+	/**
+	 * Sets the label provider for the viewer.
+	 */
+	void initLabelProvider(TreeViewer viewer) {
+		ILabelProvider cProvider= createLabelProvider();
+		ILabelDecorator decorator = CUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator();
+		viewer.setLabelProvider(new DecoratingLabelProvider(cProvider, decorator));
+	}
+	
+	
 
-		// FIXME: Add Drag and Drop support.
-		initFrameList();
-		initRefreshKey();
-		updateTitle();
-		initDragAndDrop();
-		viewer.addFilter(patternFilter);
-		viewer.addFilter(workingSetFilter);
-		//viewer.addFilter(clibFilter);
-		viewer.setSorter(new CElementSorter ());
-		// FIXME: Add different Sorting.
-		if(memento != null)
-			restoreFilters();
-		else
-			initFilterFromPreferences();
-
-		viewer.setInput (CoreModel.getDefault().getCModel());
-
-		MenuManager menuMgr= new MenuManager("#PopupMenu"); //$NON-NLS-1$
+	/**
+	 * Initializes and registers the context menu.
+	 */
+	protected void initContextMenu() {
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(this);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				CView.this.fillContextMenu(manager);
+			}
+		});
+		TreeViewer viewer = getViewer();
+		Menu menu = menuMgr.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(menu);
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
 
-		Control control = viewer.getControl();
-		Menu menu = menuMgr.createContextMenu(viewer.getTree ());
-		control.setMenu (menu);
-
-		// Make the Actions for the Context Menu
-		makeActions();
-
-		//Add the property changes after all of the UI work has been done.
-		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
-		wsmanager.addPropertyChangeListener(workingSetListener);
-
+	/**
+	 * Add listeners to the viewer.
+	 */	
+	protected void initListeners(TreeViewer viewer) {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 			handleDoubleClick(event);
@@ -506,19 +449,57 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
 			}
+			public void keyReleased(KeyEvent e) {
+				handleKeyReleased(e);
+			}
 		});
+	}
+
+	/**
+	* @see ContentOutlinePage#createControl
+	*/
+	public void createPartControl (Composite parent) {
+
+		viewer = createViewer(parent);
+		viewer.setUseHashlookup (true);
+		initContentProvider(viewer);
+		initLabelProvider(viewer);
+		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
+		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+
+		initFilters(viewer);
+		initCElementSorter();
+		initFrameList();
+		initDragAndDrop();
+		updateTitle();
+
+		if (memento != null) {
+			restoreFilters();
+		} else {
+			initFilterFromPreferences();
+		}
+
+		viewer.setInput (CoreModel.getDefault().getCModel());
+
+		initContextMenu();
+
+		// Make the Actions for the Context Menu
+		makeActions();
+		getActionGroup().fillActionBars(getViewSite().getActionBars());
+
+		
+		//Add the property changes after all of the UI work has been done.
+		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+		wsmanager.addPropertyChangeListener(workingSetListener);
 
 		viewer.addTreeListener(expansionListener);
 
-		getSite().registerContextMenu(menuMgr, viewer);
 		getSite().setSelectionProvider(viewer);
 		getSite().getPage().addPartListener(partListener);
 
 		if (memento != null)
 			restoreState (memento);
 		memento = null;
-
-		fillActionBars();
 
 	}
 
@@ -545,10 +526,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			viewer.removeTreeListener(expansionListener);
 			CUIPlugin.getDefault().getProblemMarkerManager().removeListener(viewer);
 		}
-		IWorkspace workspace = CUIPlugin.getWorkspace();
-		workspace.removeResourceChangeListener(closeProjectAction);
-		workspace.removeResourceChangeListener(openProjectAction);
-
+		if (getActionGroup() != null) {
+			getActionGroup().dispose();
+		}
 		IWorkingSetManager wsmanager = getViewSite().getWorkbenchWindow().getWorkbench().getWorkingSetManager();
 		wsmanager.removePropertyChangeListener(workingSetListener);
 
@@ -591,148 +571,52 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		return patternFilter;
 	}
 	
-//	/**
-//	 * Returns the working set filter for this view.
-//	 * @return the working set filter
-//	 */
-//	CWorkingSetFilter getWorkingSetFilter() {
-//		return workingSetFilter;
-//	}
+	/**
+	 * Returns the working set filter for this view.
+	 * @return the working set
+	 */
+	public IWorkingSet getWorkingSet() {
+		return workingSetFilter.getWorkingSet();
+	}
 
-	TreeViewer getViewer () {
+        /**
+         * Returns the sorter.
+         */
+	public CElementSorter getSorter() {
+		return (CElementSorter) getViewer().getSorter();
+	}
+
+	/**
+	 * Returns the tree viewer which shows the resource hierarchy.
+	 */
+	public TreeViewer getViewer () {
 		return viewer;
 	}
 
+	/*
+	 */
+	public FrameList getFrameList() {
+		return frameList;
+	}	
+
 	/**
-	*      Create self's action objects
-	*/
+	 *      Create self's action objects
+	 */
 	void makeActions() {
-		Shell shell = getViewSite().getShell();
-
-		openIncludeAction = new OpenIncludeAction (viewer);
-		openFileAction = new OpenFileAction(getSite().getPage());
-		openSystemEditorAction = new OpenSystemEditorAction(getSite().getPage());
-		refreshAction = new RefreshAction(shell);
-		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
-		moveResourceAction = new MoveResourceAction (shell);
-		copyResourceAction = new CopyResourceAction(shell);
-		renameResourceAction = new RenameResourceAction(shell, viewer.getTree());
-		deleteResourceAction = new DeleteResourceAction(shell);
-		
-		IWorkspace workspace = CUIPlugin.getWorkspace();
-
-		openProjectAction = new OpenResourceAction(shell);
-		workspace.addResourceChangeListener(openProjectAction, IResourceChangeEvent.POST_CHANGE);
-		closeProjectAction = new CloseResourceAction(shell);
-		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
-
-		//sortByNameAction = new SortViewAction(this, false);
-		//sortByTypeAction = new SortViewAction(this, true);
-		patternFilterAction = new FilterSelectionAction(shell, this, "Filters...");
-		clibFilterAction = new ShowLibrariesAction(shell, this, "Show Referenced Libs");
-
 		wsFilterActionGroup = new WorkingSetFilterActionGroup(getViewSite().getShell(), workingSetListener);
-
-		goIntoAction = new GoIntoAction(frameList);
-		backAction = new BackAction(frameList);
-		forwardAction = new ForwardAction(frameList);
-		upAction = new UpAction(frameList);
-
-		addBookmarkAction = new AddBookmarkAction(shell);
-		//propertyDialogAction = new PropertyDialogAction(shell, viewer);
-		propertyDialogAction = new PropertyDialogAction(shell,
-		new ISelectionProvider () {
-			public void addSelectionChangedListener(ISelectionChangedListener listener)  {
-				viewer.addSelectionChangedListener (listener);
-			}
-			public ISelection getSelection()  {
-				return convertSelection (viewer.getSelection ());
-			}
-			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-				viewer.removeSelectionChangedListener (listener);
-			}
-			public void setSelection(ISelection selection)  {
-				viewer.setSelection (selection);
-			}
-		});
-
-		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteResourceAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BOOKMARK, addBookmarkAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.REFRESH, refreshAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.BUILD_PROJECT, buildAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.REBUILD_PROJECT, rebuildAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.OPEN_PROJECT, openProjectAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.CLOSE_PROJECT, closeProjectAction);
-
-		collapseAllAction = new CollapseAllAction(this);
-		
-		fFileSearchAction = new FileSearchAction(viewer);
-		fFileSearchActionInWorkingSet = new	FileSearchActionInWorkingSet(viewer);
-		fSearchDialogAction = new SearchDialogAction(viewer, this.getViewSite().getWorkbenchWindow());
+		setActionGroup(new MainActionGroup(this));
 	}
 
 	/**
-	 * Updates all actions with the given selection.
-	 * Necessary when popping up a menu, because some of the enablement criteria
-	 * may have changed, even if the selection in the viewer hasn't.
-	 * E.g. A project was opened or closed.
+	 * Called when the context menu is about to open.
+	 * Delegates to the action group using the viewer's selection as the action context.
+	 * @since 2.0
 	 */
-	void updateActions(IStructuredSelection selection) {
-		copyResourceAction.selectionChanged(selection);
-		refreshAction.selectionChanged(selection);
-		moveResourceAction.selectionChanged(selection);
-		openFileAction.selectionChanged(selection);
-		openSystemEditorAction.selectionChanged(selection);
-		propertyDialogAction.selectionChanged(selection);
-		renameResourceAction.selectionChanged(selection);
-		//sortByTypeAction.selectionChanged(selection);
-		//sortByNameAction.selectionChanged(selection); 
-	}
- 
-	/**
-	 * Updates the global actions with the given selection.
-	 * Be sure to invoke after actions objects have updated, since can* methods delegate to action objects.
-	 */
-	void updateGlobalActions(IStructuredSelection selection) {
-		deleteResourceAction.selectionChanged(selection);
-		addBookmarkAction.selectionChanged(selection);
-
-		// Ensure Copy global action targets correct action,
-		// either copyProjectAction or copyResourceAction,
-		// depending on selection.
-		copyResourceAction.selectionChanged(selection);
-		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyResourceAction);
-		actionBars.updateActionBars();
-		renameResourceAction.selectionChanged(selection);
-		
-		refreshAction.selectionChanged(selection);
-		buildAction.selectionChanged(selection);
-		rebuildAction.selectionChanged(selection);
-		openProjectAction.selectionChanged(selection);
-		closeProjectAction.selectionChanged(selection);
-
-	}
-
-
-	//---- Action handling ----------------------------------------------------------
-
-	IStructuredSelection convertSelection(ISelection s) {
-		List converted = new ArrayList();
-		if (s instanceof StructuredSelection) {
-			Object[] elements= ((StructuredSelection)s).toArray();
-			for (int i= 0; i < elements.length; i++) {
-				Object e = elements[i];
-				if (e instanceof IAdaptable) {
-					IResource r = (IResource)((IAdaptable)e).getAdapter(IResource.class);
-					if (r != null)
-						converted.add(r);
-				}
-			}
-		}
-		return new StructuredSelection(converted.toArray());
+	protected void fillContextMenu(IMenuManager menu) {
+		IStructuredSelection selection =
+			(IStructuredSelection) getViewer().getSelection();
+		getActionGroup().setContext(new ActionContext(selection));
+		getActionGroup().fillContextMenu(menu);
 	}
 
 	IStructuredSelection convertSelectionToCElement(ISelection s) {
@@ -752,218 +636,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	/**
-	* Called when the context menu is about to open.
-	* Override to add your own context dependent menu contributions.
-	*/
-	public void menuAboutToShow(IMenuManager menu) {
-		IStructuredSelection selection= (IStructuredSelection) viewer.getSelection();
-		if (selection.isEmpty()) {
-			new NewWizardMenu(menu, getSite().getWorkbenchWindow(), false);
-			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
-			return;
-		}
-
-		updateActions (convertSelection(selection));
-		//updateActions (selection);
-		addNewMenu(menu, selection);
-		menu.add(new Separator());
-		addOpenMenu(menu, selection);
-		menu.add(new Separator());
-		addBuildMenu(menu, selection);
-		menu.add(new Separator ());
-		addRefreshMenu (menu, selection);
-		menu.add(new Separator());
-		addIOMenu(menu, selection);
-		menu.add(new Separator());
-		addBookMarkMenu (menu, selection);
-		menu.add(new Separator());
-		addSearchMenu(menu, selection);
-		//menu.add(new Separator());
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
-		addPropertyMenu(menu, selection);
-	}
-
-	void addNewMenu (IMenuManager menu, IStructuredSelection selection) {
-		
-		
-		MenuManager newMenu = new MenuManager("New");
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		
-		newMenu.add(goIntoAction);		
-		
-		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
-
-		menu.add(newMenu);
-
-		if (resource == null)
-			return;
-
-		menu.add (new Separator ());
-		if (selection.size() == 1 && resource instanceof IContainer) {
-			menu.add(goIntoAction);
-		}
-
-		MenuManager gotoMenu = new MenuManager("GoTo");
-		menu.add(gotoMenu);
-		if (viewer.isExpandable(element)) {
-			gotoMenu.add(backAction);
-			gotoMenu.add(forwardAction);
-			gotoMenu.add(upAction);
-		}
-
-	}
-
-	void addOpenMenu(IMenuManager menu, IStructuredSelection selection) {
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null)
-			return;
-
-		// Create a menu flyout.
-		//MenuManager submenu= new MenuManager("Open With"); //$NON-NLS-1$
-		//submenu.add(new OpenWithMenu(getSite().getPage(), (IFile) resource));
-		//menu.add(submenu);
-		if (resource instanceof IFile)
-			menu.add(openFileAction);
-
-		fillOpenWithMenu(menu, selection);
-		fillOpenToMenu(menu, selection);
-	}
-
-
-	void addBuildMenu(IMenuManager menu, IStructuredSelection selection) {
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null) {
-			return;
-		}
-		
-		menu.add(new GroupMarker(BUILD_GROUP_MARKER));
-		if (resource instanceof IProject && hasBuilder((IProject) resource)) {
-			buildAction.selectionChanged(selection);
-			menu.add(buildAction);
-			rebuildAction.selectionChanged(selection);
-			menu.add(rebuildAction);
-		}
-		
-		menu.add(new GroupMarker(BUILD_GROUP_MARKER_END));
-	}
-	
-	boolean hasBuilder(IProject project) {
-		try {
-			ICommand[] commands = project.getDescription().getBuildSpec();
-			if (commands.length > 0)
-				return true;
-		}
-		catch (CoreException e) {
-			// Cannot determine if project has builders. Project is closed 
-			// or does not exist. Fall through to return false.
-		}
-		return false;
-	}
-
-
-	void addRefreshMenu (IMenuManager menu, IStructuredSelection selection) {
-		menu.add(refreshAction);
-	}
-
-	void addIOMenu (IMenuManager menu, IStructuredSelection selection) {
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null)
-			return;
-
-		menu.add(new Separator ());
-
-		if (resource instanceof IProject) {
-			menu.add(closeProjectAction);
-		}
-
-		if (resource instanceof IFile || resource instanceof IFolder) {
-			menu.add(copyResourceAction);
-			menu.add(moveResourceAction);
-		}
-
-		if (!(element instanceof IArchiveContainer || element instanceof IBinaryContainer)) {
-			menu.add(renameResourceAction);
-			menu.add(deleteResourceAction);
-		}
-
-	}
-
-	void addBookMarkMenu (IMenuManager menu, IStructuredSelection selection) {
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null)
-			return;
-		if (resource instanceof IFile) {
-			menu.add(addBookmarkAction);
-		}
-	}
-
-	void addPropertyMenu (IMenuManager menu, IStructuredSelection selection) {
-		propertyDialogAction.selectionChanged(convertSelection(selection));
-		if (propertyDialogAction.isApplicableForSelection()) {
-			menu.add(propertyDialogAction);
-		}
-	}
-
-
-	/**
-	 * Add "open with" actions to the context sensitive menu.
-	 * @param menu the context sensitive menu
-	 * @param selection the current selection in the project explorer
-	 */
-	void fillOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null)
-			return;
-
-		// If one file is selected get it.
-		// Otherwise, do not show the "open with" menu.
-		if (selection.size() != 1)
-			return;
-
-		if (!(resource instanceof IFile))
-			return;
-
-		// Create a menu flyout.
-		MenuManager submenu = new MenuManager("Open With"); //$NON-NLS-1$
-		submenu.add(new OpenWithMenu(getSite().getPage(), (IFile) resource));
-
-		// Add the submenu.
-		menu.add(submenu);
-	}
-
-	/**
-	 * Add "open to" actions to the context sensitive menu.
-	 * @param menu the context sensitive menu
-	 * @param selection the current selection in the project explorer
-	 */
-	void fillOpenToMenu(IMenuManager menu, IStructuredSelection selection)
-	{
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-		IResource resource = (IResource)element.getAdapter(IResource.class);
-		if (resource == null)
-			return;
-
-		// If one file is selected get it.
-		// Otherwise, do not show the "open with" menu.
-		if (selection.size() != 1)
-			return;
-
-		if (!(resource instanceof IContainer))
-			return;
-
-		menu.add(new OpenInNewWindowAction(getSite().getWorkbenchWindow(), resource));
-	}
-
-
-	/**
 	* Returns the tool tip text for the given element.
 	*/
 	String getToolTipText(Object element) {
@@ -980,11 +652,11 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	/**
-	* Returns the message to show in the status line.
-	*
-	* @param selection the current selection
-	* @return the status line message
-	*/
+	 * Returns the message to show in the status line.
+	 *
+	 * @param selection the current selection
+	 * @return the status line message
+	 */
 	String getStatusLineMessage(IStructuredSelection selection) {
 		if (selection.size() == 1) {
 			Object o = selection.getFirstElement();
@@ -1039,41 +711,15 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	/**
-	 * Returns the tree viewer which shows the resource hierarchy.
+	 * Updates the message shown in the status line.
+	 *
+	 * @param selection the current selection
 	 */
-	TreeViewer getResourceViewer() {
-	        return viewer;
-	}
-
-	/**
-	* Updates the message shown in the status line.
-	*
-	* @param selection the current selection
-	*/
 	void updateStatusLine(IStructuredSelection selection) {
 		String msg = getStatusLineMessage(selection);
 		getViewSite().getActionBars().getStatusLineManager().setMessage(msg);
 	}
 
-
-	void fillActionBars() { 
-		IActionBars actionBars= getViewSite().getActionBars();
-		IToolBarManager toolBar = actionBars.getToolBarManager();
-		toolBar.add(backAction);
-		toolBar.add(forwardAction);
-		toolBar.add(upAction);
-		toolBar.add(new Separator());
-		toolBar.add(collapseAllAction);
-		actionBars.updateActionBars();
-
-		wsFilterActionGroup.fillActionBars(actionBars);
-
-		IMenuManager menu = actionBars.getMenuManager();
-				
-		//menu.add (clibFilterAction);
-		menu.add (patternFilterAction);
-	}
-	
 	/**
 	 * Sets the decorator for the package explorer.
 	 *
@@ -1081,11 +727,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
 		ILabelProvider cProvider= createLabelProvider();
-		if (decorator == null) {
-			viewer.setLabelProvider(cProvider);
-		} else {
-			viewer.setLabelProvider(new DecoratingLabelProvider(cProvider, decorator));
-		}
+		viewer.setLabelProvider(new DecoratingLabelProvider(cProvider, decorator));
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
@@ -1235,7 +877,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				bar.setSelection(position);
 				position = new Integer(posStr).intValue();
 				bar.setSelection(position);
-			} catch (NumberFormatException e){}
+			} catch (NumberFormatException e){
+			}
 		}
 		bar = tree.getHorizontalBar();
 		if (bar != null) {
@@ -1244,7 +887,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				int position;
 				position = new Integer(posStr).intValue();
 				bar.setSelection(position);
-			} catch (NumberFormatException e){}
+			} catch (NumberFormatException e){
+			}
 		}		
 	}
 
@@ -1326,29 +970,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				memento.putString(TAG_WORKINGSET, wsname);
 			}
 		}
-	}
-	
-	void addSearchMenu(IMenuManager menu, IStructuredSelection selection) {	
-		IAdaptable element = (IAdaptable)selection.getFirstElement();
-
-		if (element instanceof TranslationUnit ||
-			element instanceof CProject)
-		 return;
-		 
-		MenuManager search = new MenuManager("Search", IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
-		
-		if (SearchDialogAction.canActionBeAdded(selection)){
-			search.add(fSearchDialogAction);
-		}
-		
-		if (FileSearchAction.canActionBeAdded(selection)) {
-			MenuManager fileSearch = new MenuManager("File Search");
-			fileSearch.add(fFileSearchAction);
-			fileSearch.add(fFileSearchActionInWorkingSet);
-			search.add(fileSearch);
-		}
-		
-		menu.add(search);
 	}
 	
 	/* (non-Javadoc)

@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.io.BufferedReader;
+import java.io.CharArrayReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +67,6 @@ import org.eclipse.cdt.internal.ui.util.Util;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -96,10 +97,13 @@ public class CompletionEngine implements RelevanceConstants {
 		if (CharOperation.prefixEquals(prefix.toCharArray(), proposalName.toCharArray(), true /* do not ignore case */)) {
 			if(CharOperation.equals(prefix.toCharArray(), proposalName.toCharArray(), true /* do not ignore case */)) {
 				return CASE_MATCH_RELEVANCE + EXACT_NAME_MATCH_RELEVANCE;
+			} else {
+				return CASE_MATCH_RELEVANCE;
 			}
-			return CASE_MATCH_RELEVANCE;
 		} 
-		return 0;
+		else {
+				return 0;
+		}	
 	}
 	private int computeTypeRelevance(int type){
 		switch (type){
@@ -148,11 +152,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IResource currentResource = sourceUnit.getResource();
 		IPath realPath = currentResource.getLocation(); 
 		IProject project = currentResource.getProject();
-		Reader reader = null;
-		try {
-			reader = ParserUtil.createResourceReader(sourceUnit.getResource());
-		} catch (CoreException e1) {
-		}		
+		Reader reader = new BufferedReader( new CharArrayReader( sourceUnit.getContents() ));		
 		
 		//Get the scanner info
 		IScannerInfo scanInfo = new ScannerInfo();
@@ -203,8 +203,9 @@ public class CompletionEngine implements RelevanceConstants {
 				elementRequestor.stopTimer();
 			}
 			return result;
-		} 
-		return null;	
+		} else {
+			return null;
+		}	 	
 	}
 	
 	private void addNodeToCompletions(IASTNode node, String prefix, int totalNumberOfResults, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly, int parameterIndex){

@@ -74,7 +74,7 @@ final class TemplateParameterManager
 	/**
 	 * @return
 	 */
-	public static TemplateParameterManager getInstance() {
+	public synchronized static TemplateParameterManager getInstance() {
 		int index = findFreeCounter();
 		if( index == -1 )
 			return new TemplateParameterManager(++counter);
@@ -82,7 +82,7 @@ final class TemplateParameterManager
 		return counters[ index ];
 	}
 
-	public static void returnInstance( TemplateParameterManager c )
+	public synchronized static void returnInstance( TemplateParameterManager c )
 	{
 		if( c.counterId > 0 && c.counterId < NUMBER_OF_INSTANCES )
 			instancesUsed[ c.counterId ] = false;

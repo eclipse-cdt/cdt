@@ -2137,6 +2137,7 @@ public class ParserSymbolTable {
 	
 	static protected class LookupData
 	{
+		protected static final TypeFilter ANY_FILTER = new TypeFilter( TypeInfo.t_any );
 		public Set ambiguities;
 		public String name;
 		public Map usingDirectives; 
@@ -2164,11 +2165,12 @@ public class ParserSymbolTable {
 		
 		public LookupData( String n, TypeInfo.eType t ){
 			name = n;
-			filter = new TypeFilter( t );
+			if( t == TypeInfo.t_any ) filter = ANY_FILTER;
+			else filter = new TypeFilter( t );
 		}
 		public LookupData( String n, TypeFilter f ) {
 			name = n;
-			filter = ( f != null ) ? f : new TypeFilter( TypeInfo.t_any );
+			filter = ( f != null ) ? f : ANY_FILTER;
 		}
 	}
 	

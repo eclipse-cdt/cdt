@@ -52,7 +52,7 @@ public class AutomatedSuite extends TestSuite {
 		// Failed Tests
 		addTest(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.suite());
 		addTest(CompletionFailedTest_ScopedReference_Prefix_Bug50152.suite());
-		addTest(CompletionFailedTest_FieldType_NoPrefix_Bug50344.suite());
+		addTest(CompletionTest_FieldType_NoPrefix2.suite());
 		
 	}
 	

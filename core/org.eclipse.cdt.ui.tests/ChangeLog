@@ -1,3 +1,6 @@
+2004-01-22 John Camelon
+	Updated CompletionFailedTest_FieldType_NoPrefix_Bug50344 and moved from failed tests.  
+
 2004-01-21 Hoda Amer
 	Renamed completion tests to be more meaningful.
 	

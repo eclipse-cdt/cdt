@@ -2751,6 +2751,10 @@ public abstract class Parser implements IParser
         if (LT(1) == IToken.tLBRACE)
         {
             consume(IToken.tLBRACE);
+            setCompletionKind(CompletionKind.FIELD_TYPE);
+            setCompletionContext(null);
+            setCompletionKeywords(Key.DECLARATION);
+            setCurrentScope(astClassSpecifier);
             astClassSpecifier.enterScope( requestor );
             memberDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {

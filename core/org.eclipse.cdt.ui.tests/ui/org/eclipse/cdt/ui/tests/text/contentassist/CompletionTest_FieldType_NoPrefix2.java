@@ -8,12 +8,11 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
@@ -22,26 +21,26 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
  * Bug#50344 :Wrong completion in Class scope if before the first declaration
  *
  */
-public class CompletionFailedTest_FieldType_NoPrefix_Bug50344  extends CompletionProposalsBaseTest{
+public class CompletionTest_FieldType_NoPrefix2  extends CompletionProposalsBaseTest{
 	
 	private final String fileName = "CompletionFailedTestStart3.h";
 	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit"; // should be "ASTClassSpecifier";
+	private final String expectedScopeName = "ASTClassSpecifier";
 	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind =CompletionKind.USER_SPECIFIED_NAME; // should be CompletionKind.FIELD_TYPE;
+	private final CompletionKind expectedKind = CompletionKind.FIELD_TYPE;
 	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
 	};
 	
-	public CompletionFailedTest_FieldType_NoPrefix_Bug50344(String name) {
+	public CompletionTest_FieldType_NoPrefix2(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_FieldType_NoPrefix_Bug50344.class.getName());
-		suite.addTest(new CompletionFailedTest_FieldType_NoPrefix_Bug50344("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_FieldType_NoPrefix2.class.getName());
+		suite.addTest(new CompletionTest_FieldType_NoPrefix2("testCompletionProposals"));
 		return suite;
 	}		
 	

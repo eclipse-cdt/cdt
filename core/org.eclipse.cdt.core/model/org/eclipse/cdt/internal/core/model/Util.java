@@ -111,11 +111,27 @@ public class Util implements ICLogConstants {
 
 	public static void save(StringBuffer buffer, IFile file)
 			throws CoreException {
-		byte[] bytes = buffer.toString().getBytes();
-		ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
-		// use a platform operation to update the resource contents
-		boolean force = true;
-		file.setContents(stream, force, true, null); // record history
+        String encoding = null;
+        try {
+        	encoding = file.getCharset();
+        } catch (CoreException ce) {
+        	// use no encoding
+        }
+        
+        byte[] bytes = null;		
+        if (encoding != null) {
+        	try {
+        		bytes = buffer.toString().getBytes(encoding);
+        	} catch (Exception e) {
+        	}
+        } else {
+        	bytes = buffer.toString().getBytes();
+        }		
+        
+        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+        // use a platform operation to update the resource contents
+        boolean force = true;
+        file.setContents(stream, force, true, null); // record history
 	}
 
 	/**

@@ -1,3 +1,10 @@
+2004-12-21 Alain Magloire
+        purpose: using charset from 'file' to encode in-memory String object into bytes
+        modifer: Wu Zhi Qiang
+        action:  first get the charset from 'file', then use it 
+			to encode the 'buffer.toString()' into bytes
+	* src/org/eclipse/cdt/internal/core/model/Util.java
+
 2004-12-09 Alain Magloire
 	Fix for 80724: not showing initialized global variables.
 	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEBinaryObject.java

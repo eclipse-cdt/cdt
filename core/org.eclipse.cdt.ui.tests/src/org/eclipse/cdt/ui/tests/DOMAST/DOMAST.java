@@ -712,10 +712,11 @@ public class DOMAST extends ViewPart {
    private IEditorPart getActiveEditor() {
    	IEditorPart editor = null;
    	
-   	if (getSite().getPage().isEditorAreaVisible()) {
+   	if (getSite().getPage().isEditorAreaVisible() &&
+	   	getSite().getPage().getActiveEditor() != null) {
 	   	editor = getSite().getPage().getActiveEditor();
 	    part = editor;
-	    lang = lang = getLanguageFromFile(((CEditor)editor).getInputFile());
+	    lang = getLanguageFromFile(((CEditor)editor).getInputFile());
    	}
 
    	return editor;

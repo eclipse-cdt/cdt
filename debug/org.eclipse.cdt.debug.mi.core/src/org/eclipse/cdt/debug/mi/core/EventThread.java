@@ -23,7 +23,7 @@ public class EventThread extends Thread {
 	}
 
 	public void run() {
-		// signal by the session of time to die.
+		// Signal by the session of time to die.
 		while (session.getChannelOutputStream() != null) {
 			MIEvent event = null;
 			Queue eventQueue = session.getEventQueue();

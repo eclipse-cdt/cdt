@@ -1969,8 +1969,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	type = ITypeInfo.t_bool;
         else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
 			type = ITypeInfo.t_char;
-		else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE ||kind == IASTSimpleTypeSpecifier.Type.FLOAT  ) 
+		else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE ) 
 			type = ITypeInfo.t_double;
+		else if( kind == IASTSimpleTypeSpecifier.Type.FLOAT  )
+			type = ITypeInfo.t_float;
 		else if( kind == IASTSimpleTypeSpecifier.Type.INT )
 			type = ITypeInfo.t_int;
 		else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
@@ -2187,8 +2189,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			symbol = functionDeclaration;
 		}
 		
-		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, startLine, nameOffset, nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, isFriend, filename );        
-	    attachSymbolExtension(symbol, function, isFunctionDefinition); 
+		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, startLine, nameOffset, nameLine, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, isFriend, filename );
+		
+	    attachSymbolExtension(symbol, function, isFunctionDefinition);
+	    
+		function.setHasFunctionBody(isFunctionDefinition);
+	    
 	    return function;
 	}
     

@@ -136,7 +136,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public void setHasFunctionBody(boolean b)
     {
-        hasFunctionBody = true;
+        hasFunctionBody = b;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#hasFunctionBody()

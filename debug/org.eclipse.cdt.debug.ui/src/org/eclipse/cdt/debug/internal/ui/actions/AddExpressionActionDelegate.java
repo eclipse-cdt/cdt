@@ -5,29 +5,31 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -43,19 +45,20 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelegate, 
 													IEditorActionDelegate,
 													IPartListener,
-													IDebugEventSetListener
+													ISelectionListener,
+													INullSelectionListener
 {
 	private IAction fAction;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IWorkbenchPart fTargetPart;
 	private IEditorPart fTargetEditor;
+	private IDebugTarget fDebugTarget = null;
 
 	/**
 	 * Constructor for AddExpressionActionDelegate.
 	 */
 	public AddExpressionActionDelegate()
 	{
-		DebugPlugin.getDefault().addDebugEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -63,11 +66,11 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 	 */
 	public void dispose()
 	{
-		DebugPlugin.getDefault().removeDebugEventListener( this );
 		IWorkbenchWindow win = getWorkbenchWindow();
 		if ( win != null )
 		{
 			win.getPartService().removePartListener( this );
+			win.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		}
 	}
 
@@ -83,6 +86,7 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 			setTargetPart( page.getActivePart() );
 		}
 		window.getPartService().addPartListener( this );
+		window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		update();
 	}
 
@@ -239,24 +243,6 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 		}
 		return null;
 	}
-
-	protected IDebugTarget getDebugTarget()
-	{
-		IAdaptable context = DebugUITools.getDebugContext();
-		if ( context != null )
-		{
-			IDebugTarget target = ((IDebugTarget)context.getAdapter( IDebugTarget.class )).getDebugTarget();
-			if ( target != null )
-			{
-				ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
-				if ( ee != null && ee.canEvaluate() )
-				{
-					return target;
-				}
-			}
-		}
-		return null;
-	}
 	
 	private void createExpression( final String text )
 	{
@@ -281,19 +267,38 @@ public class AddExpressionActionDelegate implements IWorkbenchWindowActionDelega
 									}
 								} );
 	}
-
 	/**
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void handleDebugEvents( DebugEvent[] events )
+	public void selectionChanged( IWorkbenchPart part, ISelection selection )
 	{
-		for ( int i = 0; i < events.length; ++i )
+		IDebugTarget target = null;
+		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
 		{
-			if ( ( events[i].getKind() == DebugEvent.CREATE || events[i].getKind() == DebugEvent.TERMINATE ) && 
-				   events[i].getSource() instanceof ICExpressionEvaluator )
+			if ( selection != null && selection instanceof IStructuredSelection )
 			{
-				update();
+				Object element = ((IStructuredSelection)selection).getFirstElement();
+				if ( element != null && element instanceof IDebugElement )
+				{
+					IDebugTarget target1 = ((IDebugElement)element).getDebugTarget();
+					if ( target1 != null && target1 instanceof ICExpressionEvaluator )
+					{
+						target = target1;
+					}
+				}
 			}
+			setDebugTarget( target );
+			update();
 		}
+	}
+	
+	protected void setDebugTarget( IDebugTarget target )
+	{
+		fDebugTarget = target;
+	}
+	
+	protected IDebugTarget getDebugTarget()
+	{
+		return fDebugTarget;
 	}
 }

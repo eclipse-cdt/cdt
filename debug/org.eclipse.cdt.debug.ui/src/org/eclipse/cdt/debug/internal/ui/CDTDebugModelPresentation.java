@@ -35,6 +35,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -180,6 +181,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 			if ( element instanceof IRegisterGroup ) 
 			{
 				return getRegisterGroupImage( (IRegisterGroup)element );
+			}
+			if ( element instanceof IExpression ) 
+			{
+				return getExpressionImage( (IExpression)element );
 			}
 			if ( element instanceof IRegister ) 
 			{
@@ -670,5 +675,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 	protected Image getRegisterImage( IRegister element ) throws DebugException
 	{
 		return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_REGISTER,  0 ) );
+	}
+
+	protected Image getExpressionImage( IExpression element ) throws DebugException
+	{
+		return fDebugImageRegistry.get( new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ),  0 ) );
 	}
 }

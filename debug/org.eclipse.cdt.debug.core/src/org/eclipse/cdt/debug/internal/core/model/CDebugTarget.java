@@ -28,6 +28,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
@@ -60,6 +61,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IExpressionListener;
+import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -210,6 +212,7 @@ public class CDebugTarget extends CDebugElement
 		setThreadList( new ArrayList( 5 ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
+		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
 		getCDISession().getEventManager().addEventListener( this );
 	}
 
@@ -996,7 +999,9 @@ public class CDebugTarget extends CDebugElement
 		removeAllRegisterGroups();
 		getCDISession().getEventManager().removeEventListener( this );
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
+		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+		removeAllExpressions();
 		try
 		{
 			removeAllBreakpoints();
@@ -1020,6 +1025,23 @@ public class CDebugTarget extends CDebugElement
 		{
 			CThread thread = (CThread)itr.next();
 			thread.terminated();
+		}
+	}
+
+	/**
+	 * Removes all expressions from this target.
+	 * 
+	 */
+	protected void removeAllExpressions()
+	{
+		IExpressionManager em = DebugPlugin.getDefault().getExpressionManager();
+		IExpression[] expressions = em.getExpressions();
+		for ( int i = 0; i < expressions.length; ++i )
+		{
+			if ( expressions[i] instanceof CExpression && expressions[i].getDebugTarget().equals( this ) )
+			{
+				em.removeExpression( expressions[i] );
+			}
 		}
 	}
 
@@ -1681,5 +1703,17 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void expressionRemoved( IExpression expression )
 	{
+		if ( expression != null && expression.getDebugTarget().equals( this ) && expression instanceof CExpression )
+		{
+			ICDIExpressionManager em = getCDISession().getExpressionManager();
+			try
+			{
+				em.removeExpression( ((CExpression)expression).getCDIExpression() );
+			}
+			catch( CDIException e )
+			{
+				// do nothing
+			}
+		}
 	}
 }

@@ -66,4 +66,9 @@ public class CExpression extends CVariable
 	{
 		super.dispose();
 	}
+	
+	protected ICDIExpression getCDIExpression()
+	{
+		return (ICDIExpression)getCDIVariable();
+	}
 }

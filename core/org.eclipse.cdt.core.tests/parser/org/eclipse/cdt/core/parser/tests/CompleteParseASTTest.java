@@ -2263,5 +2263,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") > 0);
     	}
 	}
+    
+    public void testBug74847() throws Exception {
+        String code = "class A : public FOO {};";
+        Iterator i = parse( code, false ).getDeclarations();
+        IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+        assertFalse( A.getBaseClauses().hasNext() );
+        i = callback.getProblems();
+        IProblem problem = (IProblem) i.next();
+        assertEquals( problem.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );
+        assertEquals( problem.getSourceStart(), code.indexOf( "FOO" ) );
+        assertFalse( i.hasNext() );
+    }
 }
 

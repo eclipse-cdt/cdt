@@ -211,6 +211,15 @@ public class CElementImageProvider {
 			case ICElement.C_UNION:
 				return CPluginImages.DESC_OBJS_UNION;
 
+			case ICElement.C_TYPEDEF:
+				return CPluginImages.DESC_OBJS_TYPEDEF;
+
+			case ICElement.C_ENUMERATION:
+				return CPluginImages.DESC_OBJS_ENUMERATION;
+
+			case ICElement.C_ENUMERATOR:
+				return CPluginImages.DESC_OBJS_ENUMERATOR;
+
 			case ICElement.C_FIELD:
 			IField  field = (IField)celement;
 			switch(field.getVisibility()){
@@ -267,6 +276,15 @@ public class CElementImageProvider {
 				
 			case ICElement.C_UNION:
 				return CPluginImages.DESC_OBJS_UNION;
+
+			case ICElement.C_TYPEDEF:
+				return CPluginImages.DESC_OBJS_TYPEDEF;
+
+			case ICElement.C_ENUMERATION:
+				return CPluginImages.DESC_OBJS_ENUMERATION;
+
+			case ICElement.C_ENUMERATOR:
+				return CPluginImages.DESC_OBJS_ENUMERATOR;
 
 			case ICElement.C_FIELD:
 				return CPluginImages.DESC_OBJS_PUBLIC_FIELD;

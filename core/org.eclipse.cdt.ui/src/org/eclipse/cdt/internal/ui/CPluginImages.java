@@ -47,6 +47,9 @@ public class CPluginImages {
 	public static final String IMG_OBJS_CLASS= NAME_PREFIX + "class_obj.gif";
 	public static final String IMG_OBJS_STRUCT= NAME_PREFIX + "struct_obj.gif";
 	public static final String IMG_OBJS_UNION= NAME_PREFIX + "union_obj.gif";
+	public static final String IMG_OBJS_TYPEDEF= NAME_PREFIX + "typedef_obj.gif";
+	public static final String IMG_OBJS_ENUMERATION= NAME_PREFIX + "enum_obj.gif";
+	public static final String IMG_OBJS_ENUMERATOR= NAME_PREFIX + "enumerator_obj.gif";
 	public static final String IMG_OBJS_FUNCTION= NAME_PREFIX + "function_obj.gif";
 	public static final String IMG_OBJS_PUBLIC_METHOD= NAME_PREFIX + "method_public_obj.gif";
 	public static final String IMG_OBJS_PROTECTED_METHOD= NAME_PREFIX + "method_protected_obj.gif";
@@ -75,6 +78,9 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_CLASS= createManaged(T_OBJ, IMG_OBJS_CLASS);
 	public static final ImageDescriptor DESC_OBJS_STRUCT= createManaged(T_OBJ, IMG_OBJS_STRUCT);
 	public static final ImageDescriptor DESC_OBJS_UNION= createManaged(T_OBJ, IMG_OBJS_UNION);
+	public static final ImageDescriptor DESC_OBJS_TYPEDEF= createManaged(T_OBJ, IMG_OBJS_TYPEDEF);
+	public static final ImageDescriptor DESC_OBJS_ENUMERATION= createManaged(T_OBJ, IMG_OBJS_ENUMERATION);
+	public static final ImageDescriptor DESC_OBJS_ENUMERATOR= createManaged(T_OBJ, IMG_OBJS_ENUMERATOR);
 	public static final ImageDescriptor DESC_OBJS_FUNCTION= createManaged(T_OBJ, IMG_OBJS_FUNCTION);
 	public static final ImageDescriptor DESC_OBJS_PUBLIC_METHOD= createManaged(T_OBJ, IMG_OBJS_PUBLIC_METHOD);
 	public static final ImageDescriptor DESC_OBJS_PROTECTED_METHOD= createManaged(T_OBJ, IMG_OBJS_PROTECTED_METHOD);

@@ -41,17 +41,13 @@ public class Include extends Parent implements IInclude {
 	}
 
 	public IDirective[] getDirectives() {
-		GNUMakefile gnu = new GNUMakefile();
 		clearDirectives();
 		for (int i = 0; i < filenames.length; i++) {
 			// Try the current directory.
+			GNUMakefile gnu = new GNUMakefile();
 			try {
 				gnu.parse(filenames[i]);
-				Directive[] subdirs = gnu.getStatements();
-				addDirectives(subdirs);
-				for (int k = 0; k < subdirs.length; ++k) {
-					subdirs[k].setFilename(filenames[i]);
-				}				
+				addDirective(gnu);
 				continue;
 			} catch (IOException e) {
 			}
@@ -59,12 +55,9 @@ public class Include extends Parent implements IInclude {
 				for (int j = 0; j < dirs.length; j++) {
 					try {
 						String filename =  dirs[j] + GNUMakefile.FILE_SEPARATOR + filenames[i];
+						gnu = new GNUMakefile();
 						gnu.parse(filename);
-						Directive[] subdirs = gnu.getStatements();
-						addDirectives(subdirs);
-						for (int k = 0; k < subdirs.length; ++k) {
-							subdirs[k].setFilename(filename);
-						}
+						addDirective(gnu);
 						break;
 					} catch (IOException e) {
 					}

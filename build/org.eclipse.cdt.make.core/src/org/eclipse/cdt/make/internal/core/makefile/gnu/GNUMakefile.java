@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.gnu.IGNUMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile;
 import org.eclipse.cdt.make.internal.core.makefile.BadDirective;
@@ -775,7 +776,11 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		for (int i = 0; i < dirs.length; ++i) {
 			if (dirs[i] instanceof Include) {
 				Include include = (Include)dirs[i];
-				list.addAll(Arrays.asList(include.getDirectives()));
+				IDirective[] includedMakefiles = include.getDirectives();
+				for (int j = 0; j < includedMakefiles.length; ++j) {
+					IMakefile includedMakefile = (IMakefile)includedMakefiles[j];
+					list.addAll(Arrays.asList(includedMakefile.getDirectives()));
+				}
 			}
 		}
 		return (IDirective[]) list.toArray(new IDirective[list.size()]);

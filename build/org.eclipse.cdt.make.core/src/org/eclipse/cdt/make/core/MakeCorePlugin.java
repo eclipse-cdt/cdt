@@ -183,6 +183,7 @@ public class MakeCorePlugin extends Plugin {
 				fDiscoveryPathManager.shutdown();
 				fDiscoveryPathManager = null;
 			}
+			savePluginPreferences();
 		} finally {
 			super.stop(context);
 		}

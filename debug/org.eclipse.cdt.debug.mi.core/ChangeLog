@@ -1,4 +1,8 @@
 2004-11-19 Alain Magloire
+	RegisterManager.findRegister() was not implemented correctly
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java
+
+2004-11-19 Alain Magloire
 	No need for stackframe when creating the Type class,
 	but rather use the target in the constructor.
 

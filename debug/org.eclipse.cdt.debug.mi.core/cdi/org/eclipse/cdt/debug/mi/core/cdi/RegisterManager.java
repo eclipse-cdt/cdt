@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterDescriptor;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterGroup;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
@@ -98,7 +99,7 @@ public class RegisterManager extends Manager {
 	}
 
 	public Register createRegister(RegisterDescriptor regDesc) throws CDIException {
-		Register reg = getRegister(regDesc);
+		Register reg = findRegister(regDesc);
 		if (reg == null) {
 			try {
 				String name = "$" + regDesc.getName(); //$NON-NLS-1$
@@ -229,14 +230,38 @@ public class RegisterManager extends Manager {
 		return new Register[0];
 	}
 
-	private Register getRegister(RegisterDescriptor regDesc) throws CDIException {
-		Register[] regs = getRegisters((Target)regDesc.getTarget());
+//	private Register getRegister(RegisterDescriptor regDesc) throws CDIException {
+//		Register[] regs = getRegisters((Target)regDesc.getTarget());
+//		for (int i = 0; i < regs.length; i++) {
+//			if (regDesc.getName().equals(regs[i].getName())) {
+//				return regs[i];
+//			}
+//		}
+//		return null;
+//	}
+
+	/**
+	 * Return the Element with this thread/stackframe, and with this name.
+	 * null is return if the element is not in the cache.
+	 */
+	private Register findRegister(RegisterDescriptor rd) throws CDIException {
+		Target target = (Target)rd.getTarget();
+		String name = rd.getName();
+		int position = rd.getPosition();
+		Register[] regs = getRegisters(target);
 		for (int i = 0; i < regs.length; i++) {
-			if (regDesc.getName().equals(regs[i].getName())) {
-				return regs[i];
+			if (regs[i].getName().equals(name)
+				&& regs[i].getCastingArrayStart() == rd.getCastingArrayStart()
+				&& regs[i].getCastingArrayEnd() == rd.getCastingArrayEnd()
+				&& VariableDescriptor.equalsCasting(regs[i], rd)) {
+				// check threads
+				if (regs[i].getPosition() == position) {
+					return regs[i];
+				}
 			}
 		}
 		return null;
 	}
+
 
 }

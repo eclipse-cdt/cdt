@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author dsteffle
  */
 public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMASTAction {
+	private static final int INITIAL_PROBLEM_SIZE = 4;
 	private static final int INITIAL_INCLUDE_STATEMENT_SIZE = 8;
 	{
 		shouldVisitNames          = true;
@@ -58,6 +60,7 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 
 	TreeParent root = null;
 	IProgressMonitor monitor = null;
+	IASTProblem[] astProblems = new IASTProblem[INITIAL_PROBLEM_SIZE];
 	
 	public CPopulateASTViewAction(IASTTranslationUnit tu, IProgressMonitor monitor) {
 		root = new TreeParent(tu);
@@ -83,12 +86,20 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		parent.addChild(tree);
 		
 		// set filter flags
-		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) 
+		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) { 
 			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
+			
+			if (node instanceof IASTProblemHolder)
+				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblemHolder.class, astProblems, ((IASTProblemHolder)node).getProblem());
+			else
+				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblemHolder.class, astProblems, node);
+		}
 		if (node instanceof IASTPreprocessorStatement)
 			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);
 		if (node instanceof IASTPreprocessorIncludeStatement)
 			tree.setFiltersFlag(TreeObject.FLAG_INCLUDE_STATEMENTS);
+		
+	
 		
 		return PROCESS_CONTINUE;
 	}
@@ -220,20 +231,18 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		int index = 0;
 		for(int i=0; i<statements.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
-			if (index+1 > includes.length) {
-				IASTPreprocessorIncludeStatement[] newIncludes = new IASTPreprocessorIncludeStatement[includes.length * 2];
-				for (int j=0; j<includes.length; j++) {
-					newIncludes[j] = includes[j];
+			if (statements[i] instanceof IASTPreprocessorIncludeStatement) {
+				if (index == includes.length) {
+					includes = (IASTPreprocessorIncludeStatement[])ArrayUtil.append(IASTPreprocessorIncludeStatement.class, includes, statements[i]);
+					index++;
+				} else {
+					includes[index++] = (IASTPreprocessorIncludeStatement)statements[i];	
 				}
-				includes = newIncludes;
 			}
-			
-			if (statements[i] instanceof IASTPreprocessorIncludeStatement)
-				includes[index++] = (IASTPreprocessorIncludeStatement)statements[i];
 		}
 		
 		// get the tree model elements corresponding to the includes
-		TreeParent[] treeIncludes = new TreeParent[includes.length];
+		TreeParent[] treeIncludes = new TreeParent[index];
 		for (int i=0; i<treeIncludes.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
 			treeIncludes[i] = root.findTreeObject(includes[i], false);
@@ -242,14 +251,15 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
 		TreeObject child = null;
-		for (int i=treeIncludes.length-1; i>=0; i--) {
+		outerLoop: for (int i=treeIncludes.length-1; i>=0; i--) {
 			if (treeIncludes[i] == null) continue;
 
-			for(int j=root.getChildren().length-1; j>=0; j--) {
+			for(int j=root.getChildren(false).length-1; j>=0; j--) {
 				if (monitor != null && monitor.isCanceled()) return;
-				child = root.getChildren()[j]; 
-			
-				if (treeIncludes[i] != child &&
+				child = root.getChildren(false)[j]; 
+				
+				if (child != null && 
+						treeIncludes[i] != child &&
 						includes[i] instanceof ASTInclusionStatement &&
 						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)includes[i]).startOffset &&
 						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)includes[i]).endOffset) {
@@ -258,5 +268,9 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 				}
 			}
 		}
+	}
+	
+	public IASTProblem[] getASTProblems() {
+		return astProblems;
 	}
 }

@@ -131,10 +131,12 @@ public class DOMAST extends ViewPart {
    private static final String POPUPMENU         = "#PopupMenu";       //$NON-NLS-1$
    private static final String OPEN_DECLARATIONS = "Open Declarations"; //$NON-NLS-1$
    private static final String OPEN_REFERENCES   = "Open References";  //$NON-NLS-1$
+   private static final String DISPLAY_PROBLEMS   = "Display Problems";  //$NON-NLS-1$
    TreeViewer          viewer;
    private DrillDownAdapter    drillDownAdapter;
    private Action              openDeclarationsAction;
    private Action              openReferencesAction;
+   private Action              displayProblemsAction;
    private Action			   displayNodeTypeAction;
    private Action			   displayNodeSignatureAction;
    private Action			   displayExpressionAction;
@@ -164,9 +166,10 @@ public class DOMAST extends ViewPart {
    public class ViewContentProvider implements IStructuredContentProvider,
          ITreeContentProvider {
       private static final String POPULATING_AST_VIEW = "Populating AST View"; //$NON-NLS-1$
-	private TreeParent invisibleRoot;
+	  private TreeParent invisibleRoot;
       private TreeParent tuTreeParent = null;
       private IASTTranslationUnit tu = null;
+	  private IASTProblem[] astProblems = null;
 
       public ViewContentProvider() {
       }
@@ -343,7 +346,7 @@ public class DOMAST extends ViewPart {
 	            return Status.CANCEL_STATUS;
 
 			if (monitor.isCanceled()) return Status.CANCEL_STATUS;
-			monitor.beginTask(name, 7);
+			monitor.beginTask(name, 8);
 			start=System.currentTimeMillis();
 			
 	         IPopulateDOMASTAction action = null;
@@ -414,6 +417,12 @@ public class DOMAST extends ViewPart {
 	         System.out.println("[DOM AST View] done " + GROUPING_AST + ": " + (System.currentTimeMillis()- start) );
 
 	         root.addChild(action.getTree());
+			 
+			 // get the IASTProblems from the action
+			 if (action instanceof CPopulateASTViewAction)
+				 astProblems = ((CPopulateASTViewAction)action).getASTProblems();
+			 else if (action instanceof CPPPopulateASTViewAction)
+				 astProblems = ((CPPPopulateASTViewAction)action).getASTProblems();
 	         
 	         provider.setInvisibleRoot(root);
 	         
@@ -423,11 +432,15 @@ public class DOMAST extends ViewPart {
 	         
 			return Status.OK_STATUS;
 		}
-
+		
       }
+	  
+	  public IASTProblem[] getASTProblems() {
+		  return astProblems;
+	  }
       
       private void initialize() {
-      	invisibleRoot = new TreeParent(null); // blank the AST View, when the job above is complete it will update the AST View with the proper tree
+      	invisibleRoot = new TreeParent(); // blank the AST View, when the job above is complete it will update the AST View with the proper tree
       }
       
       protected void setInvisibleRoot(TreeParent root) {
@@ -533,6 +546,7 @@ public class DOMAST extends ViewPart {
    class ViewLabelProvider extends LabelProvider {
 
       public String getText(Object obj) {
+		  if (obj == null) return "";
          return obj.toString();
       }
 
@@ -598,6 +612,7 @@ public class DOMAST extends ViewPart {
    }
 
    class NameSorter extends ViewerSorter {
+	   
    }
 
    public DOMAST() {
@@ -628,6 +643,7 @@ public class DOMAST extends ViewPart {
 
       viewer.setLabelProvider(new ViewLabelProvider());
       viewer.setInput(getViewSite());
+	  
       makeActions();
       hookContextMenu();
       hookSingleClickAction();
@@ -757,6 +773,7 @@ public class DOMAST extends ViewPart {
    	  manager.add(clearAction);
       manager.add(new Separator());
       manager.add(searchNamesAction);
+	  manager.add(displayProblemsAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
    }
@@ -839,6 +856,10 @@ public class DOMAST extends ViewPart {
       openReferencesAction.setText(OPEN_REFERENCES);
       openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	  
+	  displayProblemsAction = new DisplayProblemsResultAction();
+	  displayProblemsAction.setText(DISPLAY_PROBLEMS);
+      displayProblemsAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTProblem);
 	  
 	  displayNodeTypeAction = new Action() { 
 		  public void run() {
@@ -1026,6 +1047,26 @@ public class DOMAST extends ViewPart {
 	        NewSearchUI.runQuery(job);
 	     }
    }
+   
+   private class DisplayProblemsResultAction extends Action {
+	   	private static final String IASTPROBLEM = "IASTProblem"; //$NON-NLS-1$
+		private static final String PROBLEMS_FOUND = "Problems Found"; //$NON-NLS-1$
+		protected void displayProblems(IASTProblem[] problems, String queryLabel, String pattern) {
+	        DOMQuery job = new DOMQuery(problems, queryLabel, pattern);
+	        NewSearchUI.activateSearchResultView();
+	        NewSearchUI.runQuery(job);
+	     }
+		
+		public void run() {
+			if (viewer.getTree().getItems().length == 0) {
+        		showMessage(DOM_AST_HAS_NO_CONTENT);
+        	}
+        	
+        	if (viewer.getContentProvider() instanceof ViewContentProvider) {
+				displayProblems(((ViewContentProvider)viewer.getContentProvider()).getASTProblems(), PROBLEMS_FOUND, IASTPROBLEM);
+        	}
+		}
+  }
 
    private void hookSingleClickAction() {
       viewer.addSelectionChangedListener(new ISelectionChangedListener() {

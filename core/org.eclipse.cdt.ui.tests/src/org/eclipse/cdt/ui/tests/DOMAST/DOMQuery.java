@@ -12,7 +12,9 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.IMatch;
@@ -41,15 +43,15 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 
 	private static final String BLANK_STRING = ""; //$NON-NLS-1$
 	private CSearchResult _result;
-	private IASTName[] names = null;
+	private IASTNode[] nodes = null;
 	private String queryLabel = null;
 	
 	/**
 	 * 
 	 */
-	public DOMQuery(IASTName[] names, String queryLabel, String pattern) {
+	public DOMQuery(IASTNode[] nodes, String queryLabel, String pattern) {
 		super(CTestPlugin.getWorkspace(), pattern, false, null, null, null, queryLabel, null);
-		this.names = names;
+		this.nodes = nodes;
 		this.queryLabel = queryLabel;
 	}
 	
@@ -66,15 +68,15 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
      	
      	collector.aboutToStart();
      	
-     	for (int i=0; i<names.length; i++) {
+     	for (int i=0; i<nodes.length; i++) {
      		try {
      			String fileName = null;
      			IFile file = null;
      			IPath path = null;
      			int start = 0;
      			int end = 0;
-     			if ( names[i] != null ) {
-	     		   IASTNodeLocation [] location = names[i].getNodeLocations();
+     			if ( nodes[i] != null ) {
+	     		   IASTNodeLocation [] location = nodes[i].getNodeLocations();
 	     		   if( location.length > 0 && location[0] instanceof IASTFileLocation )
 	     		      fileName = ((IASTFileLocation)location[0]).getFileName(); // TODO Devin this is in two places now, put into one, and fix up the location[0] for things like macros 
 	     		   else
@@ -83,11 +85,11 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	     		  path = new Path(fileName);
 	              file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
 	              
-	              if (names[i].getNodeLocations().length > 0) { // fix for 84223
-		              start = names[i].getNodeLocations()[0].getNodeOffset();
-		              end = names[i].getNodeLocations()[0].getNodeOffset() + names[i].getNodeLocations()[0].getNodeLength();
+	              if (nodes[i].getNodeLocations().length > 0) { // fix for 84223
+		              start = nodes[i].getNodeLocations()[0].getNodeOffset();
+		              end = nodes[i].getNodeLocations()[0].getNodeOffset() + nodes[i].getNodeLocations()[0].getNodeLength();
 		     			
-		     		  collector.acceptMatch( createMatch(file, start, end, names[i], path ) );
+		     		  collector.acceptMatch( createMatch(file, start, end, nodes[i], path ) );
 	              }
      			}
      		} catch (CoreException ce) {}
@@ -99,7 +101,7 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
      	return new Status(IStatus.OK, CTestPlugin.getPluginId(), 0, BLANK_STRING, null); //$NON-NLS-1$	
 	}
 	
-	 public IMatch createMatch( Object fileResource, int start, int end, IASTName name, IPath referringElement ) {
+	 public IMatch createMatch( Object fileResource, int start, int end, IASTNode node, IPath referringElement ) {
 	 	BasicSearchMatch result = new BasicSearchMatch();
 		if( fileResource instanceof IResource )
 			result.resource = (IResource) fileResource;
@@ -111,7 +113,12 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 		result.parentName = BLANK_STRING; //$NON-NLS-1$
 		result.referringElement = referringElement;
 		
-		result.name = name.toString();
+		if (node instanceof IASTName)
+			result.name = node.toString();
+		else if (node instanceof IASTProblem)
+			result.name = ((IASTProblem)node).getMessage();
+		else
+			result.name = node.toString();
 	
 		result.type = ICElement.C_FIELD; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo
 		result.visibility = ICElement.CPP_PUBLIC; // TODO Devin static for now, want something like BasicSearchResultCollector#setElementInfo

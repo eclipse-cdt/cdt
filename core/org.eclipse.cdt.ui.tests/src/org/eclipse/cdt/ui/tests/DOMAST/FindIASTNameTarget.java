@@ -401,7 +401,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		// get the TreeObject from the AST View's model corresponding to that name
 		TreeObject treeNode = null;
 		TreeItem treeItem = null;
-		treeNode =  tuTreeParent.findTreeObject(foundName, true, true);
+		treeNode =  tuTreeParent.findTreeObject(foundName, true);
 
 		if (treeNode != null && treeNode.getParent() != null) {
 			// found a matching TreeObject, so expand the tree to that object
@@ -413,7 +413,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 				((searchForward && index < matchingNames.length) ||
 				(!searchForward && index >= 0))) {
 			foundName = findNextMatchingName( findString, searchForward, caseSensitive, wholeWord, regExSearch );
-			treeNode =  tuTreeParent.findTreeObject(foundName, true, true);
+			treeNode =  tuTreeParent.findTreeObject(foundName, true);
 			
 			if (treeNode != null && treeNode.getParent() != null) {
 				// found a matching TreeObject, so expand the tree to that object

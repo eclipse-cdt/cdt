@@ -188,4 +188,30 @@ public class ArrayUtil {
             if( array[i] == obj ) return true;
         return false;
     }
+	
+	/**
+	 * Removes all of the nulls from the array and returns a new
+     * array that contains all of the non-null elements.
+     *
+     * If there are no nulls in the original array then the original
+     * array is returned.
+     *
+	 * @return
+	 */
+	public static Object[] removeNulls(Class c, Object[] array) {
+        if( array == null )
+            return (Object[]) Array.newInstance( c, 0 );
+        
+        int i = 0;
+		int j = 0;
+		Object[] newArray = new Object[array.length];
+        for( ; i < array.length; i++ ){
+            if( array[i] != null ) newArray[j++] = array[i];
+        }
+		
+		if (j<i) return ArrayUtil.trim(c, newArray);
+		
+		return array;
+	}
+	
 }

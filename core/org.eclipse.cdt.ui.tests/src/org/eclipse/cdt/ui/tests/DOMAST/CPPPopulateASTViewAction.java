@@ -36,8 +36,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,6 +48,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author dsteffle
  */
 public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulateDOMASTAction {
+	private static final int INITIAL_PROBLEM_SIZE = 4;
 	private static final int INITIAL_INCLUDE_STATEMENT_SIZE = 8;
 	{
 		shouldVisitNames          = true;
@@ -64,6 +67,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 
 	TreeParent root = null;
 	IProgressMonitor monitor = null;
+	IASTProblem[] astProblems = new IASTProblem[INITIAL_PROBLEM_SIZE];
 	
 	public CPPPopulateASTViewAction(IASTTranslationUnit tu, IProgressMonitor monitor) {
 		root = new TreeParent(tu);
@@ -75,7 +79,8 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		if (node == null) return PROCESS_CONTINUE;
 		
 		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
-        if (!(nodeLocations.length > 0 && 
+		// TODO Devin !(node instanceof ICPPASTLinkageSpecification) below is a hack job for bug 86993
+        if (!(node instanceof ICPPASTLinkageSpecification) && !(nodeLocations.length > 0 && 
 				nodeLocations[0].getNodeOffset() >= 0 &&
 				nodeLocations[0].getNodeLength() > 0))
 			return PROCESS_CONTINUE;
@@ -89,8 +94,14 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		parent.addChild(tree);
 		
 		// set filter flags
-		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) 
+		if (node instanceof IASTProblemHolder || node instanceof IASTProblem) { 
 			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
+			
+			if (node instanceof IASTProblemHolder)
+				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblemHolder.class, astProblems, ((IASTProblemHolder)node).getProblem());
+			else
+				astProblems = (IASTProblem[])ArrayUtil.append(IASTProblemHolder.class, astProblems, node);
+		}
 		if (node instanceof IASTPreprocessorStatement)
 			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);
 		if (node instanceof IASTPreprocessorIncludeStatement)
@@ -247,20 +258,18 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		int index = 0;
 		for(int i=0; i<statements.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
-			if (index+1 > includes.length) {
-				IASTPreprocessorIncludeStatement[] newIncludes = new IASTPreprocessorIncludeStatement[includes.length * 2];
-				for (int j=0; j<includes.length; j++) {
-					newIncludes[j] = includes[j];
+			if (statements[i] instanceof IASTPreprocessorIncludeStatement) {
+				if (index == includes.length) {
+					includes = (IASTPreprocessorIncludeStatement[])ArrayUtil.append(IASTPreprocessorIncludeStatement.class, includes, statements[i]);
+					index++;
+				} else {
+					includes[index++] = (IASTPreprocessorIncludeStatement)statements[i];	
 				}
-				includes = newIncludes;
 			}
-			
-			if (statements[i] instanceof IASTPreprocessorIncludeStatement)
-				includes[index++] = (IASTPreprocessorIncludeStatement)statements[i];
 		}
 		
 		// get the tree model elements corresponding to the includes
-		TreeParent[] treeIncludes = new TreeParent[includes.length];
+		TreeParent[] treeIncludes = new TreeParent[index];
 		for (int i=0; i<treeIncludes.length; i++) {
 			if (monitor != null && monitor.isCanceled()) return;
 			treeIncludes[i] = root.findTreeObject(includes[i], false);
@@ -269,14 +278,14 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
 		TreeObject child = null;
-		for (int i=treeIncludes.length-1; i>=0; i--) {
+		outerLoop: for (int i=treeIncludes.length-1; i>=0; i--) {
 			if (treeIncludes[i] == null) continue;
 
-			for(int j=root.getChildren().length-1; j>=0; j--) {
+			for(int j=root.getChildren(false).length-1; j>=0; j--) {
 				if (monitor != null && monitor.isCanceled()) return;
-				child = root.getChildren()[j]; 
-			
-				if (treeIncludes[i] != child &&
+				child = root.getChildren(false)[j];
+				
+				if (child != null && treeIncludes[i] != child &&
 						includes[i] instanceof ASTInclusionStatement &&
 						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)includes[i]).startOffset &&
 						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)includes[i]).endOffset) {
@@ -285,5 +294,9 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 				}
 			}
 		}
+	}
+	
+	public IASTProblem[] getASTProblems() {
+		return astProblems;
 	}
 }

@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
@@ -174,7 +175,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 	
 	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
 		try {
-			IMarker marker= file.createMarker(SearchUI.SEARCH_MARKER);
+			IMarker marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap attributes= new HashMap(4);
 			attributes.put(IMarker.CHAR_START, new Integer(offset));
 			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
@@ -269,7 +270,7 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 			canonicalPath = tempFile.getCanonicalPath();
 		} catch (IOException e1) {}
 		
-		if (canonicalPath != null){
+		if (canonicalPath != null && (!(originalFile.isLinked()))){
 			IPath path = new Path(canonicalPath);
 			originalFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
 		}

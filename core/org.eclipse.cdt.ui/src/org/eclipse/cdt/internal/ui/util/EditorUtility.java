@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -115,6 +117,11 @@ public class EditorUtility {
 	}
 
 	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
+		if (!file.getProject().isAccessible()){
+			closedProject();
+			return null;
+		}
+		
 		if (file != null) {
 		try {
 				File tempFile = file.getRawLocation().toFile();
@@ -138,6 +145,16 @@ public class EditorUtility {
 			} catch (CModelException e) {}
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 */
+	private static void closedProject() {
+		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
+		errorMsg.setText("ARGHH!"); //$NON-NLS-1$
+		errorMsg.setMessage ("You tried to open that which cannot be opened..."); //$NON-NLS-1$
+		errorMsg.open();
 	}
 
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {

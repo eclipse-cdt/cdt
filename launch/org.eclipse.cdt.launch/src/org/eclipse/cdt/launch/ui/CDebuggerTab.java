@@ -163,7 +163,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 					list.add( debugConfigs[i] );
 					// select first exact matching debugger for platform or requested selection
 					if ( (defaultSelection.equals("") && debuggerPlatform.equalsIgnoreCase( configPlatform ))) { //$NON-NLS-1$
-						defaultSelection = debugConfigs[i].getName();
+						defaultSelection = debugConfigs[i].getID();
 					}
 				}
 			}

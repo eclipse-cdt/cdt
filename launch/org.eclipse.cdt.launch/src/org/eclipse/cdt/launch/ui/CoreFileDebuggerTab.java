@@ -119,11 +119,11 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 					// requested selection
 					String debuggerPlatform = debugConfigs[i].getPlatform();
 					if (defaultSelection == null && debuggerPlatform.equalsIgnoreCase(projectPlatform)) { //$NON-NLS-1$
-						defaultSelection = debugConfigs[i].getName();
+						defaultSelection = debugConfigs[i].getID();
 					}
 				}
 				if (selection.equals(debugConfigs[i].getID())) {
-					defaultSelection = debugConfigs[i].getName();
+					defaultSelection = debugConfigs[i].getID();
 				}
 			}
 		}

@@ -2370,6 +2370,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
          IASTNode n = mostRelevantScopeNode;
          mostRelevantScopeNode = namespaceDefinition;
+         namespaceDefinition.setParent(n);
 
          try {
             namespaceDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
@@ -3901,6 +3902,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
          IASTNode n = mostRelevantScopeNode;
          mostRelevantScopeNode = astClassSpecifier;
+         astClassSpecifier.setParent( n );
 
          try {
             memberDeclarationLoop: while (LT(1) != IToken.tRBRACE) {

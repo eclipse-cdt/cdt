@@ -136,7 +136,7 @@ public class MIPlugin extends Plugin {
 			}
 		}
 
-		Process pgdb = getGDBProcess(args, program);
+		Process pgdb = getGDBProcess(args);
 
 		MISession session;
 		try {
@@ -187,7 +187,7 @@ public class MIPlugin extends Plugin {
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()};
 		}
-		Process pgdb = getGDBProcess(args, program);
+		Process pgdb = getGDBProcess(args);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.CORE);
@@ -220,7 +220,7 @@ public class MIPlugin extends Plugin {
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()};
 		}
-		Process pgdb = getGDBProcess(args, program);
+		Process pgdb = getGDBProcess(args);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.ATTACH);
@@ -293,11 +293,10 @@ public class MIPlugin extends Plugin {
 	 * Do some basic synchronisation, gdb make take some time to load
 	 * for whatever reasons.
 	 * @param args
-	 * @param program
 	 * @return Process
 	 * @throws IOException
 	 */
-	protected Process getGDBProcess(String[] args, File program) throws IOException {
+	protected Process getGDBProcess(String[] args) throws IOException {
 		final Process pgdb = ProcessFactory.getFactory().exec(args);
 		Thread syncStartup = new Thread("GDB Start") {
 			public void run() {

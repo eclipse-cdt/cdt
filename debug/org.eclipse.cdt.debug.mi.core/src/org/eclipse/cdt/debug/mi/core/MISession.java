@@ -2,7 +2,6 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
@@ -13,8 +12,8 @@ import org.eclipse.cdt.debug.mi.core.output.MIParser;
  */
 public class MISession {
 
-	InputStream in;
-	OutputStream out;
+	InputStream inChannel;
+	OutputStream outChannel;
 
 	Thread txThread;
 	Thread rxThread;
@@ -22,9 +21,9 @@ public class MISession {
 	Queue txQueue;
 	Queue rxQueue;
 
-	Reader consoleStream = null;
-	Reader targetStream = null;
-	Reader logStream = null;
+	OutputStream consoleStream = null;
+	OutputStream targetStream = null;
+	OutputStream logStream = null;
 
 	CommandFactory factory;
 
@@ -34,8 +33,8 @@ public class MISession {
 	 * The constructor.
 	 */
 	MISession(InputStream i, OutputStream o) {
-		in = i;
-		out = o;
+		inChannel = i;
+		outChannel= o;
 		factory = new CommandFactory();
 		parser = new MIParser();
 		txQueue = new Queue();
@@ -49,21 +48,21 @@ public class MISession {
 	/**
 	 * Set Console Stream.
 	 */
-	public void setConsoleStream(Reader console) {
+	public void setConsoleStream(OutputStream console) {
 		consoleStream = console;
 	}
 
 	/**
 	 * Set Target Stream.
 	 */
-	public void setTargetStreamOutput(Reader target) {
+	public void setTargetStreamOutput(OutputStream target) {
 		targetStream = target;
 	}
 
 	/**
 	 * Set Log Stream
 	 */
-	public void setLogStreamOutput(Reader log) {
+	public void setLogStreamOutput(OutputStream log) {
 		logStream = log;
 	}
 
@@ -103,12 +102,12 @@ public class MISession {
 		return rxQueue;
 	}
 
-	InputStream getInputStream() {
-		return in;
+	InputStream getChannelInputStream() {
+		return inChannel;
 	}
 
-	OutputStream getOutputStream() {
-		return out;
+	OutputStream getChannelOutputStream() {
+		return outChannel;
 	}
 
 	MIOutput parse(String buffer) {

@@ -33,7 +33,7 @@ public class RxThread extends Thread {
 	 */
 	public void run () {
 		BufferedReader reader =
-			new BufferedReader(new InputStreamReader(session.getInputStream()));
+			new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
 		StringBuffer buffer = new StringBuffer();
 		try {
 			while (true) {

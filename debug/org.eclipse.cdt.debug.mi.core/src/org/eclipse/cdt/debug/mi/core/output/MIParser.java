@@ -158,7 +158,7 @@ public class MIParser {
 		if (buffer.charAt(0) == ',') {
 			String s = buffer.substring(1);
 			MIResult[] res = processMIResults(s);
-			rr.setResults(res);
+			rr.setMIResults(res);
 		}
 		return rr;
 	}
@@ -304,32 +304,18 @@ public class MIParser {
 		if (sb.charAt(0) == '"') {
 			sb.deleteCharAt(0);
 		}
-		for (int i = 0; i < sb.length() || termination; i++) {
+		int i = 0;
+		for (i = 0; i < sb.length() || termination; i++) {
 			switch (sb.charAt(i)) {
 				case '\\':
 					if (escape) {
+						sb.setCharAt(i, '\\');
 						sb.deleteCharAt(i - 1);
 						escape = false;
 					} else {
 						escape = true;
 					}
 					break;
-
-				case 'n':
-					if (escape) {
-						sb.setCharAt(i, '\n');
-						sb.deleteCharAt(i - 1);
-						escape = false;
-					}
-				break;
-
-				case 'r':
-					if (escape) {
-						sb.setCharAt(i, '\n');
-						sb.deleteCharAt(i - 1);
-						escape = false;
-					}
-				break;
 
 				case '"':
 					if (escape) {
@@ -345,6 +331,6 @@ public class MIParser {
 					escape = false;
 			}
 		}
-		return sb.toString();
+		return sb.substring(0, i);
 	}
 }

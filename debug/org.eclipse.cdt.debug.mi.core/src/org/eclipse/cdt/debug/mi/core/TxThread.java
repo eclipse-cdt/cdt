@@ -39,7 +39,7 @@ public class TxThread extends Thread {
 			// - Remove from the TxQueue
 			// - Move to the RxQueue
 			if (cmd != null) {
-				OutputStream out = session.getOutputStream();
+				OutputStream out = session.getChannelOutputStream();
 				cmd.setToken(token);
 				//System.out.println("Tx " + cmd.toString());
 				try {

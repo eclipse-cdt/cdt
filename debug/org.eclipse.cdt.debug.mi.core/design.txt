@@ -9,6 +9,7 @@ Note this is an interim the document and subject to changes.
 ****
 This MI implementation is base on GDB/MI 5.2.1.
 
+* Command/Response channels
 To create an MISession an InputStream and OutputStream are
 needed(assuming this the pipe connected to gdb).
 	MISession MIPlugin.createSession(InputStream, OutputStream);
@@ -26,6 +27,57 @@ for a synchronous response(MIResultRecord).  Any out-of-band
 responses(MIOOBRecord) are dispatch, clients interested in those
 notifications should register to MISession.
 
+* MI Parsing
+There is a generic MI parser (MIParser) constructing an Abstract
+Syntax Tree.  For example, a ResultRecord response after a
+break-insert, the parser will generate this AST:
+	-break-insert main
+	^done,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",
+			addr="0x08048468",func="main",file="hello.c",line="4",times="0"}
+
+	- MIOutput
+		- MIOOBRecord[0]
+		- MIResutRecord
+			- token = 0
+			- ResultClass = "done"
+			- MIResult[1]
+				- MIResult[0]
+					- variable = "bkpt"
+					- value = MITuple
+						- MIResult[9]
+							- MiResult[0]
+								- variable = "number"
+								- MIConst = "1"
+							- MiResult[1]
+								- variable = "type"
+								- MIConst = "breakpoint"
+							- MiResult[2]
+								- variable = "disp"
+								- MIConst = "keep"
+							- MiResult[3]
+								- variable = "enabled"
+								- MIConst = "y"
+							- MiResult[4]
+								- variable = "addr"
+								- MIConst = "0x08048468"
+							- MiResult[5]
+								- variable = "func"
+								- MIConst = "main"
+							- MiResult[6]
+								- variable = "file"
+								- MIConst = "hello.c"
+							- MiResult[7]
+								- variable = "line"
+								- MIConst = "4"
+							- MiResult[8]
+								- variable = "times"
+								- MIConst = "0"
+
+MICommands will do there own parsing:
+	session = MISession(in, out);
+	MIBreakInsert cmd = new MIBreakInsert("main");
+	session.postCommand(cmd);	// sent to gdb.
+	MIBreakInsertInfo info = cmd.getBreakInsertInfo(); // Parsing of the Result Record.
 
 ****
 MI <==> CDI Adapters

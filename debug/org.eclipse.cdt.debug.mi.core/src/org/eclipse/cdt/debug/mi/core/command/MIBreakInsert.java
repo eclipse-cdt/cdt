@@ -50,6 +50,10 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIBreakInsert extends MICommand 
 {
+	public MIBreakInsert(String func) {
+		this(false, false, null, 0, func);
+	}
+
 	public MIBreakInsert(boolean isTemporary, boolean isHardware,
 						 String condition, int ignoreCount, String line) {
 		super("-break-insert");
@@ -92,9 +96,5 @@ public class MIBreakInsert extends MICommand
 			setOptions(opts);
 		}
 		setParameters(new String[]{line});
-	}
-
-	public MIBreakInsert(String regex) {
-		super("-break-insert", new String[]{"-r"}, new String[]{regex});
 	}
 }

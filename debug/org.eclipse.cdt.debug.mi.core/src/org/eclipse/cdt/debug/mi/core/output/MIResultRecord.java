@@ -33,14 +33,14 @@ public class MIResultRecord {
 		resultClass = type;
 	}
 
-	public MIResult[] getResults() {
+	public MIResult[] getMIResults() {
 		if (results == null) {
 			return nullResults;
 		}
 		return results;
 	}
 
-	public void setResults(MIResult[] res) {
+	public void setMIResults(MIResult[] res) {
 		results = res;
 	}
 }

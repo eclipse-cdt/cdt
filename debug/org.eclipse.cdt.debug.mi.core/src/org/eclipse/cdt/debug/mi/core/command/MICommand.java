@@ -110,6 +110,10 @@ public class MICommand extends Command
 		token = t;
 	}
 
+	public MIOutput getMIOutput() {
+		return miOutput;
+	}
+
 	public void setMIOutput(MIOutput mi) {
 		miOutput = mi;
 	}

@@ -32,8 +32,8 @@ public class CommandFactory {
 		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line);
 	}
 
-	public MIBreakInsert createMIBreakInsert(String regex) {
-		return new MIBreakInsert(regex);
+	public MIBreakInsert createMIBreakInsert(String func) {
+		return new MIBreakInsert(func);
 	}
 
 	public MIBreakList createMIBreakList() {

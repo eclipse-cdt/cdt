@@ -12,4 +12,11 @@ public class MIConst extends MIValue {
 	public void setCString(String str) {
 		cstring = str;
 	}
+
+	/**
+	 * Translate gdb c-string.
+	 */
+	public String getString() {
+		return cstring;
+	}
 }

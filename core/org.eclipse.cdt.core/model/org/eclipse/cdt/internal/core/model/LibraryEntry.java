@@ -13,6 +13,8 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.ILibraryEntry;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 public class LibraryEntry extends APathEntry implements ILibraryEntry {
@@ -119,7 +121,20 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		return super.equals(obj);
 	}
 
-	public IPath getFullLibaryPath() {
-		return basePath.append(getPath());
+	public IPath getFullLibraryPath() {
+		IPath lib = getPath();
+		IPath p = (!basePath.isEmpty()) ? basePath.append(lib) : lib;
+		if (p.isAbsolute()) {
+			return p;
+		}
+		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(p);
+		if (res != null) {
+			IPath location = res.getLocation();
+			if (location != null) {
+				return location;
+			}
+		}
+		return p;
+
 	}
 }

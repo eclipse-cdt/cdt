@@ -1,5 +1,9 @@
 2004-04-28 Alain Magloire
 
+	NPE in the PathEntry.
+
+2004-04-28 Alain Magloire
+
 	Work in Progress for the PathEntry API
 	* model/org/eclipse/cdt/core/model/CoreModel.java
 	* model/org/eclipse/cdt/core/model/IIncludeEntry.java

@@ -23,7 +23,7 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	ILibraryEntry entry;
 
 	public LibraryReferenceArchive(ICElement parent, ILibraryEntry e, IBinaryArchive ar) {
-		super(parent, e.getPath(), ar);
+		super(parent, e.getFullLibraryPath(), ar);
 		entry = e;
 	}
 
@@ -40,7 +40,7 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
 	public IPath getPath() {
-		return entry.getPath();
+		return entry.getFullLibraryPath();
 	}
 
 	/* (non-Javadoc)

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -40,7 +41,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @param type
 	 */
 	public IncludeReference(ICProject cproject, IIncludeEntry entry) {
-		this(cproject, entry, entry.getIncludePath());
+		this(cproject, entry, entry.getFullIncludePath());
 	}
 
 	public IncludeReference(ICElement celement, IIncludeEntry entry, IPath path) {
@@ -94,7 +95,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 			if (fPath != null) {
 				file = fPath.toFile();
 			} else if (fIncludeEntry != null) {
-				file = fIncludeEntry.getIncludePath().toFile();
+				file = fIncludeEntry.getFullIncludePath().toFile();
 			}
 			String[] names = null;
 			if (file != null && file.isDirectory()) {
@@ -108,7 +109,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 					ICElement celement = null;
 					if (child.isDirectory()) {
 						celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
-					} else if (child.isFile()) {
+					} else if (CoreModel.isValidTranslationUnitName(names[i]) && child.isFile()) {
 						celement = new ExternalTranslationUnit(this, path.append(names[i]));
 					}
 					if (celement != null) {

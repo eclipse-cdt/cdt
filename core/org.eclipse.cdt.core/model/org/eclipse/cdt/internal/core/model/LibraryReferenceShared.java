@@ -23,7 +23,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	ILibraryEntry entry;
 
 	public LibraryReferenceShared(ICElement parent, ILibraryEntry e, IBinaryObject bin) {
-		super(parent, e.getPath(), bin);
+		super(parent, e.getFullLibraryPath(), bin);
 		entry = e;
 	}
 
@@ -60,7 +60,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
 	 */
 	public IPath getPath() {
-		return entry.getPath();
+		return entry.getFullLibraryPath();
 	}
 
 	/* (non-Javadoc)

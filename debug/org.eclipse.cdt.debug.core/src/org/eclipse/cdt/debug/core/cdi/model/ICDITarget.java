@@ -19,8 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISession;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDITarget extends ICDIObject
-{	
+public interface ICDITarget extends ICDIObject {
 	/**
 	 * Returns the debug session this target is contained in.
 	 * 
@@ -28,13 +27,13 @@ public interface ICDITarget extends ICDIObject
 	 */
 	ICDISession getSession();
 
-    /**
-     * Gets the target process.
-     *
-     * @return  the output stream connected to the normal input of the
-     *          target process.
-     */
-    Process getProcess();
+	/**
+	 * Gets the target process.
+	 *
+	 * @return  the output stream connected to the normal input of the
+	 *          target process.
+	 */
+	Process getProcess();
 
 	/**
 	 * Returns the shared libraries loaded in this target. 
@@ -55,16 +54,7 @@ public interface ICDITarget extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIThread[] getThreads() throws CDIException;
-	
-	/**
-	 * Returns the thread associated with the given id.
-	 * 
-	 * @param id - the thread id
-	 * @return the thread associated with the given id
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIThread getCurrentThread() throws CDIException;
-	
+
 	/**
 	 * Returns a memory block that starts at the specified memory 
 	 * address, with the specified length.
@@ -75,7 +65,8 @@ public interface ICDITarget extends ICDIObject
 	 * with the specified length 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIMemoryBlock getCMemoryBlock( long startAddress, long length ) throws CDIException;
+	ICDIMemoryBlock getCMemoryBlock(long startAddress, long length)
+		throws CDIException;
 
 	/**
 	 * Returns the register groups associated with this target.
@@ -92,7 +83,7 @@ public interface ICDITarget extends ICDIObject
 	 * @return a collection of global variables 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIGlobalVariable[] getGlobalVariables() throws CDIException;	
+	ICDIGlobalVariable[] getGlobalVariables() throws CDIException;
 
 	/**
 	 * Evaluates the expression specified by the given string.
@@ -102,7 +93,8 @@ public interface ICDITarget extends ICDIObject
 	 * @return the result of the evaluation
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIValue evaluateExpressionToValue( String expressionText ) throws CDIException; 
+	ICDIValue evaluateExpressionToValue(String expressionText)
+		throws CDIException;
 
 	/**
 	 * Evaluates the expression specified by the given string.
@@ -112,15 +104,16 @@ public interface ICDITarget extends ICDIObject
 	 * @return the result of the evaluation
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	String evaluateExpressionToString( String expressionText ) throws CDIException; 
-	
+	String evaluateExpressionToString(String expressionText)
+		throws CDIException;
+
 	/**
 	 * Returns whether this target is terminated.
 	 *
 	 * @return whether this target is terminated
 	 */
 	boolean isTerminated();
-	
+
 	/**
 	 * Causes this target to terminate.
 	 * 
@@ -157,7 +150,7 @@ public interface ICDITarget extends ICDIObject
 	 * @return whether this target is currently suspended
 	 */
 	boolean isSuspended();
-	
+
 	/**
 	 * Causes this target to resume its execution. 
 	 * Has no effect on a target that is not suspended.
@@ -165,7 +158,7 @@ public interface ICDITarget extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void resume() throws CDIException;
-	
+
 	/**
 	 * Causes this target to suspend its execution. 
 	 * Has no effect on an already suspended target.
@@ -181,7 +174,7 @@ public interface ICDITarget extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOver() throws CDIException;
-	
+
 	/**
 	 * Steps into the current source line. Can only be called
 	 * when the associated target is suspended. 
@@ -189,7 +182,7 @@ public interface ICDITarget extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepInto() throws CDIException;
-	
+
 	/**
 	 * Steps over the current machine instruction. Can only be called
 	 * when the associated target is suspended. 
@@ -197,7 +190,7 @@ public interface ICDITarget extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepOverInstruction() throws CDIException;
-	
+
 	/**
 	 * Steps into the current machine instruction. Can only be called
 	 * when the associated target is suspended. 
@@ -205,7 +198,7 @@ public interface ICDITarget extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	void stepIntoInstruction() throws CDIException;
-	
+
 	/**
 	 * Continues running until just after function in the current 
 	 * stack frame returns. Can only be called when the associated 

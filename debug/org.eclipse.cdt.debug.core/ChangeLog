@@ -1,4 +1,7 @@
 2002-10-25 Mikhail Khodjaiants
+	* IFormattedMemoryBlock.java: Replaced 'MEMORY_BYTES_PER_ROW_...' constants by 'MEMORY_NUMBER_OF_COLUMNS_...'.
+
+2002-10-25 Mikhail Khodjaiants
 	Remove the 'setWordSize' method from 'IFormattedMemoryBlock' and use 'reformat' instead.
 	* IFormattedMemoryBlock.java: removed the 'setWordSize' method.
 	* CFormattedMemoryBlock.java: removed the implementation of 'setWordSize' method.

@@ -30,12 +30,11 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	public static final int MEMORY_FORMAT_SIGNED_DECIMAL = 3;
 	public static final int MEMORY_FORMAT_UNSIGNED_DECIMAL = 4;
 
-	public static final int MEMORY_BYTES_PER_ROW_4 = 4;
-	public static final int MEMORY_BYTES_PER_ROW_8 = 8;
-	public static final int MEMORY_BYTES_PER_ROW_16 = 16;
-	public static final int MEMORY_BYTES_PER_ROW_32 = 32;
-	public static final int MEMORY_BYTES_PER_ROW_64 = 64;
-	public static final int MEMORY_BYTES_PER_ROW_128 = 128;
+	public static final int MEMORY_NUMBER_OF_COLUMNS_1 = 1;
+	public static final int MEMORY_NUMBER_OF_COLUMNS_2 = 2;
+	public static final int MEMORY_NUMBER_OF_COLUMNS_4 = 4;
+	public static final int MEMORY_NUMBER_OF_COLUMNS_8 = 8;
+	public static final int MEMORY_NUMBER_OF_COLUMNS_16 = 16;
 
 	/**
 	 * Returns the address expression specified to obtain this memory block.

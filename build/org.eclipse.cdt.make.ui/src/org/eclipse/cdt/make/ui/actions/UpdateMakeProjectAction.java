@@ -13,6 +13,9 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.make.core.BuildInfoFactory;
+import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -23,6 +26,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -98,7 +102,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
-			MakeUIPlugin.logException(e, "Error", "Error updateing Make Projects");
+			MakeUIPlugin.logException(e, "Error", "Error updating Make Projects");
 		}
 	}
 
@@ -113,11 +117,13 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					new SubProgressMonitor(monitor, 1));
 				// add new nature
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
-				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation"),
+				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
 				String location = project[i].getPersistentProperty(qlocation);
-
+				IMakeBuilderInfo newInfo = BuildInfoFactory.create(project[i], MakeBuilder.BUILDER_ID);
+				newInfo.setBuildCommand(new Path(location));
+				
 				//remove old properties
-				QualifiedName[] qName =
+				QualifiedName[] qName = 
 					{
 						new QualifiedName(CCorePlugin.PLUGIN_ID, "buildFullArguments"),
 						new QualifiedName(CCorePlugin.PLUGIN_ID, "buildIncrementalArguments"),

@@ -32,7 +32,7 @@ public class WatchpointScope extends SessionObject implements ICDIWatchpointScop
 	public ICDIWatchpoint getWatchpoint() {
 		int number = watchEvent.getNumber();
 		// Ask the breakpointManager for the breakpoint
-		BreakpointManager mgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager mgr = ((Session)getSession()).getBreakpointManager();
 		// We need to return the same object as the reason.
 		Watchpoint point = mgr.getWatchpoint(watchEvent.getMISession(), number);
 		// FIXME: if point ==null ??? Create a new breakpoint ?

@@ -121,7 +121,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public void setCondition(ICDICondition condition) throws CDIException {
 		Session session = (Session)getTarget().getSession();
-		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
+		BreakpointManager mgr = session.getBreakpointManager();
 		if (isEnabled()) {
 			mgr.setCondition(this, condition);
 		}
@@ -133,7 +133,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 */
 	public void setEnabled(boolean on) throws CDIException {
 		Session session = (Session)getTarget().getSession();
-		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
+		BreakpointManager mgr = session.getBreakpointManager();
 		if (miBreakpoint != null) {
 			if (on == false && isEnabled() == true) { 
 				mgr.disableBreakpoint(this);

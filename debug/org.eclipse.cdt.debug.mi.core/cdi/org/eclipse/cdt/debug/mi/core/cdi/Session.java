@@ -11,10 +11,11 @@
  
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
  */
 public class Session implements ICDISession, ICDISessionObject {
 
+	public final static Target[] EMPTY_TARGETS = {};
 	Properties props;
 	EventManager eventManager;
 	BreakpointManager breakpointManager;
@@ -50,26 +52,35 @@ public class Session implements ICDISession, ICDISessionObject {
 	SignalManager signalManager;
 	SourceManager sourceManager;
 	ICDIConfiguration configuration;
-	Target[] debugTargets;
+	Target[] debugTargets = EMPTY_TARGETS;
 	Target currentTarget;
 
-	public Session(MISession s, boolean attach) {
-		commonSetup(s);
-		configuration = new Configuration(s, attach);
+	public Session(MISession miSession, boolean attach) {
+		commonSetup();
+		setConfiguration(new Configuration(miSession, attach));
+
+		Target target = new Target(this, miSession);
+		addTargets(new Target[] { target }, target);
 	}
 
-	public Session(MISession s) {
-		commonSetup(s);
-		configuration = new CoreFileConfiguration();
+	public Session(MISession miSession) {
+		commonSetup();
+		setConfiguration(new CoreFileConfiguration());
+
+		Target target = new Target(this, miSession);
+		addTargets(new Target[] { target }, target);
 	}
-	
-	private void commonSetup(MISession miSession) {
+
+	public Session() {
+		commonSetup();
+		setConfiguration(new CoreFileConfiguration());
+	}
+
+	private void commonSetup() {
 		props = new Properties();
 
 		breakpointManager = new BreakpointManager(this);
-
 		eventManager = new EventManager(this);
-
 		expressionManager = new ExpressionManager(this);
 		variableManager = new VariableManager(this);
 		registerManager = new RegisterManager(this);
@@ -77,9 +88,36 @@ public class Session implements ICDISession, ICDISessionObject {
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
 		sharedLibraryManager = new SharedLibraryManager(this);
-		currentTarget = new Target(this, miSession);
-		debugTargets = new Target[] { currentTarget };
-		miSession.addObserver(eventManager);
+	}
+
+	public void addTargets(Target[] targets, Target current) {
+		Target[] newTargets = new Target[debugTargets.length + targets.length];
+		System.arraycopy(debugTargets, 0, newTargets, 0, debugTargets.length);
+		System.arraycopy(targets, 0, newTargets, debugTargets.length, targets.length);
+		if (current != null) {
+			currentTarget = current;
+		}
+		for (int i = 0; i < targets.length; ++i) {
+			MISession miSession = targets[i].getMISession();
+			if (miSession != null) {
+				miSession.addObserver((EventManager)getEventManager());
+			}
+		}
+	}
+
+	public void removeTargets(Target[] targets) {
+		ArrayList list = new ArrayList(Arrays.asList(debugTargets));
+		for (int i = 0; i < targets.length; ++i) {
+			MISession miSession = targets[i].getMISession();
+			if (miSession != null) {
+				miSession.deleteObserver((EventManager)getEventManager());
+			}
+			if (currentTarget != null && currentTarget.equals(targets[i])) {
+				currentTarget = null;
+			}
+			list.remove(targets[i]);
+		}
+		debugTargets = (Target[]) list.toArray(new Target[list.size()]);
 	}
 
 	public Target getTarget(MISession miSession) {
@@ -103,7 +141,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getBreakpointManager()
 	 */
-	public ICDIBreakpointManager getBreakpointManager() {
+	public BreakpointManager getBreakpointManager() {
 		return breakpointManager;
 	}
 

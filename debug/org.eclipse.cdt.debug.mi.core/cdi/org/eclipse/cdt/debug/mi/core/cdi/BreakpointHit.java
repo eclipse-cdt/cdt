@@ -32,7 +32,7 @@ public class BreakpointHit extends SessionObject implements ICDIBreakpointHit {
 	public ICDIBreakpoint getBreakpoint() {
 		int number = breakEvent.getNumber();
 		// Ask the breakpointManager for the breakpoint
-		BreakpointManager mgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager mgr = ((Session)getSession()).getBreakpointManager();
 		// We need to return the same object as the breakpoint.
 		Breakpoint point = mgr.getBreakpoint(breakEvent.getMISession(), number);
 		// FIXME: if point == null ?? Create a new breakpoint ??

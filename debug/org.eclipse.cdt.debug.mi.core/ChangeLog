@@ -1,3 +1,15 @@
+2004-09-07 Alain Magloire
+
+	Remove ICDIBreakpointManager class
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointHit.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/WatchpointScope.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/WatchpointTrigger.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+
 2004-09-06 Alain Magloire
 
 	The changes is move the MISession as part

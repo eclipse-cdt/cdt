@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -56,7 +55,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 /**
  * Breakpoint Manager for the CDI interface.
  */
-public class BreakpointManager extends Manager implements ICDIBreakpointManager {
+public class BreakpointManager extends Manager {
 
 	public static ICDIBreakpoint[] EMPTY_BREAKPOINTS = {};
 

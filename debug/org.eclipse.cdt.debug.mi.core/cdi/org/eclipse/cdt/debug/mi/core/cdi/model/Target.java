@@ -692,29 +692,29 @@ public class Target  implements ICDITarget {
 
 	
 	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.getBreakpoints(this);
 	}
 
 	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
 			ICDICondition condition, String threadId, boolean deferred) throws CDIException {		
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.setLocationBreakpoint(this, type, location, condition, threadId, deferred);
 	}
 
 	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
 			ICDICondition condition) throws CDIException {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.setWatchpoint(this, type, watchType, expression, condition);
 	}
 
 	public void deleteBreakpoints(ICDIBreakpoint[] breakpoints) throws CDIException {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		bMgr.deleteBreakpoints(this, breakpoints);
 	}
 
 	public void deleteAllBreakpoints() throws CDIException {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		bMgr.deleteAllBreakpoints(this);		
 	}
 
@@ -727,7 +727,7 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createCondition(int, java.lang.String)
 	 */
 	public ICDICondition createCondition(int ignoreCount, String expression) {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.createCondition(ignoreCount, expression);
 	}
 
@@ -735,7 +735,7 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(java.lang.String, java.lang.String, int)
 	 */
 	public ICDILocation createLocation(String file, String function, int line) {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.createLocation(file, function, line);
 	}
 
@@ -743,7 +743,7 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createLocation(long)
 	 */
 	public ICDILocation createLocation(long address) {
-		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
 		return bMgr.createLocation(address);
 	}
 

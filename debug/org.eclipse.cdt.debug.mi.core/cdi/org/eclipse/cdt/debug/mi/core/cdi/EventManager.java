@@ -17,7 +17,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
@@ -92,6 +91,10 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	public void update(Observable o, Object arg) {
 		MIEvent miEvent = (MIEvent)arg;
 		Session session = (Session)getSession();
+		Target currentTarget = session.getTarget(miEvent.getMISession());
+		if (currentTarget == null) {
+			return; // bailout; this no concern to us.  But we should Assert.
+		}
 		List cdiList = new ArrayList(1);
 
 		if (ignoreEventToken(miEvent.getToken())) {
@@ -130,7 +133,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something change we do not know what
 					// Let the breakpoint manager handle it with an update().
 					try {
-						session.getBreakpointManager().update();
+						session.getBreakpointManager().update(currentTarget);
 					} catch (CDIException e) {
 					}
 				}
@@ -169,7 +172,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something was deleted we do not know what
 					// Let the breakpoint manager handle it with an update().
 					try {
-						session.getBreakpointManager().update();
+						session.getBreakpointManager().update(currentTarget);
 					} catch (CDIException e) {
 					}
 				}
@@ -187,7 +190,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// Something created we do not know what
 					// Let the breakpoint manager handle it with an update().
 					try {
-						session.getBreakpointManager().update();
+						session.getBreakpointManager().update(currentTarget);
 					} catch (CDIException e) {
 					}
 				}
@@ -280,7 +283,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		ExpressionManager expMgr  = (ExpressionManager)session.getExpressionManager();		
 		RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
 		MemoryManager memMgr = (MemoryManager)session.getMemoryManager();
-		BreakpointManager bpMgr = (BreakpointManager)session.getBreakpointManager();
+		BreakpointManager bpMgr = session.getBreakpointManager();
 		SignalManager sigMgr = (SignalManager)session.getSignalManager();
 		SourceManager srcMgr = (SourceManager)session.getSourceManager();
 		SharedLibraryManager libMgr = (SharedLibraryManager)session.getSharedLibraryManager();
@@ -346,32 +349,29 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				}
 				// A new Libraries loaded, try to set the breakpoints.
 				if (eventList.size() > 0) {
-					ICDIBreakpointManager manager = session.getBreakpointManager();
-					if (manager instanceof BreakpointManager) {
-						BreakpointManager bpMgr = (BreakpointManager)manager;
-						ICDIBreakpoint bpoints[] = null;
-						try {
-							bpoints = bpMgr.getDeferredBreakpoints(currentTarget);
-						} catch (CDIException e) {
-							bpoints = new ICDIBreakpoint[0];
-						}
-						for (int i = 0; i < bpoints.length; i++) {
-							if (bpoints[i] instanceof Breakpoint) {
-								Breakpoint bkpt = (Breakpoint)bpoints[i];
-								try {
-									boolean enable = bkpt.isEnabled();
-									bpMgr.setLocationBreakpoint(bkpt);
-									bpMgr.deleteFromDeferredList(bkpt);
-									bpMgr.addToBreakpointList(bkpt);
-									// If the breakpoint was disable in the IDE
-									// install it but keep it disable
-									if (!enable) {
-										bpMgr.disableBreakpoint(bkpt);
-									}
-									eventList.add(new MIBreakpointCreatedEvent(miSession, bkpt.getMIBreakpoint().getNumber()));
-								} catch (CDIException e) {
-									// ignore
+					BreakpointManager bpMgr = session.getBreakpointManager();
+					ICDIBreakpoint bpoints[] = null;
+					try {
+						bpoints = bpMgr.getDeferredBreakpoints(currentTarget);
+					} catch (CDIException e) {
+						bpoints = new ICDIBreakpoint[0];
+					}
+					for (int i = 0; i < bpoints.length; i++) {
+						if (bpoints[i] instanceof Breakpoint) {
+							Breakpoint bkpt = (Breakpoint)bpoints[i];
+							try {
+								boolean enable = bkpt.isEnabled();
+								bpMgr.setLocationBreakpoint(bkpt);
+								bpMgr.deleteFromDeferredList(bkpt);
+								bpMgr.addToBreakpointList(bkpt);
+								// If the breakpoint was disable in the IDE
+								// install it but keep it disable
+								if (!enable) {
+									bpMgr.disableBreakpoint(bkpt);
 								}
+								eventList.add(new MIBreakpointCreatedEvent(miSession, bkpt.getMIBreakpoint().getNumber()));
+							} catch (CDIException e) {
+								// ignore
 							}
 						}
 					}

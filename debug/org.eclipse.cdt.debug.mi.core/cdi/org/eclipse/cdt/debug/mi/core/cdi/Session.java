@@ -16,7 +16,6 @@ import java.util.Properties;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -137,7 +136,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getExpressionManager()
 	 */
-	public ICDIExpressionManager getExpressionManager() {
+	public ExpressionManager getExpressionManager() {
 		return expressionManager;
 	}
 
@@ -196,7 +195,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	 */
 	public void setCurrentTarget(Target target) throws CDIException {
 		ProcessManager pMgr = getProcessManager();
-		pMgr.setCurrentTarget((Target)target);
+		pMgr.setCurrentTarget(target);
 //		throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
 	}
 

@@ -49,7 +49,7 @@ public class ChangedEvent implements ICDIChangedEvent {
 
 		// Try the Expression manager
 		if (source == null) {
-			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
+			ExpressionManager expMgr = session.getExpressionManager();
 			source = expMgr.getExpression(miSession, varName);
 		}
 

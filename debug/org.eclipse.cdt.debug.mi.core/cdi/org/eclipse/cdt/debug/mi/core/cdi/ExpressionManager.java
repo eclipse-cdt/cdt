@@ -11,39 +11,29 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
-import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
-import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
-import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class ExpressionManager extends Manager implements ICDIExpressionManager{
+public class ExpressionManager extends Manager {
 
 	final static ICDIExpression[] EMPTY_EXPRESSIONS = {};
 	Map expMap;
@@ -62,130 +52,15 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		}
 		return expList;
 	}
-	/**
-	 * Tell gdb to remove the underlying var-object also.
-	 */
-	void removeMIVar(MISession miSession, MIVar miVar) throws CDIException {
-		CommandFactory factory = miSession.getCommandFactory();
-		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
-		try {
-			miSession.postCommand(var);
-			var.getMIInfo();
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
-	}
 
 	/**
-	 * When element are remove from the cache,
-	 * The destroy event will call removeExpression.
-	 */
-	public void removeExpression(MISession miSession, String varName) throws CDIException {
-		Target target = ((Session)getSession()).getTarget(miSession);
-		List expList = (List)expMap.get(target);
-		if (expList != null) {
-			Expression[] exps = (Expression[]) expList.toArray(new Expression[expList.size()]);
-			for (int i = 0; i < exps.length; i++) {
-				if (exps[i].getMIVar().getVarName().equals(varName)) {
-					expList.remove(exps[i]);
-					removeMIVar(miSession, exps[i].getMIVar());
-				}
-			}
-		}
-	}
-
-	/**
-	 * This should bo remove to evaluate an expression we nee a context.
-	 * 
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
-	 */
-	public ICDIExpression createExpression(String name) throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return createExpression(target, name);
-	}
-	/**
-	 * This should bo remove to evaluate an expression we nee a context.
-	 * 
-	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
 	 */
 	public ICDIExpression createExpression(Target target, String name) throws CDIException {
-		Expression expression = null;
-		Session session = (Session)getSession();
-		Target currentTarget = session.getCurrentTarget();
-		session.setCurrentTarget(target);
-		try {
-			MISession mi = target.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			MIVarCreate var = factory.createMIVarCreate(name);
-			mi.postCommand(var);
-			MIVarCreateInfo info = var.getMIVarCreateInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-			}
-			VariableObject varObj = new VariableObject(target, name, null, 0, 0);
-			expression = new Expression(varObj, info.getMIVar());
-			List expList = getExpressionList(target);
-			expList.add(expression);
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		} finally {
-			session.setCurrentTarget(currentTarget);
-		}
+		Expression expression = new Expression(target, name);
+		List exprList = getExpressionList(target);
+		exprList.add(expression);
 		return expression;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(ICDIStackFrame, String)
-	 */
-	public ICDIExpression createExpression(ICDIStackFrame frame, String name) throws CDIException {
-		Expression expression = null;
-		Session session = (Session)getSession();
-		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
-		Target target = (Target)frame.getTarget();
-		session.setCurrentTarget(target);
-		target.setCurrentThread(frame.getThread(), false);
-		frame.getThread().setCurrentStackFrame(frame, false);
-		try {
-			MISession mi = target.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			MIVarCreate var = factory.createMIVarCreate(name);
-			mi.postCommand(var);
-			MIVarCreateInfo info = var.getMIVarCreateInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-			}
-			VariableObject varObj = new VariableObject(target, name, frame, 0, 0);
-			expression = new Expression(varObj, info.getMIVar());
-			List expList = getExpressionList(target);
-			expList.add(expression);
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		} finally {
-			session.setCurrentTarget(currentTarget);
-			target.setCurrentThread(currentThread, false);
-			currentThread.setCurrentStackFrame(currentFrame, false);
-		}
-		return expression;
-	}
-
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
-	 */
-	public ICDIExpression[] getExpressions() throws CDIException {
-		ICDITarget[] targets = getSession().getTargets();
-		List list = new ArrayList(targets.length);
-		for (int i = 0; i < targets.length; i++) {
-			if (targets[i] instanceof Target) {
-				ICDIExpression[] exprs = getExpressions((Target)targets[i]);
-				list.addAll(Arrays.asList(exprs));
-			}
-		}
-		return (ICDIExpression[]) list.toArray(new ICDIExpression[list.size()]);
 	}
 
 	public ICDIExpression[] getExpressions(Target target) throws CDIException {
@@ -195,40 +70,26 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		}
 		return EMPTY_EXPRESSIONS;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
 	 */
-	public void destroyExpression(ICDIExpression expression) throws CDIException {
-		if (expression instanceof Expression) {
-			// Fire  a destroyEvent ?
-			Expression exp= (Expression)expression;
-			Target target = (Target)exp.getTarget();
-			MISession miSession = target.getMISession();
-			MIVarDeletedEvent del = new MIVarDeletedEvent(miSession, exp.getMIVar().getVarName());
-			miSession.fireEvent(del);
+	public void destroyExpressions(Target target, ICDIExpression[] expressions) throws CDIException {
+		List expList = getExpressionList(target);
+		for (int i = 0; i < expressions.length; ++i) {
+			if (expressions[i] instanceof Expression) {
+				expList.remove(expressions[i]);
+				((Expression)expressions[i]).deleteVariable();
+			}
 		}
 	}
 
 	/**
-	 * Return the element that have the uniq varName.
-	 * null is return if the element is not in the cache.
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
 	 */
-	public Variable getExpression(MISession miSession, String varName) {
-		Target target = ((Session)getSession()).getTarget(miSession);
-		List expList = (List)expMap.get(target);
-		if (expList != null) {
-			Expression[] exps = (Expression[]) expList.toArray(new Expression[expList.size()]);
-			for (int i = 0; i < exps.length; i++) {
-				if (exps[i].getMIVar().getVarName().equals(varName)) {
-					return exps[i];
-				}
-				Variable v = exps[i].getChild(varName);
-				if (v != null) {
-					return v;
-				}
-			}
-		}
-		return null;
+	public void destroyAllExpressions(Target target) throws CDIException {
+		ICDIExpression[] expressions = getExpressions(target);
+		destroyExpressions(target, expressions);
 	}
 
 	public void update(Target target) throws CDIException {
@@ -238,33 +99,53 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		List expList = getExpressionList(target);
 		Expression[] exps = (Expression[])expList.toArray(new Expression[0]);
 		for (int i = 0; i < exps.length; i++) {
-			String varName = exps[i].getMIVar().getVarName();
-			MIVarChange[] changes = noChanges;
-			MIVarUpdate update = factory.createMIVarUpdate(varName);
-			try {
-				mi.postCommand(update);
-				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			Variable variable = exps[i].getVariable();
+			if (variable != null) {
+				String varName = variable.getMIVar().getVarName();
+				MIVarChange[] changes = noChanges;
+				MIVarUpdate update = factory.createMIVarUpdate(varName);
+				try {
+					mi.postCommand(update);
+					MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+					if (info == null) {
+						throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+					}
+					changes = info.getMIVarChanges();
+				} catch (MIException e) {
+					//throw new MI2CDIException(e);
+					eventList.add(new MIVarDeletedEvent(mi, varName));
 				}
-				changes = info.getMIVarChanges();
-			} catch (MIException e) {
-				//throw new MI2CDIException(e);
-				eventList.add(new MIVarDeletedEvent(mi, varName));
-			}
-			for (int j = 0 ; j < changes.length; j++) {
-				String n = changes[j].getVarName();
-				if (changes[j].isInScope()) {
-					eventList.add(new MIVarChangedEvent(mi, n));
+				for (int j = 0 ; j < changes.length; j++) {
+					String n = changes[j].getVarName();
+					if (changes[j].isInScope()) {
+						eventList.add(new MIVarChangedEvent(mi, n));
+					}
 				}
-				// We do not implicitely delete Expressions.
-				//else {
-				//	eventList.add(new MIVarDeletedEvent(n));
-				//}
 			}
 		}
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
+	}
+
+	/**
+	 * @param miSession
+	 * @param varName
+	 * @return
+	 */
+	public Expression getExpression(MISession miSession, String varName) {
+		Session session = (Session)getSession();
+		Target target = session.getTarget(miSession);
+		List expList = getExpressionList(target);
+		Expression[] exps = (Expression[])expList.toArray(new Expression[0]);
+		for (int i = 0; i < exps.length; i++) {
+			Variable variable = exps[i].getVariable();
+			if (variable != null) {
+				if (variable.getMIVar().getVarName().equals(varName)) {
+					return exps[i];
+				}
+			}
+		}
+		return null;
 	}
 
 }

@@ -299,7 +299,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		// Update the managers.
 		// For the Variable/Expression Managers call only the updateManager.
 		VariableManager varMgr = (VariableManager)session.getVariableManager();
-		ExpressionManager expMgr  = (ExpressionManager)session.getExpressionManager();		
+		ExpressionManager expMgr  = session.getExpressionManager();		
 		RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
 		MemoryManager memMgr = (MemoryManager)session.getMemoryManager();
 		BreakpointManager bpMgr = session.getBreakpointManager();

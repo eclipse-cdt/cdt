@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
@@ -56,12 +57,12 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 			} catch (CDIException e) {
 			}
 		} else {
-			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
-			variable = expMgr.getExpression(miSession, varName);
-			if (variable != null) {
-				source = variable;
+			ExpressionManager expMgr = session.getExpressionManager();
+			Expression expression = expMgr.getExpression(miSession, varName);
+			if (expression != null) {
+				source = expression;
 				try {
-					expMgr.removeExpression(miSession, variable.getMIVar().getVarName());
+					expression.deleteVariable();
 				} catch (CDIException e) {
 				}
 			} else {

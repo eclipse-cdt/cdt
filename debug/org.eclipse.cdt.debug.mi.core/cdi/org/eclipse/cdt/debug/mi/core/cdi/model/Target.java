@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
+import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -625,17 +627,6 @@ public class Target  implements ICDITarget {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#evaluateExpressionToString(String)
-	 */
-	public String evaluateExpressionToString(String expressionText) throws CDIException {
-		Session session = (Session)getSession();
-		Target currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
-		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
-		return evaluateExpressionToString(currentFrame, expressionText);
-	}
-	
 	public String evaluateExpressionToString(ICDIStackFrame frame, String expressionText) throws CDIException {
 		Session session = (Session)getSession();
 		Target currentTarget = session.getCurrentTarget();
@@ -782,5 +773,37 @@ public class Target  implements ICDITarget {
 	 */
 	public ICDIRuntimeOptions getRuntimeOptions() {
 		return new RuntimeOptions(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpressionManagement#createExpression(java.lang.String)
+	 */
+	public ICDIExpression createExpression(String code) throws CDIException {
+		ExpressionManager expMgr = ((Session)getSession()).getExpressionManager();
+		return expMgr.createExpression(this, code);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpressionManagement#getExpressions()
+	 */
+	public ICDIExpression[] getExpressions() throws CDIException {
+		ExpressionManager expMgr = ((Session)getSession()).getExpressionManager();
+		return expMgr.getExpressions(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpressionManagement#destroyExpression(org.eclipse.cdt.debug.core.cdi.model.ICDIExpression[])
+	 */
+	public void destroyExpressions(ICDIExpression[] expressions) throws CDIException {
+		ExpressionManager expMgr = ((Session)getSession()).getExpressionManager();
+		expMgr.destroyExpressions(this, expressions);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpressionManagement#destroyAllExpression()
+	 */
+	public void destroyAllExpressions() throws CDIException {
+		ExpressionManager expMgr = ((Session)getSession()).getExpressionManager();
+		expMgr.destroyAllExpressions(this);
 	}
 }

@@ -37,6 +37,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolValue;
@@ -320,18 +321,18 @@ public class Variable extends VariableObject implements ICDIVariable {
 			if (mgr.isAutoUpdate()) {
 				mgr.update(target);
 			}
-		} else if (this instanceof Expression) {
+		} else {
 			// If expression was on autoupdate, update all the other expression
 			// assigning may have side effects i.e. affecting other expressions.
-			ExpressionManager mgr = (ExpressionManager)target.getSession().getExpressionManager();
-			if (mgr.isAutoUpdate()) {
-				mgr.update(target);
+			ExpressionManager expMgr = ((Session)target.getSession()).getExpressionManager();
+			if (expMgr.isAutoUpdate()) {
+				expMgr.update(target);
 			}
-		} else {
+
 			// FIXME: Should we always call the Variable Manager ?
-			VariableManager mgr = (VariableManager)target.getSession().getVariableManager();
-			if (mgr.isAutoUpdate()) {
-				mgr.update(target);
+			VariableManager varMgr = (VariableManager)target.getSession().getVariableManager();
+			if (varMgr.isAutoUpdate()) {
+				varMgr.update(target);
 			}
 		}
 	}

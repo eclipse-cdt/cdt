@@ -7,6 +7,8 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
@@ -35,23 +37,34 @@ public class DOMCompletionContributor implements ICompletionContributor {
 											  ASTCompletionNode completionNode,
 											  List proposals) {
 		if (completionNode != null) {
+			List allBindings = new ArrayList();
 			IASTName[] names = completionNode.getNames();
 			for (int i = 0; i < names.length; ++i) {
 				IBinding[] bindings = names[i].resolvePrefix();
-				for (int j = 0; j < bindings.length; ++j)
-					handleBinding(names[i], bindings[j], completionNode, offset, viewer, proposals);
+				if (bindings != null)
+					for (int j = 0; j < bindings.length; ++j) {
+						IBinding binding = bindings[j];
+						if (!allBindings.contains(binding))
+							allBindings.add(binding);
+					}
+			}
+			
+			Iterator iBinding = allBindings.iterator();
+			while (iBinding.hasNext()) {
+				IBinding binding = (IBinding)iBinding.next();
+				handleBinding(binding, completionNode, offset, viewer, proposals);
 			}
 		}
 	}
 
-	private void handleBinding(IASTName name, IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+	private void handleBinding(IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
 		if (binding instanceof IFunction)
-			handleFunction(name, (IFunction)binding, completionNode, offset, viewer, proposals);
+			handleFunction((IFunction)binding, completionNode, offset, viewer, proposals);
 		else
 			proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), completionNode, offset, viewer));
 	}
 	
-	private void handleFunction(IASTName name, IFunction function, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+	private void handleFunction(IFunction function, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
 		Image image = getImage(CElementImageProvider.getFunctionImageDescriptor());
 		
 		StringBuffer repStringBuff = new StringBuffer();

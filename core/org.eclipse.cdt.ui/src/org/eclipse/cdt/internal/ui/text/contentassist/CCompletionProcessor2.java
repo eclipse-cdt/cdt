@@ -80,7 +80,6 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					ICompletionContributor contributor = (ICompletionContributor)contribObject;
 					contributor.contributeCompletionProposals(viewer, offset, completionNode, proposals);
 				}
-				int x = 5;
 			}
 			
 			long propTime = System.currentTimeMillis();

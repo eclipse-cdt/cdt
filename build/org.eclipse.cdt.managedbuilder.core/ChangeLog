@@ -1,3 +1,11 @@
+2004-03-02 Sean Evoy
+	A change in VCErrorParser to fix PR 53253 causes an IndexOutOfBounds 
+	exception when echoing a build command on Win32 if the absolute path 
+	to the make utility is specified, i.e. C:\<path>\make.exe
+	
+	The work-around is to not have the launcher echo the command, and just 
+	output it to the build console directly.
+
 2004-03-02 James Ciesielski
 	Marked those strings that are non-translatable as such and externalized 
 	those strings that can be translated.  There is still work to be done in

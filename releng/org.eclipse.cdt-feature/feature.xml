@@ -90,6 +90,14 @@
          version="2.0.0"/>
 
    <plugin
+         id="org.eclipse.cdt.core.aix"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"
+         fragment="true"
+         os="aix"/>
+         
+   <plugin
          id="org.eclipse.cdt.core.linux"
          download-size="0"
          install-size="0"
@@ -97,5 +105,28 @@
          fragment="true"
          os="linux"/>
 
+   <plugin
+         id="org.eclipse.cdt.core.qnx"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"
+         fragment="true"
+         os="qnx"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.solaris"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"
+         fragment="true"
+         os="solaris"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.win32"
+         download-size="0"
+         install-size="0"
+         version="2.0.0"
+         fragment="true"
+         os="win32"/>
 
 </feature>

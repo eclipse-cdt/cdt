@@ -1,5 +1,13 @@
 2004-09-24 Chris Wiebe
 
+	minor icon cleanup
+	* icons/full/dtool16/opentype.gif
+	* icons/full/etool16/opentype.gif
+	* icons/full/obj16/bin_obj.gif
+	* plugin.xml
+
+2004-09-24 Chris Wiebe
+
 	remove obsolete classes
 	* src/org/eclipse/cdt/internal/ui/wizards/BaseClassSelectionDialog.java
 	* src/org/eclipse/cdt/internal/ui/wizards/OpenNewFileWizardAction.java

@@ -939,7 +939,7 @@
                toolbarPath="org.eclipse.search.searchActionSet/Search"
                class="org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeAction"
                definitionId="org.eclipse.cdt.ui.navigate.opentype"
-               icon="icons/full/opentype16/opentype.gif"
+               icon="icons/full/etool16/opentype.gif"
                helpContextId="org.eclipse.cdt.ui.open_type_action"
                label="%OpenTypeAction.label"
                menubarPath="navigate/open.ext2"

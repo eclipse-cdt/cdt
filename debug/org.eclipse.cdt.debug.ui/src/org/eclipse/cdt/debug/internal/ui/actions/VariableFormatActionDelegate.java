@@ -128,6 +128,5 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 	protected void doAction( ICVariable var ) throws DebugException
 	{
 		var.setFormat( fFormat );
-		var.reset();
 	}
 }

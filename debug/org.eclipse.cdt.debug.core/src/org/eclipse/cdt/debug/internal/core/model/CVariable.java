@@ -151,6 +151,7 @@ public abstract class CVariable extends CDebugElement
 			return fException;
 		}
 	}
+
 	class InternalVariable
 	{
 		private ICDIVariableObject fCDIVariableObject;
@@ -633,13 +634,16 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void setFormat( int format ) throws DebugException
 	{
+		doSetFormat( format );
+		reset();
+	}
+
+	protected void doSetFormat( int format )
+	{
 		fFormat = format;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#reset()
-	 */
-	public void reset() throws DebugException
+	protected void reset() throws DebugException
 	{
 		((CValue)getValue()).reset();
 		fireChangeEvent( DebugEvent.STATE );
@@ -824,10 +828,7 @@ public abstract class CVariable extends CDebugElement
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getQualifiedName()
-	 */
-	public String getQualifiedName() throws DebugException
+	protected String getQualifiedName() throws DebugException
 	{
 		if ( fQualifiedName == null )
 		{

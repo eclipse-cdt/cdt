@@ -1,3 +1,7 @@
+2003-07-28 Mikhail Khodjaiants
+	Cleanup. Removed the 'reset' method from the 'ICVaraible' interface.
+	* VariableFormatActionDelegate.java
+
 2003-07-24 Mikhail Khodjaiants
 	New icon for closed projects.
 	* icons/full/obj16/cproject_obj.gif: new

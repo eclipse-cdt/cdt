@@ -20,15 +20,11 @@ public interface ICVariable extends IVariable
 	
 	void setFormat( int format ) throws DebugException;
 	
-	void reset() throws DebugException;
-	
 	ICType getType() throws DebugException;
 	
 	boolean isEditable();
 	
 	boolean hasChildren();
-
-	String getQualifiedName() throws DebugException;
 
 	boolean isEnabled();
 

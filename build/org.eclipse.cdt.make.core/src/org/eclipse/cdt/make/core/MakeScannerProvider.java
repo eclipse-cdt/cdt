@@ -168,6 +168,11 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	 */
 	static void updateScannerInfo(MakeScannerInfo scannerInfo) throws CoreException {
 		IProject project = scannerInfo.getProject();
+
+		// See if there's already one associated with the resource for this session
+		if ( project.getSessionProperty(scannerInfoProperty) != null ) {
+			project.setSessionProperty(scannerInfoProperty, scannerInfo);
+		} 
 		
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 

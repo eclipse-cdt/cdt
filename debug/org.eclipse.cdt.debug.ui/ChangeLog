@@ -1,4 +1,12 @@
 2002-12-19 Mikhail Khodjaiants
+	Implementing the 'Source Lookup' property page.
+	* AddSourceLocationWizard.java
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+	icons/full/obj16/project_obj.gif
+	icons/full/obj16/folder_obj.gif
+
+2002-12-19 Mikhail Khodjaiants
 	Added the 'org.eclipse.cdt.debug.internal.ui.dialogfields' package. 
 
 2002-12-19 Mikhail Khodjaiants

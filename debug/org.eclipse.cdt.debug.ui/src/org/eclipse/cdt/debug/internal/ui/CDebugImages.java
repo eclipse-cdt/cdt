@@ -61,6 +61,8 @@ public class CDebugImages
 	public static final String IMG_OBJS_REGISTER_GROUP = NAME_PREFIX + "registergroup_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_REGISTER = NAME_PREFIX + "register_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_DISASSEMBLY = NAME_PREFIX + "disassembly_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "project_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_FOLDER = NAME_PREFIX + "folder_obj.gif";	//$NON-NLS-1$
 
 	public static final String IMG_LCL_TYPE_NAMES = NAME_PREFIX + "tnames_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$
@@ -97,6 +99,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP );
 	public static final ImageDescriptor DESC_OBJS_REGISTER = createManaged( T_OBJ, IMG_OBJS_REGISTER );
 	public static final ImageDescriptor DESC_OBJS_DISASSEMBLY = createManaged( T_OBJ, IMG_OBJS_DISASSEMBLY );
+	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged( T_OBJ, IMG_OBJS_PROJECT );
+	public static final ImageDescriptor DESC_OBJS_FOLDER = createManaged( T_OBJ, IMG_OBJS_FOLDER );
 
 	/**
 	 * Returns the image managed under the given key in this registry.

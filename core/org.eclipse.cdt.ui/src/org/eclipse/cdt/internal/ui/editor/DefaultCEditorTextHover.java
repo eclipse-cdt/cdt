@@ -99,8 +99,8 @@ public class DefaultCEditorTextHover implements ITextHover
 					if(tags != null && tags.length > 0) {
 						ITagEntry selectedTag = selectTag(tags);
 						// Show only the first element
-						buffer.append("<b>" + HTMLPrinter.convertToHTMLContent(expression) +
-									  "()</b> - " + selectedTag.getIFile().getFullPath().toString() + "[" + selectedTag.getLineNumber()+"]" );
+						buffer.append("<b> " + TagFlags.value(selectedTag.getKind()) + " " + HTMLPrinter.convertToHTMLContent(expression) +
+									  "</b> - " + selectedTag.getIFile().getFullPath().toString() + "[" + selectedTag.getLineNumber()+"]" );
 						// Now add the pattern
 						buffer.append("<br><br>" + HTMLPrinter.convertToHTMLContent(selectedTag.getPattern()));
 					}	

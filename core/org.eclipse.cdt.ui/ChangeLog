@@ -1,3 +1,8 @@
+2003-12-15 Thomas Fletcher
+	Re-activate the hover help based on the function summary extension point. 
+	Fix a bug in the FunctionSummary class which displayed arguments as
+	the return value for functions.
+
 2003-12-11 John Camelon
 	Updated CompletionEngine to deal with new signatures/exceptions in parser.  
 

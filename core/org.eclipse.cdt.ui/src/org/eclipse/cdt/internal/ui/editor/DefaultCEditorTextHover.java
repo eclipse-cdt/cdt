@@ -5,24 +5,16 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
+import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-
-
-import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
-import org.eclipse.cdt.ui.IFunctionSummary;
 
 public class DefaultCEditorTextHover implements ITextHover 
 {
@@ -41,31 +33,32 @@ public class DefaultCEditorTextHover implements ITextHover
 	 */
 	public String getHoverInfo( ITextViewer viewer, IRegion region ) 
 	{
-//		String expression = null;
-//		
-//		if(fEditor == null) 
-//			return null;
-//		try
-//		{
-//			expression = viewer.getDocument().get( region.getOffset(), region.getLength() );
-//			expression = expression.trim();
-//			if ( expression.length() == 0 )
-//				return null; 
-//
-//			StringBuffer buffer = new StringBuffer();
-//
-//			// We are just doing some C, call the Help to get info
-//
-//			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(expression);
-//			if(fs != null) {
-//				buffer.append("<b>");
-//				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
-//				buffer.append("()</b>");
-//				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getPrototype().getPrototypeString(false)));
-//				if(fs.getDescription() != null) {
-//					buffer.append("<br><br>");
-//					buffer.append(HTMLPrinter.convertToHTMLContent(fs.getDescription()));
-//				}
+		String expression = null;
+		
+		if(fEditor == null) 
+			return null;
+		try
+		{
+			expression = viewer.getDocument().get( region.getOffset(), region.getLength() );
+			expression = expression.trim();
+			if ( expression.length() == 0 )
+				return null; 
+
+			StringBuffer buffer = new StringBuffer();
+
+			// We are just doing some C, call the Help to get info
+
+			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(expression);
+			if(fs != null) {
+				buffer.append("<b>Name:</b> ");
+				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));
+				buffer.append("<br><b>Protoype:</b> ");
+				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getPrototype().getPrototypeString(false)));
+				if(fs.getDescription() != null) {
+					buffer.append("<br><b>Description:</b><br>");
+					//Don't convert this description since it could already be formatted
+					buffer.append(fs.getDescription());
+				}
 //				int i;
 //				for(i = 0; i < buffer.length(); i++) {
 //					if(buffer.charAt(i) == '\\') {
@@ -74,7 +67,8 @@ public class DefaultCEditorTextHover implements ITextHover
 //						}
 //					}
 //				}
-//			} else {
+			} 
+//			else {
 //				// Query the C model
 //				IndexModel model = IndexModel.getDefault();
 //				IEditorInput input = fEditor.getEditorInput();
@@ -109,20 +103,15 @@ public class DefaultCEditorTextHover implements ITextHover
 //					}	
 //				}
 //			}
-//			if (buffer.length() > 0) {
-//				HTMLPrinter.insertPageProlog(buffer, 0);
-//				HTMLPrinter.addPageEpilog(buffer);
-//				return buffer.toString();
-//			}
-//		}
-//		catch( BadLocationException x )
-//		{
-//			// ignore
-//		}
-//		catch( CoreException x )
-//		{
-//			// ignore
-//		}
+			if (buffer.length() > 0) {
+				HTMLPrinter.insertPageProlog(buffer, 0);
+				HTMLPrinter.addPageEpilog(buffer);
+				return buffer.toString();
+			}
+		} catch(Exception ex) {
+			/* Ignore */
+		}
+		
 		return null;
 	}
 

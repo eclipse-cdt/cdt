@@ -25,11 +25,14 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.BranchTracker;
 import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
@@ -47,6 +50,37 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
  */
 public class Scanner2 implements IScanner, IScannerData {
 
+	/**
+	 * @author jcamelon
+	 *
+	 */
+	private static class ReaderInclusionDuple {
+
+		private final IASTInclusion inclusion;
+		private final CodeReader reader;
+
+		/**
+		 * @param reader
+		 * @param inclusion
+		 */
+		public ReaderInclusionDuple(CodeReader reader, IASTInclusion inclusion) {
+			this.reader = reader; 
+			this.inclusion = inclusion;
+		}
+
+		/**
+		 * @return Returns the inclusion.
+		 */
+		public final IASTInclusion getInclusion() {
+			return inclusion;
+		}
+		/**
+		 * @return Returns the reader.
+		 */
+		public final CodeReader getReader() {
+			return reader;
+		}
+	}
 	private ISourceElementRequestor requestor;
 	
 	private ParserLanguage language;
@@ -74,6 +108,11 @@ public class Scanner2 implements IScanner, IScannerData {
 	private static EndOfFileException EOF = new EndOfFileException();
 	
 	PrintStream dlog;
+
+	private ParserMode parserMode;
+
+	private List workingCopies;
+	
 	{
 //		try {
 //			dlog = new PrintStream(new FileOutputStream("C:/dlog.txt"));
@@ -92,10 +131,10 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		this.scannerExtension = extension;
 		this.requestor = requestor;
-//		this.parserMode = parserMode;
+		this.parserMode = parserMode;
 		this.language = language;
 		this.log = log;
-//		this.workingCopies = workingCopies;
+		this.workingCopies = workingCopies;
 
 		if (reader.filename != null)
 			fileCache.put(reader.filename, reader);
@@ -152,10 +191,14 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void pushContext(char[] buffer, Object data) {
 		pushContext(buffer);
 		bufferData[bufferStackPos] = data;
+		if( data instanceof ReaderInclusionDuple )
+			requestor.enterInclusion( ((ReaderInclusionDuple)data).getInclusion() ); 
 	}
 	
 	private void popContext() {
 		bufferStack[bufferStackPos] = null;
+		if( bufferData[bufferStackPos] instanceof ReaderInclusionDuple )
+			requestor.enterInclusion( ((ReaderInclusionDuple)bufferData[bufferStackPos]).getInclusion() );
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
 	}
@@ -226,6 +269,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	private IToken lastToken;
 	private IToken nextToken;
 	private boolean finished = false;
+
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#nextToken()
@@ -663,7 +708,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		if (expObject != null) {
 			if (expObject instanceof FunctionStyleMacro) {
-				handleFunctionStyleMacro((FunctionStyleMacro)expObject);
+				handleFunctionStyleMacro((FunctionStyleMacro)expObject, true);
 			} else if (expObject instanceof ObjectStyleMacro) {
 				ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;
 				char[] expText = expMacro.expansion;
@@ -1016,13 +1061,19 @@ public class Scanner2 implements IScanner, IScannerData {
 		int limit = bufferLimit[bufferStackPos];
 		
 		skipOverWhiteSpace();
-		
+		int startOffset = bufferPos[bufferStackPos]; //TODO - WRONG should be #include directive
 		int pos = ++bufferPos[bufferStackPos];
 		if (pos >= limit)
 			return;
 
 		boolean local = false;
 		String filename = null;
+		
+		int endOffset = startOffset;
+		int nameOffset = 0;
+		int nameEndOffset = 0;
+		
+		int nameLine= 0, startLine= 0, endLine = 0; 
 		char c = buffer[pos];
 		if (c == '"') {
 			local = true;
@@ -1044,6 +1095,9 @@ public class Scanner2 implements IScanner, IScannerData {
 			--length;
 			
 			filename = new String(buffer, start, length);
+			nameOffset = start;
+			nameEndOffset = start + length;
+			endOffset = start + length + 1;
 		} else if (c == '<') {
 			local = false;
 			int start = bufferPos[bufferStackPos] + 1;
@@ -1052,48 +1106,100 @@ public class Scanner2 implements IScanner, IScannerData {
 			while (++bufferPos[bufferStackPos] < limit &&
 					buffer[bufferPos[bufferStackPos]] != '>')
 				++length;
+			endOffset = start + length + 1;
+			nameOffset = start;
+			nameEndOffset = start + length;
 
 			filename = new String(buffer, start, length);
+		}
+		else
+		{
+			// handle macro expansions
+			int startPos = pos;
+			int len = 1;
+			while (++bufferPos[bufferStackPos] < limit) {
+				c = buffer[bufferPos[bufferStackPos]];
+				if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+						|| c == '_' || (c >= '0' && c <= '9')) {
+					++len;
+					continue;
+				}
+				else if( c == '\\' && bufferPos[bufferStackPos] + 1 < buffer.length && buffer[ bufferPos[bufferStackPos] + 1 ] == '\n')
+				{
+					// escaped newline
+					++bufferPos[bufferStackPos];
+					len += 2;
+					continue;
+				}
+				break;
+			}
+			
+			
+			Object expObject = definitions.get(buffer, startPos, len );
+			
+			if (expObject != null) {
+				if (expObject instanceof FunctionStyleMacro) 
+				{
+					--bufferPos[bufferStackPos];
+					filename = new String( handleFunctionStyleMacro((FunctionStyleMacro)expObject, false) );
+				}
+			}
+		}
+		 
+		if( filename == null || filename == EMPTY_STRING )
+		{
+			//TODO IProblem
+			return;
 		}
 		// TODO else we need to do macro processing on the rest of the line
 
 		skipToNewLine();
 
-		CodeReader reader = null;
-		
-		if (local) {
-			// TODO obviously...
+		if( parserMode == ParserMode.QUICK_PARSE )
+		{
+			IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), EMPTY_STRING, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine );
+			requestor.enterInclusion( inclusion );
+			requestor.exitInclusion( inclusion );
 		}
-		
-		// iterate through the include paths
-		// foundme has odd logic but if we're not include_next, then we are looking for the
-		// first occurance, otherwise, we're looking for the one after us
-		boolean foundme = !next;
-		if (includePaths != null)
-			for (int i = 0; i < includePaths.length; ++i) {
-				String finalPath = ScannerUtility.createReconciledPath(includePaths[i], filename);
-				if (!foundme) {
-					if (finalPath.equals(((CodeReader)bufferData[bufferStackPos]).filename)) {
-						foundme = true;
-						continue;
-					}
-				} else {
-					reader = (CodeReader)fileCache.get(finalPath);
-					if (reader == null)
-						reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
-					if (reader != null) {
-						if (reader.filename != null)
-							fileCache.put(reader.filename, reader);
-						if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-						pushContext(reader.buffer, reader);
-						return;
+		else
+		{
+			CodeReader reader = null;
+			
+			if (local) {
+				// TODO obviously...
+			}
+			
+			// iterate through the include paths
+			// foundme has odd logic but if we're not include_next, then we are looking for the
+			// first occurance, otherwise, we're looking for the one after us
+			boolean foundme = !next;
+			if (includePaths != null)
+				for (int i = 0; i < includePaths.length; ++i) {
+					String finalPath = ScannerUtility.createReconciledPath(includePaths[i], filename);
+					if (!foundme) {
+						if (finalPath.equals(((ReaderInclusionDuple)bufferData[bufferStackPos]).getReader().filename)) {
+							foundme = true;
+							continue;
+						}
+					} else {
+						reader = (CodeReader)fileCache.get(finalPath);
+						if (reader == null)
+							reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
+						if (reader != null) {
+							if (reader.filename != null)
+								fileCache.put(reader.filename, reader);
+							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+							IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), new String( reader.filename ), local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine );
+							pushContext(reader.buffer, new ReaderInclusionDuple( reader, inclusion ));
+							return;
+						}
 					}
 				}
-			}
 		
-		// TODO raise a problem
-		//if (reader == null)
-		//	handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, filename, beginOffset, false, true );
+			// TODO raise a problem
+			//if (reader == null)
+			//	handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, filename, beginOffset, false, true );
+		}
 		
 	}
 	
@@ -1652,15 +1758,22 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
-	private void handleFunctionStyleMacro(FunctionStyleMacro macro) {
+	private char[] handleFunctionStyleMacro(FunctionStyleMacro macro, boolean pushContext) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 
 		skipOverWhiteSpace();
+		while( 	buffer[bufferPos[bufferStackPos]] == '\\' && 
+				bufferPos[bufferStackPos] + 1 < buffer.length && 
+				buffer[bufferPos[bufferStackPos]+1] == '\n' ) 
+		{
+			bufferPos[bufferStackPos] += 2;
+			skipOverWhiteSpace();
+		}
 
 		if (++bufferPos[bufferStackPos] >= limit
-				|| buffer[bufferPos[bufferStackPos]] != '(')
-			return;
+				|| buffer[bufferPos[bufferStackPos]] != '(' )
+			return emptyCharArray;
 		
 		char[][] arglist = macro.arglist;
 		int currarg = -1;
@@ -1744,7 +1857,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		int size = expandFunctionStyleMacro(macro.expansion, argmap, null);
 		char[] result = new char[size];
 		expandFunctionStyleMacro(macro.expansion, argmap, result);
-		pushContext(result, macro);
+		if( pushContext )
+			pushContext(result, macro);
+		return result;
 	}
 
 	private int expandFunctionStyleMacro(
@@ -2021,6 +2136,8 @@ public class Scanner2 implements IScanner, IScannerData {
 				"__attribute__".toCharArray(), //$NON-NLS-1$
 				emptyCharArray,
 				new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
+
+	private IASTFactory astFactory;
 	
 	protected void setupBuiltInMacros() {
 
@@ -2198,8 +2315,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#setASTFactory(org.eclipse.cdt.core.parser.ast.IASTFactory)
 	 */
 	public void setASTFactory(IASTFactory f) {
-		// TODO Auto-generated method stub
-
+		astFactory = f;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#setOffsetBoundary(int)
@@ -2232,9 +2348,10 @@ public class Scanner2 implements IScanner, IScannerData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
 	 */
-	public IASTFactory getASTFactory() {
-		// TODO Auto-generated method stub
-		return null;
+	public final IASTFactory getASTFactory() {
+		if( astFactory == null )
+			astFactory = ParserFactory.createASTFactory( this, parserMode, language );
+		return astFactory;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getBranchTracker()
@@ -2247,8 +2364,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getClientRequestor()
 	 */
 	public ISourceElementRequestor getClientRequestor() {
-		// TODO Auto-generated method stub
-		return null;
+		return requestor;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getContextStack()
@@ -2282,15 +2398,13 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getLanguage()
 	 */
 	public ParserLanguage getLanguage() {
-		// TODO Auto-generated method stub
-		return null;
+		return language;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getLogService()
 	 */
 	public IParserLogService getLogService() {
-		// TODO Auto-generated method stub
-		return null;
+		return log;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getOriginalConfig()
@@ -2303,8 +2417,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getParserMode()
 	 */
 	public ParserMode getParserMode() {
-		// TODO Auto-generated method stub
-		return null;
+		return parserMode;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getPrivateDefinitions()
@@ -2338,8 +2451,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getWorkingCopies()
 	 */
 	public Iterator getWorkingCopies() {
-		// TODO Auto-generated method stub
-		return null;
+		if( workingCopies == null ) return EmptyIterator.EMPTY_ITERATOR;
+		return workingCopies.iterator();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#parseInclusionDirective(java.lang.String, int)

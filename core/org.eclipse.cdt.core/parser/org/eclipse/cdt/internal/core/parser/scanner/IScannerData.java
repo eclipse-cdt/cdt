@@ -53,7 +53,7 @@ public interface IScannerData {
 	public abstract IScanner getScanner();
 	public abstract IASTFactory getASTFactory();
 	public abstract void setASTFactory(IASTFactory factory);
-	public abstract BranchTracker getBranchTracker();
+	public abstract BranchTracker getBranchTracker(); // deprecated
 	public abstract Map getPublicDefinitions();
 	public Map getPrivateDefinitions();
 	/**

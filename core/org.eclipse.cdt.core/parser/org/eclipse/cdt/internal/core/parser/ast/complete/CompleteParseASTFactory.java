@@ -3574,6 +3574,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				{
 					try {
 						ISymbol symbol = getExpressionSymbol( scope, expression.getExpressionKind(), expression.getLHSExpression(), expression.getRHSExpression(), null, null );
+						if( symbol == null) return null;
 						return symbol.getASTExtension().getPrimaryDeclaration();
 					} catch (ASTSemanticException e) {
 						return null;

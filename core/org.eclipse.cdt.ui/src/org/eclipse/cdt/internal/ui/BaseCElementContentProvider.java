@@ -125,42 +125,42 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return NO_CHILDREN;
 
 		try {
-		if (element instanceof ICModel) {
-			return  getCProjects((ICModel)element);
-		} else if  (element instanceof ICProject ) {
-			return getSourceRoots((ICProject)element);
-		} else if (element instanceof ICContainer) {
-			return getCResources((ICContainer)element);
-		} else if (element instanceof IBinaryContainer) {
-			return NO_CHILDREN; // we deal with this in the CVIewContentProvider
-		} else if (element instanceof IArchiveContainer) {
-			return NO_CHILDREN; // we deal with this in the CViewContentProvider
-		} else if (element instanceof ITranslationUnit) {
-			// if we want to get the chidren of a translation unit
-			if (fProvideMembers) {
-				// if we want to use the working copy of it
-				if(fProvideWorkingCopy){
-					// if it is not already a working copy
-					if(!(element instanceof IWorkingCopy)){
-						// if it has a valid working copy
-						ITranslationUnit tu = (ITranslationUnit)element;
-						IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
-						if(copy != null) {
-							return ((IParent)copy).getChildren();
+			if (element instanceof ICModel) {
+				return  getCProjects((ICModel)element);
+			} else if  (element instanceof ICProject ) {
+				return getSourceRoots((ICProject)element);
+			} else if (element instanceof ICContainer) {
+				return getCResources((ICContainer)element);
+			} else if (element instanceof IBinaryContainer) {
+				return NO_CHILDREN; // we deal with this in the CVIewContentProvider
+			} else if (element instanceof IArchiveContainer) {
+				return NO_CHILDREN; // we deal with this in the CViewContentProvider
+			} else if (element instanceof ITranslationUnit) {
+				// if we want to get the chidren of a translation unit
+				if (fProvideMembers) {
+					// if we want to use the working copy of it
+					if(fProvideWorkingCopy){
+						// if it is not already a working copy
+						if(!(element instanceof IWorkingCopy)){
+							// if it has a valid working copy
+							ITranslationUnit tu = (ITranslationUnit)element;
+							IWorkingCopy copy = tu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
+							if(copy != null) {
+								return ((IParent)copy).getChildren();
+							}
 						}
 					}
+					return ((IParent)element).getChildren();
 				}
+			} else if (element instanceof IParent) {
 				return ((IParent)element).getChildren();
+			} else if (element instanceof IProject) {
+				return getResources((IProject)element);
+			} else if (element instanceof IFolder) {
+				return getResources((IFolder)element);
 			}
-		} else if (element instanceof IParent) {
-			return ((IParent)element).getChildren();
-		} else if (element instanceof IProject) {
-			return getResources((IProject)element);
-		} else if (element instanceof IFolder) {
-			return getResources((IFolder)element);
-		}
 		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
+			//CUIPlugin.getDefault().log(e);
 			return NO_CHILDREN;
 		}
 		return NO_CHILDREN;

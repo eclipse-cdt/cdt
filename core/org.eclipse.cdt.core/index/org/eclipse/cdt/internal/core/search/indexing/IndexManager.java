@@ -321,6 +321,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * @return
 	 */
 	public boolean isIndexEnabled(IProject project) {
+		if( project == null || !project.exists() )
+			return false;
+		
 		Boolean indexValue = null;
 		
 		try {

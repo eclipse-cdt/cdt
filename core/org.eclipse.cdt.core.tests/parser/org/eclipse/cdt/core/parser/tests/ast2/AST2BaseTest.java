@@ -117,7 +117,7 @@ public class AST2BaseTest extends TestCase {
         
         IASTTranslationUnit tu = parser2.parse();
 
-        if( parser2.encounteredError() )
+        if( parser2.encounteredError() && expectNoProblems )
             throw new ParserException( "FAILURE"); //$NON-NLS-1$
          
         if( lang == ParserLanguage.C && expectNoProblems )

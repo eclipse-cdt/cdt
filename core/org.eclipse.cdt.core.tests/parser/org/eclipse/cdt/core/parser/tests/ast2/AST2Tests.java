@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -2590,5 +2591,13 @@ public class AST2Tests extends AST2BaseTest {
 	    IASTName [] refs = tu.getReferences( a );
 	    assertEquals( refs.length, 1 );
 	    assertSame( refs[0].resolveBinding(), a );
+   }
+   
+   public void testProblems() throws Exception {
+       
+       IASTTranslationUnit tu = parse( "    a += ;", ParserLanguage.C, true, false ); //$NON-NLS-1$
+       IASTProblem [] ps = CVisitor.getProblems( tu );
+       assertEquals( ps.length, 1 );
+       ps[0].getMessage();
    }
 }

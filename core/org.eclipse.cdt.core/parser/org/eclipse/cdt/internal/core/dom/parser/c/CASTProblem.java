@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
@@ -253,7 +255,7 @@ public class CASTProblem extends CASTNode implements IASTProblem {
                 .getString("ParserProblemFactory.error.syntax.syntaxError")); //$NON-NLS-1$
     }
 
-    protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
+    protected final static String AST_PROBLEM_PATTERN = "BaseProblemFactory.astProblemPattern"; //$NON-NLS-1$
 
     public String getMessage() {
         if (message != null)
@@ -267,8 +269,19 @@ public class CASTProblem extends CASTNode implements IASTProblem {
             msg = MessageFormat.format(msg, new Object[] { new String(arg) });
         }
 
-        Object[] args = new Object[] { msg, new String(""), new Integer(0) }; //$NON-NLS-1$        
-        message = ParserMessages.getFormattedString(PROBLEM_PATTERN, args);
+        IASTNodeLocation [] locs = getNodeLocations();
+        String file = null;
+        int offset = 0;
+        if( locs != null && locs.length > 0 ){
+            file = ((IASTFileLocation) locs[0]).getFileName();
+            offset = locs[0].getNodeOffset();
+        } else {
+            file = ""; //$NON-NLS-1$
+            offset = 0;
+        }
+        
+        Object[] args = new Object[] { msg, file, new Integer( offset ) }; //$NON-NLS-1$        
+        message = ParserMessages.getFormattedString(AST_PROBLEM_PATTERN, args);
         return message;
     }
 

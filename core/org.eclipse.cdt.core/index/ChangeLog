@@ -1,3 +1,17 @@
+2004-02-03 Alain Magloire
+                                                                                                                             
+    Patches from Thomas Fletcher dealing with the indexer.
+                                                                                                                             
+    - Remove assumed throw/catch of an exception to be a regular occurance
+    and replace with explicit test and return for bounds access to the
+    particular array.
+                                                                                                                             
+    - Consider references outside of the mapping range the same as no longer
+    valid mappings (ie -1 entries) and avoid array range exceptions.
+                                                                                                                             
+    * index/org/eclipse/cdt/internal/core/index/impl/WordEntry.java
+    * index/org/eclipse/cdt/internal/core/index/impl/FileListBlock.java
+
 2004-01-26 John Camelon
 	Updated clients to use new Scanner logging service.
 	

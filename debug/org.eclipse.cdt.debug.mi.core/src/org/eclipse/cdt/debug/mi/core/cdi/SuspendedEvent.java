@@ -53,6 +53,11 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	 */
 	public ICDIObject getSource() {
 		CTarget target = session.getCTarget();
+
+		// This not necessary, we can send the target as the source
+		// it will mean to cdi that all threads are suspended.
+		// FIXME: Remove this comment code after testing.
+		/*
 		int threadId = 0;
 		if (event instanceof MIBreakpointEvent) {
 			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
@@ -84,7 +89,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 			}
 		} catch (CDIException e) {
 		}
-		
+		*/
 		return target;
 	}
 }

@@ -48,7 +48,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(IEditorPart, String)
 	 */
 	public void launch(IEditorPart editor, String mode) {
-		searchAndLaunch(new Object[] {editor.getEditorInput()}, mode);		
+		searchAndLaunch(new Object[] { editor.getEditorInput()}, mode);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 					debugList.add(debugConfigs[i]);
 				}
 			}
-			debugConfigs = (ICDebugConfiguration[])debugList.toArray(new ICDebugConfiguration[0]);
+			debugConfigs = (ICDebugConfiguration[]) debugList.toArray(new ICDebugConfiguration[0]);
 			if (debugConfigs.length == 1) {
 				debugConfig = debugConfigs[0];
 			} else if (debugConfigs.length > 1) {
@@ -147,31 +147,33 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		try {
 			String projectName = bin.getResource().getProjectRelativePath().toString();
 			ILaunchConfigurationType configType = getCLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName())); 
+			ILaunchConfigurationWorkingCopy wc =
+				configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(bin.getElementName()));
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, projectName);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, bin.getCProject().getElementName());
 			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
-			wc.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+			wc.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, true);
-			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			wc.setAttribute(
+				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
-			config = wc.doSave();		
+			config = wc.doSave();
 		} catch (CoreException ce) {
-			CDebugUIPlugin.log(ce);			
+			CDebugUIPlugin.log(ce);
 		}
 		return config;
 	}
-
 
 	/**
 	 * Method getCLaunchConfigType.
 	 * @return ILaunchConfigurationType
 	 */
 	private ILaunchConfigurationType getCLaunchConfigType() {
-		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);		
+		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
 	}
-	
+
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
@@ -200,7 +202,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				if (element == null) {
 					return "";
 				} else if (element instanceof ICDebugConfiguration) {
-					return ((ICDebugConfiguration)element).getName();
+					return ((ICDebugConfiguration) element).getName();
 				}
 				return element.toString();
 			}
@@ -219,7 +221,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 		if (result == dialog.OK) {
 			return (ICDebugConfiguration) dialog.getFirstResult();
 		}
-		return null;		
+		return null;
 	}
 
 	/**
@@ -274,57 +276,56 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 */
 	private void searchAndLaunch(final Object[] elements, String mode) {
 		final List results = new ArrayList();
-		if (elements != null) {
+		if (elements != null && elements.length > 0) {
 			try {
-				ProgressMonitorDialog dialog =
-					new ProgressMonitorDialog(getShell());
-				if (elements.length > 0) {
-					IRunnableWithProgress runnable =
-						new IRunnableWithProgress() {
-						public void run(IProgressMonitor pm)
-							throws InterruptedException {
-							int nElements = elements.length;
-							pm.beginTask("Looking for executables", nElements); //$NON-NLS-1$
-							try {
-								IProgressMonitor sub = new SubProgressMonitor(pm, 1);
-								for (int i = 0; i < nElements; i++) {
-									if (elements[i] instanceof IAdaptable) {
-										IResource r = (IResource)((IAdaptable) elements[i]).getAdapter(IResource.class);
-										ICProject cproject =CoreModel.getDefault().create(r.getProject());
-										IBinary[] bins =cproject.getBinaryContainer().getBinaries();
-										
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				IRunnableWithProgress runnable = new IRunnableWithProgress() {
+					public void run(IProgressMonitor pm) throws InterruptedException {
+						int nElements = elements.length;
+						pm.beginTask("Looking for executables", nElements); //$NON-NLS-1$
+						try {
+							IProgressMonitor sub = new SubProgressMonitor(pm, 1);
+							for (int i = 0; i < nElements; i++) {
+								if (elements[i] instanceof IAdaptable) {
+									IResource r = (IResource) ((IAdaptable) elements[i]).getAdapter(IResource.class);
+									ICProject cproject = CoreModel.getDefault().create(r.getProject());
+									if (cproject != null) {
+										IBinary[] bins = cproject.getBinaryContainer().getBinaries();
+
 										for (int j = 0; j < bins.length; j++) {
 											if (bins[j].isExecutable()) {
 												results.add(bins[j]);
 											}
 										}
 									}
-									if (pm.isCanceled()) {
-										throw new InterruptedException();
-									}
-									sub.done();
 								}
-							} finally {
-								pm.done();
+								if (pm.isCanceled()) {
+									throw new InterruptedException();
+								}
+								sub.done();
 							}
+						} finally {
+							pm.done();
 						}
-					};
-					dialog.run(true, true, runnable);
-				}
+					}
+				};
+				dialog.run(true, true, runnable);
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), "C Application Launcher", e.getMessage()); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), "C Application Launcher", e.getMessage());
 				return;
 			}
 			if (results.size() == 0) {
-				MessageDialog.openError(getShell(), "C Application Launcher", "Launch failed no binaries"); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openError(getShell(), "C Application Launcher", "Launch failed no binaries");
 			} else {
 				IBinary bin = chooseBinary(results, mode);
 				if (bin != null) {
 					launch(bin, mode);
 				}
 			}
+		} else {
+			MessageDialog.openError(getShell(), "C Application Launcher", "Launch failed no project selected");
 		}
 	}
 

@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -65,18 +66,18 @@ public class SharedLibrariesViewEventHandler implements IDebugEventSetListener
 		for( int i = 0; i < events.length; i++ )
 		{
 			DebugEvent event = events[i];
-			if ( event.getSource() instanceof ICSharedLibrary )
+			switch( event.getKind() )
 			{
-				switch( event.getKind() )
-				{
-					case DebugEvent.CREATE:
-					case DebugEvent.TERMINATE:
+				case DebugEvent.CREATE:
+				case DebugEvent.TERMINATE:
+					if ( event.getSource() instanceof IDebugTarget ||
+						 event.getSource() instanceof ICSharedLibrary )
 						refresh();
-						break;
-					case DebugEvent.CHANGE :
+					break;
+				case DebugEvent.CHANGE :
+					if ( event.getSource() instanceof ICSharedLibrary )
 						refresh( event.getSource() );
-						break;
-				}
+					break;
 			}
 		}
 	}

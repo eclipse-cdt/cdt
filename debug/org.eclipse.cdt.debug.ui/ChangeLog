@@ -1,4 +1,8 @@
 2003-01-17 Mikhail Khodjaiants
+	Added the handlers for the 'Create' and 'Terminate' events to the 'Shared Libraries' view.
+	* SharedLibrariesViewEventHandler.java
+
+2003-01-17 Mikhail Khodjaiants
 	Implementation of the shared library view.
 	* LoadSymbolsActionDelegate.java
 	* SharedLibrariesView.java

@@ -271,7 +271,13 @@ public class CDebugTarget extends CDebugElement
 	 */
 	private IFile fExecFile;
 
+	/**
+	 * Whether the target is little endian.
+	 */
+	private Boolean fIsLittleEndian = null;
+	
 	private RunningInfo fRunningInfo = null;
+	
 	
 	/**
 	 * Constructor for CDebugTarget.
@@ -1996,15 +2002,19 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean isLittleEndian()
 	{
-		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
+		if ( fIsLittleEndian == null )
 		{
-			ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
-			if ( cFile instanceof IBinary )
+			fIsLittleEndian = Boolean.TRUE;
+			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
 			{
-				((IBinary)cFile).isLittleEndian();
+				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+				if ( cFile instanceof IBinary )
+				{
+					fIsLittleEndian = new Boolean( ((IBinary)cFile).isLittleEndian() );
+				}
 			}
 		}
-		return true;
+		return fIsLittleEndian.booleanValue();
 	}
 	
 	public IFile getExecFile()

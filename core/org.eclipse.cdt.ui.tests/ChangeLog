@@ -1,3 +1,6 @@
+2004-01-21 Hoda Amer
+	Added more JUnit tests for Content Assist
+
 2004-01-19 Hoda Amer
 	Added a JUnit test case for completion on Macros with function style.
 	

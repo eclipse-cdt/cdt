@@ -1,3 +1,6 @@
+2004-01-21 Hoda Amer
+	-Fixed bug#49854 : Enumerator code complete fails when no character provided
+	
 2004-01-20 Alain Magloire
 
 	Remove the hardcode "objdump" in the EditorUtility.

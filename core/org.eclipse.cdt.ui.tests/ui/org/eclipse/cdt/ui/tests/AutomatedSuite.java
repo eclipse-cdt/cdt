@@ -44,10 +44,15 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionProposalsTest6.suite());
 		addTest(CompletionProposalsTest7.suite());
 		addTest(CompletionProposalsTest8.suite());
+		addTest(CompletionProposalsTest9.suite());
+		addTest(CompletionProposalsTest10.suite());
+		addTest(CompletionProposalsTest11.suite());
+		addTest(CompletionProposalsTest12.suite());
 		
 		// Failed Tests
 		addTest(CompletionProposalsFailedTest1.suite());
 		addTest(CompletionProposalsFailedTest2.suite());
+		addTest(CompletionProposalsFailedTest3.suite());
 		
 	}
 	

@@ -495,7 +495,11 @@ public class CompletionEngine implements RelevanceConstants{
 			// instead of only fields and methods
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.THIS;
- 
+			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			addToCompletions(result);
+			
+			kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.LOCAL_VARIABLES; 
 			result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		}
@@ -540,13 +544,13 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. basic completion on all types
 		completionOnTypeReference(completionNode);
 		// 2. Get the search scope node
-		IASTScope searchNode = completionNode.getCompletionScope();
-
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-		addToCompletions(result);
-		
+		if(completionNode.getCompletionPrefix().length() > 0) {
+			IASTScope searchNode = completionNode.getCompletionScope();
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.NAMESPACES; 
+			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			addToCompletions(result);
+		}
 		// TODO
 		// 3. provide a template for constructor/ destructor
 		// 4. lookup methods
@@ -562,13 +566,16 @@ public class CompletionEngine implements RelevanceConstants{
 	private void completionOnVariableType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
 		completionOnTypeReference(completionNode);
-		
-		IASTScope searchNode = completionNode.getCompletionScope();
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
-		kinds[0] = IASTNode.LookupKind.NAMESPACES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-		addToCompletions(result);
+		// look for namespaces only if you have a prefix
+		if(completionNode.getCompletionPrefix().length() > 0){
+			IASTScope searchNode = completionNode.getCompletionScope();
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.NAMESPACES; 
+			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+			addToCompletions(result);
+		}
 	}
+	
 	private void completionOnSingleNameReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the code scope inwhich completion is requested

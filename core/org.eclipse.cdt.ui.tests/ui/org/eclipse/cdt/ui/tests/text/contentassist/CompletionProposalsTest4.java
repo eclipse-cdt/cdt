@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  *
  */
 public class CompletionProposalsTest4  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart4.cpp";
+	private final String fileName = "CompletionTestStart4.h";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;

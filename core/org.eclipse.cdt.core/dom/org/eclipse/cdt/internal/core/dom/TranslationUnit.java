@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
  */
 public class TranslationUnit implements IScope {
 
+	private boolean parseSuccessful = true; 
 	private List declarations = new ArrayList();
 	private List macros = new ArrayList(); 
 	private List inclusions = new ArrayList(); 
@@ -150,6 +151,20 @@ public class TranslationUnit implements IScope {
 		public void remove() {
 			throw new UnsupportedOperationException( "OffsetableIterator is a const iterator"); 
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isParseSuccessful() {
+		return parseSuccessful;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setParseSuccessful(boolean b) {
+		parseSuccessful = b;
 	}
 
 }

@@ -15,15 +15,18 @@ import org.eclipse.cdt.internal.core.parser.Parser.Backtrack;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public interface IParser {
-	public abstract boolean parse() throws Backtrack;
-	public abstract void expression(Object expression) throws Backtrack;
+	public boolean parse() throws Backtrack;
+	public void expression(Object expression) throws Backtrack;
 	/**
 	 * @return
 	 */
-	public abstract boolean isCppNature();
+	public boolean isCppNature();
 	/**
 	 * @param b
 	 */
-	public abstract void setCppNature(boolean b);
-	public abstract int getLineNumberForOffset(int offset);
+	public void setCppNature(boolean b);
+	public void mapLineNumbers( boolean value );
+	public int getLineNumberForOffset(int offset) throws NoSuchMethodException;
+	public int getLastErrorOffset(); 
+	
 }

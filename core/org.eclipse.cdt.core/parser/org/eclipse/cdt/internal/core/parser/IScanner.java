@@ -28,8 +28,9 @@ public interface IScanner {
 	public void overwriteIncludePath( List newIncludePaths );
 	
 	public Token nextToken() throws ScannerException, Parser.EndOfFile;
-	public int getLineNumberForOffset(int offset); 
+	public int getLineNumberForOffset(int offset) throws NoSuchMethodException; 
 	public void setCppNature( boolean value );
+	public void mapLineNumbers( boolean value );
 	public void setQuickScan(boolean qs);
 	public void setCallback(IParserCallback c);
 }

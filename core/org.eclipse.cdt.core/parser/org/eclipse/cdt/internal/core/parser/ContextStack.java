@@ -125,7 +125,7 @@ public class ContextStack {
 	private LinkedList undoStack = new LinkedList();
 	private Set inclusions = new HashSet(); 
 	private Set defines = new HashSet();
-	private OffsetMapping offsetLineMap = new OffsetMapping(); 
+	private OffsetToLineMapping offsetLineMap = new OffsetToLineMapping(); 
 	
 	/**
 	 * @return

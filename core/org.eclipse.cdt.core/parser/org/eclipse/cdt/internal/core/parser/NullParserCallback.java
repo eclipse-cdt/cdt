@@ -18,19 +18,21 @@ public class NullParserCallback implements IParserCallback {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#inclusionBegin(java.lang.String, int)
 	 */
-	public void inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
+	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
+		return null; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#inclusionEnd()
 	 */
-	public void inclusionEnd() {
+	public void inclusionEnd(Object inclusion) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#macro(java.lang.String, int)
 	 */
-	public void macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
+	public Object macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
+		return null;
 	}
 
 	/* (non-Javadoc)

@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.core.dom.ConstructorChain;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
@@ -53,13 +54,15 @@ public class DOMTests extends TestCase {
 	
 	public TranslationUnit parse( String code ) throws Exception
 	{
-		return parse( code, false );
+		return parse( code, false, true );
 	}
 	
-	public TranslationUnit parse(String code, boolean quickParse ) throws Exception {
-		DOMBuilder domBuilder = new DOMBuilder();
+	public TranslationUnit parse(String code, boolean quickParse, boolean throwOnError ) throws Exception {
+		DOMBuilder domBuilder = DOMFactory.createDOMBuilder(false); 
 		IParser parser = new Parser(code, domBuilder, quickParse );
-		if( ! parser.parse() ) throw new ParserException( "Parse failure" ); 
+		if( ! parser.parse() )
+			if( throwOnError ) throw new ParserException( "Parse failure" );
+			else domBuilder.getTranslationUnit().setParseSuccessful( false ); 
 		
 		return domBuilder.getTranslationUnit();
 	}
@@ -697,7 +700,7 @@ public class DOMTests extends TestCase {
 
 	public void testElaboratedParms() throws Exception
 	{
-		TranslationUnit tu = parse( "int x( struct A myA ) { /* junk */ }", true);
+		TranslationUnit tu = parse( "int x( struct A myA ) { /* junk */ }", true, true);
 		assertEquals( tu.getDeclarations().size(), 1 );
 		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
 		assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_int );
@@ -720,7 +723,7 @@ public class DOMTests extends TestCase {
 	{
 		Writer code = new StringWriter(); 
 		code.write( "#include <stdio.h>\n#define DEF VALUE\n");
-		TranslationUnit tu = parse( code.toString(), true );
+		TranslationUnit tu = parse( code.toString(), true, true );
 		assertEquals( tu.getInclusions().size(), 1 ); 
 		Inclusion i = (Inclusion)tu.getInclusions().get(0);
 		assertEquals( i.getName(), "stdio.h");
@@ -1150,7 +1153,7 @@ public class DOMTests extends TestCase {
 	
 	public void testBug36288() throws Exception
 	{
-		TranslationUnit tu = parse( "int foo() {}\nlong foo2(){}", true);  
+		TranslationUnit tu = parse( "int foo() {}\nlong foo2(){}", true, true);  
 		assertEquals( tu.getDeclarations().size(), 2 );
 		for( int i = 0; i < 2; ++i )
 		{
@@ -1229,7 +1232,7 @@ public class DOMTests extends TestCase {
 	
 	public void testBug36237() throws Exception
 	{
-		TranslationUnit tu = parse( "A::A():B( (char *)0 ){}", true ); 
+		TranslationUnit tu = parse( "A::A():B( (char *)0 ){}", true, true ); 
 		assertEquals( tu.getDeclarations().size(), 1 );  
 	}
 
@@ -1422,6 +1425,41 @@ public class DOMTests extends TestCase {
 		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getClassKey(), ClassKey.t_class ); 
 		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getDeclarations().size(), 0 ); 
 		
+	}
+	
+	public void testBug36551() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "class TextFrame {\n" ); 
+		code.write( "BAD_MACRO()\n"); 
+		code.write( "};");
+		TranslationUnit tu = parse( code.toString(), true, false );
+		assertFalse( tu.isParseSuccessful() );
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration d = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( d.getDeclarators().size(), 0 );
+		ClassSpecifier classSpec = (ClassSpecifier)d.getTypeSpecifier();
+		assertEquals( classSpec.getClassKey(), ClassKey.t_class );
+		assertEquals( classSpec.getName().toString(), "TextFrame");
+		assertEquals( classSpec.getDeclarations().size(), 0 );
+		
+		code = new StringWriter(); 
+		code.write( "namespace X { class A }");
+		tu = parse( code.toString(), true, false ); 
+		assertFalse( tu.isParseSuccessful() );
+		assertEquals( tu.getDeclarations().size(), 1 );
+		NamespaceDefinition nd = (NamespaceDefinition)tu.getDeclarations().get(0);
+		assertEquals( nd.getDeclarations().size(), 0 );
+		assertEquals( nd.getName().toString(), "X");
+		
+		code = new StringWriter(); 
+		code.write( "extern \"C\" { JUNK }" );
+		tu = parse( code.toString(), true, false );
+		assertFalse( tu.isParseSuccessful() );
+		assertEquals( tu.getDeclarations().size(), 1 );
+		LinkageSpecification ls = (LinkageSpecification)tu.getDeclarations().get(0);
+		assertEquals( ls.getDeclarations().size(), 0);
+		assertEquals( ls.getLanguageLinkage(), "C" );		
 	}
 }
 

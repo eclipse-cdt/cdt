@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.Declaration;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
@@ -54,7 +55,7 @@ public class ComparatorModelBuilder {
 	}
 
 	public void parse() {
-		DOMBuilder domBuilder = new DOMBuilder();
+		DOMBuilder domBuilder = DOMFactory.createDOMBuilder(false);
 		try {
 
 			Parser parser = new Parser(code, domBuilder, true);

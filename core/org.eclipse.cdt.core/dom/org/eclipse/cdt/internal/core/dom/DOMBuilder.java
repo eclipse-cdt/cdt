@@ -10,7 +10,10 @@ import org.eclipse.cdt.internal.core.parser.Token;
  */
 public class DOMBuilder implements IParserCallback 
 {
-	private TranslationUnit translationUnit;
+
+	protected DOMBuilder()
+	{
+	}
 	
 	public TranslationUnit getTranslationUnit() {
 		return translationUnit;
@@ -56,7 +59,7 @@ public class DOMBuilder implements IParserCallback
 		ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
 		classSpecifier.setVisibility( visibility );
 		classSpecifier.setStartingOffset( classKey.getOffset() );
-		classSpecifier.setTopLine( parser.getLineNumberForOffset(classKey.getOffset()) );
+		
 		classSpecifier.setClassKeyToken( classKey );
 		decl.setTypeSpecifier(classSpecifier);
 		return classSpecifier;
@@ -75,7 +78,6 @@ public class DOMBuilder implements IParserCallback
 	public void classSpecifierEnd(Object classSpecifier, Token closingBrace) {
 		ClassSpecifier c = (ClassSpecifier)classSpecifier;
 		c.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - c.getStartingOffset() );
-		c.setBottomLine( parser.getLineNumberForOffset(closingBrace.getOffset()) );
 	}
 
 	/**
@@ -160,28 +162,25 @@ public class DOMBuilder implements IParserCallback
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionBegin(java.lang.String)
 	 */
-	public void inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
+	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset) {
 		Inclusion inclusion = new Inclusion( includeFile, offset, inclusionBeginOffset, offset - inclusionBeginOffset + includeFile.length() + 1 );
-		int lineNo = parser.getLineNumberForOffset(offset);
-		inclusion.setTopLine(lineNo);
-		inclusion.setBottomLine( lineNo ); 
 		translationUnit.addInclusion( inclusion );
+		return inclusion;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionEnd()
 	 */
-	public void inclusionEnd() {
+	public void inclusionEnd(Object inclusion) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#macro(java.lang.String)
 	 */
-	public void macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
+	public Object macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
 		Macro macro = new Macro(  macroName, offset, macroBeginOffset, macroEndOffset - macroBeginOffset);
-		macro.setTopLine( parser.getLineNumberForOffset(macroBeginOffset));
-		macro.setBottomLine( parser.getLineNumberForOffset(macroEndOffset)); 	
 		translationUnit.addMacro( macro );
+		return macro; 
 	}
 
 	/**
@@ -192,7 +191,6 @@ public class DOMBuilder implements IParserCallback
 		if( container instanceof IAccessable )
 			decl.setAccessSpecifier(new AccessSpecifier( ((IAccessable)container).getVisibility() ));
 		((IOffsetable)decl).setStartingOffset( firstToken.getOffset() );
-		((IOffsetable)decl).setTopLine( parser.getLineNumberForOffset(firstToken.getOffset()) );
 		return decl;
 	}
 
@@ -203,7 +201,6 @@ public class DOMBuilder implements IParserCallback
 		SimpleDeclaration decl = (SimpleDeclaration)declaration;
 		IOffsetable offsetable = (IOffsetable)decl;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
-		offsetable.setBottomLine( parser.getLineNumberForOffset(lastToken.getOffset() ) );	
 		decl.getOwnerScope().addDeclaration(decl);
 	}
 
@@ -221,7 +218,6 @@ public class DOMBuilder implements IParserCallback
 	public void translationUnitEnd(Object unit) {
 	}
 
-	private Name currName;
 	
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
@@ -522,7 +518,6 @@ public class DOMBuilder implements IParserCallback
 		NamespaceDefinition namespaceDef = new NamespaceDefinition(ownerScope);
 		namespaceDef.setStartToken(namespace);
 		((IOffsetable)namespaceDef).setStartingOffset( namespace.getOffset() );
-		((IOffsetable)namespaceDef).setTopLine( parser.getLineNumberForOffset(namespace.getOffset()) );
 		return namespaceDef;
 		
 	}
@@ -547,7 +542,6 @@ public class DOMBuilder implements IParserCallback
 	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
 		NamespaceDefinition ns = (NamespaceDefinition)namespace; 
 		ns.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - ns.getStartingOffset() );
-		ns.setBottomLine( parser.getLineNumberForOffset(closingBrace.getOffset()));
 		ns.getOwnerScope().addDeclaration(ns);
 	}
 
@@ -640,7 +634,6 @@ public class DOMBuilder implements IParserCallback
 		es.setStartToken(enumKey);
 		decl.setTypeSpecifier(es);
 		((IOffsetable)es).setStartingOffset( enumKey.getOffset() );
-		((IOffsetable)es).setTopLine( parser.getLineNumberForOffset(enumKey.getOffset()) );
 		return es;
 	}
 
@@ -666,7 +659,6 @@ public class DOMBuilder implements IParserCallback
 	public void enumSpecifierEnd(Object enumSpec, Token closingBrace) {
 		IOffsetable offsetable = (IOffsetable)enumSpec;
 		offsetable.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - offsetable.getStartingOffset());
-		offsetable.setBottomLine( parser.getLineNumberForOffset(closingBrace.getOffset()) );
 	}
 
 	/* (non-Javadoc)
@@ -686,7 +678,6 @@ public class DOMBuilder implements IParserCallback
 		EnumeratorDefinition definition = (EnumeratorDefinition)enumDefn;
 		definition.setName( currName );
 		((IOffsetable)enumDefn).setStartingOffset( currName.getStartOffset() );
-		((IOffsetable)enumDefn).setTopLine(parser.getLineNumberForOffset(currName.getStartOffset()));
 	}
 
 	/* (non-Javadoc)
@@ -695,7 +686,6 @@ public class DOMBuilder implements IParserCallback
 	public void enumeratorEnd(Object enumDefn, Token lastToken) {
 		IOffsetable offsetable = (IOffsetable)enumDefn;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
-		offsetable.setBottomLine(parser.getLineNumberForOffset(lastToken.getOffset() ));
 	}
 
 	/* (non-Javadoc)
@@ -816,7 +806,6 @@ public class DOMBuilder implements IParserCallback
 	 */
 	public Object templateDeclarationBegin(Object container, Token exported) {
 		TemplateDeclaration d = new TemplateDeclaration( (IScope)container, exported );
-		d.setTopLine( parser.getLineNumberForOffset(exported.getOffset()) );
 		if( container instanceof IAccessable )
 			d.setVisibility( ((IAccessable)container).getVisibility() );
 		return d;
@@ -835,7 +824,6 @@ public class DOMBuilder implements IParserCallback
 	public void templateDeclarationEnd(Object templateDecl, Token lastToken) {
 		TemplateDeclaration decl = (TemplateDeclaration)templateDecl;
 		decl.setLastToken(lastToken);
-		decl.setBottomLine( parser.getLineNumberForOffset(lastToken.getOffset()) );
 		decl.getOwnerScope().addDeclaration(decl);
 	}
 
@@ -922,5 +910,8 @@ public class DOMBuilder implements IParserCallback
 		this.parser = parser;
 	}
 	
-	private IParser parser = null; 
+	protected Name currName;	
+	protected IParser parser = null;
+	protected TranslationUnit translationUnit;
+ 
 }

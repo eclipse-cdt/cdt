@@ -5,14 +5,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
-import java.util.Map;
-
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -38,14 +32,14 @@ class TranslationUnitInfo extends OpenableInfo {
 		// CHECKPOINT: replacing the parsing done here before
 		return fChildren;		
 	}
-
-	protected Map parse(InputStream in) {
+/*
+	protected Map parse(InputStream in, boolean requiresLineNumbers) {
 		try {
 			removeChildren();
 			if (CCorePlugin.getDefault().useNewParser()) {
 				// new parser
 				CModelBuilder modelBuilder = new CModelBuilder((TranslationUnit)getElement());
-				return (modelBuilder.parse());
+				return (modelBuilder.parse(requiresLineNumbers));
 
 			} else {
 				// cdt 1.0 parser
@@ -59,16 +53,16 @@ class TranslationUnitInfo extends OpenableInfo {
 		}
 	}
 
-	protected Map parse(String buf) {
+	protected Map parse(String buf, boolean requiresLineNumbers) {
 		// CHECKPOINT: Parsing a string using the StringBufferInputStream
 		// FIXME: quick fix for the IBinary which uses fake translationUnit
 		if (buf != null) {
 			StringBufferInputStream in = new StringBufferInputStream (buf);
-			return (parse (in));
+			return (parse (in, requiresLineNumbers));
 		}
 		return null;
 	}
-
+*/
 	/* Overide the SourceManipulation for the range.  */
 	protected ISourceRange getSourceRange() {
 		IPath location = ((TranslationUnit)getElement()).getLocation(); 		

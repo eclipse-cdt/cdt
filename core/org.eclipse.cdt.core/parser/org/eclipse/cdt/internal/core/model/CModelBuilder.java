@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declaration;
 import org.eclipse.cdt.internal.core.dom.Declarator;
@@ -62,10 +63,13 @@ public class CModelBuilder {
 		this.newElements = new HashMap();
 	}
 
-	public Map parse() throws Exception {
-		DOMBuilder domBuilder = new DOMBuilder();
+	public Map parse(boolean requiresLineNumbers) throws Exception {
+		// Note - if a CModel client wishes to have a CModel with valid line numbers
+		// DOMFactory.createDOMBuilder should be given the parameter 'true'
+		DOMBuilder domBuilder = DOMFactory.createDOMBuilder( requiresLineNumbers ); 
 		String code = translationUnit.getBuffer().getContents();
 		IParser parser = new Parser(code, domBuilder, true);
+		parser.mapLineNumbers(requiresLineNumbers);
 		if( translationUnit.getCProject() != null )
 		{
 			IProject currentProject = translationUnit.getCProject().getProject();

@@ -19,13 +19,17 @@ import java.util.Map;
 
 public class Parser implements IParser {
 
+	private static int DEFAULT_OFFSET = -1; 
+	private int firstErrorOffset = DEFAULT_OFFSET;
 	private IParserCallback callback;
 	private boolean quickParse = false;
 	private boolean parsePassed = true;
 	private boolean cppNature = true;
 	
-	protected void failParse()
+	protected void failParse() throws EndOfFile
 	{
+		if( firstErrorOffset == DEFAULT_OFFSET )
+			firstErrorOffset = LA(1).offset;
 		parsePassed = false;
 	}
 	
@@ -255,7 +259,16 @@ c, quick);
 						consume(Token.tRBRACE);
 						break linkageDeclarationLoop;
 					default:
-						declaration(linkageSpec);
+						try
+						{
+							declaration(linkageSpec);
+						}
+						catch( Backtrack bt )
+						{
+							failParse(); 
+							if( checkToken == LA(1))
+								consumeToNextSemicolon();
+						}
 				}
 				if (checkToken == LA(1))
 					consumeToNextSemicolon();
@@ -506,7 +519,16 @@ c, quick);
 						consume(Token.tRBRACE);
 						break namepsaceDeclarationLoop;
 					default:
-						declaration(namespace);
+						try
+						{
+							declaration(namespace);
+						}
+						catch( Backtrack bt )
+						{
+							failParse();
+							if (checkToken == LA(1))
+								consumeToNextSemicolon();							
+						}
 				}
 				if (checkToken == LA(1))
 					consumeToNextSemicolon();
@@ -1480,7 +1502,16 @@ c, quick);
 						consume(Token.tRBRACE);
 						break memberDeclarationLoop;
 					default:
-						declaration(classSpec);
+						try
+						{
+							declaration(classSpec);
+						}
+						catch( Backtrack bt )
+						{
+							failParse();
+							if (checkToken == LA(1))
+								consumeToNextSemicolon();							
+						}
 				}
 				if (checkToken == LA(1))
 					consumeToNextSemicolon();
@@ -2286,15 +2317,29 @@ c, quick);
 			scanner.setCppNature( b ); 
 	}
 
-	public int getLineNumberForOffset(int offset)
+	public int getLineNumberForOffset(int offset) throws NoSuchMethodException
 	{
 		return scanner.getLineNumberForOffset(offset);
 	}
 	
-	public int getLastLineNumber(){
+	public int getLastLineNumber() throws NoSuchMethodException{
 		if( lastToken != null ){
 			return scanner.getLineNumberForOffset( lastToken.offset );
 		}
 		return -1;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#mapLineNumbers(boolean)
+	 */
+	public void mapLineNumbers(boolean value) {
+		scanner.mapLineNumbers( value );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParser#getLastErrorOffset()
+	 */
+	public int getLastErrorOffset() {
+		return firstErrorOffset;
 	}
 }

@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
@@ -56,6 +57,7 @@ public class LineNumberTest extends TestCase {
 		Scanner scanner = new Scanner(); 
 		Reader reader = new StringReader( "int x = 3;\n foo\nfire\nfoe ");
 		scanner.initialize( reader, "string");
+		scanner.mapLineNumbers(true);
 		Token t = scanner.nextToken(); 
 		assertEquals( t.getType(), Token.t_int );
 		assertEquals( scanner.getLineNumberForOffset(t.getOffset()), 1 );
@@ -90,8 +92,9 @@ public class LineNumberTest extends TestCase {
 	
 	public void testDOMLineNos() throws Exception
 	{
-		DOMBuilder domBuilder = new DOMBuilder();
-		IParser parser = new Parser( fileIn, domBuilder, true );  
+		DOMBuilder domBuilder = DOMFactory.createDOMBuilder( true );
+		IParser parser = new Parser( fileIn, domBuilder, true ); 
+		parser.mapLineNumbers(true); 
 		if( ! parser.parse() ) fail( "Parse of file failed");
 		
 		List macros = domBuilder.getTranslationUnit().getMacros();

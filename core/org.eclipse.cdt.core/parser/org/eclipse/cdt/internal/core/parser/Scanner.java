@@ -1579,9 +1579,7 @@ public class Scanner implements IScanner {
 			if( callback != null )
 			{
 				offset = contextStack.getCurrentContext().getOffset() - f.length() - 1; // -1 for the end quote
-				
-				callback.inclusionBegin( f, offset, beginningOffset );
-				callback.inclusionEnd();  
+				callback.inclusionEnd(callback.inclusionBegin( f, offset, beginningOffset ));  
 			}
 		}
 		else
@@ -1723,7 +1721,10 @@ public class Scanner implements IScanner {
 
 		// call the callback accordingly
 		if( callback != null )
+		{
+			// NOTE: return value is ignored!
 			callback.macro( key, offset, beginning, contextStack.getCurrentContext().getOffset() );
+		}
 	}
 	
 	protected void expandDefinition(String symbol, Object expansion)
@@ -1924,8 +1925,10 @@ public class Scanner implements IScanner {
 	/**
 	 * @return
 	 */
-	public int getLineNumberForOffset(int offset) {
-		return contextStack.mapOffsetToLineNumber(offset);
+	public int getLineNumberForOffset(int offset) throws NoSuchMethodException {
+		if( this.mapLineNumbers )
+			return contextStack.mapOffsetToLineNumber(offset);
+		throw new NoSuchMethodException();
 	}
 
 	private boolean cppNature = true; 
@@ -1936,4 +1939,12 @@ public class Scanner implements IScanner {
 		cppNature = value; 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IScanner#mapLineNumbers(boolean)
+	 */
+	public void mapLineNumbers(boolean value) {
+		mapLineNumbers = value; 
+	}
+
+	private boolean mapLineNumbers = false; 
 }

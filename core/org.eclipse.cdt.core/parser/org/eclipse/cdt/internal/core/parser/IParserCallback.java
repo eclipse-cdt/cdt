@@ -17,9 +17,9 @@ public interface IParserCallback {
 	public Object translationUnitBegin();
 	public void translationUnitEnd(Object unit);
 	
-	public void inclusionBegin(String includeFile, int nameBeginOffset, int inclusionBeginOffset);
-	public void inclusionEnd();
-	public void macro(String macroName, int macroNameOffset, int macroBeginOffset, int macroEndOffset);
+	public Object inclusionBegin(String includeFile, int nameBeginOffset, int inclusionBeginOffset);
+	public void inclusionEnd(Object inclusion);
+	public Object macro(String macroName, int macroNameOffset, int macroBeginOffset, int macroEndOffset);
 	
 	public Object simpleDeclarationBegin(Object Container, Token firstToken);
 	public void simpleDeclSpecifier(Object Container, Token specifier);

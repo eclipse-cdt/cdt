@@ -1,3 +1,10 @@
+<<<<<<< ChangeLog
+2003-04-20 John Camelon
+	Added DOMTests::testBug36551().
+	Adjusted AutomatedTest to turn on line numbering. 
+	Added DOMFailedTests and 11 failed test cases.  
+
+=======
 2003-04-17 Andrew Niefer
 	Added ScannerTestCase::testBug36695()
 	Moved ScannerFailedTest::testBug36521 to ScannerTestCase::testBug36521()
@@ -6,6 +13,7 @@
 	Updated ScannerTestCase::testBug36047
 	Updated ScannerTestCase::testBug36045
 
+>>>>>>> 1.34
 2003-04-17 John Camelon
 	Updated DOMTests::testBug36600().
 	Updated LineNumberTest::testDOMLineNos().  

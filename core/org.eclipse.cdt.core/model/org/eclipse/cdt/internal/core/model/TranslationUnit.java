@@ -6,11 +6,13 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
+import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -203,8 +206,24 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		return sourceManipulationInfo;
 	}
-	protected Map parse(InputStream in) {
-		return (getTranslationUnitInfo().parse(in));
+	protected Map parse(InputStream in, boolean requiresLineNumbers) {
+		try {
+			removeChildren();
+			if (CCorePlugin.getDefault().useNewParser()) {
+				// new parser
+				CModelBuilder modelBuilder = new CModelBuilder(this);
+				return (modelBuilder.parse(requiresLineNumbers));
+
+			} else {
+				// cdt 1.0 parser
+				ModelBuilder modelBuilder= new ModelBuilder(this);
+				CStructurizer.getCStructurizer().parse(modelBuilder, in);
+				return null;
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+			return null;
+		}
 	}
 
 	protected CElementInfo createElementInfo () {
@@ -302,7 +321,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 		
 		// generate structure
-		Map mapping = this.parse();
+		Map mapping = this.parse(false); // false since this is for working copies
 		
 		// this is temporary until the New Model Builder is implemented
 		if(mapping == null) {
@@ -459,9 +478,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	public Map parse(){
+	public Map parse(boolean requireLineNumbers){
 		try{
-			return (getTranslationUnitInfo().parse(this.getBuffer().getContents()));
+			String buf =this.getBuffer().getContents();
+			if (buf != null) {
+				StringBufferInputStream in = new StringBufferInputStream (buf);
+				return (parse (in, requireLineNumbers));
+			}
+			return null;
+
 		} catch (CModelException e){
 			// error getting the buffer
 			return null;

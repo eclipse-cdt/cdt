@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.NullParserCallback;
 import org.eclipse.cdt.internal.core.parser.Parser;
@@ -52,7 +53,7 @@ public class AutomatedTest extends TestCase {
 		assertNotNull( fileList );
 		
 		File file = null;
-		Parser parser = null;
+		IParser parser = null;
 		
 		try{
 			file = (File)fileList.removeFirst();
@@ -65,6 +66,7 @@ public class AutomatedTest extends TestCase {
 			
 			parser = new Parser( stream, nullCallback, true);
 			parser.setCppNature( cppNature );
+			parser.mapLineNumbers(true);
 			
 			assertTrue( parser.parse() );
 		} 
@@ -73,10 +75,10 @@ public class AutomatedTest extends TestCase {
 			String output = null;
 			if( e instanceof AssertionFailedError ){
 				output = file.getCanonicalPath() + ": Parse failed on line ";
-				output += parser.getLastLineNumber() + "\n";
+				output += parser.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n";
 			} else {
 				output = file.getCanonicalPath() + ": " + e.getClass().toString();
-				output += " on line " + parser.getLastLineNumber() + "\n";
+				output += " on line " + parser.getLineNumberForOffset(parser.getLastErrorOffset()) + "\n";
 			}
 			if( report != null ){
 				report.write( output.getBytes() );

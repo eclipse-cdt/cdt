@@ -340,38 +340,41 @@ public class BuildConsolePage extends Page
 		ISelection selection= null;
 		if (page != null)
 			selection= page.getSelection();
-		if (selection instanceof ITextSelection) {
-			Object part= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-			if (part instanceof IEditorPart) {
-				setSelectionFromEditor((IEditorPart)part);
-				return;
+		
+		if (convertSelectionToProject(selection) == null) {
+			if (selection instanceof ITextSelection) {
+				Object part= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				if (part instanceof IEditorPart) {
+					if (setSelectionFromEditor((IEditorPart)part) == true)
+						return;
+				}
 			}
+			selection = new StructuredSelection(getConsole().getConsoleManager().getLastBuiltProject());
 		}
 		selectionChanged(null, selection);
 	}
 
 
-	void setSelectionFromEditor(IEditorPart part) {
+	boolean setSelectionFromEditor(IEditorPart part) {
 		if (part == null)
-			return;
+			return false;
 		IWorkbenchPartSite site= part.getSite();
 		if (site == null)
-			return;
+			return false;
 		ISelectionProvider provider= site.getSelectionProvider();
 		if (provider != null ) {
 			IEditorInput ei= part.getEditorInput();
 			if (ei instanceof IFileEditorInput) {
 				IFile file= ((IFileEditorInput)ei).getFile();
 				selectionChanged(part, new StructuredSelection(file));
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IProject newProject = convertSelectionToProject(selection);
-		if (newProject == null) {
-			newProject = getConsole().getConsoleManager().getLastBuiltProject();
-		}
 		IProject oldProject = getProject();
 		if (oldProject == null || (newProject != null && !newProject.equals(oldProject))) {
 			setProject(newProject);

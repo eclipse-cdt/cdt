@@ -18,7 +18,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICRegisterGroup;
 import org.eclipse.cdt.debug.core.cdi.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICTarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICThread;
-import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -28,12 +27,10 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class CTarget implements ICTarget {
+public class CTarget extends SessionObject implements ICTarget {
 
-	MISession session;
-	
-	public CTarget(MISession s) {
-		session = s;
+	public CTarget(Session session) {
+		super(session);
 	}
 	
 	/**
@@ -103,13 +100,6 @@ public class CTarget implements ICTarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getRegisterGroups()
 	 */
 	public ICRegisterGroup[] getRegisterGroups() throws CDIException {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICTarget#getSession()
-	 */
-	public ICSession getSession() {
 		return null;
 	}
 

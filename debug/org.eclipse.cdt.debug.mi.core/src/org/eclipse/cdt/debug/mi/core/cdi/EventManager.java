@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import org.eclipse.cdt.debug.core.cdi.ICEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
-import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -18,12 +17,10 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  * To enable and disable the creation oEventManagerts go to
  * Window>Preferences>Java>Code Generation.
  */
-public class EventManager implements ICEventManager {
+public class EventManager extends SessionObject implements ICEventManager {
 
-	MISession session;
-	
-	public EventManager(MISession s) {
-		session = s;
+	public EventManager(Session session) {
+		super(session);
 	}
 	
 	/**
@@ -36,13 +33,6 @@ public class EventManager implements ICEventManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICEventManager#removeEventListener(ICEventListener)
 	 */
 	public void removeEventListener(ICEventListener listener) {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSessionObject#getSession()
-	 */
-	public ICSession getSession() {
-		return null;
 	}
 
 }

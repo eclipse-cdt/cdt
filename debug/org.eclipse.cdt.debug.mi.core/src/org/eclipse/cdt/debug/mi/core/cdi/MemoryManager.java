@@ -9,7 +9,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.model.ICMemoryBlock;
-import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -19,12 +18,10 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class MemoryManager implements ICMemoryManager {
+public class MemoryManager extends SessionObject implements ICMemoryManager {
 
-	MISession session;
-	
-	public MemoryManager(MISession s) {
-		session = s;
+	public MemoryManager(Session session) {
+		super(session);
 	}
 	
 	/**
@@ -64,13 +61,6 @@ public class MemoryManager implements ICMemoryManager {
 	 */
 	public void removeBlocks(ICMemoryBlock[] memoryBlocks)
 		throws CDIException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSessionObject#getSession()
-	 */
-	public ICSession getSession() {
-		return null;
 	}
 
 }

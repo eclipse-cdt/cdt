@@ -10,7 +10,6 @@ import java.io.File;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.ICSourceManager;
-import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -20,12 +19,10 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SourceManager implements ICSourceManager {
+public class SourceManager extends SessionObject implements ICSourceManager {
 
-	MISession session;
-	
-	public SourceManager(MISession s) {
-		session = s;
+	public SourceManager(Session session) {
+		super(session);
 	}
 	
 	/**
@@ -45,13 +42,6 @@ public class SourceManager implements ICSourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICSourceManager#set(File[])
 	 */
 	public void set(File[] directories) throws CDIException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSessionObject#getSession()
-	 */
-	public ICSession getSession() {
-		return null;
 	}
 
 }

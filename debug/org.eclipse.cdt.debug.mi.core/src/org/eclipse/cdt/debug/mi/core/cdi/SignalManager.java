@@ -9,7 +9,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.ICSignal;
 import org.eclipse.cdt.debug.core.cdi.ICSignalManager;
-import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -19,25 +18,16 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SignalManager implements ICSignalManager {
+public class SignalManager extends SessionObject implements ICSignalManager {
 
-	MISession session;
-	
-	public SignalManager(MISession s) {
-		session = s;
+	public SignalManager(Session session) {
+		super(session);
 	}
 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICSignalManager#getSignals()
 	 */
 	public ICSignal[] getSignals() throws CDIException {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSessionObject#getSession()
-	 */
-	public ICSession getSession() {
 		return null;
 	}
 

@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICMemoryManager;
+import org.eclipse.cdt.debug.core.cdi.ICRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.ICSignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICSourceManager;
@@ -23,7 +24,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICSession
  */
-public class CSession implements ICSession {
+public class Session implements ICSession {
 
 	Properties props;
 	MISession session;
@@ -35,16 +36,20 @@ public class CSession implements ICSession {
 	SourceManager sourceManager;
 	CTarget ctarget;
 
-	public CSession(MISession s) {
+	public Session(MISession s) {
 		session = s;
 		props = new Properties();
-		breakpointManager = new BreakpointManager(session);
-		eventManager = new EventManager(session);
-		expressionManager = new ExpressionManager(session);
-		memoryManager = new MemoryManager(session);
-		signalManager = new SignalManager(session);
-		sourceManager = new SourceManager(session);
-		ctarget = new CTarget(session);
+		breakpointManager = new BreakpointManager(this);
+		eventManager = new EventManager(this);
+		expressionManager = new ExpressionManager(this);
+		memoryManager = new MemoryManager(this);
+		signalManager = new SignalManager(this);
+		sourceManager = new SourceManager(this);
+		ctarget = new CTarget(this);
+	}
+	
+	MISession getMISession() {
+		return session;
 	}
 
 	/**
@@ -128,7 +133,13 @@ public class CSession implements ICSession {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICSuration()
 	 */
 	public ICDebugConfiguration getConfiguration() {
-		return null;
+		return new DebugConfiguration();
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICSession#getRuntimeOptions()
+	 */
+	public ICRuntimeOptions getRuntimeOptions() {
+		return new RuntimeOptions();
+	}
 }

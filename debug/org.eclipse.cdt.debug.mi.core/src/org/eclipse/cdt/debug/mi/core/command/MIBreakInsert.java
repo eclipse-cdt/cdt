@@ -103,6 +103,10 @@ public class MIBreakInsert extends MICommand
 		setParameters(new String[]{line});
 	}
 
+	public MIBreakInsertInfo getMIBreakInsertInfo() throws MIException {
+		return (MIBreakInsertInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

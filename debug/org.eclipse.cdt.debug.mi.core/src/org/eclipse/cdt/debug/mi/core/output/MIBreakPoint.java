@@ -7,6 +7,12 @@ package org.eclipse.cdt.debug.mi.core.output;
 
 /**
  * Contain info about the GDB/MI breakpoint info.
+ * -break-insert -t -c 2 main
+ * ^done,bkpt={number="1",type="breakpoint",disp="del",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",cond="2",times="0"}
+ * (gdb) 
+ * -break-insert -h -i 2 main
+ * ^done,bkpt={number="2",type="hw breakpoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",times="0",ignore="2"}
+ * (gdb) 
  */
 public class MIBreakPoint {
 
@@ -20,6 +26,8 @@ public class MIBreakPoint {
 	int line;
 	int times;
 	String what = "";
+	String cond = "";
+	int ignore;
 
 	public MIBreakPoint(MITuple tuple) {
 		parse(tuple);
@@ -65,6 +73,14 @@ public class MIBreakPoint {
 		return what;
 	}
 
+	public int getIgnoreCount() {
+		return ignore;
+	}
+
+	public String getCondition() {
+		return cond;
+	}
+
 	void parse(MITuple tuple) {
 		MIResult[] results = tuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
@@ -107,6 +123,13 @@ public class MIBreakPoint {
 				}
 			} else if (var.equals("what") || var.equals("exp")) {
 				what = str;
+			} else if (var.equals("ignore")) {
+				try {
+					ignore = Integer.parseInt(str.trim());
+				} catch (NumberFormatException e) {
+				}
+			} else if (var.equals("cond")) {
+				cond = str;
 			}
 		}
 	}

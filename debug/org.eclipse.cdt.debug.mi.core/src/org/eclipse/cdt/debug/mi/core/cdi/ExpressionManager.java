@@ -9,7 +9,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICSession;
 import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
-import org.eclipse.cdt.debug.mi.core.MISession;
 
 /**
  * @author alain
@@ -19,12 +18,10 @@ import org.eclipse.cdt.debug.mi.core.MISession;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ExpressionManager implements ICExpressionManager {
+public class ExpressionManager extends SessionObject implements ICExpressionManager {
 
-	MISession session;
-	
-	public ExpressionManager(MISession s) {
-		session = s;
+	public ExpressionManager(Session session) {
+		super(session);
 	}
 	
 	/**
@@ -59,13 +56,6 @@ public class ExpressionManager implements ICExpressionManager {
 	 */
 	public void removeExpressions(ICExpression[] expressions)
 		throws CDIException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICSessionObject#getSession()
-	 */
-	public ICSession getSession() {
-		return null;
 	}
 
 }

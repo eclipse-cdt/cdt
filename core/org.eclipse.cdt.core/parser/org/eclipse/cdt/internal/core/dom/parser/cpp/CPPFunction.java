@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -181,14 +182,24 @@ public class CPPFunction implements IFunction, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return (definition != null ) ? definition.getName().toString() : declarations[0].getName().toString();
+	    IASTName name = (definition != null ) ? definition.getName() : declarations[0].getName();
+	    if( name instanceof ICPPASTQualifiedName ){
+	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
+	    }
+		return name.toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return (definition != null ) ? definition.getName().toCharArray() : declarations[0].getName().toCharArray();	
+	    IASTName name = (definition != null ) ? definition.getName() : declarations[0].getName();
+	    if( name instanceof ICPPASTQualifiedName ){
+	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
+	    }
+		return name.toCharArray();	
 	}
 
 	/* (non-Javadoc)

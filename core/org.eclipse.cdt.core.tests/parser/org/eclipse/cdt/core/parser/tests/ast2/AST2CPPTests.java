@@ -2289,5 +2289,52 @@ public class AST2CPPTests extends AST2BaseTest {
         
         assertInstances( col, point, 4 );
     }
+    
+    public void testBug86358_1() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace Outer{                   \n"); //$NON-NLS-1$
+        buffer.append("   int i;                          \n"); //$NON-NLS-1$
+        buffer.append("   namespace Inner {               \n"); //$NON-NLS-1$
+        buffer.append("      void f() {  i++;  }          \n"); //$NON-NLS-1$
+        buffer.append("      int i;                       \n"); //$NON-NLS-1$
+        buffer.append("      void g() {  i++;  }          \n"); //$NON-NLS-1$
+        buffer.append("   }                               \n"); //$NON-NLS-1$
+        buffer.append("}                                  \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IVariable i = (IVariable) col.getName(4).resolveBinding();
+        IVariable i2 = (IVariable) col.getName(7).resolveBinding();
+        
+        assertInstances( col, i, 2 );
+        assertInstances( col, i2, 2 );
+    }
+    
+    public void testBug86358_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace Q {                    \n"); //$NON-NLS-1$
+        buffer.append("   namespace V {                 \n"); //$NON-NLS-1$
+        buffer.append("      void f();                  \n"); //$NON-NLS-1$
+        buffer.append("   }                             \n"); //$NON-NLS-1$
+        buffer.append("   void V::f() {}                \n"); //$NON-NLS-1$
+        buffer.append("   namespace V {                 \n"); //$NON-NLS-1$
+        buffer.append("   }                             \n"); //$NON-NLS-1$
+        buffer.append("}                                \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IFunction f1 = (IFunction) col.getName(2).resolveBinding();
+        IFunction f2 = (IFunction) col.getName(5).resolveBinding();
+        assertSame( f1, f2 );  
+
+        IASTName [] decls = tu.getDeclarations( f2 );
+        assertEquals( decls.length, 2 );
+        assertSame( decls[0], col.getName(2) );
+        assertSame( decls[1], col.getName(5) );
+    }
 }
 

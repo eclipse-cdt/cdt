@@ -67,9 +67,9 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 		session = s;
 		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
 		String name = slib.getName();
-		ICDISharedLibrary lib = mgr.getUnloadedLibrary(name);
+		ICDISharedLibrary lib = mgr.getSharedLibrary(name);
 		if (lib != null) {
-			mgr.removeFromUnloadedList(name);
+			mgr.deleteSharedLibrary(lib);
 			source = lib;
 		} else {
 			source = new CObject(session.getCurrentTarget());

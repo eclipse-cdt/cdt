@@ -70,15 +70,15 @@ public class TxThread extends Thread {
 		}
 
 		// Clear the queue and notify any command waiting, we are going down.
-                CommandQueue txQueue = session.getTxQueue();
-                if (txQueue != null) {
-                        Command[] cmds = txQueue.clearCommands();
-                        for (int i = 0; i < cmds.length; i++) {
-                                synchronized (cmds[i]) {
-                                        cmds[i].notifyAll();
-                                }
-                        }
-                }
+		CommandQueue txQueue = session.getTxQueue();
+		if (txQueue != null) {
+			Command[] cmds = txQueue.clearCommands();
+			for (int i = 0; i < cmds.length; i++) {
+				synchronized (cmds[i]) {
+					cmds[i].notifyAll();
+				}
+			}
+		}
 	}
 	
 	/**

@@ -18,9 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
-import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.xcoff.AR;
 import org.eclipse.cdt.utils.xcoff.XCoff32;
@@ -73,7 +71,8 @@ public class ARMember extends XCOFFBinaryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.xcoff.parser.XCOFFBinaryObject#addSymbols(org.eclipse.cdt.utils.xcoff.XCoff32.Symbol[], byte[], org.eclipse.cdt.utils.Addr2line, org.eclipse.cdt.utils.CPPFilt, org.eclipse.cdt.utils.CygPath, java.util.List)
 	 */
-	protected void addSymbols(XCoff32.Symbol[] peSyms, byte[] table, Addr2line addr2line, CPPFilt cppfilt, CygPath cygpath, List list) {
+	protected void addSymbols(XCoff32.Symbol[] peSyms, byte[] table, List list) {
+		CPPFilt cppfilt = getCPPFilt();
 		for (int i = 0; i < peSyms.length; i++) {
 			if (peSyms[i].isFunction() || peSyms[i].isVariable()) {
 				String name = peSyms[i].getName(table);
@@ -81,18 +80,14 @@ public class ARMember extends XCOFFBinaryObject {
 					!Character.isJavaIdentifierStart(name.charAt(0))*/) {
 					continue;
 				}
-				Symbol sym = new Symbol(this);
-				sym.type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-				sym.addr = peSyms[i].n_value;
-
-				sym.name = name;
 				if (cppfilt != null) {
 					try {
-						sym.name = cppfilt.getFunction(sym.name);
+						name = cppfilt.getFunction(name);
 					} catch (IOException e1) {
 						cppfilt = null;
 					}
 				}
+				Symbol sym = new Symbol(this, name, peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE, peSyms[i].n_value, 1);
 
 				list.add(sym);
 			}

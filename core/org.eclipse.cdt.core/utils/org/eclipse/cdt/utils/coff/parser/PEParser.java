@@ -14,18 +14,19 @@ package org.eclipse.cdt.utils.coff.parser;
 import java.io.EOFException;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.CygwinToolsProvider;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.cdt.utils.coff.PEConstants;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class PEParser extends CygwinToolsProvider implements IBinaryParser {
+public class PEParser extends AbstractCExtension implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)

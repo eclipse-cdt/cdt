@@ -58,7 +58,7 @@ public class ReadMemoryAccess {
 	}
 		
 	public short getUnsignedByte(int offset) {
-		return (short)bytes[offset];
+		return bytes[offset];
 	}
 
 	public short getShort() {
@@ -167,7 +167,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static long getUnsignedIntLE(byte[] b) {
-		return (long)(((b[3] & 0xff) << 24) |
+		return (((b[3] & 0xff) << 24) |
 			      ((b[2] & 0xff) << 16) |
 			      ((b[1] & 0xff) << 8)  |
 			       (b[0] & 0xff));
@@ -182,7 +182,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static int getIntLE(byte[] b) {
-		return (int)(((b[3] & 0xff) << 24) |
+		return (((b[3] & 0xff) << 24) |
 			     ((b[2] & 0xff) << 16) |
 			     ((b[1] & 0xff) << 8)  |
 			      (b[0] & 0xff));
@@ -209,7 +209,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static int getIntBE(byte[] b) {
-		return (int)(((b[0] & 0xff) << 24) |
+		return (((b[0] & 0xff) << 24) |
 			     ((b[1] & 0xff) << 16) |
 			     ((b[2] & 0xff) << 8)  |
 			      (b[3] & 0xff));
@@ -224,7 +224,7 @@ public class ReadMemoryAccess {
 	}
 
 	public static long getUnsignedIntBE(byte[] b) {
-		return (long)(((b[0] & 0xff) << 24) |
+		return (((b[0] & 0xff) << 24) |
 			      ((b[1] & 0xff) << 16) |
 			      ((b[2] & 0xff) << 8)  |
 			       (b[3] & 0xff));
@@ -263,7 +263,7 @@ public class ReadMemoryAccess {
 			((long)(b[3] & 0xff) << 24) |
 			((long)(b[2] & 0xff) << 16) |
 			((long)(b[1] & 0xff) <<  8) |
-			((long)(b[0] & 0xff));
+			(b[0] & 0xff);
 	}
 
 
@@ -293,7 +293,7 @@ public class ReadMemoryAccess {
 			((long)(b[4] & 0xff) << 24) |
 			((long)(b[5] & 0xff) << 16) |
 			((long)(b[6] & 0xff) << 8)  |
-			((long)(b[7] & 0xff));
+			(b[7] & 0xff);
 	} 
 
 }

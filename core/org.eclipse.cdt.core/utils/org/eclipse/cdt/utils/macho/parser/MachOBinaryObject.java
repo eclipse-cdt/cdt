@@ -18,9 +18,9 @@ import java.util.List;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
-import org.eclipse.cdt.utils.*;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.macho.MachO;
 import org.eclipse.cdt.utils.macho.MachOHelper;
 import org.eclipse.core.runtime.IPath;
@@ -120,6 +120,11 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		info.cpu = attribute.getCPU();
 	}
 
+	protected CPPFilt getCPPFilt() {
+		MachOParser parser = (MachOParser) getBinaryParser();
+		return parser.getCPPFilt();
+	}
+
 	protected void loadSymbols(MachOHelper helper) throws IOException {
 		ArrayList list = new ArrayList();
 		// Hack should be remove when Elf is clean
@@ -144,26 +149,19 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 
 	protected void addSymbols(MachO.Symbol[] array, int type, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
-			Symbol sym = new Symbol(this);
-			sym.type = type;
-			sym.name = array[i].toString();
+			String name = array[i].toString();
 			if (cppfilt != null) {
 				try {
-					sym.name = cppfilt.getFunction(sym.name);
+					name = cppfilt.getFunction(name);
 				} catch (IOException e1) {
 					cppfilt = null;
 				}
 			}
-			sym.addr = array[i].n_value;
-			sym.size = 0;
-			sym.filename = null;
-			sym.startLine =  0;
-			sym.endLine = sym.startLine;
+			long addr = array[i].n_value;
+			int size = 0;
 			String filename = array[i].getFilename();
-			sym.filename = (filename != null) ? new Path(filename) : null; //$NON-NLS-1$
-			sym.startLine = array[i].getLineNumber(sym.addr);
-			sym.endLine = array[i].getLineNumber(sym.addr + sym.size - 1);
-			list.add(sym);
+			IPath filePath = (filename != null) ? new Path(filename) : null; //$NON-NLS-1$
+			list.add(new Symbol(this, name, type, array[i].n_value, size, filePath, array[i].getLineNumber(addr), array[i].getLineNumber(addr + size - 1)));
 		}
 	}
 

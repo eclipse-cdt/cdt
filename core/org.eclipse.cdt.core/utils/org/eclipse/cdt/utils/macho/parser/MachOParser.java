@@ -13,17 +13,20 @@ package org.eclipse.cdt.utils.macho.parser;
 import java.io.EOFException;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.ToolsProvider;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.macho.AR;
 import org.eclipse.cdt.utils.macho.MachO;
 import org.eclipse.cdt.utils.macho.MachO.Attribute;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  */
-public class MachOParser extends ToolsProvider implements IBinaryParser {
+public class MachOParser extends AbstractCExtension implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
@@ -100,6 +103,29 @@ public class MachOParser extends ToolsProvider implements IBinaryParser {
 		return 128;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getCPPFilt()
+	 */
+	public CPPFilt getCPPFilt() {
+		IPath cppFiltPath = getCPPFiltPath();
+		CPPFilt cppfilt = null;
+		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
+			try {
+				cppfilt = new CPPFilt(cppFiltPath.toOSString());
+			} catch (IOException e2) {
+			}
+		}
+		return cppfilt;
+	}
+
+	protected IPath getCPPFiltPath() {
+		ICExtensionReference ref = getExtensionReference();
+		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
+		if (value == null || value.length() == 0) {
+			value = "c++filt"; //$NON-NLS-1$
+		}
+		return new Path(value);
+	}
 	/**
 	 * @param path
 	 * @return

@@ -18,9 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
@@ -71,7 +68,7 @@ public class ARMember extends PEBinaryObject {
 		throw new IOException(CCorePlugin.getResourceString("Util.exception.noFileAssociation")); //$NON-NLS-1$
 	}
 
-	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, Addr2line addr2line, CPPFilt cppfilt, CygPath cypath, List list) {
+	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List list) {
 		for (int i = 0; i < peSyms.length; i++) {
 			if (peSyms[i].isFunction() || peSyms[i].isPointer() ||peSyms[i].isArray()) {
 				String name = peSyms[i].getName(table);
@@ -79,12 +76,8 @@ public class ARMember extends PEBinaryObject {
 					!Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;
 				}
-				Symbol sym = new Symbol(this);
-				sym.type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-
-				sym.name = name;
-				sym.addr = peSyms[i].n_value;
-				list.add(sym);
+				int type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
+				list.add(new Symbol(this, name, type, peSyms[i].n_value, 1));
 			}
 		}
 	}

@@ -17,8 +17,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -70,12 +68,9 @@ public class ARMember extends ElfBinaryObject {
 		throw new IOException(CCorePlugin.getResourceString("Util.exception.noFileAssociation")); //$NON-NLS-1$
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
+	protected void addSymbols(Elf.Symbol[] array, int type, List list) {
 		for (int i = 0; i < array.length; i++) {
-			Symbol sym = new Symbol(this);
-			sym.type = type;
-			sym.name = array[i].toString();
-			sym.addr = array[i].st_value;
+			Symbol sym = new Symbol(this, array[i].toString(), type, array[i].st_value, array[i].st_size);
 			list.add(sym);
 		}
 	}

@@ -71,5 +71,4 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 		}
 		return (IBinaryObject[]) children.toArray(new IBinaryObject[0]);
 	}
-
 }

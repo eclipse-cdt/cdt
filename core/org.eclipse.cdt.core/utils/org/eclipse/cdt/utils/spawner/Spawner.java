@@ -271,7 +271,7 @@ public class Spawner extends Process {
 		public void run() {
 			try {
 				pid = exec0(cmdarray, envp, dirpath, channels);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				pid = -1;
 				errMesg = e.getMessage();
 			}

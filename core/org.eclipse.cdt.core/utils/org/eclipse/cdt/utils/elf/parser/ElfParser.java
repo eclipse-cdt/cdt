@@ -13,9 +13,9 @@ package org.eclipse.cdt.utils.elf.parser;
 import java.io.EOFException;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.ToolsProvider;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class ElfParser extends ToolsProvider implements IBinaryParser {
+public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)

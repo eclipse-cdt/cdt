@@ -8,8 +8,8 @@ package org.eclipse.cdt.utils.macho;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
 import java.util.Comparator;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.CPPFilt;
@@ -200,7 +200,7 @@ public class MachO {
 						((val[offset + 1] & 0xff) << 8) |
 						(val[offset + 0] & 0xff));
 			} else {
-				return (int)(((val[offset + 0] & 0xff) << 24) |
+				return (((val[offset + 0] & 0xff) << 24) |
 						((val[offset + 1] & 0xff) << 16) |
 						((val[offset + 2] & 0xff) << 8) |
 						(val[offset + 3] & 0xff));
@@ -685,7 +685,7 @@ public class MachO {
 			} else if ( obj instanceof Long ) {
 				Long val = (Long)obj;
 				anotherVal = val.longValue();
-				thisVal = (long)this.n_value;
+				thisVal = this.n_value;
 			}
 			return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
 		}
@@ -1540,7 +1540,7 @@ public class MachO {
 			tmp[1] = (short)((val >> 8) & 0x00ff);
 			tmp[2] = (short)((val >> 16) & 0x00ff); 
 			tmp[3] = (short)((val >> 24) & 0x00ff);
-			return (long)((tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + tmp[3]);
+			return ((tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + tmp[3]);
 		}
 		return val;
 	}

@@ -10,86 +10,111 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
-import java.io.IOException;
-
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.core.runtime.IPath;
 
 public class Symbol implements ISymbol, Comparable {
 
-	BinaryObjectAdapter binary;
-	long timestamp;
-	Addr2line addr2line;
+	protected final BinaryObjectAdapter binary;
+	private final String name;
 
-	public IPath filename;
-	public int startLine;
-	public int endLine;
-	public long addr;
-	public String name;
-	public int type;
-	public long size;
+	private final long addr;
+	private final int type;
+	private final long size;
+	private final int startLine;
+	private final int endLine;
+	private final IPath sourceFile;
 
-	public Symbol(BinaryObjectAdapter bin) {
-		binary = bin;
+	public Symbol(BinaryObjectAdapter binary, String name, int type, long addr, long size, IPath sourceFile, int startLine, int endLine) {
+		this.binary = binary;
+		this.name = name;
+		this.type = type;
+		this.addr = addr;
+		this.size = size;
+		this.startLine = startLine;
+		this.endLine = endLine;
+		this.sourceFile = sourceFile;
 	}
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getInitialFilename()
+
+	public Symbol(BinaryObjectAdapter binary, String name, int type, long addr, long size) {
+		this.binary = binary;
+		this.name = name;
+		this.type = type;
+		this.addr = addr;
+		this.size = size;
+		this.startLine = -1;
+		this.endLine = -1;
+		this.sourceFile = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getBinarObject()
+	 */
+	public IBinaryObject getBinarObject() {
+		return binary;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getFilename()
 	 */
 	public IPath getFilename() {
-		return filename;
+		return sourceFile;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getType()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getType()
 	 */
 	public int getType() {
 		return type;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
 	 */
 	public long getAddress() {
 		return addr;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getEndLine()
 	 */
 	public int getEndLine() {
 		return endLine;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getStartLine()
 	 */
 	public int getStartLine() {
 		return startLine;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getLineNumber(long)
 	 */
 	public int getLineNumber(long offset) {
-		int line = -1;
-		try {
-			Addr2line addressToLine = startAddr2Line();
-			if (addressToLine != null) {
-				line = addressToLine.getLineNumber(addr + offset);
-			}
-		} catch (IOException e) {		
-		}
-		return line;
+		return -1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
 	 */
 	public long getSize() {
@@ -110,39 +135,4 @@ public class Symbol implements ISymbol, Comparable {
 		}
 		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 	}
-
-	synchronized Addr2line startAddr2Line () {
-		if (addr2line == null) {
-			addr2line = binary.getAddr2line();
-			if (addr2line != null) {
-				timestamp = System.currentTimeMillis();
-				Runnable worker = new Runnable () {
-					public void run() {
-						long diff = System.currentTimeMillis() - timestamp;
-						while (diff < 10000) {
-							try {
-								Thread.sleep(10000);
-							} catch (InterruptedException e) {
-								break;
-							}
-							diff = System.currentTimeMillis() - timestamp;						
-						}
-						stopAddr2Line();
-					}
-				};
-				new Thread(worker, "Addr2line Reaper").start(); //$NON-NLS-1$
-			}
-		} else {
-			timestamp = System.currentTimeMillis();
-		}
-		return addr2line;
-	}
-
-	synchronized void stopAddr2Line() {
-		if (addr2line != null) {
-			addr2line.dispose();
-		}
-		addr2line = null;
-	}
-
 }

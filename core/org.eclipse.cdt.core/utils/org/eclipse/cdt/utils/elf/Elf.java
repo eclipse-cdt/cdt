@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
 
 // test checkin
 public class Elf {
@@ -27,8 +25,6 @@ public class Elf {
 
 	protected ELFhdr ehdr;
 	protected Section[] sections;
-	protected Addr2line addr2line;
-	protected CPPFilt cppFilt;
 	protected String file;
 	protected byte[] section_strtab;	
 
@@ -184,9 +180,8 @@ public class Elf {
 				throw new IOException();
 			if ( isle ) {
 				return (short)((val[offset + 1] << 8) + val[offset + 0]);
-			} else {
-				return (short)((val[offset + 0] << 8) + val[offset + 1]);
 			}
+			return (short)((val[offset + 0] << 8) + val[offset + 1]);
 		}
 	
 		private final long makeInt(byte [] val, int offset, boolean isle) throws IOException
@@ -195,9 +190,8 @@ public class Elf {
 				throw new IOException();
 			if ( isle ) {
 				return ((val[offset + 3] << 24) + (val[offset + 2] << 16) + (val[offset + 1] << 8) + val[offset + 0]);
-			} else {
-				return ((val[offset + 0] << 24) + (val[offset + 1] << 16) + (val[offset + 2] << 8) + val[offset + 3]);
 			}
+			return ((val[offset + 0] << 24) + (val[offset + 1] << 16) + (val[offset + 2] << 8) + val[offset + 3]);
 		}
 
 		
@@ -729,12 +723,6 @@ public class Elf {
 	}
 
 	public void dispose() {
-		if (addr2line != null) {
-			addr2line.dispose();
-		}
-		if (cppFilt != null) {
-			cppFilt.dispose();
-		}
 		try {
 			if (efile != null) {
 				efile.close();

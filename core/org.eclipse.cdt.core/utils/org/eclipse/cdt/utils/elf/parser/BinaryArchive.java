@@ -64,17 +64,4 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 	public int getType() {
 		return IBinaryFile.ARCHIVE;
 	}
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#add(IBinaryObject[])
-	 */
-	public void add(IBinaryObject[] objs) throws IOException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#delete(IBinaryObject[])
-	 */
-	public void delete(IBinaryObject[] objs) throws IOException {
-	}
-
 }

@@ -72,11 +72,7 @@ public class ARMember extends MachOBinaryObject {
 
 	protected void addSymbols(MachO.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
-			Symbol sym = new Symbol(this);
-			sym.type = type;
-			sym.name = array[i].toString();
-			sym.addr = array[i].n_value;
-			list.add(sym);
+			list.add(new Symbol(this, array[i].toString(), type, array[i].n_value, 4));
 		}
 	}
 

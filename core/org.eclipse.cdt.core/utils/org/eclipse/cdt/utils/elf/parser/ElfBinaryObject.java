@@ -18,14 +18,11 @@ import java.util.List;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
-import org.eclipse.cdt.utils.*;
-import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
-import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /*
  * ElfBinaryObject 
@@ -128,56 +125,20 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	protected void loadSymbols(ElfHelper helper) throws IOException {
 		ArrayList list = new ArrayList();
 
-		Addr2line addr2line = getAddr2line();
-		CPPFilt cppfilt = getCPPFilt();
-
-		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt, list);
-		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt, list);
-		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, addr2line, cppfilt, list);
-		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, addr2line, cppfilt, list);
+		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, list);
+		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, list);
+		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, list);
+		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, list);
 		list.trimToSize();
-
-		if (addr2line != null) {
-			addr2line.dispose();
-		}
-		if (cppfilt != null) {
-			cppfilt.dispose();
-		}
 
 		symbols = (ISymbol[])list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);
 		list.clear();
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
+	protected void addSymbols(Elf.Symbol[] array, int type, List list) {
 		for (int i = 0; i < array.length; i++) {
-			Symbol sym = new Symbol(this);
-			sym.type = type;
-			sym.name = array[i].toString();
-			if (cppfilt != null) {
-				try {
-					sym.name = cppfilt.getFunction(sym.name);
-				} catch (IOException e1) {
-					cppfilt = null;
-				}
-			}
-			sym.addr = array[i].st_value;
-			sym.size = array[i].st_size;
-			sym.filename = null;
-			sym.startLine =  0;
-			sym.endLine = sym.startLine;
-			if (addr2line != null) {
-				try {
-					String filename =  addr2line.getFileName(sym.addr);
-					// Addr2line returns the funny "??" when it can not find the file.
-					sym.filename = (filename != null && !filename.equals("??")) ? new Path(filename) : null; //$NON-NLS-1$
-					sym.startLine = addr2line.getLineNumber(sym.addr);
-					sym.endLine = addr2line.getLineNumber(sym.addr + sym.size - 1);
-				} catch (IOException e) {
-					addr2line = null;
-				}
-			}
-			list.add(sym);
+			list.add(new Symbol(this, array[i].toString(), type, array[i].st_value, array[i].st_size));
 		}
 	}
 

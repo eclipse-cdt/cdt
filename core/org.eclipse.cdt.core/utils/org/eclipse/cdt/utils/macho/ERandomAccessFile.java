@@ -57,7 +57,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 
 	public final long readLongE() throws IOException
 	{
-		return (long)readIntE();
+		return readIntE();
 	}
 	
     public void setFileOffset( long offset ) throws IOException {

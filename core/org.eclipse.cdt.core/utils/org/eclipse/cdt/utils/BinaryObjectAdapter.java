@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.core.runtime.IPath;
@@ -164,40 +161,8 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		return getPath().lastSegment().toString();
 	}
 
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
-	 */
-	public InputStream getContents() {
-		InputStream stream = null;
-		Objdump objdump = getObjdump();
-		if (objdump != null) {
-			try {
-				byte[] contents = objdump.getOutput();
-				stream = new ByteArrayInputStream(contents);
-			} catch (IOException e) {
-				// Nothing
-			}
-		}
-		if (stream == null) {
-			stream = super.getContents();
-		}
-		return stream;
-	}
-
 	public String toString() {
 		return getName();
-	}
-
-	public Addr2line getAddr2line() {
-		return null;
-	}
-
-	public CPPFilt getCPPFilt() {
-		return null;
-	}
-
-	public Objdump getObjdump() {
-		return null;
 	}
 
 	/**

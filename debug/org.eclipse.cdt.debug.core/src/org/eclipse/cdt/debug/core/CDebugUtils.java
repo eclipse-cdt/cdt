@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.xml.serialize.Method;
@@ -249,17 +250,13 @@ public class CDebugUtils
 	{
 		if ( parent != null && parent.exists() )
 		{
-			try
+			List projects = CDebugUtils.getReferencedProjects( project );
+			Iterator it = projects.iterator();
+			while( it.hasNext() )
 			{
-				IProject[] projects = parent.getReferencedProjects();
-				for ( int i = 0; i < projects.length; ++i )
-				{
-					if ( projects[i].exists() && ( projects[i].equals( project ) || isReferencedProject( projects[i], project ) ) )
-						return true;
-				}
-			}
-			catch( CoreException e )
-			{
+				IProject prj = (IProject)it.next();
+				if ( prj.exists() && ( prj.equals( project ) ) )
+					return true;
 			}
 		}
 		return false;

@@ -1,4 +1,8 @@
 2003-08-05 Mikhail Khodjaiants
+	Use the 'getReferencedProject' method to obtain all referenced projects.
+	* CDebugUtils.java
+
+2003-08-05 Mikhail Khodjaiants
 	Invalidate error variables when the session is resumed.
 	* CVariable.java
 

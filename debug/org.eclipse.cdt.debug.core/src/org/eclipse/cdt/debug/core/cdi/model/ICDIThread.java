@@ -52,14 +52,6 @@ public interface ICDIThread extends ICDIObject
 	 */
 	void suspend() throws CDIException;
 
-	/*
-	 * Returns whether this thread is is currently stepping.
-	 *
-	 * @return whether this thread is currently stepping
-	 *
-	boolean isStepping();
-	 */
-	 
 	/**
 	 * Steps over the current source line. Can only be called
 	 * when the associated thread is suspended. 

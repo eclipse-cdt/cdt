@@ -5,12 +5,14 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -325,10 +327,22 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 				ListSelectionDialog dlg = createDialog();
 				if ( dlg.open() == Dialog.OK )
 				{
+					MultiStatus ms = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null ); 
 					Object[] selections = dlg.getResult();
 					for ( int i = 0; i < selections.length; ++i )
 					{
-						createExpression( ((IDebugElement)element).getDebugTarget(), (Global)selections[i]  );
+						try
+						{
+							createExpression( ((IDebugElement)element).getDebugTarget(), (Global)selections[i]  );
+						}
+						catch( DebugException e )
+						{
+							ms.merge( e.getStatus() );
+						}
+					}
+					if ( !ms.isOK() )
+					{
+						throw new DebugException( ms );
 					}
 				}
 			}

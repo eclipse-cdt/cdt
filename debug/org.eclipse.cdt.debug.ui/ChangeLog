@@ -1,4 +1,8 @@
 2003-05-12 Mikhail Khodjaiants
+	Accumulate the status information when adding multiple globals to the Expression view.
+	* AddGlobalsActionDelegate.java
+
+2003-05-12 Mikhail Khodjaiants
 	Moved the generation of expressions for global variables to the mi plugin.
 	* AddGlobalsActionDelegate.java
 

@@ -20,6 +20,7 @@ import java.io.Reader;
 
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 
 /**
@@ -28,19 +29,21 @@ public class MIProcessAdapter implements MIProcess {
 
 	Process fGDBProcess;
 
-	public MIProcessAdapter(String[] args) throws IOException {
-		fGDBProcess = getGDBProcess(args);
+	public MIProcessAdapter(String[] args, IProgressMonitor monitor) throws IOException {
+		fGDBProcess = getGDBProcess(args, monitor);
 	}
 
 	/**
 	 * Do some basic synchronisation, gdb may take some time to load for
-	 * whatever reasons.
+	 * whatever reasons and we need to be able to let the user bailout.
 	 * 
 	 * @param args
 	 * @return Process
 	 * @throws IOException
 	 */
-	protected Process getGDBProcess(String[] args) throws IOException {
+	protected Process getGDBProcess(String[] args, IProgressMonitor monitor) throws IOException {
+		int ONE_SECOND = 1000;
+
 		if (MIPlugin.getDefault().isDebugging()) {
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < args.length; ++i) {
@@ -65,32 +68,49 @@ public class MIProcessAdapter implements MIProcess {
 						}
 					}
 				} catch (Exception e) {
-					// Do nothing
-				}
-				synchronized (pgdb) {
-					pgdb.notifyAll();
+					// Do nothing, ignore the errors
 				}
 			}
 		};
 		syncStartup.start();
 
-		synchronized (pgdb) {
-			MIPlugin miPlugin = MIPlugin.getDefault();
-			Preferences prefs = miPlugin.getPluginPreferences();
-			int launchTimeout = prefs
-					.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
-			while (syncStartup.isAlive()) {
+		MIPlugin miPlugin = MIPlugin.getDefault();
+		Preferences prefs = miPlugin.getPluginPreferences();
+		int timepass = 0;
+		int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
+		if (launchTimeout <= 0) {
+			// Simulate we are waiting forever.
+			launchTimeout = Integer.MAX_VALUE;
+		}
+
+		// To respect the IProgressMonitor we can not use wait/notify
+		// instead we have to loop and check for the monitor to allow to cancel the thread.
+		// The monitor is check every 1 second delay;
+		for (timepass = 0; timepass < launchTimeout; timepass += ONE_SECOND) {
+			if (syncStartup.isAlive() && !monitor.isCanceled()) {
 				try {
-					pgdb.wait(launchTimeout);
-					break;
+					Thread.sleep(ONE_SECOND);
 				} catch (InterruptedException e) {
+					// ignore
 				}
+			} else {
+				break;
 			}
 		}
 		try {
 			syncStartup.interrupt();
-			syncStartup.join(1000);
+			syncStartup.join(ONE_SECOND);
 		} catch (InterruptedException e) {
+			// ignore
+		}
+		if (monitor.isCanceled()) {
+			pgdb.destroy();
+			String message = MIPlugin.getResourceString("src.GDBDebugger.Error_creating_session");//$NON-NLS-1$
+			throw new IOException(message);
+		} else if (timepass > launchTimeout) {
+			pgdb.destroy();
+			String message = MIPlugin.getResourceString("src.GDBDebugger.Error_launch_timeout"); //$NON-NLS-1$
+			throw new IOException(message);
 		}
 		return pgdb;
 	}

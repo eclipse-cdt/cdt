@@ -168,12 +168,13 @@ public class MIInferior extends Process {
 		// - For PostMortem(Core): send event
 		// else noop
 		if ((session.isAttachSession() && isConnected()) || (session.isProgramSession() && !isTerminated())) {
-
+			// Try to interrupt the inferior, first.
+			if (isRunning()) {
+				interrupt();
+			}
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
-			// Try to interrupt the inferior, first.
-			interrupt();
-			session.postCommand(abort);
+			session.postCommand0(abort, session.getCommandTimeout());
 			abort.getMIInfo();
 			setTerminated(abort.getToken(), true);
 		} else if (session.isCoreSession() && !isTerminated()){
@@ -248,7 +249,7 @@ public class MIInferior extends Process {
 	}
 
 	public synchronized void setTerminated() {
-		setTerminated(0, false);
+		setTerminated(0, true);
 	}
 
 	synchronized void setTerminated(int token, boolean fireEvent) {

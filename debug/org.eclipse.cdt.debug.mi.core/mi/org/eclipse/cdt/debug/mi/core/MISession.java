@@ -292,7 +292,7 @@ public class MISession extends Observable {
 	/**
 	 * Sends a command to gdb, and wait(timeout) for a response.
 	 */
-	public synchronized void postCommand(Command cmd, long timeout) throws MIException {
+	public void postCommand(Command cmd, long timeout) throws MIException {
 
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
@@ -311,7 +311,10 @@ public class MISession extends Observable {
 		if (isTerminated()) {
 			throw new MIException(MIPlugin.getResourceString("src.MISession.Session_terminated")); //$NON-NLS-1$
 		}
+		postCommand0(cmd, timeout);
+	}
 
+	public synchronized void postCommand0(Command cmd, long timeout) throws MIException {
 		// TRACING: print the command;
 		MIPlugin.getDefault().debugLog(cmd.toString());
 
@@ -374,12 +377,12 @@ public class MISession extends Observable {
 		if (isTerminated()) {
 			return;
 		}
-		
+
 		terminated = true;
 		
 		// Destroy any MI Inferior(Process) and streams.
 		inferior.destroy();
-		
+
 		// {in,out}Channel is use as predicate/condition
 		// in the {RX,TX,Event}Thread to detect termination
 		// and bail out.  So they are set to null.
@@ -462,22 +465,16 @@ public class MISession extends Observable {
 		}
 
 		// Allow (10 secs) for the EventThread  to finish processing the queue.
-		Queue queue = getEventQueue();
-		for (int i = 0; !queue.isEmpty() && i < 5; i++) {
+		if (!eventThread.equals(Thread.currentThread())) {			
+			// Kill the event Thread.
 			try {
-				java.lang.Thread.sleep(2000);
+				if (eventThread.isAlive()) {
+					eventThread.interrupt();
+					eventThread.join(cmdTimeout);
+				}
 			} catch (InterruptedException e) {
-			}
+			}		
 		}
-
-		// Kill the event Thread.
-		try {
-			if (eventThread.isAlive()) {
-				eventThread.interrupt();
-				eventThread.join(cmdTimeout);
-			}
-		} catch (InterruptedException e) {
-		}		
 
 		// Tell the observers that the session is terminated
 		notifyObservers(new MIGDBExitEvent(this, 0));

@@ -28,7 +28,7 @@
             name="%GDBDebugger.name"
             modes="run,core,attach"
             cpu="native"
-            class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
+            class="org.eclipse.cdt.debug.mi.core.GDBCDIDebugger"
             id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>
       <debugger
@@ -36,7 +36,7 @@
             name="%CygwinGDBDebugger.name"
             modes="run,core,attach"
             cpu="native"
-            class="org.eclipse.cdt.debug.mi.core.CygwinGDBDebugger"
+            class="org.eclipse.cdt.debug.mi.core.CygwinGDBCDIDebugger"
             id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger">
       </debugger>
       <debugger

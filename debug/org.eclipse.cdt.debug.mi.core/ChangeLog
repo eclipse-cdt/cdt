@@ -1,3 +1,17 @@
+2004-10-20 Alain Magloire
+	Use the new ICDIDebugger interface
+
+	* mi/org/eclipse/cdt/debug/mi/core/MIInferior.java
+	* mi/org/eclipse/cdt/debug/mi/core/MISession.java
+	* mi/org/eclipse/cdt/debug/mi/core/SessionProcess.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBCDIDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBCDIDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+	* src/org/eclipse/cdt/debug/mi/core/MIProcessAdapter.java
+	* plugin.xml
+
 2004-10-20 David Inglis
 	Fixed terminated delay for corefile
 	* mi/org/eclipse/cdt/debug/mi/core/MIInferior.java

@@ -31,7 +31,7 @@ public class SessionProcess extends Process {
 	 * @see java.lang.Process#destroy()
 	 */
 	public void destroy() {
-		session.getGDBProcess().destroy();
+		session.terminate();
 	}
 
 	/**

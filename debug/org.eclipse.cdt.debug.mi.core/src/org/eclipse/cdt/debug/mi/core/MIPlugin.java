@@ -26,6 +26,8 @@ import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.osgi.framework.BundleContext;
@@ -109,7 +111,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws MIException
 	 */
-	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		IMITTY pty = null;
 		boolean failed = false;
 
@@ -117,10 +119,11 @@ public class MIPlugin extends Plugin {
 			PTY pseudo = new PTY();
 			pty = new MITTYAdapter(pseudo);
 		} catch (IOException e) {
+			// Should we not print/log this ?
 		}
 
 		try {
-			return createCSession(gdb, program, cwd, gdbinit, pty);
+			return createCSession(gdb, program, cwd, gdbinit, pty, monitor);
 		} catch (IOException exc) {
 			failed = true;
 			throw exc;
@@ -153,13 +156,17 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, IMITTY pty) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
 		
 		if (gdbinit == null || gdbinit.length() == 0) {
 			gdbinit = GDBINIT;
+		}
+
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
 
 		String[] args;
@@ -177,7 +184,7 @@ public class MIPlugin extends Plugin {
 			}
 		}
 
-		MIProcess pgdb = new MIProcessAdapter(args);
+		MIProcess pgdb = new MIProcessAdapter(args, monitor);
 
 		MISession session;
 		try {
@@ -213,7 +220,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, File core, File cwd, String gdbinit) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -221,14 +228,18 @@ public class MIPlugin extends Plugin {
 		if (gdbinit == null || gdbinit.length() == 0) {
 			gdbinit = GDBINIT;
 		}
-		
+
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
 		String[] args;
 		if (program == null) {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		}
-		MIProcess pgdb = new MIProcessAdapter(args);
+		MIProcess pgdb = new MIProcessAdapter(args, monitor);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.CORE);
@@ -248,7 +259,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -257,13 +268,17 @@ public class MIPlugin extends Plugin {
 			gdbinit = GDBINIT;
 		}
 
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
 		String[] args;
 		if (program == null) {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
-		MIProcess pgdb = new MIProcessAdapter(args);
+		MIProcess pgdb = new MIProcessAdapter(args, monitor);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.ATTACH);

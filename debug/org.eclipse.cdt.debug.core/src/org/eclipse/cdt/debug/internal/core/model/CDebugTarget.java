@@ -13,10 +13,11 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpointManager;
@@ -89,6 +90,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -2252,7 +2254,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
 		{
-			ICFile cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+			ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
 			if ( cFile instanceof IBinary )
 			{
 				((IBinary)cFile).isLittleEndian();
@@ -2279,16 +2281,16 @@ public class CDebugTarget extends CDebugElement
 		ArrayList list = new ArrayList();
 		if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) )
 		{
-			ICFile cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
-			if ( cFile instanceof IBinary )
+			ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+			if ( cFile instanceof IParent )
 			{
-				list.addAll( getCFileGlobals( cFile ) );
+				list.addAll( getCFileGlobals( (IParent)cFile ) );
 			}
 		}
 		return (IGlobalVariable[])list.toArray( new IGlobalVariable[list.size()] );
 	}
 
-	private List getCFileGlobals( ICFile file )
+	private List getCFileGlobals( IParent file )
 	{
 		ArrayList list = new ArrayList();
 		ICElement[] elements = file.getChildren();
@@ -2298,9 +2300,9 @@ public class CDebugTarget extends CDebugElement
 			{
 				list.add( createGlobalVariable( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
 			}
-			else if ( elements[i] instanceof org.eclipse.cdt.core.model.ICFile )
+			else if ( elements[i] instanceof org.eclipse.cdt.core.model.IParent )
 			{
-				list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.ICFile)elements[i] ) );
+				list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.IParent)elements[i] ) );
 			}
 		}
 		return list;
@@ -2317,14 +2319,18 @@ public class CDebugTarget extends CDebugElement
 				  	  
 				  	  public IPath getPath()
 				  	  {
-						  IPath path = null;
-						  if ( var.getParent() != null && var.getParent() instanceof ICFile )
-						  {
-						  	  if ( !(var.getParent() instanceof IBinary) && ((ICFile)var.getParent()).getFile() != null )
-						  	  {
-							  	  path = ((ICFile)var.getParent()).getFile().getLocation();
-						  	  }
-						  }
+							IPath path = new Path("");
+							try
+							{
+								IResource res = var.getUnderlyingResource();
+								if ( res != null )
+								{
+									path = res.getLocation();
+								}
+							}
+							catch (CModelException e)
+							{
+							}
 						  return path;
 				  	  }
 				  };

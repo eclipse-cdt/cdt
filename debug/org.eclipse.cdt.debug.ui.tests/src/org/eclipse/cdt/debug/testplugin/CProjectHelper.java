@@ -9,7 +9,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.ICFolder;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IArchive;
@@ -93,7 +93,7 @@ public class CProjectHelper {
 	/**
 	 * Adds a source container to a ICProject.
 	 */		
-	public static ICFolder addSourceContainer(ICProject cproject, String containerName) throws CoreException {
+	public static ICContainer addSourceContainer(ICProject cproject, String containerName) throws CoreException {
 		IProject project= cproject.getProject();
 		IContainer container= null;
 		if (containerName == null || containerName.length() == 0) {
@@ -106,15 +106,15 @@ public class CProjectHelper {
 			container= folder;
 		}
 
-		return (ICFolder)container;
+		return (ICContainer)container;
 	}
 
 	/**
 	 * Adds a source container to a ICProject and imports all files contained
 	 * in the given Zip file.
 	 */	
-	public static ICFolder addSourceContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile) throws InvocationTargetException, CoreException {
-		ICFolder root= addSourceContainer(cproject, containerName);
+	public static ICContainer addSourceContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile) throws InvocationTargetException, CoreException {
+		ICContainer root= addSourceContainer(cproject, containerName);
 		importFilesFromZip(zipFile, root.getPath(), null);
 		return root;
 	}

@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 
 /**
@@ -13,7 +14,7 @@ import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 public class Signal extends CObject implements ICDISignal {
 
 	MISignalEvent event;
-	public Signal(CTarget target, MISignalEvent e) {
+	public Signal(ICDITarget target, MISignalEvent e) {
 		super(target);
 		event = e;
 	}

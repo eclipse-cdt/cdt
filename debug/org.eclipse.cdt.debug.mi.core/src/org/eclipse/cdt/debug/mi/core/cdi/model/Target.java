@@ -10,18 +10,18 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -45,20 +45,20 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class CTarget  implements ICDITarget {
+public class Target  implements ICDITarget {
 
-	CSession session;
-	CThread[] noThreads = new CThread[0];
-	CThread[] currentThreads;
+	Session session;
+	Thread[] noThreads = new Thread[0];
+	Thread[] currentThreads;
 	int currentThreadId;
 	int lastExecutionToken;
 	
-	public CTarget(CSession s) {
+	public Target(Session s) {
 		session = s;
 		currentThreads = noThreads;
 	}
 	
-	public CSession getCSession() {
+	public Session getCSession() {
 		return session;
 	}
 
@@ -84,19 +84,27 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#setCurrentThread(ICDIThread)
 	 */
 	public void setCurrentThread(ICDIThread cthread) throws CDIException {
-		setCurrentThread(cthread, true);
+		if (cthread instanceof Thread) {
+			setCurrentThread(cthread, true);
+		} else {
+			throw new CDIException("unknown thread");
+		}
 	}
 	
 	public void setCurrentThread(ICDIThread cthread, boolean doUpdate) throws CDIException {
-		if (cthread instanceof CThread) {
-			setCurrentThread((CThread)cthread, doUpdate);
+		if (cthread instanceof Thread) {
+			setCurrentThread((Thread)cthread, doUpdate);
+		} else {
+			throw new CDIException("unknown thread");
 		}
 	}
 
 	/**
 	 */
-	public void setCurrentThread(CThread cthread, boolean doUpdate) throws CDIException {
+	public void setCurrentThread(Thread cthread, boolean doUpdate) throws CDIException {
+		// set us as the current target.
 		session.setCurrentTarget(this);
+
 		int id = cthread.getId();
 		// No need to set thread id 0, it is a dummy thread.
 		if (id == 0) {
@@ -122,7 +130,7 @@ public class CTarget  implements ICDITarget {
 			// some variables like Register.  Send an update
 			// To generate changeEvents.
 			if (doUpdate) {
-				RegisterManager regMgr = session.getRegisterManager();
+				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
 				regMgr.update();
 			}
 		}
@@ -140,75 +148,74 @@ public class CTarget  implements ICDITarget {
 	 * Called when stopping because of breakpoints etc ..
 	 */
 	public void updateState(int newThreadId) {
-		CThread[] oldThreads = currentThreads;
+		Thread[] oldThreads = currentThreads;
 
 		// If we use "info threads" in getCThreads() this
 		// will be overwritten.  However if we use -stack-list-threads
 		// it does not provide to the current thread
 		currentThreadId = newThreadId;
-		// get the new Threads.
-		CThread[] newThreads = getCThreads();
 
-		currentThreads = newThreads;
+		// get the new Threads.
+		currentThreads = getCThreads();
 
 		// Fire CreatedEvent for new threads.
-		if (newThreads != null && newThreads.length > 0) {
-			List cList = new ArrayList(newThreads.length);
-			for (int i = 0; i < newThreads.length; i++) {
-				boolean found = false;
-				for (int j = 0; oldThreads != null && j < oldThreads.length; j++) {
-					if (newThreads[i].getId() == ((CThread)oldThreads[j]).getId()) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					cList.add(new Integer(newThreads[i].getId()));
+		// Replace the new threads with the old thread object
+		// User may have old on to the old Thread object.
+		List cList = new ArrayList(currentThreads.length);
+		for (int i = 0; i < currentThreads.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < oldThreads.length; j++) {
+				if (currentThreads[i].getId() == oldThreads[j].getId()) {
+					oldThreads[j].clearState();
+					currentThreads[i] = oldThreads[j];
+					found = true;
+					break;
 				}
 			}
-			if (!cList.isEmpty()) {
-				MIThreadCreatedEvent[] events = new MIThreadCreatedEvent[cList.size()];
-				for (int j = 0; j < events.length; j++) {
-					int id = ((Integer)cList.get(j)).intValue();
-					events[j] = new MIThreadCreatedEvent(id);
-				}
-				MISession miSession = session.getMISession();
-				miSession.fireEvents(events);
+			if (!found) {
+				cList.add(new Integer(currentThreads[i].getId()));
 			}
+		}
+		if (!cList.isEmpty()) {
+			MIThreadCreatedEvent[] events = new MIThreadCreatedEvent[cList.size()];
+			for (int j = 0; j < events.length; j++) {
+				int id = ((Integer)cList.get(j)).intValue();
+				events[j] = new MIThreadCreatedEvent(id);
+			}
+			MISession miSession = session.getMISession();
+			miSession.fireEvents(events);
 		}
 
 		// Fire destroyedEvent for old threads.
-		if (oldThreads != null && oldThreads.length > 0) {
-			List dList = new ArrayList(oldThreads.length);
-			for (int i = 0; i < oldThreads.length; i++) {
-				boolean found = false;
-				for (int j = 0; newThreads != null && j < newThreads.length; j++) {
-					if (newThreads[j].getId() == ((CThread)oldThreads[i]).getId()) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					dList.add(new Integer(oldThreads[i].getId()));
+		List dList = new ArrayList(oldThreads.length);
+		for (int i = 0; i < oldThreads.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < currentThreads.length; j++) {
+				if (currentThreads[j].getId() == oldThreads[i].getId()) {
+					found = true;
+					break;
 				}
 			}
-			if (!dList.isEmpty()) {
-				MIThreadExitEvent[] events = new MIThreadExitEvent[dList.size()];
-				for (int j = 0; j < events.length; j++) {
-					int id = ((Integer)dList.get(j)).intValue();
-					events[j] = new MIThreadExitEvent(id);
-				}
-				MISession miSession = session.getMISession();
-				miSession.fireEvents(events);
+			if (!found) {
+				dList.add(new Integer(oldThreads[i].getId()));
 			}
+		}
+		if (!dList.isEmpty()) {
+			MIThreadExitEvent[] events = new MIThreadExitEvent[dList.size()];
+			for (int j = 0; j < events.length; j++) {
+				int id = ((Integer)dList.get(j)).intValue();
+				events[j] = new MIThreadExitEvent(id);
+			}
+			MISession miSession = session.getMISession();
+			miSession.fireEvents(events);
 		}
 	}
 
 	/**
 	 * Do the real work of call -thread-list-ids.
 	 */
-	public CThread[] getCThreads() { //throws CDIException {
-		CThread[] cthreads = noThreads;
+	public Thread[] getCThreads() { //throws CDIException {
+		Thread[] cthreads = noThreads;
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIInfoThreads tids = factory.createMIInfoThreads();
@@ -227,14 +234,14 @@ public class CTarget  implements ICDITarget {
 				ids = info.getThreadIds();
 			}
 			if (ids != null && ids.length > 0) {
-				cthreads = new CThread[ids.length];
+				cthreads = new Thread[ids.length];
 				// Ok that means it is a multiThreaded.
 				for (int i = 0; i < ids.length; i++) {
-					cthreads[i] = new CThread(this, ids[i]);
+					cthreads[i] = new Thread(this, ids[i]);
 				}
 			} else {
 				// Provide a dummy.
-				cthreads = new CThread[]{new CThread(this, 0)};
+				cthreads = new Thread[]{new Thread(this, 0)};
 			}
 			currentThreadId = info.getCurrentThread();
 		} catch (MIException e) {
@@ -250,7 +257,7 @@ public class CTarget  implements ICDITarget {
 	public ICDIThread getCurrentThread() throws CDIException {
 		ICDIThread[] threads = getThreads();
 		for (int i = 0; i < threads.length; i++) {
-			CThread cthread = (CThread)threads[i];
+			Thread cthread = (Thread)threads[i];
 			if (cthread.getId() == currentThreadId) {
 				return cthread;
 			}
@@ -269,10 +276,10 @@ public class CTarget  implements ICDITarget {
 	}
 
 	public ICDIThread getThread(int tid) {
-		CThread th = null;
+		Thread th = null;
 		if (currentThreads != null) {
 			for (int i = 0; i < currentThreads.length; i++) {
-				CThread cthread = (CThread)currentThreads[i];
+				Thread cthread = (Thread)currentThreads[i];
 				if (cthread.getId() == tid) {
 					th = cthread;
 					break;
@@ -560,19 +567,12 @@ public class CTarget  implements ICDITarget {
 	public boolean isRunning() {
 		return session.getMISession().getMIInferior().isRunning();
 	}
-	
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getGlobalVariables()
-	 */
-	public ICDIGlobalVariable[] getGlobalVariables() throws CDIException {
-		return new ICDIGlobalVariable[0];
-	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
 	 */
 	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
-		RegisterManager mgr = session.getRegisterManager();
+		ICDIRegisterManager mgr = session.getRegisterManager();
 		return mgr.getRegisterObjects();
 	}
 
@@ -581,7 +581,7 @@ public class CTarget  implements ICDITarget {
 	*/
 	public ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) throws CDIException {
 		ICDIRegister[] registers = null;
-		RegisterManager mgr = session.getRegisterManager();
+		ICDIRegisterManager mgr = session.getRegisterManager();
 		registers = new ICDIRegister[regs.length];
 		for (int i = 0; i < registers.length; i++) {
 				registers[i] = mgr.createRegister(regs[i]);

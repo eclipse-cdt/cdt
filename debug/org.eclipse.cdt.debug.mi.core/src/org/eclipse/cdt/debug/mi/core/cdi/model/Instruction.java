@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;
 
 /**
@@ -14,7 +15,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 
 	MIAsm asm;
 	
-	public Instruction(CTarget target, MIAsm a) {
+	public Instruction(ICDITarget target, MIAsm a) {
 		super(target);
 		asm = a;
 	}

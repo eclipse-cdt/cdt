@@ -23,7 +23,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	BreakpointManager mgr;
 
 	public Breakpoint(BreakpointManager m, MIBreakpoint miBreak) {
-		super(m.getCSession().getCTarget());
+		super(m.getSession().getCurrentTarget());
 		miBreakpoint = miBreak;
 		mgr = m;
 	}

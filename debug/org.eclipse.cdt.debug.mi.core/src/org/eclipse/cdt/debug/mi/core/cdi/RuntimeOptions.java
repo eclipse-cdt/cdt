@@ -21,9 +21,9 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
  */
 public class RuntimeOptions implements ICDIRuntimeOptions {
 
-	CSession session;
+	Session session;
 	
-	public RuntimeOptions(CSession s) {
+	public RuntimeOptions(Session s) {
 		session = s;
 	}
 

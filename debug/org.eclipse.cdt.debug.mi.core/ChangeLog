@@ -1,3 +1,70 @@
+2003-01-26 Alain Magloire
+
+	Major refactor of the code.  Rewrote/Added Managers:
+	VariableManager
+	ExpressionManager
+	RegisterManager
+	UpdateManager.
+
+	Refactor of CSession to Session, CTarget to Target
+	and CThread to Thread.
+	* src/.../mi/core/cdi/event/ChangedEvent.java:
+	* src/.../mi/core/cdi/event/CreatedEvent.java:
+	* src/.../mi/core/cdi/event/DestroyedEvent.java:
+	* src/.../mi/core/cdi/event/DisconnectedEvent.java:
+	* src/.../mi/core/cdi/event/ExitedEvent.java:
+	* src/.../mi/core/cdi/event/MemoryChangedEvent.java:
+	* src/.../mi/core/cdi/event/ResumedEvent.java:
+	* src/.../mi/core/cdi/event/SuspendedEvent.java:
+
+
+	* src/.../mi/core/cdi/model/Argument.java:
+	* src/.../mi/core/cdi/model/Breakpoint.java:
+	* src/.../mi/core/cdi/model/Thread.java:
+	* src/.../mi/core/cdi/model/Target.java:
+	* src/.../mi/core/cdi/model/MemoryBlock.java:
+	* src/.../mi/core/cdi/model/MixedInstruction.java:
+	* src/.../mi/core/cdi/model/Instruction.java:
+	* src/.../mi/core/cdi/model/Signal.java:
+	* src/.../mi/core/cdi/model/SharedLibrary.java:
+	* src/.../mi/core/cdi/model/CObject.java:
+	* src/.../mi/core/cdi/model/Expression.java:
+	* src/.../mi/core/cdi/model/Variable.java:
+	* src/.../mi/core/cdi/model/Value.java:
+	* src/.../mi/core/cdi/model/Register.java:
+	* src/.../mi/core/cdi/model/StackFrame.java:
+
+	* src/.../mi/core/cdi/ArgumentObject.java:
+	* src/.../mi/core/cdi/VariableObject.java:
+	* src/.../mi/core/cdi/RegisterObject.java:
+	* src/.../mi/core/cdi/BreakpointHit.java:
+	* src/.../mi/core/cdi/BreakpointManager.java:
+	* src/.../mi/core/cdi/VariableManager.java:
+	* src/.../mi/core/cdi/ExpressionManager.java:
+	* src/.../mi/core/cdi/RegisterManaget.java:
+	* src/.../mi/core/cdi/SignalManager.java:
+	* src/.../mi/core/cdi/SharedLibraryManager.java:
+	* src/.../mi/core/cdi/EventManager.java:
+	* src/.../mi/core/cdi/MemoryManager.java:
+	* src/.../mi/core/cdi/ErrorInfo.java:
+	* src/.../mi/core/cdi/Session.java:
+	* src/.../mi/core/cdi/ExitInfo.java:
+	* src/.../mi/core/cdi/UpdateManager.java:
+	* src/.../mi/core/cdi/IUpdateListener.java:
+	* src/.../mi/core/cdi/SessionObject.java:
+	* src/.../mi/core/cdi/SignalReceived.java:
+	* src/.../mi/core/cdi/SourceManager.java:
+	* src/.../mi/core/cdi/RuntimeOptions.java:
+	* src/.../mi/core/cdi/WatchpointScope.java:
+	* src/.../mi/core/cdi/WatchpointTrigger.java:
+	* src/.../mi/core/cdi/EndSteppingRange.java:
+
+	* src/.../mi/core/MIPlugin.java:
+	* src/.../mi/core/CygwinGDBDebugger.java:
+	* src/.../mi/core/GDBDebugger.java:
+
+
+
 2003-01-24 Alain Magloire
 
 	* src/.../mi/core/CLIProcessor.java (isEnableBreakpoint):

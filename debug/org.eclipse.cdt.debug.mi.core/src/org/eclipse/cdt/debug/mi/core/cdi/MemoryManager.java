@@ -27,10 +27,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 
 	List blockList;
+	boolean autoupdate;
 
-	public MemoryManager(CSession session) {
+	public MemoryManager(Session session) {
 		super(session);
 		blockList = new ArrayList();
+		autoupdate = true;
 	}
 
 	/**
@@ -38,9 +40,12 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 * inferior comes to a Stop/Suspended.  It will allow to look at the blocks that
 	 * are registered and fired any event if changed.
 	 * Note: Frozen blocks are not updated.
+	 *
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(long, int)
 	 */
 	public void update() {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		MemoryBlock[] blocks = listMemoryBlocks();
 		List eventList = new ArrayList(blocks.length);
 		for (int i = 0; i < blocks.length; i++) {
@@ -68,7 +73,8 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 			if (aList != null) {
 				aList.add(new MIMemoryChangedEvent(array));
 			} else {
-				MISession mi = getCSession().getMISession();
+				Session session = (Session)getSession();
+				MISession mi = session.getMISession();
 				mi.fireEvent(new MIMemoryChangedEvent(array));
 			}
 		}
@@ -112,16 +118,18 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 * with the MemoryManager.
 	 */
 	MemoryBlock cloneBlock(MemoryBlock block) throws CDIException {
+		Session session = (Session)getSession();
 		String exp = block.getExpression();
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(exp, (int)block.getLength());
-		return new MemoryBlock(getCSession().getCTarget(), exp, info);
+		return new MemoryBlock(session.getCurrentTarget(), exp, info);
 	}
 
 	/**
 	 * Post a -data-read-memory to gdb/mi.
 	 */
 	MIDataReadMemoryInfo createMIDataReadMemoryInfo(String exp, int length) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataReadMemory mem = factory.createMIDataReadMemory(0, exp, MIFormat.HEXADECIMAL, 1, 1, length, null);
 		try {
@@ -149,10 +157,11 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#createMemoryBlock(string, int)
 	 */
 	public ICDIMemoryBlock createMemoryBlock(String address, int length) throws CDIException {
+		Session session = (Session)getSession();
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(address, length);
-		ICDIMemoryBlock block = new MemoryBlock(getCSession().getCTarget(), address, info);
+		ICDIMemoryBlock block = new MemoryBlock(session.getCurrentTarget(), address, info);
 		blockList.add(block);
-		MISession mi = getCSession().getMISession();
+		MISession mi = session.getMISession();
 		mi.fireEvent(new MIMemoryCreatedEvent(block.getStartAddress(), block.getLength()));
 		return block;
 	}
@@ -186,6 +195,20 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 		for (int i = 0; i < memoryBlocks.length; i++) {
 			removeBlock(memoryBlocks[i]);
 		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#isAutoUpdate()
+	 */
+	public boolean isAutoUpdate() {
+		return autoupdate;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoUpdate(boolean update) {
+		autoupdate = update;
 	}
 
 }

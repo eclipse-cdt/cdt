@@ -16,9 +16,9 @@ import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 public class SignalReceived extends SessionObject implements ICDISignalReceived {
 
 	ICDISignal signal;
-	public SignalReceived(CSession session, MISignalEvent event) {
+	public SignalReceived(Session session, MISignalEvent event) {
 		super(session);
-		signal = new Signal(session.getCTarget(), event);
+		signal = new Signal(session.getCurrentTarget(), event);
 	}
 
 	/**

@@ -6,12 +6,15 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
 import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
@@ -26,30 +29,28 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 public class Variable extends CObject implements ICDIVariable {
 
 	MIVar miVar;
-	String name;
 	Value value;
-	StackFrame stack;
+	VariableObject varObj;
 
-	public Variable(StackFrame stackframe, String n, MIVar v) {
-		super(stackframe.getCTarget());
-		stack = stackframe;
-		name = n;
+	public Variable(VariableObject obj, MIVar v) {
+		super(obj.getStackFrame().getTarget());
 		miVar = v;
-	}
-
-	StackFrame getStackFrame() {
-		return stack;
+		varObj = obj;
 	}
 
 	public MIVar getMIVar() {
 		return miVar;
 	}
 
+	public VariableObject getVariableObject() {
+		return varObj;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getName()
 	 */
 	public String getName() throws CDIException {
-		return name;
+		return varObj.getName();
 	}
 
 	/**
@@ -80,7 +81,7 @@ public class Variable extends CObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		MISession mi = getCTarget().getCSession().getMISession();
+		MISession mi = ((Session)(getTarget().getSession())).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarAssign var = factory.createMIVarAssign(miVar.getVarName(), expression);
 		try {
@@ -102,7 +103,7 @@ public class Variable extends CObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#isEditable()
 	 */
 	public boolean isEditable() throws CDIException {
-		MISession mi = getCTarget().getCSession().getMISession();
+		MISession mi = ((Session)(getTarget().getSession())).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarShowAttributes var = factory.createMIVarShowAttributes(miVar.getVarName());
 		try {
@@ -122,7 +123,7 @@ public class Variable extends CObject implements ICDIVariable {
 	 */
 	public void setFormat(int format) throws CDIException {
 		int fmt = Format.toMIFormat(format);
-		MISession mi = getCTarget().getCSession().getMISession();
+		MISession mi = ((Session)(getTarget().getSession())).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarSetFormat var = factory.createMIVarSetFormat(miVar.getVarName(), fmt);
 		try {
@@ -146,4 +147,12 @@ public class Variable extends CObject implements ICDIVariable {
 		}
 		return super.equals(var);
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getStackFrame()
+	 */
+	public ICDIStackFrame getStackFrame() throws CDIException {
+		return varObj.getStackFrame();
+	}
+
 }

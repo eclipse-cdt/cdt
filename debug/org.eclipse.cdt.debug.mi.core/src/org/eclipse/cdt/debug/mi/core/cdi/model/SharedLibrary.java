@@ -20,7 +20,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	MIShared miShared;
 
 	public SharedLibrary(SharedLibraryManager m, MIShared slib) {
-		super(m.getCSession().getCTarget());
+		super(m.getSession().getCurrentTarget());
 		mgr = m;
 		miShared = slib;
 	}

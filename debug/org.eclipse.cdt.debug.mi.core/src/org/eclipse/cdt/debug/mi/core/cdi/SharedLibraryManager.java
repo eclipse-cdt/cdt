@@ -34,25 +34,30 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 
 	List sharedList;
 	List unloadedList;
+	boolean autoupdate;
 
-	public SharedLibraryManager (CSession session) {
+	public SharedLibraryManager (Session session) {
 		super(session);
 		sharedList = new ArrayList(1);
 		unloadedList = new ArrayList(1);
+		autoupdate = true;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#update()
+	 */
 	public void update() throws CDIException {
-		CSession s = getCSession();
-		ICDIConfiguration conf = s.getConfiguration();
+		Session session = (Session)getSession();
+		ICDIConfiguration conf = session.getConfiguration();
 		if (!conf.supportsSharedLibrary()) {
 			return; // Bail out early;
 		}
 
 		MIShared[] miLibs = new MIShared[0];
-		CommandFactory factory = s.getMISession().getCommandFactory();
+		CommandFactory factory = session.getMISession().getCommandFactory();
 		MIInfoSharedLibrary infoShared = factory.createMIInfoSharedLibrary();
 		try {
-			s.getMISession().postCommand(infoShared);
+			session.getMISession().postCommand(infoShared);
 			MIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
@@ -93,7 +98,7 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 				eventList.add(new MISharedLibUnloadedEvent(oldlibs[i].getFileName())); 
 			}
 		}
-		MISession mi = getCSession().getMISession();
+		MISession mi = session.getMISession();
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
 	}
@@ -161,10 +166,10 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols()
 	 */
 	public void loadSymbols() throws CDIException {
-		CSession s = getCSession();
+		Session session = (Session)getSession();
 		CLICommand cmd = new CLICommand("shared");
 		try {
-			s.getMISession().postCommand(cmd);
+			session.getMISession().postCommand(cmd);
 			MIInfo info = cmd.getMIInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
@@ -184,10 +189,10 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			if (libs[i].areSymbolsLoaded()) {
 				continue;
 			}
-			CSession s = getCSession();
+			Session session = (Session)getSession();
 			CLICommand cmd = new CLICommand("shared " + libs[i].getFileName());
 			try {
-				s.getMISession().postCommand(cmd);
+				session.getMISession().postCommand(cmd);
 				MIInfo info = cmd.getMIInfo();
 				if (info == null) {
 					throw new CDIException("No answer");
@@ -197,6 +202,20 @@ public class SharedLibraryManager extends SessionObject implements ICDISharedLib
 			}
 		}
 		update();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#isAutoUpdate()
+	 */
+	public boolean isAutoUpdate() {
+		return autoupdate;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoUpdate(boolean update) {
+		autoupdate = update;
 	}
 
 }

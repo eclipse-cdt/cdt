@@ -6,89 +6,82 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIArgumentObject;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Argument;
-import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
-import org.eclipse.cdt.debug.mi.core.cdi.model.CThread;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
+import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
-import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIArg;
+import org.eclipse.cdt.debug.mi.core.output.MIFrame;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
-public class VariableManager extends SessionObject implements ICDIExpressionManager {
+public class VariableManager extends SessionObject implements ICDIVariableManager, IUpdateListener {
 
-	List elementList;
-	List oosList;  // Out of Scope variable lists;
+	List variableList;
+	boolean autoupdate;
 
-	/**
-	 * Class container to regroup all info concerning a variable.
-	 */
-	public class Element {
-		public MIVar miVar;
-		public String name;
-		public StackFrame stackframe;
-		public int stackdepth;
-		public Variable variable;
-	}
-
-	public VariableManager(CSession session) {
+	public VariableManager(Session session) {
 		super(session);
-		elementList = new ArrayList();
-		oosList = new ArrayList();
+		variableList = Collections.synchronizedList(new ArrayList());
+		autoupdate = true;
 	}
 
 	/**
 	 * Return the element that have the uniq varName.
+	 * null is return if the element is not in the cache.
 	 */
-	public Element getElement(String varName) {
-		Element[] elements = getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].miVar.getVarName().equals(varName)) {
-				return elements[i];
+	public Variable getVariable(String varName) {
+		Variable[] vars = getVariables();
+		for (int i = 0; i < vars.length; i++) {
+			if (vars[i].getMIVar().getVarName().equals(varName)) {
+				return vars[i];
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * Return the Element with that stackframe, stack, that with this name.
+	 * Return the Element with this stackframe, and with this name.
 	 * null is return if the element is not in the cache.
 	 */
-	Element getElement(StackFrame stack, String name) {
-		Element[] elements = getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].name.equals(name)) {
-				if (elements[i].stackframe.equals(stack)) {
-					int depth = 0;
-					CThread thread = stack.getCThread();
-					if (thread != null) {
-						try {
-							depth = thread.getStackFrameCount();
-						} catch (CDIException e) {
+	Variable findVariable(VariableObject v) throws CDIException {
+		ICDIStackFrame stack = v.getStackFrame();
+		String name = v.getName();
+		int position = v.getPosition();
+		int depth = v.getStackDepth();
+		Variable[] vars = getVariables();
+		for (int i = 0; i < vars.length; i++) {
+			if (vars[i].getName().equals(name)) {
+				if (vars[i].getStackFrame().equals(stack)) {
+					if (vars[i].getVariableObject().getPosition() == position) {
+						if (vars[i].getVariableObject().getStackDepth() == depth) {
+							return vars[i];
 						}
-					}
-					if (elements[i].stackdepth == depth) {
-						return elements[i];
 					}
 				}
 			}
@@ -99,112 +92,36 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 	/**
 	 * Make sure an element is not added twice.
 	 */
-	void addElement(Element element) {
-		Element[] elements = getElements();
-		for (int i = 0; i < elements.length; i++) {
-			String name = elements[i].miVar.getVarName();
-			if (name.equals(element.miVar.getVarName())) {
+	void addVariable(Variable var) {
+		Variable[] vars = getVariables();
+		for (int i = 0; i < vars.length; i++) {
+			String name = vars[i].getMIVar().getVarName();
+			if (name.equals(var.getMIVar().getVarName())) {
 				return;
 			}
 		}
-		elementList.add(element);
+		variableList.add(var);
 	}
 
 	/**
 	 * Returns all the elements that are in the cache.
 	 */
-	Element[] getElements() {
-		return (Element[]) elementList.toArray(new Element[0]);
+	Variable[] getVariables() {
+		return (Variable[]) variableList.toArray(new Variable[0]);
 	}
 
-	/**
-	 * Update the elements in the cache, from the response of the "-var-update *"
-	 * mi/command.  Out-of-scope elements are removed etc ..
-	 * Expression are special they are not remove when out-of-scope is thrown.
-	 * For all remove element in the cache fires a destroy event.
-	 */
-	void update() throws CDIException {
-		MISession mi = getCSession().getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIVarUpdate update = factory.createMIVarUpdate();
-		try {
-			mi.postCommand(update);
-			MIVarUpdateInfo info = update.getMIVarUpdateInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-			MIVarChange[] changes = info.getMIVarChanges();
-			List eventList = new ArrayList(changes.length);
-			for (int i = 0 ; i < changes.length; i++) {
-				String varName = changes[i].getVarName();
-				Element element = getElement(varName);
-				if (element != null) {
-					eventList.add(new MIVarChangedEvent(update.getToken(), varName, changes[i].isInScope()));
-				}
-				if (! changes[i].isInScope()) {
-					// Only remove ICDIVariables.
-					if (! (element.variable instanceof Expression)) {
-						removeElement(changes[i]);
-					}
-				}
-			}
-			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
-			mi.fireEvents(events);
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
-	}
-
-	/**
-	 * If element is not in the cache create a new element "-var-create"
-	 * for the stackframe(stack).
-	 */
-	Element createElement(StackFrame stack, String name) throws CDIException {
-		Element element = getElement(stack, name);
-		if (element == null) {
-			//stack.getCThread().setCurrentStackFrame(stack);
-			MISession mi = getCSession().getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			MIVarCreate var = factory.createMIVarCreate(name);
-			try {
-				mi.postCommand(var);
-				MIVarCreateInfo info = var.getMIVarCreateInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
-				}
-				element = new Element();
-				element.miVar = info.getMIVar();
-				element.name = name;
-				element.stackframe = stack;
-				CThread thread = stack.getCThread();
-				if (thread != null) {
-					element.stackdepth = thread.getStackFrameCount();
-				}
-			} catch (MIException e) {
-				throw new MI2CDIException(e);
-			}
-		}
-		return element;
-	}
-
-	/**
-	 * Remove element from the OutOfscope list(oos).
-	 */
-	public Element removeOutOfScope(String varName) {
-		Element[] oos = (Element[])oosList.toArray(new Element[0]);
-		for (int i = 0; i < oos.length; i++) {
-			if (oos[i].miVar.getVarName().equals(varName)) {
-				return oos[i];
-			}
-		}
-		return null;
+	public Variable createVariable(VariableObject v, MIVar mivar) throws CDIException {
+		Variable variable = new Variable(v, mivar);
+		addVariable(variable);
+		return variable;
 	}
 
 	/**
 	 * Tell gdb to remove the underlying var-object also.
 	 */
 	void removeMIVar(MIVar miVar) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
 		try {
@@ -220,146 +137,286 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 	 * because they are still needed for the destroy events.  The destroy event will
 	 * call removeOutOfScope.
 	 */
-	void removeElement(String varName) throws CDIException {
-		Element[] elements = getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].miVar.getVarName().equals(varName)) {
-				elementList.remove(elements[i]);
-				oosList.add(elements[i]); // Put on the Out Of Scope list
-				removeMIVar(elements[i].miVar);
+	public void removeVariable(String varName) throws CDIException {
+		Variable[] vars = getVariables();
+		for (int i = 0; i < vars.length; i++) {
+			if (vars[i].getMIVar().getVarName().equals(varName)) {
+				variableList.remove(vars[i]);
+				removeMIVar(vars[i].getMIVar());
 			}
 		}
 	}
 
 	/**
-	 * Finds the variable Uniq name and call removeElement().
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createArgument(ICDIArgumentObject)
 	 */
-	void removeElement(MIVarChange changed) throws CDIException {
-		String varName = changed.getVarName();
-		removeElement(varName);
+	public ICDIArgument createArgument(ICDIArgumentObject a) throws CDIException {
+		if (a instanceof ArgumentObject) {
+			ArgumentObject argObj = (ArgumentObject)a;
+			Variable variable = findVariable(argObj);
+			Argument argument = null;
+			if (variable != null && variable instanceof Argument) {
+				argument = (Argument)variable;
+			}
+			if (argument == null) {
+				StackFrame stack = argObj.getStackFrame();
+				String name = argObj.getName();
+				Session session = (Session)getSession();
+				ICDITarget currentTarget = session.getCurrentTarget();
+				Thread currentThread = (Thread)currentTarget.getCurrentThread();
+				StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
+				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+				try {
+					MISession mi = session.getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIVarCreate var = factory.createMIVarCreate(name);
+					mi.postCommand(var);
+					MIVarCreateInfo info = var.getMIVarCreateInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+					argument = new Argument(argObj, info.getMIVar());
+					addVariable(argument);
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				} finally {
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				}
+			}
+			return argument;
+		}
+		throw  new CDIException("Wrong variable type");
 	}
 
 	/**
-	 * Remove the Element.
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getArgumentObject(ICDIStackFrame, String)
 	 */
-	void removeElement(Variable variable) throws CDIException {
-		String varName = ((Variable)variable).getMIVar().getVarName();
-		removeElement(varName);
-	}
-
-	/**
-	 * Remove the elements.
-	 */
-	void removeElements(Variable[] variables) throws CDIException {
-		for (int i = 0; i < variables.length; i++) {
-			removeElement(variables[i]);
-		}
-	}
-
-	public ICDIVariable createVariable(StackFrame stack, String name) throws CDIException {
-		Element element = createElement(stack, name);
-		Variable var;
-		if (element.variable != null) {
-			var = element.variable;
-		} else {
-			var = new Variable(stack, name, element.miVar);
-			element.variable = var;
-			addElement(element);
-			// Fire an created Event.
-			MISession mi = getCSession().getMISession();
-			mi.fireEvent(new MIVarCreatedEvent(element.miVar.getVarName()));
-		}
-		return var;
-	}
-
-	public Variable createVariable(StackFrame stack, String name, MIVar miVar )
+	public ICDIArgumentObject getArgumentObject(ICDIStackFrame stack, String name)
 		throws CDIException {
-		Element element = new Element();
-		element.miVar = miVar;
-		element.name = name;
-		element.stackframe = stack;
-		Variable var = new Variable(stack, name, miVar);
-		element.variable = var;
-		addElement(element);
-		// Fire an created Event.
-		MISession mi = getCSession().getMISession();
-		mi.fireEvent(new MIVarCreatedEvent(miVar.getVarName()));
-		return var;
-	}
-
-	public ICDIArgument createArgument(StackFrame stack, String name) throws CDIException {
-		Element element = createElement(stack, name);
-		Argument carg;
-		if (element.variable != null && element.variable instanceof Argument) { 
-			carg = (Argument)element.variable;
-		} else {
-			carg = new Argument(stack, name,element.miVar);
-			element.variable = carg;
-			addElement(element);
-			// Fire an created Event.
-			MISession mi = getCSession().getMISession();
-			mi.fireEvent(new MIVarCreatedEvent(element.miVar.getVarName()));
-		}
-		return carg;
-	}
-
-	ICDIExpression createExpression(StackFrame stack, String name) throws CDIException {
-		Element element = createElement(stack, name);
-		Expression cexp;
-		if (element.variable != null && element.variable instanceof Expression) {
-			cexp = (Expression)element.variable;
-		} else {
-			cexp = new Expression(stack, name, element.miVar);
-			element.variable = cexp;
-			addElement(element);
-			// Fire an created Event.
-			MISession mi = getCSession().getMISession();
-			mi.fireEvent(new MIVarCreatedEvent(element.miVar.getVarName()));
-		}
-		return cexp;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
-	 */
-	public ICDIExpression createExpression(String name) throws CDIException {
-		CTarget target = getCSession().getCTarget();
-		StackFrame frame = ((CThread)target.getCurrentThread()).getCurrentStackFrame();
-		return createExpression(frame, name);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
-	 */
-	public ICDIExpression[] getExpressions() throws CDIException {
-		Element[] elements = getElements();
-		List aList = new ArrayList(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].variable instanceof ICDIExpression) {
-				aList.add(elements[i].variable);
+		ICDIArgumentObject[] argsObjects = getArgumentObjects(stack);
+		for (int i = 0; i < argsObjects.length; i++) {
+			if (argsObjects[i].getName().equals(name)) {
+				return argsObjects[i];
 			}
 		}
-		return (ICDIExpression[])aList.toArray(new ICDIExpression[0]);
+		return null;
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getArgumentObjects(ICDIStackFrame)
 	 */
-	public void removeExpression(ICDIExpression expression)
-		throws CDIException {
-		if (expression instanceof Variable) {
-			removeElement((Variable)expression);
+	public ICDIArgumentObject[] getArgumentObjects(ICDIStackFrame frame) throws CDIException {
+		if (!(frame instanceof StackFrame)) {
+			return new ICDIArgumentObject[0];
+		}
+		List argObjects = new ArrayList();
+		Session session = (Session)getSession();
+		ICDITarget currentTarget = session.getCurrentTarget();
+		Thread currentThread = (Thread)currentTarget.getCurrentThread();
+		StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
+		((Thread)(frame.getThread())).setCurrentStackFrame((StackFrame)frame, false);
+		try {
+			MISession mi = session.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			int depth = frame.getThread().getStackFrameCount();
+			int level = frame.getLevel();
+			MIStackListArguments listArgs =
+			factory.createMIStackListArguments(false, level, level);
+			MIArg[] args = null;
+			mi.postCommand(listArgs);
+			MIStackListArgumentsInfo info = listArgs.getMIStackListArgumentsInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			MIFrame[] miFrames = info.getMIFrames();
+			if (miFrames != null && miFrames.length == 1) {
+				args = miFrames[0].getArgs();
+			}
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					ArgumentObject arg = new ArgumentObject(args[i].getName(),
+					 (StackFrame)frame, args.length - i, depth);
+					argObjects.add(arg);
+				}
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		} finally {
+			currentThread.setCurrentStackFrame(currentFrame);
+		}
+		return (ICDIArgumentObject[])argObjects.toArray(new ICDIArgumentObject[0]);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObject(ICDIStackFrame, String)
+	 */
+	public ICDIVariableObject getVariableObject(ICDIStackFrame stack, String name) throws CDIException {
+		ICDIVariableObject[] varObjects = getVariableObjects(stack);
+		for (int i = 0; i < varObjects.length; i++) {
+			if (varObjects[i].getName().equals(name)) {
+				return varObjects[i];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObject(String, String, String)
+	 */
+	public ICDIVariableObject getVariableObject(String filename, String function, String name) throws CDIException {
+		if (filename == null) {
+			filename = new String();
+		}
+		if (function == null) {
+			function = new String();
+		}
+		if (name == null) {
+			name = new String();
+		}
+		StringBuffer buffer = new StringBuffer();
+		if (filename.length() > 0) {
+			buffer.append('\'').append(filename).append('\'').append("::");
+		}
+		if (function.length() > 0) {
+			buffer.append(function).append("::");
+		}
+		buffer.append(name);
+		return new VariableObject(buffer.toString(), null, 0, 0);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjects(ICDIStackFrame)
+	 */
+	public ICDIVariableObject[] getVariableObjects(ICDIStackFrame frame) throws CDIException {
+		if (!(frame instanceof StackFrame)) {
+			return new ICDIVariableObject[0];
+		}
+		List varObjects = new ArrayList();
+		Session session = (Session)getSession();
+		ICDITarget currentTarget = session.getCurrentTarget();
+		Thread currentThread = (Thread)currentTarget.getCurrentThread();
+		StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
+		((Thread)(frame.getThread())).setCurrentStackFrame((StackFrame)frame, false);
+		try {
+			MISession mi = session.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			int depth = frame.getThread().getStackFrameCount();
+			MIArg[] args = null;
+			MIStackListLocals locals = factory.createMIStackListLocals(false);
+			mi.postCommand(locals);
+			MIStackListLocalsInfo info = locals.getMIStackListLocalsInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			args = info.getLocals();
+			if (args != null) {
+				for (int i = 0; i < args.length; i++) {
+					VariableObject varObj = new VariableObject(args[i].getName(),
+						 (StackFrame)frame, args.length - i, depth);
+					varObjects.add(varObj);
+				}
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		} finally {
+			currentThread.setCurrentStackFrame((StackFrame)currentFrame, false);
+		}
+		return (ICDIVariableObject[])varObjects.toArray(new ICDIVariableObject[0]);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createVariable(ICDIVariableObject)
+	 */
+	public ICDIVariable createVariable(ICDIVariableObject v) throws CDIException {
+		if (v instanceof VariableObject) {
+			VariableObject varObj = (VariableObject)v;
+			Variable variable = findVariable(varObj);
+			if (variable == null) {
+				StackFrame stack = varObj.getStackFrame();
+				String name = varObj.getName();
+				Session session = (Session)getSession();
+				ICDITarget currentTarget = session.getCurrentTarget();
+				Thread currentThread = (Thread)currentTarget.getCurrentThread();
+				StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
+				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+				try {
+					MISession mi = session.getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIVarCreate var = factory.createMIVarCreate(name);
+					mi.postCommand(var);
+					MIVarCreateInfo info = var.getMIVarCreateInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+					variable = new Variable(varObj, info.getMIVar());
+					addVariable(variable);
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				} finally {
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				}
+			}
+			return variable;
+		}
+		throw new CDIException("Wrong variable type");
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#destroyVariable(ICDIVariable)
+	 */
+	public void destroyVariable(ICDIVariable var) throws CDIException {
+		if (var instanceof Variable) {
+			// Fire  a destroyEvent ?
+			Variable variable = (Variable)var;
+			MIVarChangedEvent change = new MIVarChangedEvent(0, variable.getMIVar().getVarName(), false);
+			Session session = (Session)getSession();
+			MISession mi = session.getMISession();
+			mi.fireEvent(change);
 		}
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpressions(ICDIExpression[])
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.IVarUpdateListener#changeList(MIVarChange[])
 	 */
-	public void removeExpressions(ICDIExpression[] expressions)
-		throws CDIException {
-		for (int i = 0; i < expressions.length; i++) {
-			removeExpression(expressions[i]);
+	public void changeList(MIVarChange[] changes) {
+		List eventList = new ArrayList(changes.length);
+		for (int i = 0 ; i < changes.length; i++) {
+			String varName = changes[i].getVarName();
+			Variable variable = getVariable(varName);
+			if (variable != null) {
+				eventList.add(new MIVarChangedEvent(0, varName, changes[i].isInScope()));
+			}
 		}
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#isAutoUpdate()
+	 */
+	public boolean isAutoUpdate() {
+		return autoupdate;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoUpdate(boolean update) {
+		autoupdate = update;
+	}
+
+	/**
+	 * Update the elements in the cache, from the response of the "-var-update *"
+	 * mi/command.
+	 *
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createArgument(ICDIArgumentObject)
+	 */
+	public void update() throws CDIException {
+		Session session = (Session)getSession();
+		UpdateManager mgr = session.getUpdateManager();
+		mgr.update();
 	}
 
 }

@@ -31,15 +31,19 @@ import org.eclipse.cdt.debug.mi.core.output.MISrcAsm;
  */
 public class SourceManager extends SessionObject implements ICDISourceManager {
 
-	public SourceManager(CSession session) {
+	boolean autoupdate;
+
+	public SourceManager(Session session) {
 		super(session);
+		autoupdate = false;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#addSourcePaths(String[])
 	 */
 	public void addSourcePaths(String[] dirs) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
 		try {
@@ -54,7 +58,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getSourcePaths()
 	 */
 	public String[] getSourcePaths() throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBShowDirectories dir = factory.createMIGDBShowDirectories();
 		try {
@@ -67,7 +72,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	}
 
 	public void setLibraryPaths(String[] libPaths) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBSetSolibSearchPath solib = factory.createMIGDBSetSolibSearchPath(libPaths);
 		try {
@@ -79,7 +85,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	}
 
 	public String[] getLibraryPaths() throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBShowSolibSearchPath dir = factory.createMIGDBShowSolibSearchPath();
 		try {
@@ -92,7 +99,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	}
 
 	public void setAutoSolib(boolean set) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib(set);
 		try {
@@ -107,7 +115,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, int, int)
 	 */
 	public ICDIInstruction[] getInstructions(String filename, int linenum, int lines) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataDisassemble dis = factory.createMIDataDisassemble(filename, linenum, lines, false);
 		try {
@@ -116,7 +125,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			MIAsm[] asm = info.getMIAsms();
 			Instruction[] instructions = new Instruction[asm.length];
 			for (int i = 0; i < instructions.length; i++) {
-				instructions[i] = new Instruction(getCSession().getCTarget(), asm[i]);
+				instructions[i] = new Instruction(session.getCurrentTarget(), asm[i]);
 			}
 			return instructions;
 		} catch (MIException e) {
@@ -135,7 +144,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(long, long)
 	 */
 	public ICDIInstruction[] getInstructions(long start, long end) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String hex = "0x";
 		String sa = hex + Long.toHexString(start);
@@ -147,7 +157,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			MIAsm[] asm = info.getMIAsms();
 			Instruction[] instructions = new Instruction[asm.length];
 			for (int i = 0; i < instructions.length; i++) {
-				instructions[i] = new Instruction(getCSession().getCTarget(), asm[i]);
+				instructions[i] = new Instruction(session.getCurrentTarget(), asm[i]);
 			}
 			return instructions;
 		} catch (MIException e) {
@@ -159,7 +169,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(String, int, int)
 	 */
 	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum, int lines) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataDisassemble dis = factory.createMIDataDisassemble(filename, linenum, lines, true);
 		try {
@@ -168,7 +179,7 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			MISrcAsm[] srcAsm = info.getMISrcAsms();
 			ICDIMixedInstruction[] mixed = new ICDIMixedInstruction[srcAsm.length];
 			for (int i = 0; i < mixed.length; i++) {
-				mixed[i] = new MixedInstruction(getCSession().getCTarget(), srcAsm[i]);
+				mixed[i] = new MixedInstruction(session.getCurrentTarget(), srcAsm[i]);
 			}
 			return mixed;
 		} catch (MIException e) {
@@ -187,7 +198,8 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(long, long)
 	 */
 	public ICDIMixedInstruction[] getMixedInstructions(long start, long end) throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String hex = "0x";
 		String sa = hex + Long.toHexString(start);
@@ -199,12 +211,32 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 			MISrcAsm[] srcAsm = info.getMISrcAsms();
 			ICDIMixedInstruction[] mixed = new ICDIMixedInstruction[srcAsm.length];
 			for (int i = 0; i < mixed.length; i++) {
-				mixed[i] = new MixedInstruction(getCSession().getCTarget(), srcAsm[i]);
+				mixed[i] = new MixedInstruction(session.getCurrentTarget(), srcAsm[i]);
 			}
 			return mixed;
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#isAutoUpdate()
+	 */
+	public boolean isAutoUpdate() {
+		return autoupdate;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoUpdate(boolean update) {
+		autoupdate = update;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#update()
+	 */
+	public void update() throws CDIException {
 	}
 
 }

@@ -14,28 +14,32 @@ import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICDISession
  */
-public class CSession implements ICDISession, ICDISessionObject {
+public class Session implements ICDISession, ICDISessionObject {
 
 	Properties props;
 	MISession session;
-	BreakpointManager breakpointManager;
+	UpdateManager updateManager;
 	EventManager eventManager;
+	BreakpointManager breakpointManager;
+	ExpressionManager expressionManager;
 	VariableManager variableManager;
 	RegisterManager registerManager;
 	MemoryManager memoryManager;
@@ -43,14 +47,14 @@ public class CSession implements ICDISession, ICDISessionObject {
 	SignalManager signalManager;
 	SourceManager sourceManager;
 	ICDIConfiguration configuration;
-	CTarget ctarget;
+	Target ctarget;
 
-	public CSession(MISession s, boolean attach) {
+	public Session(MISession s, boolean attach) {
 		commonSetup(s);
 		configuration = new Configuration(s, attach);
 	}
 
-	public CSession(MISession s) {
+	public Session(MISession s) {
 		commonSetup(s);
 		configuration = new CoreFileConfiguration();
 	}
@@ -58,24 +62,32 @@ public class CSession implements ICDISession, ICDISessionObject {
 	private void commonSetup(MISession s) {
 		session = s;
 		props = new Properties();
+
 		breakpointManager = new BreakpointManager(this);
+
 		eventManager = new EventManager(this);
 		s.addObserver(eventManager);
+
+		updateManager = new UpdateManager(this);
+		expressionManager = new ExpressionManager(this);
 		variableManager = new VariableManager(this);
+		updateManager.addUpdateListener(variableManager);
+		updateManager.addUpdateListener(expressionManager);
+
 		registerManager = new RegisterManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
 		sharedLibraryManager = new SharedLibraryManager(this);
-		ctarget = new CTarget(this);
+		ctarget = new Target(this);
 	}
 
 	public MISession getMISession() {
 		return session;
 	}
 
-	public CTarget getCTarget() {
-		return ctarget;
+	public UpdateManager getUpdateManager() {
+		return updateManager;
 	}
 
 	/**
@@ -100,10 +112,24 @@ public class CSession implements ICDISession, ICDISessionObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getVariableManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getExpressionManager()
 	 */
 	public ICDIExpressionManager getExpressionManager() {
+		return expressionManager;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getVariableManager()
+	 */
+	public ICDIVariableManager getVariableManager() {
 		return variableManager;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getRegisterManager()
+	 */
+	public ICDIRegisterManager getRegisterManager() {
+		return registerManager;
 	}
 
 	/**
@@ -111,18 +137,6 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 */
 	public ICDISharedLibraryManager getSharedLibraryManager() {
 		return sharedLibraryManager;
-	}
-
-	/**
-	 */
-	public RegisterManager getRegisterManager() {
-		return registerManager;
-	}
-
-	/**
-	 */
-	public VariableManager getVariableManager() {
-		return variableManager;
 	}
 
 	/**
@@ -161,13 +175,14 @@ public class CSession implements ICDISession, ICDISessionObject {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setCurrentTarget()
 	 */
 	public void setCurrentTarget(ICDITarget target) throws CDIException {
-		if (target instanceof CTarget) {
-			ctarget = (CTarget)target;
-			return;
+		if (target instanceof Target) {
+			ctarget = (Target)target;
+		} else {
+			throw new CDIException("Unkown target");
 		}
-		throw new CDIException("Unkown target");
 	}
 
 	/**

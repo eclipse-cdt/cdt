@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
@@ -144,7 +144,7 @@ public class MIPlugin extends Plugin {
 			// If an exception is thrown that means ok
 			// we did not attach to any target.
 		}
-		return new CSession(session, false);
+		return new Session(session, false);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class MIPlugin extends Plugin {
 		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.CORE);
-		return new CSession(session);
+		return new Session(session);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class MIPlugin extends Plugin {
 		}
 		//@@@ We have to manually set the suspended state when we attach
 		session.getMIInferior().setSuspended();
-		return new CSession(session, true);
+		return new Session(session, true);
 	}
 
 	/**

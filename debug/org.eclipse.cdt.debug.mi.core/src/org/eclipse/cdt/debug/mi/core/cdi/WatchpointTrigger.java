@@ -16,7 +16,7 @@ public class WatchpointTrigger extends SessionObject implements ICDIWatchpointTr
 
 	MIWatchpointTriggerEvent watchEvent;
 
-	public WatchpointTrigger(CSession session, MIWatchpointTriggerEvent e) {
+	public WatchpointTrigger(Session session, MIWatchpointTriggerEvent e) {
 		super(session);
 		watchEvent = e;
 	}
@@ -41,7 +41,7 @@ public class WatchpointTrigger extends SessionObject implements ICDIWatchpointTr
 	public ICDIWatchpoint getWatchpoint() {
 		int number = watchEvent.getNumber();
 		// Ask the breakpointManager for the breakpoint
-		BreakpointManager mgr = (BreakpointManager)getCSession().getBreakpointManager();
+		BreakpointManager mgr = (BreakpointManager)getSession().getBreakpointManager();
 		// We need to return the same object as the reason.
 		Watchpoint point = mgr.getWatchpoint(number);
 		// FIXME: if point ==null ??? Create a new breakpoint ?

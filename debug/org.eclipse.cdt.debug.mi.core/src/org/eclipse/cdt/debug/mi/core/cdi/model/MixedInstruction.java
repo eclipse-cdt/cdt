@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.output.MIAsm;
 import org.eclipse.cdt.debug.mi.core.output.MISrcAsm;
 
@@ -16,7 +17,7 @@ public class MixedInstruction extends CObject implements ICDIMixedInstruction {
 
 	MISrcAsm srcAsm;
 	
-	public MixedInstruction (CTarget target, MISrcAsm a) {
+	public MixedInstruction (ICDITarget target, MISrcAsm a) {
 		super(target);
 		srcAsm = a;
 	}
@@ -35,7 +36,7 @@ public class MixedInstruction extends CObject implements ICDIMixedInstruction {
 		MIAsm[] asms = srcAsm.getMIAsms();
 		ICDIInstruction[] instructions = new ICDIInstruction[asms.length];
 		for (int i = 0; i < asms.length; i++) {
-			instructions[i] = new Instruction(getCTarget(), asms[i]);
+			instructions[i] = new Instruction(getTarget(), asms[i]);
 		}
 		return instructions;
 	}

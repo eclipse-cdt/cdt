@@ -14,7 +14,7 @@ public class ExitInfo extends SessionObject implements ICDIExitInfo {
 
 	MIInferiorExitEvent event;
 
-	public ExitInfo(CSession session, MIInferiorExitEvent e) {
+	public ExitInfo(Session session, MIInferiorExitEvent e) {
 		super(session);
 		event = e;
 	}

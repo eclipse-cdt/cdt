@@ -9,7 +9,7 @@ public class ErrorInfo extends SessionObject implements ICDIErrorInfo {
 
 	MIErrorEvent event;
 
-	public ErrorInfo(CSession session, MIErrorEvent e) {
+	public ErrorInfo(Session session, MIErrorEvent e) {
 		super(session);
 		event = e;
 	}

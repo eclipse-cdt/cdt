@@ -12,9 +12,9 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
  */
 public class SessionObject implements ICDISessionObject {
 
-	private CSession session;
+	private Session session;
 
-	public SessionObject (CSession session) {
+	public SessionObject (Session session) {
 		this.session = session;
 	}
 
@@ -25,7 +25,4 @@ public class SessionObject implements ICDISessionObject {
 		return session;
 	}
 	
-	public CSession getCSession() {
-		return session;
-	}
 }

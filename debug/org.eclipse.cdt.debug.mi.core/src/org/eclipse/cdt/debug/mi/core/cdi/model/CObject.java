@@ -11,9 +11,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
  */
 public class CObject implements ICDIObject {
 
-	CTarget target;
+	ICDITarget target;
 	
-	public CObject(CTarget t) {
+	public CObject(ICDITarget t) {
 		target = t;
 	}
 	
@@ -22,10 +22,6 @@ public class CObject implements ICDIObject {
 	 */
 	public ICDITarget getTarget() {
 		return target;
-	}
-	
-	public CTarget getCTarget() {
-			return target;
 	}
 
 }

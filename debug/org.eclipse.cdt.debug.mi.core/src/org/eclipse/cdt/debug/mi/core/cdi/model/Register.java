@@ -12,6 +12,8 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterObject;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterValues;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteRegisterValues;
@@ -43,12 +46,12 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * gdb/mi -data-list-register-values returns the value like this
 	 * value="{f = {0x0, 0x0, 0x0, 0x0}}"
  	 * we'll parse() it and change it to:
-	 * Argument[0] = { "xmm0", "{f = {0x0, 0x0, 0x0, 0x0}}"
-	 * Argument[1] = { "xmm0.f", "{0x0, 0x0, 0x0, 0x0}"}
+	 * Argument[0] = { "xmm0", "{f = {0x0, 0x1, 0x2, 0x3}}"}
+	 * Argument[1] = { "xmm0.f", "{0x0, 0x1, 0x2, 0x3}"}
 	 * Argument[2] = { "xmm0.f.0", "0x0"}
-	 * Argument[3] = { "xmm0.f.1", "0x0"}
-	 * Argument[4] = { "xmm0.f.2", "0x0"}
-	 * Argument[5] = { "xmm0.f.3", "0x0"}
+	 * Argument[3] = { "xmm0.f.1", "0x1"}
+	 * Argument[4] = { "xmm0.f.2", "0x2"}
+	 * Argument[5] = { "xmm0.f.3", "0x3"}
 	 * see @parse()
 	 */
 	class Argument {
@@ -66,7 +69,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 		}
 	}
 
-	public Register(CTarget target, ICDIRegisterObject r) {
+	public Register(ICDITarget target, ICDIRegisterObject r) {
 		super(target);
 		parent = null;
 		lastname = r.getName();
@@ -74,7 +77,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	}
 
 	public Register(Register p, String n) {
-		super(p.getCTarget());
+		super(p.getTarget());
 		parent = p;
 		lastname = n;
 	}
@@ -83,7 +86,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * return the MI regno.
 	 */
 	public int getID() {
-		return regObject.getId();
+		return regObject.getPosition();
 	}
 
 	/**
@@ -151,9 +154,10 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 */
 	public String getValueString() throws CDIException {
 		if (parent == null) {
-			MISession mi = getCTarget().getCSession().getMISession();
+			Session session = (Session)getTarget().getSession();
+			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
-			int[] regno = new int[]{regObject.getId()};
+			int[] regno = new int[]{regObject.getPosition()};
 			MIDataListRegisterValues registers =
 				factory.createMIDataListRegisterValues(format, regno);
 			try {
@@ -204,9 +208,10 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		MISession mi = getCTarget().getCSession().getMISession();
+		Session session = (Session)getTarget().getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		int[] regnos = new int[]{regObject.getId()};
+		int[] regnos = new int[]{regObject.getPosition()};
 		String[] values = new String[]{expression};
 		MIDataWriteRegisterValues registers =
 				factory.createMIDataWriteRegisterValues(format, regnos, values);
@@ -221,7 +226,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 		}
 		// If the assign was succesfull fire a MIRegisterChangedEvent()
 		MIRegisterChangedEvent change = new MIRegisterChangedEvent(registers.getToken(),
-			regObject.getName(), regObject.getId());
+			regObject.getName(), regObject.getPosition());
 		mi.fireEvent(change);
 
 	}
@@ -317,4 +322,12 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 		}
 		return (Argument[])aList.toArray(new Argument[0]);
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getStackFrame()
+	 */
+	public ICDIStackFrame getStackFrame() throws CDIException {
+		return null;
+	}
+
 }

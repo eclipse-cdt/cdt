@@ -4,25 +4,10 @@ import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 
 /**
  */
-public class RegisterObject implements ICDIRegisterObject {
+public class RegisterObject extends VariableObject implements ICDIRegisterObject {
 
-	int index;
-	String name;
-
-	public RegisterObject(String n, int i) {
-		name = n;
-		index = i;
-	}
-
-	public int getId() {
-		return index;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject#getName()
-	 */
-	public String getName() {
-		return name;
+	public RegisterObject(String name, int i) {
+		super(name, null, i, 0);
 	}
 
 }

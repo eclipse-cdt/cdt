@@ -12,9 +12,18 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
+import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.CreatedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.DestroyedEvent;
@@ -23,8 +32,8 @@ import org.eclipse.cdt.debug.mi.core.cdi.event.ExitedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.MemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ResumedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.SuspendedEvent;
-import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
@@ -62,7 +71,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 */
 	public void update(Observable o, Object arg) {
 		MIEvent miEvent = (MIEvent)arg;
-		CSession session = getCSession();
+		Session session = (Session)getSession();
 		List cdiList = new ArrayList(1);
 
 		if (ignoreEventToken(miEvent.getToken())) {
@@ -168,7 +177,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		fireEvents(cdiEvents);
 	}
 
-	public EventManager(CSession session) {
+	public EventManager(Session session) {
 		super(session);
 	}
 	
@@ -217,22 +226,46 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 * fired for changes.
 	 */
 	void processSuspendedEvent(MIStoppedEvent stopped) {
-		CTarget target = getCSession().getCTarget();
-
+		Session session = (Session)getSession();
+		ICDITarget currentTarget = session.getCurrentTarget();
 		// Set the current thread.
 		int threadId = threadId = stopped.getThreadId();
-		target.updateState(threadId);
-
+		if (currentTarget instanceof Target) {
+			((Target)currentTarget).updateState(threadId);
+		}
 		// Update the managers.
-		VariableManager varMgr = getCSession().getVariableManager();
-		RegisterManager regMgr = getCSession().getRegisterManager();
-		MemoryManager memMgr = (MemoryManager)getCSession().getMemoryManager();
-		SharedLibraryManager libMgr = (SharedLibraryManager)getCSession().getSharedLibraryManager();
+		// For the Variable/Expression Managers call only the updateManager.
+		UpdateManager upMgr = session.getUpdateManager();
+		ICDIVariableManager varMgr = session.getVariableManager();
+		ICDIExpressionManager expMgr  = session.getExpressionManager();		
+		ICDIRegisterManager regMgr = session.getRegisterManager();
+		ICDIMemoryManager memMgr = session.getMemoryManager();
+		ICDISharedLibraryManager libMgr = session.getSharedLibraryManager();
+		ICDIBreakpointManager bpMgr = session.getBreakpointManager();
+		ICDISignalManager sigMgr = session.getSignalManager();
+		ICDISourceManager srcMgr = session.getSourceManager();
 		try {
-			varMgr.update();
-			regMgr.update();
-			memMgr.update();
-			libMgr.update();
+			if (varMgr.isAutoUpdate() || expMgr.isAutoUpdate()) { 
+				upMgr.update();
+			}
+			if (regMgr.isAutoUpdate()) {
+				regMgr.update();
+			}
+			if (memMgr.isAutoUpdate()) {
+				memMgr.update();
+			}
+			if (libMgr.isAutoUpdate()) {
+				libMgr.update();
+			}
+			if (bpMgr.isAutoUpdate()) {
+				bpMgr.update();
+			}
+			if (sigMgr.isAutoUpdate()) {
+				sigMgr.update();
+			}
+			if (srcMgr.isAutoUpdate()) {
+				srcMgr.update();
+			}
 		} catch (CDIException e) {
 			//System.out.println(e);
 		}
@@ -242,7 +275,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 * Do any processing of before a running event.
 	 */
 	void processRunningEvent() {
-		//CTarget target = getCSession().getCTarget();
+		//Target target = getCSession().getCTarget();
 		//target.clearState();
 	}
 

@@ -6,10 +6,13 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
@@ -24,20 +27,23 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 
 /**
  */
-public class RegisterManager extends SessionObject {
+public class RegisterManager extends SessionObject implements ICDIRegisterManager {
 
-	List regList;
+	private List regList;
+	private boolean autoupdate;
 
-	public RegisterManager(CSession session) {
+	public RegisterManager(Session session) {
 		super(session);
-		regList = new ArrayList();
+		regList = Collections.synchronizedList(new ArrayList());
+		autoupdate = true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
 	 */
 	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListRegisterNames registers = factory.createMIDataListRegisterNames();
 		try {
@@ -58,10 +64,45 @@ public class RegisterManager extends SessionObject {
 		}
 	}
 
-	Register[] getRegisters() {
-		return (Register[])regList.toArray(new Register[0]);
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createRegister()
+	 */
+	public ICDIRegister createRegister(ICDIRegisterObject regObject) throws CDIException {
+		Register reg = getRegister(regObject);
+		if (reg == null) {
+			Session session = (Session)getSession();
+			reg = new Register(session.getCurrentTarget(), regObject);
+			regList.add(reg);
+			MISession mi = session.getMISession();
+			mi.fireEvent(new MIRegisterCreatedEvent(reg.getName(), reg.getID()));
+		}
+		return reg;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager#destroyRegister(ICDIRegister)
+	 */
+	public void destroyRegister(ICDIRegister reg) {
+		regList.remove(reg);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoUpdate(boolean update) {
+		autoupdate = update;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager#isAutoUpdate()
+	 */
+	public boolean isAutoUpdate() {
+		return autoupdate;
+	}
+
+	/**
+	 * Use by the eventManager to find the Register;
+	 */
 	public Register getRegister(int regno) throws CDIException {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
@@ -72,37 +113,12 @@ public class RegisterManager extends SessionObject {
 		return null;
 	}
 
-	Register getRegister(ICDIRegisterObject regObject) throws CDIException {
-		Register[] regs = getRegisters();
-		for (int i = 0; i < regs.length; i++) {
-			if (regObject.getName().equals(regs[i].getName())) {
-				return regs[i];
-			}
-		}
-		return null;
-	}
-	
-	public Register createRegister(ICDIRegisterObject regObject) throws CDIException {
-		Register reg = getRegister(regObject);
-		if (reg == null) {
-			reg = new Register(getCSession().getCTarget(), regObject);
-			regList.add(reg);
-			MISession mi = getCSession().getMISession();
-			mi.fireEvent(new MIRegisterCreatedEvent(reg.getName(), reg.getID()));
-		}
-		return reg;
-	}
-
-	Register[] createRegisters(ICDIRegisterObject[] regObjects) throws CDIException {
-		Register[] regs = new Register[regObjects.length];
-		for (int i = 0; i < regs.length; i++) {
-			regs[i] = createRegister(regObjects[i]);
-		} 
-		return regs;
-	}
-
+	/**
+	 * Call the by the EventManager when the target is suspended.
+	 */
 	public void update() throws CDIException {
-		MISession mi = getCSession().getMISession();
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListChangedRegisters changed = factory.createMIDataListChangedRegisters();
 		try {
@@ -125,6 +141,21 @@ public class RegisterManager extends SessionObject {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
+	}
+
+	private Register[] getRegisters() {
+		return (Register[])regList.toArray(new Register[0]);
+	}
+
+
+	private Register getRegister(ICDIRegisterObject regObject) throws CDIException {
+		Register[] regs = getRegisters();
+		for (int i = 0; i < regs.length; i++) {
+			if (regObject.getName().equals(regs[i].getName())) {
+				return regs[i];
+			}
+		}
+		return null;
 	}
 
 }

@@ -10,9 +10,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
@@ -27,7 +28,7 @@ public class Value extends CObject implements ICDIValue {
 	Variable variable;
 
 	public Value(Variable v) {
-		super(v.getCTarget());
+		super(v.getTarget());
 		variable = v;
 	}
 	
@@ -43,7 +44,7 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public String getValueString() throws CDIException {
 		String result = "";
-		MISession mi = getCTarget().getCSession().getMISession();
+		MISession mi = ((Session)(getTarget().getSession())).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarEvaluateExpression var =
 			factory.createMIVarEvaluateExpression(variable.getMIVar().getVarName());
@@ -96,7 +97,7 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
 		Variable[] variables = null;
-		CSession session = getCTarget().getCSession();
+		Session session = (Session)(getTarget().getSession());
 		MISession mi = session.getMISession();
 		VariableManager mgr = (VariableManager)session.getVariableManager();
 		CommandFactory factory = mi.getCommandFactory();
@@ -111,8 +112,10 @@ public class Value extends CObject implements ICDIValue {
 			MIVar[] vars = info.getMIVars();
 			variables = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
-				variables[i] = mgr.createVariable(variable.getStackFrame(),
-						vars[i].getExp(), vars[i]);
+				VariableObject varObj = new VariableObject(vars[i].getExp(),
+				 (StackFrame)variable.getStackFrame(), variable.getVariableObject().getPosition(),
+				 variable.getVariableObject().getStackDepth());
+				variables[i] = mgr.createVariable(varObj, vars[i]);
 
 			}
 		} catch (MIException e) {

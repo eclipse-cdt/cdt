@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteMemory;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
@@ -25,7 +27,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	boolean frozen;
 	boolean dirty;
 
-	public MemoryBlock(CTarget target, String exp, MIDataReadMemoryInfo info) {
+	public MemoryBlock(ICDITarget target, String exp, MIDataReadMemoryInfo info) {
 		super(target);
 		expression = exp;
 		mem = info;
@@ -115,7 +117,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#refresh()
 	 */
 	public void refresh() throws CDIException {
-		MemoryManager mgr = (MemoryManager)getCTarget().getCSession().getMemoryManager();
+		MemoryManager mgr = (MemoryManager)getTarget().getSession().getMemoryManager();
 		setDirty(true);
 		Long[] addresses = mgr.update(this, null);
 		// Check if this affects other blocks.
@@ -165,7 +167,8 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		if (offset >= getLength() || offset + bytes.length > getLength()) {
 			throw new CDIException("Bad Offset");
 		}
-		MISession mi = getCTarget().getCSession().getMISession();
+		Session session = (Session)getTarget().getSession();
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		for (int i = 0; i < bytes.length; i++) {
 			long l = new Byte(bytes[i]).longValue() & 0xff;

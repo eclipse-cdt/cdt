@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.CygwinCommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
@@ -26,14 +26,14 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		new CygwinCommandFactory();
 
 	/* Cygwin does not have any special initialization like solib paths etc.. */
-	protected void initializeLibraries(ILaunchConfiguration config, CSession session) throws CDIException {
+	protected void initializeLibraries(ILaunchConfiguration config, Session session) throws CDIException {
 	}
 
 	public ICDISession createLaunchSession(
 		ILaunchConfiguration config,
 		IFile exe)
 		throws CDIException {
-		CSession session = (CSession) super.createLaunchSession(config, exe);
+		Session session = (Session) super.createLaunchSession(config, exe);
 		session.getMISession().setCommandFactory(commandFactory);
 		// For windows we need to start the inferior in a new console window
 		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
@@ -58,8 +58,8 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		IFile exe,
 		int pid)
 		throws CDIException {
-		CSession session =
-			(CSession) super.createAttachSession(config, exe, pid);
+		Session session =
+			(Session) super.createAttachSession(config, exe, pid);
 		session.getMISession().setCommandFactory(commandFactory);
 		return session;
 	}
@@ -69,8 +69,8 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		IFile exe,
 		IPath corefile)
 		throws CDIException {
-		CSession session =
-			(CSession) super.createCoreSession(config, exe, corefile);
+		Session session =
+			(Session) super.createCoreSession(config, exe, corefile);
 		session.getMISession().setCommandFactory(commandFactory);
 		return session;
 	}

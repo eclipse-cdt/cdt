@@ -13,8 +13,11 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
  */
 public class SignalManager extends SessionObject implements ICDISignalManager {
 
-	public SignalManager(CSession session) {
+	boolean autoupdate;
+
+	public SignalManager(Session session) {
 		super(session);
+		autoupdate = false;
 	}
 	
 	/**
@@ -22,6 +25,26 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 	 */
 	public ICDISignal[] getSignals() throws CDIException {
 		return new ICDISignal[0];
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#isAutoUpdate()
+	 */
+	public boolean isAutoUpdate() {
+		return autoupdate;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoUpdate(boolean update) {
+		autoupdate = update;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#update()
+	 */
+	public void update() throws CDIException {
 	}
 
 }

@@ -5,36 +5,28 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.Location;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
-import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
-import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
-import org.eclipse.cdt.debug.mi.core.output.MIArg;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
-import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
-import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 
 /**
  */
 public class StackFrame extends CObject implements ICDIStackFrame {
 
 	MIFrame frame;
-	CThread cthread;
+	Thread cthread;
 
-	public StackFrame(CThread thread, MIFrame f) {
-		super(thread.getCTarget());
+	public StackFrame(Thread thread, MIFrame f) {
+		super(thread.getTarget());
 		cthread = thread;
 		frame = f;
 	}
@@ -43,7 +35,10 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		return frame;
 	}
 
-	public CThread getCThread() {
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getThread()
+	 */
+	public ICDIThread getThread() {
 		return cthread;
 	}
 
@@ -51,82 +46,28 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
 	public ICDIArgument[] getArguments() throws CDIException {
-		List cdiList = new ArrayList();
-		if (frame != null) {
-			CSession session = getCTarget().getCSession();
-			VariableManager mgr = (VariableManager)session.getVariableManager();
-			MISession mi = session.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
-			int level = frame.getLevel();
-			MIStackListArguments listArgs =
-				factory.createMIStackListArguments(false, level, level);
-			try {
-				cthread.setCurrentStackFrame(this);
-				MIArg[] args = null;
-				mi.postCommand(listArgs);
-				MIStackListArgumentsInfo info =
-					listArgs.getMIStackListArgumentsInfo();
-				if (info == null) {
-					throw new CDIException("No answer");
-				}
-				MIFrame[] miFrames = info.getMIFrames();
-				if (miFrames != null && miFrames.length == 1) {
-					args = miFrames[0].getArgs();
-				}
-				if (args != null) {
-					for (int i = 0; i < args.length; i++) {
-						try {
-							cdiList.add(mgr.createArgument(this, args[i].getName()));
-						} catch (CDIException e) {
-						}
-					}
-				}
-			} catch (MIException e) {
-				//throw new CDIException(e.getMessage());
-				//System.err.println(e);
-			} catch (CDIException e) {
-				//throw e;
-				//System.err.println(e);
-			}
+		Session session = (Session)getTarget().getSession();
+		VariableManager mgr = (VariableManager)session.getVariableManager();
+		ICDIArgumentObject[] argObjs = mgr.getArgumentObjects(this);
+		ICDIArgument[] args = new ICDIArgument[argObjs.length];
+		for (int i = 0; i < args.length; i++) {
+			args[i] = mgr.createArgument(argObjs[i]);
 		}
-		return (ICDIArgument[])cdiList.toArray(new ICDIArgument[0]);
+		return args;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariables()
 	 */
 	public ICDIVariable[] getLocalVariables() throws CDIException {
-		List cdiList = new ArrayList();
-		CSession session = getCTarget().getCSession();
+		Session session = (Session)getTarget().getSession();
 		VariableManager mgr = (VariableManager)session.getVariableManager();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIStackListLocals locals = factory.createMIStackListLocals(false);
-		try {
-			cthread.setCurrentStackFrame(this);
-			MIArg[] args = null;
-			mi.postCommand(locals);
-			MIStackListLocalsInfo info = locals.getMIStackListLocalsInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-			args = info.getLocals();
-			if (args != null) {
-				for (int i = 0; i < args.length; i++) {
-					try {
-						cdiList.add(mgr.createVariable(this, args[i].getName()));
-					} catch (CDIException e) {
-					}
-				}
-			}
-		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
-			//System.err.println(e);
-		} catch (CDIException e) {
-			//throw e;
-			//System.err.println(e);
+		ICDIVariableObject[] varObjs = mgr.getVariableObjects(this);
+		ICDIVariable[] vars = new ICDIVariable[varObjs.length];
+		for (int i = 0; i < vars.length; i++) {
+			vars[i] = mgr.createVariable(varObjs[i]);
 		}
-		return (ICDIVariable[])cdiList.toArray(new ICDIVariable[0]);
+		return vars;
 	}
 
 	/**
@@ -156,7 +97,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		if (stackframe instanceof StackFrame) {
 			StackFrame stack = (StackFrame)stackframe;
 			return  cthread != null &&
-				cthread.equals(stack.getCThread()) &&
+				cthread.equals(stack.getThread()) &&
 				frame != null &&
 				frame.getLevel() == stack.getMIFrame().getLevel() &&
 				frame.getFile().equals(stack.getMIFrame().getFile()) &&

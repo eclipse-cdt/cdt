@@ -3,6 +3,7 @@ package org.eclipse.cdt.core.parser;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 
 /**
  * @author jcamelon
@@ -48,5 +49,6 @@ public interface IScanner  extends IFilenameProvider {
 	 * @return
 	 */
 	public boolean isOnTopContext();
+	public void setScannerContext(IScannerContext context);
 
 }

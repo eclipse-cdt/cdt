@@ -1,3 +1,17 @@
+2004-04-15 David Daoust
+	Modified Scanner Performance by 
+		1. Moved ScannerContext sentinal to ContextStack
+		2. Delay Stringizing macro parameter until needed
+		3. Removed the sentinal from the scanner constructor
+		
+		Effect on #include <windows.h>
+		
+						total bytes	 objs	time(ms)tokens
+	orig				59905960	1455079	1593	83812
+	move sentinel		53824616	1262428	1462	83812
+	delay stringizing	40868312	950355	1322	83812
+	remove sentinal 	38598848	910909	1312	83812
+
 2004-04-15 Andrew Niefer
 	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=58492
 

@@ -80,6 +80,11 @@ public class Scanner implements IScanner {
 	private static final int NO_OFFSET_LIMIT = -1;
 	private int offsetLimit = NO_OFFSET_LIMIT;
 	private boolean limitReached = false; 
+	private IScannerContext currentContext;
+	
+	public void setScannerContext(IScannerContext context) {
+		currentContext = context;
+	}
 	
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error ) throws ScannerException
 	{
@@ -117,18 +122,6 @@ public class Scanner implements IScanner {
 		scannerData.setDefinitions( definitions );
 		scannerData.setIncludePathNames( includePaths );
 		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
-		try {
-			//this is a hack to get around a sudden EOF experience
-			scannerData.getContextStack().push(
-						new ScannerContext(
-						new StringReader("\n"), //$NON-NLS-1$
-						START,
-						ScannerContext.ContextKind.SENTINEL, null), requestor);
-
-		} catch( ContextException ce ) {
-			//won't happen since we aren't adding an include or a macro
-		} 
-		
 	}
 	
     public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies ) {
@@ -140,19 +133,6 @@ public class Scanner implements IScanner {
 			((GCCScannerExtension)scannerExtension).setScannerData( scannerData );	 
 		
 		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
-		try {
-			//this is a hack to get around a sudden EOF experience
-			scannerData.getContextStack().push(
-						new ScannerContext(
-						new StringReader("\n"), //$NON-NLS-1$
-						START,
-						ScannerContext.ContextKind.SENTINEL, null), requestor);
-
-		} catch( ContextException ce ) {
-			//won't happen since we aren't adding an include or a macro
-			// assert false
-		} 
-		
 		
 		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
 		TraceUtil.outputTrace(log, "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
@@ -546,7 +526,7 @@ public class Scanner implements IScanner {
 			}
 			else // local inclusion
 			{
-				duple = ScannerUtility.createReaderDuple( new File( scannerData.getContextStack().getCurrentContext().getFilename() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
+				duple = ScannerUtility.createReaderDuple( new File( currentContext.getFilename() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
 				if( duple != null )
 					break totalLoop;
 				useIncludePaths = true;
@@ -599,7 +579,7 @@ public class Scanner implements IScanner {
 		File includeFile = null;
 		
 		if( !useIncludePaths ) {  // local inclusion is checked first 			
-			String currentFilename = scannerData.getContextStack().getCurrentContext().getFilename(); 
+			String currentFilename = currentContext.getFilename(); 
 			File currentIncludeFile = new File( currentFilename );
 			String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
 			currentIncludeFile = null; 
@@ -723,9 +703,9 @@ public class Scanner implements IScanner {
 	private int getChar( boolean insideString ) throws ScannerException {	
 		int c = NOCHAR;
 		
-		lastContext = scannerData.getContextStack().getCurrentContext();
+		lastContext = currentContext;
 		
-		if (lastContext == null)
+		if (lastContext.getKind() == IScannerContext.ContextKind.SENTINEL)
 			// past the end of file
 			return c;
 
@@ -845,7 +825,7 @@ public class Scanner implements IScanner {
     {
     	int c;
     	try {
-    		c = scannerData.getContextStack().getCurrentContext().read();
+    		c = currentContext.read();
     	}
     	catch (IOException e) {
     		c = NOCHAR;
@@ -857,22 +837,16 @@ public class Scanner implements IScanner {
     	if (scannerData.getContextStack().rollbackContext(scannerData.getClientRequestor()) == false)
     		return NOCHAR;
     	
-    	if (scannerData.getContextStack().getCurrentContext().undoStackSize() != 0 )
-    		return scannerData.getContextStack().getCurrentContext().popUndo();
+    	if (currentContext.undoStackSize() != 0 )
+    		return currentContext.popUndo();
     	
     	return readFromStream();
     }
 
 	final void ungetChar(int c) throws ScannerException{
-		scannerData.getContextStack().getCurrentContext().pushUndo(c);
-		try
-		{
-			scannerData.getContextStack().undoRollback( lastContext, scannerData.getClientRequestor() );
-		}
-		catch (ContextException e)
-		{
-			handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true );
-		}
+		currentContext.pushUndo(c);
+		scannerData.getContextStack().undoRollback( lastContext, scannerData.getClientRequestor() );
+
 	}
 
 	protected boolean lookAheadForTokenPasting() throws ScannerException
@@ -898,7 +872,7 @@ public class Scanner implements IScanner {
 
 	protected void consumeUntilOutOfMacroExpansion() throws ScannerException
 	{
-		while( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
+		while( currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 			getChar();
 	}
 
@@ -933,7 +907,7 @@ public class Scanner implements IScanner {
 			}
 			catch (ContextException e)
 			{
-				handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true  );
+				handleProblem( e.getId(), currentContext.getFilename(), getCurrentOffset(), false, true  );
 			}
 			storageBuffer = null; 
 			return true;
@@ -1172,7 +1146,7 @@ public class Scanner implements IScanner {
 	public IToken processPreprocessor() throws ScannerException, EndOfFileException
 	{
 		int c;
-		int beginningOffset = scannerData.getContextStack().getCurrentContext().getOffset() - 1;
+		int beginningOffset = currentContext.getOffset() - 1;
 		int beginningLine = scannerData.getContextStack().getCurrentLineNumber();
 
 		// we are allowed arbitrary whitespace after the '#' and before the rest of the text
@@ -2511,10 +2485,11 @@ public class Scanner implements IScanner {
 			c = getChar();
 		}
 
-		if (c == NOCHAR && !isLimitReached() )
-			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true  );
-		else if( c== NOCHAR ) // limit reached
-			handleInvalidCompletion();
+		if ( state != 2)
+			if (c == NOCHAR && !isLimitReached() )
+				handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true  );
+			else if( c== NOCHAR ) // limit reached
+				handleInvalidCompletion();
 		
 		ungetChar(c);
 
@@ -2686,7 +2661,7 @@ public class Scanner implements IScanner {
 	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException, EndOfFileException {
 		// definition 
 		String key = getNextIdentifier();
-		int offset = scannerData.getContextStack().getCurrentContext().getOffset() - key.length() - scannerData.getContextStack().getCurrentContext().undoStackSize();
+		int offset = currentContext.getOffset() - key.length() - currentContext.undoStackSize();
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
 
 		// store the previous definition to check against later
@@ -2718,15 +2693,12 @@ public class Scanner implements IScanner {
 						handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true);
 						return;
 					}
-				} else if( c == '\r' || c == '\n' ){
+				} else if( c == '\r' || c == '\n' || c == NOCHAR ){
 					StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 					potentialErrorMessage.append( buffer );
 					potentialErrorMessage.append( '\\');
 					potentialErrorMessage.append( (char)c );
 					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true );
-					return;
-				} else if( c == NOCHAR ){
-					handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, beginning, false, true );
 					return;
 				}
 				
@@ -2826,7 +2798,7 @@ public class Scanner implements IScanner {
 		
 		try
         {
-			scannerData.getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, scannerData.getContextStack().getCurrentContext().getOffset(), scannerData.getContextStack().getCurrentLineNumber(), descriptor ).acceptElement( scannerData.getClientRequestor() );
+			scannerData.getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), scannerData.getContextStack().getCurrentLineNumber(), descriptor ).acceptElement( scannerData.getClientRequestor() );
         }
         catch (Exception e)
         {
@@ -2959,7 +2931,7 @@ public class Scanner implements IScanner {
 			}
 			catch (ContextException e)
 			{
-				handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true );
+				handleProblem( e.getId(), currentContext.getFilename(), getCurrentOffset(), false, true );
 				consumeUntilOutOfMacroExpansion();
 				return;
 			}
@@ -2990,7 +2962,7 @@ public class Scanner implements IScanner {
 				String betweenTheBrackets = buffer.toString().trim();
                 
                 Vector parameterValues = getMacroParameters(betweenTheBrackets, false);
-                Vector parameterValuesForStringizing = getMacroParameters(betweenTheBrackets, true);
+                Vector parameterValuesForStringizing = null;
                 SimpleToken t = null;
                 
 				// create a string that represents what needs to be tokenized
@@ -3025,6 +2997,8 @@ public class Scanner implements IScanner {
 					} else if (t.getType() == tPOUND) {
 						//next token should be a parameter which needs to be turned into
 						//a string literal
+						if( parameterValuesForStringizing == null)
+							parameterValuesForStringizing = getMacroParameters(betweenTheBrackets, true);
 						t = (SimpleToken) tokens.get( ++i );
 						int index = parameterNames.indexOf(t.getImage());
 						if( index == -1 ){
@@ -3109,7 +3083,7 @@ public class Scanner implements IScanner {
 				}
 				catch (ContextException e)
 				{
-					handleProblem( e.getId(), scannerData.getContextStack().getCurrentContext().getFilename(), getCurrentOffset(), false, true );
+					handleProblem( e.getId(), currentContext.getFilename(), getCurrentOffset(), false, true );
 					consumeUntilOutOfMacroExpansion();
 					return;
 				}
@@ -3199,7 +3173,7 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IScanner#isOnTopContext()
 	 */
 	public boolean isOnTopContext() {
-		return ( scannerData.getContextStack().getCurrentContext() == scannerData.getContextStack().getTopContext() );
+		return ( currentContext.getKind() == IScannerContext.ContextKind.TOP );
 	}	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFilename()
 	 */
@@ -3215,8 +3189,8 @@ public class Scanner implements IScanner {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append( "Scanner @"); //$NON-NLS-1$
-		if( scannerData.getContextStack().getCurrentContext() != null )
-			buffer.append( scannerData.getContextStack().getCurrentContext().toString());
+		if( currentContext != null )
+			buffer.append( currentContext.toString());
 		else
 			buffer.append( "EOF"); //$NON-NLS-1$
 		return buffer.toString();

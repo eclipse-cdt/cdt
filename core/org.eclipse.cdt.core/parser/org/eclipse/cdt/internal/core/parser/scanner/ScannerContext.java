@@ -23,12 +23,12 @@ public class ScannerContext implements IScannerContext
     private int macroLength = -1;
 	private int line = 1;
 	private int offset;
-	private ContextKind kind; 
+	private int kind; 
 				
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion, int, int, int)
      */
-	public ScannerContext(Reader r, String f, ContextKind k, IASTInclusion i, int mO, int mL, int l)
+	public ScannerContext(Reader r, String f, int k, IASTInclusion i, int mO, int mL, int l)
 	{
 		reader = r;
 		filename = f;
@@ -43,7 +43,7 @@ public class ScannerContext implements IScannerContext
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IScannerContext#initialize(Reader, String, int, IASTInclusion)
      */
-    public ScannerContext(Reader r, String f, ContextKind k, IASTInclusion i)
+    public ScannerContext(Reader r, String f, int k, IASTInclusion i)
     {
         this(r, f, k, i, -1, -1, 1);
     }
@@ -151,7 +151,7 @@ public class ScannerContext implements IScannerContext
 	 * Returns the kind.
 	 * @return int
 	 */
-	public ContextKind getKind() {
+	public int getKind() {
 		return kind;
 	}
 
@@ -159,7 +159,7 @@ public class ScannerContext implements IScannerContext
 	 * Sets the kind.
 	 * @param kind The kind to set
 	 */
-	public void setKind(ContextKind kind) {
+	public void setKind(int kind) {
 		this.kind = kind;
 	}
 	/* (non-Javadoc)

@@ -13,16 +13,12 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext.ContextKind;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
@@ -33,34 +29,85 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public class ContextStack {
 
+	private static class SentinelContext implements IScannerContext {
+		public int read() throws IOException { return '\n'; }
+		public String getFilename() { return ""; }
+		public int getMacroOffset() { return -1; }
+		public int getMacroLength() { return -1; }
+		public int getOffset() { return 0; }
+		public int getRelativeOffset() { return 0; }
+		public Reader getReader() { return null; }
+		public void pushUndo(int undo) { }
+		public int getKind() { return IScannerContext.ContextKind.SENTINEL; }
+		public void setKind(int kind) { }
+		public IASTInclusion getExtension() { return null; }
+		public void setExtension(IASTInclusion ext) { }
+		public int getLine() { return -1; }
+		public int undoStackSize() { return 0; }  
+		public int popUndo() { return '\n'; }
+	}
 	private final IParserLogService log;
-	private Scanner scanner;
+	private int current_size = 8;
+
+	private IScannerContext [] cs = new IScannerContext[current_size];;
+	private int cs_pos = 0;
 	
-	public ContextStack( Scanner s, IParserLogService l ) {
-		scanner = s;
+	
+	private static IScannerContext sentinel = new SentinelContext();
+	 
+	private IScanner scanner;
+
+	private final void cs_push(IScannerContext c) {
+		try {
+			cs[cs_pos++] = c;;
+		}
+		catch (ArrayIndexOutOfBoundsException a)
+		{
+			int new_size = current_size*2;
+			IScannerContext [] new_cs = new IScannerContext[new_size];
+			
+			for (int i = 0; i < current_size; i++) {
+				new_cs[i] = cs[i];
+			}
+			
+			new_cs[current_size] = c;
+			current_size = new_size;
+			cs = new_cs;
+		}
+		scanner.setScannerContext(c);
+	}
+	private final IScannerContext cs_pop() {
+		IScannerContext context = cs[--cs_pos];
+		scanner.setScannerContext((cs_pos == 0) ? sentinel : cs[cs_pos -1]);
+		return context;
+	}
+	
+	public ContextStack( IScanner scanner, IParserLogService l ) {
 		log = l;
+		this.scanner = scanner;
+		cs_push(sentinel);
+		scanner.setScannerContext(sentinel);
 	}
 
-    public void updateContext(Reader reader, String filename, ContextKind type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
+    public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
         updateContext(reader, filename, type, inclusion, requestor, -1, -1);
     }
   
-	public void updateContext(Reader reader, String filename, ContextKind type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ContextException 
+	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ContextException 
     {
 		int startLine = 1;
 		
         // If we expand a macro within a macro, then keep offsets of the top-level one,
         // as only the top level macro identifier is properly positioned    
         if (type == IScannerContext.ContextKind.MACROEXPANSION) {
-            if (currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION) {
-                macroOffset = currentContext.getMacroOffset();
-                macroLength = currentContext.getMacroLength();
+            if (getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION) {
+                macroOffset = getCurrentContext().getMacroOffset();
+                macroLength = getCurrentContext().getMacroLength();
             }
             
-			startLine = currentContext.getLine();
+			startLine = getCurrentContext().getLine();
         }
 
-		undoStack.clear();
 		IScannerContext context = new ScannerContext( reader, filename, type, null, macroOffset, macroLength, startLine );
 		context.setExtension(inclusion); 
 		push( context, requestor );	
@@ -68,70 +115,45 @@ public class ContextStack {
 	
 	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ContextException
 	{
-		if( context.getKind() == IScannerContext.ContextKind.INCLUSION )
-		{
-			if( !inclusions.add( context.getFilename() ) )
+		if( context.getKind() == IScannerContext.ContextKind.INCLUSION ) {
+			if( isCircularInclusion( context.getFilename() ) )
 				throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );
 			
 			TraceUtil.outputTrace(log, "Scanner::ContextStack: entering inclusion ", null, context.getFilename(), null, null ); //$NON-NLS-1$
 			context.getExtension().enterScope( requestor );				
-
-		} else if( context.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-		{
-			if( !defines.add( context.getFilename() ) )
-				throw new ContextException( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
-		}
-		if( currentContext != null )
-			contextStack.push(currentContext);
+		} 
 		
-		currentContext = context;
-		if( context.getKind() == IScannerContext.ContextKind.TOP )
-			topContext = context;
+//		This could be replaced with a check for shouldExpandMacro -- but it is called by 
+//		the scanner before this point
+//		else if( context.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
+//		{
+//			if( !defines.add( context.getFilename() ) )
+//				throw new ContextException( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
+//		}
+		cs_push(context);
 	}
 	
 	public boolean rollbackContext(ISourceElementRequestor requestor) {
+		IScannerContext context = getCurrentContext();
 		try {
-			currentContext.getReader().close();
+			context.getReader().close();
 		} catch (IOException ie) {
 			TraceUtil.outputTrace( log, "ContextStack : Error closing reader "); //$NON-NLS-1$
 		}
 
-		if( currentContext.getKind() == IScannerContext.ContextKind.INCLUSION )
+		if( context.getKind() == IScannerContext.ContextKind.INCLUSION )
 		{
-			TraceUtil.outputTrace(log, "Scanner::ContextStack: ending inclusion ", null, currentContext.getFilename(), null, null); //$NON-NLS-1$
-			inclusions.remove( currentContext.getFilename() );
-			currentContext.getExtension().exitScope( requestor );
-		} else if( currentContext.getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-		{
-			defines.remove( currentContext.getFilename() );
+			TraceUtil.outputTrace(log, "Scanner::ContextStack: ending inclusion ", null, context.getFilename(), null, null); //$NON-NLS-1$
+			context.getExtension().exitScope( requestor );
 		}
-		
-		undoStack.addFirst( currentContext );
-		
-		if (contextStack.isEmpty()) {
-			currentContext = null;
-			return false;
-		}
-
-		currentContext = (ScannerContext) contextStack.pop();
-		return true;
+		cs_pop();
+		return cs_pos != 0;
 	}
 	
-	public void undoRollback( IScannerContext undoTo, ISourceElementRequestor requestor ) throws ContextException {
-		if( currentContext == undoTo ){
-			return;
-		}
-		
-		int size = undoStack.size();
-		if( size > 0 )
-		{
-			for( int i = size; i > 0; i-- )
-			{
-				push( (IScannerContext) undoStack.removeFirst(), requestor );
-				
-				if( currentContext == undoTo )
-					break;
-			}	
+	public void undoRollback( IScannerContext undoTo, ISourceElementRequestor requestor ) {
+		while (getCurrentContext() != undoTo ) {
+			//cs_pos++;
+			scanner.setScannerContext(cs[cs_pos++]);
 		}
 	}
 	
@@ -147,58 +169,43 @@ public class ContextStack {
 	 */
 	protected boolean shouldExpandDefinition( String symbol )
 	{
-		return !defines.contains( symbol );
+		for(int i = cs_pos-1; i >= 0; i--)
+			if (cs[i].getKind() == IScannerContext.ContextKind.MACROEXPANSION
+					&& cs[i].getFilename().equals(symbol))
+				return false;
+		return true;
 	}
 	
-	public IScannerContext getCurrentContext(){
-		return currentContext;
+	protected boolean isCircularInclusion( String symbol )
+	{
+		for(int i = cs_pos-1; i >= 0; i--)
+			if (cs[i].getKind() == IScannerContext.ContextKind.INCLUSION &&
+					cs[i].getFilename().equals(symbol))
+				return true;
+		return false;
 	}
 	
-	private IScannerContext currentContext, topContext;
-	private Stack contextStack = new Stack();
-	private LinkedList undoStack = new LinkedList();
-	private Set inclusions = new HashSet(); 
-	private Set defines = new HashSet();
-	
-	/**
-	 * @return
-	 */
-	public IScannerContext getTopContext() {
-		return topContext;
+	public final IScannerContext getCurrentContext(){
+		//return (cs_pos == 0) ? sentinel : cs[cs_pos -1];
+		return cs[cs_pos -1];
 	}
 
 	public IScannerContext getMostRelevantFileContext()
 	{
-		if( currentContext != null )
+		IScannerContext context = sentinel;
+		for( int i = cs_pos - 1; i >= 0; --i )
 		{
-			if( currentContext.getKind() == IScannerContext.ContextKind.TOP ) return currentContext;
-			if( currentContext.getKind() == IScannerContext.ContextKind.INCLUSION ) return currentContext;
-		}
-				
-		IScannerContext context = null;
-		for( int i = contextStack.size() - 1; i >= 0; --i )
-		{
-			context = (IScannerContext)contextStack.get(i);
-			if( context.getKind() == IScannerContext.ContextKind.INCLUSION || context.getKind() == IScannerContext.ContextKind.TOP )
+			context = cs[i];
+			if( context.getKind() == IScannerContext.ContextKind.INCLUSION 
+					|| context.getKind() == IScannerContext.ContextKind.TOP )
 				break;
-			if( i == 0 ) context = null;
 		}
-		
 		return context;
 	}
 	
 	public int getCurrentLineNumber()
 	{
-		return getMostRelevantFileContext() != null ? getMostRelevantFileContext().getLine() : -1;
+		return getMostRelevantFileContext().getLine();
 	}
-	
-	public int getTopFileLineNumber()
-	{
-		return topContext.getLine();
-	}
-	
-	public Scanner getScanner()
-	{
-		return scanner;
-	}
+
 }

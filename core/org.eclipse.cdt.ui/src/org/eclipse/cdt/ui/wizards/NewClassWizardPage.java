@@ -101,7 +101,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	private ITranslationUnit parentHeaderTU = null;
 	private ITranslationUnit parentBodyTU = null;
 	// the created class element
-	private IStructure createdClass = null;
+	private /*IStructure*/ ICElement createdClass = null;
 	
 	private ArrayList elementsOfTypeClassInProject = null;
 	
@@ -149,9 +149,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		String[] buttonNames2= new String[] {
 			/* 0 == INLINE_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.inline"),
 			/* 1 == VIRTUAL_DEST_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.virtualdestructor"),
+			/* 2 == INCLUDE_GUARD_INDEX */ NewWizardMessages.getString("NewClassWizardPage.constdest.includeguard"),
 		};				
 		
-		fConstDestButtons= new SelectionButtonDialogFieldGroup(SWT.CHECK, buttonNames2, 4);
+		fConstDestButtons= new SelectionButtonDialogFieldGroup(SWT.CHECK, buttonNames2, 3);
 		fConstDestButtons.setDialogFieldListener(adapter);
 				
 		linkedResourceGroupForHeader = new LinkToFileGroup(adapter, this);
@@ -456,6 +457,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return fBaseClassDialogField.getText();
 	}
 	
+	public boolean isIncludeGuard(){
+		return fConstDestButtons.isSelected(2);	
+	}
+	
 	public boolean isVirtualDestructor(){
 		return fConstDestButtons.isSelected(1);
 	}
@@ -482,7 +487,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return parentBodyTU;
 	}
 
-	public IStructure getCreatedClassElement(){
+	public /*IStructure*/ ICElement getCreatedClassElement(){
 		return createdClass;
 	}
 	
@@ -514,7 +519,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 					headerWC.reconcile();	
 					headerWC.commit(true, monitor);
 				}
-				createdClass= (IStructure)headerWC.getElement(getNewClassName());				
+				//createdClass= (IStructure)headerWC.getElement(getNewClassName());				
+				createdClass= headerWC.getElement(getNewClassName());				
 			}
 			if(parentBodyTU != null){
 				String body = constructBodyFileContent(lineDelimiter);
@@ -742,6 +748,18 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			}
 		}
 		
+		if(isIncludeGuard()){
+			text.append("#ifndef ");
+			text.append(getNewClassName().toUpperCase());
+			text.append("_H");
+			text.append(lineDelimiter);
+			text.append("#define ");
+			text.append(getNewClassName().toUpperCase());
+			text.append("_H");
+			text.append(lineDelimiter);
+			text.append(lineDelimiter);
+		}
+		
 		if(extendingBase){
 			text.append("#include \"");
 			text.append(baseClassFileName);
@@ -793,7 +811,15 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 		text.append("};");
 		text.append(lineDelimiter);		
-				
+		
+		if(isIncludeGuard()){
+			text.append(lineDelimiter);
+			text.append("#endif // ");
+			text.append(getNewClassName().toUpperCase());
+			text.append("_H");
+			text.append(lineDelimiter);		
+		}
+					
 		return text.toString();	 		
 	}
 		

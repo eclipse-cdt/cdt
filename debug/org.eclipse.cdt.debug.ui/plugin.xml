@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.debug.ui"
+   name="%pluginName"
+   version="1.0.0"
+   provider-name=""
+   class="org.eclipse.cdt.debug.internal.ui.CDebugUIPlugin">
+
+   <runtime>
+      <library name="cdebugui.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+   </requires>
+
+
+<!-- Extensions -->
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation"
+            id="org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation">
+      </debugModelPresentation>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%RegistersView.name"
+            icon="icons/full/cview16/registers_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.registers.RegistersView"
+            id="org.eclipse.cdt.debug.ui.RegistersView">
+      </view>
+      <view
+            name="%MemoryView.name"
+            icon="icons/full/cview16/memory_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.internal.ui.views.memory.MemoryView"
+            id="org.eclipse.cdt.debug.ui.MemoryView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.debug.ui.VariableView"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.RegistersView">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.debug.ui.VariableView"
+               relationship="org.eclipse.cdt.debug.ui.view2"
+               id="org.eclipse.cdt.debug.ui.MemoryView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%MemoryPreferencePage.name"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage"
+            id="org.eclipse.cdt.debug.ui.MemoryViewPreferencePage">
+      </page>
+   </extension>
+
+</plugin>

@@ -1,3 +1,10 @@
+2004-06-24 Alain Magloire
+
+	Fix 68226
+	* cdi/org/eclipse/cdt/debug/mic/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mic/core/cdi/Configuration.java
+	* cdi/org/eclipse/cdt/debug/mic/core/cdi/SoourceManager.java
+	
 2004-06-22 Alain Magloire
 
 	Fix PR 68176

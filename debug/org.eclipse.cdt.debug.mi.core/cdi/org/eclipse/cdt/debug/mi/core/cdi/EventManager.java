@@ -425,6 +425,15 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				if (currentThread instanceof Thread) {
 					tid = ((Thread)currentThread).getId();
 				}
+				// Select the old thread now.
+				if (tid > 0) {
+					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);
+					try {
+						mi.postCommand(selectThread);
+					} catch (MIException e) {
+						// ignore
+					}
+				}
 				ICDIStackFrame frame = null;
 				try {
 					frame = currentThread.getCurrentStackFrame();
@@ -451,13 +460,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					// level of the old stack.  The -1 is because gdb level is zero-based
 					miLevel = count - frame.getLevel() - 1;
 				}
-				if (tid > 0) {
-					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);
-					try {
-						mi.postCommand(selectThread);
-					} catch (MIException e) {
-					}
-				}
 				if (miLevel >= 0) {
 					MIStackSelectFrame selectFrame = factory.createMIStackSelectFrame(miLevel);
 					MIExecFinish finish = factory.createMIExecFinish();
@@ -465,7 +467,19 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						mi.postCommand(selectFrame);
 						mi.postCommand(finish);
 					} catch (MIException e) {
+						// ignore
 					}
+				} else {
+					// if we are still at the same level in the backtrace
+					// for example the StopEventLib was on a different thread
+					// redo the last command.
+					Command cmd = lastUserCommand;
+					lastUserCommand = null;
+					try {
+						mi.postCommand(cmd);
+					} catch (MIException e) {
+						// ignore
+					}					
 				}
 				return true;
 			} else if (lastUserCommand != null) {

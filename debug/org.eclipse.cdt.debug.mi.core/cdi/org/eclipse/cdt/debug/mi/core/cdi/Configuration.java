@@ -136,9 +136,8 @@ public class Configuration implements ICDIConfiguration {
 					// FIXME: bug in Solaris gdb when using -tty, sending a control-c
 					// does not work.
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}
 			return true;
 		}

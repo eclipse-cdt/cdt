@@ -1,4 +1,8 @@
-2003-01-14 Mikhail Khodjaiants
+2003-01-15 Mikhail Khodjaiants
+	Added the 'ICDISharedLibraryManager' interface.
+	* ICDISharedLibraryManager.java
+
+2003-01-15 Mikhail Khodjaiants
 	Added new methods to the 'ICDISharedLibrary' interface.
 	* ICDISharedLibarary.java
 

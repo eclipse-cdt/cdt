@@ -48,8 +48,9 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	public Object clone(){
 		DerivableContainerSymbol copy = (DerivableContainerSymbol)super.clone();
 			
-		copy._parentScopes = ( _parentScopes != null ) ? (LinkedList) _parentScopes.clone() : null;
-		copy._constructors = ( _constructors != null ) ? (LinkedList) _constructors.clone() : null;		
+		copy._parentScopes = ( _parentScopes != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _parentScopes.clone() : _parentScopes;
+		copy._constructors = ( _constructors != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _constructors.clone() : _constructors;
+		copy._friends      = ( _friends != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _friends.clone() : _friends;
 			
 		return copy;	
 	}
@@ -64,22 +65,20 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		Iterator parents = getParents().iterator();
 		
 		newSymbol.getParents().clear();
-		ParentWrapper wrapper = null, newWrapper = null;
+		ParentWrapper wrapper = null;
 		while( parents.hasNext() ){
 			wrapper = (ParentWrapper) parents.next();
 			ISymbol parent = wrapper.getParent();
 			if( parent == null )
 				continue; 
 			
-			newWrapper = new ParentWrapper( wrapper.getParent(), wrapper.isVirtual(), wrapper.getAccess(), wrapper.getOffset(), wrapper.getReferences() );
 			if( parent instanceof IDeferredTemplateInstance ){
-				template.registerDeferredInstatiation( newSymbol, newWrapper, ITemplateSymbol.DeferredKind.PARENT, argMap );
+				template.registerDeferredInstatiation( newSymbol, parent, ITemplateSymbol.DeferredKind.PARENT, argMap );
 			} else 	if( parent.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( parent ) ){
 				TypeInfo info = (TypeInfo) argMap.get( parent );
-				newWrapper.setParent( info.getTypeSymbol() );
+				parent = info.getTypeSymbol();
 			}
-			
-			newSymbol.getParents().add( newWrapper );
+			newSymbol.addParent( parent, wrapper.isVirtual(), wrapper.getAccess(), wrapper.getOffset(), wrapper.getReferences() );
 		}
 		
 		//TODO: friends
@@ -87,20 +86,20 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return newSymbol;	
 	}
 	
-	public void instantiateDeferredParent( ParentWrapper wrapper, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public void instantiateDeferredParent( ISymbol parent, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
 		Iterator parents = getParents().iterator();
 		ParentWrapper w = null;
 		while( parents.hasNext() ) {
 			w = (ParentWrapper) parents.next();
-			if( w == wrapper ){
-				wrapper.setParent( wrapper.getParent().instantiate( template, argMap ) );
+			if( w.getParent() == parent ){
+				w.setParent( parent.instantiate( template, argMap ) );
 			}
 		}
 	}
 	
 	protected void collectInstantiatedConstructor( IParameterizedSymbol constructor ){
 		if( constructor.isType( TypeInfo.t_constructor ) )
-			getConstructors().add( constructor );
+			addToConstructors( constructor );
 	}
 	
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
@@ -123,7 +122,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#addParent(org.eclipse.cdt.internal.core.parser.pst.ISymbol, boolean, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility, int, java.util.List)
 	 */
 	public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references ){
-		if( _parentScopes == null ){
+		if( _parentScopes == ParserSymbolTable.EMPTY_LIST ){
 			_parentScopes = new LinkedList();
 		}
 		
@@ -138,9 +137,6 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#getParents()
 	 */
 	public List getParents(){
-		if( _parentScopes == null ){
-			_parentScopes = new LinkedList();
-		}
 		return _parentScopes;
 	}
 
@@ -148,7 +144,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#hasParents()
 	 */
 	public boolean hasParents(){
-		return ( _parentScopes != null && !_parentScopes.isEmpty() );
+		return !_parentScopes.isEmpty();
 	}
 	
 	/* (non-Javadoc)
@@ -161,7 +157,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		List constructors = getConstructors();
 
 		if( constructors.size() == 0 || ParserSymbolTable.isValidOverload( constructors, constructor ) ){
-			constructors.add( constructor );
+			addToConstructors( constructor );
 		} else {
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
 		}
@@ -171,7 +167,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		
 		addThis( constructor );
 
-		getContents().add( constructor );
+		addToContents( constructor );
 		
 		Command command = new AddConstructorCommand( constructor, this );
 		getSymbolTable().pushCommand( command );			
@@ -214,23 +210,27 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME, TypeInfo.t_constructor );
 		data.parameters = parameters;
 		
-		List constructors = new LinkedList();
-		if( !getConstructors().isEmpty() )
-			constructors.addAll( getConstructors() );
-			
-		return ParserSymbolTable.resolveFunction( data, constructors );
+		List constructors = null;
+		if( !getConstructors().isEmpty() ){
+			constructors = new LinkedList( getConstructors() );
+		}
+		if( constructors != null )	
+			return ParserSymbolTable.resolveFunction( data, constructors );
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#getConstructors()
 	 */
 	public List getConstructors(){
-		if( _constructors == null ){
-			_constructors = new LinkedList();
-		}
 		return _constructors;
 	}
 
+	private void addToConstructors( IParameterizedSymbol constructor ){
+		if( _constructors == ParserSymbolTable.EMPTY_LIST )
+			_constructors = new LinkedList();
+		_constructors.add( constructor );
+	}
 	/**
 	 * 
 	 * @param obj
@@ -259,7 +259,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			LookupData data = new LookupData( ParserSymbolTable.THIS, TypeInfo.t_any );
 			try {
 				Map map = ParserSymbolTable.lookupInContained( data, obj );
-				foundThis = map.containsKey( data.name );
+				foundThis = ( map != null ) ? map.containsKey( data.name ) : false;
 			} catch (ParserSymbolTableException e) {
 				return false;
 			}
@@ -323,7 +323,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			}
 		}
 		
-		getFriends().add( friend );
+		addToFriends( friend );
 	}
 	
 	/**
@@ -375,10 +375,13 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	
 	
 	public List getFriends(){ 
-		if( _friends == null ){
+		return _friends;
+	}
+	private void addToFriends( ISymbol friend ){
+		if( _friends == ParserSymbolTable.EMPTY_LIST ){
 			_friends = new LinkedList();
 		}
-		return _friends;
+		_friends.add( friend );
 	}
 	
 	static private class AddParentCommand extends Command{
@@ -467,7 +470,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		private final List references; 
 	}
 	
-	private 	LinkedList 	_constructors;			//constructor list
-	private		LinkedList	_parentScopes;			//inherited scopes (is base classes)
-	private		LinkedList	_friends;
+	private LinkedList _constructors = ParserSymbolTable.EMPTY_LIST;	//constructor list
+	private	LinkedList _parentScopes = ParserSymbolTable.EMPTY_LIST;	//inherited scopes (is base classes)
+	private	LinkedList _friends      = ParserSymbolTable.EMPTY_LIST;
 }

@@ -37,7 +37,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	public Object clone(){
 		SpecializedSymbol copy = (SpecializedSymbol)super.clone();
 		
-		copy._argumentList	  = ( _argumentList != null ) ? (LinkedList) _argumentList.clone() : null;
+		copy._argumentList	  = ( _argumentList != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _argumentList.clone() : _argumentList;
 		
 		return copy;	
 	}
@@ -123,9 +123,6 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getArgumentList()
 	 */
 	public List getArgumentList(){
-		if( _argumentList == null ){
-			_argumentList = new LinkedList();
-		}
 		return _argumentList;
 	}
 	
@@ -133,8 +130,10 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addArgument(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addArgument(TypeInfo arg) {
-		List argumentList = getArgumentList();
-		argumentList.add( arg );
+		if( _argumentList == ParserSymbolTable.EMPTY_LIST )
+			_argumentList = new LinkedList();
+		
+		_argumentList.add( arg );
 		
 		//arg.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
@@ -155,6 +154,6 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		private TypeInfo _arg;
 	}
 	
-	private LinkedList      _argumentList;	  //template specialization arguments
+	private LinkedList      _argumentList = ParserSymbolTable.EMPTY_LIST;	  //template specialization arguments
 	private ITemplateSymbol _primaryTemplate; //our primary template
 }

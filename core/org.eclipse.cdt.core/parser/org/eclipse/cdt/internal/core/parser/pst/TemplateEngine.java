@@ -664,7 +664,7 @@ public final class TemplateEngine {
 	 * after substitution of the deduced values, compatible with A.
 	 */
 	static private Map deduceTemplateArguments( ITemplateSymbol template, List arguments ){
-		if( template.getContainedSymbols() == null || template.getContainedSymbols().size() != 1 ){
+		if( template.getContainedSymbols() == ParserSymbolTable.EMPTY_MAP || template.getContainedSymbols().size() != 1 ){
 			return null;
 		}
 
@@ -846,9 +846,8 @@ public final class TemplateEngine {
 			//we shouldn't get this because there aren't any other symbols in the template
 		}
 		ISymbol param = specialization.getSymbolTable().newSymbol( "", TypeInfo.t_type ); //$NON-NLS-1$
-		LinkedList args = new LinkedList( specialization.getArgumentList() );
 		
-		param.setTypeSymbol( specialization.instantiate( args ) );
+		param.setTypeSymbol( specialization.instantiate( specialization.getArgumentList() ) );
 				
 		function.addParameter( param );
 		
@@ -884,7 +883,7 @@ public final class TemplateEngine {
 		if( templates == null || templates.size() == 0 )
 			return null;
 		
-		List instances = new LinkedList();
+		List instances = null;
 		
 		Iterator iter = templates.iterator();
 		
@@ -919,6 +918,8 @@ public final class TemplateEngine {
 			IContainerSymbol instance = (IContainerSymbol) template.instantiate( instanceArgs );
 			
 			if( instance != null ){
+				if( instances == null )
+					instances = new LinkedList();
 				instances.add( instance );		
 			}
 		}
@@ -1059,7 +1060,7 @@ public final class TemplateEngine {
 	}
 	
 	static protected ISymbol translateParameterForDefinition ( ISymbol templatedSymbol, ISymbol param, Map defnMap ){
-		if( defnMap == null ){
+		if( defnMap == ParserSymbolTable.EMPTY_MAP ){
 			return param;
 		}
 		

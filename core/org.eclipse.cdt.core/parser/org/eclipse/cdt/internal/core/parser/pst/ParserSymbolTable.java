@@ -41,6 +41,8 @@ public class ParserSymbolTable {
 
 	public static final int    TYPE_LOOP_THRESHOLD = 50;
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
+	public static final LinkedList EMPTY_LIST = new LinkedList();
+	public static final Map    EMPTY_MAP = new HashMap();
 	public static final String THIS = "this";	//$NON-NLS-1$
 	
 	/**
@@ -122,7 +124,7 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		LinkedList transitives = new LinkedList();	//list of transitive using directives
+		LinkedList transitives = null;	//list of transitive using directives
 		
 		//if this name define in this scope?
 		Map map = null;
@@ -144,7 +146,7 @@ public class ParserSymbolTable {
 			
 			data.visited.clear(); //each namesapce is searched at most once, so keep track
 			
-			lookupInNominated( data, inSymbol, transitives );
+			transitives = lookupInNominated( data, inSymbol, transitives );
 
 			//if we are doing a qualified lookup, only process using directives if
 			//we haven't found the name yet (and if we aren't ignoring them). 
@@ -156,9 +158,10 @@ public class ParserSymbolTable {
 				}
 							
 				while( data.usingDirectives != null && data.usingDirectives.get( inSymbol ) != null ){
-					transitives.clear();
+					if( transitives != null )
+						transitives.clear();
 					
-					lookupInNominated( data, inSymbol, transitives );
+					transitives = lookupInNominated( data, inSymbol, transitives );
 	
 					if( !data.qualified || data.foundItems == null ){
 						processDirectives( inSymbol, data, transitives );
@@ -167,7 +170,7 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( data.mode == LookupMode.NORMAL && ( !data.foundItems.isEmpty() || data.stopAt == inSymbol ) ){
+		if( data.mode == LookupMode.NORMAL && ( ( data.foundItems != null && !data.foundItems.isEmpty()) || data.stopAt == inSymbol ) ){
 			return;
 		}
 			
@@ -221,10 +224,10 @@ public class ParserSymbolTable {
 	 * directives, the effect is as if the using-directives from the second
 	 * namespace also appeared in the first.
 	 */
-	static private void lookupInNominated( LookupData data, IContainerSymbol symbol, LinkedList transitiveDirectives ) throws ParserSymbolTableException{
+	static private LinkedList lookupInNominated( LookupData data, IContainerSymbol symbol, LinkedList transitiveDirectives ) throws ParserSymbolTableException{
 		//if the data.usingDirectives is empty, there is nothing to do.
 		if( data.usingDirectives == null ){
-			return;
+			return transitiveDirectives;
 		}
 			
 		//local variables
@@ -238,7 +241,7 @@ public class ParserSymbolTable {
 		directives = (LinkedList) data.usingDirectives.remove( symbol );
 		
 		if( directives == null ){
-			return;
+			return transitiveDirectives;
 		}
 		
 		iter = directives.iterator();
@@ -251,19 +254,26 @@ public class ParserSymbolTable {
 				data.visited.add( temp );
 				
 				Map map = lookupInContained( data, temp );
-				foundSomething = !map.isEmpty();
-				mergeResults( data, data.foundItems, map );
+				foundSomething = ( map != null && !map.isEmpty() );
+				if( foundSomething ){
+					if( data.foundItems == null )
+						data.foundItems = map;
+					else
+						mergeResults( data, data.foundItems, map );
+				}
 				
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
 				if( (!data.qualified || !foundSomething || data.mode == LookupMode.PREFIX ) && temp.hasUsingDirectives() ){
 					//name wasn't found, add transitive using directives for later consideration
+					if( transitiveDirectives == null )
+						transitiveDirectives = new LinkedList();
 					transitiveDirectives.addAll( temp.getUsingDirectives() );
 				}
 			}
 		}
 		
-		return;
+		return transitiveDirectives;
 	}
 	
 	/**
@@ -306,7 +316,7 @@ public class ParserSymbolTable {
 	 * Look for data.name in our collection _containedDeclarations
 	 */
 	protected static Map lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
-		Map found = new LinkedHashMap();
+		Map found = null;
 		
 		Object obj = null;
 	
@@ -318,7 +328,7 @@ public class ParserSymbolTable {
 		Map declarations = lookIn.getContainedSymbols();
 		
 		Iterator iterator = null;
-		if( data.mode == LookupMode.PREFIX ){
+		if( data.mode == LookupMode.PREFIX && declarations != ParserSymbolTable.EMPTY_MAP ){
 			if( declarations instanceof SortedMap ){
 				iterator = ((SortedMap)declarations).tailMap( data.name.toLowerCase() ).keySet().iterator();
 			} else {
@@ -330,12 +340,15 @@ public class ParserSymbolTable {
 		
 		while( name != null ) {
 			if( nameMatches( data, name ) ){
-				obj = ( declarations != null ) ? declarations.get( name ) : null;
+				obj = ( !declarations.isEmpty() ) ? declarations.get( name ) : null;
 				if( obj != null ){
 					obj = collectSymbol( data, obj );
 					
-					if( obj != null )
+					if( obj != null ){
+						if( found == null )
+							found = new LinkedHashMap();
 						found.put( name, obj );
+					}
 				}
 			} else {
 				break;
@@ -348,12 +361,12 @@ public class ParserSymbolTable {
 			}
 		} 
 		
-		if( !found.isEmpty() && data.mode == LookupMode.NORMAL ){
+		if( found != null && data.mode == LookupMode.NORMAL ){
 			return found;
 		}
 		
 		if( lookIn instanceof IParameterizedSymbol ){
-			lookupInParameters(data, lookIn, found);
+			found = lookupInParameters(data, lookIn, found);
 		}
 		
 		if( lookIn.isTemplateMember() && data.templateMember == null ){
@@ -375,12 +388,12 @@ public class ParserSymbolTable {
 	 * @param found
 	 * @throws ParserSymbolTableException
 	 */
-	private static void lookupInParameters(LookupData data, IContainerSymbol lookIn, Map found) throws ParserSymbolTableException {
+	private static Map lookupInParameters(LookupData data, IContainerSymbol lookIn, Map found) throws ParserSymbolTableException {
 		Object obj;
 		Iterator iterator;
 		String name;
 		
-		if( lookIn instanceof ITemplateSymbol && ((ITemplateSymbol)lookIn).getDefinitionParameterMap() != null ){
+		if( lookIn instanceof ITemplateSymbol && !((ITemplateSymbol)lookIn).getDefinitionParameterMap().isEmpty() ){
 			ITemplateSymbol template = (ITemplateSymbol) lookIn;
 			if( data.templateMember != null && template.getDefinitionParameterMap().containsKey( data.templateMember ) ){
 				Map map = (Map) template.getDefinitionParameterMap().get( data.templateMember );
@@ -390,16 +403,18 @@ public class ParserSymbolTable {
 					if( nameMatches( data, symbol.getName() ) ){
 						obj = collectSymbol( data, symbol );
 						if( obj != null ){
+							if( found == null )
+								found = new LinkedHashMap();
 							found.put( symbol.getName(), obj );
 						}
 					}
 				}
-				return;
+				return found;
 			}
 			
 		}
 		Map parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
-		if( parameters != null ){
+		if( parameters != ParserSymbolTable.EMPTY_MAP ){
 			iterator = null;
 			if( data.mode == LookupMode.PREFIX ){
 				if( parameters instanceof SortedMap ){
@@ -415,6 +430,8 @@ public class ParserSymbolTable {
 					obj = parameters.get( name );
 					obj = collectSymbol( data, obj );
 					if( obj != null ){
+						if( found == null )
+							found = new LinkedHashMap();
 						found.put( name, obj );
 					}
 				} else {
@@ -428,6 +445,7 @@ public class ParserSymbolTable {
 				}
 			}
 		}
+		return found;
 	}
 
 	private static boolean nameMatches( LookupData data, String name ){
@@ -570,7 +588,8 @@ public class ParserSymbolTable {
 		if( numTemplateFunctions > 0 ){
 			if( data.parameters != null && ( !data.exactFunctionsOnly || data.templateParameters != null ) ){
 				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.parameters, data.templateParameters );
-				functionSet.addAll( fns );
+				if( fns != null )
+					functionSet.addAll( fns );
 				numFunctions = functionSet.size();
 			} else {
 				functionSet.addAll( templateFunctionSet );
@@ -666,9 +685,12 @@ public class ParserSymbolTable {
 						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 					}
 					
-					if( temp.isEmpty() || data.mode == LookupMode.PREFIX ){
+					if( (temp == null || temp.isEmpty()) || data.mode == LookupMode.PREFIX ){
 						inherited = lookupInParents( data, parent );
-						mergeInheritedResults( temp, inherited );
+						if( temp == null )
+							temp = inherited;
+						else
+							mergeInheritedResults( temp, inherited );
 					}
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
@@ -924,13 +946,16 @@ public class ParserSymbolTable {
 		
 		Object object = data.foundItems.get( data.name );
 
-		LinkedList functionList = new LinkedList();
+		LinkedList functionList = null;
 		
 		if( object instanceof List ){
+			//if we got this far with a list, they must all be functions
+			functionList = new LinkedList();
 			functionList.addAll( (List) object );
 		} else {
 			ISymbol symbol = (ISymbol) object;
 			if( symbol.isType( TypeInfo.t_function ) ){
+				functionList = new LinkedList();
 				functionList.add( symbol );
 			} else {
 				if( symbol.isTemplateMember() && !symbol.isTemplateInstance() && 
@@ -1267,6 +1292,9 @@ public class ParserSymbolTable {
 	static private void processDirectives( IContainerSymbol symbol, LookupData data, List directives ){
 		IContainerSymbol enclosing = null;
 		IContainerSymbol temp = null;
+		
+		if( directives == null )
+			return;
 		
 		int size = directives.size();
 		Iterator iter = directives.iterator();
@@ -1859,12 +1887,11 @@ public class ParserSymbolTable {
 				
 				if( !name.equals(EMPTY_NAME) ){
 					LookupData data = new LookupData( "operator " + name, TypeInfo.t_function ); //$NON-NLS-1$
-					LinkedList params = new LinkedList();
-					data.parameters = params;
+					data.parameters = ParserSymbolTable.EMPTY_LIST;
 					data.forUserDefinedConversion = true;
 					
 					data.foundItems = lookupInContained( data, (IContainerSymbol) sourceDecl );
-					conversion = (IParameterizedSymbol)resolveAmbiguities( data );	
+					conversion = (data.foundItems != null ) ? (IParameterizedSymbol)resolveAmbiguities( data ) : null;	
 				}
 			}
 		}

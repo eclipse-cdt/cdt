@@ -58,14 +58,14 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	public Object clone(){
 		ContainerSymbol copy = (ContainerSymbol)super.clone();
 			
-		copy._usingDirectives  = ( _usingDirectives != null ) ? (LinkedList) _usingDirectives.clone() : null;
+		copy._usingDirectives  =  (_usingDirectives != ParserSymbolTable.EMPTY_LIST) ? (LinkedList) _usingDirectives.clone() : _usingDirectives;
 		
 		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-			copy._containedSymbols = ( _containedSymbols != null )? (Map)((TreeMap) _containedSymbols).clone() : null;
+			copy._containedSymbols = ( _containedSymbols != ParserSymbolTable.EMPTY_MAP )? (Map)((TreeMap) _containedSymbols).clone() : _containedSymbols;
 		else 
-			copy._containedSymbols = ( _containedSymbols != null )? (Map)((HashMap) _containedSymbols).clone() : null;
+			copy._containedSymbols = ( _containedSymbols != ParserSymbolTable.EMPTY_MAP )? (Map)((HashMap) _containedSymbols).clone() : _containedSymbols;
 		
-		copy._contents = ( _contents != null )? (LinkedList) _contents.clone() : null;
+		copy._contents = (_contents != ParserSymbolTable.EMPTY_LIST) ? (LinkedList) _contents.clone() : _contents;
 		
 		return copy;	
 	}
@@ -80,7 +80,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		Iterator iter = getContentsIterator();
 	
 		newContainer.getContainedSymbols().clear();
-		if( newContainer._contents != null ){
+		if( !newContainer._contents.isEmpty()  ){
 			newContainer._contents.clear();
 			
 			IExtensibleSymbol containedSymbol = null;
@@ -117,7 +117,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					}
 					
 					Map instanceMap = argMap;
-					if( template.getDefinitionParameterMap() != null && 
+					if( !template.getDefinitionParameterMap().isEmpty() && 
 						template.getDefinitionParameterMap().containsKey( containedSymbol ) )
 					{
 						Map defMap = (Map) template.getDefinitionParameterMap().get( containedSymbol );
@@ -144,10 +144,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 								List list = new LinkedList();
 								list.add( obj );
 								list.add( newSymbol );
-								newContainer.getContainedSymbols().put( newSymbol.getName(), list );
+								newContainer.putInContainedSymbols( newSymbol.getName(), list );
 							}
 						} else {
-							newContainer.getContainedSymbols().put( newSymbol.getName(), newSymbol );
+							newContainer.putInContainedSymbols( newSymbol.getName(), newSymbol );
 						}
 					}
 				}
@@ -198,8 +198,6 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_RedeclaredTemplateParam );	
 			}
 		}
-		
-		Map declarations = containing.getContainedSymbols();
 	
 		boolean unnamed = obj.getName().equals( ParserSymbolTable.EMPTY_NAME );
 	
@@ -208,7 +206,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		obj.setContainingSymbol( containing );
 
 		//does this name exist already?
-		origObj = declarations.get( obj.getName() );
+		origObj = containing.getContainedSymbols().get( obj.getName() );
 	
 		if( origObj != null )
 		{
@@ -224,7 +222,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		
 			boolean validOverride =  ( !unnamed ? ( (origList == null) ? ParserSymbolTable.isValidOverload( origDecl, obj ) 
-																	  : ParserSymbolTable.isValidOverload( origList, obj ) )
+																	   : ParserSymbolTable.isValidOverload( origList, obj ) )
 											    : true );
 			
 			if( unnamed || validOverride )
@@ -234,7 +232,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					origList.add( origDecl );
 					origList.add( obj );
 			
-					declarations.put( obj.getName(), origList );
+					((ContainerSymbol)containing).putInContainedSymbols( obj.getName(), origList );
 				} else	{
 					origList.add( obj );
 					//origList is already in _containedDeclarations
@@ -243,12 +241,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
 			}
 		} else {
-			declarations.put( obj.getName(), obj );
+			((ContainerSymbol)containing).putInContainedSymbols( obj.getName(), obj );
 		}
 	
 		obj.setIsTemplateMember( isTemplateMember() || getType() == TypeInfo.t_template );
 		
-		getContents().add( obj );
+		addToContents( obj );
 		
 		Command command = new AddSymbolCommand( obj, containing );
 		getSymbolTable().pushCommand( command );
@@ -294,18 +292,20 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#hasUsingDirectives()
 	 */
 	public boolean hasUsingDirectives(){
-		return ( _usingDirectives != null && !_usingDirectives.isEmpty() );
+		return !_usingDirectives.isEmpty();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#getUsingDirectives()
 	 */
 	public List getUsingDirectives(){
-		if( _usingDirectives == null ){
-			_usingDirectives = new LinkedList();
-		}
-		
 		return _usingDirectives;
+	}
+	
+	protected void addToUsingDirectives( IExtensibleSymbol symbol ){
+		if( _usingDirectives == ParserSymbolTable.EMPTY_LIST )
+			_usingDirectives = new LinkedList();
+		_usingDirectives.add( symbol );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDirective(org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
@@ -325,12 +325,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			namespace = (IContainerSymbol) alias;
 		}
 		
-		List usingDirectives = getUsingDirectives();		
-	
 		IUsingDirectiveSymbol usingDirective = new UsingDirectiveSymbol( getSymbolTable(), namespace );
-		usingDirectives.add( usingDirective );
 		
-		getContents().add( usingDirective );
+		addToUsingDirectives( usingDirective );
+		addToContents( usingDirective );
 		
 		Command command = new AddUsingDirectiveCommand( this, usingDirective );
 		getSymbolTable().pushCommand( command );
@@ -407,7 +405,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		while( symbol != null ){
 			if( ParserSymbolTable.okToAddUsingDeclaration( symbol, this ) ){
 				if( ! addedUsingToContained ){
-					getContents().add( usingDeclaration );
+					addToContents( usingDeclaration );
 					addedUsingToContained = true;
 				}
 				clone = (ISymbol) symbol.clone(); //7.3.3-9
@@ -433,17 +431,19 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#getContainedSymbols()
 	 */
 	public Map getContainedSymbols(){
-		if( _containedSymbols == null ){
+		return _containedSymbols;
+	}
+	
+	protected void putInContainedSymbols( String key, Object obj ){
+		if( _containedSymbols == ParserSymbolTable.EMPTY_MAP ){
 			if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE ){
 				_containedSymbols = new TreeMap( new SymbolTableComparator() );
 			} else {
 				_containedSymbols = new HashMap( );
 			}
-			
 		}
-		return _containedSymbols;
+		_containedSymbols.put( key, obj );
 	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
@@ -534,14 +534,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		}
 		
 		data.foundItems = ParserSymbolTable.lookupInContained( data, container );
-	
-		return ParserSymbolTable.resolveAmbiguities( data );
+		if( data.foundItems != null )
+			return ParserSymbolTable.resolveAmbiguities( data );
+		return null;
 	}
 
 	public IParameterizedSymbol lookupMethodForDefinition( String name, List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, TypeInfo.t_any );
 		data.qualified = true;
-		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
+		data.parameters = ( parameters == null ) ? ParserSymbolTable.EMPTY_LIST : parameters;
 		data.exactFunctionsOnly = true;
 		
 		IContainerSymbol container = this;
@@ -556,8 +557,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		data.foundItems = ParserSymbolTable.lookupInContained( data, container );
 		
-		ISymbol symbol = ParserSymbolTable.resolveAmbiguities( data ); 
-		return (IParameterizedSymbol) (( symbol instanceof IParameterizedSymbol ) ? symbol : null);
+		if( data.foundItems != null ){
+			ISymbol symbol = ParserSymbolTable.resolveAmbiguities( data ); 
+			return (IParameterizedSymbol) (( symbol instanceof IParameterizedSymbol ) ? symbol : null);
+		} 
+		
+		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupNestedNameSpecifier(java.lang.String)
@@ -679,7 +684,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name, TypeInfo.t_function );
 		//if parameters == null, thats no parameters, but we need to distinguish that from
 		//no parameter information at all, so make an empty list.
-		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
+		data.parameters = ( parameters == null ) ? ParserSymbolTable.EMPTY_LIST : parameters;
 		data.associated = associated;
 	
 		ParserSymbolTable.lookup( data, this );
@@ -737,7 +742,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name, TypeInfo.t_function );
 		//if parameters == null, thats no parameters, but we need to distinguish that from
 		//no parameter information at all, so make an empty list.
-		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
+		data.parameters = ( parameters == null ) ? ParserSymbolTable.EMPTY_LIST : parameters;
 		
 		ParserSymbolTable.lookup( data, this );
 		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
@@ -751,7 +756,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.qualified = true;
 		//if parameters == null, thats no parameters, but we need to distinguish that from
 		//no parameter information at all, so make an empty list.
-		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
+		data.parameters = ( parameters == null ) ? ParserSymbolTable.EMPTY_LIST : parameters;
 	
 		ParserSymbolTable.lookup( data, this );
 	
@@ -924,10 +929,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return container;
 	}
 	
-	protected List getContents(){
-		if(_contents == null ){
+	protected void addToContents( IExtensibleSymbol symbol ){
+		if( _contents == ParserSymbolTable.EMPTY_LIST )
 			_contents = new LinkedList();
-		}
+		_contents.add( symbol );
+	}
+	
+	protected List getContents(){
 		return _contents;
 	}
 	
@@ -1096,9 +1104,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		}
 	}
 
-	private 	LinkedList	_contents;				//ordered list of all contents of this symbol
-	private		LinkedList	_usingDirectives;		//collection of nominated namespaces
-	private		Map 		_containedSymbols;		//declarations contained by us.
+	private 	LinkedList	_contents = ParserSymbolTable.EMPTY_LIST;				//ordered list of all contents of this symbol
+	private		LinkedList	_usingDirectives = ParserSymbolTable.EMPTY_LIST;		//collection of nominated namespaces
+	private		Map 		_containedSymbols = ParserSymbolTable.EMPTY_MAP;		//declarations contained by us.
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
 	 */

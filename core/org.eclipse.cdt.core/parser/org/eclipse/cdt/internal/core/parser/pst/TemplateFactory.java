@@ -296,7 +296,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 				defnMap.put( param, origParam );	
 			}
 			
-			origTemplate.getDefinitionParameterMap().put( newSymbol, defnMap );	
+			((TemplateSymbol)origTemplate).addToDefinitionParameterMap( newSymbol, defnMap );	
 		}
 	}
 	

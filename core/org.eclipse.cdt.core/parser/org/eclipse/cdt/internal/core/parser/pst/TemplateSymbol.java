@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.core.parser.pst.DerivableContainerSymbol.ParentWrapper;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
@@ -37,12 +36,9 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	
 	public Object clone(){
 		TemplateSymbol copy = (TemplateSymbol)super.clone();
-		
-		//copy._specializations = ( _specializations != null ) ? (LinkedList) _specializations.clone() : null;
-		
-		copy._defnParameterMap = ( _defnParameterMap != null ) ? (HashMap) _defnParameterMap.clone() : null;
-		copy._instantiations = ( _instantiations != null ) ? (HashMap) _instantiations.clone() : null;
-		
+
+		copy._defnParameterMap = ( _defnParameterMap != ParserSymbolTable.EMPTY_MAP ) ? (HashMap)((HashMap) _defnParameterMap).clone() : _defnParameterMap;
+		copy._instantiations = ( _instantiations != null ) ? (HashMap)((HashMap) _instantiations).clone() : _instantiations;
 		
 		return copy;	
 	}
@@ -253,19 +249,20 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#hasSpecializations()
 	 */
 	public boolean hasSpecializations(){
-		return ( _specializations != null && !_specializations.isEmpty() );
+		return !_specializations.isEmpty();
 	}
 	
 	public void addExplicitSpecialization( ISymbol symbol, List args ) throws ParserSymbolTableException{
 		
 		List actualArgs = TemplateEngine.verifyExplicitArguments( this, args, symbol );
 		
-		Map map = getExplicitSpecializations();
+		if( _explicitSpecializations == ParserSymbolTable.EMPTY_MAP )
+			_explicitSpecializations = new HashMap();
 		
 		Map specs = null;
 		List key = null;
 		
-		Iterator iter = map.keySet().iterator();
+		Iterator iter = _explicitSpecializations.keySet().iterator();
 		while( iter.hasNext() ){
 			List list = (List) iter.next();
 			if( list.equals( args ) ){
@@ -275,10 +272,10 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		
 		if( key != null ){
-			specs = (Map) map.get( key );
+			specs = (Map) _explicitSpecializations.get( key );
 		} else {
 			specs = new HashMap();
-			map.put( new LinkedList( actualArgs ), specs );
+			_explicitSpecializations.put( new LinkedList( actualArgs ), specs );
 		}
 		
 		ISymbol found = null;
@@ -329,8 +326,10 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addSpecialization(org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol)
 	 */
 	public void addSpecialization( ISpecializedSymbol spec ){
-		List specializationList = getSpecializations();
-		specializationList.add( spec );
+		if( _specializations == ParserSymbolTable.EMPTY_LIST )
+			_specializations = new LinkedList();
+		
+		_specializations.add( spec );
 		
 		spec.setContainingSymbol( getContainingSymbol() );	
 		spec.setPrimaryTemplate( this );
@@ -340,22 +339,19 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getSpecializations()
 	 */
 	public List getSpecializations() {
-		if( _specializations == null ){
-			_specializations = new LinkedList();
-		}
 		return _specializations;
 	}
 	
 	public void addInstantiation( IContainerSymbol instance, List args ){
 		List key = new LinkedList( args );
-		if( _instantiations == null ){
+		if( _instantiations == ParserSymbolTable.EMPTY_MAP ){
 			_instantiations = new HashMap();
 		}
 		_instantiations.put( key, instance );
 	}
 	
 	public IContainerSymbol findInstantiation( List arguments ){
-		if( _instantiations == null ){
+		if( _instantiations == ParserSymbolTable.EMPTY_MAP ){
 			return null;
 		}
 		
@@ -399,10 +395,13 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	}
 	
 	public Map getDefinitionParameterMap(){
-		if( _defnParameterMap == null ){
-			_defnParameterMap = new HashMap();
-		}
 		return _defnParameterMap;
+	}
+	
+	protected void addToDefinitionParameterMap( ISymbol newSymbol, Map defnMap ){
+		if( _defnParameterMap == ParserSymbolTable.EMPTY_MAP )
+			_defnParameterMap = new HashMap();
+		_defnParameterMap.put( newSymbol, defnMap );
 	}
 	
 	public IDeferredTemplateInstance deferredInstance( List args ){
@@ -410,9 +409,6 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	}
 
 	public Map getExplicitSpecializations() {
-		if( _explicitSpecializations == null ){
-			_explicitSpecializations = new HashMap();
-		}
 		return _explicitSpecializations;
 	}
 
@@ -420,7 +416,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol#registerDeferredInstatiation(org.eclipse.cdt.internal.core.parser.pst.ParameterizedSymbol, org.eclipse.cdt.internal.core.parser.pst.ISymbol, org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol.DeferredKind)
 	 */
 	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, Map argMap ) {
-		if( _deferredInstantiations == null )
+		if( _deferredInstantiations == ParserSymbolTable.EMPTY_LIST )
 			_deferredInstantiations = new LinkedList();
 		
 		_deferredInstantiations.add( new Object [] { obj0, obj1, kind, argMap } );
@@ -428,7 +424,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 
 	
 	protected void processDeferredInstantiations() throws ParserSymbolTableException{
-		if( _deferredInstantiations == null )
+		if( _deferredInstantiations == ParserSymbolTable.EMPTY_LIST )
 			return;
 		
 		Iterator iter = _deferredInstantiations.iterator();
@@ -439,7 +435,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 			
 			if( kind == DeferredKind.PARENT ){
 				DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
-				d.instantiateDeferredParent( (ParentWrapper) objs[ 1 ], this, (Map) objs[3] );
+				d.instantiateDeferredParent( (ISymbol) objs[ 1 ], this, (Map) objs[3] );
 			} else if( kind == DeferredKind.RETURN_TYPE ){
 				ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
 				p.instantiateDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
@@ -449,11 +445,11 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 	}
 	
-	private		LinkedList	_specializations;		  //template specializations
-	private     HashMap		_explicitSpecializations; //explicit specializations
-	private		HashMap		_defnParameterMap;		  //members could be defined with different template parameter names
-	private 	HashMap 	_instantiations;
-	private     LinkedList  _deferredInstantiations;  //used to avoid recursive loop
+	private		LinkedList	_specializations 		 = ParserSymbolTable.EMPTY_LIST;	//template specializations
+	private     Map			_explicitSpecializations = ParserSymbolTable.EMPTY_MAP;		//explicit specializations
+	private		Map			_defnParameterMap 		 = ParserSymbolTable.EMPTY_MAP;		//members could be defined with different template parameter names
+	private 	Map			_instantiations 		 = ParserSymbolTable.EMPTY_MAP;
+	private     LinkedList  _deferredInstantiations  = ParserSymbolTable.EMPTY_LIST;	//used to avoid recursive loop
 		
 	
 }

@@ -48,12 +48,12 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	public Object clone(){
 		ParameterizedSymbol copy = (ParameterizedSymbol)super.clone();
 			
-		copy._parameterList = ( _parameterList != null ) ? (LinkedList) _parameterList.clone() : null;
+		copy._parameterList = ( _parameterList != ParserSymbolTable.EMPTY_LIST ) ? (LinkedList) _parameterList.clone() : _parameterList;
 		
 		if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-			copy._parameterMap	= ( _parameterMap  != null ) ? (Map) ((TreeMap) _parameterMap).clone() : null;
+			copy._parameterMap	= ( _parameterMap != ParserSymbolTable.EMPTY_MAP ) ? (Map) ((TreeMap) _parameterMap).clone() : _parameterMap;
 		else 
-			copy._parameterMap	= ( _parameterMap  != null ) ? (Map) ((HashMap) _parameterMap).clone() : null;
+			copy._parameterMap	= ( _parameterMap != ParserSymbolTable.EMPTY_MAP ) ? (Map) ((HashMap) _parameterMap).clone() : _parameterMap;
 			
 		return copy;	
 	}
@@ -93,10 +93,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 				param = (ISymbol) iter.next();
 				newParam = param.instantiate( template, argMap );
 				
-				newParameterized.getParameterList().add( newParam );
-				if( !newParam.getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
-					newParameterized.getParameterMap().put( newParam.getName(), newParam );
-				}
+				newParameterized.addParameter( newParam );
 			}	
 		}
 		
@@ -111,17 +108,23 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addParameter(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addParameter( ISymbol param ){
-		List paramList = getParameterList();
+		if( _parameterList == ParserSymbolTable.EMPTY_LIST )
+			_parameterList = new LinkedList();
 
-		paramList.add( param );
+		_parameterList.add( param );
 		
 		String name = param.getName();
 		if( name != null && !name.equals(ParserSymbolTable.EMPTY_NAME) )
 		{
-			Map paramMap = getParameterMap();
-
-			if( !paramMap.containsKey( name ) )
-				paramMap.put( name, param );
+			if( _parameterMap == ParserSymbolTable.EMPTY_MAP ){
+				if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
+					_parameterMap = new TreeMap( new SymbolTableComparator() );
+				else 
+					_parameterMap = new HashMap( );
+			}
+			
+			if( !_parameterMap.containsKey( name ) )
+				_parameterMap.put( name, param );
 		}
 		
 		param.setContainingSymbol( this );
@@ -166,12 +169,6 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getParameterMap()
 	 */
 	public Map getParameterMap(){
-		if( _parameterMap == null ){
-			if( getSymbolTable().getParserMode() == ParserMode.COMPLETION_PARSE )
-				_parameterMap = new TreeMap( new SymbolTableComparator() );
-			else 
-				_parameterMap = new HashMap( );
-		}
 		return _parameterMap;
 	}
 
@@ -179,9 +176,6 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#getParameterList()
 	 */
 	public List getParameterList(){
-		if( _parameterList == null ){
-			_parameterList = new LinkedList();
-		}
 		return _parameterList;
 	}
 
@@ -314,8 +308,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	}
 	
 	
-	private 	LinkedList	_parameterList;			//have my cake
-	private 	Map			_parameterMap;			//and eat it too
+	private 	LinkedList	_parameterList = ParserSymbolTable.EMPTY_LIST;	//have my cake
+	private 	Map			_parameterMap  = ParserSymbolTable.EMPTY_MAP;	//and eat it too
 	private 	ISymbol		_returnType;
 	private 	boolean		_hasVarArgs = false;	//whether or not this function has variable arguments
 }

@@ -117,7 +117,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkingDirBrowseButton = createPushButton(workingDirComp, LaunchUIPlugin.getResourceString("Launch.common.B&rowse..."), null); //$NON-NLS-1$
+		fWorkingDirBrowseButton = createPushButton(workingDirComp, LaunchUIPlugin.getResourceString("Launch.common.Browse_1"), null); //$NON-NLS-1$
 		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkingDirBrowseButtonSelected();
@@ -140,7 +140,7 @@ public class WorkingDirectoryBlock extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LaunchUIPlugin.getResourceString("Launch.common.B&rowse..."), null); //$NON-NLS-1$
+		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LaunchUIPlugin.getResourceString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		fWorkspaceDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkspaceDirBrowseButtonSelected();

@@ -916,11 +916,6 @@ public abstract class CVariable extends CDebugElement
 		return fQualifiedName;
 	}
 
-	protected boolean isAccessSpecifier() throws DebugException
-	{
-		return ( "public".equals( getName() ) || "protected".equals( getName() ) || "private".equals( getName() ) );
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
 	 */

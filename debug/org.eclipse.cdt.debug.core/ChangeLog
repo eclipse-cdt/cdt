@@ -1,4 +1,10 @@
 2003-08-21 Mikhail Khodjaiants
+	Removed the 'isAccessSpecifier' method from CVaraiable.
+	* CArrayPartitionValue.java
+	* CValue.java
+	* CVariable.java
+
+2003-08-21 Mikhail Khodjaiants
 	Use the names of array's elements returned by CDI.
 	* CVariable.java
 

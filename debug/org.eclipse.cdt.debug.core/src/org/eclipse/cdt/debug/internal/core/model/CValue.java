@@ -517,7 +517,7 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			try
 			{
-				if ( getParentVariable() != null && !getParentVariable().isAccessSpecifier() )
+				if ( getParentVariable() != null )
 					valueString = ee.evaluateExpressionToString( getParentVariable().getQualifiedName() );
 			}
 			catch( DebugException e )

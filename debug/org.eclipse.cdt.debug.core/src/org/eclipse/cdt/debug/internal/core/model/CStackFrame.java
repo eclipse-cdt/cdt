@@ -28,6 +28,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.IJumpToAddress;
+import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
@@ -461,6 +463,12 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			return getDebugTarget().getAdapter( adapter );
 		}
 		if ( adapter == IRunToAddress.class ) {
+			return getDebugTarget().getAdapter( adapter );
+		}
+		if ( adapter == IJumpToLine.class ) {
+			return getDebugTarget().getAdapter( adapter );
+		}
+		if ( adapter == IJumpToAddress.class ) {
 			return getDebugTarget().getAdapter( adapter );
 		}
 		if ( adapter == CStackFrame.class ) {

@@ -1474,7 +1474,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						}
 					}
 				}
-				//updateMarkers(projects);
 			}
 		} catch (CModelException e) {
 		}

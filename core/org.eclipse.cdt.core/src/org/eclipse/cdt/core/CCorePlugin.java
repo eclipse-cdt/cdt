@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.core.builder.ICBuilder;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -370,13 +369,14 @@ public class CCorePlugin extends Plugin {
     throws CoreException{
     	this.convertProjectToCC(projectHandle, monitor, projectID, true);
     }
-    
-	public ICBuilder[] getBuilders(IProject project) throws CoreException {
-		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
-		ICBuilder builders[] = new ICBuilder[extensions.length];
-		System.arraycopy(extensions, 0, builders, 0, extensions.length);
-		return builders;
-	}
+ 
+// Extract the builder from the .cdtproject.  
+//	public ICBuilder[] getBuilders(IProject project) throws CoreException {
+//		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
+//		ICBuilder builders[] = new ICBuilder[extensions.length];
+//		System.arraycopy(extensions, 0, builders, 0, extensions.length);
+//		return builders;
+//	}
 	
 	public IProcessList getProcessList() {
 		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");

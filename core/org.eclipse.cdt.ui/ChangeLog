@@ -1,3 +1,10 @@
+2004-03-08 Bogdan Gheorghe
+	
+	Minor refactoring to Chris Wiebe's jumbo patch - modified TypeSearchResultCollector.createMatch 
+	in AllTypesCache
+	
+	* browser/org/eclipse/cdt/ui/browser/typeinfo/AllTypesCache.java
+	
 2004-03-08 Alain Magloire
 
 	Jumbo patch from Chris Wiebe.  Moving the relevant

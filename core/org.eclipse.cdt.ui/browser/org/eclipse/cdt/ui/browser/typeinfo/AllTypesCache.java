@@ -98,7 +98,7 @@ public class AllTypesCache {
 				super(monitor);
 			}
 			
-			public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) throws CoreException
+			public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node )
 			{
 				TypeInfo result= new TypeInfo();
 				return super.createMatch( result, fileResource, start, end, node );

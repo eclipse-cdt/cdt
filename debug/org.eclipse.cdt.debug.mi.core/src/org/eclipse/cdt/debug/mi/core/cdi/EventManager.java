@@ -15,24 +15,17 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
-import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
-import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
-import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
-import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
 
 /**
  */
@@ -54,7 +47,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				miEvent = miEvent;
 			// Ignore the event if it is on the ignore list.
 		} else if (miEvent instanceof MIStoppedEvent) {
-			processSuspendedEvent(miEvent);
+			processSuspendedEvent((MIStoppedEvent)miEvent);
 			cdiList.add(new SuspendedEvent(session, miEvent));
 		} else if (miEvent instanceof MIRunningEvent) {
 			cdiList.add(new ResumedEvent(session, (MIRunningEvent)miEvent));
@@ -148,32 +141,11 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 * Alse the variable and the memory needs to be updated and events
 	 * fired for changes.
 	 */
-	void processSuspendedEvent(MIEvent event) {
-		int threadId = 0;
+	void processSuspendedEvent(MIStoppedEvent stopped) {
 		CTarget target = getCSession().getCTarget();
+
 		// Set the current thread.
-		if (event instanceof MIBreakpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
-			threadId = breakEvent.getThreadId();
-		} else if (event instanceof MIWatchpointTriggerEvent) {
-			MIWatchpointTriggerEvent watchEvent = (MIWatchpointTriggerEvent) event;
-			threadId = watchEvent.getThreadId();
-		} else if (event instanceof MIWatchpointScopeEvent) {
-			MIWatchpointScopeEvent watchEvent = (MIWatchpointScopeEvent) event;
-			threadId = watchEvent.getThreadId();
-		} else if (event instanceof MISteppingRangeEvent) {
-			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent) event;
-			threadId = rangeEvent.getThreadId();
-		} else if (event instanceof MISignalEvent) {
-			MISignalEvent sigEvent = (MISignalEvent) event;
-			threadId = sigEvent.getThreadId();
-		} else if (event instanceof MILocationReachedEvent) {
-			MILocationReachedEvent locEvent = (MILocationReachedEvent) event;
-			threadId = locEvent.getThreadId();
-		} else if (event instanceof MIFunctionFinishedEvent) {
-			MIFunctionFinishedEvent funcEvent = (MIFunctionFinishedEvent) event;
-			threadId = funcEvent.getThreadId();
-		}
+		int threadId = threadId = stopped.getThreadId();
 		target.updateState(threadId);
 
 		// Update the managers.

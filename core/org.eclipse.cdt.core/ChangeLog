@@ -1,4 +1,9 @@
 2003-03-27 Alain Magloire
+	* model/org/eclipse/cdt/internal/core/model/BinaryContainer.java:
+	* model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java:
+	Name is now "Binaries" and "Archives", lib and bin was confusing.
+
+2003-03-27 Alain Magloire
 
 	The ICElement.getResource() should not throw a CModelException, it returns null or the the resource.
 	This makes us consistent with JDT/IJavaElement.getResource();

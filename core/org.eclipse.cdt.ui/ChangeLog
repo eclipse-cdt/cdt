@@ -1,3 +1,15 @@
+2004-09-02 Bogdan Gheorghe
+	Fix for 72816: [Search] Selection Search For Working Set
+	
+	* src/org/eclipse/cdt/internal/ui/search/CSearchUtil.java
+	* src/org/eclipse/cdt/internal/ui/search/LRUWorkingSets.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/DeclarationsSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindDeclarationsInWorkingSetAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindRefsInWorkingSetAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/ReferencesSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/WorkingSetFindAction.java
+
+	
 2004-09-01 Alain Magloire
 
 	Deal with the fact that elements can come

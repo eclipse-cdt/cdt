@@ -39,6 +39,9 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class CSearchUtil {
 
+	public static int LRU_WORKINGSET_LIST_SIZE= 3;
+	private static LRUWorkingSets workingSetsCache;
+	
 	/**
 	 * 
 	 */
@@ -50,11 +53,20 @@ public class CSearchUtil {
 	/**
 	 * @param sets
 	 */
-	public static void updateLRUWorkingSets(IWorkingSet[] sets) {
-		// TODO Auto-generated method stub
+	public static void updateLRUWorkingSets(IWorkingSet[] workingSets) {
+		if (workingSets == null || workingSets.length < 1)
+			return;
 		
+		CSearchUtil.getLRUWorkingSets().add(workingSets);
 	}
 
+	public static LRUWorkingSets getLRUWorkingSets() {
+		if (CSearchUtil.workingSetsCache == null) {
+			CSearchUtil.workingSetsCache = new LRUWorkingSets(CSearchUtil.LRU_WORKINGSET_LIST_SIZE);
+		}
+		return CSearchUtil.workingSetsCache;
+	}
+	
 	/**
 	 * @param object
 	 * @param shell
@@ -63,12 +75,11 @@ public class CSearchUtil {
 		// TODO Auto-generated method stub
 		
 	}
-
 	/**
 	 * @param workingSets
 	 * @return
 	 */
-	public static Object toString(IWorkingSet[] workingSets) {
+	public static String toString(IWorkingSet[] workingSets) {
 		if( workingSets != null & workingSets.length > 0 ){
 			String string = new String();
 			for( int i = 0; i < workingSets.length; i++ ){
@@ -82,6 +93,7 @@ public class CSearchUtil {
 		
 		return null;
 	}
+
 
 	/**
 	 * @param marker

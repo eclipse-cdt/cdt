@@ -23,23 +23,29 @@ import org.eclipse.ui.IWorkingSet;
 public class FindDeclarationsInWorkingSetAction extends FindAction {
 
 	private IWorkingSet[] fWorkingSet;
-
+	private String scopeDescription = "";
 	/**
 	 * @param site
 	 */
-	public FindDeclarationsInWorkingSetAction(IWorkbenchSite site) {
+	public FindDeclarationsInWorkingSetAction(IWorkbenchSite site, IWorkingSet[] wset) {
 		this(site,
 				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.label"), //$NON-NLS-1$
 				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.tooltip")); //$NON-NLS-1$
+		
+		if (wset != null)
+			fWorkingSet = wset;
 	}
 
 	/**
 	 * @param editor
 	 */
-	public FindDeclarationsInWorkingSetAction(CEditor editor) {
+	public FindDeclarationsInWorkingSetAction(CEditor editor, IWorkingSet[] wset) {
 		this(editor,
 				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.label"), //$NON-NLS-1$
 				CSearchMessages.getString("CSearch.FindDeclarationsInWorkingSetAction.tooltip")); //$NON-NLS-1$
+		
+		if (wset != null)
+			fWorkingSet = wset;
 	}
 
 	public FindDeclarationsInWorkingSetAction(CEditor editor, String label, String tooltip){
@@ -62,21 +68,23 @@ public class FindDeclarationsInWorkingSetAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
 	 */
 	protected String getScopeDescription() {
-		return CSearchMessages.getFormattedString("WorkingSetScope", CSearchUtil.toString(fWorkingSet)); //$NON-NLS-1$
+		return scopeDescription;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()
 	 */
 	protected ICSearchScope getScope() {
-		//
-		IWorkingSet[] workingSets= fWorkingSet;
+		IWorkingSet[] workingSets= null;
 		if (fWorkingSet == null) {
 			workingSets= CSearchScopeFactory.getInstance().queryWorkingSets();
 			if (workingSets == null)
 				return null;
-			fWorkingSet = workingSets;
+		}
+		else {
+			workingSets = fWorkingSet;
 		}
 		ICSearchScope scope= CSearchScopeFactory.getInstance().createCSearchScope(workingSets);
+		scopeDescription = CSearchMessages.getFormattedString("WorkingSetScope", new String[] {CSearchUtil.toString(workingSets)}); //$NON-NLS-1$
 		CSearchUtil.updateLRUWorkingSets(workingSets);
 		
 		return scope;

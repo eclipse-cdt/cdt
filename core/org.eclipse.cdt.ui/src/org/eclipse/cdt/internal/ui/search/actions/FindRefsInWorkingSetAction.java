@@ -22,16 +22,25 @@ import org.eclipse.ui.IWorkingSet;
 
 public class FindRefsInWorkingSetAction extends FindAction {
 	
-	public FindRefsInWorkingSetAction(CEditor editor) {
+	private IWorkingSet[] fWorkingSet;
+	private String scopeDescription = "";
+	
+	public FindRefsInWorkingSetAction(CEditor editor, IWorkingSet[] workingSets) {
 		this(editor,
 		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.label"), //$NON-NLS-1$
 		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.tooltip")); //$NON-NLS-1$
+		
+		if (workingSets != null)
+			fWorkingSet = workingSets;
 	}
 	
-	public FindRefsInWorkingSetAction(IWorkbenchSite site){
+	public FindRefsInWorkingSetAction(IWorkbenchSite site, IWorkingSet[] workingSets){
 		this(site,
 		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.label"), //$NON-NLS-1$
 		CSearchMessages.getString("CSearch.FindReferencesInWorkingSetAction.tooltip")); //$NON-NLS-1$
+		
+		if (workingSets != null)
+			fWorkingSet= workingSets;
 	}
 	/**
 	 * @param editor
@@ -65,24 +74,27 @@ public class FindRefsInWorkingSetAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
 	 */
 	protected String getScopeDescription() {
-		return CSearchMessages.getFormattedString("WorkingSetScope", CSearchUtil.toString(fWorkingSet)); //$NON-NLS-1$
+		return scopeDescription;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()
 	 */
 	protected ICSearchScope getScope() {
-		IWorkingSet[] workingSets= fWorkingSet;
+		IWorkingSet[] workingSets= null;
 		if (fWorkingSet == null) {
 			workingSets= CSearchScopeFactory.getInstance().queryWorkingSets();
 			if (workingSets == null)
 				return null;
-			fWorkingSet = workingSets;
 		}
+		else {
+			workingSets = fWorkingSet;
+		}
+		
 		ICSearchScope scope= CSearchScopeFactory.getInstance().createCSearchScope(workingSets);
+		scopeDescription = CSearchMessages.getFormattedString("WorkingSetScope", new String[] {CSearchUtil.toString(workingSets)}); //$NON-NLS-1$
 		CSearchUtil.updateLRUWorkingSets(workingSets);
 		
 		return scope;
 	}
 	
-	private IWorkingSet[] fWorkingSet;
 }

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @author dsteffle
  */
 public class TreeObject implements IAdaptable {
+	public static final String BLANK_FILENAME = ""; //$NON-NLS-1$
 	private static final String IGCCAST_PREFIX = "IGCCAST"; //$NON-NLS-1$
 	private static final String IGNUAST_PREFIX = "IGNUAST"; //$NON-NLS-1$
 	private static final String IGPPAST_PREFIX = "IGPPAST"; //$NON-NLS-1$
@@ -59,7 +60,7 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	public String toString() {
-	    if( node == null ) return ""; //$NON-NLS-1$ //TODO Devin is this the best way???
+	    if( node == null ) return BLANK_FILENAME; //$NON-NLS-1$ //TODO Devin is this the best way???
 		StringBuffer buffer = new StringBuffer();
 		
 		Class[] classes = node.getClass().getInterfaces();
@@ -85,11 +86,11 @@ public class TreeObject implements IAdaptable {
 	
 	public String getFilename()
 	{
-		if ( node == null ) return ""; //$NON-NLS-1$
+		if ( node == null ) return BLANK_FILENAME;
 	   IASTNodeLocation [] location = node.getNodeLocations();
-	   if( location[0] instanceof IASTFileLocation )
+	   if( location.length > 0 && location[0] instanceof IASTFileLocation )
 	      return ((IASTFileLocation)location[0]).getFileName();
-	   return ""; //$NON-NLS-1$
+	   return BLANK_FILENAME; //$NON-NLS-1$
 	}
 	
 	public int getOffset() {

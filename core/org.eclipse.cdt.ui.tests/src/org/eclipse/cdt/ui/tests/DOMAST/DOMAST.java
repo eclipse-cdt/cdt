@@ -98,20 +98,24 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class DOMAST extends ViewPart {
-   private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1$
+   private static final String COLLAPSE_ALL = "Collapse ALL"; //$NON-NLS-1$
+private static final String EXPAND_ALL = "Expand All"; //$NON-NLS-1$
+private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1$
    private static final String VIEW_NAME         = "DOM View";         //$NON-NLS-1$
    private static final String POPUPMENU         = "#PopupMenu";       //$NON-NLS-1$
    private static final String OPEN_DECLARATIONS = "Open Declarations"; //$NON-NLS-1$
    private static final String OPEN_REFERENCES   = "Open References";  //$NON-NLS-1$
    TreeViewer          viewer;
    private DrillDownAdapter    drillDownAdapter;
-   private Action              action1;
-   private Action              action2;
-   Action              singleClickAction;
+   private Action              openDeclarationsAction;
+   private Action              openReferencesAction;
+   private Action              singleClickAction;
    private Action              refreshAction;
-   IFile               file              = null;
+   private Action			   expandAllAction;
+   private Action			   collapseAllAction;
+   private IFile               file              = null;
    private IEditorPart         part              = null;
-   ParserLanguage              lang              = null;
+   private ParserLanguage              lang              = null;
 
    /*
     * The content provider class is responsible for providing objects to the
@@ -363,8 +367,8 @@ public class DOMAST extends ViewPart {
    }
 
    void fillContextMenu(IMenuManager manager) {
-      manager.add(action1);
-      manager.add(action2);
+      manager.add(openDeclarationsAction);
+      manager.add(openReferencesAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
       // Other plug-ins can contribute there actions here
@@ -372,46 +376,73 @@ public class DOMAST extends ViewPart {
    }
 
    private void fillLocalToolBar(IToolBarManager manager) {
-      manager.add(refreshAction);
+      manager.add(expandAllAction);
+      manager.add(collapseAllAction);
+   	  manager.add(refreshAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
    }
 
    private void makeActions() {
-      refreshAction = new Action() {
+   	  refreshAction = new Action() {
          public void run() {
-            setContentProvider(new ViewContentProvider(file));
+            // TODO take a snapshot of the tree expansion
+         	
+         	
+         	// set the new content provider
+         	setContentProvider(new ViewContentProvider(file));
+            
+         	// TODO set the expansion of the view based on the original snapshot (educated guess)
+         	
          }
       };
       refreshAction.setText(REFRESH_DOM_AST);
       refreshAction.setToolTipText(REFRESH_DOM_AST);
       refreshAction.setImageDescriptor(DOMASTPluginImages.DESC_IASTInitializer);
 
-      action1 = new Action() {
+     expandAllAction = new Action() {
+        public void run() {
+        	viewer.expandAll();
+        }
+     };
+     expandAllAction.setText(EXPAND_ALL);
+     expandAllAction.setToolTipText(EXPAND_ALL);
+     expandAllAction.setImageDescriptor(DOMASTPluginImages.DESC_EXPAND_ALL);
+     
+     collapseAllAction = new Action() {
+        public void run() {
+        	viewer.collapseAll();
+        }
+     };
+     collapseAllAction.setText(COLLAPSE_ALL);
+     collapseAllAction.setToolTipText(COLLAPSE_ALL);
+     collapseAllAction.setImageDescriptor(DOMASTPluginImages.DESC_COLLAPSE_ALL);
+      
+      openDeclarationsAction = new Action() {
          public void run() {
             showMessage("Action 1 executed"); // TODO open declarations action //$NON-NLS-1$
                                               // ... use annotations
          }
       };
-      action1.setText(OPEN_DECLARATIONS);
-      action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+      openDeclarationsAction.setText(OPEN_DECLARATIONS);
+      openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-      action2 = new Action() {
+      openReferencesAction = new Action() {
          public void run() {
             showMessage("Action 2 executed"); // TODO open references action ... //$NON-NLS-1$
                                               // use annotations
          }
       };
-      action2.setText(OPEN_REFERENCES);
-      action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+      openReferencesAction.setText(OPEN_REFERENCES);
+      openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
       singleClickAction = new ASTHighlighterAction(part);
    }
 
    private class ASTHighlighterAction extends Action {
-      IEditorPart aPart = null;
+	IEditorPart aPart = null;
 
       public ASTHighlighterAction(IEditorPart part) {
          this.aPart = part;
@@ -441,6 +472,10 @@ public class DOMAST extends ViewPart {
          Object obj = ((IStructuredSelection) selection).getFirstElement();
          if (aPart instanceof CEditor && obj instanceof TreeObject) {
             String filename = ((TreeObject) obj).getFilename();
+            
+            if (filename.equals(TreeObject.BLANK_FILENAME))
+            	return;
+            
             IResource r = ParserUtil.getResourceForFilename(filename);
             if (r != null) {
                try {

@@ -72,6 +72,8 @@ public class DOMASTPluginImages {
 	public static final String IMG_ICPPASTConstructorChainInitializer = NAME_PREFIX + "jump_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ICPPASTTemplateParameter = NAME_PREFIX + "disassembly.gif"; //$NON-NLS-1$
 	public static final String IMG_DEFAULT = NAME_PREFIX + "brkpd_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_EXPAND_ALL = NAME_PREFIX + "expandall.gif"; //$NON-NLS-1$
+	public static final String IMG_COLLAPSE_ALL = NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_IASTArrayModifier= createManaged(ICON_PREFIX, IMG_IASTArrayModifier);
 	public static final ImageDescriptor DESC_IASTDeclaration= createManaged(ICON_PREFIX, IMG_IASTDeclaration);
@@ -93,6 +95,8 @@ public class DOMASTPluginImages {
 	public static final ImageDescriptor DESC_ICPPASTConstructorChainInitializer= createManaged(ICON_PREFIX, IMG_ICPPASTConstructorChainInitializer);
 	public static final ImageDescriptor DESC_ICPPASTTemplateParameter= createManaged(ICON_PREFIX, IMG_ICPPASTTemplateParameter);
 	public static final ImageDescriptor DESC_DEFAULT= createManaged(ICON_PREFIX, IMG_DEFAULT);
+	public static final ImageDescriptor DESC_EXPAND_ALL= createManaged(ICON_PREFIX, IMG_EXPAND_ALL);
+	public static final ImageDescriptor DESC_COLLAPSE_ALL= createManaged(ICON_PREFIX, IMG_COLLAPSE_ALL);
 	
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

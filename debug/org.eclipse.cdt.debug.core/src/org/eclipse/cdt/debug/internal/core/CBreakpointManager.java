@@ -200,16 +200,16 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 				if ( source instanceof ICDIBreakpoint )
 					handleBreakpointCreatedEvent( (ICDIBreakpoint)source );
 			}
-		}
-		else if ( event instanceof ICDIDestroyedEvent )
-		{
-			if ( source instanceof ICDIBreakpoint )
-				handleBreakpointDestroyedEvent( (ICDIBreakpoint)source );
-		}
-		else if ( event instanceof ICDIChangedEvent )
-		{
-			if ( source instanceof ICDIBreakpoint )
-				handleBreakpointChangedEvent( (ICDIBreakpoint)source );
+			else if ( event instanceof ICDIDestroyedEvent )
+			{
+				if ( source instanceof ICDIBreakpoint )
+					handleBreakpointDestroyedEvent( (ICDIBreakpoint)source );
+			}
+			else if ( event instanceof ICDIChangedEvent )
+			{
+				if ( source instanceof ICDIBreakpoint )
+					handleBreakpointChangedEvent( (ICDIBreakpoint)source );
+			}
 		}
 	}
 

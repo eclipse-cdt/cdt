@@ -334,10 +334,18 @@ public class IndexManager extends JobManager{
 	* @param project
 	*/
 	public void indexerChangeNotification(IProject project) {
+		
+		//Get rid of any jobs scheduled by the old indexer
+        this.discardJobs(project.getName());
+        
+		//Get rid of the old index file
+	    ICDTIndexer currentIndexer = getIndexerForProject(project);
+	    IIndexStorage storage = currentIndexer.getIndexStorage();
+	    if (storage instanceof CIndexStorage)
+	    	((CIndexStorage) storage).removeIndex(project.getFullPath());
+	    
 	    monitor.enterWrite();
-	    try{
-	        //Get rid of any jobs scheduled by the old indexer
-	        this.discardJobs(project.getName());
+	    try{ 
 	        //Purge the old indexer from the indexer map
 	        Object e = indexerMap.remove(project);   
 	    } finally { 

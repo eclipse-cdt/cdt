@@ -1,3 +1,9 @@
+2005-03-30 Bogdan Gheorghe
+	Modified IndexManger to get rid of an exisiting index for a project when an 
+	indexer gets changed. This is needed in the case where two indexers share the same
+	storage (which is the current case for all indexers) to avoid them treading
+	on each other.
+	
 2005-03-29 Bogdan Gheorghe
 	Changed indexer change notification to run as a job.
 	Some additiional ICDTIndexer changes.

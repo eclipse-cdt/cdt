@@ -541,5 +541,58 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertInstances( collector, f, 2 );
 		assertInstances( collector, a, 3 );
 	}
+	public void testSimpleFunctionCall() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "void f();              \n" ); //$NON-NLS-1$
+    	buffer.append( "void g() {             \n" ); //$NON-NLS-1$
+    	buffer.append( "   f();                \n" ); //$NON-NLS-1$
+    	buffer.append( "}                      \n" ); //$NON-NLS-1$
+    	buffer.append( "void f(){ }            \n" ); //$NON-NLS-1$
+    	
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		IFunction f = (IFunction) collector.getName(0).resolveBinding();
+		IFunction g = (IFunction) collector.getName( 1 ).resolveBinding();
+		
+		assertInstances( collector, f, 3 );
+		assertInstances( collector, g, 1 );
+	}
+	
+	public void testForLoop() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "void f() {                         \n"); //$NON-NLS-1$
+    	buffer.append( "   for( int i = 0; i < 5; i++ ) {  \n"); //$NON-NLS-1$         
+    	buffer.append( "      i;                           \n"); //$NON-NLS-1$
+    	buffer.append( "   }                               \n"); //$NON-NLS-1$
+    	buffer.append( "}                                  \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		IVariable i = (IVariable) collector.getName(1).resolveBinding();
+		
+		assertInstances( collector, i, 4 );
+	}
+	
+    public void testExpressionFieldReference() throws Exception{
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "struct A { int x; };    \n"); //$NON-NLS-1$
+    	buffer.append( "void f(){               \n"); //$NON-NLS-1$
+    	buffer.append( "   ((struct A *) 1)->x; \n"); //$NON-NLS-1$
+    	buffer.append( "}                       \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		ICPPClassType A = (ICPPClassType) collector.getName(0).resolveBinding();
+		IField x = (IField) collector.getName(1).resolveBinding();
+		
+		assertInstances( collector, A, 2 );
+		assertInstances( collector, x, 2 );
+    }
 }
 

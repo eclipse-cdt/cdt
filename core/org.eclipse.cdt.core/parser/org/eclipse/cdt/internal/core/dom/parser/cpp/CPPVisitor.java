@@ -147,6 +147,8 @@ public class CPPVisitor {
 	            if( binding != null )
 	                return binding;
 	        }
+	    } else if( parent instanceof IASTTypeId ){
+	        return CPPSemantics.resolveBinding( elabType.getName() );
 	    }
 	    
 		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
@@ -191,6 +193,10 @@ public class CPPVisitor {
 	private static IBinding createBinding( IASTDeclarator declarator ){
 		
 		IASTNode parent = declarator.getParent();
+		
+		if( parent instanceof IASTTypeId )
+		    return CPPSemantics.resolveBinding( declarator.getName() );
+		
 		ICPPScope scope = (ICPPScope) getContainingScope( parent );
 		IBinding binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;
 
@@ -249,6 +255,8 @@ public class CPPVisitor {
 	        return getContainingScope( (IASTDeclSpecifier) node );
 	    else if( node instanceof IASTParameterDeclaration )
 	        return getContainingScope( (IASTParameterDeclaration) node );
+	    else if( node instanceof IASTExpression )
+	        return getContainingScope( (IASTExpression) node );
 	    else if( node instanceof IASTEnumerator ){
 	        //put the enumerators in the same scope as the enumeration
 	        return getContainingScope( (IASTEnumerationSpecifier) node.getParent() );
@@ -257,6 +265,15 @@ public class CPPVisitor {
 	    return getContainingScope( node.getParent() );
 	}
 	
+	public static IScope getContainingScope( IASTExpression expression ){
+	    IASTNode parent = expression.getParent();
+	    if( parent instanceof IASTForStatement ){
+	        return ((IASTForStatement)parent).getScope();
+	    } else if( parent instanceof IASTCompoundStatement ){
+	        return ((IASTCompoundStatement)parent).getScope();
+	    }
+	    return getContainingScope( parent );
+	}
 	public static IScope getContainingScope( IASTName name ){
 		IASTNode parent = name.getParent();
 		if( parent instanceof ICPPASTQualifiedName ){
@@ -329,7 +346,11 @@ public class CPPVisitor {
 	
 	public static IScope getContainingScope( IASTDeclSpecifier compTypeSpec ){
 	    IASTNode parent = compTypeSpec.getParent();
-	    return getContainingScope( (IASTSimpleDeclaration) parent );
+	    if( parent instanceof IASTSimpleDeclaration )
+	        return getContainingScope( (IASTSimpleDeclaration) parent );
+	    else if( parent instanceof IASTTypeId )
+	        return getContainingScope( parent.getParent() );
+	    return null;
 	}
 
 	/**
@@ -837,6 +858,8 @@ public class CPPVisitor {
 			declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
 		else if( parent instanceof IASTSimpleDeclaration )
 			declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+		else if( parent instanceof IASTTypeId )
+		    declSpec = ((IASTTypeId)parent).getDeclSpecifier();
 		
 		IType type = createType( declSpec );
 		

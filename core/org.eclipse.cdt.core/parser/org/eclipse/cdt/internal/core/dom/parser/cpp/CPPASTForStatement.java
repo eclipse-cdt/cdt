@@ -20,7 +20,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @author jcamelon
  */
 public class CPPASTForStatement extends CPPASTNode implements IASTForStatement {
-
+    private IScope scope = null;
+    
     private IASTExpression initialExpression;
     private IASTDeclaration initDeclaration;
     private IASTExpression condition;
@@ -102,8 +103,9 @@ public class CPPASTForStatement extends CPPASTNode implements IASTForStatement {
      * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getScope()
      */
     public IScope getScope() {
-        // TODO Auto-generated method stub
-        return null;
+        if( scope == null )
+            scope = new CPPBlockScope( this );
+        return scope;
     }
 
 }

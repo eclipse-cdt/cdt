@@ -223,6 +223,9 @@ public class CPPSemantics {
 		}
 	}
 	static protected IBinding resolveBinding( IASTName name ){
+	    if( name.toCharArray().length == 0 )
+	        return null;
+	    
 		//1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData( name );
 		
@@ -260,7 +263,8 @@ public class CPPSemantics {
 				}
 			}
 		} else if( parent instanceof IASTDeclarator ){
-			data.forDefinition = true;
+		    if( parent.getParent() instanceof IASTSimpleDeclaration )
+		        data.forDefinition = true;
 		} else if ( parent instanceof ICPPASTBaseSpecifier ||
 		        	parent instanceof ICPPASTElaboratedTypeSpecifier) 
 		{

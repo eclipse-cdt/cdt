@@ -934,7 +934,8 @@ public class Parser implements IParser
                 IASTDeclaration declaration = (IASTDeclaration)i.next();
                 declaration.enterScope( requestor );
    
-                handleFunctionBody((IASTScope)declaration);
+                handleFunctionBody((IASTScope)declaration, 
+                	sdw.isInline() );
 				((IASTOffsetableElement)declaration).setEndingOffset(
 					lastToken.getEndOffset());
   
@@ -954,9 +955,9 @@ public class Parser implements IParser
         }
         
     }
-    protected void handleFunctionBody(IASTScope scope) throws Backtrack, EndOfFile
+    protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile
     {
-        if ( mode == ParserMode.QUICK_PARSE ) // TODO - Enable parsing within function bodies i.e. mode == ParserMode.QUICK_PARSE)
+        if ( mode == ParserMode.QUICK_PARSE || isInlineFunction ) 
         {
             // speed up the parser by skiping the body
             // simply look for matching brace and return

@@ -1,4 +1,8 @@
 2003-09-05 John Camelon
+	Continue to add support for parsing within function bodies.  
+	Add workaround for 1.2 for inline function declaration-before-use chicken-and-egg.
+
+2003-09-05 John Camelon
 	Fixed NPE on nested declarations in code blocks.  
 
 2003-09-04 John Camelon

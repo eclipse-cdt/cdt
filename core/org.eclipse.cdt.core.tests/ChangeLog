@@ -1,3 +1,7 @@
+2003-09-05 John Camelon
+	Added CompleteParseASTTest::testSimpleIfStatement(), testSimpleWhileStatement(). 
+	testSimpleSwitchStatement(), testSimpleDoStatement().
+
 2003-09-05 Andrew Niefer
 	Added testEnumerators to OtherPatternTests.java
 	Modified resources/search/classDecl.cpp to include some enumerators

@@ -653,4 +653,41 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		 
 	}	
 	
+	public void testSimpleIfStatement() throws Exception
+	{
+		Iterator i = parse( "const bool T = true; int foo() { if( T ) { return 5; } else if( ! T ) return 20; else { return 10; } }").getDeclarations();
+		IASTVariable t = (IASTVariable)i.next(); 
+		IASTFunction foo = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 2 );
+	}
+	
+	public void testSimpleWhileStatement() throws Exception
+	{
+		Iterator i = parse( "const bool T = true; void foo() { int x = 0; while( T ) {  ++x;  if( x == 100 ) break; } }").getDeclarations();
+		IASTVariable t = (IASTVariable)i.next(); 
+		IASTFunction foo = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 3 );
+	}
+	
+	public void testSimpleSwitchStatement() throws Exception
+	{
+		Iterator i = parse( "const int x = 5; const int y = 10; void foo() { switch( x ) { case 1: break; case 2: goto blah; case y: continue; default: break;} }").getDeclarations();
+		IASTVariable x = (IASTVariable)i.next();
+		IASTVariable y = (IASTVariable)i.next(); 
+		IASTFunction foo = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 2  );
+	}
+	
+	public void testSimpleDoStatement() throws Exception
+	{
+		Iterator i = parse( "const int x = 3; int counter = 0; void foo() { do { ++counter; } while( counter != x ); } ").getDeclarations();
+		IASTVariable x = (IASTVariable)i.next(); 
+		IASTVariable counter = (IASTVariable)i.next(); 
+		IASTFunction foo = (IASTFunction)i.next(); 
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 3 );
+	}
 }

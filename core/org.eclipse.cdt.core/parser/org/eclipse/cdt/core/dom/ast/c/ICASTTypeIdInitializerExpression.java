@@ -15,16 +15,55 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
+ * C Expression of the format type-id { initializer }
+ * 
  * @author jcamelon
  */
 public interface ICASTTypeIdInitializerExpression extends IASTExpression {
 
-    public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty( "TypeId"); //$NON-NLS-1$
-    public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty( "Initializer"); //$NON-NLS-1$
-    
-    public IASTTypeId getTypeId();
-    public void setTypeId( IASTTypeId typeId );
-    public IASTInitializer getInitializer();
-    public void setInitializer( IASTInitializer initializer );
-    
+	/**
+	 * <code>TYPE_ID</code> represents the relationship between an
+	 * <code>ICASTTypeIdInitializerExpression</code> and
+	 * <code>IASTTypeId</code>.
+	 */
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("TypeId"); //$NON-NLS-1$
+
+	/**
+	 * <code>INITIALIZER</code> represents the relationship between an
+	 * <code>ICASTTypeIdInitializerExpression</code> and
+	 * <code>IASTInitializer</code>.
+	 */
+	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
+			"Initializer"); //$NON-NLS-1$
+
+	/**
+	 * Get the type-id.
+	 * 
+	 * @return <code>IASTTypeId</code>
+	 */
+	public IASTTypeId getTypeId();
+
+	/**
+	 * Set the typeId.
+	 * 
+	 * @param typeId
+	 *            <code>IASTTypeId</code>
+	 */
+	public void setTypeId(IASTTypeId typeId);
+
+	/**
+	 * Get the initializer.
+	 * 
+	 * @return <code>IASTInitializer</code>
+	 */
+	public IASTInitializer getInitializer();
+
+	/**
+	 * Set the initializer.
+	 * 
+	 * @param initializer
+	 *            <code>IASTInitializer</code>
+	 */
+	public void setInitializer(IASTInitializer initializer);
+
 }

@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 public interface ICBasicType extends IBasicType {
 	// Extra types in C
 	public static final int t_Bool = ICASTSimpleDeclSpecifier.t_Bool;
+
 	public static final int t_Complex = ICASTSimpleDeclSpecifier.t_Complex;
+
 	public static final int t_Imaginary = ICASTSimpleDeclSpecifier.t_Imaginary;
-	
+
 	public boolean isLongLong() throws DOMException;
 }

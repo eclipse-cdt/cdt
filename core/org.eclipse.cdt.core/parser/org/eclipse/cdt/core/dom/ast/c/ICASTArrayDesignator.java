@@ -13,13 +13,33 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
 /**
+ * C-style array designator. e.g. struct ABC { int def[10] }; struct ABC
+ * instance = { def[0] = 9 };
+ * 
  * @author jcamelon
  */
 public interface ICASTArrayDesignator extends ICASTDesignator {
 
-    public static final ASTNodeProperty SUBSCRIPT_EXPRESSION = new ASTNodeProperty( "Subscript Expression" ); //$NON-NLS-1$
-    
-    public IASTExpression getSubscriptExpression();
-    public void setSubscriptExpression( IASTExpression value );
-    
+	/**
+	 * <code>SUBSCRIPT_EXPRESSION</code> represents the relationship between
+	 * the designator and the subscript expression.
+	 */
+	public static final ASTNodeProperty SUBSCRIPT_EXPRESSION = new ASTNodeProperty(
+			"Subscript Expression"); //$NON-NLS-1$
+
+	/**
+	 * Get the subsript expression.
+	 * 
+	 * @return value <code>IASTExpression</code>
+	 */
+	public IASTExpression getSubscriptExpression();
+
+	/**
+	 * Set the subscript expression.
+	 * 
+	 * @param value
+	 *            <code>IASTExpression</code>
+	 */
+	public void setSubscriptExpression(IASTExpression value);
+
 }

@@ -18,8 +18,12 @@ import org.eclipse.cdt.core.dom.ast.IArrayType;
  */
 public interface ICArrayType extends IArrayType {
 	public boolean isConst() throws DOMException;
+
 	public boolean isRestrict() throws DOMException;
+
 	public boolean isVolatile() throws DOMException;
+
 	public boolean isStatic() throws DOMException;
+
 	public boolean isVariableLength() throws DOMException;
 }

@@ -12,9 +12,12 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 
 /**
+ * C's elaborated type specifier. (same as IASTElaboratedTypeSpecifier, except
+ * for the addition of the restrict keyword.
+ * 
  * @author jcamelon
  */
 public interface ICASTElaboratedTypeSpecifier extends
-        IASTElaboratedTypeSpecifier, ICASTDeclSpecifier {
+		IASTElaboratedTypeSpecifier, ICASTDeclSpecifier {
 
 }

@@ -12,10 +12,10 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
+ * Base interface for all C-style designators.
+ * 
  * @author jcamelon
  */
 public interface ICASTDesignator extends IASTNode {
 
-    
-    
 }

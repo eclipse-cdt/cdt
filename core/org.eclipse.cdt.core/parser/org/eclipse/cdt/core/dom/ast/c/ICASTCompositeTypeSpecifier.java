@@ -12,9 +12,11 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 
 /**
+ * Structs and Unions in C can be qualified w/restrict keyword.
+ * 
  * @author jcamelon
  */
 public interface ICASTCompositeTypeSpecifier extends
-        IASTCompositeTypeSpecifier, ICASTDeclSpecifier {
+		IASTCompositeTypeSpecifier, ICASTDeclSpecifier {
 
 }

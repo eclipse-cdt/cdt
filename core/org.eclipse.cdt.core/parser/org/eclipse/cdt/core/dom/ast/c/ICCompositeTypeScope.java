@@ -21,12 +21,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  * @author aniefer
  */
 public interface ICCompositeTypeScope extends ICScope {
-    /**
-     * get the binding for the member that has been previous added to this scope 
-     * and that matches the given name.
-     * @param name
-     * @return
-     * @throws DOMException
-     */
-    public IBinding getBinding( char[] name ) throws DOMException;
+	/**
+	 * get the binding for the member that has been previous added to this scope
+	 * and that matches the given name.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws DOMException
+	 */
+	public IBinding getBinding(char[] name) throws DOMException;
 }

@@ -12,11 +12,24 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
+ * C-specific pointer. (includes restrict modifier).
+ * 
  * @author jcamelon
  */
 public interface ICASTPointer extends IASTPointer {
-    
-    boolean isRestrict();
-    void setRestrict( boolean value );
+
+	/**
+	 * Is this a restrict pointer?
+	 * 
+	 * @return isRestrict boolean
+	 */
+	boolean isRestrict();
+
+	/**
+	 * Set this pointer to be restrict pointer.
+	 * 
+	 * @param value
+	 */
+	void setRestrict(boolean value);
 
 }

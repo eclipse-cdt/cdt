@@ -16,9 +16,26 @@ package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 
-
+/**
+ * This subclass of ASTVisitor that allows for better control in traversing C.
+ * 
+ * @ref ASTVisitor
+ * @author jcamelon
+ */
 public abstract class CASTVisitor extends ASTVisitor {
-	public boolean shouldVisitDesignators    = false;
-	
-    public int visit( ICASTDesignator designator )  { return PROCESS_CONTINUE; }
+	/**
+	 * Override this value in your subclass if you do wish to visit designators.
+	 */
+	public boolean shouldVisitDesignators = false;
+
+	/**
+	 * Function to override if you wish to visit designators in your
+	 * implementation.
+	 * 
+	 * @param designator
+	 * @return
+	 */
+	public int visit(ICASTDesignator designator) {
+		return PROCESS_CONTINUE;
+	}
 }

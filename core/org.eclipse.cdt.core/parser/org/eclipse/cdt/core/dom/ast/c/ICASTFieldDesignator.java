@@ -13,12 +13,31 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
+ * Specific Designator that represents a field reference.
+ * 
  * @author jcamelon
  */
 public interface ICASTFieldDesignator extends ICASTDesignator {
 
-    public static final ASTNodeProperty FIELD_NAME = new ASTNodeProperty( "Designator Field Name"); //$NON-NLS-1$
-    
-    public IASTName getName();
-    public void setName( IASTName name );
+	/**
+	 * <code>FIELD_NAME</code> represent the relationship between an
+	 * <code>ICASTFieldDesignator</code> and an <code>IASTName</code>.
+	 */
+	public static final ASTNodeProperty FIELD_NAME = new ASTNodeProperty(
+			"Designator Field Name"); //$NON-NLS-1$
+
+	/**
+	 * Get the field name.
+	 * 
+	 * @return <code>IASTName</code>
+	 */
+	public IASTName getName();
+
+	/**
+	 * Set the field name.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 */
+	public void setName(IASTName name);
 }

@@ -12,9 +12,12 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 
 /**
+ * This interface is just as an IASTNamedTypeSpecifier, except that it also
+ * includes the abiliy to use the restrict modifier.
+ * 
  * @author jcamelon
  */
 public interface ICASTTypedefNameSpecifier extends IASTNamedTypeSpecifier,
-        ICASTDeclSpecifier {
+		ICASTDeclSpecifier {
 
 }

@@ -14,17 +14,62 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 
 /**
+ * This interface represents a designated initializer. e.g. struct x y = { .z=4,
+ * .t[1] = 3 };
+ * 
  * @author jcamelon
+ * 
  */
-public interface ICASTDesignatedInitializer extends
-        IASTInitializer {
+public interface ICASTDesignatedInitializer extends IASTInitializer {
 
-    public static final ICASTDesignator [] EMPTY_DESIGNATOR_ARRAY = new ICASTDesignator[0];
-    public static final ASTNodeProperty DESIGNATOR = new ASTNodeProperty( "Designator"); //$NON-NLS-1$
-    public void addDesignator( ICASTDesignator designator );
-    public ICASTDesignator [] getDesignators();
-    
-    public static final ASTNodeProperty OPERAND = new ASTNodeProperty( "RHS Initializer"); //$NON-NLS-1$
-    public IASTInitializer getOperandInitializer();
-    public void setOperandInitializer( IASTInitializer rhs );
+	/**
+	 * Constant.
+	 */
+	public static final ICASTDesignator[] EMPTY_DESIGNATOR_ARRAY = new ICASTDesignator[0];
+
+	/**
+	 * <code>DESIGNATOR</code> represents the relationship between an
+	 * <code>ICASTDesignatedInitializer</code> and
+	 * <code>ICASTDesignator</code>.
+	 */
+	public static final ASTNodeProperty DESIGNATOR = new ASTNodeProperty(
+			"Designator"); //$NON-NLS-1$
+
+	/**
+	 * Add a designator to this initializer.
+	 * 
+	 * @param designator
+	 *            <code>ICASTDesignator</code>
+	 */
+	public void addDesignator(ICASTDesignator designator);
+
+	/**
+	 * Get all of the designators.
+	 * 
+	 * @return <code>ICASTDesignator []</code>
+	 */
+	public ICASTDesignator[] getDesignators();
+
+	/**
+	 * <code>OPERAND</code> represents the relationship between
+	 * <code>ICASTDesignatedInitializer</code> and its
+	 * <code>IASTInitializer</code>.
+	 */
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+			"RHS Initializer"); //$NON-NLS-1$
+
+	/**
+	 * Get the nested initializer.
+	 * 
+	 * @return <code>IASTInitializer</code>
+	 */
+	public IASTInitializer getOperandInitializer();
+
+	/**
+	 * Set the nested initializer.
+	 * 
+	 * @param rhs
+	 *            <code>IASTInitializer</code>
+	 */
+	public void setOperandInitializer(IASTInitializer rhs);
 }

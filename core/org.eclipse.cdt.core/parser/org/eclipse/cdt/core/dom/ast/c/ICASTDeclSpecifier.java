@@ -13,13 +13,24 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
+ * C extension to IASTDeclSpecifier. (restrict keyword)
+ * 
  * @author Doug Schaefer
  */
 public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 
-	// Extra type qualifier in C
+	/**
+	 * Is restrict keyword used?
+	 * 
+	 * @return boolean
+	 */
 	public boolean isRestrict();
-	
-	public void setRestrict( boolean value );
-	
+
+	/**
+	 * Set restrict to value.
+	 * 
+	 * @param value
+	 */
+	public void setRestrict(boolean value);
+
 }

@@ -39,7 +39,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		IFolderLayout folder3= layout.createFolder("topRight", IPageLayout.RIGHT,(float)0.75, editorArea);
 		folder3.addView(IPageLayout.ID_OUTLINE);
 
-//		layout.addActionSet(CUIPlugin.WIZARD_ACTION_SET_ID);
+		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);
 		layout.addActionSet(CUIPlugin.FOLDER_ACTION_SET_ID);
 		
 		// views - build console

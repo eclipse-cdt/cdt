@@ -1,3 +1,10 @@
+2003-02-03  Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java:
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIThread.java:
+	Added methods, signal(), jump() stepReturn(boolean) to
+	mimic gdb "return/finish".
+
 2003-02-03 Mikhail Khodjaiants
 	Implemention of the 'handle' command of the 'Signals' view.
 	* ICDISignal.java: added the 'handle' method

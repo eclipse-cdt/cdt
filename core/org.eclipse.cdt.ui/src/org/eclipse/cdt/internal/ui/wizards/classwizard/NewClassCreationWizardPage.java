@@ -75,10 +75,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -113,7 +116,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	ITypeInfo fCurrentEnclosingClass;
 	
 	/** Field ID of the class name input field. */	
-	protected final static String CLASSNAME = PAGE_NAME + ".typename"; //$NON-NLS-1$
+	protected final static String CLASSNAME = PAGE_NAME + ".classname"; //$NON-NLS-1$
 	StringDialogField fClassNameDialogField;
 	protected IStatus fClassNameStatus;
 
@@ -127,6 +130,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	MethodStubsListDialogField fMethodStubsDialogField;
 	protected IStatus fMethodStubsStatus;
 
+	SelectionButtonDialogField fUseDefaultSelection;
+
 	/** ID of the header file input field. */
 	protected final static String HEADERFILE = PAGE_NAME + ".headerfile"; //$NON-NLS-1$
 	StringButtonDialogField fHeaderFileDialogField;
@@ -138,7 +143,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	StringButtonDialogField fSourceFileDialogField;
 	protected IStatus fSourceFileStatus;
 	IPath fCurrentSourceFile;
-   
+
+	protected final IStatus STATUS_OK = new StatusInfo();
+	protected String fLastFocusedField = null;
+
 	private NewClassCodeGenerator fCodeGenerator = null;
 
 	public NewClassCreationWizardPage() {
@@ -181,26 +189,28 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		MethodStubsFieldAdapter methodStubsAdapter = new MethodStubsFieldAdapter();
 		fMethodStubsDialogField = new MethodStubsListDialogField(NewClassWizardMessages.getString("NewClassCreationWizardPage.methodStubs.label"), methodStubsAdapter); //$NON-NLS-1$
 	    
-		HeaderFileFieldAdapter headerFileAdapter = new HeaderFileFieldAdapter();
-		fHeaderFileDialogField = new StringButtonDialogField(headerFileAdapter);
-		fHeaderFileDialogField.setDialogFieldListener(headerFileAdapter);
+		FileGroupFieldAdapter fileGroupAdapter = new FileGroupFieldAdapter();
+		fUseDefaultSelection = new SelectionButtonDialogField(SWT.CHECK);
+		fUseDefaultSelection.setDialogFieldListener(fileGroupAdapter);
+		fUseDefaultSelection.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.useDefaultLocation.label")); //$NON-NLS-1$
+		fHeaderFileDialogField = new StringButtonDialogField(fileGroupAdapter);
+		fHeaderFileDialogField.setDialogFieldListener(fileGroupAdapter);
 		fHeaderFileDialogField.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.headerFile.label")); //$NON-NLS-1$
 		fHeaderFileDialogField.setButtonLabel(NewClassWizardMessages.getString("NewClassCreationWizardPage.headerFile.button")); //$NON-NLS-1$
-
-		SourceFileFieldAdapter sourceFileAdapter = new SourceFileFieldAdapter();
-		fSourceFileDialogField = new StringButtonDialogField(sourceFileAdapter);
-		fSourceFileDialogField.setDialogFieldListener(sourceFileAdapter);
+		fSourceFileDialogField = new StringButtonDialogField(fileGroupAdapter);
+		fSourceFileDialogField.setDialogFieldListener(fileGroupAdapter);
 		fSourceFileDialogField.setLabelText(NewClassWizardMessages.getString("NewClassCreationWizardPage.sourceFile.label")); //$NON-NLS-1$
 		fSourceFileDialogField.setButtonLabel(NewClassWizardMessages.getString("NewClassCreationWizardPage.sourceFile.button")); //$NON-NLS-1$
 		
-		fSourceFolderStatus = new StatusInfo();
-		fNamespaceStatus = new StatusInfo();
-		fEnclosingClassStatus = new StatusInfo();
-		fClassNameStatus = new StatusInfo();
-		fBaseClassesStatus = new StatusInfo();
-		fMethodStubsStatus = new StatusInfo();
-		fHeaderFileStatus = new StatusInfo();
-		fSourceFileStatus = new StatusInfo();
+		fSourceFolderStatus = STATUS_OK;
+		fNamespaceStatus = STATUS_OK;
+		fEnclosingClassStatus = STATUS_OK;
+		fClassNameStatus = STATUS_OK;
+		fBaseClassesStatus = STATUS_OK;
+		fMethodStubsStatus = STATUS_OK;
+		fHeaderFileStatus = STATUS_OK;
+		fSourceFileStatus = STATUS_OK;
+		fLastFocusedField = null;
 
 		fCurrentSourceFolder = null;
 		fCanModifyNamespace = true;
@@ -237,8 +247,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         
         createSeparator(composite, nColumns);
         
-        createHeaderFileControls(composite, nColumns);
-        createSourceFileControls(composite, nColumns);
+        createFileControls(composite, nColumns);
         
 		composite.layout();			
 
@@ -269,9 +278,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	protected void createSourceFolderControls(Composite parent, int nColumns) {
 		fSourceFolderDialogField.doFillIntoGrid(parent, nColumns);
-		LayoutUtil.setWidthHint(fSourceFolderDialogField.getTextControl(null), getMaxFieldWidth());
+		Text textControl = fSourceFolderDialogField.getTextControl(null);
+		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
+		textControl.addFocusListener(new StatusFocusListener(SOURCE_FOLDER));
 	}
-
+	
 	/**
 	 * Creates the controls for the namespace field. Expects a <code>GridLayout</code> with at 
 	 * least 4 columns.
@@ -281,7 +292,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */		
 	protected void createNamespaceControls(Composite composite, int nColumns) {
 	    fNamespaceDialogField.doFillIntoGrid(composite, nColumns);
-		LayoutUtil.setWidthHint(fNamespaceDialogField.getTextControl(null), getMaxFieldWidth());
+		Text textControl = fNamespaceDialogField.getTextControl(null);
+		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
+		textControl.addFocusListener(new StatusFocusListener(NAMESPACE));
 	}	
 
 	/**
@@ -300,11 +313,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		fEnclosingClassSelection.doFillIntoGrid(tabGroup, 1);
 
-		Text text = fEnclosingClassDialogField.getTextControl(composite);
+		Text textControl = fEnclosingClassDialogField.getTextControl(composite);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = getMaxFieldWidth();
 		gd.horizontalSpan = 2;
-		text.setLayoutData(gd);
+		textControl.setLayoutData(gd);
+		textControl.addFocusListener(new StatusFocusListener(ENCLOSING_CLASS));
 		
 		Button button = fEnclosingClassDialogField.getChangeControl(composite);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -324,8 +338,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected void createClassNameControls(Composite composite, int nColumns) {
 		fClassNameDialogField.doFillIntoGrid(composite, nColumns - 1);
 		DialogField.createEmptySpace(composite);
-		
-		LayoutUtil.setWidthHint(fClassNameDialogField.getTextControl(null), getMaxFieldWidth());
+		Text textControl = fClassNameDialogField.getTextControl(null);
+		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
+		textControl.addFocusListener(new StatusFocusListener(CLASSNAME));
 	}
 
 	/**
@@ -337,10 +352,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */			
 	protected void createBaseClassesControls(Composite composite, int nColumns) {
 	    fBaseClassesDialogField.doFillIntoGrid(composite, nColumns);
-		GridData gd = (GridData)fBaseClassesDialogField.getListControl(null).getLayoutData();
+	    Control listControl = fBaseClassesDialogField.getListControl(null);
+		GridData gd = (GridData) listControl.getLayoutData();
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		gd.grabExcessVerticalSpace = false;
 		gd.widthHint = getMaxFieldWidth();
+		listControl.addFocusListener(new StatusFocusListener(BASECLASSES));
 	}
 	
 	/**
@@ -352,58 +369,61 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */			
 	protected void createMethodStubsControls(Composite composite, int nColumns) {
 		fMethodStubsDialogField.doFillIntoGrid(composite, nColumns);
-		GridData gd = (GridData)fMethodStubsDialogField.getListControl(null).getLayoutData();
+	    Control listControl = fMethodStubsDialogField.getListControl(null);
+		GridData gd = (GridData) listControl.getLayoutData();
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		gd.grabExcessVerticalSpace = false;
 		gd.widthHint = getMaxFieldWidth();
+		listControl.addFocusListener(new StatusFocusListener(METHODSTUBS));
 	}
 	
 	/**
-	 * Creates the controls for the header file field. Expects a <code>GridLayout</code> with at 
+	 * Creates the controls for the enclosing class name field. Expects a <code>GridLayout</code> with at 
 	 * least 4 columns.
 	 * 
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
 	 */		
-	protected void createHeaderFileControls(Composite composite, int nColumns) {
-		LayoutUtil.setHorizontalSpan(fHeaderFileDialogField.getLabelControl(composite), 1);
+	protected void createFileControls(Composite composite, int nColumns) {
+		Composite tabGroup = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+ 		tabGroup.setLayout(layout);
 
-		Text text = fHeaderFileDialogField.getTextControl(composite);
+		fUseDefaultSelection.doFillIntoGrid(tabGroup, 1);
+		
+		LayoutUtil.setHorizontalSpan(fHeaderFileDialogField.getLabelControl(composite), 1);
+		Text textControl = fHeaderFileDialogField.getTextControl(composite);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = getMaxFieldWidth();
-		gd.horizontalSpan = 2;
-		text.setLayoutData(gd);
+		gd.horizontalSpan = 1;
+		textControl.setLayoutData(gd);
+		textControl.addFocusListener(new StatusFocusListener(HEADERFILE));
 		
 		Button button = fHeaderFileDialogField.getChangeControl(composite);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
-	}
 
-	/**
-	 * Creates the controls for the source file field. Expects a <code>GridLayout</code> with at 
-	 * least 4 columns.
-	 * 
-	 * @param composite the parent composite
-	 * @param nColumns number of columns to span
-	 */		
-	protected void createSourceFileControls(Composite composite, int nColumns) {
-	    LayoutUtil.setHorizontalSpan(fSourceFileDialogField.getLabelControl(composite), 1);
-
-		Text text = fSourceFileDialogField.getTextControl(composite);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = getMaxFieldWidth();
-		gd.horizontalSpan = 2;
-		text.setLayoutData(gd);
+		DialogField.createEmptySpace(composite, 1);
 		
-		Button button = fSourceFileDialogField.getChangeControl(composite);
+		LayoutUtil.setHorizontalSpan(fSourceFileDialogField.getLabelControl(composite), 1);
+		textControl = fSourceFileDialogField.getTextControl(composite);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = getMaxFieldWidth();
+		gd.horizontalSpan = 1;
+		textControl.setLayoutData(gd);
+		textControl.addFocusListener(new StatusFocusListener(SOURCEFILE));
+		
+		button = fSourceFileDialogField.getChangeControl(composite);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = SWTUtil.getButtonHeigthHint(button);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
-	}
-
+	}	
+	
     /**
      * The wizard owning this page is responsible for calling this method with the
      * current selection. The selection is used to initialize the fields of the wizard 
@@ -508,6 +528,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     	setClassName(className, true);
         addMethodStub(new ConstructorMethodStub(), true);
         addMethodStub(new DestructorMethodStub(), true);
+    	setFileGroupSelection(true, true);
     }
 
     /**
@@ -579,6 +600,21 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected void setFocusOnSourceFolder() {
 		fSourceFolderDialogField.setFocus();
 	}
+
+    private final class StatusFocusListener implements FocusListener {
+        private String fieldName;
+
+        public StatusFocusListener(String fieldName) {
+            this.fieldName = fieldName;
+        }
+        public void focusGained(FocusEvent e) {
+            fLastFocusedField = fieldName;
+        }
+
+        public void focusLost(FocusEvent e) {
+            fLastFocusedField = null;
+        }
+    }
 
     private class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
@@ -665,14 +701,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     
 	private class ClassNameFieldAdapter implements IDialogFieldListener {
 		public void dialogFieldChanged(DialogField field) {
-			String className = fClassNameDialogField.getText();
-			if (className.length() > 0) {
-			    fHeaderFileDialogField.setText(NewSourceFileGenerator.generateHeaderFileNameFromClass(className));
-			    fSourceFileDialogField.setText(NewSourceFileGenerator.generateSourceFileNameFromClass(className));
-			} else {
-			    fHeaderFileDialogField.setText(""); //$NON-NLS-1$
-			    fSourceFileDialogField.setText(""); //$NON-NLS-1$
-			}
+		    if (isUseDefaultSelected()) {
+				String className = fClassNameDialogField.getText();
+				if (className.length() > 0) {
+				    fHeaderFileDialogField.setText(NewSourceFileGenerator.generateHeaderFileNameFromClass(className));
+				    fSourceFileDialogField.setText(NewSourceFileGenerator.generateSourceFileNameFromClass(className));
+				} else {
+				    fHeaderFileDialogField.setText(""); //$NON-NLS-1$
+				    fSourceFileDialogField.setText(""); //$NON-NLS-1$
+				}
+		    }
 		    fClassNameStatus = classNameChanged();
 			// tell all others
 		    updateEnableState();
@@ -709,38 +747,36 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         }
     }
 
-    private class HeaderFileFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+    private class FileGroupFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
-			IPath filePath = chooseSourceFile(getHeaderFilePath(), NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseHeaderFileDialog.title")); //$NON-NLS-1$
-			if (filePath != null) {
-				setHeaderFile(filePath, true);
-			}
+		    if (field == fHeaderFileDialogField) {
+				IPath filePath = chooseSourceFile(getHeaderFilePath(), NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseHeaderFileDialog.title")); //$NON-NLS-1$
+				if (filePath != null) {
+					setHeaderFile(filePath, true);
+				}
+		    } else if (field == fSourceFileDialogField) {
+				IPath filePath = chooseSourceFile(getSourceFilePath(), NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFileDialog.title")); //$NON-NLS-1$
+				if (filePath != null) {
+					setSourceFile(filePath, true);
+				}
+		    }
 		}
 		
 		public void dialogFieldChanged(DialogField field) {
+		    if (field == fUseDefaultSelection) {
+		        boolean enabled = !isUseDefaultSelected();
+		        fHeaderFileDialogField.setEnabled(enabled);
+		        fSourceFileDialogField.setEnabled(enabled);
+		    }
 			fHeaderFileStatus = headerFileChanged();
-			// tell all others
-		    updateEnableState();
-			handleFieldChanged(HEADERFILE);
-		}
-	}
-
-    private class SourceFileFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
-		public void changeControlPressed(DialogField field) {
-			IPath filePath = chooseSourceFile(getSourceFilePath(), NewClassWizardMessages.getString("NewClassCreationWizardPage.ChooseSourceFileDialog.title")); //$NON-NLS-1$
-			if (filePath != null) {
-				setSourceFile(filePath, true);
-			}
-		}
-		
-		public void dialogFieldChanged(DialogField field) {
 			fSourceFileStatus = sourceFileChanged();
 			// tell all others
 		    updateEnableState();
+			handleFieldChanged(HEADERFILE);
 			handleFieldChanged(SOURCEFILE);
 		}
-    }
-		
+	}
+
     // ----------- validation ----------
 			
 	/**
@@ -966,8 +1002,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 			// must not exist
 			if (!isEnclosingClassSelected()) {
-			    if (fCurrentNamespace != null) {
-			        ITypeInfo[] types = fCurrentNamespace.getEnclosedTypes();
+			    ITypeInfo namespace = getCurrentNamespace();
+			    if (namespace != null) {
+			        ITypeInfo[] types = namespace.getEnclosedTypes();
 			        for (int i = 0; i < types.length; ++i) {
 			            IQualifiedTypeName typeName = types[i].getQualifiedTypeName().removeFirstSegments(1);
 			            if (typeName.equalsIgnoreCase(qualName)) {
@@ -990,18 +1027,21 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 						return status;
 				    }
 			    }
-			} else if (fCurrentEnclosingClass != null) {
-		        ITypeInfo[] types = fCurrentEnclosingClass.getEnclosedTypes();
-		        for (int i = 0; i < types.length; ++i) {
-		            IQualifiedTypeName typeName = types[i].getQualifiedTypeName().removeFirstSegments(1);
-		            if (typeName.equalsIgnoreCase(qualName)) {
-		                if (typeName.equals(qualName))
-		                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
-		                else
-		                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
-						return status;
-		            }
-		        }
+			} else {
+			    ITypeInfo enclosingClass = getCurrentEnclosingClass();
+			    if (enclosingClass != null) {
+			        ITypeInfo[] types = enclosingClass.getEnclosedTypes();
+			        for (int i = 0; i < types.length; ++i) {
+			            IQualifiedTypeName typeName = types[i].getQualifiedTypeName().removeFirstSegments(1);
+			            if (typeName.equalsIgnoreCase(qualName)) {
+			                if (typeName.equals(qualName))
+			                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+			                else
+			                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+							return status;
+			            }
+			        }
+			    }
 			}
 	    }
 		return status;
@@ -1062,45 +1102,44 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fCurrentHeaderFile = null;
 		String str = getHeaderFileName();
 		if (str.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFolderName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterHeaderFileName")); //$NON-NLS-1$
 			return status;
 		}
-		IPath path = new Path(str);
+
+		IProject project = getCurrentProject();
+		if (project == null) {
+//			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFolderRequired")); //$NON-NLS-1$
+			return status;
+		}
+
+		IPath path = getHeaderFilePath();
 		IResource res = fWorkspaceRoot.findMember(path);
 		if (res != null && res.exists()) {
+			int resType = res.getType();
+			if (resType == IResource.FILE) {
+				IProject proj = res.getProject();
+				if (!proj.isOpen()) {
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", str)); //$NON-NLS-1$
+					return status;
+				}
+			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+				} else {
+				    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.HeaderFileExists")); //$NON-NLS-1$
+				}
+			} else {
+				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", str)); //$NON-NLS-1$
+				return status;
+			}
+		} else {
+			IStatus val = validateHeaderFileName(project, path.lastSegment());
+			if (val.getSeverity() == IStatus.ERROR) {
+				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidHeaderFileName", val.getMessage())); //$NON-NLS-1$
+				return status;
+			} else if (val.getSeverity() == IStatus.WARNING) {
+				status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.HeaderFileNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+			}
 		}
-//				if (res.exists()) {
-////					try {
-//					    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-////						if (!proj.hasNature(CoreModel.NATURE_ID)) {
-//							if (resType == IResource.PROJECT) {
-//								status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
-//							} else {
-//								status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
-//							}
-//							return status;
-//						}
-////					} catch (CoreException e) {
-////						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
-////					}
-////					if (!cproject.isOnClasspath(fCurrRoot)) {
-////					if (!cproject.isOnSourceRoot(fCurrRoot)) {
-////						status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NotOnClassPath", str)); //$NON-NLS-1$
-////					}
-////					if (fCurrRoot.isArchive()) {
-////						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.ContainerIsBinary", str)); //$NON-NLS-1$
-////						return status;
-////					}
-//				}
-//				return status;
-//			} else {
-//				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", str)); //$NON-NLS-1$
-//				return status;
-//			}
-//		} else {
-//			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", str)); //$NON-NLS-1$
-//			return status;
-//		}
 		return status;
 	}
 
@@ -1115,48 +1154,104 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	protected IStatus sourceFileChanged() {
 		StatusInfo status = new StatusInfo();
 		
-		fCurrentHeaderFile = null;
-		String str = getHeaderFileName();
+		fCurrentSourceFile = null;
+		String str = getSourceFileName();
 		if (str.length() == 0) {
-			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFolderName")); //$NON-NLS-1$
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterSourceFileName")); //$NON-NLS-1$
 			return status;
 		}
-		IPath path = new Path(str);
+
+		IProject project = getCurrentProject();
+		if (project == null) {
+//			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFolderRequired")); //$NON-NLS-1$
+			return status;
+		}
+
+		IPath path = getSourceFilePath();
 		IResource res = fWorkspaceRoot.findMember(path);
 		if (res != null && res.exists()) {
+			int resType = res.getType();
+			if (resType == IResource.FILE) {
+				IProject proj = res.getProject();
+				if (!proj.isOpen()) {
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", str)); //$NON-NLS-1$
+					return status;
+				}
+			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+				} else {
+				    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.SourceFileExists")); //$NON-NLS-1$
+				}
+			} else {
+				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", str)); //$NON-NLS-1$
+				return status;
+			}
+		} else {
+			IStatus val = validateSourceFileName(project, path.lastSegment());
+			if (val.getSeverity() == IStatus.ERROR) {
+				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidSourceFileName", val.getMessage())); //$NON-NLS-1$
+				return status;
+			} else if (val.getSeverity() == IStatus.WARNING) {
+				status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.SourceFileNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+			}
 		}
-//				if (res.exists()) {
-////					try {
-//					    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-////						if (!proj.hasNature(CoreModel.NATURE_ID)) {
-//							if (resType == IResource.PROJECT) {
-//								status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
-//							} else {
-//								status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
-//							}
-//							return status;
-//						}
-////					} catch (CoreException e) {
-////						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotACProject")); //$NON-NLS-1$
-////					}
-////					if (!cproject.isOnClasspath(fCurrRoot)) {
-////					if (!cproject.isOnSourceRoot(fCurrRoot)) {
-////						status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NotOnClassPath", str)); //$NON-NLS-1$
-////					}
-////					if (fCurrRoot.isArchive()) {
-////						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.ContainerIsBinary", str)); //$NON-NLS-1$
-////						return status;
-////					}
-//				}
-//				return status;
-//			} else {
-//				status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFolder", str)); //$NON-NLS-1$
-//				return status;
-//			}
-//		} else {
-//			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", str)); //$NON-NLS-1$
-//			return status;
-//		}
+		return status;
+	}
+
+	//TODO should this method be part of CConventions.java?
+	private static IStatus validateHeaderFileName(IProject project, String name) {
+	    IStatus val = validateFileName(name);
+	    if (val.getSeverity() == IStatus.ERROR) {
+	        return val;
+	    }
+
+	    StatusInfo status = new StatusInfo(val.getSeverity(), val.getMessage());
+
+	    if (!CoreModel.isValidHeaderUnitName(project, name)) {
+	        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.headerFilename.filetype")); //$NON-NLS-1$
+	    }
+
+		//TODO could use a prefs option for header file naming conventions
+        return status;
+	}
+
+	//TODO should this method be part of CConventions.java?
+	private static IStatus validateSourceFileName(IProject project, String name) {
+	    IStatus val = validateFileName(name);
+	    if (val.getSeverity() == IStatus.ERROR) {
+	        return val;
+	    }
+
+	    StatusInfo status = new StatusInfo(val.getSeverity(), val.getMessage());
+
+	    if (!CoreModel.isValidSourceUnitName(project, name)) {
+	        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.sourceFilename.filetype")); //$NON-NLS-1$
+	    }
+
+		//TODO could use a prefs option for source file naming conventions
+        return status;
+	}
+	
+	//TODO should this method be part of CConventions.java?
+	private static IStatus validateFileName(String name) {
+	    StatusInfo status = new StatusInfo();
+	    
+	    if (name == null || name.length() == 0) {
+	        status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.filename.nullName")); //$NON-NLS-1$
+	        return status;
+	    }
+
+		IPath path = new Path(name);
+		if (!path.isValidSegment(name)) {
+	        status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.filename.invalid")); //$NON-NLS-1$
+	        return status;
+		}
+		
+		if (name.indexOf(" ") != -1) { //$NON-NLS-1$
+	        status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.convention.filename.nameWithBlanks")); //$NON-NLS-1$
+		}
+		
+		//TODO could use a prefs option for file naming conventions
 		return status;
 	}
 
@@ -1184,8 +1279,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 
 	protected void doStatusUpdate() {
-		// status of all used components
+	    // status of all used components
 		IStatus[] status = new IStatus[] {
+	        getLastFocusedStatus(),
 			fSourceFolderStatus,
 			isEnclosingClassSelected() ? fEnclosingClassStatus : fNamespaceStatus,
 			fClassNameStatus,
@@ -1199,7 +1295,31 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		updateStatus(status);
 	}
 
-	/**
+	private IStatus getLastFocusedStatus() {
+	    if (fLastFocusedField == null) {
+	        return STATUS_OK;
+	    }
+	        
+        if (fLastFocusedField.equals(SOURCE_FOLDER)) {
+            return fSourceFolderStatus;
+        } else if (fLastFocusedField.equals(NAMESPACE) || fLastFocusedField.equals(ENCLOSING_CLASS)) {
+            return isEnclosingClassSelected() ? fEnclosingClassStatus : fNamespaceStatus;
+        } else if (fLastFocusedField.equals(CLASSNAME)) {
+            return fClassNameStatus;
+        } else if (fLastFocusedField.equals(BASECLASSES)) {
+            return fBaseClassesStatus;
+        } else if (fLastFocusedField.equals(METHODSTUBS)) {
+            return fMethodStubsStatus;
+        } else if (fLastFocusedField.equals(HEADERFILE)) {
+            return fHeaderFileStatus;
+        } else if (fLastFocusedField.equals(SOURCEFILE)) {
+            return fSourceFileStatus;
+        } else {
+            return STATUS_OK;
+        }
+    }
+
+    /**
 	 * Returns the current text of source folder text field.
 	 * 
 	 * @return the text of the source folder text field
@@ -1217,6 +1337,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		return fNamespaceDialogField.getText();
 	}
 
+	private ITypeInfo getCurrentNamespace() {
+        return fCurrentNamespace;
+    }
+
 	/**
 	 * Returns the enclosing class name entered into the enclosing class input field.
 	 * 
@@ -1225,6 +1349,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	public String getEnclosingClass() {
 		return fEnclosingClassDialogField.getText();
 	}
+	
+	private ITypeInfo getCurrentEnclosingClass() {
+        return fCurrentEnclosingClass;
+    }
 
 	/**
 	 * Returns the selection state of the enclosing class checkbox.
@@ -1261,6 +1389,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 */
 	public IMethodStub[] getCheckedMethodStubs() {
 	    return fMethodStubsDialogField.getCheckedMethodStubs();
+	}
+
+	/**
+	 * Returns the selection state of the file group checkbox.
+	 * 
+	 * @return the selection state of the file group checkbox
+	 */
+	public boolean isUseDefaultSelected() {
+		return fUseDefaultSelection.isSelected();
 	}
 
 	/**
@@ -1504,6 +1641,19 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 	
 	/**
+	 * Sets the enclosing class checkbox's selection state.
+	 * 
+	 * @param isSelected the checkbox's selection state
+	 * @param canBeModified if <code>true</code> the enclosing class checkbox is
+	 * modifiable; otherwise it is read-only.
+	 */
+	public void setFileGroupSelection(boolean isSelected, boolean canBeModified) {
+		fUseDefaultSelection.setSelection(isSelected);
+		fUseDefaultSelection.setEnabled(canBeModified);
+		updateEnableState();
+	}
+
+	/**
 	 * Sets the current header file.
 	 * 
 	 * @param path The new header path
@@ -1520,7 +1670,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    }
 		String str = (headerPath == null) ? "" : headerPath.makeRelative().toString(); //$NON-NLS-1$
 		fHeaderFileDialogField.setText(str);
-		fHeaderFileDialogField.setEnabled(canBeModified);
+		fHeaderFileDialogField.setEnabled(!isUseDefaultSelected() && canBeModified);
 	}	
 
 	/**
@@ -1537,7 +1687,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    }
 		String str = (sourcePath == null) ? "" : sourcePath.makeRelative().toString(); //$NON-NLS-1$
 		fSourceFileDialogField.setText(str);
-		fSourceFileDialogField.setEnabled(canBeModified);
+		fSourceFileDialogField.setEnabled(!isUseDefaultSelected() && canBeModified);
 	}	
 
 	/*
@@ -1547,8 +1697,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		IProject project = getCurrentProject();
 		boolean validProject = (project != null);
 	    fBaseClassesDialogField.setEnabled(validProject);
-	    fHeaderFileDialogField.setEnabled(validProject);
-	    fSourceFileDialogField.setEnabled(validProject);
+
+		boolean filegroup = !isUseDefaultSelected();
+		fHeaderFileDialogField.setEnabled(validProject && filegroup);
+	    fSourceFileDialogField.setEnabled(validProject && filegroup);
 
 		boolean enclosing = isEnclosingClassSelected();
 		fNamespaceDialogField.setEnabled(validProject && fCanModifyNamespace && !enclosing);

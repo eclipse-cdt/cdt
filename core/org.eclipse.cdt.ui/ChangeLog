@@ -1,3 +1,9 @@
+2004-08-19 Chris Wiebe
+
+	improved file validation
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardMessages.properties
+	
 2004-08-18 Chris Wiebe
 
 	added source/header file selection dialog

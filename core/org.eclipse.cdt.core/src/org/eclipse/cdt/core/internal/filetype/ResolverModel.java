@@ -49,6 +49,8 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
  * Implementation of the file type resolver interface.
@@ -363,6 +365,9 @@ public class ResolverModel implements IResolverModel {
 			return;
 		}
 
+		// Convert the change for the IContentTypeManager
+		convertToContentType(event);
+
 		final IResolverChangeListener[] listeners;
 		listeners = (IResolverChangeListener[]) fListeners.toArray(new IResolverChangeListener[fListeners.size()]);
 
@@ -639,7 +644,106 @@ public class ResolverModel implements IResolverModel {
 	 * declared extension points.
 	 */
 	private ICFileTypeResolver loadWorkspaceResolver() {
-		return new WorkspaceResolver(this);
+		ICFileTypeResolver resolver = new WorkspaceResolver(this);
+		convertToContentTypes(resolver);
+		return resolver;
+	}
+
+	final static String CSOURCE =  "org.eclipse.cdt.core.cSource"; //$NON-NLS-1$
+	final static String CHEADER =  "org.eclipse.cdt.core.cHeader"; //$NON-NLS-1$
+	final static String CXXSOURCE = "org.eclipse.cdt.core.cxxSource"; //$NON-NLS-1$
+	final static String CXXHEADER = "org.eclipse.cdt.core.cxxHeader"; //$NON-NLS-1$
+	final static String ASMSOURCE = "org.eclipse.cdt.core.asmSource"; //$NON-NLS-1$
+	static String FILE_EXT_PATTERN = "*."; //$NON-NLS-1$
+	static int FILE_EXT_PATTERN_LENGTH = FILE_EXT_PATTERN.length();
+
+	private void convertToContentTypes(ICFileTypeResolver resolver) {
+		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		try {
+			for (int i = 0; i < associations.length; ++i) {
+				String contentTypeId = getContentTypeIdentifier(associations[i]);
+				if (contentTypeId != null) {
+					IContentType contentType = manager.getContentType(contentTypeId);
+					if (contentType != null) {
+						String pattern = associations[i].getPattern();
+						int spec = IContentType.FILE_NAME_SPEC;
+						if (isFileSpecExtension(pattern)) {
+							pattern = getFileSpecExtension(pattern);
+							spec = IContentType.FILE_EXTENSION_SPEC;
+						}
+						contentType.addFileSpec(pattern, spec);
+					}
+				}
+			}
+		} catch (CoreException e) {
+			//
+		}
+	}
+
+	private void convertToContentType(ResolverChangeEvent event) {
+		ResolverDelta[] deltas = event.getDeltas();
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		for (int i = 0; i < deltas.length; ++i) {
+			ResolverDelta delta = deltas[i];
+			if (delta.getElementType() == ResolverDelta.ELEMENT_ASSOCIATION) {
+				ICFileTypeAssociation association = delta.getAssociation();
+				String contentTypeId = getContentTypeIdentifier(association);
+				if (contentTypeId != null) {
+					try {
+						IContentType contentType = manager.getContentType(contentTypeId);
+						String pattern = association.getPattern();
+						int spec = IContentType.FILE_NAME_SPEC;
+						if (isFileSpecExtension(pattern)) {
+							pattern = getFileSpecExtension(pattern);
+							spec = IContentType.FILE_EXTENSION_SPEC;
+						}
+						if (delta.getEventType() == ResolverDelta.EVENT_ADD) {
+							contentType.addFileSpec(pattern, spec);
+						} else if (delta.getEventType() == ResolverDelta.EVENT_REMOVE) {
+							contentType.removeFileSpec(pattern, spec);
+						}
+					} catch (CoreException e) {
+						//
+					}
+				}
+			}
+		}
+	}
+
+	String getContentTypeIdentifier(ICFileTypeAssociation association) {
+		ICFileType fileType = association.getType();
+		ICLanguage lang = fileType.getLanguage();
+		String langId = lang.getId();
+		if (fileType.isSource()) {
+			if (langId.equals(ICFileTypeConstants.LANG_C)) {
+				return CSOURCE;
+			} else if (langId.equals(ICFileTypeConstants.LANG_CXX)) {
+				return CXXSOURCE;
+			} else if (langId.equals(ICFileTypeConstants.LANG_ASM)) {
+				return ASMSOURCE;
+			}
+		} else if (fileType.isHeader()) {
+			if (langId.equals(ICFileTypeConstants.LANG_C)) {
+				return CHEADER;
+			} else if (langId.equals(ICFileTypeConstants.LANG_CXX)) {
+				return CXXHEADER;
+			} else if (langId.equals(ICFileTypeConstants.LANG_ASM)) {
+				return ASMSOURCE;
+			}
+		}
+		return null;
+	}
+
+	boolean isFileSpecExtension(String pattern) {
+		return (pattern.startsWith(FILE_EXT_PATTERN)); 		
+	}
+	String getFileSpecExtension(String pattern) {
+		int i = pattern.indexOf(FILE_EXT_PATTERN);
+		if (i != -1) {
+			return pattern.substring(i + FILE_EXT_PATTERN_LENGTH);
+		}
+		return pattern;
 	}
 
 	//----------------------------------------------------------------------

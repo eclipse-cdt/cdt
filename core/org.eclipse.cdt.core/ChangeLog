@@ -1,3 +1,7 @@
+2005-02-21 Alain Magloire
+	Adapt the ResolverModel code to the IContentTypeManager.
+	* src/orgeclipse/cdt/core/internal/filetype/ResolverModel.java
+
 2005-02-16 Alain Magloire
 	Fix for PR 85625, The IBinary info were not remove in the cache.
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java

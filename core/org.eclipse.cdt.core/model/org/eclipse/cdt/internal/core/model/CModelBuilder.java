@@ -145,7 +145,6 @@ public class CModelBuilder {
 		IParser parser = null;
 		try
 		{
-			
 			IScannerInfo scanInfo = new ScannerInfo();
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
 			if (provider != null){

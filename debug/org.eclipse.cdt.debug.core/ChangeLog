@@ -1,3 +1,8 @@
+2002-11-28 Mikhail Khodjaiants
+	Live editing of the memory view: removed support of the 'Save Changes' action.
+	* IFormattedMemoryBlock.java
+	* CFormattedMemoryBlock.java
+
 2002-11-27 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java (runUntil): new method.

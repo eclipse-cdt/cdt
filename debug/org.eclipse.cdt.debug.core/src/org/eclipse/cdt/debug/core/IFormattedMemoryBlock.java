@@ -124,11 +124,7 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	boolean isFrozen();
 	
 	void setFrozen( boolean frozen );
-	
-	boolean isDirty();
-	
-	void saveChanges() throws DebugException;
-	
+
 	void refresh() throws DebugException;
 	
 	boolean canChangeFormat( int format );

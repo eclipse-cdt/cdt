@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,11 +23,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.ResourceTransfer;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICFolder;
 
 /**
  * Implements drag behaviour when items are dragged out of the
@@ -102,7 +99,15 @@ class CViewDragAdapter extends DragSourceAdapter {
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
 		for (Iterator i = selection.iterator(); i.hasNext();) {
 			Object next = i.next();
-			if (!(next instanceof ICFile || next instanceof ICFolder)) {
+			IResource res = null;
+			if (next instanceof ICElement) {
+				ICElement celement = (ICElement)next;
+				try {
+					res = celement.getResource();
+				} catch (CModelException e) {
+				}
+			}
+			if (res == null) {
 				event.doit = false;
 				return;
 			}

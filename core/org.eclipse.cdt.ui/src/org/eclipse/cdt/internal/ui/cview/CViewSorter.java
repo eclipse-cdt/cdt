@@ -9,17 +9,20 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICFolder;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IMacro;
+import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
@@ -38,7 +41,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 public class CViewSorter extends ViewerSorter { 
 	
 	public int category (Object element) {
-		if (element instanceof ICRoot) {
+		if (element instanceof ICModel) {
 			return 0;
 		} else if (element instanceof ICProject) {
 			return 10;
@@ -46,12 +49,12 @@ public class CViewSorter extends ViewerSorter {
 			return 20;
 		} else if (element instanceof IArchiveContainer) {
 			return 30;
-		} else if (element instanceof ICFolder) {
+		} else if (element instanceof ICContainer) {
 			return 40;
-		} else if (element instanceof ICFile) {
+		} else if (element instanceof ITranslationUnit) {
 			IResource res = null;
 			try {
-				res = ((ICFile)element).getUnderlyingResource();
+				res = ((ITranslationUnit)element).getUnderlyingResource();
 			} catch (CModelException e) {
 			}
 			if (res != null) {
@@ -66,7 +69,7 @@ public class CViewSorter extends ViewerSorter {
 					String[] sources = CoreModel.getDefault().getSourceExtensions();
 					for (int i = 0; i < sources.length; i++) {
 						if (ext.equals(sources[i])) {
-							return 44;
+							return 47;
 						}
 					}					
 					return 48;
@@ -82,20 +85,13 @@ public class CViewSorter extends ViewerSorter {
 			return 80;
 		} else if (element instanceof IUsing) {
 			return 90;
-		} else if (element instanceof IFunctionDeclaration) {
+		} else if (element instanceof IFunctionDeclaration && ! (element instanceof IFunction)) {
 			return 100;
-		} else if (element instanceof IVariableDeclaration) {
+		} else if (element instanceof IMethodDeclaration && !(element instanceof IMethod)) {
 			return 110;
-		} else if (element instanceof IVariable) {
-			String name = ((ICElement)element).getElementName();
-			if (name.startsWith("__")) {
-				return 112;
-			}
-			if (name.charAt(0) == '_') {
-				return 114;
-			}
+		} else if (element instanceof IVariableDeclaration) {
 			return 120;
-		} else if (element instanceof IFunction) {
+		} else if (element instanceof IVariable) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) {
 				return 122;
@@ -104,7 +100,7 @@ public class CViewSorter extends ViewerSorter {
 				return 124;
 			}
 			return 130;
-		} else if (element instanceof ICElement) {
+		} else if (element instanceof IFunction) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) {
 				return 132;
@@ -113,9 +109,20 @@ public class CViewSorter extends ViewerSorter {
 				return 134;
 			}
 			return 140;
-		} else if (element instanceof IArchive) {
+		} else if (element instanceof ICElement) {
+			String name = ((ICElement)element).getElementName();
+			if (name.startsWith("__")) {
+				return 142;
+			}
+			if (name.charAt(0) == '_') {
+				return 144;
+			}
 			return 150;
+		} else if (element instanceof IArchive) {
+			return 160;
+		} else if (element instanceof IBinary) {
+			return 170;
 		}
-		return 80;
+		return 200;
 	}
 }

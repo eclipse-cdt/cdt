@@ -64,7 +64,7 @@ public class CStructureCreator implements IStructureCreator {
 			
 		Document doc= new Document(s != null ? s : "");
 				
-		CNode root= new CNode(null, ICElement.C_FILE, "root", doc, 0, 0);		
+		CNode root= new CNode(null, ICElement.C_UNIT, "root", doc, 0, 0);		
 				
 		DocumentInputStream is= new DocumentInputStream(doc);
 		IStructurizerCallback callback= new CNodeTreeConstructor(root, doc);

@@ -8,19 +8,22 @@ package org.eclipse.cdt.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.cdt.core.model.IArchiveContainer;
-import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
  
 /**
  * A base content provider for C elements. It provides access to the
@@ -33,11 +36,12 @@ import org.eclipse.cdt.core.model.IParent;
  * <pre>
 C model (<code>ICModel</code>)
    C project (<code>ICProject</code>)
-      C Folder (<code>ICFolder</code>)
-      C File (<code>ICFile</code>)
+      C Container(folders) (<code>ICContainer</code>)
       Translation unit (<code>ITranslationUnit</code>)
       Binary file (<code>IBinary</code>)
       Archive file (<code>IArchive</code>)
+      Non C Resource file (<code>Object</code>)
+
  * </pre>
  */
 public class BaseCElementContentProvider implements ITreeContentProvider {
@@ -112,26 +116,18 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (element instanceof ICElement) {
 			ICElement celement = (ICElement)element;		
-			if (celement.getElementType() == ICElement.C_FILE) {
+			if (celement instanceof ICModel) {
+				return  getCProjects((ICModel)celement);
+			} else if  (celement instanceof ICProject ) {
+				return getCProjectResources((ICProject)celement);
+			} else if (celement instanceof ICContainer) {
+				return getCResources((ICContainer)celement);
+			} else if (celement.getElementType() == ICElement.C_UNIT) {
 				if (fProvideMembers) {
 					return ((IParent)element).getChildren();
 				}
 			} else if (celement instanceof IParent) {
-				if  (celement instanceof ICProject ) {
-					ICElement[] children = ((IParent)celement).getChildren();
-					ArrayList list = new ArrayList(children.length);
-					for( int i = 0; i < children.length; i++ ) {
-						// Note, here we are starting the Archive and binary containers thread upfront.
-						if (children[i] instanceof IArchiveContainer || children[i] instanceof IBinaryContainer) {
-							if ( ((IParent)children[i]).getChildren().length == 0 ) {
-								continue;
-							}
-						}
-						list.add(children[i]);
-					}
-					return list.toArray();
-				} else
-					return (Object[])((IParent)celement).getChildren();
+				return (Object[])((IParent)celement).getChildren();
 			}
 		}
 		return getResources(element);
@@ -143,24 +139,26 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 */
 	public boolean hasChildren(Object element) {
 		if (fProvideMembers) {
-			if (element instanceof ICFile) {
-				ICFile cfile = (ICFile)element;
-				// assume TUs and binary files are never empty
-				if (cfile.isBinary() || cfile.isTranslationUnit() || cfile.isArchive()) {
-					return true;
-				}
+			// assume TUs and binary files are never empty
+			if (element instanceof IBinary || element instanceof ITranslationUnit || element instanceof IArchive) {
+				return true;
 			}
 		} else {
 			// don't allow to drill down into a compilation unit or class file
-			if (element instanceof ICFile || element instanceof IFile)
+			if (element instanceof ITranslationUnit || element instanceof IBinary || element instanceof IArchive) {
 				return false;
+			}
 		}
 			
 		if (element instanceof ICProject) {
 			ICProject cp= (ICProject)element;
 			if (!cp.getProject().isOpen()) {
 				return false;
-			}	
+			} else {
+				return true;	
+			}
+		} else if (element instanceof ICContainer) {
+			return true;
 		}
 		
 		if (element instanceof IParent) {
@@ -186,6 +184,36 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return null;
 	}
 	
+	protected Object[] getCProjects(ICModel cModel) {
+		return cModel.getCProjects();
+	}
+
+	protected Object[] getCProjectResources(ICProject cproject) {
+		Object[] objects = getCResources((ICContainer)cproject);
+		IArchiveContainer archives = cproject.getArchiveContainer(); 
+		if (archives.hasChildren()) {
+			objects = concatenate(objects, new Object[] {archives});
+		}
+		IBinaryContainer bins = cproject.getBinaryContainer(); 
+		if (bins.hasChildren()) {
+			objects = concatenate(objects, new Object[] {bins});
+		}
+		return objects;
+	}
+
+	protected Object[] getCResources(ICContainer container) {
+		Object[] objects = null;
+		Object[] children = container.getChildren();
+		try {
+			objects = container.getNonCResources();
+		} catch (CModelException e) {
+		}
+		if (objects == null) {
+			return children;
+		}
+		return concatenate(children, objects);
+	}
+
 	private Object[] getResources(Object resource) {
 		try {
 			if (resource instanceof IContainer) {
@@ -224,4 +252,18 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		return true;
 	}
+
+
+	/**
+	 * Note: This method is for internal use only. Clients should not call this method.
+	 */
+	protected static Object[] concatenate(Object[] a1, Object[] a2) {
+		int a1Len = a1.length;
+		int a2Len = a2.length;
+		Object[] res = new Object[a1Len + a2Len];
+		System.arraycopy(a1, 0, res, 0, a1Len);
+		System.arraycopy(a2, 0, res, a1Len, a2Len); 
+		return res;
+	}
+
 }

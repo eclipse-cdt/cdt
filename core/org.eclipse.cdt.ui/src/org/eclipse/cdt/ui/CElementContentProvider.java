@@ -13,15 +13,13 @@ import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICFile;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -50,7 +48,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		fViewer = (StructuredViewer)viewer;
 
 		if (oldInput == null && newInput != null) {
-			if (newInput instanceof ICRoot)
+			if (newInput instanceof ICModel)
 				CoreModel.getDefault().addElementChangedListener(this);
 		} else if (oldInput != null && newInput == null) {
 			CoreModel.getDefault().removeElementChangedListener(this);
@@ -103,22 +101,16 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		if (kind == ICElementDelta.REMOVED) {
 			Object parent = getParent(element);
 			postRemove(element);
-			if (element instanceof ICFile) {
-				ICFile cfile = (ICFile)element;
-				if (updateContainer(cfile)) {
-					postRefresh(parent);
-				}
+			if (updateContainer(element)) {
+				postRefresh(parent);
 			}
 		}
 
 		if (kind == ICElementDelta.ADDED) {
 			Object parent= getParent(element);
 			postAdd(parent, element);
-			if (element instanceof ICFile) {
-				ICFile cfile = (ICFile)element;
-				if (updateContainer(cfile)) {
-					postRefresh(parent);
-				}
+			if (updateContainer(element)) {
+				postRefresh(parent);
 			}
 		}
 
@@ -141,50 +133,50 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		}
 
 		// Make sure that containers are updated.
-		//if (element instanceof ICRoot) {
-		//	updateContainer((ICRoot)element);
+		//if (element instanceof ICModel) {
+		//	updateContainer((ICModel)element);
 		//}
 	}
 
-	private void updateContainer(ICRoot root) {
-		postRunnable(new Runnable() {
-			public void run () {
-				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed()) {
-					IStructuredSelection s = (IStructuredSelection)fViewer.getSelection();
-					if (s.isEmpty())
-						return;
-					Object element = s.getFirstElement();
-					if (element instanceof ICProject) {
-						updateContainer((ICProject)element);
-					}
-				}
-			}
-		});
-	}
+//	private void updateContainer(ICModel root) {
+//		postRunnable(new Runnable() {
+//			public void run () {
+//				Control ctrl= fViewer.getControl();
+//				if (ctrl != null && !ctrl.isDisposed()) {
+//					IStructuredSelection s = (IStructuredSelection)fViewer.getSelection();
+//					if (s.isEmpty())
+//						return;
+//					Object element = s.getFirstElement();
+//					if (element instanceof ICProject) {
+//						updateContainer((ICProject)element);
+//					}
+//				}
+//			}
+//		});
+//	}
 
-	protected boolean updateContainer(ICProject cproject) {
-		IParent binContainer = cproject.getBinaryContainer();
-		IParent libContainer = cproject.getArchiveContainer();
-		if (binContainer != null) {
-			postContainerRefresh(binContainer, cproject);
-		}
-		if (libContainer != null) {
-			postContainerRefresh(libContainer, cproject);
-		}
-		return false;
-	}
+//	protected boolean updateContainer(ICProject cproject) {
+//		IParent binContainer = cproject.getBinaryContainer();
+//		IParent libContainer = cproject.getArchiveContainer();
+//		if (binContainer != null) {
+//			postContainerRefresh(binContainer, cproject);
+//		}
+//		if (libContainer != null) {
+//			postContainerRefresh(libContainer, cproject);
+//		}
+//		return false;
+//	}
 
-	private boolean updateContainer(ICFile cfile) {
+	private boolean updateContainer(ICElement cfile) {
 		IParent container = null;
 		ICProject cproject = null;
-		if (cfile.isBinary()) {
+		if (cfile instanceof IBinary) {
 			IBinary bin = (IBinary)cfile;
 			if (bin.isExecutable() || bin.isSharedLib()) {
 				cproject = bin.getCProject();
 				container = cproject.getBinaryContainer();
 			}
-		} else if (cfile.isArchive()) {
+		} else if (cfile instanceof IArchive) {
 			cproject = cfile.getCProject();
 			container = cproject.getArchiveContainer();
 		}

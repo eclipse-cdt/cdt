@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.BufferChangedEvent;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICOpenable;
-import org.eclipse.cdt.internal.core.model.BufferChangedEvent;
-import org.eclipse.cdt.internal.core.model.IBuffer;
-import org.eclipse.cdt.internal.core.model.IBufferChangedListener;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IBufferChangedListener;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -74,7 +74,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 			return 0;
 		}
 		
-		public ICOpenable getOwner() {
+		public IOpenable getOwner() {
 			return null;
 		}
 		
@@ -163,7 +163,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		}
 	};
 
-	private ICOpenable fOwner;
+	private IOpenable fOwner;
 	private IDocument fDocument;
 	private DocumentSetCommand fSetCmd= new DocumentSetCommand();
 	private DocumentReplaceCommand fReplaceCmd= new DocumentReplaceCommand();
@@ -178,7 +178,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	private IStatus fStatus;
 
 	
-	public DocumentAdapter(ICOpenable owner, IDocument document, ILineTracker lineTracker, CDocumentProvider provider, Object providerKey) {
+	public DocumentAdapter(IOpenable owner, IDocument document, ILineTracker lineTracker, CDocumentProvider provider, Object providerKey) {
 		
 			Assert.isNotNull(document);
 			Assert.isNotNull(lineTracker);
@@ -352,8 +352,8 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getOwner()
 	 */
-	public ICOpenable getOwner() {
-		return (ICOpenable) fOwner;
+	public IOpenable getOwner() {
+		return (IOpenable) fOwner;
 	}
 
 	/**

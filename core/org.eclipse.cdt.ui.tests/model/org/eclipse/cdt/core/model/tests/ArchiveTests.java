@@ -190,7 +190,7 @@ public class ArchiveTests extends TestCase {
         IArchive myArchive;
         myArchive=CProjectHelper.findArchive(testProject, "libtestlib_g.a");
 
-        assertTrue("A archive", myArchive.isArchive());
+        assertTrue("A archive", myArchive != null);
         myArchive=null;
 
 

@@ -346,7 +346,7 @@ public class BinaryTests extends TestCase {
     public void testisBinRead() {
         IBinary myBinary;
         myBinary =CProjectHelper.findBinary(testProject, "test_g");
-        assertTrue(myBinary.isBinary());
+        assertTrue(myBinary != null);
         assertTrue(myBinary.isReadOnly());
 
     }
@@ -420,7 +420,7 @@ public class BinaryTests extends TestCase {
         IBinary myBinary;
 
         myBinary=CProjectHelper.findBinary(testProject, "exebig_g");
-        assertTrue("A Binary", myBinary.isBinary());
+        assertTrue("A Binary", myBinary != null);
     }
 
 

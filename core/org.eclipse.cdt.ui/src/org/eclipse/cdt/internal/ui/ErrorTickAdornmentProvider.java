@@ -7,11 +7,10 @@ package org.eclipse.cdt.internal.ui;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -41,10 +40,10 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 				int type= element.getElementType();
 				switch (type) {
 					case ICElement.C_PROJECT:
-					case ICElement.C_FOLDER:
-						return getErrorTicksFromMarkers(((ICResource)element).getResource(), IResource.DEPTH_INFINITE, null);
-					case ICElement.C_FILE:
-						return getErrorTicksFromMarkers(((ICResource)element).getResource(), IResource.DEPTH_ONE, null);
+					case ICElement.C_CCONTAINER:
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_INFINITE, null);
+					case ICElement.C_UNIT:
+						return getErrorTicksFromMarkers(element.getResource(), IResource.DEPTH_ONE, null);
 					case ICElement.C_FUNCTION:
 					case ICElement.C_CLASS:
 					case ICElement.C_UNION:

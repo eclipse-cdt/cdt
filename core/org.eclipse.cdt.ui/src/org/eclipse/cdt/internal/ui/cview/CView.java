@@ -14,8 +14,7 @@ import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICRoot;
+import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
@@ -263,7 +262,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
                 
 		public void treeExpanded(TreeExpansionEvent event) {
 			final Object element= event.getElement();
-			if (element instanceof ICFile) {
+			if (element instanceof IParent) {
 				//viewer.refresh (element);
 				Control ctrl= viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
@@ -447,7 +446,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		else
 			initFilterFromPreferences();
 
-		viewer.setInput (CoreModel.getDefault().getCRoot());
+		viewer.setInput (CoreModel.getDefault().getCModel());
 
 		MenuManager menuMgr= new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
@@ -967,7 +966,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 				ICElement celement = (ICElement)o;
 				IResource res  = (IResource)celement.getAdapter(IResource.class);
 				if (res != null) {
-					if (celement.getElementType() == ICElement.C_CONTAINER) {   
+					if (celement.getElementType() == ICElement.C_VCONTAINER) {   
 						ICElement parent = celement.getParent();
 						IResource proj = (IResource)parent.getAdapter(IResource.class);
 						if (celement instanceof IArchiveContainer)
@@ -993,7 +992,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	void updateTitle () {
 		Object input= getViewer().getInput();
 		String viewName= getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
-		if (input == null || (input instanceof ICRoot)) {
+		if (input == null || (input instanceof ICModel)) {
 			setTitle(viewName);
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {

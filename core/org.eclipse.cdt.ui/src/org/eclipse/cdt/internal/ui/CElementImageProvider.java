@@ -5,22 +5,19 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -96,9 +93,9 @@ public class CElementImageProvider {
 		if (element instanceof ICElement) {
 			descriptor= getCImageDescriptor((ICElement) element, flags);
 		}
-		if (descriptor == null && element instanceof ICFile) {
-			element = ((ICFile)element).getFile();
-		}
+//		if (descriptor == null && element instanceof ICFile) {
+//			element = ((ICFile)element).getFile();
+//		}
 		if (descriptor == null && element instanceof IAdaptable) {
 			descriptor= getWorkbenchImageDescriptor((IAdaptable) element, flags);
 		}
@@ -159,31 +156,30 @@ public class CElementImageProvider {
 	public ImageDescriptor getBaseImageDescriptor(ICElement celement, int renderFlags) {
 		int type = celement.getElementType();
 		switch (type) {
-			case ICElement.C_CONTAINER:
+			case ICElement.C_VCONTAINER:
 				return CPluginImages.DESC_OBJS_CONTAINER;
 
-			case ICElement.C_FILE:
-				ICFile cfile = (ICFile)celement;
-				if (cfile.isArchive()) {
-					return CPluginImages.DESC_OBJS_ARCHIVE;
-				} else if (cfile.isBinary()) {
-					IBinary bin = (IBinary)cfile;
-					if (bin.isExecutable()) {
-						if (bin.hasDebug())
-							return CPluginImages.DESC_OBJS_CEXEC_DEBUG;
-						return CPluginImages.DESC_OBJS_CEXEC;
-					} else if (bin.isSharedLib()) {
-						return CPluginImages.DESC_OBJS_SHLIB;
-					} else if (bin.isCore()) {
-						return CPluginImages.DESC_OBJS_CORE;
-					}
-					return CPluginImages.DESC_OBJS_BINARY;
-				} else if (cfile.isTranslationUnit()) {
-					return CPluginImages.DESC_OBJS_TUNIT;
+			case ICElement.C_BINARY: {
+				IBinary bin = (IBinary)celement;
+				if (bin.isExecutable()) {
+					if (bin.hasDebug())
+						return CPluginImages.DESC_OBJS_CEXEC_DEBUG;
+					return CPluginImages.DESC_OBJS_CEXEC;
+				} else if (bin.isSharedLib()) {
+					return CPluginImages.DESC_OBJS_SHLIB;
+				} else if (bin.isCore()) {
+					return CPluginImages.DESC_OBJS_CORE;
 				}
-				break;
+				return CPluginImages.DESC_OBJS_BINARY;
+			}
+	
+			case ICElement.C_ARCHIVE:
+				return CPluginImages.DESC_OBJS_ARCHIVE;
+
+			case ICElement.C_UNIT:
+				return CPluginImages.DESC_OBJS_TUNIT;
 				
-			case ICElement.C_FOLDER:
+			case ICElement.C_CCONTAINER:
 				return DESC_OBJ_FOLDER;
 			
 			case ICElement.C_PROJECT:
@@ -241,10 +237,10 @@ public class CElementImageProvider {
 	
 	public ImageDescriptor getCElementImageDescriptor(int type) {
 		switch (type) {
-			case ICElement.C_CONTAINER:
+			case ICElement.C_VCONTAINER:
 				return CPluginImages.DESC_OBJS_CONTAINER;
 
-			case ICElement.C_FILE:
+			case ICElement.C_UNIT:
 				return CPluginImages.DESC_OBJS_TUNIT;
 
 			case ICElement.C_STRUCT:

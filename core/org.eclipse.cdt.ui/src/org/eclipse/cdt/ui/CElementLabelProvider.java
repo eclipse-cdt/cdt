@@ -7,7 +7,6 @@ package org.eclipse.cdt.ui;
  
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
@@ -109,11 +108,7 @@ public class CElementLabelProvider extends LabelProvider {
 				return result;
 			}
 		}
-		if(element instanceof ICFile) {
-			//element = ((ICFile)element).getFile();
-		}
 		return fWorkbenchLabelProvider.getImage(element);
-
 	}
 
 	/**

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.core.model.ICFolder;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
 
 public class CPatternFilter extends ViewerFilter {
@@ -108,7 +108,7 @@ public class CPatternFilter extends ViewerFilter {
 
 		// Only apply the rule for Projects and folders. 
 		if (parentElement instanceof ICProject
-			|| parentElement instanceof ICFolder) {
+			|| parentElement instanceof ICContainer) {
 			if (resource != null) {
 				String name = resource.getName();
 				StringMatcher[] testMatchers = getMatchers();

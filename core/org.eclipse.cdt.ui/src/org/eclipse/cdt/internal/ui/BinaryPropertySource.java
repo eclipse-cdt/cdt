@@ -5,14 +5,14 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.FilePropertySource;
+import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.ui.*;
-
-public class BinaryPropertySource extends FilePropertySource {
+public class BinaryPropertySource implements IPropertySource {
 	
 	private final static String ELF_CPU= "CElementProperties.elf_cpu";
 	private final static String ELF_TEXT= "CElementProperties.elf_text";
@@ -78,8 +78,7 @@ public class BinaryPropertySource extends FilePropertySource {
 	}
 	
 	public BinaryPropertySource(IBinary bin) {
-		super(bin.getFile());
-		this.binary= bin;
+		binary= bin;
 	}
 
 	/**
@@ -95,14 +94,15 @@ public class BinaryPropertySource extends FilePropertySource {
 	 * @see IPropertySource#getPropertyValue
 	 */	
 	public Object getPropertyValue(Object name) {
-		if (element != null) {
-			Object returnValue = super.getPropertyValue(name);
-
-			if(returnValue != null)
-				return returnValue;
-		}
-
-		if (name.equals(ICElementPropertyConstants.P_ELF_CPU)) {
+//		if (element != null) {
+//			Object returnValue = super.getPropertyValue(name);
+//
+//			if(returnValue != null)
+//				return returnValue;
+//		}
+		if (name.equals(IBasicPropertyConstants.P_TEXT)) {
+			return binary.getElementName();
+		} else if (name.equals(ICElementPropertyConstants.P_ELF_CPU)) {
 			return binary.getCPU();
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_TEXT)) {
 			return Long.toString(binary.getText());
@@ -143,12 +143,40 @@ public class BinaryPropertySource extends FilePropertySource {
 	 * Return the Property Descriptors for the file type.
 	 */
 	private void initializeBinaryDescriptors() {
-		IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
-		int superLength = superDescriptors.length;
-		IPropertyDescriptor[] binDescriptors = getInitialPropertyDescriptor();
-		int binLength = binDescriptors.length;
-		fgPropertyDescriptors = new IPropertyDescriptor[superLength + binLength];
-		System.arraycopy(superDescriptors, 0, fgPropertyDescriptors, 0, superLength);
-		System.arraycopy(binDescriptors, 0, fgPropertyDescriptors, superLength, binLength);
+//		IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
+//		int superLength = superDescriptors.length;
+//		IPropertyDescriptor[] binDescriptors = getInitialPropertyDescriptor();
+//		int binLength = binDescriptors.length;
+//		fgPropertyDescriptors = new IPropertyDescriptor[superLength + binLength];
+//		System.arraycopy(superDescriptors, 0, fgPropertyDescriptors, 0, superLength);
+//		System.arraycopy(binDescriptors, 0, fgPropertyDescriptors, superLength, binLength);
+		fgPropertyDescriptors = getInitialPropertyDescriptor();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
+	 */
+	public Object getEditableValue() {
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(java.lang.Object)
+	 */
+	public boolean isPropertySet(Object id) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.IPropertySource#resetPropertyValue(java.lang.Object)
+	 */
+	public void resetPropertyValue(Object id) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.properties.IPropertySource#setPropertyValue(java.lang.Object, java.lang.Object)
+	 */
+	public void setPropertyValue(Object id, Object value) {
+	}
+
 }

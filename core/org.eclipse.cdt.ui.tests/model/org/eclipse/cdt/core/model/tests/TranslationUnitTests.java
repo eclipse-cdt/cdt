@@ -164,7 +164,7 @@ public class TranslationUnitTests extends TestCase {
         ITranslationUnit myTranslationUnit;
     
         myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
-        assertTrue("A TranslationUnit", myTranslationUnit.isTranslationUnit());
+        assertTrue("A TranslationUnit", myTranslationUnit != null);
 
     }
 

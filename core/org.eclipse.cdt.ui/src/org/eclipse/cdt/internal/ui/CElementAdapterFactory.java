@@ -8,8 +8,6 @@ package org.eclipse.cdt.internal.ui;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -51,21 +49,17 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		
 		try {
 			if (IPropertySource.class.equals(key)) {
-				if (celem.getElementType() == ICElement.C_FILE) {
-					if (celem instanceof IBinary) {
-						return new BinaryPropertySource((IBinary)celem);
-					}
-					IFile file = ((ICFile)celem).getFile();
-					if (file != null) {
-						return new FilePropertySource(file);
+				if (celem instanceof IBinary) {
+					return new BinaryPropertySource((IBinary)celem);				
+				} else if (celem.getElementType() == ICElement.C_UNIT) {
+					IResource file = celem.getResource();
+					if (file != null && file instanceof IFile) {
+						return new FilePropertySource((IFile)file);
 					}
 				} else {
-					try {
-						if ( celem instanceof ICResource ) {
-							res = ((ICResource)celem).getResource();
-							return new ResourcePropertySource(res);
-						}	
-					} catch (CModelException e) {
+					res = celem.getResource();
+					if (res != null) {
+						return new ResourcePropertySource(res);
 					}
 				}
 				return new CElementPropertySource(celem);

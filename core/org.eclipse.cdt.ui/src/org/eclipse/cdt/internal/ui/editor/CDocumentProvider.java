@@ -11,9 +11,9 @@ import java.io.InputStream;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICOpenable;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.IBuffer;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.CStatusConstants;
@@ -111,7 +111,7 @@ public class CDocumentProvider extends FileDocumentProvider implements IWorkingC
 			return CDocumentProvider.this.createDocument(input);
 		}
 			
-		public IBuffer createBuffer(ICOpenable owner) {
+		public IBuffer createBuffer(IOpenable owner) {
 			try {
 				if (owner instanceof IWorkingCopy) {
 						

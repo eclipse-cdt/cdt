@@ -145,7 +145,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the used document provider
 	 */
-	public CDocumentProvider getDocumentProvider() {
+	public synchronized CDocumentProvider getDocumentProvider() {
 		if (fDocumentProvider == null) {
 			fDocumentProvider = new CDocumentProvider();
 		}
@@ -156,7 +156,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * Returns the working copy manager
 	 * @return IWorkingCopyManager
 	 */
-	public synchronized IWorkingCopyManager getWorkingCopyManager() {
+	public IWorkingCopyManager getWorkingCopyManager() {
 		return getDocumentProvider();
 	}
 

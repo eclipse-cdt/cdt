@@ -1,7 +1,13 @@
+2003-04-09 John Camelon
+	Added timing printout for CModelTests.
+	Provided partial fix for bug36255 to get past infinite loop, will leave defect open.
+	Fixed bug36045 (Again).  
+	Fixed bug36287.
+	
 2003-04-06 Andrew Niefer
 	Added ParserSymbolTable::Cost and used it to fix up the conversion sequence ranking
 
-2003-04-04 John Camelon
+2003-04-06 John Camelon
 	Fixed defect 36073.
 	Fixed error handling for unterminated strings in Scanner.
 	Significantly updated callback structure to better suite the nature of the Code Model.

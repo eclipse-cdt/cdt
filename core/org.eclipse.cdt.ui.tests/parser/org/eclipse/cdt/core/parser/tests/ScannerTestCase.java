@@ -1141,6 +1141,42 @@ public class ScannerTestCase extends TestCase
 				validateAsUndefined(row.symbolName(i));
 		}
 	}
+	
+	public void testBug36287() throws Exception
+	{
+		initializeScanner( "X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , br( rtg_arg.br ){}" );
+		validateIdentifier("X");
+		validateToken( Token.tCOLONCOLON);
+		validateIdentifier("X");
+		validateToken( Token.tLPAREN );
+		validateToken( Token.t_const );
+		validateIdentifier("X");
+		validateToken( Token.tAMPER );
+		validateIdentifier( "rtg_arg");
+		validateToken( Token.tRPAREN );  
+		validateToken( Token.tCOLON );
+		validateIdentifier( "U");
+		validateToken( Token.tLPAREN );
+		validateIdentifier( "rtg_arg");
+		validateToken( Token.tRPAREN );
+		validateToken( Token.tCOMMA );
+		validateIdentifier( "Z");
+		validateToken( Token.tLPAREN );
+		validateIdentifier( "rtg_arg");
+		validateToken( Token.tDOT );
+		validateIdentifier( "Z");
+		validateToken( Token.tRPAREN );
+		validateToken( Token.tCOMMA );
+		validateIdentifier( "br");
+		validateToken( Token.tLPAREN );
+		validateIdentifier( "rtg_arg");
+		validateToken( Token.tDOT );
+		validateIdentifier( "br");
+		validateToken( Token.tRPAREN );
+		validateToken( Token.tLBRACE);
+		validateToken( Token.tRBRACE);
+		validateEOF();
+	}
 
 	public void testBug35892()
 	{
@@ -1180,8 +1216,15 @@ public class ScannerTestCase extends TestCase
 		buffer.append( '\\');
 		buffer.append( '"'); 
 		buffer.append( '"');
+		
+		buffer.append( '"');
+		buffer.append( '\\');
+		buffer.append( '\\');
+		buffer.append( '"');
+		buffer.append( "\n\n");
 		initializeScanner( buffer.toString());
 		validateString( "\\\"");
+		validateString( "\\\\");
 	}
 
 	public void testConditionalWithBraces()

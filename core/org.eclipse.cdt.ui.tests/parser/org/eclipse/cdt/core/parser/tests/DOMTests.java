@@ -1121,6 +1121,22 @@ public class DOMTests extends TestCase {
 		writer.write( "A::A(const A&v) : x(v.x) { }\n" );
 		TranslationUnit tu = parse( writer.toString() ); 
 	}
+	
+	public void testBug36288() throws Exception
+	{
+		TranslationUnit tu = parse( "int foo() {}\nlong foo2(){}", true);  
+		assertEquals( tu.getDeclarations().size(), 2 );
+		for( int i = 0; i < 2; ++i )
+		{
+			SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(i);
+			assertEquals( declaration.getDeclarators().size(), 1 );
+			Declarator d = (Declarator)declaration.getDeclarators().get(0);
+			assertEquals( d.getName().toString(), ( i == 0 ) ? "foo" : "foo2");
+			assertEquals( declaration.getDeclSpecifier().getType(), (i == 0 ) ? DeclSpecifier.t_int : DeclSpecifier.t_type );
+			assertEquals( declaration.getDeclSpecifier().isLong(), ( i == 0 ) ? false : true ); 
+		}
+	}
+
 
 }
 

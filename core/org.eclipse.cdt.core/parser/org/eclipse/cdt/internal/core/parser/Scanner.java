@@ -348,6 +348,7 @@ public class Scanner implements IScanner {
 	private boolean throwExceptionOnEOFWithinMultilineComment = true;
 	private boolean throwExceptionOnEOFWithoutBalancedEndifs = true;
 	private boolean throwExceptionOnBadCharacterRead = false; 
+	private boolean atEOF = false;
 
 	private boolean quickScan = false;
 	public void setQuickScan(boolean qs) {
@@ -505,13 +506,16 @@ public class Scanner implements IScanner {
 				 
 				// string
 				StringBuffer buff = new StringBuffer(); 
+				int beforePrevious = NOCHAR;
 				int previous = c;
 				c = getChar(true);
 
 				for( ; ; )
 				{
-					if( ( c == '"' && previous != '\\' )|| ( c == NOCHAR) )break;  
+					if ( ( c =='"' ) && ( previous != '\\' || beforePrevious == '\\') ) break;
+					if( c == NOCHAR) break;  
 					buff.append((char) c);
+					beforePrevious = previous;
 					previous = c;
 					c = getChar(true);
 				}
@@ -527,8 +531,7 @@ public class Scanner implements IScanner {
 				} else {
 					if (throwExceptionOnUnboundedString)
 						throw new ScannerException(
-							"Unbounded string found at offset "
-								+ currentContext.getOffset());
+							"Unbounded string" );
 				}
 		
 			} else if (
@@ -710,11 +713,17 @@ public class Scanner implements IScanner {
 					}
 				}
 				
-				int tokenType = floatingPoint ? Token.tFLOATINGPT : Token.tINTEGER; 
+				int tokenType;
+				String result = buff.toString(); 
+				
+				if( floatingPoint && result.equals(".") )
+					tokenType = Token.tDOT;
+				else
+					tokenType = floatingPoint ? Token.tFLOATINGPT : Token.tINTEGER; 
 				
 				return newToken(
 					tokenType,
-					buff.toString(),
+					result,
 					currentContext);
 				
 			} else if (c == '#') {
@@ -1244,8 +1253,11 @@ public class Scanner implements IScanner {
 			}
 		}
 
-		if (throwExceptionOnEOFWithoutBalancedEndifs && ( getDepth() != 0))
+		if (throwExceptionOnEOFWithoutBalancedEndifs && ( getDepth() != 0) && !atEOF )
+		{
+			atEOF = true;
 			throw new ScannerException("End of file encountered without terminating #endif");
+		}
 
 		// we're done
 		throw Parser.endOfFile;

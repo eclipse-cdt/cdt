@@ -1,3 +1,8 @@
+2003-04-09 John Camelon
+	Updated ScannerTest::testBug36045().
+	Added ScannerTest::testBug36287().
+	Added DOMTests::testBug36288(). 
+
 2003-04-06 Andrew Niefer
 	Added ParserSymbolTableTest::testOverloadRanking()
 

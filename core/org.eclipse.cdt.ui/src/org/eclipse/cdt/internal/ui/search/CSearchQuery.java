@@ -164,7 +164,7 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 			} catch (InterruptedException e) {
 			}
 		}
-		
+		monitor.done();
 		matchCount = finalCollector.getMatchCount();
 		
 		return new Status(IStatus.OK, CUIPlugin.getPluginId(), 0,"", null); //$NON-NLS-1$	

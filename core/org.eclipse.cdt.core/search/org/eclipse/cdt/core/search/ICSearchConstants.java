@@ -95,6 +95,8 @@ public interface ICSearchConstants {
 	
 	public static final SearchFor MACRO = new SearchFor( 10 );
 	
+	public static final SearchFor CLASS_STRUCT = new SearchFor( 11 );
+	
 	/* Nature of match */
 	
 	/**

@@ -76,7 +76,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		
 		CSearchPattern pattern = null;
-		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || searchFor == ENUM || searchFor == UNION ){
+		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || searchFor == ENUM || searchFor == UNION || searchFor == CLASS_STRUCT ){
 			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == METHOD || searchFor == FUNCTION ){
 			pattern = createMethodPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
@@ -236,6 +236,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			OrPattern orPattern = new OrPattern();
 			orPattern.addPattern( createClassPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
 			orPattern.addPattern( createClassPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
+			return orPattern;
+		}
+		
+		if( searchFor == CLASS_STRUCT ){
+			OrPattern orPattern = new OrPattern();
+			orPattern.addPattern( createClassPattern( patternString, CLASS, limitTo, matchMode, caseSensitive ) );
+			orPattern.addPattern( createClassPattern( patternString, STRUCT, limitTo, matchMode, caseSensitive ) );
 			return orPattern;
 		}
 		

@@ -1,3 +1,7 @@
+2003-09-03 Andrew Niefer
+	- added CLASS_STRUCT to the SearchFor constants
+	- Modified CSearchPattern to handle CLASS_STRUCT
+
 2003-08-26 Bogdan Gheorghe
 	- Added debug tracing statements to SearchEngine
 	- Modified scanForNames in CSearchPattern to treat append

@@ -89,7 +89,12 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 			ArrayList vChildren = new ArrayList();
 			final CModelManager factory = CModelManager.getDefault();
-			File file = fIncludeEntry.getIncludePath().toFile();
+			File file = null;
+			if (fPath != null) {
+				file = fPath.toFile();
+			} else if (fIncludeEntry != null) {
+				file = fIncludeEntry.getIncludePath().toFile();
+			}
 			String[] names = null;
 			if (file != null && file.isDirectory()) {
 				names = file.list();

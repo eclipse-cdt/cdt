@@ -14,9 +14,13 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.internal.ui.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +40,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -220,6 +225,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
+			CElementImageProvider imageProvider = new CElementImageProvider();
+			
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -228,6 +235,24 @@ public class CMainTab extends CLaunchConfigurationTab {
 					return name.toString();
 				}
 				return super.getText(element);
+			}
+			
+			public Image getImage(Object element) {
+				if(!(element instanceof ICElement)) {
+					return super.getImage(element);
+				}
+				ICElement celement = (ICElement)element;
+				
+				if(celement.getElementType() == ICElement.C_BINARY) {
+					IBinary belement = (IBinary)celement;
+					if(belement.isExecutable()) {
+						Image image = super.getImage(element);
+						Point size= new Point(image.getBounds().width, image.getBounds().height);
+						return CUIPlugin.getImageDescriptorRegistry().get(new CElementImageDescriptor(CPluginImages.DESC_OBJS_CEXEC, 0, size));
+					}
+				}
+								
+				return super.getImage(element);
 			}
 		};
 
@@ -252,6 +277,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		dialog.setUpperListLabel("Binaries:");
 		dialog.setLowerListLabel("Qualifier:");
 		dialog.setMultipleSelection(false);
+		//dialog.set
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			IBinary binary = (IBinary) dialog.getFirstResult();
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());

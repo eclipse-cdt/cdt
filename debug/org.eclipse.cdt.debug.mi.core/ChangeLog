@@ -1,4 +1,8 @@
 2003-09-09 Mikhail Khodjaiants
+	Regrouping the launch configuration constants.
+	* IMILaunchConfigurationConstants.java
+
+2003-09-09 Mikhail Khodjaiants
 	Added the 'stop-on-solib-events' option. 
 	Changed the initialization of the hared library search path.
 	Changed the messages of the thrown exceptions.

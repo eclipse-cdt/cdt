@@ -1,6 +1,6 @@
 <project default="zips">
 
-	<target name="build" depends="zips,test"/>
+	<target name="build" depends="zips"/>
 	<target name="nightly" depends="build,upload,mail"/>
 	<target name="integration" depends="nightly,wswbmap"/>
 	<target name="milestone" depends="nightly,milestoneSite"/>
@@ -8,25 +8,24 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
+		<property name="branchVersion" value="2.1.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
-		<property name="pde.build.scripts" value="${basedir}/../org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.0.0/scripts"/>
+		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build_3.0.0/scripts"/>
 		<property name="eclipseZip" value="eclipse-SDK.zip"/>
 		<property name="collectingFolder" value="eclipse"/>
 		<property name="archivePrefix" value="eclipse"/>
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
-		<property name="siteurl" value="http://update.eclipse.org/tools/cdt/updates/builds/2.0"/>
-		<property name="remotedir" value="download.eclipse.org:/home/www/tools/cdt/updates/builds/2.0"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
-		<property name="sitedir" value="${buildDirectory}/build.site"/>
-		<property name="siteversion" value="2.0.0"/>
 		<property name="milestonedir" value="${buildDirectory}/${milestone}"/>
 		<property name="buildingOSGi" value="true"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
-		<property name="mapVersionTag" value="HEAD"/>
+		<property name="remotedir" value="${cdtuser}:${cdtpasswd}@download.eclipse.org:/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="cdtserver" value="download.eclipse.org"/>
+		<property name="cdtdir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 	</target>
 
 	<target name="fetch" depends="init">
@@ -55,13 +54,18 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/sdk" />
 		</ant>
-		<concat destfile="compile.log">
+		<concat destfile="${zipsdir}/compile.log">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
 		</concat>
-		<loadfile property="compileLog" srcFile="compile.log"/>
+		<loadfile property="compileLog" srcFile="${zipsdir}/compile.log"/>
 		<condition property="hasErrors">
 			<contains string="${compileLog}" substring="ERROR"/>
 		</condition>
+		<copy file="buildindex.html" tofile="${zipsdir}/index.html"/>
+		<replace file="${zipsdir}/index.html">
+			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
 	</target>
 
 	<target name="test" depends="init" unless="hasErrors">
@@ -87,9 +91,25 @@
 	</target>
 	
 	<target name="upload" depends="init" unless="hasErrors">
-		<scp todir="${cdtuser}:${cdtpasswd}@${remotedir}">
-			<fileset dir="${sitedir}"/>
-		</scp>
+		<ftp action="get" server="${cdtserver}" remotedir="${cdtdir}" userid="${cdtuser}" password="${cdtpasswd}">
+			<fileset file="index.html"/>
+		</ftp>
+		<replace file="index.html">
+			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
+			<replacevalue><![CDATA[  <li><a href="@buildId@/index.html">@buildId@</a></li>
+  <!-- add here -->]]></replacevalue>
+		</replace>
+		<replace file="index.html">
+			<replacefilter token="@buildType@" value="${buildType}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<ftp server="${cdtserver}" remotedir="${cdtdir}" userid="${cdtuser}" password="${cdtpasswd}">
+			<fileset file="index.html"/>
+		</ftp>
+		<ftp action="mkdir" server="${cdtserver}" remotedir="${cdtdir}/${buildId}" userid="${cdtuser}" password="${cdtpasswd}"/>
+		<ftp server="${cdtserver}" remotedir="${cdtdir}/${buildId}" userid="${cdtuser}" password="${cdtpasswd}">
+			<fileset dir="${zipsdir}"/>
+		</ftp>
 	</target>
 	
 	<target name="wswbmap" depends="init" unless="hasErrors">
@@ -107,18 +127,18 @@
 	
 	<target name="mailPass" unless="hasErrors">
 		<copy file="${messagefile}" tofile="message.txt" overwrite="true"/>
-		<replace file="message.txt" token="@buildId@" value="${buildId}"/>
-		<concat destfile="mail.txt">
-			<filelist dir="${basedir}" files="message.txt,compile.log"/>
-		</concat>
-		<mail subject="CDT Build ${siteversion}.${timestamp} completed"
+		<replace file="message.txt">
+			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<mail subject="CDT ${branchVersion} Build ${buildId} completed"
 			tolist="${mailto}" from="dschaefe@ca.ibm.com">
-			<message src="mail.txt"/>
+			<message src="message.txt"/>
 		</mail>
 	</target>
 
 	<target name="mailFail" if="hasErrors">
-		<mail subject="CDT Build ${siteversion}.${timestamp} failed"
+		<mail subject="CDT ${branchVersion} Build ${buildId} failed"
 			tolist="${mailto}" from="dschaefe@ca.ibm.com">
 			<message src="compile.log"/>
 		</mail>

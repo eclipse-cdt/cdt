@@ -23,32 +23,46 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.org.eclipse.cdt.aix.motif.ppc">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.aix.*.ppc">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-aix.ppc.zip"/>
+	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.hpux.motif.PA_RISC">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.hpux.*.PA_RISC">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-hpux.PA_RISC.zip"/>
+	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.linux.gtk.x86">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.linux.*.x86">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-linux.x86.zip"/>
+	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.linux.motif.x86">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.macosx.*.ppc">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-macosx.ppc.tar.gz"/>
+	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.qnx.photon.x86">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.qnx.*.x86">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-qnx.x86.zip"/>
+	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.solaris.motif.sparc">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.solaris.*.sparc">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-solaris.sparc.zip"/>
+	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.win32.win32.x86">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+<target name="assemble.org.eclipse.cdt.win32.*.x86">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-win32.x86.zip"/>
+	</ant>
 </target>
 
 <!-- ===================================================================== -->
@@ -56,12 +70,7 @@
 <!-- Replace values for cvsRoot, package and mapVersionTag as desired. -->
 <!-- ===================================================================== -->
 <target name="getMapFiles">
-	<cvs
-		cvsRoot=":pserver:anonymous@dev.eclipse.org:/home/tools"
-		package="org.eclipse.cdt-releng/org.eclipse.cdt.releng/maps/cdt.map"
-		dest="${buildDirectory}/maps"
-		tag="${mapVersionTag}"
-	/>
+	<copy file="${builder}/../maps/cdt.map" todir="${buildDirectory}/maps"/>
 </target>
 
 <!-- ===================================================================== -->

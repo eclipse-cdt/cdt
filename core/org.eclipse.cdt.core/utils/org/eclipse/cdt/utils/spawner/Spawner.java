@@ -19,9 +19,10 @@ public class Spawner extends Process {
 	private int KILL = 9;
 	private int TERM = 15;
 
-	private int pid = -1;
+	private int pid = 0;
 	private int status;
 	private int[] channels = new int[3];
+	private boolean isDone;
 	OutputStream out;
 	InputStream in;
 	InputStream err;
@@ -31,7 +32,7 @@ public class Spawner extends Process {
 		String[] cmdarray = new String[tokenizer.countTokens()];
 		for (int n = 0; tokenizer.hasMoreTokens(); n++)
 			cmdarray[n] = tokenizer.nextToken();
-		if(bNoRedirect)
+		if (bNoRedirect)
 			exec_detached(cmdarray, new String[0], ".");
 		else
 			exec(cmdarray, new String[0], ".");
@@ -97,7 +98,6 @@ public class Spawner extends Process {
 	 **/
 	public InputStream getInputStream() {
 		return in;
-		//return new SpawnerInputStream(channels[1]);
 	}
 
 	/**
@@ -105,7 +105,6 @@ public class Spawner extends Process {
 	 **/
 	public OutputStream getOutputStream() {
 		return out;
-		//return new SpawnerOutputStream(channels[0]);
 	}
 
 	/**
@@ -113,14 +112,15 @@ public class Spawner extends Process {
 	 **/
 	public InputStream getErrorStream() {
 		return err;
-		//return new SpawnerInputStream(channels[2]);
 	}
 
 	/**
 	 * See java.lang.Process#waitFor ();
 	 **/
-	public int waitFor() throws InterruptedException {
-		status = waitFor(pid);
+	public synchronized int waitFor() throws InterruptedException {
+		while (!isDone) {
+			wait();
+		}
 		try {
 			((SpawnerInputStream)getErrorStream()).close();
 			((SpawnerInputStream)getInputStream()).close();
@@ -133,8 +133,8 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#exitValue ();
 	 **/
-	public int exitValue() {
-		if (isRunning()) {
+	public synchronized int exitValue() {
+		if (!isDone) {
 			throw new IllegalThreadStateException("Process not Terminated");
 		}
 		return status;
@@ -143,14 +143,25 @@ public class Spawner extends Process {
 	/**
 	 * See java.lang.Process#destroy ();
 	 **/
-	public void destroy() {
+	public synchronized void destroy() {
+		// Sends the TERM
 		terminate();
-		if (isRunning()) {
-			kill();
-		}
+		// Close the streams on this side.
 		try {
-			waitFor();
-		} catch (InterruptedException e) {
+			((SpawnerInputStream)getErrorStream()).close();
+			((SpawnerInputStream)getInputStream()).close();
+			((SpawnerOutputStream)getOutputStream()).close();
+		} catch (IOException e) {
+		}
+		// Grace before using the heavy gone.
+		if (!isDone) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+			}
+		}
+		if (!isDone) {
+			kill();
 		}
 	}
 
@@ -182,10 +193,24 @@ public class Spawner extends Process {
 		SecurityManager s = System.getSecurityManager();
 		if (s != null)
 			s.checkExec(command);
-
 		if (envp == null)
 			envp = new String[0];
-		pid = exec0(cmdarray, envp, dirpath, channels);
+
+		Thread reaper = new Reaper(cmdarray, envp, dirpath);
+		reaper.setDaemon(true);
+		reaper.start();
+
+		// Wait until the subprocess is started or error.
+		synchronized (this) {
+			while (pid == 0) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+
+		// Check for errors.
 		if (pid == -1) {
 			throw new IOException("Exec error");
 		}
@@ -215,5 +240,36 @@ public class Spawner extends Process {
 
 	static {
 		System.loadLibrary("spawner");
+	}
+
+	// Spawn a thread to handle the forking and waiting
+	// We do it this way because on linux the SIGCHLD is
+	// send to the one thread.  So do the forking and
+	// the wait in the same thread.
+	class Reaper extends Thread {
+		String[] cmdarray;
+		String[] envp;
+		String dirpath;
+		public Reaper(String[] array, String[] env, String dir) {
+			super("Spawner Reaper");
+			cmdarray = array;
+			envp = env;
+			dirpath = dir;
+		}
+
+		public void run() {
+			pid = exec0(cmdarray, envp, dirpath, channels);
+			// Tell spawner that the process started.
+			synchronized (Spawner.this) {
+				Spawner.this.notifyAll();
+			}
+
+			// Sync with spawner and notify when done.
+			status = waitFor(pid);
+			synchronized (Spawner.this) {
+				isDone = true;
+				Spawner.this.notifyAll();
+			}
+		}
 	}
 }

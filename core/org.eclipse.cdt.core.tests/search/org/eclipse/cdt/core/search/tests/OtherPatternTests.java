@@ -176,4 +176,21 @@ public class OtherPatternTests extends BaseSearchTest {
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
 	}
+	
+	public void testEnumerators(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", FIELD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "NS::B::Two", FIELD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+	}
+	
 }

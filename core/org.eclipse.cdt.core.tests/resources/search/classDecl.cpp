@@ -16,7 +16,11 @@ namespace NS {
 	}
 	class B: public A {
 		struct AA {};
-		enum e {};
+		enum e {
+			One,
+			Two,
+			Three
+		};
 		
 		using namespace NS2;
 		

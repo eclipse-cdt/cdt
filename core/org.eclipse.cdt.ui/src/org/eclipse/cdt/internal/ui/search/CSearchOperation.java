@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -38,12 +37,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CSearchOperation extends WorkspaceModifyOperation implements ICSearchConstants{
-
-	public CSearchOperation(IWorkspace workspace, ICElement element, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
-		this( workspace, limitTo, scope, scopeDescription, collector );
-		_elementPattern = element;
-	}
-
 	public CSearchOperation(IWorkspace workspace, String pattern, boolean caseSensitive, List searchFor, LimitTo limitTo, ICSearchScope scope, String scopeDescription, CSearchResultCollector collector) {
 		this( workspace, limitTo, scope, scopeDescription, collector );
 		_stringPattern = pattern;
@@ -69,27 +62,23 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		_collector.setProgressMonitor( monitor );	
 		
 		SearchEngine engine = new SearchEngine( CUIPlugin.getSharedWorkingCopies() );
-		if( _elementPattern != null ){
-			engine.search( _workspace, _elementPattern, _limitTo, _scope, _collector );
-		} else {
-			ICSearchPattern pattern = null;
-			if( _searchFor.size() > 1 ){
-				OrPattern orPattern = new OrPattern();
-				for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
-					SearchFor element = (SearchFor)iter.next();
-					orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
-				}
-				
-				pattern = orPattern;
-				
-			} else {
-				Iterator iter = _searchFor.iterator();
-				pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
+
+		ICSearchPattern pattern = null;
+		if( _searchFor.size() > 1 ){
+			OrPattern orPattern = new OrPattern();
+			for (Iterator iter = _searchFor.iterator(); iter.hasNext();) {
+				SearchFor element = (SearchFor)iter.next();
+				orPattern.addPattern( SearchEngine.createSearchPattern( _stringPattern, element, _limitTo, _caseSensitive ) );	
 			}
 			
-			engine.search( _workspace, pattern, _scope, _collector );
+			pattern = orPattern;
+			
+		} else {
+			Iterator iter = _searchFor.iterator();
+			pattern = SearchEngine.createSearchPattern( _stringPattern, (SearchFor)iter.next(), _limitTo, _caseSensitive );
 		}
-
+		
+		engine.search( _workspace, pattern, _scope, _collector );
 	}
 	
 	/**
@@ -98,11 +87,11 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 	public String getSingularLabel() {
 		String desc = null;
 		
-		if( _elementPattern != null ){
-			desc = _elementPattern.getElementName();
-		} else {
+		//if( _elementPattern != null ){
+		//	desc = _elementPattern.getElementName();
+		//} else {
 			desc = _stringPattern; 
-		}
+		//}
 		
 		String [] args = new String [] { desc, _scopeDescription };
 
@@ -111,7 +100,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		} else if( _limitTo == REFERENCES ){
 			return CSearchMessages.getFormattedString( "CSearchOperation.singularReferencesPostfix", args ); //$NON_NLS-1$
 		} else {
-			return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurencesPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.singularOccurrencesPostfix", args ); //$NON_NLS-1$
 		}
 	}
 
@@ -121,11 +110,11 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 	public String getPluralLabelPattern() {
 		String desc = null;
 		
-		if( _elementPattern != null ){
-			desc = _elementPattern.getElementName();
-		} else {
+	//	if( _elementPattern != null ){
+	//		desc = _elementPattern.getElementName();
+	//	} else {
 			desc = _stringPattern; 
-		}
+	//	}
 		
 		String [] args = new String [] { desc, "{0}", _scopeDescription };
 		if( _limitTo == DECLARATIONS ){
@@ -133,7 +122,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 		} else if ( _limitTo == REFERENCES ){
 			return CSearchMessages.getFormattedString( "CSearchOperation.pluralReferencesPostfix", args ); //$NON_NLS-1$
 		} else {
-			return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurencesPostfix", args ); //$NON_NLS-1$
+			return CSearchMessages.getFormattedString( "CSearchOperation.pluralOccurrencesPostfix", args ); //$NON_NLS-1$
 		}
 	}
 
@@ -150,7 +139,7 @@ public class CSearchOperation extends WorkspaceModifyOperation implements ICSear
 
 	private CSearchResultCollector 	_collector;
 	private IWorkspace 				_workspace;
-	private ICElement 				_elementPattern;	
+	//private ICElement 				_elementPattern;	
 	private ICSearchScope			_scope;
 	private String					_stringPattern;
 	private String					_scopeDescription;

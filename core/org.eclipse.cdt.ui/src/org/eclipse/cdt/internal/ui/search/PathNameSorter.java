@@ -13,8 +13,9 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -38,14 +39,25 @@ public class PathNameSorter extends ViewerSorter {
 		String name2 = null;
 		ISearchResultViewEntry entry1 = null;
 		ISearchResultViewEntry entry2 = null;
+		IMatch match1 = null;
+		IMatch match2 = null;
 
 		if( e1 instanceof ISearchResultViewEntry ) {
 			entry1 = (ISearchResultViewEntry)e1;
-			name1 = _labelProvider.getText( e1 );
+			try {
+				match1 = (IMatch)entry1.getSelectedMarker().getAttribute( CSearchResultCollector.IMATCH );
+			} catch (CoreException e) {
+			}
+			name1 = match1.getLocation().toString();
 		}
 		if( e2 instanceof ISearchResultViewEntry ) {
 			entry2 = (ISearchResultViewEntry)e2;
-			name2 = _labelProvider.getText( e2 );
+			try {
+				match2 = (IMatch)entry2.getSelectedMarker().getAttribute( CSearchResultCollector.IMATCH );
+			} catch (CoreException e) {
+			}
+			//name2 = _labelProvider.getText( e2 );
+			name2 = match2.getLocation().toString();
 		}
 		
 		if( name1 == null )
@@ -59,13 +71,11 @@ public class PathNameSorter extends ViewerSorter {
 		if( compare == 0 ){
 			int startPos1 = -1;
 			int startPos2 = -1;
-			IMarker marker1 = entry1.getSelectedMarker();
-			IMarker marker2 = entry2.getSelectedMarker();
-
-			if (marker1 != null)
-				startPos1 = marker1.getAttribute( IMarker.CHAR_START, -1 );
-			if (marker2 != null)
-				startPos2 = marker2.getAttribute( IMarker.CHAR_START, -1 );
+			
+			if (match1 != null)
+				startPos1 = match1.getStartOffset();
+			if (match2 != null)
+				startPos2 = match2.getStartOffset();
 			
 			compare = startPos1 - startPos2;
 		}

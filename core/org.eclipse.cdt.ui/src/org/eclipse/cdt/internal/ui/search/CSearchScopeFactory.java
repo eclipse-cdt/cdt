@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
@@ -105,8 +106,14 @@ public class CSearchScopeFactory {
 	 * @return
 	 */
 	public ICSearchScope createCSearchScope(IStructuredSelection fStructuredSelection) {
-		// TODO Auto-generated method stub
-		return null;
+		Set cElements = new HashSet( fStructuredSelection.size() );
+		
+		Iterator iter = fStructuredSelection.iterator();
+		while( iter.hasNext() ){
+			addCElements( cElements, (IAdaptable)iter.next() );
+		}
+		
+		return createCSearchScope( cElements );
 	}
 	
 }

@@ -1,3 +1,10 @@
+2003-09-05 Andrew Niefer
+	C++ Search:
+	  - enable Selected Resource Scope
+	  - populate dialog base on selection when opened from outline view
+	  - fix small bug that found namespaces when searching for enumerations
+	  - tweak sorting by path to consider line number second
+
 2003-09-04 John Camelon
     First pass of parsing function bodies with X-Reference information.
     Updated IASTFactory/ISourceElementRequestor to include IASTCodeScope

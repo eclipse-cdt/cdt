@@ -78,11 +78,14 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			String name = en.getName();
 			IASTEnumerationSpecifier parent = en.getOwnerEnumerationSpecifier();
 			String[] parentName = parent.getFullyQualifiedName();
-			String[] enumeratorFullName = new String[parentName.length + 1];
-			int pos;
-			System.arraycopy(parentName, 0, enumeratorFullName, 0, pos = parentName.length);
-			enumeratorFullName[pos++] = name;
-			this.output.addRef(encodeEntry(enumeratorFullName,FIELD_DECL,FIELD_DECL_LENGTH));
+			
+			//See spec 7.2-10, the the scope of the enumerator is the same level as the enumeration
+			String[] enumeratorFullName = new String[ parentName.length ];
+			
+			System.arraycopy( parentName, 0, enumeratorFullName, 0, parentName.length);
+			enumeratorFullName[ parentName.length - 1 ] = name;
+			
+			this.output.addRef(encodeEntry( enumeratorFullName, FIELD_DECL, FIELD_DECL_LENGTH ));
 
 		}
 	}

@@ -1,3 +1,6 @@
+2003-09-05 Andrew Niefer
+	- fix searching for enumerators
+
 2003-09-03 Andrew Niefer
 	- added CLASS_STRUCT to the SearchFor constants
 	- Modified CSearchPattern to handle CLASS_STRUCT

@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.core.search.matching;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
@@ -59,7 +61,10 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		} else if ( node instanceof IASTVariable ){
 			if( searchFor != VAR || !canAccept( limit ) )
 				return IMPOSSIBLE_MATCH;			
-		} else return IMPOSSIBLE_MATCH;
+		} else if ( node instanceof IASTEnumerator ){
+			if( searchFor != FIELD || !canAccept( limit ) )
+				return IMPOSSIBLE_MATCH;
+		} else return IMPOSSIBLE_MATCH; 
 		
 		String nodeName = ((IASTOffsetableNamedElement)node).getName();
 		
@@ -70,7 +75,26 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		
 		//check containing scopes
 		//create char[][] out of full name, 
-		String [] fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
+		String [] fullName = null;
+		
+		if( node instanceof IASTEnumerator ){
+			//Enumerators don't derive from IASTQualifiedElement, so make the fullName
+			//from the enumerations name. 
+			// 7.2 - 10 : each enumerator declared by an enum-specifier is declared in the
+			//scope that immediately contains the enum-specifier. 
+			IASTEnumerationSpecifier enumeration = ((IASTEnumerator)node).getOwnerEnumerationSpecifier();
+			fullName = enumeration.getFullyQualifiedName();
+			
+			String[] enumeratorFullName = new String[ fullName.length ];
+
+			System.arraycopy( fullName, 0, enumeratorFullName, 0, fullName.length);
+			enumeratorFullName[ fullName.length - 1 ] = nodeName;
+			
+			fullName = enumeratorFullName;
+		} else {
+			fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName(); 
+		}
+		
 		char [][] qualName = new char [ fullName.length - 1 ][];
 		for( int i = 0; i < fullName.length - 1; i++ ){
 			qualName[i] = fullName[i].toCharArray();

@@ -43,7 +43,6 @@ public class SearchDialogAction extends Action {
 		
 		if(provider instanceof CContentOutlinePage) {
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
-			setText("Dialog"); // $NON-NLS
 		}
 		
 		fSelectionProvider= provider;

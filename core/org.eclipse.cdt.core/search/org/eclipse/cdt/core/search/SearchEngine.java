@@ -163,17 +163,4 @@ public class SearchEngine implements ICSearchConstants{
 			collector.done();
 		}
 	}
-
-	/**
-	 * @param _workspace
-	 * @param _elementPattern
-	 * @param _limitTo
-	 * @param _scope
-	 * @param _collector
-	 */
-	public void search(IWorkspace workspace, ICElement elementPattern, LimitTo limitTo, ICSearchScope scope, ICSearchResultCollector collector) {
-		// TODO Auto-generated method stub
-		
-	}
-		
 }

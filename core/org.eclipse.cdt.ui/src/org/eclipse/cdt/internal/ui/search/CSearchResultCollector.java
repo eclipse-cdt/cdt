@@ -55,7 +55,7 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 		_view = SearchUI.getSearchResultView();
 		
 		CSearchResultLabelProvider labelProvider = new CSearchResultLabelProvider();
-		labelProvider.setOrder( CSearchResultLabelProvider.SHOW_ELEMENT_CONTAINER );
+		labelProvider.setOrder( CSearchResultLabelProvider.SHOW_PATH );
 		
 		if( _view != null ){
 			_view.searchStarted(

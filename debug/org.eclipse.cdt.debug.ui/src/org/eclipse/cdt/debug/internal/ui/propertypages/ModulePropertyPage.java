@@ -11,9 +11,21 @@
 package org.eclipse.cdt.debug.internal.ui.propertypages; 
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.DialogCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -26,8 +38,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
@@ -48,9 +62,9 @@ public class ModulePropertyPage extends PropertyPage {
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText( Object element, int columnIndex ) {
-			if ( element instanceof CModuleProperties.Property ) {
-				CModuleProperties.Property property = (CModuleProperties.Property)element;
-				if ( CModuleProperties.TYPE.equals( property.getKey() ) ) {
+			if ( element instanceof ModuleProperties.Property ) {
+				ModuleProperties.Property property = (ModuleProperties.Property)element;
+				if ( ModuleProperties.TYPE.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
 						return PropertyPageMessages.getString( "ModulePropertyPage.0" ); //$NON-NLS-1$
 					}
@@ -65,35 +79,35 @@ public class ModulePropertyPage extends PropertyPage {
 						return PropertyPageMessages.getString( "ModulePropertyPage.3" ); //$NON-NLS-1$
 					}
 				}
-				else if ( CModuleProperties.CPU.equals( property.getKey() ) ) {
+				else if ( ModuleProperties.CPU.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
 						return PropertyPageMessages.getString( "ModulePropertyPage.4" ); //$NON-NLS-1$
 					}
 					String cpu = (String)property.getValue();
 					return ( cpu != null ) ? cpu : PropertyPageMessages.getString( "ModulePropertyPage.5" ); //$NON-NLS-1$
 				}
-				else if ( CModuleProperties.BASE_ADDRESS.equals( property.getKey() ) ) {
+				else if ( ModuleProperties.BASE_ADDRESS.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
 						return PropertyPageMessages.getString( "ModulePropertyPage.6" ); //$NON-NLS-1$
 					}
 					IAddress address = (IAddress)property.getValue();
 					return ( address != null && !address.isZero() ) ? address.toHexAddressString() : PropertyPageMessages.getString( "ModulePropertyPage.7" ); //$NON-NLS-1$
 				}
-				else if ( CModuleProperties.SIZE.equals( property.getKey() ) ) {
+				else if ( ModuleProperties.SIZE.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
 						return PropertyPageMessages.getString( "ModulePropertyPage.8" ); //$NON-NLS-1$
 					}
 					Long size = (Long)property.getValue();
 					return ( size != null && size.longValue() > 0 ) ? size.toString() : PropertyPageMessages.getString( "ModulePropertyPage.9" ); //$NON-NLS-1$
 				}
-				else if ( CModuleProperties.SYMBOLS_LOADED.equals( property.getKey() ) ) {
+				else if ( ModuleProperties.SYMBOLS_LOADED.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
 						return PropertyPageMessages.getString( "ModulePropertyPage.10" ); //$NON-NLS-1$
 					}
 					Boolean loaded = (Boolean)property.getValue();
 					return ( loaded != null && loaded.booleanValue() ) ? PropertyPageMessages.getString( "ModulePropertyPage.11" ) : PropertyPageMessages.getString( "ModulePropertyPage.12" ); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				else if ( CModuleProperties.SYMBOLS_FILE.equals( property.getKey() ) ) {
+				else if ( ModuleProperties.SYMBOLS_FILE.equals( property.getKey() ) ) {
 					if ( columnIndex == 0 ) {
 						return PropertyPageMessages.getString( "ModulePropertyPage.13" ); //$NON-NLS-1$
 					}
@@ -107,8 +121,6 @@ public class ModulePropertyPage extends PropertyPage {
 
 	public class ModulePropertyContentProvider implements IStructuredContentProvider {
 
-		private CModuleProperties fProperties = null;
-
 		/** 
 		 * Constructor for ModulePropertyContentProvider. 
 		 */
@@ -121,10 +133,10 @@ public class ModulePropertyPage extends PropertyPage {
 		 */
 		public Object[] getElements( Object inputElement ) {
 			if ( inputElement instanceof ICModule ) {
-				if ( fProperties == null ) {
-					fProperties = CModuleProperties.create( (ICModule)inputElement );
+				if ( getModuleProperties() == null ) {
+					setModuleProperties( ModuleProperties.create( (ICModule)inputElement ) );
 				}
-				return fProperties.getProperties();
+				return getModuleProperties().getProperties();
 			}
 			return new Object[0];
 		}
@@ -146,12 +158,14 @@ public class ModulePropertyPage extends PropertyPage {
 		}
 
 		private void disposeProperties() {
-			if ( fProperties != null ) {
-				fProperties.dispose();
-				fProperties = null;
+			if ( getModuleProperties() != null ) {
+				getModuleProperties().dispose();
+				setModuleProperties( null );
 			}
 		}
 	}
+
+	private ModuleProperties fProperties = null;
 
 	private TableViewer fViewer;
 
@@ -187,6 +201,8 @@ public class ModulePropertyPage extends PropertyPage {
 		columns[1].setWidth( pc.convertWidthInCharsToPixels( 40 ) );
 
 		fViewer.setColumnProperties( new String[]{ CP_NAME, CP_VALUE } );
+		fViewer.setCellEditors( new CellEditor[]{ null, createSymbolsFileCellEditor( table ) } );
+		fViewer.setCellModifier( createCellModifier() );
 
 		fViewer.setContentProvider( createContentProvider() );
 		fViewer.setLabelProvider( createLabelProvider() );
@@ -215,7 +231,95 @@ public class ModulePropertyPage extends PropertyPage {
 		getViewer().setInput( getElement() );
 	}
 
-	private TableViewer getViewer() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		if ( getModuleProperties() != null && getModuleProperties().isDirty() ) {
+			final IPath path = (IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE );
+			final ICModule module = getModule(); 
+			if ( module != null ) {
+				
+				DebugPlugin.getDefault().asyncExec( 
+						new Runnable() {
+							public void run() {
+								try {
+									module.setSymbolsFileName( path );
+								}
+								catch( DebugException e ) {
+									failed( PropertyPageMessages.getString( "ModulePropertyPage.15" ), e ); //$NON-NLS-1$
+								}
+							}
+						} );
+			}
+		}
+		return super.performOk();
+	}
+
+	protected TableViewer getViewer() {
 		return fViewer;
+	}
+
+	private ICellModifier createCellModifier() {
+		return new ICellModifier() {
+
+			public boolean canModify( Object element, String property ) {
+				return ( element instanceof ModuleProperties.Property && 
+						 ModuleProperties.SYMBOLS_FILE.equals( ((ModuleProperties.Property)element).getKey() ) && 
+						 CP_VALUE.equals( property ) && 
+						 getModule().canModifySymbolsSource() );
+			}
+
+			public void modify( Object element, String property, Object value ) {
+				ModuleProperties.Property mp = (ModuleProperties.Property)((TableItem)element).getData();
+				if ( ModuleProperties.SYMBOLS_FILE.equals( mp.getKey() ) && 
+					 CP_VALUE.equals( property ) && 
+					 getModule().canModifySymbolsSource() &&
+					 value instanceof IPath ) {
+					getModuleProperties().setProperty( mp.getKey(), value );
+					if ( getModuleProperties().isDirty() ) {
+						getViewer().refresh();
+					}
+				}
+			}
+
+			public Object getValue( Object element, String property ) {
+				if ( element instanceof ModuleProperties.Property && 
+					 ModuleProperties.SYMBOLS_FILE.equals( ((ModuleProperties.Property)element).getKey() ) && 
+					 CP_VALUE.equals( property ) && 
+					 getModule().canModifySymbolsSource() ) {
+					return ((ModuleProperties.Property)element).getValue();
+				}
+				return null;
+			}
+		};
+	}
+
+	private CellEditor createSymbolsFileCellEditor( Table table ) {
+
+		return new DialogCellEditor( table ) {
+
+			protected Object openDialogBox( Control cellEditorWindow ) {
+				FileDialog dialog = new FileDialog( cellEditorWindow.getShell() );
+				dialog.setFileName( ((IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE )).toOSString() );
+				String fn = dialog.open();
+				return ( fn != null ) ? new Path( dialog.getFilterPath() ).append( dialog.getFileName() ) : getModule().getSymbolsFileName();
+			}
+			
+		};
+	}
+
+	protected ModuleProperties getModuleProperties() {
+		return fProperties;
+	}
+
+	protected void setModuleProperties( ModuleProperties properties ) {
+		fProperties = properties;
+	}
+
+	protected void failed( String message, Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), null ) );
+		CDebugUtils.error( ms, getModule() );
 	}
 }

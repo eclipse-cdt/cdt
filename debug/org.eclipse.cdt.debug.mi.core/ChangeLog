@@ -1,9 +1,22 @@
+2003-11-22 Alain Magloire
+
+	In MISession constructor if the initialization fails shutdown
+	the Tx/RX/Event threads.
+	In MIPlugin if the initialization fails shutdown the pty console.
+	Ditto for GDBDebugger/GDBServerDebugger/CygwinGDBDebugger.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+	* src/org/eclipse/cdt/debug/mi/core/MISession.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+
 2003-11-21 Alain Magloire
 
 	The wrong MIPlugin.createCSession() method was used.
 	Problem noted by Ashish.
 
-	* src/org/eclipse/cdt/debu/mi/core/GDBServerDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java
 
 2003-11-21 Mikhail Khodjaiants
 

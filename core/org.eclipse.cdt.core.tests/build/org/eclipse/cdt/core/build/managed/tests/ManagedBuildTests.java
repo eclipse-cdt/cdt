@@ -290,9 +290,11 @@ public class ManagedBuildTests extends TestCase {
 	 * 
 	 */
 	public void testConfigurations() throws CoreException, BuildException {
-		String rootName = "Root Config";
-		String overrideName = "Root Override Config";
-		String completeOverrideName = "Complete Override Config";
+		final String rootName = "Root Config";
+		final String overrideName = "Root Override Config";
+		final String completeOverrideName = "Complete Override Config";
+		final String toolCmd = "doIt";
+		final String newCmd = "never";
 		
 		// Open the test project
 		IProject project = createProject(projectName);
@@ -319,6 +321,11 @@ public class ManagedBuildTests extends TestCase {
 		ITool[] definedTools = newConfig.getTools();
 		assertEquals(1, definedTools.length);
 		ITool rootTool = definedTools[0];
+		
+		// Test changing its command
+		assertEquals(rootTool.getToolCommand(), toolCmd);
+		newConfig.setToolCommand(rootTool, newCmd);
+		assertEquals(rootTool.getToolCommand(), newCmd);
 		
 		// Override options in the new configuration
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
@@ -907,6 +914,7 @@ public class ManagedBuildTests extends TestCase {
 		final String freeOptName = "String in Free";
 		final String chainedOptName = "Boolean in Chained";
 		final String freeOptValue = "Live free or die";
+		final String newCmd = "Let the Wookie win";
 		
 		// Check the inherited clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
@@ -925,17 +933,22 @@ public class ManagedBuildTests extends TestCase {
 		// Check the tools. We should have 3 (1 from each parent and the one referenced).
 		ITool[] tools = target.getTools();
 		assertEquals(3, tools.length);
+		ITool toolRef = tools[2];
+		
+		// Make sure the 3rd tool is a tool reference
+		assertTrue(toolRef instanceof ToolReference);
+		
 		// Make sure we get all the tool settings
-		assertEquals(tools[2].getName(), indyToolName);
-		assertEquals(tools[2].getToolCommand(), indyToolCommand);
-		assertTrue(tools[2].buildsFileType(indyToolInputExt));
-		assertEquals(tools[2].getOutputExtension(indyToolInputExt), indyToolOutputExt);
-		assertEquals(tools[2].getOutputFlag(), indyToolOutFlag);
-		assertTrue(tools[2].isHeaderFile(indyToolHeader));
-		assertFalse(tools[2].isHeaderFile(indyToolHeaderNot));
-		assertEquals(tools[2].getNatureFilter(), ITool.FILTER_BOTH);
+		assertEquals(toolRef.getName(), indyToolName);
+		assertEquals(toolRef.getToolCommand(), indyToolCommand);
+		assertTrue(toolRef.buildsFileType(indyToolInputExt));
+		assertEquals(toolRef.getOutputExtension(indyToolInputExt), indyToolOutputExt);
+		assertEquals(toolRef.getOutputFlag(), indyToolOutFlag);
+		assertTrue(toolRef.isHeaderFile(indyToolHeader));
+		assertFalse(toolRef.isHeaderFile(indyToolHeaderNot));
+		assertEquals(toolRef.getNatureFilter(), ITool.FILTER_BOTH);
 		// Check out the referenced tool and make sure we get all option categories
-		IOptionCategory topCategory = tools[2].getTopOptionCategory();
+		IOptionCategory topCategory = toolRef.getTopOptionCategory();
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
 		assertEquals(categories[0].getName(), indyCatOne);
@@ -964,6 +977,10 @@ public class ManagedBuildTests extends TestCase {
 		} catch (BuildException e) {
 			fail("Failure getting boolean value in subsubtarget: " + e.getLocalizedMessage());
 		}
+		
+		// Test that the tool command can be changed through the reference
+		((ToolReference)toolRef).setToolCommand(newCmd);
+		assertEquals(toolRef.getToolCommand(), newCmd);
 	}
 
 	/*

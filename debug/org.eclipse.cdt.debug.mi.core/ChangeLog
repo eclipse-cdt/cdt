@@ -1,4 +1,11 @@
 2004-05-07 Alain Magloire
+	PR 57127. Pass the stream verbatim
+	even if it has spaces.
+	This what gdb expects.
+
+	* mi/org/eclipse/cdt/debug/mi/core/command/MIEnvironmentCD.java
+
+2004-05-07 Alain Magloire
 
 	Patch from Keith Rolling(Palm Source).
 	PR 60664

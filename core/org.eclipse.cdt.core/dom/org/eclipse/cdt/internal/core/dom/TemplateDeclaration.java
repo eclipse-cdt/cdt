@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.parser.Token;
  * @author jcamelon
  *
  */
-public class TemplateDeclaration extends Declaration implements IScope, IAccessable, ITemplateParameterListOwner, IOffsetable {
+public class TemplateDeclaration extends Declaration implements IScope, IAccessable, ITemplateParameterListOwner {
 
 	private final boolean exported;
 	private AccessSpecifier visibility = null; 
@@ -91,6 +91,7 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 	 */
 	public void setFirstToken(Token token) {
 		firstToken = token;
+		setStartingOffset( getFirstToken().getOffset() );
 	}
 
 	/**
@@ -98,34 +99,7 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 	 */
 	public void setLastToken(Token token) {
 		lastToken = token;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getStartingOffset()
-	 */
-	public int getStartingOffset() {
-		return getFirstToken().getOffset();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTotalLength()
-	 */
-	public int getTotalLength() {
-		return getLastToken().getOffset() + getLastToken().getLength() - getStartingOffset();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setStartingOffset(int)
-	 */
-	public void setStartingOffset(int i) {
-		throw new Error( "Offset should not be set");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTotalLength(int)
-	 */
-	public void setTotalLength(int i) {
-		throw new Error( "Offset should not be set");
+		setTotalLength( getLastToken().getOffset() + getLastToken().getLength() - getStartingOffset() ); 
 	}
 
 	/**
@@ -144,34 +118,6 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 		else this.visibility.setAccess(visibility);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTopLine(int)
-	 */
-	public void setTopLine(int lineNumber) {
-		topLine = lineNumber;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setBottomLine(int)
-	 */
-	public void setBottomLine(int lineNumber) {
-		bottomLine = lineNumber;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTopLine()
-	 */
-	public int getTopLine() { 
-		return topLine;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getBottomLine()
-	 */
-	public int getBottomLine() {
-		return bottomLine;
-	}
-	private int topLine = 0, bottomLine = 0; 
 
 
 }

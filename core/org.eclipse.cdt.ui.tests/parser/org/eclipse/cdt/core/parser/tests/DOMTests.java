@@ -3,6 +3,7 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -1615,5 +1616,49 @@ public class DOMTests extends TestCase {
 	public void testBug36717() throws Exception  {
 		TranslationUnit tu = parse("enum { eA = A::b };");
 	}
+	
+	public void testBug36693() throws Exception {
+		TranslationUnit tu =
+				parse("FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p){}");
+	}
+
+	public void testBug36696() throws Exception {
+		Writer code = new StringWriter();
+		code.write(
+			"template <typename P1> RefCounted(const RefCounted<P1>& rhs)\n");
+		code.write(
+			": pCount_(reinterpret_cast<const RefCounted&>(rhs).pCount_) {}\n");
+		TranslationUnit tu = parse(code.toString());
+	}
+
+	public void testBug36713() throws Exception {
+		Writer code = new StringWriter();
+		code.write("A ( * const fPtr) (void *); \n");
+		code.write("A (* const fPtr2) ( A * ); \n");
+		code.write("A (*const fPtr3) ( A * ) = function\n");
+		TranslationUnit tu = parse(code.toString());
+	}
+
+	public void testBug36794() throws Exception
+	{
+		TranslationUnit tu = parse( "template<> class allocator<void> {};");
+		Iterator i = tu.iterateOffsetableElements();
+		while( i.hasNext() )
+			assertNotNull( i.next() );
+	}
+	
+	public void testBug36811() throws Exception
+	{
+		Writer code = new StringWriter();  
+		code.write( "using namespace std;\n" ); 
+		code.write( "class Test {};" );
+		TranslationUnit tu = parse( code.toString() );
+		assertEquals( tu.getDeclarations().size(), 2 );
+		Iterator i = tu.iterateOffsetableElements();
+		while( i.hasNext() )
+			assertNotNull( i.next() );
+	}
+
+
 }
 

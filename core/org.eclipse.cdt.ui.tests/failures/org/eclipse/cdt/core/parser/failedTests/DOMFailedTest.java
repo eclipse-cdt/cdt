@@ -33,8 +33,6 @@ public class DOMFailedTest extends DOMTests {
 		TestSuite suite = new TestSuite();
 
 		suite.addTest(new DOMFailedTest("testBug36691"));
-		suite.addTest(new DOMFailedTest("testBug36693"));
-		suite.addTest(new DOMFailedTest("testBug36696"));
 		suite.addTest(new DOMFailedTest("testBug36699"));
 		suite.addTest(new DOMFailedTest("testBug36704"));
 		suite.addTest(new DOMFailedTest("testBug36707"));
@@ -54,42 +52,6 @@ public class DOMFailedTest extends DOMTests {
 			code.write(
 				"typename H::template Rebind<T>::Result& Field(H& obj)\n");
 			code.write("{	return obj;	}\n");
-			TranslationUnit tu = parse(code.toString());
-			testPassed = true;
-			fail( "We should not reach this point");
-		} catch (Throwable e) {
-			if (!(e instanceof ParserException))
-				fail("Unexpected Error: " + e.getMessage());
-
-			if (testPassed)
-				fail("The expected error did not occur.");
-		}
-	}
-
-	public void testBug36693() {
-		boolean testPassed = false;
-		try {
-			TranslationUnit tu =
-				parse("FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p){}");
-			testPassed = true;
-			fail( "We should not reach this point");
-		} catch (Throwable e) {
-			if (!(e instanceof ParserException))
-				fail("Unexpected Error: " + e.getMessage());
-
-			if (testPassed)
-				fail("The expected error did not occur.");
-		}
-	}
-
-	public void testBug36696() {
-		boolean testPassed = false;
-		try {
-			Writer code = new StringWriter();
-			code.write(
-				"template <typename P1> RefCounted(const RefCounted<P1>& rhs)\n");
-			code.write(
-				": pCount_(reinterpret_cast<const RefCounted&>(rhs).pCount_) {}\n");
 			TranslationUnit tu = parse(code.toString());
 			testPassed = true;
 			fail( "We should not reach this point");
@@ -173,23 +135,6 @@ public class DOMFailedTest extends DOMTests {
 		}
 	}
 	
-	public void testBug36713(){
-		boolean testPassed = false;
-		try{
-			Writer code = new StringWriter();
-			code.write("A (const * fPtr) (void *); \n");
-			code.write("A (const * fPtr2) ( A * ); \n");
-			code.write("A (const * fPtr3) ( A * ) = function\n");
-			TranslationUnit tu = parse(code.toString());
-			testPassed = true;
-		} catch (Throwable e ) {
-			if( ! (e instanceof ParserException))
-				fail( "Unexpected Error: " + e.getMessage() );
-		}
-		if( testPassed )
-			fail( "The expected error did not occur.");
-	}
-
 	public void testBug36714(){
 		boolean testPassed = false;
 		try{

@@ -131,14 +131,26 @@ c, quick);
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
 	}
 
-	protected void consumeToNextSemicolon() throws EndOfFile {
+	protected void consumeToNextSemicolon() throws Backtrack {
 		failParse();
 		consume();
 		// TODO - we should really check for matching braces too
-		while (LT(1) != Token.tSEMI) {
+		int depth = 0; 
+		while (LT(1) != Token.tSEMI || depth != 0 ) {
+			switch( LT(1))
+			{
+				case Token.tLBRACE:
+					++depth;
+					break;
+				case Token.tRBRACE:
+					--depth;
+					break;
+			}
+			
 			consume();
 		}
-		consume();
+		// eat the SEMI as well
+		consume(Token.tSEMI);
 	}
 	
 	/**
@@ -156,12 +168,12 @@ c, quick);
 	 */
 	protected void usingClause( Object container ) throws Backtrack
 	{
-		consume( Token.t_using );
+		Token firstToken = consume( Token.t_using );
 		
 		if( LT(1) == Token.t_namespace )
 		{
 			Object directive = null; 
-			try{ directive = callback.usingDirectiveBegin( container );} catch( Exception e ) {}
+			try{ directive = callback.usingDirectiveBegin( container);} catch( Exception e ) {}
 			// using-directive
 			consume( Token.t_namespace );
 			
@@ -222,13 +234,8 @@ c, quick);
 			{
 				try{ callback.usingDeclarationAbort( usingDeclaration );} catch( Exception e ) {}
 				throw backtrack;
-			}
-
-					
+			}			
 		}
-		
-		
-		
 	}
 	
 	/**
@@ -482,7 +489,16 @@ c, quick);
 					return;
 				}
 			default:
-				simpleDeclaration( container ); 
+				Token mark = mark(); 
+				try
+				{
+					simpleDeclaration( container, true );
+				}
+				catch( Backtrack bt)
+				{ 
+					backup( mark );
+					simpleDeclaration( container, false );
+				}
 		}
 	}
 	
@@ -556,10 +572,10 @@ c, quick);
 	 * To do:
 	 * - work in ctorInitializer and functionTryBlock
 	 */
-	protected void simpleDeclaration( Object container ) throws Backtrack {
+	protected void simpleDeclaration( Object container, boolean tryConstructor ) throws Backtrack {
 		Object simpleDecl = null; 
 		try{ simpleDecl = callback.simpleDeclarationBegin( container, LA(1));} catch( Exception e ) {}
-		declSpecifierSeq(simpleDecl, false);
+		declSpecifierSeq(simpleDecl, false, tryConstructor);
 		Object declarator = null; 
 
 		if (LT(1) != Token.tSEMI)
@@ -670,7 +686,7 @@ c, quick);
 		Token current = LA(1);
 		Object parameterDecl = null;
 		try{ parameterDecl = callback.parameterDeclarationBegin( containerObject );} catch( Exception e ) {}
-		declSpecifierSeq( parameterDecl, true );
+		declSpecifierSeq( parameterDecl, true, false );
 		
 		if (LT(1) != Token.tSEMI)
 			try {
@@ -686,6 +702,107 @@ c, quick);
 		try{ callback.parameterDeclarationEnd( parameterDecl );} catch( Exception e ) {}
 		 
 	}
+	
+	private class Flags
+	{
+		private boolean encounteredTypename = false;
+		private boolean encounteredRawType = false;
+		private final boolean parm; 
+		private final boolean constructor; 
+		
+		public Flags( boolean parm, boolean c)
+		{
+			this.parm = parm;
+			constructor = c; 
+		}
+		
+
+		/**
+		 * @return
+		 */
+		public boolean haveEncounteredRawType() {
+			return encounteredRawType;
+		}
+
+		/**
+		 * @return
+		 */
+		public boolean haveEncounteredTypename() {
+			return encounteredTypename;
+		}
+		
+
+
+		/**
+		 * @param b
+		 */
+		public void setEncounteredRawType(boolean b) {
+			encounteredRawType = b;
+		}
+
+		/**
+		 * @param b
+		 */
+		public void setEncounteredTypename(boolean b) {
+			encounteredTypename = b;
+		}
+
+		/**
+		 * @return
+		 */
+		public boolean isForParameterDeclaration() {
+			return parm;
+		}
+
+		/**
+		 * @return
+		 */
+		public boolean isForConstructor() {
+			return constructor;
+		}
+
+	}
+	
+	private boolean lookAheadForConstructor( Flags flags ) throws EndOfFile
+	{
+		return 		(
+						!flags.isForParameterDeclaration() 
+					) && 
+					( 
+						(
+							( 
+								LT(2) == Token.tCOLONCOLON && 
+									(
+										LA(3).getImage().equals( LA(1).getImage() ) ||  
+										LT(3) == Token.tCOMPL
+									)  
+							) || 
+							(
+								LT(2) == Token.tLPAREN && 
+								flags.isForConstructor()
+							)   
+						)
+					)
+				;
+	}
+	
+	private boolean lookAheadForDeclarator( Flags flags ) throws EndOfFile
+	{
+		return 
+				flags.haveEncounteredTypename() && 
+				( 
+					(
+						LT(2) != Token.tIDENTIFIER || 
+				  		( 
+					  		LT(3) != Token.tLPAREN && 
+					  		LT(3) != Token.tASSIGN 
+					  	)
+					) && 
+				  	!LA(2).isPointer() 
+				) 
+			;
+	}
+	
 	
 	/**
 	 * declSpecifier
@@ -704,26 +821,23 @@ c, quick);
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	protected void declSpecifierSeq( Object decl, boolean parm ) throws Backtrack {
-		boolean encounteredTypename = false;
-		boolean encounteredRawType = false;
-		boolean modifierEncountered = false;
+	protected void declSpecifierSeq( Object decl, boolean parm, boolean tryConstructor ) throws Backtrack {
+		Flags flags = new Flags( parm, tryConstructor ); 
 		declSpecifiers:		
 		for (;;) {
 			switch (LT(1)) {
+				case Token.t_inline:
 				case Token.t_auto:
 				case Token.t_register:
 				case Token.t_static:
 				case Token.t_extern:
 				case Token.t_mutable:
-				case Token.t_inline:
 				case Token.t_virtual:
 				case Token.t_explicit:
 				case Token.t_typedef:
 				case Token.t_friend:
 				case Token.t_const:
 				case Token.t_volatile:
-					modifierEncountered = true;
 					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
 				case Token.t_signed:
@@ -737,7 +851,7 @@ c, quick);
 				case Token.t_float:
 				case Token.t_double:
 				case Token.t_void:
-					encounteredRawType = true;
+					flags.setEncounteredRawType(true);
 					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
 				case Token.t_typename:
@@ -751,19 +865,19 @@ c, quick);
 				case Token.tIDENTIFIER:
 					// TODO - Kludgy way to handle constructors/destructors
 					// handle nested later:
-					if ((modifierEncountered && ! encounteredRawType && LT(2) != Token.tLPAREN)|| (parm && !encounteredRawType) || (!encounteredRawType && LT(2) != Token.tCOLONCOLON && LT(2) != Token.tLPAREN))
-					{
-						if( ! encounteredTypename || ( LT(2) == Token.tIDENTIFIER && 
-							( LT(3) == Token.tLPAREN || LT(3) == Token.tASSIGN ) || LT(2) == Token.tSTAR || LT(2) == Token.tAMPER ) )
-						{
-							try{ callback.simpleDeclSpecifier(decl,LA(1));} catch( Exception e ) {}
-							name(); 
-							try{ callback.simpleDeclSpecifierName( decl );} catch( Exception e ) {}
-							encounteredTypename = true; 
-							break;
-						}
-					}
-					return;
+					if ( flags.haveEncounteredRawType() )
+						return;
+					if ( lookAheadForConstructor( flags )  )
+						return;
+					if ( lookAheadForDeclarator( flags ) )
+						return;
+					try{ callback.simpleDeclSpecifier(decl,LA(1));} catch( Exception e ) {}
+					name(); 
+					try{ callback.simpleDeclSpecifierName( decl );} catch( Exception e ) {}
+					flags.setEncounteredTypename(true);
+
+					break;
+
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:
@@ -1991,8 +2105,16 @@ c, quick);
 					case Token.t_short:
 					case Token.t_unsigned:
 					case Token.t_long:
+					case Token.t_const:
 						end = consume(); 
 						break;
+					case Token.tAMPER:
+					case Token.tSTAR:
+					case Token.tIDENTIFIER:
+						if( end == null )
+							throw backtrack;
+						end = consume(); 
+						break;						
 					case Token.t_int:
 					case Token.t_char:
 					case Token.t_bool:

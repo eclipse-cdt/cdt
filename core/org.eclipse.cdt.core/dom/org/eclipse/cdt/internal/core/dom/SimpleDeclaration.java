@@ -5,9 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class SimpleDeclaration extends Declaration implements DeclSpecifier.IContainer, IOffsetable, TypeSpecifier.IOwner {
+public class SimpleDeclaration extends Declaration implements DeclSpecifier.IContainer, TypeSpecifier.IOwner {
 
-	private int startingOffset = 0, totalLength = 0;
 	private AccessSpecifier accessSpecifier = null;
 	private DeclSpecifier declSpec = null;
 	private boolean isFunctionDefinition = false;
@@ -85,62 +84,4 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.ICon
 	public void setFunctionDefinition(boolean b) {
 		isFunctionDefinition = b;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#getStartingOffset()
-	 */
-	public int getStartingOffset() {
-		return startingOffset;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#getTotalLength()
-	 */
-	public int getTotalLength() {
-		return totalLength;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#setStartingOffset(int)
-	 */
-	public void setStartingOffset(int i) {
-		startingOffset = i;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#setTotalLength(int)
-	 */
-	public void setTotalLength(int i) {
-		totalLength = i;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTopLine(int)
-	 */
-	public void setTopLine(int lineNumber) {
-		topLine = lineNumber;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setBottomLine(int)
-	 */
-	public void setBottomLine(int lineNumber) {
-		bottomLine = lineNumber;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTopLine()
-	 */
-	public int getTopLine() { 
-		return topLine;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getBottomLine()
-	 */
-	public int getBottomLine() {
-		return bottomLine;
-	}
-	private int topLine = 0, bottomLine = 0; 
-
 }

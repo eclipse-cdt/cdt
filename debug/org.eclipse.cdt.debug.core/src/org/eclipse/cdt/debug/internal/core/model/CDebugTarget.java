@@ -2011,7 +2011,7 @@ public class CDebugTarget extends CDebugElement
 						  IPath path = null;
 						  if ( var.getParent() != null && var.getParent() instanceof ICFile )
 						  {
-						  	  if ( !(var.getParent() instanceof IBinary) )
+						  	  if ( !(var.getParent() instanceof IBinary) && ((ICFile)var.getParent()).getFile() != null )
 						  	  {
 							  	  path = ((ICFile)var.getParent()).getFile().getLocation();
 						  	  }

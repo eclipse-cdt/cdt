@@ -10,14 +10,13 @@
  ***********************************************************************/
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -44,11 +43,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBaseClause.CPPBaseProblem
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants.EntryType;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Path;
 
 public class CPPGenerateIndexVisitor extends CPPASTVisitor {
     private DOMSourceIndexerRunner indexer; 
     private IFile resourceFile;
-    private List problems;
     
     {
         shouldVisitNames          = true;
@@ -73,7 +72,6 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         super();
         this.indexer = indexer;
         this.resourceFile = resourceFile;
-        problems = new ArrayList();
     }
 
     /* (non-Javadoc)
@@ -101,7 +99,21 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
      * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTProblem)
      */
     public int visit(IASTProblem problem) {
-        problems.add(problem);
+        if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
+            IFile tempFile = resourceFile;
+          
+            //If we are in an include file, get the include file
+            IASTNodeLocation[] locs = problem.getNodeLocations();
+            if (locs[0] instanceof IASTFileLocation) {
+                IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
+                String fileName = fileLoc.getFileName();
+                tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+            }
+            
+            if( tempFile != null ){
+                  indexer.generateMarkerProblem(tempFile, resourceFile, problem);
+            }
+        }
         return super.visit(problem);
     }
 
@@ -115,9 +127,20 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
         // check for IProblemBinding
         if (binding instanceof IProblemBinding) {
             IProblemBinding problem = (IProblemBinding) binding;
-            problems.add(problem);
-            if (indexer.isProblemReportingEnabled()) {
-                // TODO report problem
+            if (indexer.areProblemMarkersEnabled() && indexer.shouldRecordProblem(problem)){
+                IFile tempFile = resourceFile;
+              
+                //If we are in an include file, get the include file
+                IASTNodeLocation[] locs = name.getNodeLocations();
+                if (locs[0] instanceof IASTFileLocation) {
+                    IASTFileLocation fileLoc = (IASTFileLocation) locs[0];
+                    String fileName = fileLoc.getFileName();
+                    tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+                }
+                
+                if (tempFile != null) {
+                    indexer.generateMarkerProblem(tempFile, resourceFile, name);
+                }
             }
             return;
         }
@@ -162,22 +185,19 @@ public class CPPGenerateIndexVisitor extends CPPASTVisitor {
             ASTNodeProperty prop = name.getPropertyInParent();
             switch (compositeKey) {
                 case ICPPClassType.k_class:
-                    if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
+                    entryType = IIndexEncodingConstants.CLASS;
+                    if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
                         entryType = IIndexEncodingConstants.FWD_CLASS;
-                    else if (prop == IASTCompositeTypeSpecifier.TYPE_NAME)
-                        entryType = IIndexEncodingConstants.CLASS;
                     break;
                 case ICompositeType.k_struct:
-                    if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
+                    entryType = IIndexEncodingConstants.STRUCT;
+                    if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
                         entryType = IIndexEncodingConstants.FWD_STRUCT;
-                    else if (prop == IASTCompositeTypeSpecifier.TYPE_NAME)
-                        entryType = IIndexEncodingConstants.STRUCT;
                     break;
                 case ICompositeType.k_union:
-                    if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
+                    entryType = IIndexEncodingConstants.UNION;
+                    if (name.isDeclaration() && prop == IASTElaboratedTypeSpecifier.TYPE_NAME)
                         entryType = IIndexEncodingConstants.FWD_UNION;
-                    else if (prop == IASTCompositeTypeSpecifier.TYPE_NAME)
-                        entryType = IIndexEncodingConstants.UNION;
                     break;
             }
         }

@@ -1,3 +1,11 @@
+2005-03-29 Vladimir Hirsl
+	Problem markers for DOM AST based indexer.
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/CPPGenerateIndexVisitor.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IIndexEncodingConstants.java
+
 2005-03-28 Bogdan Gheorghe
 	Modified DeltaProcessor to make use of ICDTIndexer elements when requesting an index for an element.
 	Added indextiming option to trace options in CCorePlugin.

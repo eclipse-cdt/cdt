@@ -16,11 +16,16 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -29,7 +34,10 @@ import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -49,7 +57,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 
     private IFile resourceFile;
     private SourceIndexer indexer;
-    private boolean problemReportingEnabled = false;
 
     public DOMSourceIndexerRunner(IFile resource, SourceIndexer indexer) {
         this.resourceFile = resource;
@@ -60,13 +67,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         return resourceFile;
     }
 
-    /**
-     * @return Returns the problemReportingEnabled.
-     */
-    public boolean isProblemReportingEnabled() {
-        return problemReportingEnabled;
-    }
-    
     public void setFileTypes(String[] fileTypes) {
         // TODO Auto-generated method stub
 
@@ -75,7 +75,9 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
     protected void indexFile(IDocument document) throws IOException {
         // Add the name of the file to the index
         output.addDocument(document);
-        problemReportingEnabled = indexer.indexProblemsEnabled(resourceFile.getProject()) != 0;
+        int problems = indexer.indexProblemsEnabled(resourceFile.getProject());
+        setProblemMarkersEnabled(problems);
+        requestRemoveMarkers(resourceFile, null);
         
         //C or CPP?
         ParserLanguage language = CoreModel.hasCCNature(resourceFile.getProject()) ? 
@@ -112,12 +114,7 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 endTime = System.currentTimeMillis();
                 System.out.println("DOM Indexer - Total Parse Time for " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
                 System.out.println("DOM Indexer - Total Visit Time for " + resourceFile.getName()  + ": " + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
-                long currentTime = endTime - startTime;
-                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + currentTime); //$NON-NLS-1$  //$NON-NLS-2$
-                long tempTotaltime = indexer.getTotalIndexTime() + currentTime;
-	            indexer.setTotalIndexTime(tempTotaltime);
-                System.out.println("DOM Indexer - Overall Index Time: " + tempTotaltime); //$NON-NLS-1$
-                System.out.flush();
+                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + (endTime - startTime)); //$NON-NLS-1$  //$NON-NLS-2$
             }
             if (AbstractIndexer.VERBOSE){
                 AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$
@@ -139,15 +136,16 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 throw (IOException) ex;
         }
         finally{
-            //if the user disable problem reporting since we last checked, don't report the collected problems
-//            if( manager.indexProblemsEnabled( resourceFile.getProject() ) != 0 )
-//                requestor.reportProblems();
-//            
-//            //Report events
+            // if the user disable problem reporting since we last checked, don't report the collected problems
+            if (areProblemMarkersEnabled()) {
+                reportProblems();
+            }
+            
+            // Report events
 //            ArrayList filesTrav = requestor.getFilesTraversed();
 //            IndexDelta indexDelta = new IndexDelta(resourceFile.getProject(),filesTrav, IIndexDelta.INDEX_FINISHED_DELTA);
 //            CCorePlugin.getDefault().getCoreModel().getIndexManager().notifyListeners(indexDelta);
-            //Release all resources
+            // Release all resources
         }
     }
 
@@ -207,8 +205,94 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
      * @see org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer#addMarkers(org.eclipse.core.resources.IFile, org.eclipse.core.resources.IFile, java.lang.Object)
      */
     protected void addMarkers(IFile tempFile, IFile originator, Object problem) {
-        // TODO Auto-generated method stub
+        String fileName;
+        int sourceLineNumber = -1;
+        String errorMessage = ""; //$NON-NLS-1$
+        IASTNodeLocation location = null;
+       
+        if (problem instanceof IASTProblem) {
+            IASTProblem astProblem = (IASTProblem) problem;
+            errorMessage = astProblem.getMessage();
+            location = astProblem.getNodeLocations()[0];
+        }
+        else if (problem instanceof IASTName) { // semantic error specified in IProblemBinding
+            IASTName name = (IASTName) problem;
+            if (name.resolveBinding() instanceof IProblemBinding) {
+                IProblemBinding problemBinding = (IProblemBinding) name.resolveBinding(); 
+                errorMessage = problemBinding.getMessage();
+                location = name.getNodeLocations()[0];
+            }
+        }
+        if (location != null) {
+            if (location instanceof IASTFileLocation) {
+                IASTFileLocation fileLoc = (IASTFileLocation) location;
+                fileName = fileLoc.getFileName(); 
+                try {
+                    //we only ever add index markers on the file, so DEPTH_ZERO is far enough
+                    IMarker[] markers = tempFile.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_ZERO);
+                    
+                    boolean newProblem = true;
+                    
+                    if (markers.length > 0) {
+                        IMarker tempMarker = null;
+                        Integer tempInt = null; 
+                        String tempMsgString = null;
+                        
+                        for (int i=0; i<markers.length; i++) {
+                            tempMarker = markers[i];
+                            tempInt = (Integer) tempMarker.getAttribute(IMarker.LINE_NUMBER);
+                            tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+                            if (tempInt != null && tempInt.intValue()== sourceLineNumber &&
+                                    tempMsgString.equalsIgnoreCase(INDEXER_MARKER_PREFIX + errorMessage)) {
+                                newProblem = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (newProblem) {
+                        IMarker marker = tempFile.createMarker(ICModelMarker.INDEXER_MARKER);
+                        int start = fileLoc.getNodeOffset();
+                        int end = start + fileLoc.getNodeLength();
+        //                marker.setAttribute(IMarker.LOCATION, iProblem.getSourceLineNumber());
+                        marker.setAttribute(IMarker.LOCATION, 1);
+                        marker.setAttribute(IMarker.MESSAGE, INDEXER_MARKER_PREFIX + errorMessage);
+                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+        //                marker.setAttribute(IMarker.LINE_NUMBER, iProblem.getSourceLineNumber());
+                        marker.setAttribute(IMarker.LINE_NUMBER, 1);
+                        marker.setAttribute(IMarker.CHAR_START, start);
+                        marker.setAttribute(IMarker.CHAR_END, end); 
+                        marker.setAttribute(INDEXER_MARKER_ORIGINATOR, originator.getFullPath().toString());
+                    }
+                    
+                 } catch (CoreException e) {
+                     // You need to handle the cases where attribute value is rejected
+                 }
+            }
+        }
+    }
+
+    public boolean shouldRecordProblem(IASTProblem problem) {
+        boolean preprocessor = (getProblemMarkersEnabled() & SourceIndexer.PREPROCESSOR_PROBLEMS_BIT ) != 0;
+        boolean semantics = (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT ) != 0;
+        boolean syntax = (getProblemMarkersEnabled() & SourceIndexer.SYNTACTIC_PROBLEMS_BIT ) != 0;
         
+        if (problem.checkCategory(IASTProblem.PREPROCESSOR_RELATED) || 
+                problem.checkCategory(IASTProblem.SCANNER_RELATED))
+            return preprocessor && problem.getID() != IASTProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
+        else if (problem.checkCategory(IASTProblem.SEMANTICS_RELATED))
+            return semantics;
+        else if (problem.checkCategory(IASTProblem.SYNTAX_RELATED))
+            return syntax;
+        
+        return false;
+    }
+
+    /**
+     * @param binding
+     * @return
+     */
+    public boolean shouldRecordProblem(IProblemBinding problem) {
+        return (getProblemMarkersEnabled() & SourceIndexer.SEMANTIC_PROBLEMS_BIT) != 0;
     }
 
 }

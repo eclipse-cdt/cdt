@@ -63,6 +63,8 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 		monitor.beginTask(CUIMessages.getString("IndexerOptiosn.task.savingAttributes "), 1);  //$NON-NLS-1$
 		ICOptionContainer container = getContainer();
 		IProject proj = null;
+        String indexEnabled = getIndexerEnabledString();
+        String indexMarkers = getIndexerProblemsValuesString();
 		
 		if (container != null){
 			proj = container.getProject();
@@ -80,7 +82,6 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 					String id = cext[i].getID();
 					//if (cext[i].getID().equals(parserID)) {
 						String orig = cext[i].getExtensionData("indexenabled"); //$NON-NLS-1$
-						String indexEnabled = getIndexerEnabledString();
 						if (orig == null || !orig.equals(indexEnabled)) {
 							cext[i].setExtensionData("indexenabled", indexEnabled); //$NON-NLS-1$
 						}
@@ -99,19 +100,23 @@ public class SourceIndexerBlock extends AbstractIndexerPage {
 			}
 			
 			if (store != null) {
-				String indexEnabled = getIndexerEnabledString();
-				String indexMarkers = getIndexerProblemsValuesString();
 				store.setValue(PREF_INDEX_ENABLED, indexEnabled);
 				store.setValue(PREF_INDEX_MARKERS, indexMarkers);
 			}
 		}
+
+        ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject);
+
+        int indexMarkersInt = Integer.parseInt(indexMarkers);
+        if (indexMarkersInt != oldIndexerProblemsValue && indexMarkersInt == 0) 
+            if (indexer instanceof SourceIndexer)
+                ((SourceIndexer) indexer).removeIndexerProblems(currentProject);
 		
 		boolean indexProject = getIndexerValue();
 		
 		if ((indexProject != oldIndexerValue)
 			&& (currentProject != null)
 			&& indexProject) {
-			ICDTIndexer indexer = CCorePlugin.getDefault().getCoreModel().getIndexManager().getIndexerForProject(currentProject);
 			if (indexer instanceof SourceIndexer)
 			 ((SourceIndexer) indexer).indexAll(currentProject);
 		}

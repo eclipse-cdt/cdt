@@ -44,46 +44,46 @@ public interface IIndexEncodingConstants {
 
     final static char[][] encodedTypeNames_Decl = {
         new char[] {' '},   // not used
-        "typeDecl/C/".toCharArray(),    // CLASS        //$NON-NLS-1$
-        "typeDecl/S/".toCharArray(),    // STRUCT       //$NON-NLS-1$
-        "typeDecl/U/".toCharArray(),    // UNION        //$NON-NLS-1$
-        "typeDecl/E/".toCharArray(),    // ENUM         //$NON-NLS-1$
-        "typeDecl/V/".toCharArray(),    // VAR          //$NON-NLS-1$
-        "typeDecl/T/".toCharArray(),    // TYPEDEF      //$NON-NLS-1$
-        "typeDecl/D/".toCharArray(),    // DERIVED      //$NON-NLS-1$
-        "typeDecl/F/".toCharArray(),    // FIREND       //$NON-NLS-1$
-        "typeDecl/G/".toCharArray(),    // FWD_CLASS    //$NON-NLS-1$
-        "typeDecl/H/".toCharArray(),    // FWD_STRUCT   //$NON-NLS-1$
-        "typeDecl/I/".toCharArray(),    // FWD_UNION    //$NON-NLS-1$
-        "namespaceDecl/".toCharArray(), // NAMESPACE    //$NON-NLS-1$
-        "enumtorDecl/".toCharArray(),   // ENUMERATOR   //$NON-NLS-1$
-        "fieldDecl/".toCharArray(),     // FIELD        //$NON-NLS-1$
-        "methodDecl/".toCharArray(),    // METHOD       //$NON-NLS-1$
-        "functionDecl/".toCharArray(),  // FUNCTION     //$NON-NLS-1$
-        "macroDecl/".toCharArray(),     // MACRO        //$NON-NLS-1$
-        "includeDecl/".toCharArray()    // INCLUDE-unused //$NON-NLS-1$
+        "typeDecl/C/".toCharArray(),    // CLASS            //$NON-NLS-1$
+        "typeDecl/S/".toCharArray(),    // STRUCT           //$NON-NLS-1$
+        "typeDecl/U/".toCharArray(),    // UNION            //$NON-NLS-1$
+        "typeDecl/E/".toCharArray(),    // ENUM             //$NON-NLS-1$
+        "typeDecl/V/".toCharArray(),    // VAR              //$NON-NLS-1$
+        "typeDecl/T/".toCharArray(),    // TYPEDEF          //$NON-NLS-1$
+        "typeDecl/D/".toCharArray(),    // DERIVED          //$NON-NLS-1$
+        "typeDecl/F/".toCharArray(),    // FIREND           //$NON-NLS-1$
+        "typeDecl/G/".toCharArray(),    // FWD_CLASS        //$NON-NLS-1$
+        "typeDecl/H/".toCharArray(),    // FWD_STRUCT       //$NON-NLS-1$
+        "typeDecl/I/".toCharArray(),    // FWD_UNION        //$NON-NLS-1$
+        "namespaceDecl/".toCharArray(), // NAMESPACE        //$NON-NLS-1$
+        "enumtorDecl/".toCharArray(),   // ENUMERATOR       //$NON-NLS-1$
+        "fieldDecl/".toCharArray(),     // FIELD            //$NON-NLS-1$
+        "methodDecl/".toCharArray(),    // METHOD           //$NON-NLS-1$
+        "functionDecl/".toCharArray(),  // FUNCTION         //$NON-NLS-1$
+        "macroDecl/".toCharArray(),     // MACRO            //$NON-NLS-1$
+        "includeDecl/".toCharArray()    // INCLUDE-unused   //$NON-NLS-1$
     };
     
     final static char[][] encodedTypeNames_Ref = {
         new char[] {' '},   // not used
-        "typeRef/C/".toCharArray(),    // CLASS        //$NON-NLS-1$
-        "typeRef/S/".toCharArray(),    // STRUCT       //$NON-NLS-1$
-        "typeRef/U/".toCharArray(),    // UNION        //$NON-NLS-1$
-        "typeRef/E/".toCharArray(),    // ENUM         //$NON-NLS-1$
-        "typeRef/V/".toCharArray(),    // VAR          //$NON-NLS-1$
-        "typeRef/T/".toCharArray(),    // TYPEDEF      //$NON-NLS-1$
-        "typeRef/D/".toCharArray(),    // DERIVED      //$NON-NLS-1$
-        "typeRef/F/".toCharArray(),    // FIREND       //$NON-NLS-1$
-        "typeRef/G/".toCharArray(),    // FWD_CLASS    //$NON-NLS-1$
-        "typeRef/H/".toCharArray(),    // FWD_STRUCT   //$NON-NLS-1$
-        "typeRef/I/".toCharArray(),    // FWD_UNION    //$NON-NLS-1$
-        "namespaceRef/".toCharArray(), // NAMESPACE    //$NON-NLS-1$
-        "enumtorRef/".toCharArray(),   // ENUMERATOR   //$NON-NLS-1$
-        "fieldRef/".toCharArray(),     // FIELD        //$NON-NLS-1$
-        "methodRef/".toCharArray(),    // METHOD       //$NON-NLS-1$
-        "functionRef/".toCharArray(),  // FUNCTION     //$NON-NLS-1$
-        "macroRef/".toCharArray(),     // MACRO-unused //$NON-NLS-1$
-        "includeRef/".toCharArray()    // INCLUDE      //$NON-NLS-1$
+        "typeRef/C/".toCharArray(),    // CLASS             //$NON-NLS-1$
+        "typeRef/S/".toCharArray(),    // STRUCT            //$NON-NLS-1$
+        "typeRef/U/".toCharArray(),    // UNION             //$NON-NLS-1$
+        "typeRef/E/".toCharArray(),    // ENUM              //$NON-NLS-1$
+        "typeRef/V/".toCharArray(),    // VAR               //$NON-NLS-1$
+        "typeRef/T/".toCharArray(),    // TYPEDEF           //$NON-NLS-1$
+        "typeRef/D/".toCharArray(),    // DERIVED           //$NON-NLS-1$
+        "typeRef/F/".toCharArray(),    // FIREND            //$NON-NLS-1$
+        "typeRef/G/".toCharArray(),    // FWD_CLASS-unused  //$NON-NLS-1$
+        "typeRef/H/".toCharArray(),    // FWD_STRUCT-unused //$NON-NLS-1$
+        "typeRef/I/".toCharArray(),    // FWD_UNION-unused  //$NON-NLS-1$
+        "namespaceRef/".toCharArray(), // NAMESPACE         //$NON-NLS-1$
+        "enumtorRef/".toCharArray(),   // ENUMERATOR        //$NON-NLS-1$
+        "fieldRef/".toCharArray(),     // FIELD             //$NON-NLS-1$
+        "methodRef/".toCharArray(),    // METHOD            //$NON-NLS-1$
+        "functionRef/".toCharArray(),  // FUNCTION          //$NON-NLS-1$
+        "macroRef/".toCharArray(),     // MACRO-unused      //$NON-NLS-1$
+        "includeRef/".toCharArray()    // INCLUDE           //$NON-NLS-1$
     };
         
     final static char SEPARATOR= '/';

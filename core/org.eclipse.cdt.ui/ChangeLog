@@ -1,3 +1,8 @@
+2005-03-29 Vladimir Hirsl
+	Removing indexer problem markers when problem reporting is deselected.
+
+	* src/org/eclipse/cdt/ui/dialogs/SourceIndexerBlock.java
+	
 2005-03-28 Bogdan Gheorghe
 	Added CTagsIndexer block - some more ironing of the indexer block.
 	* src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java

@@ -23,8 +23,8 @@
 		<property name="buildingOSGi" value="true"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
-		<property name="remotedir" value="${cdtuser}:${cdtpasswd}@download.eclipse.org:/home/www/tools/cdt/builds/${branchVersion}"/>
-		<property name="cdtserver" value="download.eclipse.org"/>
+		<property name="remotedir" value="${cdtuser}:${cdtpasswd}@download1.eclipse.org:/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="cdtserver" value="download1.eclipse.org"/>
 		<property name="cdtdir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 	</target>
 
@@ -115,7 +115,7 @@
 	<target name="wswbmap" depends="init" unless="hasErrors">
 		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
 		<replace file="cdt-map.txt" token="@buildId@" value="${buildId}"/>
-		<scp todir="${cdtuser}:${cdtpasswd}@download.eclipse.org:/home/www/tools/cdt/wswb">
+		<scp todir="${cdtuser}:${cdtpasswd}@download1.eclipse.org:/home/www/tools/cdt/wswb">
 			<fileset file="cdt-map.txt"/>
 		</scp>
 	</target>

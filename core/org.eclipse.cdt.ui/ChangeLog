@@ -4,6 +4,15 @@
 	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
 	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
 
+2004-03-18 Tanya Wolff
+	Externalized template descriptions,
+	Externalized name in plugin.xml,
+	Fixed missing resource "Link With Editor".
+	* src/org/eclipse/cdt/internal/corext/template/default-templates.xml
+	* plugin.xml
+	* plugin.properties
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
+	
 2004-03-18 Alain Magloire
 	Change in the hierarchy of the core Model:
 	ICModel

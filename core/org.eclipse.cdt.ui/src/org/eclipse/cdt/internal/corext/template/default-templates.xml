@@ -1,125 +1,64 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document [
+	<!ENTITY withtempvar "with temporary variable">
+	<!ENTITY statement "statement">
+	<!-- block is a noun -->
+	<!ENTITY block "block">
+	<!ENTITY method "method">
+	<!ENTITY declaration "declaration">
+	<!ENTITY usinganamespace "using a namespace">
+	<!ENTITY statement "statement">
+	<!ENTITY createnewobject "create new object">
+	<!ENTITY defaultmultilinecomment "default multiline comment">
+	<!ENTITY printtostdout "print to standard output">
+	<!ENTITY printtostderr "print to standard error">
+	<!ENTITY authorname "author name">
+	
+]>
 
-<!--
-(c) Copyright IBM Corp. 2000, 2001.
-All Rights Reserved.
--->
-
-<templates>
-
-<!-- C++ -->
-
-<template description="for loop" name="for" context="C Function">
-for (${var} = 0; ${var} &lt; ${max}; ++${var}) {
+<templates><template name="for" description="for loop" context="C Function" enabled="true">for (${var} = 0; ${var} &lt; ${max}; ${var}++) {
 	${cursor}
-}
-</template>
-
-<template description="for loop with temporary variable" name="for" context="C Function">
-for (int ${var} = 0; ${var} &lt; ${max}; ++${var}) {
+}</template><template name="for" description="for loop &withtempvar;" context="C Function" enabled="true">for (int ${var} = 0; ${var} &lt; ${max}; ${var}++) {
 	${cursor}
-}
-</template>
-
-<template description="do while statement" name="do" context="C Function">
-do {
+}</template><template name="do" description="do while &statement;" context="C Function" enabled="true">do {
 	${cursor}
-} while (${condition});
-</template>
-
-<template description="switch case statement" name="switch" context="C Function">
-switch (${key}) {
+} while (${condition});</template><template name="switch" description="switch case &statement;" context="C Function" enabled="true">switch (${key}) {
 	case ${value}:
 		${cursor}
 		break;
 	default:
 		break;
-}
-</template>
-
-<template description="if statement" name="if" context="C Function">
-if (${condition}) {
+}</template><template name="if" description="if &statement;" context="C Function" enabled="true">if (${condition}) {
 	${cursor}
-}
-</template>
-
-<template description="if else statement" name="ifelse" context="C Function">
-if (${condition}) {
+}</template><template name="ifelse" description="if else &statement;" context="C Function" enabled="true">if (${condition}) {
 	${cursor}
 } else {
 	
-}
-</template>
-
-<template description="else if block" name="elseif" context="C Function">
-else if (${condition}) {
+}</template><template name="elseif" description="else if &block;" context="C Function" enabled="true">else if (${condition}) {
 	${cursor}
-}
-</template>
-
-<template description="else block" name="else" context="C Function">
-else {
+}</template><template name="else" description="else &block;" context="C Function" enabled="true">else {
 	${cursor}
-}
-</template>
-
-<template description="try catch block" name="try" context="C++ Function">
-try {
+}</template><template name="try" description="try catch &block;" context="C++ Function" enabled="true">try {
 	${cursor}
 } catch (${Exception} e) {
-}
-</template>
-
-<template description="catch block" name="catch" context="C++ Function">
-catch (${Exception} e) {
+}</template><template name="catch" description="catch &block;" context="C++ Function" enabled="true">catch (${Exception} e) {
 	${cursor}
-}
-</template>
-
-<template description="main method" name="main" context="C Global">
-int
+}</template><template name="main" description="main &method;" context="C Global" enabled="true">int
 main(int argc, char **argv) {
 	${cursor}
-}
-</template>
-
-<template description="class declaration" name="class" context="C++ Global">
-class ${name} {
+}</template><template name="class" description="class &declaration;" context="C++ Global" enabled="true">class ${name} {
 	${cursor}
 private:
-};
-</template>
-
-<template description="using a namespace" name="using" context="C++ Global">
-using namespace ${namespace};
-</template>
-
-  <template description="namespace declaration" name="namespace" context="C++ Global"
- >namespace ${namespace} {
+};</template>
+<template name="using" description="&usinganamespace;" context="C++ Global" enabled="true">using namespace ${namespace};</template>
+<template name="namespace" description="namespace &declaration;" context="C++ Global" enabled="true">namespace ${namespace} {
 	${cursor}
-}</template>
-
-  <template description="create new object" name="new" context="C++ Function"
->${type} ${name} = new ${type}(${arguments});
-</template>
-
-
-<template name="comment" description="default multiline comment" context="C Global" enabled="true">/*
+}</template><template name="new" description="&createnewobject;" context="C++ Function" enabled="true">${type} ${name} = new ${type}(${arguments});</template><template name="comment" description="&defaultmultilinecomment;" context="C Global" enabled="true">/*
  * author ${user}
  *
  * To change this generated comment edit the template variable &quot;comment&quot;:
  * Window&gt;Preferences&gt;C&gt;Templates.
- */</template> 
-
-  <template description="print to standard out" name="stdout" context="C Function"
-  >printf(${cursor});</template>
-
-  <template description="print to standard error" name="stderr" context="C Function"
-  >fprintf(stderr, ${cursor});</template>
-
-  <!-- javadoc -->
-
-  <template description="author name" name="author" context="C Global"
-  >author ${user}</template>
-
-</templates>
+ */</template>
+ <template name="stdout" description="&printtostdout;" context="C Function" enabled="true">printf(${cursor});</template>
+ <template name="stderr" description="&printtostderr;" context="C Function" enabled="true">fprintf(stderr, ${cursor});</template>
+ <template name="author" description="&authorname;" context="C Global" enabled="true">author ${user}</template></templates>

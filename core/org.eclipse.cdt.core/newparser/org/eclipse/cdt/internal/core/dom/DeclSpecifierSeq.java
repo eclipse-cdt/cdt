@@ -72,9 +72,9 @@ public class DeclSpecifierSeq {
 	public static final int t_float = 5;
 	public static final int t_double = 6;
 	public static final int t_void = 7;
+	
 	private int type = t_unknown;
 	public void setType(int t) { type = t; }
 	public int getType() { return type; }
-	
-	
+
 }

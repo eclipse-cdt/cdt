@@ -13,4 +13,7 @@ public class TranslationUnit {
 		declarations.add(declaration);
 	}
 
+	public List getDeclarations() {
+		return declarations;
+	}
 }

@@ -58,7 +58,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String START = MESSAGE + ".starting";	//$NON-NLS-1$
 	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
 	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
-	
+	private static final String CONSOLE_HEADER = MESSAGE + ".console.header";	//$NON-NLS-1$
+	private static final String TYPE_FULL = "ManagedMakeBuilder.type.full";	//$NON-NLS-1$
+	private static final String TYPE_INC = "ManagedMakeBuider.type.incremental";	//$NON-NLS-1$
+
 	// Local variables
 	protected List resourcesToBuild;
 	protected List ruleList;
@@ -242,14 +245,14 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @see org.eclipse.cdt.core.resources.ACBuilder#getWorkingDirectory()
 	 */
 	public IPath getWorkingDirectory() {
-		IProject currProject = getProject();
-		IPath workingDirectory = currProject.getLocation();
-		return workingDirectory;
+		return getProject().getLocation();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @param delta
+	 * @param info
 	 * @param monitor
+	 * @throws CoreException
 	 */
 	protected void incrementalBuild(IResourceDelta delta, IManagedBuildInfo info, IProgressMonitor monitor) throws CoreException {
 		// Rebuild the resource tree in the delta
@@ -292,6 +295,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		invokeMake(false, buildDir, info, monitor);
 	}
 
+	/* (non-Javadoc)
+	 * @param fullBuild
+	 * @param buildDir
+	 * @param info
+	 * @param monitor
+	 */
 	protected void invokeMake(boolean fullBuild, IPath buildDir, IManagedBuildInfo info, IProgressMonitor monitor) {
 		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = getProject();
@@ -324,10 +333,23 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				monitor.beginTask(ManagedBuilderCorePlugin.getFormattedString(MAKE, msgs), IProgressMonitor.UNKNOWN);
 
 				// Get a build console for the project
+				StringBuffer buf = new StringBuffer();
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(currentProject);
 				ConsoleOutputStream consoleOutStream = console.getOutputStream();
-	
+				String[] consoleHeader = new String[3];
+				consoleHeader[0] = fullBuild ? 
+						ManagedBuilderCorePlugin.getResourceString(TYPE_FULL) : 
+						ManagedBuilderCorePlugin.getResourceString(TYPE_INC);
+				consoleHeader[1] = info.getConfigurationName();
+				consoleHeader[2] = currentProject.getName();
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$
+				buf.append(ManagedBuilderCorePlugin.getFormattedString(CONSOLE_HEADER, consoleHeader));
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$
+				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$
+				consoleOutStream.write(buf.toString().getBytes());
+				consoleOutStream.flush();
+				
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
 				IProject[] deps = currentProject.getReferencedProjects();
@@ -405,7 +427,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 				
 				// Report either the success or failure of our mission
-				StringBuffer buf = new StringBuffer();
+				buf = new StringBuffer();
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = ManagedBuilderCorePlugin.getResourceString(BUILD_ERROR);
 					buf.append(errorDesc);

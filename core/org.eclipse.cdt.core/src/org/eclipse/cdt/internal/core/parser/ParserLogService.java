@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 

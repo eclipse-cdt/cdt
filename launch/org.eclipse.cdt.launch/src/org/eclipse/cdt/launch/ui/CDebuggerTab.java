@@ -9,7 +9,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDebuggerInfo;
+import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
@@ -25,6 +26,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,6 +37,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	ArrayList fDinfo;
 	int fDindex;
 	Combo fDlist;
+	Button stopInMain;
 
 	// Dynamic Debugger UI widgets
 	protected ILaunchConfigurationTab fDynamicTab;
@@ -42,13 +45,11 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	
 	protected ILaunchConfigurationWorkingCopy fWorkingCopy;
 	protected ILaunchConfiguration fLaunchConfiguration;
-
-
 	
 	public void createControl(Composite parent) {
 		Composite comp= new Composite(parent, SWT.NONE);	
 		setControl(comp);	
-		GridLayout topLayout = new GridLayout(2, false);
+		GridLayout topLayout = new GridLayout(3, false);
 		comp.setLayout(topLayout);
 		Label dlabel = new Label(comp, SWT.NONE);
 		dlabel.setText("Debugger:");
@@ -58,9 +59,15 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 				handleDebuggerComboBoxModified();
 			}
 		});
+		stopInMain = new Button(comp, SWT.CHECK);
+		stopInMain.setText("Stop at main() on startup.");
+		GridData gd = new GridData();
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
+		stopInMain.setLayoutData(gd);
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
 		debuggerGroup.setLayoutData(gd);
 		debuggerGroup.setText("Debugger Options");
 		setDynamicTabHolder(new Composite(debuggerGroup, SWT.NONE));
@@ -71,7 +78,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		getDynamicTabHolder().setLayout(tabHolderLayout);
 		gd = new GridData(GridData.FILL_BOTH);
 		getDynamicTabHolder().setLayoutData(gd);
-
 	}
 	
 	protected void setDynamicTabHolder(Composite tabHolder) {
@@ -100,7 +106,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		// always set the newly created area with defaults
 		ILaunchConfigurationWorkingCopy wc = getLaunchConfigurationWorkingCopy();
 		if (getDynamicTab() == null) {
-			// remove any VM specfic args from the config
+			// remove any debug specfic args from the config
 			if (wc == null) {
 				if (getLaunchConfiguration().isWorkingCopy()) {
 					wc = (ILaunchConfigurationWorkingCopy)getLaunchConfiguration();
@@ -130,28 +136,37 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	}
 	
 	protected void loadDebuggerComboBox(ILaunchConfiguration config) {
-		ICDebuggerInfo[] debuggerInfo = null;
-		if ( fDinfo != null ) {
-			fDinfo.clear();
-		}
-		fDlist.removeAll();
+		ICDebugConfiguration[] debugConfigs;
+		String platform;
 		try {
-			debuggerInfo = CDebugCorePlugin.getDefault().getDebuggerManager().queryDebuggers(getPlatform(config));
+			platform = getPlatform(config);
 		}
 		catch (CoreException e) {
 			return;
 		}
-		fDinfo = new ArrayList(debuggerInfo.length);
-		for( int i = 0; i < debuggerInfo.length; i++ ) {
-			fDinfo.add(debuggerInfo[i]);
-			fDlist.add(debuggerInfo[i].getName());
+		if ( fDinfo != null ) {
+			fDinfo.clear();
 		}
+		fDlist.removeAll();
+		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
+		fDinfo = new ArrayList(debugConfigs.length);
+		for( int i = 0; i < debugConfigs.length; i++ ) {
+			String supported[] = debugConfigs[i].getPlatforms();
+			for( int j = 0; j < supported.length; j++ ) {
+				if (supported[j].equals("*") || supported[j].equalsIgnoreCase(platform)) {
+					fDinfo.add(debugConfigs[i]);
+					fDlist.add(debugConfigs[i].getName());
+					break;
+				}
+			}
+		}
+		fDlist.getParent().layout();
 	}
 	
 	protected void setSelection(String id) {
 		for (int i = 0; i < fDinfo.size(); i++ ) {
-			ICDebuggerInfo dinfo = (ICDebuggerInfo) fDinfo.get(i);
-			if ( dinfo != null && dinfo.getID().equals(id) ) {
+			ICDebugConfiguration debugConfig = (ICDebugConfiguration) fDinfo.get(i);
+			if ( debugConfig != null && debugConfig.getID().equals(id) ) {
 				fDlist.select(i);
 				return;
 			}
@@ -162,16 +177,17 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		setLaunchConfigurationWorkingCopy(config);
 		loadDebuggerComboBox(config);
 		if ( fDinfo.size() > 0 ) {
-			ICDebuggerInfo info = (ICDebuggerInfo) fDinfo.get(0);
-			if ( info != null ) {
-				setSelection(info.getID());
-				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_CDT_DEBUGGER_ID, info.getID());
+			ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDinfo.get(0);
+			if ( dbgCfg != null ) {
+				setSelection(dbgCfg.getID());
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, dbgCfg.getID());
 			}
 		}
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.setDefaults(config);
 		}
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
@@ -179,29 +195,32 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		setLaunchConfiguration(config);
 		loadDebuggerComboBox(config);
 		try {
-			id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_CDT_DEBUGGER_ID, "");
+			id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "");
+			setSelection(id);
+			ILaunchConfigurationTab dynamicTab = getDynamicTab();
+			if (dynamicTab != null) {
+				dynamicTab.initializeFrom(config);
+			}
+			if ( config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false) == true ) {
+				stopInMain.setSelection(true);
+			}
 		}
 		catch (CoreException e) {
 			return;
 		}
-		setSelection(id);
-		ILaunchConfigurationTab dynamicTab = getDynamicTab();
-		if (dynamicTab != null) {
-			dynamicTab.initializeFrom(config);
-		}		
-
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if ( isValid(config) ) {
-			ICDebuggerInfo dinfo = (ICDebuggerInfo)fDinfo.get(fDlist.getSelectionIndex());
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_CDT_DEBUGGER_ID, dinfo.getID() );
+			ICDebugConfiguration dbgCfg = (ICDebugConfiguration)fDinfo.get(fDlist.getSelectionIndex());
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, dbgCfg.getID() );
 			ILaunchConfigurationTab dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
 				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map)null);
 			} else {
 				dynamicTab.performApply(config);
 			}
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, stopInMain.getSelection());
 		}
 	}
 	
@@ -223,18 +242,20 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 	/**
 	 * Return the class that implements <code>ILaunchConfigurationTab</code>
-	 * that is registered against the install type of the currently selected VM.
+	 * that is registered against the debugger id of the currently selected debugger.
 	 */
 	protected ILaunchConfigurationTab getTabForCurrentDebugger() {
 		int selectedIndex = fDlist.getSelectionIndex();
 		if (selectedIndex > 0) {
+			ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDinfo.get(selectedIndex);
+			return CDebugUIPlugin.getDefault().getDebuggerPage(dbgCfg.getID());
 		}
 		return null;
 	}
 
 	/**
-	 * Show the contributed piece of UI that was registered for the install type
-	 * of the currently selected VM.
+	 * Show the contributed piece of UI that was registered for the debugger id
+	 * of the currently selected debugger.
 	 */
 	protected void loadDynamicDebugArea() {
 		// Dispose of any current child widgets in the tab holder area
@@ -243,7 +264,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			children[i].dispose();
 		}
 		
-		// Retrieve the dynamic UI for the current JRE 
+		// Retrieve the dynamic UI for the current Debugger
 		setDynamicTab(getTabForCurrentDebugger());
 		if (getDynamicTab() == null) {
 			return;
@@ -252,7 +273,8 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		// Ask the dynamic UI to create its Control
 		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		getDynamicTab().createControl(getDynamicTabHolder());
-		getDynamicTabHolder().layout();			
+		getDynamicTab().getControl().setVisible(true);
+		getDynamicTabHolder().layout(true);
 	}
 
 	/**

@@ -5,6 +5,7 @@
 	<projects>
 		<project>org.eclipse.cdt.core</project>
 		<project>org.eclipse.cdt.debug.core</project>
+		<project>org.eclipse.cdt.debug.ui</project>
 		<project>org.eclipse.cdt.ui</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>

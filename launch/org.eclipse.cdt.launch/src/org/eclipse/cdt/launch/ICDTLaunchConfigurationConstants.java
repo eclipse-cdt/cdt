@@ -54,18 +54,22 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is the debugger id
 	 * used when launching a C/C++ application for debug.
 	 */
-	public static final String ATTR_CDT_DEBUGGER_ID = LaunchUIPlugin.getUniqueIdentifier() + ".CDT_DEBUGGER"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_ID = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_ID"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is the platform string of the launch configuration
 	 */
-	public static final String ATTR_CDT_PLATFORM = LaunchUIPlugin.getUniqueIdentifier() + ".CDT_PLATFFORM"; //$NON-NLS-1$
+	public static final String ATTR_PLATFORM = LaunchUIPlugin.getUniqueIdentifier() + ".PLATFFORM"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute key. The value is the platform string of the launch configuration
 	 */
-	public static final String ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP = LaunchUIPlugin.getUniqueIdentifier() + ".CDT_DEBUGGER_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
+	public static final String ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_SPECIFIC_ATTRS_MAP"; //$NON-NLS-1$
 	
+	/**
+	 * Launch configuration attribute key. The value is the platform string of the launch configuration
+	 */
+	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
 	/**
 	 * Status code indicating that the Eclipse runtime does not support
 	 * launching a program with a working directory. This feature is only

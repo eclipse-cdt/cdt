@@ -83,6 +83,6 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	
 	protected String getPlatform(ILaunchConfiguration config) throws CoreException {
 		String platform = BootLoader.getOS();
-		return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_CDT_PLATFORM, platform);
+		return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PLATFORM, platform);
 	}	
 }

@@ -354,6 +354,10 @@ public class BasicTokenDuple implements ITokenDuple {
 	 public String extractNameFromTemplateId(){
 	 	ITokenDuple nameDuple = getLastSegment(); 
 	 	
+	    List [] argLists = getTemplateIdArgLists(); 
+	    if( argLists == null || argLists[ argLists.length - 1 ] == null )
+	        return nameDuple.toString();
+	 	
     	Iterator i = nameDuple.iterator();
     	
     	if( !i.hasNext() )
@@ -377,30 +381,15 @@ public class BasicTokenDuple implements ITokenDuple {
     	else if( token.getType() == IToken.t_operator ){
     		token = (IToken) i.next();
     		nameBuffer.append( ' ' );
-    		nameBuffer.append( token.getImage() );
-    		
-    		if( !i.hasNext() )
-        		return nameBuffer.toString();
-    		
-    		//operator new [] and operator delete []
-    		if( (token.getType() == IToken.t_new || token.getType() == IToken.t_delete) &&
-    			(token.getNext().getType() == IToken.tLBRACKET ) )
-    		{
-    			nameBuffer.append( ' ' );
-    			nameBuffer.append( ((IToken)i.next()).getImage() );
-    			nameBuffer.append( ((IToken)i.next()).getImage() );
-    		}
-    		//operator []
-    		else if( token.getType() == IToken.tLBRACKET )
-			{
-    			nameBuffer.append( ((IToken)i.next()).getImage() );
-			}
-    		//operator ( )
-    		else if( token.getType() == IToken.tLBRACE )
-    		{
-    			nameBuffer.append( ' ' );
-    			nameBuffer.append( ((IToken)i.next()).getImage() );
-    		}
+	
+		    IToken first = token;
+		    IToken temp = null;
+		    while( i.hasNext() ){
+		        temp = (IToken) i.next();
+		        if( temp.getType() != IToken.tLT )
+		            token = temp;
+		    }
+	        nameBuffer.append( createStringRepresentation( first, token ) );
     	}
     	
     	return nameBuffer.toString();

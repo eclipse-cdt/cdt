@@ -2071,4 +2071,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         
         parse( writer.toString() );
     }
+    
+    public void testBug69662() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "class A { operator float * (); };  \n" );
+        writer.write( "A::operator float * () { }         \n" );
+        
+        parse( writer.toString() );
+    }
 }

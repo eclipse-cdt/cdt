@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CElementSorter;
 import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -554,8 +554,8 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		return new CViewContentProvider(showCUChildren, true);
 	}
 
-	protected StandardCElementLabelProvider createLabelProvider() {
-		return new StandardCElementLabelProvider();
+	protected CElementLabelProvider createLabelProvider() {
+		return new CViewLabelProvider();
 	}
 
 	/*

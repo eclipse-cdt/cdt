@@ -372,18 +372,32 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (path == null || cproject == null) {
 			return null;
 		}
-		File file = path.toFile();
-		if (file == null || !file.isFile()) {
-			return null;
-		}
-		try {
-			IIncludeReference[] includeReferences = cproject.getIncludeReferences();
-			for (int i = 0; i < includeReferences.length; i++) {
-				if (includeReferences[i].isOnIncludeEntry(path)) {
-					return new ExternalTranslationUnit(includeReferences[i], path);
-				}
+		if (path.isAbsolute()) {
+			File file = path.toFile();
+			if (file == null || !file.isFile()) {
+				return null;
 			}
-		} catch (CModelException e) {
+			try {
+				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
+				for (int i = 0; i < includeReferences.length; i++) {
+					if (includeReferences[i].isOnIncludeEntry(path)) {
+						return new ExternalTranslationUnit(includeReferences[i], path);
+					}
+				}
+			} catch (CModelException e) {
+			}
+		} else {
+			try {
+				IIncludeReference[] includeReferences = cproject.getIncludeReferences();
+				for (int i = 0; i < includeReferences.length; i++) {
+					IPath includePath = includeReferences[i].getPath().append(path);
+					File file = path.toFile();
+					if (file != null && file.isFile()) {
+						return new ExternalTranslationUnit(includeReferences[i], path);
+					}
+				}
+			} catch (CModelException e) {
+			}			
 		}
 		return null;	
 	}

@@ -1,5 +1,15 @@
 2004-04-23 Alain Magloire
 
+	Tentative fix for PR 59098.
+	* model/org/eclipse/cdt/internal/core/model/CContainerInfo.java
+	* model/org/eclipse/cdt/internal/core/model/CElement.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* model/org/eclipse/cdt/internal/core/model/IncludeReference.java
+
+
+2004-04-23 Alain Magloire
+
 	Moving the work from Sam Robb part of PR 52864, this
 	is is only the Core part, UI is still pending.
 

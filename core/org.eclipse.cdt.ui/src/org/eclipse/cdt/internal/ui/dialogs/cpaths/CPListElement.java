@@ -113,7 +113,15 @@ public class CPListElement {
 	}
 
 	private IPathEntry newPathEntry() {
-		IPath[] exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
+		IPath[] exclusionPattern;
+		//IPath[] exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
+		Object o = getAttribute(EXCLUSION);
+		Class clazz = o.getClass();
+		if (clazz.isArray()) {
+			exclusionPattern = (IPath[]) o;
+		} else {
+			exclusionPattern = new IPath[0];
+		}
 		IPath base = (IPath) getAttribute(BASE);
 		IPath baseRef = (IPath) getAttribute(BASE_REF);
 		switch (fEntryKind) {
@@ -255,7 +263,7 @@ public class CPListElement {
 		if (attrib != null) {
 			return attrib.getValue();
 		}
-		return null;
+		return new Path("");
 	}
 
 	private void createAttributeElement(String key, Object value) {

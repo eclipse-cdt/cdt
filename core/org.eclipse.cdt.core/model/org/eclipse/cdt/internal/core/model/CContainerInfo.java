@@ -12,9 +12,12 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -42,8 +45,19 @@ public class CContainerInfo extends OpenableInfo {
 			return nonCResources;
 
 		ArrayList notChildren = new ArrayList();
-		ICElement parent = getElement();
-		ICProject cproject = parent.getCProject();
+		ICElement celement = getElement();
+		ICProject cproject = celement.getCProject();
+		// move back to the sourceroot.
+		while (! (celement instanceof ISourceRoot) && celement != null) {
+			celement = celement.getParent();
+		}
+		ISourceRoot root = null;
+		if (celement instanceof ISourceRoot) {
+			root = (ISourceRoot)celement;
+		} else {
+			return new Object[0]; // should not be. assert
+		}
+
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
@@ -55,34 +69,31 @@ public class CContainerInfo extends OpenableInfo {
 			if (resources != null) {
 				ICElement[] children = getChildren();
 				for (int i = 0; i < resources.length; i++) {
-					boolean found = false;
-					// Check if the folder is not itself a sourceEntry.
-					if (resources[i].getType() == IResource.FOLDER) {
-						IPath fullPath = resources[i].getFullPath();
-						for (int k = 0; k < entries.length; k++) {
-							IPathEntry entry = entries[k];
-							if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
-								IPath sourcePath = entry.getPath();
-								if (fullPath.equals(sourcePath)) {
-									found = true;
-									break;
+					IResource member = resources[i];
+					switch(member.getType()) {
+						case IResource.FOLDER: {
+							// Check if the folder is not itself a sourceEntry.
+							IPath resourcePath = member.getFullPath();
+							if (cproject.isOnSourceRoot(member) || isSourceEntry(resourcePath, entries)) {
+								continue;
+							}
+							break;
+						}
+						case IResource.FILE: {
+							String filename = member.getName();
+							if (CoreModel.isValidTranslationUnitName(filename) && root.isOnSourceEntry(member)) {
+								continue;
+							} else {
+								if (root.isOnSourceEntry(member)) {
+									if (CModelManager.getDefault().createBinaryFile((IFile)member) != null) {
+										continue;
+									}
 								}
 							}
+							break;
 						}
 					}
-					// Check the children for a match
-					if (!found) {
-						for (int j = 0; j < children.length; j++) {
-							IResource r = children[j].getResource();
-							if (r != null && r.equals(resources[i])){
-								found = true;
-								break;
-							}
-						}
-					}
-					if (!found) {
-						notChildren.add(resources[i]);
-					}
+					notChildren.add(member);
 				}
 			}
 		} catch (CoreException e) {
@@ -100,5 +111,18 @@ public class CContainerInfo extends OpenableInfo {
 	 */
 	public void setNonCResources(Object[] resources) {
 		nonCResources = resources;
+	}
+
+	private static boolean isSourceEntry(IPath resourcePath, IPathEntry[] entries) {
+		for (int k = 0; k < entries.length; k++) {
+			IPathEntry entry = entries[k];
+			if (entry.getEntryKind() == IPathEntry.CDT_SOURCE) {
+				IPath sourcePath = entry.getPath();
+				if (resourcePath.equals(sourcePath)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

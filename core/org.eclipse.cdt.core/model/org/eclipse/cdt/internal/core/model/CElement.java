@@ -4,7 +4,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
@@ -82,7 +81,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		try {
 			return getElementInfo() != null;
 		} catch (CModelException e) {
-			CCorePlugin.log(e);
+			// Do not log it, it will fil the .log alarming the user.
+			//CCorePlugin.log(e);
 			return false;
 		}
 	}

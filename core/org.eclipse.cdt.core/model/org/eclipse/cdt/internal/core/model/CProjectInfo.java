@@ -8,16 +8,22 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IOutputEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /** 
  * Info for ICProject.
@@ -65,15 +71,25 @@ class CProjectInfo extends OpenableInfo {
 
 		// determine if src == project
 		ISourceRoot root = null;
-		ICElement[] elements = getChildren();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof ISourceRoot) {
-				ISourceRoot source = (ISourceRoot)elements[i];
-				if (getElement().getPath().equals(source.getPath())) {
-					root = source;
-					break;
+		boolean srcIsProject = false;
+		IPathEntry[] entries = null;
+		ICProject cproject = getElement().getCProject();
+		IPath projectPath = cproject.getProject().getFullPath();
+		char[][] exclusionPatterns = null;
+		try {
+			entries = cproject.getResolvedPathEntries();
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
+					ISourceEntry entry = (ISourceEntry)entries[i];
+					if (projectPath.equals(entry.getPath())) {
+						srcIsProject = true;
+						exclusionPatterns = entry.fullExclusionPatternChars();
+						break;
+					}
 				}
 			}
+		} catch (CModelException e) {
+			// ignore
 		}
 
 		ArrayList notChildren = new ArrayList();
@@ -85,24 +101,31 @@ class CProjectInfo extends OpenableInfo {
 			}
 
 			if (resources != null) {
-				ICElement[] children;
-				if (root == null) {
-					children = getChildren();
-				} else {
-					children = root.getChildren();
-				}
 				for (int i = 0; i < resources.length; i++) {
-					boolean found = false;
-					for (int j = 0; j < children.length; j++) {
-						IResource r = children[j].getResource();
-						if (r != null && r.equals(resources[i])){
-							found = true;
+					IResource member = resources[i];
+					switch(member.getType()) {
+						case IResource.FILE: {
+							String filename = member.getName();
+							if (srcIsProject) {
+								if (CoreModel.isValidTranslationUnitName(filename) 
+									&& !CoreModelUtil.isExcluded(member, exclusionPatterns)) {
+									continue;
+								} else if (!CoreModelUtil.isExcluded(member, exclusionPatterns)) {
+									Object o = CModelManager.getDefault().createBinaryFile((IFile)member);
+									if (o != null) {
+										continue;
+									}
+								}
+							}
 							break;
 						}
+						case IResource.FOLDER: {
+							if (srcIsProject && !CoreModelUtil.isExcluded(member, exclusionPatterns)) {
+								continue;
+							}
+						}
 					}
-					if (!found) {
-						notChildren.add(resources[i]);
-					}
+					notChildren.add(member);
 				}
 			}
 		} catch (CoreException e) {

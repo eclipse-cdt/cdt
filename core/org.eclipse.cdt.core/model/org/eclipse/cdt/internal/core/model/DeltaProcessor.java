@@ -146,7 +146,10 @@ public class DeltaProcessor {
 		Openable parent = (Openable) child.getParent();
 		if (parent != null && parent.isOpen()) {
 			CElementInfo info = parent.getElementInfo();
-			info.addChild(child);
+			// Check if the element exits
+			if (!info.includesChild(child)) {
+				info.addChild(child);
+			}
 		}
 	}
 

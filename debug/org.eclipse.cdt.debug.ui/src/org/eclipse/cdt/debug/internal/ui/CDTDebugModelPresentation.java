@@ -826,7 +826,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 					try
 					{
 						long address = Long.parseLong( breakpoint.getAddress() );
-						return new DisassemblyEditorInput( (IStorage)(((DisassemblyManager)targets[i].getAdapter( DisassemblyManager.class )).getSourceElement( address ) ) );
+						IStorage storage = (IStorage)(((DisassemblyManager)targets[i].getAdapter( DisassemblyManager.class )).getSourceElement( address ) );
+						if ( storage != null )
+							return new DisassemblyEditorInput( storage );
 					}
 					catch( NumberFormatException e )
 					{

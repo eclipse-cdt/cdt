@@ -8,23 +8,29 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-
-package org.eclipse.cdt.core;
+package org.eclipse.cdt.core.parser;
 
 /**
- * @author bgheorgh
+ * @author jcamelon
+ *
  */
-public interface ICLogConstants {
-	public class LogConst{
-		private LogConst( int value )
-		{
-			this.value = value;
-		}
-		private final int value;
+public class DefaultLogService implements IParserLogService
+{
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParserLogService#traceLog(java.lang.String)
+	 */
+	public void traceLog(String message)
+	{
+		// do nothing
 	}
-	
-	
-   public static final LogConst PDE = new LogConst( 1 );
-   public static final LogConst CDT = new LogConst( 2 );
-   
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParserLogService#errorLog(java.lang.String)
+	 */
+	public void errorLog(String message)
+	{
+		// do nothing
+	}
+
 }

@@ -17,9 +17,11 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
@@ -29,7 +31,6 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -45,38 +46,38 @@ public class BaseASTTest extends TestCase
 	protected IQuickParseCallback quickParseCallback; 
 	protected IParser parser; 
 	
-	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError, ParserLanguage lang ) throws ParserException
+	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError, ParserLanguage lang ) throws ParserException, ParserFactoryException
 	{
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
-		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback), quickParseCallback, mode, lang );
+		parser = ParserFactory.createParser( ParserFactory.createScanner( new StringReader( code ), "code", new ScannerInfo(), mode, lang, quickParseCallback, null), quickParseCallback, mode, lang, null );
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
 		return quickParseCallback.getCompilationUnit(); 		
 	}
 	
 	
-	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError ) throws ParserException
+	protected IASTCompilationUnit parse( String code, boolean quick, boolean throwExceptionOnError ) throws ParserException, ParserFactoryException
 	{
 		return parse( code, quick, throwExceptionOnError, ParserLanguage.CPP );
 	}
 	
-	protected IASTCompilationUnit parse( String code )throws ParserException
+	protected IASTCompilationUnit parse( String code )throws ParserException, ParserFactoryException
 	{
 		return parse( code, true, true );
 	}
 	
-	protected IASTCompilationUnit fullParse( String code ) throws ParserException
+	protected IASTCompilationUnit fullParse( String code ) throws ParserException, ParserFactoryException
 	{
 		return parse( code, false, true );
 	}
 	
-	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException
+	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException, ParserFactoryException
 	{
 		return assertSoleDeclaration( code, ParserLanguage.CPP );
 	}	
 	
-	protected IASTDeclaration assertSoleDeclaration( String code, ParserLanguage language ) throws ParserException
+	protected IASTDeclaration assertSoleDeclaration( String code, ParserLanguage language ) throws ParserException, ParserFactoryException
 	{
 		Iterator declarationIter = null;
         try

@@ -1800,7 +1800,7 @@ public class QuickParseASTTests extends BaseASTTest
 		parse( "const int x = 4; int y = ::x;");
 	}
 
-    public void testBug40419() throws ParserException
+    public void testBug40419() throws Exception
 	{
 		Writer code = new StringWriter();
 		try
@@ -1849,7 +1849,8 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testBug43644() throws Exception
 	{
 		Iterator i = parse( "void foo();{ int x; }", true, false ).getDeclarations();
-		IASTFunction f = (IASTFunction)i.next(); 
+		IASTFunction f = (IASTFunction)i.next();
+		assertEquals( f.getName(), "foo"); 
 		assertFalse( i.hasNext() );		
 	}
 	
@@ -1894,11 +1895,11 @@ public class QuickParseASTTests extends BaseASTTest
 		writer.write( "};\n" ); 
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
-		IASTTemplateDeclaration templateDecl = (IASTTemplateDeclaration)i.next(); 
+		assertTrue( i.next() instanceof IASTTemplateDeclaration );  
 		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		Iterator members = classB.getDeclarations(); 
-		IASTTemplateDeclaration friend = (IASTTemplateDeclaration)members.next(); 
-		IASTMethod method = (IASTMethod)members.next(); 
+		assertTrue (members.next() instanceof IASTTemplateDeclaration );  
+		assertTrue( members.next() instanceof IASTMethod );  
 		assertFalse( i.hasNext() );
 	}
 
@@ -1910,7 +1911,7 @@ public class QuickParseASTTests extends BaseASTTest
 	public void testBug41935() throws Exception
 	{
 		Iterator i = parse( "namespace A	{  int x; } namespace B = A;" ).getDeclarations();
-		IASTNamespaceDefinition n = (IASTNamespaceDefinition)i.next(); 
+		assertTrue( i.next() instanceof IASTNamespaceDefinition ); 
 		IASTNamespaceAlias a = (IASTNamespaceAlias)i.next();
 		assertEquals( a.getName(), "B" );
 		assertFalse( i.hasNext() );

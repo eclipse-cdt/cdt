@@ -31,22 +31,23 @@ import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
-import org.eclipse.cdt.internal.core.model.Util;
-
 
 /**
  * @author jcamelon
@@ -55,6 +56,8 @@ import org.eclipse.cdt.internal.core.model.Util;
 
 public class Scanner implements IScanner {
    
+	protected final IParserLogService log;
+	private final static String SCRATCH = "<scratch>";
 	private Reader backupReader;
 	private IProblemFactory problemFactory = new ScannerProblemFactory();
 
@@ -76,7 +79,8 @@ public class Scanner implements IScanner {
 			throw new ScannerException( p );
 	}
 
-    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language ) {
+    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log ) {
+    	this.log = log;
 		this.requestor = requestor;
 		this.mode = parserMode;
 		this.language = language;
@@ -1887,14 +1891,21 @@ public class Scanner implements IScanner {
 		else
 		{	
 			final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
-			IScanner trial =
-				ParserFactory.createScanner(
-					new StringReader(expression + ";"),
-						EXPRESSION,
-						new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
-						ParserMode.QUICK_PARSE, language, nullCallback );
-            IParser parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language );
- 
+			IParser parser = null;
+			try
+			{
+				IScanner trial =
+					ParserFactory.createScanner(
+						new StringReader(expression + ";"),
+							EXPRESSION,
+							new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
+							ParserMode.QUICK_PARSE, language, nullCallback, log );
+	            parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language, log );
+			} catch( ParserFactoryException pfe )
+			{
+				// TODO - make INTERNAL IProblem
+				// should never happen
+			}
 			try {
 				IASTExpression exp = parser.expression(null);
 				if( exp.evaluateExpression() == 0 )
@@ -1988,7 +1999,7 @@ public class Scanner implements IScanner {
 										new ScannerInfo(definitions, originalConfig.getIncludePaths()), 
 										new NullSourceElementRequestor(),
 										mode,
-										language );
+										language, log );
 			IToken t = null;
 			
 			try {
@@ -2142,7 +2153,18 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, language, new NullSourceElementRequestor() );
+				IScanner helperScanner=null;
+				try {
+					helperScanner =
+						ParserFactory.createScanner(
+							new StringReader(replacementString),
+							SCRATCH,
+							new ScannerInfo(),
+							mode,
+							language,
+							new NullSourceElementRequestor(), log);
+				} catch (ParserFactoryException e1) {
+				}
 				helperScanner.setTokenizingMacroReplacementList( true );
 				IToken t = helperScanner.nextToken(false);
 	
@@ -2227,7 +2249,7 @@ public class Scanner implements IScanner {
 				return;
 			}
 		} else {
-			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c), IDebugLogConstants.PARSER);
+			log.traceLog("Scanner : Encountered unexpected character " + ((char) c));
 			handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + key + (char)c + getRestOfPreprocessorLine(), beginning, false, true, true );
 			return;
 		}
@@ -2266,9 +2288,9 @@ public class Scanner implements IScanner {
 					if( previousDefinition instanceof String ) 
 					{
 						Scanner previous = new Scanner( new StringReader( (String)previousDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
-							mode, language );
+							mode, language, log );
 						Scanner current = new Scanner( new StringReader( (String)newDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
-													mode, language );
+													mode, language, log );
 						for ( ; ; )
 						{
 							IToken p = null;
@@ -2309,7 +2331,7 @@ public class Scanner implements IScanner {
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language);
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language, log);
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
@@ -2512,9 +2534,9 @@ public class Scanner implements IScanner {
 			}			
 
 		} else {
-			Util.debugLog(
+			log.traceLog(
 				"Unexpected class stored in definitions table. "
-					+ expansion.getClass().getName(), IDebugLogConstants.PARSER);
+					+ expansion.getClass().getName() );
 		}
 
 	}

@@ -18,12 +18,13 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -38,13 +39,13 @@ public class BaseScannerTest extends TestCase {
 		super(x);
 	}
 
-	protected void initializeScanner( String input, ParserMode mode )
+	protected void initializeScanner( String input, ParserMode mode ) throws ParserFactoryException
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, new NullSourceElementRequestor( mode ) );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, new NullSourceElementRequestor( mode ), null );
 	}
 
 
-	protected void initializeScanner(String input)
+	protected void initializeScanner(String input) throws ParserFactoryException
 	{
        initializeScanner( input, ParserMode.COMPLETE_PARSE );
 	}

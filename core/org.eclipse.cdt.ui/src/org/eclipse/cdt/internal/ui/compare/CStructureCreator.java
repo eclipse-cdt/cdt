@@ -12,13 +12,14 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.IStreamContentAccessor;
@@ -72,13 +73,15 @@ public class CStructureCreator implements IStructureCreator {
 			//are bugs while parsing C files, we might want to create a separate Structure
 			//compare for c files, but we'll never be completely right about .h files
 			IScanner scanner =
-				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder);
-			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP );
+				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder,ParserUtil.getParserLogService());
+			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP, ParserUtil.getParserLogService() );
 			parser.parse();
 		} catch (Exception e) {
 			// What to do when error ?
 			// The CParseTreeBuilder will throw CParseTreeBuilder.ParseError
 			// for acceptProblem.
+			
+			//TODO : New : ParserFactoryException gets thrown by ParserFactory primitives
 		}
 
 		return root;

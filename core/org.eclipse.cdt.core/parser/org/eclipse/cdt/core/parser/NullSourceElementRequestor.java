@@ -1,9 +1,5 @@
-package org.eclipse.cdt.internal.core.parser;
+package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.core.parser.DefaultProblemHandler;
-import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;

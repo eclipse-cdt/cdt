@@ -8,6 +8,7 @@ import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -156,7 +157,7 @@ public class ScannerTestCase extends BaseScannerTest
 	public final static int SIZEOF_TRUTHTABLE = 10; 
 
 
-	public void testWeirdStrings()
+	public void testWeirdStrings() throws Exception
 	{
 		try
 		{
@@ -174,7 +175,7 @@ public class ScannerTestCase extends BaseScannerTest
 	}
 	
 	
-	public void testNumerics()
+	public void testNumerics()throws Exception
 	{
 		try
 		{
@@ -205,7 +206,7 @@ public class ScannerTestCase extends BaseScannerTest
 		super(name);
 	}
 
-	public void testPreprocessorDefines()
+	public void testPreprocessorDefines()throws Exception
 	{
 		try
 		{
@@ -848,7 +849,7 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 	}
 
-	public void testQuickScan() throws EndOfFile
+	public void testQuickScan() throws EndOfFile, ParserFactoryException
 	{
 		try
 		{
@@ -924,7 +925,7 @@ public class ScannerTestCase extends BaseScannerTest
 
 	}
 
-	public void testOtherPreprocessorCommands()
+	public void testOtherPreprocessorCommands() throws ParserFactoryException
 	{
 		try
 		{
@@ -1033,7 +1034,7 @@ public class ScannerTestCase extends BaseScannerTest
 		validateEOF();
 	}
 
-	public void testBug35892()
+	public void testBug35892() throws ParserFactoryException
 	{
 		try
 		{
@@ -1064,7 +1065,7 @@ public class ScannerTestCase extends BaseScannerTest
 		validateString( "\\\"\\\\");
 	}
 
-	public void testConditionalWithBraces()
+	public void testConditionalWithBraces() throws ParserFactoryException
 	{
 		try
 		{

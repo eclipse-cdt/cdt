@@ -12,8 +12,8 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.io.Reader;
 
-import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -33,8 +33,8 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 	 * @param filename
 	 * @param defns
 	 */
-	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language ) {
-        super(reader, filename, info, requestor, mode, language );
+	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService logService ) {
+        super(reader, filename, info, requestor, mode, language, logService );
     }
 
 	public void process()
@@ -47,8 +47,7 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 		catch( ScannerException se )
 		{
 			// callback IProblem here
-			org.eclipse.cdt.internal.core.model.Util.log(se, "Preprocessor Exception", ICLogConstants.CDT); //$NON-NLS-1$h
-			
+			log.errorLog("Preprocessor Exception "+ se.getProblem().getMessage()); //$NON-NLS-1$h
 		}
 		catch( EndOfFile eof )
 		{

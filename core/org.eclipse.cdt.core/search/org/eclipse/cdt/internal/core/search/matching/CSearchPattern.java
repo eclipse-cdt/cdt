@@ -24,10 +24,14 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
@@ -47,8 +51,6 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -171,7 +173,20 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
+		IScanner scanner = null;
+		try {
+			scanner =
+				ParserFactory.createScanner(
+					new StringReader(patternString),
+					"TEXT",
+					new ScannerInfo(),
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP,
+					callback, 
+					ParserUtil.getParserLogService());
+		} catch (ParserFactoryException e) {
+
+		}
 		LinkedList list = scanForNames( scanner, null );
 		
 		char [] name = (char []) list.removeLast();
@@ -229,7 +244,19 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			return orPattern;
 		}
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
+		IScanner scanner=null;
+		try {
+			scanner =
+				ParserFactory.createScanner(
+					new StringReader(patternString),
+					"TEXT",
+					new ScannerInfo(),
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP,
+					callback,ParserUtil.getParserLogService());
+		} catch (ParserFactoryException e) {
+
+		}
 		LinkedList list = scanForNames( scanner, null );
 		
 		char [] name = (char []) list.removeLast();
@@ -259,7 +286,18 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
 		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( nameString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
+		IScanner scanner=null;
+		try {
+			scanner =
+				ParserFactory.createScanner(
+					new StringReader(nameString),
+					"TEXT",
+					new ScannerInfo(),
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP,
+					callback,ParserUtil.getParserLogService());
+		} catch (ParserFactoryException e) {
+		}
 		
 		LinkedList names = scanForNames( scanner, null );
 
@@ -306,7 +344,18 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 //			return orPattern;
 //		}
 		
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
+		IScanner scanner =null;
+		try {
+			scanner =
+				ParserFactory.createScanner(
+					new StringReader(patternString),
+					"TEXT",
+					new ScannerInfo(),
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP,
+					callback,ParserUtil.getParserLogService());
+		} catch (ParserFactoryException e1) {
+		}
 		
 		IToken token = null;
 		ASTClassKind kind = null;
@@ -359,9 +408,29 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		String functionString = "void f " + paramString + ";";
 				
-		IScanner scanner = ParserFactory.createScanner( new StringReader( functionString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, callback );
+		IScanner scanner=null;
+		try {
+			scanner =
+				ParserFactory.createScanner(
+					new StringReader(functionString),
+					"TEXT",
+					new ScannerInfo(),
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP,
+					callback,ParserUtil.getParserLogService());
+		} catch (ParserFactoryException e1) {
+		}
 		IQuickParseCallback callback = ParserFactory.createQuickParseCallback();			   
-		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.QUICK_PARSE, ParserLanguage.CPP ); 
+		IParser parser=null;
+		try {
+			parser =
+				ParserFactory.createParser(
+					scanner,
+					callback,
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP, ParserUtil.getParserLogService());
+		} catch (ParserFactoryException e2) {
+		} 
 
 		if( parser.parse() ){
 			IASTCompilationUnit compUnit = callback.getCompilationUnit();

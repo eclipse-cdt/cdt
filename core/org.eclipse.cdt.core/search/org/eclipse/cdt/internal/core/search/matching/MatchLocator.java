@@ -35,8 +35,11 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -78,7 +81,6 @@ import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -434,8 +436,17 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				//TODO no project, what language do we use?
 				language = ParserLanguage.CPP;
 			}
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this );
-			IParser  parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language );
+			
+			IParser parser = null;
+			try
+			{
+				IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getParserLogService() );
+				parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
+			}
+			catch( ParserFactoryException pfe )
+			{
+				
+			}
 			
 			if (VERBOSE)
 			  MatchLocator.verbose("*** New Search for path: " + pathString);

@@ -1,4 +1,7 @@
 2003-11-05 John Camelon
+	Updated parser clients to use new ParserFactory (stand-alone parser work item).  	
+	
+2003-11-05 John Camelon
 	Updated parser clients to use new IProblem strategy.  
 
 2003-10-28 Andrew Niefer

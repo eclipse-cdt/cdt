@@ -26,8 +26,10 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -64,7 +66,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -672,22 +673,22 @@ public class CompleteParseBaseTest extends TestCase
     }
     protected FullParseCallback callback;
     
-    protected IASTScope parse( String code ) throws ParserException
+    protected IASTScope parse( String code ) throws ParserException, ParserFactoryException
     {
     	return parse( code, true, ParserLanguage.CPP );
     }
     
-    protected IASTScope parse( String code, boolean throwOnError ) throws ParserException
+    protected IASTScope parse( String code, boolean throwOnError ) throws ParserException, ParserFactoryException
     {
     	return parse( code, throwOnError, ParserLanguage.CPP );
     }
     
-    protected IASTScope parse(String code, boolean throwOnError, ParserLanguage language) throws ParserException
+    protected IASTScope parse(String code, boolean throwOnError, ParserLanguage language) throws ParserException, ParserFactoryException
     {
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, language, callback ), callback, ParserMode.COMPLETE_PARSE, language	
+    			ParserMode.COMPLETE_PARSE, language, callback, null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();

@@ -14,7 +14,6 @@ import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Preprocessor;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
@@ -37,26 +36,34 @@ public class ParserFactory {
 			return new CompleteParseASTFactory( language ); 
 	}
 	
-    public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language )
+    public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryException
     {
+    	if( scanner == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_SCANNER );
+		if( language == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_LANGUAGE );
+		IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
 		ISourceElementRequestor ourCallback = (( callback == null) ? new NullSourceElementRequestor() : callback );   
-		return new Parser( scanner, ourCallback, ourMode, language );
+		return new Parser( scanner, ourCallback, ourMode, language, logService );
     }
  	 	
-    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor )
+    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log ) throws ParserFactoryException
     {
+    	if( input == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_READER );
+    	if( fileName == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_FILENAME );
+    	if( config == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_CONFIG );
+    	if( language == null ) throw new ParserFactoryException( ParserFactoryException.Kind.NULL_LANGUAGE );
+    	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language );
+		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language, logService );
 		return s; 
     }
     
-    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor )
+    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService logService )
     {
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
-		IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language );
+		IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, logService );
 		return s;
     }
 	
@@ -70,4 +77,10 @@ public class ParserFactory {
 		return new QuickParseCallback();
 	}
 		
+	public static IParserLogService createDefaultLogService()
+	{
+		return defaultLogService;
+	}
+	
+	private static IParserLogService defaultLogService = new DefaultLogService();
 }

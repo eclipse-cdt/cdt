@@ -22,8 +22,11 @@ import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
@@ -48,7 +51,6 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifierOwner;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IProject;
 
@@ -71,9 +73,18 @@ public class CModelBuilder {
 		quickParseCallback = ParserFactory.createQuickParseCallback(); 
 		
 		ParserLanguage language = hasCppNature ? ParserLanguage.CPP : ParserLanguage.C;
-		IParser parser = ParserFactory.createParser( 
-			ParserFactory.createScanner( new StringReader( code ), "code", 
-			new ScannerInfo(), mode, language, quickParseCallback), quickParseCallback, mode, language );
+		
+		IParser parser = null;
+		try
+		{
+			parser = ParserFactory.createParser( 
+				ParserFactory.createScanner( new StringReader( code ), "code", 
+				new ScannerInfo(), mode, language, quickParseCallback, ParserUtil.getParserLogService()), quickParseCallback, mode, language, ParserUtil.getParserLogService() );
+		}
+		catch( ParserFactoryException pfe )
+		{
+			throw new ParserException( "Parser/Scanner construction failure.");
+		}
 		
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");

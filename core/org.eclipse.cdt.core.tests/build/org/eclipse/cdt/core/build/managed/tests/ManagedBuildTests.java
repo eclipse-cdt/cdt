@@ -28,10 +28,10 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -982,9 +982,9 @@ public class ManagedBuildTests extends TestCase {
 		ISourceElementRequestor callback = new NullSourceElementRequestor();
 		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( "#include <header.h>\n int A::i = 1;" ), 
-														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback );
+														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, null);
 		
-		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP );
+		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );
 	}
 	

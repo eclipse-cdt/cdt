@@ -21,15 +21,17 @@ import java.io.StringReader;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -84,9 +86,16 @@ public class SourceIndexer extends AbstractIndexer {
 		//C or CPP?
 		ParserLanguage language = CoreModel.getDefault().hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
 		
-		IParser parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor ), 
-							requestor, ParserMode.COMPLETE_PARSE, language );
+		IParser parser = null;
+		
+		try
+		{
+			parser = ParserFactory.createParser( 
+							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getParserLogService() ), 
+							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
+		} catch( ParserFactoryException pfe )
+		{
+		}
 		
 		boolean retVal = parser.parse();
 		

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 
 /**
  * @author aniefer

@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -60,8 +60,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
-import org.eclipse.cdt.internal.core.model.Util;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -73,7 +71,8 @@ import org.eclipse.cdt.internal.core.model.Util;
  */
 public class Parser implements IParser
 {
-    private static final List EMPTY_LIST = new ArrayList();
+    protected final IParserLogService log;
+	private static final List EMPTY_LIST = new ArrayList();
     private static int DEFAULT_OFFSET = -1;
     // sentinel initial value for offsets 
     private int firstErrorOffset = DEFAULT_OFFSET;
@@ -119,7 +118,7 @@ public class Parser implements IParser
         IScanner scanner,
         ISourceElementRequestor callback,
         ParserMode mode,
-        ParserLanguage language )
+        ParserLanguage language, IParserLogService log )
     {
         this.scanner = scanner;
         requestor = callback;
@@ -127,6 +126,7 @@ public class Parser implements IParser
         this.language = language;
         astFactory = ParserFactory.createASTFactory( mode, language);
         scanner.setASTFactory(astFactory);
+        this.log = log;
     }
     // counter that keeps track of the number of times Parser.parse() is called
     private static int parseCount = 0;
@@ -140,13 +140,13 @@ public class Parser implements IParser
         // For the debuglog to take place, you have to call
         // Util.setDebugging(true);
         // Or set debug to true in the core plugin preference 
-        Util.debugLog(
+        log.traceLog(
             "Parse "
                 + (++parseCount)
                 + ": "
                 + (System.currentTimeMillis() - startTime)
                 + "ms"
-                + (parsePassed ? "" : " - parse failure"), IDebugLogConstants.PARSER);
+                + (parsePassed ? "" : " - parse failure") );
         return parsePassed;
     }
 
@@ -2254,9 +2254,9 @@ public class Parser implements IParser
                                             catch (Backtrack e)
                                             {
                                                 failParse();
-                                                Util.debugLog(
+                                                log.traceLog(
                                                     "Unexpected Token ="
-                                                        + image,IDebugLogConstants.PARSER);
+                                                        + image );
                                                 consume();
                                                 // eat this token anyway
                                                 continue;
@@ -5142,8 +5142,8 @@ public class Parser implements IParser
         }
         catch (ScannerException e)
         {
-            Util.debugLog( "ScannerException thrown : " + e.getMessage(), IDebugLogConstants.PARSER );
-			org.eclipse.cdt.internal.core.model.Util.log(e, "Scanner Exception: " + e.getMessage() , ICLogConstants.CDT); //$NON-NLS-1$h
+            log.traceLog( "ScannerException thrown : " + e.getProblem().getMessage() );
+			log.errorLog( "Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$h
             failParse(); 
             return fetchToken();
         }

@@ -18,11 +18,11 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -55,11 +55,11 @@ public class ParseTestOnSearchFiles extends TestCase
         fileIn = new FileInputStream(name);
 	}
 	
-	public void testParseOfAndrewsFile()
+	public void testParseOfAndrewsFile() throws Exception
 	{
 		ISourceElementRequestor requestor = new NullSourceElementRequestor();
-		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), name, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor );
-		IParser parser = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP );
+		IScanner scanner = ParserFactory.createScanner( new InputStreamReader( fileIn ), name, new ScannerInfo(), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, requestor, null );
+		IParser parser = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );
 	}
 

@@ -17,12 +17,12 @@ import java.util.Map;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -34,13 +34,13 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 	private ISourceElementRequestor nullSourceElementRequestor = new NullSourceElementRequestor();
 
 
-    protected void initializeScanner(String input, Map definitions )
+    protected void initializeScanner(String input, Map definitions ) throws Exception
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null );
 	}
 
 
-	protected void evaluateConditionalsPositive( String conditional, Map definitions )
+	protected void evaluateConditionalsPositive( String conditional, Map definitions ) throws Exception
 	{
 		 
 		StringBuffer buff = new StringBuffer(); 
@@ -51,7 +51,7 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 		evaluate(); 
 	}
 
-	protected void evaluateConditionalsNegative( String conditional, Map definitions )
+	protected void evaluateConditionalsNegative( String conditional, Map definitions )throws Exception
 	{
 		
 		StringBuffer buff = new StringBuffer(); 
@@ -94,7 +94,7 @@ public class PreprocessorConditionalTest extends BaseScannerTest
         super(x);
     }
     
-    public void testConditionals()
+    public void testConditionals()throws Exception
     {
     	Map definitions = new HashMap();
     	definitions.put( "DEFED", "" );

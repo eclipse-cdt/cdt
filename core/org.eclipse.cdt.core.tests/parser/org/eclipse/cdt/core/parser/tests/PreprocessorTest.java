@@ -19,12 +19,12 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.internal.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -75,7 +75,7 @@ public class PreprocessorTest extends TestCase {
 	public IPreprocessor setupPreprocessor( String text, List includePaths, Map defns, ISourceElementRequestor rq )
 	{
 		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo( defns, 
-				includePaths == null ? null : (String [])includePaths.toArray()), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, rq );
+				includePaths == null ? null : (String [])includePaths.toArray()), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, rq, null );
 		return p; 
 	}
 }

@@ -28,6 +28,10 @@ public abstract class Parent extends Directive implements IParent {
 		super(parent);
 	}
 
+	public IDirective[] getDirectives(boolean expand) {
+		return getDirectives();
+	}
+
 	public IDirective[] getDirectives() {
 		children.trimToSize();
 		return (IDirective[]) children.toArray(new IDirective[0]);

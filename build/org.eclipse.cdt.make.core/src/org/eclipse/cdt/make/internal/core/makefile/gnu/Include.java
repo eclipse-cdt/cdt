@@ -47,7 +47,11 @@ public class Include extends Parent implements IInclude {
 			// Try the current directory.
 			try {
 				gnu.parse(filenames[i]);
-				addDirectives(gnu.getStatements());
+				Directive[] subdirs = gnu.getStatements();
+				addDirectives(subdirs);
+				for (int k = 0; k < subdirs.length; ++k) {
+					subdirs[k].setFilename(filenames[i]);
+				}				
 				continue;
 			} catch (IOException e) {
 			}
@@ -56,7 +60,11 @@ public class Include extends Parent implements IInclude {
 					try {
 						String filename =  dirs[j] + GNUMakefile.FILE_SEPARATOR + filenames[i];
 						gnu.parse(filename);
-						addDirectives(gnu.getStatements());
+						Directive[] subdirs = gnu.getStatements();
+						addDirectives(subdirs);
+						for (int k = 0; k < subdirs.length; ++k) {
+							subdirs[k].setFilename(filename);
+						}
 						break;
 					} catch (IOException e) {
 					}

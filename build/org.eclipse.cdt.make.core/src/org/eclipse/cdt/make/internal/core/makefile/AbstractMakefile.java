@@ -45,7 +45,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	public abstract IDirective[] getBuiltins();
 
 	public IRule[] getRules() {
-		IDirective[] stmts = getDirectives();
+		IDirective[] stmts = getDirectives(true);
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IRule) {
@@ -111,7 +111,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	}
 
 	public IMacroDefinition[] getMacroDefinitions() {
-		IDirective[] stmts = getDirectives();
+		IDirective[] stmts = getDirectives(true);
 		List array = new ArrayList(stmts.length);
 		for (int i = 0; i < stmts.length; i++) {
 			if (stmts[i] instanceof IMacroDefinition) {

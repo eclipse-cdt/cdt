@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -763,6 +764,21 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			tgt = line;
 		}
 		return new InferenceRule(this, new Target(tgt));
+	}
+
+	public IDirective[] getDirectives(boolean expand) {
+		if (!expand) {
+			return getDirectives();
+		}
+		IDirective[] dirs = getDirectives();
+		ArrayList list = new ArrayList(Arrays.asList(dirs));
+		for (int i = 0; i < dirs.length; ++i) {
+			if (dirs[i] instanceof Include) {
+				Include include = (Include)dirs[i];
+				list.addAll(Arrays.asList(include.getDirectives()));
+			}
+		}
+		return (IDirective[]) list.toArray(new IDirective[list.size()]);
 	}
 
 	/* (non-Javadoc)

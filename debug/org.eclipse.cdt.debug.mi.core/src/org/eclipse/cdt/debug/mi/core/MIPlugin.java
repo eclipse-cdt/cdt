@@ -101,7 +101,7 @@ public class MIPlugin extends Plugin {
 		if (pty != null) {
 			args = new String[] {gdb, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program};
 		} else {
-			args = new String[] {"gdb", "-q", "-nw", "-i", "mi1", program};
+			args = new String[] {gdb, "-q", "-nw", "-i", "mi1", program};
 		}
 
 		Process pgdb = ProcessFactory.getFactory().exec(args);

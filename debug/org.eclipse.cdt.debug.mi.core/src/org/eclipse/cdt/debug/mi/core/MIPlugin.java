@@ -59,7 +59,7 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program) throws IOException, MIException {
-		String[]args = new String[]{"gdb", "-q", "-i", "mi", program};
+		String[]args = new String[]{"gdb", "-q", "-nw", "-i", "mi", program};
 		Process gdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(gdb);
 		/*
@@ -86,7 +86,7 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program, String core) throws IOException, MIException {
-		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program, core};
+		String[]args = new String[]{"gdb", "--quiet", "-nw", "-i", "mi", program, core};
 		Process gdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(gdb);
 		return new CSession(session);
@@ -100,7 +100,7 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program, int pid) throws IOException, MIException {
-		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
+		String[]args = new String[]{"gdb", "--quiet", "-nw", "-i", "mi", program};
 		Process gdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(gdb);
 		try {

@@ -44,6 +44,7 @@
 <!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
+   <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -1324,4 +1325,12 @@
       </include>
    </extension>
 
+   <extension
+         point="org.eclipse.cdt.ui.completionContributors">
+      <contributor
+            class="org.eclipse.cdt.internal.ui.text.contentassist.DOMCompletionContributor"
+            id="DOM"
+            priority="1"/>
+   </extension>
+   
 </plugin>

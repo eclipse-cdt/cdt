@@ -66,7 +66,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				offset,
 				new ICodeReaderFactory() {
 					public CodeReader createCodeReaderForTranslationUnit(String path) {
-						return new CodeReader(viewer.getDocument().get().toCharArray());
+						return new CodeReader(path, viewer.getDocument().get().toCharArray());
 					}
 					public CodeReader createCodeReaderForInclusion(String path) {
 						return ParserUtil.createReader(path,

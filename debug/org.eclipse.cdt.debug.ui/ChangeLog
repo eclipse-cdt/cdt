@@ -1,3 +1,7 @@
+2002-11-29 Mikhail Khodjaiants
+	Cosmetic fix for the memory view tab's tooltips.
+	* MemoryControlArea.java
+
 2002-11-28 Mikhail Khodjaiants
 	Fixes for 'Run to line' actions.
 	* RunToLineActionDelegate.java

@@ -406,7 +406,7 @@ public class MemoryControlArea extends Composite
 		if ( getParent() instanceof CTabFolder )
 		{
 			CTabItem[] tabItems = ((CTabFolder)getParent()).getItems();
-			tabItems[fIndex].setToolTipText( "Memory View " + (fIndex + 1) + ": " + newText );
+			tabItems[fIndex].setToolTipText( "Memory View " + (fIndex + 1) + ( ( newText.length() > 0 ) ? ( ": " + newText ) : "" ) );
 		}
 	}
 

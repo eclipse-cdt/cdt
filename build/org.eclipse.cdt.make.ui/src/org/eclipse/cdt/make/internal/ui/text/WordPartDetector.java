@@ -11,6 +11,7 @@ package org.eclipse.cdt.make.internal.ui.text;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
  
 /**
@@ -19,7 +20,7 @@ import org.eclipse.jface.text.ITextViewer;
 public class WordPartDetector {
 	String wordPart = ""; //$NON-NLS-1$
 	int offset;
-	
+
 	/**
 	 * Method WordPartDetector.
 	 * @param viewer is a text viewer 
@@ -30,8 +31,11 @@ public class WordPartDetector {
 		int endOffset = documentOffset;		
 		try {
 			IDocument doc = viewer.getDocument();
-			int bottom = viewer.getBottomIndexEndOffset();
-			int top = viewer.getTopIndexStartOffset();
+			//int bottom = viewer.getBottomIndexEndOffset();
+			//int top = viewer.getTopIndexStartOffset();
+			IRegion region = doc.getLineInformationOfOffset(documentOffset);
+			int top = region.getOffset();
+			int bottom = region.getLength() + top;
 			while (offset >= top && isMakefileLetter(doc.getChar(offset))) {
 				offset--;
 			}
@@ -45,12 +49,33 @@ public class WordPartDetector {
 			// do nothing
 		}
 	}
-	
+
+	public static boolean inMacro(ITextViewer viewer, int offset) {
+		boolean isMacro = false;
+		IDocument document = viewer.getDocument();
+		// Try to figure out if we are in a Macro.
+		try {
+			for (int index = offset - 1; index >= 0; index--) {
+				char c;
+				c = document.getChar(index);
+				if (c == '$') {
+					isMacro = true;
+					break;
+				} else if (Character.isWhitespace(c)) {
+					break;
+				}
+			}
+		} catch (BadLocationException e) {
+		}
+		return isMacro;
+	}
+
+
 	/**
 	 * Method getString.
 	 * @return String
 	 */
-	public String getString() {
+	public String toString() {
 		return wordPart;
 	}
 	

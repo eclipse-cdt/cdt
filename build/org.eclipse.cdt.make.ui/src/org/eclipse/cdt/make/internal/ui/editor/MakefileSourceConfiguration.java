@@ -12,12 +12,15 @@ package org.eclipse.cdt.make.internal.ui.editor;
 
 import org.eclipse.cdt.make.internal.ui.text.IMakefileColorManager;
 import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileAnnotationHover;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCodeScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileCompletionProcessor;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefilePartitionScanner;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileReconcilingStrategy;
+import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileTextHover;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -28,6 +31,7 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.graphics.RGB;
@@ -162,4 +166,16 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 		return new String[]{"#"};
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		return new MakefileTextHover(fEditor);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+		return new MakefileAnnotationHover();
+	}
 }

@@ -14,17 +14,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.core.makefile.IRule;
-import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.CompletionProposalComparator;
 import org.eclipse.cdt.make.internal.ui.text.WordPartDetector;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
@@ -119,7 +117,8 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
-		boolean macro = inMacro(viewer, documentOffset);
+		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
+		boolean macro = WordPartDetector.inMacro(viewer, documentOffset);
 		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
 		IDirective[] statements = null;
 		if (macro) {
@@ -133,7 +132,6 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		}
 
 		ArrayList proposalList = new ArrayList(statements.length);
-		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
 
 		// iterate over all the different categories
 		for (int i = 0; i < statements.length; i++) {
@@ -149,14 +147,14 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 				image = imageTarget;
 				infoString = name;
 			}
-			if (name != null && name.startsWith(wordPart.getString())) {
+			if (name != null && name.startsWith(wordPart.toString())) {
 				IContextInformation info = new ContextInformation(name, infoString);
 				String displayString = (name.equals(infoString) ? name : name + " - " + infoString);
 				ICompletionProposal result =
 					new CompletionProposal(
 						name,
 						wordPart.getOffset(),
-						wordPart.getString().length(),
+						wordPart.toString().length(),
 						name.length(),
 						image,
 						displayString,
@@ -175,7 +173,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
-		boolean macro = inMacro(viewer, documentOffset);
+		boolean macro = WordPartDetector.inMacro(viewer, documentOffset);
 		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
 		ArrayList contextList = new ArrayList();
 		if (macro) {
@@ -183,7 +181,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			for (int i = 0; i < statements.length; i++) {
 				if (statements[i] instanceof IMacroDefinition) {
 					String name = ((IMacroDefinition) statements[i]).getName();
-					if (name != null && name.equals(wordPart.getString())) {
+					if (name != null && name.equals(wordPart.toString())) {
 						String value = ((IMacroDefinition) statements[i]).getValue().toString();
 						if (value != null && value.length() > 0) {
 							contextList.add(value);
@@ -195,7 +193,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			for (int i = 0; i < statements.length; i++) {
 				if (statements[i] instanceof IMacroDefinition) {
 					String name = ((IMacroDefinition) statements[i]).getName();
-					if (name != null && name.equals(wordPart.getString())) {
+					if (name != null && name.equals(wordPart.toString())) {
 						String value = ((IMacroDefinition) statements[i]).getValue().toString();
 						if (value != null && value.length() > 0) {
 							contextList.add(value);
@@ -208,7 +206,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		IContextInformation[] result = new IContextInformation[contextList.size()];
 		for (int i = 0; i < result.length; i++) {
 			String context = (String)contextList.get(i);
-			result[i] = new ContextInformation(imageMacro, wordPart.getString(), context);
+			result[i] = new ContextInformation(imageMacro, wordPart.toString(), context);
 		}
 		return result;
 
@@ -240,26 +238,6 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
 		return fValidator;
-	}
-
-	private boolean inMacro(ITextViewer viewer, int offset) {
-		boolean isMacro = false;
-		IDocument document = viewer.getDocument();
-		// Try to figure out if we are in a Macro.
-		try {
-			for (int index = offset - 1; index >= 0; index--) {
-				char c;
-				c = document.getChar(index);
-				if (c == '$') {
-					isMacro = true;
-					break;
-				} else if (Character.isWhitespace(c)) {
-					break;
-				}
-			}
-		} catch (BadLocationException e) {
-		}
-		return isMacro;
 	}
 
 }

@@ -70,7 +70,7 @@ public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 
 	public static void initDefaults( IPreferenceStore store )
 	{
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, true );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, false );
 	}
 
 	protected void createSpacer( Composite composite, int columnSpan )

@@ -1,3 +1,10 @@
+2004-10-19 Mikhail Khodjaiants
+	Support of the thread-specific breakpoints. 
+	Fix for the error handling of the asynchronous operations.
+	* CBreakpointManager.java
+	* CDebugTarget.java
+	* CoreModelMessages.properties
+
 2004-10-18 Alain Magloire
 	Make ICDIRuntimeOptions be part of ICDITarget
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java

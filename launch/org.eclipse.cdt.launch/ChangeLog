@@ -1,3 +1,8 @@
+2004-12-06 Mikhail Khodjaiants
+	The last character is missing in the launch configuration name generated 
+	from the binary file name.
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+
 2004-11-17 David Inglis
 
 	Change to use IBinaryObject instead of IBinayExecutable

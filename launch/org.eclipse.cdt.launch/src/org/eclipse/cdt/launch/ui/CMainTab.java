@@ -622,7 +622,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			String name = binary.getElementName();
 			int index = name.lastIndexOf('.');
 			if (index > 0) {
-				name = name.substring(0, index - 1);
+				name = name.substring(0, index);
 			}
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);

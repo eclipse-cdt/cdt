@@ -1,3 +1,11 @@
+2003-11-19 Alain Magloire
+
+	Improve performance on the binary parser, and fix a JUnit test.
+
+	* model/org/eclipose/cdt/internal/core/model/Binary.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryObject.java
+
 2003-11-19 Hoda Amer
 	Added a completion engine class.
 

@@ -1,3 +1,7 @@
+2005-01-12 Mikhail Khodjaiants
+	Fix bug 82601: Enhance the ICDIMemoryBlock interface.
+	* CMemoryBlockExtension.java
+
 2005-01-10 Mikhail Khodjaiants
 	PR 82601 changes to the memory block interface
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIMemoryBlock.java

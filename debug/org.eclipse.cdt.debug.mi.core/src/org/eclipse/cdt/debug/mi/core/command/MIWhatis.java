@@ -32,7 +32,7 @@ public class MIWhatis extends CLICommand
 		if (out != null) {
 			info = new MIWhatisInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -61,7 +61,7 @@ public class MIStackListFrames extends MICommand
 		if (out != null) {
 			info = new MIStackListFramesInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

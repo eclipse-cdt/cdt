@@ -33,7 +33,7 @@ public class MIGDBShow extends MICommand {
 		if (out != null) {
 			info = new MIGDBShowInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

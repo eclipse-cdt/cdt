@@ -30,7 +30,7 @@ public class MIEnvironmentPWD extends MICommand
 		if (out != null) {
 			info = new MIEnvironmentPWDInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

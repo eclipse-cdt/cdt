@@ -32,7 +32,7 @@ public class MIInfoSharedLibrary extends CLICommand
 		if (out != null) {
 			info = new MIInfoSharedLibraryInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -59,7 +59,7 @@ public class MIStackListArguments extends MICommand
 		if (out != null) {
 			info = new MIStackListArgumentsInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

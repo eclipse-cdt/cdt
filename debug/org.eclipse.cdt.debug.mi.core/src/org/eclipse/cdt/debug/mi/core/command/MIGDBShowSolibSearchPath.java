@@ -32,7 +32,7 @@ public class MIGDBShowSolibSearchPath extends MIGDBShow {
 		if (out != null) {
 			info = new MIGDBShowSolibSearchPathInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -97,7 +97,7 @@ public class MIDataDisassemble extends MICommand
 		if (out != null) {
 			info = new MIDataDisassembleInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

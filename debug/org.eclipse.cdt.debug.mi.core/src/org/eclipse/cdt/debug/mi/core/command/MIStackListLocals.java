@@ -41,7 +41,7 @@ public class MIStackListLocals extends MICommand
 		if (out != null) {
 			info = new MIStackListLocalsInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -38,7 +38,7 @@ public class MIVarEvaluateExpression extends MICommand {
 		if (out != null) {
 			info = new MIVarEvaluateExpressionInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -32,7 +32,7 @@ public class MIGDBShowDirectories extends MIGDBShow {
 		if (out != null) {
 			info = new MIGDBShowDirectoriesInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

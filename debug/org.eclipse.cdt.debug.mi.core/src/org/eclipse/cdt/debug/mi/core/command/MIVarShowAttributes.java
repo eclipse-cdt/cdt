@@ -38,7 +38,7 @@ public class MIVarShowAttributes extends MICommand
 		if (out != null) {
 			info = new MIVarShowAttributesInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

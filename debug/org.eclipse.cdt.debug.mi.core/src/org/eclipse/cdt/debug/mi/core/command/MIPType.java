@@ -32,7 +32,7 @@ public class MIPType extends CLICommand
 		if (out != null) {
 			info = new MIPTypeInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -35,7 +35,7 @@ public class MIThreadSelect extends MICommand
 		if (out != null) {
 			info = new MIThreadSelectInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

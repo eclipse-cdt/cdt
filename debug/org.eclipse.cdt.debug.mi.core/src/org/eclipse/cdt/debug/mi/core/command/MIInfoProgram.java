@@ -32,7 +32,7 @@ public class MIInfoProgram extends CLICommand
 		if (out != null) {
 			info = new MIInfoProgramInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

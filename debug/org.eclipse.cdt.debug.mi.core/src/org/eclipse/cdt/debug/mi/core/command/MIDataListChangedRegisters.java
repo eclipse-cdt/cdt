@@ -34,7 +34,7 @@ public class MIDataListChangedRegisters extends MICommand
 		if (out != null) {
 			info = new MIDataListChangedRegistersInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

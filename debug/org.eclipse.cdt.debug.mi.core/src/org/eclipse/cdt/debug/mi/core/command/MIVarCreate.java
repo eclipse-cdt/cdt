@@ -64,7 +64,7 @@ public class MIVarCreate extends MICommand
 		if (out != null) {
 			info = new MIVarCreateInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

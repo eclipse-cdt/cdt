@@ -50,7 +50,7 @@ public class MIBreakWatch extends MICommand
 		if (out != null) {
 			info = new MIBreakWatchInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -36,7 +36,7 @@ public class MIVarInfoNumChildren extends MICommand
 		if (out != null) {
 			info = new MIVarInfoNumChildrenInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

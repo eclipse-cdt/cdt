@@ -40,7 +40,7 @@ public class MIVarUpdate extends MICommand {
 		if (out != null) {
 			info = new MIVarUpdateInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

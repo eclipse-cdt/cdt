@@ -36,7 +36,7 @@ public class MIDataEvaluateExpression extends MICommand
 		if (out != null) {
 			info = new MIDataEvaluateExpressionInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

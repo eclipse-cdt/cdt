@@ -36,7 +36,7 @@ public class MIInfoSignals extends CLICommand
 		if (out != null) {
 			info = new MIInfoSignalsInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

@@ -35,7 +35,7 @@ public class MIGDBShowExitCode extends MIDataEvaluateExpression {
 		if (out != null) {
 			info = new MIGDBShowExitCodeInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

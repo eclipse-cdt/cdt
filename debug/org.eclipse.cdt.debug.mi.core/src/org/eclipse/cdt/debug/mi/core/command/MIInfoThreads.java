@@ -32,7 +32,7 @@ public class MIInfoThreads extends CLICommand
 		if (out != null) {
 			info = new MIInfoThreadsInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

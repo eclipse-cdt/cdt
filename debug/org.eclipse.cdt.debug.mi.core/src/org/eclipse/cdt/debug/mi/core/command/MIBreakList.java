@@ -60,7 +60,7 @@ public class MIBreakList extends MICommand
 		if (out != null) {
 			info = new MIBreakListInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

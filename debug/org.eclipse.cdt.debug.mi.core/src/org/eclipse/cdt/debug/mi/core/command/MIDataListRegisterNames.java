@@ -50,7 +50,7 @@ public class MIDataListRegisterNames extends MICommand
 		if (out != null) {
 			info = new MIDataListRegisterNamesInfo(out);
 			if (info.isError()) {
-				throw new MIException(info.getErrorMsg());
+				throwMIException(info, out);
 			}
 		}
 		return info;

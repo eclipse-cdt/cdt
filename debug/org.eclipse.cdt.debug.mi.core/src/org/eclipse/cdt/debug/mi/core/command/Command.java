@@ -70,18 +70,26 @@ public abstract class Command
 		if (out != null) {
 			info = new MIInfo(out);
 			if (info.isError()) {
-				String mesg = info.getErrorMsg();
-				StringBuffer sb = new StringBuffer();
-				MIOOBRecord[] oobs = out.getMIOOBRecords();
-				for (int i = 0; i < oobs.length; i++) {
-					if (oobs[i] instanceof MILogStreamOutput) {
-						MIStreamRecord o = (MIStreamRecord) oobs[i];
-						sb.append(o.getString());
-					}
-				}
-				throw new MIException(mesg, sb.toString());
+				throwMIException(info, out);
 			}
 		}
 		return info;
 	}
+
+	/**
+	 * throw an MIException.
+	 */
+	protected void throwMIException (MIInfo info, MIOutput out) throws MIException {
+		String mesg = info.getErrorMsg();
+		StringBuffer sb = new StringBuffer();
+		MIOOBRecord[] oobs = out.getMIOOBRecords();
+		for (int i = 0; i < oobs.length; i++) {
+			if (oobs[i] instanceof MILogStreamOutput) {
+				MIStreamRecord o = (MIStreamRecord) oobs[i];
+				sb.append(o.getString());
+			}
+		}
+		throw new MIException(mesg, sb.toString());
+	}
+
 }

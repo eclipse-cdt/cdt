@@ -1,5 +1,14 @@
 2003-08-07 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/variableManager.java
+	getVariableObjectAsArray() ignore the type argument it does
+	not work with gdb.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java
+	Added hasChildren() method.
+
+2003-08-07 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
 	Update the interface to reflect ICDIVariableManager.
 

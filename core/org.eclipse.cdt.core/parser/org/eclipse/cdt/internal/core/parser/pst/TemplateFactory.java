@@ -11,16 +11,15 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateSpecialization;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -31,7 +30,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	
 	private ArrayList templates = new ArrayList(4);
 	private ArrayList symbols = new ArrayList(4);
-	private Map  argMap = new HashMap();
+	private ObjectMap  argMap = new ObjectMap(2);
 	
 	protected TemplateFactory( ParserSymbolTable table ){
 		super( table );
@@ -278,8 +277,6 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		int size = templates.size();
 		for( int i = 0; i < size; i++ ){
-			Map defnMap = new HashMap();
-			
 			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
 			ITemplateSymbol origTemplate = (ITemplateSymbol) ((ISymbol)symbols.get(i)).getContainingSymbol();
 			
@@ -288,6 +285,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 			int tListSize = tList.size();
 			if( oList.size() < tListSize )
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+		    ObjectMap defnMap = new ObjectMap(tListSize);
 			for( int j = 0; j < tListSize; j++ ){		
 				ISymbol param = (ISymbol) tList.get(j);
 				ISymbol origParam = (ISymbol) oList.get(j);
@@ -609,7 +607,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#instantiate(org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol, java.util.Map)
 	 */
-	public ISymbol instantiate(ITemplateSymbol template, Map argMapParm) {
+	public ISymbol instantiate(ITemplateSymbol template, ObjectMap argMapParm) {
 		return null;
 	}
 

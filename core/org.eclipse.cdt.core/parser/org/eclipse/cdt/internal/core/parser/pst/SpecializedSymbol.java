@@ -15,9 +15,9 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefe
@@ -46,14 +46,13 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 	}
 	
 	public ISymbol instantiate( List arguments ) throws ParserSymbolTableException{
-		Map argMap = new HashMap();
-		
 		List specArgs = getArgumentList();
 		if( specArgs.size() != arguments.size() ){
 			return null;
 		}
 		
 		List actualArgs = new ArrayList( specArgs.size() );
+		ObjectMap argMap = new ObjectMap( specArgs.size() );
 		
 		ISymbol templatedSymbol = getTemplatedSymbol();
 		while( templatedSymbol.isTemplateInstance() ){

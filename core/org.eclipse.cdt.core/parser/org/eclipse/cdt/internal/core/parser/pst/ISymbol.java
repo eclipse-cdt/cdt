@@ -11,7 +11,8 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author jcamelon
@@ -31,7 +32,7 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 	 *     r_BadTemplateArgument if an argument does not match the corresponding parameter type
 	 *     r_Ambiguous if more than one specialization can be used but none is more specialized than all the others
 	 */
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException;
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException;
 
 	public void setName(char[] name);
 	public char[] getName();

@@ -17,12 +17,12 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -51,7 +51,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return copy;	
 	}
 	
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() ){
 			return null;
 		}
@@ -82,7 +82,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return newSymbol;	
 	}
 	
-	public void instantiateDeferredParent( ISymbol parent, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public void instantiateDeferredParent( ISymbol parent, ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		List parents = getParents();
 		int size = parents.size();
 		ParentWrapper w = null;
@@ -99,7 +99,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * @param symbol2
 	 * @param map
 	 */
-	public void discardDeferredParent(IDeferredTemplateInstance parent, ITemplateSymbol template, Map map) {
+	public void discardDeferredParent(IDeferredTemplateInstance parent, ITemplateSymbol template, ObjectMap map) {
 		List parents = getParents();
 		int size = parents.size();
 		ParentWrapper w = null;

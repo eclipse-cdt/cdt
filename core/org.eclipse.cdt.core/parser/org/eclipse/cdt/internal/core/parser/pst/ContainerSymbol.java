@@ -18,10 +18,8 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -29,10 +27,11 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArraySet;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -60,7 +59,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return copy;	
 	}
 	
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() || template == null ){
 			return null;
 		}
@@ -107,15 +106,14 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 						}
 					}
 					
-					Map instanceMap = argMap;
+					ObjectMap instanceMap = argMap;
 					if( !template.getDefinitionParameterMap().isEmpty() && 
 						template.getDefinitionParameterMap().containsKey( containedSymbol ) )
 					{
-						Map defMap = (Map) template.getDefinitionParameterMap().get( containedSymbol );
-						instanceMap = new HashMap();
-						Iterator i = defMap.keySet().iterator();
-						while( i.hasNext() ){
-							ISymbol p = (ISymbol) i.next();
+						ObjectMap defMap = (ObjectMap) template.getDefinitionParameterMap().get( containedSymbol );
+						instanceMap = new ObjectMap(defMap.size());
+						for( int i = 0; i < defMap.size(); i++ ){
+							ISymbol p = (ISymbol) defMap.keyAt(i);
 							instanceMap.put( p, argMap.get( defMap.get( p ) ) );
 						}
 					}

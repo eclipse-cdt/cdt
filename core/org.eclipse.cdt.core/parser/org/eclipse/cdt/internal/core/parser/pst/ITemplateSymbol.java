@@ -11,7 +11,8 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -36,7 +37,7 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	
 	public IContainerSymbol getTemplatedSymbol();
 	
-	public Map getDefinitionParameterMap();
+	public ObjectMap getDefinitionParameterMap();
 	
 	public IContainerSymbol findInstantiation( List arguments );
 	public List findArgumentsFor( IContainerSymbol instance );
@@ -59,14 +60,14 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	
 	public IDeferredTemplateInstance deferredInstance( List args );
 	
-	public Map getExplicitSpecializations();
+	public ObjectMap getExplicitSpecializations();
 
 	/**
 	 * @param symbol
 	 * @param type
 	 * @param kind
 	 */
-	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, Map argMap );
+	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, ObjectMap argMap );
 	public int getNumberDeferredInstantiations();
 	
 	public static class DeferredKind{

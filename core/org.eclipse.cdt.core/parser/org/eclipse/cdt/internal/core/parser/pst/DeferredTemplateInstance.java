@@ -12,7 +12,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -47,7 +48,7 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		return _arguments;
 	}
 
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		List args = getArguments();
 		List newArgs = new ArrayList( args.size() );
 		int size = args.size();

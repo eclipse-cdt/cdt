@@ -11,16 +11,13 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Cost;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
@@ -28,7 +25,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
  */
 public final class TemplateEngine {
 
-	static protected ITypeInfo instantiateTypeInfo( ITypeInfo info, ITemplateSymbol template, Map  argMap ) throws ParserSymbolTableException{
+	static protected ITypeInfo instantiateTypeInfo( ITypeInfo info, ITemplateSymbol template, ObjectMap  argMap ) throws ParserSymbolTableException{
 		if( argMap == null )
 			return info;
 
@@ -66,7 +63,7 @@ public final class TemplateEngine {
 	
 	}
 	
-	static protected void instantiateDeferredTypeInfo( ITypeInfo info, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException {
+	static protected void instantiateDeferredTypeInfo( ITypeInfo info, ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException {
 		info.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 	}
 	
@@ -75,7 +72,7 @@ public final class TemplateEngine {
 	 * @param symbol
 	 * @param map
 	 */
-	public static void discardDeferredTypeInfo(ITypeInfo info, TemplateSymbol template, Map map) {
+	public static void discardDeferredTypeInfo(ITypeInfo info, TemplateSymbol template, ObjectMap map) {
 		ISymbol instance = info.getTypeSymbol();
 		if( !(instance instanceof IDeferredTemplateInstance ) )
 			template.removeInstantiation( (IContainerSymbol) instance );
@@ -105,7 +102,7 @@ public final class TemplateEngine {
 			}
 			
 			int specArgsSize = specArgs.size();			
-			HashMap map = new HashMap();
+			ObjectMap map = new ObjectMap(specArgsSize);
 			ITypeInfo info1 = null, info2 = null;
 
 			boolean match = true;
@@ -444,7 +441,7 @@ public final class TemplateEngine {
 		return aSymbol;
 	}
 	
-	static private boolean deduceTemplateArgument( Map map, ISymbol pSymbol, ITypeInfo a ) throws ParserSymbolTableException{
+	static private boolean deduceTemplateArgument( ObjectMap map, ISymbol pSymbol, ITypeInfo a ) throws ParserSymbolTableException{
 		ISymbol symbol;
 		
 		boolean pIsAReferenceType = false;
@@ -590,7 +587,7 @@ public final class TemplateEngine {
 	 * @param aSymbol
 	 * @return
 	 */
-	private static boolean deduceFromTemplateTemplateArguments(Map map, ISymbol pSymbol, ISymbol aSymbol) {
+	private static boolean deduceFromTemplateTemplateArguments(ObjectMap map, ISymbol pSymbol, ISymbol aSymbol) {
 		//template-name<T> or template-name<i>, where template-name is a class template
 		ITemplateSymbol p = ( pSymbol instanceof IDeferredTemplateInstance ) ? 
 							(ITemplateSymbol) ((IDeferredTemplateInstance) pSymbol ).getTemplate() :
@@ -658,7 +655,7 @@ public final class TemplateEngine {
 	 * type (A), and an attempt is made to find template argument vaules that will make P, 
 	 * after substitution of the deduced values, compatible with A.
 	 */
-	static private Map deduceTemplateArgumentsUsingParameterList( ITemplateSymbol template, IParameterizedSymbol function ){
+	static private ObjectMap deduceTemplateArgumentsUsingParameterList( ITemplateSymbol template, IParameterizedSymbol function ){
 
 		List aList = function.getParameterList();
 		int size = aList.size();
@@ -681,8 +678,8 @@ public final class TemplateEngine {
 	 * type (A), and an attempt is made to find template argument vaules that will make P, 
 	 * after substitution of the deduced values, compatible with A.
 	 */
-	static private Map deduceTemplateArguments( ITemplateSymbol template, List arguments ){
-		if( template.getContainedSymbols() == Collections.EMPTY_MAP || template.getContainedSymbols().size() != 1 ){
+	static private ObjectMap deduceTemplateArguments( ITemplateSymbol template, List arguments ){
+		if( template.getContainedSymbols() == CharArrayObjectMap.EMPTY_MAP || template.getContainedSymbols().size() != 1 ){
 			return null;
 		}
 
@@ -699,9 +696,8 @@ public final class TemplateEngine {
 			return null;
 		}
 		
-		HashMap map = new HashMap();
-		
 		int size = pList.size();
+		ObjectMap map = new ObjectMap(size);
 		for( int i = 0; i < size; i++ ){
 			try {
 				if( !deduceTemplateArgument( map, (ISymbol) pList.get(i), (ITypeInfo) arguments.get(i) ) ){
@@ -715,7 +711,7 @@ public final class TemplateEngine {
 		return map;			
 	}
 
-	static private boolean deduceArgument( Map map, ISymbol p, ITypeInfo a ){
+	static private boolean deduceArgument( ObjectMap map, ISymbol p, ITypeInfo a ){
 		
 		a = ParserSymbolTable.getFlatTypeInfo( a, null );
 		
@@ -762,7 +758,7 @@ public final class TemplateEngine {
 	static protected int orderTemplateFunctions( ITemplateSymbol spec1, ITemplateSymbol spec2 ) throws ParserSymbolTableException{
 		//Using the transformed parameter list, perform argument deduction against the other
 		//function template
-		Map map = createMapForFunctionTemplateOrdering( spec1 );
+		ObjectMap map = createMapForFunctionTemplateOrdering( spec1 );
 		
 		IContainerSymbol templatedSymbol = spec1.getTemplatedSymbol();
 		if( !( templatedSymbol instanceof IParameterizedSymbol ) )
@@ -772,7 +768,7 @@ public final class TemplateEngine {
 		function = (IParameterizedSymbol) function.instantiate( spec1, map );
 		((TemplateSymbol)spec1).processDeferredInstantiations();
 		
-		Map m1 = deduceTemplateArgumentsUsingParameterList( spec2, function);
+		ObjectMap m1 = deduceTemplateArgumentsUsingParameterList( spec2, function);
 		
 		map = createMapForFunctionTemplateOrdering( spec2 );
 		
@@ -784,7 +780,7 @@ public final class TemplateEngine {
 		function = (IParameterizedSymbol) function.instantiate( spec2, map );
 		((TemplateSymbol)spec2).processDeferredInstantiations();
 		
-		Map m2 = deduceTemplateArgumentsUsingParameterList( spec1, function );
+		ObjectMap m2 = deduceTemplateArgumentsUsingParameterList( spec1, function );
 		
 		//The transformed  template is at least as specialized as the other iff the deduction
 		//succeeds and the deduced parameter types are an exact match
@@ -814,11 +810,11 @@ public final class TemplateEngine {
 	 * for each occurence of that parameter in the function parameter list
 	 */
 
-	static private Map createMapForFunctionTemplateOrdering( ITemplateSymbol template ){
-		HashMap map = new HashMap();
+	static private ObjectMap createMapForFunctionTemplateOrdering( ITemplateSymbol template ){
 		ITypeInfo val = null;
 		List paramList = template.getParameterList();
 		int size = paramList.size();
+		ObjectMap map = new ObjectMap(size);
 		for( int i = 0; i < size; i++ ){
 			ISymbol param = (ISymbol) paramList.get( i );
 			//template type parameter
@@ -870,7 +866,7 @@ public final class TemplateEngine {
 		return transformed;
 	}
 	
-	static private ITypeInfo transformTypeInfo( Object obj, Map argumentMap ){
+	static private ITypeInfo transformTypeInfo( Object obj, ObjectMap argumentMap ){
 		ITypeInfo info = null;
 		if( obj instanceof ISymbol ){
 			info = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, (ISymbol) obj );
@@ -908,7 +904,7 @@ public final class TemplateEngine {
 			IParameterizedSymbol fn = (IParameterizedSymbol) templates.keyAt( idx );
 			ITemplateSymbol template = (ITemplateSymbol) fn.getContainingSymbol();
 			
-			Map map = deduceTemplateArguments( template, functionArguments );
+			ObjectMap map = deduceTemplateArguments( template, functionArguments );
 			
 			if( map == null )
 				continue;
@@ -1021,7 +1017,7 @@ public final class TemplateEngine {
 			return false;
 		}
 		
-		Map m [] = { new HashMap(), new HashMap() };
+		ObjectMap m [] = { new ObjectMap(p1.size()), new ObjectMap(p1.size()) };
 		
 		for( List list = p1; list != null; list = p2 ){
 			int size = list.size();
@@ -1073,8 +1069,8 @@ public final class TemplateEngine {
 		return null;
 	}
 	
-	static protected ISymbol translateParameterForDefinition ( ISymbol templatedSymbol, ISymbol param, Map defnMap ){
-		if( defnMap == Collections.EMPTY_MAP ){
+	static protected ISymbol translateParameterForDefinition ( ISymbol templatedSymbol, ISymbol param, ObjectMap defnMap ){
+		if( defnMap == ObjectMap.EMPTY_MAP || templatedSymbol == null ){
 			return param;
 		}
 		
@@ -1084,11 +1080,10 @@ public final class TemplateEngine {
 		}
 			
 		if( defnMap.containsKey( templatedSymbol ) ){
-			Map map = (Map) defnMap.get( templatedSymbol );
+		    ObjectMap map = (ObjectMap) defnMap.get( templatedSymbol );
 			
-			Iterator i = map.keySet().iterator();
-			while( i.hasNext() ){
-				ISymbol key = (ISymbol) i.next();
+			for( int i = 0; i < map.size(); i++){
+				ISymbol key = (ISymbol) map.keyAt(i);
 				if( map.get( key ) == mappedParam ){
 					return key;
 				}
@@ -1202,7 +1197,7 @@ public final class TemplateEngine {
 				if( template.getTemplatedSymbol() instanceof IParameterizedSymbol &&
 					symbol instanceof IParameterizedSymbol && CharArrayUtils.equals( template.getTemplatedSymbol().getName(), symbol.getName() ) )
 				{
-					Map map = deduceTemplateArgumentsUsingParameterList( template, (IParameterizedSymbol) symbol ); 
+					ObjectMap map = deduceTemplateArgumentsUsingParameterList( template, (IParameterizedSymbol) symbol ); 
 					if( map != null && map.containsKey( param ) ){
 						actualArgs.add( map.get( param ) );
 					} else {
@@ -1214,25 +1209,23 @@ public final class TemplateEngine {
 		return actualArgs;
 	}
 	
-	static protected ITemplateSymbol resolveTemplateFunctions( Set functions, List args, ISymbol symbol ) throws ParserSymbolTableException{
+	static protected ITemplateSymbol resolveTemplateFunctions( ObjectSet functions, List args, ISymbol symbol ) throws ParserSymbolTableException{
 		ITemplateSymbol template = null;
 		
-		Iterator iter = functions.iterator();
-		
-		outer: while( iter.hasNext() ){
-			IParameterizedSymbol fn = (IParameterizedSymbol) iter.next();
+		outer: for( int i = 0; i < functions.size(); i++ ){
+		    IParameterizedSymbol fn = (IParameterizedSymbol) functions.keyAt(i);
 			ITemplateSymbol tmpl = (ITemplateSymbol) fn.getContainingSymbol();
 			
-			Map map = deduceTemplateArgumentsUsingParameterList( tmpl, (IParameterizedSymbol) symbol );
+			ObjectMap map = deduceTemplateArgumentsUsingParameterList( tmpl, (IParameterizedSymbol) symbol );
 			
 			if( map == null )
 				continue;			 
 			List params = tmpl.getParameterList();
 			int numParams = params.size();
 			int numArgs = args.size();
-			for( int i = 0; i < numParams && i < numArgs; i++ ){
-				ISymbol param = (ISymbol) params.get(i);
-				ITypeInfo arg = (ITypeInfo) args.get(i);
+			for( int j = 0; j < numParams && j < numArgs; j++ ){
+				ISymbol param = (ISymbol) params.get(j);
+				ITypeInfo arg = (ITypeInfo) args.get(j);
 				if( map.containsKey( param ) ) {
 					if( !map.get( param ).equals( arg )){
 						continue outer;
@@ -1256,7 +1249,7 @@ public final class TemplateEngine {
 		List resultList = new ArrayList();
 		
 		List params = template.getParameterList();
-		Map map = null;
+		ObjectMap map = null;
 		
 		int numParams = params.size();
 		int numArgs = ( args != null ) ? args.size() : 0;
@@ -1288,13 +1281,13 @@ public final class TemplateEngine {
 	static protected ISymbol checkForTemplateExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ){
 		if( !template.getExplicitSpecializations().isEmpty() ){
 			//TODO: could optimize this if we had a TypeInfo.hashCode()
-			Iterator iter = template.getExplicitSpecializations().keySet().iterator();
+			ObjectMap specs = template.getExplicitSpecializations();
 			List args = null;
-			while( iter.hasNext() ){
-				args = (List) iter.next();
+			for( int i = 0; i < specs.size(); i++ ){
+				args = (List) specs.keyAt(i);
 				
 				if( args.equals( arguments ) ){
-					Map explicitMap = (Map) template.getExplicitSpecializations().get( args );
+				    ObjectMap explicitMap = (ObjectMap) template.getExplicitSpecializations().get( args );
 					if( explicitMap.containsKey( symbol ) ){
 						return (ISymbol) explicitMap.get( symbol );
 					}

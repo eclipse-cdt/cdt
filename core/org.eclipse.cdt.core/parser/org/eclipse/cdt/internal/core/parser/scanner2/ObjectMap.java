@@ -84,6 +84,8 @@ public class ObjectMap extends HashTable{
 	}
 	
 	final public Object remove( Object key ) {
+	    if( key == null )
+	        return null;
 		int i = lookup(key);
 		if (i < 0)
 			return null;

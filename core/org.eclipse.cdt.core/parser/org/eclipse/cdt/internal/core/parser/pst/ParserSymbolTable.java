@@ -15,10 +15,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -26,11 +24,11 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArraySet;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
-import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -382,16 +380,14 @@ public class ParserSymbolTable {
 	 */
 	private static CharArrayObjectMap lookupInParameters(LookupData data, IContainerSymbol lookIn, CharArrayObjectMap found) throws ParserSymbolTableException {
 		Object obj;
-		Iterator iterator;
 		char[] name;
 		
 		if( lookIn instanceof ITemplateSymbol && !((ITemplateSymbol)lookIn).getDefinitionParameterMap().isEmpty() ){
 			ITemplateSymbol template = (ITemplateSymbol) lookIn;
 			if( data.templateMember != null && template.getDefinitionParameterMap().containsKey( data.templateMember ) ){
-				Map map = (Map) template.getDefinitionParameterMap().get( data.templateMember );
-				iterator = map.keySet().iterator();
-				while( iterator.hasNext() ){
-					ISymbol symbol = (ISymbol) iterator.next();
+			    ObjectMap map = (ObjectMap) template.getDefinitionParameterMap().get( data.templateMember );
+				for( int i = 0; i < map.size(); i++ ){
+					ISymbol symbol = (ISymbol) map.keyAt(i);
 					if( nameMatches( data, symbol.getName() ) ){
 						obj = collectSymbol( data, symbol );
 						if( obj != null ){

@@ -16,9 +16,9 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -45,7 +45,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		return copy;	
 	}
 	
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() ){
 			return null;
 		}
@@ -88,7 +88,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		return newParameterized;	
 	}
 	
-	public void instantiateDeferredReturnType( ISymbol returnType, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public void instantiateDeferredReturnType( ISymbol returnType, ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		setReturnType( returnType.instantiate( template, argMap ) );
 	}
 	
@@ -97,7 +97,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	 * @param symbol2
 	 * @param map
 	 */
-	public void discardDeferredReturnType(ISymbol oldReturnType, TemplateSymbol template, Map map) {
+	public void discardDeferredReturnType(ISymbol oldReturnType, TemplateSymbol template, ObjectMap map) {
 		ISymbol returnType = getReturnType();
 		setReturnType( null );
 		template.removeInstantiation( (IContainerSymbol) returnType );

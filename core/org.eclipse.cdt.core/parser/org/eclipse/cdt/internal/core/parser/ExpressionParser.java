@@ -11,9 +11,7 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -81,9 +79,42 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected IToken currToken;
 	protected IToken lastToken;
 	private boolean limitReached = false;
-	private Stack templateIdScopes = null;
+	private ScopeStack templateIdScopes = new ScopeStack();
 	private TypeId typeIdInstance = new TypeId();
 
+	private static class ScopeStack {
+	    private int [] stack;
+	    private int index = -1;
+	    
+	    public ScopeStack(){
+	        stack = new int [8];
+	    }
+	    
+	    private void grow(){
+	        int [] newStack = new int[ stack.length << 1 ];
+	        System.arraycopy( stack, 0, newStack, 0, stack.length );
+	        stack = newStack;
+	    }
+	    
+	    final public void push( int i ){
+	        if( ++index == stack.length )
+	            grow();
+	        stack[index] = i;
+	    }
+	    final public int pop(){
+	        if( index >= 0 )
+	            return stack[index--];
+	        return -1;
+	    }
+	    final public int peek(){
+	        if( index >= 0 )
+	            return stack[index];
+	        return -1;
+	    }
+	    final public int size(){
+	        return index + 1;
+	    }
+	}
 	/**
 	 * @return Returns the astFactory.
 	 */
@@ -252,23 +283,23 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		if (LT(1) == IToken.tLT) {
 			last = consume(IToken.tLT);
 			// until we get all the names sorted out
-			Stack scopes = new Stack();
-			scopes.push(new Integer(IToken.tLT));
+			ScopeStack scopes = new ScopeStack();
+			scopes.push(IToken.tLT);
 
-			while (!scopes.empty()) {
+			while (scopes.size() > 0) {
 				int top;
 				last = consume();
 
 				switch (last.getType()) {
 					case IToken.tGT :
-						if (((Integer) scopes.peek()).intValue() == IToken.tLT) {
+						if (scopes.peek() == IToken.tLT) {
 							scopes.pop();
 						}
 						break;
 					case IToken.tRBRACKET :
 						do {
-							top = ((Integer) scopes.pop()).intValue();
-						} while (!scopes.empty()
+							top = scopes.pop();
+						} while (scopes.size() > 0
 								&& (top == IToken.tGT || top == IToken.tLT));
 						if (top != IToken.tLBRACKET)
 							throwBacktrack(startingOffset, last.getEndOffset(), last.getLineNumber(), last.getFilename());
@@ -276,8 +307,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						break;
 					case IToken.tRPAREN :
 						do {
-							top = ((Integer) scopes.pop()).intValue();
-						} while (!scopes.empty()
+							top = scopes.pop();
+						} while (scopes.size() > 0
 								&& (top == IToken.tGT || top == IToken.tLT));
 						if (top != IToken.tLPAREN)
 							throwBacktrack(startingOffset, last.getEndOffset(), last.getLineNumber(), last.getFilename());
@@ -286,7 +317,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					case IToken.tLT :
 					case IToken.tLBRACKET :
 					case IToken.tLPAREN :
-						scopes.push(new Integer(last.getType()));
+						scopes.push(last.getType());
 						break;
 				}
 			}
@@ -308,10 +339,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		boolean completedArg = false;
 		boolean failed = false;
 
-		if (templateIdScopes == null) {
-			templateIdScopes = new Stack();
-		}
-		templateIdScopes.push(new Integer(IToken.tLT));
+		templateIdScopes.push( IToken.tLT );
 
 		while (LT(1) != IToken.tGT) {
 			completedArg = false;
@@ -381,9 +409,6 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		}
 
 		templateIdScopes.pop();
-		if (templateIdScopes.size() == 0) {
-			templateIdScopes = null;
-		}
 
 		if (failed) {
 			if (expression != null)
@@ -1214,8 +1239,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		for (;;) {
 			switch (LT(1)) {
 				case IToken.tGT :
-					if (templateIdScopes != null
-							&& ((Integer) templateIdScopes.peek()).intValue() == IToken.tLT) {
+					if (templateIdScopes.size() > 0	&&  templateIdScopes.peek() == IToken.tLT) {
 						return firstExpression;
 					}
 				case IToken.tLT :
@@ -1465,8 +1489,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			char [] fn = la.getFilename();
 			IToken mark = mark();
 			consume();
-			if (templateIdScopes != null) {
-				templateIdScopes.push(new Integer(IToken.tLPAREN));
+			if (templateIdScopes.size() > 0) {
+				templateIdScopes.push( IToken.tLPAREN );
 			}
 			boolean popped = false;
 			IASTTypeId typeId = null;
@@ -1482,7 +1506,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throw bte;
 				}
 				
-				if (templateIdScopes != null) {
+				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 					popped = true;
 				}
@@ -1507,7 +1531,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					throwBacktrack(startingOffset, endOffset, line, fn);
 				}
 			} catch (BacktrackException b) {
-				if (templateIdScopes != null && !popped) {
+				if (templateIdScopes.size() > 0 && !popped) {
 					templateIdScopes.pop();
 				}
 			}
@@ -1818,8 +1842,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 		if (LT(1) == IToken.tLPAREN) {
 			consume(IToken.tLPAREN);
-			if (templateIdScopes != null) {
-				templateIdScopes.push(new Integer(IToken.tLPAREN));
+			if (templateIdScopes.size() > 0) {
+				templateIdScopes.push(IToken.tLPAREN);
 			}
 			try {
 				// Try to consume placement list
@@ -1828,15 +1852,15 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				newPlacementExpressions.add(expression(scope,
 						CompletionKind.SINGLE_NAME_REFERENCE, key));
 				consume(IToken.tRPAREN);
-				if (templateIdScopes != null) {
+				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 				} //pop 1st Parent
 				placementParseFailure = false;
 				if (LT(1) == IToken.tLPAREN) {
 					beforeSecondParen = mark();
 					consume(IToken.tLPAREN);
-					if (templateIdScopes != null) {
-						templateIdScopes.push(new Integer(IToken.tLPAREN));
+					if (templateIdScopes.size() > 0) {
+						templateIdScopes.push(IToken.tLPAREN);
 					} //push 2nd Paren
 					typeIdInParen = true;
 				}
@@ -1849,7 +1873,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				// - then it has to be typeId
 				typeId = typeId(scope, true, CompletionKind.NEW_TYPE_REFERENCE);
 				consume(IToken.tRPAREN);
-				if (templateIdScopes != null) {
+				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 				} //pop 1st Paren
 			} else {
@@ -1885,7 +1909,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						typeId = typeId(scope, true,
 								CompletionKind.NEW_TYPE_REFERENCE);
 						consume(IToken.tRPAREN);
-						if (templateIdScopes != null) {
+						if (templateIdScopes.size() > 0) {
 							templateIdScopes.pop();
 						} //popping the 2nd Paren
 
@@ -1925,7 +1949,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						// CASE: new (typeid-looking-as-placement)(initializer-not-looking-as-typeid)
 						// Fallback to initializer processing
 						backup(beforeSecondParen);
-						if (templateIdScopes != null) {
+						if (templateIdScopes.size() > 0) {
 							templateIdScopes.pop();
 						}//pop that 2nd paren
 					}
@@ -1941,15 +1965,15 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			// array new
 			consume();
 
-			if (templateIdScopes != null) {
-				templateIdScopes.push(new Integer(IToken.tLBRACKET));
+			if (templateIdScopes.size() > 0) {
+				templateIdScopes.push(IToken.tLBRACKET);
 			}
 
 			newTypeIdExpressions.add(assignmentExpression(scope,
 					CompletionKind.SINGLE_NAME_REFERENCE, key));
 			consume(IToken.tRBRACKET);
 
-			if (templateIdScopes != null) {
+			if (templateIdScopes.size() > 0) {
 				templateIdScopes.pop();
 			}
 		}
@@ -1959,8 +1983,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			setCurrentFunctionName(((typeId != null) ? typeId
 					.getFullSignatureCharArray() : EMPTY_STRING));
 			setCompletionValues(scope, CompletionKind.CONSTRUCTOR_REFERENCE);
-			if (templateIdScopes != null) {
-				templateIdScopes.push(new Integer(IToken.tLPAREN));
+			if (templateIdScopes.size() > 0) {
+				templateIdScopes.push(IToken.tLPAREN);
 			}
 
 			//we want to know the difference between no newInitializer and an empty new Initializer
@@ -1970,7 +1994,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 			setCurrentFunctionName(EMPTY_STRING);
 			consume(IToken.tRPAREN);
-			if (templateIdScopes != null) {
+			if (templateIdScopes.size() > 0) {
 				templateIdScopes.pop();
 			}
 		}
@@ -2142,13 +2166,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						CompletionKind.TYPE_REFERENCE, KeywordSetKey.EMPTY);
 
 				consume(IToken.tLPAREN);
-				if (templateIdScopes != null) {
-					templateIdScopes.push(new Integer(IToken.tLPAREN));
+				if (templateIdScopes.size() > 0) {
+					templateIdScopes.push(IToken.tLPAREN);
 				}
 				IASTExpression expressionList = expression(scope,
 						CompletionKind.TYPE_REFERENCE, key);
 				int endOffset = consume(IToken.tRPAREN).getEndOffset();
-				if (templateIdScopes != null) {
+				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 				}
 				
@@ -2228,8 +2252,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			case IToken.t_typeid :
 				consume();
 				consume(IToken.tLPAREN);
-				if (templateIdScopes != null) {
-					templateIdScopes.push(new Integer(IToken.tLPAREN));
+				if (templateIdScopes.size() > 0) {
+					templateIdScopes.push(IToken.tLPAREN);
 				}
 				boolean isTypeId = true;
 				IASTExpression lhs = null;
@@ -2241,7 +2265,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					lhs = expression(scope, CompletionKind.TYPE_REFERENCE, key);
 				}
 				endOffset = consume(IToken.tRPAREN).getEndOffset();
-				if (templateIdScopes != null) {
+				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 				}
 				try {
@@ -2269,13 +2293,13 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				case IToken.tLBRACKET :
 					// array access
 					consume(IToken.tLBRACKET);
-					if (templateIdScopes != null) {
-						templateIdScopes.push(new Integer(IToken.tLBRACKET));
+					if (templateIdScopes.size() > 0) {
+						templateIdScopes.push(IToken.tLBRACKET);
 					}
 					secondExpression = expression(scope,
 							CompletionKind.SINGLE_NAME_REFERENCE, key);
 					int endOffset = consume(IToken.tRBRACKET).getEndOffset();
-					if (templateIdScopes != null) {
+					if (templateIdScopes.size() > 0) {
 						templateIdScopes.pop();
 					}
 					try {
@@ -2310,8 +2334,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						}
 					}
 
-					if (templateIdScopes != null) {
-						templateIdScopes.push(new Integer(IToken.tLPAREN));
+					if (templateIdScopes.size() > 0) {
+						templateIdScopes.push(IToken.tLPAREN);
 					}
 					setCompletionValues(scope,
 							CompletionKind.FUNCTION_REFERENCE, context);
@@ -2319,7 +2343,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							CompletionKind.FUNCTION_REFERENCE, key);
 					setCurrentFunctionName(EMPTY_STRING);
 					endOffset = consume(IToken.tRPAREN).getEndOffset();
-					if (templateIdScopes != null) {
+					if (templateIdScopes.size() > 0) {
 						templateIdScopes.pop();
 					}
 					try {
@@ -2589,12 +2613,12 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				}
 			case IToken.tLPAREN :
 				t = consume();
-				if (templateIdScopes != null) {
-					templateIdScopes.push(new Integer(IToken.tLPAREN));
+				if (templateIdScopes.size() > 0) {
+					templateIdScopes.push(IToken.tLPAREN);
 				}
 				IASTExpression lhs = expression(scope, kind, key);
 				int endOffset = consume(IToken.tRPAREN).getEndOffset();
-				if (templateIdScopes != null) {
+				if (templateIdScopes.size() > 0) {
 					templateIdScopes.pop();
 				}
 				try {

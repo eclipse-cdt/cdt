@@ -14,7 +14,8 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
-import java.util.Map;
+
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 {
@@ -31,7 +32,7 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_typeInfo = TypeInfoProvider.newTypeInfo( typeInfo );
 	}
 		
-	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+	public ISymbol instantiate( ITemplateSymbol template, ObjectMap argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() &&  !getContainingSymbol().isTemplateMember() ){
 			return null;
 		}

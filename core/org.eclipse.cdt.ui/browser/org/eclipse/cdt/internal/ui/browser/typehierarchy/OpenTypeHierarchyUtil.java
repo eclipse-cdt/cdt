@@ -143,7 +143,7 @@ public class OpenTypeHierarchyUtil {
 		if (!(input instanceof ICElement)) {
 			return null;
 		}
-//		try {
+		try {
 			ICElement elem= (ICElement) input;
 			switch (elem.getElementType()) {
 				case ICElement.C_METHOD:
@@ -168,9 +168,9 @@ public class OpenTypeHierarchyUtil {
 				case ICElement.C_PROJECT:
 				default:
 			}
-//		} catch (CModelException e) {
-//			CUIPlugin.getDefault().log(e);
-//		}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 		return null;	
 	}
 }

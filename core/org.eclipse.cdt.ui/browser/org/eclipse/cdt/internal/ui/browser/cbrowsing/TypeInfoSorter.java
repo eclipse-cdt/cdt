@@ -8,64 +8,73 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on May 18, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 
-/**
- *	A sorter to sort the file and the folders in the C viewer in the following order:
- * 	1 Project
- * 	2 BinaryContainer
- *  3 ArchiveContainer
- *  4 LibraryContainer
- *  5 IncludeContainer
- *  6 Source roots
- *  5 C Elements
- *  6 non C Elements
- */
-public class TypeInfoSorter extends ViewerSorter { 
+public class TypeInfoSorter extends CBrowsingViewerSorter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
+    public TypeInfoSorter() {
+        super();
+    }
+    
+	public int category (Object element) {
+	    if (element instanceof ITypeInfo) {
+	        ITypeInfo info = (ITypeInfo)element;
+			String name = info.getName();
+	        if (info.getCElementType() == ICElement.C_NAMESPACE) {
+				if (name.startsWith("__")) { //$NON-NLS-1$
+					return NAMESPACES_SYSTEM;
+				}
+				if (name.charAt(0) == '_') {
+					return NAMESPACES_RESERVED;
+				}
+	            return NAMESPACES;
+	        } else {
+				if (name.startsWith("__")) { //$NON-NLS-1$
+					return CELEMENTS_SYSTEM;
+				}
+				if (name.charAt(0) == '_') {
+					return CELEMENTS_RESERVED;
+				}
+	        }
+			return CELEMENTS;
+	    }
+	    return super.category(element);
+	}
+
 	public int compare(Viewer viewer, Object e1, Object e2) {
-		if (e1 instanceof ITypeInfo) {
-			return compare((ITypeInfo)e1, e2);
-		} else if (e1 instanceof ICElement) {
-			return compare((ICElement)e1, e2);
-		}
-		return 0;
-//		return getCollator().compare(name1, name2);		
-	}
+	    if (e1 instanceof ITypeInfo || e2 instanceof ITypeInfo) {
+			int cat1 = category(e1);
+			int cat2 = category(e2);
 	
-	int compare(ITypeInfo t1, Object o2) {
-		if (o2 instanceof ITypeInfo) {
-			ITypeInfo t2 = (ITypeInfo)o2;
-			return t1.compareTo(t2);
-		} else if (o2 instanceof ICElement) {
-			ICElement e2 = (ICElement)o2;
-			return getCollator().compare(t1.getName(), e2.getElementName());		
-		}
-		return 0;
-	}
+			if (cat1 != cat2)
+				return cat1 - cat2;
+			
+			// cat1 == cat2
 	
-	int compare(ICElement e1, Object o2) {
-		if (o2 instanceof ITypeInfo) {
-			ITypeInfo t2 = (ITypeInfo)o2;
-			return getCollator().compare(e1.getElementName(), t2.getName());		
-		} else if (o2 instanceof ICElement) {
-			ICElement e2 = (ICElement)o2;
-			return getCollator().compare(e1.getElementName(), e2.getElementName());		
-		}
-		return 0;
+			if (cat1 == NAMESPACES || cat1 == CELEMENTS || cat1 == CELEMENTS_SYSTEM || cat1 == CELEMENTS_RESERVED) {
+				String name1;
+				String name2;
+				if (e1 instanceof ICElement) {
+					name1 = ((ICElement)e1).getElementName();
+				} else if (e1 instanceof ITypeInfo) {
+				    name1 = ((ITypeInfo)e1).getName();
+				} else {
+					name1 = e1.toString();
+				}
+				if (e2 instanceof ICElement) {
+					name2 = ((ICElement)e2).getElementName();
+				} else if (e2 instanceof ITypeInfo) {
+				    name2 = ((ITypeInfo)e2).getName();
+				} else {
+					name2 = e2.toString();
+				}
+				return getCollator().compare(name1, name2);
+			}
+	    }
+		return super.compare(viewer, e1, e2);
 	}
 }

@@ -26,6 +26,15 @@ import org.eclipse.swt.widgets.Display;
 public abstract class CBrowsingContentProvider extends BaseCElementContentProvider
 	implements ITreeContentProvider, ITypeCacheChangedListener {
 	
+    public static final Object CONTENT_CANCELLED = new Object();
+    public static final Object CONTENT_ERROR = new Object();
+    public static final Object CONTENT_EMPTY = new Object();
+    
+    protected static final Object[] ERROR_NO_CHILDREN = new Object[] { CONTENT_ERROR };
+    protected static final Object[] ERROR_CANCELLED = new Object[] { CONTENT_CANCELLED };
+    protected static final Object[] EMPTY_CHILDREN = NO_CHILDREN;
+    protected static final Object[] INVALID_INPUT = NO_CHILDREN;
+    
 	protected StructuredViewer fViewer;
 	protected Object fInput;
 	protected CBrowsingPart fBrowsingPart;

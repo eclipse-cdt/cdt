@@ -16,11 +16,10 @@ import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.IToolBarManager;
@@ -33,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
@@ -72,10 +72,7 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	 * @see org.eclipse.jface.viewers.ILabelProvider
 	 */
 	protected LabelProvider createLabelProvider() {
-		return new AppearanceAwareLabelProvider(
-						AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS | CElementLabels.F_APP_TYPE_SIGNATURE,
-						AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS
-						);
+	    return new CBrowsingLabelProvider();
 	}
 
 	/**
@@ -100,6 +97,18 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	    ElementTreeViewer viewer= new ElementTreeViewer(parent, SWT.MULTI);
 //		fMemberFilterActionGroup= new MemberFilterActionGroup(viewer, JavaUI.ID_MEMBERS_VIEW);
 		return viewer;
+	}
+	
+	protected ViewerSorter createViewerSorter() {
+	    return new CBrowsingViewerSorter();
+	}
+	
+	/**
+	 * Adds filters the viewer of this part.
+	 */
+	protected void addFilters() {
+		super.addFilters();
+		getViewer().addFilter(new CBrowsingElementFilter());
 	}
 
 	protected void fillToolBar(IToolBarManager tbm) {
@@ -215,9 +224,6 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 		return new MembersViewContentProvider(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findInputForElement(java.lang.Object)
-	 */
 	protected Object findInputForElement(Object element) {
 		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
 			return null;
@@ -227,19 +233,28 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 		    return element;
 		}
 		
-		if (element instanceof ICElement && !(element instanceof ITranslationUnit)) {
-		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
-		    if (parent != null) {
-		        ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
-		        if (info != null)
-		            return info;
+		if (element instanceof ICElement) {
+		    ICElement celem = (ICElement)element;
+		    if (!celem.exists())
+		        return null;
+		    
+		    if (TypeUtil.isDeclaringType(celem)) {
+				ICElement type= TypeUtil.getDeclaringType(celem);
+				if (type == null || type instanceof INamespace)
+			        return AllTypesCache.getTypeForElement(celem, true, true, null);
+				else
+					return findInputForElement(type);
+		    } else if (TypeUtil.isMemberType(celem)) {
+		        return findInputForElement(TypeUtil.getDeclaringType(celem));
+		    } else {
+		        ITranslationUnit tu = TypeUtil.getTranslationUnit(celem);
+		        if (tu != null)
+		            return getTypeForTU(tu);
 		    }
-			return null;
 		}
-		
-		return null;
+		return null; 	
 	}
-
+		    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findElementToSelect(java.lang.Object)
 	 */

@@ -25,12 +25,12 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.CompositeActionGroup;
 import org.eclipse.cdt.internal.ui.actions.SelectAllAction;
-import org.eclipse.cdt.internal.ui.browser.cbrowsing.StatusBarUpdater;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.StatusBarUpdater;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetFilterActionGroup;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -1513,15 +1513,17 @@ public class TypeHierarchyViewPart extends ViewPart implements ITypeHierarchyVie
 		ICElement elem= (ICElement)editor.getEditorInput().getAdapter(ICElement.class);
 		TypeHierarchyViewer currentViewer= getCurrentViewer();
 		if (elem instanceof ITranslationUnit) {
-//			ICElement[] allTypes= ((ITranslationUnit)elem).getAllTypes();
-		    ICElement[] allTypes= TypeUtil.getTypes(elem);
-			for (int i= 0; i < allTypes.length; i++) {
-				if (currentViewer.isElementShown(allTypes[i])) {
-					internalSelectType(allTypes[i], true);
-					updateMethodViewer(allTypes[i]);
-					return;
+		    try {
+			    ICElement[] allTypes= TypeUtil.getAllTypes((ITranslationUnit)elem);
+				for (int i= 0; i < allTypes.length; i++) {
+					if (currentViewer.isElementShown(allTypes[i])) {
+						internalSelectType(allTypes[i], true);
+						updateMethodViewer(allTypes[i]);
+						return;
+					}
 				}
-			}
+		    } catch (CModelException e) {
+		    }
 		}	
 	}
 	

@@ -1,3 +1,27 @@
+2004-09-15 Chris Wiebe
+
+	fixed element navigation problems
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingElementFilter.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingLabelProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingMessages.properties
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPart.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingViewerSorter.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/LexicalSortingAction.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersViewContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/NamespacesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/NamespacesViewContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/NamespacesViewLabelProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProjectsView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProjectsViewContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypeInfoSorter.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesViewContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesViewLabelProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeHierarchyUtil.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/TypeHierarchyViewPart.java
+
 2004-09-02 Chris Wiebe
 
 	fix editor/view selection problems

@@ -23,11 +23,11 @@ import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -45,7 +45,7 @@ public class NamespacesView extends CBrowsingPart {
 	 * @see org.eclipse.jface.viewers.ILabelProvider
 	 */
 	protected LabelProvider createLabelProvider() {
-		return new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);
+	    return new NamespacesViewLabelProvider();
 	}
 
 	/**
@@ -91,14 +91,16 @@ public class NamespacesView extends CBrowsingPart {
 		return new NamespacesViewContentProvider(this);
 	}
 	
-	
+	protected ViewerSorter createViewerSorter() {
+	    return new TypeInfoSorter();
+	}
 
 	/**
 	 * Adds filters the viewer of this part.
 	 */
 	protected void addFilters() {
 		super.addFilters();
-//		getViewer().addFilter(new NonCElementFilter());
+		getViewer().addFilter(new CBrowsingElementFilter());
 	}
 
 	/**

@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -21,8 +20,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 class ProjectsViewContentProvider extends CBrowsingContentProvider {
 
@@ -70,28 +67,11 @@ class ProjectsViewContentProvider extends CBrowsingContentProvider {
 	 */
 	public Object[] getChildren(Object element) {
 		if (element == null || (element instanceof ICElement && !((ICElement)element).exists())) {
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 		}
 		
 		try {
 			startReadInDisplayThread();
-			
-			if (element instanceof IStructuredSelection) {
-				Assert.isLegal(false);
-				Object[] result= new Object[0];
-				Class clazz= null;
-				Iterator iter= ((IStructuredSelection)element).iterator();
-				while (iter.hasNext()) {
-					Object item=  iter.next();
-					if (clazz == null)
-						clazz= item.getClass();
-					if (clazz == item.getClass())
-						result= concatenate(result, getChildren(item));
-					else
-						return NO_CHILDREN;
-				}
-				return result;
-			}
 			
 			if (element instanceof ICModel) {
 				ICModel cModel = (ICModel)element;
@@ -104,9 +84,9 @@ class ProjectsViewContentProvider extends CBrowsingContentProvider {
 			if (element instanceof ISourceRoot) 
 				return NO_CHILDREN;
 
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 		} catch (CModelException e) {
-			return NO_CHILDREN;
+			return ERROR_CANCELLED;
 		} finally {
 			finishedReadInDisplayThread();
 		}

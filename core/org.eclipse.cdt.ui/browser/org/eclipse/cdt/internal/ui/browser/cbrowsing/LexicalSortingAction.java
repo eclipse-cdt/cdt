@@ -23,7 +23,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  *      which should be renamed to MemberActionsGroup
  */
 public class LexicalSortingAction extends Action {
-	private TypeInfoSorter fSorter= new TypeInfoSorter();
+	private CBrowsingViewerSorter fSorter= new CBrowsingViewerSorter();
 	private StructuredViewer fViewer;
 	private String fPreferenceKey;
 

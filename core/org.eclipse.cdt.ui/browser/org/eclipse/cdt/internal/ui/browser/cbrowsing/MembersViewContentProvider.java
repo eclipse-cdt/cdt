@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 class MembersViewContentProvider extends CBrowsingContentProvider {
@@ -61,48 +62,43 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 	 */
 	public Object[] getChildren(Object element) {
 		if (element == null || (element instanceof ICElement && !((ICElement)element).exists())) {
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 		}
 		
 		try {
 			startReadInDisplayThread();
 			
-			if (element instanceof IStructuredSelection) {
-				Assert.isLegal(false);
-				Object[] result= new Object[0];
-				Class clazz= null;
-				Iterator iter= ((IStructuredSelection)element).iterator();
-				while (iter.hasNext()) {
-					Object item=  iter.next();
-					if (clazz == null)
-						clazz= item.getClass();
-					if (clazz == item.getClass())
-						result= concatenate(result, getChildren(item));
-					else
-						return NO_CHILDREN;
-				}
-				return result;
-			}
-			
 			if (element instanceof ITypeInfo) {
 				ITypeInfo info = (ITypeInfo) element;
 				if (info.getCElementType() == ICElement.C_NAMESPACE) {
-					return NO_CHILDREN;		// shouldn't get here...
+					return INVALID_INPUT;		// shouldn't get here...
+				}
+				if (info.getCElementType() == ICElement.C_TYPEDEF) {
+					return EMPTY_CHILDREN;
 				}
 				ICElement elem = AllTypesCache.getElementForType(info, true, true, null);
-				if (elem != null && elem instanceof IParent) {
-					return ((IParent)elem).getChildren();
+				if (elem == null) {
+				    return ERROR_NO_CHILDREN;
+				} else {
+					if (elem instanceof IParent) {
+						ICElement[] children = ((IParent)elem).getChildren();
+						if (children != null && children.length > 0)
+						    return children;
+					}
+					return EMPTY_CHILDREN;
 				}
-				return NO_CHILDREN;
 			}
 			
 			if (element instanceof IParent) {
-				return ((IParent)element).getChildren();
+				ICElement[] children = ((IParent)element).getChildren();
+				if (children != null && children.length > 0)
+				    return children;
+				return EMPTY_CHILDREN;
 			}
-
-			return NO_CHILDREN;
+			
+			return INVALID_INPUT;
 		} catch (CModelException e) {
-			return NO_CHILDREN;
+			return ERROR_CANCELLED;
 		} finally {
 			finishedReadInDisplayThread();
 		}
@@ -112,8 +108,7 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-	    return fInput;
-/*		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
+		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
 			return null;
 		}
 		
@@ -125,18 +120,25 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 			startReadInDisplayThread();
 		
 			if (element instanceof ICElement) {
-			    ICElement parent = ((ICElement)element).getParent();
-			    if (parent != null)
-			        return AllTypesCache.getTypeForElement(parent, true, true, null);
+			    ICElement celem = (ICElement)element;
+			    if (TypeUtil.isMemberType(celem)) {
+					ICElement parent = TypeUtil.getDeclaringType(celem);
+					if (parent == null || parent instanceof INamespace) {
+				        ITypeInfo info = AllTypesCache.getTypeForElement(celem, true, true, null);
+				        if (info != null)
+				            return info.getEnclosingType();
+					}
+					return parent;
+			    }
 			}
-
+			
 			return null;
 //		} catch (CModelException e) {
 //			return false;
 		} finally {
 			finishedReadInDisplayThread();
 		}
-*/	}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)

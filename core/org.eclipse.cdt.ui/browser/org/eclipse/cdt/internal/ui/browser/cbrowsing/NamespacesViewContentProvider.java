@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -25,8 +24,6 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -75,28 +72,11 @@ class NamespacesViewContentProvider extends CBrowsingContentProvider {
 	 */
 	public Object[] getChildren(Object element) {
 		if (element == null || (element instanceof ICElement && !((ICElement)element).exists())) {
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 		}
 		
 		try {
 			startReadInDisplayThread();
-			
-			if (element instanceof IStructuredSelection) {
-				Assert.isLegal(false);
-				Object[] result= new Object[0];
-				Class clazz= null;
-				Iterator iter= ((IStructuredSelection)element).iterator();
-				while (iter.hasNext()) {
-					Object item=  iter.next();
-					if (clazz == null)
-						clazz= item.getClass();
-					if (clazz == item.getClass())
-						result= concatenate(result, getChildren(item));
-					else
-						return NO_CHILDREN;
-				}
-				return result;
-			}
 			
 			if (element instanceof ICProject) {
 				TypeSearchScope scope = new TypeSearchScope();
@@ -110,7 +90,7 @@ class NamespacesViewContentProvider extends CBrowsingContentProvider {
 				return getNamespaces(scope);
 			}
 
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 //		} catch (CModelException e) {
 //			return NO_CHILDREN;
 		} finally {
@@ -172,13 +152,17 @@ class NamespacesViewContentProvider extends CBrowsingContentProvider {
 				String title = OpenTypeMessages.getString("OpenTypeAction.exception.title"); //$NON-NLS-1$
 				String message = OpenTypeMessages.getString("OpenTypeAction.exception.message"); //$NON-NLS-1$
 				ExceptionHandler.handle(e, title, message);
-				return NO_CHILDREN;
+				return ERROR_CANCELLED;
 			} catch (InterruptedException e) {
 				// cancelled by user
-				return NO_CHILDREN;
+				return ERROR_CANCELLED;
 			}
 		}
-		return AllTypesCache.getNamespaces(scope, true);
+		ITypeInfo[] namespaces = AllTypesCache.getNamespaces(scope, true);
+		if (namespaces != null && namespaces.length > 0) {
+		    return namespaces;
+		}
+	    return EMPTY_CHILDREN;
 	}
 	
 	protected Shell getShell() {

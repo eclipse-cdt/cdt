@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 class TypesViewContentProvider extends CBrowsingContentProvider {
 
@@ -52,28 +48,11 @@ class TypesViewContentProvider extends CBrowsingContentProvider {
 	 */
 	public Object[] getChildren(Object element) {
 		if (element == null || (element instanceof ITypeInfo && !((ITypeInfo)element).exists())) {
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 		}
 		
 		try {
 			startReadInDisplayThread();
-			
-			if (element instanceof IStructuredSelection) {
-				Assert.isLegal(false);
-				Object[] result= new Object[0];
-				Class clazz= null;
-				Iterator iter= ((IStructuredSelection)element).iterator();
-				while (iter.hasNext()) {
-					Object item=  iter.next();
-					if (clazz == null)
-						clazz= item.getClass();
-					if (clazz == item.getClass())
-						result= concatenate(result, getChildren(item));
-					else
-						return NO_CHILDREN;
-				}
-				return result;
-			}
 			
 			if (element instanceof ITypeInfo) {
 				ITypeInfo info = (ITypeInfo)element;
@@ -81,10 +60,14 @@ class TypesViewContentProvider extends CBrowsingContentProvider {
 						ICElement.C_UNION, ICElement.C_ENUMERATION,
 						ICElement.C_TYPEDEF};
 				//TODO this should be a prefs option
-				return info.getEnclosedTypes(kinds);
+				ITypeInfo[] children = info.getEnclosedTypes(kinds);
+				if (children != null && children.length > 0) {
+				    return children;
+				}
+				return EMPTY_CHILDREN;
 			}
 
-			return NO_CHILDREN;
+			return INVALID_INPUT;
 //		} catch (CModelException e) {
 //			return NO_CHILDREN;
 		} finally {

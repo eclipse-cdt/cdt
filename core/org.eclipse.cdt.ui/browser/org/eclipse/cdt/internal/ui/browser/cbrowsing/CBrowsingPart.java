@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IViewPartInputProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.StatusBarUpdater;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetFilterActionGroup;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -61,6 +63,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -72,6 +75,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -303,7 +307,9 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		fLabelProvider= createLabelProvider();
 		fViewer.setLabelProvider(fLabelProvider);
 		
-		fViewer.setSorter(createTypeInfoSorter());
+		fViewer.setSorter(createViewerSorter());
+		fViewer.setComparer(createElementComparer());
+		
 		fViewer.setUseHashlookup(true);
 		fTitleProvider= createTitleProvider();
 
@@ -379,10 +385,6 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 ////		return new ExcludingDecoratingLabelProvider(provider, decorationMgr, "org.eclipse.jdt.ui.problem.decorator"); //$NON-NLS-1$
 //		return new DecoratingCLabelProvider(provider);
 //	}
-	
-	protected TypeInfoSorter createTypeInfoSorter() {
-		return new TypeInfoSorter();
-	}
 	
 	protected StatusBarUpdater createStatusBarUpdater(IStatusLineManager slManager) {
 		return new StatusBarUpdater(slManager);
@@ -658,8 +660,11 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	}
 
 	protected boolean isProjectSourceRoot(ISourceRoot root) {
-		IResource resource= root.getResource();
-		return (resource instanceof IProject);
+	    if (root != null) {
+			IResource resource = root.getResource();
+			return (resource instanceof IProject);
+	    }
+	    return false;
 	}
 
 	/**
@@ -873,6 +878,12 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 
 	protected abstract LabelProvider createLabelProvider();
 
+	protected abstract ViewerSorter createViewerSorter();
+	
+	protected IElementComparer createElementComparer() {
+	    return new CBrowsingElementComparer();
+	}
+	
 	protected ILabelProvider createTitleProvider() {
 		return new CElementLabelProvider(CElementLabelProvider.SHOW_BASICS | CElementLabelProvider.SHOW_SMALL_ICONS);
 	}
@@ -903,7 +914,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	 * Adds filters the viewer of this part.
 	 */
 	protected void addFilters() {
-		// default is to have no filters
+	    // default is to have no filters
 	}
 
 //	/**
@@ -1266,6 +1277,26 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 //		else {
 //			return element.getPrimaryElement();
 //		}
+	}
+	
+	protected ICElement getTypeForTU(ITranslationUnit tu) {
+		tu = (ITranslationUnit) getSuitableElement(tu);
+		
+//		// Use primary type if possible
+//		IType primaryType= cu.findPrimaryType();
+//		if (primaryType != null)
+//			return primaryType;
+
+		// Use first top-level type
+		try {
+		    ICElement[] types = TypeUtil.getTypes(tu);
+			if (types.length > 0)
+				return types[0];
+			else
+				return null;
+		} catch (CModelException ex) {
+			return null;
+		}
 	}
 
 	protected final Object getSingleElementFromSelection(ISelection selection) {

@@ -183,13 +183,22 @@ public class CModelManager implements IResourceChangeListener {
 	}
 
 	public synchronized ICFile create(ICElement parent, IFile file) {
+		return create(parent, file, null);
+	}
+
+	public ICFile create(ICElement parent, IFile file, IBinaryFile bin) {
 		ICFile cfile = (ICFile)fParsedResources.get(file);
 		if (cfile == null) {
 			if (file.exists()) {
-				if (isArchive(file)) {
-					cfile = new Archive(parent, file);
-				} else if (isBinary(file)) {
-					cfile = new Binary(parent, file);
+				if (bin == null) {
+					bin = getBinaryFile(file);
+				}
+				if (bin != null) {
+					if (bin.getType() == IBinaryFile.ARCHIVE) {
+						cfile = new Archive(parent, file);
+					} else {
+						cfile = new Binary(parent, file);
+					}
 				} else if (isTranslationUnit(file)) {
 					cfile = new TranslationUnit(parent, file);
 				} else {
@@ -199,23 +208,23 @@ public class CModelManager implements IResourceChangeListener {
 			}
 		}
 		// Added also to the Containers
-		if (cfile != null) {
-			if (cfile instanceof IArchive) {
+		if (cfile != null && (cfile instanceof IBinary || cfile instanceof IArchive)) {
+			if (bin == null) {
+				bin = getBinaryFile(file);
+			}
+			if (bin.getType() == IBinaryFile.ARCHIVE) {
 				CProject cproj = (CProject)cfile.getCProject();
 				ArchiveContainer container = (ArchiveContainer)cproj.getArchiveContainer();
 				container.addChild(cfile);
-			} else if (cfile instanceof IBinary) {
-				IBinary bin = (IBinary)cfile;
-				if (bin.isExecutable() || bin.isSharedLib()) {
-					CProject cproj = (CProject)cfile.getCProject();
-					BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
-					container.addChild(bin);
-				}
+			} else if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+				CProject cproj = (CProject)cfile.getCProject();
+				BinaryContainer container = (BinaryContainer)cproj.getBinaryContainer();
+				container.addChild(cfile);
 			}
 		}
 		return cfile;
 	}
-
+	
 	public ICFolder create(IFolder folder) {
 		IResource parent = folder.getParent();
 		ICElement cparent = null;
@@ -491,6 +500,17 @@ public class CModelManager implements IResourceChangeListener {
 		return false;
 	}
 
+	public IBinaryFile getBinaryFile(IFile file) {
+		IBinaryFile bin = null;
+		try {
+			IBinaryParser parser = getBinaryParser(file.getProject());
+			bin = parser.getBinary(file);
+		} catch (IOException e) {
+			//e.printStackTrace();
+		}
+		return bin;
+	}
+	
 	public boolean isBinary(IFile file) {
 		try {
 			IBinaryParser parser = getBinaryParser(file.getProject());

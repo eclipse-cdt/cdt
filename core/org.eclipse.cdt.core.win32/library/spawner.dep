@@ -1,0 +1,19 @@
+# Microsoft Developer Studio Generated Dependency File, included by spawner.mak
+
+.\iostream.c : \
+	"..\..\java\jdk1.3.1\include\jni.h"\
+	"..\..\java\jdk1.3.1\include\win32\jni_md.h"\
+	".\SpawnerInputStream.h"\
+	".\SpawnerOutputStream.h"\
+	
+
+.\StdAfx.c : \
+	"..\..\program files\microsoft visual studio\vc98\include\basetsd.h"\
+	".\StdAfx.h"\
+	
+
+.\Win32ProcessEx.c : \
+	"..\..\java\jdk1.3.1\include\jni.h"\
+	"..\..\java\jdk1.3.1\include\win32\jni_md.h"\
+	".\Spawner.h"\
+	

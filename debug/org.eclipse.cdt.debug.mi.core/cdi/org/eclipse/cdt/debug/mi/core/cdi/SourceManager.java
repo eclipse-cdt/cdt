@@ -242,12 +242,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 				}
 				gdbType = ((GDBDerivedType)gdbType).getChild();
 			} else {
-				//try {
-					aType = toCDIType(target, gdbType.toString());
-				//} catch (CDIException e) {
-				//	String ptype = getDetailTypeName(gdbType.toString());
-				//	aType = getType(target, ptype);
-				//}
+				aType = toCDIType(target, gdbType.toString());
 				gdbType = null;
 			}
 			if (type instanceof DerivedType) {

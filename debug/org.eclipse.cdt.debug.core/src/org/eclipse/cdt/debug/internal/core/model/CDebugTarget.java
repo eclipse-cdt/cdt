@@ -284,7 +284,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			CThread thread = createThread( cdiThreads[i] );
 			debugEvents.add( thread.createCreateEvent() );
 			try {
-				if ( cdiThreads[i].equals( getCDITarget().getCurrentThread() ) ) {
+				if ( cdiThreads[i].equals( getCDITarget().getCurrentThread() ) && thread.isSuspended() ) {
 					// Use BREAKPOINT as a detail to force perspective switch
 					suspendEvent = thread.createSuspendEvent( DebugEvent.BREAKPOINT );
 				}

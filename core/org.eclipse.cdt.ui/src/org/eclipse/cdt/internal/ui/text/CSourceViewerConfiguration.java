@@ -27,6 +27,7 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.Reconciler;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -327,7 +328,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		String[] types= new String[] {
-			RuleBasedPartitioner.CONTENT_TYPES_CATEGORY
+			DefaultPartitioner.CONTENT_TYPES_CATEGORY
 		};
 		
 		ContentFormatter formatter= new ContentFormatter();

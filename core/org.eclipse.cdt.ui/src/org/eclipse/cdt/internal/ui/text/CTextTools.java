@@ -10,6 +10,8 @@ import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -35,7 +37,7 @@ public class CTextTools {
 	/** The C++ source code scanner */
 	private CppCodeScanner fCppCodeScanner;
 	/** The C partitions scanner */
-	private CPartitionScanner fPartitionScanner;
+	private FastCPartitionScanner fPartitionScanner;
 	/** The Java multiline comment scanner */
 	private SingleTokenCScanner fMultilineCommentScanner;
 	/** The Java singleline comment scanner */
@@ -63,7 +65,7 @@ public class CTextTools {
 		fColorManager= new CColorManager();
 		fCodeScanner= new CCodeScanner(fColorManager, store);
 		fCppCodeScanner= new CppCodeScanner(fColorManager, store);
-		fPartitionScanner= new CPartitionScanner();
+		fPartitionScanner= new FastCPartitionScanner();
 		
 		fMultilineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_SINGLE_LINE_COMMENT);
@@ -125,9 +127,13 @@ public class CTextTools {
 	}
 	
 	/**
-	 * Gets the partition scanner used.
+	 * Returns a scanner which is configured to scan 
+	 * C-specific partitions, which are multi-line comments,
+	 * and regular C source code.
+	 *
+	 * @return a C partition scanner
 	 */
-	public RuleBasedScanner getPartitionScanner() {
+	public IPartitionTokenScanner getPartitionScanner() {
 		return fPartitionScanner;
 	}
 	
@@ -142,7 +148,7 @@ public class CTextTools {
 			CPartitionScanner.C_STRING
 		};
 		
-		return new RuleBasedPartitioner(getPartitionScanner(), types);
+		return new DefaultPartitioner(getPartitionScanner(), types);
 	}
 	
 	/**

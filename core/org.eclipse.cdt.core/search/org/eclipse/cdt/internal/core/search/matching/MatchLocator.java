@@ -277,15 +277,16 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		
 		if( workspaceRoot != null ){
 			resource = workspaceRoot.getFileForLocation( path );
-			if( resource == null ){
-				IFile file = workspaceRoot.getFile( path );
-				try{
-					file.createLink( path, 0, null );
-				} catch ( CoreException e ){
-					file = null;
-				}
-				resource = file;
-			}
+//			if( resource == null ){
+//				//TODO:What to do if the file is not in the workspace?				
+//				IFile file = currentResource.getProject().getFile( inclusion.getName() );
+//				try{
+//					file.createLink( path, 0, null );
+//				} catch ( CoreException e ){
+//					file = null;
+//				}
+//				resource = file;
+//			}
 		}
 		
 		resourceStack.addFirst( ( currentResource != null ) ? (Object)currentResource : (Object)currentPath );
@@ -368,23 +369,18 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 					currentResource = workspaceRoot.findMember( pathString, true );
 					
 					try{
-						if( currentResource == null ){
-							IPath path = new Path( pathString );
-							IFile file = workspaceRoot.getFile( path );
-							file.createLink( path, 0, null );
-							project = file.getProject();
-						}
 						if( currentResource != null && currentResource instanceof IFile ){
 							IFile file = (IFile) currentResource;
 							reader = new InputStreamReader( file.getContents() );
 							realPath = currentResource.getLocation();
 							project = file.getProject();
-						} else continue;
+						}
 					} catch ( CoreException e ){
 						continue;
 					}
 				}
-			} else {
+			}
+			if( currentResource == null ) {
 				IPath path = new Path( pathString );
 				try {
 					currentPath = path;
@@ -407,7 +403,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			if( project != null ){
 				language = CoreModel.getDefault().hasCCNature( project ) ? ParserLanguage.CPP : ParserLanguage.C;
 			} else {
-				//TODO no probject, what language do we use?
+				//TODO no project, what language do we use?
 				language = ParserLanguage.CPP;
 			}
 			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this );

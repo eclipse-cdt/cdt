@@ -1,6 +1,11 @@
 2003-09-25 Hoda Amer
 	Solution to bug#43646: Code Assist won't work if missing end bracket
 
+2003-09-25 Andrew Niefer
+	modify CSearchResultCollector to accept matches without resources, but not attempt to report
+	them in the UI.	Addresses 43664 for non-ui clients of search
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	
 2003-09-25 Alain Magloire
 
 	Add HelpContext IDs in the preference page.

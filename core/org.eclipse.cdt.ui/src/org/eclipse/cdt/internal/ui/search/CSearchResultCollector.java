@@ -82,12 +82,13 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 	public boolean acceptMatch( IMatch match ) throws CoreException
 	{
 		BasicSearchMatch searchMatch = (BasicSearchMatch) match;
-		if( searchMatch.resource == null  )
-			return false;
-					
+							
 		if( !super.acceptMatch( match ) )
 			return false;
-		 
+		
+		if( searchMatch.resource == null  )
+			return false;
+			 
 		IMarker marker =  searchMatch.resource.createMarker( SearchUI.SEARCH_MARKER );
 	
 		HashMap markerAttributes = new HashMap( 2 );

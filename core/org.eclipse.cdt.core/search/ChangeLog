@@ -1,3 +1,7 @@
+2003-09-25 Andrew Niefer
+	- partial fix for 43664	Modify Matchlocator to not try and create a link if we have no 
+	resource, instead just use the path
+
 2003-09-23 Andrew Niefer
 	fix bug 43498 Search with ? fails on first letter of second word
 		-modifications to CSearchPattern.scanForNames()

@@ -1,6 +1,9 @@
 2003-09-25 Hoda Amer
 	Enabled CompleteParseASTExpressionTest.testPostfixTypenameIdentifier()
 	
+2003-09-25 Andrew Niefer
+	added testNoResourceSearching() to OtherPatternTests
+
 2003-09-24 Hoda Amer
     Added testNewTypeId(), testCastExpression(), testPostfixDynamicCast(), 
     testPostfixReinterpretCast(), testPostfixStaticCast(), and testPostfixConstCast() 

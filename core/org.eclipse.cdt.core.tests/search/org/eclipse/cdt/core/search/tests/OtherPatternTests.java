@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
+import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author aniefer
@@ -237,4 +239,22 @@ public class OtherPatternTests extends BaseSearchTest {
 		Set matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 3 );
 	}
+	
+	public void testNoResourceSearching(){
+		String pluginRoot = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		String path = pluginRoot + "resources/search/include.h";
+		
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Head", CLASS, REFERENCES, true );
+
+		resultCollector.setProgressMonitor( monitor );
+		
+		resultCollector.aboutToStart();
+		MatchLocator matchLocator = new MatchLocator( pattern, resultCollector, scope, monitor );		
+		matchLocator.locateMatches( new String [] { path }, workspace, null );
+		resultCollector.done();
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 4 );
+	}
+	
 }

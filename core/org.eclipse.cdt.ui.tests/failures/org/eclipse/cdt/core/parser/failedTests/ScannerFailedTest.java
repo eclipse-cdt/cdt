@@ -18,8 +18,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.tests.BaseScannerTest;
-import org.eclipse.cdt.internal.core.parser.ScannerException;
-import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
  * @author aniefer
@@ -38,7 +36,6 @@ public class ScannerFailedTest extends BaseScannerTest  {
 		TestSuite suite = new TestSuite();
 		 
 		suite.addTest( new ScannerFailedTest( "testBug36701" ) );
-		suite.addTest( new ScannerFailedTest( "testBug37011" ) );
 
 		return suite;
 	}
@@ -64,27 +61,4 @@ public class ScannerFailedTest extends BaseScannerTest  {
 			fail( "The expected error did not occur." );
 	}
 	
-	public void testBug37011() throws Exception
-	{
-		boolean testPassed = false;
-		try{
-			StringWriter writer = new StringWriter();
-			writer.write( "#define A \"//\"\n" );
-			writer.write( " { A };\n" );
-			
-			initializeScanner( writer.toString() );
-			validateToken( Token.tLBRACE );
-			validateString( "//" );
-			validateToken( Token.tRBRACE );
-			validateToken( Token.tSEMI );
-			validateEOF();
-			
-			testPassed = true;
-		} catch( ScannerException e ){
-			//expected failure
-		}
-				
-		if( testPassed )
-			fail( "The expected error did not occur." );
-	}
 }

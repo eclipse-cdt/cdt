@@ -995,7 +995,7 @@ public class ScannerTestCase extends BaseScannerTest
 	
 	public void testBug36287() throws Exception
 	{
-		initializeScanner( "X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , br( rtg_arg.br ){}" );
+		initializeScanner( "X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , er( rtg_arg.er ){}" );
 		validateIdentifier("X");
 		validateToken( Token.tCOLONCOLON);
 		validateIdentifier("X");
@@ -1018,14 +1018,26 @@ public class ScannerTestCase extends BaseScannerTest
 		validateIdentifier( "Z");
 		validateToken( Token.tRPAREN );
 		validateToken( Token.tCOMMA );
-		validateIdentifier( "br");
+		validateIdentifier( "er");
 		validateToken( Token.tLPAREN );
 		validateIdentifier( "rtg_arg");
 		validateToken( Token.tDOT );
-		validateIdentifier( "br");
+		validateIdentifier( "er");
 		validateToken( Token.tRPAREN );
 		validateToken( Token.tLBRACE);
 		validateToken( Token.tRBRACE);
+		validateEOF();
+		
+		initializeScanner( "foo.*bar");
+		validateIdentifier("foo");
+		validateToken( Token.tDOTSTAR );
+		validateIdentifier("bar");
+		validateEOF();
+		
+		initializeScanner( "foo...bar");
+		validateIdentifier("foo");
+		validateToken( Token.tELIPSE );
+		validateIdentifier("bar");
 		validateEOF();
 	}
 
@@ -1308,5 +1320,40 @@ public class ScannerTestCase extends BaseScannerTest
 		
 		initializeScanner( writer.toString() );
 		validateEOF();
+	}
+	
+	public void testBug37011() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "#define A \"//\"");
+		
+		initializeScanner( writer.toString() );
+		
+		validateEOF();
+		validateDefinition("A", "\"//\"");
+	}
+
+	public void testOtherPreprocessorDefines() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( "#define A a//boo\n" );
+		writer.write( "#define B a /*boo*/ a\n" );
+		writer.write( "#define C a \" //boo \"\n" );
+		writer.write( "#define D a \\\"//boo\n" );
+		writer.write( "#define E a \\n \"\\\"\"\n" );
+		writer.write( "#define F a\\\n b\n" );
+		writer.write( "#define G a '\"'//boo\n" );
+		writer.write( "#define H a '\\'//b'\"/*bo\\o*/\" b\n" );
+		 
+		initializeScanner( writer.toString() );
+		
+		validateEOF();
+		
+		validateDefinition("A", "a");
+		validateDefinition("B", "a  a");
+		validateDefinition("C", "a \" //boo \"");
+		validateDefinition("D", "a \\\"");
+		validateDefinition("E", "a \\n \"\\\"\"");
+		validateDefinition("F", "a b");
+		validateDefinition("G", "a '\"'");
+		validateDefinition("H", "a '\\'//b'\"/*bo\\o*/\" b");
 	}
 }

@@ -120,17 +120,28 @@ public class Scanner implements IScanner {
 		StringBuffer buffer = new StringBuffer();
 		skipOverWhitespace();
 		int c = getChar();
-
+		boolean inString = false;
+		boolean inChar = false;
 		while (true) {
 			while ((c != '\n')
 				&& (c != '\r')
 				&& (c != '\\')
 				&& (c != '/')
+				&& (c != '"' || ( c == '"' && inChar ) )
+				&& (c != '\'' || ( c == '\'' && inString ) )
 				&& (c != NOCHAR)) {
 				buffer.append((char) c);
-				c = getChar();
+				c = getChar( true );
 			}
+			
 			if (c == '/') {
+				//only care about comments outside of a quote
+				if( inString || inChar ){
+					buffer.append( (char) c );
+					c = getChar( true );
+					continue;
+				}
+				
 				// we need to peek ahead at the next character to see if 
 				// this is a comment or not
 				int next = getChar();
@@ -143,7 +154,7 @@ public class Scanner implements IScanner {
 					if (skipOverMultilineComment())
 						break;
 					else
-						c = getChar();
+						c = getChar( true );
 					continue;
 				} else {
 					// we are not in a comment
@@ -151,12 +162,35 @@ public class Scanner implements IScanner {
 					c = next;
 					continue;
 				}
-			} else {
-				if (c != '\\') {
-					ungetChar(c);
+			} else if( c == '"' ){
+				inString = !inString;
+				buffer.append((char) c);
+				c = getChar( true );
+				continue;
+			} else if( c == '\'' ){
+				inChar = !inChar;
+				buffer.append((char) c);
+				c = getChar( true );
+				continue;
+			} else if( c == '\\' ){
+				c = getChar(true);
+				if( c == '\r' ){
+					c = getChar(true);
+					if( c == '\n' ){
+						c = getChar(true);		
+					}
+				} else if( c == '\n' ){ 
+					c = getChar(true);
 				} else {
-					c = getChar();
+					buffer.append('\\');
+					if( c == '"' || c == '\'' ){
+						buffer.append((char)c);
+						c = getChar( true );
+					}
 				}
+				continue;
+			} else {
+				ungetChar(c);
 				break;
 			}
 		}
@@ -645,13 +679,23 @@ public class Scanner implements IScanner {
 
 				c = getChar();
 				
-				if (c == 'x') {
-					if( ! firstCharZero && floatingPoint )
-					{
-						ungetChar( c ); 
-						return newToken( Token.tDOT, ".", contextStack.getCurrentContext() ); 
+				if( ! firstCharZero && floatingPoint && !(c >= '0' && c <= '9') ){
+					//if pasting, there could actually be a float here instead of just a .
+					if( buff.toString().equals( "." ) ){
+						if( c == '*' ){
+							return newToken( Token.tDOTSTAR, ".*", contextStack.getCurrentContext() );
+						} else if( c == '.' ){
+							if( getChar() == '.' )
+								return newToken( Token.tELIPSE, "..." );
+							else
+								throw new ScannerException( "Invalid floating point @ offset " + contextStack.getCurrentContext().getOffset() ); 
+						} else {
+							ungetChar( c );
+							return newToken( Token.tDOT, ".", contextStack.getCurrentContext() );
+						}
 					}
-					else if( ! firstCharZero ) 
+				} else if (c == 'x') {
+					if( ! firstCharZero ) 
 						throw new ScannerException( "Invalid Hexidecimal @ offset " + contextStack.getCurrentContext().getOffset() );
 					
 					hex = true;
@@ -668,11 +712,6 @@ public class Scanner implements IScanner {
 				if( c == '.' )
 				{
 					buff.append( (char)c);
-					if( floatingPoint || hex ) 	{
-						if( buff.toString().equals( "..") && getChar() == '.' ) 
-							return newToken( Token.tELIPSE, "..." ); 
-						throw new ScannerException( "Invalid floating point @ offset " + contextStack.getCurrentContext().getOffset() );						
-					} 
 					
 					floatingPoint = true;
 					c= getChar(); 

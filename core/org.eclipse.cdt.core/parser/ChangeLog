@@ -1,3 +1,7 @@
+2003-05-01 Andrew Niefer
+	Fixed Bug 36287 - Parser failure with new CDT 1.1 parser
+	Fixed Bug 37011 - Scanner: #define A "//" not properly handled
+	
 2003-04-30 John Camelon
 	Added some Javadoc to IParser.java and Parser.java.  
 

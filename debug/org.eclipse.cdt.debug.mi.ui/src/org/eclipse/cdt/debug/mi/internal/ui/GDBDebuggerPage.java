@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
+
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.ui.IMILaunchConfigurationComponent;
 import org.eclipse.cdt.debug.mi.ui.MIUIUtils;
@@ -21,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -71,9 +71,6 @@ public class GDBDebuggerPage extends AbstractLaunchConfigurationTab implements O
 			fSolibBlock.setDefaults( configuration );
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
-	 */
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		boolean valid = fGDBCommandText.getText().length() != 0;
 		if ( valid ) {

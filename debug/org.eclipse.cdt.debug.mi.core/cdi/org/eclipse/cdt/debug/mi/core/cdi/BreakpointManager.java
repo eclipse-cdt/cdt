@@ -24,7 +24,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
@@ -489,9 +488,6 @@ public class BreakpointManager extends Manager {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints(ICDITarget)
-	 */
 	public ICDIBreakpoint[] getBreakpoints(Target target) throws CDIException {
 		List list = (List)breakMap.get(target);
 		if (list != null) {

@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.mi.internal.ui.actions;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
@@ -213,9 +212,6 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 		return ActionMessages.getString( "SetAutoSolibActionDelegate.0" ); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
-	 */
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString( "SetAutoSolibActionDelegate.1" ); //$NON-NLS-1$
 	}

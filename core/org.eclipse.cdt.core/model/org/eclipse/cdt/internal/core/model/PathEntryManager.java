@@ -148,13 +148,14 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 	
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
-		IPathEntry[] entries = (IPathEntry[])resolvedMap.get(cproject);
-		if (entries == null) {
+		ArrayList listEntries = (ArrayList)resolvedMap.get(cproject);
+		IPathEntry[] resolvedEntries;
+		if (listEntries == null) {
 			IPath projectPath = cproject.getPath();
-			entries = getRawPathEntries(cproject);
-			ArrayList list = new ArrayList();
-			for (int i = 0; i < entries.length; i++) {
-				IPathEntry entry = entries[i];
+			IPathEntry[] rawEntries = getRawPathEntries(cproject);
+			listEntries = new ArrayList();
+			for (int i = 0; i < rawEntries.length; i++) {
+				IPathEntry entry = rawEntries[i];
 				// Expand the containers.
 				if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 					IContainerEntry centry = (IContainerEntry) entry;
@@ -164,7 +165,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						if (containerEntries != null) {
 							for (int j = 0; j < containerEntries.length; j++) {
 								IPathEntry newEntry = cloneEntry(projectPath, containerEntries[j]);
-								list.add(newEntry);
+								listEntries.add(newEntry);
 							}
 						}
 					}
@@ -172,15 +173,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					IPathEntry clone = cloneEntry(projectPath, entry);
 					IPathEntry e = getExpandedPathEntry(clone, cproject);
 					if (e != null) {
-						list.add(e);
+						listEntries.add(e);
 					}
 				}
 			}
-			entries = new IPathEntry[list.size()];
-			list.toArray(entries);
+			listEntries.trimToSize();
+			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
 			if (generateMarkers) {
 				final ICProject finalCProject = cproject;
-				final IPathEntry[] finalEntries = entries;
+				final IPathEntry[] finalEntries = resolvedEntries; 
 				Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -203,9 +204,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				};
 				markerTask.schedule();
 			}
-			resolvedMap.put(cproject, entries);
+			resolvedMap.put(cproject, listEntries);
+		} else {
+			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
 		}
-		return entries;
+		return resolvedEntries;
 	}
 
 	private IPathEntry getExpandedPathEntry(IPathEntry entry, ICProject cproject) throws CModelException {
@@ -387,7 +390,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		try {
-			IPathEntry[] oldResolvedEntries = (IPathEntry[]) resolvedMap.get(cproject);
+			IPathEntry[] oldResolvedEntries = null;
+			ArrayList listEntries = (ArrayList)resolvedMap.get(cproject);
+			if (listEntries != null) {
+				oldResolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
+			}
 			SetPathEntriesOperation op = new SetPathEntriesOperation(cproject, oldResolvedEntries, newEntries);
 			CModelManager.getDefault().runOperation(op, monitor);
 		} catch (CoreException e) {
@@ -482,7 +489,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				continue;
 			}
 			remaining++;
-			oldResolvedEntries[i] = (IPathEntry[]) resolvedMap.remove(affectedProject);
+			ArrayList listEntries = (ArrayList) resolvedMap.remove(affectedProject);
+			if (listEntries != null) {
+				oldResolvedEntries[i] = (IPathEntry[]) listEntries.toArray(NO_PATHENTRIES);
+			} else {
+				oldResolvedEntries[i] = null;
+			}
 			containerPut(affectedProject, containerPath, newContainer);
 		}
 		// Nothing change.
@@ -1014,7 +1026,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (project.isAccessible()) {
 			try {
 				// Clear the old cache entries.
-				IPathEntry[] oldResolvedEntries = (IPathEntry[])resolvedMap.remove(cproject);
+				IPathEntry[] oldResolvedEntries = null;
+				ArrayList listEntries = (ArrayList) resolvedMap.remove(cproject);
+				if (listEntries != null) {
+					oldResolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
+				}
 				IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
 				ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
 				if (deltas.length > 0) {

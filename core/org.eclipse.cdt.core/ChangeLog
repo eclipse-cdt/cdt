@@ -1,3 +1,13 @@
+2004-06-21 Alain Magloire
+
+	The PathEntryManager was returning the array instead
+	of making a copy.  Potentially clients could have
+	modified the contents.
+
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* model/org/eclipse/cdt/internal/core/model/IMacroEntry.java
+	* src/org/eclipse/cdt/core/resources/ScannerProvider.java
+
 2004-06-21 Hoda Amer
 	Fix for PR 67696: [I18N] - New Class Wizard does not take project encoding into account when creating files
 	Now the encoding is taken into consideration when committing a working copy contents to a file.

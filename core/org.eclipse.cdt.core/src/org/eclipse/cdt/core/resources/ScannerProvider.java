@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -89,6 +90,31 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 			if (cproject != null) {
 				IPathEntry[] entries = cproject.getResolvedPathEntries();
 				
+				// First deal with the exclusion any entry that
+				// excludes the file should not be part of the list.
+				for (int k = 0; k < entries.length; k++) {
+					switch (entries[k].getEntryKind()) {
+						case IPathEntry.CDT_INCLUDE:
+							IIncludeEntry incEntry = (IIncludeEntry)entries[k];
+							if (CoreModelUtil.isExcluded(resPath, incEntry.fullExclusionPatternChars())) {
+								entries[k] = null;
+							}
+							break;
+						case IPathEntry.CDT_MACRO:
+							IMacroEntry macEntry = (IMacroEntry)entries[k];
+							if (CoreModelUtil.isExcluded(resPath, macEntry.fullExclusionPatternChars())) {
+								entries[k] = null;
+							}
+							break;
+						case IPathEntry.CDT_PROJECT:
+							// do nothing.
+							break;
+						default:
+							// not interrested in the other types.
+							entries[k] = null;
+					}
+				}
+
 				// We need to reorder the include/macros:
 				// includes the closest match to the resource will come first
 				// /project/src/file.c  --> /usr/local/include
@@ -101,23 +127,26 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 				// /project/src       --> NDEBUG=0
 				//
 				// We will use NDEBUG=1 only
+				
 				int count = resPath.segmentCount();
 				ArrayList includeList = new ArrayList();
 				Map symbolMap = new HashMap();
 				for (int i = 0; i < count; i++) {
 					IPath newPath = resPath.removeLastSegments(i);
 					for (int j = 0; j < entries.length; j++) {
-						IPathEntry entry = entries[j];
-						IPath otherPath = entry.getPath();
-						if (newPath.equals(otherPath)) {
-							if (entry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-								IIncludeEntry include = (IIncludeEntry)entry;
-								includeList.add(include.getFullIncludePath().toOSString());
-							} else if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {
-								IMacroEntry macro = (IMacroEntry)entry;
-								String key = macro.getMacroName();
-								if (!symbolMap.containsKey(key)) {
-									symbolMap.put(key, macro.getMacroValue());
+						if (entries[j] != null) {
+							IPathEntry entry = entries[j];
+							IPath otherPath = entry.getPath();
+							if (newPath.equals(otherPath)) {
+								if (entry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
+									IIncludeEntry include = (IIncludeEntry)entry;
+									includeList.add(include.getFullIncludePath().toOSString());
+								} else if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {
+									IMacroEntry macro = (IMacroEntry)entry;
+									String key = macro.getMacroName();
+									if (!symbolMap.containsKey(key)) {
+										symbolMap.put(key, macro.getMacroValue());
+									}
 								}
 							}
 						}
@@ -127,7 +156,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 				// Add the Project contributions last.
 				for (int i = 0; i < entries.length; i++) {
 					IPathEntry entry = entries[i];
-					if (entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
+					if (entry != null && entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
 						IResource res = resource.getWorkspace().getRoot().findMember(entry.getPath());
 						if (res != null && res.getType() == IResource.PROJECT) {
 							ICProject refCProject = CoreModel.getDefault().create((IProject)res);

@@ -52,6 +52,9 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			// Find all bindings
 			List allBindings = new ArrayList();
 			for (int i = 0; i < names.length; ++i) {
+				if (names[i].getTranslationUnit() == null)
+					// The node isn't properly hooked up, must have backtracked out of this node
+					continue;
 				IBinding[] bindings = names[i].resolvePrefix();
 				if (bindings != null)
 					for (int j = 0; j < bindings.length; ++j) {

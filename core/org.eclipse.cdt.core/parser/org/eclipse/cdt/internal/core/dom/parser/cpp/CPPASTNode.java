@@ -30,10 +30,9 @@ public class CPPASTNode extends ASTNode implements IASTNode {
     public IASTTranslationUnit getTranslationUnit() {
         if( this instanceof IASTTranslationUnit ) return (IASTTranslationUnit) this;
         IASTNode node = getParent();
-        while( ! (node instanceof IASTTranslationUnit ))
-        {
+        while(node != null && !(node instanceof IASTTranslationUnit))
             node = node.getParent();
-        }
+		
         return (IASTTranslationUnit) node;
     }
 

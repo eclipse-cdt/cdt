@@ -21,7 +21,7 @@ public class CDebuggerManager implements ICDebuggerManager {
 	public CDebuggerManager() {
 	}
 
-	public ICDebugger createDebugger(String id) {
+	public ICDebugger createDebugger(String id) throws CoreException {
 		ICDebugger debugger = null;
 
 		IExtensionPoint extension = CDebugCorePlugin.getDefault().getDescriptor().getExtensionPoint("CDebugger");
@@ -30,12 +30,7 @@ public class CDebuggerManager implements ICDebuggerManager {
 			for(int i = 0; i < extensions.length; i++){
 				if ( id.equals(extensions[i].getUniqueIdentifier()) ) {
 					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
-					try {
-						debugger = (ICDebugger)configElements[0].createExecutableExtension("class");
-					}
-					catch (CoreException e) {
-						return null;
-					}
+					debugger = (ICDebugger)configElements[0].createExecutableExtension("class");
 				}
 			}
 		}

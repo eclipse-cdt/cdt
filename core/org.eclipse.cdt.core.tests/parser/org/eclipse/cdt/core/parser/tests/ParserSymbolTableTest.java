@@ -2844,5 +2844,73 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
 		assertEquals( look, f );
 	}
+	
+	/**
+	 * 
+	 * namespace A{
+	 *    void f();
+	 * }
+	 * namespace B{
+	 *    int f;
+	 * }
+	 * namespace C{
+	 *    using namespace A;
+	 *    using namespace B;
+	 *    using f;		//ambiguous, int f or void f()?
+	 * }
+	 */
+	public void testBug43503_AmbiguousUsing() throws Exception{
+		newTable();
+		IContainerSymbol NSA = table.newContainerSymbol( "A", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( NSA );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		NSA.addSymbol( f1 );
+		
+		IContainerSymbol NSB = table.newContainerSymbol( "B", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( NSB );
+		
+		ISymbol f2 = table.newSymbol( "f", TypeInfo.t_int );
+		NSB.addSymbol( f2 );
+		
+		IContainerSymbol NSC = table.newContainerSymbol( "C", TypeInfo.t_namespace );
+		table.getCompilationUnit().addSymbol( NSC );
+		NSC.addUsingDirective( NSA );
+		NSC.addUsingDirective( NSB );
+		
+		try{
+			NSC.addUsingDeclaration( "f" );
+			assertTrue( false );
+		} catch ( ParserSymbolTableException e ){
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
+		}
+	}
+	
+	/**
+	 * void f( void );
+	 * void f( int );
+	 * 
+	 * void * pF = &f;  //lookup without function parameters, should be ambiguous
+	 * @throws Exception
+	 */
+	public void testBug43503_UnableToResolveFunction() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		table.getCompilationUnit().addSymbol( f1 );
+		table.getCompilationUnit().addSymbol( f2 );
+		
+		try{
+			table.getCompilationUnit().lookup( "f" );
+			assertTrue( false );
+		} catch( ParserSymbolTableException e ){
+			assertEquals( e.reason, ParserSymbolTableException.r_UnableToResolveFunction );
+		}
+		
+	}
 }
 

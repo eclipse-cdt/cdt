@@ -657,7 +657,7 @@ public class ParserSymbolTable {
 					return (ISymbol) functionList.getFirst();
 				} else {
 					data.foundItems.addAll( functionList );
-					return null;
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_UnableToResolveFunction );
 				}
 			} else {
 				return resolveFunction( data, functionList );
@@ -3074,7 +3074,14 @@ public class ParserSymbolTable {
 	
 			//figure out which declaration we are talking about, if it is a set of functions,
 			//then they will be in data.foundItems (since we provided no parameter info);
-			BasicSymbol obj = (BasicSymbol)ParserSymbolTable.resolveAmbiguities( data );
+			BasicSymbol obj = null;
+			try{
+				obj = (BasicSymbol)ParserSymbolTable.resolveAmbiguities( data );
+			} catch ( ParserSymbolTableException e ) {
+				if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
+					throw e;
+				}
+			}
 	
 			if( data.foundItems == null ){
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidUsing );				

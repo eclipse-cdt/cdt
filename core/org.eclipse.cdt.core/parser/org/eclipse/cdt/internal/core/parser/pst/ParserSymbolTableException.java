@@ -44,6 +44,7 @@ public class ParserSymbolTableException extends Exception {
 	public static final int r_BadTemplate			=  4;
 	public static final int r_InvalidUsing			=  5;
 	public static final int r_BadVisibility			=  6;
+	public static final int r_UnableToResolveFunction = 7;
 	
 	public int reason = -1;
 }

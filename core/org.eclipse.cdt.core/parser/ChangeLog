@@ -1,3 +1,10 @@
+2003-09-30 Andrew Niefer
+	PST changes for bug 43503 - parser needs to know the different between ambiguous functions
+	and no functions when no parameter information is provided
+	- throw r_UnableToResolveFunction if we have more than 1 function and no parameter info was given
+	- handle this case in addUsingDeclaration.
+	* note that r_UnableToResolveFunction doesn't necessarily mean ambiguous if we had enough information
+
 2003-09-29 Hoda Amer
 	Solution to bug#43679 : Exceptions in indexer 
 	

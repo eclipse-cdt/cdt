@@ -8,8 +8,6 @@
 
 <context id ="cdt_u_gdb_mi_pref">
    <description>Enter a timeout value in milliseconds. </description>
-   <topic href="cdt_u_gdb_mi_pref.htm"
-   	label="GDB MI preference page"/>
 </context>
 
 </contexts>

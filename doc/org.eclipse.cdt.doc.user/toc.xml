@@ -104,6 +104,7 @@
           </topic>
      </topic>
      <topic label="Reference" href="cdt_o_ref.htm">
+          <topic label="CDT icons" href="cdt_u_icons.htm"/>
           <topic label="Project properties" href="cdt_o_proj_prop_pages.htm">
                <topic label="Make Builder page, C/C++ Properties window" href="cdt_u_newproj_buildset.htm"/>
                <topic label="Error Parsers, C/C++ Properties window" href="cdt_u_newproj_parser_error.htm"/>
@@ -123,13 +124,13 @@
                     <topic label="Debug preferences" href="cdt_u_dbg_pref.htm"/>
                </topic>
           </topic>
-          <topic label="Run and Debug" href="cdt_o_run_dbg_pages.htm">
-               <topic label="Main page, Run/Debug dialog box" href="cdt_u_run_dbg_main.htm"/>
-               <topic label="Arguments page, Run/Debug dialog box" href="cdt_u_run_dbg_arg.htm"/>
-               <topic label="Environment page, Run/Debug dialog box" href="cdt_u_run_dbg_env.htm"/>
-               <topic label="Debugger page, Run/Debug dialog box" href="cdt_u_run_dbg_dbg.htm"/>
-               <topic label="Source page, Run/Debug dialog box" href="cdt_u_run_dbg_srce.htm"/>
-               <topic label="Common page, Run/Debug dialog box" href="cdt_u_run_dbg_comm.htm"/>
+          <topic label="Run and Debug dialog boxes" href="cdt_o_run_dbg_pages.htm">
+               <topic label="Main page, Run or Debug dialog box" href="cdt_u_run_dbg_main.htm"/>
+               <topic label="Arguments page, Run or Debug dialog box" href="cdt_u_run_dbg_arg.htm"/>
+               <topic label="Environment page, Run or Debug dialog box" href="cdt_u_run_dbg_env.htm"/>
+               <topic label="Debugger page, Run or Debug dialog box" href="cdt_u_run_dbg_dbg.htm"/>
+               <topic label="Source page, Run or Debug dialog box" href="cdt_u_run_dbg_srce.htm"/>
+               <topic label="Common page, Run or Debug dialog box" href="cdt_u_run_dbg_comm.htm"/>
           </topic>
           <topic label="C/C++ editor, code templates and search preferences" href="cdt_o_ceditor_pref.htm">
                <topic label="General page, Preferences window" href="cdt_u_c_editor_gen.htm"/>

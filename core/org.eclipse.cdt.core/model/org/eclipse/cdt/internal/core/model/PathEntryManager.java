@@ -635,8 +635,13 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			switch(kind) {
 				case IPathEntry.CDT_INCLUDE: {
 					IIncludeEntry include = (IIncludeEntry)entries[i];
-					entry =  CoreModel.newIncludeEntry(resourcePath, include.getBasePath(), include.getIncludePath(),
-							include.isSystemInclude(), include.getExclusionPatterns(), include.isExported());
+					IPath baseRef = include.getBaseReference();
+					if (baseRef == null || baseRef.isEmpty()) {
+						entry =  CoreModel.newIncludeEntry(resourcePath, include.getBasePath(), include.getIncludePath(),
+								include.isSystemInclude(), include.getExclusionPatterns(), include.isExported());
+					} else {
+						entry = CoreModel.newIncludeRefEntry(resourcePath, baseRef, include.getIncludePath());
+					}
 					break;
 				}
 				case IPathEntry.CDT_LIBRARY: {
@@ -651,15 +656,25 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							}
 						}
 					}
-					entry = CoreModel.newLibraryEntry(resourcePath, library.getBasePath(),
-							library.getLibraryPath(), sourcePath, library.getSourceAttachmentRootPath(),
-							library.getSourceAttachmentPrefixMapping(), library.isExported());
+					IPath baseRef = library.getBaseReference();
+					if (baseRef == null || baseRef.isEmpty()) {
+						entry = CoreModel.newLibraryEntry(resourcePath, library.getBasePath(),
+								library.getLibraryPath(), sourcePath, library.getSourceAttachmentRootPath(),
+								library.getSourceAttachmentPrefixMapping(), library.isExported());
+					} else {
+						entry = CoreModel.newLibraryRefEntry(resourcePath, baseRef, library.getLibraryPath());
+					}
 					break;
 				}
 				case IPathEntry.CDT_MACRO: {
 					IMacroEntry macro = (IMacroEntry)entries[i];
-					entry = CoreModel.newMacroEntry(resourcePath, macro.getMacroName(), macro.getMacroValue(),
-							macro.getExclusionPatterns(), macro.isExported());
+					IPath baseRef = macro.getBaseReference();
+					if (baseRef == null || baseRef.isEmpty()) {
+						entry = CoreModel.newMacroEntry(resourcePath, macro.getMacroName(), macro.getMacroValue(),
+								macro.getExclusionPatterns(), macro.isExported());
+					} else {
+						entry = CoreModel.newMacroRefEntry(resourcePath, baseRef, macro.getMacroName());
+					}
 					break;
 				}
 				case IPathEntry.CDT_OUTPUT: {

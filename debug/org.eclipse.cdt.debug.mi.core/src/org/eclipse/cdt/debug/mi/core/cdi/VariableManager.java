@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -366,7 +367,11 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				}
 				buffer.append('(').append(type).append(')');
 			}
-			buffer.append(obj.getName());
+			if (obj instanceof ICDIRegisterObject) {
+				buffer.append("$" + obj.getName());
+			} else {
+				buffer.append(obj.getName());
+			}
 			buffer.append(')');
 			if (start != 0) {
 				buffer.append('+').append(start);
@@ -407,7 +412,11 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				buffer.append('(').append(type).append(')');
 			}
 			buffer.append('(');
-			buffer.append(obj.getName());
+			if (obj instanceof ICDIRegisterObject) {
+				buffer.append("$" + obj.getName());
+			} else {
+				buffer.append(obj.getName());
+			}
 			buffer.append(')');
 			return new VariableObject(obj, buffer.toString());
 		}

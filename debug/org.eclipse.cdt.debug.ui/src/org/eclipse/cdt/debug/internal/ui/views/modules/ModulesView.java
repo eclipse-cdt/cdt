@@ -880,6 +880,8 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 
 	private String getModuleDetail( ICModule module ) {
 		StringBuffer sb = new StringBuffer();
+		
+		// Type
 		String type = null;
 		switch( module.getType() ) {
 			case ICModule.EXECUTABLE:
@@ -894,15 +896,18 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			sb.append( type );
 			sb.append( '\n' );
 		}
+		
+		// Symbols flag
 		sb.append( ModulesMessages.getString( "ModulesView.4" ) ); //$NON-NLS-1$
 		sb.append( ( module.areSymbolsLoaded() ) ? ModulesMessages.getString( "ModulesView.5" ) : ModulesMessages.getString( "ModulesView.6" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append( '\n' );
-		if ( module.areSymbolsLoaded() ) {
-			sb.append( ModulesMessages.getString( "ModulesView.7" ) ); //$NON-NLS-1$
-			sb.append( module.getSymbolsFileName().toOSString() );
-			sb.append( '\n' );
-		}
 
+		// Symbols file
+		sb.append( ModulesMessages.getString( "ModulesView.7" ) ); //$NON-NLS-1$
+		sb.append( module.getSymbolsFileName().toOSString() );
+		sb.append( '\n' );
+
+		// CPU
 		String cpu = module.getCPU();
 		if ( cpu != null ) {
 			sb.append( ModulesMessages.getString( "ModulesView.8" ) ); //$NON-NLS-1$
@@ -910,18 +915,22 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			sb.append( '\n' );
 		}
 
+		// Base address
 		IAddress baseAddress = module.getBaseAddress();
 		if ( !baseAddress.isZero() ) {
 			sb.append( ModulesMessages.getString( "ModulesView.9" ) ); //$NON-NLS-1$
 			sb.append( baseAddress.toHexAddressString() );
 			sb.append( '\n' );
 		}
+		
+		// Size
 		long size = module.getSize();
 		if ( size > 0 ) { 
 			sb.append( ModulesMessages.getString( "ModulesView.10" ) ); //$NON-NLS-1$
 			sb.append( size );
 			sb.append( '\n' );
 		}
+
 		return sb.toString();
 	}
 

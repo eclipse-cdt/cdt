@@ -1,3 +1,15 @@
+2003-09-01 Alain Magloire
+
+	The Drag&Drop code is revisited with a facelift.
+	The good news much of the code can be removed, the Eclise
+	platform/Worbench folks refactor there code so more can now
+	be shared.  We take adavantage of this.
+	The bad news much of the code will have to be revisited
+	and rewrite again when we will start dealing with refactoring.
+
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java
+
 2003-08-31 Alain Magloire
 
 	Added new block ErrorParserBlock, not enable yet.

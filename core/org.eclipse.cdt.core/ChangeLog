@@ -1,3 +1,9 @@
+2003-09-01 Alain Magloire
+
+	Typo in the class signature.
+
+	* plugin.xml
+
 2003-08-31 Alain Magloire
 
 	Add method to save the ErrorParsers

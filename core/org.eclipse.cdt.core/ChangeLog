@@ -1,3 +1,12 @@
+2003-09-05 Alain Magloire
+
+	The PTY classes are using one instance of the master fd for Input/Output/Error
+	Streams. We need to wrap the fd access, to not throw IOException on multiple close.
+
+	* utils/org/eclipse/cdt/utils/pty/PTY.java
+	* utils/org/eclipse/cdt/utils/pty/PTYInputStream.java
+	* utils/org/eclipse/cdt/utils/pty/PTYOutputStream.java
+
 2003-09-04 Hoda Amer
 	- Added references to variables in solution of bug#42453:Expression result types not computed
 	- Solution to bug#42560: Class Cast Exception during Method definition

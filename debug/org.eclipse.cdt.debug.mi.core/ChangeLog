@@ -1,3 +1,7 @@
+2004-11-12 Alain Magloire
+	Fix for PR 78488
+	* mi/org/eclipse/cdt/debug/mi/core/command/MICommand.java
+
 2004-11-11 Alain Magloire
 	Fix for PR 75000, from PalmSource
 	* cdi/org/eclipse/cdt/debug/core/cdi/model/Variable.java

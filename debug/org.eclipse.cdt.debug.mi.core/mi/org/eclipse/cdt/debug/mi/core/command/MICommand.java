@@ -81,12 +81,26 @@ public class MICommand extends Command {
 		StringBuffer sb = new StringBuffer();
 		if (options != null && options.length > 0) {
 			for (int i = 0; i < options.length; i++) {
+				String option = options[i];
+				// If the option argument contains " or \ it must be escaped
+				if (option.indexOf('"') != -1 || option.indexOf('\\') != -1) {
+					StringBuffer buf = new StringBuffer();
+					for (int j = 0; j < option.length(); j++) {
+						char c = option.charAt(j);
+						if (c == '"' || c == '\\') {
+							buf.append('\\');
+						}
+						buf.append(c);
+					}
+					option = buf.toString();
+				}
+
 				// If the option contains a space according to
 				// GDB/MI spec we must surround it with double quotes.
-				if (options[i].indexOf('\t') != -1 || options[i].indexOf(' ') != -1) {
-					sb.append(' ').append('"').append(options[i]).append('"');
+				if (option.indexOf('\t') != -1 || option.indexOf(' ') != -1) {
+					sb.append(' ').append('"').append(option).append('"');
 				} else {
-					sb.append(' ').append(options[i]);
+					sb.append(' ').append(option);
 				}
 			}
 		}

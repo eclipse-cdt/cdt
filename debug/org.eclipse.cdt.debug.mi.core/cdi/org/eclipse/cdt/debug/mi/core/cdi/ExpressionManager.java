@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
@@ -108,6 +109,7 @@ public class ExpressionManager extends Manager {
 	}
 
 	public void update(Target target) throws CDIException {
+//		deleteAllVariables(target);
 		List eventList = new ArrayList();
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -192,6 +194,23 @@ public class ExpressionManager extends Manager {
 		}
 	}
 
+	/**
+	 * Remove variable form the maintained cache list.
+	 * @param miSession
+	 * @param varName
+	 * @return
+	 */
+	public Variable removeVariableFromList(MISession miSession, String varName) {
+		Variable var = getVariable(miSession, varName);
+		if (var != null) {
+			Target target = ((Session)getSession()).getTarget(miSession);
+			List varList = getVariableList(target);
+			varList.remove(var);
+			return var;
+		}
+		return null;
+	}
+
 	public void deleteAllVariables(Target target) throws CDIException {
 		List varList = getVariableList(target);
 		Variable[] variables = (Variable[]) varList.toArray(new Variable[varList.size()]);
@@ -215,8 +234,21 @@ public class ExpressionManager extends Manager {
 		} catch (MIException e) {
 			//throw new MI2CDIException(e);
 		}
-		List varList = getVariableList(target);
-		varList.remove(variable);
+		//List varList = getVariableList(target);
+		//varList.remove(variable);
+
+		// remove any children
+		ICDIVariable[] children = variable.children;
+		if (children != null) {
+			for (int i = 0; i < children.length; ++i) {
+				if (children[0] instanceof Variable) {
+					Variable child = (Variable)children[i];
+					MIVarDeletedEvent event = new MIVarDeletedEvent(miSession, child.getMIVar().getVarName());
+					miSession.fireEvent(event);
+				}
+			}
+		}
+		miSession.fireEvent(new MIVarDeletedEvent(miSession, variable.getMIVar().getVarName()));
 	}
 
 }

@@ -164,6 +164,13 @@ public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 	void signal(ICDISignal signal) throws CDIException;
 
 	/**
+	 * Returns the Runtime options for this target debug session.
+	 * 
+	 * @return the configuration description
+	 */
+	ICDIRuntimeOptions getRuntimeOptions();
+
+	/**
 	 * Return a ICDICondition
 	 */
 	ICDICondition createCondition(int ignoreCount, String expression);

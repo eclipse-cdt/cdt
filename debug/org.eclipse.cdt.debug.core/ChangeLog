@@ -1,3 +1,9 @@
+2004-10-18 Alain Magloire
+	Make ICDIRuntimeOptions be part of ICDITarget
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIRuntimeOptions.java
+
 2004-10-18 David Inglis
 	Update to new ICDIDebugger interface deprecating old
 	

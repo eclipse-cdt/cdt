@@ -110,13 +110,6 @@ public interface ICDISession {
 	ICDIConfiguration getConfiguration();
 
 	/**
-	 * Returns the Runtime options for this debug session.
-	 * 
-	 * @return the configuration description
-	 */
-	ICDIRuntimeOptions getRuntimeOptions();
-
-	/**
 	 * Causes this element to terminate, generating a <code>KIND_TERMINATE</code> event.  
 	 *
 	 * @exception CDIException on failure. Reasons include:

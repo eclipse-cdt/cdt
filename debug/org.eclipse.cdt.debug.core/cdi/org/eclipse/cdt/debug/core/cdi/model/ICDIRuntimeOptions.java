@@ -9,16 +9,18 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
 
 import java.util.Properties;
+
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
  * Describes the configuration of debug session.
  * 
  * @since Aug 6, 2002
  */
-public interface ICDIRuntimeOptions {
+public interface ICDIRuntimeOptions extends ICDIObject {
 
 	/**
 	 * Program/Inferior arguments.

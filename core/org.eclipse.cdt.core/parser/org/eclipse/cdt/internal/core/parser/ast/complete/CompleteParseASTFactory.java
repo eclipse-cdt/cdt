@@ -100,6 +100,7 @@ import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -1160,9 +1161,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
 	private boolean createConstructorReference( ISymbol classSymbol, ASTExpression expressionList, ITokenDuple duple, List references ){
 		if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
-			TypeInfo info = classSymbol.getTypeInfo().getFinalType(true);
+			TypeInfoProvider provider = pst.getTypeInfoProvider();
+			TypeInfo info = classSymbol.getTypeInfo().getFinalType( provider );
 			classSymbol = info.getTypeSymbol();
-			info.release();
+			provider.returnTypeInfo( info );
 		}
 		if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
 			return false;
@@ -1294,14 +1296,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			TypeInfo lhsInfo = ((ASTExpression)lhs).getResultType().getResult();
 			if(lhsInfo != null){
+				TypeInfoProvider provider = pst.getTypeInfoProvider();
 				TypeInfo info = null;
 				try{
-					info = lhsInfo.getFinalType(true);
+					info = lhsInfo.getFinalType( provider );
 				} catch ( ParserSymbolTableError e ){
 					return null;
 				}
 				ISymbol containingScope = info.getTypeSymbol();
-				info.release();
+				provider.returnTypeInfo( info );
 //				assert containingScope != null : "Malformed Expression";	
 				if( containingScope instanceof IDeferredTemplateInstance )
 					return ((IDeferredTemplateInstance) containingScope).getTemplate().getTemplatedSymbol();
@@ -1335,7 +1338,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return info;	
 		}
 		try{
-	     	info = ParserSymbolTable.getConditionalOperand(second, third);
+	     	info = pst.getConditionalOperand(second, third);
 	     	return info;
 		} catch(ParserSymbolTableException e){
 			// empty info
@@ -3519,9 +3522,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					} catch (ASTSemanticException e) {
 					}
 					if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
-						TypeInfo info = classSymbol.getTypeInfo().getFinalType(true);
+						TypeInfo info = classSymbol.getTypeInfo().getFinalType( pst.getTypeInfoProvider() );
 						classSymbol = (IContainerSymbol) info.getTypeSymbol();
-						info.release();
+						pst.getTypeInfoProvider().returnTypeInfo( info );
 					}
 					if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
 						return null;
@@ -3607,38 +3610,31 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 */
 	public boolean validateIndirectMemberOperation(IASTNode node) {
 		List pointerOps = null;
+		TypeInfoProvider provider = pst.getTypeInfoProvider();
 		TypeInfo typeInfo = null;
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
-			typeInfo = symbol.getTypeInfo().getFinalType(true);
+			typeInfo = symbol.getTypeInfo().getFinalType( provider );
 			pointerOps = typeInfo.getPtrOperators();
-			typeInfo.release();
+			provider.returnTypeInfo( typeInfo );
 		}
 		else if( node instanceof ASTExpression )
 		{
 			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
-			if( typeSymbol != null )
-			{
-				typeInfo = typeSymbol.getTypeInfo().getFinalType(true);
+			if( typeSymbol != null ){
+				typeInfo = typeSymbol.getTypeInfo().getFinalType( provider );
 				pointerOps = typeInfo.getPtrOperators();
+				provider.returnTypeInfo( typeInfo );
 			}
 		}
 		else
 			return false;
 		
-		try
-		{
-			if( pointerOps == null || pointerOps.isEmpty() ) return false;
-			TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
-			if( lastOperator.getType() == TypeInfo.PtrOp.t_array || lastOperator.getType() == TypeInfo.PtrOp.t_pointer ) return true;
-			return false;
-		}
-		finally
-		{
-			if( typeInfo != null )
-				typeInfo.release();
-		}
+		if( pointerOps == null || pointerOps.isEmpty() ) return false;
+		TypeInfo.PtrOp lastOperator = (PtrOp) pointerOps.get( pointerOps.size() - 1 );
+		if( lastOperator.getType() == TypeInfo.PtrOp.t_array || lastOperator.getType() == TypeInfo.PtrOp.t_pointer ) return true;
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -3649,9 +3645,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
-			TypeInfo typeInfo = symbol.getTypeInfo().getFinalType(true);
-			pointerOps = typeInfo.getPtrOperators();
-			typeInfo.release();
+			TypeInfoProvider provider = pst.getTypeInfoProvider();
+			TypeInfo info = symbol.getTypeInfo().getFinalType( provider );
+			pointerOps = info.getPtrOperators();
+			provider.returnTypeInfo( info );
 		}
 		else if( node instanceof ASTExpression )
 		{
@@ -3688,7 +3685,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * @return
 	 */
 	public boolean validateCaches() {
-		return cache.isBalanced();
+		return cache.isBalanced() && (pst.getTypeInfoProvider().numAllocated() == 0);
 	}
 
 }

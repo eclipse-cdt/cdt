@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 
@@ -43,9 +44,11 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
     public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
     	ISymbol sym = getSymbol();
     	IContainerSymbol result = null;
+    	ParserSymbolTable.TypeInfoProvider provider = sym.getSymbolTable().getTypeInfoProvider();
 		TypeInfo info = null;
+		
 		try{
-			info = sym.getTypeInfo().getFinalType(true);
+			info = sym.getTypeInfo().getFinalType( provider );
 		} catch( ParserSymbolTableError e ){
 			throw new LookupError();
 		}
@@ -55,15 +58,16 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
 		else if( sym instanceof IContainerSymbol )
 			result = (IContainerSymbol) sym;
 	
-		info.release();
+		provider.returnTypeInfo( info );
 		return result;
     }
     
     public boolean shouldFilterLookupResult( ISymbol sym ){
     	boolean result = false;
+    	ParserSymbolTable.TypeInfoProvider provider = sym.getSymbolTable().getTypeInfoProvider();
     	TypeInfo info = null;
     	try{
-			info = getSymbol().getTypeInfo().getFinalType(true);
+			info = getSymbol().getTypeInfo().getFinalType( provider );
 		} catch( ParserSymbolTableError e ){
 			return true;
 		}
@@ -74,7 +78,7 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
 		if( info.checkBit( TypeInfo.isVolatile ) && !sym.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
 			result = true;
 		
-		info.release();
+		provider.returnTypeInfo( info );
 		return result;
 		
     }

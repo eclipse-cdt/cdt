@@ -170,7 +170,7 @@ public final class TemplateEngine {
 				try {
 					TypeInfo info = new TypeInfo( param.getTypeInfo() );
 					info.setType( info.getTemplateParameterType() );
-					cost = ParserSymbolTable.checkStandardConversionSequence( arg, info );
+					cost = param.getSymbolTable().checkStandardConversionSequence( arg, info );
 				} catch (ParserSymbolTableException e) {
 				}
 				
@@ -179,7 +179,7 @@ public final class TemplateEngine {
 				}
 			} finally{
 				if( cost != null )
-					cost.release();
+					cost.release( param.getSymbolTable().getTypeInfoProvider() );
 			}
 		}
 		return true;
@@ -312,7 +312,7 @@ public final class TemplateEngine {
 	 */
 	static private TypeInfo getArgumentTypeForDeduction( TypeInfo aInfo, boolean pIsAReferenceType ) throws ParserSymbolTableException{
 		
-		TypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo, false );
+		TypeInfo a = ParserSymbolTable.getFlatTypeInfo( aInfo, null );
 		
 		if( !pIsAReferenceType ){
 			ISymbol aSymbol = a.getTypeSymbol();
@@ -694,7 +694,7 @@ public final class TemplateEngine {
 
 	static private boolean deduceArgument( Map map, ISymbol p, TypeInfo a ){
 		
-		a = ParserSymbolTable.getFlatTypeInfo( a, false );
+		a = ParserSymbolTable.getFlatTypeInfo( a, null );
 		
 		if( map.containsKey( p ) ){
 			TypeInfo current = (TypeInfo)map.get( p );

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
 
 /**
  * @author jcamelon
@@ -175,14 +176,16 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 		ExpressionResult result = getResultType();
 		TypeInfo type = (result != null ) ? result.getResult() : null;
 		IContainerSymbol containerSymbol = null;
-		if( type != null ){
-			type = type.getFinalType(true);
+		
+		if( type != null && type.getTypeSymbol() != null ){
+			TypeInfoProvider provider = type.getTypeSymbol().getSymbolTable().getTypeInfoProvider();
+			type = type.getFinalType( provider );
 			if( type.isType( TypeInfo.t_type ) && 
 				type.getTypeSymbol() != null   && type.getTypeSymbol() instanceof IContainerSymbol )
 			{
 				containerSymbol = (IContainerSymbol) type.getTypeSymbol();
 			}
-			type.release();
+			provider.returnTypeInfo( type );
 		}
 				
 		return containerSymbol;
@@ -193,18 +196,15 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 		TypeInfo type = ( result != null ) ? result.getResult() : null;
 		if( type != null ){
 			boolean answer = false;
-			type = type.getFinalType(true);
-			if( type.checkBit( TypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( TypeInfo.isConst ) )
-			{
-				
+			TypeInfoProvider provider = symbol.getSymbolTable().getTypeInfoProvider(); 
+			type = type.getFinalType( provider );
+			if( type.checkBit( TypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( TypeInfo.isConst ) )	
 				answer = true;
-			}
 			
 			if( type.checkBit( TypeInfo.isVolatile ) && !symbol.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
-			{
 				answer = true;
-			}
-			type.release();
+			
+			provider.returnTypeInfo( type );
 			return answer;
 		}
 		

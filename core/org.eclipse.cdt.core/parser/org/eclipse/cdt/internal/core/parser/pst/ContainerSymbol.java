@@ -381,7 +381,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		List objList = null;
 		
 		try{
-			symbol = ParserSymbolTable.resolveAmbiguities( data );
+			symbol = getSymbolTable().resolveAmbiguities( data );
 		} catch ( ParserSymbolTableException e ) {
 			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
 				throw e;
@@ -463,7 +463,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		ParserSymbolTable.lookup( data, this );
 	
-		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		ISymbol found = getSymbolTable().resolveAmbiguities( data );
 		
 		if( isTemplateMember() && found instanceof ITemplateSymbol ) {
 			boolean areWithinTemplate = false;
@@ -490,7 +490,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		ParserSymbolTable.lookup( data, this );
 	
-		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		ISymbol found = getSymbolTable().resolveAmbiguities( data );
 		
 		if( isTemplateMember() && found instanceof ITemplateSymbol ) {
 			return TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) found );
@@ -546,7 +546,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		data.foundItems = ParserSymbolTable.lookupInContained( data, container );
 		if( data.foundItems != null )
-			return ParserSymbolTable.resolveAmbiguities( data );
+			return getSymbolTable().resolveAmbiguities( data );
 		return null;
 	}
 
@@ -571,7 +571,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.foundItems = ParserSymbolTable.lookupInContained( data, container );
 		
 		if( data.foundItems != null ){
-			ISymbol symbol = ParserSymbolTable.resolveAmbiguities( data ); 
+			ISymbol symbol = getSymbolTable().resolveAmbiguities( data ); 
 			return (IParameterizedSymbol) (( symbol instanceof IParameterizedSymbol ) ? symbol : null);
 		} 
 		
@@ -609,7 +609,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
 	
 		if( data.foundItems != null ){
-			foundSymbol = ParserSymbolTable.resolveAmbiguities( data );
+			foundSymbol = getSymbolTable().resolveAmbiguities( data );
 		}
 			
 		if( foundSymbol == null && inSymbol.getContainingSymbol() != null ){
@@ -630,7 +630,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.qualified = true;
 		ParserSymbolTable.lookup( data, this );
 	
-		return ParserSymbolTable.resolveAmbiguities( data );	
+		return getSymbolTable().resolveAmbiguities( data );	
 	}
 	
 	/* (non-Javadoc)
@@ -651,7 +651,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.qualified = true;
 		ParserSymbolTable.lookup( data, this );
 	
-		return ParserSymbolTable.resolveAmbiguities( data ); 
+		return getSymbolTable().resolveAmbiguities( data ); 
 	}
 
 	/* (non-Javadoc)
@@ -691,9 +691,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ISymbol paramType = null;
 		for( int i = 0; i < size; i++ ){
 			param = (TypeInfo) parameters.get(i);
-			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( param, true );
+			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( param, getSymbolTable().getTypeInfoProvider() );
 			paramType = info.getTypeSymbol();
-			info.release();
+			getSymbolTable().getTypeInfoProvider().returnTypeInfo( info );
 		
 			if( paramType == null ){
 				continue;
@@ -724,7 +724,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		ParserSymbolTable.lookup( data, this );
 	
-		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		ISymbol found = getSymbolTable().resolveAmbiguities( data );
 	
 		//if we haven't found anything, or what we found is not a class member, consider the 
 		//associated scopes
@@ -751,7 +751,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				}
 			}
 		
-			found = ParserSymbolTable.resolveAmbiguities( data );
+			found = getSymbolTable().resolveAmbiguities( data );
 		}
 	
 		if( found instanceof IParameterizedSymbol )
@@ -779,7 +779,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			public TypeFilter getFilter() { return FUNCTION_FILTER; }
 		};
 		ParserSymbolTable.lookup( data, this );
-		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
+		return (IParameterizedSymbol) getSymbolTable().resolveAmbiguities( data ); 
 	}
 	
 	/* (non-Javadoc)
@@ -795,7 +795,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		ParserSymbolTable.lookup( data, this );
 	
-		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data ); 
+		return (IParameterizedSymbol) getSymbolTable().resolveAmbiguities( data ); 
 	}
 
 	/* (non-Javadoc)
@@ -806,7 +806,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name );
 		
 		ParserSymbolTable.lookup( data, this );
-		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		ISymbol found = getSymbolTable().resolveAmbiguities( data );
 		if( found != null ){
 			if( (found.isType( TypeInfo.t_templateParameter ) && found.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template) ||
 				     found.isType( TypeInfo.t_template ) )
@@ -834,7 +834,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		data.exactFunctionsOnly = forDefinition;
 		
 		ParserSymbolTable.lookup( data, this );
-		ISymbol found = ParserSymbolTable.resolveAmbiguities( data );
+		ISymbol found = getSymbolTable().resolveAmbiguities( data );
 
 		return found;
 	}
@@ -885,7 +885,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		if( data.foundItems == null || data.foundItems.isEmpty() ){
 			if( constructors != null ){
 				if( paramList != null ){
-					ParserSymbolTable.resolveFunction( data, constructors );
+					getSymbolTable().resolveFunction( data, constructors );
 					return constructors;
 				} 
 				return constructors;
@@ -911,7 +911,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			if( obj instanceof List ){
 				//a list must be all functions?
 				if( paramList != null )
-					ParserSymbolTable.resolveFunction( data, (List) obj );
+					getSymbolTable().resolveFunction( data, (List) obj );
 				list.addAll( (List) obj );
 			} else{
 				if( paramList != null && ((ISymbol)obj).isType( TypeInfo.t_function ) )
@@ -921,7 +921,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					else 
 						tempList.clear();
 					tempList.add( obj );
-					ParserSymbolTable.resolveFunction( data, tempList );
+					getSymbolTable().resolveFunction( data, tempList );
 					list.addAll( tempList );
 				} else {
 					list.add( obj );

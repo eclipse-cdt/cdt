@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
@@ -217,6 +218,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		TypeInfo info = null;
 		TypeInfo fInfo = null;
 	
+		TypeInfoProvider provider = getSymbolTable().getTypeInfoProvider();
+		
 		for( int i = 0; i < size; i++ ){
 			ISymbol p = (ISymbol) params.get(i);
 			ISymbol pf = (ISymbol) functionParams.get(i);
@@ -225,8 +228,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			fInfo = pf.getTypeInfo();
 			
 			//parameters that differ only in the use of equivalent typedef types are equivalent.
-			info = ParserSymbolTable.getFlatTypeInfo( info, true );
-			fInfo = ParserSymbolTable.getFlatTypeInfo( fInfo, true );
+			info = ParserSymbolTable.getFlatTypeInfo( info, provider );
+			fInfo = ParserSymbolTable.getFlatTypeInfo( fInfo, provider );
 			
 			for( TypeInfo nfo = info; nfo != null; nfo = fInfo ){
 				//an array declaration is adjusted to become a pointer declaration
@@ -265,8 +268,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			
 			boolean equals = info.equals( fInfo );
 
-			info.release();
-			fInfo.release();
+			provider.returnTypeInfo( info );
+			provider.returnTypeInfo( fInfo );
 			
 			if( ! equals )
 				return false;

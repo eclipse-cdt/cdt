@@ -184,7 +184,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			paramType = TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) getContainingSymbol() );
 		}
 		
-		TypeInfo param = ParserSymbolTable.TypeInfoProvider.getTypeInfo();
+		TypeInfo param = getSymbolTable().getTypeInfoProvider().getTypeInfo();
 		param.setType( TypeInfo.t_type );
 		param.setBit( true, TypeInfo.isConst );
 		param.setTypeSymbol( paramType );
@@ -196,7 +196,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			constructor = lookupConstructor( parameters );
 		} catch ( ParserSymbolTableException e ){
 		} finally {
-			param.release();
+			getSymbolTable().getTypeInfoProvider().returnTypeInfo( param );
 		}
 		
 		if( constructor == null ){
@@ -223,7 +223,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			constructors = new ArrayList( getConstructors() );
 		}
 		if( constructors != null )	
-			return ParserSymbolTable.resolveFunction( data, constructors );
+			return getSymbolTable().resolveFunction( data, constructors );
 		return null;
 	}
 
@@ -363,7 +363,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		};
 
 		ParserSymbolTable.lookup( data, this );
-		return ParserSymbolTable.resolveAmbiguities( data ); 
+		return getSymbolTable().resolveAmbiguities( data ); 
 	}
 	
 	public IParameterizedSymbol lookupFunctionForFriendship( String name, final List parameters ) throws ParserSymbolTableException{
@@ -385,7 +385,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		};
 		
 		ParserSymbolTable.lookup( data, this );
-		return (IParameterizedSymbol) ParserSymbolTable.resolveAmbiguities( data );
+		return (IParameterizedSymbol) getSymbolTable().resolveAmbiguities( data );
 	}
 	
 	

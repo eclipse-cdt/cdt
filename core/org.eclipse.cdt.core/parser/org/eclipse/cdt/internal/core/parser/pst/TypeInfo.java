@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.cdt.core.parser.Enum;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfoProvider;
 
 
 public class TypeInfo {
@@ -287,12 +288,13 @@ public class TypeInfo {
 	
 	/**
 	 * 
-	 * @param usePool - whether or not use to the pool, if true, TypeInfo.release() must
-	 *                  be called on the returned TypeInfo when itis no longer needed
+	 * @param infoProvider - TypeInfoProvider to use if pooling the TypeInfo created, if null,
+	 *                       pooling is not used.  If pooling is used, TypeInfoProvider.returnTypeInfo
+	 *                       must be called when the TypeInfo is no longer needed
 	 * @return
 	 */
-	public TypeInfo getFinalType(boolean usePool){
-		return ParserSymbolTable.getFlatTypeInfo( this, usePool ); 
+	public TypeInfo getFinalType(TypeInfoProvider infoProvider){
+		return ParserSymbolTable.getFlatTypeInfo( this, infoProvider ); 
 	}
 	/**
 	 * 
@@ -565,9 +567,9 @@ public class TypeInfo {
 			_operatorExpressions = Collections.EMPTY_LIST;
 	}
 
-	public void release() {
-		ParserSymbolTable.TypeInfoProvider.returnTypeInfo( this );
-	}
+//	public void release() {
+//		ParserSymbolTable.TypeInfoProvider.returnTypeInfo( this );
+//	}
 
 	
 	private int 	_typeBits = 0;

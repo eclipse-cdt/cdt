@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
@@ -994,9 +995,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		if (obj instanceof IFile && selection.size() == 1) {
 			IFile file = (IFile) obj;
 			IWorkbenchPage page = getSite().getPage();
-			IEditorPart editorArray[] = page.getEditors();
-			for (int i = 0; i < editorArray.length; ++i) {
-				IEditorPart editor = editorArray[i];
+			IEditorReference[] editorReferences = page.getEditorReferences();
+			for (int i = 0; i < editorReferences.length; ++i) {
+				IEditorPart editor = editorReferences[i].getEditor(false);
 				IEditorInput input = editor.getEditorInput();
 				if (input instanceof IFileEditorInput
 				&& file.equals(((IFileEditorInput)input).getFile())) {
@@ -1010,9 +1011,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			if (res == null || !(res instanceof IFile))
 				return;
 			IWorkbenchPage page = getSite().getPage();
-			IEditorPart editorArray[] = page.getEditors();
-			for (int i = 0; i < editorArray.length; ++i) {
-				IEditorPart editor = editorArray[i];
+			IEditorReference editorReferences[] = page.getEditorReferences();
+			for (int i = 0; i < editorReferences.length; ++i) {
+				IEditorPart editor = editorReferences[i].getEditor(false);
 				IEditorInput input = editor.getEditorInput();
 				if (input instanceof IFileEditorInput
 				&& res.equals(((IFileEditorInput)input).getFile())) {

@@ -166,7 +166,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		for (int i = 0; i < bytes.length; i++) {
-			long l = new Byte(bytes[i]).longValue();
+			long l = new Byte(bytes[i]).longValue() & 0xff;
 			String value = "0x" + Long.toHexString(l);
 			MIDataWriteMemory mw = factory.createMIDataWriteMemory(offset + i,
 				expression, MIFormat.HEXADECIMAL, 1, value);

@@ -40,9 +40,6 @@ public class MakeBuilder extends AbstractCExtension implements ICBuilder {
 		return null;
 	}
 
-	public void setOptimization() {
-	}
-
 	public IProject[] build(CIncrementalBuilder cbuilder) {
 		ICExtensionReference ref = getExtensionReference();
 		System.out.println("MakeBuilder!!!!\n Command is:" + ref.getExtensionData("command"));
@@ -51,6 +48,9 @@ public class MakeBuilder extends AbstractCExtension implements ICBuilder {
 
 	public String getID() {
 		return CCorePlugin.getDefault().PLUGIN_ID + ".makeBuilder";
+	}
+
+	public void setOptimization(IOptimization o) {
 	}
 
 }

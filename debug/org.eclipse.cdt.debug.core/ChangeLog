@@ -1,4 +1,8 @@
 2003-05-06 Mikhail Khodjaiants
+	Check if the underlying debugger supports expression evaluation in the "canEvaluate" method.
+	* CDebugTarget.java
+
+2003-05-06 Mikhail Khodjaiants
 	Added tooltips to breakpoints and watchpoints.
 	* CAddressBreakpoint.java
 	* CBreakpoint.java

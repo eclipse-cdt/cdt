@@ -2029,6 +2029,11 @@ public class CDebugTarget extends CDebugElement
 		return null;
 	}
 
+	protected boolean supportsExpressionEvaluation()
+	{
+		return getConfiguration().supportsExpressionEvaluation();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICExpressionEvaluator#evaluateExpressionToString(String)
 	 */
@@ -2050,7 +2055,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canEvaluate()
 	{
-		return isAvailable() && isSuspended();
+		return supportsExpressionEvaluation() && isAvailable() && isSuspended();
 	}
 
 	/* (non-Javadoc)

@@ -134,7 +134,7 @@ public class ASTMacro implements IASTMacro {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getMacroType()
 	 */
-	public MacroType getMacroType() {
+	public IMacroDescriptor.MacroType getMacroType() {
 		return innerMacro.getMacroType();
 	}
 	/* (non-Javadoc)

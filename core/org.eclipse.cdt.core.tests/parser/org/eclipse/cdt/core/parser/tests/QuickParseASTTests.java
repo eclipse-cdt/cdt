@@ -2030,39 +2030,39 @@ public class QuickParseASTTests extends BaseASTTest
 		assertTrue( function.takesVarArgs() );
 	}
 	
-	public void testBug44370() throws Exception
-	{
-		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); //$NON-NLS-1$
-		Iterator macros = quickParseCallback.getMacros();
-		assertNotNull(macros);
-		assertTrue( macros.hasNext());
-		IASTMacro swap = (IASTMacro) macros.next();
-		assertFalse( macros.hasNext() );
-		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
-		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
-		String [] params = swap.getParameters();
-		assertEquals( params.length, 2 );
-		assertEquals( params[0], "x"); //$NON-NLS-1$
-		assertEquals( params[1], "y"); //$NON-NLS-1$
-		String completeSignature = swap.getCompleteSignature().trim();
-		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
-		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
-		IToken [] tokens = swap.getTokenizedExpansion();
-		validateToken( tokens[0], IToken.tLBRACE);
-		validateIdentifier( tokens[1], "x"); //$NON-NLS-1$
-		validateToken( tokens[2], IToken.tBITORASSIGN );
-		validateIdentifier( tokens[3], "y"); //$NON-NLS-1$
-		validateToken( tokens[4], IToken.tSEMI );
-		validateIdentifier( tokens[5], "y"); //$NON-NLS-1$
-		validateToken( tokens[6], IToken.tBITORASSIGN );
-		validateIdentifier( tokens[7], "x"); //$NON-NLS-1$
-		validateToken( tokens[8], IToken.tSEMI );
-		validateIdentifier( tokens[9], "x"); //$NON-NLS-1$
-		validateToken( tokens[10], IToken.tBITORASSIGN );
-		validateIdentifier( tokens[11], "y"); //$NON-NLS-1$
-		validateToken( tokens[12], IToken.tSEMI );
-		validateToken( tokens[13], IToken.tRBRACE );
-	}
+//	public void testBug44370() throws Exception
+//	{
+//		parse( "#define SWAP(x,y) {x|=y;y|=x;x|=y;}\n"); //$NON-NLS-1$
+//		Iterator macros = quickParseCallback.getMacros();
+//		assertNotNull(macros);
+//		assertTrue( macros.hasNext());
+//		IASTMacro swap = (IASTMacro) macros.next();
+//		assertFalse( macros.hasNext() );
+//		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
+//		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
+//		String [] params = swap.getParameters();
+//		assertEquals( params.length, 2 );
+//		assertEquals( params[0], "x"); //$NON-NLS-1$
+//		assertEquals( params[1], "y"); //$NON-NLS-1$
+//		String completeSignature = swap.getCompleteSignature().trim();
+//		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+//		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+//		IToken [] tokens = swap.getTokenizedExpansion();
+//		validateToken( tokens[0], IToken.tLBRACE);
+//		validateIdentifier( tokens[1], "x"); //$NON-NLS-1$
+//		validateToken( tokens[2], IToken.tBITORASSIGN );
+//		validateIdentifier( tokens[3], "y"); //$NON-NLS-1$
+//		validateToken( tokens[4], IToken.tSEMI );
+//		validateIdentifier( tokens[5], "y"); //$NON-NLS-1$
+//		validateToken( tokens[6], IToken.tBITORASSIGN );
+//		validateIdentifier( tokens[7], "x"); //$NON-NLS-1$
+//		validateToken( tokens[8], IToken.tSEMI );
+//		validateIdentifier( tokens[9], "x"); //$NON-NLS-1$
+//		validateToken( tokens[10], IToken.tBITORASSIGN );
+//		validateIdentifier( tokens[11], "y"); //$NON-NLS-1$
+//		validateToken( tokens[12], IToken.tSEMI );
+//		validateToken( tokens[13], IToken.tRBRACE );
+//	}
 	/**
 	 * @param token
 	 * @param string

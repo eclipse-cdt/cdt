@@ -64,6 +64,10 @@ public class CommandFactory {
 		return new MIDataListChangedRegisters();
 	}
 
+	public MIDataListRegisterNames createMIDataListRegisterNames() {
+		return new MIDataListRegisterNames();
+	}
+
 	public MIDataListRegisterNames createMIDataListRegisterNames(int[] regno) {
 		return new MIDataListRegisterNames(regno);
 	}

@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 
 /**
  * 
@@ -45,6 +46,13 @@ public interface ICDIStackFrame extends ICDIObject
 	 */
 	ICDIArgument[] getArguments() throws CDIException;
 	
+	/**
+	 * Returns the Registers
+	 * @return a collection of registers
+	 * @throws CDIException if this method fails:
+	 */
+	ICDIRegister[] getRegisters(ICDIRegisterObject[] regs);
+
 	/**
 	 * Returns the level of the stack frame.
 	 * 

@@ -19,7 +19,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 		super(rr);
 	}
 
-	String[] getRegistersNames () {
+	public String[] getRegisterNames () {
 		if (names == null) {
 			parse();
 		}

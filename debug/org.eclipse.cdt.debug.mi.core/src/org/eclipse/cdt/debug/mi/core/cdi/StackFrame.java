@@ -7,7 +7,9 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -128,6 +130,30 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			variables = new ICDIVariable[0];
 		}
 		return variables;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getRegisters(ICDIRegisterObject[])
+	 */
+	public ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) {
+		ICDIRegister[] registers = null;
+		CSession session = getCTarget().getCSession();
+		VariableManager mgr = (VariableManager)session.getVariableManager();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		try {
+			registers = new ICDIRegister[regs.length];
+			for (int i = 0; i < registers.length; i++) {
+				registers[i] = mgr.createRegister(this, regs[i].getName());
+			}
+		} catch (CDIException e) {
+			//throw e;
+			System.err.println(e);
+		}
+		if (registers == null) {
+			registers = new ICDIRegister[0];
+		}
+		return registers;
 	}
 
 	/**

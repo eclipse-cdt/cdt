@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
+import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
 import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIThreadListIds;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadListIdsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
@@ -441,10 +443,29 @@ public class CTarget  implements ICDITarget {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterGroups()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
 	 */
-	public ICDIRegisterGroup[] getRegisterGroups() throws CDIException {
-		return new ICDIRegisterGroup[0];
+	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIDataListRegisterNames registers = 
+			factory.createMIDataListRegisterNames();
+		try {
+			mi.postCommand(registers);
+			MIDataListRegisterNamesInfo info =
+				registers.getMIDataListRegisterNamesInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			String[] names = info.getRegisterNames();
+			RegisterObject[] regs = new RegisterObject[names.length];
+			for (int i = 0; i < names.length; i++) {
+				regs[i] = new RegisterObject(names[i], i);
+			}
+			return regs;
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
 	}
 
 	/**

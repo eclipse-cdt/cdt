@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
+import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
 import org.eclipse.cdt.debug.mi.core.command.MIVarShowAttributes;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
@@ -105,6 +106,25 @@ public class Variable extends CObject implements ICDIVariable {
 				throw new CDIException("No answer");
 			}
 			return info.isEditable();
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setFormat()
+	 */
+	public void setFormat(int format) throws CDIException {
+		int fmt = Format.toMIFormat(format);
+		MISession mi = getCTarget().getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIVarSetFormat var = factory.createMIVarSetFormat(miVar.getVarName(), fmt);
+		try {
+			mi.postCommand(var);
+			MIInfo info = var.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
 		}

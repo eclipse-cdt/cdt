@@ -6,10 +6,8 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 
 /**
@@ -69,12 +67,12 @@ public interface ICDITarget extends ICDIObject {
 		throws CDIException;
 
 	/**
-	 * Returns the register groups associated with this target.
+	 * Returns the register associated with this target.
 	 * 
 	 * @return a collection of register groups 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICDIRegisterGroup[] getRegisterGroups() throws CDIException;
+	ICDIRegisterObject[] getRegisterObjects() throws CDIException;
 
 	/**
 	 * Returns a collection of global variables associated with 

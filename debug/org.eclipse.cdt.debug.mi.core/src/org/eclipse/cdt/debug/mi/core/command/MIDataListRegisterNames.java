@@ -40,6 +40,10 @@ public class MIDataListRegisterNames extends MICommand
 		}
 	}
 
+	public MIDataListRegisterNamesInfo getMIDataListRegisterNamesInfo() throws MIException {
+		return (MIDataListRegisterNamesInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

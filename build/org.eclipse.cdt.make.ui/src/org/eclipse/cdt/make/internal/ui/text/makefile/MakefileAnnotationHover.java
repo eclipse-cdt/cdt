@@ -11,11 +11,15 @@
 
 package org.eclipse.cdt.make.internal.ui.text.makefile;
 
+import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * MakefileAnnotationHover
@@ -23,11 +27,13 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class MakefileAnnotationHover implements IAnnotationHover {
 
+	private IEditorPart fEditor;
+                                                                                                                             
 	/**
 	 *  
 	 */
-	public MakefileAnnotationHover() {
-		super();
+	public MakefileAnnotationHover(IEditorPart editor) {
+                fEditor = editor;
 	}
 
 	/*
@@ -38,15 +44,19 @@ public class MakefileAnnotationHover implements IAnnotationHover {
 	 */
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IDocument document = sourceViewer.getDocument();
-
 		try {
 			IRegion info = document.getLineInformation(lineNumber);
-			return document.get(info.getOffset(), info.getLength());
+			String line = document.get(info.getOffset(), info.getLength());
+			if (line != null && line.indexOf('$') != -1 && line.length() > 1) {
+				IWorkingCopyManager fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
+				IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
+				line = makefile.expandString(line);
+				return line;
+			}
+			return line;
 		} catch (BadLocationException x) {
 		}
-
 		return null;
-
 	}
 
 }

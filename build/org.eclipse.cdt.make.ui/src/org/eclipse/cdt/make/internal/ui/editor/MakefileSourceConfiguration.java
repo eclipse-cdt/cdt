@@ -176,6 +176,6 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		return new MakefileAnnotationHover();
+		return new MakefileAnnotationHover(fEditor);
 	}
 }

@@ -1,3 +1,6 @@
+2002-10-15 Mikhail Khodjaiants
+	* CDebugPreferencePage.java: Implementation of the 'Automatically switch to disassembly mode' preference.
+
 2002-10-14 Mikhail Khodjaiants
 	* CDebugUIPlugin.java: In the 'selectionChanged' method check if the thread of the new frame is current. If not make it current.
 

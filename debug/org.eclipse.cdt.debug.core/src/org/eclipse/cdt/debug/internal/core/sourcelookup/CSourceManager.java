@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -136,11 +138,15 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
 		Object result = null;
+		boolean autoDisassembly = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY );
+		
 		if ( getMode() == ISourceMode.MODE_SOURCE && getSourceLocator() != null )
 		{
 			result = getSourceLocator().getSourceElement( stackFrame );
 		}
-		if ( result == null && getDisassemblyManager() != null )
+		if ( result == null && 
+			 ( autoDisassembly || getMode() == ISourceMode.MODE_DISASSEMBLY ) && 
+			 getDisassemblyManager() != null )
 		{
 			setRealMode( ISourceMode.MODE_DISASSEMBLY );
 			result = getDisassemblyManager().getSourceElement( stackFrame );

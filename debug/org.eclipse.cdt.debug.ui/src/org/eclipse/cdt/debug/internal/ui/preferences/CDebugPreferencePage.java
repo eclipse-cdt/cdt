@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
@@ -46,6 +48,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	// View setting widgets
 	private Button fPathsButton;
+
+	// Disassembly setting widgets
+	private Button fAutoDisassemblyButton;
 
 	private PropertyChangeListener fPropertyChangeListener;
 
@@ -105,6 +110,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		createPrimitiveDisplayPreferences( composite );		
 		createSpacer( composite, 1 );
 		createViewSettingPreferences( composite );
+		createSpacer( composite, 1 );
+		createDisassemblySettingPreferences( composite );
 		setValues();
 
 		return composite;
@@ -144,6 +151,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 		fHexButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
+		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
 	}
 
 	/* (non-Javadoc)
@@ -169,6 +177,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_AUTO_DISASSEMBLY, false );
 	}
 
 	/**
@@ -196,6 +205,15 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		Composite comp = createGroupComposite( parent, 1, "Opened view default settings" );
 		fPathsButton = createCheckButton( comp, "Show full &paths" );
+	}
+
+	/**
+	 * Create the disassembly setting preferences composite widget
+	 */
+	private void createDisassemblySettingPreferences( Composite parent )
+	{
+		Composite comp = createGroupComposite( parent, 1, "Disassembly options" );
+		fAutoDisassemblyButton = createCheckButton( comp, "Automatically switch to &disassembly mode" );
 	}
 
 	/**
@@ -232,6 +250,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 			refreshViews();
 		}
 		CDebugUIPlugin.getDefault().savePluginPreferences();
+		CDebugCorePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 
@@ -291,6 +310,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, fHexButton.getSelection() );
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_AUTO_DISASSEMBLY, fAutoDisassemblyButton.getSelection() );
 	}
 
 	/**
@@ -307,5 +327,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		IPreferenceStore store = getPreferenceStore();
 		fHexButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
+		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
 	}
 }

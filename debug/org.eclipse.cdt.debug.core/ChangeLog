@@ -1,4 +1,8 @@
 2002-10-15 Mikhail Khodjaiants
+	* ICDebugConstants.java: New interface that contains the constant definitions for C/C++ debug plug-in.
+	* CSourceManager.java: Implementation of the 'Automatically switch to disassembly mode' preference.
+
+2002-10-15 Mikhail Khodjaiants
 	* CThread.java: The previous fix should be done only when switching between frames of the same thread.
 
 2002-10-14 Mikhail Khodjaiants

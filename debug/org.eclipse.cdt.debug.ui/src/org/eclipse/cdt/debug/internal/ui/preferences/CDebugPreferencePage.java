@@ -219,7 +219,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		GridData data = (GridData)fMaxNumberOfInstructionsText.getTextControl( parent ).getLayoutData();
 		data.horizontalAlignment = GridData.BEGINNING;
 		data.widthHint = convertWidthInCharsToPixels( NUMBER_OF_DIGITS + 1 );
-		fMaxNumberOfInstructionsText.setPreferencePage( this );
+		fMaxNumberOfInstructionsText.setPage( this );
 		fMaxNumberOfInstructionsText.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
 		fMaxNumberOfInstructionsText.setValidRange( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
 		String minValue = Integer.toString( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS );
@@ -237,7 +237,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private void createDisassemblyColorsField( Composite parent ) {
 		fDisassemblySourceColor = new ColorFieldEditor( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, PreferenceMessages.getString( "CDebugPreferencePage.Color_of_disassembly_source_lines_1" ), parent ); //$NON-NLS-1$
-		fDisassemblySourceColor.setPreferencePage( this );
+		fDisassemblySourceColor.setPage( this );
 		fDisassemblySourceColor.setPreferenceStore( getPreferenceStore() );
 		fDisassemblySourceColor.load();
 	}

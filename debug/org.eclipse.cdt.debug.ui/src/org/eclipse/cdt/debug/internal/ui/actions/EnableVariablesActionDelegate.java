@@ -78,13 +78,13 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 		final int size = selection.size();
 		if ( size == 0 )
 			return;
-		final Iterator enum = selection.iterator();
+		final Iterator it = selection.iterator();
 		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "EnableVariablesActionDelegate.0" ), null ); //$NON-NLS-1$
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
 			public void run() {
-				while( enum.hasNext() ) {
-					IEnableDisableTarget target = getEnableDisableTarget( enum.next() );
+				while( it.hasNext() ) {
+					IEnableDisableTarget target = getEnableDisableTarget( it.next() );
 					if ( target != null ) {
 						try {
 							if ( size > 1 ) {
@@ -119,11 +119,11 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 		Object o = sel.getFirstElement();
 		if ( getEnableDisableTarget( o ) == null )
 			return;
-		Iterator enum = sel.iterator();
+		Iterator it = sel.iterator();
 		boolean allEnabled = true;
 		boolean allDisabled = true;
-		while( enum.hasNext() ) {
-			IEnableDisableTarget target = getEnableDisableTarget( enum.next() );
+		while( it.hasNext() ) {
+			IEnableDisableTarget target = getEnableDisableTarget( it.next() );
 			if ( target != null && !target.canEnableDisable() )
 				continue;
 			if ( target.isEnabled() )

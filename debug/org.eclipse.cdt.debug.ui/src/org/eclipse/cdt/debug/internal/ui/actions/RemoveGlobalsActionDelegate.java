@@ -53,10 +53,10 @@ public class RemoveGlobalsActionDelegate extends ActionDelegate implements IView
 		if ( !(selection instanceof IStructuredSelection) )
 			return;
 		IStructuredSelection ss = (IStructuredSelection)selection;
-		final Iterator enum = ss.iterator();
+		final Iterator it = ss.iterator();
 		ArrayList list = new ArrayList( ss.size() );
-		while( enum.hasNext() ) {
-			Object obj = enum.next();
+		while( it.hasNext() ) {
+			Object obj = it.next();
 			if ( obj instanceof ICGlobalVariable )
 				list.add( obj );
 		}

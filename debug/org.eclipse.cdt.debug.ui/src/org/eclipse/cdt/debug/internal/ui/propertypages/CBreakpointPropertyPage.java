@@ -88,8 +88,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		 * Clears the error message from the message line if the error message is the error message from this field editor.
 		 */
 		protected void clearErrorMessage() {
-			if ( getPreferencePage() != null ) {
-				String message = getPreferencePage().getErrorMessage();
+			if ( getPage() != null ) {
+				String message = getPage().getErrorMessage();
 				if ( message != null ) {
 					if ( getErrorMessage().equals( message ) ) {
 						super.clearErrorMessage();
@@ -138,8 +138,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		 * Clears the error message from the message line if the error message is the error message from this field editor.
 		 */
 		protected void clearErrorMessage() {
-			if ( getPreferencePage() != null ) {
-				String message = getPreferencePage().getErrorMessage();
+			if ( getPage() != null ) {
+				String message = getPage().getErrorMessage();
 				if ( message != null ) {
 					if ( getErrorMessage().equals( message ) ) {
 						super.clearErrorMessage();

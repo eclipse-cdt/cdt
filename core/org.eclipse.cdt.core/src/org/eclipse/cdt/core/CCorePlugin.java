@@ -554,9 +554,9 @@ public class CCorePlugin extends Plugin {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask("Creating C Project", 3); //$NON-NLS-1$
+			monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
 			if (!projectHandle.exists()) {
-				projectHandle.create(description, monitor);
+				projectHandle.create(description, new SubProgressMonitor(monitor, 1));
 			}
 
 			if (monitor.isCanceled()) {
@@ -564,13 +564,13 @@ public class CCorePlugin extends Plugin {
 			}
 
 			// Open first.
-			projectHandle.open(monitor);
+			projectHandle.open(new SubProgressMonitor(monitor, 1));
 
 			// Add C Nature ... does not add duplicates
 			mapCProjectOwner(projectHandle, projectID, false);
 			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
 		} finally {
-			//monitor.done();
+			monitor.done();
 		}
 		return projectHandle;
 	}
@@ -596,19 +596,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * Method addDefaultCBuilder adds the default C make builder
-	 * @param projectHandle
-	 * @param monitor
-	 * @exception CoreException
-	 */
-	public void addDefaultCBuilder(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
-		// Set the Default C Builder.
-		CProjectNature.addCBuildSpec(projectHandle, monitor);
-	}
-
-	/**
 	 * Method to convert a project to a C nature 
-	 * & default make builder (Will always add a default builder)
 	 * All checks should have been done externally
 	 * (as in the Conversion Wizards). 
 	 * This method blindly does the conversion.
@@ -620,26 +608,7 @@ public class CCorePlugin extends Plugin {
 	 * @exception CoreException
 	 */
 
-	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID) throws CoreException {
-		this.convertProjectToC(projectHandle, monitor, projectID, true);
-
-	}
-	/**
-	 * Method to convert a project to a C nature 
-	 * & default make builder (if indicated)
-	 * All checks should have been done externally
-	 * (as in the Conversion Wizards). 
-	 * This method blindly does the conversion.
-	 * 
-	 * @param project
-	 * @param String targetNature
-	 * @param monitor
-	 * @param projectID
-	 * @param addMakeBuilder
-	 * @exception CoreException
-	 */
-
-	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID, boolean addMakeBuilder)
+	public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 		throws CoreException {
 		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
 			return;
@@ -648,23 +617,19 @@ public class CCorePlugin extends Plugin {
 		IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
 		description.setLocation(projectHandle.getFullPath());
 		createCProject(description, projectHandle, monitor, projectID);
-		if (addMakeBuilder) {
-			addDefaultCBuilder(projectHandle, monitor);
-		}
 	}
+
 	/**
 	 * Method to convert a project to a C++ nature 
-	 * & default make builder(if indicated), if it does not have one already
 	 * 
 	 * @param project
 	 * @param String targetNature
 	 * @param monitor
 	 * @param projectID
-	 * @param addMakeBuilder
 	 * @exception CoreException
 	 */
 
-	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID, boolean addMakeBuilder)
+	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID)
 		throws CoreException {
 		if ((projectHandle == null) || (monitor == null) || (projectID == null)) {
 			return;
@@ -672,31 +637,16 @@ public class CCorePlugin extends Plugin {
 		createCProject(projectHandle.getDescription(), projectHandle, monitor, projectID);
 		// now add C++ nature
 		convertProjectFromCtoCC(projectHandle, monitor);
-		if (addMakeBuilder) {
-			addDefaultCBuilder(projectHandle, monitor);
-		}
-	}
-	/**
-	* Method to convert a project to a C++ nature 
-	* & default make builder,
-	* Note: Always adds the default Make builder
-	* 
-	* @param project
-	* @param String targetNature
-	* @param monitor
-	* @param projectID
-	* @exception CoreException
-	*/
-
-	public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID) throws CoreException {
-		this.convertProjectToCC(projectHandle, monitor, projectID, true);
 	}
 
-	/**
-	 *  Instanciate the class from the extension point "ProcessList"
-	 * responsable of returning a list of process for this platform.
-	 * @return
-	 */
+	// Extract the builder from the .cdtproject.  
+	//	public ICBuilder[] getBuilders(IProject project) throws CoreException {
+	//		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
+	//		ICBuilder builders[] = new ICBuilder[extensions.length];
+	//		System.arraycopy(extensions, 0, builders, 0, extensions.length);
+	//		return builders;
+	//	}
+
 	public IProcessList getProcessList() {
 		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");
 		if (extension != null) {

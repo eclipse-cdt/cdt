@@ -90,37 +90,38 @@ public class CProjectNature implements IProjectNature {
 
     /**
      * Sets the path of the build command executable.
+     * @depercated
      */
     public void setBuildCommand(IPath locationPath, IProgressMonitor monitor) throws CoreException {
-		String newLocation= locationPath.toString();
-		String oldLocation= fBuildInfo.getBuildLocation();
-		if (!newLocation.equals(oldLocation)) {
-		    fBuildInfo.setBuildLocation(newLocation);
-		}
     }
 
     /**
      * Gets the path of the build command executable.
+     * @deprecated
      */
     public IPath getBuildCommand() throws CoreException {
+    	if( fBuildInfo == null) {
+			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+    	}
 		String buildLocation= fBuildInfo.getBuildLocation();
 	    return new Path(buildLocation);
     }
 
     /**
      * Sets the arguments for the full build.
+     * @deprecated
      */
     public void setFullBuildArguments(String arguments, IProgressMonitor monitor) throws CoreException {
-		String oldArguments= fBuildInfo.getFullBuildArguments();
-		if (!arguments.equals(oldArguments)) {
-		    fBuildInfo.setFullBuildArguments(arguments);
-		}
     }
 
     /**
      * Gets the arguments for the full build
+     * @deprecated
      */
     public String getFullBuildArguments() throws CoreException {
+		if( fBuildInfo == null) {
+			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+		}
 		String buildArguments= fBuildInfo.getFullBuildArguments();
 		if (buildArguments == null) {
 			buildArguments= "";
@@ -130,18 +131,19 @@ public class CProjectNature implements IProjectNature {
     
     /**
      * Sets the arguments for the incremental build.
+     * @deprecated
      */
     public void setIncrBuildArguments(String arguments, IProgressMonitor monitor) throws CoreException {
-		String oldArguments= fBuildInfo.getIncrementalBuildArguments();
-		if (!arguments.equals(oldArguments)) {
-			fBuildInfo.setIncrementalBuildArguments(arguments);
-		}
     }
 
     /**
      * Gets the arguments for the incremental build
+     * @deprecated
      */
     public String getIncrBuildArguments() throws CoreException {
+		if( fBuildInfo == null) {
+			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+		}
 		String buildArguments= fBuildInfo.getIncrementalBuildArguments();
 		if (buildArguments == null) {
 			buildArguments= "";
@@ -151,32 +153,41 @@ public class CProjectNature implements IProjectNature {
 
     /**
      * Sets Stop on Error
+     * @deprecated
      */
     public void setStopOnError(boolean on) throws CoreException {
-		boolean oldArgument= fBuildInfo.isStopOnError();
-		if (on != oldArgument) {
-		    fBuildInfo.setStopOnError(on);
-		}
     }
 
+	/**
+	* @deprecated
+     */
     public void setBuildCommandOverride(boolean on) throws CoreException {
-		boolean oldArgument= fBuildInfo.isDefaultBuildCmd();
-		if (on != oldArgument) {
-		    fBuildInfo.setUseDefaultBuildCmd(on);
-		}
     }
 
     /**
      * Gets Stop on Error
+     * @deprecated
      */
     public boolean isStopOnError() throws CoreException {
+		if( fBuildInfo == null) {
+			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+		}
 		return fBuildInfo.isStopOnError();
     }
 
+	/**
+	* @deprecated
+     */
     public boolean isDefaultBuildCmd() throws CoreException {
+		if( fBuildInfo == null) {
+			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+		}
 		return fBuildInfo.isDefaultBuildCmd();
     }
 
+    /**
+	* @deprecated
+     */
 	public static boolean hasCBuildSpec(IProject project) {
 		boolean found= false;
 		try {
@@ -193,20 +204,28 @@ public class CProjectNature implements IProjectNature {
 		return found;
 	}
 
+    /**
+	* @deprecated
+     */
 	public void addCBuildSpec(IProgressMonitor mon) throws CoreException {
-		addToBuildSpec(getBuilderID(), mon);
 	}
 
+    /**
+	* @deprecated
+     */
 	public static void addCBuildSpec(IProject project, IProgressMonitor mon) throws CoreException {
-		addToBuildSpec(project, getBuilderID(), mon);
 	}
 
+    /**
+	* @deprecated
+     */
     public void addToBuildSpec(String builderID, IProgressMonitor mon) throws CoreException {
 		addToBuildSpec(getProject(), builderID, mon);
 	}
 
     /**
      * Adds a builder to the build spec for the given project.
+     * @deprecated
      */
     public static void addToBuildSpec(IProject project, String builderID, IProgressMonitor mon) throws CoreException {
 		IProjectDescription description= project.getDescription();
@@ -230,12 +249,15 @@ public class CProjectNature implements IProjectNature {
 		}
 	}
 
+	/**
+	* @deprecated
+     */
 	public void removeCBuildSpec(IProgressMonitor mon) throws CoreException {
-		removeFromBuildSpec(getBuilderID(), mon);
 	}
 
     /**
      * Removes the given builder from the build spec for the given project.
+     * @deprecated
      */
     public void removeFromBuildSpec(String builderID, IProgressMonitor mon) throws CoreException {
 		IProjectDescription description= getProject().getDescription();
@@ -254,6 +276,7 @@ public class CProjectNature implements IProjectNature {
 
     /**
      * Get the correct builderID
+     * @deprecated
      */
     public static String getBuilderID() {
     	Plugin plugin = (Plugin)CCorePlugin.getDefault();
@@ -268,21 +291,12 @@ public class CProjectNature implements IProjectNature {
      * @see IProjectNature#configure
      */
     public void configure() throws CoreException {
-		addToBuildSpec(getBuilderID(), null);
-		IStandardBuildInfo info = BuildInfoFactory.create();
-		fBuildInfo.setBuildLocation(info.getBuildLocation());
-		fBuildInfo.setFullBuildArguments("");
-		fBuildInfo.setIncrementalBuildArguments("");
     }
 
     /**
      * @see IProjectNature#deconfigure
      */
     public void deconfigure() throws CoreException {
-		removeFromBuildSpec(getBuilderID(), null);
-		fBuildInfo.setBuildLocation(null);
-		fBuildInfo.setFullBuildArguments(null);
-		fBuildInfo.setIncrementalBuildArguments(null);
     }
 
     /**
@@ -296,11 +310,7 @@ public class CProjectNature implements IProjectNature {
      * @see IProjectNature#setProject
      */
     public void setProject(IProject project) {
-    	try {
-			fProject= project;
-			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
-		} catch (CoreException e) {
-		}
+		fProject= project;
     }
     
 }

@@ -13,6 +13,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
+/**
+ * @deprecated
+ *
+ */
 public class MakeUtil {
 
 	final static String MAKE_GOALS = "goals";

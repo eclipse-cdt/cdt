@@ -47,6 +47,7 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 		codeStream.writeUTF(word, prefixLen, word.length);
 		int n= entry.getNumRefs();
 		codeStream.writeGamma(n);
+		//encode file references
 		int prevRef= 0;
 		for (int i= 0; i < n; ++i) {
 			int ref= entry.getRef(i);
@@ -55,6 +56,16 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 			codeStream.writeGamma(ref - prevRef);
 			prevRef= ref;
 		}
+		//encode index bit field
+		//FUTURE USE: For index parms etc.
+		/*if (entry.fRefs.length != entry.fRefsIndexFlags.length)
+			throw new IndexOutOfBoundsException();
+		
+		for (int i=0; i < n; ++i) {
+			int indexField = entry.getIndexFlag(i);
+			codeStream.writeGamma(indexField);
+		}*/
+		
 	}
 	/**
 	 * @see IndexBlock#addEntry
@@ -133,9 +144,20 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 				int ref= prevRef + readCodeStream.readGamma();
 				if (ref < prevRef)
 					throw new InternalError();
-				entry.addRef(ref);
+				entry.addRef(ref,0);
 				prevRef= ref;
 			}
+			
+		/*	//Now read in the index bit fields
+			//FUTURE USE: For index parms etc.
+			for (int i=0; i<n; ++i) {
+				int indexField = readCodeStream.readGamma();
+				//The index fields are encoded in the same order as 
+				//the file refs read above. So the first one belongs 
+				//to whatever the first file reference is
+				entry.fRefsIndexFlags[i]=indexField;
+			}*/
+			
 			offset= readCodeStream.byteLength();
 			prevWord= word;
 			return true;

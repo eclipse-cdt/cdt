@@ -17,10 +17,12 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 public class EntryResult implements IEntryResult {
 	private char[] word;
 	private int[]  fileRefs;
+	private int[] indexFlags;
 	
-public EntryResult(char[] word, int[] refs) {
+public EntryResult(char[] word, int[] refs, int[] indexFlags) {
 	this.word = word;
 	this.fileRefs = refs;
+	this.indexFlags = indexFlags;
 }
 public boolean equals(Object anObject){
 	
@@ -37,6 +39,13 @@ public boolean equals(Object anObject){
 		for (int i =  0; i < length; i++){
 			if (refs[i] != otherRefs[i]) return false;
 		}
+		
+		int[] indexRefs, indexOtherRefs;
+		if ((length = (indexRefs = this.indexFlags).length) != (indexOtherRefs = anEntryResult.indexFlags).length) return false;
+		for (int i =  0; i < length; i++){
+			if (indexRefs[i] != indexOtherRefs[i]) return false;
+		}
+		
 		return true;
 	}
 	return false;
@@ -63,6 +72,10 @@ public String toString(){
 	}
 	buffer.append(" }"); //$NON-NLS-1$
 	return buffer.toString();
+}
+
+public int[] getIndexFlags() {
+	return indexFlags;
 }
 }
 

@@ -19,6 +19,7 @@ public class IndexDelta implements IIndexDelta {
 
 	private ArrayList files = null;
 	private IProject project = null;
+	private IndexDeltaType deltaType = null; 
 	
 	/**
 	 * @param filesTrav
@@ -26,10 +27,20 @@ public class IndexDelta implements IIndexDelta {
 	 * 
 	 */
 	public IndexDelta(IProject project, ArrayList filesTrav) {
-		this.project = project;
-		this.files = filesTrav;
+		this(project,filesTrav,null);
 	}
 
+	/**
+	 * @param filesTrav
+	 * @param project
+	 * 
+	 */
+	public IndexDelta(IProject project, ArrayList filesTrav, IndexDeltaType indexDeltaType) {
+		this.project = project;
+		this.files = filesTrav;
+		this.deltaType = indexDeltaType;
+	}
+	
 	/**
 	 * @return Returns the files.
 	 */
@@ -41,5 +52,12 @@ public class IndexDelta implements IIndexDelta {
 	 */
 	public IProject getProject() {
 		return project;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.index.IIndexDelta#getDeltaType()
+	 */
+	public IndexDeltaType getDeltaType() {
+		return deltaType;
 	}
 }

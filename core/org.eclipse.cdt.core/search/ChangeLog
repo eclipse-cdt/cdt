@@ -1,3 +1,6 @@
+2004-11-02 Bogdan Gheorghe
+	Partial Fix for 74427: Indexer needs to store more info
+	
 2004-08-11 Bogdan Gheorghe	
  	Fix for 71964: Search parses too many times
  	

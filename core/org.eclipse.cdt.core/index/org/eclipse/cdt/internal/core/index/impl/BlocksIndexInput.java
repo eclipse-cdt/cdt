@@ -245,7 +245,7 @@ public class BlocksIndexInput extends IndexInput {
 			case -1 :
 				WordEntry entry = getEntry(pattern);
 				if (entry == null) return null;
-				return new IEntryResult[]{ new EntryResult(entry.getWord(), entry.getRefs()) };
+				return new IEntryResult[]{ new EntryResult(entry.getWord(), entry.getRefs(), entry.getRefsIndexFlags()) };
 			case 0 :
 				blockNums = summary.getAllBlockNums();
 				break;
@@ -267,7 +267,7 @@ public class BlocksIndexInput extends IndexInput {
 					if (count == entries.length){
 						System.arraycopy(entries, 0, entries = new IEntryResult[count*2], 0, count);
 					}
-					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs());
+					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getRefsIndexFlags());
 					found = true;
 				} else {
 					if (found) break;
@@ -297,7 +297,7 @@ public class BlocksIndexInput extends IndexInput {
 					if (count == entries.length){
 						System.arraycopy(entries, 0, entries = new IEntryResult[count*2], 0, count);
 					}
-					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs());
+					entries[count++] = new EntryResult(entry.getWord(), entry.getRefs(), entry.getRefsIndexFlags());
 					found = true;
 				} else {
 					if (found) break;
@@ -410,7 +410,7 @@ public class BlocksIndexInput extends IndexInput {
 		boolean endOfBlock= !currentIncludeIndexBlock.nextEntry(currentIncludeEntry);
 		if (endOfBlock) {
 			currentIncludeIndexBlock= getIndexBlock(++currentIncludeBlockNum);
-			currentIncludeIndexBlock.nextEntry(currentWordEntry);
+			currentIncludeIndexBlock.nextEntry(currentIncludeEntry);
 		}
 	}
 	/* (non-Javadoc)

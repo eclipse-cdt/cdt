@@ -89,7 +89,7 @@ public class OrPattern extends CSearchPattern {
 	   }
    }
 
-   public void feedIndexRequestor(	IIndexSearchRequestor requestor, int detailLevel, int[] references, IndexInput input, ICSearchScope scope )
+   public void feedIndexRequestor(	IIndexSearchRequestor requestor, int detailLevel, int[] references, int[] indexFlags, IndexInput input, ICSearchScope scope )
    throws IOException {
 	   //never called for OrPattern
    }

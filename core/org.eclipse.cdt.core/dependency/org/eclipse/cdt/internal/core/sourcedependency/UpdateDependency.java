@@ -99,7 +99,7 @@ public class UpdateDependency implements IJob {
 			if (fileToReindex!=null && fileToReindex.exists() ) {
 //			if (VERBOSE)
 //			 System.out.println("Going to reindex " + fileToReindex.getName());
-			 indexManager.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath(), false);
+			 indexManager.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
 			}
 		}
 		return false;

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -275,6 +276,10 @@ public class Index implements IIndex {
 			state= MERGED;
 			//flush the CDT log
 			CCorePlugin.getDefault().cdtLog.flushLog();
+			
+			//Send out notification to listeners;
+			IndexDelta indexDelta = new IndexDelta(null,null,IIndexDelta.MERGE_DELTA);
+			CCorePlugin.getDefault().getCoreModel().getIndexManager().notifyListeners(indexDelta);
 		}
 	}
 	/**

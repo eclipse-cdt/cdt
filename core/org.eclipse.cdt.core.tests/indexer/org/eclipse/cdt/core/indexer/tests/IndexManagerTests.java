@@ -14,12 +14,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexDelta;
+import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -41,14 +47,15 @@ import org.eclipse.core.runtime.Path;
 /**
  * @author bgheorgh
  */
-public class IndexManagerTests extends TestCase {
+public class IndexManagerTests extends TestCase implements IIndexChangeListener  {
 	IFile 					file;
 	IFileDocument 			fileDoc;
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IndexManager 			indexManager;
-
-	public static final int TIMEOUT = 5000;
+	boolean					fileIndexed;
+	
+	public static final int TIMEOUT = 50;
 	/**
 	 * Constructor for IndexManagerTest.
 	 * @param name
@@ -69,6 +76,12 @@ public class IndexManagerTests extends TestCase {
 		
 		//Create temp project
 		testProject = createProject("IndexerTestProject");
+		IPath pathLoc = CCorePlugin.getDefault().getStateLocation();
+		
+		File indexFile = new File(pathLoc.append("3915980774.index").toOSString());
+		if (indexFile.exists())
+			indexFile.delete();
+		
 		
 		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
 		
@@ -77,6 +90,7 @@ public class IndexManagerTests extends TestCase {
 		
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.reset();
+		indexManager.addIndexChangeListener(this);
 	}
 	/*
 	 * @see TestCase#tearDown()
@@ -84,6 +98,7 @@ public class IndexManagerTests extends TestCase {
 	protected void tearDown() {
 		try {
 			super.tearDown();
+			indexManager.removeIndexChangeListener(this);
 		} catch (Exception e1) {
 		}
 		//Delete project
@@ -120,6 +135,7 @@ public class IndexManagerTests extends TestCase {
 		suite.addTest(new IndexManagerTests("testIndexContents"));
 		suite.addTest(new IndexManagerTests("testMacros"));
 		suite.addTest(new IndexManagerTests("testRefs"));
+		suite.addTest(new IndexManagerTests("testExactDeclarations"));
 		suite.addTest(new IndexManagerTests("testRemoveFileFromIndex"));
 		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));
 		suite.addTest(new IndexManagerTests("testIndexShutdown"));
@@ -153,9 +169,12 @@ public class IndexManagerTests extends TestCase {
 	 * Start of tests
 	 */ 	
 	public void testIndexAll() throws Exception {
+		
 		//Add a file to the project
+		fileIndexed = false;
 		importFile("mail.cpp","resources/indexer/mail.cpp");
-		Thread.sleep(5000);
+		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+		
 		IIndex ind = indexManager.getIndex(testProject.getFullPath(),true,true);
 		assertTrue("Index exists for project",ind != null);
 		
@@ -188,27 +207,32 @@ public class IndexManagerTests extends TestCase {
 	}
 	
 	public void testAddNewFileToIndex() throws Exception{
-		//Add a file to the project
-		importFile("mail.cpp","resources/indexer/mail.cpp");
-		//Enable indexing on the created project
-		//By doing this, we force the Index Manager to indexAll()
 		
-		Thread.sleep(10000);
+		
+		//Add a file to the project
+		fileIndexed = false;
+		importFile("mail.cpp","resources/indexer/mail.cpp");
+		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+		
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 		assertTrue("Index exists for project",ind != null);
 		//Add a new file to the project, give it some time to index
+		fileIndexed = false;
 		importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
+		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+		
+		fileIndexed = false;
 		importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
-	
-		Thread.sleep(10000);
+		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+		
 		ind = indexManager.getIndex(testProjectPath,true,true);
 		
 		char[] prefix = "typeDecl/C/CDocumentManager".toCharArray();
-		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1, 2 }"};
+		String [] entryResultModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }"};
 		IEntryResult[] eresults =ind.queryEntries(prefix);
-		
+		IEntryResult[] bogRe = ind.queryEntries(IIndexConstants.TYPE_DECL);
 		assertTrue("Entry Result exists", eresults != null);
 		
 		if (eresults.length != entryResultModel.length)
@@ -221,10 +245,13 @@ public class IndexManagerTests extends TestCase {
 	}
 
 	public void testRemoveProjectFromIndex() throws Exception{
-	  //Add a file to the project
-	  importFile("mail.cpp","resources/indexer/mail.cpp");
 	  
-	  Thread.sleep(TIMEOUT);
+		
+	  //Add a file to the project
+	  fileIndexed = false;
+	  importFile("mail.cpp","resources/indexer/mail.cpp");
+	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	  
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
 	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -253,25 +280,34 @@ public class IndexManagerTests extends TestCase {
 	}
 
 	public void testRemoveFileFromIndex() throws Exception{
-	 //Add a file to the project
-	 importFile("mail.cpp","resources/indexer/mail.cpp");
-
-	 Thread.sleep(TIMEOUT);
-	 //Make sure project got added to index
-	 IPath testProjectPath = testProject.getFullPath();
-	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
-	 assertTrue("Index exists for project",ind != null);
-	 //Add a new file to the project
-	 importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
-	 importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
-	 Thread.sleep(10000);
+     
+    //Add a file to the project
+	fileIndexed = false;
+	importFile("mail.cpp","resources/indexer/mail.cpp");
+	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	
+	//Make sure project got added to index
+	IPath testProjectPath = testProject.getFullPath();
+	IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	assertTrue("Index exists for project",ind != null);
+	//Add a new file to the project, give it some time to index
+	fileIndexed = false;
+	importFile("DocumentManager.h","resources/indexer/DocumentManager.h");
+	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	
+	fileIndexed = false;
+	importFile("DocumentManager.cpp","resources/indexer/DocumentManager.cpp");
+	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	
+	ind = indexManager.getIndex(testProjectPath,true,true);
+		 
 	 //Do a "before" deletion comparison
-	 ind = indexManager.getIndex(testProjectPath,true,true);
+	 //ind = indexManager.getIndex(testProjectPath,true,true);
 	 char[] prefix = "typeDecl/".toCharArray();
 	 IEntryResult[] eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry result found for typdeDecl/", eresults != null);
 	 
-	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1, 2 }", "EntryResult: word=typeDecl/C/Mail, refs={ 3 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 3 }", "EntryResult: word=typeDecl/C/container, refs={ 3 }", "EntryResult: word=typeDecl/C/first_class, refs={ 3 }", "EntryResult: word=typeDecl/C/postcard, refs={ 3 }",  "EntryResult: word=typeDecl/D/Mail, refs={ 3 }", "EntryResult: word=typeDecl/D/first_class, refs={ 3 }", "EntryResult: word=typeDecl/D/postcard, refs={ 3 }", "EntryResult: word=typeDecl/V/, refs={ 1, 2 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 3 }", "EntryResult: word=typeDecl/V/index, refs={ 3 }", "EntryResult: word=typeDecl/V/mail, refs={ 3 }", "EntryResult: word=typeDecl/V/size, refs={ 3 }", "EntryResult: word=typeDecl/V/temp, refs={ 3 }", "EntryResult: word=typeDecl/V/x, refs={ 3 }"};
+	 String [] entryResultBeforeModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }", "EntryResult: word=typeDecl/C/Mail, refs={ 3 }", "EntryResult: word=typeDecl/C/Unknown, refs={ 3 }", "EntryResult: word=typeDecl/C/container, refs={ 3 }", "EntryResult: word=typeDecl/C/first_class, refs={ 3 }", "EntryResult: word=typeDecl/C/postcard, refs={ 3 }",  "EntryResult: word=typeDecl/D/Mail, refs={ 3 }", "EntryResult: word=typeDecl/D/first_class, refs={ 3 }", "EntryResult: word=typeDecl/D/postcard, refs={ 3 }", "EntryResult: word=typeDecl/V/, refs={ 1, 2 }", "EntryResult: word=typeDecl/V/PO_Box, refs={ 3 }", "EntryResult: word=typeDecl/V/index, refs={ 3 }", "EntryResult: word=typeDecl/V/mail, refs={ 3 }", "EntryResult: word=typeDecl/V/size, refs={ 3 }", "EntryResult: word=typeDecl/V/temp, refs={ 3 }", "EntryResult: word=typeDecl/V/x, refs={ 3 }"};
 	 if (eresults.length != entryResultBeforeModel.length)
 			fail("Entry Result length different from model");	
 
@@ -291,7 +327,7 @@ public class IndexManagerTests extends TestCase {
 	 eresults = ind.queryEntries(prefix);
 	 assertTrue("Entry exists", eresults != null);
 		
-	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 1, 2 }", "EntryResult: word=typeDecl/V/, refs={ 1, 2 }"};
+	 String [] entryResultAfterModel ={"EntryResult: word=typeDecl/C/CDocumentManager, refs={ 2 }", "EntryResult: word=typeDecl/V/, refs={ 1, 2 }"};
 	 if (eresults.length != entryResultAfterModel.length)
 		fail("Entry Result length different from model");
 		
@@ -302,10 +338,12 @@ public class IndexManagerTests extends TestCase {
 	}
 	
 	public void testIndexContents() throws Exception{
+		 
 		//Add a new file to the project, give it some time to index
+		fileIndexed = false;
 		importFile("extramail.cpp","resources/indexer/extramail.cpp");
-	
-		Thread.sleep(TIMEOUT);
+		while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+		
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -416,10 +454,11 @@ public class IndexManagerTests extends TestCase {
   }
   
   public void testRefs() throws Exception{
-		  //Add a new file to the project, give it some time to index
+		  //Add a new file to the project, give it some time to index 
+  		  fileIndexed = false;
 		  importFile("reftest.cpp","resources/indexer/reftest.cpp");
-	
-		  Thread.sleep(TIMEOUT);
+		  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+		  
 		  //Make sure project got added to index
 		  IPath testProjectPath = testProject.getFullPath();
 		  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -486,12 +525,95 @@ public class IndexManagerTests extends TestCase {
 		  }
 	}
 	
+  public void testExactDeclarations() throws Exception
+  {
+  	 
+	 fileIndexed = false;
+  	 importFile("a.h","resources/dependency/a.h");
+	 while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	 
+  	  //Make sure project got added to index
+	  IPath testProjectPath = testProject.getFullPath();
+	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	  assertTrue("Index exists for project",ind != null);
+	  
+	  fileIndexed = false;
+	  importFile("DepTest3.h","resources/dependency/DepTest3.h");
+	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	  
+	  fileIndexed = false;
+	  importFile("DepTest3.cpp","resources/dependency/DepTest3.cpp");
+	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+
+	  
+	  IEntryResult[] eResult = ind.queryEntries(IIndexConstants.CLASS_DECL);
+	  IQueryResult[] qResult = ind.queryPrefix(IIndexConstants.CLASS_DECL);
+	  
+	  assertTrue("Expected 2 files indexed", qResult.length == 2);
+	  assertTrue("Checking DepTest3.h location", qResult[0].getPath().equals("/IndexerTestProject/DepTest3.h"));
+	  assertTrue("Checking a.h location", qResult[1].getPath().equals("/IndexerTestProject/a.h"));
+	  
+	  assertTrue("Expect 2 class declaration entries", eResult.length == 2);
+	  
+	  int[] DepTest3FileRefs = {2};
+	
+	  int[] fileRefs = eResult[0].getFileReferences();
+	
+	  assertTrue("Check DepTest3 File Refs number", fileRefs.length == 1);
+	  
+	  for (int i=0; i<fileRefs.length; i++){
+	  	assertTrue("Verify DepTest3 File Ref",fileRefs[i] == DepTest3FileRefs[i]);
+	  }
+	  
+	  int[] aFileRefs = {3};
+	
+	  fileRefs = eResult[1].getFileReferences();
+	 
+	  assertTrue("Check a.h File Refs number", fileRefs.length == 1);
+	  
+	  for (int i=0; i<fileRefs.length; i++){
+	  	assertTrue("Verify a.h File Ref",fileRefs[i] == aFileRefs[i]);
+	  }
+	  
+  }
+  
+  public void testMD5() throws Exception
+  {
+  	fileIndexed = false;
+  	importFile("extramail.cpp","resources/indexer/extramail.cpp");
+  	//importFile("mail.cpp","resources/indexer/mail.cpp");
+  	
+	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+  	
+	MessageDigest md = MessageDigest.getInstance("MD5");
+	//MessageDigest md = MessageDigest.getInstance("SHA");
+	String fileName = testProject.getFile("extramail.cpp").getLocation().toOSString();
+	//String fileName = testProject.getFile("mail.cpp").getLocation().toOSString();
+	
+	long startTime = System.currentTimeMillis();
+	
+	FileInputStream stream = new FileInputStream(fileName);
+	FileChannel channel = stream.getChannel();
+	
+	ByteBuffer byteBuffer = ByteBuffer.allocate((int)channel.size());
+	channel.read(byteBuffer);
+	byteBuffer.rewind();
+	
+	md.update(byteBuffer.array());
+	byte[] messageDigest = md.digest();
+
+  	//System.out.println("Elapsed Time: " + (System.currentTimeMillis() - startTime) + " ms");
+	
+  	 
+  }
+  
   public void testMacros() throws Exception
   {
 	  //Add a new file to the project, give it some time to index
+  	  fileIndexed = false;
 	  importFile("extramail.cpp","resources/indexer/extramail.cpp");
-
-	  Thread.sleep(TIMEOUT);
+	  while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
 	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -513,9 +635,10 @@ public class IndexManagerTests extends TestCase {
   
   public void testIndexShutdown() throws Exception{
 	//Add a new file to the project, give it some time to index
+  	 fileIndexed = false;
 	 importFile("reftest.cpp","resources/indexer/reftest.cpp");
-
-	 Thread.sleep(TIMEOUT);
+	 while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	 
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
 	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -549,9 +672,10 @@ public class IndexManagerTests extends TestCase {
   
   public void testForwardDeclarations() throws Exception{
 	//Add a new file to the project, give it some time to index
+  	fileIndexed = false;
 	importFile("reftest.cpp","resources/indexer/reftest.cpp");
-
-	Thread.sleep(TIMEOUT);
+	while (fileIndexed != true){ Thread.sleep(TIMEOUT);}
+	
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
 	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -584,5 +708,12 @@ public class IndexManagerTests extends TestCase {
 	  assertEquals(fwdDclRefModel[i],fwdDclRefResults[i].toString());
 	}
   }
+
+public void indexChanged(IndexChangeEvent event) {
+	IIndexDelta delta = event.getDelta();
+	if (delta.getDeltaType() == IIndexDelta.MERGE_DELTA){
+		fileIndexed = true;
+	}
+}
 
 }

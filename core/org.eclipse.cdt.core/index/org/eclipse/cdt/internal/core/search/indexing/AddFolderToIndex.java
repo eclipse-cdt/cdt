@@ -102,13 +102,12 @@ class AddFolderToIndex extends IndexRequest {
 	private void scheduleJobs() {
 		//Schedule the source jobs first, then the headers
 		for (int i=0; i<sourceFilesToIndex.size(); i++)
-			this.manager.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath, true);
+			this.manager.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath);
 		
 		for (int i=0;i<headerFilesToIndex.size(); i++)
-			this.manager.addSource((IFile)headerFilesToIndex.get(i), this.indexPath, true);
+			this.manager.addSource((IFile)headerFilesToIndex.get(i), this.indexPath);
 		
-		CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.manager);
-		this.manager.request(cleanHeaders);
+		
 	}
 
 	public String toString() {

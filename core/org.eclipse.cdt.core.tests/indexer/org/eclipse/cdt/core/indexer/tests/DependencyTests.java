@@ -14,10 +14,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexDelta;
+import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
@@ -89,6 +94,11 @@ import org.eclipse.core.runtime.Platform;
 		super.setUp();
 		//Create temp project
 		testProject = createProject("DepTestProject");
+		IPath pathLoc = CCorePlugin.getDefault().getStateLocation();
+		
+		File indexFile = new File(pathLoc.append("281274758.index").toOSString());
+		if (indexFile.exists())
+			indexFile.delete();
 		
 		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
 		
@@ -208,7 +218,6 @@ import org.eclipse.core.runtime.Platform;
 
  public void testDepTable() throws Exception{
    //Add a file to the project
-   
    IFile cH = importFile("c.h","resources/dependency/c.h");
    IFile aH = importFile("a.h","resources/dependency/a.h");
    IFile Inc1H = importFile("Inc1.h","resources/dependency/Inc1.h");
@@ -220,7 +229,7 @@ import org.eclipse.core.runtime.Platform;
    
    PathCollector pathCollector = new PathCollector();
    getTableRefs(dH, pathCollector);
-				
+
    String[] dHModel = {IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest.cpp", IPath.SEPARATOR + "DepTestProject" + IPath.SEPARATOR + "DepTest2.h"};
    String[] iPath = pathCollector.getPaths();
 	

@@ -340,7 +340,7 @@ public class CModelManager implements IResourceChangeListener {
 			} else {
 				ICProject cproject = celement.getCProject();
 				CProjectInfo info = (CProjectInfo)peekAtInfo(cproject);
-				if (info.vBin != null) {
+				if (info != null && info.vBin != null) {
 					if (peekAtInfo(info.vBin) != null) {
 						IBinary[] bins = info.vBin.getBinaries();
 						for (int i = 0; i < bins.length; i++) {
@@ -353,7 +353,7 @@ public class CModelManager implements IResourceChangeListener {
 						}
 					}
 				}
-				if (info.vLib != null) {
+				if (info != null && info.vLib != null) {
 					if (peekAtInfo(info.vLib) != null) {
 						IArchive[] ars = info.vLib.getArchives();
 						for (int i = 0; i < ars.length; i++) {
@@ -803,6 +803,13 @@ public class CModelManager implements IResourceChangeListener {
 						binaryRunners.put(project, new BinaryRunner(project));
 					}
 				}
+			} else if (0 != (delta.getFlags() & IResourceDelta.REMOVED)) {
+				IProject project = (IProject) resource;
+				BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
+				if (runner != null) {
+					runner.stop();
+				}
+				binaryParsersMap.remove(project);
 			}
 		break;
 		}
@@ -874,10 +881,5 @@ public class CModelManager implements IResourceChangeListener {
 	public void deleting(IProject project){
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
-		BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
-		if (runner != null) {
-			runner.stop();
-		}
-		binaryParsersMap.remove(project);
 	}
 }

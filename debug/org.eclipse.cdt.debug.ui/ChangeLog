@@ -1,3 +1,8 @@
+2004-07-15 Mikhail Khodjaiants
+	Fix for bug 70147. TVT3.0: Preferences CDT Editor has non-externalized string.
+	* plugin.properties
+	* plugin.xml
+
 2004-07-15 Tanya Wolff
 	Fix for bug 69939. I18N: Memory view contains unexternalized strings.
 	Externalized Memory View Refresh menu item.

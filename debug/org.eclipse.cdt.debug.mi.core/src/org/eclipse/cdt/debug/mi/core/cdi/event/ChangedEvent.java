@@ -10,11 +10,13 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
+import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Expression;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
@@ -37,7 +39,13 @@ public class ChangedEvent implements ICDIChangedEvent {
 		if (variable != null) {
 			source = variable;
 		} else {
-			source = new CObject(session.getCurrentTarget());
+			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
+			Expression expression = expMgr.getExpression(varName);
+			if (expression != null) {
+				source = expression;
+			} else {
+				source = new CObject(session.getCurrentTarget());
+			}
 		}
 	}
 

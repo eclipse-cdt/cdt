@@ -33,15 +33,18 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BuildPathInfoBlock extends AbstractCOptionPage {
+	private static final int PROJECT_LIST_MULTIPLIER = 10;
 
 	private static final String PREF_SYMBOLS = "ScannerSymbols";
 	private static final String PREF_INCLUDES = "ScannerIncludes";
@@ -159,9 +162,28 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 		// Make it occupy the first 2 columns
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = numColumns - 1;
+		gd.heightHint = getDefaultFontHeight(pathList, PROJECT_LIST_MULTIPLIER);
 		pathList.setLayoutData(gd);
 		pathList.setFont(parent.getFont());
+
+	}
+
+	/**
+	 * Get the defualt widget height for the supplied control.
+	 * @return int
+	 * @param control - the control being queried about fonts
+	 * @param lines - the number of lines to be shown on the table.
+	 */
+	private static int getDefaultFontHeight(Control control, int lines) {
+		FontData[] viewerFontData = control.getFont().getFontData();
+		int fontHeight = 10;
+
+		//If we have no font data use our guess
+		if (viewerFontData.length > 0)
+			fontHeight = viewerFontData[0].getHeight();
+		return lines * fontHeight;
 	}
 
 	private void createSymbolListButtons(Composite parent) {
@@ -240,6 +262,8 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		// Make it occupy the first n-1 columns
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = numColumns - 1;
+		gd.grabExcessHorizontalSpace = true;
+		gd.heightHint = getDefaultFontHeight(pathList, PROJECT_LIST_MULTIPLIER);
 		symbolList.setLayoutData(gd);
 		symbolList.setFont(parent.getFont());
 
@@ -464,8 +488,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	protected void handleAddPath() {
 		// Popup an entry dialog
-		InputDialog dialog =
-			new InputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
+		InputDialog dialog = new InputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
 		String path = null;
 		if (dialog.open() == InputDialog.OK) {
 			path = dialog.getValue();
@@ -479,8 +502,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	protected void handleAddSymbol() {
 		// Popup an entry dialog
-		InputDialog dialog =
-			new InputDialog(shell, MakeUIPlugin.getResourceString(SYMBOL_TITLE), MakeUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
+		InputDialog dialog = new InputDialog(shell, MakeUIPlugin.getResourceString(SYMBOL_TITLE), MakeUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
 		String symbol = null;
 		if (dialog.open() == InputDialog.OK) {
 			symbol = dialog.getValue();

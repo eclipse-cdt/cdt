@@ -50,11 +50,6 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		Iterator iter = getContentsIterator();
 		if( iter.hasNext() ){
 			IContainerSymbol contained = (IContainerSymbol) iter.next();
-			if( contained.isForwardDeclaration() && contained.getTypeSymbol() != null ){
-				ISymbol symbol = contained.getTypeSymbol();
-				if( symbol.getContainingSymbol() == this )
-					return (IContainerSymbol) symbol; 
-			} 
 			return contained;
 		}
 		return null;

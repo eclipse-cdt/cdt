@@ -32,4 +32,8 @@ public interface IExtensibleSymbol {
 	 * @param obj
 	 */
 	public void setASTExtension( ISymbolASTExtension obj );
+	
+	public IContainerSymbol getContainingSymbol();
+	
+	public void setContainingSymbol( IContainerSymbol scope );
 }

@@ -17,9 +17,10 @@ import java.util.ListIterator;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
-import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolOwner;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
@@ -55,7 +56,7 @@ public class ASTNode implements IASTNode {
 		}
 		
 		ISymbolOwner owner = (ISymbolOwner) this;
-		ISymbol symbol = owner.getSymbol();
+		IExtensibleSymbol symbol = owner.getSymbol();
 		if( symbol == null || !(symbol instanceof IContainerSymbol) ){
 			throw new LookupError();
 		}
@@ -131,29 +132,5 @@ public class ASTNode implements IASTNode {
 		public String getPrefix() 	{	return prefix;	 }
 		public Iterator getNodes() 	{	return iterator; }
 		public int getResultsSize() { return resultsNumber; } 
-	}
-	
-	private class SymbolIterator implements Iterator{
-		Iterator interalIterator;
-		
-		public SymbolIterator( Iterator iter ){
-			interalIterator = iter;
-		}
-
-		public boolean hasNext() {
-			return interalIterator.hasNext();
-		}
-
-		public Object next() {
-			ISymbol nextSymbol = (ISymbol) interalIterator.next();
-			
-			ISymbolASTExtension extension = (nextSymbol != null ) ? nextSymbol.getASTExtension() : null;
-			
-			return (extension != null ) ? extension.getPrimaryDeclaration() : null;
-		}
-
-		public void remove() {
-			interalIterator.remove();
-		}
 	}
 }

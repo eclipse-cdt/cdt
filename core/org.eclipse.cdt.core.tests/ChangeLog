@@ -1,3 +1,6 @@
+2004-03-01 Andrew Niefer
+	created CompleteParseASTSymbolIteratorTest and added it to the ParserTestSuite
+
 2004-02-26 Sean Evoy
 	Work to test the ability to inherit a tool description via a tool 
 	reference. Updated the testSubSubTarget to check inheritted tool 

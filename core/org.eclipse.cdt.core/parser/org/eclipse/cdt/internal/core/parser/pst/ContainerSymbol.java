@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -895,9 +897,80 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	}
 	
 	public Iterator getContentsIterator(){
-		return getContents().iterator();
+		//return getContents().iterator();
+		return new ContentsIterator( getContents().iterator() );
 	}
 	
+	protected class ContentsIterator implements Iterator {
+		final Iterator internalIterator;
+	
+		Set alreadyReturned = new HashSet();
+		
+		public ContentsIterator( Iterator iter ){
+			internalIterator = iter;
+		}
+		
+		IExtensibleSymbol next = null;
+		public boolean hasNext() {
+			if( next != null ){
+				return true;
+			}
+			if( !internalIterator.hasNext() )
+				return false;
+			while( internalIterator.hasNext() ){
+				IExtensibleSymbol extensible = (IExtensibleSymbol) internalIterator.next();
+				if( !alreadyReturned.contains( extensible ) ){
+					if( extensible instanceof ISymbol ){
+						ISymbol symbol = (ISymbol) extensible;
+						if( symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null &&
+							symbol.getTypeSymbol().getContainingSymbol() == ContainerSymbol.this )
+						{
+							alreadyReturned.add( symbol.getTypeSymbol() );
+							next = symbol.getTypeSymbol();
+							return true;
+						}
+					}
+					next = extensible;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public Object next() {
+			IExtensibleSymbol extensible = next;
+			if( next != null ){
+				next = null;
+				return extensible;
+			}
+			
+			while( internalIterator.hasNext() ){
+				extensible = (IExtensibleSymbol) internalIterator.next();
+				if( !alreadyReturned.contains( extensible ) ){
+					if( extensible instanceof ISymbol ){
+						ISymbol symbol = (ISymbol) extensible;
+						if( symbol.isForwardDeclaration() && symbol.getTypeSymbol() != null &&
+							symbol.getTypeSymbol().getContainingSymbol() == ContainerSymbol.this )
+						{
+							alreadyReturned.add( symbol.getTypeSymbol() );
+							return symbol.getTypeSymbol();
+						}
+					}
+					return extensible;
+				}
+			}
+			throw new NoSuchElementException();
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+		protected void removeSymbol(){
+			internalIterator.remove();
+		}
+		
+	}
 	static private class AddSymbolCommand extends Command{
 		AddSymbolCommand( ISymbol newDecl, IContainerSymbol context ){
 			_symbol = newDecl;
@@ -928,11 +1001,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			
 			//this is an inefficient way of doing this, we can modify the interfaces if the undo starts
 			//being used often.
-			Iterator iter = _context.getContentsIterator();
+			ContentsIterator iter = (ContentsIterator) _context.getContentsIterator();
 			while( iter.hasNext() ){
 				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
 				if( ext == _symbol ){
-					iter.remove();
+					iter.removeSymbol();
 					break;
 				}
 			}
@@ -952,11 +1025,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			
 			//this is an inefficient way of doing this, we can modify the interfaces if the undo starts
 			//being used often.
-			Iterator iter = _decl.getContentsIterator();
+			ContentsIterator iter = (ContentsIterator) _decl.getContentsIterator();
 			while( iter.hasNext() ){
 				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
 				if( ext == _directive ){
-					iter.remove();
+					iter.removeSymbol();
 					break;
 				}
 			}

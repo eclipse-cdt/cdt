@@ -19,48 +19,28 @@ import java.util.Map;
 
 
 
-public class BasicSymbol implements Cloneable, ISymbol
+public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 {
-	private final ParserSymbolTable _table;
+	
 	public BasicSymbol( ParserSymbolTable table, String name ){
-		super();
-		this._table = table;
+		super( table );
 		_name = name;
 		_typeInfo = new TypeInfo();
 	}
 	
 	public BasicSymbol( ParserSymbolTable table, String name, ISymbolASTExtension obj ){
-		super();
-		this._table = table;
+		super( table, obj );
 		_name   = name;
-		_object = obj;
 		_typeInfo = new TypeInfo();
 	}
 	
 	public BasicSymbol( ParserSymbolTable table, String name, TypeInfo.eType typeInfo )
 	{
-		super();
-		this._table = table;
+		super( table );
 		_name = name;
 		_typeInfo = new TypeInfo( typeInfo, 0, null );
 	}
-	
-	public ParserSymbolTable getSymbolTable(){
-		return _table;
-	}
-	
-	public Object clone(){
-		BasicSymbol copy = null;
-		try{
-			copy = (BasicSymbol)super.clone();
-		} catch ( CloneNotSupportedException e ){
-			//should not happen
-			return null;
-		}
-		copy._object = null;
-		return copy;	
-	}
-	
+		
 	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
 		if( !isTemplateMember() &&  !getContainingSymbol().isTemplateMember() ){
 			return null;
@@ -75,12 +55,9 @@ public class BasicSymbol implements Cloneable, ISymbol
 	public String getName() { return _name; }
 	public void setName(String name) { _name = name; }
 
-	public ISymbolASTExtension getASTExtension() { return _object; }
-	public void setASTExtension( ISymbolASTExtension obj ) { _object = obj; }
-		
-	public IContainerSymbol getContainingSymbol() { return _containingScope; }
+
 	public void setContainingSymbol( IContainerSymbol scope ){ 
-		_containingScope = scope;
+		super.setContainingSymbol( scope );
 		_depth = scope.getDepth() + 1; 
 	}
 
@@ -196,9 +173,7 @@ public class BasicSymbol implements Cloneable, ISymbol
 	}
 	
 	private 	String 				_name;					//our name
-	private		ISymbolASTExtension	_object;				//the object associated with us
 	private		TypeInfo			_typeInfo;				//our type info
-	private		IContainerSymbol	_containingScope;		//the scope that contains us
 	private		int 				_depth;					//how far down the scope stack we are
 	
 	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)

@@ -11,25 +11,16 @@
 package org.eclipse.cdt.internal.core.parser.pst;
 
 
-public class UsingDirectiveSymbol implements IUsingDirectiveSymbol{
-	private final ParserSymbolTable symbolTable;
+public class UsingDirectiveSymbol extends ExtensibleSymbol implements IUsingDirectiveSymbol{
 
 	public UsingDirectiveSymbol( ParserSymbolTable table, IContainerSymbol ns ){
+		super( table );
 		namespace = ns;
-		symbolTable = table;
 	}
 	
 	public IContainerSymbol getNamespace(){
 		return namespace;
 	}
 	
-	public ISymbolASTExtension getASTExtension() { return extension; }
-	public void setASTExtension( ISymbolASTExtension ext ) { extension = ext; }
-	
-	private	ISymbolASTExtension	extension;
 	private final IContainerSymbol namespace;
-
-	public ParserSymbolTable getSymbolTable() {
-		return symbolTable;
-	}
 }

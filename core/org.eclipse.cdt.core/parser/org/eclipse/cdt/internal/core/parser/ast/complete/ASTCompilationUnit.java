@@ -73,8 +73,15 @@ public class ASTCompilationUnit
 
     public Iterator getDeclarations()
     {
-    	return declarations.iterator();
+    	//If a callback (ie StructuralParseCallback) populates the declarations list
+    	//then return that iterator, otherwise use the ASTScope implementation which
+    	//gets one from the symbol table.
+    	if( !declarations.isEmpty() )
+    		return declarations.iterator();
+    	
+    	return super.getDeclarations();
     }
+    
     public void addDeclaration(IASTDeclaration declaration)
     {
     	declarations.add(declaration);

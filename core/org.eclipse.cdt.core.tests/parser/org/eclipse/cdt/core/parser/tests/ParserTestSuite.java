@@ -40,6 +40,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( CompleteParseASTTest.class );
 		suite.addTestSuite( SelectionParseTest.class );
 		suite.addTestSuite( CompleteParseASTExpressionTest.class );
+		suite.addTestSuite( CompleteParseASTSymbolIteratorTest.class );
 		return suite;
 	}	
 }

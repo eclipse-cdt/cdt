@@ -394,11 +394,11 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 				}
 			}
 			
-			iter = _context.getContentsIterator();
+			ContentsIterator contents = (ContentsIterator) _context.getContentsIterator();
 			while( iter.hasNext() ){
 				IExtensibleSymbol ext = (IExtensibleSymbol) iter.next();
 				if( ext == _constructor ){
-					iter.remove();
+					contents.removeSymbol();
 					break;
 				}
 			}

@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 
@@ -41,6 +42,10 @@ public abstract class ASTScope extends ASTSymbol implements IASTScope
 	 */
 	public Iterator getDeclarations()
 	{
+		IContainerSymbol symbol = getContainerSymbol();
+		if( symbol != null ){
+			return new SymbolIterator( symbol.getContentsIterator() );
+		}
 		return null;
 	}
 	

@@ -15,25 +15,17 @@ import java.util.List;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class UsingDeclarationSymbol implements IUsingDeclarationSymbol {
+public class UsingDeclarationSymbol extends ExtensibleSymbol implements IUsingDeclarationSymbol {
 
 	public UsingDeclarationSymbol( ParserSymbolTable table, List referenced, List declared ){
+		super( table );
 		referencedSymbol = referenced;
 		declaredSymbol = declared; 
-		symbolTable = table;
 	}
 
 	public List getReferencedSymbols() { return referencedSymbol; }
 	public List getDeclaredSymbols()   { return declaredSymbol;   }
 	
-	public ISymbolASTExtension getASTExtension()           { return extension; }
-	public void setASTExtension( ISymbolASTExtension ext ) { extension = ext;  }
-	
-	public ParserSymbolTable getSymbolTable() {	return symbolTable;  }
-	
-	private	ISymbolASTExtension	extension;
 	private final List referencedSymbol;
 	private final List declaredSymbol;
-	private final ParserSymbolTable symbolTable;
-	
 }

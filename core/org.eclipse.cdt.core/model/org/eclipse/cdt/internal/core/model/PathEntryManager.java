@@ -71,6 +71,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -1176,7 +1177,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						/* (non-Javadoc)
 						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 						 */
-						public void run(IProgressMonitor monitor) throws CoreException {
+						public void run(IProgressMonitor mon) throws CoreException {
 							flushPathEntryProblemMarkers(project);
 							for (int i = 0; i < problems.length; ++i) {
 								createPathEntryProblemMarker(project, problems[i]);
@@ -1190,7 +1191,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				return Status.OK_STATUS;
 			}
 		};
-		markerTask.setRule(CCorePlugin.getWorkspace().getRoot());
+		ISchedulingRule rule = project.getWorkspace().getRuleFactory().markerRule(project);
+		markerTask.setRule(rule);
 		markerTask.schedule();
 	}
 
@@ -1457,21 +1459,24 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					IPathEntry[] entries = getCachedResolvedPathEntries(cProjects[i]);
 					if (entries != null) {
 						IProject project = cProjects[i].getProject();
-						ArrayList problemList = new ArrayList();
-						ICModelStatus status = validatePathEntry(cProjects[i], entries);
-						if (!status.isOK()) {
-							problemList.add(status);
-						}
-						for (int j = 0; j < entries.length; j++) {
-							status = validatePathEntry(cProjects[i], entries[j], true, false);
-							if (!status.isOK()) {
-								problemList.add(status);
+						try {
+							IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+							if (markers != null && markers.length > 0) {
+								ArrayList problemList = new ArrayList();
+								for (int j = 0; j < entries.length; j++) {
+									ICModelStatus status = validatePathEntry(cProjects[i], entries[j], true, false);
+									if (!status.isOK()) {
+										problemList.add(status);
+									}
+								}
+								ICModelStatus[] problems = new ICModelStatus[problemList.size()];
+								problemList.toArray(problems);
+								if (hasPathEntryProblemMarkersChange(project, problems)) {
+									generateMarkers(project, problems);
+								}
 							}
-						}
-						ICModelStatus[] problems = new ICModelStatus[problemList.size()];
-						problemList.toArray(problems);
-						if (hasPathEntryProblemMarkersChange(project, problems)) {
-							generateMarkers(project, problems);
+						} catch (CoreException e) {
+							// ignore the exception.
 						}
 					}
 				}
@@ -1864,7 +1869,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	protected IMarker[] getPathEntryProblemMarkers(IProject project) {
 
 		try {
-			IWorkspace workspace = project.getWorkspace();
 			IMarker[] markers = project.findMarkers(ICModelMarker.PATHENTRY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 			if (markers != null) {
 				return markers;

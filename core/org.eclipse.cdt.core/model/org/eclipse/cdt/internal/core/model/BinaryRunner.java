@@ -87,7 +87,7 @@ public class BinaryRunner {
 		}
 	}
 
-	void fireEvents(ICProject cproject, Parent container) {
+	void fireEvents(ICProject cproj, Parent container) {
 		// Fired the event.
 		try {
 			ICElement[] children = container.getChildren();
@@ -95,7 +95,7 @@ public class BinaryRunner {
 				CModelManager factory = CModelManager.getDefault();
 				ICElement root = factory.getCModel();
 				CElementDelta cdelta = new CElementDelta(root);
-				cdelta.added(cproject);
+				cdelta.added(cproj);
 				cdelta.added(container);
 				for (int i = 0; i < children.length; i++) {
 					cdelta.added(children[i]);

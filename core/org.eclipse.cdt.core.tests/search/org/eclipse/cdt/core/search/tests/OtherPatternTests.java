@@ -228,4 +228,13 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( match.getName().equals( "eE" ) );
 		assertTrue( match.getParentName().equals( "NS3::C" ));
 	}
+	
+	public void testParameterReferences(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "index", VAR, REFERENCES, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 3 );
+	}
 }

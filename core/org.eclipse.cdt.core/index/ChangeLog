@@ -1,3 +1,8 @@
+2003-09-16 Andrew Niefer
+	- add parameter references to index
+	- modify CharOperation.match to allow escaping wildcards (bug43063)
+	- modify AbstractIndexer.bestPrefix to handle wildcard escaping in name (bug43063)
+
 2003-09-13 Andrew Niefer
 	- add Typedefs to index as Types with suffix T (bug42902)
 		- added addTypedefReference to AbstractIndexer

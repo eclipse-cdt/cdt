@@ -30,7 +30,8 @@ public interface IScanner  {
 
 	public IToken nextTokenForStringizing() throws ScannerException, EndOfFile;
 	public void setTokenizingMacroReplacementList(boolean b);
-    
+	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad );
+		
 	public void onParseEnd();
     /**
      * @param i

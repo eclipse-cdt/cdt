@@ -2398,6 +2398,10 @@ public class Scanner implements IScanner {
 		language = value; 
 	}
 	
+	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad ){
+		throwExceptionOnBadCharacterRead = throwOnBad;
+	}
+	
 	private final ISourceElementRequestor requestor;
 	private IASTFactory astFactory = null; 
 	

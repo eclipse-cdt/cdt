@@ -1,3 +1,8 @@
+2003-09-15 Andrew Niefer
+	- modify CSearchPattern to handle escaping wildcards (bug43063)
+	- modify enterFunctionBody and enterMethodBody to fix bug42979
+	- search for Parameter References
+
 2003-09-13 Andrew Niefer
 	-Searching for Typedefs: (bug42902)
 		- modified setElementInfo in BasicSearchResultCollector

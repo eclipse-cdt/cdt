@@ -1,3 +1,6 @@
+2003-09-16 Andrew Niefer
+	- added setThrowExceptionOnBadCharacterRead to IScanner to help with wildcard bug43063
+
 2003-09-16 John Camelon
 	Implement CompleteParse IASTFunction::previouslyDeclared(). 
 

@@ -1530,7 +1530,7 @@ public final class CharOperation {
 			name,
 			0,
 			name.length,
-			isCaseSensitive);
+			isCaseSensitive, true);
 	}
 	/**
 	 * Answers true if the a sub-pattern matches the subpart of the given name, false otherwise.
@@ -1583,7 +1583,21 @@ public final class CharOperation {
 		char[] name,
 		int nameStart,
 		int nameEnd,
-		boolean isCaseSensitive) {
+		boolean isCaseSensitive){
+			
+		return match( pattern, patternStart, patternEnd, name, nameStart, nameEnd, isCaseSensitive, false );
+	}
+	
+	
+	public static final boolean match(
+		char[] pattern,
+		int patternStart,
+		int patternEnd,
+		char[] name,
+		int nameStart,
+		int nameEnd,
+		boolean isCaseSensitive,
+		boolean allowEscaping) {
 
 		if (name == null)
 			return false; // null name cannot match
@@ -1599,8 +1613,17 @@ public final class CharOperation {
 
 		/* check first segment */
 		char patternChar = 0;
-		while ((iPattern < patternEnd)
-			&& (patternChar = pattern[iPattern]) != '*') {
+		boolean isEscaped = false;
+		while ((iPattern < patternEnd) && 
+			   ( (patternChar = pattern[iPattern]) != '*' ||
+			     (patternChar == '*' && isEscaped) ) ) {
+			     	
+			if( allowEscaping && pattern[iPattern] == '\\' && !isEscaped ){
+				iPattern++;
+				isEscaped = true;
+				continue;
+			} else isEscaped = false;
+			
 			if (iName == nameEnd)
 				return false;
 			if (patternChar
@@ -1612,6 +1635,7 @@ public final class CharOperation {
 			}
 			iName++;
 			iPattern++;
+			patternChar = 0;
 		}
 		/* check sequence of star+segment */
 		int segmentStart;

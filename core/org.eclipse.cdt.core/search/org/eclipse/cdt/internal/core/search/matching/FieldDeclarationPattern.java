@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -64,7 +65,10 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		} else if ( node instanceof IASTEnumerator ){
 			if( searchFor != FIELD || !canAccept( limit ) )
 				return IMPOSSIBLE_MATCH;
-		} else return IMPOSSIBLE_MATCH; 
+		} else if( node instanceof IASTParameterDeclaration ){
+			if( searchFor != VAR || !canAccept( limit ) )
+				return IMPOSSIBLE_MATCH;
+		} else return IMPOSSIBLE_MATCH;
 		
 		String nodeName = ((IASTOffsetableNamedElement)node).getName();
 		
@@ -91,17 +95,19 @@ public class FieldDeclarationPattern extends CSearchPattern {
 			enumeratorFullName[ fullName.length - 1 ] = nodeName;
 			
 			fullName = enumeratorFullName;
-		} else {
+		} else if( node instanceof IASTQualifiedNameElement ){
 			fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName(); 
-		}
+		} 
 		
-		char [][] qualName = new char [ fullName.length - 1 ][];
-		for( int i = 0; i < fullName.length - 1; i++ ){
-			qualName[i] = fullName[i].toCharArray();
-		}
-		//check containing scopes
-		if( !matchQualifications( qualifications, qualName ) ){
-			return IMPOSSIBLE_MATCH;
+		if( fullName != null ){
+			char [][] qualName = new char [ fullName.length - 1 ][];
+			for( int i = 0; i < fullName.length - 1; i++ ){
+				qualName[i] = fullName[i].toCharArray();
+			}
+			//check containing scopes
+			if( !matchQualifications( qualifications, qualName ) ){
+				return IMPOSSIBLE_MATCH;
+			}
 		}
 		
 		return ACCURATE_MATCH;

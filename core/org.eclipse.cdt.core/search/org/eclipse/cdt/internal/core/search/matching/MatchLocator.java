@@ -129,6 +129,14 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public void enterCodeBlock(IASTCodeScope scope) {	}
 	public void exitCodeBlock(IASTCodeScope scope) 	{	}
 	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
+	 */
+	public void acceptParameterReference(IASTParameterReference reference)
+	{
+		check( REFERENCES, reference );        
+	}
 	
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef){
 		lastDeclaration = typedef;
@@ -208,13 +216,19 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	
 	public void enterFunctionBody(IASTFunction function){
 		lastDeclaration = function;
-		check( DECLARATIONS, function );
+		
+		if( !function.previouslyDeclared() )
+			check( DECLARATIONS, function );
+			
 		check( DEFINITIONS, function );
 		pushScope( function );
 	}
 	
 	public void enterMethodBody(IASTMethod method) {
 		lastDeclaration = method;
+		if( !method.previouslyDeclared() )
+			check( DECLARATIONS, method );
+			
 		check( DEFINITIONS, method );
 		pushScope( method );
 	}
@@ -471,7 +485,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		if( level != ICSearchPattern.IMPOSSIBLE_MATCH )
 		{
 			report( node, level );
-		}
+		} 
 	}
 	
 	private void pushScope( IASTScope scope ){
@@ -509,15 +523,4 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	public static void verbose(String log) {
 	  System.out.println("(" + Thread.currentThread() + ") " + log); 
 	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
-     */
-    public void acceptParameterReference(IASTParameterReference reference)
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-
 }

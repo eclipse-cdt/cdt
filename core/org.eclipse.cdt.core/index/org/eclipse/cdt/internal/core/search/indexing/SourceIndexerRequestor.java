@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
@@ -450,7 +451,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
      */
     public void acceptParameterReference(IASTParameterReference reference)
     {
-        // TODO Auto-generated method stub
+        if( reference.getReferencedElement() instanceof IASTParameterDeclaration )
+        	indexer.addParameterReference( (IASTParameterDeclaration) reference.getReferencedElement() );
         
     }
 }

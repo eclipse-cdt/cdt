@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
@@ -117,6 +118,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	public void addVariableReference(IASTVariable variable) {
 		this.output.addRef(encodeTypeEntry(variable.getFullyQualifiedName(), VAR, ICSearchConstants.REFERENCES));
 	}	
+	
+	public void addParameterReference( IASTParameterDeclaration parameter ){
+		this.output.addRef( encodeTypeEntry( new String [] { parameter.getName() }, VAR, ICSearchConstants.REFERENCES));
+	}
 	
 	public void addTypedefDeclaration(IASTTypedefDeclaration typedef) {
 		this.output.addRef(encodeEntry(typedef.getFullyQualifiedName(), TYPEDEF_DECL, TYPEDEF_DECL_LENGTH));
@@ -463,7 +468,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		char[] 	result = null;
 		int 	pos    = 0;
 		
-		int wildPos, starPos, questionPos;
+		int wildPos, starPos = -1, questionPos;
 		
 		//length of prefix + separator
 		int length = prefix.length;
@@ -477,7 +482,29 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			//type name.
 			name = null;
 		} else if( matchMode == PATTERN_MATCH && name != null ){
-			starPos     = CharOperation.indexOf( '*', name );
+			int start = 0;
+
+			char [] temp = new char [ name.length ];
+			boolean isEscaped = false;
+			int tmpIdx = 0;
+			for( int i = 0; i < name.length; i++ ){
+				if( name[i] == '\\' ){
+					if( !isEscaped ){
+						isEscaped = true;
+						continue;
+					} 
+					isEscaped = false;		
+				} else if( name[i] == '*' && !isEscaped ){
+					starPos = i;
+					break;
+				} 
+				temp[ tmpIdx++ ] = name[i];
+			}
+			
+			name = new char [ tmpIdx ];
+			System.arraycopy( temp, 0, name, 0, tmpIdx );				
+		
+			//starPos = CharOperation.indexOf( '*', name );
 			questionPos = CharOperation.indexOf( '?', name );
 
 			if( starPos >= 0 ){

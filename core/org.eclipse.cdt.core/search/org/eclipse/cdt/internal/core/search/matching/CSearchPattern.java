@@ -415,6 +415,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		try {
 			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
+			scanner.setThrowExceptionOnBadCharacterRead( true );
 			
 			boolean lastTokenWasWild = false;
 			
@@ -432,13 +433,26 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 							lastTokenWasWild = true;
 						} else if( !lastTokenWasWild && name.length() > 0 ) {
 							name += " ";
+						} else {
+							lastTokenWasWild = false;
 						}
 						
 						name += token.getImage();
 						break;
 				}
+				token = null;
+				while( token == null ){
+					try{
+						token = scanner.nextToken();
+					} catch ( ScannerException e ){
+						if( e.getErrorCode() == ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE ){
+							if( !lastTokenWasWild ) name += " ";
+							name += "\\";
+							lastTokenWasWild = true;
+						}
+					}
+				}
 				
-				token = scanner.nextToken();
 			}
 		} catch (EndOfFile e) {	
 			list.addLast( name.toCharArray() );

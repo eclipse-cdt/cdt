@@ -54,3 +54,11 @@ AClassForFoo foo( AClassForFoo ){
 	AClassForFoo b;
 	return b;
 }
+
+Head * Head::operator *= ( int index ){
+	return array[ index ];
+}
+
+Head * Head::operator += ( int index ){
+	return array[ index ];
+}

@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.search.tests;
 import java.util.Set;
 
 import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.MethodDeclarationPattern;
@@ -102,5 +103,41 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
 		assertEquals( matches.size(), 1 );
+	}
+	
+	public void testOperators_bug43063_bug42979(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "operator \\*", METHOD, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		IMatch match1 = (IMatch) matches.iterator().next();
+		
+		pattern = SearchEngine.createSearchPattern( "operator \\*", METHOD, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		IMatch match2 = (IMatch) matches.iterator().next();
+
+		assertTrue( match1.getStartOffset() == match2.getStartOffset() );
+		
+		pattern = SearchEngine.createSearchPattern( "operator \\*=", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		match1 = (IMatch) matches.iterator().next();
+		
+		pattern = SearchEngine.createSearchPattern( "operator \\*=", METHOD, DEFINITIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		match2 = (IMatch) matches.iterator().next();
+
+		assertTrue( match1.getStartOffset() != match2.getStartOffset() );
+		
+		pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 5 ); //3 in classDecl.cpp, 2 in mail.cpp 
 	}
 }

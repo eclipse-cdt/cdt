@@ -79,16 +79,18 @@ public class MethodDeclarationPattern extends CSearchPattern {
 			return IMPOSSIBLE_MATCH;
 		}
 
-		//create char[][] out of full name, 
-		String [] fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
-		char [][] qualName = new char [ fullName.length - 1 ][];
-		for( int i = 0; i < fullName.length - 1; i++ ){
-			qualName[i] = fullName[i].toCharArray();
-		}
-		
-		//check containing scopes
-		if( !matchQualifications( qualifications, qualName ) ){
-			return IMPOSSIBLE_MATCH;
+		if( node instanceof IASTQualifiedNameElement ){
+			//create char[][] out of full name, 
+			String [] fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
+			char [][] qualName = new char [ fullName.length - 1 ][];
+			for( int i = 0; i < fullName.length - 1; i++ ){
+				qualName[i] = fullName[i].toCharArray();
+			}
+			
+			//check containing scopes
+			if( !matchQualifications( qualifications, qualName ) ){
+				return IMPOSSIBLE_MATCH;
+			}
 		}
 		
 		//parameters

@@ -5,18 +5,14 @@ package org.eclipse.cdt.internal.ui.editor.asm;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.swt.custom.StyleRange;
 
 
 public class AsmSourceViewerConfiguration extends SourceViewerConfiguration {
@@ -68,7 +64,7 @@ public class AsmSourceViewerConfiguration extends SourceViewerConfiguration {
 
 
 
-		CColorManager manager= fTextTools.getColorManager();
+		// CColorManager manager= fTextTools.getColorManager();
 		PresentationReconciler reconciler= new PresentationReconciler();
 
 

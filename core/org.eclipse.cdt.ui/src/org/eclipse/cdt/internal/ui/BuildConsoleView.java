@@ -7,16 +7,7 @@ package org.eclipse.cdt.internal.ui;
  
 import java.util.ResourceBundle;
 
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-
-
+import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -30,17 +21,18 @@ import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.TextEditorAction;
-
-
-import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 
 /**
  * Console view for the desktop. Registered using XML.

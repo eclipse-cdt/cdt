@@ -140,7 +140,7 @@ public class AsmTextEditor extends StatusTextEditor {
 	 * Pulled in from 2.0
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		String p= event.getProperty();
+		// String p= event.getProperty();
 		
 		boolean affects= false;
 		AsmTextTools textTools= CPlugin.getDefault().getAsmTextTools();

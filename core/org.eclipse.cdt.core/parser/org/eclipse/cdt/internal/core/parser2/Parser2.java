@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -43,7 +42,6 @@ import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
-import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias;
@@ -51,7 +49,6 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -67,18 +64,10 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCDesignator;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.DeclarationWrapper;
-import org.eclipse.cdt.internal.core.parser.Declarator;
-import org.eclipse.cdt.internal.core.parser.IDeclarator;
-import org.eclipse.cdt.internal.core.parser.IDeclaratorOwner;
-import org.eclipse.cdt.internal.core.parser.IParameterCollection;
-import org.eclipse.cdt.internal.core.parser.ParameterCollection;
 import org.eclipse.cdt.internal.core.parser.ParserProblemFactory;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
-import org.eclipse.cdt.internal.core.parser.TypeId;
 import org.eclipse.cdt.internal.core.parser.Parser.Flags;
-import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
@@ -114,7 +103,6 @@ public class Parser2
 	//TODO this stuff needs to be encapsulated by IParserData
 	protected final IParserLogService log;
 	protected ParserLanguage language = ParserLanguage.CPP;
-	protected IASTFactory astFactory = null;
 	protected IScanner scanner;
 	protected IToken currToken;
 	protected IToken lastToken;
@@ -153,12 +141,6 @@ public class Parser2
 	    final public int size(){
 	        return index + 1;
 	    }
-	}
-	/**
-	 * @return Returns the astFactory.
-	 */
-	public IASTFactory getAstFactory() {
-		return astFactory;
 	}
 	/**
 	 * @return Returns the log.
@@ -327,7 +309,7 @@ public class Parser2
 		return last;
 	}
 
-	protected List templateArgumentList(IASTScope scope) throws EndOfFileException,
+	protected List templateArgumentList(Object scope) throws EndOfFileException,
 			BacktrackException {
 		IToken start = LA(1);
 		int startingOffset = start.getOffset();
@@ -350,16 +332,16 @@ public class Parser2
 			try {
 				IASTTypeId typeId = typeId(scope, false );
 
-				expression = astFactory.createExpression(scope,
+				expression = null; /* astFactory.createExpression(scope,
 						IASTExpression.Kind.POSTFIX_TYPEID_TYPEID, null, null,
-						null, typeId, null, EMPTY_STRING, null);
+						null, typeId, null, EMPTY_STRING, null); */
 				list.add(expression);
 				completedArg = true;
 			} catch (BacktrackException e) {
 				backup(mark);
-			} catch (ASTSemanticException e) {
+			} /* catch (ASTSemanticException e) {
 				backup(mark);
-			}
+			} */
 
 			if (!completedArg) {
 				try {
@@ -368,7 +350,7 @@ public class Parser2
 					int ln= la.getLineNumber();
 					expression = assignmentExpression(scope);
 					 
-					if (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY) {
+					if ( ( expression == null ) || expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY) {
 						throwBacktrack(so, ( lastToken != null ) ? lastToken.getEndOffset() : 0, ln, fn );
 					}
 					list.add(expression);
@@ -380,15 +362,15 @@ public class Parser2
 			if (!completedArg) {
 				try {
 					ITokenDuple nameDuple = name(scope);
-					expression = astFactory.createExpression(scope,
+					expression = null; /* astFactory.createExpression(scope,
 							IASTExpression.Kind.ID_EXPRESSION, null, null,
-							null, null, nameDuple, EMPTY_STRING, null);
+							null, null, nameDuple, EMPTY_STRING, null); */
 					list.add(expression);
 					continue;
-				} catch (ASTSemanticException e) {
+				} /* catch (ASTSemanticException e) {
 					failed = true;
 					break;
-				} catch (BacktrackException e) {
+				} */ catch (BacktrackException e) {
 					failed = true;
 					break;
 				} catch (Exception e) {
@@ -427,7 +409,7 @@ public class Parser2
 	 * 
 	 * @throws BacktrackException	request a backtrack
 	 */
-	protected IToken templateId(IASTScope scope)
+	protected IToken templateId(Object scope)
 			throws EndOfFileException, BacktrackException {
 		ITokenDuple duple = name(scope);
 		//IToken last = consumeTemplateParameters(duple.getLastToken());
@@ -446,7 +428,7 @@ public class Parser2
 	 * 
 	 * @throws BacktrackException	request a backtrack
 	 */
-	protected ITokenDuple name(IASTScope scope)
+	protected ITokenDuple name(Object scope)
 			throws BacktrackException, EndOfFileException {
 
 		TemplateParameterManager argumentList = TemplateParameterManager
@@ -523,7 +505,7 @@ public class Parser2
 	 * @throws EndOfFileException
 	 * @throws BacktrackException
 	 */
-	protected IToken consumeTemplateArguments(IASTScope scope, IToken last,
+	protected IToken consumeTemplateArguments(Object scope, IToken last,
 			TemplateParameterManager argumentList)
 			throws EndOfFileException, BacktrackException {
 		if (language != ParserLanguage.CPP)
@@ -584,7 +566,7 @@ public class Parser2
 		return result;
 	}
 
-	protected IToken consumeArrayModifiers(IDeclarator d, IASTScope scope)
+	protected IToken consumeArrayModifiers(IDeclarator d, Object scope)
 			throws EndOfFileException, BacktrackException {
 		int startingOffset = LA(1).getOffset();
 		IToken last = null;
@@ -598,7 +580,7 @@ public class Parser2
 			last = consume(IToken.tRBRACKET);
 			IASTArrayModifier arrayMod = null;
 			try {
-				arrayMod = astFactory.createArrayModifier(exp);
+				arrayMod = null; /* astFactory.createArrayModifier(exp); */
 			} catch (Exception e) {
 				logException("consumeArrayModifiers::createArrayModifier()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, last.getEndOffset(), last.getLineNumber(), last.getFilename());
@@ -728,12 +710,12 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression constantExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression constantExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		return conditionalExpression(scope);
 	}
 
-	public IASTExpression expression(IASTScope scope) throws BacktrackException, EndOfFileException {
+	public IASTExpression expression(Object scope) throws BacktrackException, EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
 		int ln = la.getLineNumber();
@@ -756,13 +738,13 @@ public class Parser2
 			
 			int endOffset = lastToken != null ? lastToken.getEndOffset() : 0 ;
 			try {
-				assignmentExpression = astFactory.createExpression(scope,
+				assignmentExpression = null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.EXPRESSIONLIST,
 						assignmentExpression, secondExpression, null, null,
-						null, EMPTY_STRING, null);
-			} catch (ASTSemanticException e) {
+						null, EMPTY_STRING, null); */
+			} /* catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
-			} catch (Exception e) {
+			} */ catch (Exception e) {
 				logException("expression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, ln, fn);
 			}
@@ -778,7 +760,7 @@ public class Parser2
 	 * @throws EndOfFileException
 	 * @throws BacktrackException
 	 */
-	private IASTExpression compoundStatementExpression(IASTScope scope, IToken la, IASTExpression resultExpression) throws EndOfFileException, BacktrackException {
+	private IASTExpression compoundStatementExpression(Object scope, IToken la, IASTExpression resultExpression) throws EndOfFileException, BacktrackException {
 		int startingOffset = la.getOffset();
 		int ln = la.getLineNumber();
 		char [] fn = la.getFilename();
@@ -800,11 +782,11 @@ public class Parser2
 			consume( IToken.tRPAREN );
 			try
 			{
-				resultExpression = astFactory.createExpression( scope, IASTGCCExpression.Kind.STATEMENT_EXPRESSION, null, null, null, null, null,EMPTY_STRING, null );
+				resultExpression = null; /*astFactory.createExpression( scope, IASTGCCExpression.Kind.STATEMENT_EXPRESSION, null, null, null, null, null,EMPTY_STRING, null ); */
 			}
-			catch (ASTSemanticException e) {
+			/* catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
-			} catch (Exception e) {
+			} */ catch (Exception e) {
 				logException("expression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, lastToken != null ? lastToken.getEndOffset() : 0 , ln, fn);
 			}
@@ -820,7 +802,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression assignmentExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression assignmentExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		if (LT(1) == IToken.t_throw) {
 			return throwExpression(scope);
@@ -884,7 +866,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression throwExpression(IASTScope scope)
+	protected IASTExpression throwExpression(Object scope)
 			throws EndOfFileException, BacktrackException {
 		IToken throwToken = consume(IToken.t_throw);
 		IASTExpression throwExpression = null;
@@ -892,12 +874,12 @@ public class Parser2
 
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
-			return astFactory.createExpression(scope,
+			return null; /*astFactory.createExpression(scope,
 					IASTExpression.Kind.THROWEXPRESSION, throwExpression, null,
-					null, null, null, EMPTY_STRING, null);
-		} catch (ASTSemanticException e) {
+					null, null, null, EMPTY_STRING, null); */
+		} /* catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
-		} catch (Exception e) {
+		} */ catch (Exception e) {
 			logException("throwExpression::createExpression()", e); //$NON-NLS-1$
 			throwBacktrack(throwToken.getOffset(), endOffset, throwToken.getLineNumber(), throwToken.getFilename() );
 
@@ -910,7 +892,7 @@ public class Parser2
 	 * @return
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression conditionalExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression conditionalExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -925,13 +907,13 @@ public class Parser2
 			IASTExpression thirdExpression = assignmentExpression(scope);
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
-				return astFactory.createExpression(scope,
+				return null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.CONDITIONALEXPRESSION,
 						firstExpression, secondExpression, thirdExpression,
-						null, null, EMPTY_STRING, null);
-			} catch (ASTSemanticException e) {
+						null, null, EMPTY_STRING, null); */
+			} /* catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
-			} catch (Exception e) {
+			} */ catch (Exception e) {
 				logException("conditionalExpression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, ln, fn);
 			}
@@ -943,7 +925,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression logicalOrExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression logicalOrExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -955,12 +937,12 @@ public class Parser2
 			IASTExpression secondExpression = logicalAndExpression(scope);
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
-				firstExpression = astFactory.createExpression(scope,
+				firstExpression = null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.LOGICALOREXPRESSION,
 						firstExpression, secondExpression, null, null, null,
-						EMPTY_STRING, null);
+						EMPTY_STRING, null); 
 			} catch (ASTSemanticException e) {
-				throwBacktrack(e.getProblem());
+				throwBacktrack(e.getProblem()); */
 			} catch (Exception e) {
 				logException("logicalOrExpression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, line, fn);
@@ -973,7 +955,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression logicalAndExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression logicalAndExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -985,12 +967,12 @@ public class Parser2
 			IASTExpression secondExpression = inclusiveOrExpression(scope);
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
-				firstExpression = astFactory.createExpression(scope,
+				firstExpression = null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.LOGICALANDEXPRESSION,
 						firstExpression, secondExpression, null, null, null,
 						EMPTY_STRING, null);
 			} catch (ASTSemanticException e) {
-				throwBacktrack(e.getProblem());
+				throwBacktrack(e.getProblem()); */
 			} catch (Exception e) {
 				logException("logicalAndExpression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1003,7 +985,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression inclusiveOrExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression inclusiveOrExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1016,12 +998,12 @@ public class Parser2
 			IASTExpression secondExpression = exclusiveOrExpression(scope);
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
-				firstExpression = astFactory.createExpression(scope,
+				firstExpression = null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.INCLUSIVEOREXPRESSION,
 						firstExpression, secondExpression, null, null, null,
 						EMPTY_STRING, null);
 			} catch (ASTSemanticException e) {
-				throwBacktrack(e.getProblem());
+				throwBacktrack(e.getProblem()); */
 			} catch (Exception e) {
 				logException("inclusiveOrExpression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1034,7 +1016,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression exclusiveOrExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression exclusiveOrExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1048,12 +1030,12 @@ public class Parser2
 			IASTExpression secondExpression = andExpression(scope);
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
-				firstExpression = astFactory.createExpression(scope,
+				firstExpression = null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
 						firstExpression, secondExpression, null, null, null,
 						EMPTY_STRING, null);
 			} catch (ASTSemanticException e) {
-				throwBacktrack(e.getProblem());
+				throwBacktrack(e.getProblem()); */
 			} catch (Exception e) {
 				logException("exclusiveORExpression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1066,7 +1048,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression andExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression andExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1079,11 +1061,11 @@ public class Parser2
 			IASTExpression secondExpression = equalityExpression(scope);
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 			try {
-				firstExpression = astFactory.createExpression(scope,
+				firstExpression = null; /*astFactory.createExpression(scope,
 						IASTExpression.Kind.ANDEXPRESSION, firstExpression,
 						secondExpression, null, null, null, EMPTY_STRING, null);
 			} catch (ASTSemanticException e) {
-				throwBacktrack(e.getProblem());
+				throwBacktrack(e.getProblem()); */
 			} catch (Exception e) {
 				logException("andExpression::createExpression()", e); //$NON-NLS-1$
 				throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1116,7 +1098,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression equalityExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression equalityExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1133,14 +1115,14 @@ public class Parser2
 							scope);
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
-						firstExpression = astFactory.createExpression(scope, (t
+						firstExpression = null; /*astFactory.createExpression(scope, (t
 								.getType() == IToken.tEQUAL)
 								? IASTExpression.Kind.EQUALITY_EQUALS
 								: IASTExpression.Kind.EQUALITY_NOTEQUALS,
 								firstExpression, secondExpression, null, null,
 								null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"equalityExpression::createExpression()", e); //$NON-NLS-1$
@@ -1157,7 +1139,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression relationalExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression relationalExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1200,12 +1182,12 @@ public class Parser2
 					}
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								expressionKind, firstExpression,
 								secondExpression, null, null, null,
 								EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"relationalExpression::createExpression()", e); //$NON-NLS-1$
@@ -1236,12 +1218,12 @@ public class Parser2
 			            	return firstExpression;
 			            }
 						IASTExpression resultExpression = null;
-						try {
-							resultExpression = astFactory.createExpression( 
+						//try {
+							resultExpression = null; /*astFactory.createExpression( 
 									scope, k, firstExpression, se, null, null, null, EMPTY_STRING, null );
 						} catch (ASTSemanticException e1) {
-							throwBacktrack( e1.getProblem() );
-						}
+							throwBacktrack( e1.getProblem() ); 
+						} */
 						return resultExpression;
 					}
 					return firstExpression;
@@ -1253,7 +1235,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	public IASTExpression shiftExpression(IASTScope scope) throws BacktrackException, EndOfFileException {
+	public IASTExpression shiftExpression(Object scope) throws BacktrackException, EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
 		int line = la.getLineNumber();
@@ -1267,14 +1249,14 @@ public class Parser2
 					IASTExpression secondExpression = additiveExpression(scope);
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								((t.getType() == IToken.tSHIFTL)
 										? IASTExpression.Kind.SHIFT_LEFT
 										: IASTExpression.Kind.SHIFT_RIGHT),
 								firstExpression, secondExpression, null, null,
 								null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException("shiftExpression::createExpression()", e); //$NON-NLS-1$
 						throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1290,7 +1272,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression additiveExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression additiveExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1306,14 +1288,14 @@ public class Parser2
 							scope);
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								((t.getType() == IToken.tPLUS)
 										? IASTExpression.Kind.ADDITIVE_PLUS
 										: IASTExpression.Kind.ADDITIVE_MINUS),
 								firstExpression, secondExpression, null, null,
 								null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"additiveExpression::createExpression()", e); //$NON-NLS-1$
@@ -1330,7 +1312,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression multiplicativeExpression(IASTScope scope) throws BacktrackException,
+	protected IASTExpression multiplicativeExpression(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1358,13 +1340,13 @@ public class Parser2
 					}
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								expressionKind, firstExpression,
 								secondExpression, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null); 
 					} catch (ASTSemanticException e) {
 						firstExpression.freeReferences();
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"multiplicativeExpression::createExpression()", e); //$NON-NLS-1$
@@ -1381,7 +1363,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression pmExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
+	protected IASTExpression pmExpression(Object scope) throws EndOfFileException, BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
 		int line = la.getLineNumber();
@@ -1396,14 +1378,14 @@ public class Parser2
 					IASTExpression secondExpression = castExpression(scope);
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								((t.getType() == IToken.tDOTSTAR)
 										? IASTExpression.Kind.PM_DOTSTAR
 										: IASTExpression.Kind.PM_ARROWSTAR),
 								firstExpression, secondExpression, null, null,
 								null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException("pmExpression::createExpression()", e); //$NON-NLS-1$
 						throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1420,7 +1402,7 @@ public class Parser2
 	 * : unaryExpression
 	 * | "(" typeId ")" castExpression
 	 */
-	protected IASTExpression castExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression castExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		// TO DO: we need proper symbol checkint to ensure type name
 		if (LT(1) == IToken.tLPAREN) {
@@ -1462,11 +1444,11 @@ public class Parser2
 				int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 				mark = null; // clean up mark so that we can garbage collect
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.CASTEXPRESSION, castExpression,
 							null, null, typeId, null, EMPTY_STRING, null);
 				} catch (ASTSemanticException e) {
-					throwBacktrack(e.getProblem());
+					throwBacktrack(e.getProblem()); */
 				} catch (Exception e) {
 					logException("castExpression::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1484,7 +1466,7 @@ public class Parser2
 	/**
 	 * @throws BacktrackException
 	 */
-	public IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers) throws EndOfFileException,
+	public IASTTypeId typeId(Object scope, boolean skipArrayModifiers) throws EndOfFileException,
 			BacktrackException {
 		IToken mark = mark();
 		ITokenDuple name = null;
@@ -1667,13 +1649,13 @@ public class Parser2
 					lastToken = last;
 				signature = TokenFactory.createCharArrayRepresentation(mark, last);
 			}
-			return astFactory.createTypeId(scope, kind, isConst, isVolatile,
+			return null; /*astFactory.createTypeId(scope, kind, isConst, isVolatile,
 					isShort, isLong, isSigned, isUnsigned, isTypename, name, id
 							.getPointerOperators(), id.getArrayModifiers(),
-					signature);
+					signature); 
 		} catch (ASTSemanticException e) {
 			backup(mark);
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			logException("typeId::createTypeId()", e); //$NON-NLS-1$
 			throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(), mark.getFilename());
@@ -1685,7 +1667,7 @@ public class Parser2
 	 * @param scope
 	 * @return
 	 */
-	private TypeId getTypeIdInstance(IASTScope scope) {
+	private TypeId getTypeIdInstance(Object scope) {
 		typeIdInstance.reset(scope);
 		return typeIdInstance;
 	}
@@ -1693,7 +1675,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression deleteExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression deleteExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1716,12 +1698,12 @@ public class Parser2
 		IASTExpression castExpression = castExpression(scope);
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
-			return astFactory.createExpression(scope, (vectored
+			return null; /*astFactory.createExpression(scope, (vectored
 					? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
 					: IASTExpression.Kind.DELETE_CASTEXPRESSION),
 					castExpression, null, null, null, null, EMPTY_STRING, null);
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			logException("deleteExpression::createExpression()", e); //$NON-NLS-1$
 			throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1745,7 +1727,7 @@ public class Parser2
 	 *							directnewdeclarator [ constantexpression ]
 	 * newinitializer:	( expressionlist? )
 	 */
-	protected IASTExpression newExpression(IASTScope scope)
+	protected IASTExpression newExpression(Object scope)
 			throws BacktrackException, EndOfFileException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -1849,7 +1831,7 @@ public class Parser2
 							// new-expression ends here.
 							int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 							try {
-								return astFactory.createExpression(scope,
+								return null; /*astFactory.createExpression(scope,
 										IASTExpression.Kind.NEW_TYPEID, null,
 										null, null, typeId, null, EMPTY_STRING,
 										astFactory.createNewDescriptor(
@@ -1857,7 +1839,7 @@ public class Parser2
 												newTypeIdExpressions,
 												newInitializerExpressions));
 							} catch (ASTSemanticException e) {
-								throwBacktrack(e.getProblem());
+								throwBacktrack(e.getProblem()); */
 							} catch (Exception e) {
 								logException(
 										"newExpression_1::createExpression()", e); //$NON-NLS-1$
@@ -1913,14 +1895,14 @@ public class Parser2
 		}
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
-			return astFactory.createExpression(scope,
+			return null; /*astFactory.createExpression(scope,
 					IASTExpression.Kind.NEW_TYPEID, null, null, null, typeId,
 					null, EMPTY_STRING, astFactory.createNewDescriptor(
 							newPlacementExpressions, newTypeIdExpressions,
 							newInitializerExpressions));
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
-			return null;
+			return null; */
 		} catch (Exception e) {
 			logException("newExpression_2::createExpression()", e); //$NON-NLS-1$
 			throwBacktrack(startingOffset, endOffset, line, fn);
@@ -1932,7 +1914,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	public IASTExpression unaryExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
+	public IASTExpression unaryExpression(Object scope) throws EndOfFileException, BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
 		int line = la.getLineNumber();
@@ -1990,22 +1972,22 @@ public class Parser2
 				int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 				if (unaryExpression == null)
 					try {
-						return astFactory.createExpression(scope,
+						return null; /*astFactory.createExpression(scope,
 								IASTExpression.Kind.UNARY_SIZEOF_TYPEID, null,
 								null, null, d, null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException("unaryExpression_1::createExpression()", e); //$NON-NLS-1$
 						throwBacktrack(startingOffset, endOffset, line, fn);
 					}
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
 							unaryExpression, null, null, null, null,
 							EMPTY_STRING, null);
 				} catch (ASTSemanticException e1) {
-					throwBacktrack(e1.getProblem());
+					throwBacktrack(e1.getProblem()); */
 				} catch (Exception e) {
 					logException("unaryExpression_1::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(startingOffset, endOffset, line, fn);
@@ -2048,7 +2030,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 * @throws EndOfFileException
      */
-    private IASTExpression unaryAlignofExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
+    private IASTExpression unaryAlignofExpression(Object scope) throws EndOfFileException, BacktrackException {
 		consume(IGCCToken.t___alignof__ );
 		IASTTypeId d = null;
 		IASTExpression unaryExpression = null;
@@ -2075,8 +2057,8 @@ public class Parser2
 	    }
 	    if (d != null & unaryExpression == null)
 	    {
-                try {
-					return getAstFactory().createExpression(
+//                try {
+					return null; /*astFactory.createExpression(
 					    scope,
 					    IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID,
 					    null,
@@ -2086,12 +2068,12 @@ public class Parser2
 					    null, EMPTY_STRING, null);
 				} catch (ASTSemanticException e2) {
 					throwBacktrack( e2.getProblem() );
-				} 
+				} */
         }
         else if (unaryExpression != null && d == null)
-            try
-            {
-                return getAstFactory().createExpression(
+//            try
+//            {
+                return null; /*.createExpression(
                     scope,
                     IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION,
                     unaryExpression,
@@ -2103,12 +2085,12 @@ public class Parser2
             catch (ASTSemanticException e1)
             {
                	throwBacktrack( e1.getProblem() );
-            } 
+            } */
         return null;
 
     }
 
-    protected IASTExpression unaryTypeofExpression( IASTScope scope ) throws EndOfFileException, BacktrackException
+    protected IASTExpression unaryTypeofExpression( Object scope ) throws EndOfFileException, BacktrackException
 	{
 		consume(IGCCToken.t_typeof );
 		IASTTypeId d = null;
@@ -2136,8 +2118,8 @@ public class Parser2
 	    }
 	    if (d != null & unaryExpression == null)
 	    {
-                try {
-					return getAstFactory().createExpression(
+//                try {
+					return null; /*astFactory.createExpression(
 					    scope,
 					    IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID,
 					    null,
@@ -2147,12 +2129,12 @@ public class Parser2
 					    null, EMPTY_STRING, null);
 				} catch (ASTSemanticException e2) {
 					throwBacktrack( e2.getProblem() );
-				} 
+				}  */
         }
         else if (unaryExpression != null && d == null)
-            try
-            {
-                return getAstFactory().createExpression(
+//            try
+//            {
+                return null; /*astFactory.createExpression(
                     scope,
                     IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION,
                     unaryExpression,
@@ -2164,14 +2146,14 @@ public class Parser2
             catch (ASTSemanticException e1)
             {
                	throwBacktrack( e1.getProblem() );
-            } 
+            } */
         return null;
 	}
 	/**
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression postfixExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression postfixExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -2202,7 +2184,7 @@ public class Parser2
 				}
 				
 				try {
-					firstExpression = astFactory
+					firstExpression = null; /*astFactory
 							.createExpression(
 									scope,
 									(templateTokenConsumed
@@ -2211,7 +2193,7 @@ public class Parser2
 									expressionList, null, null, null,
 									nestedName, EMPTY_STRING, null);
 				} catch (ASTSemanticException ase) {
-					throwBacktrack(ase.getProblem());
+					throwBacktrack(ase.getProblem()); */
 				} catch (Exception e) {
 					logException("postfixExpression_1::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(startingOffset, endOffset, line, fn);
@@ -2294,7 +2276,7 @@ public class Parser2
 					templateIdScopes.pop();
 				}
 				try {
-					firstExpression = astFactory
+					firstExpression = null; /*astFactory
 							.createExpression(
 									scope,
 									(isTypeId
@@ -2303,7 +2285,7 @@ public class Parser2
 									lhs, null, null, typeId, null,
 									EMPTY_STRING, null);
 				} catch (ASTSemanticException e6) {
-					throwBacktrack(e6.getProblem());
+					throwBacktrack(e6.getProblem()); */
 				} catch (Exception e) {
 					logException("postfixExpression_2::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(startingOffset, endOffset, line, fn);
@@ -2327,12 +2309,12 @@ public class Parser2
 						templateIdScopes.pop();
 					}
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_SUBSCRIPT,
 								firstExpression, secondExpression, null, null,
 								null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e2) {
-						throwBacktrack(e2.getProblem());
+						throwBacktrack(e2.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_3::createExpression()", e); //$NON-NLS-1$
@@ -2352,12 +2334,12 @@ public class Parser2
 						templateIdScopes.pop();
 					}
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_FUNCTIONCALL,
 								firstExpression, secondExpression, null, null,
 								null, EMPTY_STRING, null);
 					} catch (ASTSemanticException e3) {
-						throwBacktrack(e3.getProblem());
+						throwBacktrack(e3.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_4::createExpression()", e); //$NON-NLS-1$
@@ -2367,12 +2349,12 @@ public class Parser2
 				case IToken.tINCR :
 					endOffset = consume(IToken.tINCR).getEndOffset();
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_INCREMENT,
 								firstExpression, null, null, null, null,
 								EMPTY_STRING, null);
 					} catch (ASTSemanticException e1) {
-						throwBacktrack(e1.getProblem());
+						throwBacktrack(e1.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_5::createExpression()", e); //$NON-NLS-1$
@@ -2382,12 +2364,12 @@ public class Parser2
 				case IToken.tDECR :
 					endOffset = consume().getEndOffset();
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_DECREMENT,
 								firstExpression, null, null, null, null,
 								EMPTY_STRING, null);
 					} catch (ASTSemanticException e4) {
-						throwBacktrack(e4.getProblem());
+						throwBacktrack(e4.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_6::createExpression()", e); //$NON-NLS-1$
@@ -2416,12 +2398,12 @@ public class Parser2
 						memberCompletionKind = Kind.POSTFIX_DOT_DESTRUCTOR;
 
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								memberCompletionKind, firstExpression,
 								secondExpression, null, null, null,
 								EMPTY_STRING, null);
 					} catch (ASTSemanticException e5) {
-						throwBacktrack(e5.getProblem());
+						throwBacktrack(e5.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_7::createExpression()", e); //$NON-NLS-1$
@@ -2449,12 +2431,12 @@ public class Parser2
 							&& CharArrayUtils.indexOf( '~', secondExpression.getIdExpressionCharArray() ) != -1)
 						arrowCompletionKind = Kind.POSTFIX_ARROW_DESTRUCTOR;
 					try {
-						firstExpression = astFactory.createExpression(scope,
+						firstExpression = null; /*astFactory.createExpression(scope,
 								arrowCompletionKind, firstExpression,
 								secondExpression, null, null, null,
 								EMPTY_STRING, null);
 					} catch (ASTSemanticException e) {
-						throwBacktrack(e.getProblem());
+						throwBacktrack(e.getProblem()); */
 					} catch (Exception e) {
 						logException(
 								"postfixExpression_8::createExpression()", e); //$NON-NLS-1$
@@ -2491,7 +2473,7 @@ public class Parser2
 			LA(1);
 	}
 
-	protected IASTExpression simpleTypeConstructorExpression(IASTScope scope,
+	protected IASTExpression simpleTypeConstructorExpression(Object scope,
 			Kind type) throws EndOfFileException,
 			BacktrackException {
 		IToken la = LA(1);
@@ -2504,10 +2486,10 @@ public class Parser2
 		IASTExpression inside = expression(scope);
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
-			return astFactory.createExpression(scope, type, inside, null, null,
+			return null; /*astFactory.createExpression(scope, type, inside, null, null,
 					null, null, EMPTY_STRING, null);
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			logException(
 					"simpleTypeConstructorExpression::createExpression()", e); //$NON-NLS-1$
@@ -2520,7 +2502,7 @@ public class Parser2
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression primaryExpression(IASTScope scope) throws EndOfFileException,
+	protected IASTExpression primaryExpression(Object scope) throws EndOfFileException,
 			BacktrackException {
 		IToken t = null;
 		switch (LT(1)) {
@@ -2528,11 +2510,11 @@ public class Parser2
 			case IToken.tINTEGER :
 				t = consume();
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null,
 							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e1) {
-					throwBacktrack(e1.getProblem());
+					throwBacktrack(e1.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_1::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename());
@@ -2540,11 +2522,11 @@ public class Parser2
 			case IToken.tFLOATINGPT :
 				t = consume();
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_FLOAT_LITERAL, null,
 							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e2) {
-					throwBacktrack(e2.getProblem());
+					throwBacktrack(e2.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_2::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename());
@@ -2553,11 +2535,11 @@ public class Parser2
 			case IToken.tLSTRING :
 				t = consume();
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_STRING_LITERAL, null,
 							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e5) {
-					throwBacktrack(e5.getProblem());
+					throwBacktrack(e5.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_3::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename());
@@ -2567,11 +2549,11 @@ public class Parser2
 			case IToken.t_true :
 				t = consume();
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL, null,
 							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e3) {
-					throwBacktrack(e3.getProblem());
+					throwBacktrack(e3.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_4::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename() );
@@ -2582,11 +2564,11 @@ public class Parser2
 
 				t = consume();
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_CHAR_LITERAL, null,
 							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e4) {
-					throwBacktrack(e4.getProblem());
+					throwBacktrack(e4.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_5::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename());
@@ -2595,11 +2577,11 @@ public class Parser2
 			case IToken.t_this :
 				t = consume(IToken.t_this);
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_THIS, null, null, null,
 							null, null, EMPTY_STRING, null);
 				} catch (ASTSemanticException e7) {
-					throwBacktrack(e7.getProblem());
+					throwBacktrack(e7.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_6::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename());
@@ -2615,11 +2597,11 @@ public class Parser2
 					templateIdScopes.pop();
 				}
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION,
 							lhs, null, null, null, null, EMPTY_STRING, null);
 				} catch (ASTSemanticException e6) {
-					throwBacktrack(e6.getProblem());
+					throwBacktrack(e6.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_7::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(t.getOffset(), endOffset, t.getLineNumber(), t.getFilename() );
@@ -2664,11 +2646,11 @@ public class Parser2
 
 				endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 				try {
-					return astFactory.createExpression(scope,
+					return null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.ID_EXPRESSION, null, null,
 							null, null, duple, EMPTY_STRING, null);
 				} catch (ASTSemanticException e8) {
-					throwBacktrack(e8.getProblem());
+					throwBacktrack(e8.getProblem()); */
 				} catch (Exception e) {
 					logException("primaryExpression_8::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(startingOffset, endOffset, line, duple.getFilename());
@@ -2686,12 +2668,12 @@ public class Parser2
 				}
 				IASTExpression empty = null;
 				try {
-					empty = astFactory.createExpression(scope,
+					empty = null; /*astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_EMPTY, null, null,
 							null, null, null, EMPTY_STRING, null);
 				} catch (ASTSemanticException e9) {
 					throwBacktrack( e9.getProblem() );
-					return null;
+					return null; */
 				} catch (Exception e) {
 					logException("primaryExpression_9::createExpression()", e); //$NON-NLS-1$
 					throwBacktrack(startingOffset, 0, line, fn);
@@ -2717,17 +2699,17 @@ public class Parser2
 		} 
 	}
 
-	protected IASTExpression assignmentOperatorExpression(IASTScope scope,
+	protected IASTExpression assignmentOperatorExpression(Object scope,
 			IASTExpression.Kind kind, IASTExpression lhs)
 			throws EndOfFileException, BacktrackException {
 		IToken t = consume();
 		IASTExpression assignmentExpression = assignmentExpression(scope);
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
-			return astFactory.createExpression(scope, kind, lhs,
+			return null; /*astFactory.createExpression(scope, kind, lhs,
 					assignmentExpression, null, null, null, EMPTY_STRING, null);
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			logException("assignmentOperatorExpression::createExpression()", e); //$NON-NLS-1$
 			throwBacktrack(t.getOffset(), endOffset, t.getLineNumber(), t.getFilename());
@@ -2736,7 +2718,7 @@ public class Parser2
 	}
 
 
-	protected IASTExpression unaryOperatorCastExpression(IASTScope scope,
+	protected IASTExpression unaryOperatorCastExpression(Object scope,
 			IASTExpression.Kind kind) throws EndOfFileException, BacktrackException {
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
@@ -2746,10 +2728,10 @@ public class Parser2
 		IASTExpression castExpression = castExpression(scope);
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
-			return astFactory.createExpression(scope, kind, castExpression,
+			return null; /*astFactory.createExpression(scope, kind, castExpression,
 					null, null, null, null, EMPTY_STRING, null);
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			logException("unaryOperatorCastExpression::createExpression()", e); //$NON-NLS-1$
 			throwBacktrack(startingOffset, endOffset, line, fn);
@@ -2757,7 +2739,7 @@ public class Parser2
 		return null;
 	}
 
-	protected IASTExpression specialCastExpression(IASTScope scope,
+	protected IASTExpression specialCastExpression(Object scope,
 			IASTExpression.Kind kind)
 			throws EndOfFileException, BacktrackException {
 		IToken la = LA(1);
@@ -2774,10 +2756,10 @@ public class Parser2
 		IASTExpression lhs = expression(scope);
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
-			return astFactory.createExpression(scope, kind, lhs, null, null,
+			return null; /*astFactory.createExpression(scope, kind, lhs, null, null,
 					duple, null, EMPTY_STRING, null);
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			logException("specialCastExpression::createExpression()", e); //$NON-NLS-1$
 			throwBacktrack(startingOffset, endOffset, line, fn );
@@ -2885,7 +2867,6 @@ public class Parser2
 		this.language = language;
 		this.log = log;
 		this.mode = mode;
-		setupASTFactory(scanner, language);
     	requestor = callback;
 		if( this.mode == ParserMode.QUICK_PARSE ) 
 			constructInitializersInDeclarations = false;
@@ -2969,7 +2950,7 @@ public class Parser2
     {
         try
         {
-            compilationUnit = astFactory.createCompilationUnit();
+            compilationUnit = null; /*astFactory.createCompilationUnit(); */
         }
         catch (Exception e2)
         {
@@ -3098,7 +3079,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 *             request for a backtrack
 	 */
-    protected IASTDeclaration usingClause(IASTScope scope)
+    protected IASTDeclaration usingClause(Object scope)
         throws EndOfFileException, BacktrackException
     {
         IToken firstToken = consume(IToken.t_using);
@@ -3124,12 +3105,12 @@ public class Parser2
                 
                 try
                 {
-                    astUD = astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
+                    astUD = null; /*astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
                 }
                 catch( ASTSemanticException ase )
 				{
                 	backup( last );
-                	throwBacktrack( ase.getProblem() );
+                	throwBacktrack( ase.getProblem() ); */
 				}
                 catch (Exception e1)
                 {
@@ -3167,12 +3148,12 @@ public class Parser2
             try
             {
                 declaration =
-                    astFactory.createUsingDeclaration(
+                    null; /*astFactory.createUsingDeclaration(
                         scope,
                         typeName,
                         name,
                         firstToken.getOffset(),
-                        firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber());
+                        firstToken.getLineNumber(), last.getEndOffset(), last.getLineNumber()); */
             }
             catch (Exception e1)
             {
@@ -3202,7 +3183,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 *             request for a backtrack
 	 */
-    protected IASTDeclaration linkageSpecification(IASTScope scope)
+    protected IASTDeclaration linkageSpecification(Object scope)
         throws EndOfFileException, BacktrackException
     {
         IToken firstToken = consume(IToken.t_extern);
@@ -3217,10 +3198,10 @@ public class Parser2
             try
             {
                 linkage =
-                    astFactory.createLinkageSpecification(
+                    null; /*astFactory.createLinkageSpecification(
                         scope,
                         spec.getCharImage(),
-                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
+                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename()); */
             }
             catch (Exception e)
             {
@@ -3256,7 +3237,8 @@ public class Parser2
 	            }
 	            // consume the }
 	            IToken lastTokenConsumed = consume();
-	            linkage.setEndingOffsetAndLineNumber(lastTokenConsumed.getEndOffset(), lastTokenConsumed.getLineNumber());
+	            if( linkage != null )
+	                linkage.setEndingOffsetAndLineNumber(lastTokenConsumed.getEndOffset(), lastTokenConsumed.getLineNumber());
 			}
             finally
 			{
@@ -3271,10 +3253,10 @@ public class Parser2
         try
         {
             linkage =
-                astFactory.createLinkageSpecification(
+                null; /*astFactory.createLinkageSpecification(
                     scope,
                     spec.getCharImage(),
-                    firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
+                    firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename()); */
         }
         catch (Exception e)
         {
@@ -3310,7 +3292,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 *             request for a backtrack
 	 */
-    protected IASTDeclaration templateDeclaration(IASTScope scope)
+    protected IASTDeclaration templateDeclaration(Object scope)
         throws EndOfFileException, BacktrackException
     {
     	IToken mark = mark();
@@ -3348,9 +3330,9 @@ public class Parser2
             try
             {
                 templateInstantiation =
-                    astFactory.createTemplateInstantiation(
+                    null; /*astFactory.createTemplateInstantiation(
                         scope,
-                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
+                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename()); */
             }
             catch (Exception e)
             {
@@ -3363,7 +3345,8 @@ public class Parser2
             try
 			{
             	declaration(templateInstantiation, templateInstantiation);
-            	templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
+            	if( templateInstantiation != null )
+            	    templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
 			} finally
 			{
 //				templateInstantiation.exitScope( requestor );
@@ -3380,10 +3363,10 @@ public class Parser2
             IASTTemplateSpecialization templateSpecialization;
             try
             {
-                templateSpecialization =
+                templateSpecialization =null; /*
                     astFactory.createTemplateSpecialization(
                         scope,
-                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
+                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename()); */
             }
             catch (Exception e)
             {
@@ -3396,8 +3379,9 @@ public class Parser2
 			try
 			{
 				declaration(templateSpecialization, templateSpecialization);
-				templateSpecialization.setEndingOffsetAndLineNumber(
-						lastToken.getEndOffset(), lastToken.getLineNumber());
+				if( templateSpecialization != null )
+					templateSpecialization.setEndingOffsetAndLineNumber(
+							lastToken.getEndOffset(), lastToken.getLineNumber());
 			}
 			finally
 			{
@@ -3415,11 +3399,11 @@ public class Parser2
             try
             {
                 templateDecl =
-                    astFactory.createTemplateDeclaration(
+                    null; /*astFactory.createTemplateDeclaration(
                         scope,
                         parms,
                         exported,
-                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
+                        firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename()); */
             }
             catch (Exception e)
             {
@@ -3430,7 +3414,8 @@ public class Parser2
 //            templateDecl.enterScope( requestor );
             try{
             	declaration(templateDecl, templateDecl );
-            	templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
+            	if( templateDecl != null )
+            	    templateDecl.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
             } finally
 			{
 //    			templateDecl.exitScope( requestor );
@@ -3464,14 +3449,14 @@ public class Parser2
 	 * @throws BacktrackException
 	 *             request for a backtrack
 	 */
-    protected List templateParameterList(IASTScope scope)
+    protected List templateParameterList(Object scope)
         throws BacktrackException, EndOfFileException
     {
         // if we have gotten this far then we have a true template-declaration
         // iterate through the template parameter list
         List returnValue = new ArrayList();
  
-        IASTScope parameterScope = astFactory.createNewCodeBlock( scope );
+        Object parameterScope = null; /*astFactory.createNewCodeBlock( scope ); */
         if( parameterScope == null )
         	parameterScope = scope;
         
@@ -3516,7 +3501,7 @@ public class Parser2
 				    int nameEnd = (id != null) ? id.getEndOffset() : 0;
 				    int nameLine = (id != null) ? id.getLineNumber() : 0;
                     returnValue.add(
-                    	astFactory.createTemplateParameter(
+                            null /*astFactory.createTemplateParameter(
                     		kind,
                     		( id == null )? EMPTY_STRING : id.getCharImage(), //$NON-NLS-1$
                     		typeId,
@@ -3526,12 +3511,12 @@ public class Parser2
 							startingToken.getOffset(), startingToken.getLineNumber(), 
 							nameStart, nameEnd, nameLine, 
 							(lastToken != null ) ? lastToken.getEndOffset() : nameEnd, 
-							(lastToken != null ) ? lastToken.getLineNumber() : nameLine, startingToken.getFilename() ));
+							(lastToken != null ) ? lastToken.getLineNumber() : nameLine, startingToken.getFilename() ) */ );
                 }
-				catch( ASTSemanticException ase )
-				{
-					throwBacktrack(ase.getProblem());
-				}
+//				catch( ASTSemanticException ase )
+//				{
+//					throwBacktrack(ase.getProblem());
+//				}
                 catch (Exception e)
                 {
                 	logException( "templateParameterList_1:createTemplateParameter", e ); //$NON-NLS-1$
@@ -3565,7 +3550,7 @@ public class Parser2
                 try
                 {
                     returnValue.add(
-                        astFactory.createTemplateParameter(
+                        null /* astFactory.createTemplateParameter(
                             IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
                             ( optionalId == null )? EMPTY_STRING : optionalId.getCharImage(), //$NON-NLS-1$
                             optionalTypeId,
@@ -3576,12 +3561,12 @@ public class Parser2
 							(optionalId != null) ? optionalId.getOffset() : 0, 
 							(optionalId != null) ? optionalId.getEndOffset() : 0, 
 							(optionalId != null) ? optionalId.getLineNumber() : 0,
-							lastToken.getEndOffset(), lastToken.getLineNumber(), lastToken.getFilename() ));
+							lastToken.getEndOffset(), lastToken.getLineNumber(), lastToken.getFilename() ) */ );
                 }
-				catch( ASTSemanticException ase )
-				{
-					throwBacktrack(ase.getProblem());
-				}
+//				catch( ASTSemanticException ase )
+//				{
+//					throwBacktrack(ase.getProblem());
+//				}
                 catch (Exception e)
                 {
                 	int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
@@ -3602,8 +3587,8 @@ public class Parser2
                 Declarator declarator = (Declarator)wrapper.getDeclarators().next();
                 try
                 {
-                    returnValue.add(
-                        astFactory.createTemplateParameter(
+                    returnValue.add( null 
+                        /* astFactory.createTemplateParameter(
                             IASTTemplateParameter.ParamKind.PARAMETER,
                             null,
                             null,
@@ -3623,12 +3608,12 @@ public class Parser2
 							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
 							wrapper.startingOffset, wrapper.startingLine, 
 							declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
-							wrapper.endOffset, wrapper.endLine, fn ));
+							wrapper.endOffset, wrapper.endLine, fn ) */ );
                 }
-				catch( ASTSemanticException ase )
-				{
-					throwBacktrack(ase.getProblem());
-				}
+//				catch( ASTSemanticException ase )
+//				{
+//					throwBacktrack(ase.getProblem());
+//				}
                 catch (Exception e)
                 {
                 	int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
@@ -3658,7 +3643,7 @@ public class Parser2
 	 *             request a backtrack
 	 */
     protected void declaration(
-        IASTScope scope,
+        Object scope,
         IASTTemplate ownerTemplate)
         throws EndOfFileException, BacktrackException
     {
@@ -3673,11 +3658,11 @@ public class Parser2
                 
                 try
                 {
-                    astFactory.createASMDefinition(
-                            scope,
-                            assembly,
-                            first.getOffset(),
-                            first.getLineNumber(), last.getEndOffset(), last.getLineNumber(), last.getFilename());
+//                    astFactory.createASMDefinition(
+//                            scope,
+//                            assembly,
+//                            first.getOffset(),
+//                            first.getLineNumber(), last.getEndOffset(), last.getLineNumber(), last.getFilename());
                 }
                 catch (Exception e)
                 {
@@ -3716,7 +3701,7 @@ public class Parser2
     
 	
 	protected IASTDeclaration simpleDeclarationStrategyUnion(
-        IASTScope scope,
+        Object scope,
         IASTTemplate ownerTemplate)
         throws EndOfFileException, BacktrackException
     {
@@ -3796,7 +3781,7 @@ public class Parser2
 	 *             request a backtrack
 	 *  
 	 */
-    protected IASTDeclaration namespaceDefinition(IASTScope scope)
+    protected IASTDeclaration namespaceDefinition(Object scope)
         throws BacktrackException, EndOfFileException
     {
         IToken first = consume(IToken.t_namespace);
@@ -3814,14 +3799,14 @@ public class Parser2
             try
             {
                 namespaceDefinition = 
-                    astFactory.createNamespaceDefinition(
+                    null; /*astFactory.createNamespaceDefinition(
                         scope,
                         (identifier == null ? EMPTY_STRING: identifier.getCharImage()), //$NON-NLS-1$
                         first.getOffset(),
                         first.getLineNumber(), 
                         (identifier == null ? first.getOffset() : identifier.getOffset()), 
 						(identifier == null ? first.getEndOffset() : identifier.getEndOffset() ),  
-						(identifier == null ? first.getLineNumber() : identifier.getLineNumber() ), first.getFilename());
+						(identifier == null ? first.getLineNumber() : identifier.getLineNumber() ), first.getFilename()); */
             }
             catch (Exception e1)
             {
@@ -3860,8 +3845,9 @@ public class Parser2
 	            // consume the }
 	            IToken last = consume(IToken.tRBRACE);
 	 
-	            namespaceDefinition.setEndingOffsetAndLineNumber(
-	                last.getOffset() + last.getLength(), last.getLineNumber());
+	            if( namespaceDefinition != null )
+		            namespaceDefinition.setEndingOffsetAndLineNumber(
+		                last.getOffset() + last.getLength(), last.getLineNumber());
 			} 
             finally
 			{
@@ -3885,9 +3871,9 @@ public class Parser2
         	IASTNamespaceAlias alias = null;
         	try
             {
-                alias = astFactory.createNamespaceAlias( 
+                alias = null; /*astFactory.createNamespaceAlias( 
                 	scope, identifier.getCharImage(), duple, first.getOffset(), 
-                	first.getLineNumber(), identifier.getOffset(), identifier.getEndOffset(), identifier.getLineNumber(), duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber() );
+                	first.getLineNumber(), identifier.getOffset(), identifier.getEndOffset(), identifier.getLineNumber(), duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber() ); */
             }
             catch (Exception e1)
             {
@@ -3927,7 +3913,7 @@ public class Parser2
 	 */
     protected IASTDeclaration simpleDeclaration(
         SimpleDeclarationStrategy strategy,
-        IASTScope scope,
+        Object scope,
         IASTTemplate ownerTemplate, boolean fromCatchHandler)
         throws BacktrackException, EndOfFileException
     {
@@ -3946,7 +3932,7 @@ public class Parser2
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
             try
             {
-                simpleTypeSpecifier = astFactory.createSimpleTypeSpecifier(
+                simpleTypeSpecifier = null; /*astFactory.createSimpleTypeSpecifier(
                         scope,
                         sdw.getSimpleType(),
                         sdw.getName(),
@@ -3960,7 +3946,7 @@ public class Parser2
 						sdw.isGloballyQualified(), sdw.getExtensionParameters());
 				sdw.setTypeSpecifier(
                     simpleTypeSpecifier);
-                sdw.setTypeName( null );
+                sdw.setTypeName( null ); */
             }
             catch (Exception e1)
             {
@@ -4030,7 +4016,7 @@ public class Parser2
 			List l = null; 
 			try
 			{
-			    l = sdw.createASTNodes(astFactory);
+			    l = sdw.createASTNodes();
 			}
 			catch (ASTSemanticException e)
 			{
@@ -4065,8 +4051,9 @@ public class Parser2
 			        for( int i = 0; i < l.size(); ++i )
 			        {
 			            declaration = (IASTDeclaration)l.get(i);
-			            ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
-			                lastToken.getEndOffset(), lastToken.getLineNumber());
+			            if( declaration != null )
+				            ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
+				                lastToken.getEndOffset(), lastToken.getLineNumber());
 //			            declaration.acceptElement( requestor );
 			        }
 			        return declaration;
@@ -4076,12 +4063,14 @@ public class Parser2
 //			    declaration.enterScope( requestor );
 			    try
 				{	
-					if ( !( declaration instanceof IASTScope ) ) 
-						throwBacktrack(firstOffset, endOffset, firstLine, fn);
+//					if ( !( declaration instanceof IASTScope ) ) 
+//						throwBacktrack(firstOffset, endOffset, firstLine, fn);
 	 
-					handleFunctionBody((IASTScope)declaration );
-					((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
-						lastToken.getEndOffset(), lastToken.getLineNumber());
+					handleFunctionBody(declaration );
+					
+					if( declaration != null )
+						((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
+							lastToken.getEndOffset(), lastToken.getLineNumber());
 				}
 			    finally
 				{
@@ -4099,13 +4088,13 @@ public class Parser2
 			{
 				if( sdw.getTypeSpecifier() != null )
 				{
-			   		IASTAbstractTypeSpecifierDeclaration declaration = astFactory.createTypeSpecDeclaration(
+			   		IASTAbstractTypeSpecifierDeclaration declaration = null; /*astFactory.createTypeSpecDeclaration(
 			                sdw.getScope(),
 			                sdw.getTypeSpecifier(),
 			                ownerTemplate,
 			                sdw.startingOffset,
 			                sdw.startingLine, lastToken.getEndOffset(), lastToken.getLineNumber(),
-							sdw.isFriend(), lastToken.getFilename());
+							sdw.isFriend(), lastToken.getFilename()); */
 //					declaration.acceptElement(requestor);
 					return declaration;
 				}
@@ -4129,7 +4118,7 @@ public class Parser2
     }
 
 
-	protected void handleFunctionBody(IASTScope scope) throws BacktrackException, EndOfFileException
+	protected void handleFunctionBody(Object scope) throws BacktrackException, EndOfFileException
 	{
 		if( mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE  )
 			skipOverCompoundStatement();
@@ -4181,8 +4170,8 @@ public class Parser2
         throws EndOfFileException, BacktrackException
     {
         int startingOffset = consume(IToken.tCOLON).getOffset();
-        IASTScope scope = d.getDeclarationWrapper().getScope();
-        scope = astFactory.getDeclaratorScope(scope, d.getNameDuple());
+        Object scope = d.getDeclarationWrapper().getScope();
+        scope = null; /*astFactory.getDeclaratorScope(scope, d.getNameDuple()); */
         for (;;)
         {
             if (LT(1) == IToken.tLBRACE)
@@ -4202,7 +4191,7 @@ public class Parser2
             try
             {
                 d.addConstructorMemberInitializer(
-                    astFactory.createConstructorMemberInitializer(scope, duple, expressionList) );
+                        null /*astFactory.createConstructorMemberInitializer(scope, duple, expressionList) */ );
             }
             catch (Exception e1)
             {
@@ -4228,7 +4217,7 @@ public class Parser2
 	 *             request a backtrack
 	 */
     protected void parameterDeclaration(
-        IParameterCollection collection, IASTScope scope)
+        IParameterCollection collection, Object scope)
         throws BacktrackException, EndOfFileException
     {
         IToken current = LA(1);
@@ -4242,7 +4231,7 @@ public class Parser2
             try
             {
                 sdw.setTypeSpecifier(
-                    astFactory.createSimpleTypeSpecifier(
+                        null /*astFactory.createSimpleTypeSpecifier(
                         scope,
                         sdw.getSimpleType(),
                         sdw.getName(),
@@ -4253,12 +4242,12 @@ public class Parser2
 						sdw.isTypeNamed(), 
 						sdw.isComplex(), 
 						sdw.isImaginary(),
-						sdw.isGloballyQualified(), null));
+						sdw.isGloballyQualified(), null) */ );
             }
-            catch (ASTSemanticException e)
-            {
-                throwBacktrack(e.getProblem());
-            }
+//            catch (ASTSemanticException e)
+//            {
+//                throwBacktrack(e.getProblem());
+//            }
             catch (Exception e)
             {
             	int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
@@ -4345,7 +4334,8 @@ public class Parser2
 					for (int j = 0; j < arrayOfLists[i].size(); ++j) {
 						IASTExpression e = (IASTExpression) arrayOfLists[i]
 								.get(j);
-						e.freeReferences();
+						if( e != null )
+						    e.freeReferences();
 
 					}
 				}
@@ -4688,12 +4678,12 @@ public class Parser2
 		final boolean isForewardDecl = (LT(1) == IToken.tSEMI);
 
 		try {
-			elaboratedTypeSpec = astFactory.createElaboratedTypeSpecifier(sdw
+			elaboratedTypeSpec = null; /*astFactory.createElaboratedTypeSpecifier(sdw
 					.getScope(), eck, d, t.getOffset(), t.getLineNumber(), d
 					.getLastToken().getEndOffset(), d.getLastToken()
 					.getLineNumber(), isForewardDecl, sdw.isFriend());
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 			logException(
@@ -4729,7 +4719,7 @@ public class Parser2
 		Declarator d = declarator(sdw, sdw.getScope(), strategy);
 
 		try {
-			astFactory.constructExpressions(constructInitializers);
+//			astFactory.constructExpressions(constructInitializers);
 			if (language == ParserLanguage.CPP)
 				optionalCPPInitializer(d, constructInitializers);
 			else if (language == ParserLanguage.C)
@@ -4737,7 +4727,7 @@ public class Parser2
 			sdw.addDeclarator(d);
 			return d;
 		} finally {
-			astFactory.constructExpressions(true);
+//			astFactory.constructExpressions(true);
 		}
 	}
 
@@ -4745,7 +4735,7 @@ public class Parser2
 			boolean constructInitializers) throws EndOfFileException,
 			BacktrackException {
 		// handle initializer
-		final IASTScope scope = d.getDeclarationWrapper().getScope();
+		Object scope = d.getDeclarationWrapper().getScope();
 		
 		if (LT(1) == IToken.tASSIGN) {
 			consume(IToken.tASSIGN);
@@ -4785,7 +4775,7 @@ public class Parser2
 	protected void optionalCInitializer(Declarator d,
 			boolean constructInitializers) throws EndOfFileException,
 			BacktrackException {
-		final IASTScope scope = d.getDeclarationWrapper().getScope();
+		final Object scope = d.getDeclarationWrapper().getScope();
 		if (LT(1) == IToken.tASSIGN) {
 			consume(IToken.tASSIGN);
 			throwAwayMarksForInitializerClause(d);
@@ -4797,7 +4787,7 @@ public class Parser2
 	 * @param scope
 	 * @return
 	 */
-	protected IASTInitializerClause cInitializerClause(IASTScope scope,
+	protected IASTInitializerClause cInitializerClause(Object scope,
 			List designators, boolean constructInitializers)
 			throws EndOfFileException, BacktrackException {
 		IToken la = LA(1);
@@ -4870,7 +4860,7 @@ public class Parser2
 	/**
 	 *  
 	 */
-	protected IASTInitializerClause initializerClause(IASTScope scope,
+	protected IASTInitializerClause initializerClause(Object scope,
 			boolean constructInitializers) throws EndOfFileException,
 			BacktrackException {
 		if (LT(1) == IToken.tLBRACE) {
@@ -4943,17 +4933,17 @@ public class Parser2
 		return null;
 	}
 
-	protected IASTInitializerClause createInitializerClause(IASTScope scope,
+	protected IASTInitializerClause createInitializerClause(Object scope,
 			IASTInitializerClause.Kind kind, IASTExpression expression,
 			List initializerClauses, List designators,
 			boolean constructInitializer) {
 		if (!constructInitializer)
 			return null;
-		return astFactory.createInitializerClause(scope, kind, expression,
-				initializerClauses, designators);
+		return null; /*astFactory.createInitializerClause(scope, kind, expression,
+				initializerClauses, designators); */ 
 	}
 
-	protected List designatorList(IASTScope scope) throws EndOfFileException,
+	protected List designatorList(Object scope) throws EndOfFileException,
 			BacktrackException {
 		List designatorList = Collections.EMPTY_LIST;
 		// designated initializers for C
@@ -4981,7 +4971,7 @@ public class Parser2
 							{
 								IToken identifier = identifier();
 								consume( IToken.tCOLON );
-								d = getAstFactory().createDesignator( IASTDesignator.DesignatorKind.FIELD, null, identifier, null );
+								d = null; /*astFactory.createDesignator( IASTDesignator.DesignatorKind.FIELD, null, identifier, null ); */
 							}
 							else if( LT(1) == IToken.tLBRACKET )
 							{
@@ -4992,7 +4982,7 @@ public class Parser2
 								consume(IToken.tRBRACKET );
 								Map extensionParms = new Hashtable();
 								extensionParms.put( IASTGCCDesignator.SECOND_EXRESSION, constantExpression2 );
-								d =  getAstFactory().createDesignator( IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE, constantExpression1, null, extensionParms );
+								d =  null; /*astFactory.createDesignator( IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE, constantExpression1, null, extensionParms ); */
 							}
 
 							if (d != null) {
@@ -5008,8 +4998,8 @@ public class Parser2
 					kind = IASTDesignator.DesignatorKind.SUBSCRIPT;
 				}
 
-				IASTDesignator d = astFactory.createDesignator(kind,
-						constantExpression, id, null);
+				IASTDesignator d = null; /*astFactory.createDesignator(kind,
+						constantExpression, id, null); */
 				if (designatorList == Collections.EMPTY_LIST)
 					designatorList = new ArrayList(DEFAULT_DESIGNATOR_LIST_SIZE);
 				designatorList.add(d);
@@ -5022,7 +5012,7 @@ public class Parser2
 				{
 					IToken identifier = identifier();
 					consume( IToken.tCOLON );
-					d = getAstFactory().createDesignator( IASTDesignator.DesignatorKind.FIELD, null, identifier, null );
+					d = null; /*astFactory.createDesignator( IASTDesignator.DesignatorKind.FIELD, null, identifier, null ); */
 				}
 				else if( LT(1) == IToken.tLBRACKET )
 				{
@@ -5033,7 +5023,7 @@ public class Parser2
 					consume(IToken.tRBRACKET );
 					Map extensionParms = new Hashtable();
 					extensionParms.put( IASTGCCDesignator.SECOND_EXRESSION, constantExpression2 );
-					d =  getAstFactory().createDesignator( IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE, constantExpression1, null, extensionParms );
+					d = null; /* astFactory.createDesignator( IASTGCCDesignator.DesignatorKind.SUBSCRIPT_RANGE, constantExpression1, null, extensionParms ); */
 				}
 				if (d != null) {
 					if (designatorList == Collections.EMPTY_LIST)
@@ -5064,7 +5054,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 *             request a backtrack
 	 */
-	protected Declarator declarator(IDeclaratorOwner owner, IASTScope scope,
+	protected Declarator declarator(IDeclaratorOwner owner, Object scope,
 			SimpleDeclarationStrategy strategy)
 			throws EndOfFileException, BacktrackException {
 		Declarator d = null;
@@ -5091,8 +5081,8 @@ public class Parser2
 					case IToken.tLPAREN :
 
 						boolean failed = false;
-						IASTScope parameterScope = astFactory
-								.getDeclaratorScope(scope, d.getNameDuple());
+						Object parameterScope = null; /*astFactory
+								.getDeclaratorScope(scope, d.getNameDuple()); */
 						// temporary fix for initializer/function declaration
 						// ambiguity
 						if (queryLookaheadCapability(2)
@@ -5105,9 +5095,7 @@ public class Parser2
 								try {
 									try {
 										queryName = name(parameterScope);
-										if (!astFactory.queryIsTypeName(
-												parameterScope, queryName))
-											failed = true;
+										failed = true;
 									} catch (Exception e) {
 										int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 										logException(
@@ -5211,13 +5199,13 @@ public class Parser2
 							}
 							if (exceptionSpecIds != null)
 								try {
-									d.setExceptionSpecification(astFactory
+									d.setExceptionSpecification(null /*astFactory
 											.createExceptionSpecification(d
 													.getDeclarationWrapper()
 													.getScope(),
-													exceptionSpecIds));
-								} catch (ASTSemanticException e) {
-									throwBacktrack(e.getProblem());
+													exceptionSpecIds) */);
+//								} catch (ASTSemanticException e) {
+//									throwBacktrack(e.getProblem());
 								} catch (Exception e) {
 									int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 									logException(
@@ -5360,7 +5348,7 @@ public class Parser2
 		if (LT(1) == IToken.tLBRACE) {
 			IASTEnumerationSpecifier enumeration = null;
 			try {
-				enumeration = astFactory.createEnumerationSpecifier(sdw
+				enumeration = null; /*astFactory.createEnumerationSpecifier(sdw
 						.getScope(), ((identifier == null)
 						? EMPTY_STRING : identifier.getCharImage()), //$NON-NLS-1$
 						mark.getOffset(), mark.getLineNumber(),
@@ -5371,7 +5359,7 @@ public class Parser2
 								? mark.getLineNumber()
 								: identifier.getLineNumber()), mark.getFilename());
 			} catch (ASTSemanticException e) {
-				throwBacktrack(e.getProblem());
+				throwBacktrack(e.getProblem()); */
 			} catch (Exception e) {
 				int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 				logException("enumSpecifier:createEnumerationSpecifier", e); //$NON-NLS-1$
@@ -5395,7 +5383,7 @@ public class Parser2
 				IASTEnumerator enumerator = null;
 				if (LT(1) == IToken.tRBRACE) {
 					try {
-						enumerator = astFactory.addEnumerator(enumeration,
+						enumerator = null; /*astFactory.addEnumerator(enumeration,
 								enumeratorIdentifier.getCharImage(),
 								enumeratorIdentifier.getOffset(),
 								enumeratorIdentifier.getLineNumber(),
@@ -5403,10 +5391,10 @@ public class Parser2
 								enumeratorIdentifier.getEndOffset(),
 								enumeratorIdentifier.getLineNumber(), lastToken
 										.getEndOffset(), lastToken
-										.getLineNumber(), initialValue, lastToken.getFilename());
+										.getLineNumber(), initialValue, lastToken.getFilename()); */
 						cleanupLastToken();
-					} catch (ASTSemanticException e1) {
-						throwBacktrack(e1.getProblem());
+//					} catch (ASTSemanticException e1) {
+//						throwBacktrack(e1.getProblem());
 					} catch (Exception e) {
 						int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 						logException("enumSpecifier:addEnumerator", e); //$NON-NLS-1$
@@ -5423,7 +5411,7 @@ public class Parser2
 					throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(), mark.getFilename());
 				}
 				try {
-					enumerator = astFactory.addEnumerator(enumeration,
+					enumerator = null; /*astFactory.addEnumerator(enumeration,
 							enumeratorIdentifier.getCharImage(),
 							enumeratorIdentifier.getOffset(),
 							enumeratorIdentifier.getLineNumber(),
@@ -5431,10 +5419,10 @@ public class Parser2
 							enumeratorIdentifier.getEndOffset(),
 							enumeratorIdentifier.getLineNumber(), lastToken
 									.getEndOffset(), lastToken.getLineNumber(),
-							initialValue, lastToken.getFilename());
-					cleanupLastToken();
-				} catch (ASTSemanticException e1) {
-					throwBacktrack(e1.getProblem());
+							initialValue, lastToken.getFilename()); */
+					cleanupLastToken();	
+//				} catch (ASTSemanticException e1) {
+//					throwBacktrack(e1.getProblem());
 				} catch (Exception e) {
 					int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 					logException("enumSpecifier:addEnumerator", e); //$NON-NLS-1$
@@ -5443,8 +5431,9 @@ public class Parser2
 				consume(IToken.tCOMMA);
 			}
 			IToken t = consume(IToken.tRBRACE);
-			enumeration.setEndingOffsetAndLineNumber(t.getEndOffset(), t
-					.getLineNumber());
+			if( enumeration != null )
+				enumeration.setEndingOffsetAndLineNumber(t.getEndOffset(), t
+						.getLineNumber());
 //			enumeration.acceptElement(requestor);
 			sdw.setTypeSpecifier(enumeration);
 		} else {
@@ -5508,7 +5497,7 @@ public class Parser2
 		IASTClassSpecifier astClassSpecifier = null;
 
 		try {
-			astClassSpecifier = astFactory.createClassSpecifier(sdw.getScope(),
+			astClassSpecifier = null; /*astFactory.createClassSpecifier(sdw.getScope(),
 					duple, classKind, nameType, access, classKey.getOffset(),
 					classKey.getLineNumber(), duple == null ? classKey
 							.getOffset() : duple.getFirstToken().getOffset(),
@@ -5517,7 +5506,7 @@ public class Parser2
 							? classKey.getLineNumber()
 							: duple.getFirstToken().getLineNumber(), classKey.getFilename());
 		} catch (ASTSemanticException e) {
-			throwBacktrack(e.getProblem());
+			throwBacktrack(e.getProblem()); */
 		} catch (Exception e) {
 			int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
 			logException("classSpecifier:createClassSpecifier", e); //$NON-NLS-1$
@@ -5543,21 +5532,24 @@ public class Parser2
 						case IToken.t_public :
 							consume();
 							consume(IToken.tCOLON);
-							astClassSpecifier
-									.setCurrentVisibility(ASTAccessVisibility.PUBLIC);
+							if( astClassSpecifier != null )
+								astClassSpecifier
+										.setCurrentVisibility(ASTAccessVisibility.PUBLIC);
 							break;
 						case IToken.t_protected :
 							consume();
 							consume(IToken.tCOLON);
-							astClassSpecifier
-									.setCurrentVisibility(ASTAccessVisibility.PROTECTED);
+							if( astClassSpecifier != null )
+								astClassSpecifier
+										.setCurrentVisibility(ASTAccessVisibility.PROTECTED);
 							break;
 	
 						case IToken.t_private :
 							consume();
 							consume(IToken.tCOLON);
-							astClassSpecifier
-									.setCurrentVisibility(ASTAccessVisibility.PRIVATE);
+							if( astClassSpecifier != null )
+								astClassSpecifier
+										.setCurrentVisibility(ASTAccessVisibility.PRIVATE);
 							break;
 						case IToken.tRBRACE :
 							consume(IToken.tRBRACE);
@@ -5575,14 +5567,15 @@ public class Parser2
 				}
 				// consume the }
 				IToken lt = consume(IToken.tRBRACE);
-				astClassSpecifier.setEndingOffsetAndLineNumber(lt.getEndOffset(),
-						lt.getLineNumber());
-				try {
-					astFactory.signalEndOfClassSpecifier(astClassSpecifier);
-				} catch (Exception e1) {
-					logException("classSpecifier:signalEndOfClassSpecifier", e1); //$NON-NLS-1$
-					throwBacktrack(lt.getOffset(), lt.getEndOffset(), lt.getLineNumber(), lt.getFilename());
-				}
+				if( astClassSpecifier != null )
+					astClassSpecifier.setEndingOffsetAndLineNumber(lt.getEndOffset(),
+							lt.getLineNumber());
+//				try {
+//					astFactory.signalEndOfClassSpecifier(astClassSpecifier);
+//				} catch (Exception e1) {
+//					logException("classSpecifier:signalEndOfClassSpecifier", e1); //$NON-NLS-1$
+//					throwBacktrack(lt.getOffset(), lt.getEndOffset(), lt.getLineNumber(), lt.getFilename());
+//				}
 
 			}
 			finally
@@ -5672,26 +5665,26 @@ public class Parser2
 	            	int size = bases.size();
 	            	for( int i = 0; i < size; i++ ){
 	            		Object [] data = (Object[]) bases.get( i );
-	            		try {
-							astFactory.addBaseSpecifier( astClassSpec, 
-									                     ((Boolean)data[0]).booleanValue(),
-							                             (ASTAccessVisibility) data[1], 
-														 (ITokenDuple)data[2] );
-						} catch (ASTSemanticException e1) {
-							failParse( e1.getProblem() );
-						}
+//	            		try {
+//							astFactory.addBaseSpecifier( astClassSpec, 
+//									                     ((Boolean)data[0]).booleanValue(),
+//							                             (ASTAccessVisibility) data[1], 
+//														 (ITokenDuple)data[2] );
+//						} catch (ASTSemanticException e1) {
+//							failParse( e1.getProblem() );
+//						}
 	            	}
 	            }
 	            
-	        	astFactory.addBaseSpecifier(
-	                astClassSpec,
-	                isVirtual,
-	                visibility,
-	                nameDuple );
-	        }
-	        catch (ASTSemanticException e)
-	        {
-				failParse( e.getProblem() );
+//	        	astFactory.addBaseSpecifier(
+//	                astClassSpec,
+//	                isVirtual,
+//	                visibility,
+//	                nameDuple );
+//	        }
+//	        catch (ASTSemanticException e)
+//	        {
+//				failParse( e.getProblem() );
 	        } catch (Exception e)
 	        {
 	        	int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0 ;
@@ -5706,7 +5699,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 *             request a backtrack
 	 */
-	protected void functionBody(IASTScope scope) throws EndOfFileException,
+	protected void functionBody(Object scope) throws EndOfFileException,
 			BacktrackException {
 		compoundStatement(scope, false);
 	}
@@ -5877,7 +5870,7 @@ cleanupLastToken();
 		}
 
 	}
-	protected void catchHandlerSequence(IASTScope scope)
+	protected void catchHandlerSequence(Object scope)
 	throws EndOfFileException, BacktrackException {
 		if( LT(1) != IToken.t_catch )
 		{
@@ -5906,7 +5899,7 @@ cleanupLastToken();
 		}
 	}
 
-	protected void catchBlockCompoundStatement(IASTScope scope)
+	protected void catchBlockCompoundStatement(Object scope)
 			throws BacktrackException, EndOfFileException
 	{
 		if( mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE  )
@@ -5922,11 +5915,11 @@ cleanupLastToken();
 			compoundStatement(scope, true);
 	}
 
-	protected void singleStatementScope(IASTScope scope)
+	protected void singleStatementScope(Object scope)
 			throws EndOfFileException, BacktrackException {
 		IASTCodeScope newScope;
 		try {
-			newScope = astFactory.createNewCodeBlock(scope);
+			newScope = null; /*astFactory.createNewCodeBlock(scope); */
 		} catch (Exception e) {
 			logException("singleStatementScope:createNewCodeBlock", e); //$NON-NLS-1$
 			IToken la = LA(1);
@@ -5944,7 +5937,7 @@ cleanupLastToken();
 	/**
 	 * @throws BacktrackException
 	 */
-	protected void condition(IASTScope scope) throws BacktrackException,
+	protected void condition(Object scope) throws BacktrackException,
 			EndOfFileException {
 		expression(scope);
 cleanupLastToken();
@@ -5953,7 +5946,7 @@ cleanupLastToken();
 	/**
 	 * @throws BacktrackException
 	 */
-	protected void forInitStatement(IASTScope scope) throws BacktrackException,
+	protected void forInitStatement(Object scope) throws BacktrackException,
 			EndOfFileException {
 		IToken mark = mark();
 		try {
@@ -5975,7 +5968,7 @@ cleanupLastToken();
 	/**
 	 * @throws BacktrackException
 	 */
-	protected void compoundStatement(IASTScope scope, boolean createNewScope)
+	protected void compoundStatement(Object scope, boolean createNewScope)
 			throws EndOfFileException, BacktrackException {
 		IToken la = LA(1);
 		int line = la.getLineNumber();
@@ -5985,7 +5978,7 @@ cleanupLastToken();
 		IASTCodeScope newScope = null;
 		if (createNewScope) {
 			try {
-				newScope = astFactory.createNewCodeBlock(scope);
+				newScope = null; /*astFactory.createNewCodeBlock(scope); */
 			} catch (Exception e) {
 				int endOffset = ( lastToken == null ) ? 0 : lastToken.getEndOffset();
 				logException("compoundStatement:createNewCodeBlock", e); //$NON-NLS-1$
@@ -6040,18 +6033,6 @@ cleanupLastToken();
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner,
-	 *      org.eclipse.cdt.core.parser.ParserLanguage)
-	 */
-	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
-		astFactory = ParserFactory.createASTFactory( mode, language);
-		scanner.setASTFactory(astFactory);
-		astFactory.setLogger(log);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#getCompliationUnit()
 	 */
 	protected IASTNode getCompliationUnit() {
@@ -6076,18 +6057,6 @@ cleanupLastToken();
 		isCancelled = true;
 		scanner.cancel();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#validateCaches()
-	 */
-	public boolean validateCaches() {
-		if( astFactory instanceof CompleteParseASTFactory)
-			return ((CompleteParseASTFactory)astFactory).validateCaches();
-		return true;
-	}
-
-
-
 	
 	
 	/* (non-Javadoc)

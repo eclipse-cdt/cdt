@@ -356,7 +356,11 @@ public class CModelManager implements IResourceChangeListener {
 		if (project != null) {
 			ICElement celement = create(project);
 			if (celement != null) {
+				// Let the function remove the children
+				// but it has the side of effect of removing the CProject also
+				// so we have to recall create again.
 				releaseCElement(celement);
+				celement = create(project);
 				// Fired and ICElementDelta.PARSER_CHANGED
 				CElementDelta delta = new CElementDelta(getCModel());
 				delta.binaryParserChanged(celement);

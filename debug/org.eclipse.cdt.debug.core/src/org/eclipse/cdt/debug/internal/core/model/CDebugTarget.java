@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
@@ -19,6 +23,7 @@ import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IDebuggerProcessSupport;
+import org.eclipse.cdt.debug.core.IExecFileInfo;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
@@ -104,7 +109,8 @@ public class CDebugTarget extends CDebugElement
 						  			 ISwitchToThread,
 						  			 IExpressionListener,
 						  			 ICExpressionEvaluator,
-						  			 IDebuggerProcessSupport
+						  			 IDebuggerProcessSupport,
+						  			 IExecFileInfo
 {
 	/**
 	 * The type of this target.
@@ -219,6 +225,11 @@ public class CDebugTarget extends CDebugElement
 	private boolean fIsDebuggerProcessDefault = false;
 
 	/**
+	 * The executable file.
+	 */
+	private IFile fExecFile;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -241,9 +252,10 @@ public class CDebugTarget extends CDebugElement
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
 		setTemporaryBreakpoints( new ArrayList() );
-		if ( file != null )
+		setExecFile( file );
+		if ( getExecFile() != null )
 		{
-			getLaunch().setSourceLocator( createSourceLocator( file.getProject() ) );
+			getLaunch().setSourceLocator( createSourceLocator( getExecFile().getProject() ) );
 		}
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
@@ -1969,5 +1981,31 @@ public class CDebugTarget extends CDebugElement
 	public boolean supportsDebuggerProcess()
 	{
 		return ( fDebuggerProcess != null );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IExecFileInfo#isLittleEndian()
+	 */
+	public boolean isLittleEndian()
+	{
+		if ( getExecFile() != null && CoreModel.isBinary( getExecFile() ) )
+		{
+			ICFile cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
+			if ( cFile instanceof IBinary )
+			{
+				((IBinary)cFile).isLittleEndian();
+			}
+		}
+		return true;
+	}
+	
+	protected IFile getExecFile()
+	{
+		return fExecFile;
+	}
+	
+	private void setExecFile( IFile file )
+	{
+		fExecFile = file;
 	}
 }

@@ -256,11 +256,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	protected IBinary chooseBinary(List binList, String mode) {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new WorkbenchLabelProvider());
 		dialog.setElements(binList.toArray());
-		dialog.setTitle("C ApplicationAction"); //$NON-NLS-1$
+		dialog.setTitle("C Local Application"); //$NON-NLS-1$
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage("Choose an application to debug"); //$NON-NLS-1$
+			dialog.setMessage("Choose a local application to debug"); //$NON-NLS-1$
 		} else {
-			dialog.setMessage("Choose an application to run"); //$NON-NLS-1$
+			dialog.setMessage("Choose a local application to run"); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == ElementListSelectionDialog.OK) {
@@ -313,11 +313,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), "C Application Launcher", e.getMessage());
+				MessageDialog.openError(getShell(), "C Local Application Launcher", e.getMessage());
 				return;
 			}
 			if (results.size() == 0) {
-				MessageDialog.openError(getShell(), "C Application Launcher", "Launch failed no binaries");
+				MessageDialog.openError(getShell(), "C Local Application Launcher", "Launch failed no binaries");
 			} else {
 				IBinary bin = chooseBinary(results, mode);
 				if (bin != null) {
@@ -325,7 +325,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				}
 			}
 		} else {
-			MessageDialog.openError(getShell(), "C Application Launcher", "Launch failed no project selected");
+			MessageDialog.openError(getShell(), "C Local Application Launcher", "Launch failed no project selected");
 		}
 	}
 

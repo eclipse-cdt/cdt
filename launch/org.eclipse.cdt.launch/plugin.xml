@@ -70,7 +70,7 @@
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
-            label="C Application"
+            label="C Local Application"
             icon="icons/c_app.gif"
             modes="run, debug"
             class="org.eclipse.cdt.launch.internal.CApplicationLaunchShortcut"

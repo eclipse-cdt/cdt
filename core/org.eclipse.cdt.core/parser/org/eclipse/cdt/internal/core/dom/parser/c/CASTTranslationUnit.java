@@ -102,6 +102,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public IASTName[] getDeclarations(IBinding binding) {
+	    //TODO if binding is macro, circumvent the visitor
 		return CVisitor.getDeclarations(this, binding);
 	}
 	
@@ -109,6 +110,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	public IASTName[] getReferences(IBinding binding) {
+	    //TODO if binding is macro, circumvent the visitor
 		return CVisitor.getReferences( this, binding );
 	}
 

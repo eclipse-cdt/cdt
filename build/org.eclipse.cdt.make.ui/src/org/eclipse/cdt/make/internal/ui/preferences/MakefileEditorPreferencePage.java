@@ -363,6 +363,16 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 			}
 		});
 
+		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+			public void widgetSelected(SelectionEvent e) {
+				HighlightingColorListItem item= getHighlightingColorListItem();
+				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
+			}
+		});
+
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing

@@ -1,3 +1,14 @@
+2003-03-14 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Argument.java:
+	New method getArgumentObject().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java:
+	New method getRegisterObject().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	Checks for ICDIVariable and ICDIArgument since they are now ICDIVariableObject too.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java:
+	Checks for ICDIRegister when creating since they are now ICDIRegisterObject too.
+
 2003-03-13 Alain Magloire
 
 	Small bug fix

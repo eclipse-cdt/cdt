@@ -1,5 +1,23 @@
 2002-10-20 Alain Magloire
 
+	Eclipse provides plugins a way to trace by having an .options file,
+	this mechanism is use to print out the mi exchange between gdb
+	and the plugin.  To enable this in the debug launch one must enable
+	"tracing" and set for the "org.eclipse.debug.mi.core/debug" to true.
+	But one problem, the console will simply blow taking down eclipse,
+	for big MI line response, say 4k length, for example asking the children
+	of "char buffer[4096]", -var-list-children varxx.
+	This seem only to happen in Eclipse-gtk or Eclipse-motif
+	on GNU/Linux, so it will be break in smaller chunks to give a chance to
+	the console.
+
+	* .options: Set debug to true.
+	* src/.../core/MIPlugin.java (debugLog): Break the log line in small chuncks of 100.
+	* src/.../MISession.java (postCommand): Print the gdb/mi command.
+	* src/.../RxThread.java (run): Print gdb/mi responses.
+
+2002-10-20 Alain Magloire
+
 	-data-write-register-values is not in the texinfo manual but implemented in
 	gdb-5.2.1/gdb/mi/mim-main.c:
 	Write given values into registers. The registers and values are

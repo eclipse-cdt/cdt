@@ -30,12 +30,12 @@ public class DebuggerConsoleActionDelegate extends AbstractListenerActionDelegat
 	 */
 	protected void doAction( Object element ) throws DebugException
 	{
-		if ( element != null && element instanceof CDebugElement )
+		if ( element != null && element instanceof CDebugElement && getAction() != null && getAction().isEnabled() )
 		{
 			IDebuggerProcessSupport dps = (IDebuggerProcessSupport)((CDebugElement)element).getDebugTarget().getAdapter( IDebuggerProcessSupport.class );
 			if ( dps != null && dps.supportsDebuggerProcess() )
 			{
-				dps.setDebuggerProcessDefault( !dps.isDebuggerProcessDefault() );
+				dps.setDebuggerProcessDefault( getAction().isChecked() );
 				((CDebugElement)element).fireChangeEvent( DebugEvent.CLIENT_REQUEST );
 				if ( fViewPart != null && fViewPart instanceof AbstractDebugView )
 				{

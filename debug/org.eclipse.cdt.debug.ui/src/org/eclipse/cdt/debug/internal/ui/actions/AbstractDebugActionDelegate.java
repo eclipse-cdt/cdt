@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Iterator;
 
@@ -17,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -25,7 +31,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener {
+public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener, INullSelectionListener {
 	
 	/**
 	 * The underlying action for this delegate
@@ -112,10 +118,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 
 	/**
-	 * Set the icons for this action on the first selection changed
-	 * event. This is necessary because the XML currently only
-	 * supports setting the enabled icon. 
-	 * <p>
 	 * AbstractDebugActionDelegates come in 2 flavors: IViewActionDelegate, 
 	 * IWorkbenchWindowActionDelegate delegates.
 	 * </p>
@@ -154,45 +156,10 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 	
 	/**
-	 * Return whether the action should be enabled or not based on the given selection.
-	 */
-	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
-		if (selection.size() == 0) {
-			return false;
-		}
-		Iterator enum= selection.iterator();
-		int count= 0;
-		while (enum.hasNext()) {
-			count++;
-			if (count > 1 && !enableForMultiSelection()) {
-				return false;
-			}
-			Object element= enum.next();
-			if (!isEnabledFor(element)) {
-				return false;
-			}
-		}
-		return true;		
-	}
-	
-	/**
-	 * Returns whether this action should be enabled if there is
-	 * multi selection.
-	 */
-	protected boolean enableForMultiSelection() {
-		return true;
-	}
-		
-	/**
 	 * Performs the specific action on this element.
 	 */
 	protected abstract void doAction(Object element) throws DebugException;
 
-	/**
-	 * Returns whether this action will work for the given element
-	 */
-	protected abstract boolean isEnabledFor(Object element);
-	
 	/**
 	 * Returns the String to use as an error dialog title for
 	 * a failed action. Default is to return null.
@@ -327,5 +294,26 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	protected void setWindow(IWorkbenchWindow window) {
 		fWindow = window;
+	}
+	
+	/**
+	 * Return whether the action should be enabled or not based on the given selection.
+	 */
+	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
+		if (selection.size() == 0) {
+			return false;
+		}
+		Iterator enum= selection.iterator();
+		while (enum.hasNext()) {
+			Object element= enum.next();
+			if (!isEnabledFor(element)) {
+				return false;
+			}
+		}
+		return true;		
+	}
+
+	protected boolean isEnabledFor(Object element) {
+		return true;
 	}
 }

@@ -1,76 +1,41 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
-
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
  
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventSetListener, IPartListener, IPageListener {
+public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventSetListener, IActionDelegate2 {
 
 	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part.equals(getView())) {
-			dispose();
-		}
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-	}
-	
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		getWindow().removePageListener(this);
-		if (getView() != null) {
-			getView().getViewSite().getPage().removePartListener(this);	
-		}
 	}
 	
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
 	public void handleDebugEvents(final DebugEvent[] events) {
-		if (getPage() == null || getAction() == null) {
+		if (getWindow() == null || getAction() == null) {
 			return;
 		}
 		Shell shell= getWindow().getShell();
@@ -91,22 +56,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 			}
 		};
 		
-		getPage().getWorkbenchWindow().getShell().getDisplay().asyncExec(r);
-	}
-	
-	/**
-	 * Returns the page that this action works in.
-	 */
-	protected IWorkbenchPage getPage() {
-		if (getWindow() != null) {
-			return getWindow().getActivePage();
-		} else {
-			IWorkbenchWindow window=  DebugUIPlugin.getActiveWorkbenchWindow();
-			if (window != null) {
-				return window.getActivePage();
-			}
-		}
-		return null;
+		shell.getDisplay().asyncExec(r);
 	}
 	
 	/**
@@ -137,7 +87,6 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	public void init(IWorkbenchWindow window){
 		super.init(window);
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		window.addPageListener(this);
 	}
 
 	/**
@@ -147,46 +96,18 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		super.init(view);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		setWindow(view.getViewSite().getWorkbenchWindow());
-		if ( getPage() != null )
-		{
-			getPage().addPartListener(this);
-			getPage().getWorkbenchWindow().addPageListener(this);
-		}
-	}
-	
-	/**
-	 * @see IPageListener#pageActivated(IWorkbenchPage)
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-		if (getAction() != null && getView() != null && getPage() != null && getPage().equals(page)) {
-			Runnable r= new Runnable() {
-				public void run() {
-					if (getPage() != null) {
-						IWorkbenchWindow window= getPage().getWorkbenchWindow();
-						if (window != null && window.getShell() != null && !window.getShell().isDisposed()) {
-							ISelection selection= getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-							update(getAction(), selection);
-						}
-					}
-				}
-			};
-		
-			getPage().getWorkbenchWindow().getShell().getDisplay().asyncExec(r);
-		}
 	}
 
 	/**
-	 * @see IPageListener#pageClosed(IWorkbenchPage)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
-	public void pageClosed(IWorkbenchPage page) {
-		if (page.equals(getPage())) {
-			dispose();
-		}
+	public void init(IAction action) {
 	}
 
 	/**
-	 * @see IPageListener#pageOpened(IWorkbenchPage)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
-	public void pageOpened(IWorkbenchPage page) {
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 }

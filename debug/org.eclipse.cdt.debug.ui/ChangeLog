@@ -1,3 +1,12 @@
+2003-10-31 Mikhail Khodjaiants
+	Applied the changes made to the corresponding classes of 'org.eclipse.debug.ui'.
+	* AbstractDebugActionDelegate.java
+	* AbstractListenerActionDelegate.java
+	* AddAddressBreakpointActionDelegate.java
+	* DebuggerConsoleActionDelegate.java
+	* SwitchToDisassemblyActionDelegate.java
+	* SignalZeroWorkbenchActionDelegate.java
+
 2003-10-28 Mikhail Khodjaiants
 	Changed name of source lookup preference page.
 	* plugin.properties

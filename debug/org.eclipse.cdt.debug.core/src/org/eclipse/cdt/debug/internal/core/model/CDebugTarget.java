@@ -241,6 +241,11 @@ public class CDebugTarget extends CDebugElement
 	private CRegisterManager fRegisterManager;
 
 	/**
+	 * The suspension thread.
+	 */
+	private ICDIThread fSuspensionThread;	 
+
+	/**
 	 * Whether the debugger process is default.
 	 */
 	private boolean fIsDebuggerProcessDefault = false;
@@ -1365,6 +1370,7 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.SUSPENDED );
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
+		setSuspensionThread();
 		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDITarget )
 		{
@@ -2584,5 +2590,41 @@ public class CDebugTarget extends CDebugElement
 	public IRegisterGroup[] getRegisterGroups() throws DebugException
 	{
 		return getRegisterManager().getRegisterGroups();
+	}
+
+	protected ICDIThread getSuspensionThread()
+	{
+		return fSuspensionThread;
+	}	
+
+	private void setSuspensionThread()
+	{
+		fSuspensionThread = null;
+		try
+		{
+			fSuspensionThread = getCDITarget().getCurrentThread();
+		}
+		catch( CDIException e )
+		{
+			// ignore
+		}
+	}	
+
+	protected IBreakpoint[] getThreadBreakpoints( CThread thread )
+	{
+		List list = new ArrayList( 1 );
+		if ( isSuspended() && thread != null && 
+			 getSuspensionThread() != null && 
+			 getSuspensionThread().equals( thread.getCDIThread() ) )
+		{
+			IBreakpoint bkpt = null;
+			if ( getCurrentStateInfo() instanceof ICDIBreakpointHit )
+				bkpt = findBreakpoint( ((ICDIBreakpointHit)getCurrentStateInfo()).getBreakpoint() );
+			else if ( getCurrentStateInfo() instanceof ICDIWatchpointTrigger )
+				bkpt = findBreakpoint( ((ICDIWatchpointTrigger)getCurrentStateInfo()).getWatchpoint() );
+			if ( bkpt != null )
+				list.add( bkpt );
+		}
+		return (IBreakpoint[])list.toArray( new IBreakpoint[list.size()]);
 	}
 }

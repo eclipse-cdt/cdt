@@ -1,3 +1,8 @@
+2004-01-15 Mikhail Khodjaiants
+	Fix for bug 48682: IThread.getBreakpoints() stubbed out.
+	* CDebugTarget.java
+	* CThread.java
+
 2003-04-25 Mikhail Khodjaiants
 	Fix for bug 36909
 	* DisassemblyManager.java: check if the address of a stack frame is not 0;

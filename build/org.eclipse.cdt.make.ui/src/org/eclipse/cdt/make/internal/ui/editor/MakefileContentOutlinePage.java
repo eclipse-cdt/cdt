@@ -30,7 +30,11 @@ import org.eclipse.cdt.make.internal.core.makefile.NullMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -39,8 +43,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -207,10 +214,12 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 
 	protected MakefileEditor fEditor;
 	protected Object fInput;
+	protected AddBuildTargetAction fAddBuildTargetAction;
 
 	public MakefileContentOutlinePage(MakefileEditor editor) {
 		super();
 		fEditor = editor;
+		fAddBuildTargetAction = new AddBuildTargetAction(this);
 	}
 
 	/* (non-Javadoc)
@@ -224,6 +233,32 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		if (fInput != null) {
 			viewer.setInput(fInput);
 		}
+
+		MenuManager manager= new MenuManager("#MakefileOutlinerContext");
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager m) {
+				contextMenuAboutToShow(m);
+			}
+		});
+		Control tree = viewer.getControl();
+		Menu menu = manager.createContextMenu(tree);
+		tree.setMenu(menu);
+                 
+		IPageSite site= getSite();
+		site.registerContextMenu(MakeUIPlugin.getPluginId() + ".outline", manager, viewer); //$NON-NLS-1$
+		site.setSelectionProvider(viewer);
+
+	}
+
+	/**
+	 * called to create the context menu of the outline
+	 */
+	protected void contextMenuAboutToShow(IMenuManager menu) {
+		if (fAddBuildTargetAction.canActionBeAdded(getSelection()))
+			menu.add(fAddBuildTargetAction);
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 	}
 
 	/**
@@ -232,6 +267,10 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	public void setInput(Object input) {
 		fInput = input;
 		update();
+	}
+
+	public Object getInput() {
+		return fInput;
 	}
 
 	/**

@@ -8,7 +8,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represent struct(ure), class or union.
  */
-public interface IStructure extends IInheritance, IParent, ICElement, IVariableDeclaration {
+public interface IStructure extends IInheritance, IParent, IDeclaration {
 	//public String instantiatesTemplate();
 
 	public IField getField(String name);

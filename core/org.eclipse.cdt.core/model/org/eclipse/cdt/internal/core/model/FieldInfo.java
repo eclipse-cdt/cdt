@@ -20,6 +20,7 @@ public class FieldInfo extends SourceManipulationInfo {
 	boolean isConst = false;
 	boolean isVolatile = false;
 	boolean isMutable = false;
+	boolean isStatic = false;
 	int visibility;
 	
 	protected FieldInfo (CElement element) {
@@ -48,6 +49,7 @@ public class FieldInfo extends SourceManipulationInfo {
 		&&  (isVolatile == otherInfo.isVolatile())
 		&& 	(isMutable == otherInfo.isMutable())
 		&& 	(visibility == otherInfo.getVisibility())
+		&& 	(isStatic == otherInfo.isStatic())
 		)
 			return true;
 		else
@@ -66,7 +68,7 @@ public class FieldInfo extends SourceManipulationInfo {
 		return isConst;
 	}
 
-	protected void setIsConst(boolean isConst){
+	protected void setConst(boolean isConst){
 		this.isConst = isConst;
 	}
 
@@ -74,15 +76,23 @@ public class FieldInfo extends SourceManipulationInfo {
 		return isVolatile;
 	}
 
-	protected void setIsVolatile(boolean isVolatile){
+	protected void setVolatile(boolean isVolatile){
 		this.isVolatile = isVolatile;
+	}
+
+	public boolean isStatic() {
+		return isStatic;
+	}
+
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
 	}
 
 	protected boolean isMutable(){
 		return isMutable;
 	}
 
-	protected void setIsMutable(boolean mutable){
+	protected void setMutable(boolean mutable){
 		this.isMutable = mutable;
 	}
 	/**
@@ -100,5 +110,4 @@ public class FieldInfo extends SourceManipulationInfo {
 	public void setVisibility(int visibility) {
 		this.visibility = visibility;
 	}
-
 }

@@ -8,7 +8,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represents a function
  */
-public interface IFunctionDeclaration extends ICElement, ISourceReference, ISourceManipulation {
+public interface IFunctionDeclaration extends IDeclaration {
 
 	/**
 	 * Returns the type signatures of the exceptions this method throws,
@@ -63,14 +63,4 @@ public interface IFunctionDeclaration extends ICElement, ISourceReference, ISour
 	 * Returns the signature of the method. 
 	 */	
 	String getSignature();
-
-	/**
-	 * Returns the access Control of the member. The access qualifier
-	 * can be examine using the AccessControl class.
-	 *
-	 * @exception CModelException if this element does not exist or if an
-	 *      exception occurs while accessing its corresponding resource.
-	 * @see IAccessControl
-	 */
-	int getAccessControl();
 }

@@ -257,9 +257,11 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	private CElement createField(CElement parent, String name){
 		Field newElement = new Field( parent, name );
 		newElement.setTypeName ( getTypeName() );
-		newElement.setIsConst(isConst());
-		newElement.setIsMutable(isMutable());
+		newElement.setMutable(isMutable());
 		newElement.setVisibility(this.getCurrentVisibility());
+		newElement.setConst(isConst());
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;
 	}
 
@@ -272,6 +274,9 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	private CElement createVariable(CElement parent, String name){
 		Variable newElement = new Variable( parent, name );
 		newElement.setTypeName ( getTypeName() );
+		newElement.setConst(isConst());
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;
 	}
 
@@ -284,6 +289,9 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	private CElement createVariableDeclaration(CElement parent, String name){
 		VariableDeclaration newElement = new VariableDeclaration( parent, name );
 		newElement.setTypeName ( getTypeName() );
+		newElement.setConst(isConst());
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;
 	}
 
@@ -307,6 +315,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		newElement.setParameterTypes(parameterTypes);
 		newElement.setReturnType( getTypeName() );
 		newElement.setVisibility(this.getCurrentVisibility());
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;		
 	}
 
@@ -329,6 +339,8 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		newElement.setParameterTypes(parameterTypes);
 		newElement.setReturnType( getTypeName() );
 		newElement.setVisibility(this.getCurrentVisibility());
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;		
 	}
 
@@ -340,8 +352,18 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * @return CElement
 	 */
 	private CElement createFunctionDeclaration(CElement parent, String name, Parameter[] parameters){
+		String[] parameterTypes = new String[parameters.length];
+		for( int j = 0; j< parameters.length; ++j )
+		{
+			Parameter param = parameters[j];
+			parameterTypes[j] = new String(param.getTypeName());
+		}
+
 		FunctionDeclaration newElement = new FunctionDeclaration( parent, name );
+		newElement.setParameterTypes(parameterTypes);
 		newElement.setReturnType( getTypeName() );
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;
 	}
 
@@ -353,8 +375,18 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * @return CElement
 	 */
 	private CElement createFunction(CElement parent, String name, Parameter[] parameters){
+		String[] parameterTypes = new String[parameters.length];
+		for( int j = 0; j< parameters.length; ++j )
+		{
+			Parameter param = parameters[j];
+			parameterTypes[j] = new String(param.getTypeName());
+		}
+
 		Function newElement = new Function( parent, name );
+		newElement.setParameterTypes(parameterTypes);
 		newElement.setReturnType( getTypeName() );
+		newElement.setVolatile(isVolatile());
+		newElement.setStatic(isStatic());
 		return newElement;
 	}
 

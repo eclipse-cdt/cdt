@@ -16,12 +16,10 @@ import org.eclipse.cdt.core.model.IMember;
 public class MethodInfo extends FunctionInfo {
 
 	boolean isAbstract = false;
-	boolean isStatic = false;
 	boolean isInline = false;
 	boolean isVirtual = false;
 	boolean isFriend = false;
 	boolean isConst = false;
-	boolean isVolatile = false;
 	int visibility;
 		
 	MethodInfo(CElement element) {
@@ -33,23 +31,15 @@ public class MethodInfo extends FunctionInfo {
 		return isAbstract;
 	}
 
-	public void setIsAbstract(boolean isAbstract){
+	public void setAbstract(boolean isAbstract){
 		this.isAbstract = isAbstract;
-	}
-
-	public boolean isStatic(){
-		return isStatic;
-	}
-
-	public void setIsStatic(boolean isStatic){
-		this.isStatic = isStatic;
 	}
 
 	public boolean isInline(){
 		return isInline;
 	}
 
-	public void setIsInline(boolean isInline){
+	public void setInline(boolean isInline){
 		this.isInline = isInline;
 	}
 
@@ -57,7 +47,7 @@ public class MethodInfo extends FunctionInfo {
 		return isVirtual;
 	}
 
-	public void setIsVirtual(boolean isVirtual){
+	public void setVirtual(boolean isVirtual){
 		this.isVirtual = isVirtual;
 	}
 
@@ -65,7 +55,7 @@ public class MethodInfo extends FunctionInfo {
 		return isFriend;
 	}
 
-	public void setIsFriend(boolean isFriend){
+	public void setFriend(boolean isFriend){
 		this.isFriend = isFriend;
 	}
 
@@ -73,18 +63,9 @@ public class MethodInfo extends FunctionInfo {
 		return isConst;
 	}
 
-	public void setIsConst(boolean isConst){
+	public void setConst(boolean isConst){
 		this.isConst = isConst;
 	}
-
-	public boolean isVolatile(){
-		return isVolatile;
-	}
-
-	public void setIsVolatile(boolean isVolatile){
-		this.isVolatile = isVolatile;
-	}
-	
 	
 	/**
 	 * Returns the visibility.

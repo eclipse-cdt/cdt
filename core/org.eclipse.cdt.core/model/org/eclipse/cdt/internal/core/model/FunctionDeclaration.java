@@ -51,9 +51,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	}		
 		
 	public String getSignature(){
-		String sig = getReturnType();
-		sig += " ";
-		sig += getElementName();
+		String sig = getElementName();
 		if(getNumberOfParameters() > 0){
 			sig += "(";
 			String[] paramTypes = getParameterTypes();
@@ -79,6 +77,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		return getFunctionInfo().getAccessControl();
 	}
 
+
 	public String[] getExceptions(){
 		return new String[] {};
 	}
@@ -98,4 +97,44 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		);
 	}
 	
+	/**
+	 * FunctionDeclarations and Functions can not be constant 
+	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
+	 */
+	public boolean isConst(){
+		return false;
+	}
+
+	/**
+	 * Returns the isStatic.
+	 * @return boolean
+	 */
+	public boolean isStatic() {
+		return getFunctionInfo().isStatic();
+	}
+
+	/**
+	 * Returns the isVolatile.
+	 * @return boolean
+	 */
+	public boolean isVolatile() {
+		return getFunctionInfo().isVolatile();
+	}
+
+	/**
+	 * Sets the isStatic.
+	 * @param isStatic The isStatic to set
+	 */
+	public void setStatic(boolean isStatic) {
+		getFunctionInfo().setStatic(isStatic);
+	}
+
+	/**
+	 * Sets the isVolatile.
+	 * @param isVolatile The isVolatile to set
+	 */
+	public void setVolatile(boolean isVolatile) {
+		getFunctionInfo().setVolatile(isVolatile);
+	}
+
 }

@@ -52,6 +52,9 @@ public class Structure extends SourceManipulation implements IStructure {
 		return false;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.core.model.IDeclaration#getAccessControl()
+	 */
 	public int getAccessControl(){
 		return 0;
 	}
@@ -75,6 +78,30 @@ public class Structure extends SourceManipulation implements IStructure {
 		getStructureInfo().setTypeString(type);
 	}
 	
+	public boolean isConst() {
+		return getStructureInfo().isConst();
+	}
+
+	public void setConst(boolean isConst) {
+		getStructureInfo().setConst(isConst);
+	}
+
+	public boolean isVolatile() {
+		return getStructureInfo().isVolatile();
+	}
+
+	public void setVolatile(boolean isVolatile) {
+		getStructureInfo().setVolatile(isVolatile);
+	}
+
+	public boolean isStatic() {
+		return getStructureInfo().isStatic();
+	}
+	
+	public void setStatic(boolean isStatic) {
+		getStructureInfo().setStatic(isStatic);
+	}
+	
 	public StructureInfo getStructureInfo(){
 		return (StructureInfo) getElementInfo();
 	}
@@ -92,6 +119,7 @@ public class Structure extends SourceManipulation implements IStructure {
 		baseTypes = newBase;
 	}
 
+
 	protected CElementInfo createElementInfo () {
 		return new StructureInfo(this);
 	}
@@ -101,14 +129,6 @@ public class Structure extends SourceManipulation implements IStructure {
 	 * @IInheritance
 	 */
 	public int getAccessControl(int pos) throws CModelException {
-		return 0;
-	}
-
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getAccesControl()
-	 */
-	public int getAccesControl() {
 		return 0;
 	}
 

@@ -10,6 +10,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -281,28 +282,18 @@ public class CElementImageProvider {
 		
 		int flags= computeBasicAdornmentFlags(element, renderFlags);
 		
-		/* if (showOverlayIcons(renderFlags) && element instanceof ISourceReference) { 
-			ISourceReference sourceReference= (ISourceReference)element;
-			int modifiers= getModifiers(sourceReference);
-		
-			if (Flags.isAbstract(modifiers) && confirmAbstract((IMember) sourceReference))
-				flags |= JavaElementImageDescriptor.ABSTRACT;
-			if (Flags.isFinal(modifiers))
-				flags |= JavaElementImageDescriptor.FINAL;
-			if (Flags.isSynchronized(modifiers) && confirmSynchronized((IMember) sourceReference))
-				flags |= JavaElementImageDescriptor.SYNCHRONIZED;
-			if (Flags.isStatic(modifiers))
-				flags |= JavaElementImageDescriptor.STATIC;
-				
-			if (sourceReference instanceof IType) {
-				try {
-					if (JavaModelUtil.hasMainMethod((IType)sourceReference))
-						flags |= JavaElementImageDescriptor.RUNNABLE;
-				} catch (JavaModelException e) {
-					// do nothing. Can't compute runnable adornment.
-				}
+		if (showOverlayIcons(renderFlags) && element instanceof IDeclaration) {
+			IDeclaration decl = (IDeclaration) element;
+			if(decl.isStatic()){
+				flags |= CElementImageDescriptor.STATIC;
 			}
-		} */
+			if(decl.isConst()){
+				flags |= CElementImageDescriptor.CONSTANT;
+			}
+			if(decl.isVolatile()){
+				flags |= CElementImageDescriptor.VOLATILE;
+			}
+		}
 		return flags;
 	}
 	

@@ -8,9 +8,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represents the declaration of a variable.
  */
-public interface IVariableDeclaration extends ICElement, ISourceManipulation, ISourceReference {
-
+public interface IVariableDeclaration extends IDeclaration {
 	public String getTypeName();
 	public void setTypeName(String type);
-	public int getAccessControl();
 }

@@ -22,8 +22,8 @@ public class Field extends SourceManipulation implements IField {
 		return getFieldInfo().isMutable();
 	}
 
-	public void setIsMutable(boolean mutable){
-		getFieldInfo().setIsMutable(mutable);
+	public void setMutable(boolean mutable){
+		getFieldInfo().setMutable(mutable);
 	}
 
 	public String getTypeName() {
@@ -38,16 +38,24 @@ public class Field extends SourceManipulation implements IField {
 		return getFieldInfo().isConst();
 	}
 
-	public void setIsConst(boolean isConst) {
-		getFieldInfo().setIsConst(isConst);
+	public void setConst(boolean isConst) {
+		getFieldInfo().setConst(isConst);
 	}
 
 	public boolean isVolatile() {
 		return getFieldInfo().isVolatile();
 	}
 
-	public void setIsVolatile(boolean isVolatile) {
-		getFieldInfo().setIsVolatile(isVolatile);
+	public void setVolatile(boolean isVolatile) {
+		getFieldInfo().setVolatile(isVolatile);
+	}
+
+	public boolean isStatic() {
+		return getFieldInfo().isStatic();
+	}
+
+	public void setStatic(boolean isStatic) {
+		getFieldInfo().setStatic(isStatic);
 	}
 
 	public int getVisibility() {
@@ -57,6 +65,7 @@ public class Field extends SourceManipulation implements IField {
 	public void setVisibility(int visibility) {
 		getFieldInfo().setVisibility(visibility);
 	}
+
 
 	public FieldInfo getFieldInfo(){
 		return (FieldInfo) getElementInfo();

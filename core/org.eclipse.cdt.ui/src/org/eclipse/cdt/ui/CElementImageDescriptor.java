@@ -33,11 +33,11 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render the abstract adornment */
 	public final static int ABSTRACT= 		0x001;
 	
-	/** Flag to render the final adornment */
-	public final static int FINAL=			0x002;
+	/** Flag to render the const adornment */
+	public final static int CONSTANT=		0x002;
 	
-	/** Flag to render the synchronized adornment */
-	public final static int SYNCHRONIZED=	0x004;
+	/** Flag to render the volatile adornment */
+	public final static int VOLATILE=		0x004;
 	
 	/** Flag to render the static adornment */
 	public final static int STATIC=			0x008;
@@ -160,8 +160,8 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	}	
 	
 	private void drawTopRight() {		
-		//int x= getSize().x;
-		//ImageData data= null;
+		int x= getSize().x;
+		ImageData data= null;
 		/* if ((fFlags & ABSTRACT) != 0) {
 			data= CPluginImages.DESC_OVR_ABSTRACT.getImageData();
 			x-= data.width;
@@ -171,19 +171,19 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			data= CPluginImages.DESC_OVR_FINAL.getImageData();
 			x-= data.width;
 			drawImage(data, x, 0);
-		}
+		}*/
 		if ((fFlags & STATIC) != 0) {
 			data= CPluginImages.DESC_OVR_STATIC.getImageData();
 			x-= data.width;
 			drawImage(data, x, 0);
-		} */
+		} 
 	}		
 	
 	private void drawBottomRight() {
 		//Point size= getSize();
 		//int x= size.x;
 		//ImageData data= null;
-		/* if ((fFlags & SYNCHRONIZED) != 0) {
+		 /*if ((fFlags & SYNCHRONIZED) != 0) {
 			data= CPluginImages.DESC_OVR_SYNCH.getImageData();
 			x-= data.width;
 			drawImage(data, x, size.y - data.height);

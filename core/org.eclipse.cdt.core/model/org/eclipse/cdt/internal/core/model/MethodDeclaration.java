@@ -16,6 +16,8 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 
 public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration{
 	
+	boolean isConst;
+	boolean isVolatile;
 
 	public MethodDeclaration(ICElement parent, String name){
 		super(parent, name, CElement.C_METHOD_DECLARATION);
@@ -52,55 +54,49 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	}
 
 	public void setIsAbstract(boolean isAbstract){
-		getMethodInfo().setIsAbstract(isAbstract);
-	}
-
-	public boolean isStatic(){
-		return getMethodInfo().isStatic();
-	}
-
-	public void setIsStatic(boolean isStatic){
-		getMethodInfo().setIsStatic(isStatic);
+		getMethodInfo().setAbstract(isAbstract);
 	}
 
 	public boolean isInline(){
 		return getMethodInfo().isInline();
 	}
 
-	public void setIsInline(boolean isInline){
-		getMethodInfo().setIsInline(isInline);
+	public void setInline(boolean isInline){
+		getMethodInfo().setInline(isInline);
 	}
 
 	public boolean isVirtual(){
 		return getMethodInfo().isVirtual();
 	}
 
-	public void setIsVirtual(boolean isVirtual){
-		getMethodInfo().setIsVirtual(isVirtual);
+	public void setVirtual(boolean isVirtual){
+		getMethodInfo().setVirtual(isVirtual);
 	}
 
 	public boolean isFriend(){
 		return getMethodInfo().isFriend();
 	}
 
-	public void setIsFriend(boolean isFriend){
-		getMethodInfo().setIsFriend(isFriend);
+	public void setFriend(boolean isFriend){
+		getMethodInfo().setFriend(isFriend);
 	}
 
 	public boolean isConst(){
-		return getMethodInfo().isConst();
+		return isConst;
 	}
 
-	public void setIsConst(boolean isConst){
-		getMethodInfo().setIsConst(isConst);
+	public void setConst(boolean isConst){
+		this.isConst = isConst;
+		getMethodInfo().setConst(isConst);
 	}
 
 	public boolean isVolatile(){
-		return getMethodInfo().isVolatile();
+		return isVolatile;
 	}
 
-	public void setIsVolatile(boolean isVolatile){
-		getMethodInfo().setIsVolatile(isVolatile);
+	public void setVolatile(boolean isVolatile){
+		this.isVolatile = isVolatile; 
+		getMethodInfo().setVolatile(isVolatile);
 	}
 
 	public int getVisibility(){
@@ -109,11 +105,6 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	
 	public void setVisibility(int visibility){
 		getMethodInfo().setVisibility(visibility);
-	}
-	// do we need this one or not?
-	// can we get this info from the parser or not?
-	public boolean hasClassScope(){
-		return false;
 	}
 	
 	protected CElementInfo createElementInfo () {
@@ -128,7 +119,10 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	 * See if we need anything else to put in equals here
 	 */
 	public boolean equals(Object other) {
-		return ( super.equals(other) );
+		return ( super.equals(other)
+		&& isConst() == ((MethodDeclaration)other).isConst()
+		&& isVolatile() == ((MethodDeclaration)other).isVolatile()
+		);
 	}
 		
 }

@@ -10,6 +10,9 @@ class FunctionInfo extends SourceManipulationInfo {
 	protected int flags;
 	protected String returnType = "";
 	protected int numOfParams;
+	protected boolean isStatic;
+	protected boolean isVolatile;
+	
 
 	protected FunctionInfo (CElement element) {
 		super(element);
@@ -31,4 +34,36 @@ class FunctionInfo extends SourceManipulationInfo {
 	protected void setReturnType(String type){
 		returnType = type;
 	}	
+	/**
+	 * Returns the isStatic.
+	 * @return boolean
+	 */
+	public boolean isStatic() {
+		return isStatic;
+	}
+
+	/**
+	 * Returns the isVolatile.
+	 * @return boolean
+	 */
+	public boolean isVolatile() {
+		return isVolatile;
+	}
+
+	/**
+	 * Sets the isStatic.
+	 * @param isStatic The isStatic to set
+	 */
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
+	}
+
+	/**
+	 * Sets the isVolatile.
+	 * @param isVolatile The isVolatile to set
+	 */
+	public void setVolatile(boolean isVolatile) {
+		this.isVolatile = isVolatile;
+	}
+
 }

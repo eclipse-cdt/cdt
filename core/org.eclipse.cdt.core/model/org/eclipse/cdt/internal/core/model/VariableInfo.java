@@ -9,6 +9,9 @@ class VariableInfo extends SourceManipulationInfo {
 
 	protected int flags;
 	String typeStr = "";
+	boolean isConst = false;
+	boolean isVolatile = false;
+	boolean isStatic = false;
 	
 	protected VariableInfo (CElement element) {
 		super(element);
@@ -41,4 +44,28 @@ class VariableInfo extends SourceManipulationInfo {
 	protected void setTypeString(String type){
 		typeStr = type;
 	}
+	protected boolean isConst(){
+		return isConst;
+	}
+
+	protected void setConst(boolean isConst){
+		this.isConst = isConst;
+	}
+
+	protected boolean isVolatile(){
+		return isVolatile;
+	}
+
+	protected void setVolatile(boolean isVolatile){
+		this.isVolatile = isVolatile;
+	}
+
+	public boolean isStatic() {
+		return isStatic;
+	}
+
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
+	}
+	
 }

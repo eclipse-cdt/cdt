@@ -26,11 +26,35 @@ public class VariableDeclaration extends SourceManipulation implements IVariable
 		getVariableInfo().setTypeString(type);
 	}
 
+	public boolean isConst() {
+		return getVariableInfo().isConst();
+	}
+
+	public void setConst(boolean isConst) {
+		getVariableInfo().setConst(isConst);
+	}
+
+	public boolean isVolatile() {
+		return getVariableInfo().isVolatile();
+	}
+
+	public void setVolatile(boolean isVolatile) {
+		getVariableInfo().setVolatile(isVolatile);
+	}
+
+	public boolean isStatic() {
+		return getVariableInfo().isStatic();
+	}
+
+	public void setStatic(boolean isStatic) {
+		getVariableInfo().setStatic(isStatic);
+	}
+
 	public VariableInfo getVariableInfo(){
 		return (VariableInfo) getElementInfo();
 	}
 	
 	protected CElementInfo createElementInfo () {
-		return new SourceManipulationInfo(this);
+		return new VariableInfo(this);
 	}
 }

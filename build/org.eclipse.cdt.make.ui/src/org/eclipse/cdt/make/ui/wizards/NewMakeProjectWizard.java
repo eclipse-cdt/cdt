@@ -8,7 +8,7 @@ package org.eclipse.cdt.make.ui.wizards;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.ui.wizards.CProjectWizard;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  */
-public abstract class NewMakeProjectWizard extends CProjectWizard {
+public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 	
 	protected MakeProjectWizardOptionPage fOptionPage;
 	

@@ -333,5 +333,26 @@
             id="org.eclipse.cdt.debug.ui.cSourceLocator">
       </sourceLocator>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            code="10000"
+            plugin="org.eclipse.cdt.debug.core"
+            class="org.eclipse.cdt.debug.internal.ui.ConfirmStatusHandler"
+            id="org.eclipse.cdt.debug.internal.ui.ConfirmStatusHandler">
+      </statusHandler>
+      <statusHandler
+            code="10001"
+            plugin="org.eclipse.cdt.debug.core"
+            class="org.eclipse.cdt.debug.internal.ui.InfoStatusHandler"
+            id="org.eclipse.cdt.debug.internal.ui.InfoStatusHandler">
+      </statusHandler>
+      <statusHandler
+            code="10002"
+            plugin="org.eclipse.cdt.debug.core"
+            class="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler"
+            id="org.eclipse.cdt.debug.internal.ui.ErrorStatusHandler">
+      </statusHandler>
+   </extension>
 
 </plugin>

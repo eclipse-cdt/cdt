@@ -9,9 +9,11 @@ package org.eclipse.cdt.debug.core;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -113,14 +115,28 @@ public class CDebugModel
 		catch( CoreException e )
 		{
 			CDebugCorePlugin.log( e );
+			// throw DebugException
 		}
-		
-		if ( stopInMain )
+
+		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+
+		if ( config.supportsBreakpoints() && stopInMain )
 		{
 			ICDILocation location = cdiTarget.getSession().getBreakpointManager().createLocation( "", "main", 0 );
-			((CDebugTarget)target[0]).setInternalTemporaryBreakpoint( location );
+			try
+			{
+				((CDebugTarget)target[0]).setInternalTemporaryBreakpoint( location );
+			}
+			catch( DebugException e )
+			{
+				CDebugUtils.confirm( e.getStatus(), e );
+			}
 		}
-		target[0].resume();
+
+		if ( config.supportsResume() )
+		{
+			target[0].resume();
+		}
 
 		return target[0];
 	}

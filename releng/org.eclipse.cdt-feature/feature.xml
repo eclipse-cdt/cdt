@@ -21,7 +21,6 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.debug.core"/>

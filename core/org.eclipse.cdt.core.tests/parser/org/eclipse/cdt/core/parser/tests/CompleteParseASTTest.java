@@ -2036,4 +2036,31 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	writer.write( "}\n" );
     	parse( writer.toString() );
     }
+    
+    public void testBug68623() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "class A {                         \n" );
+        writer.write( "   A();                           \n" );
+        writer.write( "   class sub{};                   \n" );
+        writer.write( "   sub * x;                       \n" );
+        writer.write( "};                                \n" );
+        writer.write( "A::A() : x( (sub *) 0 ) {}        \n" );
+        
+        parse( writer.toString() );
+        
+        writer = new StringWriter();
+        writer.write( "class A {                         \n" );
+        writer.write( "   A() : x (0) {}                 \n" );
+        writer.write( "   int x;                         \n" );
+        writer.write( "};                                \n" );
+        
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+        
+        i = A.getDeclarations();
+        IASTMethod constructor = (IASTMethod) i.next();
+        IASTField x = (IASTField) i.next();
+        
+        assertAllReferences( 1, createTaskList( new Task( x ) ) );
+    }
 }

@@ -1927,7 +1927,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         		symbol = lookupQualifiedName( scopeSymbol, duple, references, true );
         	} catch( ASTSemanticException ase )
         	{
-        		requireReferenceResolution = true;
+        	    //use the class specifier's unresolved reference mechanism to resolve these references.
+        	    //TODO: resolve unresolved references in the expressionList using resolveLeftoverConstructorInitializerMembers
+        	    if( scope instanceof ASTClassSpecifier ){
+        	        ASTClassSpecifier classSpecifier = (ASTClassSpecifier) scope;
+        	        classSpecifier.addUnresolvedReference( new UnresolvedReferenceDuple(scopeSymbol, duple ) );
+        	    } 
         	}
         }
         

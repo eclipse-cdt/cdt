@@ -1333,6 +1333,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     {
         int startingOffset = consume(IToken.tCOLON).getOffset();
         IASTScope scope = d.getDeclarationWrapper().getScope();
+        scope = astFactory.getDeclaratorScope(scope, d.getNameDuple());
         for (;;)
         {
             if (LT(1) == IToken.tLBRACE)
@@ -1344,16 +1345,14 @@ public abstract class Parser extends ExpressionParser implements IParser
             consume(IToken.tLPAREN);
             IASTExpression expressionList = null;
 
-            expressionList = expression(d.getDeclarationWrapper().getScope(), CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION);
+            expressionList = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION);
 
             IToken rparen = consume(IToken.tRPAREN);
 
             try
             {
                 d.addConstructorMemberInitializer(
-                    astFactory.createConstructorMemberInitializer(
-                        d.getDeclarationWrapper().getScope(),
-                        duple, expressionList));
+                    astFactory.createConstructorMemberInitializer(scope, duple, expressionList) );
             }
             catch (Exception e1)
             {

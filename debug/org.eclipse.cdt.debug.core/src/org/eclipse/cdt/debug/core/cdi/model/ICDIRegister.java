@@ -15,13 +15,5 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIRegister extends ICDIVariable
-{
-	/**
-	 * Returns the register group this register is contained in.
-	 * 
-	 * @return the register group this register is contained in
-	 * @exception CDIException if this method fails.  Reasons include:
-	 */
-	ICDIRegisterGroup getRegisterGroup() throws CDIException; 
+public interface ICDIRegister extends ICDIVariable {
 }

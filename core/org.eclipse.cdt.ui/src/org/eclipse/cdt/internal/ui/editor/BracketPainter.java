@@ -102,7 +102,7 @@ public final class BracketPainter implements IPainter, PaintListener {
 			
 			gc.setForeground(fColor);
 			if(fNoBox) {
-				gc.drawString(fTextWidget.getTextRange(offset, 1), left.x, left.y);
+				gc.drawString(fTextWidget.getTextRange(offset, 1), left.x, left.y, true);
 			} else {
 				gc.drawRectangle(left.x, left.y, right.x - left.x - 1, gc.getFontMetrics().getHeight() - 1);
 			}				

@@ -448,7 +448,7 @@ public class Coff {
 	public SectionHeader[] getSectionHeaders() throws IOException {
 		if (scnhdrs == null) {
 			scnhdrs = new SectionHeader[getFileHeader().f_nscns];
-			long sec = getFileHeader().FILHSZ + getFileHeader().f_opthdr;
+			long sec = FileHeader.FILHSZ + getFileHeader().f_opthdr;
 			for (int i = 0; i < scnhdrs.length; i++, sec += SectionHeader.SCNHSZ) {
 				scnhdrs[i] = new SectionHeader(rfile, sec);
 			}

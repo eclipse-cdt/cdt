@@ -118,6 +118,27 @@ public class CoreModel {
 	}
 
 	/**
+	 * Return the list of headers extensions.
+	 */
+	public String[] getHeaderExtensions() {
+		return manager.getHeaderExtensions();
+	}
+
+	/**
+	 * Returns the list of source extensions.
+	 */
+	public String[] getSourceExtensions() {
+		return manager.getSourceExtensions();
+	}
+
+	/**
+	 * Returns the list of headers and sources extensions
+	 */
+	public String[] getTranslationUnitExtensions() {
+		return manager.getTranslationUnitExtensions();
+	}
+
+	/**
 	 * Return true if project has C nature.
 	 */
 	public boolean hasCNature(IProject project){
@@ -167,7 +188,7 @@ public class CoreModel {
 		return cmodel;
 	}
 
-	public static void addElementChangedListener(IElementChangedListener listener) {
+	public void addElementChangedListener(IElementChangedListener listener) {
 		manager.addElementChangedListener(listener);
 	}
 
@@ -177,7 +198,7 @@ public class CoreModel {
 	 *
 	 * @param listener the listener
 	 */
-	public static void removeElementChangedListener(IElementChangedListener listener) {
+	public void removeElementChangedListener(IElementChangedListener listener) {
 		manager.removeElementChangedListener(listener);
 	}
 

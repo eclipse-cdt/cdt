@@ -88,7 +88,9 @@ public class ErrorParserManager extends OutputStream {
 		if (fDirectoryStack.size() != 0) {
 			return (IPath) fDirectoryStack.lastElement();
 		}
-		return new Path("");
+		// Fallback to the Project Location
+		// FIXME: if the build did not start in the Project ?
+		return fBaseDirectory;
 	}
 
 	public void pushDirectory(IPath dir) {
@@ -97,8 +99,7 @@ public class ErrorParserManager extends OutputStream {
 			if (fBaseDirectory.isPrefixOf(dir)) {
 				int segments = fBaseDirectory.matchingFirstSegments(dir);
 				pwd = dir.removeFirstSegments(segments);
-			}
-			else {
+			} else {
 				pwd = dir;
 			}
 			fDirectoryStack.addElement(pwd);
@@ -107,11 +108,12 @@ public class ErrorParserManager extends OutputStream {
 
 	public IPath popDirectory() {
 		int i = fDirectoryStack.size();
-		IPath dir = (IPath) fDirectoryStack.lastElement();
-		if (i != 0) {
+		if (i != 0) {			
+			IPath dir = (IPath) fDirectoryStack.lastElement();
 			fDirectoryStack.removeElementAt(i - 1);
+			return dir;
 		}
-		return dir;
+		return new Path("");
 	}
 
 	public int getDirectoryLevel() {
@@ -130,7 +132,7 @@ public class ErrorParserManager extends OutputStream {
 			while (tok.hasMoreElements()) {
 				String clName = tok.nextToken();
 				try {
-					IErrorParser parser = (IErrorParser) getClass().forName(clName).newInstance();
+					IErrorParser parser = (IErrorParser) Class.forName(clName).newInstance();
 					fErrorParsers.add(parser);
 				}
 				catch (ClassNotFoundException e) {
@@ -244,7 +246,14 @@ public class ErrorParserManager extends OutputStream {
 		} else {
 			path = (IPath) getWorkingDirectory().append(filePath);
 		}
-		IFile file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+
+		IFile file = null;
+		// The workspace may throw an IllegalArgumentException
+		// Catch it and the parser will fallback to scan the entire project.
+		try {
+			file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+		} catch (Exception e) {
+		}
 		return (file != null && file.exists()) ? file : null;
 	}
 

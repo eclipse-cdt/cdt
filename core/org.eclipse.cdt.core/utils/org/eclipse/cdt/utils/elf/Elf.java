@@ -530,7 +530,7 @@ public class Elf {
 		} else {
 			for (int i = 0; i < section.sh_size / section.sh_entsize; i++ ) {
 				Dynamic dynEnt = new Dynamic(section, efile.readIntE(), efile.readIntE());
-				if ( dynEnt.d_tag == dynEnt.DT_NULL ) 
+				if ( dynEnt.d_tag == Dynamic.DT_NULL ) 
 					break;
 				dynList.add(dynEnt);
 			}
@@ -617,16 +617,16 @@ public class Elf {
 
         switch( ehdr.e_type ) {
         	case Elf.ELFhdr.ET_CORE:
-				attrib.type = attrib.ELF_TYPE_CORE;
+				attrib.type = Attribute.ELF_TYPE_CORE;
 				break;
             case Elf.ELFhdr.ET_EXEC:
-                attrib.type = attrib.ELF_TYPE_EXE;
+                attrib.type = Attribute.ELF_TYPE_EXE;
                 break;
             case Elf.ELFhdr.ET_REL:
-                attrib.type = attrib.ELF_TYPE_OBJ;
+                attrib.type = Attribute.ELF_TYPE_OBJ;
                 break;
             case Elf.ELFhdr.ET_DYN:
-                attrib.type = attrib.ELF_TYPE_SHLIB;
+                attrib.type = Attribute.ELF_TYPE_SHLIB;
                 break;
         }
 
@@ -744,9 +744,9 @@ public class Elf {
 				sections[i].sh_info = efile.readIntE();
 				sections[i].sh_addralign = efile.readIntE();
 				sections[i].sh_entsize = efile.readIntE();
-				if ( sections[i].sh_type == sections[i].SHT_SYMTAB )
+				if ( sections[i].sh_type == Section.SHT_SYMTAB )
 					syms = i;
-				if ( syms == 0 && sections[i].sh_type == sections[i].SHT_DYNSYM )
+				if ( syms == 0 && sections[i].sh_type == Section.SHT_DYNSYM )
 					syms = i;					
 			}
 		}
@@ -843,7 +843,7 @@ public class Elf {
 	}
 		
 	public long swapInt( long val ) {
-		if ( ehdr.e_ident[ehdr.EI_DATA] == ehdr.ELFDATA2LSB ) {
+		if ( ehdr.e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB ) {
 			short tmp[] = new short[4];
 			tmp[0] = (short)(val & 0x00ff);
 			tmp[1] = (short)((val >> 8) & 0x00ff);
@@ -855,7 +855,7 @@ public class Elf {
 	}
 
 	public int swapShort( short val ) {
-		if ( ehdr.e_ident[ehdr.EI_DATA] == ehdr.ELFDATA2LSB ) {
+		if ( ehdr.e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB ) {
 			short tmp[] = new short[2];
 			tmp[0] = (short)(val & 0x00ff);
 			tmp[1] = (short)((val >> 8) & 0x00ff);

@@ -73,9 +73,9 @@ public final class CPPParser implements CPPParserConstants {
   }
 
   static void synchronize(int kind) {
-    if (getToken(0).kind == kind) {
-      return;
-    }
+    //if (getToken(0).kind == kind) {
+    //  return;
+    //}
     Token t;
     do {
        t= getNextToken();

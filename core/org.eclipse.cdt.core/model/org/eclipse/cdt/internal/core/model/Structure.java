@@ -65,14 +65,6 @@ public class Structure extends SourceManipulation implements IStructure {
 	}
 
 	/**
-	 * Return the access control for each inherited structure.
-	 * @IInheritance
-	 */
-	public int getAccessControl(int pos) throws CModelException {
-		return 0;
-	}
-
-	/**
 	 * @see IVariable
 	 */
 	public String getType() {
@@ -99,6 +91,22 @@ public class Structure extends SourceManipulation implements IStructure {
 
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
+	}
+
+	/**
+	 * Return the access control for each inherited structure.
+	 * @IInheritance
+	 */
+	public int getAccessControl(int pos) throws CModelException {
+		return 0;
+	}
+
+
+	/**
+	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getAccesControl()
+	 */
+	public int getAccesControl() {
+		return 0;
 	}
 
 }

@@ -50,16 +50,8 @@ public class GCCErrorParser implements IErrorParser {
 					}
 
 					if (num == -1) {
-						// Maybe a bad option error or cc1(plus) error
-						if (fileName.startsWith("cc") || fileName.startsWith("gcc")
-							|| fileName.startsWith("qcc") || fileName.startsWith("QCC")) {
-							// do nothing;
-							if(line.indexOf("caught signal") != -1) {
-								return false;
-							}
-						} else {
-							return false;
-						}
+						// Bail out not recognizable format. i.e. no line numbers
+						return false;
 					} else {
 						/* Then check for the column  */
 						int thirdColon= line.indexOf(':', secondColon + 1);

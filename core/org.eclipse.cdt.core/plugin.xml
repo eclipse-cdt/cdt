@@ -62,7 +62,7 @@
          </run>
       </cextension>
    </extension>
-<!-- extension
+   <extension
          id="GNU_ELF"
          name="GNU Elf Parser"
          point="org.eclipse.cdt.core.BinaryParser">
@@ -71,7 +71,7 @@
                class="org.eclipse.cdt.utils.elf.parser.GNUElfParser">
          </run>
       </cextension>
-   </extension -->
+   </extension>
    <extension
          id="PE"
          name="PE Windows Parser"

@@ -18,21 +18,25 @@ public class Addr2line {
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 	private String lastaddr, lastsymbol, lastline;
-		
-	public Addr2line(String file) throws IOException {
-		String[] args = {"addr2line", "-C", "-f", "-e", file};
+
+	public Addr2line(String command, String file) throws IOException {
+		String[] args = {command, "-C", "-f", "-e", file};
 		addr2line = ProcessFactory.getFactory().exec(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(addr2line.getOutputStream()));
-		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));
+		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));			
+	}
+
+	public Addr2line(String file) throws IOException {
+		this("addr2line", file);
 	}
 
 	private void getOutput(String address) throws IOException {
 		if ( address.equals(lastaddr) == false ) {
-			stdin.write(address + "\n");
-			stdin.flush();
-			lastsymbol = stdout.readLine();
-			lastline = stdout.readLine();
-			lastaddr = address;
+				stdin.write(address + "\n");
+				stdin.flush();
+				lastsymbol = stdout.readLine();
+				lastline = stdout.readLine();
+				lastaddr = address;
 		}
 	}
 

@@ -1,3 +1,15 @@
+2003-10-06 Alain Magloire
+
+	Implementation of the GNU Elf parser, where you can
+	change the path of the external commands: addr2line and cppfilt.
+
+	* plugin.xml: Enable the GNU Elf Parser.
+	* utils/org/eclipse/cdt/utils/elf/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/elf/BinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/Addr2line.java
+	* utils/org/eclipse/cdt/utils/elf/CPPFilt.java
+
 2003-10-01 Bogdan Gheorghe
 	
 	Changed DeltaProcessor.updateDependencies to use the CModelManager

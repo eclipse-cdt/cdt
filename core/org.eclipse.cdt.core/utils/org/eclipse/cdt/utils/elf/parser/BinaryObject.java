@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
@@ -234,25 +236,84 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 		sizes = helper.getSizes();
 		soname = helper.getSoname();
 		attribute = helper.getElf().getAttributes();
+		// Hack should be remove when Elf is clean
+		helper.getElf().setCppFilter(false);
 
-		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION);
-		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION);
-		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE);
-		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE);
+		Addr2line addr2line = getAddr2Line();
+		CPPFilt cppfilt = getCPPFilt();
+
+		addSymbols(helper.getExternalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt);
+		addSymbols(helper.getLocalFunctions(), ISymbol.FUNCTION, addr2line, cppfilt);
+		addSymbols(helper.getExternalObjects(), ISymbol.VARIABLE, addr2line, cppfilt);
+		addSymbols(helper.getLocalObjects(), ISymbol.VARIABLE, addr2line, cppfilt);
 		symbols.trimToSize();
+
+		if (addr2line != null) {
+			addr2line.dispose();
+		}
+		if (cppfilt != null) {
+			cppfilt.dispose();
+		}
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type) {
+	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt) {
 		for (int i = 0; i < array.length; i++) {
 			Symbol sym = new Symbol();
 			sym.type = type;
 			sym.name = array[i].toString();
+			if (cppfilt != null) {
+				try {
+					sym.name = cppfilt.getFunction(sym.name);
+				} catch (IOException e1) {
+				}
+			}
 			sym.addr = array[i].st_value;
 			try {
 				// This can fail if we use addr2line
 				// but we can safely ignore the error.
-				sym.filename = array[i].getFilename();
-				sym.startLine = array[i].getFuncLineNumber();
+				long value = sym.addr;
+				int lineno = -1;
+				String filename = null; 
+				if (addr2line != null) {
+					// We try to get the nearest match
+					// since the symbol may not exactly align with debug info.
+					// In C line number 0 is invalid, line starts at 1 for file, we use
+					// this for validation.
+					String line = null;
+					for (int j = 0; j <= 20; j += 4, value += j) {
+						line = addr2line.getLine(value);
+						if (line != null) {
+							int colon = line.lastIndexOf(':');
+							if (colon != -1) {
+								String number = line.substring(colon + 1);
+								if (!number.startsWith("0")) {
+									break; // potential candidate bail out
+								}
+							}
+						}
+					}
+
+					int index1, index2;
+					if (line != null && (index1 = line.lastIndexOf(':')) != -1) {
+						// we do this because addr2line on win produces
+						// <cygdrive/pathtoexc/C:/pathtofile:##>
+						index2 = line.indexOf(':');
+						if ( index1 == index2 ) {
+							index2 = 0;
+						} else {
+							index2--;
+						}
+						filename = line.substring(index2, index1);
+						try {
+							lineno = Integer.parseInt(line.substring(index1 + 1));
+							lineno = (lineno == 0) ? -1 : lineno;
+						} catch(Exception e) {
+							lineno = -1;
+						}
+					}
+				}
+				sym.filename =  filename;
+				sym.startLine = lineno;
 				sym.endLine = sym.startLine;
 			} catch (IOException e) {
 				//e.printStackTrace();
@@ -263,6 +324,26 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	protected void addSymbol(Symbol sym) {
 		symbols.add(sym);
+	}
+
+	protected Addr2line getAddr2Line() {
+		IPath addr2LinePath = getAddr2LinePath();
+		Addr2line addr2line = null;
+		try {
+			addr2line = new Addr2line(addr2LinePath.toOSString(), getPath().toOSString());
+		} catch (IOException e1) {
+		}
+		return addr2line;
+	}
+
+	protected CPPFilt getCPPFilt() {
+		IPath cppFiltPath = getCPPFiltPath();
+		CPPFilt cppfilt = null;
+		try {
+			cppfilt = new CPPFilt(cppFiltPath.toOSString());
+		} catch (IOException e2) {
+		}
+		return cppfilt;
 	}
 
 }

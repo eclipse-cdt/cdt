@@ -15,20 +15,19 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.utils.elf.AR;
+import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PlatformObject;
 
 /**
  */
-public class BinaryArchive extends PlatformObject implements IBinaryArchive {
+public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 
-	IPath path;
 	ArrayList children;
 	long timestamp;
 
 	public BinaryArchive(IPath p) throws IOException {
-		path = p;
-		new AR(path.toOSString()).dispose(); // check file type
+		super(p);
+		new AR(p.toOSString()).dispose(); // check file type
 		children = new ArrayList(5);
 	}
 
@@ -41,10 +40,10 @@ public class BinaryArchive extends PlatformObject implements IBinaryArchive {
 			if (path != null) {
 				AR ar = null;
 				try {
-					ar = new AR(path.toOSString());
+					ar = new AR(getPath().toOSString());
 					AR.ARHeader[] headers = ar.getHeaders();
 					for (int i = 0; i < headers.length; i++) {
-						IBinaryObject bin = new ARMember(path, headers[i]);
+						IBinaryObject bin = new ARMember(getPath(), headers[i]);
 						children.add(bin);
 					}
 				} catch (IOException e) {
@@ -60,13 +59,6 @@ public class BinaryArchive extends PlatformObject implements IBinaryArchive {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
-	 */
-	public IPath getPath() {
-		return path;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
 	 */
 	public int getType() {
@@ -78,14 +70,14 @@ public class BinaryArchive extends PlatformObject implements IBinaryArchive {
 	 */
 	public InputStream getContents() {
 		try {
-			return new FileInputStream(path.toFile());
+			return new FileInputStream(getPath().toFile());
 		} catch (IOException e) {
 		}
 		return new ByteArrayInputStream(new byte[0]);
 	}
 
 	boolean hasChanged() {
-		long modif = path.toFile().lastModified();
+		long modif = getPath().toFile().lastModified();
 		boolean changed = modif != timestamp;
 		timestamp = modif;
 		return changed;
@@ -100,6 +92,13 @@ public class BinaryArchive extends PlatformObject implements IBinaryArchive {
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#delete(IBinaryObject[])
 	 */
 	public void delete(IBinaryObject[] objs) throws IOException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.elf.parser.BinaryFile#getAttribute()
+	 */
+	protected Attribute getAttribute() {
+		return null;
 	}
 
 }

@@ -10,7 +10,6 @@ import java.io.IOException;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.internal.core.model.parser.ElfBinaryArchive;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.core.runtime.IPath;
@@ -25,9 +24,10 @@ public class GNUElfParser extends AbstractCExtension implements IBinaryParser {
 	 */
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		if (path == null) {
-			path = new Path("");
+			throw new IOException("path is null");
 		}
-		IBinaryFile binary = null;
+
+		BinaryFile binary = null;
 		try {
 			Elf.Attribute attribute = Elf.getAttributes(path.toOSString());
 			if (attribute != null) {
@@ -52,8 +52,10 @@ public class GNUElfParser extends AbstractCExtension implements IBinaryParser {
 				}
 			}
 		} catch (IOException e) {
-			binary = new ElfBinaryArchive(path);
+			binary = new BinaryArchive(path);
 		}
+		binary.setAddr2LinePath(getAddr2LinePath());
+		binary.setCPPFiltPath(getCPPFiltPath());
 		return binary;
 	}
 
@@ -64,13 +66,21 @@ public class GNUElfParser extends AbstractCExtension implements IBinaryParser {
 		return "ELF";
 	}
 
-	String getAddr2LinePath() {
+	public IPath getAddr2LinePath() {
 		ICExtensionReference ref = getExtensionReference();
-		return ref.getExtensionData("addr2line");
+		String value =  ref.getExtensionData("addr2line");
+		if (value == null || value.length() == 0) {
+			value = "addr2line";
+		}
+		return new Path(value);
 	}
 
-	String getCPPFiltPath() {
+	public IPath getCPPFiltPath() {
 		ICExtensionReference ref = getExtensionReference();
-		return ref.getExtensionData("c++filt");
+		String value = ref.getExtensionData("c++filt");
+		if (value == null || value.length() == 0) {
+			value = "c++filt";
+		}
+		return new Path(value);
 	}
 }

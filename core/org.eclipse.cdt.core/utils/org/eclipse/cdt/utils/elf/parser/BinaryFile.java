@@ -16,13 +16,32 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
+ *
  */
 public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 
 	protected IPath path;
+	protected IPath addr2linePath;
+	protected IPath cppfiltPath;
 
 	public BinaryFile(IPath p) {
 		path = p;
+	}
+
+	public void setAddr2LinePath(IPath p) {
+		addr2linePath = p;
+	}
+
+	public IPath getAddr2LinePath() {
+		return addr2linePath;
+	}
+
+	public void setCPPFiltPath(IPath p) {
+		cppfiltPath = p;
+	}
+
+	public IPath getCPPFiltPath() {
+		return cppfiltPath;
 	}
 
 	/**

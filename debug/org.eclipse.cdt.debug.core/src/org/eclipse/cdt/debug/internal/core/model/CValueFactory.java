@@ -22,8 +22,8 @@ public class CValueFactory
 	 * Creates the appropriate kind of value, or <code>null</code>.
 	 * 
 	 */
-	static public ICValue createValue( CDebugTarget target, ICDIValue cdiValue ) throws DebugException
+	static public ICValue createValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
 	{
-		return new CValue( target, cdiValue );
+		return new CValue( parent, cdiValue );
 	}
 }

@@ -84,7 +84,7 @@ public abstract class CVariable extends CDebugElement
 		ICDIValue currentValue = getCurrentValue();
 		if ( fValue == null )
 		{
-			fValue = CValueFactory.createValue( (CDebugTarget)getDebugTarget(), currentValue );
+			fValue = CValueFactory.createValue( this, currentValue );
 		}
 		return fValue;
 	}
@@ -252,8 +252,13 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-			//setValue( getCurrentValue() );
 			setChanged( true );
+			if ( getValue() != null && 
+				 ((CValue)getValue()).getType() == ICValue.TYPE_CHAR &&
+				 getParent() instanceof CValue )
+			{
+				updateParentVariable( (CValue)getParent() );
+			}
 			getParent().fireChangeEvent( DebugEvent.CONTENT );
 		}
 		catch( DebugException e )
@@ -328,5 +333,11 @@ public abstract class CVariable extends CDebugElement
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return type;
+	}
+
+	protected void updateParentVariable( CValue parentValue ) throws DebugException
+	{
+		parentValue.getParentVariable().setChanged( true );
+		parentValue.getParentVariable().fireChangeEvent( DebugEvent.STATE );
 	}
 }

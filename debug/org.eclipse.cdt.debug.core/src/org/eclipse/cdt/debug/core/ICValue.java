@@ -25,6 +25,7 @@ public interface ICValue extends IValue
 	static final public int TYPE_ARRAY_PARTITION = 5;
 	static final public int TYPE_ARRAY_ENTRY = 7;
 	static final public int TYPE_CHAR = 8;
+	static final public int TYPE_KEYWORD = 9;
 
 	/**
 	 * Returns the type of this value.

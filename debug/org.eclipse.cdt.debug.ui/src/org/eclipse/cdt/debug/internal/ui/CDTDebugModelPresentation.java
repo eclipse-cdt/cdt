@@ -389,6 +389,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 							break;
 						case ICValue.TYPE_STRUCTURE:
 							break;
+						case ICValue.TYPE_KEYWORD:
+							break;
 						default:
 							label += "= " + value.getValueString();
 							break;
@@ -633,7 +635,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 		if ( element != null )
 		{
 			if ( element.getType() == ICValue.TYPE_ARRAY ||
-				 element.getType() == ICValue.TYPE_STRUCTURE )
+				 element.getType() == ICValue.TYPE_STRUCTURE ||
+				 element.getType() == ICValue.TYPE_KEYWORD )
 				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE,  0 ) );
 			else if ( element.getType() == ICValue.TYPE_POINTER )
 				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_POINTER,  0 ) );

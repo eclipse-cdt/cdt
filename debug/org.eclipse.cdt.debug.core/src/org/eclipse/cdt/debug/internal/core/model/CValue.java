@@ -29,6 +29,11 @@ import org.eclipse.debug.core.model.IVariable;
 public class CValue extends CDebugElement implements ICValue
 {
 	/**
+	 * Parent variable.
+	 */
+	private CVariable fParent = null;
+
+	/**
 	 * Cached value.
 	 */
 	private String fValueString = null;
@@ -52,9 +57,10 @@ public class CValue extends CDebugElement implements ICValue
 	 * Constructor for CValue.
 	 * @param target
 	 */
-	public CValue( CDebugTarget target, ICDIValue cdiValue )
+	public CValue( CVariable parent, ICDIValue cdiValue )
 	{
-		super( target );
+		super( (CDebugTarget)parent.getDebugTarget() );
+		fParent = parent;
 		fCDIValue = cdiValue;
 	}
 
@@ -186,10 +192,14 @@ public class CValue extends CDebugElement implements ICValue
 	
 	protected void calculateType( String stringValue )
 	{
-		if ( stringValue != null && stringValue.trim().length() > 0 )
+		if ( stringValue != null )
 		{
 			stringValue = stringValue.trim();
-			if ( stringValue.charAt( stringValue.length() - 1 ) == '\'' )
+			if ( stringValue.length() == 0 )
+			{
+				fType = TYPE_KEYWORD;
+			}
+			else if ( stringValue.charAt( stringValue.length() - 1 ) == '\'' )
 			{
 				fType = TYPE_CHAR;
 			}
@@ -290,5 +300,10 @@ public class CValue extends CDebugElement implements ICValue
 			}
 		}
 		return String.valueOf( result );
+	}
+	
+	protected CVariable getParentVariable()
+	{
+		return fParent;
 	}
 }

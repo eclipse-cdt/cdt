@@ -7,7 +7,6 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 
 /**

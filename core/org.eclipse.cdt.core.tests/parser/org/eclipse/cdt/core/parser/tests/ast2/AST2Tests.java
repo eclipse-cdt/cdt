@@ -29,8 +29,11 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
@@ -80,7 +83,7 @@ public class AST2Tests extends TestCase {
 		IASTDeclarator declor_y = decl_y.getDeclarator();
 		IASTName name_y = declor_y.getName(); 
 		assertEquals("y", name_y.toString());
-		IVariable var_y = (IVariable)name_y.resolveBinding();
+		IParameter var_y = (IParameter)name_y.resolveBinding();
 		assertEquals(func_f, var_y.getScope());
 		
 		// int z
@@ -122,7 +125,9 @@ public class AST2Tests extends TestCase {
 		// it's a typedef
 		assertEquals(IASTSimpleDeclSpecifier.sc_typedef, type.getStorageClass());
 		// this an anonymous struct
-		assertNull(type.getName());
+		IASTName name_struct = type.getName();
+		assertNull("", name_struct.toString());
+		ICompositeType type_struct = (ICompositeType)name_struct.resolveBinding(); 
 		// member - x
 		IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration)type.getMembers().get(0);
 		IASTSimpleDeclSpecifier spec_x = (IASTSimpleDeclSpecifier)decl_x.getDeclSpecifier();
@@ -132,6 +137,10 @@ public class AST2Tests extends TestCase {
 		assertEquals("x", tor_x.getName().toString());
 		// declarator S
 		IASTDeclarator tor_S = (IASTDeclarator)decl.getDeclarators().get(0);
-		assertEquals("S", tor_S.getName().toString());
+		IASTName name_S = tor_S.getName();
+		assertEquals("S", name_S.toString());
+		ITypedef typedef_S = (ITypedef)name_S.resolveBinding();
+		// make sure the typedef is hooked up correctly
+		assertEquals(type_struct, typedef_S.getType());
 	}
 }

@@ -1,0 +1,4 @@
+name=QNX Momentics IDE
+id=com.qnx.tools.ide
+version=2.0.0
+feature.default.id=com.qnx.tools.ide

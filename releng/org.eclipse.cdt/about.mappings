@@ -3,4 +3,6 @@
 # java.io.Properties file (ISO 8859-1 with "\" escapes)
 # This file does not need to be translated.
 
-0=@build@
+# The following should contain the build version.
+# e.g. "0=20020612"
+0=200210031200
